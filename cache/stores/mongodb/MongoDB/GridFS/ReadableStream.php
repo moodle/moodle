@@ -1,12 +1,12 @@
 <?php
 /*
- * Copyright 2016-2017 MongoDB, Inc.
+ * Copyright 2016-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,10 +17,11 @@
 
 namespace MongoDB\GridFS;
 
-use IteratorIterator;
+use MongoDB\Driver\CursorInterface;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\GridFS\Exception\CorruptFileException;
 use stdClass;
+
 use function ceil;
 use function floor;
 use function is_integer;
@@ -48,7 +49,7 @@ class ReadableStream
     /** @var integer */
     private $chunkOffset = 0;
 
-    /** @var IteratorIterator|null */
+    /** @var CursorInterface|null */
     private $chunksIterator;
 
     /** @var CollectionWrapper */
@@ -95,14 +96,14 @@ class ReadableStream
 
         if ($this->length > 0) {
             $this->numChunks = (integer) ceil($this->length / $this->chunkSize);
-            $this->expectedLastChunkSize = ($this->length - (($this->numChunks - 1) * $this->chunkSize));
+            $this->expectedLastChunkSize = $this->length - (($this->numChunks - 1) * $this->chunkSize);
         }
     }
 
     /**
      * Return internal properties for debugging purposes.
      *
-     * @see http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.debuginfo
+     * @see https://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.debuginfo
      * @return array
      */
     public function __debugInfo()
@@ -315,9 +316,7 @@ class ReadableStream
      */
     private function initChunksIterator()
     {
-        $cursor = $this->collectionWrapper->findChunksByFileId($this->file->_id, $this->chunkOffset);
-
-        $this->chunksIterator = new IteratorIterator($cursor);
+        $this->chunksIterator = $this->collectionWrapper->findChunksByFileId($this->file->_id, $this->chunkOffset);
         $this->chunksIterator->rewind();
     }
 }

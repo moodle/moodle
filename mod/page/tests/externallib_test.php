@@ -147,7 +147,7 @@ class externallib_test extends externallib_advanced_testcase {
         $returndescription = mod_page_external::get_pages_by_courses_returns();
 
         // Create what we expect to be returned when querying the two courses.
-        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles',
+        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'lang',
                                 'content', 'contentformat', 'contentfiles', 'legacyfiles', 'legacyfileslast', 'display',
                                 'displayoptions', 'revision', 'timemodified', 'section', 'visible', 'groupmode', 'groupingid');
 
@@ -161,6 +161,7 @@ class externallib_test extends externallib_advanced_testcase {
         $page1->groupingid = 0;
         $page1->introfiles = [];
         $page1->contentfiles = [];
+        $page1->lang = '';
 
         $page2->coursemodule = $page2->cmid;
         $page2->introformat = 1;
@@ -171,6 +172,7 @@ class externallib_test extends externallib_advanced_testcase {
         $page2->groupingid = 0;
         $page2->introfiles = [];
         $page2->contentfiles = [];
+        $page2->lang = '';
 
         foreach ($expectedfields as $field) {
             $expected1[$field] = $page1->{$field};

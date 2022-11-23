@@ -47,7 +47,7 @@ defined('MOODLE_INTERNAL') || die;
 class user extends tablelike implements selectable_items {
 
     /** @var array $categories A cache for grade_item categories */
-    private $categories = array();
+    private $categories = [];
 
     /** @var int $requirespaging Do we have more items than the paging limit? */
     private $requirespaging = true;
@@ -56,7 +56,7 @@ class user extends tablelike implements selectable_items {
      * Get the label for the select box that chooses items for this page.
      * @return string
      */
-    public function select_label() {
+    public function select_label(): string {
         return get_string('selectgrade', 'gradereport_singleview');
     }
 
@@ -65,7 +65,7 @@ class user extends tablelike implements selectable_items {
      *
      * @return string
      */
-    public function description() {
+    public function description(): string {
         return get_string('gradeitems', 'grades');
     }
 
@@ -74,8 +74,8 @@ class user extends tablelike implements selectable_items {
      *
      * @return array
      */
-    public function options() {
-        $result = array();
+    public function options(): array {
+        $result = [];
         foreach ($this->items as $itemid => $item) {
             $result[$itemid] = $item->get_name();
         }
@@ -87,7 +87,7 @@ class user extends tablelike implements selectable_items {
      *
      * @return string
      */
-    public function item_type() {
+    public function item_type(): string {
         return 'grade';
     }
 
@@ -97,7 +97,6 @@ class user extends tablelike implements selectable_items {
      * @param bool $selfitemisempty Have we selected an item yet?
      */
     public function init($selfitemisempty = false) {
-        global $DB;
 
         if (!$selfitemisempty) {
             $validusers = $this->load_users();
@@ -110,11 +109,9 @@ class user extends tablelike implements selectable_items {
             }
         }
 
-        $params = array('courseid' => $this->courseid);
-
         $seq = new grade_seq($this->courseid, true);
 
-        $this->items = array();
+        $this->items = [];
         foreach ($seq->items as $itemid => $item) {
             if (grade::filter($item)) {
                 $this->items[$itemid] = $item;
@@ -125,9 +122,9 @@ class user extends tablelike implements selectable_items {
 
         $this->setup_structure();
 
-        $this->definition = array(
+        $this->definition = [
             'finalgrade', 'feedback', 'override', 'exclude'
-        );
+        ];
         $this->set_headers($this->original_headers());
     }
 
@@ -136,26 +133,26 @@ class user extends tablelike implements selectable_items {
      *
      * @return array List of headers
      */
-    public function original_headers() {
-        return array(
-            '', // For filter icon.
+    public function original_headers(): array {
+        return [
             get_string('assessmentname', 'gradereport_singleview'),
+            '', // For filter icon.
             get_string('gradecategory', 'grades'),
-            get_string('range', 'grades'),
             get_string('grade', 'grades'),
+            get_string('range', 'grades'),
             get_string('feedback', 'grades'),
-            $this->make_toggle_links('override'),
-            $this->make_toggle_links('exclude')
-        );
+            get_string('override', 'gradereport_singleview'),
+            get_string('exclude', 'gradereport_singleview'),
+        ];
     }
 
     /**
      * Format each row of the table.
      *
      * @param grade_item $item
-     * @return string
+     * @return array
      */
-    public function format_line($item) {
+    public function format_line($item): array {
         global $OUTPUT;
 
         $grade = $this->fetch_grade_or_default($item, $this->item->id);
@@ -170,44 +167,58 @@ class user extends tablelike implements selectable_items {
         }
         // Check both grade and grade item.
         if ($lockeditem || $lockeditemgrade) {
-             $lockicon = $OUTPUT->pix_icon('t/locked', 'grade is locked');
+             $lockicon = $OUTPUT->pix_icon('t/locked', 'grade is locked', 'moodle', ['class' => 'ml-3']);
         }
-
-        $iconstring = get_string('filtergrades', 'gradereport_singleview', $item->get_name());
 
         // Create a fake gradetreeitem so we can call get_element_header().
         // The type logic below is from grade_category->_get_children_recursion().
-        $gradetreeitem = array();
-        if (in_array($item->itemtype, array('course', 'category'))) {
-            $gradetreeitem['type'] = $item->itemtype.'item';
-        } else {
-            $gradetreeitem['type'] = 'item';
-        }
+        $gradetreeitem = [];
+
+        $type = in_array($item->itemtype, ['course', 'category']) ? "{$item->itemtype}item" : 'item';
+        $gradetreeitem['type'] = $type;
         $gradetreeitem['object'] = $item;
         $gradetreeitem['userid'] = $this->item->id;
 
-        $itemlabel = $this->structure->get_element_header($gradetreeitem, true, false, false, false, true);
+        $itemname = $this->structure->get_element_header($gradetreeitem, true, false, false, false, true);
         $grade->label = $item->get_name();
 
-        $line = array(
-            $OUTPUT->action_icon($this->format_link('grade', $item->id), new pix_icon('t/editstring', ''), null,
-                    ['title' => $iconstring, 'aria-label' => $iconstring]),
-            $this->format_icon($item) . $lockicon . $itemlabel,
-            $this->category($item),
-            new range($item)
-        );
-        $lineclasses = array(
-            "action",
-            "gradeitem",
-            "category",
-            "range"
-        );
+        $formatteddefinition = $this->format_definition($grade);
 
-        $outputline = array();
+        $itemicon = html_writer::div($this->format_icon($item), 'mr-1');
+        $itemtype = \html_writer::span($this->structure->get_element_type_string($gradetreeitem),
+            'd-block text-uppercase small dimmed_text');
+        // If a behat test site is running avoid outputting the information about the type of the grade item.
+        // This additional information currently causes issues in behat particularly with the existing xpath used to
+        // interact with table elements.
+        if (!defined('BEHAT_SITE_RUNNING')) {
+            $itemcontent = html_writer::div($itemtype . $itemname);
+        } else {
+            $itemcontent = html_writer::div($itemname);
+        }
+
+        $line = [
+            html_writer::div($itemicon . $itemcontent .  $lockicon, "{$type} d-flex align-items-center"),
+            $this->get_item_action_menu($item),
+            $this->category($item),
+            $formatteddefinition['finalgrade'],
+            new range($item),
+            $formatteddefinition['feedback'],
+            $formatteddefinition['override'],
+            $formatteddefinition['exclude'],
+        ];
+        $lineclasses = [
+            'gradeitem',
+            'action',
+            'category',
+            'grade',
+            'range',
+        ];
+
+        $outputline = [];
         $i = 0;
         foreach ($line as $key => $value) {
             $cell = new \html_table_cell($value);
-            if ($isheader = $i == 1) {
+            if ($isheader = $i == 0) {
                 $cell->header = $isheader;
                 $cell->scope = "row";
             }
@@ -218,7 +229,7 @@ class user extends tablelike implements selectable_items {
             $i++;
         }
 
-        return $this->format_definition($outputline, $grade);
+        return $outputline;
     }
 
     /**
@@ -227,18 +238,39 @@ class user extends tablelike implements selectable_items {
      * @param grade_item $item
      * @return string
      */
-    private function format_icon($item) {
-        $element = array('type' => 'item', 'object' => $item);
+    private function format_icon($item): string {
+        $element = ['type' => 'item', 'object' => $item];
         return $this->structure->get_element_icon($element);
+    }
+
+    /**
+     * Return the action menu HTML for the grade item.
+     *
+     * @param grade_item $item
+     * @return mixed
+     */
+    private function get_item_action_menu(grade_item $item) {
+        global $OUTPUT;
+
+        $menuitems = [];
+        $url = new moodle_url($this->format_link('grade', $item->id));
+        $title = get_string('showallgrades', 'core_grades');
+        $menuitems[] = new \action_menu_link_secondary($url, null, $title);
+        $menu = new \action_menu($menuitems);
+        $icon = $OUTPUT->pix_icon('i/moremenu', get_string('actions'));
+        $menu->set_menu_trigger($icon);
+        $menu->set_menu_left();
+
+        return $OUTPUT->render($menu);
     }
 
     /**
      * Helper to get the category for an item.
      *
      * @param grade_item $item
-     * @return grade_category
+     * @return string
      */
-    private function category($item) {
+    private function category(grade_item $item): string {
         global $DB;
 
         if (empty($item->categoryid)) {
@@ -247,7 +279,7 @@ class user extends tablelike implements selectable_items {
                 return $this->course->fullname;
             }
 
-            $params = array('id' => $item->iteminstance);
+            $params = ['id' => $item->iteminstance];
             $elem = $DB->get_record('grade_categories', $params);
 
             return $elem->fullname;
@@ -267,7 +299,7 @@ class user extends tablelike implements selectable_items {
      *
      * @return string
      */
-    public function heading() {
+    public function heading(): string {
         return get_string('gradeuser', 'gradereport_singleview', fullname($this->item));
     }
 
@@ -276,7 +308,7 @@ class user extends tablelike implements selectable_items {
      *
      * @return string
      */
-    public function summary() {
+    public function summary(): string {
         return get_string('summaryuser', 'gradereport_singleview');
     }
 
@@ -285,7 +317,7 @@ class user extends tablelike implements selectable_items {
      *
      * @return string
      */
-    public function pager() {
+    public function pager(): string {
         global $OUTPUT;
 
         if (!$this->supports_paging()) {
@@ -294,13 +326,13 @@ class user extends tablelike implements selectable_items {
 
         return $OUTPUT->paging_bar(
             count($this->items), $this->page, $this->perpage,
-            new moodle_url('/grade/report/singleview/index.php', array(
+            new moodle_url('/grade/report/singleview/index.php', [
                 'perpage' => $this->perpage,
                 'id' => $this->courseid,
                 'group' => $this->groupid,
                 'itemid' => $this->itemid,
                 'item' => 'user'
-            ))
+            ])
         );
     }
 
@@ -309,7 +341,7 @@ class user extends tablelike implements selectable_items {
      *
      * @return bool
      */
-    public function supports_paging() {
+    public function supports_paging(): bool {
         return $this->requirespaging;
     }
 
@@ -318,9 +350,9 @@ class user extends tablelike implements selectable_items {
      * Process the data from the form.
      *
      * @param array $data
-     * @return array of warnings
+     * @return stdClass of warnings
      */
-    public function process($data) {
+    public function process($data): stdClass {
         $bulk = new bulk_insert($this->item);
         // Bulk insert messages the data to be passed in
         // ie: for all grades of empty grades apply the specified value.
@@ -350,10 +382,10 @@ class user extends tablelike implements selectable_items {
                     }
                     continue;
                 }
-                $grade = grade_grade::fetch(array(
+                $grade = grade_grade::fetch([
                     'itemid' => $gradeitemid,
                     'userid' => $userid
-                ));
+                ]);
 
                 $data->$field = empty($grade) ? $null : $grade->finalgrade;
                 $data->{"old$field"} = $data->$field;
@@ -371,10 +403,10 @@ class user extends tablelike implements selectable_items {
                     continue;
                 }
 
-                $gradeitem = grade_item::fetch(array(
+                $gradeitem = grade_item::fetch([
                     'courseid' => $this->courseid,
                     'id' => $matches[1]
-                ));
+                ]);
 
                 $isscale = ($gradeitem->gradetype == GRADE_TYPE_SCALE);
 

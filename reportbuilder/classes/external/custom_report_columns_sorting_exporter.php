@@ -21,8 +21,8 @@ namespace core_reportbuilder\external;
 use pix_icon;
 use renderer_base;
 use core\external\exporter;
+use core_reportbuilder\datasource;
 use core_reportbuilder\local\models\column;
-use core_reportbuilder\local\report\base;
 
 /**
  * Custom report columns sorting exporter class
@@ -40,7 +40,7 @@ class custom_report_columns_sorting_exporter extends exporter {
      */
     protected static function define_related(): array {
         return [
-            'report' => base::class,
+            'report' => datasource::class,
         ];
     }
 
@@ -53,7 +53,6 @@ class custom_report_columns_sorting_exporter extends exporter {
         return [
             'hassortablecolumns' => [
                 'type' => PARAM_BOOL,
-                'optional' => true,
             ],
             'sortablecolumns' => [
                 'type' => [
@@ -73,12 +72,10 @@ class custom_report_columns_sorting_exporter extends exporter {
                     'movetitle' => ['type' => PARAM_TEXT],
                     'sortenabledtitle' => ['type' => PARAM_TEXT],
                 ],
-                'optional' => true,
                 'multiple' => true,
             ],
             'helpicon' => [
                 'type' => PARAM_RAW,
-                'optional' => true,
             ],
         ];
     }
@@ -90,7 +87,7 @@ class custom_report_columns_sorting_exporter extends exporter {
      * @return array
      */
     protected function get_other_values(renderer_base $output): array {
-        /** @var base $report */
+        /** @var datasource $report */
         $report = $this->related['report'];
 
         $reportid = $report->get_report_persistent()->get('id');

@@ -24,6 +24,16 @@
 require_once('../config.php');
 require_once($CFG->dirroot . '/user/lib.php');
 
+$user = isloggedin() && !isguestuser() ? $USER : null;
+
+// If not allowed to view this page, redirect to the homepage. This would be where the site has
+// disabled support, or limited it to authenticated users and the current user is a guest or not logged in.
+if (!isset($CFG->supportavailability) ||
+        $CFG->supportavailability == CONTACT_SUPPORT_DISABLED ||
+        ($CFG->supportavailability == CONTACT_SUPPORT_AUTHENTICATED && is_null($user))) {
+    redirect($CFG->wwwroot);
+}
+
 if (!empty($CFG->supportpage)) {
     redirect($CFG->supportpage);
 }
@@ -34,7 +44,6 @@ $PAGE->set_title(get_string('contactsitesupport', 'admin'));
 $PAGE->set_heading(get_string('contactsitesupport', 'admin'));
 $PAGE->set_pagelayout('standard');
 
-$user = isloggedin() && !isguestuser() ? $USER : null;
 $renderer = $PAGE->get_renderer('user');
 
 $form = new \core_user\form\contactsitesupport_form(null, $user);

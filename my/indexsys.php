@@ -40,6 +40,8 @@ require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/my/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
+redirect_if_major_upgrade_required();
+
 $resetall = optional_param('resetall', false, PARAM_BOOL);
 
 $pagetitle = get_string('mypage', 'admin');

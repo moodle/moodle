@@ -1,0 +1,25 @@
+<div class="card">
+    <div class="card-header" role="tab" id="entry-##id##">
+        <div>
+            <div class="row align-middle">
+                <div class="col-4 col-sm-8 my-auto">
+                    <a data-toggle="collapse" data-parent="#proposals-list" href="#collapseentry-##id##" aria-expanded="true" aria-controls="collapseentry-##id##" class="d-block">
+                        <i class="fa fa-chevron-down"></i> [[Title]]
+                    </a>
+                 </div>
+                <div class="col-4 col-sm-2 ml-auto my-auto">##userpicture## ##user##</div>
+                <div class="col-4 col-sm-2 ml-auto align-self-center d-flex flex-row-reverse">
+                    <div>##actionsmenu##</div>
+                    <div class="ml-auto my-auto ##approvalstatusclass##">##approvalstatus##</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="collapseentry-##id##" class="collapse" role="tabpanel" aria-labelledby="entry-##id##">
+        <div class="card-body">
+            [[Summary]]
+            <p class="mt-3 preview-disabled"><a href="##moreurl##">View the full proposal</a></p>
+        </div>
+    </div>
+</div>

@@ -14,14 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests for the question_usage_by_activity class.
- *
- * @package   core_question
- * @copyright 2012 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_question;
 
+use question_bank;
+use question_state;
+use question_test_recordset;
+use question_usage_by_activity;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -29,16 +27,16 @@ global $CFG;
 require_once(__DIR__ . '/../lib.php');
 require_once(__DIR__ . '/helpers.php');
 
-
 /**
  * Unit tests for loading data into the {@link question_usage_by_activity} class.
  *
+ * @package   core_question
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_usage_db_test extends data_loading_method_test_base {
+class questionusagebyactivity_data_test extends \data_loading_method_test_base {
     public function test_load() {
-        $scid = context_system::instance()->id;
+        $scid = \context_system::instance()->id;
         $records = new question_test_recordset(array(
         array('qubaid', 'contextid', 'component', 'preferredbehaviour',
                                                'questionattemptid', 'questionusageid', 'slot',
@@ -51,7 +49,7 @@ class question_usage_db_test extends data_loading_method_test_base {
         array(1, $scid, 'unit_test', 'interactive', 1, 1, 1, 'interactive', -1, 1, 2.0000000, 0.0000000, 1.0000000, 0, '', '', '', 1256233790, 5, 2, 'gradedright', 1.0000000, 1256233720, 1,  '-finish',  '1'),
         ));
 
-        $question = test_question_maker::make_question('truefalse', 'true');
+        $question = \test_question_maker::make_question('truefalse', 'true');
         $question->id = -1;
 
         question_bank::start_unit_test();
@@ -96,7 +94,7 @@ class question_usage_db_test extends data_loading_method_test_base {
         // The code had a bug where if one question_attempt had no steps,
         // load_from_records got stuck in an infinite loop. This test is to
         // verify that no longer happens.
-        $scid = context_system::instance()->id;
+        $scid = \context_system::instance()->id;
         $records = new question_test_recordset(array(
         array('qubaid', 'contextid', 'component', 'preferredbehaviour',
                                                    'questionattemptid', 'questionusageid', 'slot',
@@ -128,7 +126,7 @@ class question_usage_db_test extends data_loading_method_test_base {
         // The code had a bug where if a question_usage had no question_attempts,
         // load_from_records got stuck in an infinite loop. This test is to
         // verify that no longer happens.
-        $scid = context_system::instance()->id;
+        $scid = \context_system::instance()->id;
         $records = new question_test_recordset(array(
         array('qubaid', 'contextid', 'component', 'preferredbehaviour',
                                                    'questionattemptid', 'questionusageid', 'slot',

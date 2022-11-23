@@ -122,6 +122,11 @@ if ($hassiteconfig) {
         new lang_string('qrkeyttl_desc', 'tool_mobile'), tool_mobile\api::LOGIN_QR_KEY_TTL, MINSECS));
     $temp->hide_if('tool_mobile/qrkeyttl', 'tool_mobile/qrcodetype', 'neq', tool_mobile\api::QR_CODE_LOGIN);
 
+    $temp->add(new admin_setting_configcheckbox('tool_mobile/qrsameipcheck',
+                new lang_string('qrsameipcheck', 'tool_mobile'),
+                new lang_string('qrsameipcheck_desc', 'tool_mobile'), 1));
+    $temp->hide_if('tool_mobile/qrsameipcheck', 'tool_mobile/qrcodetype', 'neq', tool_mobile\api::QR_CODE_LOGIN);
+
     $temp->add(new admin_setting_configtext('tool_mobile/forcedurlscheme',
                 new lang_string('forcedurlscheme_key', 'tool_mobile'),
                 new lang_string('forcedurlscheme', 'tool_mobile'), 'moodlemobile', PARAM_NOTAGS));

@@ -213,10 +213,9 @@ class tool_task_renderer extends plugin_renderer_base {
      * @return string HTML.
      */
     public function next_run_time(scheduled_task $task): string {
-        $plugininfo = core_plugin_manager::instance()->get_plugin_info($task->get_component());
-
         $nextrun = $task->get_next_run_time();
-        if ($plugininfo && $plugininfo->is_enabled() === false && !$task->get_run_if_component_disabled()) {
+
+        if (!$task->is_component_enabled() && !$task->get_run_if_component_disabled()) {
             $nextrun = get_string('plugindisabled', 'tool_task');
         } else if ($task->get_disabled()) {
             $nextrun = get_string('taskdisabled', 'tool_task');

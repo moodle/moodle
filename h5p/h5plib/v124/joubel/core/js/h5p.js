@@ -23,7 +23,7 @@ H5P.$window = H5P.jQuery(window);
 H5P.instances = [];
 
 // Detect if we support fullscreen, and what prefix to use.
-if (document.documentElement.requestFullScreen) {
+if (document.documentElement.requestFullscreen) {
   /**
    * Browser prefix to use when entering fullscreen mode.
    * undefined means no fullscreen support.
@@ -377,10 +377,29 @@ H5P.init = function (target) {
 
   // Insert H5Ps that should be in iframes.
   H5P.jQuery('iframe.h5p-iframe:not(.h5p-initialized)', target).each(function () {
-    var contentId = H5P.jQuery(this).addClass('h5p-initialized').data('content-id');
-    this.contentDocument.open();
-    this.contentDocument.write('<!doctype html><html class="h5p-iframe"><head>' + H5P.getHeadTags(contentId) + '</head><body><div class="h5p-content" data-content-id="' + contentId + '"/></body></html>');
-    this.contentDocument.close();
+    const iframe = this;
+    const $iframe = H5P.jQuery(iframe);
+
+    const contentId = $iframe.data('content-id');
+    const contentData = H5PIntegration.contents['cid-' + contentId];
+    const contentLanguage = contentData && contentData.metadata && contentData.metadata.defaultLanguage
+      ? contentData.metadata.defaultLanguage : 'en';
+
+    const writeDocument = function () {
+      iframe.contentDocument.open();
+      iframe.contentDocument.write('<!doctype html><html class="h5p-iframe" lang="' + contentLanguage + '"><head>' + H5P.getHeadTags(contentId) + '</head><body><div class="h5p-content" data-content-id="' + contentId + '"/></body></html>');
+      iframe.contentDocument.close();
+    };
+
+    $iframe.addClass('h5p-initialized')
+    if (iframe.contentDocument === null) {
+      // In some Edge cases the iframe isn't always loaded when the page is ready.
+      $iframe.on('load', writeDocument);
+      $iframe.attr('src', 'about:blank');
+    }
+    else {
+      writeDocument();
+    }
   });
 };
 
@@ -657,7 +676,7 @@ H5P.fullScreen = function ($element, instance, exitCallback, body, forceSemiFull
     });
 
     if (H5P.fullScreenBrowserPrefix === '') {
-      $element[0].requestFullScreen();
+      $element[0].requestFullscreen();
     }
     else {
       var method = (H5P.fullScreenBrowserPrefix === 'ms' ? 'msRequestFullscreen' : H5P.fullScreenBrowserPrefix + 'RequestFullScreen');

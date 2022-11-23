@@ -120,6 +120,10 @@ class myprofile implements renderable, templatable {
             $data->userlastip = $USER->lastip;
         }
 
+        if (!empty($this->config->display_lastlogin) && !empty($USER->lastlogin)) {
+            $data->userlastlogin = userdate($USER->lastlogin);
+        }
+
         return $data;
     }
 }

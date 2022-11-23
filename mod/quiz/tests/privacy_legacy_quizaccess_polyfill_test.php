@@ -17,11 +17,13 @@
 /**
  * Unit tests for the privacy legacy polyfill for quiz access rules.
  *
- * @package     mod_quiz
- * @category    test
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace mod_quiz;
+
+use quiz;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,7 +36,7 @@ require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_privacy_legacy_quizaccess_polyfill_test extends advanced_testcase {
+class privacy_legacy_quizaccess_polyfill_test extends \advanced_testcase {
     /**
      * Test that the core_quizaccess\privacy\legacy_polyfill works and that the static _export_quizaccess_user_data can
      * be called.
@@ -59,7 +61,7 @@ class core_privacy_legacy_quizaccess_polyfill_test extends advanced_testcase {
      * Test the _delete_quizaccess_for_context shim.
      */
     public function test_delete_quizaccess_for_context() {
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         $quiz = $this->createMock(quiz::class);
 
@@ -76,7 +78,7 @@ class core_privacy_legacy_quizaccess_polyfill_test extends advanced_testcase {
      * Test the _delete_quizaccess_for_user shim.
      */
     public function test_delete_quizaccess_for_user() {
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         $quiz = $this->createMock(quiz::class);
         $user = (object) [];
@@ -94,7 +96,7 @@ class core_privacy_legacy_quizaccess_polyfill_test extends advanced_testcase {
      * Test the _delete_quizaccess_for_users shim.
      */
     public function test_delete_quizaccess_for_users() {
-        $context = $this->createMock(context_module::class);
+        $context = $this->createMock(\context_module::class);
         $user = (object) [];
         $approveduserlist = new \core_privacy\local\request\approved_userlist($context, 'mod_quiz', [$user]);
 

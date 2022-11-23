@@ -37,3 +37,34 @@ Feature: Test creating a Select missing words question
     And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
     And the following fields match these values:
       | id_shuffleanswers | 1 |
+
+  Scenario: Edit a Select missing words question with 2 choice and should not have empty choice.
+    Given I am on the "Course 1" "core_question > course question bank" page logged in as teacher
+    And I add a "Select missing words" question filling the form with:
+      | Question name            | Select missing words 002    |
+      | Question text            | The [[1]] [[2]] on the mat. |
+      | General feedback         | The cat sat on the mat.     |
+      | id_shuffleanswers        | 1                           |
+      | id_choices_0_answer      | cat                         |
+      | id_choices_1_answer      | sat                         |
+      | id_choices_2_answer      | dog                         |
+      | id_choices_2_choicegroup | 2                           |
+      | id_choices_3_answer      | stand                       |
+      | id_choices_3_choicegroup | 2                           |
+      | Hint 1                   | First hint                  |
+      | Hint 2                   | Second hint                 |
+    When I choose "Edit question" action for "Select missing words 002" in the question bank
+    And the following fields match these values:
+      | Question name            | Select missing words 002    |
+      | Question text            | The [[1]] [[2]] on the mat. |
+      | General feedback         | The cat sat on the mat.     |
+      | id_shuffleanswers        | 1                           |
+      | id_choices_0_answer      | cat                         |
+      | id_choices_1_answer      | sat                         |
+      | id_choices_2_answer      | dog                         |
+      | id_choices_2_choicegroup | 2                           |
+      | id_choices_3_answer      | stand                       |
+      | id_choices_3_choicegroup | 2                           |
+      | Hint 1                   | First hint                  |
+      | Hint 2                   | Second hint                 |
+    Then I should not see "Choice [[5]]"

@@ -23,6 +23,11 @@ Feature: Manage custom reports
     And I should see "Full name" in the "reportbuilder-table" "table"
     And I should see "Username" in the "reportbuilder-table" "table"
     And I should see "Email address" in the "reportbuilder-table" "table"
+    # Confirm we see the default sorting in the report
+    And "Admin User" "table_row" should appear before "User 2" "table_row"
+    And I click on "Show/hide 'Sorting'" "button"
+    And "Disable sorting for column 'Full name'" "checkbox" should exist in the "#settingssorting" "css_element"
+    And I click on "Show/hide 'Sorting'" "button"
     # Confirm we only see not suspended users in the report.
     And I should see "Admin User" in the "reportbuilder-table" "table"
     And I should see "User 2" in the "reportbuilder-table" "table"
@@ -233,3 +238,17 @@ Feature: Manage custom reports
       | customreportslimit     | 2 |
     And I reload the page
     And "New report" "button" should not exist
+
+  Scenario: Disable live editing of custom reports
+    Given the following config values are set as admin:
+      | customreportsliveediting     | 0 |
+    And the following "core_reportbuilder > Reports" exist:
+      | name           | source                                       |
+      | Report users   | core_user\reportbuilder\datasource\users     |
+    When I am on the "Report users" "reportbuilder > Editor" page logged in as "admin"
+    Then I should see "Viewing of report data while editing is disabled by the site administrator. Switch to preview mode to view the report." in the "[data-region='core_table/dynamic']" "css_element"
+    And I click on "Switch to preview mode" "button"
+    And I should see "admin" in the "reportbuilder-table" "table"
+    And I click on "Close 'Report users' editor" "button"
+    And I press "View" action in the "Report users" report row
+    And I should see "admin" in the "reportbuilder-table" "table"

@@ -229,6 +229,15 @@ class process {
     }
 
     /**
+     * Setting to allow matching user accounts on email
+     * @return bool
+     */
+    protected function get_match_on_email(): bool {
+        $optype = $this->get_operation_type();
+        return (!empty($this->formdata->uumatchemail) && $optype != UU_USER_ADDNEW && $optype != UU_USER_ADDINC);
+    }
+
+    /**
      * Setting to allow deletes
      * @return bool
      */
@@ -414,7 +423,7 @@ class process {
         }
 
         // Make sure we really have username.
-        if (empty($user->username)) {
+        if (empty($user->username) && !$this->get_match_on_email()) {
             $this->upt->track('status', get_string('missingfield', 'error', 'username'), 'error');
             $this->upt->track('username', get_string('error'), 'error');
             $this->userserrors++;
@@ -453,7 +462,16 @@ class process {
             return;
         }
 
-        if ($existinguser = $DB->get_record('user', ['username' => $user->username, 'mnethostid' => $user->mnethostid])) {
+        $matchparam = $this->get_match_on_email() ? ['email' => $user->email] : ['username' => $user->username];
+        if ($existinguser = $DB->get_records('user', $matchparam + ['mnethostid' => $user->mnethostid])) {
+            if (is_array($existinguser) && count($existinguser) !== 1) {
+                $this->upt->track('status', get_string('duplicateemail', 'tool_uploaduser', $user->email), 'warning');
+                $this->userserrors++;
+                return;
+
+            }
+
+            $existinguser = is_array($existinguser) ? array_values($existinguser)[0] : $existinguser;
             $this->upt->track('id', $existinguser->id, 'normal', false);
         }
 
@@ -581,6 +599,12 @@ class process {
         }
         // We do not need the deleted flag anymore.
         unset($user->deleted);
+
+        $matchonemailallowrename = $this->get_match_on_email() && $this->get_allow_renames();
+        if ($matchonemailallowrename && $user->username && ($user->username !== $existinguser->username)) {
+            $user->oldusername = $existinguser->username;
+            $existinguser = false;
+        }
 
         // Renaming requested?
         if (!empty($user->oldusername) ) {

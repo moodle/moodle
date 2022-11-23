@@ -26,31 +26,34 @@ class Mustache_Compiler
     private $entityFlags;
     private $charset;
     private $strictCallables;
+    private $disableLambdaRendering;
 
     /**
      * Compile a Mustache token parse tree into PHP source code.
      *
-     * @param string $source          Mustache Template source code
-     * @param string $tree            Parse tree of Mustache tokens
-     * @param string $name            Mustache Template class name
-     * @param bool   $customEscape    (default: false)
-     * @param string $charset         (default: 'UTF-8')
-     * @param bool   $strictCallables (default: false)
-     * @param int    $entityFlags     (default: ENT_COMPAT)
+     * @param string $source                 Mustache Template source code
+     * @param array  $tree                   Parse tree of Mustache tokens
+     * @param string $name                   Mustache Template class name
+     * @param bool   $customEscape           (default: false)
+     * @param string $charset                (default: 'UTF-8')
+     * @param bool   $strictCallables        (default: false)
+     * @param int    $entityFlags            (default: ENT_COMPAT)
+     * @param bool   $disableLambdaRendering (default: false)
      *
      * @return string Generated PHP source code
      */
-    public function compile($source, array $tree, $name, $customEscape = false, $charset = 'UTF-8', $strictCallables = false, $entityFlags = ENT_COMPAT)
+    public function compile($source, array $tree, $name, $customEscape = false, $charset = 'UTF-8', $strictCallables = false, $entityFlags = ENT_COMPAT, $disableLambdaRendering = false)
     {
-        $this->pragmas         = $this->defaultPragmas;
-        $this->sections        = array();
-        $this->blocks          = array();
-        $this->source          = $source;
-        $this->indentNextLine  = true;
-        $this->customEscape    = $customEscape;
-        $this->entityFlags     = $entityFlags;
-        $this->charset         = $charset;
-        $this->strictCallables = $strictCallables;
+        $this->pragmas                = $this->defaultPragmas;
+        $this->sections               = array();
+        $this->blocks                 = array();
+        $this->source                 = $source;
+        $this->indentNextLine         = true;
+        $this->customEscape           = $customEscape;
+        $this->entityFlags            = $entityFlags;
+        $this->charset                = $charset;
+        $this->strictCallables        = $strictCallables;
+        $this->disableLambdaRendering = $disableLambdaRendering;
 
         return $this->writeCode($tree, $name);
     }
@@ -286,7 +289,6 @@ class Mustache_Compiler
     private function blockArg($nodes, $id, $start, $end, $otag, $ctag, $level)
     {
         $key = $this->block($nodes);
-        $keystr = var_export($key, true);
         $id = var_export($id, true);
 
         return sprintf($this->prepare(self::BLOCK_ARG, $level), $id, $key);
@@ -321,7 +323,6 @@ class Mustache_Compiler
     }
 
     const SECTION_CALL = '
-        // %s section
         $value = $context->%s(%s);%s
         $buffer .= $this->section%s($context, $indent, $value);
     ';
@@ -333,14 +334,8 @@ class Mustache_Compiler
 
             if (%s) {
                 $source = %s;
-                $result = call_user_func($value, $source, %s);
-                if (strpos($result, \'{{\') === false) {
-                    $buffer .= $result;
-                } else {
-                    $buffer .= $this->mustache
-                        ->loadLambda((string) $result%s)
-                        ->renderInternal($context);
-                }
+                $result = (string) call_user_func($value, $source, %s);%s
+                $buffer .= $result;
             } elseif (!empty($value)) {
                 $values = $this->isIterable($value) ? $value : array($value);
                 foreach ($values as $value) {
@@ -353,6 +348,36 @@ class Mustache_Compiler
             return $buffer;
         }
     ';
+
+    const SECTION_RENDER_LAMBDA = '
+        if (strpos($result, \'{{\') !== false) {
+            $result = $this->mustache
+                ->loadLambda($result%s)
+                ->renderInternal($context);
+        }
+    ';
+
+    /**
+     * Helper function to compile section with and without lambda rendering.
+     *
+     * @param string $key
+     * @param string $callable
+     * @param string $source
+     * @param string $helper
+     * @param string $delims
+     * @param string $content
+     *
+     * @return string section code
+     */
+    private function getSection($key, $callable, $source, $helper, $delims, $content)
+    {
+        $render = '';
+        if (!$this->disableLambdaRendering) {
+            $render = sprintf($this->prepare(self::SECTION_RENDER_LAMBDA, 2), $delims);
+        }
+
+        return sprintf($this->prepare(self::SECTION), $key, $callable, $source, $helper, $render, $content);
+    }
 
     /**
      * Generate Mustache Template section PHP source.
@@ -385,18 +410,17 @@ class Mustache_Compiler
         $key = ucfirst(md5($delims . "\n" . $source));
 
         if (!isset($this->sections[$key])) {
-            $this->sections[$key] = sprintf($this->prepare(self::SECTION), $key, $callable, $source, $helper, $delims, $this->walk($nodes, 2));
+            $this->sections[$key] = $this->getSection($key, $callable, $source, $helper, $delims, $this->walk($nodes, 2));
         }
 
         $method  = $this->getFindMethod($id);
         $id      = var_export($id, true);
         $filters = $this->getFilters($filters, $level);
 
-        return sprintf($this->prepare(self::SECTION_CALL, $level), $id, $method, $id, $filters, $key);
+        return sprintf($this->prepare(self::SECTION_CALL, $level), $method, $id, $filters, $key);
     }
 
     const INVERTED_SECTION = '
-        // %s inverted section
         $value = $context->%s(%s);%s
         if (empty($value)) {
             %s
@@ -419,7 +443,7 @@ class Mustache_Compiler
         $id      = var_export($id, true);
         $filters = $this->getFilters($filters, $level);
 
-        return sprintf($this->prepare(self::INVERTED_SECTION, $level), $id, $method, $id, $filters, $this->walk($nodes, $level));
+        return sprintf($this->prepare(self::INVERTED_SECTION, $level), $method, $id, $filters, $this->walk($nodes, $level));
     }
 
     const PARTIAL_INDENT = ', $indent . %s';
@@ -507,7 +531,7 @@ class Mustache_Compiler
 
     const VARIABLE = '
         $value = $this->resolveValue($context->%s(%s), $context);%s
-        $buffer .= %s%s;
+        $buffer .= %s($value === null ? \'\' : %s);
     ';
 
     /**

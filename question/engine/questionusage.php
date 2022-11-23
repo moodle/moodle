@@ -1056,6 +1056,7 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
      *
      * @return question_attempt
      */
+    #[\ReturnTypeWillChange]
     public function current() {
         return $this->offsetGet(current($this->slots));
     }
@@ -1065,6 +1066,7 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function key() {
         return current($this->slots);
     }
@@ -1072,14 +1074,14 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
     /**
      * Standard part of the Iterator interface.
      */
-    public function next() {
+    public function next(): void {
         next($this->slots);
     }
 
     /**
      * Standard part of the Iterator interface.
      */
-    public function rewind() {
+    public function rewind(): void {
         reset($this->slots);
     }
 
@@ -1088,7 +1090,7 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
      *
      * @return bool
      */
-    public function valid() {
+    public function valid(): bool {
         return current($this->slots) !== false;
     }
 
@@ -1098,7 +1100,7 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
      * @param int $slot
      * @return bool
      */
-    public function offsetExists($slot) {
+    public function offsetExists($slot): bool {
         return in_array($slot, $this->slots);
     }
 
@@ -1108,6 +1110,7 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
      * @param int $slot
      * @return question_attempt
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($slot) {
         return $this->quba->get_question_attempt($slot);
     }
@@ -1118,7 +1121,7 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
      * @param int $slot
      * @param question_attempt $value
      */
-    public function offsetSet($slot, $value) {
+    public function offsetSet($slot, $value): void {
         throw new coding_exception('You are only allowed read-only access to ' .
                 'question_attempt::states through a question_attempt_step_iterator. Cannot set.');
     }
@@ -1128,7 +1131,7 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
      *
      * @param int $slot
      */
-    public function offsetUnset($slot) {
+    public function offsetUnset($slot): void {
         throw new coding_exception('You are only allowed read-only access to ' .
                 'question_attempt::states through a question_attempt_step_iterator. Cannot unset.');
     }

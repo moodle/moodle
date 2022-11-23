@@ -50,8 +50,9 @@ class custom_report_column_cards_exporter_test extends advanced_testcase {
         $exporter = new custom_report_column_cards_exporter(null, ['report' => $reportinstance]);
         $export = $exporter->export($PAGE->get_renderer('core_reportbuilder'));
 
-        $this->assertCount(2, $export->menucards);
-        [$menucardcategory, $menucardcourse] = $export->menucards;
+        // The root of the menu cards property should contain each entity.
+        $this->assertCount(3, $export->menucards);
+        [$menucardcategory, $menucardcourse, $menucardtag] = $export->menucards;
 
         // Course category entity menu card.
         $this->assertEquals('Course category', $menucardcategory['name']);
@@ -78,6 +79,20 @@ class custom_report_column_cards_exporter_test extends advanced_testcase {
             'name' => 'Course full name with link',
             'identifier' => 'course:coursefullnamewithlink',
             'title' => 'Add column \'Course full name with link\'',
+            'action' => 'report-add-column',
+        ], $menucarditem);
+
+        // Tag entity menu card.
+        $this->assertEquals('Tag', $menucardtag['name']);
+        $this->assertEquals('tag', $menucardtag['key']);
+        $this->assertNotEmpty($menucardtag['items']);
+
+        // Test the structure of the first menu card item.
+        $menucarditem = reset($menucardtag['items']);
+        $this->assertEquals([
+            'name' => 'Tag name',
+            'identifier' => 'tag:name',
+            'title' => 'Add column \'Tag name\'',
             'action' => 'report-add-column',
         ], $menucarditem);
     }

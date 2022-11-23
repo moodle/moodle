@@ -1,0 +1,35 @@
+#tiny_media_form {
+    padding: 1rem;
+}
+
+#tiny_media_form #id_deletefileshdr {
+    display: none;
+}
+
+#tiny_media_form.has-unused-files #id_deletefileshdr {
+    display: block;
+}
+
+#tiny_media_form #id_missingfileshdr {
+    display: none;
+}
+
+#tiny_media_form.has-missing-files #id_missingfileshdr {
+    display: block;
+}
+
+iframe.mm_iframe {
+    height: 650px;
+    border: none;
+    width: 100%;
+}
+
+.missing-files ol {
+    padding-left: 15px;
+}
+
+.missing-files ol li {
+    font-style: italic;
+    font-weight: 600;
+    color: red;
+}

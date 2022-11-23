@@ -117,6 +117,9 @@ class auth_plugin_base {
      */
     protected $errorlogtag = '';
 
+    /** @var array Stores extra information available to the logged in event. */
+    protected $extrauserinfo = [];
+
     /**
      * This is the primary method that is used by the authenticate_user_login()
      * function in moodlelib.php.
@@ -806,6 +809,25 @@ class auth_plugin_base {
             'subject' => $subject,
             'message' => $message
         ];
+    }
+
+    /**
+     * Set extra user information.
+     *
+     * @param array $values Any Key value pair.
+     * @return void
+     */
+    public function set_extrauserinfo(array $values): void {
+        $this->extrauserinfo = $values;
+    }
+
+    /**
+     * Returns extra user information.
+     *
+     * @return array An array of keys and values
+     */
+    public function get_extrauserinfo(): array {
+        return $this->extrauserinfo;
     }
 }
 

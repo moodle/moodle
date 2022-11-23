@@ -82,6 +82,14 @@ reports,core_reportbuilder|/reportbuilder/index.php',
     $setting->set_updatedcallback('theme_reset_all_caches');
     $temp->add($setting);
 
+    // Favicon file setting.
+    $title = get_string('favicon', 'admin');
+    $description = get_string('favicon_desc', 'admin');
+    $setting = new admin_setting_configstoredfile('core_admin/favicon', $title, $description, 'favicon', 0,
+        ['maxfiles' => 1, 'accepted_types' => ['image']]);
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $temp->add($setting);
+
     $ADMIN->add('appearance', $temp);
 
     // Course colours section.

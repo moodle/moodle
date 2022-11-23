@@ -49,12 +49,12 @@ H5PEditor.language.core = {
   selectFiletoUpload: 'Velg fil som skal lastes opp',
   or: 'eller',
   enterAudioUrl: 'Skriv inn nettadresse til lydkilde',
-  enterVideoUrl: 'Skriv inn nettadresse til videokilde eller YouTube-lenke',
+  enterVideoUrl: 'Skriv inn nettadresse til video',
   enterAudioTitle: 'Lim inn link eller annen lydkilde URL',
   enterVideoTitle: 'Lim inn YouTube lenke eller annen videokilde URL',
   uploadAudioTitle: 'Last opp lydfil',
   uploadVideoTitle: 'Last opp videofil',
-  addVideoDescription: 'H5P støtter alle eksterne videokilder på formatene mp4, webm eller ogv, slik som Vimeo Pro, og har støtte for YouTube-lenker.',
+  addVideoDescription: 'H5P støtter alle eksterne videokilder på formatene mp4, webm eller ogv, slik som Vimeo Pro, og har støtte for YouTube-lenker og Panopto-lenker.',
   insert: 'Sett inn',
   cancel: 'Avbryt',
   height: 'Høyde',
@@ -213,5 +213,81 @@ H5PEditor.language.core = {
   unknownLibrary: 'Dessverre var ikke den valgte \'%lib\'-innholdstypen installert på dette systemet.',
   proceedButtonLabel: 'Proceed to save',
   enterFullscreenButtonLabel: 'Enter fullscreen',
-  exitFullscreenButtonLabel: 'Exit fullscreen'
+  exitFullscreenButtonLabel: 'Exit fullscreen',
+  noContentHeader: 'No Fitting Content?',
+  noContentSuggestion: 'Create one yourself!',
+  tutorials: 'Tutorials',
+  contentSectionAll: 'All shared content',
+  popularContent: 'Popular Content',
+  allPopular: 'All Popular',
+  newOnTheHub: 'New on the Hub',
+  allNew: 'All New',
+  filterBy: 'Filter by',
+  filter: 'Filter',
+  filters: {
+    level: {
+      dropdownLabel: 'Level',
+      dialogHeader: 'Select level of education',
+      dialogButtonLabel: 'Filter level of education'
+    },
+    language: {
+      dropdownLabel: 'Language',
+      dialogHeader: 'Select language(s)',
+      dialogButtonLabel: 'Filter languages',
+      searchPlaceholder: 'Select one or more languages'
+    },
+    reviewed: {
+      dropdownLabel: 'Reviewed',
+      dialogHeader: 'Reviewed Content',
+      dialogButtonLabel: 'Filter',
+      optionLabel: 'Show only reviewed content'
+    },
+    contentTypes: {
+      dropdownLabel: 'Content types',
+      dialogHeader: 'Select Content type(s)',
+      dialogButtonLabel: 'Filter Content Types',
+      searchPlaceholder: 'Select one or more content types'
+    },
+    disciplines: {
+      dropdownLabel: 'Discipline',
+      dialogHeader: 'Select Your Discipline',
+      dialogButtonLabel: 'Filter Disciplines',
+      searchPlaceholder: 'Select one or more disciplines'
+    },
+    licenses: {
+      dropdownLabel: 'License',
+      dialogHeader: 'Select preferred rights of use',
+      dialogButtonLabel: 'Filter licenses',
+      options: {
+        modified: 'Can be modified',
+        commercial: 'Allows commercial use'
+      }
+    }
+  },
+  clearFilters: 'Clear all filters',
+  contentSearchFieldPlaceholder: 'Search for Content',
+  loadingContentTitle: 'We are loading content for you...',
+  loadingContentSubtitle: 'Please wait',
+  by: 'By',
+  dropdownButton: 'Open dropdown',
+  paginationNavigation: 'Pagination navigation',
+  page: 'Page',
+  currentPage: 'Current page',
+  nextPage: 'Go to next page',
+  previousPage: 'Go to previous page',
+  contentPreviewButtonLabel: 'Preview',
+  contentDownloadButtonLabel: 'Get Content',
+  reuseContentTabLabel: 'Get Shared Content',
+  contentPublisherPanelHeader: 'Publisher Info',
+  noContentFoundDesc: 'There is no content that matches your search criteria.',
+  h5pType: 'H5P Type',
+  level: 'Level',
+  size: 'Size',
+  failedFetchingData: 'Failed fetching data',
+  filterErrorMessage: 'Something went wrong. Please reload the page.',
+  in: 'in',
+  navigateToParent: 'Navigate to parent',
+  a11yTitleShowLabel: 'Show label for AT',
+  a11yTitleHideLabel: 'Hide label for AT',
+  reuseSuccess: ':title was successfully imported from the H5P Hub.',
 };

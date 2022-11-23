@@ -786,9 +786,15 @@ class mod_quiz_renderer extends plugin_renderer_base {
                 new moodle_url($attemptobj->processattempt_url(), $options),
                 get_string('submitallandfinish', 'quiz'));
         $button->id = 'responseform';
+        $button->class = 'btn-finishattempt';
+        $button->formid = 'frm-finishattempt';
         if ($attemptobj->get_state() == quiz_attempt::IN_PROGRESS) {
-            $button->add_action(new confirm_action(get_string('confirmclose', 'quiz'), null,
-                    get_string('submitallandfinish', 'quiz')));
+            $totalunanswered = 0;
+            if ($attemptobj->get_quiz()->navmethod == 'free') {
+                // Only count the unanswered question if the navigation method is set to free.
+                $totalunanswered = $attemptobj->get_number_of_unanswered_questions();
+            }
+            $this->page->requires->js_call_amd('mod_quiz/submission_confirmation', 'init', [$totalunanswered]);
         }
         $button->primary = true;
 

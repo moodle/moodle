@@ -22,30 +22,25 @@ Feature: Users can add entries to database activities
 
   @javascript
   Scenario: Students can add entries to a database
-    Given I am on the "Course 1" course page logged in as teacher1
-    And I add a "Text input" field to "Test database name" database and I fill the form with:
-      | Field name | Test field name |
-      | Field description | Test field description |
-    And I add a "Text input" field to "Test database name" database and I fill the form with:
-      | Field name | Test field 2 name |
-      | Field description | Test field 2 description |
-    # To generate the default templates.
-    And I navigate to "Templates" in current page administration
-    And I wait until the page is ready
-    And I log out
+    Given the following "mod_data > fields" exist:
+      | database | type | name              | description              |
+      | data1    | text | Test field name   | Test field description   |
+      | data1    | text | Test field 2 name | Test field 2 description |
     When I am on the "Course 1" course page logged in as student1
     And I add an entry to "Test database name" database with:
       | Test field name | Student original entry |
       | Test field 2 name | Student original entry 2 |
     And I press "Save"
     Then I should see "Student original entry"
-    And I follow "Edit"
+    And I open the action menu in "#defaulttemplate-single" "css_element"
+    And I choose "Edit" in the open action menu
     And I set the following fields to these values:
       | Test field name | Student original entry |
       | Test field 2 name |  |
     And I press "Save"
     Then I should not see "Student original entry 2"
-    And I follow "Edit"
+    And I open the action menu in "#defaulttemplate-single" "css_element"
+    And I choose "Edit" in the open action menu
     And I set the following fields to these values:
       | Test field name | Student edited entry |
     And I press "Save"
@@ -62,18 +57,12 @@ Feature: Users can add entries to database activities
     And I should see "Student second entry"
     And I should see "Student third entry"
     # Will delete the first one.
-    And I follow "Delete"
+    And I open the action menu in ".defaulttemplate-listentry" "css_element"
+    And I choose "Delete" in the open action menu
     And I press "Delete"
     And I should not see "Student edited entry"
     And I should see "Student second entry"
     And I should see "Student third entry"
-    # Now I will bulk delete the rest of the entries.
-    And I log out
-    And I am on the "Test database name" "data activity" page logged in as teacher1
-    And I press "Select all"
-    And I press "Delete selected"
-    And I press "Delete"
-    And I should see "No entries in database"
 
   @javascript @editor @editor_atto @atto @atto_h5p
   Scenario: If a new text area entry is added, the filepicker is displayed in the H5P Atto button
@@ -94,10 +83,8 @@ Feature: Users can add entries to database activities
     And I set the following fields to these values:
       | Maximum number of entries | 2 |
     And I press "Save and display"
-    And I add a "Text input" field to "Test database name" database and I fill the form with:
+    And I add a "Short text" field to "Test database name" database and I fill the form with:
       | Field name | Test1 |
-    And I navigate to "Templates" in current page administration
-    And I press "Save template"
     And I log out
     And I am on the "Test database name" "data activity" page logged in as student1
     And I press "Add entry"
@@ -128,3 +115,19 @@ Feature: Users can add entries to database activities
     And I log out
     When I am on the "Test database name" "data activity" page logged in as "guest"
     Then I should not see "Add entry"
+
+  @javascript
+  Scenario Outline: Users see the Add entry button in the view page when some field has been created only.
+    Given I am on the "Test database name" "data activity" page logged in as <user>
+    And I should not see "Add entry"
+    And I log out
+    When the following "mod_data > fields" exist:
+      | database | type | name              | description              |
+      | data1    | text | Test field name   | Test field description   |
+    Then I am on the "Test database name" "data activity" page logged in as <user>
+    And I should see "Add entry"
+
+    Examples:
+      | user     |
+      | teacher1 |
+      | student1 |

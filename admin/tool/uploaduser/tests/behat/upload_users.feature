@@ -258,3 +258,47 @@ Feature: Upload users
     And I select "Assign roles" from the "jump" singleselect
     And I should see "Course creator"
     And I should see "Federico Fellini"
+
+  @javascript
+  Scenario: Update existing users matching them on email
+    Given the following "users" exist:
+      | username | firstname | lastname | email              |
+      | bilbob   | Blasbo    | Blabbins | bilbo@example.com |
+      | frodob   | Frodeo    | Baspins  | frodo@example.com |
+    And I log in as "admin"
+    And I navigate to "Users > Accounts >Upload users" in site administration
+    When I upload "lib/tests/fixtures/upload_users_email_matching.csv" file to "File" filemanager
+    And I press "Upload users"
+    Then I should see "Upload users preview"
+    And I set the following fields to these values:
+      | Upload type  | Update existing users only |
+      | Existing user details | Override with file |
+      | Match on email address | Yes |
+    And I press "Upload users"
+    And I press "Continue"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I should see "Bilbo Baggins"
+    And I should see "Frodo Baggins"
+
+  @javascript
+  Scenario: Update existing users matching them on email where one email address is associated with multiple users
+    Given the following "users" exist:
+      | username | firstname | lastname | email              |
+      | bilbob   | Blasbo    | Blabbins | bilbo@example.com |
+      | frodob   | Frodeo    | Baspins  | frodo@example.com |
+      | fredob   | Fredoo    | Baspins  | frodo@example.com |
+    And I log in as "admin"
+    And I navigate to "Users > Accounts > Upload users" in site administration
+    When I upload "lib/tests/fixtures/upload_users_email_matching.csv" file to "File" filemanager
+    And I press "Upload users"
+    Then I should see "Upload users preview"
+    And I set the following fields to these values:
+      | Upload type  | Update existing users only |
+      | Existing user details | Override with file |
+      | Match on email address | Yes |
+    And I press "Upload users"
+    And I should see "Multiple users with email frodo@example.com detected"
+    And I press "Continue"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I should see "Bilbo Baggins"
+    And I should not see "Frodo Baggins"

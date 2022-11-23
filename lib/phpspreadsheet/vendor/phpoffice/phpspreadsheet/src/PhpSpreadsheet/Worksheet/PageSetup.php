@@ -259,10 +259,11 @@ class PageSetup
     /**
      * First page number.
      *
-     * @var int
+     * @var ?int
      */
     private $firstPageNumber;
 
+    /** @var string */
     private $pageOrder = self::PAGEORDER_DOWN_THEN_OVER;
 
     /**
@@ -375,7 +376,7 @@ class PageSetup
     {
         // Microsoft Office Excel 2007 only allows setting a scale between 10 and 400 via the user interface,
         // but it is apparently still able to handle any scale >= 0, where 0 results in 100
-        if (($scale >= 0) || $scale === null) {
+        if ($scale === null || $scale >= 0) {
             $this->scale = $scale;
             if ($update) {
                 $this->fitToPage = false;
@@ -640,6 +641,7 @@ class PageSetup
         if ($index == 0) {
             return $this->printArea;
         }
+        /** @phpstan-ignore-next-line */
         $printAreas = explode(',', $this->printArea);
         if (isset($printAreas[$index - 1])) {
             return $printAreas[$index - 1];
@@ -663,6 +665,7 @@ class PageSetup
         if ($index == 0) {
             return $this->printArea !== null;
         }
+        /** @phpstan-ignore-next-line */
         $printAreas = explode(',', $this->printArea);
 
         return isset($printAreas[$index - 1]);
@@ -683,6 +686,7 @@ class PageSetup
         if ($index == 0) {
             $this->printArea = null;
         } else {
+            /** @phpstan-ignore-next-line */
             $printAreas = explode(',', $this->printArea);
             if (isset($printAreas[$index - 1])) {
                 unset($printAreas[$index - 1]);
@@ -731,6 +735,7 @@ class PageSetup
             if ($index == 0) {
                 $this->printArea = $value;
             } else {
+                /** @phpstan-ignore-next-line */
                 $printAreas = explode(',', $this->printArea);
                 if ($index < 0) {
                     $index = count($printAreas) - abs($index) + 1;
@@ -745,6 +750,7 @@ class PageSetup
             if ($index == 0) {
                 $this->printArea = $this->printArea ? ($this->printArea . ',' . $value) : $value;
             } else {
+                /** @phpstan-ignore-next-line */
                 $printAreas = explode(',', $this->printArea);
                 if ($index < 0) {
                     $index = abs($index) - 1;
@@ -840,7 +846,7 @@ class PageSetup
     /**
      * Get first page number.
      *
-     * @return int
+     * @return ?int
      */
     public function getFirstPageNumber()
     {
@@ -850,7 +856,7 @@ class PageSetup
     /**
      * Set first page number.
      *
-     * @param int $value
+     * @param ?int $value
      *
      * @return $this
      */

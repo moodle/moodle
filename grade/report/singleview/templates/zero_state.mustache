@@ -1,0 +1,36 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template gradereport_singleview/zero_state
+
+    The zero state of the user report that contains the image and trigger for the search widget.
+
+    Example context (json):
+    {
+        "imglink": "http://foo.bar/gradereport/?userid=25",
+        "userzerolink": "http://foo.bar/gradereport/?userid=25",
+        "gradezerolink": "http://foo.bar/gradereport/?userid=25"
+    }
+}}
+<div class="zero-state mx-auto w-50 text-center my-6">
+    <img src="{{imglink}}" alt="{{#str}}pluginname, gradereport_singleview{{/str}}" aria-hidden="true" class="my-5">
+    <h3>{{#str}}pluginname, gradereport_singleview{{/str}}</h3>
+    <p>{{#str}}viewsingleuserorgradeitem, gradereport_singleview{{/str}}</p>
+    <div class="justify-content-center d-flex">
+        {{>gradereport_singleview/page_toggler}}
+    </div>
+</div>

@@ -83,7 +83,8 @@ class content extends \core_search\base_block {
 
         $context = \context::instance_by_id($document->get('contextid'));
 
-        $files = $fs->get_area_files($context->id, 'block_html', 'content');
+        $files = $fs->get_area_files($context->id, 'block_html', 'content',
+                false, 'itemid, filepath, filename', false);
         foreach ($files as $file) {
             $document->add_stored_file($file);
         }

@@ -88,11 +88,11 @@ class Mustache_Tokenizer
      * @throws Mustache_Exception_InvalidArgumentException when $delimiters string is invalid
      *
      * @param string $text       Mustache template source to tokenize
-     * @param string $delimiters Optionally, pass initial opening and closing delimiters (default: null)
+     * @param string $delimiters Optionally, pass initial opening and closing delimiters (default: empty string)
      *
      * @return array Set of Mustache tokens
      */
-    public function scan($text, $delimiters = null)
+    public function scan($text, $delimiters = '')
     {
         // Setting mbstring.func_overload makes things *really* slow.
         // Let's do everyone a favor and scan this string as ASCII instead.
@@ -112,7 +112,7 @@ class Mustache_Tokenizer
 
         $this->reset();
 
-        if ($delimiters = trim($delimiters)) {
+        if (is_string($delimiters) && $delimiters = trim($delimiters)) {
             $this->setDelimiters($delimiters);
         }
 
@@ -215,6 +215,10 @@ class Mustache_Tokenizer
             }
         }
 
+        if ($this->state !== self::IN_TEXT) {
+            $this->throwUnclosedTagException();
+        }
+
         $this->flushBuffer();
 
         // Restore the user's encoding...
@@ -279,6 +283,10 @@ class Mustache_Tokenizer
         $close      = '=' . $this->ctag;
         $closeIndex = strpos($text, $close, $index);
 
+        if ($closeIndex === false) {
+            $this->throwUnclosedTagException();
+        }
+
         $token = array(
             self::TYPE => self::T_DELIM_CHANGE,
             self::LINE => $this->line,
@@ -333,6 +341,10 @@ class Mustache_Tokenizer
     private function addPragma($text, $index)
     {
         $end    = strpos($text, $this->ctag, $index);
+        if ($end === false) {
+            $this->throwUnclosedTagException();
+        }
+
         $pragma = trim(substr($text, $index + 2, $end - $index - 2));
 
         // Pragmas are hoisted to the front of the template.
@@ -343,5 +355,24 @@ class Mustache_Tokenizer
         ));
 
         return $end + $this->ctagLen - 1;
+    }
+
+    private function throwUnclosedTagException()
+    {
+        $name = trim($this->buffer);
+        if ($name !== '') {
+            $msg = sprintf('Unclosed tag: %s on line %d', $name, $this->line);
+        } else {
+            $msg = sprintf('Unclosed tag on line %d', $this->line);
+        }
+
+        throw new Mustache_Exception_SyntaxException($msg, array(
+            self::TYPE  => $this->tagType,
+            self::NAME  => $name,
+            self::OTAG  => $this->otag,
+            self::CTAG  => $this->ctag,
+            self::LINE  => $this->line,
+            self::INDEX => $this->seenTag - $this->otagLen,
+        ));
     }
 }

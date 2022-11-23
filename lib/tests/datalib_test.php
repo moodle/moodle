@@ -847,6 +847,16 @@ class datalib_test extends \advanced_testcase {
         $results = array_diff_key($results, $existingids);
         $this->assertEquals([$userids[3], $userids[2], $userids[1], $userids[0]], array_keys($results));
 
+        // Check default fallback sort field works as expected.
+        $results = get_users_listing('blah2', 'ASC');
+        $results = array_diff_key($results, $existingids);
+        $this->assertEquals([$userids[0], $userids[1], $userids[2], $userids[3]], array_keys($results));
+
+        // Check default fallback sort direction works as expected.
+        $results = get_users_listing('lastaccess', 'blah2');
+        $results = array_diff_key($results, $existingids);
+        $this->assertEquals([$userids[0], $userids[1], $userids[2], $userids[3]], array_keys($results));
+
         // Add the options to showuseridentity and check it returns those fields but only if you
         // specify a context AND have permissions.
         $results = get_users_listing('lastaccess', 'asc', 0, 0, '', '', '', '', null,

@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\external;
 
 use renderer_base;
-use core_reportbuilder\local\report\base;
+use core_reportbuilder\datasource;
 
 /**
  * Custom report column cards exporter class
@@ -37,7 +37,7 @@ class custom_report_column_cards_exporter extends custom_report_menu_cards_expor
      */
     protected static function define_related(): array {
         return [
-            'report' => base::class,
+            'report' => datasource::class,
         ];
     }
 
@@ -48,7 +48,7 @@ class custom_report_column_cards_exporter extends custom_report_menu_cards_expor
      * @return array
      */
     protected function get_other_values(renderer_base $output): array {
-        /** @var base $report */
+        /** @var datasource $report */
         $report = $this->related['report'];
 
         $menucards = [];

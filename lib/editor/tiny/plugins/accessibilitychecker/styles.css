@@ -1,0 +1,7 @@
+.warning-desc {
+    word-wrap: break-word;
+}
+
+.warning-desc li {
+    margin-bottom: 10px;
+}

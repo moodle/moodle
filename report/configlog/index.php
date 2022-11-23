@@ -25,7 +25,7 @@
 
 use core_reportbuilder\system_report_factory;
 use core_reportbuilder\local\filters\text;
-use report_configlog\local\systemreports\config_changes;
+use report_configlog\reportbuilder\local\systemreports\config_changes;
 
 require(__DIR__.'/../../config.php');
 require_once($CFG->libdir.'/adminlib.php');

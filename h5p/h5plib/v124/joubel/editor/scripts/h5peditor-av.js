@@ -119,8 +119,8 @@ H5PEditor.widgets.video = H5PEditor.widgets.audio = H5PEditor.AV = (function ($)
       '</div>';
 
     var html = H5PEditor.createFieldMarkup(this.field, imageHtml, id);
-
     var $container = $(html).appendTo($wrapper);
+
     this.$files = $container.children('.file');
     this.$add = $container.children('.h5p-add-file').click(function () {
       self.$addDialog.addClass('h5p-open');
@@ -582,20 +582,22 @@ H5PEditor.widgets.video = H5PEditor.widgets.audio = H5PEditor.AV = (function ($)
    * @returns {string} HTML
    */
   C.createTabContent = function (tab, type) {
+    const isAudio = (type === 'audio');
+
     switch (tab) {
       case 'BasicFileUpload':
         const id = 'av-upload-' + C.getNextId();
-        return '<h3 id="' + id + '">' + H5PEditor.t('core', type === 'audio' ? 'uploadAudioTitle' : 'uploadVideoTitle') + '</h3>' +
+        return '<h3 id="' + id + '">' + H5PEditor.t('core', isAudio ? 'uploadAudioTitle' : 'uploadVideoTitle') + '</h3>' +
           '<div class="h5p-file-drop-upload" tabindex="0" role="button" aria-labelledby="' + id + '">' +
-            '<div class="h5p-file-drop-upload-inner"/>' +
+            '<div class="h5p-file-drop-upload-inner ' + type + '"></div>' +
           '</div>';
 
       case 'InputLinkURL':
-        return '<h3>' + H5PEditor.t('core', type === 'audio' ? 'enterAudioTitle' : 'enterVideoTitle') + '</h3>' +
-          '<div class="h5p-file-url-wrapper">' +
-            '<input type="text" placeholder="' + H5PEditor.t('core', type === 'audio' ? 'enterAudioUrl' : 'enterVideoUrl') + '" class="h5p-file-url h5peditor-text"/>' +
+        return '<h3>' + H5PEditor.t('core', isAudio ? 'enterAudioTitle' : 'enterVideoTitle') + '</h3>' +
+          '<div class="h5p-file-url-wrapper ' + type + '">' +
+            '<input type="text" placeholder="' + H5PEditor.t('core', isAudio ? 'enterAudioUrl' : 'enterVideoUrl') + '" class="h5p-file-url h5peditor-text"/>' +
           '</div>' +
-          (type === 'audio' ? '' : '<div class="h5p-errors"></div><div class="h5peditor-field-description">' + H5PEditor.t('core', 'addVideoDescription') + '</div>');
+          (isAudio ? '' : '<div class="h5p-errors"></div><div class="h5peditor-field-description">' + H5PEditor.t('core', 'addVideoDescription') + '</div>');
 
       default:
         return '';
@@ -671,11 +673,18 @@ H5PEditor.widgets.video = H5PEditor.widgets.audio = H5PEditor.AV = (function ($)
    * Providers incase mime type is unknown.
    * @public
    */
-  C.providers = [{
-    name: 'YouTube',
-    regexp: /(?:https?:\/\/)?(?:www\.)?(?:(?:youtube.com\/(?:attribution_link\?(?:\S+))?(?:v\/|embed\/|watch\/|(?:user\/(?:\S+)\/)?watch(?:\S+)v\=))|(?:youtu.be\/|y2u.be\/))([A-Za-z0-9_-]{11})/i,
-    aspectRatio: '16:9',
-  }];
+  C.providers = [
+    {
+      name: 'YouTube',
+      regexp: /(?:https?:\/\/)?(?:www\.)?(?:(?:youtube.com\/(?:attribution_link\?(?:\S+))?(?:v\/|embed\/|watch\/|(?:user\/(?:\S+)\/)?watch(?:\S+)v\=))|(?:youtu.be\/|y2u.be\/))([A-Za-z0-9_-]{11})/i,
+      aspectRatio: '16:9',
+    },
+    {
+      name: 'Panopto',
+      regexp: /^[^\/]+:\/\/([^\/]*panopto\.[^\/]+)\/Panopto\/.+\?id=(.+)$/i,
+      aspectRatio: '16:9',
+    }
+  ];
 
   // Avoid ID attribute collisions
   let idCounter = 0;

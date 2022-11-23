@@ -62,9 +62,9 @@ function(
         LOADING_ICON: 'core/loading'
     };
 
-    /** @type {number} The total items will be shown on the first load. */
+    /** @property {number} The total items will be shown on the first load. */
     const DEFAULT_LAZY_LOADING_ITEMS_FIRST_LOAD = 5;
-    /** @type {number} The total items will be shown when click on the Show more activities button. */
+    /** @property {number} The total items will be shown when click on the Show more activities button. */
     const DEFAULT_LAZY_LOADING_ITEMS_OTHER_LOAD = 10;
 
     /**

@@ -134,3 +134,5 @@ abstract class SimplePie_Cache_DB implements SimplePie_Cache_Base
 		return array(serialize($data->data), $items_by_id);
 	}
 }
+
+class_alias('SimplePie_Cache_DB', 'SimplePie\Cache\DB', false);

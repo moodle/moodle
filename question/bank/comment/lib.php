@@ -84,7 +84,7 @@ function qbank_comment_preview_display($question, $courseid): string {
             && core\plugininfo\qbank::is_plugin_enabled('qbank_comment')) {
         \comment::init($PAGE);
         $args = new \stdClass;
-        $args->contextid = 1; // Static data to bypass comment sql as context is not needed.
+        $args->contextid = context_system::instance()->id; // Static data to bypass comment sql as context is not needed.
         $args->courseid  = $courseid;
         $args->area      = 'question';
         $args->itemid    = $question->id;
@@ -132,6 +132,11 @@ function qbank_comment_output_fragment_question_comment($args): string {
     if (empty($displaydata['comment']) && !$CFG->usecomments) {
         $displaydata['commenstdisabled'] = true;
     }
+
+    $selector = \core_question\output\question_version_selection::make_for_question('question_comment_version_dropdown',
+        $args['questionid']);
+    $qbankrenderer = $PAGE->get_renderer('core_question', 'bank');
+    $displaydata['versionselection'] = $selector->export_for_template($qbankrenderer);
 
     return $PAGE->get_renderer('qbank_comment')->render_comment_fragment($displaydata);
 }

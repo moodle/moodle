@@ -106,6 +106,9 @@ class text_test extends advanced_testcase {
         $utf8 = "A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. アクセシビリティ. ﬁ";
         $this->assertSame("A ae Ubermensch pa hoyeste niva! I a lublu PHP! est'. akuseshibiriti. fi",
             core_text::convert($utf8, 'utf-8', 'ascii'));
+
+        // Check that null argument is allowed.
+        $this->assertSame('', core_text::convert(null, 'utf-8', 'ascii'));
     }
 
     /**
@@ -150,6 +153,12 @@ class text_test extends advanced_testcase {
         $str = pack("H*", "bcf2cce5d6d0cec4"); // GB18030
         $s = pack("H*", "cce5"); // GB18030
         $this->assertSame($s, core_text::substr($str, 1, 1, 'GB18030'));
+
+        // Check that null argument is allowed.
+        $this->assertSame('', core_text::substr(null, 1, 1));
+        $this->assertSame('', core_text::substr(null, 1));
+        $this->assertSame('', core_text::substr(null, 1, 1, 'cp1250'));
+        $this->assertSame('', core_text::substr(null, 1, null, 'cp1250'));
     }
 
     /**
@@ -191,6 +200,10 @@ class text_test extends advanced_testcase {
         $this->assertSame(1, core_text::strlen($str, 'GB18030'));
         $str = pack("H*", "bcf2cce5d6d0cec4"); // GB18030
         $this->assertSame(4, core_text::strlen($str, 'GB18030'));
+
+        // Check that null argument is allowed.
+        $this->assertSame(0, core_text::strlen(null));
+        $this->assertSame(0, core_text::strlen(null, 'cp1250'));
     }
 
     /**
@@ -243,6 +256,9 @@ class text_test extends advanced_testcase {
         $conv = core_text::str_max_bytes($str, 0);
         $this->assertEquals(0, strlen($conv));
         $this->assertSame('', $conv);
+
+        // Check that null argument is allowed.
+        $this->assertSame('', core_text::str_max_bytes(null, 1));
     }
 
     /**
@@ -281,6 +297,10 @@ class text_test extends advanced_testcase {
 
         $str = 1309528800;
         $this->assertSame((string)$str, core_text::strtolower($str));
+
+        // Check that null argument is allowed.
+        $this->assertSame('', core_text::strtolower(null));
+        $this->assertSame('', core_text::strtolower(null, 'cp1250'));
     }
 
     /**
@@ -316,6 +336,10 @@ class text_test extends advanced_testcase {
 
         $str = pack("H*", "bcf2cce5d6d0cec4"); // GB18030
         $this->assertSame($str, core_text::strtoupper($str, 'GB18030'));
+
+        // Check that null argument is allowed.
+        $this->assertSame('', core_text::strtoupper(null));
+        $this->assertSame('', core_text::strtoupper(null, 'cp1250'));
     }
 
     /**
@@ -338,6 +362,9 @@ class text_test extends advanced_testcase {
             // Reverse it twice to be doubly sure.
             $this->assertSame($after, core_text::strrev(core_text::strrev($after)));
         }
+
+        // Check that null argument is allowed.
+        $this->assertSame('', core_text::strrev(null));
     }
 
     /**
@@ -348,6 +375,9 @@ class text_test extends advanced_testcase {
     public function test_strpos() {
         $str = "Žluťoučký koníček";
         $this->assertSame(10, core_text::strpos($str, 'koníč'));
+
+        // Check that null argument is allowed.
+        $this->assertSame(false, core_text::strpos(null, 'a'));
     }
 
     /**
@@ -358,6 +388,9 @@ class text_test extends advanced_testcase {
     public function test_strrpos() {
         $str = "Žluťoučký koníček";
         $this->assertSame(11, core_text::strrpos($str, 'o'));
+
+        // Check that null argument is allowed.
+        $this->assertSame(false, core_text::strrpos(null, 'o'));
     }
 
     /**
@@ -382,6 +415,10 @@ class text_test extends advanced_testcase {
 
         $utf8 = 'キャンパス Αλφαβητικός Κατάλογος Лорем ипсум долор сит амет';
         $this->assertSame('kyanpasu Alphabetikos Katalogos Lorem ipsum dolor sit amet', core_text::specialtoascii($utf8));
+
+        // Check that null argument is allowed.
+        $this->assertSame('', core_text::specialtoascii(null));
+        $this->assertSame('', core_text::specialtoascii(null, 'ascii'));
     }
 
     /**
@@ -423,6 +460,9 @@ class text_test extends advanced_testcase {
  =?utf-8?B?0Ywg0LLQuNC90LTQvtGD0Lci?=";
         $this->assertSame($encodedlongstr, $mailer->encodeHeader($longstr));
         $this->assertSame('"' . $encodedlongstr . '"', $mailer->encodeHeader($longstr, 'phrase'));
+
+        // Check that null argument is allowed.
+        $this->assertSame('', core_text::encode_mimeheader(null));
     }
 
     /**
@@ -433,6 +473,9 @@ class text_test extends advanced_testcase {
     public function test_entities_to_utf8() {
         $str = "&#x17d;lu&#x165;ou&#x10d;k&#xfd; kon&iacute;&#269;ek&copy;&quot;&amp;&lt;&gt;&sect;&laquo;";
         $this->assertSame("Žluťoučký koníček©\"&<>§«", core_text::entities_to_utf8($str));
+
+        // Check that null argument is allowed.
+        $this->assertSame('', core_text::entities_to_utf8(null));
     }
 
     /**
@@ -448,6 +491,10 @@ class text_test extends advanced_testcase {
         $str = "&#381;luťoučký kon&iacute;ček&copy;&quot;&amp;&lt;&gt;&sect;&laquo;";
         $this->assertSame("&#x17d;lu&#x165;ou&#x10d;k&#xfd; kon&#xed;&#x10d;ek&#xa9;\"&<>&#xa7;&#xab;", core_text::utf8_to_entities($str, false, true));
         $this->assertSame("&#381;lu&#357;ou&#269;k&#253; kon&#237;&#269;ek&#169;\"&<>&#167;&#171;", core_text::utf8_to_entities($str, true, true));
+
+        // Check that null argument is allowed.
+        $this->assertSame('', core_text::utf8_to_entities(null));
+        $this->assertSame('', core_text::utf8_to_entities(null, true));
     }
 
     /**
@@ -459,6 +506,9 @@ class text_test extends advanced_testcase {
         $bom = "\xef\xbb\xbf";
         $str = "Žluťoučký koníček";
         $this->assertSame($str.$bom, core_text::trim_utf8_bom($bom.$str.$bom));
+
+        // Check that null argument is allowed.
+        $this->assertSame(null, core_text::trim_utf8_bom(null));
     }
 
     /**
@@ -482,6 +532,9 @@ class text_test extends advanced_testcase {
         // If you only have a non-character, you get empty string.
         $example = html_entity_decode('&#xfffe;');
         $this->assertSame('', core_text::remove_unicode_non_characters($example));
+
+        // Check that null argument is allowed.
+        $this->assertSame(null, core_text::trim_utf8_bom(null));
     }
 
     /**
@@ -517,6 +570,9 @@ class text_test extends advanced_testcase {
         $this->assertSame(0x0439, core_text::utf8ord('й'));
         $this->assertSame(0x2FA1F, core_text::utf8ord('𯨟'));
         $this->assertSame(381, core_text::utf8ord('Ž'));
+
+        // Check that null argument is allowed.
+        $this->assertSame(ord(''), core_text::utf8ord(null));
     }
 
     /**
@@ -527,6 +583,9 @@ class text_test extends advanced_testcase {
     public function test_strtotitle() {
         $str = "žluťoučký koníček";
         $this->assertSame("Žluťoučký Koníček", core_text::strtotitle($str));
+
+        // Check that null argument is allowed.
+        $this->assertSame(null, core_text::strtotitle(null));
     }
 
     /**
@@ -540,6 +599,9 @@ class text_test extends advanced_testcase {
         $this->assertSame('Žluťoučký ', core_text::strrchr($str, 'koní', true));
         $this->assertFalse(core_text::strrchr($str, 'A'));
         $this->assertFalse(core_text::strrchr($str, 'ç', true));
+
+        // Check that null argument is allowed.
+        $this->assertSame(false, core_text::strrchr(null, 'o'));
     }
 
     /**

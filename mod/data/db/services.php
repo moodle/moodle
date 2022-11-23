@@ -115,4 +115,18 @@ $functions = array(
         'capabilities'  => 'mod/data:writeentry',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_data_delete_saved_preset' => array(
+        'classname'     => 'mod_data\external\delete_saved_preset',
+        'description'   => 'Delete site user preset.',
+        'type'          => 'write',
+        'ajax'          => true,
+        'capabilities'  => 'mod/data:manageuserpresets',
+    ),
+    'mod_data_get_mapping_information' => array(
+        'classname'     => 'mod_data\external\get_mapping_information',
+        'description'   => 'Get importing information',
+        'type'          => 'read',
+        'ajax'          => true,
+        'capabilities'  => 'mod/data:managetemplates',
+    ),
 );

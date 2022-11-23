@@ -58,6 +58,7 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
+    And I change window size to "large"
     And I click on student "Student 2" for grade item "Item VU"
     Then I should see a grade field for "Student 2" and grade item "Item VU"
     And I should not see a feedback field for "Student 2" and grade item "Item VU"
@@ -112,6 +113,7 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
+    And I change window size to "large"
     And I click on student "Student 2" for grade item "Item VU"
     Then I should see a grade field for "Student 2" and grade item "Item VU"
     And I should see a feedback field for "Student 2" and grade item "Item VU"
@@ -149,6 +151,7 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
+    And I change window size to "large"
     And I click on student "Student 2" for grade item "Item VU"
     Then I should see a grade field for "Student 2" and grade item "Item VU"
     And I should see a feedback field for "Student 2" and grade item "Item VU"
@@ -264,3 +267,9 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     When I navigate to "View > Grader report" in the course gradebook
     Then I should see "litle yellow frog" in the "student1" "table_row"
     And I should see "prince frog" in the "student2" "table_row"
+    # Sort by the custom profile field.
+    And I click on "Favourite frog" "link" in the "gradereport-grader-table" "table"
+    And "student1" "table_row" should appear before "student2" "table_row"
+    # Now sort by descending.
+    And I click on "Favourite frog" "link" in the "gradereport-grader-table" "table"
+    And "student2" "table_row" should appear before "student1" "table_row"

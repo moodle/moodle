@@ -84,6 +84,9 @@ class template_editor_tools implements templatable, renderable {
         $taglist = [];
         $fields = $this->manager->get_fields();
         foreach ($fields as $field) {
+            if ($field->type === 'unknown') {
+                continue;
+            }
             $fieldname = $field->get_name();
             $taglist["[[$fieldname]]"] = $fieldname;
         }
@@ -105,6 +108,9 @@ class template_editor_tools implements templatable, renderable {
         // Field IDs.
         $fields = $this->manager->get_fields();
         foreach ($fields as $field) {
+            if ($field->type === 'unknown') {
+                continue;
+            }
             $fieldname = $field->get_name();
             $taglist["[[$fieldname#id]]"] = "$fieldname id";
         }
@@ -127,6 +133,7 @@ class template_editor_tools implements templatable, renderable {
             '##delete##' => get_string('delete', 'data'),
             '##approve##' => get_string('approve', 'data'),
             '##disapprove##' => get_string('disapprove', 'data'),
+            '##actionsmenu##' => get_string('actionsmenu', 'data'),
         ];
         if ($templatename != 'rsstemplate') {
             $taglist['##export##'] = get_string('export', 'data');

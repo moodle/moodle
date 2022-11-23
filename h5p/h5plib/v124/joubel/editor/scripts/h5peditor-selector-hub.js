@@ -29,7 +29,8 @@ ns.SelectorHub = function (libraries, selectedLibrary, changeLibraryDialog) {
     contentTypes: libraries,
     getAjaxUrl: H5PEditor.getAjaxUrl,
     expanded: true,
-    canPaste: false
+    canPaste: false,
+    enableContentHub: H5PEditor.enableContentHub || false,
   };
 
   if (selectedLibrary) {

@@ -24,6 +24,8 @@
 
 namespace mod_data\search;
 
+use mod_data\manager;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/data/lib.php');
@@ -280,11 +282,13 @@ class entry extends \core_search\base_mod {
                  WHERE dc.fieldid = df.id
                        AND dc.recordid = :recordid";
 
-        $contents = $DB->get_records_sql($sql, array('recordid' => $entry->id));
-        $filteredcontents = array();
+        $contents = $DB->get_records_sql($sql, ['recordid' => $entry->id]);
+        $filteredcontents = [];
 
-        $template = $DB->get_record_sql('SELECT addtemplate FROM {data} WHERE id = ?', array($entry->dataid));
-        $template = $template->addtemplate;
+        $data = $DB->get_record('data', ['id' => $entry->dataid]);
+        $manager = manager::create_from_instance($data);
+        $template = $manager->get_template('addtemplate');
+        $template = $template->get_template_content();
 
         // Filtering out the data_content records having invalid fieldtypes.
         foreach ($contents as $content) {
@@ -295,6 +299,10 @@ class entry extends \core_search\base_mod {
 
         foreach ($filteredcontents as $content) {
             $classname = $this->get_field_class_name($content->fieldtype);
+            if (!$classname) {
+                $content->addtemplateposition = -1;
+                continue;
+            }
             $content->priority = $classname::get_priority();
             $content->addtemplateposition = strpos($template, '[['.$content->fldname.']]');
         }
@@ -342,16 +350,22 @@ class entry extends \core_search\base_mod {
     }
 
     /**
-     * Returns the class name for that field type and includes it.
+     * Returns the class name for the given field type and includes it.
      *
      * @param string $fieldtype
-     * @return string
+     * @return string|null It will return the class name or null if the field type is not available.
      */
     protected function get_field_class_name($fieldtype) {
         global $CFG;
 
         $fieldtype = trim($fieldtype);
-        require_once($CFG->dirroot . '/mod/data/field/' . $fieldtype . '/field.class.php');
+
+        $fieldpath = $CFG->dirroot . '/mod/data/field/' . $fieldtype . '/field.class.php';
+        if (!file_exists($fieldpath)) {
+            return null;
+        }
+
+        require_once($fieldpath);
         return 'data_field_' . $fieldtype;
     }
 

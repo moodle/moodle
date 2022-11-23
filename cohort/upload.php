@@ -69,6 +69,7 @@ if ($uploadform->is_cancelled()) {
 }
 
 $strheading = get_string('uploadcohorts', 'cohort');
+$PAGE->set_title($strheading);
 $PAGE->navbar->add($strheading);
 
 echo $OUTPUT->header();

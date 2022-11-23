@@ -65,7 +65,9 @@ class http_client implements IHttpClient {
             $this->curlclient->setHeader($headers);
         }
         if ($method == 'POST') {
-            $res = $this->curlclient->post($url, $options['body'] ?? null, ['CURLOPT_HEADER' => 1]);
+            $body = $options['body'] ?? null;
+            $body = $body ?? (!empty($options['form_params']) ? http_build_query($options['form_params'], '' , '&') : null);
+            $res = $this->curlclient->post($url, $body, ['CURLOPT_HEADER' => 1]);
         } else if ($method == 'GET') {
             $res = $this->curlclient->get($url, [], ['CURLOPT_HEADER' => 1]);
         } else {

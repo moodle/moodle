@@ -17,17 +17,65 @@
     Actions bar at the top of the presets page in the database activity.
 
     Context variables required for this template:
-    * importpreseturl - The url to the import preset page.
+    * actionsselect - The presets actions selector.
+    * id - The database course module id (cmid).
 
     Example context (json):
     {
-        "importpreseturl": "http://www.example.com"
+        "actionsselect": {
+            "classes": "moodle-actionmenu",
+            "instance": "1",
+            "triggerrole": "button",
+            "primary": {
+                "attributes": [
+                    {"name": "id", "value": "action-menu-1"},
+                    {"name": "role", "value": "menu"}
+                ],
+                "items": [
+                    {
+                        "attributes": [
+                            {"name": "role", "value": "menuitem"}
+                        ],
+                        "rawhtml": "Actions"
+                    }
+                ]
+            },
+            "secondary": {
+                "attributes": [
+                    {"name": "id", "value": "action-menu-1-menu"},
+                    {"name": "role", "value": "menuitem"}
+                ],
+                "items": [
+                    {
+                        "rawhtml": "Import preset"
+                    },
+                    {
+                        "rawhtml": "Export preset"
+                    }
+                ]
+            }
+        },
+        "id" : 1
     }
 }}
 <div class="container-fluid tertiary-navigation">
     <div class="row">
-        <div class="navitem">
-            <a href="{{importpreseturl}}" class="btn btn-secondary">{{#str}}import, core{{/str}}</a>
+        <div class="col">
+            <h2>{{#str}}presets, mod_data{{/str}}</h2>
+        </div>
+        <div class="col-auto">
+            {{#actionsselect}}
+                <div class='navitem mb-0 presetsactions'>
+                    {{>core/action_menu}}
+                </div>
+            {{/actionsselect}}
         </div>
     </div>
 </div>
+<hr/>
+{{#js}}
+    require(['mod_data/saveaspreset', 'mod_data/importpresets'], (saveAsPreset, importPresets) => {
+        saveAsPreset.init();
+        importPresets.init();
+    });
+{{/js}}

@@ -24,44 +24,63 @@
     Example context (json):
     {
         "generalnavselector": {
-            "id": "url_select12345",
-            "action": "https://example.com/get",
-            "classes": "urlselect",
-            "formid": "gradesactionselect",
-            "sesskey": "sesskey",
-            "label": "",
-            "helpicon": false,
-            "showbutton": null,
-            "options": [{
-                "name": "View", "isgroup": true, "options":
-                [
-                    {"name": "Grader report", "isgroup": false, "value": "/grade/report/grader/index.php"}
-                ]},
-                {"name": "Setup", "isgroup": true, "options":
-                [
-                    {"name": "Gradebook setup", "isgroup": false, "value": "/grade/edit/tree/index.php"}
-                ]}],
-            "disabled": false,
-            "title": null
-        },
-        "exportselector": {
-            "id": "url_select56789",
-            "action": "https://example.com/get",
-            "formid": "gradesexportactionselect",
-            "sesskey": "sesskey",
-            "classes": "urlselect",
-            "label": "",
-            "helpicon": false,
-            "showbutton": null,
+            "name": "Gradebook tertiary navigation selector",
+            "value": "opt2",
+            "baseid": "select-menu56788",
+            "selectedoption": "Export",
             "options": [
                 {
-                    "name": "OpenDocument spreadsheet",
-                    "value": "/grade/export/ods/index.php",
-                    "selected": true
+                    "selected": false,
+                     "isgroup": {
+                         "name": "View",
+                         "id": "select-menu-group1",
+                         "options": [
+                             {
+                                 "name": "Grader report",
+                                 "value": "opt1",
+                                 "id": "select-menu-option1",
+                                 "selected": false
+                             }
+                         ]
+                     }
+                },
+                {
+                    "selected": false,
+                    "isgroup": {
+                        "name": "More",
+                        "id": "select-menu-group2",
+                        "options": [
+                            {
+                                "name": "Export",
+                                "value": "opt2",
+                                "id": "select-menu-option2",
+                                "selected": true
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "exportselector": {
+            "name": "exportas",
+            "value": "https://example.com/grade/export/keymanager.php",
+            "baseid": "select-menu56789",
+            "label": "Export as",
+            "labelattributes": [
+                {
+                    "name": "class",
+                    "value": "font-weight-bold"
                 }
             ],
-            "disabled": false,
-            "title": null
+            "selectedoption": "Key manager",
+            "options": [
+                {
+                    "name": "Key manager",
+                    "value": "https://example.com/grade/export/keymanager.php",
+                    "selected": true,
+                    "id": "select-menu-option56789"
+                }
+            ]
         },
         "adduserkeybutton": {
             "id": "single_button12345",
@@ -76,17 +95,23 @@
         }
     }
 }}
-<div class="container-fluid tertiary-navigation">
+<div class="container-fluid tertiary-navigation full-width-bottom-border">
     <div class="row">
         {{#generalnavselector}}
             <div class="navitem">
-                {{>core/url_select}}
+                {{>core/tertiary_navigation_selector}}
             </div>
+            <div class="navitem-divider"></div>
         {{/generalnavselector}}
         {{#exportselector}}
             <div class="navitem">
-                {{>core/url_select}}
+                {{>core/select_menu}}
             </div>
+            {{#js}}
+                document.querySelector('#{{baseid}}').addEventListener('change', function(e) {
+                window.location.href = e.target.value;
+                });
+            {{/js}}
         {{/exportselector}}
         {{#adduserkeybutton}}
             <div class="navitem">

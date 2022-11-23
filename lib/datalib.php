@@ -522,22 +522,26 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
         $params = $params + (array)$extraparams;
     }
 
-    if ($sort) {
-        $sort = " ORDER BY $sort $dir";
-    }
-
     // If a context is specified, get extra user fields that the current user
     // is supposed to see, otherwise just get the name fields.
     $userfields = \core_user\fields::for_name();
     if ($extracontext) {
         $userfields->with_identity($extracontext, true);
     }
-    $userfields->excluding('id', 'username', 'email', 'city', 'country', 'lastaccess', 'confirmed', 'mnethostid');
-    ['selects' => $selects, 'joins' => $joins, 'params' => $joinparams] =
+
+    $userfields->excluding('id');
+    $userfields->including('username', 'email', 'city', 'country', 'lastaccess', 'confirmed', 'mnethostid', 'suspended');
+    ['selects' => $selects, 'joins' => $joins, 'params' => $joinparams, 'mappings' => $mappings] =
             (array)$userfields->get_sql('u', true);
 
+    if ($sort) {
+        $orderbymap = $mappings;
+        $orderbymap['default'] = 'lastaccess';
+        $sort = get_safe_orderby($orderbymap, $sort, $dir);
+    }
+
     // warning: will return UNCONFIRMED USERS
-    return $DB->get_records_sql("SELECT u.id, username, email, city, country, lastaccess, confirmed, mnethostid, suspended $selects
+    return $DB->get_records_sql("SELECT u.id $selects
                                    FROM {user} u
                                         $joins
                                   WHERE $select
@@ -1352,7 +1356,7 @@ function get_coursemodules_in_course($modulename, $courseid, $extrafields='') {
  * in the course. Returns an empty array on any errors.
  *
  * The returned objects includle the columns cw.section, cm.visible,
- * cm.groupmode, and cm.groupingid, and are indexed by cm.id.
+ * cm.groupmode, cm.groupingid and cm.lang and are indexed by cm.id.
  *
  * @global object
  * @global object
@@ -1380,7 +1384,7 @@ function get_all_instances_in_courses($modulename, $courses, $userid=NULL, $incl
     $params['modulename'] = $modulename;
 
     if (!$rawmods = $DB->get_records_sql("SELECT cm.id AS coursemodule, m.*, cw.section, cm.visible AS visible,
-                                                 cm.groupmode, cm.groupingid
+                                                 cm.groupmode, cm.groupingid, cm.lang
                                             FROM {course_modules} cm, {course_sections} cw, {modules} md,
                                                  {".$modulename."} m
                                            WHERE cm.course $coursessql AND
@@ -1585,6 +1589,11 @@ function user_accesstime_log($courseid=0) {
 
     if (isguestuser()) {
         // Do not update guest access times/ips for performance.
+        return;
+    }
+
+    if (defined('USER_KEY_LOGIN') && USER_KEY_LOGIN === true) {
+        // Do not update user login time when using user key login.
         return;
     }
 

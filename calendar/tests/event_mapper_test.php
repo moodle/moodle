@@ -464,7 +464,7 @@ class core_calendar_event_mapper_test_event_collection implements event_collecti
         return 2;
     }
 
-    public function getIterator() {
+    public function getIterator(): \Traversable {
         foreach ($this->events as $event) {
             yield $event;
         }

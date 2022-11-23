@@ -51,7 +51,7 @@ $separatemode = (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS and
         !has_capability('moodle/site:accessallgroups', $context));
 $currentgroup = groups_get_course_group($course);
 
-$actionbar = new \core_grades\output\import_action_bar($context, $PAGE->url, 'csv');
+$actionbar = new \core_grades\output\import_action_bar($context, null, 'csv');
 print_grade_page_head($course->id, 'import', 'csv', get_string('importcsv', 'grades'), false, false, true,
     'importcsv', 'grades', null, $actionbar);
 

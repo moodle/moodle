@@ -1023,3 +1023,5 @@ class SimplePie_Parse_Date
 		return $strtotime;
 	}
 }
+
+class_alias('SimplePie_Parse_Date', 'SimplePie\Parse\Date', false);

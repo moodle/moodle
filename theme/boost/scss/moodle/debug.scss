@@ -7,6 +7,13 @@ body.behat-site {
         position: absolute;
     }
 
+    // Sticky footer can overlap with elements so we keep it relative for behat.
+    &.hasstickyfooter .stickyfooter,
+    .stickyfooter {
+        position: inherit;
+        z-index: inherit;
+    }
+
     // We need more spacing in action menus so behat does not click on the wrong menu item.
     .dropdown-item {
         margin-top: 4px !important; /* stylelint-disable declaration-no-important */
@@ -100,4 +107,3 @@ body > .debuggingmessage {
 body > .debuggingmessage ~ .debuggingmessage {
     margin-top: .5rem;
 }
-

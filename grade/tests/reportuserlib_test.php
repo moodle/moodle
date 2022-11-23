@@ -17,7 +17,7 @@
 namespace core_grades;
 
 use grade_plugin_return;
-use grade_report_user;
+use gradereport_user\report\user as user_report;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -133,9 +133,9 @@ class reportuserlib_test extends \advanced_testcase {
         $forum1->set_parent($gradecategory->id);
 
         $report = $this->create_report($course, $student, $coursecontext);
-        // Lead column + course + (category + category grade item) + (2 x activity) = 6
-        $this->assertEquals(6, $report->inject_rowspans($report->gtree->top_element));
-        $this->assertEquals(6, $report->gtree->top_element['rowspan']);
+        // Lead column + course + (category + lead column + category grade item) + (2 x activity) = 7.
+        $this->assertEquals(7, $report->inject_rowspans($report->gtree->top_element));
+        $this->assertEquals(7, $report->gtree->top_element['rowspan']);
         // Lead column -> the category -> the forum activity = 3
         $this->assertEquals(3, $report->maxdepth);
 
@@ -165,9 +165,9 @@ class reportuserlib_test extends \advanced_testcase {
             accesslib_clear_all_caches_for_unit_testing();
 
             $report = $this->create_report($course, $user, $coursecontext);
-            // Lead column + course + (category + category grade item) + (2 x activity) = 6
-            $this->assertEquals(6, $report->inject_rowspans($report->gtree->top_element), $message);
-            $this->assertEquals(6, $report->gtree->top_element['rowspan'], $message);
+            // Lead column + course + (category + lead column + category grade item) + (2 x activity) = 7.
+            $this->assertEquals(7, $report->inject_rowspans($report->gtree->top_element), $message);
+            $this->assertEquals(7, $report->gtree->top_element['rowspan'], $message);
             // Lead column -> the category -> the forum activity = 3
             $this->assertEquals(3, $report->maxdepth, $message);
         }
@@ -176,7 +176,7 @@ class reportuserlib_test extends \advanced_testcase {
     private function create_report($course, $user, $coursecontext) {
 
         $gpr = new grade_plugin_return(array('type' => 'report', 'plugin'=>'user', 'courseid' => $course->id, 'userid' => $user->id));
-        $report = new grade_report_user($course->id, $gpr, $coursecontext, $user->id);
+        $report = new user_report($course->id, $gpr, $coursecontext, $user->id);
 
         return $report;
     }

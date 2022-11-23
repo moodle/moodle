@@ -23,25 +23,42 @@
     Example context (json):
     {
         "generalnavselector": {
-            "id": "url_select12345",
-            "action": "https://example.com/get",
-            "classes": "urlselect",
-            "formid": "gradesactionselect",
-            "sesskey": "sesskey",
-            "label": "",
-            "helpicon": false,
-            "showbutton": null,
-            "options": [{
-                "name": "View", "isgroup": true, "options":
-                [
-                    {"name": "Grader report", "isgroup": false, "value": "/grade/report/grader/index.php"}
-                ]},
-                {"name": "Setup", "isgroup": true, "options":
-                [
-                    {"name": "Gradebook setup", "isgroup": false, "value": "/grade/edit/tree/index.php"}
-                ]}],
-            "disabled": false,
-            "title": null
+            "name": "Gradebook tertiary navigation selector",
+            "value": "opt2",
+            "baseid": "select-menu56789",
+            "selectedoption": "Import",
+            "options": [
+                {
+                    "selected": false,
+                     "isgroup": {
+                         "name": "View",
+                         "id": "select-menu-group1",
+                         "options": [
+                             {
+                                 "name": "Grader report",
+                                 "value": "opt1",
+                                 "id": "select-menu-option1",
+                                 "selected": false
+                             }
+                         ]
+                     }
+                },
+                {
+                    "selected": false,
+                    "isgroup": {
+                        "name": "More",
+                        "id": "select-menu-group2",
+                        "options": [
+                            {
+                                "name": "Grade letters",
+                                "value": "opt2",
+                                "id": "select-menu-option2",
+                                "selected": true
+                            }
+                        ]
+                    }
+                }
+            ]
         },
         "editbutton": {
             "id": "single_button12345",
@@ -56,12 +73,13 @@
         }
     }
 }}
-<div class="container-fluid tertiary-navigation">
+<div class="container-fluid tertiary-navigation full-width-bottom-border">
     <div class="row">
         {{#generalnavselector}}
             <div class="navitem">
-                {{>core/url_select}}
+                {{>core/tertiary_navigation_selector}}
             </div>
+            <div class="navitem-divider"></div>
         {{/generalnavselector}}
         {{#editbutton}}
             <div class="navitem">

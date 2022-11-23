@@ -23,7 +23,7 @@ Feature: Using the database activities which support point scale
   @javascript
   Scenario: Database rescale grade should not be possible when users are graded
     Given I am on the "Course 1" course page logged in as teacher1
-    And I add a "Text input" field to "Test database name" database and I fill the form with:
+    And I add a "Short text" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |
       | Field description | Test field description |
     And I navigate to "Templates" in current page administration

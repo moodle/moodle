@@ -3,10 +3,15 @@ information provided here is intended especially for developers.
 
 This information is intended for authors of webservices, not people writing webservice clients.
 
+=== 4.1 ===
+
+* The XMLRPC webservice (protocol) has been completely removed. It's now available in the plugins directory.
+
 === 4.0 ===
 
-* User access related exceptions have been changed to use the moodle_exception class instead of the generic webservice_access_exception,
-  the main reason for this change is to allow clients to implement some code logic against an access error.
+* User access related exceptions have been changed to use the moodle_exception class instead of the
+  generic webservice_access_exception, the main reason for this change is to allow clients to
+  implement some code logic against an access error.
 
 === 3.11 ===
 

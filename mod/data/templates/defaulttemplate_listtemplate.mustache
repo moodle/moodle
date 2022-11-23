@@ -1,0 +1,70 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_data/defaulttemplate_listtemplate
+
+    Default template for the list view page in the database activity.
+
+    Context variables required for this template:
+    * fields - The database fields to display
+
+    Example context (json):
+    {
+        "fields": [
+            {
+                "fieldname": "Field1",
+                "fieldcontent": "[[Field1]]"
+            },
+            {
+                "fieldname": "Field2",
+                "fieldcontent": "[[Field2]]"
+            }
+        ]
+    }
+}}
+<div class="defaulttemplate-listentry my-5 p-5 card">
+    <div class="row my-6">
+        <div class="col-auto">##userpicture##</div>
+        <div class="col">
+            <div class="row h-100">
+                <div class="col-3 align-self-center">
+                    ##user##<br/><span class="data-timeinfo">##timeadded##</span>
+                </div>
+                <div class="col-4 col-md-6 text-right align-self-center data-timeinfo">
+                    <span class="font-weight-bold ">{{#str}}datemodified, mod_data{{/str}}&nbsp;</span>##timemodified##
+                </div>
+                <div class="col-4 col-md-3 ml-auto align-self-center d-flex flex-row-reverse">
+                    <div>##actionsmenu##</div>
+                    <div class="ml-auto my-auto ##approvalstatusclass##">##approvalstatus##</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr/>
+
+    <div class="defaulttemplate-list-body">
+        {{#fields}}
+            <div class="row my-3 align-items-start justify-content-start">
+                <div class="col-4 col-lg-3 font-weight-bold">{{fieldname}}</div>
+                <div class="col-8 col-lg-9 ml-n3">{{fieldcontent}}</div>
+            </div>
+        {{/fields}}
+        {{#tags}}
+            <div class="mb-4">
+                <span class="font-weight-bold">{{#str}}tags{{/str}}</span>
+                <p class="mt-2">{{.}}</p>
+            </div>
+        {{/tags}}
+    </div>
+</div>

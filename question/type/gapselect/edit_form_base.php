@@ -142,18 +142,10 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
         $textboxgroup[] = $mform->createElement('group', 'choices',
                 get_string('choicex', 'qtype_gapselect'), $this->choice_group($mform));
 
-        if (isset($this->question->options)) {
-            $countanswers = count($this->question->options->answers);
+        if (!empty($this->question->options->answers)) {
+            $repeatsatstart = count($this->question->options->answers);
         } else {
-            $countanswers = 0;
-        }
-
-        if ($this->question->formoptions->repeatelements) {
-            $defaultstartnumbers = QUESTION_NUMANS_START * 2;
-            $repeatsatstart = max($defaultstartnumbers, QUESTION_NUMANS_START,
-                    $countanswers + QUESTION_NUMANS_ADD);
-        } else {
-            $repeatsatstart = $countanswers;
+            $repeatsatstart = QUESTION_NUMANS_ADD * 2;
         }
 
         $repeatedoptions = $this->repeated_options();

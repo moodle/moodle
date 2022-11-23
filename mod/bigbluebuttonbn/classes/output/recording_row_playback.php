@@ -49,7 +49,7 @@ class recording_row_playback implements renderable, templatable {
      * recording_row_playback constructor.
      *
      * @param recording $rec
-     * @param instance $instance
+     * @param instance|null $instance $instance
      */
     public function __construct(recording $rec, ?instance $instance) {
         $this->instance = $instance ?? null;

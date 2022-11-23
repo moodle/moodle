@@ -14,14 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the Moodle Blackboard V6+ format.
- *
- * @package    qformat_blackboard_six
- * @copyright  2012 Jean-Michel Vedrine
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qformat_blackboard_six;
 
+use qformat_blackboard_six;
+use qformat_blackboard_six_file;
+use question_bank;
+use question_check_specified_fields_expectation;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,14 +29,14 @@ require_once($CFG->dirroot . '/question/format.php');
 require_once($CFG->dirroot . '/question/format/blackboard_six/format.php');
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 
-
 /**
- * Unit tests for the blackboard question import format.
+ * Unit tests for the blackboard v6+ question import format.
  *
+ * @package    qformat_blackboard_six
  * @copyright  2012 Jean-Michel Vedrine
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qformat_blackboard_six_pool_test extends question_testcase {
+class blackboardformatpool_test extends \question_testcase {
 
     public function make_test_xml() {
         $xmlfile = new qformat_blackboard_six_file();
@@ -60,7 +58,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
         // qtypes, not match ones.
         $ddmatchisinstalled = question_bank::is_qtype_installed('ddmatch');
 
-        $expectedq = new stdClass();
+        $expectedq = new \stdClass();
         $expectedq->qtype = $ddmatchisinstalled ? 'ddmatch' : 'match';
         $expectedq->name = 'Classify the animals.';
         $expectedq->questiontext = '<i>Classify the animals.</i>';
@@ -104,7 +102,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
         $questions = $importer->readquestions($xml);
         $q = $questions[2];
 
-        $expectedq = new stdClass();
+        $expectedq = new \stdClass();
         $expectedq->qtype = 'multichoice';
         $expectedq->single = 1;
         $expectedq->name = 'What\'s between orange and green in the spectrum?';
@@ -163,7 +161,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
         $questions = $importer->readquestions($xml);
         $q = $questions[3];
 
-        $expectedq = new stdClass();
+        $expectedq = new \stdClass();
         $expectedq->qtype = 'multichoice';
         $expectedq->single = 0;
         $expectedq->name = 'What\'s between orange and green in the spectrum?';
@@ -236,7 +234,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
         $questions = $importer->readquestions($xml);
         $q = $questions[1];
 
-        $expectedq = new stdClass();
+        $expectedq = new \stdClass();
         $expectedq->qtype = 'truefalse';
         $expectedq->name = '42 is the Absolute Answer to everything.';
         $expectedq->questiontext = '<span style="font-size:12pt">42 is the Absolute Answer to everything.</span>';
@@ -265,7 +263,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
         $questions = $importer->readquestions($xml);
         $q = $questions[4];
 
-        $expectedq = new stdClass();
+        $expectedq = new \stdClass();
         $expectedq->qtype = 'shortanswer';
         $expectedq->name = 'Name an amphibian: __________.';
         $expectedq->questiontext = '<span style="font-size:12pt">Name an amphibian: __________.</span>';
@@ -299,7 +297,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
         $questions = $importer->readquestions($xml);
         $q = $questions[6];
 
-        $expectedq = new stdClass();
+        $expectedq = new \stdClass();
         $expectedq->qtype = 'essay';
         $expectedq->name = 'How are you?';
         $expectedq->questiontext = 'How are you?';
@@ -327,7 +325,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
         $questions = $importer->readquestions($xml);
         $q = $questions[0];
 
-        $expectedq = new stdClass();
+        $expectedq = new \stdClass();
         $expectedq->qtype = 'category';
         $expectedq->category = 'exam 3 2008-9';
 

@@ -1,4 +1,4 @@
-@core @core_grades
+@core @core_grades @javascript
 Feature: We can duplicate grade items that already exist.
   In order to quickly create grade items that have similar settings.
   As a teacher
@@ -32,7 +32,8 @@ Feature: We can duplicate grade items that already exist.
     And I should not see "Duplicate   Assignment1"
     When I duplicate the grade item "Item1"
     Then I should see "Item1 (copy)"
-    And I follow "Edit   Item1 (copy)"
+    And I open the action menu in "Item1 (copy)" "table_row"
+    And I choose "Edit settings" in the open action menu
     And the field "Item name" matches value "Item1 (copy)"
     And the field "ID number" matches value ""
     And the field "Grade type" matches value "Value"

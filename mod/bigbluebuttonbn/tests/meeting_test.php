@@ -155,6 +155,17 @@ class meeting_test extends \advanced_testcase {
         $meeting->update_cache();
         $meetinginfo = $meeting->get_meeting_info();
         $this->assertFalse($meetinginfo->statusrunning);
+
+        if ($type == instance::TYPE_ALL) {
+            $this->assertTrue($meetinginfo->features['showroom']);
+            $this->assertTrue($meetinginfo->features['showrecordings']);
+        } else if ($type == instance::TYPE_ROOM_ONLY) {
+            $this->assertTrue($meetinginfo->features['showroom']);
+            $this->assertFalse($meetinginfo->features['showrecordings']);
+        } else if ($type == instance::TYPE_RECORDING_ONLY) {
+            $this->assertFalse($meetinginfo->features['showroom']);
+            $this->assertTrue($meetinginfo->features['showrecordings']);
+        }
     }
 
     /**
@@ -206,10 +217,15 @@ class meeting_test extends \advanced_testcase {
         $this->setUser($useringroup);
         $meeting->update_cache();
         $this->assertEquals($canjoin['useringroup'], $meeting->can_join());
+        // We check that admin can not join outside opening/closing times either.
+        $this->setAdminUser();
+        $this->assertEquals(false, $meeting->can_join());
         if ($groupname) {
             $this->setUser($usernotingroup);
             $meeting->update_cache();
             $this->assertEquals($canjoin['usernotingroup'], $meeting->can_join());
+            $this->setAdminUser();
+            $this->assertEquals(false, $meeting->can_join());
         }
     }
 

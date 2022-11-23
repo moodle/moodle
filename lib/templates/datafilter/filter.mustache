@@ -1,0 +1,63 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/datafilter/filter
+
+    Template for the form containing one or more filter rows.
+
+    Example context (json):
+    {
+        "filtertypes": [
+            {
+                "name": "status",
+                "title": "Status",
+                "values": [
+                    {
+                        "value": 1,
+                        "title": "Active"
+                    },
+                    {
+                        "value": 0,
+                        "title": "Suspended"
+                    }
+                ]
+            }
+        ]
+    }
+}}
+
+<div id="core-filter-{{uniqid}}" class="filter-group my-2 p-2 bg-light border-radius border" data-table-region="{{tableregionid}}" data-table-course-id="{{courseid}}" data-filterverb="2">
+    {{> core/datafilter/filter_match }}
+
+    <div data-filterregion="filters">
+        {{> core/datafilter/filter_row }}
+    </div>
+
+    <div class="d-flex" data-filterregion="actions">
+        &nbsp;
+        <button type="button" class="btn btn-link text-reset" data-filteraction="add">
+            {{#pix}}t/add{{/pix}}<span class="pl-3">{{#str}}addcondition{{/str}}</span>
+        </button>
+        <button data-filteraction="reset" type="button" class="btn btn-secondary ml-auto mr-2">{{#str}}clearfilters{{/str}}</button>
+        <button data-filteraction="apply" type="button" class="btn btn-primary">{{#str}}applyfilters{{/str}}</button>
+    </div>
+
+    {{> core/datafilter/filter_types }}
+
+</div>
+
+

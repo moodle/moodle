@@ -1,4 +1,4 @@
-@core @core_grades
+@core @core_grades @javascript
 Feature: Control the aggregation of the scales
   In order to use control the aggregation of the scales
   As an admin
@@ -47,7 +47,7 @@ Feature: Control the aggregation of the scales
     And I set the following settings for grade item "Course 1":
       | Aggregation | <aggregation> |
     And I navigate to "View > User report" in the course gradebook
-    And I select "Student 1" from the "Select all or one user" singleselect
+    And I click on "Student 1" in the "user" search widget
     Then the following should exist in the "user-grade" table:
       | Grade item             | Grade          | Percentage  | Contribution to course total |
       | Grade me               | 10.00          | 10.00 %     | <gradecontrib>               |
@@ -61,7 +61,7 @@ Feature: Control the aggregation of the scales
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "View > User report" in the course gradebook
-    And I select "Student 1" from the "Select all or one user" singleselect
+    And I click on "Student 1" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item             | Grade          | Percentage  | Contribution to course total |
       | Grade me               | 10.00          | 10.00 %     | <gradecontrib2>              |
@@ -80,7 +80,6 @@ Feature: Control the aggregation of the scales
       | Highest grade                       | Highest grade.                       | 10.00       | 10.00 %  | 10.00        | 0.00         | 75.00        | 75.00 %   | 0.00 %        | 75.00 %       |
       | Mode of grades                      | Mode of grades.                      | 10.00       | 10.00 %  | 10.00        | 0.00         | 75.00        | 75.00 %   | 0.00 %        | 75.00 %       |
 
-  @javascript
   Scenario: Weights of scales cannot be edited when they are not aggregated
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage

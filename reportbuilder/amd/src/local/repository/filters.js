@@ -28,12 +28,31 @@ import Ajax from 'core/ajax';
  *
  * @method
  * @param {Number} reportId
+ * @param {String} reportParameters
  * @return {Promise}
  */
-export const resetFilters = reportId => {
+export const resetFilters = (reportId, reportParameters) => {
     const request = {
         methodname: 'core_reportbuilder_filters_reset',
-        args: {reportid: reportId}
+        args: {reportid: reportId, parameters: reportParameters}
+    };
+
+    return Ajax.call([request])[0];
+};
+
+/**
+ * Set filter values for given report
+ *
+ * @method
+ * @param {Number} reportId
+ * @param {String} reportParameters
+ * @param {String} filterValues
+ * @return {Promise}
+ */
+export const setFilters = (reportId, reportParameters, filterValues) => {
+    const request = {
+        methodname: 'core_reportbuilder_set_filters',
+        args: {reportid: reportId, parameters: reportParameters, values: filterValues}
     };
 
     return Ajax.call([request])[0];

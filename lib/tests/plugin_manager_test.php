@@ -14,14 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for plugin manager class.
- *
- * @package   core
- * @category  phpunit
- * @copyright 2013 Petr Skoda {@link http://skodak.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
+
+use core_plugin_manager;
+use testable_core_plugin_manager;
+use testable_plugininfo_base;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,9 +27,14 @@ require_once($CFG->dirroot.'/lib/tests/fixtures/testable_plugin_manager.php');
 require_once($CFG->dirroot.'/lib/tests/fixtures/testable_plugininfo_base.php');
 
 /**
- * Tests of the basic API of the plugin manager.
+ * Unit tests for plugin manager class.
+ *
+ * @package   core
+ * @category  test
+ * @copyright 2013 Petr Skoda {@link http://skodak.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_plugin_manager_testcase extends advanced_testcase {
+class plugin_manager_test extends \advanced_testcase {
 
     public function tearDown(): void {
         // The caches of the testable singleton must be reset explicitly. It is
@@ -376,7 +378,7 @@ class core_plugin_manager_testcase extends advanced_testcase {
      */
     public function test_get_remote_plugin_info_exception() {
         $pluginman = testable_core_plugin_manager::instance();
-        $this->expectException(moodle_exception::class);
+        $this->expectException(\moodle_exception::class);
         $pluginman->get_remote_plugin_info('any_thing', ANY_VERSION, true);
     }
 

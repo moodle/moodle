@@ -18,63 +18,88 @@
 
     Context variables required for this template:
     * d - The database id.
-    * urlselect - The data object containing the required properties to render core/url_select.
-    * saveaspreset - Whether to display the save as preset button (mod_data/save_as_preset).
-    * exportpreset - The data object containing the required properties to render core/single_button.
+    * selectmenu - The data object containing the required properties to render core/selectmenu.
+    * actionsselect - The presets actions selector.
 
     Example context (json):
     {
         "d": 1,
-        "urlselect": {
-            "id": "url_select_test",
-            "action": "https://example.com/post",
-            "formid": "url_select_form",
-            "sesskey": "sesskey",
-            "classes": "urlselect",
-            "label": "",
-            "helpicon": false,
-            "showbutton": null,
+        "selectmenu": {
+            "name": "Templates tertiary navigation selector",
+            "value": "opt",
+            "baseid": "select-menu1",
+            "selectedoption": "Single view template",
             "options": [
                 {
-                    "name": "Some name",
-                    "value": "/mod/data/someurl.php",
-                    "selected": false
+                    "selected": false,
+                    "name": "Add entry template",
+                    "id": "select-menu-group1"
+                },
+                {
+                    "selected": true,
+                    "name": "Single view template",
+                    "value": "opt2",
+                    "id": "select-menu-option2"
                 }
-            ],
-            "disabled": false,
-            "title": null
+            ]
         },
-        "saveaspreset": true,
-        "exportpreset": {
-            "id": "single_button_test",
-            "method" : "post",
-            "formid": "single_button_form",
-            "url" : "https://example.com/post",
-            "primary" : false,
-            "tooltip" : null,
-            "label" : "Label",
-            "attributes": []
+        "actionsselect": {
+            "classes": "moodle-actionmenu",
+            "instance": "1",
+            "triggerrole": "button",
+            "primary": {
+                "attributes": [
+                    {"name": "id", "value": "action-menu-1"},
+                    {"name": "role", "value": "menu"}
+                ],
+                "items": [
+                    {
+                        "attributes": [
+                            {"name": "role", "value": "menuitem"}
+                        ],
+                        "rawhtml": "Actions"
+                    }
+                ]
+            },
+            "secondary": {
+                "attributes": [
+                    {"name": "id", "value": "action-menu-1-menu"},
+                    {"name": "role", "value": "menuitem"}
+                ],
+                "items": [
+                    {
+                        "rawhtml": "Import preset"
+                    },
+                    {
+                        "rawhtml": "Export preset"
+                    }
+                ]
+            }
         }
     }
 }}
 <div class="container-fluid tertiary-navigation">
     <div class="row">
-        {{#urlselect}}
-            <div class="navitem">
-                {{>core/url_select}}
-            </div>
-        {{/urlselect}}
-        <div class="ml-sm-auto d-flex">
-            {{#saveaspreset}}
-                <div class="navitem">
-                    {{>mod_data/save_as_preset}}
+        <div class="navitem mb-0 col">
+            {{#selectmenu}}
+                <div>
+                    {{>core/tertiary_navigation_selector}}
                 </div>
-            {{/saveaspreset}}
-            {{#exportpreset}}
-                <div class="navitem">
-                    {{>core/single_button}}
+            {{/selectmenu}}
+        </div>
+        <div class="col-auto">
+            {{#actionsselect}}
+                <div class='navitem mb-0 presetsactions'>
+                    {{>core/action_menu}}
                 </div>
-            {{/exportpreset}}
+            {{/actionsselect}}
         </div>
     </div>
 </div>
+<hr/>
+{{#js}}
+    require(['mod_data/saveaspreset', 'mod_data/resetalltemplates'], function(saveAsPreset, resetAll) {
+        saveAsPreset.init();
+        resetAll.init();
+    });
+{{/js}}

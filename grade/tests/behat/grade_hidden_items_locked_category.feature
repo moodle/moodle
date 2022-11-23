@@ -1,4 +1,4 @@
-@core @core_grades
+@core @core_grades @javascript
 Feature: Hidden grade items should be hidden when grade category is locked, but should be visible in overridden category
   In order to verify existing grades items display as expected
   As an teacher
@@ -47,8 +47,8 @@ Feature: Hidden grade items should be hidden when grade category is locked, but 
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "View > User report" in the course gradebook
-    And I select "Myself" from the "View report as" singleselect
-    When I select "Student 1" from the "Select all or one user" singleselect
+    And I click on "Student 1" in the "user" search widget
+    When I set the field "View report as" to "Myself"
     Then the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Percentage | Contribution to course total |
       | Test locked category total | 100.00 % | 50.00 | 0–100 | 50.00 % | - |

@@ -75,6 +75,7 @@ $string['messageinboundenabled_desc'] = 'Incoming mail processing must be enable
 $string['messageinboundgeneralconfiguration'] = 'General configuration';
 $string['messageinboundgeneralconfiguration_desc'] = 'Inbound message processing allows you to receive and process email within Moodle. This has applications such as sending email replies to forum posts or adding files to a user\'s private files.';
 $string['messageinboundhost'] = 'Incoming Mail Server';
+$string['messageinboundhostoauth_help'] = 'OAuth 2 service to use to access the IMAP server, using XOAUTH2 authentication. If the service doesn\'t exist yet, you will need to create it.';
 $string['messageinboundhostpass'] = 'Password';
 $string['messageinboundhostpass_desc'] = 'This is the password your service provider will have provided to log in to your email account with.';
 $string['messageinboundhostssl'] = 'Use SSL';

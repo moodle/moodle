@@ -1,8 +1,8 @@
 @mod @mod_quiz @quiz @quiz_overview @javascript
 Feature: Regrading quiz attempts using the Grades report
-  In order to be able to correct mistakes I made setting up my quiz
-  As a teacher
-  I need to be able to re-grade attempts after editing questions
+    In order to be able to correct mistakes I made setting up my quiz
+    As a teacher
+    I need to be able to re-grade attempts after editing questions
 
   Background:
     Given the following "users" exist:
@@ -24,24 +24,24 @@ Feature: Regrading quiz attempts using the Grades report
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
     And the following "activities" exist:
-      | activity   | name                       | course | idnumber |
-      | quiz       | Quiz for testing regrading | C1     | quiz1    |
+      | activity | name                       | course | idnumber |
+      | quiz     | Quiz for testing regrading | C1     | quiz1    |
     And the following "questions" exist:
-      | questioncategory | qtype       | name  |
-      | Test questions   | truefalse   | TF    |
-      | Test questions   | shortanswer | SA    |
+      | questioncategory | qtype       | name |
+      | Test questions   | truefalse   | TF   |
+      | Test questions   | shortanswer | SA   |
     And quiz "Quiz for testing regrading" contains the following questions:
       | question | page | maxmark |
       | TF       | 1    | 5.0     |
       | SA       | 1    | 5.0     |
     And user "student1" has attempted "Quiz for testing regrading" with responses:
       | slot | response |
-      |   1  | True     |
-      |   2  | frog     |
+      | 1    | True     |
+      | 2    | frog     |
     And user "student2" has attempted "Quiz for testing regrading" with responses:
       | slot | response |
-      |   1  | True     |
-      |   2  | toad     |
+      | 1    | True     |
+      | 2    | toad     |
 
   Scenario: Regrade all attempts
     Given I am on the "Quiz for testing regrading" "quiz activity" page logged in as teacher
@@ -76,13 +76,12 @@ Feature: Regrading quiz attempts using the Grades report
     And I should see "Overall number of students achieving grade ranges"
 
   Scenario: Dry-run a full regrade, then regrade the attempts that will need it.
-    Given I am on the "Quiz for testing regrading" "quiz activity" page logged in as teacher
-    When I navigate to "Questions" in current page administration
+    Given I am on the "Quiz for testing regrading" "mod_quiz > edit" page logged in as teacher
     And I follow "Edit question SA"
     And I set the field "id_fraction_1" to "50%"
     And I press "id_submitbutton"
-    And I click on "v1" "option"
-    And I click on "v2" "option"
+    And I set the field "version" in the "TF" "list_item" to "v1"
+    And I set the field "version" in the "SA" "list_item" to "v2 (latest)"
     And I follow "Attempts: 2"
     And I press "Dry run a full regrade"
 
@@ -123,13 +122,12 @@ Feature: Regrading quiz attempts using the Grades report
     And I should see "Quiz for testing regrading"
     And I should see "Overall number of students achieving grade ranges"
     And "Student One" row "Regrade" column of "attempts" table should not contain "Needed"
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Quiz for testing regrading" "mod_quiz > question bank" page
     And I choose "Edit question" action for "TF" in the question bank
     And I set the field "Correct answer" to "False"
     And I press "id_submitbutton"
-    And I navigate to "Questions" in current page administration
-    And I click on "version" "select" in the "TF" "list_item"
-    And I click on "v2 (latest)" "option"
+    And I am on the "Quiz for testing regrading" "mod_quiz > edit" page
+    And I set the field "version" in the "TF" "list_item" to "v2 (latest)"
     And I navigate to "Results" in current page administration
     And I press "Dry run a full regrade"
     And I should see "Regrade completed"
@@ -149,10 +147,10 @@ Feature: Regrading quiz attempts using the Grades report
     And I click on "mod-quiz-report-overview-report-selectall-attempts" "checkbox"
     And I click on "Delete selected attempts" "button"
     And I click on "Yes" "button"
-    And I navigate to "Questions" in current page administration
+    And I am on the "Quiz for testing regrading" "mod_quiz > edit" page
     And I should see "(latest)" in the "TF" "list_item"
     # Create multiple question versions.
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Quiz for testing regrading" "mod_quiz > question bank" page
     And I choose "Edit question" action for "TF" in the question bank
     And I set the field "Correct answer" to "True"
     And I press "id_submitbutton"
@@ -160,21 +158,20 @@ Feature: Regrading quiz attempts using the Grades report
     And I set the field "Question name" to "New version of TF"
     And I set the field "Correct answer" to "False"
     And I press "id_submitbutton"
-    And I navigate to "Questions" in current page administration
+    And I am on the "Quiz for testing regrading" "mod_quiz > edit" page
     And I should see "(latest)" in the "TF" "list_item"
     And I click on "version" "select" in the "TF" "list_item"
     And I should see "v1"
     And I should see "v2"
     And I should see "v3 (latest)"
     # Set version that is going to be attempted to an older one.
-    And I click on "v1" "option"
+    And I set the field "version" in the "TF" "list_item" to "v1"
     And user "student3" has attempted "Quiz for testing regrading" with responses:
       | slot | response |
-      |   1  | True     |
-      |   2  | toad     |
-    And I navigate to "Questions" in current page administration
-    And I click on "version" "select" in the "TF" "list_item"
-    And I click on "Always latest" "option"
+      | 1    | True     |
+      | 2    | toad     |
+    And I am on the "Quiz for testing regrading" "mod_quiz > edit" page
+    And I set the field "version" in the "TF" "list_item" to "Always latest"
     And I navigate to "Results" in current page administration
     And I press "Regrade all"
     And I should see "Finished regrading (1/1)"
@@ -190,10 +187,10 @@ Feature: Regrading quiz attempts using the Grades report
     And I click on "Delete selected attempts" "button"
     And I click on "Yes" "button"
     # Create multiple question versions.
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Quiz for testing regrading" "mod_quiz > question bank" page
     And I choose "Delete" action for "SA" in the question bank
     And I press "Delete"
-    And I navigate to "Questions" in current page administration
+    And I am on the "Quiz for testing regrading" "mod_quiz > edit" page
     And I click on "Delete" "link" in the "TF" "list_item"
     And I click on "Yes" "button" in the "Confirm" "dialogue"
     And I click on "Delete" "link" in the "SA" "list_item"
@@ -208,9 +205,8 @@ Feature: Regrading quiz attempts using the Grades report
     And I set the field "True" to "1"
     And I click on "Finish attempt ..." "button"
     And I press "Submit all and finish"
-    And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
-    And I am on the "Quiz for testing regrading" "quiz activity" page logged in as teacher
-    And I navigate to "Question bank" in current page administration
+    And I click on "Submit" "button" in the "Submit all your answers and finish?" "dialogue"
+    And I am on the "Quiz for testing regrading" "mod_quiz > question bank" page logged in as teacher
     And I choose "Edit question" action for "TF" in the question bank
     And I set the field "Correct answer" to "False"
     And I press "id_submitbutton"

@@ -27,5 +27,6 @@
 $string['maxbytes'] = 'Maximum embedded file size (bytes)';
 $string['maxbytes_desc'] = 'If set to zero will be unlimited by default';
 $string['pluginname'] = 'Text area';
-$string['fieldtypelabel'] = 'Textarea field';
-$string['privacy:metadata'] = 'The Textarea field component does not store any personal data, it uses tables defined in mod_data.';
+$string['fieldtypelabel'] = 'Text area';
+$string['privacy:metadata'] = 'The Text area field component doesn\'t store any personal data; it uses tables defined in mod_data.';
+$string['sample'] = '<p>This is a text area. It lets users enter long form text which spans over multiple lines.</p><p>You can choose the size of your text areas in rows and columns.</p><p>The text in a text area can be formatted, for example in <strong>bold</strong>, and also include <a href="#">links</a> or images.</p>';

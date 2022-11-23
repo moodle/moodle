@@ -24,8 +24,6 @@
 
 namespace gradereport_singleview\local\ui;
 
-use html_writer;
-
 defined('MOODLE_INTERNAL') || die;
 
 /**
@@ -37,14 +35,26 @@ defined('MOODLE_INTERNAL') || die;
  */
 class dropdown_attribute extends element {
 
-    /** @var string $selected Who is selected ? */
+    /**
+     * Who is selected?
+     * @var string $selected
+     */
     private $selected;
 
-    /** @var array $options List of options ? */
+    /**
+     * List of options
+     * @var array $options
+     */
     private $options;
 
-    /** @var bool $isdisabled Is this input disabled. */
+    /**
+     * Is this input disabled.
+     * @var bool $isdisabled
+     */
     private $isdisabled;
+
+    /** @var bool If this is a read-only input. */
+    private bool $isreadonly;
 
     /**
      * Constructor
@@ -54,11 +64,20 @@ class dropdown_attribute extends element {
      * @param string $label The form label for this input.
      * @param string $selected The name of the selected item in this input.
      * @param bool $isdisabled Are we disabled?
+     * @param bool $isreadonly If this is a read-only input.
      */
-    public function __construct($name, $options, $label, $selected = '', $isdisabled = false) {
+    public function __construct(
+        string $name,
+        array $options,
+        string $label,
+        string $selected = '',
+        bool $isdisabled = false,
+        bool $isreadonly = false
+    ) {
         $this->selected = $selected;
         $this->options = $options;
         $this->isdisabled = $isdisabled;
+        $this->isreadonly = $isreadonly;
         parent::__construct($name, $selected, $label);
     }
 
@@ -67,7 +86,7 @@ class dropdown_attribute extends element {
      *
      * @return bool
      */
-    public function is_dropdown() {
+    public function is_dropdown(): bool {
         return true;
     }
 
@@ -76,17 +95,19 @@ class dropdown_attribute extends element {
      *
      * @return string
      */
-    public function html() {
+    public function html(): string {
         global $OUTPUT;
 
         $options = $this->options;
         $selected = $this->selected;
 
-        $context = array(
+        $context = [
             'name' => $this->name,
             'value' => $this->selected,
+            'text' => $options[$selected],
             'tabindex' => 1,
             'disabled' => !empty($this->isdisabled),
+            'readonly' => $this->isreadonly,
             'options' => array_map(function($option) use ($options, $selected) {
                 return [
                     'name' => $options[$option],
@@ -95,7 +116,7 @@ class dropdown_attribute extends element {
                 ];
             }, array_keys($options)),
             'label' => get_string('gradefor', 'gradereport_singleview', $this->label),
-        );
+        ];
 
         return $OUTPUT->render_from_template('gradereport_singleview/dropdown_attribute', $context);
     }

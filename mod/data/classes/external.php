@@ -527,7 +527,7 @@ class mod_data_external extends external_api {
 
         // Check correct record entry. Group check was done before.
         if (!data_can_view_record($database, $record, $record->groupid, $canmanageentries)) {
-            throw new moodle_exception('notapproved', 'data');
+            throw new moodle_exception('notapprovederror', 'data');
         }
 
         $related = array('context' => $context, 'database' => $database, 'user' => null);
@@ -982,6 +982,12 @@ class mod_data_external extends external_api {
         $fieldnotifications = array();
 
         list($database, $course, $cm, $context) = self::validate_database($params['databaseid']);
+
+        $fields = $DB->get_records('data_fields', ['dataid' => $database->id]);
+        if (empty($fields)) {
+            throw new moodle_exception('nofieldindatabase', 'data');
+        }
+
         // Check database is open in time.
         data_require_time_available($database, null, $context);
 
@@ -1009,7 +1015,6 @@ class mod_data_external extends external_api {
             $datarecord->{'field_' . $data['fieldid'] . $subfield} = json_decode($data['value']);
         }
         // Validate to ensure that enough data was submitted.
-        $fields = $DB->get_records('data_fields', array('dataid' => $database->id));
         $processeddata = data_process_submission($database, $fields, $datarecord);
 
         // Format notifications.

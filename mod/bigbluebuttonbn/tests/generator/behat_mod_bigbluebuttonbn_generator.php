@@ -24,8 +24,6 @@
  * @author     Laurent David (laurent@call-learning.fr)
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Behat data generator for behat_mod_bigbluebuttonbn_generator.
  *

@@ -17,9 +17,9 @@
  * Column selector js.
  *
  * @module    qbank_comment/comment
- * @copyright  2021 Catalyst IT Australia Pty Ltd
- * @author     Safat Shahin <safatshahin@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2021 Catalyst IT Australia Pty Ltd
+ * @author    Safat Shahin <safatshahin@catalyst-au.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 import Fragment from 'core/fragment';
@@ -41,11 +41,10 @@ const commentEvent = (questionId, courseID, contextId) => {
         questionid: questionId,
         courseid: courseID
     };
-    let commentFragment = Fragment.loadFragment('qbank_comment', 'question_comment', contextId, args);
     ModalFactory.create({
         type: ModalFactory.types.SAVE_CANCEL,
         title: Str.get_string('commentheader', 'qbank_comment'),
-        body: commentFragment,
+        body: Fragment.loadFragment('qbank_comment', 'question_comment', contextId, args),
         large: true,
     }).then((modal) => {
         let root = modal.getRoot();
@@ -54,6 +53,12 @@ const commentEvent = (questionId, courseID, contextId) => {
         root.on(ModalEvents.bodyRendered, function() {
             const submitlink = document.querySelectorAll("div.comment-area a")[0];
             submitlink.style.display = 'none';
+        });
+
+        // Version selection event.
+        root.on('change', '#question_comment_version_dropdown', function(e) {
+            args.questionid = e.target.value;
+            modal.setBody(Fragment.loadFragment('qbank_comment', 'question_comment', contextId, args));
         });
 
         // Get the required strings and updated the modal button text labels.
@@ -99,12 +104,9 @@ const commentEvent = (questionId, courseID, contextId) => {
  * @param {string} questionSelector the question comment identifier.
  */
 export const init = (questionSelector) => {
-    let target = document.querySelector(questionSelector);
-    let contextId = 1;
-    let questionId = target.getAttribute('data-questionid'),
-        courseID = target.getAttribute('data-courseid');
+    const target = document.querySelector(questionSelector);
     target.addEventListener('click', () => {
         // Call for the event listener to listed for clicks in any comment count row.
-        commentEvent(questionId, courseID, contextId);
+        commentEvent(target.dataset.questionid, target.dataset.courseid, target.dataset.contextid);
     });
 };

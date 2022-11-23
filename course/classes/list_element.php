@@ -336,7 +336,7 @@ class core_course_list_element implements IteratorAggregate {
      *
      * @return ArrayIterator
      */
-    public function getIterator() {
+    public function getIterator(): Traversable {
         $ret = array('id' => $this->record->id);
         foreach ($this->record as $property => $value) {
             $ret[$property] = $value;

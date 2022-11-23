@@ -14,30 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests that walks a question through the deferred feedback
- * with certainty base marking behaviour.
- *
- * @package    qbehaviour
- * @subpackage deferredcbm
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qbehaviour_deferredcbm;
 
+use question_cbm;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once(__DIR__ . '/../../../engine/lib.php');
 
-
 /**
  * Unit tests for the deferred feedback with certainty base marking behaviour.
  *
+ * @package    qbehaviour_deferredcbm
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_deferredcbm_cbm_test extends basic_testcase {
+class question_cbm_test extends \basic_testcase {
 
     public function test_adjust_fraction() {
         $this->assertEqualsWithDelta( 1,   question_cbm::adjust_fraction( 1,    question_cbm::LOW), 0.0000001);

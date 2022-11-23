@@ -20,6 +20,7 @@ Feature: A teacher can edit questions in the question bank
     And the following "questions" exist:
       | questioncategory | qtype | name                       | questiontext                  |
       | Test questions   | essay | Test question to be edited | Write about whatever you want |
+    And I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
 
   Scenario: Edit a previously created question
     When I am on the "Test question to be edited" "core_question > edit" page logged in as "teacher1"
@@ -82,9 +83,9 @@ Feature: A teacher can edit questions in the question bank
       | questioncategory | qtype       | name            | questiontext    |
       | Test questions   | missingtype | Broken question | Write something |
     When I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
-    Then "Edit question" "link" should not exist in the "Broken question" "table_row"
-    And "Duplicate" "link" should not exist in the "Broken question" "table_row"
-    And "Manage tags" "link" should exist in the "Broken question" "table_row"
-    And "Preview" "link" should not exist in the "Broken question" "table_row"
-    And "Delete" "link" should exist in the "Broken question" "table_row"
-    And "Export as Moodle XML" "link" should not exist in the "Broken question" "table_row"
+    Then the "Edit question" item should not exist in the "Edit" action menu of the "Broken question" "table_row"
+    And the "Duplicate" item should not exist in the "Edit" action menu of the "Broken question" "table_row"
+    And the "Preview" item should not exist in the "Edit" action menu of the "Broken question" "table_row"
+    And the "Export as XML" item should not exist in the "Edit" action menu of the "Broken question" "table_row"
+    And the "Manage tags" item should exist in the "Edit" action menu of the "Broken question" "table_row"
+    And the "Delete" item should exist in the "Edit" action menu of the "Broken question" "table_row"

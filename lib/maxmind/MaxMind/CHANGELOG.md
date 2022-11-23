@@ -1,6 +1,14 @@
 CHANGELOG
 =========
 
+1.11.0
+-------------------
+
+* Replace runtime define of a constant to facilitate opcache preloading.
+  Reported by vedadkajtaz. GitHub #134.
+* Resolve minor issue found by the Clang static analyzer in the C
+  extension.
+
 1.10.1 (2021-04-14)
 -------------------
 

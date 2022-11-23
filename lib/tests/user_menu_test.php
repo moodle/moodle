@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
 /**
  * Tests user menu functionality.
  *
@@ -21,7 +23,7 @@
  * @copyright  2015 Jetha Chan <jetha@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_user_menu_testcase extends advanced_testcase {
+class user_menu_test extends \advanced_testcase {
 
     /**
      * Custom user menu data for the test_custom_user_menu test.

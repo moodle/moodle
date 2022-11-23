@@ -14,6 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_quiz;
+
+use core_question\local\bank\question_edit_contexts;
+use mod_quiz\question\bank\custom_view;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/question/editlib.php');
+
 /**
  * Unit tests for the quiz's own question bank view class.
  *
@@ -22,20 +32,7 @@
  * @copyright  2018 the Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/question/editlib.php');
-
-
-/**
- * Unit tests for the quiz's own question bank view class.
- *
- * @copyright  2018 the Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class quiz_question_bank_view_testcase extends advanced_testcase {
+class quiz_question_bank_view_test extends \advanced_testcase {
 
     public function test_viewing_question_bank_should_not_load_individual_questions() {
         $this->resetAfterTest();
@@ -47,21 +44,21 @@ class quiz_question_bank_view_testcase extends advanced_testcase {
         // Create a course and a quiz.
         $course = $generator->create_course();
         $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
-        $context = context_module::instance($quiz->cmid);
+        $context = \context_module::instance($quiz->cmid);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id);
 
         // Create a question in the default category.
-        $contexts = new core_question\local\bank\question_edit_contexts($context);
+        $contexts = new question_edit_contexts($context);
         $cat = question_make_default_categories($contexts->all());
         $questiondata = $questiongenerator->create_question('numerical', null,
                 ['name' => 'Example question', 'category' => $cat->id]);
 
         // Ensure the question is not in the cache.
-        $cache = cache::make('core', 'questiondata');
+        $cache = \cache::make('core', 'questiondata');
         $cache->delete($questiondata->id);
 
         // Generate the view.
-        $view = new mod_quiz\question\bank\custom_view($contexts, new moodle_url('/'), $course, $cm, $quiz);
+        $view = new custom_view($contexts, new \moodle_url('/'), $course, $cm, $quiz);
         ob_start();
         $pagevars = [
             'qpage' => 0,

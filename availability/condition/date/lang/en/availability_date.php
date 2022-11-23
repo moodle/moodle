@@ -28,6 +28,7 @@ $string['direction_from'] = 'from';
 $string['direction_label'] = 'Direction';
 $string['direction_until'] = 'until';
 $string['description'] = 'Prevent access until (or from) a specified date and time.';
+$string['error_dateconflict'] = 'Conflicts with other date restrictions';
 $string['full_from'] = 'It is after <strong>{$a}</strong>';
 $string['full_from_date'] = 'It is on or after <strong>{$a}</strong>';
 $string['full_until'] = 'It is before <strong>{$a}</strong>';

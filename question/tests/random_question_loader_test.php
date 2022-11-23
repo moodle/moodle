@@ -14,24 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_question;
+
+use qubaid_list;
+use question_bank;
+use question_engine;
+
 /**
  * Tests for the {@see core_question\local\bank\random_question_loader} class.
  *
  * @package   core_question
- * @copyright 2015 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-
-/**
- * Tests for the {@see core_question\local\bank\random_question_loader} class.
- *
  * @copyright  2015 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class random_question_loader_testcase extends advanced_testcase {
+class random_question_loader_test extends \advanced_testcase {
 
     public function test_empty_category_gives_null() {
         $this->resetAfterTest();
@@ -168,7 +164,7 @@ class random_question_loader_testcase extends advanced_testcase {
         $cat = $generator->create_question_category();
         $question1 = $generator->create_question('shortanswer', null, ['category' => $cat->id]);
         $question2 = $generator->create_question('shortanswer', null, ['category' => $cat->id]);
-        $quba = question_engine::make_questions_usage_by_activity('test', context_system::instance());
+        $quba = question_engine::make_questions_usage_by_activity('test', \context_system::instance());
         $quba->set_preferred_behaviour('deferredfeedback');
         $question = question_bank::load_question($question2->id);
         $quba->add_question($question);
@@ -317,8 +313,8 @@ class random_question_loader_testcase extends advanced_testcase {
                 'subcat',
                 'foo'
         ];
-        $collid = core_tag_collection::get_default();
-        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $collid = \core_tag_collection::get_default();
+        $tags = \core_tag_tag::create_if_missing($collid, $tagnames);
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
         // First category and questions.
@@ -527,8 +523,8 @@ class random_question_loader_testcase extends advanced_testcase {
                 'subcat',
                 'foo'
         ];
-        $collid = core_tag_collection::get_default();
-        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $collid = \core_tag_collection::get_default();
+        $tags = \core_tag_tag::create_if_missing($collid, $tagnames);
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
         // First category and questions.
@@ -589,8 +585,8 @@ class random_question_loader_testcase extends advanced_testcase {
         }
 
         if (!empty($tagnames) && !empty($questions)) {
-            $context = context::instance_by_id($category->contextid);
-            core_tag_tag::set_item_tags('core_question', 'question', $questions[0]->id, $context, $tagnames);
+            $context = \context::instance_by_id($category->contextid);
+            \core_tag_tag::set_item_tags('core_question', 'question', $questions[0]->id, $context, $tagnames);
         }
 
         return [$category, $questions];

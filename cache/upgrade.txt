@@ -1,6 +1,14 @@
 This files describes API changes in /cache/stores/* - cache store plugins.
 Information provided here is intended especially for developers.
 
+=== 4.1 ===
+* Added new `requirelockingbeforewrite` option for cache definitions. This will check that a lock for a given cache key already
+  exists before it will perform a `set()` on that key. A `coding_exception` is thrown if the lock has not been acquired.
+* Added native locking to cachestore_file. This will use an instance of file_lock_factory pointing at a subdirectory in the same
+  location as the cache instance, meaning a local file cache will have its locks stored locally. If file locks are disabled
+  globally, it will fall back to use the default lock factory, which may not be in the same location as the cache. cachestore_file
+  includes an additional setting to control how long it will wait for a lock before giving up, default is 60 seconds.
+
 === 4.0 ===
 * Cache stores may implement new optional function cache_store::get_last_io_bytes() to provide
   information about the size of data transferred (shown in footer if performance info enabled).

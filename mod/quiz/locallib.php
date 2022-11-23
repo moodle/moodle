@@ -2266,12 +2266,17 @@ function quiz_require_question_use($questionid) {
 
 /**
  * Verify that the question exists, and the user has permission to use it.
+ *
+ * @deprecated in 4.1 use mod_quiz\structure::has_use_capability(...) instead.
+ *
  * @param object $quiz the quiz settings.
  * @param int $slot which question in the quiz to test.
  * @return bool whether the user can use this question.
  */
 function quiz_has_question_use($quiz, $slot) {
     global $DB;
+
+    debugging('Deprecated. Please use mod_quiz\structure::has_use_capability instead.');
 
     $sql = 'SELECT q.*
               FROM {quiz_slots} slot

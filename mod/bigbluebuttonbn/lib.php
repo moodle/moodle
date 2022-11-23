@@ -99,6 +99,8 @@ function bigbluebuttonbn_add_instance($bigbluebuttonbn) {
     $bigbluebuttonbn->presentation = files::save_media_file($bigbluebuttonbn);
     // Encode meetingid.
     $bigbluebuttonbn->meetingid = meeting::get_unique_meetingid_seed();
+    [$bigbluebuttonbn->guestlinkuid, $bigbluebuttonbn->guestpassword] =
+        \mod_bigbluebuttonbn\plugin::generate_guest_meeting_credentials();
     // Insert a record.
     $bigbluebuttonbn->id = $DB->insert_record('bigbluebuttonbn', $bigbluebuttonbn);
     // Log insert action.
@@ -125,6 +127,10 @@ function bigbluebuttonbn_update_instance($bigbluebuttonbn) {
     $bigbluebuttonbn->id = $bigbluebuttonbn->instance;
     $bigbluebuttonbn->presentation = files::save_media_file($bigbluebuttonbn);
 
+    if (empty($bigbluebuttonbn->guestjoinurl) || empty($bigbluebuttonbn->guestpassword)) {
+        [$bigbluebuttonbn->guestlinkuid, $bigbluebuttonbn->guestpassword] =
+            \mod_bigbluebuttonbn\plugin::generate_guest_meeting_credentials();
+    }
     // Update a record.
     $DB->update_record('bigbluebuttonbn', $bigbluebuttonbn);
 
@@ -159,18 +165,30 @@ function bigbluebuttonbn_delete_instance($id) {
     try {
         $meeting = new meeting($instance);
         $meeting->end_meeting();
-        $groups = groups_get_course_group($instance->get_course());
-        if ($groups) {
-            foreach ($groups as $group) {
-                $instance->set_group_id($group->id);
-                $meeting = new meeting($instance);
-                $meeting->end_meeting();
-            }
-        }
     } catch (moodle_exception $e) {
         // Do not log any issue when testing.
         if (!(defined('PHPUNIT_TEST') && PHPUNIT_TEST) && !defined('BEHAT_SITE_RUNNING')) {
-            debugging($e->getMessage(), DEBUG_NORMAL, $e->getTrace());
+            debugging($e->getMessage(), DEBUG_DEVELOPER, $e->getTrace());
+        }
+    }
+    // Get all possible groups (course and course module).
+    $groupids = [];
+    if (groups_get_activity_groupmode($instance->get_cm())) {
+        $coursegroups = groups_get_activity_allowed_groups($instance->get_cm());
+        $groupids = array_map(
+            function($gp) {
+                return $gp->id;
+            },
+            $coursegroups);
+    }
+    // End all meetings for all groups.
+    foreach ($groupids as $groupid) {
+        try {
+            $instance->set_group_id($groupid);
+            $meeting = new meeting($instance);
+            $meeting->end_meeting();
+        } catch (moodle_exception $e) {
+            debugging($e->getMessage() . ' for group ' . $groupid, DEBUG_NORMAL, $e->getTrace());
         }
     }
 
@@ -337,7 +355,14 @@ function bigbluebuttonbn_get_coursemodule_info($coursemodule) {
     global $DB;
 
     $dbparams = ['id' => $coursemodule->instance];
-    $fields = 'id, name, intro, introformat, completionattendance';
+    $customcompletionfields = custom_completion::get_defined_custom_rules();
+    $fieldsarray = array_merge([
+        'id',
+        'name',
+        'intro',
+        'introformat',
+    ], $customcompletionfields);
+    $fields = join(',', $fieldsarray);
     $bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', $dbparams, $fields);
     if (!$bigbluebuttonbn) {
         return null;
@@ -350,7 +375,10 @@ function bigbluebuttonbn_get_coursemodule_info($coursemodule) {
     }
     // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
     if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
-        $info->customdata['customcompletionrules']['completionattendance'] = $bigbluebuttonbn->completionattendance;
+        foreach ($customcompletionfields as $completiontype) {
+            $info->customdata['customcompletionrules'][$completiontype] =
+                $bigbluebuttonbn->$completiontype ?? 0;
+        }
     }
 
     return $info;
@@ -675,7 +703,7 @@ function bigbluebuttonbn_print_recent_activity(object $course, bool $viewfullnam
         if ($logs) {
             echo $OUTPUT->heading(get_string('new_bigblubuttonbn_activities', 'bigbluebuttonbn') . ':', 6);
             foreach ($logs as $log) {
-                $activityurl = new moodle_url('/mod/bigbluebuttonbn/index.php', ['id' => $instance->get_instance_id()]);
+                $activityurl = new moodle_url('/mod/bigbluebuttonbn/index.php', ['id' => $course->id]);
                 print_recent_activity_note($log->timecreated,
                     $log,
                     logger::get_printable_event_name($log) . ' - ' . $instance->get_meeting_name(),

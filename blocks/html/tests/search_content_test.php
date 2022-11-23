@@ -137,11 +137,9 @@ class search_content_test extends \advanced_testcase {
             $this->assertCount(0, $doc->get_files());
             $area->attach_files($doc);
             $files = $doc->get_files();
-            $this->assertCount(2, $files);
+            // The directory entry should NOT be provided for indexing.
+            $this->assertCount(1, $files);
             foreach ($files as $file) {
-                if ($file->is_directory()) {
-                    continue;
-                }
                 $this->assertEquals('file.txt', $file->get_filename());
                 $this->assertEquals('File content', $file->get_content());
             }

@@ -14,13 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for the matching question type backup and restore logic.
- *
- * @package   qtype_match
- * @copyright 2020 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
- */
+namespace qtype_match;
+
+use question_bank;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -29,11 +25,14 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 require_once($CFG->dirroot . '/course/externallib.php');
 
-
 /**
  * Tests for the matching question type backup and restore logic.
+ *
+ * @package   qtype_match
+ * @copyright 2020 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class qtype_match_backup_testcase extends advanced_testcase {
+class backup_test extends \advanced_testcase {
 
     /**
      * Duplicate quiz with a matching question, and check it worked.
@@ -49,7 +48,7 @@ class qtype_match_backup_testcase extends advanced_testcase {
         // Create a course with a page that embeds a question.
         $course = $coregenerator->create_course();
         $quiz = $coregenerator->create_module('quiz', ['course' => $course->id]);
-        $quizcontext = context_module::instance($quiz->cmid);
+        $quizcontext = \context_module::instance($quiz->cmid);
 
         $cat = $questiongenerator->create_question_category(['contextid' => $quizcontext->id]);
         $question = $questiongenerator->create_question('match', 'trickynums', ['category' => $cat->id]);

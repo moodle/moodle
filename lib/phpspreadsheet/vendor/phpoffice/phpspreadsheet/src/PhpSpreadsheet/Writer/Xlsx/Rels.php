@@ -67,12 +67,13 @@ class Rels extends WriterPart
             'xl/workbook.xml'
         );
         // a custom UI in workbook ?
+        $target = $spreadsheet->getRibbonXMLData('target');
         if ($spreadsheet->hasRibbon()) {
             $this->writeRelationShip(
                 $objWriter,
                 5,
                 'http://schemas.microsoft.com/office/2006/relationships/ui/extensibility',
-                $spreadsheet->getRibbonXMLData('target')
+                is_string($target) ? $target : ''
             );
         }
 
@@ -163,10 +164,11 @@ class Rels extends WriterPart
      *
      * @param int $worksheetId
      * @param bool $includeCharts Flag indicating if we should write charts
+     * @param int $tableRef Table ID
      *
      * @return string XML Output
      */
-    public function writeWorksheetRelationships(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet, $worksheetId = 1, $includeCharts = false)
+    public function writeWorksheetRelationships(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet, $worksheetId = 1, $includeCharts = false, $tableRef = 1)
     {
         // Create XML writer
         $objWriter = null;
@@ -252,6 +254,17 @@ class Rels extends WriterPart
             );
         }
 
+        // Write Table
+        $tableCount = $worksheet->getTableCollection()->count();
+        for ($i = 1; $i <= $tableCount; ++$i) {
+            $this->writeRelationship(
+                $objWriter,
+                '_table_' . $i,
+                'http://schemas.openxmlformats.org/officeDocument/2006/relationships/table',
+                '../tables/table' . $tableRef++ . '.xml'
+            );
+        }
+
         // Write header/footer relationship?
         $i = 1;
         if (count($worksheet->getHeaderFooter()->getImages()) > 0) {
@@ -272,7 +285,7 @@ class Rels extends WriterPart
         return $objWriter->getData();
     }
 
-    private function writeUnparsedRelationship(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet, XMLWriter $objWriter, $relationship, $type): void
+    private function writeUnparsedRelationship(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet, XMLWriter $objWriter, string $relationship, string $type): void
     {
         $unparsedLoadedData = $worksheet->getParent()->getUnparsedLoadedData();
         if (!isset($unparsedLoadedData['sheets'][$worksheet->getCodeName()][$relationship])) {
@@ -436,7 +449,7 @@ class Rels extends WriterPart
     /**
      * Write Override content type.
      *
-     * @param int $id Relationship ID. rId will be prepended!
+     * @param int|string $id Relationship ID. rId will be prepended!
      * @param string $type Relationship type
      * @param string $target Relationship target
      * @param string $targetMode Relationship target mode

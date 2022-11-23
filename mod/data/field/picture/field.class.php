@@ -1,34 +1,54 @@
 <?php
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999-onwards Moodle Pty Ltd  http://moodle.com          //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Class picture field for database activity
+ *
+ * @package    datafield_picture
+ * @copyright  2005 Martin Dougiamas
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 class data_field_picture extends data_field_base {
     var $type = 'picture';
     var $previewwidth  = 50;
     var $previewheight = 50;
 
+    public function supports_preview(): bool {
+        return true;
+    }
+
+    public function get_data_content_preview(int $recordid): stdClass {
+        return (object)[
+            'id' => 0,
+            'fieldid' => $this->field->id,
+            'recordid' => $recordid,
+            'content' => 'datafield_picture/preview',
+            'content1' => get_string('sample', 'datafield_picture'),
+            'content2' => null,
+            'content3' => null,
+            'content4' => null,
+        ];
+    }
+
     function display_add_field($recordid = 0, $formdata = null) {
         global $CFG, $DB, $OUTPUT, $USER, $PAGE;
+
+        // Necessary for the constants used in args.
+        require_once($CFG->dirroot . '/repository/lib.php');
 
         $file        = false;
         $content     = false;
@@ -158,32 +178,43 @@ class data_field_picture extends data_field_base {
     }
 
     function display_browse_field($recordid, $template) {
-        global $CFG, $DB;
+        global $OUTPUT;
 
-        if (!$content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
-            return false;
-        }
+        $content = $this->get_data_content($recordid);
 
-        if (empty($content->content)) {
+        if (!$content || empty($content->content)) {
             return '';
         }
 
         $alt   = $content->content1;
         $title = $alt;
 
-        if ($template == 'listtemplate') {
-            $src = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/mod_data/content/'.$content->id.'/'.'thumb_'.$content->content);
-            // no need to add width/height, because the thumb is resized properly
-            $str = '<a href="view.php?d='.$this->field->dataid.'&amp;rid='.$recordid.'"><img src="'.$src.'" alt="'.s($alt).'" title="'.s($title).'" class="list_picture"/></a>';
+        $width  = $this->field->param1 ? ' width="' . s($this->field->param1) . '" ' : ' ';
+        $height = $this->field->param2 ? ' height="' . s($this->field->param2) . '" ' : ' ';
 
-        } else {
-            $src = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/mod_data/content/'.$content->id.'/'.$content->content);
-            $width  = $this->field->param1 ? ' width="'.s($this->field->param1).'" ':' ';
-            $height = $this->field->param2 ? ' height="'.s($this->field->param2).'" ':' ';
-            $str = '<a href="'.$src.'"><img '.$width.$height.' src="'.$src.'" alt="'.s($alt).'" title="'.s($title).'" class="list_picture"/></a>';
+        if ($this->preview) {
+            $imgurl = $OUTPUT->image_url('sample', 'datafield_picture');
+            return '<img ' . $width . $height . ' src="' . $imgurl . '" alt="' . s($alt) . '" class="list_picture"/>';
         }
 
-        return $str;
+        if ($template == 'listtemplate') {
+            $filename = 'thumb_' . $content->content;
+            // Thumbnails are already converted to the correct width and height.
+            $width = '';
+            $height = '';
+            $url = new moodle_url('/mod/data/view.php', ['d' => $this->field->dataid, 'rid' => $recordid]);
+        } else {
+            $filename = $content->content;
+            $url = null;
+        }
+        $imgurl = moodle_url::make_pluginfile_url($this->context->id, 'mod_data', 'content', $content->id, '/', $filename);
+
+        if (!$url) {
+            $url = $imgurl;
+        }
+        $img = '<img ' . $width . $height . ' src="' . $imgurl->out() . '" alt="' . s($alt) .
+            '" title="' . s($title) . '" class="list_picture"/>';
+        return '<a class="data-field-link" href="' . $url->out() . '">' . $img . '</a>';
     }
 
     function update_field() {

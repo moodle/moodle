@@ -61,6 +61,16 @@ if ($hassiteconfig) {
     $temp->add($setting);
     $temp->add(new admin_setting_configtext('supportpage', new lang_string('supportpage', 'admin'),
         new lang_string('configsupportpage', 'admin'), '', PARAM_URL));
+    $temp->add(new admin_setting_configselect('supportavailability', new lang_string('supportavailability', 'admin'),
+        new lang_string('configsupportavailability', 'admin'), CONTACT_SUPPORT_AUTHENTICATED,
+        [
+            CONTACT_SUPPORT_ANYONE => new lang_string('availabletoanyone', 'admin'),
+            CONTACT_SUPPORT_AUTHENTICATED => new lang_string('availabletoauthenticated', 'admin'),
+            CONTACT_SUPPORT_DISABLED => new lang_string('disabled', 'admin'),
+        ]
+    ));
+
+
     $ADMIN->add('server', $temp);
 
     // Session handling.
@@ -442,8 +452,34 @@ if ($hassiteconfig) {
         'CRAM-MD5' => 'CRAM-MD5',
     ];
 
+    // Get all the issuers.
+    $issuers = \core\oauth2\api::get_all_issuers();
+    $enabledissuers = [];
+    foreach ($issuers as $issuer) {
+        // Get the enabled issuer only.
+        if ($issuer->get('enabled')) {
+            $enabledissuers[] = $issuer;
+        }
+    }
+
+    if (count($enabledissuers) > 0) {
+        $authtypeoptions['XOAUTH2'] = 'XOAUTH2';
+    }
+
     $temp->add(new admin_setting_configselect('smtpauthtype', new lang_string('smtpauthtype', 'admin'),
         new lang_string('configsmtpauthtype', 'admin'), 'LOGIN', $authtypeoptions));
+
+    if (count($enabledissuers) > 0) {
+        $oauth2services = [
+            '' => new lang_string('none', 'admin'),
+        ];
+        foreach ($enabledissuers as $issuer) {
+            $oauth2services[$issuer->get('id')] = s($issuer->get('name'));
+        }
+
+        $temp->add(new admin_setting_configselect('smtpoauthservice', new lang_string('issuer', 'auth_oauth2'),
+            new lang_string('configsmtpoauthservice', 'admin'), '', $oauth2services));
+    }
 
     $temp->add(new admin_setting_configtext('smtpuser', new lang_string('smtpuser', 'admin'),
         new lang_string('configsmtpuser', 'admin'), '', PARAM_NOTAGS));

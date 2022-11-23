@@ -40,5 +40,5 @@ interface filterable_items {
      * @param mixed $item (user or grade_item)
      * @return bool
      */
-    public static function filter($item);
+    public static function filter($item): bool;
 }

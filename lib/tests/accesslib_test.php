@@ -1971,6 +1971,157 @@ class accesslib_test extends advanced_testcase {
     }
 
     /**
+     * Utility method to fake a plugin
+     *
+     * @param string $pluginname plugin name
+     * @return void
+     */
+    protected function setup_fake_plugin($pluginname) {
+        global $CFG;
+        // Here we have to hack the component loader so we can insert our fake plugin and test that
+        // the access.php works.
+        $mockedcomponent = new ReflectionClass(core_component::class);
+        $mockedplugins = $mockedcomponent->getProperty('plugins');
+        $mockedplugins->setAccessible(true);
+        $plugins = $mockedplugins->getValue();
+        $plugins['fake'] = [$pluginname => "{$CFG->dirroot}/lib/tests/fixtures/fakeplugins/$pluginname"];
+        $mockedplugins->setValue($plugins);
+        update_capabilities('fake_access');
+        $this->resetDebugging(); // We have debugging messages here that we need to get rid of.
+        // End of the component loader mock.
+    }
+
+    /**
+     * Test get_deprecated_capability_info()
+     *
+     * @covers ::get_deprecated_capability_info
+     */
+    public function test_get_deprecated_capability_info() {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+        $this->setup_fake_plugin('access');
+
+        // For now we have deprecated fake/access:fakecapability.
+        $capinfo = get_deprecated_capability_info('fake/access:fakecapability');
+        $this->assertNotEmpty($capinfo);
+        $this->assertEquals("The capability 'fake/access:fakecapability' is"
+            . " deprecated.This capability should not be used anymore.", $capinfo['fullmessage']);
+    }
+
+    /**
+     * Test get_deprecated_capability_info() through has_capability
+     *
+     * @covers ::get_deprecated_capability_info
+     */
+    public function test_get_deprecated_capability_info_through_has_capability() {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+        $this->setup_fake_plugin('access');
+
+        // For now we have deprecated fake/access:fakecapability.
+        $hascap = has_capability('fake/access:fakecapability', $coursecontext, $user);
+        $this->assertTrue($hascap);
+        $this->assertDebuggingCalled("The capability 'fake/access:fakecapability' is deprecated."
+            . "This capability should not be used anymore.");
+    }
+
+    /**
+     * Test get_deprecated_capability_info() through get_user_capability_contexts()
+     *
+     * @covers ::get_deprecated_capability_info
+     */
+    public function test_get_deprecated_capability_info_through_get_user_capability_contexts() {
+        $this->resetAfterTest();
+        $category = $this->getDataGenerator()->create_category();
+        $course = $this->getDataGenerator()->create_course(['categoryid' => $category->id]);
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+        $this->setup_fake_plugin('access');
+
+        // For now we have deprecated fake/access:fakecapability.
+        list($categories, $courses) = get_user_capability_contexts('fake/access:fakecapability', false, $user->id);
+        $this->assertNotEmpty($courses);
+        $this->assertDebuggingCalled("The capability 'fake/access:fakecapability' is deprecated."
+                . "This capability should not be used anymore.");
+    }
+
+    /**
+     * Test get_deprecated_capability_info with a capability that does not exist
+     *
+     * @param string $capability the capability name
+     * @param array $debugmessages the debug messsages we expect
+     * @param bool $expectedexisting does the capability exist
+     * @covers ::get_deprecated_capability_info
+     * @dataProvider deprecated_capabilities_use_cases
+     */
+    public function test_get_deprecated_capability_specific_cases(string $capability, array $debugmessages,
+        bool $expectedexisting) {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+        $this->setup_fake_plugin('access');
+
+        // For now we have deprecated fake/access:fakecapability.
+        $this->resetDebugging();
+        $hascap = has_capability($capability, $coursecontext, $user);
+        $this->assertEquals($expectedexisting, $hascap);
+        $this->assertDebuggingCalledCount(count($debugmessages), $debugmessages);
+    }
+
+    /**
+     * Specific use case for deprecated capabilities
+     *
+     * @return array
+     */
+    public function deprecated_capabilities_use_cases() {
+        return [
+            'capability missing' => [
+                'fake/access:missingcapability',
+                [
+                    "Capability \"fake/access:missingcapability\" was not found! This has to be fixed in code."
+                ],
+                false
+            ],
+            'replacement no info' => [
+                'fake/access:replacementnoinfo',
+                [
+                    "The capability 'fake/access:replacementnoinfo' is deprecated.",
+                ],
+                true
+            ],
+            'replacement missing' => [
+                'fake/access:replacementmissing',
+                [
+                    "The capability 'fake/access:replacementmissing' is deprecated.This capability should not be used anymore.",
+                ],
+                true
+            ],
+            'replacement with non existing cap' => [
+                'fake/access:replacementwithwrongcapability',
+                [
+                    "Capability 'fake/access:replacementwithwrongcapability' was supposed to be replaced with"
+                    . " 'fake/access:nonexistingcapabilty', which does not exist !",
+                    "The capability 'fake/access:replacementwithwrongcapability' is deprecated."
+                    . "This capability should not be used anymore.It will be replaced by 'fake/access:nonexistingcapabilty'."
+                ],
+                true
+            ],
+            'replacement with existing' => [
+                'fake/access:replacementwithexisting', // Existing capability buf for a different role.
+                [
+                    "The capability 'fake/access:replacementwithexisting' is deprecated.This capability should not be used anymore."
+                    . "It will be replaced by 'fake/access:existingcapability'.",
+                ],
+                false // As the capability is applied to managers, we should not have this capability for this simple user.
+            ],
+        ];
+    }
+
+    /**
      * Test that assigning a fake cap does not return.
      *
      * @covers ::get_users_by_capability

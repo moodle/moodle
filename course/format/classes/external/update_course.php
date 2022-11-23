@@ -72,22 +72,22 @@ class update_course extends external_api {
 
     /**
      * This webservice will execute any action from the course editor. The default actions
-     * are located in core_course\stateactions but the format plugin can extend that class
+     * are located in {@see \core_courseformat\stateactions} but the format plugin can extend that class
      * in format_XXX\course.
      *
-     * The specific action methods will register in a core_course\stateupdates all the affected
-     * sections, cms and course attribute. This object (in JSON) will be send back to the
+     * The specific action methods will register in a {@see \core_courseformat\stateupdates} all the affected
+     * sections, cms and course attribute. This object (in JSON) will be sent back to the
      * frontend editor to refresh the updated state elements.
      *
-     * By default, core_course\stateupdates will register only create, delete and update events
+     * By default, {@see \core_courseformat\stateupdates} will register only create, delete and update events
      * on cms, sections and the general course data. However, if some plugin needs adhoc messages for
-     * its own mutation module, it extend this class in format_XXX\course.
+     * its own mutation module, extend this class in format_XXX\course.
      *
      * @param string $action the action name to execute
      * @param int $courseid the course id
      * @param int[] $ids the affected ids (section or cm depending on the action)
-     * @param int $targetsectionid optional target section id (for move action)
-     * @param int $targetcmid optional target cm id (for move action)
+     * @param int|null $targetsectionid optional target section id (for move action)
+     * @param int|null $targetcmid optional target cm id (for move action)
      * @return string Course state in JSON
      */
     public static function execute(string $action, int $courseid, array $ids = [],

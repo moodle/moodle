@@ -82,5 +82,16 @@ function xmldb_assignfeedback_editpdf_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022061000, 'assignfeedback', 'editpdf');
     }
 
+    if ($oldversion < 2022082200) {
+        // Conversion records need to be removed in order for conversions to restart.
+        $DB->delete_records('file_conversion');
+
+        // Schedule an adhoc task to fix existing stale conversions.
+        $task = new \assignfeedback_editpdf\task\bump_submission_for_stale_conversions();
+        \core\task\manager::queue_adhoc_task($task);
+
+        upgrade_plugin_savepoint(true, 2022082200, 'assignfeedback', 'editpdf');
+    }
+
     return true;
 }

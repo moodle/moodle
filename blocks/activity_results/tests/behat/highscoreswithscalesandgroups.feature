@@ -1,4 +1,4 @@
-@block @block_activity_results
+@block @block_activity_results @javascript
 Feature: The activity results block displays student in group high scores as scales
   In order to be display student scores as scales
   As a user
@@ -53,7 +53,7 @@ Feature: The activity results block displays student in group high scores as sca
       | Scale | Disappointing, Not good enough, Average, Good, Very good, Excellent! |
     And I press "Save changes"
     And I am on "Course 1" course homepage
-    And I follow "Test assignment"
+    And I am on the "Test assignment" "assign activity" page
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | assignsubmission_file_enabled | 0 |

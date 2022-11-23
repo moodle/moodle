@@ -161,7 +161,7 @@ class primary extends view {
             if ($node->key && ($activekey === $node->key)) {
                 return $node;
             }
-        } else if ($node->check_if_active(URL_MATCH_BASE)) {
+        } else if ($node->check_if_active()) {
             return $node;
         }
 

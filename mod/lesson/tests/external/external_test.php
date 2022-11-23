@@ -142,8 +142,8 @@ class external_test extends externallib_advanced_testcase {
 
         // Create what we expect to be returned when querying the two courses.
         // First for the student user.
-        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'practice',
-                                'modattempts', 'usepassword', 'grade', 'custom', 'ongoing', 'usemaxgrade',
+        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'lang',
+                                'practice', 'modattempts', 'usepassword', 'grade', 'custom', 'ongoing', 'usemaxgrade',
                                 'maxanswers', 'maxattempts', 'review', 'nextpagedefault', 'feedback', 'minquestions',
                                 'maxpages', 'timelimit', 'retake', 'mediafile', 'mediafiles', 'mediaheight', 'mediawidth',
                                 'mediaclose', 'slideshow', 'width', 'height', 'bgcolor', 'displayleft', 'displayleftif',
@@ -155,11 +155,13 @@ class external_test extends externallib_advanced_testcase {
         $lesson1->introformat = 1;
         $lesson1->introfiles = [];
         $lesson1->mediafiles = [];
+        $lesson1->lang = '';
 
         $lesson2->coursemodule = $lesson2->cmid;
         $lesson2->introformat = 1;
         $lesson2->introfiles = [];
         $lesson2->mediafiles = [];
+        $lesson2->lang = '';
 
         $booltypes = array('practice', 'modattempts', 'usepassword', 'custom', 'ongoing', 'review', 'feedback', 'retake',
             'slideshow', 'displayleft', 'progressbar', 'allowofflineattempts');
@@ -1322,7 +1324,7 @@ class external_test extends externallib_advanced_testcase {
         // Lesson not using password.
         $result = mod_lesson_external::get_lesson($this->lesson->id);
         $result = \external_api::clean_returnvalue(mod_lesson_external::get_lesson_returns(), $result);
-        $this->assertCount(36, $result['lesson']);  // Expect most of the fields.
+        $this->assertCount(37, $result['lesson']);  // Expect most of the fields.
         $this->assertFalse(isset($result['password']));
     }
 
@@ -1340,7 +1342,7 @@ class external_test extends externallib_advanced_testcase {
         // Lesson not using password.
         $result = mod_lesson_external::get_lesson($this->lesson->id);
         $result = \external_api::clean_returnvalue(mod_lesson_external::get_lesson_returns(), $result);
-        $this->assertCount(6, $result['lesson']);   // Expect just this few fields.
+        $this->assertCount(7, $result['lesson']);   // Expect just this few fields.
         $this->assertFalse(isset($result['intro']));
     }
 
@@ -1358,7 +1360,7 @@ class external_test extends externallib_advanced_testcase {
         // Lesson not using password.
         $result = mod_lesson_external::get_lesson($this->lesson->id, $password);
         $result = \external_api::clean_returnvalue(mod_lesson_external::get_lesson_returns(), $result);
-        $this->assertCount(36, $result['lesson']);
+        $this->assertCount(37 , $result['lesson']);
         $this->assertFalse(isset($result['intro']));
     }
 
@@ -1376,7 +1378,7 @@ class external_test extends externallib_advanced_testcase {
         // Lesson not passing a valid password (but we are teachers, we should see all the info).
         $result = mod_lesson_external::get_lesson($this->lesson->id);
         $result = \external_api::clean_returnvalue(mod_lesson_external::get_lesson_returns(), $result);
-        $this->assertCount(45, $result['lesson']);  // Expect all the fields.
+        $this->assertCount(46, $result['lesson']);  // Expect all the fields.
         $this->assertEquals($result['lesson']['password'], $password);
     }
 }

@@ -44,6 +44,9 @@ class pgsql_native_moodle_database extends moodle_database {
         query_end as read_slave_query_end;
     }
 
+    /** @var array $serverinfo cache */
+    private $serverinfo = [];
+
     /** @var array $dbhcursor keep track of open cursors */
     private $dbhcursor = [];
 
@@ -315,12 +318,12 @@ class pgsql_native_moodle_database extends moodle_database {
     /**
      * Called before each db query.
      * @param string $sql
-     * @param array array of parameters
+     * @param array|null $params An array of parameters.
      * @param int $type type of query
      * @param mixed $extrainfo driver specific extra information
      * @return void
      */
-    protected function query_start($sql, array $params=null, $type, $extrainfo=null) {
+    protected function query_start($sql, ?array $params, $type, $extrainfo=null) {
         $this->read_slave_query_start($sql, $params, $type, $extrainfo);
         // pgsql driver tends to send debug to output, we do not need that.
         $this->last_error_reporting = error_reporting(0);
@@ -336,7 +339,12 @@ class pgsql_native_moodle_database extends moodle_database {
         error_reporting($this->last_error_reporting);
         try {
             $this->read_slave_query_end($result);
-            if ($this->savepointpresent and $this->last_type != SQL_QUERY_AUX and $this->last_type != SQL_QUERY_SELECT) {
+            if ($this->savepointpresent &&
+                    !in_array(
+                        $this->last_type,
+                        [SQL_QUERY_AUX, SQL_QUERY_AUX_READONLY, SQL_QUERY_SELECT],
+                        true
+                    )) {
                 $res = @pg_query($this->pgsql, "RELEASE SAVEPOINT moodle_pg_savepoint; SAVEPOINT moodle_pg_savepoint");
                 if ($res) {
                     pg_free_result($res);
@@ -357,14 +365,16 @@ class pgsql_native_moodle_database extends moodle_database {
      * Returns database server info array
      * @return array Array containing 'description' and 'version' info
      */
-    public function get_server_info() {
-        static $info;
-        if (!$info) {
-            $this->query_start("--pg_version()", null, SQL_QUERY_AUX);
-            $info = pg_version($this->pgsql);
+    public function get_server_info(): array {
+        if (empty($this->serverinfo)) {
+            $this->query_start('--pg_version()', null, SQL_QUERY_AUX);
+            $this->serverinfo = pg_version($this->pgsql);
             $this->query_end(true);
         }
-        return array('description'=>$info['server'], 'version'=>$info['server']);
+        return [
+            'description' => $this->serverinfo['server'],
+            'version' => $this->serverinfo['server'],
+        ];
     }
 
     /**
@@ -400,7 +410,7 @@ class pgsql_native_moodle_database extends moodle_database {
                  WHERE c.relname LIKE '$prefix%' ESCAPE '|'
                        AND c.relkind = 'r'
                        AND (ns.nspname = current_schema() OR ns.oid = pg_my_temp_schema())";
-        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $this->query_start($sql, null, SQL_QUERY_AUX_READONLY);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
 
@@ -492,7 +502,7 @@ class pgsql_native_moodle_database extends moodle_database {
                  WHERE i.tablename = '$tablename'
                        AND (i.schemaname = current_schema() OR ns.oid = pg_my_temp_schema())";
 
-        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $this->query_start($sql, null, SQL_QUERY_AUX_READONLY);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
 
@@ -545,7 +555,7 @@ class pgsql_native_moodle_database extends moodle_database {
                        AND (ns.nspname = current_schema() OR ns.oid = pg_my_temp_schema())
               ORDER BY a.attnum";
 
-        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $this->query_start($sql, null, SQL_QUERY_AUX_READONLY);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
 
@@ -766,8 +776,8 @@ class pgsql_native_moodle_database extends moodle_database {
      */
     public function setup_is_unicodedb() {
         // Get PostgreSQL server_encoding value
-        $sql = "SHOW server_encoding";
-        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $sql = 'SHOW server_encoding';
+        $this->query_start($sql, null, SQL_QUERY_AUX_READONLY);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
 
@@ -1513,6 +1523,19 @@ class pgsql_native_moodle_database extends moodle_database {
     public function sql_group_concat(string $field, string $separator = ', ', string $sort = ''): string {
         $fieldsort = $sort ? "ORDER BY {$sort}" : '';
         return "STRING_AGG(" . $this->sql_cast_to_char($field) . ", '{$separator}' {$fieldsort})";
+    }
+
+    /**
+     * Returns the SQL text to be used to order by columns, standardising the return
+     * pattern of null values across database types to sort nulls first when ascending
+     * and last when descending.
+     *
+     * @param string $fieldname The name of the field we need to sort by.
+     * @param int $sort An order to sort the results in.
+     * @return string The piece of SQL code to be used in your statement.
+     */
+    public function sql_order_by_null(string $fieldname, int $sort = SORT_ASC): string {
+        return parent::sql_order_by_null($fieldname, $sort) . ' NULLS ' . ($sort == SORT_ASC ? 'FIRST' : 'LAST');
     }
 
     public function sql_regex_supported() {

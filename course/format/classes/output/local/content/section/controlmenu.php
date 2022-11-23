@@ -159,8 +159,9 @@ class controlmenu implements named_templatable, renderable {
             $url = clone($baseurl);
             if (!$isstealth) {
                 if (has_capability('moodle/course:sectionvisibility', $coursecontext, $user)) {
+                    $strhidefromothers = get_string('hidefromothers', 'format_' . $course->format);
+                    $strshowfromothers = get_string('showfromothers', 'format_' . $course->format);
                     if ($section->visible) { // Show the hide/show eye.
-                        $strhidefromothers = get_string('hidefromothers', 'format_'.$course->format);
                         $url->param('hide', $section->section);
                         $controls['visiblity'] = [
                             'url' => $url,
@@ -170,11 +171,13 @@ class controlmenu implements named_templatable, renderable {
                             'attr' => [
                                 'class' => 'icon editing_showhide',
                                 'data-sectionreturn' => $sectionreturn,
-                                'data-action' => 'hide',
+                                'data-action' => ($usecomponents) ? 'sectionHide' : 'hide',
+                                'data-id' => $section->id,
+                                'data-swapname' => $strshowfromothers,
+                                'data-swapicon' => 'i/show',
                             ],
                         ];
                     } else {
-                        $strshowfromothers = get_string('showfromothers', 'format_'.$course->format);
                         $url->param('show',  $section->section);
                         $controls['visiblity'] = [
                             'url' => $url,
@@ -184,7 +187,10 @@ class controlmenu implements named_templatable, renderable {
                             'attr' => [
                                 'class' => 'icon editing_showhide',
                                 'data-sectionreturn' => $sectionreturn,
-                                'data-action' => 'show',
+                                'data-action' => ($usecomponents) ? 'sectionShow' : 'show',
+                                'data-id' => $section->id,
+                                'data-swapname' => $strhidefromothers,
+                                'data-swapicon' => 'i/hide',
                             ],
                         ];
                     }

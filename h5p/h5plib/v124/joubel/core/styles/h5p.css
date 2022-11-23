@@ -3,13 +3,25 @@
 /* Custom H5P font to use for icons. */
 @font-face {
   font-family: 'h5p';
-  src:    url('../fonts/h5p-core-23.eot?mz1lkp');
-  src:    url('../fonts/h5p-core-23.eot?mz1lkp#iefix') format('embedded-opentype'),
-  url('../fonts/h5p-core-23.ttf?mz1lkp') format('truetype'),
-  url('../fonts/h5p-core-23.woff?mz1lkp') format('woff'),
-  url('../fonts/h5p-core-23.svg?mz1lkp#h5p') format('svg');
+  src:  url('../fonts/h5p-core-28.eot?h1atjl');
+  src:  url('../fonts/h5p-core-28.eot?h1atjl#iefix') format('embedded-opentype'),
+    url('../fonts/h5p-core-28.ttf?h1atjl') format('truetype'),
+    url('../fonts/h5p-core-28.woff?h1atjl') format('woff'),
+    url('../fonts/h5p-core-28.svg?h1atjl#h5p-core-28') format('svg');
   font-weight: normal;
   font-style: normal;
+}
+
+@font-face {
+  font-family: 'h5p-hub-publish';
+  src: url('../fonts/h5p-hub-publish.eot?wy8ylc');
+  src: url('../fonts/h5p-hub-publish.eot?wy8ylc#iefix') format('embedded-opentype'),
+  url('../fonts/h5p-hub-publish.ttf?wy8ylc') format('truetype'),
+  url('../fonts/h5p-hub-publish.woff?wy8ylc') format('woff'),
+  url('../fonts/h5p-hub-publish.svg?wy8ylc#h5p-hub') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
 }
 
 html.h5p-iframe, html.h5p-iframe > body {
@@ -199,13 +211,13 @@ div.h5p-fullscreen {
   background: none;
   padding: 0 0.75em 0 0.25em;
   vertical-align: top;
-  color: #999;
+  color: #707070;
   text-decoration: none;
   outline: none;
   line-height: 22px;
 }
 .h5p-actions > .h5p-button:hover {
-  color: #666;
+  color: #333;
 }
 .h5p-actions > .h5p-button:active,
 .h5p-actions > .h5p-button:focus,
@@ -581,4 +593,31 @@ iframe.h5peditor-semi-fullscreen {
 
 .h5p-content.using-mouse *:not(textarea):focus {
   outline: none !important;
+}
+
+.h5p-content-hub-button:before {
+  font-family: "h5p";
+  margin-right: 0.5em;
+  font-size: 0.7em;
+  line-height: 1;
+}
+
+.h5p-content-hub-button.unpublish:before {
+  content: "\e916";
+}
+
+.h5p-content-hub-button.waiting:before,
+.h5p-content-hub-button.sync:before {
+  content: "\e917";
+}
+
+.h5p-content-hub-button.waiting:before {
+  display: inline-block;
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
 }

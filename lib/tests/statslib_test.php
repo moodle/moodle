@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for ../statslib.php
- *
- * @package    core_stats
- * @category   phpunit
- * @copyright  2012 Tyler Bannister
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,8 +26,13 @@ require_once(__DIR__ . '/fixtures/stats_events.php');
 
 /**
  * Test functions that affect daily stats.
+ *
+ * @package    core
+ * @category   test
+ * @copyright  2012 Tyler Bannister
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_statslib_testcase extends advanced_testcase {
+class statslib_test extends \advanced_testcase {
     /** The day to use for testing **/
     const DAY = 1272672000;
 
@@ -58,14 +56,14 @@ class core_statslib_testcase extends advanced_testcase {
 
         // Settings to force statistic to run during testing.
         $this->setTimezone(self::TIMEZONE);
-        core_date::set_default_server_timezone();
+        \core_date::set_default_server_timezone();
         $CFG->statsfirstrun           = 'all';
         $CFG->statslastdaily          = 0;
 
         // Figure out the broken day start so I can figure out when to the start time should be.
         $time   = time();
         // This nonsense needs to be rewritten.
-        $date = new DateTime('now', core_date::get_server_timezone_object());
+        $date = new \DateTime('now', \core_date::get_server_timezone_object());
         $offset = $date->getOffset();
         $stime  = $time + $offset;
         $stime  = intval($stime / (60*60*24)) * 60*60*24;
@@ -307,7 +305,7 @@ class core_statslib_testcase extends advanced_testcase {
         $dataset = $this->load_xml_data_file(__DIR__."/fixtures/statslib-test01.xml");
         $DB->delete_records('log');
 
-        $date = new DateTime('now', core_date::get_server_timezone_object());
+        $date = new \DateTime('now', \core_date::get_server_timezone_object());
         $day = self::DAY - $date->getOffset();
 
         $CFG->statsfirstrun = 'all';
@@ -347,22 +345,22 @@ class core_statslib_testcase extends advanced_testcase {
         $this->assertEquals($firstoldtime, stats_get_start_from('daily'));
 
         $time = time() - 5;
-        \core_tests\event\create_executed::create(array('context' => context_system::instance()))->trigger();
+        \core_tests\event\create_executed::create(array('context' => \context_system::instance()))->trigger();
         $DB->set_field('logstore_standard_log', 'timecreated', $time++, [
                 'eventname' => '\\core_tests\\event\\create_executed',
             ]);
 
-        \core_tests\event\read_executed::create(array('context' => context_system::instance()))->trigger();
+        \core_tests\event\read_executed::create(array('context' => \context_system::instance()))->trigger();
         $DB->set_field('logstore_standard_log', 'timecreated', $time++, [
                 'eventname' => '\\core_tests\\event\\read_executed',
             ]);
 
-        \core_tests\event\update_executed::create(array('context' => context_system::instance()))->trigger();
+        \core_tests\event\update_executed::create(array('context' => \context_system::instance()))->trigger();
         $DB->set_field('logstore_standard_log', 'timecreated', $time++, [
                 'eventname' => '\\core_tests\\event\\update_executed',
             ]);
 
-        \core_tests\event\delete_executed::create(array('context' => context_system::instance()))->trigger();
+        \core_tests\event\delete_executed::create(array('context' => \context_system::instance()))->trigger();
         $DB->set_field('logstore_standard_log', 'timecreated', $time++, [
                 'eventname' => '\\core_tests\\event\\delete_executed',
             ]);
@@ -571,7 +569,7 @@ class core_statslib_testcase extends advanced_testcase {
         $this->prepare_db($dataset, array('log'));
 
         // This nonsense needs to be rewritten.
-        $date = new DateTime('now', core_date::get_server_timezone_object());
+        $date = new \DateTime('now', \core_date::get_server_timezone_object());
         $start = self::DAY - $date->getOffset();
         $end   = $start + (24 * 3600);
 
@@ -588,8 +586,8 @@ class core_statslib_testcase extends advanced_testcase {
         stats_temp_table_create();
 
         $course = $this->getDataGenerator()->create_course();
-        $context = context_course::instance($course->id);
-        $fcontext = context_course::instance(SITEID);
+        $context = \context_course::instance($course->id);
+        $fcontext = \context_course::instance(SITEID);
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
@@ -603,8 +601,8 @@ class core_statslib_testcase extends advanced_testcase {
 
         \core_tests\event\create_executed::create(array('context' => $fcontext, 'courseid' => SITEID))->trigger();
         \core_tests\event\read_executed::create(array('context' => $context, 'courseid' => $course->id))->trigger();
-        \core_tests\event\update_executed::create(array('context' => context_system::instance()))->trigger();
-        \core_tests\event\delete_executed::create(array('context' => context_system::instance()))->trigger();
+        \core_tests\event\update_executed::create(array('context' => \context_system::instance()))->trigger();
+        \core_tests\event\delete_executed::create(array('context' => \context_system::instance()))->trigger();
 
         \core\event\user_loggedin::create(
             array(
@@ -618,8 +616,8 @@ class core_statslib_testcase extends advanced_testcase {
 
         $this->assertEquals(5, $DB->count_records('logstore_standard_log'));
 
-        \core_tests\event\delete_executed::create(array('context' => context_system::instance()))->trigger();
-        \core_tests\event\delete_executed::create(array('context' => context_system::instance()))->trigger();
+        \core_tests\event\delete_executed::create(array('context' => \context_system::instance()))->trigger();
+        \core_tests\event\delete_executed::create(array('context' => \context_system::instance()))->trigger();
 
         // Fake the origin of events.
         $DB->set_field('logstore_standard_log', 'origin', 'web', array());

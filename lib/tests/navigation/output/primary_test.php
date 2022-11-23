@@ -159,7 +159,20 @@ class primary_test extends \advanced_testcase {
         $method = new ReflectionMethod('core\navigation\output\primary', 'get_custom_menu');
         $method->setAccessible(true);
         $renderer = $PAGE->get_renderer('core');
-        $this->assertEquals($expected, $method->invoke($output, $renderer));
+
+        // We can't assert the value of each menuitem "moremenuid" property (because it's random).
+        $custommenufilter = static function(array $custommenu) use (&$custommenufilter): void {
+            foreach ($custommenu as $menuitem) {
+                unset($menuitem->moremenuid);
+                // Recursively move through child items.
+                $custommenufilter($menuitem->children);
+            }
+        };
+
+        $actual = $method->invoke($output, $renderer);
+        $custommenufilter($actual);
+
+        $this->assertEquals($expected, $actual);
     }
 
     /**

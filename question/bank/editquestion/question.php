@@ -213,7 +213,7 @@ $toform->appendqnumstring = $appendqnumstring;
 $toform->returnurl = $originalreturnurl;
 $toform->makecopy = $makecopy;
 $toform->idnumber = null;
-if (isset($question->id)) {
+if (!empty($question->id)) {
     $questionobject = question_bank::load_question($question->id);
     $toform->status = $questionobject->status;
     $toform->idnumber = $questionobject->idnumber;

@@ -16,11 +16,13 @@ Feature: Perform basic calendar functionality
       | Course 1 | C1 | topics |
       | Course 2 | C2 | topics |
       | Course 3 | C3 | topics |
+      | Course 4 | C4 | topics |
     And the following "course enrolments" exist:
       | user | course | role |
       | student1 | C1 | student |
       | student3 | C1 | student |
       | teacher1 | C1 | teacher |
+      | admin    | C1 | editingteacher |
     And the following "groups" exist:
       | name | course | idnumber |
       | Group 1 | C1 | G1 |
@@ -207,7 +209,6 @@ Feature: Perform basic calendar functionality
   Scenario: Admin can only see all courses if calendar_adminseesall setting is enabled.
     Given I log in as "admin"
     And I am on "Course 1" course homepage
-    And I enrol "admin" user as "Teacher"
     And I am viewing site calendar
     And I click on "New event" "button"
     And I set the field "Type of event" to "Course"
@@ -229,27 +230,37 @@ Feature: Perform basic calendar functionality
     And "Course 3" "autocomplete_suggestions" should exist
 
   @javascript
-  Scenario: Students can only see user event type by default.
+  Scenario: Students can not see event type field by default.
     Given I log in as "student1"
     And I am viewing site calendar
     When I click on "New event" "button"
-    Then I should see "User" in the "div#fitem_id_staticeventtype" "css_element"
-    And I am on "Course 1" course homepage
-    And I follow "Full calendar"
+    # Only "user" event type is available, so "Type of event" field should not be displayed.
+    Then "Type of event" "select" should not exist
+
+  @javascript
+  Scenario: "Student 2" has "manageentries" capability assigned but it's not enrolled in any course.
+    Given the following "permission overrides" exist:
+      | capability                    | permission | role    | contextlevel | reference |
+      | moodle/calendar:manageentries | Allow      | student | System       |           |
+    And I log in as "student2"
+    And I am viewing site calendar
     When I click on "New event" "button"
-    Then I should see "User" in the "div#fitem_id_staticeventtype" "css_element"
-    And I click on "Close" "button" in the "New event" "dialogue"
-    And I log out
-    Given I log in as "admin"
-    And I navigate to "Appearance > Calendar" in site administration
-    And I set the field "Admins see all" to "1"
-    And I press "Save changes"
-    And I log out
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Full calendar"
+    # Only "user" event type is available, so "Type of event" field should not be displayed.
+    Then "Type of event" "select" should not exist
+
+  @javascript
+  Scenario: "Student 1" has "manageentries" capability assigned and it's enrolled in a course.
+    Given the following "permission overrides" exist:
+      | capability                    | permission | role    | contextlevel | reference |
+      | moodle/calendar:manageentries | Allow      | student | System       |           |
+    And I log in as "student1"
+    And I am viewing site calendar
     When I click on "New event" "button"
-    Then I should see "User" in the "div#fitem_id_staticeventtype" "css_element"
+    # Student 1 is enrolled in a course and have the capability assigned.
+    # Then, the "Type of event" select box should be visible.
+    Then "Type of event" "select" should exist
+    And I should see "User" in the "Type of event" "select"
+    And I should see "Course" in the "Type of event" "select"
 
   @javascript @accessibility
   Scenario: The calendar page must be accessible
@@ -276,3 +287,70 @@ Feature: Perform basic calendar functionality
     And I should not see "Event 1:1"
     And I hover over day "1" of this month in the full calendar page
     And I should see "Event 1:1"
+
+  @javascript
+  Scenario: Admin can create and edit course events if calendar_adminseesall setting is disabled
+    Given I log in as "admin"
+    And the following config values are set as admin:
+      | calendar_adminseesall | 0 |
+    And I am on "Course 4" course homepage with editing mode on
+    And I add the "Upcoming events" block
+    And I click on "Go to calendar..." "link" in the "Upcoming events" "block"
+    And I click on "New event" "button"
+    And I should see "Course" in the "Type of event" "select"
+    And "Course 4" "autocomplete_selection" should exist
+    And I set the field "Event title" to "Test course event"
+    And I click on "Save" "button"
+    And I should see "Test course event"
+    When I click on "Edit" "link" in the "region-main" "region"
+    Then the field "Event title" matches value "Test course event"
+    And the field "Type of event" matches value "Course"
+    And "Course 4" "autocomplete_selection" should exist
+
+  @javascript
+  Scenario: Changing the event type should clear previous data
+    Given I log in as "admin"
+    And I am on "Course 1" course homepage
+    And I follow "Full calendar"
+    And I set the field "course" to "C1"
+    And I press "New event"
+    And I set the following fields to these values:
+      | Event title | Group 1 event |
+      | Type of event | Group       |
+    And I press "Save"
+    And I am on "Course 1" course homepage
+    And I follow "Full calendar"
+    And I click on "Group 1 event" "link"
+    And I should see "Group event"
+    And I should see "Group 1"
+    When I click on "Edit" "button"
+    And I set the following fields to these values:
+      | Event title | My own user event |
+      | Type of event | user |
+    And I press "Save"
+    And I click on "My own user event" "link"
+    Then I should see "User event"
+    And I should not see "Group 1"
+    And I click on "Edit" "button" in the "My own user event" "dialogue"
+    And I set the following fields to these values:
+      | Event title | Site event |
+      | Type of event | site |
+    And I press "Save"
+    And I click on "Site event" "link"
+    And I should see "Site event"
+    And I click on "Edit" "button" in the "Site event" "dialogue"
+    And I set the following fields to these values:
+      | Event title | Course 1 event |
+      | Type of event | course |
+    And I expand the "Course" autocomplete
+    And I click on "Course 1" item in the autocomplete list
+    And I press "Save"
+    And I click on "Course 1 event" "link"
+    And I should see "Course event"
+    And I click on "Edit" "button" in the "Course 1 event" "dialogue"
+    And I set the following fields to these values:
+      | Event title | Category event |
+      | Type of event | category |
+    And I press "Save"
+    And I click on "Category event" "link"
+    And I should see "Category event"

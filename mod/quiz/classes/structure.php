@@ -245,6 +245,25 @@ class structure {
     }
 
     /**
+     * Does the current user have '...use' capability over the question(s) in a given slot?
+     *
+     *
+     * @param int $slotnumber the index of the slot in question.
+     * @return bool true if they have the required capability.
+     */
+    public function has_use_capability(int $slotnumber): bool {
+        $slot = $this->slotsinorder[$slotnumber];
+        if (is_numeric($slot->questionid)) {
+            // Non-random question.
+            return question_has_capability_on($this->get_question_by_id($slot->questionid), 'use');
+        } else {
+            // Random question.
+            $context = \context::instance_by_id($slot->contextid);
+            return has_capability('moodle/question:useall', $context);
+        }
+    }
+
+    /**
      * Get the course id that the quiz belongs to.
      * @return int the course.id for the quiz.
      */

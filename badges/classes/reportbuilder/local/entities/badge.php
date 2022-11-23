@@ -92,6 +92,8 @@ class badge extends base {
      * @return column[]
      */
     protected function get_all_columns(): array {
+        global $DB;
+
         $badgealias = $this->get_table_alias('badge');
         $contextalias = $this->get_table_alias('context');
 
@@ -107,6 +109,10 @@ class badge extends base {
             ->set_is_sortable(true);
 
         // Description (note, this column contains plaintext so requires no post-processing).
+        $descriptionfieldsql = "{$badgealias}.description";
+        if ($DB->get_dbfamily() === 'oracle') {
+            $descriptionfieldsql = $DB->sql_order_by_text($descriptionfieldsql, 1024);
+        }
         $columns[] = (new column(
             'description',
             new lang_string('description', 'core_badges'),
@@ -114,7 +120,7 @@ class badge extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_LONGTEXT)
-            ->add_field("{$badgealias}.description");
+            ->add_field($descriptionfieldsql, 'description');
 
         // Criteria.
         $columns[] = (new column(
@@ -128,7 +134,9 @@ class badge extends base {
             ->set_disabled_aggregation_all()
             ->add_callback(static function($badgeid): string {
                 global $PAGE;
-
+                if (!$badgeid) {
+                    return '';
+                }
                 $badge = new \core_badges\badge($badgeid);
 
                 $renderer = $PAGE->get_renderer('core_badges');
@@ -146,10 +154,14 @@ class badge extends base {
                     ON {$contextalias}.contextlevel = " . CONTEXT_COURSE . "
                    AND {$contextalias}.instanceid = {$badgealias}.courseid")
             ->set_type(column::TYPE_INTEGER)
-            ->add_fields("{$badgealias}.id, {$badgealias}.type, {$badgealias}.courseid, {$badgealias}.imagecaption")
+            ->add_fields("{$badgealias}.id, {$badgealias}.type, {$badgealias}.courseid")
+            ->add_field($DB->sql_cast_to_char("{$badgealias}.imagecaption"), 'imagecaption')
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             ->set_disabled_aggregation_all()
-            ->add_callback(static function(int $badgeid, stdClass $badge): string {
+            ->add_callback(static function(?int $badgeid, stdClass $badge): string {
+                if (!$badgeid) {
+                    return '';
+                }
                 if ($badge->type == BADGE_TYPE_SITE) {
                     $context = context_system::instance();
                 } else {
@@ -173,7 +185,7 @@ class badge extends base {
             ->set_is_sortable(true)
             ->add_callback(static function($language): string {
                 $languages = get_string_manager()->get_list_of_languages();
-                return $languages[$language] ?? $language;
+                return $languages[$language] ?? $language ?? '';
             });
 
         // Version.
@@ -198,7 +210,7 @@ class badge extends base {
             ->add_field("{$badgealias}.status")
             ->set_is_sortable(true)
             ->add_callback(static function($status): string {
-                return get_string("badgestatus_{$status}", 'core_badges');
+                return $status ? get_string("badgestatus_{$status}", 'core_badges') : '';
             });
 
         // Expiry date/period.
@@ -209,11 +221,13 @@ class badge extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
-            ->add_fields("{$badgealias}.expiredate, {$badgealias}.expireperiod")
+            ->add_fields("{$badgealias}.expiredate, {$badgealias}.expireperiod, {$badgealias}.id")
             ->set_is_sortable(true, ["{$badgealias}.expiredate", "{$badgealias}.expireperiod"])
             ->set_disabled_aggregation_all()
-            ->add_callback(static function(int $expiredate, stdClass $badge): string {
-                if ($expiredate) {
+            ->add_callback(static function(?int $expiredate, stdClass $badge): string {
+                if (!$badge->id) {
+                    return '';
+                } else if ($expiredate) {
                     return userdate($expiredate);
                 } else if ($badge->expireperiod) {
                     return format_time($badge->expireperiod);

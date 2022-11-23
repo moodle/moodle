@@ -274,7 +274,9 @@ class modinfolib_test extends advanced_testcase {
         $prevcacherev = $cacherev;
 
         // Little trick to check that cache is not rebuilt druing the next step - substitute the value in MUC and later check that it is still there.
+        $cache->acquire_lock($course->id);
         $cache->set_versioned($course->id, $cacherev, (object)array_merge((array)$cachedvalue, array('secretfield' => 1)));
+        $cache->release_lock($course->id);
 
         // Clear static cache and call get_fast_modinfo() again (pretend we are in another request). Cache should not be rebuilt.
         course_modinfo::clear_instance_cache();
@@ -801,7 +803,7 @@ class modinfolib_test extends advanced_testcase {
             get_course_and_cm_from_cmid($page->cmid, 'forum');
             $this->fail();
         } catch (moodle_exception $e) {
-            $this->assertEquals('invalidcoursemodule', $e->errorcode);
+            $this->assertEquals('invalidcoursemoduleid', $e->errorcode);
         }
 
         // Invalid module name.
@@ -1095,5 +1097,80 @@ class modinfolib_test extends advanced_testcase {
         $this->assertArrayHasKey(3, $sectioncaches);
         // Make sure that the cacherev will be reset.
         $this->assertEquals(-1, $coursemodinfo->cacherev);
+    }
+
+    /**
+     * Test get_cm() method to output course module id in the exception text.
+     *
+     * @covers \course_modinfo::get_cm
+     * @return void
+     */
+    public function test_invalid_course_module_id(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $forum0 = $this->getDataGenerator()->create_module('assign', ['course' => $course->id], ['section' => 0]);
+        $forum1 = $this->getDataGenerator()->create_module('assign', ['course' => $course->id], ['section' => 0]);
+        $forum2 = $this->getDataGenerator()->create_module('assign', ['course' => $course->id], ['section' => 0]);
+
+        // Break section sequence.
+        $modinfo = get_fast_modinfo($course->id);
+        $sectionid = $modinfo->get_section_info(0)->id;
+        $section = $DB->get_record('course_sections', ['id' => $sectionid]);
+        $sequence = explode(',', $section->sequence);
+        $sequence = array_diff($sequence, [$forum1->cmid]);
+        $section->sequence = implode(',', $sequence);
+        $DB->update_record('course_sections', $section);
+
+        // Assert exception text.
+        $this->expectException(\moodle_exception::class);
+        $this->expectExceptionMessage('Invalid course module ID: ' . $forum1->cmid);
+        delete_course($course, false);
+    }
+
+    /**
+     * Tests that if the modinfo cache returns a newer-than-expected version, Moodle won't rebuild
+     * it.
+     *
+     * This is important to avoid wasted time/effort and poor performance, for example in cases
+     * where multiple requests are accessing the course.
+     *
+     * Certain cases could be particularly bad if this test fails. For example, if using clustered
+     * databases where there is a 100ms delay between updates to the course table being available
+     * to all users (but no such delay on the cache infrastructure), then during that 100ms, every
+     * request that calls get_fast_modinfo and uses the read-only database will rebuild the course
+     * cache. Since these will then create a still-newer version, future requests for the next
+     * 100ms will also rebuild it again... etc.
+     *
+     * @covers \course_modinfo
+     */
+    public function test_get_modinfo_with_newer_version(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Get info about a course and build the initial cache, then drop it from memory.
+        $course = $this->getDataGenerator()->create_course();
+        get_fast_modinfo($course);
+        get_fast_modinfo(0, 0, true);
+
+        // User A starts a request, which takes some time...
+        $useracourse = $DB->get_record('course', ['id' => $course->id]);
+
+        // User B also starts a request and makes a change to the course.
+        $userbcourse = $DB->get_record('course', ['id' => $course->id]);
+        $this->getDataGenerator()->create_module('page', ['course' => $course->id]);
+        rebuild_course_cache($userbcourse->id, false);
+
+        // Finally, user A's request now gets modinfo. It should accept the version from B even
+        // though the course version (of cache) is newer than the one expected by A.
+        $before = $DB->perf_get_queries();
+        $modinfo = get_fast_modinfo($useracourse);
+        $after = $DB->perf_get_queries();
+        $this->assertEquals($after, $before, 'Should use cached version, making no DB queries');
+
+        // Obviously, modinfo should include the Page now.
+        $this->assertCount(1, $modinfo->get_instances_of('page'));
     }
 }

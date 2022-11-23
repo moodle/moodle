@@ -480,6 +480,11 @@ abstract class data_loading_method_test_base extends advanced_testcase {
 
 abstract class question_testcase extends advanced_testcase {
 
+    /**
+     * Tolerance accepted in some unit tests when float operations are involved.
+     */
+    const GRADE_DELTA = 0.00000005;
+
     public function assert($expectation, $compare, $notused = '') {
 
         if (get_class($expectation) === 'question_pattern_expectation') {
@@ -1360,10 +1365,12 @@ class question_test_recordset extends moodle_recordset {
         $this->close();
     }
 
+    #[\ReturnTypeWillChange]
     public function current() {
         return (object) current($this->records);
     }
 
+    #[\ReturnTypeWillChange]
     public function key() {
         if (is_null(key($this->records))) {
             return false;
@@ -1372,11 +1379,11 @@ class question_test_recordset extends moodle_recordset {
         return reset($current);
     }
 
-    public function next() {
+    public function next(): void {
         next($this->records);
     }
 
-    public function valid() {
+    public function valid(): bool {
         return !is_null(key($this->records));
     }
 

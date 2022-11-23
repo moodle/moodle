@@ -316,3 +316,5 @@ class SimplePie_Content_Type_Sniffer
 		return 'text/html';
 	}
 }
+
+class_alias('SimplePie_Content_Type_Sniffer', 'SimplePie\Content\Type\Sniffer', false);

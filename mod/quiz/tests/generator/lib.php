@@ -183,6 +183,7 @@ class mod_quiz_generator extends testing_module_generator {
     public function create_override(array $data): void {
         global $DB;
 
+        // Validate.
         if (!isset($data['quiz'])) {
             throw new coding_exception('Must specify quiz (id) when creating a quiz override.');
         }
@@ -195,6 +196,10 @@ class mod_quiz_generator extends testing_module_generator {
             throw new coding_exception('Cannot specify both userid and groupid when creating a quiz override.');
         }
 
+        // Create the override.
         $DB->insert_record('quiz_overrides', (object) $data);
+
+        // Update any associated calendar events, if necessary.
+        quiz_update_events($DB->get_record('quiz', ['id' => $data['quiz']], '*', MUST_EXIST));
     }
 }

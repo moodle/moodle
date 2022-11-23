@@ -33,7 +33,6 @@
 
 .path-grade-report-grader {
     #region-main {
-        overflow-x: visible;
         min-width: 100%;
         width: auto;
         display: flex;
@@ -59,6 +58,17 @@
     }
     .gradefail {
         color: $danger;
+    }
+}
+
+.path-grade {
+    #region-main {
+        overflow-x: visible;
+    }
+
+    .user-heading .userinitials {
+        width: 50px;
+        height: 50px;
     }
 }
 
@@ -447,7 +457,7 @@
 
         tr.heading {
             position: sticky;
-            top: 0vh;
+            top: 0;
             z-index: 1;
         }
 
@@ -505,6 +515,63 @@
 /**
  * Single view.
  */
-.path-grade-report-singleview input[name^="finalgrade"] {
-    width: 80px;
+.path-grade-report-singleview .reporttable {
+    input[name^="finalgrade"] {
+        width: 80px;
+        display: inline-block;
+    }
+    .action-menu {
+        display: inline-block;
+        margin-left: 0.5rem;
+        float: right;
+    }
+    .dropdown-toggle::after {
+        display: none;
+    }
+}
+
+.search-widget {
+    .dropdown-menu {
+        padding: 0.8rem 1.2rem;
+
+        &.wide {
+            width: 350px;
+        }
+
+        &.narrow {
+            width: 250px;
+        }
+
+        .dropdown-item {
+            span {
+                &.email {
+                    color: $text-muted;
+                }
+            }
+        }
+
+        .dropdown-item:hover,
+        .dropdown-item:active {
+            span {
+                color: #fff;
+            }
+        }
+
+        .searchresultscontainer {
+            height: 178px;
+            font-size: 90%;
+
+            .searchresultitemscontainer {
+                height: 178px;
+                max-height: 178px;
+                overflow: auto;
+            }
+        }
+
+        .unsearchablecontentcontainer {
+            border-top: 1px solid #dee2e6;
+            padding-top: 10px;
+            font-size: 90%;
+        }
+    }
 }

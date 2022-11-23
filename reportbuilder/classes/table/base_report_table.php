@@ -21,7 +21,6 @@ namespace core_reportbuilder\table;
 use context;
 use moodle_url;
 use renderable;
-use table_default_export_format_parent;
 use table_sql;
 use html_writer;
 use core_table\dynamic;
@@ -30,7 +29,6 @@ use core_reportbuilder\local\filters\base;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\report\base as base_report;
 use core_reportbuilder\local\report\filter;
-use core_reportbuilder\output\dataformat_export_format;
 use core\output\notification;
 
 defined('MOODLE_INTERNAL') || die;
@@ -151,14 +149,11 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
     }
 
     /**
-     * Override parent method of the same, to make use of a recordset and avoid issues with duplicate values in the first column
+     * Generate suitable SQL for the table
      *
-     * @param int $pagesize
-     * @param bool $useinitialsbar
+     * @return string
      */
-    public function query_db($pagesize, $useinitialsbar = true) {
-        global $DB;
-
+    protected function get_table_sql(): string {
         $sql = "SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where} {$this->groupbysql}";
 
         $sort = $this->get_sql_sort();
@@ -166,12 +161,25 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
             $sql .= " ORDER BY {$sort}";
         }
 
+        return $sql;
+    }
+
+    /**
+     * Override parent method of the same, to make use of a recordset and avoid issues with duplicate values in the first column
+     *
+     * @param int $pagesize
+     * @param bool $useinitialsbar
+     */
+    public function query_db($pagesize, $useinitialsbar = true): void {
+        global $DB;
+
         if (!$this->is_downloading()) {
             $this->pagesize($pagesize, $DB->count_records_sql($this->countsql, $this->countparams));
 
-            $this->rawdata = $DB->get_recordset_sql($sql, $this->sql->params, $this->get_page_start(), $this->get_page_size());
+            $this->rawdata = $DB->get_recordset_sql($this->get_table_sql(), $this->sql->params, $this->get_page_start(),
+                $this->get_page_size());
         } else {
-            $this->rawdata = $DB->get_recordset_sql($sql, $this->sql->params);
+            $this->rawdata = $DB->get_recordset_sql($this->get_table_sql(), $this->sql->params);
         }
     }
 
@@ -201,23 +209,6 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
         }
 
         return static::construct_order_by($columnsortby);
-    }
-
-    /**
-     * Set the export class to use when downloading reports (TODO: consider applying to all tables, MDL-72058)
-     *
-     * @param table_default_export_format_parent|null $exportclass
-     * @return table_default_export_format_parent|null
-     */
-    public function export_class_instance($exportclass = null) {
-        if (is_null($this->exportclass) && $this->is_downloading()) {
-            $this->exportclass = new dataformat_export_format($this, $this->download);
-            if (!$this->exportclass->document_started()) {
-                $this->exportclass->start_document($this->filename, $this->sheettitle);
-            }
-        }
-
-        return $this->exportclass;
     }
 
     /**

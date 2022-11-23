@@ -146,8 +146,8 @@ class template_test extends \advanced_testcase {
         // Some cooked variables for the regular expression.
         $replace = [
             '{authorfullname}' => fullname($author),
-            '{timeadded}' => userdate($entry->timecreated),
-            '{timemodified}' => userdate($entry->timemodified),
+            '{timeadded}' => userdate($entry->timecreated, get_string('strftimedatemonthabbr', 'langconfig')),
+            '{timemodified}' => userdate($entry->timemodified, get_string('strftimedatemonthabbr', 'langconfig')),
             '{fieldid}' => $field->field->id,
             '{entryid}' => $entry->id,
             '{cmid}' => $cm->id,
@@ -191,11 +191,41 @@ class template_test extends \advanced_testcase {
                 'templatecontent' => 'Some ##more## tag',
                 'expected' => '|Some .*more.*{cmid}.*rid.*{entryid}.*More.* tag|',
                 'rolename' => 'editingteacher',
+                'enableexport' => false,
+                'approved' => true,
+                'enablecomments' => false,
+                'enableratings' => false,
+                'options' => ['showmore' => true],
+            ],
+            'Teacher more tag with showmore set to false' => [
+                'templatecontent' => 'Some ##more## tag',
+                'expected' => '|Some  tag|',
+                'rolename' => 'editingteacher',
+                'enableexport' => false,
+                'approved' => true,
+                'enablecomments' => false,
+                'enableratings' => false,
+                'options' => ['showmore' => false],
             ],
             'Teacher moreurl tag' => [
                 'templatecontent' => 'Some ##moreurl## tag',
                 'expected' => '|Some .*/mod/data/view.*{cmid}.*rid.*{entryid}.* tag|',
                 'rolename' => 'editingteacher',
+                'enableexport' => false,
+                'approved' => true,
+                'enablecomments' => false,
+                'enableratings' => false,
+                'options' => ['showmore' => true],
+            ],
+            'Teacher moreurl tag with showmore set to false' => [
+                'templatecontent' => 'Some ##moreurl## tag',
+                'expected' => '|Some .*/mod/data/view.*{cmid}.*rid.*{entryid}.* tag|',
+                'rolename' => 'editingteacher',
+                'enableexport' => false,
+                'approved' => true,
+                'enablecomments' => false,
+                'enableratings' => false,
+                'options' => ['showmore' => false],
             ],
             'Teacher delcheck tag' => [
                 'templatecontent' => 'Some ##delcheck## tag',
@@ -226,12 +256,12 @@ class template_test extends \advanced_testcase {
             ],
             'Teacher timeadded tag' => [
                 'templatecontent' => 'Some ##timeadded## tag',
-                'expected' => '|Some {timeadded} tag|',
+                'expected' => '|Some <span.*>{timeadded}</span> tag|',
                 'rolename' => 'editingteacher',
             ],
             'Teacher timemodified tag' => [
                 'templatecontent' => 'Some ##timemodified## tag',
-                'expected' => '|Some {timemodified} tag|',
+                'expected' => '|Some <span.*>{timemodified}</span> tag|',
                 'rolename' => 'editingteacher',
             ],
             'Teacher approve tag approved entry' => [
@@ -264,14 +294,14 @@ class template_test extends \advanced_testcase {
             ],
             'Teacher approvalstatus tag approved entry' => [
                 'templatecontent' => 'Some ##approvalstatus## tag',
-                'expected' => '|Some Approved tag|',
+                'expected' => '|Some  tag|', // We do not display the approval status anymore.
                 'rolename' => 'editingteacher',
                 'enableexport' => false,
                 'approved' => true,
             ],
             'Teacher approvalstatus tag disapproved entry' => [
                 'templatecontent' => 'Some ##approvalstatus## tag',
-                'expected' => '|Some .*not approved.* tag|',
+                'expected' => '|Some .*Pending approval.* tag|',
                 'rolename' => 'editingteacher',
                 'enableexport' => false,
                 'approved' => false,
@@ -361,6 +391,49 @@ class template_test extends \advanced_testcase {
                 'enableratings' => true,
                 'options' => ['ratings' => true],
             ],
+            'Teacher actionsmenu tag with default options' => [
+                'templatecontent' => 'Some ##actionsmenu## tag',
+                'expected' => '|Some .*edit.*{entryid}.*sesskey.*Edit.* .*delete.*{entryid}.*sesskey.*Delete.* tag|',
+                'rolename' => 'editingteacher',
+            ],
+            'Teacher actionsmenu tag with default options (check Show more is not there)' => [
+                'templatecontent' => 'Some ##actionsmenu## tag',
+                'expected' => '|^Some((?!Show more).)*tag$|',
+                'rolename' => 'editingteacher',
+            ],
+            'Teacher actionsmenu tag with show more enabled' => [
+                'templatecontent' => 'Some ##actionsmenu## tag',
+                'expected' => '|Some .*view.*{cmid}.*rid.*{entryid}.*Show more.* .*Edit.* .*Delete.* tag|',
+                'rolename' => 'editingteacher',
+                'enableexport' => false,
+                'approved' => false,
+                'enablecomments' => false,
+                'enableratings' => false,
+                'options' => ['showmore' => true],
+            ],
+            'Teacher actionsmenu tag with export enabled' => [
+                'templatecontent' => 'Some ##actionsmenu## tag',
+                'expected' => '|Some .*Edit.* .*Delete.* .*portfolio/add.* tag|',
+                'rolename' => 'editingteacher',
+                'enableexport' => true,
+            ],
+            'Teacher actionsmenu tag with approved enabled' => [
+                'templatecontent' => 'Some ##actionsmenu## tag',
+                'expected' => '|Some .*Edit.* .*Delete.* .*disapprove.*{entryid}.*sesskey.*Undo approval.* tag|',
+                'rolename' => 'editingteacher',
+                'enableexport' => false,
+                'approved' => true,
+            ],
+            'Teacher actionsmenu tag with export, approved and showmore enabled' => [
+                'templatecontent' => 'Some ##actionsmenu## tag',
+                'expected' => '|Some .*Show more.* .*Edit.* .*Delete.* .*Undo approval.* .*Export to portfolio.* tag|',
+                'rolename' => 'editingteacher',
+                'enableexport' => true,
+                'approved' => true,
+                'enablecomments' => false,
+                'enableratings' => false,
+                'options' => ['showmore' => true],
+            ],
             // Student scenarios.
             'Student id tag' => [
                 'templatecontent' => 'Some ##id## tag',
@@ -403,11 +476,41 @@ class template_test extends \advanced_testcase {
                 'templatecontent' => 'Some ##more## tag',
                 'expected' => '|Some .*more.*{cmid}.*rid.*{entryid}.*More.* tag|',
                 'rolename' => 'student',
+                'enableexport' => false,
+                'approved' => true,
+                'enablecomments' => false,
+                'enableratings' => false,
+                'options' => ['showmore' => true],
+            ],
+            'Student more tag with showmore set to false' => [
+                'templatecontent' => 'Some ##more## tag',
+                'expected' => '|Some  tag|',
+                'rolename' => 'student',
+                'enableexport' => false,
+                'approved' => true,
+                'enablecomments' => false,
+                'enableratings' => false,
+                'options' => ['showmore' => false],
             ],
             'Student moreurl tag' => [
                 'templatecontent' => 'Some ##moreurl## tag',
                 'expected' => '|Some .*/mod/data/view.*{cmid}.*rid.*{entryid}.* tag|',
                 'rolename' => 'student',
+                'enableexport' => false,
+                'approved' => true,
+                'enablecomments' => false,
+                'enableratings' => false,
+                'options' => ['showmore' => true],
+            ],
+            'Student moreurl tag with showmore set to false' => [
+                'templatecontent' => 'Some ##moreurl## tag',
+                'expected' => '|Some .*/mod/data/view.*{cmid}.*rid.*{entryid}.* tag|',
+                'rolename' => 'student',
+                'enableexport' => false,
+                'approved' => true,
+                'enablecomments' => false,
+                'enableratings' => false,
+                'options' => ['showmore' => false],
             ],
             'Student delcheck tag' => [
                 'templatecontent' => 'Some ##delcheck## tag',
@@ -449,12 +552,12 @@ class template_test extends \advanced_testcase {
             ],
             'Student timeadded tag' => [
                 'templatecontent' => 'Some ##timeadded## tag',
-                'expected' => '|Some {timeadded} tag|',
+                'expected' => '|Some <span.*>{timeadded}</span> tag|',
                 'rolename' => 'student',
             ],
             'Student timemodified tag' => [
                 'templatecontent' => 'Some ##timemodified## tag',
-                'expected' => '|Some {timemodified} tag|',
+                'expected' => '|Some <span.*>{timemodified}</span> tag|',
                 'rolename' => 'student',
             ],
             'Student approve tag approved entry' => [
@@ -487,14 +590,14 @@ class template_test extends \advanced_testcase {
             ],
             'Student approvalstatus tag approved entry' => [
                 'templatecontent' => 'Some ##approvalstatus## tag',
-                'expected' => '|Some Approved tag|',
+                'expected' => '|Some  tag|',
                 'rolename' => 'student',
                 'enableexport' => false,
                 'approved' => true,
             ],
             'Student approvalstatus tag disapproved entry' => [
                 'templatecontent' => 'Some ##approvalstatus## tag',
-                'expected' => '|Some .*not approved.* tag|',
+                'expected' => '|Some .*Pending approval.* tag|',
                 'rolename' => 'student',
                 'enableexport' => false,
                 'approved' => false,
@@ -584,6 +687,49 @@ class template_test extends \advanced_testcase {
                 'enableratings' => true,
                 'options' => ['ratings' => true]
             ],
+            'Student actionsmenu tag with default options' => [
+                'templatecontent' => 'Some ##actionsmenu## tag',
+                'expected' => '|Some .*edit.*{entryid}.*sesskey.*Edit.* .*delete.*{entryid}.*sesskey.*Delete.* tag|',
+                'rolename' => 'student',
+            ],
+            'Student actionsmenu tag with default options (check Show more is not there)' => [
+                'templatecontent' => 'Some ##actionsmenu## tag',
+                'expected' => '|^Some((?!Show more).)*tag$|',
+                'rolename' => 'student',
+            ],
+            'Student actionsmenu tag with show more enabled' => [
+                'templatecontent' => 'Some ##actionsmenu## tag',
+                'expected' => '|Some .*view.*{cmid}.*rid.*{entryid}.*Show more.* .*Edit.* .*Delete.* tag|',
+                'rolename' => 'student',
+                'enableexport' => false,
+                'approved' => false,
+                'enablecomments' => false,
+                'enableratings' => false,
+                'options' => ['showmore' => true],
+            ],
+            'Student actionsmenu tag with export enabled' => [
+                'templatecontent' => 'Some ##actionsmenu## tag',
+                'expected' => '|Some .*Edit.* .*Delete.* .*portfolio/add.* tag|',
+                'rolename' => 'student',
+                'enableexport' => true,
+            ],
+            'Student actionsmenu tag with approved enabled' => [
+                'templatecontent' => 'Some ##actionsmenu## tag',
+                'expected' => '|^Some((?!Approve).)*tag$|',
+                'rolename' => 'student',
+                'enableexport' => false,
+                'approved' => true,
+            ],
+            'Student actionsmenu tag with export, approved and showmore enabled' => [
+                'templatecontent' => 'Some ##actionsmenu## tag',
+                'expected' => '|Some .*Show more.* .*Edit.* .*Delete.* .*Export to portfolio.* tag|',
+                'rolename' => 'student',
+                'enableexport' => true,
+                'approved' => true,
+                'enablecomments' => false,
+                'enableratings' => false,
+                'options' => ['showmore' => true],
+            ],
         ];
     }
 
@@ -647,5 +793,118 @@ class template_test extends \advanced_testcase {
         ];
         $rm = new rating_manager();
         return $rm->get_ratings($ratingoptions);
+    }
+
+    /**
+     * Test parse add entry template parsing.
+     *
+     * @covers ::parse_add_entry
+     * @dataProvider parse_add_entry_provider
+     * @param string $templatecontent the template string
+     * @param string $expected expected output
+     * @param bool $newentry if it is a new entry or editing and existing one
+     */
+    public function test_parse_add_entry(
+        string $templatecontent,
+        string $expected,
+        bool $newentry = false
+    ) {
+        global $DB, $PAGE;
+        // Comments, tags, approval, user role.
+        $this->resetAfterTest();
+
+        $params = ['approval' => true];
+
+        $course = $this->getDataGenerator()->create_course();
+        $params['course'] = $course;
+        $activity = $this->getDataGenerator()->create_module('data', $params);
+        $author = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+
+        // Generate an entry.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $fieldrecord = (object)[
+            'name' => 'myfield',
+            'type' => 'text',
+        ];
+        $field = $generator->create_field($fieldrecord, $activity);
+
+        if ($newentry) {
+            $entryid = null;
+            $entry = null;
+        } else {
+            $entryid = $generator->create_entry(
+                $activity,
+                [$field->field->id => 'Example entry'],
+                0,
+                ['Cats', 'Dogs']
+            );
+            $entry = (object)[
+                'd' => $activity->id,
+                'rid' => $entryid,
+                "field_{$field->field->id}" => "New value",
+            ];
+        }
+
+        $manager = manager::create_from_instance($activity);
+
+        // Some cooked variables for the regular expression.
+        $replace = [
+            '{fieldid}' => $field->field->id,
+        ];
+
+        $processdata = (object)[
+            'generalnotifications' => ['GENERAL'],
+            'fieldnotifications' => [$field->field->name => ['FIELD']],
+        ];
+
+        $parser = new template($manager, $templatecontent);
+        $result = $parser->parse_add_entry($processdata, $entryid, $entry);
+
+        // We don't want line breaks for the validations.
+        $result = str_replace("\n", '', $result);
+        $regexp = str_replace(array_keys($replace), array_values($replace), $expected);
+        $this->assertMatchesRegularExpression($regexp, $result);
+    }
+
+    /**
+     * Data provider for test_parse_add_entry().
+     *
+     * @return array of scenarios
+     */
+    public function parse_add_entry_provider(): array {
+        return [
+            // Editing an entry.
+            'Teacher editing entry tags tag' => [
+                'templatecontent' => 'Some ##tags## tag',
+                'expected' => '|GENERAL.*Some .*select .*tags.*Cats.* tag|',
+                'newentry' => false,
+            ],
+            'Teacher editing entry field name tag' => [
+                'templatecontent' => 'Some [[myfield]] tag',
+                'expected' => '|GENERAL.*Some .*FIELD.*field_{fieldid}.*input.*New value.* tag|',
+                'newentry' => false,
+            ],
+            'Teacher editing entry field#id tag' => [
+                'templatecontent' => 'Some [[myfield#id]] tag',
+                'expected' => '|GENERAL.*Some field_{fieldid} tag|',
+                'newentry' => false,
+            ],
+            // New entry.
+            'Teacher new entry tags tag' => [
+                'templatecontent' => 'Some ##tags## tag',
+                'expected' => '|GENERAL.*Some .*select .*tags\[\].* tag|',
+                'newentry' => true,
+            ],
+            'Teacher new entry field name tag' => [
+                'templatecontent' => 'Some [[myfield]] tag',
+                'expected' => '|GENERAL.*Some .*FIELD.*field_{fieldid}.*input.*value="".* tag|',
+                'newentry' => true,
+            ],
+            'Teacher new entry field#id name tag' => [
+                'templatecontent' => 'Some [[myfield#id]] tag',
+                'expected' => '|GENERAL.*Some field_{fieldid} tag|',
+                'newentry' => true,
+            ],
+        ];
     }
 }

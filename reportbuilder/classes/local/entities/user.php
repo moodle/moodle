@@ -22,7 +22,6 @@ use context_helper;
 use context_system;
 use context_user;
 use core_component;
-use core_tag_tag;
 use html_writer;
 use lang_string;
 use moodle_url;
@@ -31,7 +30,6 @@ use core_user\fields;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\select;
-use core_reportbuilder\local\filters\tags;
 use core_reportbuilder\local\filters\text;
 use core_reportbuilder\local\filters\user as user_filter;
 use core_reportbuilder\local\helpers\user_profile_fields;
@@ -111,11 +109,39 @@ class user extends base {
     }
 
     /**
+     * Returns column that corresponds to the given identity field
+     *
+     * @param string $identityfield Field from the user table, or the shortname of a custom profile field
+     * @return column
+     */
+    public function get_identity_column(string $identityfield): column {
+        if (preg_match("/^profile_field_(?<shortname>.*)$/", $identityfield, $matches)) {
+            $identityfield = 'profilefield_' . $matches['shortname'];
+        }
+
+        return $this->get_column($identityfield);
+    }
+
+    /**
+     * Returns filter that corresponds to the given identity field
+     *
+     * @param string $identityfield Field from the user table, or the shortname of a custom profile field
+     * @return filter
+     */
+    public function get_identity_filter(string $identityfield): filter {
+        if (preg_match("/^profile_field_(?<shortname>.*)$/", $identityfield, $matches)) {
+            $identityfield = 'profilefield_' . $matches['shortname'];
+        }
+
+        return $this->get_filter($identityfield);
+    }
+
+    /**
      * Return joins necessary for retrieving tags
      *
      * @return string[]
      */
-    private function get_tag_joins(): array {
+    public function get_tag_joins(): array {
         $user = $this->get_table_alias('user');
         $taginstance = $this->get_table_alias('tag_instance');
         $tag = $this->get_table_alias('tag');
@@ -138,6 +164,8 @@ class user extends base {
      * @return column[]
      */
     protected function get_all_columns(): array {
+        global $DB;
+
         $usertablealias = $this->get_table_alias('user');
         $contexttablealias = $this->get_table_alias('context');
 
@@ -244,26 +272,15 @@ class user extends base {
                 return !empty($row->id) ? $OUTPUT->user_picture($row, ['link' => false, 'alttext' => false]) : '';
             });
 
-        // Interests (tags).
-        $tag = $this->get_table_alias('tag');
-        $columns[] = (new column(
-            'interests',
-            new lang_string('interests'),
-            $this->get_entity_name()
-        ))
-            ->add_joins($this->get_joins())
-            ->add_joins($this->get_tag_joins())
-            ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$tag}.name, {$tag}.rawname")
-            ->set_is_sortable(true)
-            ->add_callback(static function($value, stdClass $tag): string {
-                return core_tag_tag::make_display_name($tag);
-            });
-
         // Add all other user fields.
         $userfields = $this->get_user_fields();
         foreach ($userfields as $userfield => $userfieldlang) {
             $columntype = $this->get_user_field_type($userfield);
+
+            $columnfieldsql = "{$usertablealias}.{$userfield}";
+            if ($columntype === column::TYPE_LONGTEXT && $DB->get_dbfamily() === 'oracle') {
+                $columnfieldsql = $DB->sql_order_by_text($columnfieldsql, 1024);
+            }
 
             $column = (new column(
                 $userfield,
@@ -271,8 +288,8 @@ class user extends base {
                 $this->get_entity_name()
             ))
                 ->add_joins($this->get_joins())
-                ->add_field("{$usertablealias}.{$userfield}")
                 ->set_type($columntype)
+                ->add_field($columnfieldsql, $userfield)
                 ->set_is_sortable($this->is_sortable($userfield))
                 ->add_callback([$this, 'format'], $userfield);
 
@@ -466,11 +483,9 @@ class user extends base {
         // User fields filters.
         $fields = $this->get_user_fields();
         foreach ($fields as $field => $name) {
-            // Filtering isn't supported for LONGTEXT fields on Oracle.
-            if ($this->get_user_field_type($field) === column::TYPE_LONGTEXT &&
-                    $DB->get_dbfamily() === 'oracle') {
-
-                continue;
+            $filterfieldsql = "{$tablealias}.{$field}";
+            if ($this->get_user_field_type($field) === column::TYPE_LONGTEXT) {
+                $filterfieldsql = $DB->sql_cast_to_char($filterfieldsql);
             }
 
             $optionscallback = [static::class, 'get_options_for_' . $field];
@@ -489,7 +504,7 @@ class user extends base {
                 $field,
                 $name,
                 $this->get_entity_name(),
-                $tablealias . '.' . $field
+                $filterfieldsql
             ))
                 ->add_joins($this->get_joins());
 
@@ -500,22 +515,6 @@ class user extends base {
 
             $filters[] = $filter;
         }
-
-        // Interests (tags).
-        $tag = $this->get_table_alias('tag');
-        $filters[] = (new filter(
-            tags::class,
-            'interests',
-            new lang_string('interests'),
-            $this->get_entity_name(),
-            "{$tag}.id"
-        ))
-            ->add_joins($this->get_joins())
-            ->add_joins($this->get_tag_joins())
-            ->set_options([
-                'component' => 'core',
-                'itemtype' => 'user',
-            ]);
 
         // User select filter.
         $filters[] = (new filter(
@@ -535,6 +534,7 @@ class user extends base {
             $this->get_entity_name(),
             "{$tablealias}.auth"
         ))
+            ->add_joins($this->get_joins())
             ->set_options_callback(static function(): array {
                 $plugins = core_component::get_plugin_list('auth');
                 $enabled = get_string('pluginenabled', 'core_plugin');

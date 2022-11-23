@@ -14,46 +14,45 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for the {@link core_question\engine\variants\least_used_strategy} class.
- *
- * @package   core_question
- * @copyright 2015 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_question;
+
+use core_question\engine\variants\least_used_strategy;
+use qubaid_list;
+use question_bank;
+use question_engine;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 
-
 /**
  * Tests for the {@link core_question\engine\variants\least_used_strategy} class.
  *
+ * @package    core_question
  * @copyright  2015 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class least_used_variant_strategy_testcase extends advanced_testcase {
+class least_used_variant_strategy_test extends \advanced_testcase {
 
     public function test_question_with_one_variant_always_picks_that() {
-        $question = test_question_maker::make_question('shortanswer');
-        $quba = question_engine::make_questions_usage_by_activity('test', context_system::instance());
+        $question = \test_question_maker::make_question('shortanswer');
+        $quba = question_engine::make_questions_usage_by_activity('test', \context_system::instance());
         $quba->set_preferred_behaviour('deferredfeedback');
         $slot = $quba->add_question($question);
-        $quba->start_all_questions(new core_question\engine\variants\least_used_strategy(
+        $quba->start_all_questions(new least_used_strategy(
                 $quba, new qubaid_list([])));
         $this->assertEquals(1, $quba->get_variant($slot));
     }
 
     public function test_synchronised_question_should_use_the_same_dataset() {
         // Actually, we cheat here. We use the same question twice, not two different synchronised questions.
-        $question = test_question_maker::make_question('calculated');
-        $quba = question_engine::make_questions_usage_by_activity('test', context_system::instance());
+        $question = \test_question_maker::make_question('calculated');
+        $quba = question_engine::make_questions_usage_by_activity('test', \context_system::instance());
         $quba->set_preferred_behaviour('deferredfeedback');
         $slot1 = $quba->add_question($question);
         $slot2 = $quba->add_question($question);
-        $quba->start_all_questions(new core_question\engine\variants\least_used_strategy(
+        $quba->start_all_questions(new least_used_strategy(
                 $quba, new qubaid_list([])));
         $this->assertEquals($quba->get_variant($slot1), $quba->get_variant($slot2));
     }
@@ -92,19 +91,19 @@ class least_used_variant_strategy_testcase extends advanced_testcase {
 
         $question = question_bank::load_question($questiondata->id);
 
-        $quba1 = question_engine::make_questions_usage_by_activity('test', context_system::instance());
+        $quba1 = question_engine::make_questions_usage_by_activity('test', \context_system::instance());
         $quba1->set_preferred_behaviour('deferredfeedback');
         $slot1 = $quba1->add_question($question);
-        $quba1->start_all_questions(new core_question\engine\variants\least_used_strategy(
+        $quba1->start_all_questions(new least_used_strategy(
                 $quba1, new qubaid_list([])));
         question_engine::save_questions_usage_by_activity($quba1);
         $variant1 = $quba1->get_variant($slot1);
 
         // Second attempt should use the other variant.
-        $quba2 = question_engine::make_questions_usage_by_activity('test', context_system::instance());
+        $quba2 = question_engine::make_questions_usage_by_activity('test', \context_system::instance());
         $quba2->set_preferred_behaviour('deferredfeedback');
         $slot2 = $quba2->add_question($question);
-        $quba2->start_all_questions(new core_question\engine\variants\least_used_strategy(
+        $quba2->start_all_questions(new least_used_strategy(
                 $quba1, new qubaid_list([$quba1->get_id()])));
         question_engine::save_questions_usage_by_activity($quba2);
         $variant2 = $quba2->get_variant($slot2);
@@ -112,10 +111,10 @@ class least_used_variant_strategy_testcase extends advanced_testcase {
         $this->assertNotEquals($variant1, $variant2);
 
         // Third attempt uses either variant at random.
-        $quba3 = question_engine::make_questions_usage_by_activity('test', context_system::instance());
+        $quba3 = question_engine::make_questions_usage_by_activity('test', \context_system::instance());
         $quba3->set_preferred_behaviour('deferredfeedback');
         $slot3 = $quba3->add_question($question);
-        $quba3->start_all_questions(new core_question\engine\variants\least_used_strategy(
+        $quba3->start_all_questions(new least_used_strategy(
                 $quba1, new qubaid_list([$quba1->get_id(), $quba2->get_id()])));
         $variant3 = $quba3->get_variant($slot3);
 

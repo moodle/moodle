@@ -1,12 +1,12 @@
 <?php
 /*
- * Copyright 2016-2017 MongoDB, Inc.
+ * Copyright 2016-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,18 +19,15 @@ namespace MongoDB\GridFS;
 
 use MongoDB\BSON\UTCDateTime;
 use stdClass;
-use Throwable;
+
 use function explode;
-use function get_class;
 use function in_array;
 use function is_integer;
-use function sprintf;
 use function stream_context_get_options;
 use function stream_get_wrappers;
 use function stream_wrapper_register;
 use function stream_wrapper_unregister;
-use function trigger_error;
-use const E_USER_WARNING;
+
 use const SEEK_CUR;
 use const SEEK_END;
 use const SEEK_SET;
@@ -92,7 +89,7 @@ class StreamWrapper
     /**
      * Closes the stream.
      *
-     * @see http://php.net/manual/en/streamwrapper.stream-close.php
+     * @see https://php.net/manual/en/streamwrapper.stream-close.php
      */
     public function stream_close()
     {
@@ -106,7 +103,7 @@ class StreamWrapper
     /**
      * Returns whether the file pointer is at the end of the stream.
      *
-     * @see http://php.net/manual/en/streamwrapper.stream-eof.php
+     * @see https://php.net/manual/en/streamwrapper.stream-eof.php
      * @return boolean
      */
     public function stream_eof()
@@ -121,7 +118,7 @@ class StreamWrapper
     /**
      * Opens the stream.
      *
-     * @see http://php.net/manual/en/streamwrapper.stream-open.php
+     * @see https://php.net/manual/en/streamwrapper.stream-open.php
      * @param string  $path       Path to the file resource
      * @param string  $mode       Mode used to open the file (only "r" and "w" are supported)
      * @param integer $options    Additional flags set by the streams API
@@ -150,7 +147,7 @@ class StreamWrapper
      * Note: this method may return a string smaller than the requested length
      * if data is not available to be read.
      *
-     * @see http://php.net/manual/en/streamwrapper.stream-read.php
+     * @see https://php.net/manual/en/streamwrapper.stream-read.php
      * @param integer $length Number of bytes to read
      * @return string
      */
@@ -160,19 +157,13 @@ class StreamWrapper
             return '';
         }
 
-        try {
-            return $this->stream->readBytes($length);
-        } catch (Throwable $e) {
-            trigger_error(sprintf('%s: %s', get_class($e), $e->getMessage()), E_USER_WARNING);
-
-            return false;
-        }
+        return $this->stream->readBytes($length);
     }
 
     /**
      * Return the current position of the stream.
      *
-     * @see http://php.net/manual/en/streamwrapper.stream-seek.php
+     * @see https://php.net/manual/en/streamwrapper.stream-seek.php
      * @param integer $offset Stream offset to seek to
      * @param integer $whence One of SEEK_SET, SEEK_CUR, or SEEK_END
      * @return boolean True if the position was updated and false otherwise
@@ -206,7 +197,7 @@ class StreamWrapper
     /**
      * Return information about the stream.
      *
-     * @see http://php.net/manual/en/streamwrapper.stream-stat.php
+     * @see https://php.net/manual/en/streamwrapper.stream-stat.php
      * @return array
      */
     public function stream_stat()
@@ -236,7 +227,7 @@ class StreamWrapper
     /**
      * Return the current position of the stream.
      *
-     * @see http://php.net/manual/en/streamwrapper.stream-tell.php
+     * @see https://php.net/manual/en/streamwrapper.stream-tell.php
      * @return integer The current position of the stream
      */
     public function stream_tell()
@@ -247,7 +238,7 @@ class StreamWrapper
     /**
      * Write bytes to the stream.
      *
-     * @see http://php.net/manual/en/streamwrapper.stream-write.php
+     * @see https://php.net/manual/en/streamwrapper.stream-write.php
      * @param string $data Data to write
      * @return integer The number of bytes written
      */
@@ -257,13 +248,7 @@ class StreamWrapper
             return 0;
         }
 
-        try {
-            return $this->stream->writeBytes($data);
-        } catch (Throwable $e) {
-            trigger_error(sprintf('%s: %s', get_class($e), $e->getMessage()), E_USER_WARNING);
-
-            return false;
-        }
+        return $this->stream->writeBytes($data);
     }
 
     /**

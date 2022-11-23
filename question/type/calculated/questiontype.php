@@ -640,23 +640,13 @@ class qtype_calculated extends question_type {
                     if (isset($form->synchronize) && $form->synchronize == 2) {
                         $this->addnamecategory($question);
                     }
-                } else if (!empty($form->makecopy)) {
+                } else {
                     $questionfromid =  $form->id;
                     $question = parent::save_question($question, $form);
                     // Prepare the datasets.
                     $this->preparedatasets($form, $questionfromid);
                     $form->id = $question->id;
                     $this->save_as_new_dataset_definitions($form, $questionfromid);
-                    if (isset($form->synchronize) && $form->synchronize == 2) {
-                        $this->addnamecategory($question);
-                    }
-                } else {
-                    // Editing a question.
-                    $question = parent::save_question($question, $form);
-                    // Prepare the datasets.
-                    $this->preparedatasets($form, $question->id);
-                    $form->id = $question->id;
-                    $this->save_dataset_definitions($form);
                     if (isset($form->synchronize) && $form->synchronize == 2) {
                         $this->addnamecategory($question);
                     }
@@ -1759,13 +1749,10 @@ class qtype_calculated extends question_type {
                     $line++;
                     $text .= "<td align=\"left\" style=\"white-space:nowrap;\">{$questionname}</td>";
                     // TODO MDL-43779 should not have quiz-specific code here.
-                    $nbofquiz = $DB->count_records('quiz_slots', array('questionid' => $qu->id));
-                    $nbofattempts = $DB->count_records_sql("
-                            SELECT count(1)
-                              FROM {quiz_slots} slot
-                              JOIN {quiz_attempts} quiza ON quiza.quiz = slot.quizid
-                             WHERE slot.questionid = ?
-                               AND quiza.preview = 0", array($qu->id));
+                    $sql = 'SELECT COUNT(*) FROM (' . qbank_usage\helper::get_question_bank_usage_sql() . ') questioncount';
+                    $nbofquiz = $DB->count_records_sql($sql, [$qu->id, 'mod_quiz', 'slot']);
+                    $sql = 'SELECT COUNT(*) FROM (' . qbank_usage\helper::get_question_attempt_usage_sql() . ') attemptcount';
+                    $nbofattempts = $DB->count_records_sql($sql, [$qu->id]);
                     if ($nbofquiz > 0) {
                         $text .= "<td align=\"center\">{$nbofquiz}</td>";
                         $text .= "<td align=\"center\">{$nbofattempts}";

@@ -18,8 +18,7 @@ declare(strict_types=1);
 
 namespace core_cohort\reportbuilder\datasource;
 
-use core_cohort\local\entities\cohort;
-use core_cohort\local\entities\cohort_member;
+use core_cohort\reportbuilder\local\entities\{cohort, cohort_member};
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\user;
 
@@ -82,8 +81,8 @@ class cohorts extends datasource {
      */
     public function get_default_columns(): array {
         return [
-            'cohort:context',
             'cohort:name',
+            'cohort:context',
             'cohort:idnumber',
             'cohort:description',
         ];
@@ -105,5 +104,16 @@ class cohorts extends datasource {
      */
     public function get_default_conditions(): array {
         return [];
+    }
+
+    /**
+     * Return the default sorting that will be added to the report once it is created
+     *
+     * @return array|int[]
+     */
+    public function get_default_column_sorting(): array {
+        return [
+            'cohort:name' => SORT_ASC,
+        ];
     }
 }

@@ -133,4 +133,4 @@ Feature: Enable Block Completion in a course using activity completion
     And I am on "Course 1" course homepage
     And I follow "More details"
     And I should see "Achieving grade, Achieving passing grade" in the "Activity completion" "table_row"
-    And I should see "Yes" in the "Activity completion" "table_row"
+    And I should see "No" in the "Activity completion" "table_row"

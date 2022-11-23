@@ -39,39 +39,10 @@
         ]
     }
 }}
-
-<div id="core_user-participantsfilter-{{uniqid}}" class="filter-group my-2 p-2 bg-light border-radius border" data-table-region="{{tableregionid}}" data-table-course-id="{{courseid}}" data-filterverb="2">
-    <div data-filterregion="filtermatch" class="hidden">
-        <label for="core_user-local-participantsfilter-jointype-{{uniqid}}" class="my-0" aria-hidden="true">
-            {{#str}}match, core_user{{/str}}
-        </label>
-        <select class="custom-select" data-filterfield="join" id="core_user-local-participantsfilter-jointype-{{uniqid}}"
-                aria-label="{{#str}}filtersetmatchdescription, core_user{{/str}}">
-            <option value="0">{{#str}}none{{/str}}</option>
-            <option value="1">{{#str}}any{{/str}}</option>
-            <option value="2" selected>{{#str}}all{{/str}}</option>
-        </select>
-        <span aria-hidden="true">{{#str}}matchofthefollowing, core_user{{/str}}</span>
-    </div>
-
-    <div data-filterregion="filters">
-        {{> core_user/local/participantsfilter/filterrow }}
-    </div>
-
-    <div class="d-flex" data-filterregion="actions">
-        &nbsp;
-        <button type="button" class="btn btn-link text-reset" data-filteraction="add">
-            <i class="fa fa-plus"></i><span class="pl-3">{{#str}}addcondition, core_user{{/str}}</span>
-        </button>
-        <button data-filteraction="reset" type="button" class="btn btn-secondary ml-auto mr-2">{{#str}}clearfilters, core_user{{/str}}</button>
-        <button data-filteraction="apply" type="button" class="btn btn-primary">{{#str}}applyfilters, core_user{{/str}}</button>
-    </div>
-
-    {{> core_user/local/participantsfilter/filtertypes}}
-</div>
+{{> core/datafilter/filter }}
 
 {{#js}}
-require(['core_user/participantsfilter'], function(ParticipantsFilter) {
-    ParticipantsFilter.init('core_user-participantsfilter-{{uniqid}}');
-});
+    require(['core_user/participants_filter'], function(ParticipantsFilter) {
+        ParticipantsFilter.init('core-filter-{{uniqid}}');
+    });
 {{/js}}

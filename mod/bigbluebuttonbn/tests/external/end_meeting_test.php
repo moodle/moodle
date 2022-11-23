@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @package   mod_bigbluebuttonbn
  * @copyright  2021 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_bigbluebuttonbn\external\end_meeting
+ * @covers \mod_bigbluebuttonbn\external\end_meeting
  */
 class end_meeting_test extends \externallib_advanced_testcase {
     use testcase_helper_trait;
@@ -50,7 +50,7 @@ class end_meeting_test extends \externallib_advanced_testcase {
     /**
      * Helper
      *
-     * @param ... $params
+     * @param mixed ...$params
      * @return array|bool|mixed
      */
     protected function end_meeting(...$params) {

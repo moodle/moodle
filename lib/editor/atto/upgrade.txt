@@ -1,5 +1,15 @@
 This files describes API changes in the editor_atto code.
 
+=== 4.1 ===
+
+* Two new helper functions have been added to lib/editor/atto
+to handle enable/disable the empty placeholder for empty content in the HTML source view:
+  - enablePlaceholderForEmptyContent() - Handle to enable the empty placeholder for empty content
+  - disablePlaceholderForEmptyContent() - Handle to disable the empty placeholder for empty content.
+
+* One property have been added to lib/editor/atto to handle the state of the empty placeholder content.
+  - enableAppropriateEmptyContent - Enable/disable the empty placeholder content.
+
 === 3.4 ===
 
 * The following functions, previously used (exclusively) by upgrade steps are not available

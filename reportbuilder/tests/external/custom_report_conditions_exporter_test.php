@@ -51,11 +51,11 @@ class custom_report_conditions_exporter_test extends advanced_testcase {
         $exporter = new custom_report_conditions_exporter(null, ['report' => $reportinstance]);
         $export = $exporter->export($PAGE->get_renderer('core_reportbuilder'));
 
-        // The root of the available conditions property should contain two entities.
         $this->assertTrue($export->hasavailableconditions);
-        $this->assertCount(2, $export->availableconditions);
 
-        [$conditionscategory, $conditionscourse] = $export->availableconditions;
+        // The root of the available conditions property should contain each entity.
+        $this->assertCount(3, $export->availableconditions);
+        [$conditionscategory, $conditionscourse, $conditionstag] = $export->availableconditions;
 
         // Course category conditions, assert structure of first item.
         $this->assertEquals('Course category', $conditionscategory['optiongroup']['text']);
@@ -75,6 +75,14 @@ class custom_report_conditions_exporter_test extends advanced_testcase {
 
         // Make sure the active condition we added, isn't present in available conditions.
         $this->assertNotContains('course:shortname', array_column($conditionscourse['optiongroup']['values'], 'value'));
+
+        // Tag conditions, assert structure of first item.
+        $this->assertEquals('Tag', $conditionstag['optiongroup']['text']);
+        $this->assertGreaterThanOrEqual(1, $conditionstag['optiongroup']['values']);
+        $this->assertEquals([
+            'value' => 'tag:name',
+            'visiblename' => 'Tag name',
+        ], $conditionstag['optiongroup']['values'][0]);
 
         // The active conditions are contained inside form HTML, just assert there's something present.
         $this->assertTrue($export->hasactiveconditions);

@@ -30,6 +30,23 @@ Feature: Export calendar events
     And I should see "Events related to groups"
     And I should see "My personal events"
 
+  @javascript
+  Scenario: Export calendar in ics format
+    And I follow "Full calendar"
+    And I press "New event"
+    And I set the following fields to these values:
+      | Event title         | My event |
+      | id_timestart_hour   | 13       |
+      | id_timestart_minute | 00       |
+    And I press "Save"
+    When I click on "Import or export calendars" "link"
+    And I click on "Export calendar" "button"
+    And I set the field "All events" to "1"
+    And I set the field "This week" to "1"
+    And I press "Export"
+    And I should see "SUMMARY:My event"
+    And I should see "##today##DTSTART:%Y%m%dT050000Z##"
+
   Scenario: Generating calendar URL for all events
     Given I follow "Full calendar"
     And I click on "Import or export calendars" "link"

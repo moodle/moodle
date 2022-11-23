@@ -479,7 +479,8 @@ final class column {
      * fields, and $additionalarguments are those passed on from this method):
      *
      * The type of the $value parameter passed to the callback is determined by calling {@see set_type}, this type is preserved
-     * if the column is part of a report source and is aggregated using one of the "Group concatenation" methods
+     * if the column is part of a report source and is being aggregated.
+     * For entities that can to be left joined to a report, the first argument to their column callbacks must be nullable.
      *
      * function($value, stdClass $row[, $additionalarguments]): string
      *
@@ -649,6 +650,9 @@ final class column {
      */
     public static function get_default_value(array $values, int $columntype) {
         $value = reset($values);
+        if ($value === null) {
+            return $value;
+        }
 
         // Ensure default value is cast to it's strict type.
         switch ($columntype) {

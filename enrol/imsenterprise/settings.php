@@ -111,6 +111,21 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/imsunenrol',
         get_string('allowunenrol', 'enrol_imsenterprise'), get_string('allowunenrol_desc', 'enrol_imsenterprise'), 0));
 
+    /* Action to take when a request to remove a user enrolment record is detected in the IMS file */
+    $options = [
+        ENROL_EXT_REMOVED_KEEP => get_string('noaction', 'enrol_imsenterprise'),
+        ENROL_EXT_REMOVED_UNENROL => get_string('removeenrolmentandallroles', 'enrol_imsenterprise'),
+        ENROL_EXT_REMOVED_SUSPEND => get_string('disableenrolonly', 'enrol_imsenterprise'),
+        ENROL_EXT_REMOVED_SUSPENDNOROLES => get_string('disableenrolmentandremoveallroles', 'enrol_imsenterprise'),
+    ];
+
+    $settings->add(
+        new admin_setting_configselect('enrol_imsenterprise/unenrolaction',
+            get_string('unenrolaction', 'enrol_imsenterprise'),
+            get_string('unenrolaction_desc', 'enrol_imsenterprise'),
+            ENROL_EXT_REMOVED_UNENROL, $options)
+    );
+
     if (!during_initial_install()) {
         $imscourses = new imsenterprise_courses();
         foreach ($imscourses->get_courseattrs() as $courseattr) {

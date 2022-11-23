@@ -66,8 +66,10 @@
     }
 }}
 <div>{{title}}</div>
-<form id="tempform" action="{{{url}}}" method="post">
+<form id="edittemplateform" action="{{{url}}}" method="post">
     <input name="sesskey" value="{{sesskey}}" type="hidden" />
+    <input name="defaultform" type="hidden" value=""/>
+    <input name="resetall" type="hidden" value=""/>
     <div class="d-flex flex-row align-items-center">
         {{#toolbar}}
             {{> mod_data/template_editor_tools }}
@@ -85,28 +87,16 @@
                         class="form-control"
                         rows="15"
                         cols="80"
+                        {{#usehtmleditor}}data-fieldtype="editor"{{/usehtmleditor}}
                     >{{value}}</textarea>
                 </div>
             </div>
             {{/editors}}
         </div>
     </div>
+    {{#disableeditor}}
     <div class="container-fluid mt-4">
         <div class="row">
-            <div>
-                <input
-                    class="btn btn-secondary"
-                    type="submit"
-                    name="defaultform"
-                    value="{{#str}} resettemplate, data {{/str}}"
-                />
-                <input
-                    class="btn btn-primary"
-                    type="submit"
-                    value="{{#str}} savetemplate, data {{/str}}"
-                />
-            </div>
-            {{#disableeditor}}
             <div class="ml-auto">
                 <input
                     type="checkbox"
@@ -117,7 +107,24 @@
                 />
                 <label for="useeditor">{{#str}} editorenable, data {{/str}}</label>
             </div>
-            {{/disableeditor}}
         </div>
     </div>
+    {{/disableeditor}}
+    {{< core/sticky_footer }}
+        {{$ stickycontent }}
+        <div>
+            <input
+                class="btn btn-secondary"
+                type="button"
+                name="resetbutton"
+                value="{{#str}} reset {{/str}}"
+            />
+            <input
+                class="btn btn-primary"
+                type="submit"
+                value="{{#str}} save {{/str}}"
+            />
+        </div>
+        {{/ stickycontent }}
+    {{/ core/sticky_footer }}
 </form>

@@ -351,7 +351,7 @@ class HTML_QuickForm_element extends HTML_Common
         if (empty($values)) {
             return null;
         }
-        $elementName = $this->getName();
+        $elementName = $this->getName() ?? '';
         if (isset($values[$elementName])) {
             return $values[$elementName];
         } elseif (strpos($elementName, '[')) {
@@ -447,7 +447,7 @@ class HTML_QuickForm_element extends HTML_Common
             return;
         }
 
-        $id = $this->getName();
+        $id = $this->getName() ?? '';
         $id = 'id_' . str_replace(array('qf_', '[', ']'), array('', '_', ''), $id);
         $id = clean_param($id, PARAM_ALPHANUMEXT);
         $this->updateAttributes(array('id' => $id));

@@ -4,7 +4,8 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
   As a teacher
   I need to be able to edit the feedback for a students previous submission attempt.
 
-  @javascript
+  # This scenario has Atto-specific steps. See MDL-75913 for further details.
+  @javascript @editor_atto
   Scenario: Edit feedback for a students previous attempt.
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
@@ -51,7 +52,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
     And I click on "Grade" "link" in the "Student 2" "table_row"
     And I click on "View a different attempt" "link"
     And I click on "Attempt 1" "radio" in the "View a different attempt" "dialogue"
-    And I click on "View" "button"
+    And I click on "View" "button" in the "View a different attempt" "dialogue"
     And I set the following fields to these values:
       | Grade | 50 |
       | Feedback comments | I'm the teacher second feedback |

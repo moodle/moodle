@@ -1,0 +1,83 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/tertiary_navigation_selector
+
+    Tertiary navigation selector.
+
+    Context variables required for this template:
+    * name - name of the form element
+    * value - value of the form element
+    * baseid - id of the dropdown element and to be used to generate id for other elements used internally
+    * label - Element label
+    * labelattributes - Label attributes.
+    * selectedoption - Text of the selected option
+    * options - Array of options for the select with value, name, selected, isgroup and id properites.
+    Example context (json):
+    {
+        "name": "Tertiary navigation selector",
+        "value": "opt2",
+        "baseid": "select-menu56789",
+        "selectedoption": "Second option",
+        "options": [
+            {
+                "name": "First option",
+                "value": "opt1",
+                "id": "select-menu-option1",
+                "selected": false
+            },
+            {
+                "name": "Second option",
+                "value": "opt2",
+                "id": "select-menu-option2",
+                "selected": true
+            },
+            {
+                "selected": false,
+                "isgroup": {
+                    "name": "First group",
+                    "id": "select-menu-group1",
+                    "options": [
+                        {
+                            "name": "Third option",
+                            "value": "opt3",
+                            "id": "select-menu-option3",
+                            "selected": false
+                        },
+                        {
+                            "name": "Fourth option",
+                            "value": "opt4",
+                            "id": "select-menu-option4",
+                            "selected": false
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "Fifth option",
+                "value": "opt5",
+                "id": "select-menu-option5",
+                "selected": false
+            }
+        ]
+    }
+}}
+<nav class="tertiary-navigation-selector">
+    {{>core/select_menu}}
+</nav>
+{{#js}}
+    document.querySelector('#{{baseid}}').addEventListener('change', function(e) {
+        window.location.href = e.target.value;
+    });
+{{/js}}

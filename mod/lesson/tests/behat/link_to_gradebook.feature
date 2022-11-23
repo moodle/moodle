@@ -49,7 +49,8 @@ Feature: link to gradebook on the end of lesson page
     Then I should see "Congratulations - end of lesson reached"
     And I should see "View grades"
     And I follow "View grades"
-    And I should see "User report - Student 1"
+    And I should see "User report" in the "page-header" "region"
+    And I should see "Student 1" in the "region-main" "region"
     And I should see "Test lesson"
 
   Scenario: No link to gradebook for non graded lesson

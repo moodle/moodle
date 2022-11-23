@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * PHPUnit tests for quiz_settings class.
- *
- * @package    quizaccess_seb
- * @author     Andrew Madden <andrewmadden@catalyst-au.net>
- * @copyright  2019 Catalyst IT
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-use quizaccess_seb\quiz_settings;
-use quizaccess_seb\settings_provider;
+namespace quizaccess_seb;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,11 +23,13 @@ require_once(__DIR__ . '/test_helper_trait.php');
 /**
  * PHPUnit tests for quiz_settings class.
  *
- * @copyright  2020 Catalyst IT
+ * @package   quizaccess_seb
+ * @author    Andrew Madden <andrewmadden@catalyst-au.net>
+ * @copyright 2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
-    use quizaccess_seb_test_helper_trait;
+class quiz_settings_test extends \advanced_testcase {
+    use \quizaccess_seb_test_helper_trait;
 
     /** @var context_module $context Test context. */
     protected $context;
@@ -59,8 +51,8 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
             'course' => $this->course->id,
             'seb_requiresafeexambrowser' => settings_provider::USE_SEB_CONFIG_MANUALLY,
         ]);
-        $this->context = context_module::instance($this->quiz->cmid);
-        $this->url = new moodle_url("/mod/quiz/view.php", ['id' => $this->quiz->cmid]);
+        $this->context = \context_module::instance($this->quiz->cmid);
+        $this->url = new \moodle_url("/mod/quiz/view.php", ['id' => $this->quiz->cmid]);
     }
 
     /**
@@ -68,9 +60,10 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
      */
     public function test_config_is_created_from_quiz_settings() {
         // Test settings to populate the in the object.
-        $settings = $this->get_test_settings();
-        $settings->quizid = $this->quiz->id;
-        $settings->cmid = $this->quiz->cmid;
+        $settings = $this->get_test_settings([
+            'quizid' => $this->quiz->id,
+            'cmid' => $this->quiz->cmid,
+        ]);
 
         // Obtain the existing record that is created when using a generator.
         $quizsettings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
@@ -91,8 +84,8 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
                 . "<string>9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08</string><key>URLFilterRules</key>"
                 . "<array><dict><key>action</key><integer>1</integer><key>active</key><true/><key>expression</key>"
                 . "<string>test.com</string><key>regex</key><false/></dict></array><key>startURL</key><string>$this->url</string>"
-                . "<key>sendBrowserExamKey</key><true/><key>examSessionClearCookiesOnStart</key><false/>"
-                . "<key>allowPreferencesWindow</key><false/></dict></plist>\n",
+                . "<key>sendBrowserExamKey</key><true/><key>browserWindowWebView</key><integer>3</integer>"
+                . "<key>examSessionClearCookiesOnStart</key><false/><key>allowPreferencesWindow</key><false/></dict></plist>\n",
             $config);
     }
 
@@ -101,9 +94,10 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
      */
     public function test_config_is_updated_from_quiz_settings() {
         // Test settings to populate the in the object.
-        $settings = $this->get_test_settings();
-        $settings->quizid = $this->quiz->id;
-        $settings->cmid = $this->quiz->cmid;
+        $settings = $this->get_test_settings([
+            'quizid' => $this->quiz->id,
+            'cmid' => $this->quiz->cmid,
+        ]);
 
         // Obtain the existing record that is created when using a generator.
         $quizsettings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
@@ -123,7 +117,8 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
             . "<string>9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08</string><key>URLFilterRules</key>"
             . "<array><dict><key>action</key><integer>1</integer><key>active</key><true/><key>expression</key>"
             . "<string>test.com</string><key>regex</key><false/></dict></array><key>startURL</key><string>$this->url</string>"
-            . "<key>sendBrowserExamKey</key><true/><key>examSessionClearCookiesOnStart</key><false/>"
+            . "<key>sendBrowserExamKey</key><true/><key>browserWindowWebView</key><integer>3</integer>"
+            . "<key>examSessionClearCookiesOnStart</key><false/>"
             . "<key>allowPreferencesWindow</key><false/></dict></plist>\n", $config);
 
         $quizsettings->set('filterembeddedcontent', 1); // Alter the settings.
@@ -139,7 +134,8 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
             . "<string>9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08</string><key>URLFilterRules</key>"
             . "<array><dict><key>action</key><integer>1</integer><key>active</key><true/><key>expression</key>"
             . "<string>test.com</string><key>regex</key><false/></dict></array><key>startURL</key><string>$this->url</string>"
-            . "<key>sendBrowserExamKey</key><true/><key>examSessionClearCookiesOnStart</key><false/>"
+            . "<key>sendBrowserExamKey</key><true/><key>browserWindowWebView</key><integer>3</integer>"
+            . "<key>examSessionClearCookiesOnStart</key><false/>"
             . "<key>allowPreferencesWindow</key><false/></dict></plist>\n", $config);
     }
 
@@ -151,7 +147,7 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
 
         $quizsettings = new quiz_settings(0, $settings);
         $configkey = $quizsettings->get_config_key();
-        $this->assertEquals("b35510bd754f9d106ff88b9d2dc1bb297cddc9fc7b4bdde2dbda4e7d9e4b50d8",
+        $this->assertEquals("65ff7a3b8aec80e58fbe2e7968826c33cbf0ac444a748055ebe665829cbf4201",
             $configkey
         );
     }
@@ -164,24 +160,24 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
 
         $quizsettings = new quiz_settings(0, $settings);
         $configkey = $quizsettings->get_config_key();
-        $this->assertEquals("b35510bd754f9d106ff88b9d2dc1bb297cddc9fc7b4bdde2dbda4e7d9e4b50d8",
+        $this->assertEquals("65ff7a3b8aec80e58fbe2e7968826c33cbf0ac444a748055ebe665829cbf4201",
                 $configkey);
 
         $quizsettings->set('filterembeddedcontent', 1); // Alter the settings.
         $configkey = $quizsettings->get_config_key();
-        $this->assertEquals("58010792504cccc18f7b0e5c9680fe60b567e8c1b5fb9798654cc9bad9ddf30c",
+        $this->assertEquals("d975b8a2ec4472495a8be7c64d7c8cc960dbb62472d5e88a8847ac0e5d77e533",
             $configkey);
     }
 
     /**
      * Test that different URL filter expressions are turned into config XML.
      *
-     * @param stdClass $settings Quiz settings
+     * @param \stdClass $settings Quiz settings
      * @param string $expectedxml SEB Config XML.
      *
      * @dataProvider filter_rules_provider
      */
-    public function test_filter_rules_added_to_config(stdClass $settings, string $expectedxml) {
+    public function test_filter_rules_added_to_config(\stdClass $settings, string $expectedxml) {
         $quizsettings = new quiz_settings(0, $settings);
         $config = $quizsettings->get_config();
         $this->assertEquals($expectedxml, $config);
@@ -217,12 +213,12 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
      * Test that uploaded seb file gets converted to config string.
      */
     public function test_config_file_uploaded_converted_to_config() {
-        $url = new moodle_url("/mod/quiz/view.php", ['id' => $this->quiz->cmid]);
+        $url = new \moodle_url("/mod/quiz/view.php", ['id' => $this->quiz->cmid]);
         $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                 . "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n"
                 . "<plist version=\"1.0\"><dict><key>hashedQuitPassword</key><string>hashedpassword</string>"
                 . "<key>allowWlan</key><false/><key>startURL</key><string>$url</string>"
-                . "<key>sendBrowserExamKey</key><true/></dict></plist>\n";
+                . "<key>sendBrowserExamKey</key><true/><key>browserWindowWebView</key><integer>3</integer></dict></plist>\n";
         $itemid = $this->create_module_test_file($xml, $this->quiz->cmid);
         $quizsettings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $quizsettings->set('requiresafeexambrowser', settings_provider::USE_SEB_UPLOAD_CONFIG);
@@ -238,7 +234,7 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
         $quizsettings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $quizsettings->set('requiresafeexambrowser', settings_provider::USE_SEB_UPLOAD_CONFIG);
         $cmid = $quizsettings->get('cmid');
-        $this->expectException(moodle_exception::class);
+        $this->expectException(\moodle_exception::class);
         $this->expectExceptionMessage("No uploaded SEB config file could be found for quiz with cmid: {$cmid}");
         $quizsettings->get_config();
     }
@@ -574,7 +570,8 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
                 . "<key>active</key><true/><key>expression</key>"
                 . "<string>second.hello</string><key>regex</key><false/></dict></array>"
                 . "<key>startURL</key><string>https://www.example.com/moodle/mod/quiz/view.php?id=1</string>"
-                . "<key>sendBrowserExamKey</key><true/><key>examSessionClearCookiesOnStart</key><false/>"
+                . "<key>sendBrowserExamKey</key><true/><key>browserWindowWebView</key><integer>3</integer>"
+                . "<key>examSessionClearCookiesOnStart</key><false/>"
                 . "<key>allowPreferencesWindow</key><false/></dict></plist>\n",
             ],
             'blocked simple expessions' => [
@@ -601,7 +598,8 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
                 . "<key>active</key><true/><key>expression</key>"
                 . "<string>second.hello</string><key>regex</key><false/></dict></array>"
                 . "<key>startURL</key><string>https://www.example.com/moodle/mod/quiz/view.php?id=1</string>"
-                . "<key>sendBrowserExamKey</key><true/><key>examSessionClearCookiesOnStart</key><false/>"
+                . "<key>sendBrowserExamKey</key><true/><key>browserWindowWebView</key><integer>3</integer>"
+                . "<key>examSessionClearCookiesOnStart</key><false/>"
                 . "<key>allowPreferencesWindow</key><false/></dict></plist>\n",
             ],
             'enabled regex expessions' => [
@@ -628,7 +626,8 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
                 . "<key>active</key><true/><key>expression</key>"
                 . "<string>second.hello</string><key>regex</key><true/></dict></array>"
                 . "<key>startURL</key><string>https://www.example.com/moodle/mod/quiz/view.php?id=1</string>"
-                . "<key>sendBrowserExamKey</key><true/><key>examSessionClearCookiesOnStart</key><false/>"
+                . "<key>sendBrowserExamKey</key><true/><key>browserWindowWebView</key><integer>3</integer>"
+                . "<key>examSessionClearCookiesOnStart</key><false/>"
                 . "<key>allowPreferencesWindow</key><false/></dict></plist>\n",
             ],
             'blocked regex expessions' => [
@@ -655,7 +654,8 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
                 . "<key>active</key><true/><key>expression</key>"
                 . "<string>second.hello</string><key>regex</key><true/></dict></array>"
                 . "<key>startURL</key><string>https://www.example.com/moodle/mod/quiz/view.php?id=1</string>"
-                . "<key>sendBrowserExamKey</key><true/><key>examSessionClearCookiesOnStart</key><false/>"
+                . "<key>sendBrowserExamKey</key><true/><key>browserWindowWebView</key><integer>3</integer>"
+                . "<key>examSessionClearCookiesOnStart</key><false/>"
                 . "<key>allowPreferencesWindow</key><false/></dict></plist>\n",
             ],
             'multiple simple expessions' => [
@@ -684,7 +684,8 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
                 . "<key>active</key><true/><key>expression</key>"
                 . "<string>second.hello</string><key>regex</key><true/></dict></array>"
                 . "<key>startURL</key><string>https://www.example.com/moodle/mod/quiz/view.php?id=1</string>"
-                . "<key>sendBrowserExamKey</key><true/><key>examSessionClearCookiesOnStart</key><false/>"
+                . "<key>sendBrowserExamKey</key><true/><key>browserWindowWebView</key><integer>3</integer>"
+                . "<key>examSessionClearCookiesOnStart</key><false/>"
                 . "<key>allowPreferencesWindow</key><false/></dict></plist>\n",
             ],
         ];

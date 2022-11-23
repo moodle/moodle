@@ -58,4 +58,9 @@ $settings->add(new admin_setting_configtext(
     new lang_string('customreportslimit', 'core_reportbuilder'),
     new lang_string('customreportslimit_desc', 'core_reportbuilder'), 0, PARAM_INT));
 
+$settings->add(new admin_setting_configcheckbox(
+    'customreportsliveediting',
+    new lang_string('customreportsliveediting', 'core_reportbuilder'),
+    new lang_string('customreportsliveediting_desc', 'core_reportbuilder'), 1));
+
 $ADMIN->add('reportbuilder', $settings);

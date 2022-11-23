@@ -18,6 +18,7 @@ namespace core_courseformat\output\local\state;
 
 use core_courseformat\base as course_format;
 use completion_info;
+use renderer_base;
 use section_info;
 use cm_info;
 use renderable;
@@ -70,8 +71,9 @@ class cm implements renderable {
      * @param renderer_base $output typically, the renderer that's calling this function
      * @return stdClass data context for a mustache template
      */
-    public function export_for_template(\renderer_base $output): stdClass {
+    public function export_for_template(renderer_base $output): stdClass {
         global $USER, $CFG;
+        require_once($CFG->libdir . '/externallib.php');
 
         $format = $this->format;
         $section = $this->section;
@@ -83,6 +85,7 @@ class cm implements renderable {
             'anchor' => "module-{$cm->id}",
             'name' => external_format_string($cm->name, $cm->context, true),
             'visible' => !empty($cm->visible),
+            'stealth' => $cm->is_stealth(),
             'sectionid' => $section->id,
             'sectionnumber' => $section->section,
             'uservisible' => $cm->uservisible,

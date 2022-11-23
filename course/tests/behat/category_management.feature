@@ -282,7 +282,7 @@ Feature: Test category management actions
     And I should see the "Course categories and courses" management page
     And I click on "cohorts" action for "Cat 1" in management category listing
     # Redirect
-    And I should see "Category: Cat 1: available cohorts"
+    And I should see "Cohorts"
 
   Scenario: Test configuring filters for a category
     Given the following "categories" exist:

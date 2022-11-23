@@ -18,33 +18,11 @@
 
     Context variables required for this template:
     * d - The database id.
-    * urlselect - The data object containing the required properties to render core/url_select.
     * fieldselect - The data object containing the required properties to render core/single_select.
-    * saveaspreset - Whether to display the save as preset button (mod_data/save_as_preset).
-    * exportpreset - The data object containing the required properties to render core/single_button.
 
     Example context (json):
     {
-        "d": 1,
-        "urlselect": {
-            "id": "url_select_test",
-            "action": "https://example.com/post",
-            "formid": "url_select_form",
-            "sesskey": "sesskey",
-            "classes": "urlselect",
-            "label": "",
-            "helpicon": false,
-            "showbutton": null,
-            "options": [
-                {
-                    "name": "Some name",
-                    "value": "/mod/data/someurl.php",
-                    "selected": false
-                }
-            ],
-            "disabled": false,
-            "title": null
-        },
+        "tertiarytitle": "Manage fields",
         "fieldselect": {
             "id": "single_select_test",
             "name": "fieldselector",
@@ -66,44 +44,39 @@
             "disabled": false,
             "title": null
         },
-        "saveaspreset": true,
-        "exportpreset": {
-            "id": "single_button_test",
-            "method" : "post",
-            "formid": "single_button_form",
-            "url" : "https://example.com/post",
-            "primary" : false,
-            "tooltip" : null,
-            "label" : "Label",
-            "attributes": []
-        }
+        "hasback" : true,
+        "backurl": "https://moodlesite.com/mod/data/preset.php",
+        "backtitle": "Back"
     }
 }}
 <div class="container-fluid tertiary-navigation">
     <div class="row">
         <div class="d-flex">
+            {{#hasback}}
+                <div class="navitem mb-0 backbutton border-right">
+                    <a href="{{backurl}}" role="button" title="{{backtitle}}" class="d-flex align-items-center">{{!
+                    }}{{#pix}} i/previous, moodle {{/pix}}{{!
+                    }}</a>
+                </div>
+            {{/hasback}}
             {{#urlselect}}
-                <div class="navitem">
+                <div class="navitem mb-0">
                     {{>core/url_select}}
                 </div>
             {{/urlselect}}
+            {{#tertiarytitle}}
+                <div class="navitem mb-0 title d-flex align-items-center">
+                    <h2>{{tertiarytitle}}</h2>
+                </div>
+            {{/tertiarytitle}}
+        </div>
+        <div class="ml-sm-auto d-flex">
             {{#fieldselect}}
-                <div class='navitem fieldadd'>
-                    {{>core/single_select}}
+                <div class='navitem mb-0 fieldadd'>
+                    {{>core/action_menu}}
                 </div>
             {{/fieldselect}}
         </div>
-        <div class="ml-sm-auto d-flex">
-            {{#saveaspreset}}
-                <div class="navitem">
-                    {{>mod_data/save_as_preset}}
-                </div>
-            {{/saveaspreset}}
-            {{#exportpreset}}
-                <div class="navitem">
-                    {{>core/single_button}}
-                </div>
-            {{/exportpreset}}
-        </div>
     </div>
 </div>
+<hr/>

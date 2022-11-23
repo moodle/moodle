@@ -643,7 +643,7 @@ class backup_ui_stage_complete extends backup_ui_stage_final {
         }
         $output .= $renderer->get_samesite_notification();
         $output .= $renderer->notification(get_string('executionsuccess', 'backup'), 'notifysuccess');
-        $output .= $renderer->continue_button($restorerul);
+        $output .= $renderer->continue_button($restorerul, 'get');
         $output .= $renderer->box_end();
 
         return $output;

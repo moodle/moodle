@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,6 +21,7 @@
  */
 
 use mod_data\manager;
+use mod_data\preset;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -84,6 +84,9 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     /** priority value for maximum priority */
     const MAX_PRIORITY = 4;
 
+    /** @var bool whether the field is used in preview mode. */
+    protected $preview = false;
+
     /**
      * Constructor function
      *
@@ -145,6 +148,58 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
      */
     public function get_name(): string {
         return $this->field->name;
+    }
+
+    /**
+     * Return if the field type supports preview.
+     *
+     * Fields without a preview cannot be displayed in the preset preview.
+     *
+     * @return bool if the plugin supports preview.
+     */
+    public function supports_preview(): bool {
+        return false;
+    }
+
+    /**
+     * Generate a fake data_content for this field to be used in preset previews.
+     *
+     * Data plugins must override this method and support_preview in order to enable
+     * preset preview for this field.
+     *
+     * @param int $recordid the fake record id
+     * @return stdClass the fake record
+     */
+    public function get_data_content_preview(int $recordid): stdClass {
+        $message = get_string('nopreviewavailable', 'mod_data', $this->field->name);
+        return (object)[
+            'id' => 0,
+            'fieldid' => $this->field->id,
+            'recordid' => $recordid,
+            'content' => "<span class=\"nopreview\">$message</span>",
+            'content1' => null,
+            'content2' => null,
+            'content3' => null,
+            'content4' => null,
+        ];
+    }
+
+    /**
+     * Set the field to preview mode.
+     *
+     * @param bool $preview the new preview value
+     */
+    public function set_preview(bool $preview) {
+        $this->preview = $preview;
+    }
+
+    /**
+     * Get the field preview value.
+     *
+     * @return bool
+     */
+    public function get_preview(): bool {
+        return $this->preview;
     }
 
 
@@ -345,35 +400,72 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         if (empty($this->field)) {   // No field has been defined yet, try and make one
             $this->define_default_field();
         }
+
+        // Throw an exception if field type doen't exist. Anyway user should never access to edit a field with an unknown fieldtype.
+        if ($this->type === 'unknown') {
+            throw new \moodle_exception(get_string('missingfieldtype', 'data', (object)['name' => $this->field->name]));
+        }
+
         echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
         echo '<form id="editfield" action="'.$CFG->wwwroot.'/mod/data/field.php" method="post">'."\n";
         echo '<input type="hidden" name="d" value="'.$this->data->id.'" />'."\n";
         if (empty($this->field->id)) {
             echo '<input type="hidden" name="mode" value="add" />'."\n";
-            $savebutton = get_string('add');
         } else {
             echo '<input type="hidden" name="fid" value="'.$this->field->id.'" />'."\n";
             echo '<input type="hidden" name="mode" value="update" />'."\n";
-            $savebutton = get_string('savechanges');
         }
         echo '<input type="hidden" name="type" value="'.$this->type.'" />'."\n";
         echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />'."\n";
 
         echo $OUTPUT->heading($this->name(), 3);
 
-        require_once($CFG->dirroot.'/mod/data/field/'.$this->type.'/mod.html');
+        $filepath = $CFG->dirroot.'/mod/data/field/'.$this->type.'/mod.html';
 
-        echo html_writer::start_div('mt-3');
-        echo html_writer::tag('input', null, array('type' => 'submit', 'value' => $savebutton,
-            'class' => 'btn btn-primary'));
-        echo html_writer::tag('input', null, array('type' => 'submit', 'name' => 'cancel',
-            'value' => get_string('cancel'), 'class' => 'btn btn-secondary ml-2'));
-        echo html_writer::end_div();
+        if (!file_exists($filepath)) {
+            throw new \moodle_exception(get_string('missingfieldtype', 'data', (object)['name' => $this->field->name]));
+        } else {
+            require_once($filepath);
+        }
+
+        $actionbuttons = html_writer::start_div();
+        $actionbuttons .= html_writer::tag('input', null, [
+            'type' => 'submit',
+            'name' => 'cancel',
+            'value' => get_string('cancel'),
+            'class' => 'btn btn-secondary mr-2'
+        ]);
+        $actionbuttons .= html_writer::tag('input', null, [
+            'type' => 'submit',
+            'value' => get_string('save'),
+            'class' => 'btn btn-primary'
+        ]);
+        $actionbuttons .= html_writer::end_div();
+
+        $stickyfooter = new core\output\sticky_footer($actionbuttons);
+        echo $OUTPUT->render($stickyfooter);
 
         echo '</form>';
 
         echo $OUTPUT->box_end();
+    }
+
+    /**
+     * Return the data_content of the field, or generate it if it is in preview mode.
+     *
+     * @param int $recordid the record id
+     * @return stdClass|bool the record data or false if none
+     */
+    protected function get_data_content(int $recordid) {
+        global $DB;
+        if ($this->preview) {
+            return $this->get_data_content_preview($recordid);
+        }
+        return $DB->get_record(
+            'data_content',
+            ['fieldid' => $this->field->id, 'recordid' => $recordid]
+        );
     }
 
     /**
@@ -386,23 +478,18 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
      */
     function display_browse_field($recordid, $template) {
         global $DB;
-
-        if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
-            if (isset($content->content)) {
-                $options = new stdClass();
-                if ($this->field->param1 == '1') {  // We are autolinking this field, so disable linking within us
-                    //$content->content = '<span class="nolink">'.$content->content.'</span>';
-                    //$content->content1 = FORMAT_HTML;
-                    $options->filter=false;
-                }
-                $options->para = false;
-                $str = format_text($content->content, $content->content1, $options);
-            } else {
-                $str = '';
-            }
-            return $str;
+        $content = $this->get_data_content($recordid);
+        if (!$content || !isset($content->content)) {
+            return '';
         }
-        return false;
+        $options = new stdClass();
+        if ($this->field->param1 == '1') {
+            // We are autolinking this field, so disable linking within us.
+            $options->filter = false;
+        }
+        $options->para = false;
+        $str = format_text($content->content, $content->content1, $options);
+        return $str;
     }
 
     /**
@@ -519,12 +606,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     function image() {
         global $OUTPUT;
 
-        $params = array('d'=>$this->data->id, 'fid'=>$this->field->id, 'mode'=>'display', 'sesskey'=>sesskey());
-        $link = new moodle_url('/mod/data/field.php', $params);
-        $str = '<a href="'.$link->out().'">';
-        $str .= $OUTPUT->pix_icon('field/' . $this->type, $this->type, 'data');
-        $str .= '</a>';
-        return $str;
+        return $OUTPUT->pix_icon('field/' . $this->type, $this->type, 'data');
     }
 
     /**
@@ -605,98 +687,46 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
  * @param int $recordid the entry record
  * @param bool $form print a form instead of data
  * @param bool $update if the function update the $data object or not
- * @return bool|string the template content.
+ * @return string the template content or an empty string if no content is available (for instance, when database has no fields).
  */
 function data_generate_default_template(&$data, $template, $recordid = 0, $form = false, $update = true) {
     global $DB;
 
-    if (!$data && !$template) {
-        return false;
+    if (!$data || !$template) {
+        return '';
     }
 
-    $defaulttemplates = [
+    // These templates are empty by default (they have no content).
+    $emptytemplates = [
         'csstemplate',
         'jstemplate',
         'listtemplateheader',
         'listtemplatefooter',
         'rsstitletemplate',
     ];
-    if (in_array($template, $defaulttemplates)) {
+    if (in_array($template, $emptytemplates)) {
         return '';
     }
 
-    // get all the fields for that database
-    if ($fields = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id')) {
-
-        $table = new html_table();
-        $table->attributes['class'] = 'mod-data-default-template ##approvalstatusclass##';
-        $table->colclasses = array('template-field', 'template-token');
-        $table->data = array();
-        foreach ($fields as $field) {
-            if ($form) {   // Print forms instead of data
-                $fieldobj = data_get_field($field, $data);
-                $token = $fieldobj->display_add_field($recordid, null);
-            } else {           // Just print the tag
-                $token = '[['.$field->name.']]';
-            }
-            $table->data[] = array(
-                $field->name.': ',
-                $token
-            );
-        }
-
-        if (core_tag_tag::is_enabled('mod_data', 'data_records')) {
-            $label = new html_table_cell(get_string('tags') . ':');
-            if ($form) {
-                $cell = data_generate_tag_form();
-            } else {
-                $cell = new html_table_cell('##tags##');
-            }
-            $table->data[] = new html_table_row(array($label, $cell));
-        }
-
-        if ($template == 'listtemplate') {
-            $cell = new html_table_cell('##edit##  ##more##  ##delete##  ##approve##  ##disapprove##  ##export##');
-            $cell->colspan = 2;
-            $cell->attributes['class'] = 'controls';
-            $table->data[] = new html_table_row(array($cell));
-        } else if ($template == 'singletemplate') {
-            $cell = new html_table_cell('##edit##  ##delete##  ##approve##  ##disapprove##  ##export##');
-            $cell->colspan = 2;
-            $cell->attributes['class'] = 'controls';
-            $table->data[] = new html_table_row(array($cell));
-        } else if ($template == 'asearchtemplate') {
-            $row = new html_table_row(array(get_string('authorfirstname', 'data').': ', '##firstname##'));
-            $row->attributes['class'] = 'searchcontrols';
-            $table->data[] = $row;
-            $row = new html_table_row(array(get_string('authorlastname', 'data').': ', '##lastname##'));
-            $row->attributes['class'] = 'searchcontrols';
-            $table->data[] = $row;
-        }
-
-        $str = '';
-        if ($template == 'listtemplate'){
-            $str .= '##delcheck##';
-            $str .= html_writer::empty_tag('br');
-        }
-
-        $str .= html_writer::start_tag('div', array('class' => 'defaulttemplate'));
-        $str .= html_writer::table($table);
-        $str .= html_writer::end_tag('div');
-        if ($template == 'listtemplate'){
-            $str .= html_writer::empty_tag('hr');
-        }
-
-        if ($update) {
-            $newdata = new stdClass();
-            $newdata->id = $data->id;
-            $newdata->{$template} = $str;
-            $DB->update_record('data', $newdata);
-            $data->{$template} = $str;
-        }
-
-        return $str;
+    $manager = manager::create_from_instance($data);
+    if (empty($manager->get_fields())) {
+        // No template will be returned if there are no fields.
+        return '';
     }
+
+    $templateclass = \mod_data\template::create_default_template($manager, $template, $form);
+    $templatecontent = $templateclass->get_template_content();
+
+    if ($update) {
+        // Update the database instance.
+        $newdata = new stdClass();
+        $newdata->id = $data->id;
+        $newdata->{$template} = $templatecontent;
+        $DB->update_record('data', $newdata);
+        $data->{$template} = $templatecontent;
+    }
+
+    return $templatecontent;
 }
 
 /**
@@ -901,7 +931,12 @@ function data_get_field_from_id($fieldid, $data){
 function data_get_field_new($type, $data) {
     global $CFG;
 
-    require_once($CFG->dirroot.'/mod/data/field/'.$type.'/field.class.php');
+    $filepath = $CFG->dirroot.'/mod/data/field/'.$type.'/field.class.php';
+    // It should never access this method if the subfield class doesn't exist.
+    if (!file_exists($filepath)) {
+        throw new \moodle_exception('invalidfieldtype', 'data');
+    }
+    require_once($filepath);
     $newfield = 'data_field_'.$type;
     $newfield = new $newfield(0, $data);
     return $newfield;
@@ -913,20 +948,24 @@ function data_get_field_new($type, $data) {
  * input: $param $field - record from db
  *
  * @global object
- * @param object $field
- * @param object $data
- * @param object $cm
- * @return data_field_base
+ * @param stdClass $field the field record
+ * @param stdClass $data the data instance
+ * @param stdClass|null $cm optional course module data
+ * @return data_field_base the field object instance or data_field_base if unkown type
  */
 function data_get_field($field, $data, $cm=null) {
     global $CFG;
-
-    if ($field) {
-        require_once('field/'.$field->type.'/field.class.php');
-        $newfield = 'data_field_'.$field->type;
-        $newfield = new $newfield($field, $data, $cm);
-        return $newfield;
+    if (!isset($field->type)) {
+        return new data_field_base($field);
     }
+    $filepath = $CFG->dirroot.'/mod/data/field/'.$field->type.'/field.class.php';
+    if (!file_exists($filepath)) {
+        return new data_field_base($field);
+    }
+    require_once($filepath);
+    $newfield = 'data_field_'.$field->type;
+    $newfield = new $newfield($field, $data, $cm);
+    return $newfield;
 }
 
 
@@ -1106,7 +1145,9 @@ function data_update_instance($data) {
     require_once($CFG->dirroot.'/mod/data/locallib.php');
 
     $data->timemodified = time();
-    $data->id           = $data->instance;
+    if (!empty($data->instance)) {
+        $data->id = $data->instance;
+    }
 
     if (empty($data->assessed)) {
         $data->assessed = 0;
@@ -1623,8 +1664,9 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
 
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = context_module::instance($cm->id);
-    echo '<div class="datapreferences mb-3">';
+    echo '<div class="datapreferences my-5">';
     echo '<form id="options" action="view.php" method="get">';
+    echo '<div class="d-flex">';
     echo '<div>';
     echo '<input type="hidden" name="d" value="'.$data->id.'" />';
     if ($mode =='asearch') {
@@ -1704,7 +1746,12 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '&nbsp;<input type="checkbox" id="advancedcheckbox" name="advanced" value="1" ' . $checked . ' ' .
          'onchange="showHideAdvSearch(this.checked);" class="mx-1" />' .
          '<label for="advancedcheckbox">' . get_string('advancedsearch', 'data') . '</label>';
+    echo '</div>';
+    echo '<div id="advsearch-save-sec" class="ml-auto '. $regsearchclass . '">';
     echo '&nbsp;<input type="submit" class="btn btn-secondary" value="' . get_string('savesettings', 'data') . '" />';
+    echo '</div>';
+    echo '</div>';
+    echo '<div>';
 
     echo '<br />';
     echo '<div class="' . $advancedsearchclass . '" id="data_adv_form">';
@@ -1716,8 +1763,9 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
 
     // Determine if we are printing all fields for advanced search, or the template for advanced search
     // If a template is not defined, use the deafault template and display all fields.
-    if(empty($data->asearchtemplate)) {
-        data_generate_default_template($data, 'asearchtemplate');
+    $asearchtemplate = $data->asearchtemplate;
+    if (empty($asearchtemplate)) {
+        $asearchtemplate = data_generate_default_template($data, 'asearchtemplate', 0, false, false);
     }
 
     static $fields = array();
@@ -1746,6 +1794,10 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         $fieldname = preg_quote($fieldname, '/');
         $patterns[] = "/\[\[$fieldname\]\]/i";
         $searchfield = data_get_field_from_id($field->field->id, $data);
+
+        if ($searchfield->type === 'unknown') {
+            continue;
+        }
         if (!empty($search_array[$field->field->id]->data)) {
             $replacement[] = $searchfield->display_search_field($search_array[$field->field->id]->data);
         } else {
@@ -1773,7 +1825,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     $options->para=false;
     $options->noclean=true;
     echo '<tr><td>';
-    echo preg_replace($patterns, $replacement, format_text($data->asearchtemplate, FORMAT_HTML, $options));
+    echo preg_replace($patterns, $replacement, format_text($asearchtemplate, FORMAT_HTML, $options));
     echo '</td></tr>';
 
     echo '<tr><td colspan="4"><br/>' .
@@ -1782,9 +1834,9 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
          '</td></tr>';
     echo '</table>';
     echo '</div>';
-    echo '</div>';
     echo '</form>';
     echo '</div>';
+    echo '<hr/>';
 }
 
 /**
@@ -2030,52 +2082,30 @@ function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array
  * @param string $shortname
  * @param  string $path
  * @return string
+ * @deprecated since Moodle 4.1 MDL-75148 - please, use the preset::get_name_from_plugin() function instead.
+ * @todo MDL-75189 This will be deleted in Moodle 4.5.
+ * @see preset::get_name_from_plugin()
  */
 function data_preset_name($shortname, $path) {
+    debugging('data_preset_name() is deprecated. Please use preset::get_name_from_plugin() instead.', DEBUG_DEVELOPER);
 
-    // We are looking inside the preset itself as a first choice, but also in normal data directory
-    $string = get_string('modulename', 'datapreset_'.$shortname);
-
-    if (substr($string, 0, 1) == '[') {
-        return $shortname;
-    } else {
-        return $string;
-    }
+    return preset::get_name_from_plugin($shortname);
 }
 
 /**
  * Returns an array of all the available presets.
  *
  * @return array
+ * @deprecated since Moodle 4.1 MDL-75148 - please, use the manager::get_available_presets() function instead.
+ * @todo MDL-75189 This will be deleted in Moodle 4.5.
+ * @see manager::get_available_presets()
  */
 function data_get_available_presets($context) {
-    global $CFG, $USER;
+    debugging('data_get_available_presets() is deprecated. Please use manager::get_available_presets() instead.', DEBUG_DEVELOPER);
 
-    $presets = array();
-
-    // First load the ratings sub plugins that exist within the modules preset dir
-    if ($dirs = core_component::get_plugin_list('datapreset')) {
-        foreach ($dirs as $dir=>$fulldir) {
-            if (is_directory_a_preset($fulldir)) {
-                $preset = new stdClass();
-                $preset->path = $fulldir;
-                $preset->userid = 0;
-                $preset->shortname = $dir;
-                $preset->name = data_preset_name($dir, $fulldir);
-                if (file_exists($fulldir.'/screenshot.jpg')) {
-                    $preset->screenshot = $CFG->wwwroot.'/mod/data/preset/'.$dir.'/screenshot.jpg';
-                } else if (file_exists($fulldir.'/screenshot.png')) {
-                    $preset->screenshot = $CFG->wwwroot.'/mod/data/preset/'.$dir.'/screenshot.png';
-                } else if (file_exists($fulldir.'/screenshot.gif')) {
-                    $preset->screenshot = $CFG->wwwroot.'/mod/data/preset/'.$dir.'/screenshot.gif';
-                }
-                $presets[] = $preset;
-            }
-        }
-    }
-    // Now add to that the site presets that people have saved
-    $presets = data_get_available_site_presets($context, $presets);
-    return $presets;
+    $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
+    $manager = manager::create_from_coursemodule($cm);
+    return $manager->get_available_presets();
 }
 
 /**
@@ -2084,30 +2114,20 @@ function data_get_available_presets($context) {
  * @param stdClass $context The context that we are looking from.
  * @param array $presets
  * @return array An array of presets
+ * @deprecated since Moodle 4.1 MDL-75148 - please, use the manager::get_available_saved_presets() function instead.
+ * @todo MDL-75189 This will be deleted in Moodle 4.5.
+ * @see manager::get_available_saved_presets()
  */
 function data_get_available_site_presets($context, array $presets=array()) {
-    global $USER;
+    debugging(
+        'data_get_available_site_presets() is deprecated. Please use manager::get_available_saved_presets() instead.',
+        DEBUG_DEVELOPER
+    );
 
-    $fs = get_file_storage();
-    $files = $fs->get_area_files(DATA_PRESET_CONTEXT, DATA_PRESET_COMPONENT, DATA_PRESET_FILEAREA);
-    $canviewall = has_capability('mod/data:viewalluserpresets', $context);
-    if (empty($files)) {
-        return $presets;
-    }
-    foreach ($files as $file) {
-        if (($file->is_directory() && $file->get_filepath()=='/') || !$file->is_directory() || (!$canviewall && $file->get_userid() != $USER->id)) {
-            continue;
-        }
-        $preset = new stdClass;
-        $preset->path = $file->get_filepath();
-        $preset->name = trim($preset->path, '/');
-        $preset->shortname = $preset->name;
-        $preset->userid = $file->get_userid();
-        $preset->id = $file->get_id();
-        $preset->storedfile = $file;
-        $presets[] = $preset;
-    }
-    return $presets;
+    $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
+    $manager = manager::create_from_coursemodule($cm);
+    $savedpresets = $manager->get_available_saved_presets();
+    return array_merge($presets, $savedpresets);
 }
 
 /**
@@ -2115,8 +2135,13 @@ function data_get_available_site_presets($context, array $presets=array()) {
  *
  * @param string $name
  * @return bool
+ * @deprecated since Moodle 4.1 MDL-75187 - please, use the preset::delete() function instead.
+ * @todo MDL-75189 This will be deleted in Moodle 4.5.
+ * @see preset::delete()
  */
 function data_delete_site_preset($name) {
+    debugging('data_delete_site_preset() is deprecated. Please use preset::delete() instead.', DEBUG_DEVELOPER);
+
     $fs = get_file_storage();
 
     $files = $fs->get_directory_files(DATA_PRESET_CONTEXT, DATA_PRESET_COMPONENT, DATA_PRESET_FILEAREA, 0, '/'.$name.'/');
@@ -2170,7 +2195,12 @@ function data_print_header($course, $cm, $data, $currenttab='', string $actionba
  * @return bool
  */
 function data_user_can_add_entry($data, $currentgroup, $groupmode, $context = null) {
-    global $USER;
+    global $DB;
+
+    // Don't let add entry to a database that has no fields.
+    if (!$DB->record_exists('data_fields', ['dataid' => $data->id])) {
+        return false;
+    }
 
     if (empty($context)) {
         $cm = get_coursemodule_from_instance('data', $data->id, 0, false, MUST_EXIST);
@@ -2261,26 +2291,25 @@ function data_in_readonly_period($data) {
 }
 
 /**
- * @return bool
+ * Check if the files in a directory are the expected for a preset.
+ *
+ * @return bool Wheter the defined $directory has or not all the expected preset files.
+ *
+ * @deprecated since Moodle 4.1 MDL-75148 - please, use the preset::is_directory_a_preset() function instead.
+ * @todo MDL-75189 This will be deleted in Moodle 4.5.
+ * @see manager::is_directory_a_preset()
  */
 function is_directory_a_preset($directory) {
-    $directory = rtrim($directory, '/\\') . '/';
-    $status = file_exists($directory.'singletemplate.html') &&
-              file_exists($directory.'listtemplate.html') &&
-              file_exists($directory.'listtemplateheader.html') &&
-              file_exists($directory.'listtemplatefooter.html') &&
-              file_exists($directory.'addtemplate.html') &&
-              file_exists($directory.'rsstemplate.html') &&
-              file_exists($directory.'rsstitletemplate.html') &&
-              file_exists($directory.'csstemplate.css') &&
-              file_exists($directory.'jstemplate.js') &&
-              file_exists($directory.'preset.xml');
+    debugging('is_directory_a_preset() is deprecated. Please use preset::is_directory_a_preset() instead.', DEBUG_DEVELOPER);
 
-    return $status;
+    return preset::is_directory_a_preset($directory);
 }
 
 /**
  * Abstract class used for data preset importers
+ *
+ * @deprecated since Moodle 4.1 MDL-75140 - please do not use this class any more.
+ * @todo MDL-75189 Final deprecation in Moodle 4.5.
  */
 abstract class data_preset_importer {
 
@@ -2298,6 +2327,11 @@ abstract class data_preset_importer {
      * @param string $directory
      */
     public function __construct($course, $cm, $module, $directory) {
+        debugging(
+            'data_preset_importer is deprecated. Please use mod\\data\\local\\importer\\preset_importer instead',
+            DEBUG_DEVELOPER
+        );
+
         $this->course = $course;
         $this->cm = $cm;
         $this->module = $module;
@@ -2350,7 +2384,7 @@ abstract class data_preset_importer {
         require_once($CFG->libdir.'/xmlize.php');
 
         $fs = $fileobj = null;
-        if (!is_directory_a_preset($this->directory)) {
+        if (!preset::is_directory_a_preset($this->directory)) {
             //maybe the user requested a preset stored in the Moodle file storage
 
             $fs = get_file_storage();
@@ -2450,7 +2484,7 @@ abstract class data_preset_importer {
      * @return bool
      */
     function import($overwritesettings) {
-        global $DB, $CFG;
+        global $DB, $CFG, $OUTPUT;
 
         $params = $this->get_preset_settings();
         $settings = $params->settings;
@@ -2471,7 +2505,7 @@ abstract class data_preset_importer {
                 }
                 else $preservedfields[$cid] = true;
             }
-
+            $missingfieldtypes = [];
             foreach ($newfields as $nid => $newfield) {
                 $cid = optional_param("field_$nid", -1, PARAM_INT);
 
@@ -2488,7 +2522,12 @@ abstract class data_preset_importer {
                     unset($fieldobject);
                 } else {
                     /* Make a new field */
-                    include_once("field/$newfield->type/field.class.php");
+                    $filepath = "field/$newfield->type/field.class.php";
+                    if (!file_exists($filepath)) {
+                        $missingfieldtypes[] = $newfield->name;
+                        continue;
+                    }
+                    include_once($filepath);
 
                     if (!isset($newfield->description)) {
                         $newfield->description = '';
@@ -2499,20 +2538,21 @@ abstract class data_preset_importer {
                     unset($fieldclass);
                 }
             }
+            if (!empty($missingfieldtypes)) {
+                echo $OUTPUT->notification(get_string('missingfieldtypeimport', 'data') . html_writer::alist($missingfieldtypes));
+            }
         }
 
         /* Get rid of all old unused data */
-        if (!empty($preservedfields)) {
-            foreach ($currentfields as $cid => $currentfield) {
-                if (!array_key_exists($cid, $preservedfields)) {
-                    /* Data not used anymore so wipe! */
-                    print "Deleting field $currentfield->name<br />";
+        foreach ($currentfields as $cid => $currentfield) {
+            if (!array_key_exists($cid, $preservedfields)) {
+                /* Data not used anymore so wipe! */
+                echo "Deleting field $currentfield->name<br />";
 
-                    $id = $currentfield->id;
-                    //Why delete existing data records and related comments/ratings??
-                    $DB->delete_records('data_content', array('fieldid'=>$id));
-                    $DB->delete_records('data_fields', array('id'=>$id));
-                }
+                $id = $currentfield->id;
+                // Why delete existing data records and related comments/ratings??
+                $DB->delete_records('data_content', ['fieldid' => $id]);
+                $DB->delete_records('data_fields', ['id' => $id]);
             }
         }
 
@@ -2562,10 +2602,19 @@ abstract class data_preset_importer {
 
 /**
  * Data preset importer for uploaded presets
+ *
+ * @deprecated since Moodle 4.1 MDL-75140 - please do not use this class any more.
+ * @todo MDL-75189 Final deprecation in Moodle 4.5.
  */
 class data_preset_upload_importer extends data_preset_importer {
     public function __construct($course, $cm, $module, $filepath) {
         global $USER;
+
+        debugging(
+            'data_preset_upload_importer is deprecated. Please use mod\\data\\local\\importer\\preset_upload_importer instead',
+            DEBUG_DEVELOPER
+        );
+
         if (is_file($filepath)) {
             $fp = get_file_packer();
             if ($fp->extract_to_pathname($filepath, $filepath.'_extracted')) {
@@ -2575,6 +2624,7 @@ class data_preset_upload_importer extends data_preset_importer {
         }
         parent::__construct($course, $cm, $module, $filepath);
     }
+
     public function cleanup() {
         return fulldelete($this->directory);
     }
@@ -2582,11 +2632,20 @@ class data_preset_upload_importer extends data_preset_importer {
 
 /**
  * Data preset importer for existing presets
+ *
+ * @deprecated since Moodle 4.1 MDL-75140 - please do not use this class any more.
+ * @todo MDL-75189 Final deprecation in Moodle 4.5.
  */
 class data_preset_existing_importer extends data_preset_importer {
     protected $userid;
     public function __construct($course, $cm, $module, $fullname) {
         global $USER;
+
+        debugging(
+            'data_preset_existing_importer is deprecated. Please use mod\\data\\local\\importer\\preset_existing_importer instead',
+            DEBUG_DEVELOPER
+        );
+
         list($userid, $shortname) = explode('/', $fullname, 2);
         $context = context_module::instance($cm->id);
         if ($userid && ($userid != $USER->id) && !has_capability('mod/data:manageuserpresets', $context) && !has_capability('mod/data:viewalluserpresets', $context)) {
@@ -2936,7 +2995,12 @@ function data_import_csv($cm, $data, &$csvdata, $encoding, $fielddelimiter) {
                     unset($fieldnames[$id]); // To ensure the user provided content fields remain in the array once flipped.
                 } else {
                     $field = $rawfields[$name];
-                    require_once("$CFG->dirroot/mod/data/field/$field->type/field.class.php");
+                    $filepath = "$CFG->dirroot/mod/data/field/$field->type/field.class.php";
+                    if (!file_exists($filepath)) {
+                        $errorfield .= "'$name' ";
+                        continue;
+                    }
+                    require_once($filepath);
                     $classname = 'data_field_' . $field->type;
                     $fields[$name] = new $classname($field, $data, $cm);
                 }
@@ -3460,11 +3524,11 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
             $defaultemplate = 'singletemplate';
         }
 
+        $datanode->add(get_string('presets', 'data'), new moodle_url('/mod/data/preset.php', array('d' => $data->id)));
         $datanode->add(get_string('fields', 'data'),
             new moodle_url('/mod/data/field.php', array('d' => $data->id)));
         $datanode->add(get_string('templates', 'data'),
             new moodle_url('/mod/data/templates.php', array('d' => $data->id)));
-        $datanode->add(get_string('presets', 'data'), new moodle_url('/mod/data/preset.php', array('d' => $data->id)));
     }
 
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
@@ -3485,52 +3549,16 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
  * @param stdClass $data The database record
  * @param string $path
  * @return bool
+ * @deprecated since Moodle 4.1 MDL-75142 - please, use the preset::save() function instead.
+ * @todo MDL-75189 This will be deleted in Moodle 4.5.
+ * @see preset::save()
  */
 function data_presets_save($course, $cm, $data, $path) {
-    global $USER;
-    $fs = get_file_storage();
-    $filerecord = new stdClass;
-    $filerecord->contextid = DATA_PRESET_CONTEXT;
-    $filerecord->component = DATA_PRESET_COMPONENT;
-    $filerecord->filearea = DATA_PRESET_FILEAREA;
-    $filerecord->itemid = 0;
-    $filerecord->filepath = '/'.$path.'/';
-    $filerecord->userid = $USER->id;
+    debugging('data_presets_save() is deprecated. Please use preset::save() instead.', DEBUG_DEVELOPER);
 
-    $filerecord->filename = 'preset.xml';
-    $fs->create_file_from_string($filerecord, data_presets_generate_xml($course, $cm, $data));
-
-    $filerecord->filename = 'singletemplate.html';
-    $fs->create_file_from_string($filerecord, $data->singletemplate);
-
-    $filerecord->filename = 'listtemplateheader.html';
-    $fs->create_file_from_string($filerecord, $data->listtemplateheader);
-
-    $filerecord->filename = 'listtemplate.html';
-    $fs->create_file_from_string($filerecord, $data->listtemplate);
-
-    $filerecord->filename = 'listtemplatefooter.html';
-    $fs->create_file_from_string($filerecord, $data->listtemplatefooter);
-
-    $filerecord->filename = 'addtemplate.html';
-    $fs->create_file_from_string($filerecord, $data->addtemplate);
-
-    $filerecord->filename = 'rsstemplate.html';
-    $fs->create_file_from_string($filerecord, $data->rsstemplate);
-
-    $filerecord->filename = 'rsstitletemplate.html';
-    $fs->create_file_from_string($filerecord, $data->rsstitletemplate);
-
-    $filerecord->filename = 'csstemplate.css';
-    $fs->create_file_from_string($filerecord, $data->csstemplate);
-
-    $filerecord->filename = 'jstemplate.js';
-    $fs->create_file_from_string($filerecord, $data->jstemplate);
-
-    $filerecord->filename = 'asearchtemplate.html';
-    $fs->create_file_from_string($filerecord, $data->asearchtemplate);
-
-    return true;
+    $manager = manager::create_from_instance($data);
+    $preset = preset::create_from_instance($manager, $path);
+    return $preset->save();
 }
 
 /**
@@ -3541,151 +3569,42 @@ function data_presets_save($course, $cm, $data, $path) {
  * @param stdClass $cm The course module record
  * @param stdClass $data The database record
  * @return string The XML for the preset
+ * @deprecated since Moodle 4.1 MDL-75142 - please, use the protected preset::generate_preset_xml() function instead.
+ * @todo MDL-75189 This will be deleted in Moodle 4.5.
+ * @see preset::generate_preset_xml()
  */
 function data_presets_generate_xml($course, $cm, $data) {
-    global $DB;
-
-    // Assemble "preset.xml":
-    $presetxmldata = "<preset>\n\n";
-
-    // Raw settings are not preprocessed during saving of presets
-    $raw_settings = array(
-        'intro',
-        'comments',
-        'requiredentries',
-        'requiredentriestoview',
-        'maxentries',
-        'rssarticles',
-        'approval',
-        'manageapproved',
-        'defaultsortdir'
+    debugging(
+        'data_presets_generate_xml() is deprecated. Please use the protected preset::generate_preset_xml() instead.',
+        DEBUG_DEVELOPER
     );
 
-    $presetxmldata .= "<settings>\n";
-    // First, settings that do not require any conversion
-    foreach ($raw_settings as $setting) {
-        $presetxmldata .= "<$setting>" . htmlspecialchars($data->$setting) . "</$setting>\n";
-    }
-
-    // Now specific settings
-    if ($data->defaultsort > 0 && $sortfield = data_get_field_from_id($data->defaultsort, $data)) {
-        $presetxmldata .= '<defaultsort>' . htmlspecialchars($sortfield->field->name) . "</defaultsort>\n";
-    } else {
-        $presetxmldata .= "<defaultsort>0</defaultsort>\n";
-    }
-    $presetxmldata .= "</settings>\n\n";
-    // Now for the fields. Grab all that are non-empty
-    $fields = $DB->get_records('data_fields', array('dataid'=>$data->id));
-    ksort($fields);
-    if (!empty($fields)) {
-        foreach ($fields as $field) {
-            $presetxmldata .= "<field>\n";
-            foreach ($field as $key => $value) {
-                if ($value != '' && $key != 'id' && $key != 'dataid') {
-                    $presetxmldata .= "<$key>" . htmlspecialchars($value) . "</$key>\n";
-                }
-            }
-            $presetxmldata .= "</field>\n\n";
-        }
-    }
-    $presetxmldata .= '</preset>';
-    return $presetxmldata;
+    $manager = manager::create_from_instance($data);
+    $preset = preset::create_from_instance($manager, $data->name);
+    $reflection = new \ReflectionClass(preset::class);
+    $method = $reflection->getMethod('generate_preset_xml');
+    $method->setAccessible(true);
+    return $method->invokeArgs($preset, []);
 }
 
+/**
+ * Export current fields and presets.
+ *
+ * @param stdClass $course The course the database module belongs to.
+ * @param stdClass $cm The course module record
+ * @param stdClass $data The database record
+ * @param bool $tostorage
+ * @return string the full path to the exported preset file.
+ * @deprecated since Moodle 4.1 MDL-75142 - please, use the preset::export() function instead.
+ * @todo MDL-75189 This will be deleted in Moodle 4.5.
+ * @see preset::export()
+ */
 function data_presets_export($course, $cm, $data, $tostorage=false) {
-    global $CFG, $DB;
+    debugging('data_presets_export() is deprecated. Please use preset::export() instead.', DEBUG_DEVELOPER);
 
-    $presetname = clean_filename($data->name) . '-preset-' . gmdate("Ymd_Hi");
-    $exportsubdir = "mod_data/presetexport/$presetname";
-    make_temp_directory($exportsubdir);
-    $exportdir = "$CFG->tempdir/$exportsubdir";
-
-    // Assemble "preset.xml":
-    $presetxmldata = data_presets_generate_xml($course, $cm, $data);
-
-    // After opening a file in write mode, close it asap
-    $presetxmlfile = fopen($exportdir . '/preset.xml', 'w');
-    fwrite($presetxmlfile, $presetxmldata);
-    fclose($presetxmlfile);
-
-    // Now write the template files
-    $singletemplate = fopen($exportdir . '/singletemplate.html', 'w');
-    fwrite($singletemplate, $data->singletemplate);
-    fclose($singletemplate);
-
-    $listtemplateheader = fopen($exportdir . '/listtemplateheader.html', 'w');
-    fwrite($listtemplateheader, $data->listtemplateheader);
-    fclose($listtemplateheader);
-
-    $listtemplate = fopen($exportdir . '/listtemplate.html', 'w');
-    fwrite($listtemplate, $data->listtemplate);
-    fclose($listtemplate);
-
-    $listtemplatefooter = fopen($exportdir . '/listtemplatefooter.html', 'w');
-    fwrite($listtemplatefooter, $data->listtemplatefooter);
-    fclose($listtemplatefooter);
-
-    $addtemplate = fopen($exportdir . '/addtemplate.html', 'w');
-    fwrite($addtemplate, $data->addtemplate);
-    fclose($addtemplate);
-
-    $rsstemplate = fopen($exportdir . '/rsstemplate.html', 'w');
-    fwrite($rsstemplate, $data->rsstemplate);
-    fclose($rsstemplate);
-
-    $rsstitletemplate = fopen($exportdir . '/rsstitletemplate.html', 'w');
-    fwrite($rsstitletemplate, $data->rsstitletemplate);
-    fclose($rsstitletemplate);
-
-    $csstemplate = fopen($exportdir . '/csstemplate.css', 'w');
-    fwrite($csstemplate, $data->csstemplate);
-    fclose($csstemplate);
-
-    $jstemplate = fopen($exportdir . '/jstemplate.js', 'w');
-    fwrite($jstemplate, $data->jstemplate);
-    fclose($jstemplate);
-
-    $asearchtemplate = fopen($exportdir . '/asearchtemplate.html', 'w');
-    fwrite($asearchtemplate, $data->asearchtemplate);
-    fclose($asearchtemplate);
-
-    // Check if all files have been generated
-    if (! is_directory_a_preset($exportdir)) {
-        throw new \moodle_exception('generateerror', 'data');
-    }
-
-    $filenames = array(
-        'preset.xml',
-        'singletemplate.html',
-        'listtemplateheader.html',
-        'listtemplate.html',
-        'listtemplatefooter.html',
-        'addtemplate.html',
-        'rsstemplate.html',
-        'rsstitletemplate.html',
-        'csstemplate.css',
-        'jstemplate.js',
-        'asearchtemplate.html'
-    );
-
-    $filelist = array();
-    foreach ($filenames as $filename) {
-        $filelist[$filename] = $exportdir . '/' . $filename;
-    }
-
-    $exportfile = $exportdir.'.zip';
-    file_exists($exportfile) && unlink($exportfile);
-
-    $fp = get_file_packer('application/zip');
-    $fp->archive_to_pathname($filelist, $exportfile);
-
-    foreach ($filelist as $file) {
-        unlink($file);
-    }
-    rmdir($exportdir);
-
-    // Return the full path to the exported preset file:
-    return $exportfile;
+    $manager = manager::create_from_instance($data);
+    $preset = preset::create_from_instance($manager, $data->name);
+    return $preset->export();
 }
 
 /**
@@ -3764,7 +3683,7 @@ function data_comment_validate($comment_param) {
 
     //check if approved
     if ($data->approval and !$record->approved and !data_isowner($record) and !has_capability('mod/data:approve', $context)) {
-        throw new comment_exception('notapproved', 'data');
+        throw new comment_exception('notapprovederror', 'data');
     }
 
     // group access
@@ -4006,7 +3925,8 @@ function data_get_advanced_search_sql($sort, $data, $recordids, $selectdata, $so
 
     // Find the field we are sorting on
     if ($sort > 0 or data_get_field_from_id($sort, $data)) {
-        $selectdata .= ' AND c.fieldid = :sort';
+        $selectdata .= ' AND c.fieldid = :sort AND s.recordid = r.id';
+        $nestselectsql .= ',{data_content} s ';
     }
 
     // If there are no record IDs then return an sql statment that will return no rows.
@@ -4026,15 +3946,28 @@ function data_get_advanced_search_sql($sort, $data, $recordids, $selectdata, $so
  * @param stdClass $context  Context object.
  * @param stdClass $preset  The preset object that we are checking for deletion.
  * @return bool  Returns true if the user can delete, otherwise false.
+ * @deprecated since Moodle 4.1 MDL-75187 - please, use the preset::can_manage() function instead.
+ * @todo MDL-75189 This will be deleted in Moodle 4.5.
+ * @see preset::can_manage()
  */
 function data_user_can_delete_preset($context, $preset) {
     global $USER;
+
+    debugging('data_user_can_delete_preset() is deprecated. Please use manager::can_manage() instead.', DEBUG_DEVELOPER);
+
+    if ($context->contextlevel == CONTEXT_MODULE && isset($preset->name)) {
+        $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
+        $manager = manager::create_from_coursemodule($cm);
+        $todelete = preset::create_from_instance($manager, $preset->name);
+        return $todelete->can_manage();
+    }
 
     if (has_capability('mod/data:manageuserpresets', $context)) {
         return true;
     } else {
         $candelete = false;
-        if ($preset->userid == $USER->id) {
+        $userid = $preset instanceof preset ? $preset->get_userid() : $preset->userid;
+        if ($userid == $USER->id) {
             $candelete = true;
         }
         return $candelete;

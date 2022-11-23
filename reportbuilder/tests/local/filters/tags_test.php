@@ -42,8 +42,11 @@ class tags_test extends advanced_testcase {
         return [
             'Any value' => [tags::ANY_VALUE, null, ['course01', 'course01', 'course02', 'course03']],
             'Not empty' => [tags::NOT_EMPTY, null, ['course01', 'course01', 'course02']],
+            'Empty' => [tags::EMPTY, null, ['course03']],
             'Equal to unselected' => [tags::EQUAL_TO, null, ['course01', 'course01', 'course02', 'course03']],
             'Equal to selected tag' => [tags::EQUAL_TO, 'cat', ['course01']],
+            'Not equal to unselected' => [tags::NOT_EQUAL_TO, null, ['course01', 'course01', 'course02', 'course03']],
+            'Not equal to selected tag' => [tags::NOT_EQUAL_TO, 'fish', ['course01', 'course01', 'course03']],
         ];
     }
 

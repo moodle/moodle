@@ -39,5 +39,5 @@ interface unique_name {
      * Get the name for this form element
      * @return string
      */
-    public function get_name();
+    public function get_name(): string;
 }

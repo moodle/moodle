@@ -274,7 +274,7 @@ class question_test extends \advanced_testcase {
                 $newm->validate_can_regrade_with_other_version($m));
     }
 
-        public function test_update_attempt_state_date_from_old_version_bad() {
+    public function test_update_attempt_state_date_from_old_version_bad() {
         $m = \test_question_maker::make_question('match');
 
         $newm = clone($m);

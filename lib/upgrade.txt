@@ -1,8 +1,21 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
-
 === 4.1 ===
 
+*   A process to deprecate capabilities by flagging them in the access.php by adding a $deprecatedcapabilities variable (an array).
+This array will list the deprecated capabilities and a possible replacement. Once we declare the capability as deprecated, a debugging
+message will be displayed (in DEBUG_DEVELOPPER mode only) when using the deprecated capability.
+Declaration is as follow:
+    $deprecatedcapabilities = [
+        'fake/access:fakecapability' => ['replacement' => '', 'message' => 'This capability should not be used anymore.']
+    ];
+* coursemodinfo cache uses the new `requirelockingbeforewrite` option, and rebuilding the cache now uses the cache lock API, rather
+  than using the core lock factory directly. This allows the locks to be stored locally if the cache is stored locally, and
+  avoids the risk of delays and timeouts when multiple nodes need to rebuild the cache locally, but are waiting for a central lock.
+* Final deprecation and removal of the class \admin_setting_managelicenses, please use \tool_licensemanager\manager instead.
+* Final deprecation and removal of the function license_manager::add(). Please use license_manager::save() instead.
+* Final deprecation of the following functions behat_field_manager::get_node_type() and behat_field_manager::get_field()
+  please call behat_field_manager::get_field_node_type() and behat_field_manager::get_form_field().
 * Final deprecation and removal of the following class, please use \core\task\manager.
     - \tool_task\run_from_cli
 * Final deprecation and removal of the following CLI scripts:
@@ -37,10 +50,18 @@ information provided here is intended especially for developers.
 * Added $CFG->proxylogunsafe and proxyfixunsafe to detect code which doesn't honor the proxy config
 * Function admin_externalpage_setup() now has additional option 'nosearch' allowing to remove Site administration search form.
 * The function print_error has been deprecated. Kindly use moodle_exception.
+* When exporting table content, HTML tags/entities will be removed when the selected dataformat does not support HTML
 * The abstract `get_name` method has been moved from `\core\task\scheduled_task` to the `\core\task\task_base` class and can now be
   implemented by adhoc tasks. For backwards compatibility, a default implementation has been added to `\core\task\adhoc_task` to
   return the class name.
 * The function get_module_metadata() has been finally deprecated and can not be used anymore.
+* New DML driver method `$DB->sql_order_by_null` for sorting nulls sort nulls first when ascending and last when descending.
+* Allow plugins to callback on all pages just prior to the session start.
+* New function set_additional_classes() has been implemented to add additional classes to action_menu.
+* Most Behat functionality for the Moodle App has been removed from core, refer to the documentation in order to upgrade your testing
+  setup: https://moodledev.io/general/app/development/testing/acceptance-testing#upgrading-tests-from-an-older-version
+* New DML driver methods `$DB->sql_regex_get_word_beginning_boundary_marker` and `$DB->sql_regex_get_word_end_boundary_marker`
+  for managing word boundary markers in a database driver supporting regex syntax when searching.
 
 === 4.0 ===
 
@@ -271,6 +292,8 @@ defined or can't be applied.
 * Add an early $CFG->session_redis_acquire_lock_warn option
 * Removed $CFG->conversionattemptlimit setting from config.php. assignfeedback_editpdf\task\convert_submissions task
   is now replaced with adhoc tasks with standard fail delay approach.
+* With strftime() being deprecated in PHP 8.1, a new function \core_date::strftime() that can be used as a PHP 8.1-compatible
+  alternative has been introduced.
 
 === 3.11.4 ===
 * A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.

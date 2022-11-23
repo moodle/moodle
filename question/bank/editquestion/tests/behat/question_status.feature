@@ -19,23 +19,17 @@ Feature: Use the qbank base view to test the status change using
 
   @javascript
   Scenario: Question status dropdown should change the status of the question
-    Given I log in as "admin"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
+    Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
     And I set the field "Select a category" to "Test questions"
     And I should see "Test questions"
-    And I should see "Ready" in the "First question" "table_row"
-    And I should see "Ready" in the "Second question" "table_row"
-    And I click on "question_status_dropdown" "select" in the "First question" "table_row"
-    And I should see "Draft"
-    And I click on "Draft" "option"
+    And the field "question_status_dropdown" in the "First question" "table_row" matches value "Ready"
+    And the field "question_status_dropdown" in the "Second question" "table_row" matches value "Ready"
+    And I set the field "question_status_dropdown" to "Draft"
     And I reload the page
-    And I should see "Draft" in the "First question" "table_row"
-    And I should see "Ready" in the "Second question" "table_row"
-    And I click on "question_status_dropdown" "select" in the "Second question" "table_row"
-    And I click on "Draft" "option"
-    And I click on "question_status_dropdown" "select" in the "First question" "table_row"
-    And I click on "Ready" "option"
+    And the field "question_status_dropdown" in the "First question" "table_row" matches value "Draft"
+    And the field "question_status_dropdown" in the "Second question" "table_row" matches value "Ready"
+    And I set the field "question_status_dropdown" in the "Second question" "table_row" to "Draft"
+    And I set the field "question_status_dropdown" in the "First question" "table_row" to "Ready"
     And I reload the page
-    Then I should see "Ready" in the "First question" "table_row"
-    And I should see "Draft" in the "Second question" "table_row"
+    And the field "question_status_dropdown" in the "First question" "table_row" matches value "Ready"
+    And the field "question_status_dropdown" in the "Second question" "table_row" matches value "Draft"

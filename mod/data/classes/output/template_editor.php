@@ -93,7 +93,8 @@ class template_editor implements templatable, renderable {
         global $PAGE;
 
         $result = [];
-        $instance = $this->manager->get_instance();
+        $manager = $this->manager;
+        $instance = $manager->get_instance();
 
         // Setup editor.
         editors_head_setup();
@@ -112,40 +113,43 @@ class template_editor implements templatable, renderable {
 
         // Add editors.
         if ($this->templatename === 'listtemplate') {
+            $template = $manager->get_template('listtemplateheader');
             $result[] = $this->generate_editor_data(
                 $editor,
                 'header',
                 'listtemplateheader',
-                $instance->listtemplateheader
+                $template->get_template_content()
             );
             $maineditorname = 'multientry';
         } else {
             $maineditorname = $this->templatename;
         }
 
-        $value = $instance->{$this->templatename} ?? '';
+        $template = $manager->get_template($this->templatename);
         $result[] = $this->generate_editor_data(
             $editor,
             $maineditorname,
             $this->templatename,
-            $value
+            $template->get_template_content()
         );
 
         if ($this->templatename === 'listtemplate') {
+            $template = $manager->get_template('listtemplatefooter');
             $result[] = $this->generate_editor_data(
                 $editor,
                 'footer',
                 'listtemplatefooter',
-                $instance->listtemplatefooter
+                $template->get_template_content()
             );
         }
 
         if ($this->templatename === 'rsstemplate') {
+            $template = $manager->get_template('rsstitletemplate');
             $result[] = $this->generate_editor_data(
                 $editor,
                 'rsstitletemplate',
                 'rsstitletemplate',
-                $instance->rsstitletemplate
+                $template->get_template_content()
             );
         }
 

@@ -42,8 +42,6 @@ defined('MOODLE_INTERNAL') || die();
 class xml_format_exception extends moodle_exception {
     /** @var string */
     public $errorstring;
-    /** @var int */
-    public $line;
     /** @var char */
     public $char;
     /**

@@ -136,7 +136,7 @@ class core_calendar_event_test_event_collection implements event_collection_inte
         return 2;
     }
 
-    public function getIterator() {
+    public function getIterator(): \Traversable {
         foreach ($this->events as $event) {
             yield $event;
         }

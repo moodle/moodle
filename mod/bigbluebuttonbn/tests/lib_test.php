@@ -101,6 +101,79 @@ class lib_test extends \advanced_testcase {
     }
 
     /**
+     * Check delete instance
+     *
+     * @covers ::bigbluebuttonbn_delete_instance
+     */
+    public function test_bigbluebuttonbn_delete_instance_with_running_meeting() {
+        $this->resetAfterTest();
+        $this->initialise_mock_server();
+        list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance();
+        $bbbgenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
+        $instance = instance::get_from_instanceid($bbactivity->id);
+        // Run the meeting.
+        $bbbgenerator->create_meeting([
+            'instanceid' => $instance->get_instance_id(),
+            'groupid' => $instance->get_group_id(),
+        ]);
+        $meeting = new meeting($instance);
+        $meeting->update_cache();
+        $this->assertTrue($meeting->is_running());
+        $result = bigbluebuttonbn_delete_instance($bbactivity->id);
+        $this->assertTrue($result);
+        $meeting->update_cache();
+        $this->assertFalse($meeting->is_running());
+    }
+
+    /**
+     * Check delete instance
+     *
+     * @covers ::bigbluebuttonbn_delete_instance
+     */
+    public function test_bigbluebuttonbn_delete_instance_with_running_group_meetings() {
+        $this->resetAfterTest();
+        $this->initialise_mock_server();
+        $datagenerator = $this->getDataGenerator();
+        list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance();
+        $course = $this->get_course();
+        set_coursemodule_groupmode($bbactivitycm->id, VISIBLEGROUPS);
+
+        $groups = [];
+        foreach (['G1', 'G2'] as $gname) {
+            $groups[] = $datagenerator->create_group(['courseid' => $course->id, 'name' => $gname]);
+        }
+        // Just create a user in one of the group so we check we don't just end meetings for this user...
+        $user = $datagenerator->create_and_enrol($this->get_course());
+        $groupids = array_map(function($g) {
+            return $g->id;
+        }, $groups);
+        $datagenerator->create_group_member(['userid' => $user->id, 'groupid' => $groupids[0]]);
+        $this->setUser($user);
+
+        $groupids[] = 0; // Add no group (id=0) - as an item so it is covered in the loop.
+        $bbbgenerator = $datagenerator->get_plugin_generator('mod_bigbluebuttonbn');
+        $globalinstance = instance::get_from_instanceid($bbactivity->id);
+        $meetings = [];
+        foreach ($groupids as $groupid) {
+            $instance = instance::get_group_instance_from_instance($globalinstance, $groupid);
+            // Run the meetings.
+            $bbbgenerator->create_meeting([
+                'instanceid' => $instance->get_instance_id(),
+                'groupid' => $instance->get_group_id(),
+            ]);
+            $meeting = new meeting($instance);
+            $meeting->update_cache();
+            $this->assertTrue($meeting->is_running());
+            $meetings[] = $meeting;
+        }
+        $result = bigbluebuttonbn_delete_instance($bbactivity->id);
+        $this->assertTrue($result);
+        foreach ($meetings as $meeting) {
+            $meeting->update_cache();
+            $this->assertFalse($meeting->is_running());
+        }
+    }
+    /**
      * Check user outline page
      *
      * @covers ::bigbluebuttonbn_user_outline
@@ -228,11 +301,11 @@ class lib_test extends \advanced_testcase {
                     continue;
                 }
 
-                if (!empty($filter) and $cm->modname != $filter) {
+                if (!empty($filter) && $cm->modname != $filter) {
                     continue;
                 }
 
-                if (!empty($filtermodid) and $cmid != $filtermodid) {
+                if (!empty($filtermodid) && $cmid != $filtermodid) {
                     continue;
                 }
 
@@ -397,6 +470,7 @@ class lib_test extends \advanced_testcase {
 
         list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance();
         $this->getDataGenerator()->enrol_user($user->id, $this->course->id);
+        $this->setUser($user);
 
         logger::log_meeting_joined_event(instance::get_from_instanceid($bbactivity->id), 0);
         $data->courseid = $this->get_course()->id;
@@ -462,6 +536,7 @@ class lib_test extends \advanced_testcase {
 
         list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance();
         $this->getDataGenerator()->enrol_user($user->id, $this->course->id);
+        $this->setUser($user);
         logger::log_meeting_joined_event(instance::get_from_instanceid($bbactivity->id), 0);
 
         $data->courseid = $this->get_course()->id;

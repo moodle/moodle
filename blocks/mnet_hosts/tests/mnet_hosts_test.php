@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace block_mnet_hosts\tests;
+namespace block_mnet_hosts;
 
 use advanced_testcase;
 use block_mnet_hosts;

@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the update checker.
- *
- * @package   core_plugin
- * @category  test
- * @copyright 2012, 2015 David Mudrak <david@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,8 +26,13 @@ require_once(__DIR__.'/fixtures/testable_update_checker.php');
 
 /**
  * Tests of the basic API of the available update checker.
+ *
+ * @package   core
+ * @category  test
+ * @copyright 2012, 2015 David Mudrak <david@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_update_checker_testcase extends advanced_testcase {
+class update_checker_test extends \advanced_testcase {
 
     public function test_core_available_update() {
         $provider = testable_checker::instance();

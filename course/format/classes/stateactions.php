@@ -16,8 +16,8 @@
 
 namespace core_courseformat;
 
-use core_courseformat\base as course_format;
 use core_courseformat\stateupdates;
+use core\event\course_module_updated;
 use cm_info;
 use section_info;
 use stdClass;
@@ -25,7 +25,6 @@ use course_modinfo;
 use moodle_exception;
 use context_module;
 use context_course;
-use cache;
 
 /**
  * Contains the core course state actions.
@@ -256,6 +255,171 @@ class stateactions {
 
         // Removing a section affects the full course structure.
         $this->course_state($updates, $course);
+    }
+
+    /**
+     * Hide course sections.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids section ids
+     * @param int $targetsectionid not used
+     * @param int $targetcmid not used
+     */
+    public function section_hide(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+        $this->set_section_visibility($updates, $course, $ids, 0);
+    }
+
+    /**
+     * Show course sections.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids section ids
+     * @param int $targetsectionid not used
+     * @param int $targetcmid not used
+     */
+    public function section_show(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+        $this->set_section_visibility($updates, $course, $ids, 1);
+    }
+
+    /**
+     * Show course sections.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids section ids
+     * @param int $visible the new visible value
+     */
+    protected function set_section_visibility (
+        stateupdates $updates,
+        stdClass $course,
+        array $ids,
+        int $visible
+    ) {
+        $this->validate_sections($course, $ids, __FUNCTION__);
+        $coursecontext = context_course::instance($course->id);
+        require_all_capabilities(['moodle/course:update', 'moodle/course:sectionvisibility'], $coursecontext);
+
+        $modinfo = get_fast_modinfo($course);
+
+        foreach ($ids as $sectionid) {
+            $section = $modinfo->get_section_info_by_id($sectionid, MUST_EXIST);
+            course_update_section($course, $section, ['visible' => $visible]);
+        }
+        $this->section_state($updates, $course, $ids);
+    }
+
+    /**
+     * Show course cms.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids cm ids
+     * @param int $targetsectionid not used
+     * @param int $targetcmid not used
+     */
+    public function cm_show(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+        $this->set_cm_visibility($updates, $course, $ids, 1, 1);
+    }
+
+    /**
+     * Hide course cms.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids cm ids
+     * @param int $targetsectionid not used
+     * @param int $targetcmid not used
+     */
+    public function cm_hide(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+        $this->set_cm_visibility($updates, $course, $ids, 0, 1);
+    }
+
+    /**
+     * Stealth course cms.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids cm ids
+     * @param int $targetsectionid not used
+     * @param int $targetcmid not used
+     */
+    public function cm_stealth(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+        $this->set_cm_visibility($updates, $course, $ids, 1, 0);
+    }
+
+    /**
+     * Internal method to define the cm visibility.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids cm ids
+     * @param int $visible the new visible value
+     * @param int $coursevisible the new course visible value
+     */
+    protected function set_cm_visibility(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids,
+        int $visible,
+        int $coursevisible
+    ): void {
+        global $CFG;
+
+        $this->validate_cms($course, $ids, __FUNCTION__);
+
+        // Check capabilities on every activity context.
+        foreach ($ids as $cmid) {
+            $modcontext = context_module::instance($cmid);
+            require_all_capabilities(['moodle/course:manageactivities', 'moodle/course:activityvisibility'], $modcontext);
+        }
+
+        $format = course_get_format($course->id);
+        $modinfo = get_fast_modinfo($course);
+
+        $cms = $this->get_cm_info($modinfo, $ids);
+        foreach ($cms as $cm) {
+            // Check stealth availability.
+            if (!$coursevisible) {
+                $section = $cm->get_section_info();
+                $allowstealth = !empty($CFG->allowstealth) && $format->allow_stealth_module_visibility($cm, $section);
+                $coursevisible = ($allowstealth) ? 0 : 1;
+            }
+            set_coursemodule_visible($cm->id, $visible, $coursevisible);
+            course_module_updated::create_from_cm($cm, $modcontext)->trigger();
+            $updates->add_cm_put($cm->id);
+        }
     }
 
     /**

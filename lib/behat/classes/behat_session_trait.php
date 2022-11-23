@@ -30,6 +30,7 @@ use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Mink\Exception\NoSuchWindowException;
 use Behat\Mink\Session;
+use Behat\Testwork\Hook\Scope\HookScope;
 use Facebook\WebDriver\Exception\ScriptTimeoutException;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverElement;
@@ -221,6 +222,22 @@ trait behat_session_trait {
             'locator' => $locator,
             'container' => $container,
         ];
+    }
+
+    /**
+     * Get a description of the selector and locator to use in an exception message.
+     *
+     * @param string $selector The type of locator
+     * @param mixed $locator The locator text
+     * @return string
+     */
+    protected function get_selector_description(string $selector, $locator): string {
+        if ($selector === 'NodeElement') {
+            $description = $locator->getText();
+            return "'{$description}' {$selector}";
+        }
+
+        return "'{$locator}' {$selector}";
     }
 
     /**
@@ -954,8 +971,11 @@ EOF;
                     }
 
                 } else {
-                    $errorinfo = $this->get_debug_text($errorinfoboxes[0]->getHtml()) . "\n" .
-                        $this->get_debug_text($errorinfoboxes[1]->getHtml());
+                    $errorinfo = implode("\n", [
+                        $this->get_debug_text($errorinfoboxes[0]->getHtml()),
+                        $this->get_debug_text($errorinfoboxes[1]->getHtml()),
+                        html_to_text($errorinfoboxes[2]->find('css', 'ul')->getHtml()),
+                    ]);
                 }
 
                 $msg = "Moodle exception: " . $errormsg->getText() . "\n" . $errorinfo;
@@ -1043,6 +1063,29 @@ EOF;
 
         // Look for exceptions.
         $this->look_for_exceptions();
+    }
+
+    /**
+     * Execute a function in a specific behat context.
+     *
+     * For example, to call the 'set_editor_value' function for all editors, you would call:
+     *
+     *     behat_base::execute_in_matching_contexts('editor', 'set_editor_value', ['Some value']);
+     *
+     * This would find all behat contexts whose class name starts with 'behat_editor_' and
+     * call the 'set_editor_value' function on that context.
+     *
+     * @param string $prefix
+     * @param string $method
+     * @param array $params
+     */
+    public static function execute_in_matching_contexts(string $prefix, string $method, array $params): void {
+        $contexts = behat_context_helper::get_prefixed_contexts("behat_{$prefix}_");
+        foreach ($contexts as $context) {
+            if (method_exists($context, $method) && is_callable([$context, $method])) {
+                call_user_func_array([$context, $method], $params);
+            }
+        }
     }
 
     /**
@@ -1593,5 +1636,64 @@ EOF;
         $instancedata = $acttable->extract_from_result($result);
 
         return get_fast_modinfo($course)->get_cm($result->cmid);
+    }
+
+    /**
+     * Check whether any of the tags availble to the current scope match using the given callable.
+     *
+     * This function is typically called from within a Behat Hook, such as BeforeFeature, BeforeScenario, AfterStep, etc.
+     *
+     * The callable is used as the second argument to `array_filter()`, and is passed a single string argument for each of the
+     * tags available in the scope.
+     *
+     * The tags passed will include:
+     * - For a FeatureScope, the Feature tags only
+     * - For a ScenarioScope, the Feature and Scenario tags
+     * - For a StepScope, the Feature, Scenario, and Step tags
+     *
+     * An example usage may be:
+     *
+     *    // Note: phpDoc beforeStep attribution not shown.
+     *    public function before_step(StepScope $scope) {
+     *        $callback = function (string $tag): bool {
+     *            return $tag === 'editor_atto' || substr($tag, 0, 5) === 'atto_';
+     *        };
+     *
+     *        if (!self::scope_tags_match($scope, $callback)) {
+     *            return;
+     *        }
+     *
+     *        // Do something here.
+     *    }
+     *
+     * @param HookScope $scope The scope to check
+     * @param callable $callback The callable to use to check the scope
+     * @return boolean Whether any of the scope tags match
+     */
+    public static function scope_tags_match(HookScope $scope, callable $callback): bool {
+        $tags = [];
+
+        if (is_subclass_of($scope, \Behat\Behat\Hook\Scope\FeatureScope::class)) {
+            $tags = $scope->getFeature()->getTags();
+        }
+
+        if (is_subclass_of($scope, \Behat\Behat\Hook\Scope\ScenarioScope::class)) {
+            $tags = array_merge(
+                $scope->getFeature()->getTags(),
+                $scope->getScenario()->getTags()
+            );
+        }
+
+        if (is_subclass_of($scope, \Behat\Behat\Hook\Scope\StepScope::class)) {
+            $tags = array_merge(
+                $scope->getFeature()->getTags(),
+                $scope->getScenario()->getTags(),
+                $scope->getStep()->getTags()
+            );
+        }
+
+        $matches = array_filter($tags, $callback);
+
+        return !empty($matches);
     }
 }

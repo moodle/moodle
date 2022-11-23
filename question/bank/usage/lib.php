@@ -59,6 +59,10 @@ function qbank_usage_output_fragment_question_usage(array $args): string {
         }
     }
     $displaydata['tablesql'] = $questionusagetable->export_for_fragment();
+    $selector = \core_question\output\question_version_selection::make_for_question('question_usage_version_dropdown',
+        $args['questionid']);
+    $qbankrenderer = $PAGE->get_renderer('core_question', 'bank');
+    $displaydata['versionselection'] = $selector->export_for_template($qbankrenderer);
 
     return $PAGE->get_renderer('qbank_usage')->render_usage_fragment($displaydata);
 }

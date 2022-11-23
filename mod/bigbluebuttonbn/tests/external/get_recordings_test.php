@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2021 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David (laurent@call-learning.fr)
- * @coversDefaultClass \mod_bigbluebuttonbn\external\get_recordings
+ * @covers \mod_bigbluebuttonbn\external\get_recordings
  */
 class get_recordings_test extends \externallib_advanced_testcase {
     use testcase_helper_trait;
@@ -50,7 +50,7 @@ class get_recordings_test extends \externallib_advanced_testcase {
     /**
      * Helper
      *
-     * @param ... $params
+     * @param mixed ...$params
      * @return array|bool|mixed
      */
     protected function get_recordings(...$params) {
@@ -123,7 +123,7 @@ class get_recordings_test extends \externallib_advanced_testcase {
         $this->assertArrayHasKey('status', $getrecordings);
         $this->assertEquals(true, $getrecordings['status']);
         $this->assertNotEmpty($getrecordings['tabledata']);
-        $this->assertEquals($getrecordings['tabledata']['data'], '[]');
+        $this->assertEquals('[]', $getrecordings['tabledata']['data']);
     }
 
     /**
@@ -315,9 +315,67 @@ class get_recordings_test extends \externallib_advanced_testcase {
     }
 
     /**
+     * Check we can see only imported recordings in a recordings only instance when "Show only imported links" enabled.
+     * @covers \mod_bigbluebuttonbn\external\get_recordings::execute
+     */
+    public function test_get_imported_recordings_only() {
+        $this->resetAfterTest();
+        set_config('bigbluebuttonbn_importrecordings_enabled', 1);
+        $dataset = [
+            'type' => instance::TYPE_ALL,
+            'groups' => null,
+            'users' => [['username' => 's1', 'role' => 'student']],
+            'recordingsdata' => [
+                [['name' => 'Recording1']],
+                [['name' => 'Recording2']]
+            ],
+        ];
+        $activityid = $this->create_from_dataset($dataset);
+        $instance = instance::get_from_instanceid($activityid);
+
+        // Now create a recording only activity.
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
+        // Now create a new activity and import the first record.
+        $newactivity = $plugingenerator->create_instance([
+            'course' => $instance->get_course_id(),
+            'type' => instance::TYPE_RECORDING_ONLY,
+            'name' => 'Example 2'
+        ]);
+        $plugingenerator->create_meeting([
+            'instanceid' => $newactivity->id,
+        ]); // We need to have a meeting created in order to import recordings.
+        $newinstance = instance::get_from_instanceid($newactivity->id);
+        $recordings = $instance->get_recordings();
+        foreach ($recordings as $recording) {
+            if ($recording->get('name') == 'Recording1') {
+                $recording->create_imported_recording($newinstance);
+            }
+        }
+        $user = \core_user::get_user_by_username('s1');
+        $this->setUser($user);
+        $getrecordings = $this->get_recordings($newinstance->get_instance_id());
+        $data = json_decode($getrecordings['tabledata']['data']);
+        // Check that all recordings including the imported recording appear.
+        $this->assertCount(3, $data);
+        // Set the flags to enable "Show only imported links".
+        set_config('bigbluebuttonbn_recordings_imported_default', 1);
+        set_config('bigbluebuttonbn_recordings_imported_editable', 0);
+        $getrecordings = $this->get_recordings($newinstance->get_instance_id());
+        $data = json_decode($getrecordings['tabledata']['data']);
+        $this->assertCount(1, $data);
+    }
+
+    /**
      * Check if recording are visible/invisible depending on the group.
      *
-     * @covers       \mod_bigbluebuttonbn\external\get_recordings::execute
+     * @param string $type
+     * @param array $groups
+     * @param array $users
+     * @param array $recordingsdata
+     * @param array $test
+     * @param int $coursemode
+     *
+     * @covers   \mod_bigbluebuttonbn\external\get_recordings::execute
      * @dataProvider recording_group_test_data
      */
     public function test_get_recordings_groups($type, $groups, $users, $recordingsdata, $test, $coursemode) {

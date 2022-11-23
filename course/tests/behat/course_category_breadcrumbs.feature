@@ -164,7 +164,7 @@ Feature: Course category breadcrumbs navigation
     And I should see "Cat 1" in the ".breadcrumb" "css_element"
     And I should see "Cohorts" in the ".breadcrumb" "css_element"
     And I should see "Cat 1" in the ".page-context-header" "css_element"
-    And I should see "Category: Cat 1: available cohorts" in the "region-main" "region"
+    And I should see "Cohorts" in the "region-main" "region"
     And I should see "Cat 1" in the ".block_navigation .active_tree_node" "css_element"
 
   Scenario: Admin user navigates to category 'add new cohort' page

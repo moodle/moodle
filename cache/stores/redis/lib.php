@@ -216,8 +216,7 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
                 if (!empty($prefix)) {
                     $redis->setOption(Redis::OPT_PREFIX, $prefix);
                 }
-                // Database setting option...
-                $this->isready = $this->ping($redis);
+                $this->isready = true;
             } else {
                 $this->isready = false;
             }

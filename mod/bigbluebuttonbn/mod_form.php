@@ -24,6 +24,7 @@
  * @author    Fred Dixon  (ffdixon [at] blindsidenetworks [dt] com)
  */
 
+use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\helpers\roles;
 use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
 
@@ -80,6 +81,8 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
         $this->bigbluebuttonbn_mform_add_block_preuploads($mform, $cfg);
         // Add block 'Participant List'.
         $this->bigbluebuttonbn_mform_add_block_user_role_mapping($mform, $participantlist);
+        // Add block 'Guest Access'.
+        $this->bigbluebuttonbn_mform_add_block_guest_access($mform, $cfg, $this->current);
         // Add block 'Schedule'.
         $this->bigbluebuttonbn_mform_add_block_schedule($mform, $this->current);
         // Add standard elements, common to all modules.
@@ -212,7 +215,7 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
         $mform->setType('completionattendance', PARAM_INT);
         $mform->addGroup($attendance['group'], 'completionattendancegroup', $attendance['grouplabel'], [' '], false);
         $mform->addHelpButton('completionattendancegroup', 'completionattendancegroup', 'bigbluebuttonbn');
-        $mform->disabledIf('completionattendancegroup', 'completionview', 'notchecked');
+        $mform->disabledIf('completionattendancegroup', 'completion', 'neq', COMPLETION_AGGREGATION_ANY);
         $mform->disabledIf('completionattendance', 'completionattendanceenabled', 'notchecked');
 
         // Elements for completion by Engagement.
@@ -236,7 +239,7 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
             ]
         ]);
         $mform->addHelpButton('completionengagementgroup', 'completionengagementgroup', 'bigbluebuttonbn');
-        $mform->disabledIf('completionengagementgroup', 'completionview', 'notchecked');
+        $mform->disabledIf('completionengagementgroup', 'completion', 'neq', COMPLETION_AGGREGATION_ANY);
 
         return ['completionattendancegroup', 'completionengagementgroup'];
     }
@@ -453,15 +456,6 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
         $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
                 $field['description_key'], $cfg['disablenote_default']);
 
-        $field = ['type' => 'hidden', 'name' => 'lockonjoin', 'data_type' => PARAM_INT, 'description_key' => null];
-        if ($cfg['lockonjoin_editable']) {
-            $field['type'] = 'checkbox';
-            $field['description_key'] = 'mod_form_field_lockonjoin';
-            $locksettings = true;
-        }
-        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
-                $field['description_key'], $cfg['lockonjoin_default']);
-
         $field = ['type' => 'hidden', 'name' => 'hideuserlist', 'data_type' => PARAM_INT, 'description_key' => null];
         if ($cfg['hideuserlist_editable']) {
             $field['type'] = 'checkbox';
@@ -604,6 +598,42 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
         $html = $OUTPUT->render_from_template('mod_bigbluebuttonbn/participant_form', $pformcontext);
         $mform->addElement('static', 'static_participant_list',
             get_string('mod_form_field_participant_list', 'bigbluebuttonbn'), $html);
+    }
+
+    /**
+     * Function to add guest acces settings to the instance
+     *
+     * @param MoodleQuickForm $mform
+     * @param array $cfg
+     * @param stdClass $current
+     * @return void
+     * @throws coding_exception
+     */
+    private function bigbluebuttonbn_mform_add_block_guest_access(MoodleQuickForm $mform, array $cfg, stdClass $current) {
+        if (!empty($cfg['guestaccess_enabled'])) {
+            $mform->addElement('header', 'guestaccess', get_string('mod_form_block_guestaccess', 'bigbluebuttonbn'));
+            $mform->setExpanded('guestaccess');
+            $mform->addElement('advcheckbox', 'guestallowed',
+                get_string('mod_form_field_guestallowed', 'bigbluebuttonbn'));
+            $mform->addElement('advcheckbox', 'mustapproveuser',
+                get_string('mod_form_field_mustapproveuser', 'bigbluebuttonbn'));
+            $mform->hideIf('mustapproveuser', 'guestallowed');
+            if (!empty($this->_cm)) {
+                $instance = instance::get_from_cmid($this->_cm->id);
+                \mod_bigbluebuttonbn\form\guest_add::add_meeting_links_elements($mform);
+                $mform->setDefault('guestjoinurl', $instance->get_guest_access_url());
+                $mform->setDefault('guestpassword', $instance->get_guest_access_password());
+                $mform->hideIf('guestjoinurl', 'guestallowed');
+                $mform->hideIf('guestpassword', 'guestallowed');
+            }
+        } else {
+            $mform->addElement('hidden', 'guestallowed', 0);
+            $mform->addElement('hidden', 'mustapproveuser', 0);
+        }
+        $mform->setType('guestallowed', PARAM_BOOL);
+        $mform->setType('mustapproveuser', PARAM_BOOL);
+        $mform->setDefault('guestallowed', 0);
+        $mform->setDefault('mustapproveuser', 1);
     }
 
     /**

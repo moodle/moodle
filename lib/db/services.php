@@ -679,7 +679,7 @@ $functions = array(
         'classname' => 'core_course_external',
         'methodname' => 'get_enrolled_users_by_cmid',
         'classpath' => 'course/externallib.php',
-        'description' => 'List users by course module id & filter by group id.',
+        'description' => 'List users by course module id, filter by group and active enrolment status.',
         'type' => 'read',
         'ajax' => true,
     ),
@@ -956,6 +956,20 @@ $functions = array(
         'type' => 'write',
         'capabilities' => 'moodle/grade:manage',
     ),
+    'core_grades_get_enrolled_users_for_search_widget' => array (
+        'classname' => 'core_grades\external\get_enrolled_users_for_search_widget',
+        'description' => 'Returns the enrolled users within and map some fields to the returned array of user objects.',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ),
+    'core_grades_get_groups_for_search_widget' => [
+        'classname' =>  'core_grades\external\get_groups_for_search_widget',
+        'description' => 'Get the group/(s) for a course',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_grading_get_definitions' => array(
         'classname' => 'core_grading_external',
         'methodname' => 'get_definitions',
@@ -2781,6 +2795,12 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ],
+    'core_reportbuilder_set_filters' => [
+        'classname'   => 'core_reportbuilder\external\filters\set',
+        'description' => 'Set filter values for given report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
     'core_dynamic_tabs_get_content' => [
         'classname'   => 'core\external\dynamic_tabs_get_content',
         'description' => 'Returns the content for a dynamic tab',
@@ -2805,6 +2825,24 @@ $functions = array(
         'description' => 'Get custom report',
         'type'        => 'read',
         'ajax'        => true,
+    ],
+    'core_reportbuilder_list_reports' => [
+        'classname'   => 'core_reportbuilder\external\reports\listing',
+        'description' => 'List custom reports for current user',
+        'type'        => 'read',
+        'services'    => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_reportbuilder_retrieve_report' => [
+        'classname'   => 'core_reportbuilder\external\reports\retrieve',
+        'description' => 'Retrieve custom report content',
+        'type'        => 'read',
+        'services'    => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_reportbuilder_view_report' => [
+        'classname'   => 'core_reportbuilder\external\reports\view',
+        'description' => 'Trigger custom report viewed',
+        'type'        => 'write',
+        'services'    => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
     'core_reportbuilder_columns_add' => [
         'classname'   => 'core_reportbuilder\external\columns\add',

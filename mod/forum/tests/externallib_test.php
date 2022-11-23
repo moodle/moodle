@@ -145,6 +145,7 @@ class externallib_test extends externallib_advanced_testcase {
         $forum1->istracked = true;
         $forum1->unreadpostscount = 0;
         $forum1->introfiles = [];
+        $forum1->lang = '';
 
         $record = new \stdClass();
         $record->course = $course2->id;
@@ -157,6 +158,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Default limited role, no create discussion capability enabled.
         $forum2->cancreatediscussions = false;
         $forum2->istracked = false;
+        $forum2->lang = '';
 
         // Check the forum was correctly created.
         $this->assertEquals(2, $DB->count_records_select('forum', 'id = :forum1 OR id = :forum2',

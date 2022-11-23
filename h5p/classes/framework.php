@@ -14,18 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * \core_h5p\framework class
- *
- * @package    core_h5p
- * @copyright  2019 Mihail Geshoski <mihail@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_h5p;
 
 use Moodle\H5PFrameworkInterface;
 use Moodle\H5PCore;
+
+// phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
+
 /**
  * Moodle's implementation of the H5P framework interface.
  *
@@ -41,7 +36,7 @@ class framework implements H5PFrameworkInterface {
     /** @var string The path to the last uploaded h5p file */
     private $lastuploadedfile;
 
-    /** @var stored_file The .h5p file */
+    /** @var \stored_file The .h5p file */
     private $file;
 
     /**
@@ -64,16 +59,22 @@ class framework implements H5PFrameworkInterface {
     }
 
     /**
-     * Fetches a file from a remote server using HTTP GET.
+     * Fetches a file from a remote server using HTTP GET
      * Implements fetchExternalData.
      *
-     * @param string $url Where you want to get or send data
-     * @param array $data Data to post to the URL
-     * @param bool $blocking Set to 'FALSE' to instantly time out (fire and forget)
-     * @param string $stream Path to where the file should be saved
-     * @return string The content (response body). NULL if something went wrong
+     * @param  string  $url  Where you want to get or send data.
+     * @param  array  $data  Data to post to the URL.
+     * @param  bool  $blocking  Set to 'FALSE' to instantly time out (fire and forget).
+     * @param  string  $stream  Path to where the file should be saved.
+     * @param  bool  $fulldata  Return additional response data such as headers and potentially other data
+     * @param  array  $headers  Headers to send
+     * @param  array  $files Files to send
+     * @param  string  $method
+     *
+     * @return string|array The content (response body), or an array with data. NULL if something went wrong
      */
-    public function fetchExternalData($url, $data = null, $blocking = true, $stream = null) {
+    public function fetchExternalData($url, $data = null, $blocking = true, $stream = null, $fulldata = false, $headers = [],
+            $files = [], $method = 'POST') {
 
         if ($stream === null) {
             // Download file.
@@ -351,7 +352,101 @@ class framework implements H5PFrameworkInterface {
             'Your PHP version does not support ZipArchive.' => 'noziparchive',
             'Your PHP version is outdated. H5P requires version 5.2 to function properly. Version 5.6 or later is recommended.' => 'oldphpversion',
             'Your server does not have SSL enabled. SSL should be enabled to ensure a secure connection with the H5P hub.' => 'sslnotenabled',
-            'Your site was successfully registered with the H5P Hub.' => 'successfullyregisteredwithhub'
+            'Your site was successfully registered with the H5P Hub.' => 'successfullyregisteredwithhub',
+            'Sharing <strong>:title</strong>' => 'mainTitle',
+            'Edit info for <strong>:title</strong>' => 'editInfoTitle',
+            'Back' => 'back',
+            'Next' => 'next',
+            'Review info' => 'reviewInfo',
+            'Share' => 'share',
+            'Save changes' => 'saveChanges',
+            'Register on the H5P Hub' => 'registerOnHub',
+            'Save account settings' => 'updateRegistrationOnHub',
+            'Required Info' => 'requiredInfo',
+            'Optional Info' => 'optionalInfo',
+            'Review & Share' => 'reviewAndShare',
+            'Review & Save' => 'reviewAndSave',
+            'Shared' => 'shared',
+            'Step :step of :total' => 'currentStep',
+            'All content details can be edited after sharing' => 'sharingNote',
+            'Select a license for your content' => 'licenseDescription',
+            'Select a license version' => 'licenseVersionDescription',
+            'Disciplines' => 'disciplineLabel',
+            'You can select multiple disciplines' => 'disciplineDescription',
+            'You can select up to :numDisciplines disciplines' => 'disciplineLimitReachedMessage',
+            'Type to search for disciplines' => 'discipline:searchPlaceholder',
+            'in' => 'discipline:in',
+            'Dropdown button' => 'discipline:dropdownButton',
+            'Remove :chip from the list' => 'removeChip',
+            'Add keywords' => 'keywordsPlaceholder',
+            'Keywords' => 'keywords',
+            'You can add multiple keywords separated by commas. Press "Enter" or "Add" to confirm keywords' => 'keywordsDescription',
+            'Alt text' => 'altText',
+            'Please review the info below before you share' => 'reviewMessage',
+            'Sub-content (images, questions etc.) will be shared under :license unless otherwise specified in the authoring tool' => 'subContentWarning',
+            'Disciplines' => 'disciplines',
+            'Short description' => 'shortDescription',
+            'Long description' => 'longDescription',
+            'Icon' => 'icon',
+            'Screenshots' => 'screenshots',
+            'Help me choose a license' => 'helpChoosingLicense',
+            'Share failed.' => 'shareFailed',
+            'Editing failed.' => 'editingFailed',
+            'Something went wrong, please try to share again.' => 'shareTryAgain',
+            'Please wait...' => 'pleaseWait',
+            'Language' => 'language',
+            'Level' => 'level',
+            'Short description of your content' => 'shortDescriptionPlaceholder',
+            'Long description of your content' => 'longDescriptionPlaceholder',
+            'Description' => 'description',
+            '640x480px. If not selected content will use category icon' => 'iconDescription',
+            'Add up to five screenshots of your content' => 'screenshotsDescription',
+            'Submitted!' => 'submitted',
+            'Is now submitted to H5P Hub' => 'isNowSubmitted',
+            'A change has been submited for' => 'changeHasBeenSubmitted',
+            'Your content will normally be available in the Hub within one business day.' => 'contentAvailable',
+            'Your content will update soon' => 'contentUpdateSoon',
+            'Content License Info' => 'contentLicenseTitle',
+            'Click on a specific license to get info about proper usage' => 'licenseDialogDescription',
+            'Publisher' => 'publisherFieldTitle',
+            'This will display as the "Publisher name" on shared content' => 'publisherFieldDescription',
+            'Email Address' => 'emailAddress',
+            'Publisher description' => 'publisherDescription',
+            'This will be displayed under "Publisher info" on shared content' => 'publisherDescriptionText',
+            'Contact Person' => 'contactPerson',
+            'Phone' => 'phone',
+            'Address' => 'address',
+            'City' => 'city',
+            'Zip' => 'zip',
+            'Country' => 'country',
+            'Organization logo or avatar' => 'logoUploadText',
+            'I accept the <a href=":url" target="_blank">terms of use</a>' => 'acceptTerms',
+            'You have successfully registered an account on the H5P Hub' => 'successfullyRegistred',
+            'You account details can be changed' => 'successfullyRegistredDescription',
+            'Your H5P Hub account settings have successfully been changed' => 'successfullyUpdated',
+            'here' => 'accountDetailsLinkText',
+            'H5P Hub Registration' => 'registrationTitle',
+            'An error occurred' => 'registrationFailed',
+            'We were not able to create an account at this point. Something went wrong. Try again later.' => 'registrationFailedDescription',
+            ':length is the maximum number of characters' => 'maxLength',
+            'Keyword already exists!' => 'keywordExists',
+            'License details' => 'licenseDetails',
+            'Remove' => 'remove',
+            'Remove image' => 'removeImage',
+            'Cancel sharing' => 'cancelPublishConfirmationDialogTitle',
+            'Are you sure you want to cancel the sharing process?' => 'cancelPublishConfirmationDialogDescription',
+            'No' => 'cancelPublishConfirmationDialogCancelButtonText',
+            'Yes' => 'cancelPublishConfirmationDialogConfirmButtonText',
+            'Add' => 'add',
+            'Typical age' => 'age',
+            'The target audience of this content. Possible input formats separated by commas: "1,34-45,-50,59-".' => 'ageDescription',
+            'Invalid input format for Typical age. Possible input formats separated by commas: "1, 34-45, -50, -59-".' => 'invalidAge',
+            'H5P will reach out to the contact person in case there are any issues with the content shared by the publisher. The contact person\'s name or other information will not be published or shared with third parties' => 'contactPersonDescription',
+            'The email address will be used by H5P to reach out to the publisher in case of any issues with the content or in case the publisher needs to recover their account. It will not be published or shared with any third parties' => 'emailAddressDescription',
+            'Copyrighted material cannot be shared in the H5P Content Hub. If the content is licensed with a OER friendly license like Creative Commons, please choose the appropriate license. If not this content cannot be shared.' => 'copyrightWarning',
+            'Keywords already exists!' => 'keywordsExits',
+            'Some of these keywords already exist' => 'someKeywordsExits',
+            'Assistive Technologies label' => 'a11yTitle:label',
         ];
 
         if (isset($translationsmap[$message])) {
@@ -652,7 +747,7 @@ class framework implements H5PFrameworkInterface {
     /**
      * Get the .h5p file.
      *
-     * @return stored_file The .h5p file.
+     * @return \stored_file The .h5p file.
      */
     public function get_file(): \stored_file {
         if (!isset($this->file)) {
@@ -1140,7 +1235,7 @@ class framework implements H5PFrameworkInterface {
      * Delete a library from database and file system.
      * Implements deleteLibrary.
      *
-     * @param stdClass $library Library object with id, name, major version and minor version
+     * @param \stdClass $library Library object with id, name, major version and minor version
      */
     public function deleteLibrary($library) {
         $factory = new \core_h5p\factory();
@@ -1678,5 +1773,55 @@ class framework implements H5PFrameworkInterface {
         }
 
         return null;
+    }
+
+    /**
+     * Replace content hub metadata cache
+     *
+     * @param JsonSerializable $metadata Metadata as received from content hub
+     * @param string $lang Language in ISO 639-1
+     *
+     * @return mixed
+     */
+    public function replaceContentHubMetadataCache($metadata, $lang) {
+        debugging('The replaceContentHubMetadataCache() method is not implemented.', DEBUG_DEVELOPER);
+        return null;
+    }
+
+    /**
+     * Get content hub metadata cache from db
+     *
+     * @param  string  $lang Language code in ISO 639-1
+     *
+     * @return JsonSerializable Json string
+     */
+    public function getContentHubMetadataCache($lang = 'en') {
+        debugging('The getContentHubMetadataCache() method is not implemented.', DEBUG_DEVELOPER);
+        return null;
+    }
+
+    /**
+     * Get time of last content hub metadata check
+     *
+     * @param  string  $lang Language code iin ISO 639-1 format
+     *
+     * @return string|null Time in RFC7231 format
+     */
+    public function getContentHubMetadataChecked($lang = 'en') {
+        debugging('The getContentHubMetadataChecked() method is not implemented.', DEBUG_DEVELOPER);
+        return null;
+    }
+
+    /**
+     * Set time of last content hub metadata check
+     *
+     * @param  int|null  $time Time in RFC7231 format
+     * @param  string  $lang Language code iin ISO 639-1 format
+     *
+     * @return bool True if successful
+     */
+    public function setContentHubMetadataChecked($time, $lang = 'en') {
+        debugging('The setContentHubMetadataChecked() method is not implemented.', DEBUG_DEVELOPER);
+        return false;
     }
 }

@@ -47,7 +47,7 @@ $separatemode = (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS and
         !has_capability('moodle/site:accessallgroups', $context));
 $currentgroup = groups_get_course_group($course);
 
-$actionbar = new \core_grades\output\import_action_bar($context, $PAGE->url, 'direct');
+$actionbar = new \core_grades\output\import_action_bar($context, null, 'direct');
 print_grade_page_head($course->id, 'import', 'direct', get_string('pluginname', 'gradeimport_direct'), false, false, true,
     'userdata', 'gradeimport_direct', null, $actionbar);
 

@@ -16,6 +16,8 @@
 
 namespace mod_data;
 
+use action_menu;
+use action_menu_link_secondary;
 use core\output\checkbox_toggleall;
 use html_writer;
 use mod_data\manager;
@@ -47,6 +49,9 @@ class template {
     /** @var string the template. */
     private $templatecontent;
 
+    /** @var string the template name. */
+    private $templatename;
+
     /** @var moodle_url the base url. */
     private $baseurl;
 
@@ -59,6 +64,9 @@ class template {
     /** @var bool if comments must be added if not present in the template. */
     private $forcecomments;
 
+    /** @var bool if show more option must be added. */
+    private $showmore;
+
     /** @var bool if the current user can manage entries. */
     private $canmanageentries = null;
 
@@ -68,6 +76,9 @@ class template {
     /** @var array All template tags (calculated in load_template_tags). */
     protected $tags = [];
 
+    /** @var array The mod_data fields. */
+    protected $fields = [];
+
     /**
      * Class contructor.
      *
@@ -76,8 +87,9 @@ class template {
      * @param manager $manager the current instance manager
      * @param string $templatecontent the template string to use
      * @param array $options an array of extra diplay options
+     * @param array $fields alternative array of fields (for preview presets)
      */
-    public function __construct(manager $manager, string $templatecontent, array $options = []) {
+    public function __construct(manager $manager, string $templatecontent, array $options = [], array $fields = null) {
         $this->manager = $manager;
         $this->instance = $manager->get_instance();
         $this->templatecontent = $templatecontent;
@@ -85,8 +97,72 @@ class template {
         $context = $manager->get_context();
         $this->canmanageentries = has_capability('mod/data:manageentries', $context);
         $this->icons = $this->get_icons();
+        $this->fields = $fields ?? $manager->get_fields();
         $this->add_options($options);
         $this->load_template_tags($templatecontent);
+    }
+
+    /**
+     * Create a template class with the default template content.
+     *
+     * @param manager $manager the current instance manager.
+     * @param string $templatename the template name.
+     * @param bool $form whether the fields should be displayed as form instead of data.
+     * @return self The template with the default content (to be displayed when no template is defined).
+     */
+    public static function create_default_template(
+            manager $manager,
+            string $templatename,
+            bool $form = false
+    ): self {
+        $renderer = $manager->get_renderer();
+        $content = '';
+        switch ($templatename) {
+            case 'addtemplate':
+            case 'asearchtemplate':
+            case 'listtemplate':
+            case 'rsstemplate':
+            case 'singletemplate':
+                $template = new \mod_data\output\defaulttemplate($manager->get_fields(), $templatename, $form);
+                $content = $renderer->render_defaulttemplate($template);
+        }
+
+        // Some templates have extra options.
+        $options = self::get_default_display_options($templatename);
+
+        return new self($manager, $content, $options);
+    }
+
+    /**
+     * Get default options for templates.
+     *
+     * For instance, the list template supports the show more button.
+     *
+     * @param string $templatename the template name.
+     * @return array an array of extra diplay options.
+     */
+    public static function get_default_display_options(string $templatename): array {
+        $options = [];
+
+        if ($templatename === 'singletemplate') {
+            $options['comments'] = true;
+            $options['ratings'] = true;
+        }
+        if ($templatename === 'listtemplate') {
+            // The "Show more" button should be only displayed in the listtemplate.
+            $options['showmore'] = true;
+        }
+
+        return $options;
+    }
+
+    /**
+     * Return the raw template content.
+     *
+     * @return string the template content before parsing
+     */
+    public function get_template_content(): string {
+        return $this->templatecontent;
     }
 
     /**
@@ -115,6 +191,8 @@ class template {
         $this->search = $options['search'] ?? null;
         $this->ratings = $options['ratings'] ?? false;
         $this->forcecomments = $options['comments'] ?? false;
+        $this->showmore = $options['showmore'] ?? false;
+        $this->templatename = $options['templatename'] ?? 'singletemplate';
     }
 
     /**
@@ -138,14 +216,33 @@ class template {
     }
 
     /**
+     * Check if a tag is present in the template.
+     *
+     * @param bool $tagname the tag to check (without ##)
+     * @return bool if the tag is present
+     */
+    public function has_tag(string $tagname): bool {
+        return in_array($tagname, $this->tags);
+    }
+
+    /**
+     * Return the current template name.
+     *
+     * @return string the template name
+     */
+    public function get_template_name(): string {
+        return $this->templatename;
+    }
+
+    /**
      * Generate the list of action icons.
      *
      * @return pix_icon[] icon name => pix_icon
      */
     protected function get_icons() {
-        $attrs = ['class' => 'iconsmall'];
+        $attrs = ['class' => 'iconsmall dataicon'];
         return [
-            'edit' => new pix_icon('t/edit', get_string('edit'), '', $attrs),
+            'edit' => new pix_icon('t/editinline', get_string('edit'), '', $attrs),
             'delete' => new pix_icon('t/delete', get_string('delete'), '', $attrs),
             'more' => new pix_icon('t/preview', get_string('more', 'data'), '', $attrs),
             'approve' => new pix_icon('t/approve', get_string('approve', 'data'), '', $attrs),
@@ -205,13 +302,12 @@ class template {
      */
     private function get_fields_replacements(stdClass $entry): array {
         $result = [];
-        $fields = $this->manager->get_fields();
-        foreach ($fields as $field) {
+        foreach ($this->fields as $field) {
             // Field value.
             $pattern = '[[' . $field->field->name . ']]';
             $result[$pattern] = highlight(
                 $this->search,
-                $field->display_browse_field($entry->id, $this->templatecontent)
+                $field->display_browse_field($entry->id, $this->templatename)
             );
             // Field id.
             $pattern = '[[' . $field->field->name . '#id]]';
@@ -320,6 +416,11 @@ class template {
      */
     protected function get_tag_more_replacement(stdClass $entry, bool $canmanageentry): string {
         global $OUTPUT;
+
+        if (!$this->showmore) {
+            return '';
+        }
+
         $url = new moodle_url($this->baseurl, [
             'rid' => $entry->id,
             'filter' => 1,
@@ -402,7 +503,7 @@ class template {
         if (!isset($user->picture)) {
             $user = core_user::get_user($entry->userid);
         }
-        return $OUTPUT->user_picture($user, ['courseid' => $cm->course]);
+        return $OUTPUT->user_picture($user, ['courseid' => $cm->course, 'size' => 64]);
     }
 
     /**
@@ -433,10 +534,13 @@ class template {
             ['id' => $cm->id, 'recordid' => $entry->id],
             'mod_data'
         );
-        $fields = $this->manager->get_fields();
-        list($formats, $files) = data_portfolio_caller::formats($fields, $entry);
+        list($formats, $files) = data_portfolio_caller::formats($this->fields, $entry);
         $button->set_formats($formats);
-        return $button->to_html(PORTFOLIO_ADD_ICON_LINK);
+        $result = $button->to_html(PORTFOLIO_ADD_ICON_LINK);
+        if (is_null($result)) {
+            $result = '';
+        }
+        return $result;
     }
 
     /**
@@ -447,7 +551,11 @@ class template {
      * @return string the tag replacement
      */
     protected function get_tag_timeadded_replacement(stdClass $entry, bool $canmanageentry): string {
-        return userdate($entry->timecreated);
+        return html_writer::tag(
+            'span',
+            userdate($entry->timecreated, get_string('strftimedatemonthabbr', 'langconfig')),
+            ['title' => userdate($entry->timecreated)]
+        );
     }
 
     /**
@@ -458,7 +566,11 @@ class template {
      * @return string the tag replacement
      */
     protected function get_tag_timemodified_replacement(stdClass $entry, bool $canmanageentry): string {
-        return userdate($entry->timemodified);
+        return html_writer::tag(
+            'span',
+            userdate($entry->timemodified, get_string('strftimedatemonthabbr', 'langconfig')),
+            ['title' => userdate($entry->timecreated)]
+        );
     }
 
     /**
@@ -520,7 +632,7 @@ class template {
         if (!$this->instance->approval) {
             return '';
         }
-        return ($entry->approved) ? get_string('approved', 'data') : get_string('notapproved', 'data');
+        return ($entry->approved) ? '' : html_writer::div(get_string('notapproved', 'data'), 'mod-data-approval-status-badge');
     }
 
     /**
@@ -595,4 +707,200 @@ class template {
         return (string) $entry->id;
     }
 
+    /**
+     * Returns the ##actionsmenu## tag replacement for an entry.
+     *
+     * @param stdClass $entry the entry object
+     * @param bool $canmanageentry if the current user can manage this entry
+     * @return string the tag replacement
+     */
+    protected function get_tag_actionsmenu_replacement(stdClass $entry, bool $canmanageentry): string {
+        global $OUTPUT, $CFG;
+
+        $actionmenu = new action_menu();
+        $icon = $OUTPUT->pix_icon('i/menu', get_string('actions'));
+        $actionmenu->set_menu_trigger($icon, 'btn btn-icon d-flex align-items-center justify-content-center');
+        $actionmenu->set_action_label(get_string('actions'));
+        $actionmenu->attributes['class'] .= ' entry-actionsmenu';
+
+        // Show more.
+        if ($this->showmore) {
+            $showmoreurl = new moodle_url($this->baseurl, [
+                'rid' => $entry->id,
+                'filter' => 1,
+            ]);
+            $actionmenu->add(new action_menu_link_secondary(
+                $showmoreurl,
+                null,
+                get_string('showmore', 'mod_data')
+            ));
+        }
+
+        if ($canmanageentry) {
+            // Edit entry.
+            $backurl = new moodle_url($this->baseurl, [
+                'rid' => $entry->id,
+                'mode' => 'single',
+            ]);
+            $editurl = new moodle_url('/mod/data/edit.php', $this->baseurl->params());
+            $editurl->params([
+                'rid' => $entry->id,
+                'sesskey' => sesskey(),
+                'backto' => urlencode($backurl->out(false))
+            ]);
+
+            $actionmenu->add(new action_menu_link_secondary(
+                $editurl,
+                null,
+                get_string('edit')
+            ));
+
+            // Delete entry.
+            $deleteurl = new moodle_url($this->baseurl, [
+                'delete' => $entry->id,
+                'sesskey' => sesskey(),
+                'mode' => 'single',
+            ]);
+
+            $actionmenu->add(new action_menu_link_secondary(
+                $deleteurl,
+                null,
+                get_string('delete')
+            ));
+        }
+
+        // Approve/disapprove entry.
+        $context = $this->manager->get_context();
+        if (has_capability('mod/data:approve', $context) && $this->instance->approval) {
+            if ($entry->approved) {
+                $disapproveurl = new moodle_url($this->baseurl, [
+                    'disapprove' => $entry->id,
+                    'sesskey' => sesskey(),
+                ]);
+                $actionmenu->add(new action_menu_link_secondary(
+                    $disapproveurl,
+                    null,
+                    get_string('disapprove', 'mod_data')
+                ));
+            } else {
+                $approveurl = new moodle_url($this->baseurl, [
+                    'approve' => $entry->id,
+                    'sesskey' => sesskey(),
+                ]);
+                $actionmenu->add(new action_menu_link_secondary(
+                    $approveurl,
+                    null,
+                    get_string('approve', 'mod_data')
+                ));
+            }
+        }
+
+        // Export entry to portfolio.
+        if (!empty($CFG->enableportfolios)) {
+            // Check the user can export the entry.
+            $cm = $this->manager->get_coursemodule();
+            $canexportall = has_capability('mod/data:exportentry', $context);
+            $canexportown = has_capability('mod/data:exportownentry', $context);
+            if ($canexportall || (data_isowner($entry->id) && $canexportown)) {
+                // Add the portfolio export button.
+                require_once($CFG->libdir . '/portfoliolib.php');
+                $button = new portfolio_add_button();
+                $button->set_callback_options(
+                    'data_portfolio_caller',
+                    ['id' => $cm->id, 'recordid' => $entry->id],
+                    'mod_data'
+                );
+                $fields = $this->manager->get_fields();
+                list($formats, $files) = data_portfolio_caller::formats($fields, $entry);
+                $button->set_formats($formats);
+                $exporturl = $button->to_html(PORTFOLIO_ADD_MOODLE_URL);
+                if (!is_null($exporturl)) {
+                    $actionmenu->add(new action_menu_link_secondary(
+                        $exporturl,
+                        null,
+                        get_string('addtoportfolio', 'portfolio')
+                    ));
+                }
+            }
+        }
+
+        return $OUTPUT->render($actionmenu);
+    }
+
+    /**
+     * Parse the template as if it was for add entry.
+     *
+     * This method is similar to the parse_entry but it uses the display_add_field method
+     * instead of the display_browse_field.
+     *
+     * @param stdClass|null $processeddata the previous process data information.
+     * @param int|null $entryid the possible entry id
+     * @param stdClass|null $entrydata the entry data from a previous form or from a real entry
+     * @return string the add entry HTML content
+     */
+    public function parse_add_entry(
+        ?stdClass $processeddata = null,
+        ?int $entryid = null,
+        ?stdClass $entrydata = null
+    ): string {
+        $manager = $this->manager;
+        $renderer = $manager->get_renderer();
+        $templatecontent = $this->templatecontent;
+
+        if (!$processeddata) {
+            $processeddata = (object)[
+                'generalnotifications' => [],
+                'fieldnotifications' => [],
+            ];
+        }
+
+        $result = '';
+
+        foreach ($processeddata->generalnotifications as $notification) {
+            $result .= $renderer->notification($notification);
+        }
+
+        $possiblefields = $manager->get_fields();
+        $patterns = [];
+        $replacements = [];
+
+        // Then we generate strings to replace.
+        foreach ($possiblefields as $field) {
+            // To skip unnecessary calls to display_add_field().
+            if (strpos($templatecontent, "[[" . $field->field->name . "]]") !== false) {
+                // Replace the field tag.
+                $patterns[] = "[[" . $field->field->name . "]]";
+                $errors = '';
+                $fieldnotifications = $processeddata->fieldnotifications[$field->field->name] ?? [];
+                if (!empty($fieldnotifications)) {
+                    foreach ($fieldnotifications as $notification) {
+                        $errors .= $renderer->notification($notification);
+                    }
+                }
+                $fielddisplay = '';
+                if ($field->type === 'unknown') {
+                    if ($this->canmanageentries) { // Display notification for users that can manage entries.
+                        $errors .= $renderer->notification(get_string('missingfieldtype', 'data',
+                        (object)['name' => $field->field->name]));
+                    }
+                } else {
+                    $fielddisplay = $field->display_add_field($entryid, $entrydata);
+                }
+
+                $replacements[] = $errors . $fielddisplay;
+            }
+
+            // Replace the field id tag.
+            $patterns[] = "[[" . $field->field->name . "#id]]";
+            $replacements[] = 'field_' . $field->field->id;
+        }
+
+        if (core_tag_tag::is_enabled('mod_data', 'data_records')) {
+            $patterns[] = "##tags##";
+            $replacements[] = data_generate_tag_form($entryid);
+        }
+
+        $result .= str_ireplace($patterns, $replacements, $templatecontent);
+        return $result;
+    }
 }

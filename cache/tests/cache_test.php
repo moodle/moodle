@@ -2112,6 +2112,135 @@ class cache_test extends \advanced_testcase {
     }
 
     /**
+     * Test requiring a lock before attempting to set a key.
+     *
+     * @covers ::set_implementation
+     */
+    public function test_application_locking_before_write() {
+        $instance = cache_config_testing::instance(true);
+        $instance->phpunit_add_definition('phpunit/test_application_locking', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'test_application_locking',
+            'staticacceleration' => true,
+            'staticaccelerationsize' => 1,
+            'requirelockingbeforewrite' => true
+        ));
+        $cache = cache::make('phpunit', 'test_application_locking');
+        $this->assertInstanceOf(cache_application::class, $cache);
+
+        $cache->acquire_lock('a');
+        $this->assertTrue($cache->set('a', 'A'));
+        $cache->release_lock('a');
+
+        $this->expectExceptionMessage('Attempted to set cache key "b" without a lock. '
+                . 'Locking before writes is required for phpunit/test_application_locking');
+        $this->assertFalse($cache->set('b', 'B'));
+    }
+
+
+    /**
+     * Test that invalid lock setting combinations are caught.
+     *
+     * @covers ::make
+     */
+    public function test_application_conflicting_locks() {
+        $instance = cache_config_testing::instance(true);
+        $instance->phpunit_add_definition('phpunit/test_application_locking', array(
+                'mode' => cache_store::MODE_APPLICATION,
+                'component' => 'phpunit',
+                'area' => 'test_application_locking',
+                'staticacceleration' => true,
+                'staticaccelerationsize' => 1,
+                'requirelockingwrite' => true,
+                'requirelockingbeforewrite' => true,
+        ));
+
+        $this->expectException('coding_exception');
+        cache::make('phpunit', 'test_application_locking');
+    }
+
+    /**
+     * Test that locking before write works when writing across multiple layers.
+     *
+     * @covers \cache_loader
+     * @return void
+     */
+    public function test_application_locking_multiple_layers() {
+
+        $instance = cache_config_testing::instance(true);
+        $instance->phpunit_add_definition('phpunit/test_application_locking', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'test_application_locking',
+            'staticacceleration' => true,
+            'staticaccelerationsize' => 1,
+            'requirelockingbeforewrite' => true
+        ), false);
+        $instance->phpunit_add_file_store('phpunittest1');
+        $instance->phpunit_add_file_store('phpunittest2');
+        $instance->phpunit_add_definition_mapping('phpunit/test_application_locking', 'phpunittest1', 1);
+        $instance->phpunit_add_definition_mapping('phpunit/test_application_locking', 'phpunittest2', 2);
+
+        $cache = cache::make('phpunit', 'test_application_locking');
+        $this->assertInstanceOf(cache_application::class, $cache);
+
+        // Check that we can set a key across multiple layers.
+        $cache->acquire_lock('a');
+        $this->assertTrue($cache->set('a', 'A'));
+        $cache->release_lock('a');
+
+        // Delete from the current layer.
+        $cache->delete('a', false);
+
+        // Check that we can get the value from the deeper layer, which will also re-set it in the current one.
+        $this->assertEquals('A', $cache->get('a'));
+
+        // Try set/delete/get_many.
+        $cache->acquire_lock('x');
+        $cache->acquire_lock('y');
+        $cache->acquire_lock('z');
+        $this->assertEquals(3, $cache->set_many(['x' => 'X', 'y' => 'Y', 'z' => 'Z']));
+        $cache->release_lock('x');
+        $cache->release_lock('y');
+        $cache->release_lock('z');
+
+        $cache->delete_many(['x', 'y', 'z'], false);
+        $this->assertEquals(['x' => 'X', 'y' => 'Y', 'z' => 'Z'], $cache->get_many(['x', 'y', 'z']));
+
+        $cache->purge();
+
+        // Try the tests again with a third layer.
+        $instance->phpunit_add_file_store('phpunittest3');
+        $instance->phpunit_add_definition_mapping('phpunit/test_application_locking', 'phpunittest3', 3);
+        $cache = cache::make('phpunit', 'test_application_locking');
+        $this->assertInstanceOf(cache_application::class, $cache);
+
+        // Check that we can set a key across multiple layers.
+        $cache->acquire_lock('a');
+        $this->assertTrue($cache->set('a', 'A'));
+        $cache->release_lock('a');
+
+        // Delete from the current layer.
+        $cache->delete('a', false);
+
+        // Check that we can get the value from the deeper layer, which will also re-set it in the current one.
+        $this->assertEquals('A', $cache->get('a'));
+
+        // Try set/delete/get_many.
+        $cache->acquire_lock('x');
+        $cache->acquire_lock('y');
+        $cache->acquire_lock('z');
+        $this->assertEquals(3, $cache->set_many(['x' => 'X', 'y' => 'Y', 'z' => 'Z']));
+        $cache->release_lock('x');
+        $cache->release_lock('y');
+        $cache->release_lock('z');
+
+        $cache->delete_many(['x', 'y', 'z'], false);
+        $this->assertEquals(['x' => 'X', 'y' => 'Y', 'z' => 'Z'], $cache->get_many(['x', 'y', 'z']));
+    }
+
+    /**
      * Test the static cache_helper method purge_stores_used_by_definition.
      */
     public function test_purge_stores_used_by_definition() {

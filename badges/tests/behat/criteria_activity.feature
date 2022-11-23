@@ -70,7 +70,7 @@ Feature: Award badges based on activity completion
     And I set the field "False" to "1"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
-    And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
+    And I click on "Submit" "button" in the "Submit all your answers and finish?" "dialogue"
     And I log out
 
     And I am on the "Course 1" course page logged in as teacher1
@@ -97,7 +97,7 @@ Feature: Award badges based on activity completion
     And I set the field "False" to "1"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
-    And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
+    And I click on "Submit" "button" in the "Submit all your answers and finish?" "dialogue"
     And I log out
 
     # Pass grade with student1
@@ -107,7 +107,7 @@ Feature: Award badges based on activity completion
     And I set the field "False" to "0"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
-    And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
+    And I click on "Submit" "button" in the "Submit all your answers and finish?" "dialogue"
     And I log out
 
     # Enable badge access once all students have completed an activity.

@@ -47,6 +47,9 @@ module.exports = grunt => {
     // Load ESLint.
     require('./eslint')(grunt);
 
+    // Load jsconfig.
+    require('./jsconfig')(grunt);
+
     // Load JSDoc.
     require('./jsdoc')(grunt);
 

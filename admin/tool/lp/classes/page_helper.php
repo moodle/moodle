@@ -229,7 +229,7 @@ class page_helper {
         $PAGE->set_pagelayout('standard');
         $PAGE->set_url($url);
         $PAGE->set_title($title);
-        $PAGE->set_heading($title);
+        $PAGE->set_heading(fullname($user));
 
         if (!empty($plan)) {
             $PAGE->navbar->add($title, $planurl);
@@ -303,7 +303,7 @@ class page_helper {
         $PAGE->set_pagelayout('standard');
         $PAGE->set_url($url);
         $PAGE->set_title($title);
-        $PAGE->set_heading($title);
+        $PAGE->set_heading(fullname($user));
 
         if (!empty($evidence)) {
             $PAGE->navbar->add($title, $evidenceurl);

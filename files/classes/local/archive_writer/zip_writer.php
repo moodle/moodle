@@ -26,6 +26,7 @@ namespace core_files\local\archive_writer;
 
 use ZipStream\Option\Archive;
 use ZipStream\ZipStream;
+use ZipStream\Option\File as FileOptions;
 use core_files\archive_writer;
 use core_files\local\archive_writer\file_writer_interface as file_writer_interface;
 use core_files\local\archive_writer\stream_writer_interface as stream_writer_interface;
@@ -110,8 +111,12 @@ class zip_writer extends archive_writer implements file_writer_interface, stream
     }
 
     public function add_file_from_stored_file(string $name, \stored_file $file): void {
+        $datetime = new \DateTime();
+        $datetime->setTimestamp($file->get_timemodified());
+        $fileoptions = new FileOptions();
+        $fileoptions->setTime($datetime);
         $filehandle = $file->get_content_file_handle();
-        $this->archive->addFileFromStream($this->sanitise_filepath($name), $filehandle);
+        $this->archive->addFileFromStream($this->sanitise_filepath($name), $filehandle, $fileoptions);
         fclose($filehandle);
     }
 

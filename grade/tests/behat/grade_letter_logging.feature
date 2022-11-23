@@ -1,4 +1,4 @@
-@core @core_grades
+@core @core_grades @javascript
 Feature: We can view the logs for any changes to grade letters.
   In order to view changes the letter boundary of a course
   As an administrator

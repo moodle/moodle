@@ -1,4 +1,4 @@
-@core @core_grades @gradereport_user
+@core @core_grades @gradereport_user @javascript
 Feature: View the user report as the student will see it
   In order to know what grades students will see
   As a teacher
@@ -49,8 +49,8 @@ Feature: View the user report as the student will see it
 
   Scenario: View the report as the teacher themselves
     When I navigate to "View > User report" in the course gradebook
-    And I select "Student 1" from the "Select all or one user" singleselect
-    And I select "Myself" from the "View report as" singleselect
+    And I click on "Student 1" in the "user" search widget
+    And I set the field "View report as" to "Myself"
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | Test assignment one     | 50.00 %           | 80.00  | 0–100 | 80.00 %    | 13.33 %                      |
@@ -65,8 +65,8 @@ Feature: View the user report as the student will see it
 
   Scenario: View the report as the student from both the teachers and students perspective
     When I navigate to "View > User report" in the course gradebook
-    And I select "Student 1" from the "Select all or one user" singleselect
-    And I select "User" from the "View report as" singleselect
+    And I click on "Student 1" in the "user" search widget
+    And I set the field "View report as" to "User"
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | Test assignment one     | -                 | 80.00  | 0–100 | 80.00 %    | -                            |
@@ -107,8 +107,8 @@ Feature: View the user report as the student will see it
     And I set the field with xpath "//select[@name='report_user_showtotalsifcontainhidden']" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    When I select "Student 1" from the "Select all or one user" singleselect
-    And I select "User" from the "View report as" singleselect
+    When I click on "Student 1" in the "user" search widget
+    And I set the field "View report as" to "User"
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | Test assignment one     | 50.00 %           | 80.00  | 0–100 | 80.00 %    | 26.67 %                      |
@@ -145,8 +145,8 @@ Feature: View the user report as the student will see it
     And I set the field with xpath "//select[@name='report_user_showtotalsifcontainhidden']" to "Show totals including hidden items"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    When I select "Student 1" from the "Select all or one user" singleselect
-    And I select "User" from the "View report as" singleselect
+    When I click on "Student 1" in the "user" search widget
+    And I set the field "View report as" to "User"
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | Test assignment one     | 50.00 %           | 80.00  | 0–100 | 80.00 %    | 13.33 %                      |
@@ -191,8 +191,8 @@ Feature: View the user report as the student will see it
     And I set the field with xpath "//select[@name='report_user_showtotalsifcontainhidden']" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    When I select "Student 1" from the "Select all or one user" singleselect
-    And I select "User" from the "View report as" singleselect
+    When I click on "Student 1" in the "user" search widget
+    And I set the field "View report as" to "User"
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | Test assignment one     | 50.00 %           | 80.00  | 0–100 | 80.00 %    | 13.33 %                      |

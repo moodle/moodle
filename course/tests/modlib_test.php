@@ -120,6 +120,7 @@ class modlib_test extends \advanced_testcase {
         $expecteddata->showdescription    = $assigncm->showdescription;
         $expecteddata->downloadcontent    = $assigncm->downloadcontent;
         $expecteddata->tags               = \core_tag_tag::get_item_tags_array('core', 'course_modules', $assigncm->id);
+        $expecteddata->lang               = null;
         $expecteddata->availabilityconditionsjson = null;
         $expecteddata->advancedgradingmethod_submissions = null;
         if ($items = \grade_item::fetch_all(array('itemtype' => 'mod', 'itemmodule' => 'assign',

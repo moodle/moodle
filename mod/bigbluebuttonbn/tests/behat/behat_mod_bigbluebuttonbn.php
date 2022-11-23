@@ -26,6 +26,8 @@
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Gherkin\Node\TableNode;
+use mod_bigbluebuttonbn\instance;
 use Moodle\BehatExtension\Exception\SkippedException;
 
 /**
@@ -137,7 +139,13 @@ XPATH
                 return new moodle_url('/mod/bigbluebuttonbn/index.php', [
                     'id' => $this->get_course_id($identifier),
                 ]);
-
+            case 'BigblueButtonBN Guest':
+                $cm = $this->get_cm_by_activity_name('bigbluebuttonbn', $identifier);
+                $instance = instance::get_from_cmid($cm->id);
+                $url = $instance->get_guest_access_url();
+                // We have to make sure we set the password. It makes it then easy to submit the form with the right password.
+                $url->param('password', $instance->get_guest_access_password());
+                return $url;
             default:
                 throw new Exception("Unrecognised page type '{$type}'.");
         }
@@ -171,10 +179,56 @@ XPATH
      * @Given the BigBlueButtonBN server has sent recording ready notifications
      */
     public function trigger_recording_ready_notification(): void {
-        $this->send_mock_request('backoffice/sendNotifications', [
+        $this->send_mock_request('backoffice/sendRecordingReadyNotifications', [
                 'secret' => \mod_bigbluebuttonbn\local\config::DEFAULT_SHARED_SECRET,
             ]
         );
     }
 
+    /**
+     * Trigger a meeting event on BBB side
+     *
+     * @Given /^the BigBlueButtonBN server has received the following events from user "(?P<element_string>(?:[^"]|\\")*)":$/
+     * @param string $username
+     * @param TableNode $data
+     */
+    public function trigger_meeting_event(string $username, TableNode $data): void {
+        global $DB;
+        $user = core_user::get_user_by_username($username);
+        $rows = $data->getHash();
+        foreach ($rows as $elementdata) {
+            $instanceid = $DB->get_field('bigbluebuttonbn', 'id', [
+                'name' => $elementdata['instancename'],
+            ]);
+            $instance = \mod_bigbluebuttonbn\instance::get_from_instanceid($instanceid);
+            $this->send_mock_request('backoffice/addMeetingEvent', [
+                    'secret' => \mod_bigbluebuttonbn\local\config::DEFAULT_SHARED_SECRET,
+                    'meetingID' => $instance->get_meeting_id(),
+                    'attendeeID' => $user->id,
+                    'attendeeName' => fullname($user),
+                    'eventType' => $elementdata['eventtype'],
+                    'eventData' => $elementdata['eventdata'] ?? '',
+                ]
+            );
+        }
+    }
+    /**
+     * Send all events received for this meeting back to moodle
+     *
+     * @Given /^the BigBlueButtonBN activity "(?P<element_string>(?:[^"]|\\")*)" has sent recording all its events$/
+     * @param string $instancename
+     */
+    public function trigger_all_events(string $instancename): void {
+        global $DB;
+
+        $instanceid = $DB->get_field('bigbluebuttonbn', 'id', [
+            'name' => $instancename,
+        ]);
+        $instance = \mod_bigbluebuttonbn\instance::get_from_instanceid($instanceid);
+        $this->send_mock_request('backoffice/sendAllEvents', [
+                'meetingID' => $instance->get_meeting_id(),
+                'sendQuery' => true
+            ]
+        );
+    }
 }

@@ -14,47 +14,174 @@
     display: inline-block;
 }
 
-.path-grade-report-user .user-grade {
+.path-grade-report-user .user-grade,
+.grade-report-user .user-grade {
     width: 100%;
-    border: 1px solid;
 }
 
-.path-grade-report-user .user-grade thead th {
+.path-grade-report-user .user-grade thead th,
+.grade-report-user .user-grade thead th {
     vertical-align: bottom;
-}
-
-.path-grade-report-user .user-grade th {
+    border: none;
     text-align: left;
+    background-color: #f8f9fa;
 }
 
-.path-grade-report-user .user-grade td {
+.path-grade-report-user .user-grade td,
+.grade-report-user .user-grade td {
     min-width: 4.5em;
-    vertical-align: top;
+    background-color: #f8f9fa;
+    border: none;
+    vertical-align: middle;
 }
 
-.path-grade-report-user .user-grade .b1l {
+.path-grade-report-user .user-grade .b1l,
+.grade-report-user .user-grade .b1l {
     padding: 0;
     width: 24px;
     min-width: 24px;
 }
 
-.path-grade-report-user .user-grade tbody .column-itemname {
-    padding-left: 0;
+.path-grade-report-user .user-grade tbody .column-itemname,
+.grade-report-user .user-grade tbody .column-itemname {
+    padding-left: 24px;
     padding-right: 8px;
 }
 
-.path-grade-report-user .user-grade .column-itemname.item,
-.path-grade-report-user .user-grade .gradeitemdescription {
-    font-weight: normal;
-    padding-left: 24px;
+.path-grade-report-user .user-grade .column-itemname.baggt,
+.path-grade-report-user .user-grade .column-itemname.baggb,
+.grade-report-user .user-grade .column-itemname.baggt,
+.grade-report-user .user-grade .column-itemname.baggb {
+    padding-left: 0;
 }
 
-.path-grade-report-user .user-grade .column-itemname.baggt,
-.path-grade-report-user .user-grade .column-itemname.baggb {
-    padding-left: 24px;
+.path-grade-report-user .user-grade .column-itemname .itemicon,
+.grade-report-user .user-grade .column-itemname .itemicon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
 }
 
 .path-grade-report-user .user-grade .baggt,
-.path-grade-report-user .user-grade .baggb {
+.path-grade-report-user .user-grade .baggb,
+.grade-report-user .user-grade .baggt,
+.grade-report-user .user-grade .baggb {
     font-weight: bold;
+}
+
+.path-grade-report-user .user-report-container,
+.grade-report-user .user-report-container {
+    margin: 20px 0 30px 0;
+    padding: 10px 10px;
+    background-color: #f8f9fa;
+}
+
+.path-grade-report-user .user-grade tbody tr,
+.grade-report-user .user-grade tbody tr {
+    background-color: #f8f9fa;
+}
+
+.path-grade-report-user .user-grade tbody tr:hover,
+.grade-report-user .user-grade tbody tr:hover {
+    color: inherit;
+    background-color: #f8f9fa;
+}
+
+.path-grade-report-user .user-grade tbody tr.spacer,
+.grade-report-user .user-grade tbody tr.spacer {
+    height: 0.5rem;
+}
+
+.path-grade-report-user .user-grade td.item,
+.grade-report-user .user-grade td.item {
+    background-color: white;
+    border-top: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.path-grade-report-user .user-grade td.category,
+.grade-report-user .user-grade td.category {
+    background-color: white;
+    border: 1px solid #dee2e6;
+    padding-left: 10px;
+    font-weight: bold;
+}
+
+.path-grade-report-user .user-grade td.category a[aria-expanded="true"] .expanded,
+.path-grade-report-user .user-grade td.category a[aria-expanded="false"] .collapsed,
+.grade-report-user .user-grade td.category a[aria-expanded="true"] .expanded,
+.grade-report-user .user-grade td.category a[aria-expanded="false"] .collapsed {
+    display: none;
+}
+
+.path-grade-report-user .user-grade td.category a.toggle-category,
+.grade-report-user .user-grade td.category a.toggle-category {
+    height: 24px;
+    width: 24px;
+    font-size: 12px;
+    line-height: 24px;
+    margin-right: 3px;
+}
+
+.path-grade-report-user .user-grade td.category a.toggle-category i,
+.grade-report-user .user-grade td.category a.toggle-category i {
+    font-size: 12px;
+    width: 12px;
+    height: 12px;
+    color: #1d2125;
+    margin: 0;
+}
+
+.path-grade-report-user .user-grade .column-itemname .small,
+.grade-report-user .user-grade .column-itemname .small {
+    font-size: 70%;
+}
+
+.path-grade-report-user .user-grade tr[data-hidden="true"],
+.grade-report-user .user-grade tr[data-hidden="true"] {
+    display: none;
+}
+
+.path-grade-report-user .user-grade .category div,
+.grade-report-user .user-grade .category div {
+    min-height: 30px;
+    align-items: center;
+}
+
+.path-grade-report-user .search-widget[data-searchtype="user"] .userinitials {
+    width: 40px;
+    height: 40px;
+}
+
+.path-grade-report-user .user-navigation .container {
+    max-width: 767px;
+}
+
+.path-grade-report-user .view-user-selector label {
+    display: block;
+    font-size: 80%;
+    margin: 0;
+}
+
+.path-grade-report-user .view-user-selector .dropdown-toggle {
+    padding: 0;
+    font-weight: bold;
+}
+
+.path-grade-report-user .zero-state img {
+    width: 185px;
+}
+
+@media print {
+    .path-grade-report-user .user-grade td.category,
+    .grade-report-user .user-grade td.category {
+        border-left: none;
+        border-right: none;
+    }
+
+    .path-grade-report-user .user-grade td.category a.toggle-category,
+    .grade-report-user .user-grade td.category a.toggle-category
+    .path-grade-report-user #page-footer {
+        display: none;
+    }
 }

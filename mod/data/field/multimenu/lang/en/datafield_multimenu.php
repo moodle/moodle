@@ -24,6 +24,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Multimenu';
-$string['fieldtypelabel'] = 'Multiple-selection menu field';
-$string['privacy:metadata'] = 'The Multiple-selection menu field component does not store any personal data, it uses tables defined in mod_data.';
+$string['pluginname'] = 'Multi-select list';
+$string['fieldtypelabel'] = 'Multi-select list';
+$string['privacy:metadata'] = 'The Multi-select list field component doesn\'t store any personal data, it uses tables defined in mod_data';
