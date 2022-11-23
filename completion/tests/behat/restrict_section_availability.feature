@@ -78,7 +78,7 @@ Feature: Restrict sections availability through completion or grade conditions
     And I log out
     When I log in as "student1"
     And I am on "Course 1" course homepage
-    Then I should see "Not available unless: You achieve a required score in Grade assignment"
+    Then I should see "Not available unless: You achieve higher than a certain score in Grade assignment"
     And "Test page name" activity should be hidden
     And I am on the "Grade assignment" "assign activity" page
     And I press "Add submission"
@@ -97,4 +97,4 @@ Feature: Restrict sections availability through completion or grade conditions
     And I log out
     And I am on the "Course 1" Course page logged in as student1
     And "Test page name" activity should be visible
-    And I should not see "Not available unless: You achieve a required score in Grade assignment"
+    And I should not see "Not available unless: You achieve higher than a certain score in Grade assignment"

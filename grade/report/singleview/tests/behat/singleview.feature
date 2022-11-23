@@ -120,7 +120,7 @@ Feature: We can use Single view
     And I click on "Bulk insert" "link"
     And I click on "I understand that my unsaved changes will be lost." "checkbox"
     And I click on "All grades" "radio"
-    And I set the field "Insert value" to "1.0"
+    And I set the field "Insert new grade" to "1.0"
     And I click on "Save" "button" in the ".modal-dialog" "css_element"
     Then I should see "Grades were set for 6 items"
 
@@ -135,7 +135,7 @@ Feature: We can use Single view
     And I click on "Bulk insert" "link"
     And I click on "I understand that my unsaved changes will be lost." "checkbox"
     And I click on "All grades" "radio"
-    And I set the field "Insert value" to "1#25"
+    And I set the field "Insert new grade" to "1#25"
     And I click on "Save" "button" in the ".modal-dialog" "css_element"
     Then I should see "Grades were set for 6 items"
     # Custom scale, cast to int
