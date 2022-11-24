@@ -14,6 +14,7 @@ information provided here is intended especially for developers.
 * New DB parameter 'versionfromdb', only available for MySQL and MariaDB drivers. It allows to force the DB version to be
   evaluated through an explicit call to VERSION() to skip the PHP client version which appears to be sometimes fooled by the
   underlying infrastructure, e.g. PaaS on Azure.
+* Box/Spout has been archived and is no longer maintained, so it has now been removed and replaced by OpenSpout.
 
 === 4.1 ===
 
