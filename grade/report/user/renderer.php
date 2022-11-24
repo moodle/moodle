@@ -150,13 +150,18 @@ class gradereport_user_renderer extends plugin_renderer_base {
         $arraykeys = array_keys($users);
         $keynumber = array_search($userid, $arraykeys);
 
+        // Determine directionality so that icons can be modified to suit language.
+        $previousarrow = right_to_left() ? 'right' : 'left';
+        $nextarrow = right_to_left() ? 'left' : 'right';
+
         // If the current user is not the first one in the list, find and render the previous user.
         if ($keynumber !== 0) {
             $previoususer = $users[$arraykeys[$keynumber - 1]];
             $navigationdata['previoususer'] = [
                 'name' => fullname($previoususer),
                 'url' => (new moodle_url('/grade/report/user/index.php', ['id' => $courseid, 'userid' => $previoususer->id]))
-                    ->out(false)
+                    ->out(false),
+                'previousarrow' => $previousarrow
             ];
         }
         // If the current user is not the last one in the list, find and render the last user.
@@ -165,7 +170,8 @@ class gradereport_user_renderer extends plugin_renderer_base {
             $navigationdata['nextuser'] = [
                 'name' => fullname($nextuser),
                 'url' => (new moodle_url('/grade/report/user/index.php', ['id' => $courseid, 'userid' => $nextuser->id]))
-                    ->out(false)
+                    ->out(false),
+                'nextarrow' => $nextarrow
             ];
         }
 
