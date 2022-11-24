@@ -90,4 +90,6 @@ $renamedclasses = [
     'core_cohort\\local\\entities\\cohort' => 'core_cohort\\reportbuilder\\local\\entities\\cohort',
     'core_cohort\\local\\entities\\cohort_member' => 'core_cohort\\reportbuilder\\local\\entities\\cohort_member',
     'core_block\\local\\views\\secondary' => 'core_block\\navigation\\views\\secondary',
+    // Since Moodle 4.2.
+    'Box\\Spout' => 'OpenSpout',
 ];
