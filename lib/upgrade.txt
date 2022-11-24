@@ -14,6 +14,7 @@ information provided here is intended especially for developers.
 * New DB parameter 'versionfromdb', only available for MySQL and MariaDB drivers. It allows to force the DB version to be
   evaluated through an explicit call to VERSION() to skip the PHP client version which appears to be sometimes fooled by the
   underlying infrastructure, e.g. PaaS on Azure.
+* The actionmenu component has now a set_kebab_trigger that will setup the action menu for use in kebab menus.
 * The useexternalyui configuration setting has been removed as a part of the migration away from YUI.
   It only worked with http sites and did not officially support SSL, and is at risk of disappearing should Yahoo! decide
   to remove it.
@@ -714,7 +715,6 @@ filepath because some components, such as mod_page or mod_resource, add the revi
 * If you have a form which sends a file in response to a Moodle form submit button, but you cannot
   call the above function because the file is sent by a third party library, then you should add
   the attribute data-double-submit-protection="off" to your form.
-
 
 === 3.7 ===
 

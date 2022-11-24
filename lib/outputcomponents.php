@@ -4305,6 +4305,31 @@ class action_menu implements renderable, templatable {
     }
 
     /**
+     * Classes for the trigger menu
+     */
+    const DEFAULT_KEBAB_TRIGGER_CLASSES = 'btn btn-icon d-flex align-items-center justify-content-center';
+
+    /**
+     * Setup trigger as in the kebab menu.
+     *
+     * @param string|null $triggername
+     * @param core_renderer|null $output
+     * @param string|null $extraclasses extra classes for the trigger {@see self::set_menu_trigger()}
+     * @throws coding_exception
+     */
+    public function set_kebab_trigger(?string $triggername = null, ?core_renderer $output = null,
+        ?string $extraclasses = '') {
+        global $OUTPUT;
+        if (empty($output)) {
+            $output = $OUTPUT;
+        }
+        $label = $triggername ?? get_string('actions');
+        $triggerclasses = self::DEFAULT_KEBAB_TRIGGER_CLASSES . ' ' . $extraclasses;
+        $icon = $output->pix_icon('i/menu', $label);
+        $this->set_menu_trigger($icon, $triggerclasses);
+    }
+
+    /**
      * Return true if there is at least one visible link in the menu.
      *
      * @return bool

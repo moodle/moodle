@@ -718,10 +718,9 @@ class template {
         global $OUTPUT, $CFG;
 
         $actionmenu = new action_menu();
-        $icon = $OUTPUT->pix_icon('i/menu', get_string('actions'));
-        $actionmenu->set_menu_trigger($icon, 'btn btn-icon d-flex align-items-center justify-content-center');
+        $actionmenu->set_kebab_trigger();
         $actionmenu->set_action_label(get_string('actions'));
-        $actionmenu->attributes['class'] .= ' entry-actionsmenu';
+        $actionmenu->set_additional_classes('entry-actionsmenu');
 
         // Show more.
         if ($this->showmore) {
