@@ -4,6 +4,7 @@ information provided here is intended especially for developers.
 === 4.1.1 ===
 
 * There is a new helper function mtrace_exception to help with reporting exceptions you have caught in scheduled tasks.
+* Convert a floating value to an integer in lib/graphlib.php to avoid PHP 8.1 deprecated function error.
 
 === 4.1 ===
 
