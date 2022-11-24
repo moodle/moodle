@@ -18,6 +18,9 @@ information provided here is intended especially for developers.
   It only worked with http sites and did not officially support SSL, and is at risk of disappearing should Yahoo! decide
   to remove it.
 * New `properties_filter` method of persistent class for filtering properties of a record against persistent definition
+* In outputcomponents.php, initials_bar() can now be rendered in a smaller (mini) way. This provides purely the
+  initials bar without the bootstrapping and form handling on each initials bar. If you use this mini render,
+  you'll need to implement your own form handling. Example usage can be found within the grader report.
 
 === 4.1 ===
 
