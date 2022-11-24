@@ -941,7 +941,7 @@ class theme_config {
 
             $url = new moodle_url("/theme/styles.php");
             if (!empty($CFG->slasharguments)) {
-                $url->set_slashargument("{$this->name}/{$rev}/{$type}", 'noparam', true);
+                $url->set_slashargument("/{$this->name}/{$rev}/{$type}", 'noparam', true);
             } else {
                 $url->params([
                     'theme' => $this->name,
