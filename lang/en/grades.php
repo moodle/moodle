@@ -901,6 +901,8 @@ $string['xml'] = 'XML';
 $string['yes'] = 'Yes';
 $string['yourgrade'] = 'Your grade';
 
+$string['aria-toggledropdown'] = 'Toggle the following dropdown';
+
 // Deprecated since Moodle 4.0.
 $string['navmethod'] = 'Navigation method';
 $string['dropdown'] = 'Drop-down menu';
