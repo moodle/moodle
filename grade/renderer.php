@@ -86,6 +86,54 @@ class core_grades_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Build the data to render the initials bar filter within the gradebook.
+     * Using this initials selector means you'll have to retain the use of the templates & JS to handle form submission.
+     * If a simple redirect on each selection is desired the standard user_search() within the user renderer is what you are after.
+     *
+     * @param object $course The course object.
+     * @param context $context Our current context.
+     * @param string $slug The slug for the report that called this function.
+     * @return stdClass The data to output.
+     */
+    public function initials_selector(
+        object $course,
+        context $context,
+        string $slug
+    ): stdClass {
+        global $SESSION, $COURSE;
+        // User search.
+        $url = new moodle_url($slug, ['id' => $course->id]);
+        $firstinitial = $SESSION->gradereport["filterfirstname-{$context->id}"] ?? '';
+        $lastinitial  = $SESSION->gradereport["filtersurname-{$context->id}"] ?? '';
+
+        $renderer = $this->page->get_renderer('core_user');
+        $initialsbar = $renderer->partial_user_search($url, $firstinitial, $lastinitial, true);
+
+        $currentfilter = '';
+        if ($firstinitial !== '' && $lastinitial !== '') {
+            $currentfilter = get_string('filterbothactive', 'grades', ['first' => $firstinitial, 'last' => $lastinitial]);
+        } else if ($firstinitial !== '') {
+            $currentfilter = get_string('filterfirstactive', 'grades', ['first' => $firstinitial]);
+        } else if ($lastinitial !== '') {
+            $currentfilter = get_string('filterlastactive', 'grades', ['last' => $lastinitial]);
+        }
+
+        $this->page->requires->js_call_amd('core_grades/searchwidget/initials', 'init', [$slug]);
+
+        $formdata = (object) [
+            'courseid' => $COURSE->id,
+            'initialsbars' => $initialsbar,
+        ];
+        $dropdowncontent = $this->render_from_template('core_grades/initials_dropdown_form', $formdata);
+
+        return (object) [
+             'buttoncontent' => $currentfilter !== '' ? $currentfilter : get_string('filterbyname', 'core_grades'),
+             'buttonheader' => $currentfilter !== '' ? get_string('name') : null,
+             'dropdowncontent' => $dropdowncontent,
+        ];
+    }
+
+    /**
      * Creates and renders a custom user heading.
      *
      * @param stdClass $user The user object.

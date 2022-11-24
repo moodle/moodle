@@ -201,3 +201,12 @@
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+
+.path-grade-report-grader .initialsdropdown {
+    width: 460px;
+}
+
+.path-grade-report-grader .initialsdropdown::after {
+    content: '';
+}
+

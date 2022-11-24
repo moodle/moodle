@@ -154,6 +154,7 @@ $string['answer'] = 'Answer';
 $string['any'] = 'Any';
 $string['approve'] = 'Approve';
 $string['appearance'] = 'Appearance';
+$string['apply'] = 'Apply';
 $string['applyfilters'] = 'Apply filters';
 $string['areyousure'] = 'Are you sure?';
 $string['areyousuretorestorethis'] = 'Do you want to continue?';

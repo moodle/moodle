@@ -18,6 +18,7 @@ namespace gradereport_grader\output;
 
 use moodle_url;
 use core_grades\output\general_action_bar;
+use core_grades\output\gradebook_dropdown;
 
 /**
  * Renderable class for the action bar elements in the grader report.
@@ -53,12 +54,37 @@ class action_bar extends \core_grades\output\action_bar {
      * @return array
      */
     public function export_for_template(\renderer_base $output): array {
+        global $PAGE;
         // If in the course context, we should display the general navigation selector in gradebook.
         $courseid = $this->context->instanceid;
         // Get the data used to output the general navigation selector.
         $generalnavselector = new general_action_bar($this->context,
             new moodle_url('/grade/report/grader/index.php', ['id' => $courseid]), 'gradereport', 'grader');
 
-        return $generalnavselector->export_for_template($output);
+        $data = $generalnavselector->export_for_template($output);
+
+        // If the user has the capability to view all grades, display the group selector (if applicable), the user selector
+        // and the view mode selector (if applicable).
+        if (has_capability('moodle/grade:viewall', $this->context)) {
+            $course = get_course($courseid);
+            $gradesrenderer = $PAGE->get_renderer('core_grades');
+
+            $initialscontent = $gradesrenderer->initials_selector(
+                $course,
+                $this->context,
+                '/grade/report/grader/index.php'
+            );
+            $initialselector = new gradebook_dropdown(
+                false,
+                $initialscontent->buttoncontent,
+                $initialscontent->dropdowncontent,
+                'initials-selector',
+                'initialswidget',
+                'initialsdropdown',
+                $initialscontent->buttonheader,
+            );
+            $data['initialselector'] = $initialselector->export_for_template($output);
+        }
+        return $data;
     }
 }
