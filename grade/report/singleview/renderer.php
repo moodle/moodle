@@ -121,13 +121,18 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
         $i = array_search($itemid, $reloptionssorting);
         $navparams = ['item' => $itemtype, 'id' => $courseid, 'group' => $groupid];
 
+        // Determine directionality so that icons can be modified to suit language.
+        $previousarrow = right_to_left() ? 'right' : 'left';
+        $nextarrow = right_to_left() ? 'left' : 'right';
+
         if ($i > 0) {
             $navparams['itemid'] = $reloptionssorting[$i - 1];
             $link = (new moodle_url('/grade/report/singleview/index.php', $navparams))
                 ->out(false);
             $navigationdata['previoususer'] = [
                 'name' => $reloptions[$navparams['itemid']],
-                'url' => $link
+                'url' => $link,
+                'previousarrow' => $previousarrow
             ];
         }
         if ($i < count($reloptionssorting) - 1) {
@@ -136,7 +141,8 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
                 ->out(false);
             $navigationdata['nextuser'] = [
                 'name' => $reloptions[$navparams['itemid']],
-                'url' => $link
+                'url' => $link,
+                'nextarrow' => $nextarrow
             ];
         }
 
