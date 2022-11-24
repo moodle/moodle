@@ -22,11 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['helplinktext'] = 'Moodle H5P Helper';
+$string['helplinktext'] = 'H5P helper';
 $string['modaltitle'] = 'Insert H5P content';
 $string['buttontitle'] = 'Configure H5P content';
 $string['insert'] = 'Insert H5P content';
-$string['pluginname'] = 'Tiny H5P plugin for Moodle';
+$string['pluginname'] = 'Tiny insert H5P';
 $string['browserepositories'] = 'Browse repositories...';
 $string['copyrightbutton'] = 'Copyright button';
 $string['downloadbutton'] = 'Allow download';

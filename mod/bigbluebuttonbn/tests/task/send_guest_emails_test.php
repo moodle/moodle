@@ -57,7 +57,7 @@ class send_guest_emails_test extends advanced_testcase {
         $messages = $emailsink->get_messages();
         $this->assertCount(2, $messages);
 
-        $this->assertEquals('You have been invited to the session BigBlueButton 1 on Test course 1 !', $messages[0]->subject);
+        $this->assertEquals('Invitation: BigBlueButton 1 session in Test course 1', $messages[0]->subject);
         $this->assertEquals('noreply@www.example.com', $messages[0]->from);
         $this->assertEquals('test1@email.com', $messages[0]->to);
         $this->assertEquals('test2@email.com', $messages[1]->to);

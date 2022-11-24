@@ -48,8 +48,7 @@ $string['bigbluebuttondisablednotification_subject'] = 'BigBlueButton activity m
 $string['bigbluebuttondisablednotification'] = 'The BigBlueButton activity module has been disabled and any existing BigBlueButton course activities are currently not accessible. Prior to re-enabling this plugin, please ensure that you have read and accepted the <a href="{$a}" target="_blank">data processing agreement</a> with Blindside Networks Inc.';
 $string['cannotperformaction'] = 'Cannot perform action {$a} on this recording';
 $string['enablingbigbluebutton'] = 'Enabling BigBlueButton activity';
-$string['enablingbigbluebuttondpainfo'] = 'In order to meet your data protection obligations, prior to enabling this plugin, you may need to ensure that you have read and accepted the <a href="{$a}" target="_blank">data processing agreement</a> with Blindside Networks Inc.<br/>
-Please consult with your own privacy professionals for advice.';
+$string['enablingbigbluebuttondpainfo'] = 'In order to meet your data protection obligations, prior to enabling this plugin, you may need to ensure that you have read and accepted the <a href="{$a}" target="_blank">Blindside Networks data processing agreement</a>. Please consult with your own privacy professionals for advice.';
 $string['indicator:cognitivedepth'] = 'BigBlueButton cognitive';
 $string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in a BigBlueButton activity.';
 $string['indicator:socialbreadth'] = 'BigBlueButton social';
@@ -132,8 +131,8 @@ $string['minutes'] = 'minutes';
 
 $string['config_dpa_note'] = 'Note: In order to meet your data protection obligations, before using a service provider for this plugin, you must ensure that you have read and accepted the service provider\'s data processing agreement. For the default free BigBlueButton service, this is the <a href="{$a}" target="_blank">Blindside Networks data processing agreement</a>. Please consult with your own privacy professionals for advice.';
 
-$string['config_guestaccess_enabled'] = 'Create guest access link for external guests.';
-$string['config_guestaccess_enabled_description'] = 'You can use the guest access link to invite external guests who do not have a Moodle account to this conference room.';
+$string['config_guestaccess_enabled'] = 'External guest access';
+$string['config_guestaccess_enabled_description'] = 'Allow users without an account on your site to access the room.';
 
 $string['config_general'] = 'General settings';
 $string['config_general_description'] = 'These settings are always used.';
@@ -305,39 +304,37 @@ $string['general_error_not_found'] = 'Cannot find the BigBlueButton activity wit
 $string['general_error_cannot_create_meeting'] = 'Cannot create session.';
 $string['general_error_cannot_get_recordings'] = 'Cannot get recordings.';
 $string['guestaccess_add'] = 'Add guests';
-$string['guestaccess_add_no_id'] = 'No bigbluebutton instance ID provided.';
-$string['guestaccess_emails'] = 'Add guests emails';
-$string['guestaccess_emails_help'] = 'Emails of users you want to invite, separated by commas';
-$string['guestaccess_emails_invalidemail'] = 'The email {$a} is invalid, please correct it.';
+$string['guestaccess_add_no_id'] = 'No BigBlueButton instance ID provided.';
+$string['guestaccess_emails'] = 'Guest emails';
+$string['guestaccess_emails_help'] = 'A list of email addresses, separated by commas.';
+$string['guestaccess_emails_invalidemail'] = 'Invalid email: {$a}';
 $string['guestaccess_username'] = 'Guest username';
 $string['guestaccess_meeting_link'] = 'Meeting link';
 $string['guestaccess_meeting_password'] = 'Meeting password';
 $string['guestaccess_password'] = 'Password';
-$string['guestaccess_meeting_not_started'] = 'Sorry, the meeting has not started yet. Please try again later.';
+$string['guestaccess_meeting_not_started'] = 'The meeting has not yet started. Please come back later.';
 $string['guestaccess_meeting_invalid_password'] = 'Incorrect password.';
-$string['guestaccess_activitynotfound'] = 'The BigblueButton activity is not found for this access as guest. Contact your
-support.';
-$string['guestaccess_feature_disabled'] = 'Guest access: feature is disabled.';
+$string['guestaccess_activitynotfound'] = 'Activity not found.';
+$string['guestaccess_feature_disabled'] = 'Guest access disabled.';
 $string['guestaccess_title']  = 'Add guests to this meeting';
 $string['guestaccess_copy_link'] = 'Copy link';
 $string['guestaccess_copy_password'] = 'Copy password';
-$string['guestaccess_invite_success'] = 'An invitation will be sent to guest(s) {$a->emails} via email.';
-$string['guestaccess_invite_failure'] = 'Error {$a->errors} when inviting guests {$a->emails}, please contact your support.';
+$string['guestaccess_invite_success'] = 'An invitation will be sent to {$a->emails}.';
+$string['guestaccess_invite_failure'] = 'Error {$a->errors} when inviting {$a->emails}.';
 $string['guestaccess_join_meeting'] = 'Join meeting';
-$string['guest_invitation_subject'] = 'You have been invited to the session {$a->name} on {$a->course_fullname} !';
+$string['guest_invitation_subject'] = 'Invitation: {$a->name} session in {$a->course_fullname}';
 $string['guest_invitation_small_message'] = 'Hi,
 
-You have been invited as a guest to a BigblueButton session "{$a->name}" on "{$a->course_fullname}" course.
+You are invited to a BigBlueButton session {$a->name} in the course  {$a->course_fullname}.
 
-You can join the session by following the link here : {$a->guestjoinurl}.
-You will then be prompted for your name and the following password: "{$a->guestpassword}".
+Link: {$a->guestjoinurl}
+Password: {$a->guestpassword}
 
-If you need help, please contact {$a->sender}.
-';
+If you need help, please contact {$a->sender}.';
 $string['guest_invitation_full_message'] = 'Hi,
-<p>You have been invited as a guest to a BigblueButton session "{$a->name}" on "{$a->course_fullname}" course.</p>
-<p>You can join the session by <a href="{$a->guestjoinurl}"> following the link here</a>.
-You will then be prompted for your name and the following password: "{$a->guestpassword}".</p>
+<p>You are invited to a BigBlueButton session <strong>{$a->name}</strong> in the course  {$a->course_fullname}.</p>
+<p>Link: {$a->guestjoinurl}<br/>
+<p>Password: {$a->guestpassword}</p>
 <p>If you need help, please contact {$a->sender}.</p>';
 
 $string['index_confirm_end'] = 'Do you want to end the session?';
@@ -371,8 +368,8 @@ $string['mod_form_field_intro'] = 'Description';
 $string['mod_form_field_intro_help'] = 'A short description of the room.';
 $string['mod_form_field_duration_help'] = 'Setting the duration for a meeting will establish the maximum time for a meeting to keep alive before the recording finish';
 $string['mod_form_field_duration'] = 'Duration';
-$string['mod_form_field_guestallowed'] = 'Allow guest access in the meeting';
-$string['mod_form_field_mustapproveuser'] = 'User must be approved by moderators';
+$string['mod_form_field_guestallowed'] = 'Allow guest access';
+$string['mod_form_field_mustapproveuser'] = 'Guests joining must be admitted by a moderator';
 $string['mod_form_field_userlimit'] = 'User limit';
 $string['mod_form_field_userlimit_help'] = 'The maximum number of users allowed in a session. Set to 0 to allow an unlimited number of users.';
 $string['mod_form_field_name'] = 'Room name';
