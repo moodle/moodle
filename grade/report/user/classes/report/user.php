@@ -863,6 +863,8 @@ class user extends grade_report {
 
         // Category.
         if ($type == 'category') {
+            // Determine directionality so that icons can be modified to suit language.
+            $arrow = right_to_left() ? 'left' : 'right';
             // Alter style based on whether aggregation is first or last.
             if ($this->switch) {
                 $data['itemname']['class'] = $class . ' ' . "d$depth b1b b1t category";
@@ -871,7 +873,7 @@ class user extends grade_report {
             }
             $data['itemname']['colspan'] = ($this->maxdepth - $depth + count($this->tablecolumns));
             $data['itemname']['content'] = $OUTPUT->render_from_template('gradereport_user/user_report_category_content',
-                ['categoryid' => $gradeobject->id, 'categoryname' => $fullname]);
+                ['categoryid' => $gradeobject->id, 'categoryname' => $fullname, 'arrow' => $arrow]);
             $data['itemname']['id'] = "cat_{$gradeobject->id}_{$this->user->id}";
             // Get the IDs of all parent categories of this grade category.
             $data['parentcategories'] = array_diff(array_filter(explode('/', $gradeobject->path)), [$gradeobject->id]);
