@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_course\reportbuilder\datasource;
 
+use context_course;
 use core_customfield_generator;
 use core_reportbuilder_testcase;
 use core_reportbuilder_generator;
@@ -77,6 +78,16 @@ class courses_test extends core_reportbuilder_testcase {
 
         $course = $this->getDataGenerator()->create_course(['tags' => ['Horses']]);
 
+        // Add a course image.
+        get_file_storage()->create_file_from_string([
+            'contextid' => context_course::instance($course->id)->id,
+            'component' => 'course',
+            'filearea' => 'overviewfiles',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => 'HelloWorld.jpg',
+        ], 'HelloWorld');
+
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'Courses', 'source' => courses::class, 'default' => 0]);
@@ -91,6 +102,9 @@ class courses_test extends core_reportbuilder_testcase {
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:name']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:namewithlink']);
 
+        // File entity.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'file:name']);
+
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(1, $content);
 
@@ -99,6 +113,7 @@ class courses_test extends core_reportbuilder_testcase {
         $this->assertEquals($course->fullname, $courserow[1]);
         $this->assertEquals('Horses', $courserow[2]);
         $this->assertStringContainsString('Horses', $courserow[3]);
+        $this->assertEquals('HelloWorld.jpg', $courserow[4]);
     }
 
     /**
