@@ -7,17 +7,11 @@ Feature: OAuth2 user profile fields functionality
   to custom user profile fields defined by an administrator.
 
   Background:
-    Given the following "users" exist:
-      | username            | firstname           | lastname | email                           |
-      | userwithinformation | userwithinformation | 1        | userwithinformation@example.com |
+    Given the following "custom profile fields" exist:
+    | datatype | shortname      | name            | locked  |
+    | text     | unlocked_field | Unlocked field  | 0       |
+    | text     | locked_field   | Locked field    | 1       |
     And I log in as "admin"
-    And I navigate to "Users > Accounts > User profile fields" in site administration
-    And I click on "Create a new profile field" "link"
-    And I click on "Text input" "link"
-    And I set the following fields to these values:
-      | Short name                    | test_shortname  |
-      | Name                          | test field name |
-    And I click on "Save changes" "button"
     And I navigate to "Server > OAuth 2 services" in site administration
 
   Scenario: Verify custom user profile field mapping
@@ -31,9 +25,19 @@ Feature: OAuth2 user profile fields functionality
     Then I should see "Changes saved"
     And I should see "Testing service"
     And I click on "Configure user field mappings" "link" in the "Testing service" "table_row"
+
+    # Create unlocked field
     And I click on "Create new user field mapping for issuer \"Testing service\"" "button"
     And I set the following fields to these values:
-      | External field name | sub             |
-      | Internal field name | test field name |
+      | External field name | External unlocked             |
+      | Internal field name | Unlocked field |
     And I click on "Save changes" "button"
-    And I should see "test_shortname"
+    And I should see "unlocked_field"
+
+    # Create locked field
+    And I click on "Create new user field mapping for issuer \"Testing service\"" "button"
+    And I set the following fields to these values:
+      | External field name | External locked      |
+      | Internal field name | Locked field |
+    And I click on "Save changes" "button"
+    And I should see "locked_field"
