@@ -62,13 +62,13 @@
         {{/forum.capabilities.create}}
         {{^forum.capabilities.create}}
             {{#forum.capabilities.selfenrol}}
-                <div class="py-3">
+                {{#enablediscussioncreation}}
                     <a class="btn btn-primary" href="{{forum.urls.create}}">
                         {{$discussion_create_text}}
                             {{#str}}addanewdiscussion, forum{{/str}}
                         {{/discussion_create_text}}
                     </a>
-                </div>
+                {{/enablediscussioncreation}}
             {{/forum.capabilities.selfenrol}}
         {{/forum.capabilities.create}}
         {{#forum.capabilities.grade}}
