@@ -97,7 +97,10 @@
             <br/>
             <div class="mdl-align">
                 <div class="tiny_image_preview_box">
-                    <img class="tiny_image_preview" alt="" src="{{src}}" {{^haspreview}}style="display: none;"{{/haspreview}}/>
+                    <img class="tiny_image_preview" alt=""
+                        {{#haspreview}} src="{{src}}" {{/haspreview}}
+                        {{^haspreview}} style="display: none;" {{/haspreview}}
+                    />
                 </div>
             </div>
         </form>
