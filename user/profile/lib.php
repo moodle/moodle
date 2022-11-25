@@ -960,3 +960,38 @@ function profile_has_required_custom_fields_set($userid) {
 
     return true;
 }
+
+/**
+ * Return the list of valid custom profile user fields.
+ *
+ * @return array array of profile field names
+ */
+function get_profile_field_names(): array {
+    $profilefields = profile_get_user_fields_with_data(0);
+    $profilefieldnames = [];
+    foreach ($profilefields as $field) {
+        $profilefieldnames[] = $field->inputname;
+    }
+    return $profilefieldnames;
+}
+
+/**
+ * Return the list of profile fields
+ * in a format they can be used for choices in a group select menu.
+ *
+ * @return array array of category name with its profile fields
+ */
+function get_profile_field_list(): array {
+    $customfields = profile_get_user_fields_with_data_by_category(0);
+    $data = [];
+    foreach ($customfields as $category) {
+        foreach ($category as $field) {
+            $categoryname = $field->get_category_name();
+            if (!isset($data[$categoryname])) {
+                $data[$categoryname] = [];
+            }
+            $data[$categoryname][$field->inputname] = $field->field->name;
+        }
+    }
+    return $data;
+}

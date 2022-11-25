@@ -1,5 +1,18 @@
 This files describes API changes for code that uses the user API.
 
+=== 4.2 ===
+
+* Added get_internalfield_list() and get_internalfields() in the user_field_mapping class.
+  The get_internalfield_list() returns data in an array by grouping profile fields based on field categories,
+  used for internal field name dropdown in the user field mapping of Oauth2 services
+  The get_internalfields() converts the result from get_internalfield_list() into flat array,
+  used to save/update the profile data when a user uses OAuth2 services.
+
+* Added get_profile_field_names() and get_profile_field_list() in the profile_field_base class.
+  The get_profile_field_names() returns the list of valid custom profile user fields.
+  The get_profile_field_list() returns the profile fields
+  in a format that can be used for choices in a group select menu.
+
 === 4.1 ===
 
 * Added a new method is_transform_supported() in the profile_field_base class.
