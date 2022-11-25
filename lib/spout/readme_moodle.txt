@@ -4,6 +4,11 @@ Description of Spout library import
 * Only include the src/Spout directory.
 * Update lib/thirdpartylibs.xml with the latest version.
 
+2022/11/25
+----------
+Imported PHP 8.1 patch from OpenSpout/OpenSpout 4.8.1
+https://github.com/openspout/openspout/commit/64a09a748d04992d63b38712599a9d8742bd77f7
+
 2022/10/27
 ----------
 Changes:
