@@ -1,4 +1,4 @@
-@gradereport @gradereport_grader
+@gradereport @gradereport_grader @javascript
 Feature: Using the AJAX grading feature of Grader report to update grades and feedback
   In order to use AJAX grading
   As a teacher
@@ -7,10 +7,10 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
   Background:
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
-      | Course 1 | C1 | 0 | 1 |
+      | Course 1 | C1        | 0        | 1         |
     And the following "custom profile fields" exist:
-      | datatype | shortname  | name           |
-      | text     | frog       | Favourite frog |
+      | datatype | shortname | name           |
+      | text     | frog      | Favourite frog |
     And the following "users" exist:
       | username | firstname | lastname | email                | idnumber | profile_field_frog |
       | teacher1 | Teacher   | 1        | teacher1@example.com | t1       |                    |
@@ -18,11 +18,11 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | student2 | Student   | 2        | student2@example.com | s2       | prince frog        |
       | student3 | Student   | 3        | student3@example.com | s3       |                    |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
-      | student2 | C1 | student |
-      | student3 | C1 | student |
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
+      | student2 | C1     | student        |
+      | student3 | C1     | student        |
     And the following "scales" exist:
       | name       | scale                                  |
       | Test Scale | Disappointing,Good,Very good,Excellent |
@@ -50,7 +50,6 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | grade_report_showaverages | 0 |
       | grade_report_enableajax | 1 |
 
-  @javascript
   Scenario: Use the grader report without editing, with AJAX on and quick feedback off
     When the following config values are set as admin:
       | grade_overridecat | 1 |
@@ -105,7 +104,6 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | Student 2          | -     | 33.00 | -         | 33.00     |
       | Student 3          | 80.00 | 50.00 | Very good | 133.00    |
 
-  @javascript
   Scenario: Use the grader report without editing, with AJAX and quick feedback on
     When the following config values are set as admin:
       | grade_overridecat | 1 |
@@ -143,7 +141,6 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And I click on student "Student 2" for grade item "Item SU"
     And the field "ajaxfeedback" matches value "Student 2 SU feedback"
 
-  @javascript
   Scenario: Use the grader report without editing, with AJAX and quick feedback on, without category override
     When the following config values are set as admin:
       | grade_overridecat | 0 |
@@ -164,7 +161,6 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | -1-         | -7-      | -16-    |
       | Student 2   | 33.00    | 33.00   |
 
-  @javascript
   Scenario: Use the grader report with editing, with AJAX and quick feedback on, with category override
     When the following config values are set as admin:
       | grade_overridecat | 1 |
@@ -195,7 +191,6 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And I click on student "Student 2" for grade item "Item 1"
     And the field "ajaxfeedback" matches value "Some feedback"
 
-  @javascript
   Scenario: Use the grader report with editing, with AJAX and quick feedback on, without category override
     When the following config values are set as admin:
       | grade_overridecat | 0 |
@@ -243,7 +238,6 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And I click on student "Student 2" for grade item "Item 1"
     And the field "ajaxfeedback" matches value "Some feedback"
 
-  @javascript
   Scenario: Teacher can see an error when an incorrect grade is given using the grader report with editing and AJAX on
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -258,7 +252,6 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And I should not see "The grade entered for Item VU for Student 2 is more than the maximum allowed"
     And the grade for "Student 2" in grade item "Item VU" should match "66.00"
 
-  @javascript
   Scenario: Teacher can see user custom filed columns as additional user identity
     Given the following config values are set as admin:
       | showuseridentity | email,profile_field_frog |
