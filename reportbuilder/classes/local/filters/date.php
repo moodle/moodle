@@ -64,6 +64,9 @@ class date extends base {
     /** @var int Date in the future */
     public const DATE_FUTURE = 8;
 
+    /** @var int Relative date unit for an hour */
+    public const DATE_UNIT_HOUR = 0;
+
     /** @var int Relative date unit for a day */
     public const DATE_UNIT_DAY = 1;
 
@@ -123,6 +126,7 @@ class date extends base {
         // Unit selector for last and next operators.
         $unitlabel = get_string('filterdurationunit', 'core_reportbuilder', $this->get_header());
         $units = [
+            self::DATE_UNIT_HOUR => get_string('filterdatehours', 'core_reportbuilder'),
             self::DATE_UNIT_DAY => get_string('filterdatedays', 'core_reportbuilder'),
             self::DATE_UNIT_WEEK => get_string('filterdateweeks', 'core_reportbuilder'),
             self::DATE_UNIT_MONTH => get_string('filterdatemonths', 'core_reportbuilder'),
@@ -235,7 +239,7 @@ class date extends base {
      *
      * @param int $operator One of the ::DATE_LAST/CURRENT/NEXT constants
      * @param int $dateunitvalue Unit multiplier of the date unit
-     * @param int $dateunit One of the ::DATE_UNIT_DAY/WEEK/MONTH/YEAR constants
+     * @param int $dateunit One of the ::DATE_UNIT_* constants
      * @return int[] Timestamps representing the start/end of timeframe
      */
     private static function get_relative_timeframe(int $operator, int $dateunitvalue, int $dateunit): array {
@@ -243,6 +247,17 @@ class date extends base {
         $datestart = $dateend = new DateTimeImmutable();
 
         switch ($dateunit) {
+            case self::DATE_UNIT_HOUR:
+                if ($operator === self::DATE_CURRENT) {
+                    $hour = (int) $datestart->format('G');
+                    $datestart = $datestart->setTime($hour, 0);
+                    $dateend = $dateend->setTime($hour, 59, 59);
+                } else if ($operator === self::DATE_LAST) {
+                    $datestart = $datestart->modify("-{$dateunitvalue} hour");
+                } else if ($operator === self::DATE_NEXT) {
+                    $dateend = $dateend->modify("+{$dateunitvalue} hour");
+                }
+                break;
             case self::DATE_UNIT_DAY:
                 if ($operator === self::DATE_CURRENT) {
                     $datestart = $datestart->setTime(0, 0);
