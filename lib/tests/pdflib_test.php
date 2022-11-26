@@ -36,4 +36,34 @@ class pdflib_test extends \advanced_testcase {
         $producer = TCPDF_STATIC::getTCPDFProducer();
         $this->assertEquals('TCPDF (http://www.tcpdf.org)', $producer);
     }
+
+    public function test_qrcode() {
+        global $CFG;
+        require_once($CFG->libdir.'/pdflib.php');
+
+        $this->resetAfterTest();
+
+        $pdf = new \pdf();
+        $pdf->AddPage('P', [500, 500]);
+        $pdf->SetMargins(10, 0, 10);
+
+        $style = [
+            'border' => 0,
+            'vpadding' => 'auto',
+            'hpadding' => 'auto',
+            'fgcolor' => [0, 0, 0],
+            'bgcolor' => [255, 255, 255],
+            'module_width' => 1,
+            'module_height' => 1
+        ];
+
+        $pdf->setCellPaddings(0, 0, 0, 0);
+        $pdf->write2DBarcode('https://www.example.com/moodle/admin/search.php',
+            'QRCODE,M', null, null, 35, 35, $style, 'N');
+        $pdf->SetFillColor(255, 255, 255);
+        $res = $pdf->Output('output', 'S');
+
+        $this->assertGreaterThan(100000, strlen($res));
+        $this->assertLessThan(120000, strlen($res));
+    }
 }
