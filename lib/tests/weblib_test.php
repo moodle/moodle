@@ -48,6 +48,10 @@ class weblib_test extends advanced_testcase {
         // Unicode entities.
         $this->assertSame("&#4475;", format_string("&#4475;"));
 
+        // Nulls.
+        $this->assertSame('', format_string(null));
+        $this->assertSame('', format_string(null, true, ['escape' => false]));
+
         // < and > signs.
         $originalformatstringstriptags = $CFG->formatstringstriptags;
 
