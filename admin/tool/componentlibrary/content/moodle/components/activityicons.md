@@ -81,6 +81,30 @@ $activity-icon-colors: (
 );
 {{</ highlight >}}
 
+### Custom activity icons
+
+Some activities allow icons to be customised. This can be done by implementing callback XXX_get_coursemodule_info() returning instance of object e.g. mod/lti/lib.php
+
+{{< php >}}
+$info = new cached_cm_info();
+$info->iconurl = new moodle_url('https://moodle.org/theme/moodleorg/pix/moodle_logo_small.svg');
+{{< /php >}}
+
+To get this customised icon, use:
+
+{{< php >}}
+$iconurl = get_fast_modinfo($courseid)->get_cm($cmid)->get_icon_url()->out(false);
+{{< /php >}}
+
+<div class="media mb-3">
+    <div class="activityiconcontainer lti mr-3">
+        <img alt="lti icon" title="lti icon" src="https://moodle.org/theme/moodleorg/pix/moodle_logo_small.svg" class="activityicon ">    </div>
+    <div class="media-body align-self-center">
+        <div class="text-uppercase small">external</div>
+        <div class="activityname"><a href="#">External tool module</a></div>
+    </div>
+</div>
+
 ## Examples
 
 <div class="media mb-3">
