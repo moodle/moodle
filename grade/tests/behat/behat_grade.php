@@ -60,7 +60,7 @@ class behat_grade extends behat_base {
         $gradeitem = behat_context_helper::escape($gradeitem);
 
         if ($this->running_javascript()) {
-            $xpath = "//tr[contains(.,$gradeitem)]//*[contains(@class,'moodle-actionmenu')]";
+            $xpath = "//tr[contains(.,$gradeitem)]//*[contains(@class,'moodle-actionmenu')][not(contains(@class,'grader'))]";
             if ($this->getSession()->getPage()->findAll('xpath', $xpath)) {
                 $this->execute("behat_action_menu::i_open_the_action_menu_in",
                         array("//tr[contains(.,$gradeitem)]",

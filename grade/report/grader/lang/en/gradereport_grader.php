@@ -51,6 +51,7 @@ $string['privacy:request:preference:grade_report_grader_collapsed_categories'] =
 $string['summarygrader'] = 'A table with the names of students in the first column, with assessable activities grouped by course and category across the top.';
 $string['useractivitygrade'] = '{$a} grade';
 $string['overriddengrade'] = 'Overridden grade';
+$string['cellactions'] = 'Cell actions';
 
 // Deprecated since Moodle 4.2.
 $string['privacy:metadata:preference:grade_report_showquickfeedback'] = 'Whether to display a feedback text input box with a dotted border for each grade, allowing the feedback for many grades to be edited at the same time';

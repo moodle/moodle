@@ -119,7 +119,7 @@ $numusers = $report->get_numusers(true, true);
 
 $actionbar = new \gradereport_grader\output\action_bar($context, $report, $numusers);
 print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons, true,
-    null, null, null, $actionbar);
+    null, null, null, $actionbar, false);
 
 // make sure separate group does not prevent view
 if ($report->currentgroup == -2) {
