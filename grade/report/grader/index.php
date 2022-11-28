@@ -138,7 +138,6 @@ if ($isediting && ($data = data_submitted()) && confirm_sesskey()) {
 // Final grades MUST be loaded after the processing.
 $report->load_users();
 $report->load_final_grades();
-echo $report->group_selector;
 
 //show warnings if any
 foreach ($warnings as $warning) {
