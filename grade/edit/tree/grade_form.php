@@ -171,7 +171,8 @@ class edit_grade_form extends moodleform {
 
         $old_grade_grade = new grade_grade(array('itemid'=>$grade_item->id, 'userid'=>$userid));
 
-        if (!$grade_item->is_overridable_item()) {
+        $gradeitemoverridable = $grade_item->is_overridable_item();
+        if (!$gradeitemoverridable) {
             $mform->removeElement('overridden');
         }
 
@@ -185,7 +186,9 @@ class edit_grade_form extends moodleform {
                 $mform->hardFreeze('locktime');
             }
 
-            $mform->hardFreeze('overridden');
+            if ($gradeitemoverridable) {
+                $mform->hardFreeze('overridden');
+            }
             $mform->hardFreeze('finalgrade');
             $mform->hardFreeze('feedback');
 
