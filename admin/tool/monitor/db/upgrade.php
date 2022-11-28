@@ -69,5 +69,8 @@ function xmldb_tool_monitor_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022053000, 'tool', 'monitor');
     }
 
+    // Automatically generated Moodle v4.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
