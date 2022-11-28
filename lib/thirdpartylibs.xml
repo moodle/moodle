@@ -682,4 +682,12 @@ All rights reserved.</copyright>
     <license>MIT</license>
     <repository>https://github.com/symfony/deprecation-contracts</repository>
   </library>
+  <library>
+    <location>guzzlehttp/kevinrob/guzzlecache</location>
+    <name>Guzzle cache middleware</name>
+    <description>A HTTP Cache for Guzzle as a simple Middleware to be added in the HandlerStack.</description>
+    <version>4.0.2</version>
+    <license>MIT</license>
+    <repository>https://github.com/Kevinrob/guzzle-cache-middleware</repository>
+  </library>
 </libraries>

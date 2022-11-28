@@ -116,6 +116,7 @@ class core_component {
         'GuzzleHttp\\Psr7' => 'lib/guzzlehttp/psr7/src',
         'GuzzleHttp\\Promise' => 'lib/guzzlehttp/promises/src',
         'GuzzleHttp' => 'lib/guzzlehttp/guzzle/src',
+        'Kevinrob\\GuzzleCache' => 'lib/guzzlehttp/kevinrob/guzzlecache/src',
     );
 
     /**

@@ -14,3 +14,8 @@ Update guzzle psr-7 message implementation library
 1. Download the latest psr-7 library from https://github.com/guzzle/psr7
 2. Copy the src directory to lib/guzzlehttp/psr-7 folder
 3. Copy the associated files LICENCE, README.md etc. to psr-7 directory
+
+Update guzzle cache implementation library
+1. Download the latest Guzzle cache middleware library from https://github.com/Kevinrob/guzzle-cache-middleware
+2. Copy the src directory to guzzlehttp/kevinrob/guzzlecache folder
+3. Copy the associated files LICENCE, README.md etc. to guzzlecache directory
