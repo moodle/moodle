@@ -49,6 +49,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 use mod_lti\local\ltiopenid\registration_helper;
+
 /**
  * Structure step to restore one lti activity
  */
@@ -136,7 +137,8 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
         if (!$ltitypeid && $data->course == $courseid) {
             unset($data->toolproxyid); // Course tools can not use LTI2.
             if (!empty($data->clientid)) {
-                $data->clientid = registration_helper::get()->new_clientid(); // Need to rebuild clientid to ensure uniqueness.
+                // Need to rebuild clientid to ensure uniqueness.
+                $data->clientid = registration_helper::get()->new_clientid();
             }
             $ltitypeid = $DB->insert_record('lti_types', $data);
             $this->newltitype = true;
