@@ -16,6 +16,8 @@
 
 namespace core;
 
+use core\local\guzzle\cache_handler;
+use core\local\guzzle\cache_storage;
 use core\local\guzzle\check_request;
 use core\local\guzzle\redirect_middleware;
 use GuzzleHttp\Client;
@@ -76,10 +78,6 @@ class http_client extends Client {
             }
         }
 
-        // Cache.
-        // TODO Look at whether to implement our own cache, or something like this:
-        // @see {https://github.com/Kevinrob/guzzle-cache-middleware}.
-
         return $settings;
     }
 
@@ -106,6 +104,30 @@ class http_client extends Client {
         // It extends the standard 'allow_redirects' handler so supports the same options.
         $stack->after('allow_redirects', redirect_middleware::setup($settings), 'moodle_allow_redirect');
         $stack->remove('allow_redirects');
+
+        // Use cache middleware if cache is enabled.
+        if (!empty($settings['cache'])) {
+            $module = 'misc';
+            if (!empty($settings['module_cache'])) {
+                $module = $settings['module_cache'];
+            }
+
+            // Set TTL for the cache.
+            if ($module === 'repository') {
+                if (empty($CFG->repositorycacheexpire)) {
+                    $CFG->repositorycacheexpire = 120;
+                }
+                $ttl = $CFG->repositorycacheexpire;
+            } else {
+                if (empty($CFG->curlcache)) {
+                    $CFG->curlcache = 120;
+                }
+                $ttl = $CFG->curlcache;
+            }
+
+            $stack->push(new CacheMiddleware (new PrivateCacheStrategy (new cache_storage (new cache_handler($module), $ttl))),
+                    'cache');
+        }
 
         return $stack;
     }

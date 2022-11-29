@@ -30,6 +30,11 @@ use GuzzleHttp\Psr7\Uri;
  * @copyright  2022 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core\http_client
+ * @coversDefaultClass \core\local\guzzle\redirect_middleware
+ * @coversDefaultClass \core\local\guzzle\check_request
+ * @coversDefaultClass \core\local\guzzle\cache_item
+ * @coversDefaultClass \core\local\guzzle\cache_handler
+ * @coversDefaultClass \core\local\guzzle\cache_storage
  */
 class http_client_test extends \advanced_testcase {
 
@@ -352,5 +357,56 @@ class http_client_test extends \advanced_testcase {
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame($testurl, (string)$mock->getLastRequest()->getUri());
         $this->assertSame('done', $response->getBody()->getContents());
+    }
+
+    /**
+     * Test guzzle cache middleware.
+     *
+     * @covers \core\local\guzzle\cache_item
+     * @covers \core\local\guzzle\cache_handler
+     * @covers \core\local\guzzle\cache_storage
+     */
+    public function test_http_client_cache_item() {
+        global $CFG, $USER;
+        $module = 'core_guzzle';
+        $cachedir = "$CFG->cachedir/$module/";
+
+        $testhtml = $this->getExternalTestFileUrl('/test.html');
+
+        // Test item is cached in the specified module.
+        $client = new \core\http_client([
+                'cache' => true,
+                'module_cache' => $module
+        ]);
+        $response = $client->get($testhtml);
+
+        $cachecontent = '';
+        if ($dir = opendir($cachedir)) {
+            while (false !== ($file = readdir($dir))) {
+                if (!is_dir($file) && $file !== '.' && $file !== '..') {
+                    if (strpos($file, 'u' . $USER->id . '_') !== false) {
+                        $cachecontent = file_get_contents($cachedir . $file);
+                    }
+                }
+            }
+        }
+
+        $this->assertNotEmpty($cachecontent);
+        @unlink($cachedir . $file);
+
+        // Test cache item objects returns correct values.
+        $key = 'sample_key';
+        $cachefilename = 'u' . $USER->id . '_' . md5(serialize($key));
+        $cachefile = $cachedir.$cachefilename;
+
+        $content = $response->getBody()->getContents();
+        file_put_contents($cachefile, serialize($content));
+
+        $cacheitemobject = new \core\local\guzzle\cache_item($key, $module, null);
+
+        // Test the cache item matches with the cached response.
+        $this->assertSame($content, $cacheitemobject->get());
+
+        @unlink($cachefile);
     }
 }
