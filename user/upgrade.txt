@@ -1,6 +1,11 @@
 This files describes API changes for code that uses the user API.
 
 === 4.1 ===
+
+* Added a new method is_transform_supported() in the profile_field_base class.
+  The purpose is to allow the field to be transformed during the export process.
+  It has been implemented in the Date/Time data type (Applied in 4.1, 4.0.6).
+
 * user_get_user_details_courses() now accepts an optional second parameter, an array of userfields that should be
   returned. The values passed into the $userfields parameter must all be included in the return from
   user_get_default_fields().
