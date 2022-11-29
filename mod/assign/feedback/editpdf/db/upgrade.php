@@ -106,5 +106,11 @@ function xmldb_assignfeedback_editpdf_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022041901, 'assignfeedback', 'editpdf');
     }
 
+    if ($oldversion < 2022041902) {
+        $task = new \assignfeedback_editpdf\task\remove_orphaned_editpdf_files();
+        \core\task\manager::queue_adhoc_task($task);
+
+        upgrade_plugin_savepoint(true, 2022041902, 'assignfeedback', 'editpdf');
+    }
     return true;
 }
