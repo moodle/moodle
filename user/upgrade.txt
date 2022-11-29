@@ -1,7 +1,11 @@
 This files describes API changes for code that uses the user API.
 
-=== 4.0 ===
+=== 4.0.6 ===
+* Added a new method is_transform_supported() in the profile_field_base class.
+  The purpose is to allow the field to be transformed during the export process.
+  It has been implemented in the Date/Time data type.
 
+=== 4.0 ===
 * External function core_user_external::update_users() will now fail on a per user basis. Previously if one user
   update failed all users in the operation would fail.
 * External function core_user_external::update_users() now returns an error code and message to why a user update
