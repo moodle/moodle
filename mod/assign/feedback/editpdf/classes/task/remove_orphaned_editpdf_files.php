@@ -75,6 +75,6 @@ class remove_orphaned_editpdf_files extends adhoc_task {
                         FROM {assignfeedback_editpdf_rot} er
                    LEFT JOIN {assign_grades} g ON g.id = er.gradeid
                        WHERE g.id IS NULL";
-        $DB->delete_records_subquery('assignfeedback_editpdf_rot', 'id', 'erid' ,$rotatesql);
+        $DB->delete_records_subquery('assignfeedback_editpdf_rot', 'id', 'erid', $rotatesql);
     }
 }
