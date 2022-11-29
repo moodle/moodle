@@ -180,23 +180,12 @@ class page_requirements_manager {
         $this->yui3loader = new stdClass();
         $this->YUI_config = new YUI_config();
 
-        if (is_https() && !empty($CFG->useexternalyui)) {
-            // On HTTPS sites all JS must be loaded from https sites,
-            // YUI CDN does not support https yet, sorry.
-            $CFG->useexternalyui = 0;
-        }
-
         // Set up some loader options.
         $this->yui3loader->local_base = $CFG->wwwroot . '/lib/yuilib/'. $CFG->yui3version . '/';
         $this->yui3loader->local_comboBase = $CFG->wwwroot . '/theme/yui_combo.php'.$sep;
 
-        if (!empty($CFG->useexternalyui)) {
-            $this->yui3loader->base = 'http://yui.yahooapis.com/' . $CFG->yui3version . '/';
-            $this->yui3loader->comboBase = 'http://yui.yahooapis.com/combo?';
-        } else {
-            $this->yui3loader->base = $this->yui3loader->local_base;
-            $this->yui3loader->comboBase = $this->yui3loader->local_comboBase;
-        }
+        $this->yui3loader->base = $this->yui3loader->local_base;
+        $this->yui3loader->comboBase = $this->yui3loader->local_comboBase;
 
         // Enable combo loader? This significantly helps with caching and performance!
         $this->yui3loader->combine = !empty($CFG->yuicomboloading);
@@ -219,7 +208,7 @@ class page_requirements_manager {
 
         $configname = $this->YUI_config->set_config_source('lib/yui/config/yui2.js');
         $this->YUI_config->add_group('yui2', array(
-            // Loader configuration for our 2in3, for now ignores $CFG->useexternalyui.
+            // Loader configuration for our 2in3.
             'base' => $CFG->wwwroot . '/lib/yuilib/2in3/' . $CFG->yui2version . '/build/',
             'comboBase' => $CFG->wwwroot . '/theme/yui_combo.php'.$sep,
             'combine' => $this->yui3loader->combine,

@@ -14,6 +14,9 @@ information provided here is intended especially for developers.
 * New DB parameter 'versionfromdb', only available for MySQL and MariaDB drivers. It allows to force the DB version to be
   evaluated through an explicit call to VERSION() to skip the PHP client version which appears to be sometimes fooled by the
   underlying infrastructure, e.g. PaaS on Azure.
+* The useexternalyui configuration setting has been removed as a part of the migration away from YUI.
+  It only worked with http sites and did not officially support SSL, and is at risk of disappearing should Yahoo! decide
+  to remove it.
 
 === 4.1 ===
 

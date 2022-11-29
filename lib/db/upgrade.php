@@ -3064,5 +3064,13 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022121600.01);
     }
 
+    if ($oldversion < 2023010300.00) {
+        // The useexternalyui setting has been removed.
+        unset_config('useexternalyui');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023010300.00);
+    }
+
     return true;
 }
