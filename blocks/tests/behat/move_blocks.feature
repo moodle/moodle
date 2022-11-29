@@ -14,12 +14,11 @@ Feature: Block region moving
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "activities" exist:
+      | activity | name             | course | template |
+      | survey   | Test survey name | C1     | 4        |
     And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Survey" to section "1" and I fill the form with:
-      | Name | Test survey name |
-      | Survey type | ATTLS (20 item version) |
-      | Description | Test survey description |
     And I add a "Book" to section "1" and I fill the form with:
       | Name | Test book name |
       | Description | Test book description |

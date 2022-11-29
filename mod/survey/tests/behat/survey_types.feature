@@ -4,7 +4,7 @@ Feature: A teacher can set three types of survey activity
   As a teacher
   I need to set survey activities and select which survey type suits my needs
 
-  Scenario: Switching between the three survey types
+  Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
@@ -15,12 +15,12 @@ Feature: A teacher can set three types of survey activity
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    When I add a "Survey" to section "1" and I fill the form with:
-      | Name | Test survey name |
-      | Survey type | ATTLS (20 item version) |
-      | Description | Test survey description |
-    And I follow "Test survey name"
+
+  Scenario: Switching between the three survey types
+    Given the following "activities" exist:
+      | activity | course | name             |
+      | survey   | C1     | Test survey name |
+    When I am on the "Test survey name" "survey activity" page
     Then I should see "Attitudes Towards Thinking and Learning"
     And I follow "Edit settings"
     And I set the following fields to these values:
@@ -33,3 +33,15 @@ Feature: A teacher can set three types of survey activity
     And I press "Save and display"
     And I should see "In this online unit..."
     And I should see "my learning focuses on issues that interest me."
+
+  @javascript
+  Scenario: Survey activity is created via UI
+    Given I am on the "Course 1" course page
+    And I turn editing mode on
+    And I add a "Survey" to section "1"
+    And I set the following fields to these values:
+      | Name        | Test survey name        |
+      | Description | Test survey description |
+      | Survey type | Critical incidents      |
+    When I press "Save and return to course"
+    Then I should see "Test survey name"
