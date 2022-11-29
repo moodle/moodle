@@ -416,6 +416,45 @@ class base_test extends advanced_testcase {
             ]
         ];
     }
+
+    /**
+     * Test duplicate_section()
+     * @covers ::duplicate_section
+     */
+    public function test_duplicate_section() {
+        global $DB;
+
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $format = course_get_format($course);
+
+        $originalsection = $DB->get_record('course_sections', ['course' => $course->id, 'section' => 1], '*', MUST_EXIST);
+        $generator->create_module('page', ['course' => $course, 'section' => $originalsection->section]);
+        $generator->create_module('page', ['course' => $course, 'section' => $originalsection->section]);
+        $generator->create_module('page', ['course' => $course, 'section' => $originalsection->section]);
+
+        $originalmodcount = $DB->count_records('course_modules', ['course' => $course->id, 'section' => $originalsection->id]);
+        $this->assertEquals(3, $originalmodcount);
+
+        $modinfo = get_fast_modinfo($course);
+        $sectioninfo = $modinfo->get_section_info($originalsection->section, MUST_EXIST);
+
+        $newsection = $format->duplicate_section($sectioninfo);
+
+        // Verify properties are the same.
+        foreach ($originalsection as $prop => $value) {
+            if ($prop == 'id' || $prop == 'sequence' || $prop == 'section' || $prop == 'timemodified') {
+                continue;
+            }
+            $this->assertEquals($value, $newsection->$prop);
+        }
+
+        $newmodcount = $DB->count_records('course_modules', ['course' => $course->id, 'section' => $newsection->id]);
+        $this->assertEquals($originalmodcount, $newmodcount);
+    }
 }
 
 /**

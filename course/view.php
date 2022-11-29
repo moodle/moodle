@@ -13,6 +13,7 @@
     $edit        = optional_param('edit', -1, PARAM_BOOL);
     $hide        = optional_param('hide', 0, PARAM_INT);
     $show        = optional_param('show', 0, PARAM_INT);
+    $duplicatesection = optional_param('duplicatesection', 0, PARAM_INT);
     $idnumber    = optional_param('idnumber', '', PARAM_RAW);
     $sectionid   = optional_param('sectionid', 0, PARAM_INT);
     $section     = optional_param('section', 0, PARAM_INT);
@@ -185,6 +186,12 @@
                 set_section_visible($course->id, $show, '1');
                 redirect($PAGE->url);
             }
+        }
+
+        if (!empty($section) && !empty($coursesections) && !empty($duplicatesection)
+            && has_capability('moodle/course:update', $context) && confirm_sesskey()) {
+            $newsection = $format->duplicate_section($coursesections);
+            redirect(course_get_url($course, $newsection->section));
         }
 
         if (!empty($section) && !empty($move) &&

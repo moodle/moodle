@@ -16,6 +16,7 @@ Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
     - Renderer method: core_courseformat\output\section_renderer::bulk_editing_button
     - New overridable checkboxes: content/cm/bulkselect.mustache and content/section/bulkselect.mustache
 * Plugins can use the CSS class "bulk-hidden" to hide elements when the bulk editing is enabled.
+* New core_courseformat\base::duplicate_section method to duplicate course sections and their modules within a course.
 
 === 4.1 ===
 * New \core_courseformat\stateupdates methods add_section_remove() and add_cm_remove() have been added to replace

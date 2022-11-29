@@ -3357,6 +3357,8 @@ function mod_duplicate_activity($course, $cm, $sr = null) {
  *
  * @param object $course course object.
  * @param object $cm course module object to be duplicated.
+ * @param int $sectionid section ID new course module will be placed in.
+ * @param bool $changename updates module name with text from duplicatedmodule lang string.
  * @since Moodle 2.8
  *
  * @throws Exception
@@ -3366,7 +3368,7 @@ function mod_duplicate_activity($course, $cm, $sr = null) {
  *
  * @return cm_info|null cminfo object if we sucessfully duplicated the mod and found the new cm.
  */
-function duplicate_module($course, $cm) {
+function duplicate_module($course, $cm, int $sectionid = null, bool $changename = true): ?cm_info {
     global $CFG, $DB, $USER;
     require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
     require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
@@ -3442,16 +3444,22 @@ function duplicate_module($course, $cm) {
         // Proceed with activity renaming before everything else. We don't use APIs here to avoid
         // triggering a lot of create/update duplicated events.
         $newcm = get_coursemodule_from_id($cm->modname, $newcmid, $cm->course);
-        // Add ' (copy)' to duplicates. Note we don't cleanup or validate lengths here. It comes
-        // from original name that was valid, so the copy should be too.
-        $newname = get_string('duplicatedmodule', 'moodle', $newcm->name);
-        $DB->set_field($cm->modname, 'name', $newname, ['id' => $newcm->instance]);
+        if ($changename) {
+            // Add ' (copy)' to duplicates. Note we don't cleanup or validate lengths here. It comes
+            // from original name that was valid, so the copy should be too.
+            $newname = get_string('duplicatedmodule', 'moodle', $newcm->name);
+            $DB->set_field($cm->modname, 'name', $newname, ['id' => $newcm->instance]);
+        }
 
-        $section = $DB->get_record('course_sections', array('id' => $cm->section, 'course' => $cm->course));
-        $modarray = explode(",", trim($section->sequence));
-        $cmindex = array_search($cm->id, $modarray);
-        if ($cmindex !== false && $cmindex < count($modarray) - 1) {
-            moveto_module($newcm, $section, $modarray[$cmindex + 1]);
+        $section = $DB->get_record('course_sections', ['id' => $sectionid ?? $cm->section, 'course' => $cm->course]);
+        if (isset($sectionid)) {
+            moveto_module($newcm, $section);
+        } else {
+            $modarray = explode(",", trim($section->sequence));
+            $cmindex = array_search($cm->id, $modarray);
+            if ($cmindex !== false && $cmindex < count($modarray) - 1) {
+                moveto_module($newcm, $section, $modarray[$cmindex + 1]);
+            }
         }
 
         // Update calendar events with the duplicated module.

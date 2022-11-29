@@ -1735,4 +1735,36 @@ abstract class base {
         // By default, formats store some most display specifics in a user preference.
         $DB->delete_records('user_preferences', ['name' => 'coursesectionspreferences_' . $course->id]);
     }
+
+    /**
+     * Duplicate a section
+     *
+     * @param section_info $originalsection The section to be duplicated
+     * @return section_info The new duplicated section
+     * @since Moodle 4.2
+     */
+    public function duplicate_section(section_info $originalsection): section_info {
+        if (!$this->uses_sections()) {
+            throw new moodle_exception('sectionsnotsupported', 'core_courseformat');
+        }
+
+        $course = $this->get_course();
+        $oldsectioninfo = get_fast_modinfo($course)->get_section_info($originalsection->section);
+        $newsection = course_create_section($course, $oldsectioninfo->section + 1); // Place new section after existing one.
+
+        $newsection->name = $originalsection->name;
+        $newsection->summary = $originalsection->summary;
+        $newsection->summaryformat = $originalsection->summaryformat;
+        $newsection->visible = $originalsection->visible;
+        $newsection->availability = $originalsection->availability;
+        course_update_section($course, $newsection, $newsection);
+
+        $modinfo = $this->get_modinfo();
+        foreach ($modinfo->sections[$originalsection->section] as $modnumber) {
+            $originalcm = $modinfo->cms[$modnumber];
+            duplicate_module($course, $originalcm, $newsection->id, false);
+        }
+
+        return get_fast_modinfo($course)->get_section_info_by_id($newsection->id);
+    }
 }
