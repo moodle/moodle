@@ -22,35 +22,30 @@ Feature: Backup user data
     And the following "activities" exist:
       | activity | course | section | name   | intro                 |
       | quiz     | C1     | 1       | Quiz 1 | Test quiz description |
+    And the following "question categories" exist:
+      | contextlevel | reference | name           |
+      | Course       | C1        | Test questions |
+    And the following "questions" exist:
+      | questioncategory | qtype     | name | questiontext    |
+      | Test questions   | truefalse | TF1  | First question  |
+      | Test questions   | truefalse | TF2  | Second question |
+    And quiz "Quiz 1" contains the following questions:
+      | question | page |
+      | TF1      | 1    |
+      | TF2      | 1    |
 
   @javascript
-  Scenario: Delete and restore a quiz with user data
-    Given I am on the "Quiz 1" "quiz activity" page logged in as teacher1
-    And I add a "True/False" question to the "Quiz 1" quiz with:
-      | Question name                      | TF1                          |
-      | Question text                      | First question               |
-      | General feedback                   | Thank you, this is the general feedback |
-      | Correct answer                     | False                                   |
-      | Feedback for the response 'True'.  | So you think it is true                 |
-      | Feedback for the response 'False'. | So you think it is false                |
-    And I add a "True/False" question to the "Quiz 1" quiz with:
-      | Question name                      | TF2                                     |
-      | Question text                      | Second question                         |
-      | General feedback                   | Thank you, this is the general feedback |
-      | Correct answer                     | False                                   |
-      | Feedback for the response 'True'.  | So you think it is true                 |
-      | Feedback for the response 'False'. | So you think it is false                |
-    And I set the field "maxgrade" to "10.0"
-    And I press "savechanges"
-    And I log out
-    When I am on the "Quiz 1" "quiz activity" page logged in as student1
+  Scenario Outline: Delete and restore a quiz with user data
+    Given the following config values are set as admin:
+      | restore_general_users | <include_user> | restore |
+    And I am on the "Quiz 1" "quiz activity" page logged in as student1
     And I press "Attempt quiz"
     And I click on "True" "radio" in the "First question" "question"
     And I click on "False" "radio" in the "Second question" "question"
     And I press "Finish attempt"
     And I press "Submit all and finish"
     And I click on "Submit" "button" in the "Submit all your answers and finish?" "dialogue"
-    And I should see "5.00 out of 10.00"
+    And I should see "50.00 out of 100.00"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
@@ -63,5 +58,10 @@ Feature: Backup user data
     And I log in as "student1"
     And I am on "Course 1" course homepage
     When I navigate to "User report" in the course gradebook
-    Then "Quiz 1" row "Grade" column of "user-grade" table should contain "5"
+    Then "Quiz 1" row "Grade" column of "user-grade" table should contain "50"
     And "Quiz 1" row "Percentage" column of "user-grade" table should contain "50"
+
+    Examples:
+      | include_user | case_explanation |
+      | 1            | Checked          |
+      | 1            | Unchecked        |
