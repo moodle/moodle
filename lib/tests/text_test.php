@@ -521,16 +521,16 @@ class text_test extends advanced_testcase {
         $this->assertSame('Frogs!', core_text::remove_unicode_non_characters('Frogs!'));
 
         // Even if they contain some very scary characters.
-        $example = html_entity_decode('A&#xfffd;&#x1d15f;B');
+        $example = html_entity_decode('A&#xfffd;&#x1d15f;B', ENT_COMPAT);
         $this->assertSame($example, core_text::remove_unicode_non_characters($example));
 
         // Non-characters are removed wherever they may be, with other characters left.
-        $example = html_entity_decode('&#xfffe;A&#xffff;B&#x8fffe;C&#xfdd0;D&#xfffd;E&#xfdd5;');
-        $expected = html_entity_decode('ABCD&#xfffd;E');
+        $example = html_entity_decode('&#xfffe;A&#xffff;B&#x8fffe;C&#xfdd0;D&#xfffd;E&#xfdd5;', ENT_COMPAT);
+        $expected = html_entity_decode('ABCD&#xfffd;E', ENT_COMPAT);
         $this->assertSame($expected, core_text::remove_unicode_non_characters($example));
 
         // If you only have a non-character, you get empty string.
-        $example = html_entity_decode('&#xfffe;');
+        $example = html_entity_decode('&#xfffe;', ENT_COMPAT);
         $this->assertSame('', core_text::remove_unicode_non_characters($example));
 
         // Check that null argument is allowed.

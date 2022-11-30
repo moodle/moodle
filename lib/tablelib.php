@@ -2204,7 +2204,7 @@ class table_default_export_format_parent {
     function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL) {
         //use some whitespace to indicate where there was some line spacing.
         $text = str_replace(array('</p>', "\n", "\r"), '   ', $text);
-        return html_entity_decode(strip_tags($text));
+        return html_entity_decode(strip_tags($text), ENT_COMPAT);
     }
 
     /**

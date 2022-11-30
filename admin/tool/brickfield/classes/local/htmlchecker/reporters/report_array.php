@@ -43,7 +43,7 @@ class report_array extends brickfield_accessibility_reporter {
             $output[$testname]['body'] = $translation['description'];
             foreach ($test as $k => $problem) {
                 if (is_object($problem)) {
-                    $output[$testname]['problems'][$k]['element'] = htmlentities($problem->get_html());
+                    $output[$testname]['problems'][$k]['element'] = htmlentities($problem->get_html(), ENT_COMPAT);
                     $output[$testname]['problems'][$k]['line'] = $problem->get_line();
                     if ($problem->message) {
                         $output[$testname]['problems']['message'] = $problem->message;

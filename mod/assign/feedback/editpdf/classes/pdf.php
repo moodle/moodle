@@ -587,9 +587,9 @@ class pdf extends TcpdfFpdi {
                 $fullerror = '<pre>'.get_string('command', 'assignfeedback_editpdf')."\n";
                 $fullerror .= $command . "\n\n";
                 $fullerror .= get_string('result', 'assignfeedback_editpdf')."\n";
-                $fullerror .= htmlspecialchars($result) . "\n\n";
+                $fullerror .= htmlspecialchars($result, ENT_COMPAT) . "\n\n";
                 $fullerror .= get_string('output', 'assignfeedback_editpdf')."\n";
-                $fullerror .= htmlspecialchars(implode("\n", $output)) . '</pre>';
+                $fullerror .= htmlspecialchars(implode("\n", $output), ENT_COMPAT) . '</pre>';
                 throw new \moodle_exception('errorgenerateimage', 'assignfeedback_editpdf', '', $fullerror);
             }
         }

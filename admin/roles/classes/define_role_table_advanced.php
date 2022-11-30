@@ -533,7 +533,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
 
     protected function get_description_field($id) {
         return '<textarea class="form-textarea form-control" id="'. s($id) .'" name="description" rows="10" cols="50">' .
-            htmlspecialchars($this->role->description) .
+            htmlspecialchars($this->role->description, ENT_COMPAT) .
             '</textarea>';
     }
 
