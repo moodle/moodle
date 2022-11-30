@@ -243,6 +243,16 @@ class category_bin extends base_bin {
             throw new \moodle_exception("Could not create course to restore into.");
         }
 
+        // As far as recycle bin is using MODE_AUTOMATED, it observes the General restore settings.
+        // For recycle bin we want to ensure that backup files are always restore the users and groups information.
+        // In order to achieve that, we hack the setting here via $CFG->forced_plugin_settings,
+        // so it won't interfere other operations.
+        // See MDL-65218 and MDL-35773 for more information.
+        // This hack will be removed once recycle bin switches to use its own backup mode, with
+        // own preferences and 100% separate from MOODLE_AUTOMATED.
+        // TODO: Remove this as part of MDL-65228.
+        $CFG->forced_plugin_settings['restore'] = ['restore_general_users' => 1, 'restore_general_groups' => 1];
+
         // Define the import.
         $controller = new \restore_controller(
             $tempdir,
@@ -276,6 +286,10 @@ class category_bin extends base_bin {
 
         // Run the import.
         $controller->execute_plan();
+
+        // We don't need the forced setting anymore, hence unsetting it.
+        // TODO: Remove this as part of MDL-65228.
+        unset($CFG->forced_plugin_settings['restore']);
 
         // Have finished with the controller, let's destroy it, freeing mem and resources.
         $controller->destroy();
