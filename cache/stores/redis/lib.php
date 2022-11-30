@@ -439,6 +439,10 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
      * @return int The number of keys successfully deleted.
      */
     public function delete_many(array $keys) {
+        // If there are no keys to delete, do nothing.
+        if (!$keys) {
+            return 0;
+        }
         $count = $this->redis->hDel($this->hash, ...$keys);
         if ($this->definition->get_ttl()) {
             // When TTL is enabled, also remove the keys from the TTL list.
