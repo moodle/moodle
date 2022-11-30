@@ -1264,7 +1264,7 @@ the groupid field.
     - test_get_user_timezone_offset()
 * The google api library has been updated to version 1.1.7. There was some important changes
   on the SSL handling. Now the SSL version will be determined by the underlying library.
-  For more information see https://github.com/google/google-api-php-client/pull/644
+  For more information see https://github.com/googleapis/google-api-php-client/pull/644
 * The get_role_users() function will now add the $sort fields that are not part
   of the requested fields to the query result and will throw a debugging message
   with the added fields when that happens.
