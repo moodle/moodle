@@ -42,10 +42,12 @@ Feature: Export calendar events
     When I click on "Import or export calendars" "link"
     And I click on "Export calendar" "button"
     And I set the field "All events" to "1"
-    And I set the field "This week" to "1"
+    And I set the field "This month" to "1"
     And I press "Export"
     And I should see "SUMMARY:My event"
-    And I should see "##today##DTSTART:%Y%m%dT050000Z##"
+    # We need to split the step in two because Bennu library use days with leading zero and moodle removes it.
+    And I should see "##today##DTSTART:%Y%m##"
+    And I should see "##today##%dT050000Z##"
 
   Scenario: Generating calendar URL for all events
     Given I follow "Full calendar"
