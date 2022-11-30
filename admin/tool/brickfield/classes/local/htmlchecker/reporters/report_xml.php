@@ -49,7 +49,7 @@ class report_xml extends brickfield_accessibility_reporter {
             $output .= "\n\t<htmlchecker:problems>";
             foreach ($test as $problem) {
                 if (is_object($problem)) {
-                    $output .= "\n\t<htmlchecker:entities><![CDATA[" . htmlentities($problem->get_html()) .
+                    $output .= "\n\t<htmlchecker:entities><![CDATA[" . htmlentities($problem->get_html(), ENT_COMPAT) .
                         "]]></htmlchecker:entities>";
                     $output .= "\n\t<htmlchecker:line>". $problem->get_line() ."</htmlchecker:line>";
                     if ($problem->message) {

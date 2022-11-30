@@ -223,7 +223,7 @@ class data_field_latlong extends data_field_base {
                                 array_keys($urlreplacements),
                                 array_values($urlreplacements),
                                 $this->linkoutservices[$servicename]
-                            ) . "'>".htmlspecialchars($servicename)."</option>";
+                            ) . "'>".htmlspecialchars($servicename, ENT_COMPAT)."</option>";
             }
             // NB! If you are editing this, make sure you don't break the javascript reference "previousSibling"
             // which allows the "Go" button to refer to the drop-down selector.

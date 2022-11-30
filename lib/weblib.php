@@ -3439,7 +3439,7 @@ class html_progress_trace extends progress_trace {
      * @return void Output is echo'd
      */
     public function output($message, $depth = 0) {
-        echo '<p>', str_repeat('&#160;&#160;', $depth), htmlspecialchars($message), "</p>\n";
+        echo '<p>', str_repeat('&#160;&#160;', $depth), htmlspecialchars($message, ENT_COMPAT), "</p>\n";
         flush();
     }
 }
@@ -3480,7 +3480,7 @@ class html_list_progress_trace extends progress_trace {
         if ($samedepth) {
             echo "</li>\n<li>";
         }
-        echo htmlspecialchars($message);
+        echo htmlspecialchars($message, ENT_COMPAT);
         flush();
     }
 

@@ -42,7 +42,7 @@ abstract class core_media_player_native extends core_media_player {
      */
     public static function get_attribute($tag, $attrname, $type = PARAM_RAW) {
         if (preg_match('/^<[^>]*\b' . $attrname . '="(.*?)"/is', $tag, $matches)) {
-            return clean_param(htmlspecialchars_decode($matches[1]), $type);
+            return clean_param(htmlspecialchars_decode($matches[1], ENT_COMPAT), $type);
         } else if (preg_match('~^<[^>]*\b' . $attrname . '[ />]"~is', $tag, $matches)) {
             // Some attributes may not have value, for example this is valid: <video controls>.
             return clean_param("true", $type);

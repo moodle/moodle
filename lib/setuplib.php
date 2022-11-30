@@ -549,7 +549,7 @@ function get_exception_info($ex) {
     if (function_exists('clean_text')) {
         $message = clean_text($message);
     } else {
-        $message = htmlspecialchars($message);
+        $message = htmlspecialchars($message, ENT_COMPAT);
     }
 
     if (!empty($CFG->errordocroot)) {
@@ -1436,7 +1436,7 @@ function redirect_if_major_upgrade_required() {
         $url = $CFG->wwwroot . '/' . $CFG->admin . '/index.php';
         @header($_SERVER['SERVER_PROTOCOL'] . ' 303 See Other');
         @header('Location: ' . $url);
-        echo bootstrap_renderer::plain_redirect_message(htmlspecialchars($url));
+        echo bootstrap_renderer::plain_redirect_message(htmlspecialchars($url, ENT_COMPAT));
         exit;
     }
 }

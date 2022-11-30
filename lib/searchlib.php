@@ -71,7 +71,7 @@ class search_token {
   // Need to think about this some more.
 
   function sanitize($userstring){
-    return htmlspecialchars($userstring);
+    return htmlspecialchars($userstring, ENT_COMPAT);
   }
   function getValue(){
     return $this->value;

@@ -146,7 +146,7 @@ class core_tag_tag {
         // Clean up a bit just in case the rules change again.
         $tagname = clean_param($tagname, PARAM_TAG);
 
-        return $ashtml ? htmlspecialchars($tagname) : $tagname;
+        return $ashtml ? htmlspecialchars($tagname, ENT_COMPAT) : $tagname;
     }
 
     /**

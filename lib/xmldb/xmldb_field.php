@@ -525,7 +525,7 @@ class xmldb_field extends xmldb_object {
             $o.= ' DECIMALS="' . $this->decimals . '"';
         }
         if ($this->comment) {
-            $o.= ' COMMENT="' . htmlspecialchars($this->comment) . '"';
+            $o.= ' COMMENT="' . htmlspecialchars($this->comment, ENT_COMPAT) . '"';
         }
         $o.= '/>' . "\n";
 
