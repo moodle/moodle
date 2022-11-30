@@ -47,7 +47,7 @@ Local changes (to reapply until upstream upgrades contain them):
 Information
 -----------
 
-Repository: https://github.com/google/google-api-php-client
+Repository: https://github.com/googleapis/google-api-php-client
 Documentation: https://developers.google.com/api-client-library/php/
 Global documentation: https://developers.google.com
 
