@@ -12228,6 +12228,35 @@ body.dragging .dragging {
   visibility: visible;
   cursor: move; }
 
+.overlay-preview {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 2px dashed #0f6cbf;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; }
+  .overlay-preview .overlay-preview-wrapper {
+    position: absolute;
+    top: 0;
+    padding: 2rem;
+    width: 100%; }
+  .overlay-preview .overlay-preview-content {
+    position: relative;
+    top: 0;
+    padding: 1rem;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 600px;
+    background-color: #0f6cbf;
+    color: #fff;
+    text-align: center;
+    font-size: 1.171875rem;
+    border-radius: 0.5rem; }
+
+.overlay-preview-borders {
+  outline: 2px dashed #0f6cbf; }
+
 .waitstate {
   display: none; }
 
