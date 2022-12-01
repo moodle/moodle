@@ -1,6 +1,6 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
 //
+// This file is part of Moodle - http://moodle.org/
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -54,174 +54,39 @@ class course_expiry_warning_task extends \core\task\scheduled_task {
 
         mtrace("Running email report course expiry warning task at ".date('D M Y h:m:s', $runtime));
 
-        // Deal with courses which have expiry warnings
-        $expiredsql = "SELECT lit.*, c.name AS companyname, ic.notifyperiod, u.firstname,u.lastname,u.username,u.email,u.lang
-                       FROM {local_iomad_track} lit
-                       JOIN {company} c ON (lit.companyid = c.id)
-                       JOIN {iomad_courses} ic ON (lit.courseid = ic.courseid)
-                       JOIN {user} u ON (lit.userid = u.id)
-                       JOIN {course} co ON (lit.courseid = co.id AND ic.courseid = co.id)
-                       WHERE co.visible = 1
-                       AND ic.validlength > 0
-                       AND ic.warnexpire > 0
-                       AND (lit.timecompleted + ic.validlength * 86400 - ic.warnexpire * 86400) > " . $runtime . "
-                       AND u.deleted = 0
-                       AND u.suspended = 0
-                       AND lit.expiredstop = 0
-                       AND lit.id IN (
-                           SELECT max(id) FROM {local_iomad_track}
-                       GROUP BY userid,courseid)";
+        // Getting courses which have expiry settings.
+        $expirycourses = $DB->get_records_sql("SELECT * FROM {iomad_courses}
+                                               WHERE validlength > 0");
 
-        // Email all of the users
-        mtrace("sending to users");
-        $allusers = $DB->get_records_sql($expiredsql);
-
-        foreach ($allusers as $compuser) {
-            if (!$user = $DB->get_record('user', array('id' => $compuser->userid))) {
-                continue;
-            }
-            if (!$course = $DB->get_record('course', array('id' => $compuser->courseid))) {
-                continue;
-            }
-            if (!$company = $DB->get_record('company', array('id' => $compuser->companyid))) {
-                continue;
-            }
-
-            // Deal with parent companies as we only want users in this company.
-            $companyobj = new company($company->id);
-            if ($parentslist = $companyobj->get_parent_companies_recursive()) {
-                if ($DB->get_records_sql("SELECT userid FROM {company_users}
-                                          WHERE companyid IN (" . implode(',', array_keys($parentslist)) .")
-                                          AND userid = :userid",
-                                          array('userid' => $compuser->userid))) {
-                    continue;
-
-                }
-            }
-
-            if ($DB->get_record_sql("SELECT ra.id FROM
-                                     {user_enrolments} ue
-                                     INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
-                                     JOIN {role_assignments} ra ON (ue.userid = ra.userid)
-                                     JOIN {context} c ON (ra.contextid = c.id AND c.instanceid = e.courseid)
-                                     WHERE c.contextlevel = 50
-                                     AND ue.userid = :userid
-                                     AND e.courseid = :courseid
-                                     AND ra.roleid = :studentrole",
-                                     array('courseid' => $compuser->courseid,
-                                           'userid' => $compuser->userid,
-                                           'studentrole' => $studentrole->id))) {
-
-                // Expire the user from the course.
-                mtrace("Expiring $user->id from course id $course->id as a student");
-                $event = \block_iomad_company_admin\event\user_course_expired::create(array('context' => context_course::instance($course->id),
-                                                                                            'courseid' => $course->id,
-                                                                                            'objectid' => $course->id,
-                                                                                            'userid' => $user->id));
-                $event->trigger();
-            }
-
-            // Get the company template info.
-            // Check against per company template repeat instead.
-            if ($templateinfo = $DB->get_record('email_template', array('companyid' => $notstarteduser->companyid, 'lang' => $userrec->lang, 'name' => 'expiry_warn_user'))) {
-                // Check if its the correct day, if not continue.
-                if (!empty($templateinfo->repeatday) && $templateinfo->repeatday != 99 && $templateinfo->repeatday != $dayofweek - 1) {
-                    continue;
-                }
-
-                // otherwise set the notifyperiod
-                if ($templateinfo->repeatperiod == 0) {
-                    $notifyperiod = "";
-                } else if ($templateinfo->repeatperiod == 99) {
-                    $notifyperiod = "";
-                } else {
-                    $notifytime = strtotime("- 1" . $periods[$templateinfo->repeatperiod], $runtime);
-                    $notifyperiod = "AND sent < $notifytime";
-                }
-            } else {
-                // use the default notify period.
-                $notifytime = $runtime - $warnnotstartedcourse->notifyperiod * 86400;
-                $notifyperiod = "AND sent < $notifytime";
-            }
-
-            // Check if we have sent any emails and if they are within the period.
-            if ($DB->count_records('email', array('userid' => $compuser->userid,
-                                                  'courseid' => $compuser->courseid,
-                                                  'templatename' => 'expiry_warn_user')) > 0) {
-                if (!empty($notifyperiod)) {
-                    if (!$DB->get_records_sql("SELECT id FROM {email}
-                                              WHERE userid = :userid
-                                              AND courseid = :courseid
-                                                  AND templatename = :templatename
-                                              $notifyperiod
-                                              AND id IN (
-                                                 SELECT MAX(id) FROM {email}
-                                                 WHERE userid = :userid2
-                                                 AND courseid = :courseid2
-                                                 AND templatename = :templatename2)",
-                                              array('userid' => $compuser->userid,
-                                                    'courseid' => $compuser->courseid,
-                                                    'templatename' => 'expiry_warn_user',
-                                                    'userid2' => $compuser->userid,
-                                                    'courseid2' => $compuser->courseid,
-                                                    'templatename2' => 'expiry_warn_user'))) {
-                        continue;
-                    }
-                }
-            }
-
-            mtrace("Sending expiry warning email to $user->email");
-            EmailTemplate::send('expiry_warn_user', array('course' => $course, 'user' => $user, 'company' => $companyobj));
-
-            // Send the supervisor email too.
-            mtrace("Sending supervisor warning email for $user->email");
-            company::send_supervisor_expiry_warning_email($user, $course);
-
-            // Do we have a value for the template repeat?
-            if (!empty($templateinfo->repeatvalue)) {
-                $sentcount = $DB->count_records_sql("SELECT count(id) FROM {email}
-                                                     WHERE userid =:userid
-                                                     AND courseid = :courseid
-                                                     AND templatename = :templatename
-                                                     AND modifiedtime > :timesent",
-                                                     array('userid' => $compuser->userid,
-                                                           'courseid' => $compuser->courseid,
-                                                           'templatename' => $templateinfo->name,
-                                                           'timesent' => $compuser->timecompleted));
-                if ($sentcount >= $templateinfo->repeatvalue) {
-                    $compuser->expiredstop = 1;
-                    $compuser->modifiedtime = $runtime;
-                    $DB->update_record('local_iomad_track', $compuser);
-                }
-            }
-            if (empty($templateinfo->repeatperiod)) {
-                // Set to never so mark it to stop.
-                $compuser->expiredstop = 1;
-                $compuser->modifiedtime = $runtime;
-                $DB->update_record('local_iomad_track', $compuser);
-            }
-        }
 
         // Email the managers
         mtrace("sending to managers");
 
-        // Get the companies from the list of users in the temp table.
-        $companysql = "SELECT DISTINCT lit.companyid
-                            FROM {local_iomad_track} lit
-                            JOIN {iomad_courses} ic ON (lit.courseid = ic.courseid)
-                            JOIN {user} u ON (lit.userid = u.id)
-                            JOIN {course} co ON (lit.courseid = co.id AND ic.courseid = co.id)
-                            WHERE co.visible = 1
-                            AND ic.validlength > 0
-                            AND ic.warnexpire > 0
-                            AND (lit.timecompleted + ic.validlength * 86400 - ic.warnexpire * 86400) < " . $runtime . "
-                            AND u.deleted = 0
-                            AND u.suspended = 0
-                            AND lit.expiredstop = 0
-                            AND lit.id IN (
-                                SELECT max(id) FROM {local_iomad_track})";
+        // Deal with courses which have expiry warnings
+        $companies = [];
+        foreach ($expirycourses as $expirycourse) {
+            $targettime = $runtime - ($expirycourse->validlength * 86400) - ($expirycourse->warnexpire * 86400);
 
-        $companies = $DB->get_records_sql($companysql);
+            // Get the companies from the list of users in the temp table.
+            $companysql = "SELECT DISTINCT lit.companyid
+                                FROM {local_iomad_track} lit
+                                JOIN {user} u ON (lit.userid = u.id)
+                                JOIN {course} co ON (lit.courseid = co.id)
+                                WHERE co.visible = 1
+                                AND co.id = :expirycourseid
+                                AND u.deleted = 0
+                                AND u.suspended = 0
+                                AND lit.timecompleted < :targettime
+                                AND lit.expiredstop = 0
+                                AND lit.id IN (
+                                    SELECT max(id) FROM {local_iomad_track})";
+
+            $foundcompanies = $DB->get_records_sql($companysql, ['expirycourseid' => $expirycourse->id, 'targettime' => $targettime]);
+            foreach ($foundcompanies as $id => $foundcompany) {
+                $companies[$id] = $foundcompany;
+            }
+        }
+
         foreach ($companies as $company) {
             if (!$companyrec = $DB->get_record('company', array('id' => $company->companyid))) {
                 continue;
@@ -331,6 +196,157 @@ class course_expiry_warning_task extends \core\task\scheduled_task {
                             EmailTemplate::send('expiry_warn_manager', array('user' => $user, 'course' => $course, 'company' => $companyobj));
                         }
                     }
+                }
+            }
+        }
+
+        // Deal with users.
+        foreach ($expirycourses as $expirycourse) {
+            mtrace("Dealing with course id $expirycourse->courseid");
+            $targettime = $runtime - ($expirycourse->validlength * 86400) - ($expirycourse->warnexpire * 86400);
+            $expiredsql = "SELECT lit.*, c.name AS companyname, u.firstname,u.lastname,u.username,u.email,u.lang
+                           FROM {local_iomad_track} lit
+                           JOIN {company} c ON (lit.companyid = c.id)
+                           JOIN {user} u ON (lit.userid = u.id)
+                           JOIN {course} co ON (lit.courseid = co.id)
+                           WHERE co.visible = 1
+                           AND co.id = :expirycourseid
+                           AND lit.timecompleted < :targettime
+                           AND u.deleted = 0
+                           AND u.suspended = 0
+                           AND lit.expiredstop = 0
+                           AND lit.id IN (
+                               SELECT max(id) FROM {local_iomad_track}
+                           GROUP BY userid,courseid)";
+
+            // Email all of the users
+            mtrace("getting expired users");
+            $allusers = $DB->get_records_sql($expiredsql, ['expirycourseid' => $expirycourse->courseid, 'targettime' => $targettime]);
+
+            foreach ($allusers as $compuser) {
+                mtrace("Dealing with user id $compuser->userid");
+                if (!$user = $DB->get_record('user', array('id' => $compuser->userid))) {
+                    continue;
+                }
+                if (!$course = $DB->get_record('course', array('id' => $compuser->courseid))) {
+                    continue;
+                }
+                if (!$company = $DB->get_record('company', array('id' => $compuser->companyid))) {
+                    continue;
+                }
+
+                // Deal with parent companies as we only want users in this company.
+                $companyobj = new company($company->id);
+                if ($parentslist = $companyobj->get_parent_companies_recursive()) {
+                    if ($DB->get_records_sql("SELECT userid FROM {company_users}
+                                              WHERE companyid IN (" . implode(',', array_keys($parentslist)) .")
+                                              AND userid = :userid",
+                                              array('userid' => $compuser->userid))) {
+                        continue;
+
+                    }
+                }
+
+                if ($DB->get_record_sql("SELECT ra.id FROM
+                                         {user_enrolments} ue
+                                         INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
+                                         JOIN {role_assignments} ra ON (ue.userid = ra.userid)
+                                         JOIN {context} c ON (ra.contextid = c.id AND c.instanceid = e.courseid)
+                                         WHERE c.contextlevel = 50
+                                         AND ue.userid = :userid
+                                         AND e.courseid = :courseid
+                                         AND ra.roleid = :studentrole",
+                                         array('courseid' => $compuser->courseid,
+                                               'userid' => $compuser->userid,
+                                               'studentrole' => $studentrole->id))) {
+
+                    // Expire the user from the course.
+                    mtrace("Expiring $user->id from course id $course->id as a student");
+                    $event = \block_iomad_company_admin\event\user_course_expired::create(array('context' => context_course::instance($course->id),
+                                                                                                'courseid' => $course->id,
+                                                                                                'objectid' => $course->id,
+                                                                                                'userid' => $user->id));
+                    $event->trigger();
+                }
+
+                // Get the company template info.
+                // Check against per company template repeat instead.
+                if ($templateinfo = $DB->get_record('email_template', array('companyid' => $company->id, 'lang' => $user->lang, 'name' => 'expiry_warn_user'))) {
+                    // Check if its the correct day, if not continue.
+                    if (!empty($templateinfo->repeatday) && $templateinfo->repeatday != 99 && $templateinfo->repeatday != $dayofweek - 1) {
+                        continue;
+                    }
+
+                    // otherwise set the notifyperiod
+                    if ($templateinfo->repeatperiod == 0) {
+                        $notifyperiod = "";
+                    } else if ($templateinfo->repeatperiod == 99) {
+                        $notifyperiod = "";
+                    } else {
+                        $notifytime = strtotime("- 1" . $periods[$templateinfo->repeatperiod], $runtime);
+                        $notifyperiod = "AND sent < $notifytime";
+                    }
+                } else {
+                    // use the default notify period.
+                    $notifytime = $runtime - $expirycourse->notifyperiod * 86400;
+                    $notifyperiod = "AND sent < $notifytime";
+                }
+
+                // Check if we have sent any emails and if they are within the period.
+                if ($DB->count_records('email', array('userid' => $compuser->userid,
+                                                      'courseid' => $compuser->courseid,
+                                                      'templatename' => 'expiry_warn_user')) > 0) {
+                    if (!empty($notifyperiod)) {
+                        if (!$DB->get_records_sql("SELECT id FROM {email}
+                                                  WHERE userid = :userid
+                                                  AND courseid = :courseid
+                                                      AND templatename = :templatename
+                                                  $notifyperiod
+                                                  AND id IN (
+                                                     SELECT MAX(id) FROM {email}
+                                                     WHERE userid = :userid2
+                                                     AND courseid = :courseid2
+                                                     AND templatename = :templatename2)",
+                                                  array('userid' => $compuser->userid,
+                                                        'courseid' => $compuser->courseid,
+                                                        'templatename' => 'expiry_warn_user',
+                                                        'userid2' => $compuser->userid,
+                                                        'courseid2' => $compuser->courseid,
+                                                        'templatename2' => 'expiry_warn_user'))) {
+                            continue;
+                        }
+                    }
+                }
+
+                mtrace("Sending expiry warning email to $user->email");
+                EmailTemplate::send('expiry_warn_user', array('course' => $course, 'user' => $user, 'company' => $companyobj));
+
+                // Send the supervisor email too.
+                mtrace("Sending supervisor warning email for $user->email");
+                company::send_supervisor_expiry_warning_email($user, $course);
+
+                // Do we have a value for the template repeat?
+                if (!empty($templateinfo->repeatvalue)) {
+                    $sentcount = $DB->count_records_sql("SELECT count(id) FROM {email}
+                                                         WHERE userid =:userid
+                                                         AND courseid = :courseid
+                                                         AND templatename = :templatename
+                                                         AND modifiedtime > :timesent",
+                                                         array('userid' => $compuser->userid,
+                                                               'courseid' => $compuser->courseid,
+                                                               'templatename' => $templateinfo->name,
+                                                               'timesent' => $compuser->timecompleted));
+                    if ($sentcount >= $templateinfo->repeatvalue) {
+                        $compuser->expiredstop = 1;
+                        $compuser->modifiedtime = $runtime;
+                        $DB->update_record('local_iomad_track', $compuser);
+                    }
+                }
+                if (empty($templateinfo->repeatperiod)) {
+                    // Set to never so mark it to stop.
+                    $compuser->expiredstop = 1;
+                    $compuser->modifiedtime = $runtime;
+                    $DB->update_record('local_iomad_track', $compuser);
                 }
             }
         }
