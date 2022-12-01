@@ -71,6 +71,12 @@
             </div>
             <div class="navitem-divider"></div>
         {{/generalnavselector}}
+        {{#searchdropdown}}
+            <div class="navitem">
+                {{>core_grades/tertiary_navigation_dropdown}}
+            </div>
+            <div class="navitem-divider"></div>
+        {{/searchdropdown}}
         {{#groupselector}}
             <div class="navitem">
                 {{{groupselector}}}

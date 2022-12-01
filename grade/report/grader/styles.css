@@ -244,3 +244,33 @@
     content: '';
 }
 
+.path-grade-report-grader .usersearchwidget::after {
+    content: '';
+}
+
+.path-grade-report-grader .usersearchwidget {
+    pointer-events: none;
+}
+.path-grade-report-grader .usersearchwidget input {
+    pointer-events: initial;
+    z-index: 1;
+}
+.path-grade-report-grader .usersearchwidget button {
+    pointer-events: initial;
+}
+.path-grade-report-grader .usersearchdropdown {
+    /*Extra height to allow non result items.*/
+    max-height: 400px;
+    width: 300px;
+    pointer-events: all;
+    padding: 0;
+}
+.path-grade-report-grader .usersearchdropdown .unsearchablecontentcontainer {
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+}
+.path-grade-report-grader .usersearchdropdown .footer {
+    border-top: 1px solid #dee2e6;
+    font-size: 90%;
+}

@@ -29,6 +29,9 @@ use core_grades\output\gradebook_dropdown;
  */
 class action_bar extends \core_grades\output\action_bar {
 
+    /** @var string $usersearch The content that the current user is looking for. */
+    protected string $usersearch = '';
+
     /**
      * The class constructor.
      *
@@ -36,6 +39,8 @@ class action_bar extends \core_grades\output\action_bar {
      */
     public function __construct(\context_course $context) {
         parent::__construct($context);
+
+        $this->usersearch = optional_param('searchvalue', '', PARAM_NOTAGS);
     }
 
     /**
@@ -52,9 +57,10 @@ class action_bar extends \core_grades\output\action_bar {
      *
      * @param \renderer_base $output renderer to be used to render the action bar elements.
      * @return array
+     * @throws \moodle_exception
      */
     public function export_for_template(\renderer_base $output): array {
-        global $PAGE;
+        global $PAGE, $OUTPUT;
         // If in the course context, we should display the general navigation selector in gradebook.
         $courseid = $this->context->instanceid;
         // Get the data used to output the general navigation selector.
@@ -85,6 +91,22 @@ class action_bar extends \core_grades\output\action_bar {
             );
             $data['initialselector'] = $initialselector->export_for_template($output);
             $data['groupselector'] = $gradesrenderer->group_selector($course);
+
+            $searchinput = $OUTPUT->render_from_template('gradereport_grader/search/searchinput', [
+                'currentvalue' => $this->usersearch,
+                'courseid' => $courseid,
+            ]);
+            $searchdropdown = new gradebook_dropdown(
+                true,
+                $searchinput,
+                null,
+                'user-search',
+                'usersearchwidget',
+                'usersearchdropdown overflow-auto',
+                null,
+                false,
+            );
+            $data['searchdropdown'] = $searchdropdown->export_for_template($output);
         }
 
         return $data;

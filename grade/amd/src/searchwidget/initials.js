@@ -117,7 +117,7 @@ const registerListenerEvents = (callingLink) => {
             }
 
             // Handle form submissions.
-            if (e.target.type === selectors.formItems.type) {
+            if (e.target.closest(`${selectors.formDropdown}`) && e.target.type === selectors.formItems.type) {
                 if (e.target.dataset.action === selectors.formItems.save) {
                     // Ensure we strip out the value (All) as it messes with the PHP side of the initials bar.
                     // Then we will redirect the user back onto the page with new filters applied.

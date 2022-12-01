@@ -56,6 +56,9 @@ class gradebook_dropdown implements renderable, templatable {
     /** @var null|string $buttonheader If the button item in the tertiary nav needs an extra top header for context. */
     protected $buttonheader;
 
+    /** @var boolean $usesbutton Whether to provide a A11y button. */
+    protected $usesbutton;
+
     /**
      * The class constructor.
      *
@@ -66,6 +69,7 @@ class gradebook_dropdown implements renderable, templatable {
      * @param ?string $buttonclasses Any special classes that may be needed.
      * @param ?string $dropdownclasses Any special classes that may be needed.
      * @param ?string $buttonheader If the button item in the tertiary nav needs an extra top header for context.
+     * @param bool $usebutton If we want the mustache to add the button roles for us or do we have another aria role node?
      * @throws moodle_exception If the implementor incorrectly call this module.
      */
     public function __construct(
@@ -75,7 +79,8 @@ class gradebook_dropdown implements renderable, templatable {
         ?string $parentclasses = null,
         ?string $buttonclasses = null,
         ?string $dropdownclasses = null,
-        ?string $buttonheader = null
+        ?string $buttonheader = null,
+        ?bool $usebutton = true
     ) {
         // Ensure implementors cant request to render the content now and not provide us any to show.
         if (!$renderlater && empty($dropdowncontent)) {
@@ -94,6 +99,7 @@ class gradebook_dropdown implements renderable, templatable {
         $this->buttonclasses = $buttonclasses;
         $this->dropdownclasses = $dropdownclasses;
         $this->buttonheader = $buttonheader;
+        $this->usesbutton = $usebutton;
     }
 
     /**
@@ -112,6 +118,7 @@ class gradebook_dropdown implements renderable, templatable {
             'buttonclasses' => $this->buttonclasses,
             'dropdownclasses' => $this->dropdownclasses,
             'buttonheader' => $this->buttonheader,
+            'usebutton' => $this->usesbutton,
         ];
     }
 

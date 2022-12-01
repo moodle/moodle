@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,15 +14,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details for the grader report
+ * A repo for the search partial in the grader report.
  *
- * @package    gradereport_grader
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @module    gradereport_grader/search/repository
+ * @copyright 2022 Mathew May <mathew.solutions>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+import ajax from 'core/ajax';
 
-$plugin->version   = 2023032702;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2022111800;        // Requires this Moodle version.
-$plugin->component = 'gradereport_grader'; // Full name of the plugin (used for diagnostics)
+/**
+ * Given a course ID, we want to fetch the learners within this report.
+ *
+ * @method userFetch
+ * @param {int} courseid ID of the course to fetch the users of.
+ * @return {object} jQuery promise
+ */
+export const userFetch = (courseid) => {
+    const request = {
+        methodname: 'gradereport_grader_get_users_in_report',
+        args: {
+            courseid: courseid,
+        },
+    };
+    return ajax.call([request])[0];
+};
