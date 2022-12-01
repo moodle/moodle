@@ -32,7 +32,11 @@
 <div id="{{uniqid}}-reactive-debugpanel" class="py-1">
     <div>
         {{#str}} reactive_instances , core_debug {{/str}}
-        <span data-for="loaders">{{#str}} reactive_noinstances , core_debug {{/str}}</span>
+        <span data-for="loaders">
+            <span data-for="noinstances">
+                {{#str}} reactive_noinstances , core_debug {{/str}}
+            </span>
+        </span>
     </div>
     <div data-for="subpanel">
         {{> core/loading }}
