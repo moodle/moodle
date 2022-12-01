@@ -93,11 +93,15 @@ function xmldb_assignfeedback_editpdf_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022082200, 'assignfeedback', 'editpdf');
     }
 
+    // Automatically generated Moodle v4.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
     if ($oldversion < 2022112801) {
         $task = new \assignfeedback_editpdf\task\remove_orphaned_editpdf_files();
         \core\task\manager::queue_adhoc_task($task);
 
         upgrade_plugin_savepoint(true, 2022112801, 'assignfeedback', 'editpdf');
     }
+
     return true;
 }
