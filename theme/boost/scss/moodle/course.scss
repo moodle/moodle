@@ -1333,6 +1333,7 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         display: inline-block;
     }
 
+    // Legacy dndupload classes. Can be removed in 4.4 as part of MDL-77124.
     &.dndupload-dropzone {
         border: 2px dashed $primary;
         padding-left: 2px;
