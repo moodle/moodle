@@ -3034,5 +3034,16 @@ privatefiles,moodle|/user/files.php';
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2022112800.03) {
+
+        // Remove any orphaned role assignment records (pointing to non-existing roles).
+        $DB->delete_records_select('role_assignments', 'NOT EXISTS (
+            SELECT r.id FROM {role} r WHERE r.id = {role_assignments}.roleid
+        )');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022112800.03);
+    }
+
     return true;
 }
