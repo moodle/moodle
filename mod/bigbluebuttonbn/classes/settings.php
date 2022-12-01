@@ -85,8 +85,9 @@ class settings {
      * Add all settings.
      */
     public function add_all_settings(): void {
+        // Renders settings for welcome messages.
+        $this->add_defaultmessages_settings();
         // Evaluates if recordings are enabled for the Moodle site.
-
         // Renders settings for record feature.
         $this->add_record_settings();
         // Renders settings for import recordings.
@@ -188,37 +189,6 @@ class settings {
                 $item,
                 $settingsgeneral
             );
-            $settingsgeneral->add($item);
-            $item = new admin_setting_heading(
-                'bigbluebuttonbn_config_default_messages',
-                get_string('config_default_messages', 'bigbluebuttonbn'),
-                get_string('config_default_messages_description', 'bigbluebuttonbn')
-            );
-            $settingsgeneral->add($item);
-            $item = new admin_setting_configtextarea(
-                'bigbluebuttonbn_welcome_default',
-                get_string('config_welcome_default', 'bigbluebuttonbn'),
-                get_string('config_welcome_default_description', 'bigbluebuttonbn'),
-                '',
-                PARAM_TEXT
-            );
-            $this->add_conditional_element(
-                'welcome_default',
-                $item,
-                $settingsgeneral
-            );
-            $settingsgeneral->add($item);
-            $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_welcome_editable',
-                get_string('config_welcome_editable', 'bigbluebuttonbn'),
-                get_string('config_welcome_editable_description', 'bigbluebuttonbn'),
-                1,
-            );
-            $this->add_conditional_element(
-                'welcome_editable',
-                $item,
-                $settingsgeneral
-            );
             $item = new admin_setting_configtext(
                 'bigbluebuttonbn_poll_interval',
                 get_string('config_poll_interval', 'bigbluebuttonbn'),
@@ -233,6 +203,53 @@ class settings {
             );
         }
         return $settingsgeneral;
+    }
+
+    /**
+     * Helper function renders default messages settings if the feature is enabled.
+     */
+    protected function add_defaultmessages_settings(): void {
+        // Configuration for 'default messages' feature.
+        $defaultmessagessetting = new admin_settingpage(
+            "{$this->sectionnameprefix}_default_messages",
+            get_string('config_default_messages', 'bigbluebuttonbn'),
+            'moodle/site:config',
+            !((boolean) setting_validator::section_default_messages_shown()) && ($this->moduleenabled)
+        );
+
+        if ($this->admin->fulltree) {
+            $item = new admin_setting_heading(
+                'bigbluebuttonbn_config_default_messages',
+                '',
+                get_string('config_default_messages_description', 'bigbluebuttonbn')
+            );
+            $defaultmessagessetting->add($item);
+            $item = new admin_setting_configtextarea(
+                'bigbluebuttonbn_welcome_default',
+                get_string('config_welcome_default', 'bigbluebuttonbn'),
+                get_string('config_welcome_default_description', 'bigbluebuttonbn'),
+                '',
+                PARAM_TEXT
+            );
+            $this->add_conditional_element(
+                'welcome_default',
+                $item,
+                $defaultmessagessetting
+            );
+            $item = new admin_setting_configcheckbox(
+                'bigbluebuttonbn_welcome_editable',
+                get_string('config_welcome_editable', 'bigbluebuttonbn'),
+                get_string('config_welcome_editable_description', 'bigbluebuttonbn'),
+                1,
+            );
+            $this->add_conditional_element(
+                'welcome_editable',
+                $item,
+                $defaultmessagessetting
+            );
+        }
+        $this->admin->add($this->parent, $defaultmessagessetting);
+
     }
 
     /**
