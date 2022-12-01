@@ -42,7 +42,7 @@ Feature: Export calendar events
     When I click on "Import or export calendars" "link"
     And I click on "Export calendar" "button"
     And I set the field "All events" to "1"
-    And I set the field "This month" to "1"
+    And I set the field "Recent and next 60 days" to "1"
     And I press "Export"
     And I should see "SUMMARY:My event"
     # We need to split the step in two because Bennu library use days with leading zero and moodle removes it.
