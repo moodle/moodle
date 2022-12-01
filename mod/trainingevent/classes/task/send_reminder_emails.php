@@ -49,7 +49,7 @@ class send_reminder_emails extends \core\task\scheduled_task {
         $runtime = time();
 
         // Get all of the training events which have reminders set and not already passed.
-        if ($trainingevents = $DB->get_records_sql("SELECT * FROM {trainingevents}
+        if ($trainingevents = $DB->get_records_sql("SELECT * FROM {trainingevent}
                                                     WHERE sendreminder > 0
                                                     AND startdatetime < :now",
                                                     ['now' => $runtime])) {
