@@ -29,7 +29,10 @@ class activitybadge extends \core_courseformat\output\activitybadge {
      * This method will be called before exporting the template.
      */
     protected function update_content(): void {
-        $options = (object) ['displayoptions' => $this->cminfo->customdata['displayoptions']];
-        $this->content = resource_get_optional_filetype($options, $this->cminfo);
+        $customdata = $this->cminfo->customdata;
+        if (is_array($customdata) && isset($customdata['displayoptions'])) {
+            $options = (object) ['displayoptions' => $customdata['displayoptions']];
+            $this->content = resource_get_optional_filetype($options, $this->cminfo);
+        }
     }
 }
