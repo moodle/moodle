@@ -12,6 +12,7 @@ MDL-73624 needs to fix with a couple of minor changes to
 Writer/WriterAbstract.php. The changes replace rawurldecode() with
 rawurlencode() in lines 143 and 144.
 by Meirza <meirza.arson@moodle.com>
+MDL-76494 compatibility for PHP 8.1
 
 2021/09/01
 ----------

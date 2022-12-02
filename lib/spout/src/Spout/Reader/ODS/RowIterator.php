@@ -118,6 +118,7 @@ class RowIterator implements IteratorInterface
      * @throws \Box\Spout\Reader\Exception\IteratorNotRewindableException If the iterator is rewound more than once
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         // Because sheet and row data is located in the file, we can't rewind both the
@@ -142,6 +143,7 @@ class RowIterator implements IteratorInterface
      *
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return (!$this->hasReachedEndOfFile);
@@ -155,6 +157,7 @@ class RowIterator implements IteratorInterface
      * @throws \Box\Spout\Common\Exception\IOException If unable to read the sheet data XML
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         if ($this->doesNeedDataForNextRowToBeProcessed()) {
@@ -356,6 +359,7 @@ class RowIterator implements IteratorInterface
      *
      * @return Row
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->rowBuffer;
@@ -367,6 +371,7 @@ class RowIterator implements IteratorInterface
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->lastRowIndexProcessed;
@@ -377,6 +382,7 @@ class RowIterator implements IteratorInterface
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function end()
     {
         $this->xmlReader->close();
