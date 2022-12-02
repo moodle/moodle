@@ -323,7 +323,7 @@ class qtype_multichoice_single_renderer extends qtype_multichoice_renderer_base 
         // Adds an hidden radio that will be checked to give the impression the choice has been cleared.
         $clearchoiceradio = html_writer::empty_tag('input', $clearchoiceradioattrs);
         $clearchoice = html_writer::link('#', get_string('clearchoice', 'qtype_multichoice'),
-            ['tabindex' => $linktabindex, 'role' => 'button', 'class' => 'btn btn-link ml-3 mt-n1 mb-n1']);
+            ['tabindex' => $linktabindex, 'role' => 'button', 'class' => 'btn btn-link ml-3 mt-n1']);
         $clearchoiceradio .= html_writer::label($clearchoice, $clearchoiceid);
 
         // Now wrap the radio and label inside a div.
