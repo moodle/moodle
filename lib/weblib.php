@@ -1108,7 +1108,12 @@ function page_get_doc_link_path(moodle_page $page) {
  */
 function validate_email($address) {
     global $CFG;
-    require_once($CFG->libdir.'/phpmailer/moodle_phpmailer.php');
+
+    if ($address === null || $address === '') {
+        return false;
+    }
+
+    require_once("{$CFG->libdir}/phpmailer/moodle_phpmailer.php");
 
     return moodle_phpmailer::validateAddress($address) && !preg_match('/[<>]/', $address);
 }

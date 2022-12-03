@@ -595,6 +595,20 @@ EXPECTED;
                 'result' => false
             ],
 
+            // Empty e-mail addresess are not valid.
+            [
+                'email' => '',
+                'result' => false,
+            ],
+            [
+                'email' => null,
+                'result' => false,
+            ],
+            [
+                'email' => false,
+                'result' => false,
+            ],
+
             // Extra email addresses from Wikipedia page on Email Addresses.
             // Valid.
             [
