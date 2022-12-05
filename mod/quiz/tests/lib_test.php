@@ -24,6 +24,8 @@
  */
 namespace mod_quiz;
 
+use mod_quiz\external\submit_question_version;
+use mod_quiz\question\bank\qbank_helper;
 use quiz;
 use quiz_attempt;
 
@@ -1195,5 +1197,78 @@ class lib_test extends \advanced_testcase {
             'timeclose' => $time + 2000,
         );
         $generator->create_instance($params);
+    }
+
+    /**
+     * Data provider for summarise_response() test cases.
+     *
+     * @return array List of data sets (test cases)
+     */
+    public function mod_quiz_inplace_editable_provider(): array {
+        return [
+            'slot 1 customised to A1, displayednumber is A1'  => [1, 'A1'],
+            'slot 2 customised to "A2", displayednumber is A2'  => [2, 'A2'],
+            'slot 3 is not customised, displayednumber is 3'  => [3, '3'],
+            'slot 4 customised to "", displayednumber is 4'  => [4, '']
+        ];
+    }
+
+    /**
+     * Test customised and automated question numbering for a given slot number and customised value.
+     *
+     * @dataProvider mod_quiz_inplace_editable_provider
+     * @param int $slotnumber
+     * @param string $newvalue
+     * @covers ::mod_quiz_inplace_editable
+     */
+    public function test_mod_quiz_inplace_editable(int $slotnumber, string $newvalue): void {
+        global $CFG;
+        require_once($CFG->dirroot . '/lib/external/externallib.php');
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        $course = self::getDataGenerator()->create_course();
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id, 'sumgrades' => 1]);
+        $cm = get_coursemodule_from_id('quiz', $quiz->cmid);
+
+        // Add few questions to the quiz.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category();
+
+        $question = $questiongenerator->create_question('truefalse', null, ['category' => $cat->id]);
+        quiz_add_quiz_question($question->id, $quiz);
+
+        $question = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        quiz_add_quiz_question($question->id, $quiz);
+
+        $question = $questiongenerator->create_question('multichoice', null, ['category' => $cat->id]);
+        quiz_add_quiz_question($question->id, $quiz);
+
+        $question = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
+        quiz_add_quiz_question($question->id, $quiz);
+
+        // Create the quiz object.
+        $quizobj = new quiz($quiz, $cm, $course);
+        $structure = $quizobj->get_structure();
+
+        $slots = $structure->get_slots();
+        $this->assertEquals(4, count($slots));
+
+        $slotid = $structure->get_slot_id_for_slot($slotnumber);
+        $inplaceeditable = mod_quiz_inplace_editable('slotdisplaynumber', $slotid, $newvalue);
+        $res = \core_external::update_inplace_editable('mod_quiz', 'slotdisplaynumber', $slotid, $newvalue);
+        $res = \external_api::clean_returnvalue(\core_external::update_inplace_editable_returns(), $res);
+
+        $this->assertEquals(count((array) $inplaceeditable), count($res));
+        $this->assertEquals($slotid, $res['itemid']);
+        if ($newvalue === '' || is_null($newvalue)) {
+            // Process automated numbering.
+            $this->assertEquals($slotnumber, $res['displayvalue']);
+            $this->assertEquals($slotnumber, $res['value']);
+        } else {
+            // Process customised numbering.
+            $this->assertEquals($newvalue, $res['displayvalue']);
+            $this->assertEquals($newvalue, $res['value']);
+        }
     }
 }

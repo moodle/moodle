@@ -715,9 +715,9 @@ class quiz_attempt {
 
         $this->quba = question_engine::load_questions_usage_by_activity($this->attempt->uniqueid);
         $this->slots = $DB->get_records('quiz_slots',
-                array('quizid' => $this->get_quizid()), 'slot', 'slot, id, requireprevious');
+                ['quizid' => $this->get_quizid()], 'slot', 'slot, id, requireprevious, displaynumber');
         $this->sections = array_values($DB->get_records('quiz_sections',
-                array('quizid' => $this->get_quizid()), 'firstslot'));
+                ['quizid' => $this->get_quizid()], 'firstslot'));
 
         $this->link_sections_and_slots();
         $this->determine_layout();
@@ -796,7 +796,12 @@ class quiz_attempt {
         foreach ($this->pagelayout as $page => $slots) {
             foreach ($slots as $slot) {
                 if ($length = $this->is_real_question($slot)) {
-                    $this->questionnumbers[$slot] = $number;
+                    // Whether question numbering is customised or is numeric and automatically incremented.
+                    if (!empty($this->slots[$slot]->displaynumber) && !is_null($this->slots[$slot]->displaynumber)) {
+                        $this->questionnumbers[$slot] = $this->slots[$slot]->displaynumber;
+                    } else {
+                        $this->questionnumbers[$slot] = $number;
+                    }
                     $number += $length;
                 } else {
                     $this->questionnumbers[$slot] = get_string('infoshort', 'quiz');

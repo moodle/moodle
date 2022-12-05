@@ -22,6 +22,7 @@ use qubaid_condition;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/question/engine/bank.php');
 require_once($CFG->dirroot . '/mod/quiz/accessmanager.php');
 require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 
@@ -108,6 +109,7 @@ class qbank_helper {
                        slot.id AS slotid,
                        slot.page,
                        slot.maxmark,
+                       slot.displaynumber,
                        slot.requireprevious,
                        qsr.filtercondition,
                        qv.status,

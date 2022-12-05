@@ -589,7 +589,6 @@ table.quizreviewsummary td.cell {
 }
 
 #page-mod-quiz-edit .slotnumber {
-    background-color: #d3d3d3;
     text-align: center;
     margin: 0.1em 0.5em;
     min-width: 2em;
@@ -1100,6 +1099,47 @@ table#categoryquestions {
 /* Base theme needs extra support. */
 #page-mod-quiz-edit ul.slots li.section ul.section {
     list-style: none;
+}
+
+#page-mod-quiz-edit .inplaceeditable {
+    box-sizing: border-box;
+    background: #fdfdfe;
+    display: inline-block;
+    margin: 2px;
+    padding: 0.5em 0 0.5em 0.1em;
+}
+#page-mod-quiz-edit .inplaceeditable.inplaceeditingon input {
+    width: 64px;
+    vertical-align: middle;
+}
+#page-mod-quiz-edit .inplaceeditable-text {
+    color: #000;
+    text-align: right;
+}
+#page-mod-quiz-edit .inplaceeditable .quickeditlink {
+    color: #0f6cbf;
+    text-decoration: none;
+    background-color: transparent;
+    padding-left: 1px;
+    margin: 0;
+}
+#page-mod-quiz-edit .qickeditlink .aalink {
+    color: #0f6cbf;
+    text-align: right;
+    width: 10px;
+    margin: 2px;
+}
+#page-mod-quiz-edit .qickedition {
+    color: #0f6cbf;
+    text-align: right;
+    width: 10px;
+    margin: 2px;
+}
+#page-mod-quiz-edit .qickedition .visibleifjs {
+    text-align: right;
+}
+#page-mod-quiz-edit .qickeditlink {
+    text-align: right;
 }
 
 @media (max-width: 576px) {

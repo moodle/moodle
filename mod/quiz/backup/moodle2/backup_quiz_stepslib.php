@@ -49,7 +49,8 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         $qinstances = new backup_nested_element('question_instances');
 
         $qinstance = new backup_nested_element('question_instance', ['id'],
-            ['slot', 'page', 'requireprevious', 'questionid', 'questioncategoryid', 'includingsubcategories', 'maxmark']);
+            ['slot', 'page', 'displaynumber', 'requireprevious', 'questionid',
+                    'questioncategoryid', 'includingsubcategories', 'maxmark']);
 
         $this->add_question_references($qinstance, 'mod_quiz', 'slot');
 
