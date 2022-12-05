@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Mustache helper that will add JS to the end of the page.
- *
- * @package    core
- * @category   output
- * @copyright  2015 Damyon Wiese
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\output;
 
 /**
@@ -34,13 +25,13 @@ namespace core\output;
  */
 class mustache_javascript_helper {
 
-    /** @var moodle_page $page - Page used to get requirement manager */
+    /** @var \moodle_page $page - Page used to get requirement manager */
     private $page = null;
 
     /**
      * Create new instance of mustache javascript helper.
      *
-     * @param moodle_page $page Page.
+     * @param \moodle_page $page Page.
      */
     public function __construct($page) {
         $this->page = $page;
@@ -50,10 +41,14 @@ class mustache_javascript_helper {
      * Add the block of text to the page requires so it is appended in the footer. The
      * content of the block can contain further mustache tags which will be resolved.
      *
+     * This function will always return an empty string because the JS is added to the page via the requirements manager.
+     *
      * @param string $text The script content of the section.
      * @param \Mustache_LambdaHelper $helper Used to render the content of this block.
+     * @return string The text of the block
      */
     public function help($text, \Mustache_LambdaHelper $helper) {
         $this->page->requires->js_amd_inline($helper->render($text));
+        return '';
     }
 }
