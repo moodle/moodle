@@ -384,7 +384,7 @@ class quiz_grading_report extends quiz_default_report {
 
             $row[] = $this->questions[$counts->slot]->number;
 
-            $row[] = $PAGE->get_renderer('question', 'bank')->qtype_icon($this->questions[$counts->slot]->type);
+            $row[] = $PAGE->get_renderer('question', 'bank')->qtype_icon($this->questions[$counts->slot]->qtype);
 
             $row[] = format_string($counts->name);
 
