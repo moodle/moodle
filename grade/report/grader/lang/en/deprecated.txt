@@ -1,0 +1,2 @@
+privacy:metadata:preference:grade_report_showquickfeedback,gradereport_grader
+useractivityfeedback,gradereport_grader

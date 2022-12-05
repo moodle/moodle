@@ -64,19 +64,6 @@ class behat_gradereport_grader extends behat_base {
     }
 
     /**
-     * Remove focus for a grade value cell.
-     *
-     * @Given /^I click away from student "([^"]*)" and grade item "([^"]*)" feedback$/
-     * @param string $student
-     * @param string $itemname
-     */
-    public function i_click_away_from_student_and_grade_feedback($student, $itemname) {
-        $xpath = $this->get_student_and_grade_feedback_selector($student, $itemname);
-
-        $this->execute('behat_general::i_take_focus_off_field', array($this->escape($xpath), 'xpath_element'));
-    }
-
-    /**
      * Checks grade values with or without a edit box.
      *
      * @Then /^the grade for "([^"]*)" in grade item "([^"]*)" should match "([^"]*)"$/
@@ -133,19 +120,6 @@ class behat_gradereport_grader extends behat_base {
     }
 
     /**
-     * Look for a feedback editing field.
-     *
-     * @Then /^I should see a feedback field for "([^"]*)" and grade item "([^"]*)"$/
-     * @param string $student
-     * @param string $itemname
-     */
-    public function i_should_see_feedback_field($student, $itemname) {
-        $xpath = $this->get_student_and_grade_feedback_selector($student, $itemname);
-
-        $this->execute('behat_general::should_be_visible', array($this->escape($xpath), 'xpath_element'));
-    }
-
-    /**
      * Look for a lack of the grade editing field.
      *
      * @Then /^I should not see a grade field for "([^"]*)" and grade item "([^"]*)"$/
@@ -154,19 +128,6 @@ class behat_gradereport_grader extends behat_base {
      */
     public function i_should_not_see_grade_field($student, $itemname) {
         $xpath = $this->get_student_and_grade_value_selector($student, $itemname);
-
-        $this->execute('behat_general::should_not_exist', array($this->escape($xpath), 'xpath_element'));
-    }
-
-    /**
-     * Look for a lack of the feedback editing field.
-     *
-     * @Then /^I should not see a feedback field for "([^"]*)" and grade item "([^"]*)"$/
-     * @param string $student
-     * @param string $itemname
-     */
-    public function i_should_not_see_feedback_field($student, $itemname) {
-        $xpath = $this->get_student_and_grade_feedback_selector($student, $itemname);
 
         $this->execute('behat_general::should_not_exist', array($this->escape($xpath), 'xpath_element'));
     }
@@ -244,19 +205,6 @@ class behat_gradereport_grader extends behat_base {
     protected function get_student_and_grade_value_selector($student, $itemname) {
         $cell = $this->get_student_and_grade_cell_selector($student, $itemname);
         return $cell . "//*[contains(@id, 'grade_') or @name='ajaxgrade']";
-    }
-
-    /**
-     * Gets xpath for a particular student/grade item feedback cell.
-     *
-     * @throws Exception
-     * @param string $student
-     * @param string $itemname
-     * @return string
-     */
-    protected function get_student_and_grade_feedback_selector($student, $itemname) {
-        $cell = $this->get_student_and_grade_cell_selector($student, $itemname);
-        return $cell . "//input[contains(@id, 'feedback_') or @name='ajaxfeedback']";
     }
 
 }

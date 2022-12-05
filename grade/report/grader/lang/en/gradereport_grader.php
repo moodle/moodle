@@ -50,12 +50,14 @@ $string['privacy:metadata:preference:grade_report_showeyecons'] = 'Whether to di
 $string['privacy:metadata:preference:grade_report_showlocks'] = 'Whether to display a lock/unlock icon for each grade for controlling if the grade can be automatically updated by the related activity when editing is turned on';
 $string['privacy:metadata:preference:grade_report_shownumberofgrades'] = 'Whether to display in brackets after each average the number of grades used when calculating the average';
 $string['privacy:metadata:preference:grade_report_showonlyactiveenrol'] = 'Whether to display only active enrolled users (not suspended) in gradebook report or all the enrolled users';
-$string['privacy:metadata:preference:grade_report_showquickfeedback'] = 'Whether to display a feedback text input box with a dotted border for each grade, allowing the feedback for many grades to be edited at the same time';
 $string['privacy:metadata:preference:grade_report_showranges'] = 'Whether to display an additional row with the range for each category and grade item';
 $string['privacy:metadata:preference:grade_report_showuserimage'] = 'Whether to show the user\'s profile image next to the name';
 $string['privacy:metadata:preference:grade_report_studentsperpage'] = 'The number of students displayed per page in the grader report';
 $string['privacy:request:preference:grade_report_grader_collapsed_categories'] = 'You have some gradebook categories collapsed in the "{$a->name}" course';
 $string['summarygrader'] = 'A table with the names of students in the first column, with assessable activities grouped by course and category across the top.';
 $string['useractivitygrade'] = '{$a} grade';
-$string['useractivityfeedback'] = '{$a} feedback';
 $string['overriddengrade'] = 'Overridden grade';
+
+// Deprecated since Moodle 4.2.
+$string['privacy:metadata:preference:grade_report_showquickfeedback'] = 'Whether to display a feedback text input box with a dotted border for each grade, allowing the feedback for many grades to be edited at the same time';
+$string['useractivityfeedback'] = '{$a} feedback';

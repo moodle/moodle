@@ -70,3 +70,5 @@ placeholdertypeorselect,core_user
 selectfiltertype,core_user
 confirmaddadmin,core_role
 confirmdeladmin,core_role
+showquickfeedback,core_grades
+showquickfeedback_help,core_grades

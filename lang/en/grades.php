@@ -805,10 +805,6 @@ $string['showonlyactiveenrol'] = 'Show only active enrolments';
 $string['showonlyactiveenrol_help'] = 'This setting determines, if only active enrolled users will be visible in gradebook report. If enabled suspended users will not be shown in gradebook.';
 $string['showpercentage'] = 'Show percentage';
 $string['showpercentage_help'] = 'Whether to show the percentage value of each grade item.';
-$string['showquickfeedback'] = 'Show quick feedback';
-$string['showquickfeedback_help'] = 'If enabled, when editing is turned on, a feedback text input box with a dotted border appears for each grade, allowing the feedback for many grades to be edited at the same time. Changes are saved and highlighted when the update button is clicked.
-
-Note that when feedback is edited in the grader report, an overridden flag is set, meaning that the feedback can no longer be changed from within the related activity.';
 $string['showranges'] = 'Show ranges';
 $string['showranges_help'] = 'If enabled, the grader report will contain an additional row displaying the range for each category and grade item.';
 $string['showrank'] = 'Show rank';
@@ -912,3 +908,9 @@ $string['navmethod'] = 'Navigation method';
 $string['dropdown'] = 'Drop-down menu';
 $string['tabs'] = 'Tabs';
 $string['combo'] = 'Tabs and drop-down menu';
+
+// Deprecated since Moodle 4.2.
+$string['showquickfeedback'] = 'Show quick feedback';
+$string['showquickfeedback_help'] = 'If enabled, when editing is turned on, a feedback text input box with a dotted border appears for each grade, allowing the feedback for many grades to be edited at the same time. Changes are saved and highlighted when the update button is clicked.
+
+Note that when feedback is edited in the grader report, an overridden flag is set, meaning that the feedback can no longer be changed from within the related activity.';

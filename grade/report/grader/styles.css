@@ -178,14 +178,6 @@
     text-align: center;
 }
 
-.path-grade-report-grader .gradeparent .quickfeedback {
-    border: 1px dashed #000;
-    width: auto;
-    margin: 0;
-    padding: 0;
-    margin-left: 10px;
-}
-
 .path-grade-report-grader .yui3-overlay {
     border: 0;
     background: none;

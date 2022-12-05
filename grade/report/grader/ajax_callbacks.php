@@ -50,7 +50,7 @@ switch ($action) {
         require_capability('moodle/grade:edit', $context);
 
         if (!empty($userid) && !empty($itemid) && $newvalue !== false && !empty($type)) {
-            // Save the grade or feedback
+            // Save the grade
             if (!$grade_item = grade_item::fetch(array('id'=>$itemid, 'courseid'=>$courseid))) { // we must verify course id here!
                 throw new \moodle_exception('invalidgradeitemid');
             }
@@ -61,12 +61,9 @@ switch ($action) {
             $warnings = array();
             $finalvalue = null;
             $finalgrade = null;
-            $feedback = null;
             $json_object = new stdClass();
             // Pre-process grade
             if ($type == 'value' || $type == 'scale') {
-                $feedback = false;
-                $feedbackformat = false;
                 if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
                     if ($newvalue == -1) { // -1 means no grade
                         $finalgrade = null;
@@ -102,17 +99,6 @@ switch ($action) {
                 }
 
                 $finalvalue = $finalgrade;
-
-            } else if ($type == 'feedback') {
-                $finalgrade = false;
-                $trimmed = trim($newvalue);
-                if (empty($trimmed)) {
-                    $feedback = NULL;
-                } else {
-                    $feedback = $newvalue;
-                }
-
-                $finalvalue = $feedback;
             }
 
             if (!empty($json_object->result) && $json_object->result == 'error') {
@@ -121,7 +107,7 @@ switch ($action) {
             } else {
                 $json_object->gradevalue = $finalvalue;
 
-                if ($grade_item->update_final_grade($userid, $finalgrade, 'gradebook', $feedback, FORMAT_MOODLE)) {
+                if ($grade_item->update_final_grade($userid, $finalgrade, 'gradebook', false, FORMAT_MOODLE)) {
                     $json_object->result = 'success';
                     $json_object->message = false;
                 } else {

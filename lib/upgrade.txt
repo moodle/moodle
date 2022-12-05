@@ -3,6 +3,7 @@ information provided here is intended especially for developers.
 
 === 4.2 ===
 
+* 'Quick feedback' interface has been deprecated for grader report
 * \single_button constructor signature has been changed to manage more types than just primary buttons.
   The boolean "primary" parameter has been deprecated and replaced by a more generic type allowing to use
   Bootstrap styles of buttons (danger, warning...). The constructor will still manage the boolean primary

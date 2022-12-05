@@ -103,13 +103,6 @@ class grade_report_grader extends grade_report {
     public $canviewhidden;
 
     /**
-     * Length at which feedback will be truncated (to the nearest word) and an ellipsis be added.
-     * TODO replace this by a report preference
-     * @var int $feedback_trunc_length
-     */
-    protected $feedback_trunc_length = 50;
-
-    /**
      * Allow category grade overriding
      * @var bool $overridecat
      */
@@ -168,7 +161,7 @@ class grade_report_grader extends grade_report {
     }
 
     /**
-     * Processes the data sent by the form (grades and feedbacks).
+     * Processes the data sent by the form (grades).
      * Caller is responsible for all access control checks
      * @param array $data form submission (with magic quotes)
      * @return array empty array if success, array of warnings if something fails.
@@ -206,11 +199,9 @@ class grade_report_grader extends grade_report {
 
             $needsupdate = false;
 
-            // skip, not a grade nor feedback
+            // skip, not a grade
             if (strpos($varname, 'grade') === 0) {
                 $datatype = 'grade';
-            } else if (strpos($varname, 'feedback') === 0) {
-                $datatype = 'feedback';
             } else {
                 continue;
             }
@@ -245,15 +236,6 @@ class grade_report_grader extends grade_report {
                         }
 
                         $changedgrades = true;
-
-                    } else if ($datatype === 'feedback') {
-                        // If quick grading is on, feedback needs to be compared without line breaks.
-                        if ($this->get_pref('quickgrading')) {
-                            $oldvalue->feedback = preg_replace("/\r\n|\r|\n/", "", $oldvalue->feedback);
-                        }
-                        if (($oldvalue->feedback === $postedvalue) or ($oldvalue->feedback === null and empty($postedvalue))) {
-                            continue;
-                        }
                     }
 
                     if (!$gradeitem = grade_item::fetch(array('id'=>$itemid, 'courseid'=>$this->courseid))) {
@@ -262,8 +244,6 @@ class grade_report_grader extends grade_report {
 
                     // Pre-process grade
                     if ($datatype == 'grade') {
-                        $feedback = false;
-                        $feedbackformat = false;
                         if ($gradeitem->gradetype == GRADE_TYPE_SCALE) {
                             if ($postedvalue == -1) { // -1 means no grade
                                 $finalgrade = null;
@@ -305,15 +285,6 @@ class grade_report_grader extends grade_report {
                                 continue;
                             }
                         }
-
-                    } else if ($datatype == 'feedback') {
-                        $finalgrade = false;
-                        $trimmed = trim($postedvalue);
-                        if (empty($trimmed)) {
-                             $feedback = null;
-                        } else {
-                             $feedback = $postedvalue;
-                        }
                     }
 
                     // group access control
@@ -334,13 +305,8 @@ class grade_report_grader extends grade_report {
                         }
                     }
 
-                    $gradeitem->update_final_grade($userid, $finalgrade, 'gradebook', $feedback,
+                    $gradeitem->update_final_grade($userid, $finalgrade, 'gradebook', false,
                         FORMAT_MOODLE, null, null, true);
-
-                    // We can update feedback without reloading the grade item as it doesn't affect grade calculations
-                    if ($datatype === 'feedback') {
-                        $this->grades[$userid][$itemid]->feedback = $feedback;
-                    }
                 }
             }
         }
@@ -643,8 +609,6 @@ class grade_report_grader extends grade_report {
         $hasuserreportcell = $canseeuserreport || $canseesingleview;
         $viewfullnames = has_capability('moodle/site:viewfullnames', $this->context);
 
-        $strfeedback  = $this->get_lang_string("feedback");
-
         $extrafields = \core_user\fields::get_identity_fields($this->context);
 
         $arrows = $this->get_sort_arrows($extrafields);
@@ -806,14 +770,12 @@ class grade_report_grader extends grade_report {
         $gradetabindex = 1;
         $columnstounset = array();
         $strgrade = $this->get_lang_string('gradenoun');
-        $strfeedback  = $this->get_lang_string("feedback");
         $arrows = $this->get_sort_arrows();
 
         $jsarguments = array(
             'cfg'       => array('ajaxenabled'=>false),
             'items'     => array(),
             'users'     => array(),
-            'feedback'  => array(),
             'grades'    => array()
         );
         $jsscales = array();
@@ -821,7 +783,6 @@ class grade_report_grader extends grade_report {
         // Get preferences once.
         $showactivityicons = $this->get_pref('showactivityicons');
         $quickgrading = $this->get_pref('quickgrading');
-        $showquickfeedback = $this->get_pref('showquickfeedback');
         $enableajax = $this->get_pref('enableajax');
         $showanalysisicon = $this->get_pref('showanalysisicon');
 
@@ -956,7 +917,6 @@ class grade_report_grader extends grade_report {
                 $jsarguments['items'][$itemid] = array('id'=>$itemid, 'name'=>$item->get_name(true), 'type'=>'value', 'scale'=>false, 'decimals'=>$item->get_decimals());
             }
             $tabindices[$item->id]['grade'] = $gradetabindex;
-            $tabindices[$item->id]['feedback'] = $gradetabindex + $numusers;
             $gradetabindex += $numusers * 2;
         }
         $scalesarray = array();
@@ -1051,12 +1011,6 @@ class grade_report_grader extends grade_report {
                 if ($grade->is_overridden()) {
                     $itemcell->attributes['class'] .= ' overridden';
                     $itemcell->attributes['aria-label'] = get_string('overriddengrade', 'gradereport_grader');
-                }
-
-                if (!empty($grade->feedback)) {
-                    $feedback = wordwrap(trim(format_string($grade->feedback, $grade->feedbackformat)), 34, '<br>');
-                    $itemcell->attributes['data-feedback'] = $feedback;
-                    $jsarguments['feedback'][] = array('user'=>$userid, 'item'=>$itemid, 'content' => $feedback);
                 }
 
                 if ($grade->is_excluded()) {
@@ -1158,15 +1112,6 @@ class grade_report_grader extends grade_report {
                         }
                     }
 
-                    // If quickfeedback is on, print an input element
-                    if ($showquickfeedback and $grade->is_editable()) {
-                        $feedbacklabel = $fullname . ' ' . $item->get_name(true);
-                        $itemcell->text .= '<label class="accesshide" for="feedback_'.$userid.'_'.$item->id.'">'
-                                      .get_string('useractivityfeedback', 'gradereport_grader', $feedbacklabel).'</label>';
-                        $itemcell->text .= '<input class="quickfeedback" tabindex="' . $tabindices[$item->id]['feedback'].'" id="feedback_'.$userid.'_'.$item->id
-                                      . '" size="6" title="' . $strfeedback . '" type="text" name="feedback['.$userid.']['.$item->id.']" value="' . s($grade->feedback) . '" />';
-                    }
-
                 } else { // Not editing
                     $gradedisplaytype = $item->get_displaytype();
 
@@ -1180,8 +1125,8 @@ class grade_report_grader extends grade_report {
 
                     // Only allow edting if the grade is editable (not locked, not in a unoverridable category, etc).
                     if ($enableajax && $grade->is_editable()) {
-                        // If a grade item is type text, and we don't have show quick feedback on, it can't be edited.
-                        if ($item->gradetype != GRADE_TYPE_TEXT || $showquickfeedback) {
+                        // If a grade item is type text, it can't be edited.
+                        if ($item->gradetype != GRADE_TYPE_TEXT) {
                             $itemcell->attributes['class'] .= ' clickable';
                         }
                     }
@@ -1205,8 +1150,8 @@ class grade_report_grader extends grade_report {
 
                 // Enable keyboard navigation if the grade is editable (not locked, not in a unoverridable category, etc).
                 if ($enableajax && $grade->is_editable()) {
-                    // If a grade item is type text, and we don't have show quick feedback on, it can't be edited.
-                    if ($item->gradetype != GRADE_TYPE_TEXT || $showquickfeedback) {
+                    // If a grade item is type text, it can't be edited.
+                    if ($item->gradetype != GRADE_TYPE_TEXT) {
                         $itemcell->attributes['class'] .= ' gbnavigable';
                     }
                 }
@@ -1227,14 +1172,12 @@ class grade_report_grader extends grade_report {
                 // Trim the scale values, as they may have a space that is ommitted from values later.
                 $jsarguments['cfg']['scales'][$scale->id] = array_map('trim', explode(',', $scale->scale));
             }
-            $jsarguments['cfg']['feedbacktrunclength'] =  $this->feedback_trunc_length;
 
-            // Student grades and feedback are already at $jsarguments['feedback'] and $jsarguments['grades']
+            // Student grades are already at $jsarguments['grades']
         }
         $jsarguments['cfg']['isediting'] = !empty($USER->editing);
         $jsarguments['cfg']['courseid'] = $this->courseid;
         $jsarguments['cfg']['studentsperpage'] = $this->get_students_per_page();
-        $jsarguments['cfg']['showquickfeedback'] = (bool) $showquickfeedback;
 
         $module = array(
             'name'      => 'gradereport_grader',
@@ -1242,7 +1185,7 @@ class grade_report_grader extends grade_report {
             'requires'  => array('base', 'dom', 'event', 'event-mouseenter', 'event-key', 'io-queue', 'json-parse', 'overlay')
         );
         $PAGE->requires->js_init_call('M.gradereport_grader.init_report', $jsarguments, false, $module);
-        $PAGE->requires->strings_for_js(array('addfeedback', 'feedback', 'grade'), 'grades');
+        $PAGE->requires->strings_for_js(array('grade'), 'grades');
         $PAGE->requires->strings_for_js(array('ajaxchoosescale', 'ajaxclicktoclose', 'ajaxerror', 'ajaxfailedupdate', 'ajaxfieldchanged'), 'gradereport_grader');
         if (!$enableajax && !empty($USER->editing)) {
             $PAGE->requires->js_call_amd('core_form/changechecker', 'watchFormById', ['gradereport_grader']);

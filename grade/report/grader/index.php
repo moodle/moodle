@@ -131,7 +131,7 @@ if ($report->currentgroup == -2) {
 $warnings = [];
 $isediting = has_capability('moodle/grade:edit', $context) && isset($USER->editing) && $USER->editing;
 if ($isediting && ($data = data_submitted()) && confirm_sesskey()) {
-    // Processing posted grades & feedback here.
+    // Processing posted grades here.
     $warnings = $report->process_data($data);
 }
 
@@ -158,7 +158,7 @@ if ($numusers == 0) {
 $reporthtml = $report->get_grade_table($displayaverages);
 
 // print submit button
-if (!empty($USER->editing) && ($report->get_pref('showquickfeedback') || $report->get_pref('quickgrading'))) {
+if (!empty($USER->editing) && $report->get_pref('quickgrading')) {
     echo '<form action="index.php" enctype="application/x-www-form-urlencoded" method="post" id="gradereport_grader">'; // Enforce compatibility with our max_input_vars hack.
     echo '<div>';
     echo '<input type="hidden" value="'.s($courseid).'" name="id" />';

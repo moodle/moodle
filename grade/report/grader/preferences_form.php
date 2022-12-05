@@ -92,10 +92,9 @@ class grader_report_preferences_form extends moodleform {
             }
         }
 
-        // quickgrading and showquickfeedback are conditional on grade:edit capability
+        // Quickgrading use conditional on grade:edit capability.
         if (has_capability('moodle/grade:edit', $context)) {
             $preferences['prefgeneral']['quickgrading'] = $checkbox_default;
-            $preferences['prefgeneral']['showquickfeedback'] = $checkbox_default;
         }
 
         // View capability is the lowest permission. Users with grade:manage or grade:edit must also have grader:view

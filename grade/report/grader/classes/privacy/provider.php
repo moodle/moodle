@@ -69,7 +69,6 @@ class provider implements
         $items->add_user_preference('grade_report_shownumberofgrades', 'privacy:metadata:preference:grade_report_shownumberofgrades');
         // General preferences.
         $items->add_user_preference('grade_report_quickgrading', 'privacy:metadata:preference:grade_report_quickgrading');
-        $items->add_user_preference('grade_report_showquickfeedback', 'privacy:metadata:preference:grade_report_showquickfeedback');
         $items->add_user_preference('grade_report_studentsperpage', 'privacy:metadata:preference:grade_report_studentsperpage');
         $items->add_user_preference('grade_report_showonlyactiveenrol', 'privacy:metadata:preference:grade_report_showonlyactiveenrol');
         $items->add_user_preference('grade_report_aggregationposition', 'privacy:metadata:preference:grade_report_aggregationposition');
@@ -104,7 +103,6 @@ class provider implements
                 case 'grade_report_shownumberofgrades':
                 case 'grade_report_quickgrading':
                 case 'grade_report_showonlyactiveenrol':
-                case 'grade_report_showquickfeedback':
                 case 'grade_report_enableajax':
                     $prefname = $name;
                     $transformedvalue = transform::yesno($value);

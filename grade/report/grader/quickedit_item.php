@@ -70,7 +70,7 @@ $USER->grade_last_report[$course->id] = 'grader';
 // Initialise the grader report object
 $report = new grade_report_grader($courseid, $gpr, $context, $page);
 
-/// processing posted grades & feedback here
+/// processing posted grades here
 if ($data = data_submitted() and confirm_sesskey() and has_capability('moodle/grade:edit', $context)) {
     $warnings = $report->process_data($data);
 } else {

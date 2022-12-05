@@ -1,5 +1,5 @@
 @gradereport @gradereport_grader @javascript
-Feature: Using the AJAX grading feature of Grader report to update grades and feedback
+Feature: Using the AJAX grading feature of Grader report to update grades
   In order to use AJAX grading
   As a teacher
   I need to be able to update and verify grades
@@ -50,21 +50,18 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | grade_report_showaverages | 0 |
       | grade_report_enableajax | 1 |
 
-  Scenario: Use the grader report without editing, with AJAX on and quick feedback off
+  Scenario: Use the grader report without editing, with AJAX on
     When the following config values are set as admin:
       | grade_overridecat | 1 |
-      | grade_report_showquickfeedback | 0 |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I change window size to "large"
     And I click on student "Student 2" for grade item "Item VU"
     Then I should see a grade field for "Student 2" and grade item "Item VU"
-    And I should not see a feedback field for "Student 2" and grade item "Item VU"
     And I set the field "ajaxgrade" to "33"
     And I press the enter key
     And I should not see a grade field for "Student 2" and grade item "Item VU"
-    And I should not see a feedback field for "Student 2" and grade item "Item VU"
     And I click on student "Student 3" for grade item "Item SU"
     And I set the field "ajaxgrade" to "Very good"
     And I press the shift tab key
@@ -82,16 +79,12 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | Student 3          | 80.00    | 50.00    | Very good | 133.00       |
     And I click on student "Student 3" for grade item "Item VL"
     And I should not see a grade field for "Student 3" and grade item "Item VL"
-    And I should not see a feedback field for "Student 3" and grade item "Item VL"
     And I click on student "Student 3" for grade item "Item SL"
     And I should not see a grade field for "Student 3" and grade item "Item SL"
-    And I should not see a feedback field for "Student 3" and grade item "Item SL"
     And I click on student "Student 3" for grade item "Item TU"
     And I should not see a grade field for "Student 3" and grade item "Item TU"
-    And I should not see a feedback field for "Student 3" and grade item "Item TU"
     And I click on student "Student 1" for grade item "Course total"
     And I should see a grade field for "Student 1" and grade item "Course total"
-    And I should not see a feedback field for "Student 1" and grade item "Course total"
     And I set the field "ajaxgrade" to "90"
     And I press the enter key
     And the following should exist in the "user-grades" table:
@@ -104,82 +97,36 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | Student 2          | -     | 33.00 | -         | 33.00     |
       | Student 3          | 80.00 | 50.00 | Very good | 133.00    |
 
-  Scenario: Use the grader report without editing, with AJAX and quick feedback on
-    When the following config values are set as admin:
-      | grade_overridecat | 1 |
-      | grade_report_showquickfeedback | 1 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
-    And I change window size to "large"
-    And I click on student "Student 2" for grade item "Item VU"
-    Then I should see a grade field for "Student 2" and grade item "Item VU"
-    And I should see a feedback field for "Student 2" and grade item "Item VU"
-    And I set the field "ajaxgrade" to "33"
-    And I set the field "ajaxfeedback" to "Student 2 VU feedback"
-    And I press the enter key
-    And I click on student "Student 2" for grade item "Item SU"
-    And I set the field "ajaxgrade" to "Very good"
-    And I set the field "ajaxfeedback" to "Student 2 SU feedback"
-    And I press the enter key
-    And I click on student "Student 3" for grade item "Item VL"
-    And I should not see a grade field for "Student 3" and grade item "Item VL"
-    And I should not see a feedback field for "Student 3" and grade item "Item VL"
-    And I click on student "Student 3" for grade item "Item TU"
-    And I should not see a grade field for "Student 3" and grade item "Item TU"
-    And I should see a feedback field for "Student 3" and grade item "Item TU"
-    And I set the field "ajaxfeedback" to "Student 3 TU feedback"
-    And I press the enter key
-    # Reload grader report:
-    And I navigate to "View > User report" in the course gradebook
-    And I navigate to "View > Grader report" in the course gradebook
-    And the following should exist in the "user-grades" table:
-      | -1-       | -7-   | -13-      | -16-  |
-      | Student 2 | 33.00 | Very good | 36.00 |
-    And I click on student "Student 3" for grade item "Item TU"
-    And the field "ajaxfeedback" matches value "Student 3 TU feedback"
-    And I click on student "Student 2" for grade item "Item SU"
-    And the field "ajaxfeedback" matches value "Student 2 SU feedback"
-
-  Scenario: Use the grader report without editing, with AJAX and quick feedback on, without category override
+  Scenario: Use the grader report without editing, with AJAX without category override
     When the following config values are set as admin:
       | grade_overridecat | 0 |
-      | grade_report_showquickfeedback | 1 |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I change window size to "large"
     And I click on student "Student 2" for grade item "Item VU"
     Then I should see a grade field for "Student 2" and grade item "Item VU"
-    And I should see a feedback field for "Student 2" and grade item "Item VU"
     And I set the field "ajaxgrade" to "33"
     And I press the enter key
     And I click on student "Student 2" for grade item "Course total"
     And I should not see a grade field for "Student 3" and grade item "Course total"
-    And I should not see a feedback field for "Student 3" and grade item "Course total"
     And the following should exist in the "user-grades" table:
       | -1-         | -7-      | -16-    |
       | Student 2   | 33.00    | 33.00   |
 
-  Scenario: Use the grader report with editing, with AJAX and quick feedback on, with category override
+  Scenario: Use the grader report with editing, with AJAX with category override
     When the following config values are set as admin:
       | grade_overridecat | 1 |
-      | grade_report_showquickfeedback | 1 |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     Then I should not see a grade field for "Student 2" and grade item "Item VL"
-    And I should not see a feedback field for "Student 2" and grade item "Item VL"
     And I should not see a grade field for "Student 2" and grade item "Item TU"
-    And I should see a feedback field for "Student 2" and grade item "Item TU"
     And I should see a grade field for "Student 2" and grade item "Course total"
-    And I should see a feedback field for "Student 2" and grade item "Course total"
     And I give the grade "20.00" to the user "Student 2" for the grade item "Item VU"
     And I click away from student "Student 2" and grade item "Item VU" value
     And I give the grade "30.00" to the user "Student 2" for the grade item "Item 1"
-    And I give the feedback "Some feedback" to the user "Student 2" for the grade item "Item 1"
-    And I click away from student "Student 2" and grade item "Item 1" feedback
     And I give the grade "Very good" to the user "Student 2" for the grade item "Item SU"
     And I click away from student "Student 2" and grade item "Item SU" value
     And the grade for "Student 2" in grade item "Grade Cat" should match "53.00"
@@ -189,12 +136,10 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | -1-        | -6-      | -7-     | -13-      | -15-     | -16-    |
       | Student 2  | 30.00    | 20.00   | Very good | 53.00    | 53.00   |
     And I click on student "Student 2" for grade item "Item 1"
-    And the field "ajaxfeedback" matches value "Some feedback"
 
-  Scenario: Use the grader report with editing, with AJAX and quick feedback on, without category override
+  Scenario: Use the grader report with editing, with AJAX without category override
     When the following config values are set as admin:
       | grade_overridecat | 0 |
-      | grade_report_showquickfeedback | 1 |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
@@ -205,7 +150,6 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | Item 3        | i3  |
       | Grade Sub Cat | gsc |
     Then I should not see a grade field for "Student 2" and grade item "Course total"
-    And I should not see a feedback field for "Student 2" and grade item "Course total"
     And I give the grade "20.00" to the user "Student 2" for the grade item "Item VU"
     And I click away from student "Student 2" and grade item "Item VU" value
     And the following should exist in the "user-grades" table:
@@ -229,14 +173,11 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | -1-        | -5-   | -15-   | -16-   |
       | Student 2  | 10.00 | 110.00 | 110.00 |
     And the field "Student 2 Calc Item grade" matches value "45.00"
-    And I give the feedback "Some feedback" to the user "Student 2" for the grade item "Item 1"
-    And I click away from student "Student 2" and grade item "Item 1" feedback
     And I turn editing mode off
     And the following should exist in the "user-grades" table:
       | -1-        | -4-   | -6-   | -7-   | -11- | -12-  | -15-   | -16-   |
       | Student 2  | 10.00 | 30.00 | 20.00 | 5.00 | 45.00 | 110.00 | 110.00 |
     And I click on student "Student 2" for grade item "Item 1"
-    And the field "ajaxfeedback" matches value "Some feedback"
 
   Scenario: Teacher can see an error when an incorrect grade is given using the grader report with editing and AJAX on
     Given I log in as "teacher1"
