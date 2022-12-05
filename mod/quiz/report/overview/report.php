@@ -203,7 +203,6 @@ class quiz_overview_report extends quiz_attempts_report {
 
             if ($options->slotmarks) {
                 foreach ($questions as $slot => $question) {
-                    // Ignore questions of zero length.
                     $columns[] = 'qsgrade' . $slot;
                     $header = get_string('qbrief', 'quiz', $question->number);
                     if (!$table->is_downloading()) {
