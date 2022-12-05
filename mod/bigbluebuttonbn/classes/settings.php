@@ -486,13 +486,13 @@ class settings {
                 $showrecordingsettings
             );
             $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_recordings_sortorder',
-                get_string('config_recordings_sortorder', 'bigbluebuttonbn'),
-                get_string('config_recordings_sortorder_description', 'bigbluebuttonbn'),
+                'bigbluebuttonbn_recordings_asc_sort',
+                get_string('config_recordings_asc_sort', 'bigbluebuttonbn'),
+                get_string('config_recordings_asc_sort_description', 'bigbluebuttonbn'),
                 0
             );
             $this->add_conditional_element(
-                'recordings_sortorder',
+                'recordings_asc_sort',
                 $item,
                 $showrecordingsettings
             );
