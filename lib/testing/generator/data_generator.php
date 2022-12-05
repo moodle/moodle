@@ -1315,6 +1315,11 @@ EOD;
                     [$data['categoryid']]) + 1;
         }
 
+        if ($data['datatype'] === 'menu' && isset($data['param1'])) {
+            // Convert new lines to the proper character.
+            $data['param1'] = str_replace('\n', "\n", $data['param1']);
+        }
+
         // Defaults for other values.
         $defaults = [
             'description' => '',
