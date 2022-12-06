@@ -54,14 +54,19 @@ class MoodleQuickForm_password extends HTML_QuickForm_password implements templa
      */
     public function __construct($elementName=null, $elementLabel=null, $attributes=null) {
         global $CFG;
-        // no standard mform in moodle should allow autocomplete of passwords
+
+        // No standard mform in moodle should allow autocomplete of passwords.
         if (empty($attributes)) {
-            $attributes = array('autocomplete'=>'off');
+            $attributes = ['autocomplete' => 'new-password'];
         } else if (is_array($attributes) && empty($attributes['autocomplete'])) {
-            $attributes['autocomplete'] = 'off';
+            $attributes['autocomplete'] = 'new-password';
+        } else if (is_array($attributes) && $attributes['autocomplete'] === 'off') {
+            // A value of 'off' is ignored in all modern browsers and password
+            // managers and should be new-password instead.
+            $attributes['autocomplete'] = 'new-password';
         } else if (is_string($attributes)) {
             if (strpos($attributes, 'autocomplete') === false) {
-                $attributes .= ' autocomplete="off" ';
+                $attributes .= ' autocomplete="new-password" ';
             }
         }
 
