@@ -30,6 +30,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * Asyncronhous helper tests.
  *
  * @package    core_backup
+ * @covers     \async_helper
  * @copyright  2018 Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -47,7 +48,7 @@ class async_helper_test extends \advanced_testcase {
         set_config('backup_async_message_users', '1', 'backup');
         set_config('backup_async_message_subject', 'Moodle {operation} completed sucessfully', 'backup');
         set_config('backup_async_message',
-                'Dear {user_firstname} {user_lastname}, <br/> Your {operation} (ID: {backupid}) has completed successfully!',
+                'Dear {user_firstname} {user_lastname}, your {operation} (ID: {backupid}) has completed successfully!',
                 'backup');
         set_config('allowedemaildomains', 'example.com');
 
@@ -76,15 +77,17 @@ class async_helper_test extends \advanced_testcase {
         $this->assertCount(1, $emails);
         $email = reset($emails);
 
-        $this->assertSame($USER->email, $email->from);
-        $this->assertSame($user2->email, $email->to);
-        $this->assertSame('Moodle backup completed sucessfully', $email->subject);
-        $this->assertNotEmpty($email->header);
-        $this->assertNotEmpty($email->body);
-        $this->assertMatchesRegularExpression("/$backupid/", $email->body);
-        $this->assertThat($email->body, $this->logicalNot($this->stringContains('{')));
         $this->assertGreaterThan(0, $messageid);
         $sink->clear();
+
+        $this->assertSame($USER->email, $email->from);
+        $this->assertSame($user2->email, $email->to);
+        $this->assertSame('Moodle Backup completed sucessfully', $email->subject);
+
+        // Assert body placeholders have all been replaced.
+        $this->assertStringContainsString('Dear test human, your Backup', $email->body);
+        $this->assertStringContainsString("(ID: {$backupid})", $email->body);
+        $this->assertStringNotContainsString('{', $email->body);
     }
 
     /**
