@@ -28,9 +28,8 @@ Feature: Users can be added to multiple groups at once
     And I am on "Course 1" course homepage
     And I follow "Participants"
     And I click on "Edit groups for \"Student 1\"" "link" in the "student1" "table_row"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "student1" "table_row"
+    And I open the autocomplete suggestions list in the "student1" "table_row"
     And I click on "Group 1" item in the autocomplete list
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "student1" "table_row"
     And I click on "Group 2" item in the autocomplete list
     And I press the escape key
     And I click on "Save changes" "link" in the "student1" "table_row"
