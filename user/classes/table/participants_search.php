@@ -285,7 +285,7 @@ class participants_search {
             ] = $this->get_keywords_search_sql($mappings);
 
             if (!empty($keywordswhere)) {
-                $wheres[] = $keywordswhere;
+                $wheres[] = "({$keywordswhere})";
             }
 
             if (!empty($keywordsparams)) {
