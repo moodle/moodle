@@ -52,16 +52,6 @@ class MoodleQuickForm_passwordunmask extends MoodleQuickForm_password {
      *              or an associative array
      */
     public function __construct($elementName=null, $elementLabel=null, $attributes=null) {
-        // no standard mform in moodle should allow autocomplete of passwords
-        if (empty($attributes)) {
-            $attributes = array('autocomplete'=>'off');
-        } else if (is_array($attributes)) {
-            $attributes['autocomplete'] = 'off';
-        } else {
-            if (strpos($attributes, 'autocomplete') === false) {
-                $attributes .= ' autocomplete="off" ';
-            }
-        }
         $this->_persistantFreeze = true;
 
         parent::__construct($elementName, $elementLabel, $attributes);
