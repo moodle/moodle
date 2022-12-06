@@ -14537,7 +14537,8 @@ span.editinstructions {
     margin-left: 1em;
     color: #a1a1a8; }
   #course-category-listings #course-listing .listitem .coursename {
-    display: inline-block; }
+    display: inline-block;
+    flex-basis: 10rem; }
   #course-category-listings #course-listing > .firstpage .listitem:first-child > div .item-actions .action-moveup,
   #course-category-listings #course-listing > .lastpage .listitem:last-child > div .item-actions .action-movedown {
     display: none; }
