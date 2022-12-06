@@ -19,8 +19,8 @@ Feature: Exporting workshop submissions and assessments to a portfolio
       | student2 | c1     | student        |
       | teacher1 | c1     | editingteacher |
     And the following "activities" exist:
-      | activity | name         | intro                     | course | idnumber  | submissiontypefile |
-      | workshop | TestWorkshop | Test workshop description | c1     | workshop1 | 1                  |
+      | activity | name         | course | idnumber  | submissiontypefile |
+      | workshop | TestWorkshop | c1     | workshop1 | 1                  |
     # Admin needs to enable portfolio API and set a portfolio instance first.
     And I log in as "admin"
     And the following config values are set as admin:
@@ -28,34 +28,24 @@ Feature: Exporting workshop submissions and assessments to a portfolio
     And I navigate to "Plugins > Portfolios > Manage portfolios" in site administration
     And I set portfolio instance "File download" to "Enabled and visible"
     And I click on "Save" "button"
-    And I log out
     # Teacher sets up assessment form and changes the phase to submission.
-    And I log in as "teacher1"
-    And I am on "Course1" course homepage
+    And I am on the "Course1" course page logged in as teacher1
     And I edit assessment form in workshop "TestWorkshop" as:"
       | id_description__idx_0_editor | Aspect1 |
       | id_description__idx_1_editor | Aspect2 |
     And I change phase in workshop "TestWorkshop" to "Submission phase"
-    And I log out
     # Student1 submits.
-    And I log in as "student1"
-    And I am on "Course1" course homepage
-    And I follow "TestWorkshop"
+    And I am on the "TestWorkshop" "workshop activity" page logged in as student1
     And I add a submission in workshop "TestWorkshop" as:"
       | Title              | Submission1  |
       | Submission content | Some content |
-    And I log out
     # Student2 submits.
-    And I log in as "student2"
-    And I am on "Course1" course homepage
+    And I am on the "Course1" course page logged in as student2
     And I add a submission in workshop "TestWorkshop" as:"
       | Title              | Submission2  |
       | Submission content | Some content |
-    And I log out
      # Teacher allocates reviewers and changes the phase to assessment.
-    And I log in as "teacher1"
-    And I am on "Course1" course homepage
-    And I follow "TestWorkshop"
+    And I am on the "TestWorkshop" "workshop activity" page logged in as teacher1
     And I should see "to allocate: 2"
     And I should see "Workshop submissions report"
     And I should see "Submitted (2) / not submitted (0)"
@@ -68,12 +58,9 @@ Feature: Exporting workshop submissions and assessments to a portfolio
     And I follow "TestWorkshop"
     And I should see "to allocate: 0"
     And I change phase in workshop "TestWorkshop" to "Assessment phase"
-    And I log out
 
   Scenario: Students can export their own submission to a portfolio.
-    Given I log in as "student1"
-    And I am on "Course1" course homepage
-    And I follow "TestWorkshop"
+    Given I am on the "TestWorkshop" "workshop activity" page logged in as student1
     When I follow "Submission1"
     Then I should see "Submission1"
     And "Export this page" "button" should exist
@@ -83,12 +70,9 @@ Feature: Exporting workshop submissions and assessments to a portfolio
     And I should see "Summary of your export"
     And I click on "Continue" "button"
     And I should see "Return to where you were"
-    And I log out
 
   Scenario: Students can export submission they have peer-assessed.
-    Given I log in as "student1"
-    And I am on "Course1" course homepage
-    And I follow "TestWorkshop"
+    Given I am on the "TestWorkshop" "workshop activity" page logged in as student1
     And I should see "Submission2"
     And I follow "Submission2"
     And "Export this page" "button" should exist
@@ -98,14 +82,11 @@ Feature: Exporting workshop submissions and assessments to a portfolio
     And I should see "Summary of your export"
     And I click on "Continue" "button"
     And I should see "Return to where you were"
-    And I log out
 
   Scenario: If the portfolio API is disabled, the portfolio export button is not displayed.
     Given the following config values are set as admin:
       | enableportfolios | 0 |
-    When I log in as "student1"
-    And I am on "Course1" course homepage
-    And I follow "TestWorkshop"
+    When I am on the "TestWorkshop" "workshop activity" page logged in as student1
     And I follow "Submission1"
     Then I should see "Submission1"
     And "Export this page" "button" should not exist
