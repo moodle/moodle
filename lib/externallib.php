@@ -29,6 +29,7 @@ class_alias(\core_external\external_api::class, 'external_api');
 class_alias(\core_external\restricted_context_exception::class, 'restricted_context_exception');
 class_alias(\core_external\external_description::class, 'external_description');
 class_alias(\core_external\external_value::class, 'external_value');
+class_alias(\core_external\external_format_value::class, 'external_format_value');
 class_alias(\core_external\external_single_structure::class, 'external_single_structure');
 class_alias(\core_external\external_multiple_structure::class, 'external_multiple_structure');
 class_alias(\core_external\external_function_parameters::class, 'external_function_parameters');
@@ -131,43 +132,6 @@ function external_delete_descriptions($component) {
             "functionname IN (SELECT name FROM {external_functions} WHERE component = ?)", $params);
     $DB->delete_records('external_services', array('component'=>$component));
     $DB->delete_records('external_functions', array('component'=>$component));
-}
-
-/**
- * A pre-filled external_value class for text format.
- *
- * Default is FORMAT_HTML
- * This should be used all the time in external xxx_params()/xxx_returns functions
- * as it is the standard way to implement text format param/return values.
- *
- * @package    core_webservice
- * @copyright  2012 Jerome Mouneyrac
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.3
- */
-class external_format_value extends external_value {
-
-    /**
-     * Constructor
-     *
-     * @param string $textfieldname Name of the text field
-     * @param int $required if VALUE_REQUIRED then set standard default FORMAT_HTML
-     * @param int $default Default value.
-     * @since Moodle 2.3
-     */
-    public function __construct($textfieldname, $required = VALUE_REQUIRED, $default = null) {
-
-        if ($default == null && $required == VALUE_DEFAULT) {
-            $default = FORMAT_HTML;
-        }
-
-        $desc = $textfieldname . ' format (' . FORMAT_HTML . ' = HTML, '
-                . FORMAT_MOODLE . ' = MOODLE, '
-                . FORMAT_PLAIN . ' = PLAIN or '
-                . FORMAT_MARKDOWN . ' = MARKDOWN)';
-
-        parent::__construct(PARAM_INT, $desc, $required, $default);
-    }
 }
 
 /**
