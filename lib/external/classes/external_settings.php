@@ -75,6 +75,13 @@ class external_settings {
     }
 
     /**
+     * Reset the singleton instance.
+     */
+    public static function reset(): void {
+        self::$instance = null;
+    }
+
+    /**
      * Set raw
      *
      * @param boolean $raw
