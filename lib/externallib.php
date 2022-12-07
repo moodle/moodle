@@ -45,39 +45,7 @@ class restricted_context_exception extends moodle_exception {
 }
 
 class_alias(\core_external\external_api::class, 'external_api');
-
-/**
- * Common ancestor of all parameter description classes
- *
- * @package    core_webservice
- * @copyright  2009 Petr Skodak
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- */
-abstract class external_description {
-    /** @var string Description of element */
-    public $desc;
-
-    /** @var bool Element value required, null not allowed */
-    public $required;
-
-    /** @var mixed Default value */
-    public $default;
-
-    /**
-     * Contructor
-     *
-     * @param string $desc
-     * @param bool $required
-     * @param mixed $default
-     * @since Moodle 2.0
-     */
-    public function __construct($desc, $required, $default) {
-        $this->desc = $desc;
-        $this->required = $required;
-        $this->default = $default;
-    }
-}
+class_alias(\core_external\external_description::class, 'external_description');
 
 /**
  * Scalar value description class
