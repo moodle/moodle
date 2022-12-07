@@ -19,9 +19,7 @@ Feature: Custom profile fields should be visible and editable by those with the 
       | text     | uservisible_field      | uservisible_field     | 1      | 1       |
       | text     | everyonevisible_field  | everyonevisible_field | 0      | 2       |
       | text     | teachervisible_field   | teachervisible_field  | 1      | 3       |
-    And I log in as "admin"
-    And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I click on ".icon[title=Edit]" "css_element" in the "userwithinformation@example.com" "table_row"
+    And I am on the "userwithinformation" "user > editing" page logged in as "admin"
     And I set the following fields to these values:
       | notvisible_field      | notvisible_field_information      |
       | uservisible_field     | uservisible_field_information     |
