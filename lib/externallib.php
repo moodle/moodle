@@ -34,6 +34,7 @@ class_alias(\core_external\external_multiple_structure::class, 'external_multipl
 class_alias(\core_external\external_function_parameters::class, 'external_function_parameters');
 class_alias(\core_external\util::class, 'external_util');
 class_alias(\core_external\external_files::class, 'external_files');
+class_alias(\core_external\external_warnings::class, 'external_warnings');
 
 /**
  * Generate a token
@@ -130,37 +131,6 @@ function external_delete_descriptions($component) {
             "functionname IN (SELECT name FROM {external_functions} WHERE component = ?)", $params);
     $DB->delete_records('external_services', array('component'=>$component));
     $DB->delete_records('external_functions', array('component'=>$component));
-}
-
-/**
- * Standard Moodle web service warnings
- *
- * @package    core_webservice
- * @copyright  2012 Jerome Mouneyrac
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.3
- */
-class external_warnings extends external_multiple_structure {
-
-    /**
-     * Constructor
-     *
-     * @since Moodle 2.3
-     */
-    public function __construct($itemdesc = 'item', $itemiddesc = 'item id',
-        $warningcodedesc = 'the warning code can be used by the client app to implement specific behaviour') {
-
-        parent::__construct(
-            new external_single_structure(
-                array(
-                    'item' => new external_value(PARAM_TEXT, $itemdesc, VALUE_OPTIONAL),
-                    'itemid' => new external_value(PARAM_INT, $itemiddesc, VALUE_OPTIONAL),
-                    'warningcode' => new external_value(PARAM_ALPHANUM, $warningcodedesc),
-                    'message' => new external_value(PARAM_RAW,
-                            'untranslated english message to explain the warning')
-                ), 'warning'),
-            'list of warnings', VALUE_OPTIONAL);
-    }
 }
 
 /**
