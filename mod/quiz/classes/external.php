@@ -194,8 +194,8 @@ class mod_quiz_external extends external_api {
                                                                             (-1 means use decimalpoints.)', VALUE_OPTIONAL),
                             'reviewattempt' => new external_value(PARAM_INT, 'Whether users are allowed to review their quiz
                                                                     attempts at various times. This is a bit field, decoded by the
-                                                                    mod_quiz_display_options class. It is formed by ORing together
-                                                                    the constants defined there.', VALUE_OPTIONAL),
+                                                                    \mod_quiz\question\display_options class. It is formed by ORing
+                                                                    together the constants defined there.', VALUE_OPTIONAL),
                             'reviewcorrectness' => new external_value(PARAM_INT, 'Whether users are allowed to review their quiz
                                                                         attempts at various times.
                                                                         A bit field, like reviewattempt.', VALUE_OPTIONAL),

@@ -29,6 +29,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use mod_quiz\question\bank\custom_view;
+use mod_quiz\question\display_options;
 use core_question\statistics\questions\all_calculated_for_qubaid_condition;
 
 require_once($CFG->dirroot . '/calendar/lib.php');
@@ -759,10 +760,10 @@ function quiz_grade_item_update($quiz, $grades = null) {
     // 2. If the quiz is set to not show grades at either of those times,
     //    create the grade_item as hidden.
     // 3. If the quiz is set to show grades, create the grade_item visible.
-    $openreviewoptions = mod_quiz_display_options::make_from_quiz($quiz,
-            mod_quiz_display_options::LATER_WHILE_OPEN);
-    $closedreviewoptions = mod_quiz_display_options::make_from_quiz($quiz,
-            mod_quiz_display_options::AFTER_CLOSE);
+    $openreviewoptions = display_options::make_from_quiz($quiz,
+            display_options::LATER_WHILE_OPEN);
+    $closedreviewoptions = display_options::make_from_quiz($quiz,
+            display_options::AFTER_CLOSE);
     if ($openreviewoptions->marks < question_display_options::MARK_AND_MAX &&
             $closedreviewoptions->marks < question_display_options::MARK_AND_MAX) {
         $params['hidden'] = 1;
@@ -1115,8 +1116,8 @@ function quiz_process_options($quiz) {
     $quiz->reviewgeneralfeedback = quiz_review_option_form_to_db($quiz, 'generalfeedback');
     $quiz->reviewrightanswer = quiz_review_option_form_to_db($quiz, 'rightanswer');
     $quiz->reviewoverallfeedback = quiz_review_option_form_to_db($quiz, 'overallfeedback');
-    $quiz->reviewattempt |= mod_quiz_display_options::DURING;
-    $quiz->reviewoverallfeedback &= ~mod_quiz_display_options::DURING;
+    $quiz->reviewattempt |= display_options::DURING;
+    $quiz->reviewoverallfeedback &= ~display_options::DURING;
 
     // Ensure that disabled checkboxes in completion settings are set to 0.
     // But only if the completion settinsg are unlocked.
@@ -1140,10 +1141,10 @@ function quiz_process_options($quiz) {
  */
 function quiz_review_option_form_to_db($fromform, $field) {
     static $times = array(
-        'during' => mod_quiz_display_options::DURING,
-        'immediately' => mod_quiz_display_options::IMMEDIATELY_AFTER,
-        'open' => mod_quiz_display_options::LATER_WHILE_OPEN,
-        'closed' => mod_quiz_display_options::AFTER_CLOSE,
+        'during' => display_options::DURING,
+        'immediately' => display_options::IMMEDIATELY_AFTER,
+        'open' => display_options::LATER_WHILE_OPEN,
+        'closed' => display_options::AFTER_CLOSE,
     );
 
     $review = 0;

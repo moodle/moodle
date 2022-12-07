@@ -30,6 +30,8 @@ require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/quiz/accessmanager.php');
 
+use mod_quiz\question\display_options;
+
 /**
  * Takes an array of objects and constructs a multidimensional array keyed by
  * the keys it finds on the object.
@@ -427,11 +429,11 @@ function quiz_no_questions_message($quiz, $cm, $context) {
  */
 function quiz_report_should_show_grades($quiz, context $context) {
     if ($quiz->timeclose && time() > $quiz->timeclose) {
-        $when = mod_quiz_display_options::AFTER_CLOSE;
+        $when = display_options::AFTER_CLOSE;
     } else {
-        $when = mod_quiz_display_options::LATER_WHILE_OPEN;
+        $when = display_options::LATER_WHILE_OPEN;
     }
-    $reviewoptions = mod_quiz_display_options::make_from_quiz($quiz, $when);
+    $reviewoptions = display_options::make_from_quiz($quiz, $when);
 
     return quiz_has_grades($quiz) &&
             ($reviewoptions->marks >= question_display_options::MARK_AND_MAX ||

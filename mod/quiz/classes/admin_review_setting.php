@@ -35,25 +35,25 @@ defined('MOODLE_INTERNAL') || die();
 class mod_quiz_admin_review_setting extends admin_setting {
     /**
      * @var integer should match the constants defined in
-     * {@link mod_quiz_display_options}. Copied for performance reasons.
+     * {@see display_options}. Copied for performance reasons.
      */
     const DURING            = 0x10000;
 
     /**
      * @var integer should match the constants defined in
-     * {@link mod_quiz_display_options}. Copied for performance reasons.
+     * {@see display_options}. Copied for performance reasons.
      */
     const IMMEDIATELY_AFTER = 0x01000;
 
     /**
      * @var integer should match the constants defined in
-     * {@link mod_quiz_display_options}. Copied for performance reasons.
+     * {@see display_options}. Copied for performance reasons.
      */
     const LATER_WHILE_OPEN  = 0x00100;
 
     /**
      * @var integer should match the constants defined in
-     * {@link mod_quiz_display_options}. Copied for performance reasons.
+     * {@see display_options}. Copied for performance reasons.
      */
     const AFTER_CLOSE       = 0x00010;
 

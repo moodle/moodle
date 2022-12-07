@@ -27,4 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 $renamedclasses = [
     // Since Moodle 4.1.
     'mod_quiz\local\views\secondary' => 'mod_quiz\navigation\views\secondary',
+    // Since Moodle 4.2.
+    'mod_quiz_display_options' => 'mod_quiz\question\display_options',
 ];

@@ -28,7 +28,7 @@ namespace mod_quiz\external;
 
 use externallib_advanced_testcase;
 use mod_quiz_external;
-use mod_quiz_display_options;
+use mod_quiz\question\display_options;
 use quiz;
 use quiz_attempt;
 
@@ -681,7 +681,7 @@ class external_test extends externallib_advanced_testcase {
     }
     /**
      * Test get_combined_review_options.
-     * This is a basic test, this is already tested in mod_quiz_display_options_testcase.
+     * This is a basic test, this is already tested in display_options_testcase.
      */
     public function test_get_combined_review_options() {
         global $DB;
@@ -1027,7 +1027,7 @@ class external_test extends externallib_advanced_testcase {
         list($quiz, $context, $quizobj, $attempt, $attemptobj) = $this->create_quiz_with_questions(true);
 
         // Set correctness mask so questions state can be fetched only after finishing the attempt.
-        $DB->set_field('quiz', 'reviewcorrectness', mod_quiz_display_options::IMMEDIATELY_AFTER, array('id' => $quiz->id));
+        $DB->set_field('quiz', 'reviewcorrectness', display_options::IMMEDIATELY_AFTER, array('id' => $quiz->id));
 
         $quizobj = $attemptobj->get_quizobj();
         $quizobj->preload_questions();
