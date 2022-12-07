@@ -25,32 +25,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Exception indicating user is not allowed to use external function in the current context.
- *
- * @package    core_webservice
- * @copyright  2009 Petr Skodak
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- */
-class restricted_context_exception extends moodle_exception {
-    /**
-     * Constructor
-     *
-     * @since Moodle 2.0
-     */
-    function __construct() {
-        parent::__construct('restrictedcontextexception', 'error');
-    }
-}
-
 class_alias(\core_external\external_api::class, 'external_api');
+class_alias(\core_external\restricted_context_exception::class, 'restricted_context_exception');
 class_alias(\core_external\external_description::class, 'external_description');
 class_alias(\core_external\external_value::class, 'external_value');
 class_alias(\core_external\external_single_structure::class, 'external_single_structure');
 class_alias(\core_external\external_multiple_structure::class, 'external_multiple_structure');
 class_alias(\core_external\external_function_parameters::class, 'external_function_parameters');
-
 
 /**
  * Generate a token

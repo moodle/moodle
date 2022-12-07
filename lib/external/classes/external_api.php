@@ -28,7 +28,6 @@ use external_value;
 use invalid_parameter_exception;
 use invalid_response_exception;
 use moodle_exception;
-use restricted_context_exception;
 
 /**
  * Base class for external api methods.
