@@ -27,6 +27,7 @@ require_once(__DIR__ . '/test_helper_trait.php');
  * @author    Andrew Madden <andrewmadden@catalyst-au.net>
  * @copyright 2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \quizaccess_seb\access_manager
  */
 class access_manager_test extends \advanced_testcase {
     use \quizaccess_seb_test_helper_trait;
@@ -96,6 +97,24 @@ class access_manager_test extends \advanced_testcase {
     }
 
     /**
+     * Test that user has capability to bypass SEB check.
+     */
+    public function test_admin_user_can_bypass_seb_check() {
+        $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CONFIG_MANUALLY);
+
+        // Test normal user cannot bypass check.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $accessmanager = $this->get_access_manager();
+        $this->assertFalse($accessmanager->can_bypass_seb());
+
+        // Test with admin user.
+        $this->setAdminUser();
+        $accessmanager = $this->get_access_manager();
+        $this->assertTrue($accessmanager->can_bypass_seb());
+    }
+
+    /**
      * Test user does not have capability to bypass SEB check.
      */
     public function test_user_cannot_bypass_seb_check() {
@@ -141,8 +160,21 @@ class access_manager_test extends \advanced_testcase {
         $expectedhash = hash('sha256', $FULLME . $configkey);
         $_SERVER['HTTP_X_SAFEEXAMBROWSER_CONFIGKEYHASH'] = $expectedhash;
 
-        $this->assertTrue($accessmanager->validate_browser_exam_keys());
         $this->assertTrue($accessmanager->validate_config_key());
+    }
+
+    /**
+     * Test that the quiz Config Key matches a provided config key with no incoming request header.
+     */
+    public function test_access_keys_validate_with_provided_config_key() {
+        $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CONFIG_MANUALLY);
+        $url = 'https://www.example.com/moodle';
+        $accessmanager = $this->get_access_manager();
+
+        $configkey = quiz_settings::get_record(['quizid' => $this->quiz->id])->get_config_key();
+        $fullconfigkey = hash('sha256', $url . $configkey);
+
+        $this->assertTrue($accessmanager->validate_config_key($fullconfigkey, $url));
     }
 
     /**
@@ -153,7 +185,6 @@ class access_manager_test extends \advanced_testcase {
         $accessmanager = $this->get_access_manager();
 
         $this->assertFalse($accessmanager->validate_config_key());
-        $this->assertTrue($accessmanager->validate_browser_exam_keys());
     }
 
     /**
@@ -162,22 +193,21 @@ class access_manager_test extends \advanced_testcase {
     public function test_config_key_not_checked_if_client_requirement_is_selected() {
         $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CLIENT_CONFIG);
         $accessmanager = $this->get_access_manager();
-        $this->assertTrue($accessmanager->validate_config_key());
-        $this->assertTrue($accessmanager->validate_browser_exam_keys());
+        $this->assertFalse($accessmanager->should_validate_config_key());
     }
 
     /**
      * Test that if there are no browser exam keys for quiz, check is skipped.
      */
-    public function test_no_browser_exam_keys_cause_check_to_be_skipped() {
+    public function test_no_browser_exam_keys_cause_check_to_be_successful() {
         $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CLIENT_CONFIG);
 
         $settings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $settings->set('allowedbrowserexamkeys', '');
         $settings->save();
         $accessmanager = $this->get_access_manager();
-        $this->assertTrue($accessmanager->validate_config_key());
-        $this->assertTrue($accessmanager->validate_browser_exam_keys());
+        $this->assertTrue($accessmanager->should_validate_browser_exam_key());
+        $this->assertTrue($accessmanager->validate_browser_exam_key());
     }
 
     /**
@@ -190,8 +220,7 @@ class access_manager_test extends \advanced_testcase {
         $settings->set('allowedbrowserexamkeys', hash('sha256', 'one') . "\n" . hash('sha256', 'two'));
         $settings->save();
         $accessmanager = $this->get_access_manager();
-        $this->assertTrue($accessmanager->validate_config_key());
-        $this->assertFalse($accessmanager->validate_browser_exam_keys());
+        $this->assertFalse($accessmanager->validate_browser_exam_key());
     }
 
     /**
@@ -205,8 +234,7 @@ class access_manager_test extends \advanced_testcase {
         $settings->save();
         $accessmanager = $this->get_access_manager();
         $_SERVER['HTTP_X_SAFEEXAMBROWSER_REQUESTHASH'] = hash('sha256', 'notwhatyouwereexpectinghuh');
-        $this->assertTrue($accessmanager->validate_config_key());
-        $this->assertFalse($accessmanager->validate_browser_exam_keys());
+        $this->assertFalse($accessmanager->validate_browser_exam_key());
     }
 
     /**
@@ -226,8 +254,23 @@ class access_manager_test extends \advanced_testcase {
         $FULLME = 'https://example.com/moodle/mod/quiz/attempt.php?attemptid=123&page=4';
         $expectedhash = hash('sha256', $FULLME . $browserexamkey);
         $_SERVER['HTTP_X_SAFEEXAMBROWSER_REQUESTHASH'] = $expectedhash;
-        $this->assertTrue($accessmanager->validate_config_key());
-        $this->assertTrue($accessmanager->validate_browser_exam_keys());
+        $this->assertTrue($accessmanager->validate_browser_exam_key());
+    }
+
+    /**
+     * Test that browser exam key matches a provided browser exam key.
+     */
+    public function test_browser_exam_keys_match_provided_browser_exam_key() {
+        $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CLIENT_CONFIG);
+        $url = 'https://www.example.com/moodle';
+        $settings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $browserexamkey = hash('sha256', 'browserexamkey');
+        $fullbrowserexamkey = hash('sha256', $url . $browserexamkey);
+        $settings->set('allowedbrowserexamkeys', $browserexamkey); // Add a hashed BEK.
+        $settings->save();
+        $accessmanager = $this->get_access_manager();
+
+        $this->assertTrue($accessmanager->validate_browser_exam_key($fullbrowserexamkey, $url));
     }
 
     /**
@@ -441,4 +484,105 @@ class access_manager_test extends \advanced_testcase {
 
     }
 
+    /**
+     * Test if config key should not be validated.
+     */
+    public function test_if_config_key_should_not_be_validated() {
+        $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_NO);
+        $accessmanager = $this->get_access_manager();
+
+        $this->assertTrue($accessmanager->validate_config_key());
+    }
+
+    /**
+     * Test if browser exam key should not be validated.
+     */
+    public function test_if_browser_exam_key_should_not_be_validated() {
+        $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CONFIG_MANUALLY);
+        $accessmanager = $this->get_access_manager();
+
+        $this->assertTrue($accessmanager->validate_browser_exam_key());
+    }
+
+    /**
+     * Test that access is set correctly in Moodle session.
+     */
+    public function test_set_session_access() {
+        global $SESSION;
+
+        $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CLIENT_CONFIG);
+        $accessmanager = $this->get_access_manager();
+
+        $this->assertTrue(empty($SESSION->quizaccess_seb_access[$this->quiz->cmid]));
+
+        $accessmanager->set_session_access(true);
+
+        $this->assertTrue($SESSION->quizaccess_seb_access[$this->quiz->cmid]);
+    }
+
+    /**
+     * Test that access is set in Moodle session for only course module associated with access manager.
+     */
+    public function test_session_access_set_for_specific_course_module() {
+        global $SESSION;
+
+        $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CLIENT_CONFIG);
+        $quiz2 = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CLIENT_CONFIG);
+        $accessmanager = $this->get_access_manager();
+
+        $accessmanager->set_session_access(true);
+
+        $this->assertCount(1, $SESSION->quizaccess_seb_access);
+        $this->assertTrue($SESSION->quizaccess_seb_access[$this->quiz->cmid]);
+        $this->assertTrue(empty($SESSION->quizaccess_seb_access[$quiz2->cmid]));
+    }
+
+    /**
+     * Test that access state can be retrieved from Moodle session.
+     */
+    public function test_validate_session_access() {
+        global $SESSION;
+
+        $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CLIENT_CONFIG);
+        $accessmanager = $this->get_access_manager();
+
+        $this->assertEmpty($accessmanager->validate_session_access());
+
+        $SESSION->quizaccess_seb_access[$this->quiz->cmid] = true;
+
+        $this->assertTrue($accessmanager->validate_session_access());
+    }
+
+    /**
+     * Test that access can be cleared from Moodle session.
+     */
+    public function test_clear_session_access() {
+        global $SESSION;
+
+        $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CLIENT_CONFIG);
+        $accessmanager = $this->get_access_manager();
+
+        $SESSION->quizaccess_seb_access[$this->quiz->cmid] = true;
+
+        $accessmanager->clear_session_access();
+
+        $this->assertTrue(empty($SESSION->quizaccess_seb_access[$this->quiz->cmid]));
+    }
+
+    /**
+     * Test we can decide if need to redirect to SEB config link.
+     */
+    public function test_should_redirect_to_seb_config_link() {
+        $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CONFIG_MANUALLY);
+        $accessmanager = $this->get_access_manager();
+
+        set_config('autoreconfigureseb', '1', 'quizaccess_seb');
+        $_SERVER['HTTP_USER_AGENT'] = 'SEB';
+        $this->assertFalse($accessmanager->should_redirect_to_seb_config_link());
+
+        set_config('autoreconfigureseb', '1', 'quizaccess_seb');
+        $_SERVER['HTTP_USER_AGENT'] = 'SEB';
+        $_SERVER['HTTP_X_SAFEEXAMBROWSER_CONFIGKEYHASH'] = hash('sha256', 'configkey');
+        $this->assertTrue($accessmanager->should_redirect_to_seb_config_link());
+    }
 }

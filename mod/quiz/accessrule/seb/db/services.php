@@ -15,17 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the quizaccess_seb plugin.
+ * List web services and external functions for plugin.
  *
  * @package    quizaccess_seb
  * @author     Andrew Madden <andrewmadden@catalyst-au.net>
- * @copyright  2019 Catalyst IT
+ * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2022041901;
-$plugin->requires = 2022041200;
-$plugin->component = 'quizaccess_seb';
-$plugin->maturity = MATURITY_STABLE;
+$functions = [
+    'quizaccess_seb_validate_quiz_keys' => [
+        'classname' => 'quizaccess_seb\external\validate_quiz_keys',
+        'methodname' => 'execute',
+        'description' => 'Validate a Safe Exam Browser config key or a browser exam key.',
+        'type' => 'read',
+        'ajax' => true,
+    ],
+];
