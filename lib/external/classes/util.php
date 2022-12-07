@@ -169,7 +169,7 @@ class util {
         int $tokentype,
         stdClass $service,
         int $userid,
-        context $contextorid,
+        context $context,
         int $validuntil = 0,
         string $iprestriction = ''
     ): string {
@@ -416,4 +416,174 @@ class util {
         }
         return $token;
     }
+
+    /**
+     * Format the string to be returned properly as requested by the either the web service server,
+     * either by an internally call.
+     * The caller can change the format (raw) with the settings singleton
+     * All web service servers must set this singleton when parsing the $_GET and $_POST.
+     *
+     * <pre>
+     * Options are the same that in {@link format_string()} with some changes:
+     *      filter      : Can be set to false to force filters off, else observes {@link settings}.
+     * </pre>
+     *
+     * @param string|null $content The string to be filtered. Should be plain text, expect
+     * possibly for multilang tags.
+     * @param boolean $striplinks To strip any link in the result text. Moodle 1.8 default changed from false to true! MDL-8713
+     * @param context $contextorid The id of the context for the string or the context (affects filters).
+     * @param array $options options array/object or courseid
+     * @return string text
+     */
+    public static function format_string(
+        $content,
+        $context,
+        $striplinks = true,
+        $options = []
+    ) {
+        if ($content === null || $content === '') {
+            // Nothing to return.
+            // Note: It's common for the DB to return null, so we allow format_string to take a null,
+            // even though it is counter-intuitive.
+            return '';
+        }
+
+        // Get settings (singleton).
+        $settings = external_settings::get_instance();
+
+        if (!$settings->get_raw()) {
+            $options['context'] = $context;
+            $options['filter'] = isset($options['filter']) && !$options['filter'] ? false : $settings->get_filter();
+            return format_string($content, $striplinks, $options);
+        }
+
+        return $content;
+    }
+
+    /**
+     * Format the text to be returned properly as requested by the either the web service server,
+     * either by an internally call.
+     * The caller can change the format (raw, filter, file, fileurl) with the \core_external\settings singleton
+     * All web service servers must set this singleton when parsing the $_GET and $_POST.
+     *
+     * <pre>
+     * Options are the same that in {@link format_text()} with some changes in defaults to provide backwards compatibility:
+     *      trusted     :   If true the string won't be cleaned. Default false.
+     *      noclean     :   If true the string won't be cleaned only if trusted is also true. Default false.
+     *      nocache     :   If true the string will not be cached and will be formatted every call. Default false.
+     *      filter      :   Can be set to false to force filters off, else observes {@link \core_external\settings}.
+     *      para        :   If true then the returned string will be wrapped in div tags.
+     *                      Default (different from format_text) false.
+     *                      Default changed because div tags are not commonly needed.
+     *      newlines    :   If true then lines newline breaks will be converted to HTML newline breaks. Default true.
+     *      context     :   Not used! Using contextid parameter instead.
+     *      overflowdiv :   If set to true the formatted text will be encased in a div with the class no-overflow before being
+     *                      returned. Default false.
+     *      allowid     :   If true then id attributes will not be removed, even when using htmlpurifier. Default (different from
+     *                      format_text) true. Default changed id attributes are commonly needed.
+     *      blanktarget :   If true all <a> tags will have target="_blank" added unless target is explicitly specified.
+     * </pre>
+     *
+     * @param string|null $text The content that may contain ULRs in need of rewriting.
+     * @param string|int|null $textformat The text format.
+     * @param context $context This parameter and the next two identify the file area to use.
+     * @param string|null $component
+     * @param string|null $filearea helps identify the file area.
+     * @param int|string|null $itemid helps identify the file area.
+     * @param array|stdClass|null $options text formatting options
+     * @return array text + textformat
+     */
+    public static function format_text(
+        $text,
+        $textformat,
+        $context,
+        $component = null,
+        $filearea = null,
+        $itemid = null,
+        $options = null
+    ) {
+        global $CFG;
+
+        if ($text === null || $text === '') {
+            // Nothing to return.
+            // Note: It's common for the DB to return null, so we allow format_string to take nulls,
+            // even though it is counter-intuitive.
+            return ['', $textformat ?? FORMAT_MOODLE];
+        }
+
+        if (empty($itemid)) {
+            $itemid = null;
+        }
+
+        // Get settings (singleton).
+        $settings = external_settings::get_instance();
+
+        if ($component && $filearea && $settings->get_fileurl()) {
+            require_once($CFG->libdir . "/filelib.php");
+            $text = file_rewrite_pluginfile_urls($text, $settings->get_file(), $context->id, $component, $filearea, $itemid);
+        }
+
+        // Note that $CFG->forceclean does not apply here if the client requests for the raw database content.
+        // This is consistent with web clients that are still able to load non-cleaned text into editors, too.
+
+        if (!$settings->get_raw()) {
+            $options = (array) $options;
+
+            // If context is passed in options, check that is the same to show a debug message.
+            if (isset($options['context'])) {
+                if (is_int($options['context'])) {
+                    if ($options['context'] != $context->id) {
+                        debugging(
+                            'Different contexts found in external_format_text parameters. $options[\'context\'] not allowed. ' .
+                            'Using $contextid parameter...',
+                            DEBUG_DEVELOPER
+                        );
+                    }
+                } else if ($options['context'] instanceof context) {
+                    if ($options['context']->id != $context->id) {
+                        debugging(
+                            'Different contexts found in external_format_text parameters. $options[\'context\'] not allowed. ' .
+                            'Using $contextid parameter...',
+                            DEBUG_DEVELOPER
+                        );
+                    }
+                }
+            }
+
+            $options['filter'] = isset($options['filter']) && !$options['filter'] ? false : $settings->get_filter();
+            $options['para'] = isset($options['para']) ? $options['para'] : false;
+            $options['context'] = $context;
+            $options['allowid'] = isset($options['allowid']) ? $options['allowid'] : true;
+
+            $text = format_text($text, $textformat, $options);
+            // Once converted to html (from markdown, plain... lets inform consumer this is already HTML).
+            $textformat = FORMAT_HTML;
+        }
+
+        // Note: The formats defined in weblib are strings.
+        return [$text, $textformat];
+    }
+
+    /**
+     * Validate text field format against known FORMAT_XXX
+     *
+     * @param array $format the format to validate
+     * @return the validated format
+     * @throws coding_exception
+     * @since Moodle 2.3
+     */
+    public static function validate_format($format) {
+        $allowedformats = array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN);
+        if (!in_array($format, $allowedformats)) {
+            throw new moodle_exception(
+                'formatnotsupported',
+                'webservice',
+                '',
+                null,
+                'The format with value=' . $format . ' is not supported by this Moodle site'
+            );
+        }
+        return $format;
+    }
+
 }

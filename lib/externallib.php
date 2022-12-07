@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Support for external API
  *
@@ -23,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+use core_external\util;
 
 class_alias(\core_external\external_api::class, 'external_api');
 class_alias(\core_external\restricted_context_exception::class, 'restricted_context_exception');
@@ -126,12 +125,7 @@ function external_delete_descriptions($component) {
  * @since Moodle 2.3
  */
 function external_validate_format($format) {
-    $allowedformats = array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN);
-    if (!in_array($format, $allowedformats)) {
-        throw new moodle_exception('formatnotsupported', 'webservice', '' , null,
-                'The format with value=' . $format . ' is not supported by this Moodle site');
-    }
-    return $format;
+    return util::validate_format($format);
 }
 
 /**
@@ -153,26 +147,12 @@ function external_validate_format($format) {
  * @return string text
  * @since Moodle 3.0
  */
-function external_format_string($str, $contextorid, $striplinks = true, $options = array()) {
-
-    // Get settings (singleton).
-    $settings = external_settings::get_instance();
-    if (empty($contextorid)) {
-        throw new coding_exception('contextid is required');
+function external_format_string($str, $context, $striplinks = true, $options = []) {
+    if (!$context instanceof context) {
+        $context = context::instance_by_id($context);
     }
 
-    if (!$settings->get_raw()) {
-        if (is_object($contextorid) && is_a($contextorid, 'context')) {
-            $context = $contextorid;
-        } else {
-            $context = context::instance_by_id($contextorid);
-        }
-        $options['context'] = $context;
-        $options['filter'] = isset($options['filter']) && !$options['filter'] ? false : $settings->get_filter();
-        $str = format_string($str, $striplinks, $options);
-    }
-
-    return $str;
+    return util::format_string($str, $context, $striplinks, $options);
 }
 
 /**
@@ -200,7 +180,7 @@ function external_format_string($str, $contextorid, $striplinks = true, $options
  *
  * @param string $text The content that may contain ULRs in need of rewriting.
  * @param int $textformat The text format.
- * @param context|int $contextorid This parameter and the next two identify the file area to use.
+ * @param context|int $context This parameter and the next two identify the file area to use.
  * @param string $component
  * @param string $filearea helps identify the file area.
  * @param int $itemid helps identify the file area.
@@ -209,51 +189,12 @@ function external_format_string($str, $contextorid, $striplinks = true, $options
  * @since Moodle 2.3
  * @since Moodle 3.2 component, filearea and itemid are optional parameters
  */
-function external_format_text($text, $textformat, $contextorid, $component = null, $filearea = null, $itemid = null,
-                                $options = null) {
-    global $CFG;
-
-    // Get settings (singleton).
-    $settings = external_settings::get_instance();
-
-    if (is_object($contextorid) && is_a($contextorid, 'context')) {
-        $context = $contextorid;
-        $contextid = $context->id;
-    } else {
-        $context = null;
-        $contextid = $contextorid;
+function external_format_text($text, $textformat, $context, $component = null, $filearea = null, $itemid = null, $options = null) {
+    if (!$context instanceof context) {
+        $context = context::instance_by_id($context);
     }
 
-    if ($component and $filearea and $settings->get_fileurl()) {
-        require_once($CFG->libdir . "/filelib.php");
-        $text = file_rewrite_pluginfile_urls($text, $settings->get_file(), $contextid, $component, $filearea, $itemid);
-    }
-
-    // Note that $CFG->forceclean does not apply here if the client requests for the raw database content.
-    // This is consistent with web clients that are still able to load non-cleaned text into editors, too.
-
-    if (!$settings->get_raw()) {
-        $options = (array)$options;
-
-        // If context is passed in options, check that is the same to show a debug message.
-        if (isset($options['context'])) {
-            if ((is_object($options['context']) && $options['context']->id != $contextid)
-                    || (!is_object($options['context']) && $options['context'] != $contextid)) {
-                debugging('Different contexts found in external_format_text parameters. $options[\'context\'] not allowed.
-                    Using $contextid parameter...', DEBUG_DEVELOPER);
-            }
-        }
-
-        $options['filter'] = isset($options['filter']) && !$options['filter'] ? false : $settings->get_filter();
-        $options['para'] = isset($options['para']) ? $options['para'] : false;
-        $options['context'] = !is_null($context) ? $context : context::instance_by_id($contextid);
-        $options['allowid'] = isset($options['allowid']) ? $options['allowid'] : true;
-
-        $text = format_text($text, $textformat, $options);
-        $textformat = FORMAT_HTML; // Once converted to html (from markdown, plain... lets inform consumer this is already HTML).
-    }
-
-    return array($text, $textformat);
+    return util::format_text($text, $textformat, $context, $component, $filearea, $itemid, $options);
 }
 
 /**

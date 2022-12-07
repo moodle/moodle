@@ -173,8 +173,10 @@ class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Test get_config
+     *
+     * @covers \tool_mobile\external::get_config
      */
-    public function test_get_config() {
+    public function test_get_config(): void {
         global $CFG, $SITE;
         require_once($CFG->dirroot . '/course/format/lib.php');
 
@@ -188,7 +190,11 @@ class externallib_test extends externallib_advanced_testcase {
         $result = \external_api::clean_returnvalue(external::get_config_returns(), $result);
 
         // SITE summary is null in phpunit which gets transformed to an empty string by format_text.
-        list($sitesummary, $unused) = external_format_text($SITE->summary, $SITE->summaryformat, \context_system::instance()->id);
+        [$sitesummary, $summaryformat] = external_format_text(
+            $SITE->summary,
+            $SITE->summaryformat,
+            \context_system::instance()->id
+        );
 
         // Test default values.
         $context = \context_system::instance();
@@ -196,7 +202,7 @@ class externallib_test extends externallib_advanced_testcase {
             array('name' => 'fullname', 'value' => $SITE->fullname),
             array('name' => 'shortname', 'value' => $SITE->shortname),
             array('name' => 'summary', 'value' => $sitesummary),
-            array('name' => 'summaryformat', 'value' => FORMAT_HTML),
+            array('name' => 'summaryformat', 'value' => $summaryformat),
             array('name' => 'frontpage', 'value' => $CFG->frontpage),
             array('name' => 'frontpageloggedin', 'value' => $CFG->frontpageloggedin),
             array('name' => 'maxcategorydepth', 'value' => $CFG->maxcategorydepth),
