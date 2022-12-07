@@ -24,6 +24,10 @@
 
 use core_external\util;
 
+// Please note that this file and all of the classes and functions listed below will be deprecated from Moodle 4.6.
+// This deprecation is delayed to aid plugin developers when maintaining plugins for multiple Moodle versions.
+// See MDL-76583 for further information.
+
 class_alias(\core_external\external_api::class, 'external_api');
 class_alias(\core_external\restricted_context_exception::class, 'restricted_context_exception');
 class_alias(\core_external\external_description::class, 'external_description');
