@@ -46,40 +46,7 @@ class restricted_context_exception extends moodle_exception {
 
 class_alias(\core_external\external_api::class, 'external_api');
 class_alias(\core_external\external_description::class, 'external_description');
-
-/**
- * Scalar value description class
- *
- * @package    core_webservice
- * @copyright  2009 Petr Skodak
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- */
-class external_value extends external_description {
-
-    /** @var mixed Value type PARAM_XX */
-    public $type;
-
-    /** @var bool Allow null values */
-    public $allownull;
-
-    /**
-     * Constructor
-     *
-     * @param mixed $type
-     * @param string $desc
-     * @param bool $required
-     * @param mixed $default
-     * @param bool $allownull
-     * @since Moodle 2.0
-     */
-    public function __construct($type, $desc='', $required=VALUE_REQUIRED,
-            $default=null, $allownull=NULL_ALLOWED) {
-        parent::__construct($desc, $required, $default);
-        $this->type      = $type;
-        $this->allownull = $allownull;
-    }
-}
+class_alias(\core_external\external_value::class, 'external_value');
 
 /**
  * Associative array description class
