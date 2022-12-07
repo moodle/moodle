@@ -1417,13 +1417,14 @@ class completion_info {
         $fieldssql = $userfieldsapi->get_sql('u', true);
         $sql = 'SELECT u.id, u.idnumber ' . $fieldssql->selects;
         $sql .= ' FROM (' . $enrolledsql . ') eu JOIN {user} u ON u.id = eu.id';
-        $sql .= $fieldssql->joins;
-        $params = array_merge($params, $fieldssql->params);
 
         if ($where) {
             $sql .= " AND $where";
             $params = array_merge($params, $whereparams);
         }
+
+        $sql .= $fieldssql->joins;
+        $params = array_merge($params, $fieldssql->params);
 
         if ($sort) {
             $sql .= " ORDER BY $sort";
