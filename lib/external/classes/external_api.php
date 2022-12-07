@@ -24,7 +24,6 @@ use core_component;
 use core_php_time_limit;
 use external_description;
 use external_function_parameters;
-use external_multiple_structure;
 use external_single_structure;
 use external_value;
 use invalid_parameter_exception;
