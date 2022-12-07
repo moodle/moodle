@@ -26,6 +26,9 @@ require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/comment/locallib.php');
 
+use core_reportbuilder\system_report_factory;
+use core_comment\reportbuilder\local\systemreports\comments;
+
 admin_externalpage_setup('comments', '', null, '', array('pagelayout'=>'report'));
 
 $PAGE->requires->js_init_call('M.core_comment.init_admin', null, true);
@@ -75,20 +78,21 @@ if ($action === 'delete') {
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('comments'));
-echo $OUTPUT->box_start('generalbox commentsreport');
-if (!empty($err)) {
-    throw new \moodle_exception($err, 'error', $CFG->wwwroot.'/comment/');
-}
-if (empty($action)) {
-    echo '<form method="post">';
-    $return = $manager->print_comments($page);
-    // if no comments available, $return will be false
-    if ($return) {
-        echo '<input type="submit" class="btn btn-primary" id="comments_delete" name="batchdelete"
-            value="'.get_string('delete').'" />';
-    }
-    echo '</form>';
+
+$report = system_report_factory::create(comments::class, context_system::instance());
+$report->set_default_per_page($CFG->commentsperpage);
+
+echo $report->output();
+
+// Render delete selected button.
+if ($DB->record_exists('comments', [])) {
+    echo $OUTPUT->render(new single_button(
+        new moodle_url('#'),
+        get_string('deleteselected'),
+        'post',
+        single_button::BUTTON_PRIMARY,
+        ['data-action' => 'comment-delete-selected']
+    ));
 }
 
-echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
