@@ -2955,9 +2955,16 @@ class assign {
 
         // If the conditions are met, allow another attempt.
         if ($submission) {
-            $this->reopen_submission_if_required($grade->userid,
+            $isreopened = $this->reopen_submission_if_required($grade->userid,
                     $submission,
                     $reopenattempt);
+            if ($isreopened) {
+                $completion = new completion_info($this->get_course());
+                if ($completion->is_enabled($this->get_course_module()) &&
+                    $this->get_instance()->completionsubmit) {
+                    $completion->update_state($this->get_course_module(), COMPLETION_INCOMPLETE, $grade->userid);
+                }
+            }
         }
 
         return true;
