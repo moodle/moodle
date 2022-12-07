@@ -22,9 +22,6 @@ use context_helper;
 use context_system;
 use core_component;
 use core_php_time_limit;
-use external_description;
-use external_single_structure;
-use external_value;
 use invalid_parameter_exception;
 use invalid_response_exception;
 use moodle_exception;
@@ -45,17 +42,17 @@ class external_api {
     /**
      * Returns detailed function information
      *
-     * @param string|object $function name of external function or record from external_function
+     * @param string|\stdClass $function name of external function or record from external_function
      * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
      *                        MUST_EXIST means throw exception if no record or multiple records found
      * @return \stdClass|bool description or false if not found or exception thrown
      * @since Moodle 2.0
      */
-    public static function external_function_info($function, $strictness=MUST_EXIST) {
+    public static function external_function_info($function, $strictness = MUST_EXIST) {
         global $DB, $CFG;
 
         if (!is_object($function)) {
-            if (!$function = $DB->get_record('external_functions', array('name' => $function), '*', $strictness)) {
+            if (!$function = $DB->get_record('external_functions', ['name' => $function], '*', $strictness)) {
                 return false;
             }
         }
@@ -64,58 +61,64 @@ class external_api {
         if (!class_exists($function->classname)) {
             // Fallback to explicit include of externallib.php.
             if (empty($function->classpath)) {
-                $function->classpath = core_component::get_component_directory($function->component).'/externallib.php';
+                $function->classpath = core_component::get_component_directory($function->component) . '/externallib.php';
             } else {
-                $function->classpath = $CFG->dirroot.'/'.$function->classpath;
+                $function->classpath = "{$CFG->dirroot}/{$function->classpath}";
             }
             if (!file_exists($function->classpath)) {
-                throw new coding_exception('Cannot find file ' . $function->classpath .
-                        ' with external function implementation');
+                throw new coding_exception(
+                    "Cannot find file {$function->classpath} with external function implementation"
+                );
             }
             require_once($function->classpath);
             if (!class_exists($function->classname)) {
-                throw new coding_exception('Cannot find external class ' . $function->classname);
+                throw new coding_exception("Cannot find external class {$function->classname}");
             }
         }
 
-        $function->ajax_method = $function->methodname.'_is_allowed_from_ajax';
-        $function->parameters_method = $function->methodname.'_parameters';
-        $function->returns_method    = $function->methodname.'_returns';
-        $function->deprecated_method = $function->methodname.'_is_deprecated';
+        $function->ajax_method = "{$function->methodname}_is_allowed_from_ajax";
+        $function->parameters_method = "{$function->methodname}_parameters";
+        $function->returns_method    = "{$function->methodname}_returns";
+        $function->deprecated_method = "{$function->methodname}_is_deprecated";
 
         // Make sure the implementaion class is ok.
         if (!method_exists($function->classname, $function->methodname)) {
-            throw new coding_exception('Missing implementation method ' .
-                    $function->classname . '::' . $function->methodname);
+            throw new coding_exception(
+                "Missing implementation method {$function->classname}::{$function->methodname}"
+            );
         }
         if (!method_exists($function->classname, $function->parameters_method)) {
-            throw new coding_exception('Missing parameters description method ' .
-                    $function->classname . '::' . $function->parameters_method);
+            throw new coding_exception(
+                "Missing parameters description method {$function->classname}::{$function->parameters_method}"
+            );
         }
         if (!method_exists($function->classname, $function->returns_method)) {
-            throw new coding_exception('Missing returned values description method ' .
-                    $function->classname . '::' . $function->returns_method);
+            throw new coding_exception(
+                "Missing returned values description method {$function->classname}::{$function->returns_method}"
+            );
         }
         if (method_exists($function->classname, $function->deprecated_method)) {
-            if (call_user_func(array($function->classname, $function->deprecated_method)) === true) {
+            if (call_user_func([$function->classname, $function->deprecated_method]) === true) {
                 $function->deprecated = true;
             }
         }
         $function->allowed_from_ajax = false;
 
         // Fetch the parameters description.
-        $function->parameters_desc = call_user_func(array($function->classname, $function->parameters_method));
+        $function->parameters_desc = call_user_func([$function->classname, $function->parameters_method]);
         if (!($function->parameters_desc instanceof external_function_parameters)) {
-            throw new coding_exception($function->classname . '::' . $function->parameters_method .
-                    ' did not return a valid external_function_parameters object.');
+            throw new coding_exception(
+                "{$function->classname}::{$function->parameters_method} did not return a valid external_function_parameters object"
+            );
         }
 
         // Fetch the return values description.
-        $function->returns_desc = call_user_func(array($function->classname, $function->returns_method));
+        $function->returns_desc = call_user_func([$function->classname, $function->returns_method]);
         // Null means void result or result is ignored.
-        if (!is_null($function->returns_desc) and !($function->returns_desc instanceof external_description)) {
-            throw new coding_exception($function->classname . '::' . $function->returns_method .
-                    ' did not return a valid external_description object');
+        if (!is_null($function->returns_desc) && !($function->returns_desc instanceof external_description)) {
+            throw new coding_exception(
+                "{$function->classname}::{$function->returns_method} did not return a valid external_description object"
+            );
         }
 
         // Now get the function description.
@@ -125,7 +128,7 @@ class external_api {
         // on the other hand this is still a bit in a flux and we need to find some new naming
         // conventions for these descriptions in lang packs.
         $function->description = null;
-        $servicesfile = core_component::get_component_directory($function->component).'/db/services.php';
+        $servicesfile = core_component::get_component_directory($function->component) . '/db/services.php';
         if (file_exists($servicesfile)) {
             $functions = null;
             include($servicesfile);
@@ -141,7 +144,7 @@ class external_api {
             if (isset($functions[$function->name]['ajax'])) {
                 $function->allowed_from_ajax = $functions[$function->name]['ajax'];
             } else if (method_exists($function->classname, $function->ajax_method)) {
-                if (call_user_func(array($function->classname, $function->ajax_method)) === true) {
+                if (call_user_func([$function->classname, $function->ajax_method]) === true) {
                     debugging('External function ' . $function->ajax_method . '() function is deprecated.' .
                               'Set ajax=>true in db/service.php instead.', DEBUG_DEVELOPER);
                     $function->allowed_from_ajax = true;
@@ -173,10 +176,10 @@ class external_api {
      * @param boolean $ajaxonly If true, an extra check will be peformed to see if ajax is required.
      * @return array containing keys for error (bool), exception and data.
      */
-    public static function call_external_function($function, $args, $ajaxonly=false) {
+    public static function call_external_function($function, $args, $ajaxonly = false) {
         global $PAGE, $COURSE, $CFG, $SITE;
 
-        require_once($CFG->libdir . "/pagelib.php");
+        require_once("{$CFG->libdir}/pagelib.php");
 
         $externalfunctioninfo = static::external_function_info($function);
 
@@ -188,7 +191,7 @@ class external_api {
 
         $currentpage = $PAGE;
         $currentcourse = $COURSE;
-        $response = array();
+        $response = [];
 
         try {
             // Taken straight from from setup.php.
@@ -219,10 +222,12 @@ class external_api {
                 }
             }
             // Validate params, this also sorts the params properly, we need the correct order in the next part.
-            $callable = array($externalfunctioninfo->classname, 'validate_parameters');
-            $params = call_user_func($callable,
-                                     $externalfunctioninfo->parameters_desc,
-                                     $args);
+            $callable = [$externalfunctioninfo->classname, 'validate_parameters'];
+            $params = call_user_func(
+                $callable,
+                $externalfunctioninfo->parameters_desc,
+                $args
+            );
             $params = array_values($params);
 
             // Allow any Moodle plugin a chance to override this call. This is a convenient spot to
@@ -231,8 +236,8 @@ class external_api {
             // thing.
             $callbacks = get_plugins_with_function('override_webservice_execution');
             $result = false;
-            foreach ($callbacks as $plugintype => $plugins) {
-                foreach ($plugins as $plugin => $callback) {
+            foreach (array_values($callbacks) as $plugins) {
+                foreach (array_values($plugins) as $callback) {
                     $result = $callback($externalfunctioninfo, $params);
                     if ($result !== false) {
                         break 2;
@@ -242,13 +247,13 @@ class external_api {
 
             // If the function was not overridden, call the real one.
             if ($result === false) {
-                $callable = array($externalfunctioninfo->classname, $externalfunctioninfo->methodname);
+                $callable = [$externalfunctioninfo->classname, $externalfunctioninfo->methodname];
                 $result = call_user_func_array($callable, $params);
             }
 
             // Validate the return parameters.
             if ($externalfunctioninfo->returns_desc !== null) {
-                $callable = array($externalfunctioninfo->classname, 'clean_returnvalue');
+                $callable = [$externalfunctioninfo->classname, 'clean_returnvalue'];
                 $result = call_user_func($callable, $externalfunctioninfo->returns_desc, $result);
             }
 
@@ -290,7 +295,7 @@ class external_api {
      * @param int $seconds max expected time the next operation needs
      * @since Moodle 2.0
      */
-    public static function set_timeout($seconds=360) {
+    public static function set_timeout($seconds = 360) {
         $seconds = ($seconds < 300) ? 300 : $seconds;
         core_php_time_limit::raise($seconds);
     }
@@ -308,67 +313,72 @@ class external_api {
      */
     public static function validate_parameters(external_description $description, $params) {
         if ($description instanceof external_value) {
-            if (is_array($params) or is_object($params)) {
+            if (is_array($params) || is_object($params)) {
                 throw new invalid_parameter_exception('Scalar type expected, array or object received.');
             }
 
             if ($description->type == PARAM_BOOL) {
-                // special case for PARAM_BOOL - we want true/false instead of the usual 1/0 - we can not be too strict here ;-)
-                if (is_bool($params) or $params === 0 or $params === 1 or $params === '0' or $params === '1') {
-                    return (bool)$params;
+                // Special case for PARAM_BOOL - we want true/false instead of the usual 1/0 - we can not be too strict here.
+                if (is_bool($params) || $params === 0 || $params === 1 || $params === '0' || $params === '1') {
+                    return (bool) $params;
                 }
             }
-            $debuginfo = 'Invalid external api parameter: the value is "' . $params .
-                    '", the server was expecting "' . $description->type . '" type';
+            $debuginfo = "Invalid external api parameter: the value is \"{$params}\", ";
+            $debuginfo .= "the server was expecting \"{$description->type}\" type";
             return validate_param($params, $description->type, $description->allownull, $debuginfo);
-
         } else if ($description instanceof external_single_structure) {
             if (!is_array($params)) {
-                throw new invalid_parameter_exception('Only arrays accepted. The bad value is: \''
-                        . print_r($params, true) . '\'');
+                throw new invalid_parameter_exception(
+                    // phpcs:ignore moodle.PHP.ForbiddenFunctions.Found
+                    "Only arrays accepted. The bad value is: '" . print_r($params, true) . "'"
+                );
             }
-            $result = array();
-            foreach ($description->keys as $key=>$subdesc) {
+            $result = [];
+            foreach ($description->keys as $key => $subdesc) {
                 if (!array_key_exists($key, $params)) {
                     if ($subdesc->required == VALUE_REQUIRED) {
-                        throw new invalid_parameter_exception('Missing required key in single structure: '. $key);
+                        throw new invalid_parameter_exception("Missing required key in single structure: {$key}");
                     }
                     if ($subdesc->required == VALUE_DEFAULT) {
                         try {
                             $result[$key] = static::validate_parameters($subdesc, $subdesc->default);
                         } catch (invalid_parameter_exception $e) {
-                            //we are only interested by exceptions returned by validate_param() and validate_parameters()
-                            //(in order to build the path to the faulty attribut)
-                            throw new invalid_parameter_exception($key." => ".$e->getMessage() . ': ' .$e->debuginfo);
+                            // We are only interested by exceptions returned by validate_param() and validate_parameters().
+                            // This is used to build the path to the faulty attribute.
+                            throw new invalid_parameter_exception("{$key} => " . $e->getMessage() . ': ' . $e->debuginfo);
                         }
                     }
                 } else {
                     try {
                         $result[$key] = static::validate_parameters($subdesc, $params[$key]);
                     } catch (invalid_parameter_exception $e) {
-                        //we are only interested by exceptions returned by validate_param() and validate_parameters()
-                        //(in order to build the path to the faulty attribut)
-                        throw new invalid_parameter_exception($key." => ".$e->getMessage() . ': ' .$e->debuginfo);
+                        // We are only interested by exceptions returned by validate_param() and validate_parameters().
+                        // This is used to build the path to the faulty attribute.
+                        throw new invalid_parameter_exception($key . " => " . $e->getMessage() . ': ' . $e->debuginfo);
                     }
                 }
                 unset($params[$key]);
             }
             if (!empty($params)) {
-                throw new invalid_parameter_exception('Unexpected keys (' . implode(', ', array_keys($params)) . ') detected in parameter array.');
+                throw new invalid_parameter_exception(
+                    'Unexpected keys (' . implode(', ', array_keys($params)) . ') detected in parameter array.'
+                );
             }
             return $result;
-
         } else if ($description instanceof external_multiple_structure) {
             if (!is_array($params)) {
-                throw new invalid_parameter_exception('Only arrays accepted. The bad value is: \''
-                        . print_r($params, true) . '\'');
+                throw new invalid_parameter_exception(
+                    'Only arrays accepted. The bad value is: \'' .
+                    // phpcs:ignore moodle.PHP.ForbiddenFunctions.Found
+                    print_r($params, true) .
+                    "'"
+                );
             }
-            $result = array();
+            $result = [];
             foreach ($params as $param) {
                 $result[] = static::validate_parameters($description->content, $param);
             }
             return $result;
-
         } else {
             throw new invalid_parameter_exception('Invalid external api description');
         }
@@ -389,30 +399,31 @@ class external_api {
      */
     public static function clean_returnvalue(external_description $description, $response) {
         if ($description instanceof external_value) {
-            if (is_array($response) or is_object($response)) {
+            if (is_array($response) || is_object($response)) {
                 throw new invalid_response_exception('Scalar type expected, array or object received.');
             }
 
             if ($description->type == PARAM_BOOL) {
-                // special case for PARAM_BOOL - we want true/false instead of the usual 1/0 - we can not be too strict here ;-)
-                if (is_bool($response) or $response === 0 or $response === 1 or $response === '0' or $response === '1') {
-                    return (bool)$response;
+                // Special case for PARAM_BOOL - we want true/false instead of the usual 1/0 - we can not be too strict here.
+                if (is_bool($response) || $response === 0 || $response === 1 || $response === '0' || $response === '1') {
+                    return (bool) $response;
                 }
             }
             $responsetype = gettype($response);
-            $debuginfo = 'Invalid external api response: the value is "' . $response .
-                    '" of PHP type "' . $responsetype . '", the server was expecting "' . $description->type . '" type';
+            $debuginfo = "Invalid external api response: the value is \"{$response}\" of PHP type \"{$responsetype}\", ";
+            $debuginfo .= "the server was expecting \"{$description->type}\" type";
             try {
                 return validate_param($response, $description->type, $description->allownull, $debuginfo);
             } catch (invalid_parameter_exception $e) {
-                //proper exception name, to be recursively catched to build the path to the faulty attribut
+                // Proper exception name, to be recursively catched to build the path to the faulty attribute.
                 throw new invalid_response_exception($e->debuginfo);
             }
-
         } else if ($description instanceof external_single_structure) {
             if (!is_array($response) && !is_object($response)) {
-                throw new invalid_response_exception('Only arrays/objects accepted. The bad value is: \'' .
-                        print_r($response, true) . '\'');
+                throw new invalid_response_exception(
+                    // phpcs:ignore moodle.PHP.ForbiddenFunctions.Found
+                    "Only arrays/objects accepted. The bad value is: '" . print_r($response, true) . "'"
+                );
             }
 
             // Cast objects into arrays.
@@ -420,19 +431,21 @@ class external_api {
                 $response = (array) $response;
             }
 
-            $result = array();
-            foreach ($description->keys as $key=>$subdesc) {
+            $result = [];
+            foreach ($description->keys as $key => $subdesc) {
                 if (!array_key_exists($key, $response)) {
                     if ($subdesc->required == VALUE_REQUIRED) {
-                        throw new invalid_response_exception('Error in response - Missing following required key in a single structure: ' . $key);
+                        throw new invalid_response_exception(
+                            "Error in response - Missing following required key in a single structure: {$key}"
+                        );
                     }
                     if ($subdesc instanceof external_value) {
                         if ($subdesc->required == VALUE_DEFAULT) {
                             try {
-                                    $result[$key] = static::clean_returnvalue($subdesc, $subdesc->default);
+                                $result[$key] = static::clean_returnvalue($subdesc, $subdesc->default);
                             } catch (invalid_response_exception $e) {
-                                //build the path to the faulty attribut
-                                throw new invalid_response_exception($key." => ".$e->getMessage() . ': ' . $e->debuginfo);
+                                // Build the path to the faulty attribute.
+                                throw new invalid_response_exception("{$key} => " . $e->getMessage() . ': ' . $e->debuginfo);
                             }
                         }
                     }
@@ -440,26 +453,26 @@ class external_api {
                     try {
                         $result[$key] = static::clean_returnvalue($subdesc, $response[$key]);
                     } catch (invalid_response_exception $e) {
-                        //build the path to the faulty attribut
-                        throw new invalid_response_exception($key." => ".$e->getMessage() . ': ' . $e->debuginfo);
+                        // Build the path to the faulty attribute.
+                        throw new invalid_response_exception("{$key} => " . $e->getMessage() . ': ' . $e->debuginfo);
                     }
                 }
                 unset($response[$key]);
             }
 
             return $result;
-
         } else if ($description instanceof external_multiple_structure) {
             if (!is_array($response)) {
-                throw new invalid_response_exception('Only arrays accepted. The bad value is: \'' .
-                        print_r($response, true) . '\'');
+                throw new invalid_response_exception(
+                    // phpcs:ignore moodle.PHP.ForbiddenFunctions.Found
+                    "Only arrays accepted. The bad value is: '" . print_r($response, true) . "'"
+                );
             }
-            $result = array();
+            $result = [];
             foreach ($response as $param) {
                 $result[] = static::clean_returnvalue($description->content, $param);
             }
             return $result;
-
         } else {
             throw new invalid_response_exception('Invalid external api response description');
         }
@@ -468,11 +481,11 @@ class external_api {
     /**
      * Makes sure user may execute functions in this context.
      *
-     * @param \stdClass $context
+     * @param context $context
      * @since Moodle 2.0
      */
     public static function validate_context($context) {
-        global $CFG, $PAGE;
+        global $PAGE;
 
         if (empty($context)) {
             throw new invalid_parameter_exception('Context does not exist');
@@ -496,7 +509,7 @@ class external_api {
         }
 
         $PAGE->reset_theme_and_output();
-        list($unused, $course, $cm) = get_context_info_array($context->id);
+        [, $course, $cm] = get_context_info_array($context->id);
         require_login($course, false, $cm, false, true);
         $PAGE->set_context($context);
     }
@@ -518,14 +531,16 @@ class external_api {
         if (!empty($param['contextid'])) {
             return context::instance_by_id($param['contextid'], IGNORE_MISSING);
         } else if (!empty($param['contextlevel']) && isset($param['instanceid'])) {
-            $contextlevel = "context_".$param['contextlevel'];
+            $contextlevel = "context_{$param['contextlevel']}";
             if (!array_search($contextlevel, $levels)) {
-                throw new invalid_parameter_exception('Invalid context level = '.$param['contextlevel']);
+                throw new invalid_parameter_exception("Invalid context level = {$param['contextlevel']}");
             }
-           return $contextlevel::instance($param['instanceid'], IGNORE_MISSING);
+            return $contextlevel::instance($param['instanceid'], IGNORE_MISSING);
         } else {
             // No valid context info was found.
-            throw new invalid_parameter_exception('Missing parameters, please provide either context level with instance id or contextid');
+            throw new invalid_parameter_exception(
+                'Missing parameters, please provide either context level with instance id or contextid'
+            );
         }
     }
 
@@ -552,11 +567,10 @@ class external_api {
             VALUE_DEFAULT,
             0
         );
-        return new external_single_structure(array(
+        return new external_single_structure([
             'contextid' => $id,
             'contextlevel' => $level,
             'instanceid' => $instanceid,
-        ));
+        ]);
     }
-
 }
