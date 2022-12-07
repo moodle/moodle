@@ -48,54 +48,31 @@ class_alias(\core_external\external_settings::class, 'external_settings');
  * @param int $validuntil date when the token expired
  * @param string $iprestriction allowed ip - if 0 or empty then all ips are allowed
  * @return string generated token
- * @author  2010 Jamie Pratt
  * @since Moodle 2.0
  */
-function external_generate_token($tokentype, $serviceorid, $userid, $contextorid, $validuntil=0, $iprestriction=''){
-    global $DB, $USER;
-    // make sure the token doesn't exist (even if it should be almost impossible with the random generation)
-    $numtries = 0;
-    do {
-        $numtries ++;
-        $generatedtoken = md5(uniqid(rand(),1));
-        if ($numtries > 5){
-            throw new moodle_exception('tokengenerationfailed');
-        }
-    } while ($DB->record_exists('external_tokens', array('token'=>$generatedtoken)));
-    $newtoken = new stdClass();
-    $newtoken->token = $generatedtoken;
-    if (!is_object($serviceorid)){
-        $service = $DB->get_record('external_services', array('id' => $serviceorid));
+function external_generate_token($tokentype, $serviceorid, $userid, $contextorid, $validuntil = 0, $iprestriction = '') {
+    if (is_numeric($serviceorid)) {
+        $service = util::get_service_by_id($serviceorid);
+    } else if (is_string($serviceorid)) {
+        $service = util::get_service_by_name($serviceorid);
     } else {
         $service = $serviceorid;
     }
-    if (!is_object($contextorid)){
+
+    if (!is_object($contextorid)) {
         $context = context::instance_by_id($contextorid, MUST_EXIST);
     } else {
         $context = $contextorid;
     }
-    if (empty($service->requiredcapability) || has_capability($service->requiredcapability, $context, $userid)) {
-        $newtoken->externalserviceid = $service->id;
-    } else {
-        throw new moodle_exception('nocapabilitytousethisservice');
-    }
-    $newtoken->tokentype = $tokentype;
-    $newtoken->userid = $userid;
-    if ($tokentype == EXTERNAL_TOKEN_EMBEDDED){
-        $newtoken->sid = session_id();
-    }
 
-    $newtoken->contextid = $context->id;
-    $newtoken->creatorid = $USER->id;
-    $newtoken->timecreated = time();
-    $newtoken->validuntil = $validuntil;
-    if (!empty($iprestriction)) {
-        $newtoken->iprestriction = $iprestriction;
-    }
-    // Generate the private token, it must be transmitted only via https.
-    $newtoken->privatetoken = random_string(64);
-    $DB->insert_record('external_tokens', $newtoken);
-    return $newtoken->token;
+    return util::generate_token(
+        $tokentype,
+        $service,
+        $userid,
+        $context,
+        $validuntil,
+        $iprestriction
+    );
 }
 
 /**
@@ -109,10 +86,15 @@ function external_generate_token($tokentype, $serviceorid, $userid, $contextorid
  * @return int returns token id.
  * @since Moodle 2.0
  */
-function external_create_service_token($servicename, $context){
-    global $USER, $DB;
-    $service = $DB->get_record('external_services', array('name'=>$servicename), '*', MUST_EXIST);
-    return external_generate_token(EXTERNAL_TOKEN_EMBEDDED, $service, $USER->id, $context, 0);
+function external_create_service_token($servicename, $contextid) {
+    global $USER;
+
+    return util::generate_token(
+        EXTERNAL_TOKEN_EMBEDDED,
+        util::get_service_by_name($servicename),
+        $USER->id,
+        \context::instance_by_id($contextid)
+    );
 }
 
 /**
@@ -281,119 +263,9 @@ function external_format_text($text, $textformat, $contextorid, $component = nul
  * @param stdClass $service external service object
  * @return stdClass token object
  * @since Moodle 3.2
- * @throws moodle_exception
  */
 function external_generate_token_for_current_user($service) {
-    global $DB, $USER, $CFG;
-
-    core_user::require_active_user($USER, true, true);
-
-    // Check if there is any required system capability.
-    if ($service->requiredcapability and !has_capability($service->requiredcapability, context_system::instance())) {
-        throw new moodle_exception('missingrequiredcapability', 'webservice', '', $service->requiredcapability);
-    }
-
-    // Specific checks related to user restricted service.
-    if ($service->restrictedusers) {
-        $authoriseduser = $DB->get_record('external_services_users',
-            array('externalserviceid' => $service->id, 'userid' => $USER->id));
-
-        if (empty($authoriseduser)) {
-            throw new moodle_exception('usernotallowed', 'webservice', '', $service->shortname);
-        }
-
-        if (!empty($authoriseduser->validuntil) and $authoriseduser->validuntil < time()) {
-            throw new moodle_exception('invalidtimedtoken', 'webservice');
-        }
-
-        if (!empty($authoriseduser->iprestriction) and !address_in_subnet(getremoteaddr(), $authoriseduser->iprestriction)) {
-            throw new moodle_exception('invalidiptoken', 'webservice');
-        }
-    }
-
-    // Check if a token has already been created for this user and this service.
-    $conditions = array(
-        'userid' => $USER->id,
-        'externalserviceid' => $service->id,
-        'tokentype' => EXTERNAL_TOKEN_PERMANENT
-    );
-    $tokens = $DB->get_records('external_tokens', $conditions, 'timecreated ASC');
-
-    // A bit of sanity checks.
-    foreach ($tokens as $key => $token) {
-
-        // Checks related to a specific token. (script execution continue).
-        $unsettoken = false;
-        // If sid is set then there must be a valid associated session no matter the token type.
-        if (!empty($token->sid)) {
-            if (!\core\session\manager::session_exists($token->sid)) {
-                // This token will never be valid anymore, delete it.
-                $DB->delete_records('external_tokens', array('sid' => $token->sid));
-                $unsettoken = true;
-            }
-        }
-
-        // Remove token is not valid anymore.
-        if (!empty($token->validuntil) and $token->validuntil < time()) {
-            $DB->delete_records('external_tokens', array('token' => $token->token, 'tokentype' => EXTERNAL_TOKEN_PERMANENT));
-            $unsettoken = true;
-        }
-
-        // Remove token if its IP is restricted.
-        if (isset($token->iprestriction) and !address_in_subnet(getremoteaddr(), $token->iprestriction)) {
-            $unsettoken = true;
-        }
-
-        if ($unsettoken) {
-            unset($tokens[$key]);
-        }
-    }
-
-    // If some valid tokens exist then use the most recent.
-    if (count($tokens) > 0) {
-        $token = array_pop($tokens);
-    } else {
-        $context = context_system::instance();
-        $isofficialservice = $service->shortname == MOODLE_OFFICIAL_MOBILE_SERVICE;
-
-        if (($isofficialservice and has_capability('moodle/webservice:createmobiletoken', $context)) or
-                (!is_siteadmin($USER) && has_capability('moodle/webservice:createtoken', $context))) {
-
-            // Create a new token.
-            $token = new stdClass;
-            $token->token = md5(uniqid(rand(), 1));
-            $token->userid = $USER->id;
-            $token->tokentype = EXTERNAL_TOKEN_PERMANENT;
-            $token->contextid = context_system::instance()->id;
-            $token->creatorid = $USER->id;
-            $token->timecreated = time();
-            $token->externalserviceid = $service->id;
-            // By default tokens are valid for 12 weeks.
-            $token->validuntil = $token->timecreated + $CFG->tokenduration;
-            $token->iprestriction = null;
-            $token->sid = null;
-            $token->lastaccess = null;
-            // Generate the private token, it must be transmitted only via https.
-            $token->privatetoken = random_string(64);
-            $token->id = $DB->insert_record('external_tokens', $token);
-
-            $eventtoken = clone $token;
-            $eventtoken->privatetoken = null;
-            $params = array(
-                'objectid' => $eventtoken->id,
-                'relateduserid' => $USER->id,
-                'other' => array(
-                    'auto' => true
-                )
-            );
-            $event = \core\event\webservice_token_created::create($params);
-            $event->add_record_snapshot('external_tokens', $eventtoken);
-            $event->trigger();
-        } else {
-            throw new moodle_exception('cannotcreatetoken', 'webservice', '', $service->shortname);
-        }
-    }
-    return $token;
+    return util::generate_token_for_current_user($service);
 }
 
 /**
@@ -405,37 +277,6 @@ function external_generate_token_for_current_user($service) {
  * @param  stdClass $token token object
  * @since  Moodle 3.2
  */
-function external_log_token_request($token) {
-    global $DB, $USER;
-
-    $token->privatetoken = null;
-
-    // Log token access.
-    $DB->set_field('external_tokens', 'lastaccess', time(), array('id' => $token->id));
-
-    $params = array(
-        'objectid' => $token->id,
-    );
-    $event = \core\event\webservice_token_sent::create($params);
-    $event->add_record_snapshot('external_tokens', $token);
-    $event->trigger();
-
-    // Check if we need to notify the user about the new login via token.
-    $loginip = getremoteaddr();
-    if ($USER->lastip != $loginip &&
-            ((!WS_SERVER && !CLI_SCRIPT && NO_MOODLE_COOKIES) || PHPUNIT_TEST)) {
-
-        $logintime = time();
-        $useragent = \core_useragent::get_user_agent_string();
-        $ismoodleapp = \core_useragent::is_moodle_app();
-
-        // Schedule adhoc task to sent a login notification to the user.
-        $task = new \core\task\send_login_notifications();
-        $task->set_userid($USER->id);
-        $task->set_custom_data(compact('ismoodleapp', 'useragent', 'loginip', 'logintime'));
-        $task->set_component('core');
-        // We need sometime so the mobile app will send to Moodle the device information after login.
-        $task->set_next_run_time($logintime + (2 * MINSECS));
-        \core\task\manager::reschedule_or_queue_adhoc_task($task);
-    }
+function external_log_token_request($token): void {
+    util::log_token_request($token);
 }

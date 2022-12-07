@@ -119,7 +119,7 @@ class util_test extends \advanced_testcase {
         $courseids = [$c1->id, $c2->id, $c3->id];
 
         $this->setAdminUser();
-        [$courses, $warnings] = \external_util::validate_courses($courseids);
+        [$courses, $warnings] = util::validate_courses($courseids);
         $this->assertEmpty($warnings);
         $this->assertCount(3, $courses);
         $this->assertArrayHasKey($c1->id, $courses);
@@ -130,7 +130,7 @@ class util_test extends \advanced_testcase {
         $this->assertEquals($c3->id, $courses[$c3->id]->id);
 
         $this->setUser($u1);
-        [$courses, $warnings] = \external_util::validate_courses($courseids);
+        [$courses, $warnings] = util::validate_courses($courseids);
         $this->assertCount(2, $warnings);
         $this->assertEquals($c2->id, $warnings[0]['itemid']);
         $this->assertEquals($c3->id, $warnings[1]['itemid']);
@@ -146,7 +146,7 @@ class util_test extends \advanced_testcase {
      *
      * @covers \core_external\util::get_area_files
      */
-    public function test_external_util_get_area_files(): void {
+    public function test_get_area_files(): void {
         global $CFG, $DB;
 
         $this->DB = $DB;
@@ -194,5 +194,33 @@ class util_test extends \advanced_testcase {
         // Get just the file indicated by $itemid.
         $files = util::get_area_files($context, $component, $filearea, $itemid);
         $this->assertEquals($expectedfiles, $files);
+    }
+
+    /**
+     * Test default time for user created tokens.
+     *
+     * @covers \core_external\util::generate_token_for_current_user
+     */
+    public function test_user_created_tokens_duration(): void {
+        global $CFG, $DB;
+        $this->resetAfterTest(true);
+
+        $CFG->enablewebservices = 1;
+        $CFG->enablemobilewebservice = 1;
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $service = $DB->get_record('external_services', ['shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE, 'enabled' => 1]);
+
+        $this->setUser($user1);
+        $timenow = time();
+        $token = util::generate_token_for_current_user($service);
+        $this->assertGreaterThanOrEqual($timenow + $CFG->tokenduration, $token->validuntil);
+
+        // Change token default time.
+        $this->setUser($user2);
+        set_config('tokenduration', DAYSECS);
+        $token = util::external_generate_token_for_current_user($service);
+        $timenow = time();
+        $this->assertLessThanOrEqual($timenow + DAYSECS, $token->validuntil);
     }
 }
