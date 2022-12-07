@@ -106,7 +106,6 @@ class grader_report_preferences_form extends moodleform {
             $preferences['prefgeneral']['aggregationposition'] = array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
                                                                        GRADE_REPORT_AGGREGATION_POSITION_FIRST => get_string('positionfirst', 'grades'),
                                                                        GRADE_REPORT_AGGREGATION_POSITION_LAST => get_string('positionlast', 'grades'));
-            $preferences['prefgeneral']['enableajax'] = $checkbox_default;
 
             $preferences['prefshow']['showuserimage'] = $checkbox_default;
             $preferences['prefshow']['showactivityicons'] = $checkbox_default;

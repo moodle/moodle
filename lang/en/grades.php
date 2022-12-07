@@ -176,8 +176,6 @@ $string['editoutcomes'] = 'Edit outcomes';
 $string['editscale'] = 'Edit scale';
 $string['edittree'] = 'Setup';
 $string['editverbose'] = 'Edit {$a->category} {$a->itemmodule} {$a->itemname}';
-$string['enableajax'] = 'Enable AJAX';
-$string['enableajax_help'] = 'Adds a layer of AJAX functionality to the grader report, simplifying and speeding up common operations. Depends on Javascript being switched on at the user\'s browser level.';
 $string['enableoutcomes'] = 'Enable outcomes';
 $string['enableoutcomes_help'] = 'If enabled, grade items may be graded using one or more scales tied to outcome statements.';
 $string['encoding'] = 'Encoding';
@@ -914,3 +912,5 @@ $string['showquickfeedback'] = 'Show quick feedback';
 $string['showquickfeedback_help'] = 'If enabled, when editing is turned on, a feedback text input box with a dotted border appears for each grade, allowing the feedback for many grades to be edited at the same time. Changes are saved and highlighted when the update button is clicked.
 
 Note that when feedback is edited in the grader report, an overridden flag is set, meaning that the feedback can no longer be changed from within the related activity.';
+$string['enableajax'] = 'Enable AJAX';
+$string['enableajax_help'] = 'Adds a layer of AJAX functionality to the grader report, simplifying and speeding up common operations. Depends on Javascript being switched on at the user\'s browser level.';

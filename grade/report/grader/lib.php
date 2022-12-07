@@ -772,18 +772,9 @@ class grade_report_grader extends grade_report {
         $strgrade = $this->get_lang_string('gradenoun');
         $arrows = $this->get_sort_arrows();
 
-        $jsarguments = array(
-            'cfg'       => array('ajaxenabled'=>false),
-            'items'     => array(),
-            'users'     => array(),
-            'grades'    => array()
-        );
-        $jsscales = array();
-
         // Get preferences once.
         $showactivityicons = $this->get_pref('showactivityicons');
         $quickgrading = $this->get_pref('quickgrading');
-        $enableajax = $this->get_pref('enableajax');
         $showanalysisicon = $this->get_pref('showanalysisicon');
 
         // Get strings which are re-used inside the loop.
@@ -912,9 +903,6 @@ class grade_report_grader extends grade_report {
             $scale = null;
             if (!empty($item->scaleid)) {
                 $scaleslist[] = $item->scaleid;
-                $jsarguments['items'][$itemid] = array('id'=>$itemid, 'name'=>$item->get_name(true), 'type'=>'scale', 'scale'=>$item->scaleid, 'decimals'=>$item->get_decimals());
-            } else {
-                $jsarguments['items'][$itemid] = array('id'=>$itemid, 'name'=>$item->get_name(true), 'type'=>'value', 'scale'=>false, 'decimals'=>$item->get_decimals());
             }
             $tabindices[$item->id]['grade'] = $gradetabindex;
             $gradetabindex += $numusers * 2;
@@ -924,7 +912,6 @@ class grade_report_grader extends grade_report {
         if (!empty($scaleslist)) {
             $scalesarray = $DB->get_records_list('scale', 'id', $scaleslist);
         }
-        $jsscales = $scalesarray;
 
         // Get all the grade items if the user can not view hidden grade items.
         // It is possible that the user is simply viewing the 'Course total' by switching to the 'Aggregates only' view
@@ -952,7 +939,6 @@ class grade_report_grader extends grade_report {
             $itemrow->id = 'user_'.$userid;
 
             $fullname = fullname($user, $viewfullnames);
-            $jsarguments['users'][$userid] = $fullname;
 
             foreach ($this->gtree->items as $itemid => $unused) {
                 $item =& $this->gtree->items[$itemid];
@@ -972,15 +958,6 @@ class grade_report_grader extends grade_report {
                     $gradeval = $altered[$itemid];
                 } else {
                     $gradeval = $grade->finalgrade;
-                }
-                if (!empty($grade->finalgrade)) {
-                    $gradevalforjs = null;
-                    if ($item->scaleid && !empty($scalesarray[$item->scaleid])) {
-                        $gradevalforjs = (int)$gradeval;
-                    } else {
-                        $gradevalforjs = format_float($gradeval, $decimalpoints);
-                    }
-                    $jsarguments['grades'][] = array('user'=>$userid, 'item'=>$itemid, 'grade'=>$gradevalforjs);
                 }
 
                 // MDL-11274
@@ -1123,14 +1100,6 @@ class grade_report_grader extends grade_report {
                         $itemcell->attributes['class'] .= ' grade_type_text';
                     }
 
-                    // Only allow edting if the grade is editable (not locked, not in a unoverridable category, etc).
-                    if ($enableajax && $grade->is_editable()) {
-                        // If a grade item is type text, it can't be edited.
-                        if ($item->gradetype != GRADE_TYPE_TEXT) {
-                            $itemcell->attributes['class'] .= ' clickable';
-                        }
-                    }
-
                     if ($item->needsupdate) {
                         $itemcell->text .= $gradepassicon . "<span class='gradingerror{$hidden}{$gradepass}'>" . $error . "</span>";
                     } else {
@@ -1148,14 +1117,6 @@ class grade_report_grader extends grade_report {
                     }
                 }
 
-                // Enable keyboard navigation if the grade is editable (not locked, not in a unoverridable category, etc).
-                if ($enableajax && $grade->is_editable()) {
-                    // If a grade item is type text, it can't be edited.
-                    if ($item->gradetype != GRADE_TYPE_TEXT) {
-                        $itemcell->attributes['class'] .= ' gbnavigable';
-                    }
-                }
-
                 if (!empty($this->gradeserror[$item->id][$userid])) {
                     $itemcell->text .= $this->gradeserror[$item->id][$userid];
                 }
@@ -1165,30 +1126,9 @@ class grade_report_grader extends grade_report {
             $rows[] = $itemrow;
         }
 
-        if ($enableajax) {
-            $jsarguments['cfg']['ajaxenabled'] = true;
-            $jsarguments['cfg']['scales'] = array();
-            foreach ($jsscales as $scale) {
-                // Trim the scale values, as they may have a space that is ommitted from values later.
-                $jsarguments['cfg']['scales'][$scale->id] = array_map('trim', explode(',', $scale->scale));
-            }
-
-            // Student grades are already at $jsarguments['grades']
-        }
-        $jsarguments['cfg']['isediting'] = !empty($USER->editing);
-        $jsarguments['cfg']['courseid'] = $this->courseid;
-        $jsarguments['cfg']['studentsperpage'] = $this->get_students_per_page();
-
-        $module = array(
-            'name'      => 'gradereport_grader',
-            'fullpath'  => '/grade/report/grader/module.js',
-            'requires'  => array('base', 'dom', 'event', 'event-mouseenter', 'event-key', 'io-queue', 'json-parse', 'overlay')
-        );
-        $PAGE->requires->js_init_call('M.gradereport_grader.init_report', $jsarguments, false, $module);
-        $PAGE->requires->strings_for_js(array('grade'), 'grades');
-        $PAGE->requires->strings_for_js(array('ajaxchoosescale', 'ajaxclicktoclose', 'ajaxerror', 'ajaxfailedupdate', 'ajaxfieldchanged'), 'gradereport_grader');
-        if (!$enableajax && !empty($USER->editing)) {
-            $PAGE->requires->js_call_amd('core_form/changechecker', 'watchFormById', ['gradereport_grader']);
+        if (!empty($USER->editing)) {
+            $PAGE->requires->js_call_amd('core_form/changechecker',
+                'watchFormById', ['gradereport_grader']);
         }
 
         $rows = $this->get_right_range_row($rows);

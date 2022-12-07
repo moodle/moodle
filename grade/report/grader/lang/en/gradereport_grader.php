@@ -23,11 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['ajaxclicktoclose'] = 'Click this box to remove it';
-$string['ajaxerror'] = 'Error';
-$string['ajaxfailedupdate'] = 'Unable to update [1] for [2]';
-$string['ajaxfieldchanged'] = 'The field you are currently editing has changed, would you like to use the updated value?';
-$string['ajaxchoosescale'] = 'Choose';
 $string['eventgradereportviewed'] = 'Grader report viewed';
 $string['grader:manage'] = 'Manage the grader report';
 $string['grader:view'] = 'View grader report';
@@ -36,7 +31,6 @@ $string['preferences'] = 'Grader report preferences';
 $string['privacy:metadata:preference:grade_report_aggregationposition'] = 'Whether the category and course total columns are displayed first or last in the gradebook reports';
 $string['privacy:metadata:preference:grade_report_averagesdecimalpoints'] = 'The number of decimal places to display for each average or whether the overall decimal places setting for the category or grade item is used (inherit).';
 $string['privacy:metadata:preference:grade_report_averagesdisplaytype'] = 'Whether the average (mean) is displayed as real grades, percentages or letters, or whether the display type for the category or grade item is used (inherit).';
-$string['privacy:metadata:preference:grade_report_enableajax'] = 'Whether to add a layer of AJAX functionality to the grader report, simplifying and speeding up common operations';
 $string['privacy:metadata:preference:grade_report_grader_collapsed_categories'] = 'List of gradebook categories to be collapsed';
 $string['privacy:metadata:preference:grade_report_meanselection'] = 'Whether cells with no grade should be included when calculating the average (mean) for each category or grade item';
 $string['privacy:metadata:preference:grade_report_quickgrading'] = 'Whether to display a text input box for each grade, allowing many grades to be edited at the same time';
@@ -60,4 +54,10 @@ $string['overriddengrade'] = 'Overridden grade';
 
 // Deprecated since Moodle 4.2.
 $string['privacy:metadata:preference:grade_report_showquickfeedback'] = 'Whether to display a feedback text input box with a dotted border for each grade, allowing the feedback for many grades to be edited at the same time';
+$string['privacy:metadata:preference:grade_report_enableajax'] = 'Whether to add a layer of AJAX functionality to the grader report, simplifying and speeding up common operations';
 $string['useractivityfeedback'] = '{$a} feedback';
+$string['ajaxclicktoclose'] = 'Click this box to remove it';
+$string['ajaxerror'] = 'Error';
+$string['ajaxfailedupdate'] = 'Unable to update [1] for [2]';
+$string['ajaxfieldchanged'] = 'The field you are currently editing has changed, would you like to use the updated value?';
+$string['ajaxchoosescale'] = 'Choose';

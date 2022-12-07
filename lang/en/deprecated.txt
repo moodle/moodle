@@ -72,3 +72,5 @@ confirmaddadmin,core_role
 confirmdeladmin,core_role
 showquickfeedback,core_grades
 showquickfeedback_help,core_grades
+enableajax,core_grades
+enableajax_help,core_grades
