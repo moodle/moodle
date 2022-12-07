@@ -1109,7 +1109,7 @@ function page_get_doc_link_path(moodle_page $page) {
 function validate_email($address) {
     global $CFG;
 
-    if ($address === null || $address === '') {
+    if ($address === null || $address === false || $address === '') {
         return false;
     }
 
