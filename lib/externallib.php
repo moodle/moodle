@@ -49,41 +49,8 @@ class_alias(\core_external\external_description::class, 'external_description');
 class_alias(\core_external\external_value::class, 'external_value');
 class_alias(\core_external\external_single_structure::class, 'external_single_structure');
 class_alias(\core_external\external_multiple_structure::class, 'external_multiple_structure');
+class_alias(\core_external\external_function_parameters::class, 'external_function_parameters');
 
-/**
- * Description of top level - PHP function parameters.
- *
- * @package    core_webservice
- * @copyright  2009 Petr Skodak
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- */
-class external_function_parameters extends external_single_structure {
-
-    /**
-     * Constructor - does extra checking to prevent top level optional parameters.
-     *
-     * @param array $keys
-     * @param string $desc
-     * @param bool $required
-     * @param array $default
-     */
-    public function __construct(array $keys, $desc='', $required=VALUE_REQUIRED, $default=null) {
-        global $CFG;
-
-        if ($CFG->debugdeveloper) {
-            foreach ($keys as $key => $value) {
-                if ($value instanceof external_value) {
-                    if ($value->required == VALUE_OPTIONAL) {
-                        debugging('External function parameters: invalid OPTIONAL value specified.', DEBUG_DEVELOPER);
-                        break;
-                    }
-                }
-            }
-        }
-        parent::__construct($keys, $desc, $required, $default);
-    }
-}
 
 /**
  * Generate a token
