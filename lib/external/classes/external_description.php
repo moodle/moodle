@@ -19,10 +19,9 @@ namespace core_external;
 /**
  * Common ancestor of all parameter description classes
  *
- * @package    core_webservice
+ * @package    core_external
  * @copyright  2009 Petr Skodak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
  */
 abstract class external_description {
     /** @var string Description of element */
@@ -35,12 +34,11 @@ abstract class external_description {
     public $default;
 
     /**
-     * Contructor
+     * Contructor.
      *
-     * @param string $desc
-     * @param bool $required
-     * @param mixed $default
-     * @since Moodle 2.0
+     * @param string $desc Description of element
+     * @param int $required Whethe the element value is required
+     * @param mixed $default The default value
      */
     public function __construct($desc, $required, $default) {
         $this->desc = $desc;
