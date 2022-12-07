@@ -33,6 +33,7 @@ class_alias(\core_external\external_single_structure::class, 'external_single_st
 class_alias(\core_external\external_multiple_structure::class, 'external_multiple_structure');
 class_alias(\core_external\external_function_parameters::class, 'external_function_parameters');
 class_alias(\core_external\util::class, 'external_util');
+class_alias(\core_external\external_files::class, 'external_files');
 
 /**
  * Generate a token
@@ -668,101 +669,5 @@ class external_settings {
      */
     public function get_timezone() {
         return $this->timezone;
-    }
-}
-
-/**
- * External structure representing a set of files.
- *
- * @package    core_webservice
- * @copyright  2016 Juan Leyva
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.2
- */
-class external_files extends external_multiple_structure {
-
-    /**
-     * Constructor
-     * @param string $desc Description for the multiple structure.
-     * @param int $required The type of value (VALUE_REQUIRED OR VALUE_OPTIONAL).
-     */
-    public function __construct($desc = 'List of files.', $required = VALUE_REQUIRED) {
-
-        parent::__construct(
-            new external_single_structure(
-                array(
-                    'filename' => new external_value(PARAM_FILE, 'File name.', VALUE_OPTIONAL),
-                    'filepath' => new external_value(PARAM_PATH, 'File path.', VALUE_OPTIONAL),
-                    'filesize' => new external_value(PARAM_INT, 'File size.', VALUE_OPTIONAL),
-                    'fileurl' => new external_value(PARAM_URL, 'Downloadable file url.', VALUE_OPTIONAL),
-                    'timemodified' => new external_value(PARAM_INT, 'Time modified.', VALUE_OPTIONAL),
-                    'mimetype' => new external_value(PARAM_RAW, 'File mime type.', VALUE_OPTIONAL),
-                    'isexternalfile' => new external_value(PARAM_BOOL, 'Whether is an external file.', VALUE_OPTIONAL),
-                    'repositorytype' => new external_value(PARAM_PLUGIN, 'The repository type for external files.', VALUE_OPTIONAL),
-                ),
-                'File.'
-            ),
-            $desc,
-            $required
-        );
-    }
-
-    /**
-     * Return the properties ready to be used by an exporter.
-     *
-     * @return array properties
-     * @since  Moodle 3.3
-     */
-    public static function get_properties_for_exporter() {
-        return [
-            'filename' => array(
-                'type' => PARAM_FILE,
-                'description' => 'File name.',
-                'optional' => true,
-                'null' => NULL_NOT_ALLOWED,
-            ),
-            'filepath' => array(
-                'type' => PARAM_PATH,
-                'description' => 'File path.',
-                'optional' => true,
-                'null' => NULL_NOT_ALLOWED,
-            ),
-            'filesize' => array(
-                'type' => PARAM_INT,
-                'description' => 'File size.',
-                'optional' => true,
-                'null' => NULL_NOT_ALLOWED,
-            ),
-            'fileurl' => array(
-                'type' => PARAM_URL,
-                'description' => 'Downloadable file url.',
-                'optional' => true,
-                'null' => NULL_NOT_ALLOWED,
-            ),
-            'timemodified' => array(
-                'type' => PARAM_INT,
-                'description' => 'Time modified.',
-                'optional' => true,
-                'null' => NULL_NOT_ALLOWED,
-            ),
-            'mimetype' => array(
-                'type' => PARAM_RAW,
-                'description' => 'File mime type.',
-                'optional' => true,
-                'null' => NULL_NOT_ALLOWED,
-            ),
-            'isexternalfile' => array(
-                'type' => PARAM_BOOL,
-                'description' => 'Whether is an external file.',
-                'optional' => true,
-                'null' => NULL_NOT_ALLOWED,
-            ),
-            'repositorytype' => array(
-                'type' => PARAM_PLUGIN,
-                'description' => 'The repository type for the external files.',
-                'optional' => true,
-                'null' => NULL_ALLOWED,
-            ),
-        ];
     }
 }
