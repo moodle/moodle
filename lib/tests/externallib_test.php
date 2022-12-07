@@ -324,26 +324,6 @@ class externallib_test extends \advanced_testcase {
     }
 
     /**
-     * Text external files structure.
-     */
-    public function test_external_files() {
-
-        $description = new \external_files();
-
-        // First check that the expected default values and keys are returned.
-        $expectedkeys = array_flip(array('filename', 'filepath', 'filesize', 'fileurl', 'timemodified', 'mimetype',
-            'isexternalfile', 'repositorytype'));
-        $returnedkeys = array_flip(array_keys($description->content->keys));
-        $this->assertEquals($expectedkeys, $returnedkeys);
-        $this->assertEquals('List of files.', $description->desc);
-        $this->assertEquals(VALUE_REQUIRED, $description->required);
-        foreach ($description->content->keys as $key) {
-            $this->assertEquals(VALUE_OPTIONAL, $key->required);
-        }
-
-    }
-
-    /**
      * Test default time for user created tokens.
      */
     public function test_user_created_tokens_duration() {
