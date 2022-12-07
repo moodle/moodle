@@ -3371,6 +3371,7 @@
       <VENDOR name="oracle" version="11.2" />
     </DATABASE>
     <PHP version="7.3.0" level="required">
+      <RESTRICT function="restrict_php_version_81" message="unsupportedphpversion81" />
     </PHP>
     <PCREUNICODE level="optional">
       <FEEDBACK>
@@ -3557,6 +3558,7 @@
       <VENDOR name="oracle" version="11.2" />
     </DATABASE>
     <PHP version="7.3.0" level="required">
+      <RESTRICT function="restrict_php_version_81" message="unsupportedphpversion81" />
     </PHP>
     <PCREUNICODE level="optional">
       <FEEDBACK>
