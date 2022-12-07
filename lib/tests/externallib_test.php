@@ -77,7 +77,7 @@ class externallib_test extends \advanced_testcase {
         $params = array('text'=>'aaa', 'someid'=>'6');
         $description = new \external_function_parameters(array('someid' => new \external_value(PARAM_INT, 'Some int value'),
             'text'   => new \external_value(PARAM_ALPHA, 'Some text value')));
-        $result = \external_api::validate_parameters($description, $params);
+        $result = \core_external\external_api::validate_parameters($description, $params);
         $this->assertCount(2, $result);
         reset($result);
         $this->assertSame('someid', key($result));
@@ -87,7 +87,7 @@ class externallib_test extends \advanced_testcase {
         $params = array('someids'=>array('1', 2, 'a'=>'3'), 'scalar'=>666);
         $description = new \external_function_parameters(array('someids' => new \external_multiple_structure(new \external_value(PARAM_INT, 'Some ID')),
             'scalar'  => new \external_value(PARAM_ALPHANUM, 'Some text value')));
-        $result = \external_api::validate_parameters($description, $params);
+        $result = \core_external\external_api::validate_parameters($description, $params);
         $this->assertCount(2, $result);
         reset($result);
         $this->assertSame('someids', key($result));
@@ -97,7 +97,7 @@ class externallib_test extends \advanced_testcase {
         $params = array('text'=>'aaa');
         $description = new \external_function_parameters(array('someid' => new \external_value(PARAM_INT, 'Some int value', false),
             'text'   => new \external_value(PARAM_ALPHA, 'Some text value')));
-        $result = \external_api::validate_parameters($description, $params);
+        $result = \core_external\external_api::validate_parameters($description, $params);
         $this->assertCount(2, $result);
         reset($result);
         $this->assertSame('someid', key($result));
@@ -107,7 +107,7 @@ class externallib_test extends \advanced_testcase {
         $params = array('text'=>'aaa');
         $description = new \external_function_parameters(array('someid' => new \external_value(PARAM_INT, 'Some int value', false, 6),
             'text'   => new \external_value(PARAM_ALPHA, 'Some text value')));
-        $result = \external_api::validate_parameters($description, $params);
+        $result = \core_external\external_api::validate_parameters($description, $params);
         $this->assertCount(2, $result);
         reset($result);
         $this->assertSame('someid', key($result));
@@ -270,7 +270,7 @@ class externallib_test extends \advanced_testcase {
         // Check return type on exception because the external values does not allow NULL values.
         $testdata = array('value' => null);
         try {
-            $cleanedvalue = \external_api::clean_returnvalue($returndesc, $testdata);
+            $cleanedvalue = \core_external\external_api::clean_returnvalue($returndesc, $testdata);
         } catch (\moodle_exception $e) {
             $this->assertInstanceOf(\invalid_response_exception::class, $e);
             $this->assertStringContainsString('of PHP type "NULL"', $e->debuginfo);
@@ -297,7 +297,7 @@ class externallib_test extends \advanced_testcase {
         $singlestructure['object'] = $object;
         $singlestructure['value2'] = 'Some text';
         $testdata = array($singlestructure);
-        $cleanedvalue = \external_api::clean_returnvalue($returndesc, $testdata);
+        $cleanedvalue = \core_external\external_api::clean_returnvalue($returndesc, $testdata);
         $cleanedsinglestructure = array_pop($cleanedvalue);
         $this->assertSame($object->value1, $cleanedsinglestructure['object']['value1']);
         $this->assertSame($singlestructure['value2'], $cleanedsinglestructure['value2']);
@@ -308,7 +308,7 @@ class externallib_test extends \advanced_testcase {
         $singlestructure = new \stdClass();
         $singlestructure->object = $object;
         $testdata = array($singlestructure);
-        $cleanedvalue = \external_api::clean_returnvalue($returndesc, $testdata);
+        $cleanedvalue = \core_external\external_api::clean_returnvalue($returndesc, $testdata);
         $cleanedsinglestructure = array_pop($cleanedvalue);
         $this->assertSame($object->value1, $cleanedsinglestructure['object']['value1']);
         $this->assertArrayNotHasKey('value2', $cleanedsinglestructure);
@@ -321,7 +321,7 @@ class externallib_test extends \advanced_testcase {
         $singlestructure['value2'] = 'Some text';
         $singlestructure['unknownvalue'] = 'Some text to ignore';
         $testdata = array($singlestructure);
-        $cleanedvalue = \external_api::clean_returnvalue($returndesc, $testdata);
+        $cleanedvalue = \core_external\external_api::clean_returnvalue($returndesc, $testdata);
         $cleanedsinglestructure = array_pop($cleanedvalue);
         $this->assertSame($object['value1'], $cleanedsinglestructure['object']['value1']);
         $this->assertSame($singlestructure['value2'], $cleanedsinglestructure['value2']);
@@ -334,10 +334,10 @@ class externallib_test extends \advanced_testcase {
         $singlestructure['value2'] = 'Some text';
         $testdata = array($singlestructure);
         $this->expectException('invalid_response_exception');
-        $cleanedvalue = \external_api::clean_returnvalue($returndesc, $testdata);
+        $cleanedvalue = \core_external\external_api::clean_returnvalue($returndesc, $testdata);
     }
     /*
-     * Test \external_api::get_context_from_params().
+     * Test \core_external\external_api::get_context_from_params().
      */
     public function test_get_context_from_params() {
         $this->resetAfterTest(true);
@@ -385,7 +385,7 @@ class externallib_test extends \advanced_testcase {
     }
 
     /*
-     * Test \external_api::get_context()_from_params parameter validation.
+     * Test \core_external\external_api::get_context()_from_params parameter validation.
      */
     public function test_get_context_params() {
         global $USER;
@@ -396,7 +396,7 @@ class externallib_test extends \advanced_testcase {
     }
 
     /*
-     * Test \external_api::get_context()_from_params parameter validation.
+     * Test \core_external\external_api::get_context()_from_params parameter validation.
      */
     public function test_get_context_params2() {
         global $USER;
@@ -407,7 +407,7 @@ class externallib_test extends \advanced_testcase {
     }
 
     /*
-     * Test \external_api::get_context()_from_params parameter validation.
+     * Test \core_external\external_api::get_context()_from_params parameter validation.
      */
     public function test_get_context_params3() {
         global $USER;
@@ -437,7 +437,7 @@ class externallib_test extends \advanced_testcase {
      * @dataProvider all_external_info_provider
      */
     public function test_all_external_info($f) {
-        $desc = \external_api::external_function_info($f);
+        $desc = \core_external\external_api::external_function_info($f);
         $this->assertNotEmpty($desc->name);
         $this->assertNotEmpty($desc->classname);
         $this->assertNotEmpty($desc->methodname);
@@ -555,7 +555,7 @@ class externallib_test extends \advanced_testcase {
         $beforepage = $PAGE;
         $beforecourse = $COURSE;
         $params = array('cohortids' => array($cohort1->id, $cohort2->id));
-        $result = \external_api::call_external_function('core_cohort_get_cohorts', $params);
+        $result = \core_external\external_api::call_external_function('core_cohort_get_cohorts', $params);
 
         $this->assertSame($beforepage, $PAGE);
         $this->assertSame($beforecourse, $COURSE);
@@ -566,7 +566,7 @@ class externallib_test extends \advanced_testcase {
         $beforepage = $PAGE;
         $beforecourse = $COURSE;
         $params = array('courseid' => $course->id, 'options' => array());
-        $result = \external_api::call_external_function('core_enrol_get_enrolled_users', $params);
+        $result = \core_external\external_api::call_external_function('core_enrol_get_enrolled_users', $params);
 
         $this->assertSame($beforepage, $PAGE);
         $this->assertSame($beforecourse, $COURSE);
@@ -686,7 +686,7 @@ class externallib_test extends \advanced_testcase {
 /*
  * Just a wrapper to access protected apis for testing
  */
-class test_exernal_api extends \external_api {
+class test_exernal_api extends \core_external\external_api {
 
     public static function get_context_wrapper($params) {
         return self::get_context_from_params($params);
