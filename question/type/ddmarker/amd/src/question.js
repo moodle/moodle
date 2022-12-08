@@ -149,13 +149,17 @@ define([
 
         root.find('input.choices').each(function(key, input) {
             var choiceNo = thisQ.getChoiceNoFromElement(input),
-                coords = thisQ.getCoords(input);
-            if (coords.length) {
+                imageCoords = thisQ.getImageCoords(input);
+            if (imageCoords.length) {
                 var drag = thisQ.getRoot().find('.draghomes' + ' span.marker' + '.choice' + choiceNo).not('.dragplaceholder');
                 drag.remove();
-                for (var i = 0; i < coords.length; i++) {
+                for (var i = 0; i < imageCoords.length; i++) {
                     var dragInDrop = drag.clone();
-                    dragInDrop.data('pagex', coords[i].x).data('pagey', coords[i].y);
+                    // Convert image coords to screen coords.
+                    const screenCoords = thisQ.convertToWindowXY(imageCoords[i]);
+                    dragInDrop.data('pagex', screenCoords.x).data('pagey', screenCoords.y);
+                    // Save image coords to the drag item so we can use it later.
+                    dragInDrop.data('imageCoords', imageCoords[i]);
                     // We always save the coordinates in the 1:1 ratio.
                     // So we need to set the scale ratio to 1 for the initial load.
                     dragInDrop.data('scaleRatio', 1);
@@ -216,18 +220,18 @@ define([
      * drags should be shown.
      *
      * @param {jQuery} inputNode
-     * @returns {Point[]} coordinates of however many copies of the drag item should be shown.
+     * @returns {Point[]} image coordinates of however many copies of the drag item should be shown.
      */
-    DragDropMarkersQuestion.prototype.getCoords = function(inputNode) {
-        var coords = [],
+    DragDropMarkersQuestion.prototype.getImageCoords = function(inputNode) {
+        var imageCoords = [],
             val = $(inputNode).val();
         if (val !== '') {
             var coordsStrings = val.split(';');
             for (var i = 0; i < coordsStrings.length; i++) {
-                coords[i] = this.convertToWindowXY(Shapes.Point.parse(coordsStrings[i]));
+                imageCoords[i] = Shapes.Point.parse(coordsStrings[i]);
             }
         }
-        return coords;
+        return imageCoords;
     };
 
     /**
@@ -330,7 +334,12 @@ define([
         if (this.coordsInBgImg(dragXY)) {
             this.sendDragToDrop(dragged, true);
             placed = true;
-
+            // Since we already move the drag item to new position.
+            // Remove the image coords if this drag item have it.
+            // We will get the new image coords for this drag item in saveCoordsForChoice.
+            if (dragged.data('imageCoords')) {
+                dragged.data('imageCoords', null);
+            }
             // It seems that the dragdrop sometimes leaves the drag
             // one pixel out of position. Put it in exactly the right place.
             var bgImgXY = this.convertToBgImgXY(dragXY);
@@ -353,15 +362,15 @@ define([
      * @param {Number} choiceNo which copy of the choice this was.
      */
     DragDropMarkersQuestion.prototype.saveCoordsForChoice = function(choiceNo) {
-        var coords = [],
-            items = this.getRoot().find('div.droparea span.marker.choice' + choiceNo),
+        let imageCoords = [];
+        var items = this.getRoot().find('div.droparea span.marker.choice' + choiceNo),
             thiQ = this,
             bgRatio = this.bgRatio();
 
         if (items.length) {
             items.each(function() {
                 var drag = $(this);
-                if (!drag.hasClass('beingdragged')) {
+                if (!drag.hasClass('beingdragged') && !drag.data('imageCoords')) {
                     if (drag.data('scaleRatio') !== bgRatio) {
                         // The scale ratio for the draggable item was changed. We need to update that.
                         drag.data('pagex', drag.offset().left).data('pagey', drag.offset().top);
@@ -370,13 +379,15 @@ define([
                     if (thiQ.coordsInBgImg(dragXY)) {
                         var bgImgXY = thiQ.convertToBgImgXY(dragXY);
                         bgImgXY = new Shapes.Point(bgImgXY.x / bgRatio, bgImgXY.y / bgRatio);
-                        coords[coords.length] = bgImgXY;
+                        imageCoords[imageCoords.length] = bgImgXY;
                     }
+                } else if (drag.data('imageCoords')) {
+                    imageCoords[imageCoords.length] = drag.data('imageCoords');
                 }
             });
         }
 
-        this.getRoot().find('input.choice' + choiceNo).val(coords.join(';'));
+        this.getRoot().find('input.choice' + choiceNo).val(imageCoords.join(';'));
         if (this.isQuestionInteracted()) {
             // The user has interacted with the draggable items. We need to mark the form as dirty.
             questionManager.handleFormDirty();
