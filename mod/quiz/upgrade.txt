@@ -10,6 +10,26 @@ This files describes API changes in the quiz code.
   - qubaids_for_quiz => mod_quiz\question\qubaids_for_quiz
   - qubaids_for_quiz_user => mod_quiz\question\qubaids_for_quiz_user - which is deprecated, because
           it is almost the same as mod_quiz\question\qubaids_for_users_attempts.
+  - mod_quiz_admin_setting_browsersecurity => mod_quiz\admin\browser_security_setting
+  - mod_quiz_admin_setting_grademethod => mod_quiz\admin\grade_method_setting
+  - mod_quiz_admin_setting_overduehandling => mod_quiz\admin\overdue_handling_setting
+  - mod_quiz_admin_review_setting => mod_quiz\admin\review_setting
+  - mod_quiz_admin_setting_user_image => mod_quiz\admin\user_image_setting
+  - mod_quiz_admin_setting_browsersecurity => mod_quiz\admin\browser_security_setting
+  - mod_quiz_admin_setting_grademethod => mod_quiz\admin\grade_method_setting
+  - mod_quiz_admin_setting_overduehandling => mod_quiz\admin\overdue_handling_setting
+  - mod_quiz_admin_review_setting => mod_quiz\admin\review_setting
+  - mod_quiz_admin_setting_user_image => mod_quiz\admin\user_image_setting
+  - mod_quiz\adminpresets\adminpresets_mod_quiz_admin_setting_browsersecurity =>
+            mod_quiz\adminpresets\adminpresets_browser_security_setting
+  - mod_quiz\adminpresets/adminpresets_mod_quiz_admin_setting_grademethod =>
+            mod_quiz\adminpresets\adminpresets_grade_method_setting
+  - mod_quiz\adminpresets\adminpresets_mod_quiz_admin_setting_overduehandling =>
+            mod_quiz\adminpresets\adminpresets_overdue_handling_setting
+  - mod_quiz\adminpresets\adminpresets_mod_quiz_admin_review_setting =>
+            mod_quiz\adminpresets\adminpresets_review_setting
+  - mod_quiz\adminpresets\adminpresets_mod_quiz_admin_setting_user_image =>
+            mod_quiz\adminpresets\adminpresets_user_image_setting
 
 
 === 4.1 ===

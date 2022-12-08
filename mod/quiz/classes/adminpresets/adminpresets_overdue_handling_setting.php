@@ -14,37 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Admin settings class for the quiz overdue attempt handling method.
- *
- * @package   mod_quiz
- * @copyright 2008 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_quiz\adminpresets;
 
-
-defined('MOODLE_INTERNAL') || die();
-
+use core_adminpresets\local\setting\adminpresets_admin_setting_configselect_with_advanced;
 
 /**
  * Admin settings class for the quiz overdue attempt handling method.
  *
- * Just so we can lazy-load the choices.
- *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package          mod_quiz
+ * @copyright        2021 Pimenko <support@pimenko.com><pimenko.com>
+ * @author           Jordan Kesraoui | Sylvain Revenu | Pimenko based on David Monllaó <david.monllao@urv.cat> code
+ * @license          http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_quiz_admin_setting_overduehandling extends admin_setting_configselect_with_advanced {
-    public function load_choices() {
-        global $CFG;
+class adminpresets_overdue_handling_setting extends adminpresets_admin_setting_configselect_with_advanced {
 
-        if (is_array($this->choices)) {
-            return true;
-        }
-
-        require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-        $this->choices = quiz_get_overdue_handling_options();
-
-        return true;
+    public function set_behaviors() {
+        $this->behaviors['loadchoices'] = &$this->settingdata;
     }
 }

@@ -14,27 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Admin settings class for the quiz grading method.
- *
- * @package   mod_quiz
- * @copyright 2008 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-
-defined('MOODLE_INTERNAL') || die();
-
+namespace mod_quiz\admin;
 
 /**
- * Admin settings class for the quiz grading method.
+ * Admin settings class for the choices for how to display the user's image.
  *
  * Just so we can lazy-load the choices.
  *
+ * @package   mod_quiz
+ * @category  admin
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_quiz_admin_setting_grademethod extends admin_setting_configselect_with_advanced {
+class user_image_setting extends \admin_setting_configselect_with_advanced {
     public function load_choices() {
         global $CFG;
 
@@ -43,7 +35,7 @@ class mod_quiz_admin_setting_grademethod extends admin_setting_configselect_with
         }
 
         require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-        $this->choices = quiz_get_grading_options();
+        $this->choices = quiz_get_user_image_options();
 
         return true;
     }
