@@ -1026,8 +1026,8 @@ class locallib_test extends mod_lti_testcase {
                 'isarray' => false
             ],
         ];
-
-        $this->assertEquals($mapping, lti_get_jwt_claim_mapping());
+        $actual = lti_get_jwt_claim_mapping();
+        $this->assertEquals($mapping, $actual);
     }
 
     /**
