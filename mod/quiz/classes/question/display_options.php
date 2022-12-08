@@ -20,43 +20,54 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/question/engine/lib.php');
 
 /**
- * An extension of question_display_options that includes the extra options used
- * by the quiz.
+ * An extension of question_display_options that includes the extra options used by the quiz.
  *
- * @copyright  2022 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @category  question
+ * @copyright 2022 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class display_options extends \question_display_options {
-    /**#@+
-     * @var integer bits used to indicate various times in relation to a
-     * quiz attempt.
+    /**
+     * The bitmask patterns use in the review option settings.
+     *
+     * In the quiz settings, the review... (e.g. reviewmarks) values are
+     * bit patterns that allow what is visible to be change at different times.
+     * These constants define which bit is for which time.
+     *
+     * @var int bit used to indicate 'during the attempt'.
      */
-    const DURING =            0x10000;
+    const DURING = 0x10000;
+
+    /** @var int as above, bit used to indicate 'immediately after the attempt'. */
     const IMMEDIATELY_AFTER = 0x01000;
-    const LATER_WHILE_OPEN =  0x00100;
-    const AFTER_CLOSE =       0x00010;
-    /**#@-*/
+
+    /** @var int as above, bit used to indicate 'later while the quiz is still open'. */
+    const LATER_WHILE_OPEN = 0x00100;
+
+    /** @var int as above, bit used to indicate 'after the quiz is closed'. */
+    const AFTER_CLOSE = 0x00010;
 
     /**
-     * @var boolean if this is false, then the student is not allowed to review
+     * @var bool if this is false, then the student is not allowed to review
      * anything about the attempt.
      */
     public $attempt = true;
 
     /**
-     * @var boolean if this is false, then the student is not allowed to review
-     * anything about the attempt.
+     * @var int whether the attempt overall feedback is visible.
      */
     public $overallfeedback = self::VISIBLE;
 
     /**
      * Set up the various options from the quiz settings, and a time constant.
-     * @param object $quiz the quiz settings.
-     * @param int $one of the {@link DURING}, {@link IMMEDIATELY_AFTER},
-     * {@link LATER_WHILE_OPEN} or {@link AFTER_CLOSE} constants.
-     * @return display_options set up appropriately.
+     *
+     * @param \stdClass $quiz the quiz settings from the database.
+     * @param int $when of the constants {@see DURING}, {@see IMMEDIATELY_AFTER},
+     *      {@see LATER_WHILE_OPEN} or {@see AFTER_CLOSE}.
+     * @return display_options instance of this class set up appropriately.
      */
-    public static function make_from_quiz($quiz, $when) {
+    public static function make_from_quiz(\stdClass $quiz, int $when): self {
         $options = new self();
 
         $options->attempt = self::extract($quiz->reviewattempt, $when, true, false);
@@ -80,9 +91,19 @@ class display_options extends \question_display_options {
         return $options;
     }
 
-    protected static function extract($bitmask, $bit,
+    /**
+     * Helper function to return one value or another depending on whether one bit is set.
+     *
+     * @param int $setting the setting to unpack (e.g. $quiz->reviewmarks).
+     * @param int $when of the constants {@see DURING}, {@see IMMEDIATELY_AFTER},
+     *      {@see LATER_WHILE_OPEN} or {@see AFTER_CLOSE}.
+     * @param bool|int $whenset value to return when the bit is set.
+     * @param bool|int $whennotset value to return when the bit is set.
+     * @return bool|int $whenset or $whennotset, depending.
+     */
+    protected static function extract(int $setting, int $when,
             $whenset = self::VISIBLE, $whennotset = self::HIDDEN) {
-        if ($bitmask & $bit) {
+        if ($setting & $when) {
             return $whenset;
         } else {
             return $whennotset;
