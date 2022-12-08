@@ -23,11 +23,21 @@ require_once($CFG->dirroot . '/question/engine/datalib.php');
 /**
  * A {@see qubaid_condition} for finding all the question usages belonging to a particular quiz.
  *
- * @copyright  2010 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @category  question
+ * @copyright 2010 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qubaids_for_quiz extends \qubaid_join {
-    public function __construct($quizid, $includepreviews = true, $onlyfinished = false) {
+
+    /**
+     * Constructor.
+     *
+     * @param int $quizid The quiz to search.
+     * @param bool $includepreviews Whether to include preview attempts
+     * @param bool $onlyfinished Whether to only include finished attempts or not
+     */
+    public function __construct(int $quizid, bool $includepreviews = true, bool $onlyfinished = false) {
         $where = 'quiza.quiz = :quizaquiz';
         $params = array('quizaquiz' => $quizid);
 

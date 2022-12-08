@@ -16,41 +16,28 @@
 
 namespace mod_quiz\question;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot . '/question/engine/datalib.php');
-
 /**
  * A {@see qubaid_condition} for finding all the question usages belonging to a particular user and quiz combination.
  *
- * @copyright  2018 Andrew Nicols <andrwe@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @category  question
+ * @copyright 2018 Andrew Nicols <andrwe@nicols.co.uk>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated This class was never needed because qubaids_for_users_attempts already existed and is more flexible.
  */
-class qubaids_for_quiz_user extends \qubaid_join {
+class qubaids_for_quiz_user extends qubaids_for_users_attempts {
     /**
-     * Constructor for this qubaid.
+     * Constructor.
      *
-     * @param   int     $quizid The quiz to search.
-     * @param   int     $userid The user to filter on
-     * @param   bool    $includepreviews Whether to include preview attempts
-     * @param   bool    $onlyfinished Whether to only include finished attempts or not
+     * @param int $quizid The quiz to search.
+     * @param int $userid The user to filter on
+     * @param bool $includepreviews Whether to include preview attempts
+     * @param bool $onlyfinished Whether to only include finished attempts or not
      */
-    public function __construct($quizid, $userid, $includepreviews = true, $onlyfinished = false) {
-        $where = 'quiza.quiz = :quizaquiz AND quiza.userid = :quizauserid';
-        $params = [
-            'quizaquiz' => $quizid,
-            'quizauserid' => $userid,
-        ];
-
-        if (!$includepreviews) {
-            $where .= ' AND preview = 0';
-        }
-
-        if ($onlyfinished) {
-            $where .= ' AND state = :statefinished';
-            $params['statefinished'] = quiz_attempt::FINISHED;
-        }
-
-        parent::__construct('{quiz_attempts} quiza', 'quiza.uniqueid', $where, $params);
+    public function __construct(int $quizid, int $userid,
+            bool $includepreviews = true, bool $onlyfinished = false) {
+        debugging('qubaids_for_quiz_user is deprecated. Please use qubaids_for_users_attempts instead.');
+        parent::__construct($quizid, $userid,
+                $onlyfinished ? 'finished' : 'all', $includepreviews);
     }
 }

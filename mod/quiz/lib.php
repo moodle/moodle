@@ -31,6 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 use mod_quiz\question\bank\custom_view;
 use mod_quiz\question\display_options;
 use mod_quiz\question\qubaids_for_quiz;
+use mod_quiz\question\qubaids_for_users_attempts;
 use core_question\statistics\questions\all_calculated_for_qubaid_condition;
 
 require_once($CFG->dirroot . '/calendar/lib.php');
@@ -416,7 +417,8 @@ function quiz_delete_all_attempts($quiz) {
 function quiz_delete_user_attempts($quiz, $user) {
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-    question_engine::delete_questions_usage_by_activities(new qubaids_for_quiz_user($quiz->get_quizid(), $user->id));
+    question_engine::delete_questions_usage_by_activities(new qubaids_for_users_attempts(
+            $quiz->get_quizid(), $user->id, 'all'));
     $params = [
         'quiz' => $quiz->get_quizid(),
         'userid' => $user->id,

@@ -8,7 +8,8 @@ This files describes API changes in the quiz code.
   doable by adding use statements, and a search/replace.
   - mod_quiz_display_options => mod_quiz\question\display_options
   - qubaids_for_quiz => mod_quiz\question\qubaids_for_quiz
-  - qubaids_for_quiz_user => mod_quiz\question\qubaids_for_quiz_user
+  - qubaids_for_quiz_user => mod_quiz\question\qubaids_for_quiz_user - which is deprecated, because
+          it is almost the same as mod_quiz\question\qubaids_for_users_attempts.
 
 
 === 4.1 ===
