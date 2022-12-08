@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use mod_quiz\question\bank\custom_view;
 use mod_quiz\question\display_options;
+use mod_quiz\question\qubaids_for_quiz;
 use core_question\statistics\questions\all_calculated_for_qubaid_condition;
 
 require_once($CFG->dirroot . '/calendar/lib.php');

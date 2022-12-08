@@ -24,6 +24,7 @@
 
 namespace mod_quiz;
 use mod_quiz\question\bank\qbank_helper;
+use mod_quiz\question\qubaids_for_quiz;
 
 defined('MOODLE_INTERNAL') || die();
 

@@ -2067,66 +2067,6 @@ function quiz_get_js_module() {
 
 
 /**
- * A {@link qubaid_condition} for finding all the question usages belonging to
- * a particular quiz.
- *
- * @copyright  2010 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class qubaids_for_quiz extends qubaid_join {
-    public function __construct($quizid, $includepreviews = true, $onlyfinished = false) {
-        $where = 'quiza.quiz = :quizaquiz';
-        $params = array('quizaquiz' => $quizid);
-
-        if (!$includepreviews) {
-            $where .= ' AND preview = 0';
-        }
-
-        if ($onlyfinished) {
-            $where .= ' AND state = :statefinished';
-            $params['statefinished'] = quiz_attempt::FINISHED;
-        }
-
-        parent::__construct('{quiz_attempts} quiza', 'quiza.uniqueid', $where, $params);
-    }
-}
-
-/**
- * A {@link qubaid_condition} for finding all the question usages belonging to a particular user and quiz combination.
- *
- * @copyright  2018 Andrew Nicols <andrwe@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class qubaids_for_quiz_user extends qubaid_join {
-    /**
-     * Constructor for this qubaid.
-     *
-     * @param   int     $quizid The quiz to search.
-     * @param   int     $userid The user to filter on
-     * @param   bool    $includepreviews Whether to include preview attempts
-     * @param   bool    $onlyfinished Whether to only include finished attempts or not
-     */
-    public function __construct($quizid, $userid, $includepreviews = true, $onlyfinished = false) {
-        $where = 'quiza.quiz = :quizaquiz AND quiza.userid = :quizauserid';
-        $params = [
-            'quizaquiz' => $quizid,
-            'quizauserid' => $userid,
-        ];
-
-        if (!$includepreviews) {
-            $where .= ' AND preview = 0';
-        }
-
-        if ($onlyfinished) {
-            $where .= ' AND state = :statefinished';
-            $params['statefinished'] = quiz_attempt::FINISHED;
-        }
-
-        parent::__construct('{quiz_attempts} quiza', 'quiza.uniqueid', $where, $params);
-    }
-}
-
-/**
  * Creates a textual representation of a question for display.
  *
  * @param object $question A question object from the database questions table

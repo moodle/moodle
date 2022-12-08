@@ -29,4 +29,6 @@ $renamedclasses = [
     'mod_quiz\local\views\secondary' => 'mod_quiz\navigation\views\secondary',
     // Since Moodle 4.2.
     'mod_quiz_display_options' => 'mod_quiz\question\display_options',
+    'qubaids_for_quiz' => 'mod_quiz\question\qubaids_for_quiz',
+    'qubaids_for_quiz_user' => 'mod_quiz\question\qubaids_for_quiz_user',
 ];
