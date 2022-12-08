@@ -133,7 +133,11 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
             }
             $class = 'r' . ($value % 2);
             if ($options->correctness && $isselected) {
-                $feedbackimg[] = $this->feedback_image($this->is_right($ans));
+                // Feedback images will be rendered using Font awesome.
+                // Font awesome icons are actually characters(text) with special glyphs,
+                // so the icons cannot be aligned correctly even if the parent div wrapper is using align-items: flex-start.
+                // To make the Font awesome icons follow align-items: flex-start, we need to wrap them inside a span tag.
+                $feedbackimg[] = html_writer::span($this->feedback_image($this->is_right($ans)), 'ml-1');
                 $class .= ' ' . $this->feedback_class($this->is_right($ans));
             } else {
                 $feedbackimg[] = '';
