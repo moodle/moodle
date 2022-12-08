@@ -57,7 +57,7 @@ trait store {
             throw new \coding_exception("Store $called doesn't define classes in correct namespaces.");
         }
         $this->component = $parts[0];
-        $this->store = str_replace('logstore_', '', $this->store);
+        $this->store = str_replace('logstore_', '', $this->component);
     }
 
     /**
