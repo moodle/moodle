@@ -26,6 +26,7 @@ require_once($CFG->libdir . '/formslib.php');
 /**
  * Base class for the settings form for {@see attempts_report}s.
  *
+ * @package   mod_quiz
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -50,16 +51,21 @@ abstract class attempts_report_options_form extends \moodleform {
                 get_string('showreport', 'quiz'));
     }
 
+    /**
+     * Add the standard form fields for selecting which attempts to include in the report.
+     *
+     * @param MoodleQuickForm $mform the form we are building.
+     */
     protected function standard_attempt_fields(MoodleQuickForm $mform) {
 
-        $mform->addElement('select', 'attempts', get_string('reportattemptsfrom', 'quiz'), array(
+        $mform->addElement('select', 'attempts', get_string('reportattemptsfrom', 'quiz'), [
                     attempts_report::ENROLLED_WITH    => get_string('reportuserswith', 'quiz'),
                     attempts_report::ENROLLED_WITHOUT => get_string('reportuserswithout', 'quiz'),
                     attempts_report::ENROLLED_ALL     => get_string('reportuserswithorwithout', 'quiz'),
                     attempts_report::ALL_WITH         => get_string('reportusersall', 'quiz'),
-                 ));
+        ]);
 
-        $stategroup = array(
+        $stategroup = [
             $mform->createElement('advcheckbox', 'stateinprogress', '',
                     get_string('stateinprogress', 'quiz')),
             $mform->createElement('advcheckbox', 'stateoverdue', '',
@@ -68,9 +74,9 @@ abstract class attempts_report_options_form extends \moodleform {
                     get_string('statefinished', 'quiz')),
             $mform->createElement('advcheckbox', 'stateabandoned', '',
                     get_string('stateabandoned', 'quiz')),
-        );
+        ];
         $mform->addGroup($stategroup, 'stateoptions',
-                get_string('reportattemptsthatare', 'quiz'), array(' '), false);
+                get_string('reportattemptsthatare', 'quiz'), [' '], false);
         $mform->setDefault('stateinprogress', 1);
         $mform->setDefault('stateoverdue',    1);
         $mform->setDefault('statefinished',   1);
@@ -83,7 +89,7 @@ abstract class attempts_report_options_form extends \moodleform {
         if (quiz_report_can_filter_only_graded($this->_customdata['quiz'])) {
             $gm = html_writer::tag('span',
                     quiz_get_grading_option_name($this->_customdata['quiz']->grademethod),
-                    array('class' => 'highlight'));
+                    ['class' => 'highlight']);
             $mform->addElement('advcheckbox', 'onlygraded', '',
                     get_string('reportshowonlyfinished', 'quiz', $gm));
             $mform->disabledIf('onlygraded', 'attempts', 'eq', attempts_report::ENROLLED_WITHOUT);
@@ -91,14 +97,29 @@ abstract class attempts_report_options_form extends \moodleform {
         }
     }
 
+    /**
+     * Extension point to allow subclasses to add their own fields in the attempts section.
+     *
+     * @param MoodleQuickForm $mform the form we are building.
+     */
     protected function other_attempt_fields(MoodleQuickForm $mform) {
     }
 
+    /**
+     * Add the standard options fields to the form.
+     *
+     * @param MoodleQuickForm $mform the form we are building.
+     */
     protected function standard_preference_fields(MoodleQuickForm $mform) {
         $mform->addElement('text', 'pagesize', get_string('pagesize', 'quiz'));
         $mform->setType('pagesize', PARAM_INT);
     }
 
+    /**
+     * Extension point to allow subclasses to add their own fields in the options section.
+     *
+     * @param MoodleQuickForm $mform the form we are building.
+     */
     protected function other_preference_fields(MoodleQuickForm $mform) {
     }
 

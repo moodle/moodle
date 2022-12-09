@@ -37,15 +37,17 @@ use stdClass;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class report_base {
+    /** @var int special value used in place of groupid, to mean the use cannot access any groups. */
     const NO_GROUPS_ALLOWED = -2;
 
     /**
-     * Override this function to displays the report.
+     * Override this function to display the report.
+     *
+     * @param stdClass $quiz this quiz.
      * @param stdClass $cm the course-module for this quiz.
      * @param stdClass $course the coures we are in.
-     * @param stdClass $quiz this quiz.
      */
-    public abstract function display($cm, $course, $quiz);
+    abstract public function display($quiz, $cm, $course);
 
     /**
      * Initialise some parts of $PAGE and start output.
@@ -64,7 +66,7 @@ abstract class report_base {
         echo $OUTPUT->header();
         $context = context_module::instance($cm->id);
         if (!$PAGE->has_secondary_navigation()) {
-            echo $OUTPUT->heading(format_string($quiz->name, true, array('context' => $context)));
+            echo $OUTPUT->heading(format_string($quiz->name, true, ['context' => $context]));
         }
         if (!empty($CFG->enableplagiarism)) {
             require_once($CFG->libdir . '/plagiarismlib.php');

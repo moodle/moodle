@@ -20,11 +20,11 @@ use context_module;
 use moodle_url;
 use quiz_attempt;
 use stdClass;
-use mod_quiz\local\reports\attempts_report;
 
 /**
  * Base class for the options that control what is visible in an {@see attempts_report}.
  *
+ * @package   mod_quiz
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,24 +33,24 @@ class attempts_report_options {
     /** @var string the report mode. */
     public $mode;
 
-    /** @var object the settings for the quiz being reported on. */
+    /** @var stdClass the settings for the quiz being reported on. */
     public $quiz;
 
-    /** @var object the course module objects for the quiz being reported on. */
+    /** @var stdClass the course module objects for the quiz being reported on. */
     public $cm;
 
-    /** @var object the course settings for the course the quiz is in. */
+    /** @var stdClass the course settings for the course the quiz is in. */
     public $course;
 
     /**
      * @var array form field name => corresponding quiz_attempt:: state constant.
      */
-    protected static $statefields = array(
+    protected static $statefields = [
         'stateinprogress' => quiz_attempt::IN_PROGRESS,
         'stateoverdue'    => quiz_attempt::OVERDUE,
         'statefinished'   => quiz_attempt::FINISHED,
         'stateabandoned'  => quiz_attempt::ABANDONED,
-    );
+    ];
 
     /**
      * @var string attempts_report::ALL_WITH, attempts_report::ENROLLED_WITH,
@@ -65,8 +65,8 @@ class attempts_report_options {
      * @var array|null of quiz_attempt::IN_PROGRESS, etc. constants. null means
      *      no restriction.
      */
-    public $states = array(quiz_attempt::IN_PROGRESS, quiz_attempt::OVERDUE,
-            quiz_attempt::FINISHED, quiz_attempt::ABANDONED);
+    public $states = [quiz_attempt::IN_PROGRESS, quiz_attempt::OVERDUE,
+            quiz_attempt::FINISHED, quiz_attempt::ABANDONED];
 
     /**
      * @var bool whether to show all finished attmepts, or just the one that gave
@@ -88,10 +88,11 @@ class attempts_report_options {
 
     /**
      * Constructor.
+     *
      * @param string $mode which report these options are for.
      * @param object $quiz the settings for the quiz being reported on.
      * @param object $cm the course module objects for the quiz being reported on.
-     * @param object $coures the course settings for the coures this quiz is in.
+     * @param object $course the course settings for the coures this quiz is in.
      */
     public function __construct($mode, $quiz, $cm, $course) {
         $this->mode   = $mode;
@@ -107,12 +108,12 @@ class attempts_report_options {
      * @return array URL parameter name => value.
      */
     protected function get_url_params() {
-        $params = array(
+        $params = [
             'id'         => $this->cm->id,
             'mode'       => $this->mode,
             'attempts'   => $this->attempts,
             'onlygraded' => $this->onlygraded,
-        );
+        ];
 
         if ($this->states) {
             $params['states'] = implode('-', $this->states);
@@ -182,7 +183,7 @@ class attempts_report_options {
         $this->onlygraded = !empty($fromform->onlygraded);
         $this->pagesize   = $fromform->pagesize;
 
-        $this->states = array();
+        $this->states = [];
         foreach (self::$statefields as $field => $state) {
             if (!empty($fromform->$field)) {
                 $this->states[] = $state;
@@ -237,12 +238,12 @@ class attempts_report_options {
             // Force report on front page to show all, unless a group is selected.
             $this->attempts = attempts_report::ALL_WITH;
 
-        } else if (!in_array($this->attempts, array(attempts_report::ALL_WITH, attempts_report::ENROLLED_WITH,
-                attempts_report::ENROLLED_WITHOUT, attempts_report::ENROLLED_ALL))) {
+        } else if (!in_array($this->attempts, [attempts_report::ALL_WITH, attempts_report::ENROLLED_WITH,
+                attempts_report::ENROLLED_WITHOUT, attempts_report::ENROLLED_ALL])) {
             $this->attempts = attempts_report::ENROLLED_WITH;
         }
 
-        $cleanstates = array();
+        $cleanstates = [];
         foreach (self::$statefields as $state) {
             if (in_array($state, $this->states)) {
                 $cleanstates[] = $state;

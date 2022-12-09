@@ -21,7 +21,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir.'/tablelib.php');
 
 use coding_exception;
-use context;
+use context_module;
 use html_writer;
 use moodle_url;
 use popup_action;
@@ -51,20 +51,20 @@ abstract class attempts_report_table extends \table_sql {
 
     /**
      * @var array information about the latest step of each question.
-     * Loaded by {@link load_question_latest_steps()}, if applicable.
+     * Loaded by {@see load_question_latest_steps()}, if applicable.
      */
     protected $lateststeps = null;
 
-    /** @var object the quiz settings for the quiz we are reporting on. */
+    /** @var stdClass the quiz settings for the quiz we are reporting on. */
     protected $quiz;
 
-    /** @var context the quiz context. */
+    /** @var context_module the quiz context. */
     protected $context;
 
     /** @var string HTML fragment to select the first/best/last attempt, if appropriate. */
     protected $qmsubselect;
 
-    /** @var object attempts_report_options the options affecting this report. */
+    /** @var stdClass attempts_report_options the options affecting this report. */
     protected $options;
 
     /** @var \core\dml\sql_join Contains joins, wheres, params to find students
@@ -75,7 +75,7 @@ abstract class attempts_report_table extends \table_sql {
     /** @var \core\dml\sql_join Contains joins, wheres, params to find the students in the course. */
     protected $studentsjoins;
 
-    /** @var object the questions that comprise this quiz.. */
+    /** @var array the questions that comprise this quiz. */
     protected $questions;
 
     /** @var bool whether to include the column with checkboxes to select each attempt. */
@@ -85,10 +85,11 @@ abstract class attempts_report_table extends \table_sql {
     protected $togglegroup = 'quiz-attempts';
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param string $uniqueid
-     * @param object $quiz
-     * @param context $context
+     * @param stdClass $quiz
+     * @param context_module $context
      * @param string $qmsubselect
      * @param attempts_report_options $options
      * @param \core\dml\sql_join $groupstudentsjoins Contains joins, wheres, params
@@ -113,7 +114,8 @@ abstract class attempts_report_table extends \table_sql {
 
     /**
      * Generate the display of the checkbox column.
-     * @param object $attempt the table row being output.
+     *
+     * @param stdClass $attempt the table row being output.
      * @return string HTML content to go inside the td.
      */
     public function col_checkbox($attempt) {
@@ -135,7 +137,8 @@ abstract class attempts_report_table extends \table_sql {
 
     /**
      * Generate the display of the user's picture column.
-     * @param object $attempt the table row being output.
+     *
+     * @param stdClass $attempt the table row being output.
      * @return string HTML content to go inside the td.
      */
     public function col_picture($attempt) {
@@ -149,7 +152,8 @@ abstract class attempts_report_table extends \table_sql {
 
     /**
      * Generate the display of the user's full name column.
-     * @param object $attempt the table row being output.
+     *
+     * @param stdClass $attempt the table row being output.
      * @return string HTML content to go inside the td.
      */
     public function col_fullname($attempt) {
@@ -159,13 +163,14 @@ abstract class attempts_report_table extends \table_sql {
         }
 
         return $html . html_writer::empty_tag('br') . html_writer::link(
-                new moodle_url('/mod/quiz/review.php', array('attempt' => $attempt->attempt)),
-                get_string('reviewattempt', 'quiz'), array('class' => 'reviewlink'));
+                new moodle_url('/mod/quiz/review.php', ['attempt' => $attempt->attempt]),
+                get_string('reviewattempt', 'quiz'), ['class' => 'reviewlink']);
     }
 
     /**
      * Generate the display of the attempt state column.
-     * @param object $attempt the table row being output.
+     *
+     * @param stdClass $attempt the table row being output.
      * @return string HTML content to go inside the td.
      */
     public function col_state($attempt) {
@@ -178,7 +183,8 @@ abstract class attempts_report_table extends \table_sql {
 
     /**
      * Generate the display of the start time column.
-     * @param object $attempt the table row being output.
+     *
+     * @param stdClass $attempt the table row being output.
      * @return string HTML content to go inside the td.
      */
     public function col_timestart($attempt) {
@@ -191,7 +197,8 @@ abstract class attempts_report_table extends \table_sql {
 
     /**
      * Generate the display of the finish time column.
-     * @param object $attempt the table row being output.
+     *
+     * @param stdClass $attempt the table row being output.
      * @return string HTML content to go inside the td.
      */
     public function col_timefinish($attempt) {
@@ -204,7 +211,8 @@ abstract class attempts_report_table extends \table_sql {
 
     /**
      * Generate the display of the time taken column.
-     * @param object $attempt the table row being output.
+     *
+     * @param stdClass $attempt the table row being output.
      * @return string HTML content to go inside the td.
      */
     public function col_duration($attempt) {
@@ -217,7 +225,8 @@ abstract class attempts_report_table extends \table_sql {
 
     /**
      * Generate the display of the feedback column.
-     * @param object $attempt the table row being output.
+     *
+     * @param stdClass $attempt the table row being output.
      * @return string HTML content to go inside the td.
      */
     public function col_feedbacktext($attempt) {
@@ -248,7 +257,7 @@ abstract class attempts_report_table extends \table_sql {
      * Make a link to review an individual question in a popup window.
      *
      * @param string $data HTML fragment. The text to make into the link.
-     * @param object $attempt data for the row of the table being output.
+     * @param stdClass $attempt data for the row of the table being output.
      * @param int $slot the number used to identify this question within this usage.
      */
     public function make_review_link($data, $attempt, $slot) {
@@ -257,7 +266,7 @@ abstract class attempts_report_table extends \table_sql {
         $flag = '';
         if ($this->is_flagged($attempt->usageid, $slot)) {
             $flag = $OUTPUT->pix_icon('i/flagged', get_string('flagged', 'question'),
-                    'moodle', array('class' => 'questionflag'));
+                    'moodle', ['class' => 'questionflag']);
         }
 
         $feedbackimg = '';
@@ -267,17 +276,17 @@ abstract class attempts_report_table extends \table_sql {
         }
 
         $output = html_writer::tag('span', $feedbackimg . html_writer::tag('span',
-                $data, array('class' => $state->get_state_class(true))) . $flag, array('class' => 'que'));
+                $data, ['class' => $state->get_state_class(true)]) . $flag, ['class' => 'que']);
 
-        $reviewparams = array('attempt' => $attempt->attempt, 'slot' => $slot);
+        $reviewparams = ['attempt' => $attempt->attempt, 'slot' => $slot];
         if (isset($attempt->try)) {
             $reviewparams['step'] = $this->step_no_for_try($attempt->usageid, $slot, $attempt->try);
         }
         $url = new moodle_url('/mod/quiz/reviewquestion.php', $reviewparams);
         $output = $OUTPUT->action_link($url, $output,
                 new popup_action('click', $url, 'reviewquestion',
-                        array('height' => 450, 'width' => 650)),
-                array('title' => get_string('reviewresponse', 'quiz')));
+                        ['height' => 450, 'width' => 650]),
+                ['title' => get_string('reviewresponse', 'quiz')]);
 
         if (!empty($CFG->enableplagiarism)) {
             require_once($CFG->libdir . '/plagiarismlib.php');
@@ -293,9 +302,11 @@ abstract class attempts_report_table extends \table_sql {
     }
 
     /**
-     * @param object $attempt the row data
-     * @param int $slot
-     * @return question_state
+     * Get the question attempt state for a particular question in a particular quiz attempt.
+     *
+     * @param stdClass $attempt the row data.
+     * @param int $slot indicates which question.
+     * @return question_state the state of that question.
      */
     protected function slot_state($attempt, $slot) {
         $stepdata = $this->lateststeps[$attempt->usageid][$slot];
@@ -303,20 +314,23 @@ abstract class attempts_report_table extends \table_sql {
     }
 
     /**
-     * @param int $questionusageid
-     * @param int $slot
-     * @return bool
+     * Work out if a particular question in a particular attempt has been flagged.
+     *
+     * @param int $questionusageid used to identify the attempt of interest.
+     * @param int $slot identifies which question in the attempt to check.
+     * @return bool true if the question is flagged in the attempt.
      */
     protected function is_flagged($questionusageid, $slot) {
         $stepdata = $this->lateststeps[$questionusageid][$slot];
         return $stepdata->flagged;
     }
 
-
     /**
-     * @param object $attempt the row data
-     * @param int $slot
-     * @return float
+     * Get the mark (out of 1) for the question in a particular slot.
+     *
+     * @param stdClass $attempt the row data
+     * @param int $slot which slot to check.
+     * @return float the score for this question on a scale of 0 - 1.
      */
     protected function slot_fraction($attempt, $slot) {
         $stepdata = $this->lateststeps[$attempt->usageid][$slot];
@@ -325,6 +339,7 @@ abstract class attempts_report_table extends \table_sql {
 
     /**
      * Return an appropriate icon (green tick, red cross, etc.) for a grade.
+     *
      * @param float $fraction grade on a scale 0..1.
      * @return string html fragment.
      */
@@ -333,13 +348,15 @@ abstract class attempts_report_table extends \table_sql {
 
         $feedbackclass = question_state::graded_state_for_fraction($fraction)->get_feedback_class();
         return $OUTPUT->pix_icon('i/grade_' . $feedbackclass, get_string($feedbackclass, 'question'),
-                'moodle', array('class' => 'icon'));
+                'moodle', ['class' => 'icon']);
     }
 
     /**
-     * Load any extra data after main query. At this point you can call {@link get_qubaids_condition} to get the condition that
-     * limits the query to just the question usages shown in this report page or alternatively for all attempts if downloading a
-     * full report.
+     * Load any extra data after main query.
+     *
+     * At this point you can call {@see get_qubaids_condition} to get the condition
+     * that limits the query to just the question usages shown in this report page or
+     * alternatively for all attempts if downloading a full report.
      */
     protected function load_extra_data() {
         $this->lateststeps = $this->load_question_latest_steps();
@@ -348,10 +365,10 @@ abstract class attempts_report_table extends \table_sql {
     /**
      * Load information about the latest state of selected questions in selected attempts.
      *
-     * The results are returned as an two dimensional array $qubaid => $slot => $dataobject
+     * The results are returned as a two-dimensional array $qubaid => $slot => $dataobject.
      *
      * @param qubaid_condition|null $qubaids used to restrict which usages are included
-     * in the query. See {@link qubaid_condition}.
+     *      in the query. See {@see qubaid_condition}.
      * @return array of records. See the SQL in this function to see the fields available.
      */
     protected function load_question_latest_steps(qubaid_condition $qubaids = null) {
@@ -362,7 +379,7 @@ abstract class attempts_report_table extends \table_sql {
         $latesstepdata = $dm->load_questions_usages_latest_steps(
                 $qubaids, array_keys($this->questions));
 
-        $lateststeps = array();
+        $lateststeps = [];
         foreach ($latesstepdata as $step) {
             $lateststeps[$step->questionusageid][$step->slot] = $step;
         }
@@ -371,19 +388,18 @@ abstract class attempts_report_table extends \table_sql {
     }
 
     /**
-     * Does this report require loading any more data after the main query. After the main query then
-     * you can use $this->get
+     * Does this report require loading any more data after the main query.
      *
-     * @return bool should {@link query_db()} call {@link load_extra_data}?
+     * @return bool should {@see query_db()} call {@see load_extra_data}?
      */
     protected function requires_extra_data() {
         return $this->requires_latest_steps_loaded();
     }
 
     /**
-     * Does this report require the detailed information for each question from the
-     * question_attempts_steps table?
-     * @return bool should {@link load_extra_data} call {@link load_question_latest_steps}?
+     * Does this report require the detailed information for each question from the question_attempts_steps table?
+     *
+     * @return bool should {@see load_extra_data} call {@see load_question_latest_steps}?
      */
     protected function requires_latest_steps_loaded() {
         return false;
@@ -391,9 +407,11 @@ abstract class attempts_report_table extends \table_sql {
 
     /**
      * Is this a column that depends on joining to the latest state information?
+     *
      * If so, return the corresponding slot. If not, return false.
+     *
      * @param string $column a column name
-     * @return int false if no, else a slot.
+     * @return int|false false if no, else a slot.
      */
     protected function is_latest_step_column($column) {
         return false;
@@ -415,8 +433,9 @@ abstract class attempts_report_table extends \table_sql {
 
     /**
      * Contruct all the parts of the main database query.
+     *
      * @param \core\dml\sql_join $allowedstudentsjoins (joins, wheres, params) defines allowed users for the report.
-     * @return array with 4 elements ($fields, $from, $where, $params) that can be used to
+     * @return array with 4 elements [$fields, $from, $where, $params] that can be used to
      *     build the actual database query.
      */
     public function base_sql(\core\dml\sql_join $allowedstudentsjoins) {
@@ -492,18 +511,18 @@ abstract class attempts_report_table extends \table_sql {
         }
 
         if ($this->options->states) {
-            list($statesql, $stateparams) = $DB->get_in_or_equal($this->options->states,
+            [$statesql, $stateparams] = $DB->get_in_or_equal($this->options->states,
                     SQL_PARAMS_NAMED, 'state');
             $params += $stateparams;
             $where .= " AND (quiza.state $statesql OR quiza.state IS NULL)";
         }
 
-        return array($fields, $from, $where, $params);
+        return [$fields, $from, $where, $params];
     }
 
     /**
-     * A chance for subclasses to modify the SQL after the count query has been generated,
-     * and before the full query is constructed.
+     * Lets subclasses modify the SQL after the count query has been created and before the full query is.
+     *
      * @param string $fields SELECT list.
      * @param string $from JOINs part of the SQL.
      * @param string $where WHERE clauses.
@@ -520,13 +539,13 @@ abstract class attempts_report_table extends \table_sql {
      * @param \core\dml\sql_join $allowedjoins (joins, wheres, params) defines allowed users for the report.
      */
     public function setup_sql_queries($allowedjoins) {
-        list($fields, $from, $where, $params) = $this->base_sql($allowedjoins);
+        [$fields, $from, $where, $params] = $this->base_sql($allowedjoins);
 
         // The WHERE clause is vital here, because some parts of tablelib.php will expect to
         // add bits like ' AND x = 1' on the end, and that needs to leave to valid SQL.
         $this->set_count_sql("SELECT COUNT(1) FROM (SELECT $fields FROM $from WHERE $where) temp WHERE 1 = 1", $params);
 
-        list($fields, $from, $where, $params) = $this->update_sql_after_count($fields, $from, $where, $params);
+        [$fields, $from, $where, $params] = $this->update_sql_after_count($fields, $from, $where, $params);
         $this->set_sql($fields, $from, $where, $params);
     }
 
@@ -549,14 +568,14 @@ abstract class attempts_report_table extends \table_sql {
         }
 
         // This condition roughly filters the list of attempts to be considered.
-        // It is only used in a subselect to help crappy databases (see MDL-30122)
+        // It is only used in a sub-select to help crappy databases (see MDL-30122)
         // therefore, it is better to use a very simple join, which may include
         // too many records, than to do a super-accurate join.
         $qubaids = new qubaid_join("{quiz_attempts} {$alias}quiza", "{$alias}quiza.uniqueid",
-                "{$alias}quiza.quiz = :{$alias}quizid", array("{$alias}quizid" => $this->sql->params['quizid']));
+                "{$alias}quiza.quiz = :{$alias}quizid", ["{$alias}quizid" => $this->sql->params['quizid']]);
 
         $dm = new question_engine_data_mapper();
-        list($inlineview, $viewparams) = $dm->question_attempt_latest_state_view($alias, $qubaids);
+        [$inlineview, $viewparams] = $dm->question_attempt_latest_state_view($alias, $qubaids);
 
         $this->sql->fields .= ",\n$fields";
         $this->sql->from .= "\nLEFT JOIN $inlineview ON " .
@@ -566,8 +585,8 @@ abstract class attempts_report_table extends \table_sql {
     }
 
     /**
-     * Get an appropriate qubaid_condition for loading more data about the
-     * attempts we are displaying.
+     * Get an appropriate qubaid_condition for loading more data about the attempts we are displaying.
+     *
      * @return qubaid_condition
      */
     protected function get_qubaids_condition() {
@@ -586,7 +605,7 @@ abstract class attempts_report_table extends \table_sql {
                     "1 = 1", $this->sql->params);
         }
 
-        $qubaids = array();
+        $qubaids = [];
         foreach ($this->rawdata as $attempt) {
             if ($attempt->usageid > 0) {
                 $qubaids[] = $attempt->usageid;
@@ -597,7 +616,7 @@ abstract class attempts_report_table extends \table_sql {
     }
 
     public function query_db($pagesize, $useinitialsbar = true) {
-        $doneslots = array();
+        $doneslots = [];
         foreach ($this->get_sort_columns() as $column => $notused) {
             $slot = $this->is_latest_step_column($column);
             if ($slot && !in_array($slot, $doneslots)) {
@@ -670,7 +689,7 @@ abstract class attempts_report_table extends \table_sql {
             ];
             echo html_writer::empty_tag('input', $deletebuttonparams);
             $PAGE->requires->event_handler('#deleteattemptsbutton', 'click', 'M.util.show_confirm_dialog',
-                    array('message' => get_string('deleteattemptcheck', 'quiz')));
+                    ['message' => get_string('deleteattemptcheck', 'quiz')]);
         }
     }
 

@@ -30,6 +30,7 @@ require_once($CFG->libdir.'/tablelib.php');
 /**
  * Base class for quiz reports that are basically a table with one row for each attempt.
  *
+ * @package   mod_quiz
  * @copyright 2010 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -59,7 +60,7 @@ abstract class attempts_report extends report_base {
      * if applicable. */
     protected $qmsubselect;
 
-    /** @var boolean caches the results of {@link should_show_grades()}. */
+    /** @var boolean caches the results of {@see should_show_grades()}. */
     protected $showgrades = null;
 
     /**
@@ -77,20 +78,20 @@ abstract class attempts_report extends report_base {
      *      3 => \core\dml\sql_join Contains joins, wheres, params for all the students to show in the report.
      *              Will be the same as either element 1 or 2.
      */
-    public function init($mode, $formclass, $quiz, $cm, $course) {
+    public function init($mode, $formclass, $quiz, $cm, $course): array {
         $this->mode = $mode;
 
         $this->context = context_module::instance($cm->id);
 
-        list($currentgroup, $studentsjoins, $groupstudentsjoins, $allowedjoins) = $this->get_students_joins(
+        [$currentgroup, $studentsjoins, $groupstudentsjoins, $allowedjoins] = $this->get_students_joins(
                 $cm, $course);
 
         $this->qmsubselect = quiz_report_qm_filter_select($quiz);
 
         $this->form = new $formclass($this->get_base_url(),
-                array('quiz' => $quiz, 'currentgroup' => $currentgroup, 'context' => $this->context));
+                ['quiz' => $quiz, 'currentgroup' => $currentgroup, 'context' => $this->context]);
 
-        return array($currentgroup, $studentsjoins, $groupstudentsjoins, $allowedjoins);
+        return [$currentgroup, $studentsjoins, $groupstudentsjoins, $allowedjoins];
     }
 
     /**
@@ -99,7 +100,7 @@ abstract class attempts_report extends report_base {
      */
     protected function get_base_url() {
         return new moodle_url('/mod/quiz/report.php',
-                array('id' => $this->context->instanceid, 'mode' => $this->mode));
+                ['id' => $this->context->instanceid, 'mode' => $this->mode]);
     }
 
     /**
@@ -120,27 +121,27 @@ abstract class attempts_report extends report_base {
 
         $empty = new \core\dml\sql_join();
         if ($currentgroup == self::NO_GROUPS_ALLOWED) {
-            return array($currentgroup, $empty, $empty, $empty);
+            return [$currentgroup, $empty, $empty, $empty];
         }
 
         $studentsjoins = get_enrolled_with_capabilities_join($this->context, '',
-                array('mod/quiz:attempt', 'mod/quiz:reviewmyattempts'));
+                ['mod/quiz:attempt', 'mod/quiz:reviewmyattempts']);
 
         if (empty($currentgroup)) {
-            return array($currentgroup, $studentsjoins, $empty, $studentsjoins);
+            return [$currentgroup, $studentsjoins, $empty, $studentsjoins];
         }
 
         // We have a currently selected group.
         $groupstudentsjoins = get_enrolled_with_capabilities_join($this->context, '',
-                array('mod/quiz:attempt', 'mod/quiz:reviewmyattempts'), $currentgroup);
+                ['mod/quiz:attempt', 'mod/quiz:reviewmyattempts'], $currentgroup);
 
-        return array($currentgroup, $studentsjoins, $groupstudentsjoins, $groupstudentsjoins);
+        return [$currentgroup, $studentsjoins, $groupstudentsjoins, $groupstudentsjoins];
     }
 
     /**
      * Outputs the things you commonly want at the top of a quiz report.
      *
-     * Calls through to {@link print_header_and_tabs()} and then
+     * Calls through to {@see print_header_and_tabs()} and then
      * outputs the standard group selector, number of attempts summary,
      * and messages to cover common cases when the report can't be shown.
      *
@@ -315,7 +316,7 @@ abstract class attempts_report extends report_base {
             \core\dml\sql_join $allowedjoins, $redirecturl) {
         if (empty($currentgroup) || $this->hasgroupstudents) {
             if (optional_param('delete', 0, PARAM_BOOL) && confirm_sesskey()) {
-                if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
+                if ($attemptids = optional_param_array('attemptid', [], PARAM_INT)) {
                     require_capability('mod/quiz:deleteattempts', $this->context);
                     $this->delete_selected_attempts($quiz, $cm, $attemptids, $allowedjoins);
                     redirect($redirecturl);
@@ -350,7 +351,7 @@ abstract class attempts_report extends report_base {
                         {$allowedjoins->joins}
                          WHERE {$allowedjoins->wheres} AND quiza.id = :attemptid";
             }
-            $params = $allowedjoins->params + array('attemptid' => $attemptid);
+            $params = $allowedjoins->params + ['attemptid' => $attemptid];
             $attempt = $DB->get_record_sql($sql, $params, IGNORE_MULTIPLE);
             if (!$attempt || $attempt->quiz != $quiz->id || $attempt->preview != 0) {
                 // Ensure the attempt exists, belongs to this quiz and belongs to
