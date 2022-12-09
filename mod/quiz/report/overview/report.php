@@ -22,11 +22,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\local\reports\attempts_report;
 use mod_quiz\question\bank\qbank_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport.php');
 require_once($CFG->dirroot . '/mod/quiz/report/overview/overview_options.php');
 require_once($CFG->dirroot . '/mod/quiz/report/overview/overview_form.php');
 require_once($CFG->dirroot . '/mod/quiz/report/overview/overview_table.php');
@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/overview/overview_table.php');
  * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_overview_report extends quiz_attempts_report {
+class quiz_overview_report extends attempts_report {
 
     /**
      * @var bool whether there are actually students to show, given the options.

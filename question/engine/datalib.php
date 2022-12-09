@@ -1210,7 +1210,7 @@ ORDER BY
     /**
      * Get a subquery that returns the latest step of every qa in some qubas.
      * Currently, this is only used by the quiz reports. See
-     * {@link quiz_attempts_report_table::add_latest_state_join()}.
+     * {@see \mod_quiz\local\reports\attempts_report_table::add_latest_state_join()}.
      *
      * This method may be called publicly.
      *

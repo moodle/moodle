@@ -46,4 +46,9 @@ $renamedclasses = [
             'mod_quiz\adminpresets\adminpresets_review_setting',
     'mod_quiz\adminpresets\adminpresets_mod_quiz_admin_setting_user_image' =>
             'mod_quiz\adminpresets\adminpresets_user_image_setting',
+    'quiz_default_report' => 'mod_quiz\local\reports\report_base',
+    'quiz_attempts_report' => 'mod_quiz\local\reports\attempts_report',
+    'mod_quiz_attempts_report_form' => 'mod_quiz\local\reports\attempts_report_options_form',
+    'mod_quiz_attempts_report_options' => 'mod_quiz\local\reports\attempts_report_options',
+    'quiz_attempts_report_table' => 'mod_quiz\local\reports\attempts_report_table',
 ];

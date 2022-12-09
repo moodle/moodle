@@ -25,9 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use mod_quiz\local\reports\report_base;
 use core_question\statistics\questions\all_calculated_for_qubaid_condition;
 
-require_once($CFG->dirroot . '/mod/quiz/report/default.php');
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 require_once($CFG->dirroot . '/mod/quiz/report/statistics/statistics_form.php');
 require_once($CFG->dirroot . '/mod/quiz/report/statistics/statistics_table.php');
@@ -42,7 +42,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/statistics/statisticslib.php');
  * @copyright 2008 Jamie Pratt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_statistics_report extends quiz_default_report {
+class quiz_statistics_report extends report_base {
 
     /** @var context_module context of this quiz.*/
     protected $context;

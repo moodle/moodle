@@ -21,7 +21,7 @@ use mod_quiz\external\submit_question_version;
 use question_engine;
 use quiz;
 use quiz_attempt;
-use quiz_attempts_report;
+use mod_quiz\local\reports\attempts_report;
 use quiz_overview_options;
 use quiz_overview_report;
 use quiz_overview_table;
@@ -31,7 +31,6 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
-require_once($CFG->dirroot . '/mod/quiz/report/default.php');
 require_once($CFG->dirroot . '/mod/quiz/report/overview/report.php');
 require_once($CFG->dirroot . '/mod/quiz/report/overview/overview_form.php');
 require_once($CFG->dirroot . '/mod/quiz/report/overview/tests/helpers.php');
@@ -176,7 +175,7 @@ class report_test extends \advanced_testcase {
 
         // Set the options.
         $reportoptions = new quiz_overview_options('overview', $quiz, $cm, null);
-        $reportoptions->attempts = quiz_attempts_report::ENROLLED_ALL;
+        $reportoptions->attempts = attempts_report::ENROLLED_ALL;
         $reportoptions->onlygraded = true;
         $reportoptions->states = array(quiz_attempt::IN_PROGRESS, quiz_attempt::OVERDUE, quiz_attempt::FINISHED);
 

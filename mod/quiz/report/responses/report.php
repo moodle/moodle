@@ -22,10 +22,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\local\reports\attempts_report;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport.php');
 require_once($CFG->dirroot . '/mod/quiz/report/responses/responses_options.php');
 require_once($CFG->dirroot . '/mod/quiz/report/responses/responses_form.php');
 require_once($CFG->dirroot . '/mod/quiz/report/responses/last_responses_table.php');
@@ -46,7 +46,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/responses/first_or_all_responses_
  * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_responses_report extends quiz_attempts_report {
+class quiz_responses_report extends attempts_report {
 
     public function display($quiz, $cm, $course) {
         global $OUTPUT, $DB;
