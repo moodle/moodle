@@ -8,10 +8,10 @@ Some changes from the upstream version have been made:
 * Do not require tool_consumer_instance_guid
 * Prevent modification of the request to the provider
 These changes can be reverted once the following pull requests have been integrated upstream:
-* https://github.com/IMSGlobal/LTI-Tool-Provider-Library-PHP/pull/10
-* https://github.com/IMSGlobal/LTI-Tool-Provider-Library-PHP/pull/11
-* https://github.com/IMSGlobal/LTI-Tool-Provider-Library-PHP/pull/47
-* https://github.com/IMSGlobal/LTI-Tool-Provider-Library-PHP/pull/48
+* https://github.com/1EdTech/LTI-Tool-Provider-Library-PHP/pull/10
+* https://github.com/1EdTech/LTI-Tool-Provider-Library-PHP/pull/11
+* https://github.com/1EdTech/LTI-Tool-Provider-Library-PHP/pull/47
+* https://github.com/1EdTech/LTI-Tool-Provider-Library-PHP/pull/48
 
 This local changes can be reverted once it's checked that they are present upstream (note the
 LTI-Tool-Provider-Library-PHP repo has been archived so it doesn't accept pull requests anymore):
@@ -25,14 +25,14 @@ with an autoloader so it's better to do it manually.
 Information
 -----------
 
-URL: https://github.com/IMSGlobal/LTI-Tool-Provider-Library-PHP/wiki
+URL: https://github.com/1EdTech/LTI-Tool-Provider-Library-PHP/wiki
 License: Apache License, Version 2.0
 
 Installation
 ------------
 
 1) Download the latest version of the provider library
-wget https://github.com/IMSGlobal/LTI-Tool-Provider-Library-PHP/archive/3.0.3.zip
+wget https://github.com/1EdTech/LTI-Tool-Provider-Library-PHP/archive/3.0.3.zip
 
 2) Unzip the archive
 unzip 3.0.3.zip
@@ -43,7 +43,7 @@ mv LTI-Tool-Provider-Library-PHP-3.0.3/* lib/ltiprovider/
 4) Updates
 Check that the following pull request is included in the release.
 Then remove this step from this file.
-https://github.com/IMSGlobal/LTI-Tool-Provider-Library-PHP/pull/13
+https://github.com/1EdTech/LTI-Tool-Provider-Library-PHP/pull/13
 If not, apply manually.
 
 5) Run unit tests on enrol_lti_testsuite
@@ -54,7 +54,7 @@ Upgrading Notes
 Check if there are any new changes to the database schema. To do this, view the logs
 since the last release for the data connector base class and the mysql data connector.
 
-https://github.com/IMSGlobal/LTI-Tool-Provider-Library-PHP/compare/3.0.2...3.0.3
+https://github.com/1EdTech/LTI-Tool-Provider-Library-PHP/compare/3.0.2...3.0.3
 
 src/ToolProvider/DataConnector/DataConnector.php
 src/ToolProvider/DataConnector/DataConnector_mysql.php

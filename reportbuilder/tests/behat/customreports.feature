@@ -252,3 +252,24 @@ Feature: Manage custom reports
     And I click on "Close 'Report users' editor" "button"
     And I press "View" action in the "Report users" report row
     And I should see "admin" in the "reportbuilder-table" "table"
+
+  Scenario Outline: Download custom report in different formats
+    Given the following "users" exist:
+      | username  | firstname | lastname |
+      | user1     | User      | 1        |
+      | user2     | User      | 2        |
+    And the following "core_reportbuilder > Reports" exist:
+      | name           | source                                       |
+      | Report users   | core_user\reportbuilder\datasource\users     |
+    When I am on the "Report users" "reportbuilder > Editor" page logged in as "admin"
+    And I click on "Switch to preview mode" "button"
+    Then I set the field "Download table data as" to "<format>"
+    And I press "Download"
+    Examples:
+      | format                             |
+      | Comma separated values (.csv)      |
+      | Microsoft Excel (.xlsx)            |
+      | HTML table                         |
+      | Javascript Object Notation (.json) |
+      | OpenDocument (.ods)                |
+      | Portable Document Format (.pdf)    |

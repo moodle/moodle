@@ -689,15 +689,13 @@ class oci_native_moodle_database extends moodle_database {
         if (is_bool($value)) { // Always, convert boolean to int
             $value = (int)$value;
 
-        } else if ($column->meta_type == 'B') { // BLOB detected, we return 'blob' array instead of raw value to allow
-            if (!is_null($value)) {             // binding/executing code later to know about its nature
-                $value = array('blob' => $value);
-            }
+        } else if ($column->meta_type == 'B' && !is_null($value)) {
+            // Not null BLOB detected, we return 'blob' array instead for later handing on binding.
+            $value = array('blob' => $value);
 
-        } else if ($column->meta_type == 'X' && strlen($value) > 4000) { // CLOB detected (>4000 optimisation), we return 'clob'
-            if (!is_null($value)) {                                      // array instead of raw value to allow binding/
-                $value = array('clob' => (string)$value);                // executing code later to know about its nature
-            }
+        } else if ($column->meta_type == 'X' && !is_null($value) && strlen($value) > 4000) {
+            // Not null CLOB detected (>4000 optimisation), we return 'clob' array instead for later handing on binding.
+            $value = array('clob' => (string)$value);
 
         } else if ($value === '') {
             if ($column->meta_type == 'I' or $column->meta_type == 'F' or $column->meta_type == 'N') {
@@ -962,7 +960,7 @@ class oci_native_moodle_database extends moodle_database {
                     // passed in an arbitrary sql (not processed by normalise_value() ever,
                     // and let's handle it as such. This will provide proper binding of CLOBs in
                     // conditions and other raw SQLs not covered by the above function.
-                    if (strlen($value) > 4000) {
+                    if (!is_null($value) && strlen($value) > 4000) {
                         $lob = oci_new_descriptor($this->oci, OCI_DTYPE_LOB);
                         if ($descriptors === null) {
                             throw new coding_exception('moodle_database::bind_params() $descriptors not specified for clob');

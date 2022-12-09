@@ -340,7 +340,7 @@ class custom_report_table extends base_report_table {
             // We need a cleaned version (without tags/entities) of the first row column to use as toggle button.
             $rowfirstcolumn = strip_tags(reset($row));
             $buttontitle = $rowfirstcolumn !== ''
-                ? get_string('showhide', 'core_reportbuilder', html_entity_decode($rowfirstcolumn))
+                ? get_string('showhide', 'core_reportbuilder', html_entity_decode($rowfirstcolumn, ENT_COMPAT))
                 : get_string('showhidecard', 'core_reportbuilder');
 
             $button = html_writer::tag('button', $buttonicon, [

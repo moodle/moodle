@@ -60,5 +60,8 @@ function xmldb_logstore_standard_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022053000, 'logstore', 'standard');
     }
 
+    // Automatically generated Moodle v4.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

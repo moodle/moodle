@@ -89,7 +89,7 @@ function array_remove_by_key($arr,$key) {
 
 
 function cc_print_object($object) {
-    echo '<pre>' . htmlspecialchars(print_r($object,true)) . '</pre>';
+    echo '<pre>' . htmlspecialchars(print_r($object,true), ENT_COMPAT) . '</pre>';
 }
 
 

@@ -6,7 +6,7 @@
     <description>CodeMirror is a versatile text editor implemented in JavaScript for the browser.</description>
     <version>5.65.9</version>
     <license>MIT</license>
-    <repository>https://github.com/codemirror/CodeMirror</repository>
+    <repository>https://github.com/codemirror/codemirror5</repository>
   </library>
   <library>
     <location>yui/src/beautify</location>

@@ -2725,10 +2725,14 @@ abstract class enrol_plugin {
 
         $icons = array();
         if ($this->use_standard_editing_ui()) {
-            $linkparams = array('courseid' => $instance->courseid, 'id' => $instance->id, 'type' => $instance->enrol);
-            $editlink = new moodle_url("/enrol/editinstance.php", $linkparams);
-            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
-                array('class' => 'iconsmall')));
+            $context = context_course::instance($instance->courseid);
+            $cap = 'enrol/' . $instance->enrol . ':config';
+            if (has_capability($cap, $context)) {
+                $linkparams = array('courseid' => $instance->courseid, 'id' => $instance->id, 'type' => $instance->enrol);
+                $editlink = new moodle_url("/enrol/editinstance.php", $linkparams);
+                $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
+                    array('class' => 'iconsmall')));
+            }
         }
         return $icons;
     }
