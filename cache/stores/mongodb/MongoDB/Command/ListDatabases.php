@@ -99,12 +99,11 @@ class ListDatabases implements Executable
      * Execute the operation.
      *
      * @see Executable::execute()
-     * @param Server $server
      * @return array An array of database info structures
      * @throws UnexpectedValueException if the command response was malformed
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
-    public function execute(Server $server)
+    public function execute(Server $server): array
     {
         $cursor = $server->executeReadCommand('admin', $this->createCommand(), $this->createOptions());
         $cursor->setTypeMap(['root' => 'array', 'document' => 'array']);
@@ -119,10 +118,8 @@ class ListDatabases implements Executable
 
     /**
      * Create the listDatabases command.
-     *
-     * @return Command
      */
-    private function createCommand()
+    private function createCommand(): Command
     {
         $cmd = ['listDatabases' => 1];
 
@@ -146,9 +143,8 @@ class ListDatabases implements Executable
      * the command be executed on the primary.
      *
      * @see https://php.net/manual/en/mongodb-driver-server.executecommand.php
-     * @return array
      */
-    private function createOptions()
+    private function createOptions(): array
     {
         $options = [];
 

@@ -51,7 +51,6 @@ class BSONArray extends ArrayObject implements JsonSerializable, Serializable, U
      *
      * @see https://php.net/oop5.magic#object.set-state
      * @see https://php.net/var-export
-     * @param array $properties
      * @return self
      */
     public static function __set_state(array $properties)
@@ -71,6 +70,7 @@ class BSONArray extends ArrayObject implements JsonSerializable, Serializable, U
      * @see https://php.net/mongodb-bson-serializable.bsonserialize
      * @return array
      */
+    #[ReturnTypeWillChange]
     public function bsonSerialize()
     {
         return array_values($this->getArrayCopy());
@@ -82,6 +82,7 @@ class BSONArray extends ArrayObject implements JsonSerializable, Serializable, U
      * @see https://php.net/mongodb-bson-unserializable.bsonunserialize
      * @param array $data Array data
      */
+    #[ReturnTypeWillChange]
     public function bsonUnserialize(array $data)
     {
         self::__construct($data);

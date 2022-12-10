@@ -72,10 +72,8 @@ class CachingIterator implements Countable, Iterator
 
     /**
      * @see https://php.net/countable.count
-     * @return integer
      */
-    #[ReturnTypeWillChange]
-    public function count()
+    public function count(): int
     {
         $this->exhaustIterator();
 
@@ -108,10 +106,8 @@ class CachingIterator implements Countable, Iterator
 
     /**
      * @see https://php.net/iterator.next
-     * @return void
      */
-    #[ReturnTypeWillChange]
-    public function next()
+    public function next(): void
     {
         if (! $this->iteratorExhausted) {
             $this->iteratorAdvanced = true;
@@ -127,10 +123,8 @@ class CachingIterator implements Countable, Iterator
 
     /**
      * @see https://php.net/iterator.rewind
-     * @return void
      */
-    #[ReturnTypeWillChange]
-    public function rewind()
+    public function rewind(): void
     {
         /* If the iterator has advanced, exhaust it now so that future iteration
          * can rely on the cache.
@@ -144,10 +138,8 @@ class CachingIterator implements Countable, Iterator
 
     /**
      * @see https://php.net/iterator.valid
-     * @return boolean
      */
-    #[ReturnTypeWillChange]
-    public function valid()
+    public function valid(): bool
     {
         return $this->key() !== null;
     }
@@ -155,7 +147,7 @@ class CachingIterator implements Countable, Iterator
     /**
      * Ensures that the inner iterator is fully consumed and cached.
      */
-    private function exhaustIterator()
+    private function exhaustIterator(): void
     {
         while (! $this->iteratorExhausted) {
             $this->next();
@@ -165,7 +157,7 @@ class CachingIterator implements Countable, Iterator
     /**
      * Stores the current item in the cache.
      */
-    private function storeCurrentItem()
+    private function storeCurrentItem(): void
     {
         if (! $this->iterator->valid()) {
             return;

@@ -86,7 +86,7 @@ class Distinct implements Executable, Explainable
      * @param array        $options        Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
-    public function __construct($databaseName, $collectionName, $fieldName, $filter = [], array $options = [])
+    public function __construct(string $databaseName, string $collectionName, string $fieldName, $filter = [], array $options = [])
     {
         if (! is_array($filter) && ! is_object($filter)) {
             throw InvalidArgumentException::invalidType('$filter', $filter, 'array or object');
@@ -120,9 +120,9 @@ class Distinct implements Executable, Explainable
             unset($options['readConcern']);
         }
 
-        $this->databaseName = (string) $databaseName;
-        $this->collectionName = (string) $collectionName;
-        $this->fieldName = (string) $fieldName;
+        $this->databaseName = $databaseName;
+        $this->collectionName = $collectionName;
+        $this->fieldName = $fieldName;
         $this->filter = $filter;
         $this->options = $options;
     }
@@ -131,8 +131,7 @@ class Distinct implements Executable, Explainable
      * Execute the operation.
      *
      * @see Executable::execute()
-     * @param Server $server
-     * @return mixed[]
+     * @return array
      * @throws UnexpectedValueException if the command response was malformed
      * @throws UnsupportedException if read concern is used and unsupported
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
@@ -152,7 +151,7 @@ class Distinct implements Executable, Explainable
 
         $result = current($cursor->toArray());
 
-        if (! isset($result->values) || ! is_array($result->values)) {
+        if (! is_object($result) || ! isset($result->values) || ! is_array($result->values)) {
             throw new UnexpectedValueException('distinct command did not return a "values" array');
         }
 
@@ -163,7 +162,6 @@ class Distinct implements Executable, Explainable
      * Returns the command document for this operation.
      *
      * @see Explainable::getCommandDocument()
-     * @param Server $server
      * @return array
      */
     public function getCommandDocument(Server $server)
@@ -173,10 +171,8 @@ class Distinct implements Executable, Explainable
 
     /**
      * Create the distinct command document.
-     *
-     * @return array
      */
-    private function createCommandDocument()
+    private function createCommandDocument(): array
     {
         $cmd = [
             'distinct' => $this->collectionName,
@@ -204,9 +200,8 @@ class Distinct implements Executable, Explainable
      * Create options for executing the command.
      *
      * @see https://php.net/manual/en/mongodb-driver-server.executereadcommand.php
-     * @return array
      */
-    private function createOptions()
+    private function createOptions(): array
     {
         $options = [];
 
