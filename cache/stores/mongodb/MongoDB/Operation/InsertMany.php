@@ -79,7 +79,7 @@ class InsertMany implements Executable
      * @param array            $options        Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
-    public function __construct($databaseName, $collectionName, array $documents, array $options = [])
+    public function __construct(string $databaseName, string $collectionName, array $documents, array $options = [])
     {
         if (empty($documents)) {
             throw new InvalidArgumentException('$documents is empty');
@@ -125,8 +125,8 @@ class InsertMany implements Executable
             unset($options['writeConcern']);
         }
 
-        $this->databaseName = (string) $databaseName;
-        $this->collectionName = (string) $collectionName;
+        $this->databaseName = $databaseName;
+        $this->collectionName = $collectionName;
         $this->documents = $documents;
         $this->options = $options;
     }
@@ -135,7 +135,6 @@ class InsertMany implements Executable
      * Execute the operation.
      *
      * @see Executable::execute()
-     * @param Server $server
      * @return InsertManyResult
      * @throws UnsupportedException if write concern is used and unsupported
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
@@ -163,9 +162,8 @@ class InsertMany implements Executable
      * Create options for constructing the bulk write.
      *
      * @see https://php.net/manual/en/mongodb-driver-bulkwrite.construct.php
-     * @return array
      */
-    private function createBulkWriteOptions()
+    private function createBulkWriteOptions(): array
     {
         $options = ['ordered' => $this->options['ordered']];
 
@@ -182,9 +180,8 @@ class InsertMany implements Executable
      * Create options for executing the bulk write.
      *
      * @see https://php.net/manual/en/mongodb-driver-server.executebulkwrite.php
-     * @return array
      */
-    private function createExecuteOptions()
+    private function createExecuteOptions(): array
     {
         $options = [];
 
