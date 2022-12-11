@@ -145,7 +145,7 @@ XPATH
     descendant::*[
         contains(concat(' ', normalize-space(@class), ' '), ' dropdown-toggle ')
             and
-        contains(normalize-space(.), %locator%)
+        (contains(normalize-space(.), %locator%) or descendant::*[%titleMatch%])
     ]
 ]
 XPATH
