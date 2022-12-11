@@ -86,3 +86,5 @@ showactivityicons,core_grades
 showactivityicons_help,core_grades
 showcalculations,core_grades
 showcalculations_help,core_grades
+studentsperpage,core_grades
+studentsperpage_help,core_grades

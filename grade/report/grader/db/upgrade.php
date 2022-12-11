@@ -62,5 +62,10 @@ function xmldb_gradereport_grader_upgrade(int $oldversion): bool {
         upgrade_plugin_savepoint(true, 2023032100, 'grade', 'gradereport_grader');
     }
 
+    if ($oldversion < 2023032700) {
+        unset_config('grade_report_studentsperpage');
+        upgrade_plugin_savepoint(true, 2023032700, 'gradereport', 'grader');
+    }
+
     return true;
 }
