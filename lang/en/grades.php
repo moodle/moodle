@@ -184,7 +184,7 @@ $string['encoding'] = 'Encoding';
 $string['encoding_help'] = 'Select the character encoding used for the data. (The standard encoding is UTF-8.) If the wrong encoding is selected by mistake, it will be noticeable when previewing the data for import.';
 $string['errorcalculationnoequal'] = 'Formula must start with equal sign (=1+2)';
 $string['errorcalculationunknown'] = 'Invalid formula';
-$string['errorcalculationbroken'] = 'Probably circular reference or broken calculation formula';
+$string['errorcalculationbroken'] = 'Probably circular reference or broken calculation formula (Item name: {$a})';
 $string['errorgradevaluenonnumeric'] = 'Received non-numeric for low or high grade for';
 $string['errornocalculationallowed'] = 'Calculations are not allowed for this item';
 $string['errornocategorisedid'] = 'Could not get an uncategorised id!';
