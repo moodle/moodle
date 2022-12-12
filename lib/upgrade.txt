@@ -1,5 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
+
+=== 4.1.1 ===
+
+* There is a new helper function mtrace_exception to help with reporting exceptions you have caught in scheduled tasks.
+
 === 4.1 ===
 
 * HTMLPurifier has been upgraded to the latest version - 4.16.0
