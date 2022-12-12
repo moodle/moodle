@@ -1,7 +1,12 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.0.6 ===
+
+* There is a new helper function mtrace_exception to help with reporting exceptions you have caught in scheduled tasks.
+
 === 4.0.5 ===
+
 * For plugins that override secondary navigation, the namespace for the custom secondary navigation class has
   changed. It was (for example) mod_mymodule\local\views\secondary but is now
   mod_mymodule\navigation\views\secondary. The old location will continue to work, but will be deprecated in 4.1.
