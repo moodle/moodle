@@ -1,5 +1,15 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
+
+=== 4.2 ===
+
+* In enrollib.php, the methods get_enrolled_with_capabilities_join, get_enrolled_sql, get_enrolled_users and
+  count_enrolled_users used to only be able to accept a single group id, even though internally, they used
+  groups_get_members_join which could also accept an array of groups, or the constant USERSWITHOUTGROUP.
+  This has now been made consistent. These enrol methods now accept all the group-related options that
+  groups_get_members_join can handle.
+
+
 === 4.1 ===
 
 * HTMLPurifier has been upgraded to the latest version - 4.16.0
@@ -695,6 +705,7 @@ filepath because some components, such as mod_page or mod_resource, add the revi
 * If you have a form which sends a file in response to a Moodle form submit button, but you cannot
   call the above function because the file is sent by a third party library, then you should add
   the attribute data-double-submit-protection="off" to your form.
+
 
 === 3.7 ===
 
