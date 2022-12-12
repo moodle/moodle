@@ -18,6 +18,7 @@ information provided here is intended especially for developers.
   It only worked with http sites and did not officially support SSL, and is at risk of disappearing should Yahoo! decide
   to remove it.
 * New `properties_filter` method of persistent class for filtering properties of a record against persistent definition
+* There is a new helper function mtrace_exception to help with reporting exceptions you have caught in scheduled tasks.
 
 === 4.1 ===
 
