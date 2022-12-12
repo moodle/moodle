@@ -89,6 +89,9 @@ information provided here is intended especially for developers.
   setup: https://moodledev.io/general/app/development/testing/acceptance-testing#upgrading-tests-from-an-older-version
 * New DML driver methods `$DB->sql_regex_get_word_beginning_boundary_marker` and `$DB->sql_regex_get_word_end_boundary_marker`
   for managing word boundary markers in a database driver supporting regex syntax when searching.
+* The plugin_functions cache in core has been made localisable by prefixing the
+  key it uses with the all versions hash, which only changes when there are code
+  changes.
 
 === 4.0 ===
 
