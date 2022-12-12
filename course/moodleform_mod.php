@@ -197,7 +197,6 @@ abstract class moodleform_mod extends moodleform {
         return $this->_features;
     }
 
-
     protected function init_features() {
         global $CFG;
 
@@ -1062,6 +1061,9 @@ abstract class moodleform_mod extends moodleform {
 
         $mform->addElement('hidden', 'sr', 0);
         $mform->setType('sr', PARAM_INT);
+
+        $mform->addElement('hidden', 'beforemod', 0);
+        $mform->setType('beforemod', PARAM_INT);
     }
 
     public function standard_grading_coursemodule_elements() {

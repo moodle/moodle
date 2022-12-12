@@ -116,6 +116,9 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     } else {
         $newcm->showdescription = 0;
     }
+    if (empty($moduleinfo->beforemod)) {
+        $moduleinfo->beforemod = null;
+    }
 
     // From this point we make database changes, so start transaction.
     $transaction = $DB->start_delegated_transaction();
@@ -177,7 +180,7 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
 
     // Course_modules and course_sections each contain a reference to each other.
     // So we have to update one of them twice.
-    $sectionid = course_add_cm_to_section($course, $moduleinfo->coursemodule, $moduleinfo->section);
+    $sectionid = course_add_cm_to_section($course, $moduleinfo->coursemodule, $moduleinfo->section, $moduleinfo->beforemod);
 
     // Trigger event based on the action we did.
     // Api create_from_cm expects modname and id property, and we don't want to modify $moduleinfo since we are returning it.
