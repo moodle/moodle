@@ -1,6 +1,10 @@
 This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
+=== 4.2 ===
+* course/mod.php now accepts parameter beforemod for adding course modules. It contains the course module id
+  of an existing course module. The new module is inserted before this module.
+
 === 4.1 ===
 * The function course_modchooser() has been finally deprecated and can not be used anymore. Please use
   course_activitychooser() instead.
