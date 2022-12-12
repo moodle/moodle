@@ -144,18 +144,24 @@ foreach ($warnings as $warning) {
     echo $OUTPUT->notification($warning);
 }
 
-$studentsperpage = $report->get_students_per_page();
-// Don't use paging if studentsperpage is empty or 0 at course AND site levels
-if (!empty($studentsperpage)) {
-    echo $OUTPUT->paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
-}
-
 $displayaverages = true;
 if ($numusers == 0) {
     $displayaverages = false;
 }
 
 $reporthtml = $report->get_grade_table($displayaverages);
+
+$studentsperpage = $report->get_students_per_page();
+
+// Don't use paging if studentsperpage is empty or 0 at course AND site levels.
+if (!empty($studentsperpage)) {
+    $footercontent = html_writer::div(
+        $OUTPUT->paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl),
+        'col'
+    );
+} else {
+    $footercontent = html_writer::div('', 'col');
+}
 
 // print submit button
 if (!empty($USER->editing) && $report->get_pref('quickgrading')) {
@@ -168,16 +174,21 @@ if (!empty($USER->editing) && $report->get_pref('quickgrading')) {
     echo '<input type="hidden" value="'.$page.'" name="page"/>';
     echo $gpr->get_form_fields();
     echo $reporthtml;
-    echo '<div class="submit"><input type="submit" id="gradersubmit" class="btn btn-primary"
-        value="'.s(get_string('savechanges')).'" /></div>';
+
+    $footercontent .= html_writer::div(
+        '<input type="submit" id="gradersubmit" class="btn btn-primary" value="'.s(get_string('savechanges')).'" />',
+        'col-auto'
+    );
+
+    $stickyfooter = new core\output\sticky_footer($footercontent);
+    echo $OUTPUT->render($stickyfooter);
+
     echo '</div></form>';
 } else {
     echo $reporthtml;
-}
 
-// prints paging bar at bottom for large pages
-if (!empty($studentsperpage) && $studentsperpage >= 20) {
-    echo $OUTPUT->paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
+    $stickyfooter = new core\output\sticky_footer($footercontent);
+    echo $OUTPUT->render($stickyfooter);
 }
 
 $event = \gradereport_grader\event\grade_report_viewed::create(
