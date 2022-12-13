@@ -859,7 +859,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
      * We only test combinations of plugins here. Individual plugins are tested
      * in their respective test files.
      *
-     * @dataProvider test_new_submission_empty_testcases
+     * @dataProvider new_submission_empty_testcases
      * @param string $data The file submission data
      * @param bool $expected The expected return value
      */
@@ -899,7 +899,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
      *
      * @return array of testcases
      */
-    public function test_new_submission_empty_testcases() {
+    public function new_submission_empty_testcases() {
         return [
             'With file and onlinetext' => [
                 [

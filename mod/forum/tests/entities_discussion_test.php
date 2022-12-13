@@ -123,7 +123,7 @@ class mod_forum_entities_discussion_testcase extends advanced_testcase {
      * Test the display period settings for discussions.
      * This covers each individual date function as well as the combination of the 2.
      *
-     * @dataProvider test_diplay_period_options_provider
+     * @dataProvider diplay_period_options_provider
      * @param string $testdescription A basic description of the base assertions.
      * @param int $startoffset Start time offset with current time in seconds.
      * @param int $endoffset End time offset with current time in seconds.
@@ -167,7 +167,7 @@ class mod_forum_entities_discussion_testcase extends advanced_testcase {
      *
      * @return array start/end time offsets and the expected results.
      */
-    public function test_diplay_period_options_provider() {
+    public function diplay_period_options_provider() {
         return array(
             ["No dates set", 0, 0, true, false, true],
             ["Only started date in the future", 100, 0, false, false, false],

@@ -142,7 +142,7 @@ TBC;
     /**
      * Data provider for the test_load function.
      */
-    public function test_load_test_cases() {
+    public function load_test_cases() {
         $cache = [
             'core' => [
                 'test' => '{{! a comment }}The rest of the template'
@@ -171,7 +171,7 @@ TBC;
     /**
      * Test the load function.
      *
-     * @dataProvider test_load_test_cases()
+     * @dataProvider load_test_cases
      * @param mustache_template_source_loader $loader The loader
      * @param string $component The moodle component
      * @param string $name The template name
@@ -185,7 +185,7 @@ TBC;
     /**
      * Data provider for the load_with_dependencies function.
      */
-    public function test_load_with_dependencies_test_cases() {
+    public function load_with_dependencies_test_cases() {
         // Create a bunch of templates that include one another in various ways. There is
         // multiple instances of recursive inclusions to test that the code doensn't get
         // stuck in an infinite loop.
@@ -338,7 +338,7 @@ TBC;
     /**
      * Test the load_with_dependencies function.
      *
-     * @dataProvider test_load_with_dependencies_test_cases()
+     * @dataProvider load_with_dependencies_test_cases
      * @param mustache_template_source_loader $loader The loader
      * @param string $component The moodle component
      * @param string $name The template name
@@ -352,7 +352,7 @@ TBC;
     /**
      * Data provider for the test_load function.
      */
-    public function test_scan_template_source_for_dependencies_test_cases() {
+    public function scan_template_source_for_dependencies_test_cases() {
         $foo = '{{! a comment }}{{> core/bar }}{{< test/bop }}{{/ test/bop}}{{#str}} help, core {{/str}}';
         $bar = '{{! a comment }}{{> core/baz }}';
         $baz = '{{! a comment }}{{#str}} hide, core {{/str}}';
@@ -496,7 +496,7 @@ TEMPLATE;
     /**
      * Test the scan_template_source_for_dependencies function.
      *
-     * @dataProvider test_scan_template_source_for_dependencies_test_cases()
+     * @dataProvider scan_template_source_for_dependencies_test_cases()
      * @param mustache_template_source_loader $loader The loader
      * @param string $source The template to test
      * @param string $expected The expected output
