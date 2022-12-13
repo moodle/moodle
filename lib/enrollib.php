@@ -1196,8 +1196,12 @@ function enrol_try_internal_enrol($courseid, $userid, $roleid = null, $timestart
     if (!$instances = $DB->get_records('enrol', array('enrol'=>'manual', 'courseid'=>$courseid, 'status'=>ENROL_INSTANCE_ENABLED), 'sortorder,id ASC')) {
         return false;
     }
-    $instance = reset($instances);
 
+    if ($roleid && !$DB->record_exists('role', ['id' => $roleid])) {
+        return false;
+    }
+
+    $instance = reset($instances);
     $enrol->enrol_user($instance, $userid, $roleid, $timestart, $timeend);
 
     return true;

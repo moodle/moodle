@@ -4558,5 +4558,16 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022041904.14);
     }
 
+    if ($oldversion < 2022041905.07) {
+
+        // Remove any orphaned role assignment records (pointing to non-existing roles).
+        $DB->delete_records_select('role_assignments', 'NOT EXISTS (
+            SELECT r.id FROM {role} r WHERE r.id = {role_assignments}.roleid
+        )');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022041905.07);
+    }
+
     return true;
 }
