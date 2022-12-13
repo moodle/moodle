@@ -30,7 +30,7 @@ class activity_header_test extends \advanced_testcase {
     /**
      * Test the title setter
      *
-     * @dataProvider test_set_title_provider
+     * @dataProvider set_title_provider
      * @param string $value
      * @param string $expected
      * @covers ::set_title
@@ -60,7 +60,7 @@ class activity_header_test extends \advanced_testcase {
      * Provider for the test_set_title unit test.
      * @return array
      */
-    public function test_set_title_provider(): array {
+    public function set_title_provider(): array {
         return [
             "Set the title with a plain text" => [
                 "Activity title", "Activity title"
