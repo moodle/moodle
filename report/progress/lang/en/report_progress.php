@@ -25,9 +25,11 @@
 
 $string['pluginname'] = 'Activity completion';
 $string['activityorder'] = 'Activity order';
+$string['activitysection'] = 'Activity section';
 $string['allactivitiesandresources'] = 'All activities and resources';
 $string['alphabetical'] = 'Alphabetical ';
 $string['include'] = 'Include';
+$string['no_filter_by_section'] = 'Do not filter by section';
 $string['orderincourse'] = 'Order in course';
 $string['page-report-progress-x'] = 'Any activity completion report';
 $string['page-report-progress-index'] = 'Activity completion report';
