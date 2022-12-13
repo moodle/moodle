@@ -676,8 +676,7 @@ $CFG->admin = 'admin';
 //
 // There are times when a session lock is not required during a request. For a page/service to opt-in whether or not a
 // session lock is required this setting must first be set to 'true'.
-// This is an experimental issue. The session store can not be in the session, please
-// see https://docs.moodle.org/en/Session_handling#Read_only_sessions.
+// The session store can not be in the session, please see https://docs.moodle.org/en/Session_handling#Read_only_sessions.
 //
 //      $CFG->enable_read_only_sessions = true;
 //
