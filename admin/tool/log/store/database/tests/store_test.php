@@ -33,8 +33,7 @@ class store_test extends \advanced_testcase {
      * Tests log writing.
      *
      * @param bool $jsonformat True to test with JSON format
-     * @dataProvider test_log_writing_provider
-     * @throws moodle_exception
+     * @dataProvider log_writing_provider
      */
     public function test_log_writing(bool $jsonformat) {
         global $DB, $CFG;
@@ -252,9 +251,9 @@ class store_test extends \advanced_testcase {
      * Returns different JSON format settings so the test can be run with JSON format either on or
      * off.
      *
-     * @return [bool] Array of true/false
+     * @return bool[] Array of true/false
      */
-    public static function test_log_writing_provider(): array {
+    public static function log_writing_provider(): array {
         return [
             [false],
             [true]
