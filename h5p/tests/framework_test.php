@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Testing the H5PFrameworkInterface interface implementation.
- *
- * @package    core_h5p
- * @category   test
- * @copyright  2019 Mihail Geshoski <mihail@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_h5p;
 
 use core_collator;
@@ -34,6 +25,7 @@ use Moodle\H5PDisplayOptionBehaviour;
  * Test class covering the H5PFrameworkInterface interface implementation.
  *
  * @package    core_h5p
+ * @category   test
  * @copyright  2019 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @runTestsInSeparateProcesses
@@ -638,7 +630,7 @@ class framework_test extends \advanced_testcase {
     /**
      * Test the behaviour of isPatchedLibrary().
      *
-     * @dataProvider test_isPatchedLibrary_provider
+     * @dataProvider isPatchedLibrary_provider
      * @param array $libraryrecords Array containing data for the library creation
      * @param array $testlibrary Array containing the test library data
      * @param bool $expected The expectation whether the library is patched or not
@@ -660,7 +652,7 @@ class framework_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function test_isPatchedLibrary_provider(): array {
+    public function isPatchedLibrary_provider(): array {
         return [
             'Unpatched library. No different versioning' => [
                 [
@@ -1416,7 +1408,7 @@ class framework_test extends \advanced_testcase {
     /**
      * Test the behaviour of loadLibrarySemantics().
      *
-     * @dataProvider test_loadLibrarySemantics_provider
+     * @dataProvider loadLibrarySemantics_provider
      * @param array $libraryrecords Array containing data for the library creation
      * @param array $testlibrary Array containing the test library data
      * @param string $expected The expected semantics value
@@ -1439,7 +1431,7 @@ class framework_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function test_loadLibrarySemantics_provider(): array {
+    public function loadLibrarySemantics_provider(): array {
 
         $semantics = json_encode(
             [
@@ -2208,7 +2200,7 @@ class framework_test extends \advanced_testcase {
     /**
      * Test the behaviour of test_libraryHasUpgrade().
      *
-     * @dataProvider test_libraryHasUpgrade_provider
+     * @dataProvider libraryHasUpgrade_provider
      * @param array $libraryrecords Array containing data for the library creation
      * @param array $testlibrary Array containing the test library data
      * @param bool $expected The expectation whether the library is patched or not
@@ -2230,7 +2222,7 @@ class framework_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function test_libraryHasUpgrade_provider(): array {
+    public function libraryHasUpgrade_provider(): array {
         return [
             'Lower major version; Identical lower version' => [
                 [

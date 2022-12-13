@@ -29,7 +29,7 @@ require_once(__DIR__ . '/../fixtures/task_fixtures.php');
  */
 class manager_test extends \advanced_testcase {
 
-    public function test_ensure_adhoc_task_qos_provider() {
+    public function ensure_adhoc_task_qos_provider() {
         return [
             [
                 [],
@@ -173,7 +173,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test that the Quality of Service reordering works.
      *
-     * @dataProvider test_ensure_adhoc_task_qos_provider
+     * @dataProvider ensure_adhoc_task_qos_provider
      *
      * @param array $input array of tasks
      * @param array $expected array of reordered tasks
