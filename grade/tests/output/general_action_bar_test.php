@@ -49,39 +49,40 @@ class general_action_bar_test extends advanced_testcase {
     /**
      * Test the exported data for the general action bar for different user roles and settings.
      *
-     * @dataProvider test_export_for_template_provider
+     * @dataProvider export_for_template_provider
      * @param string $userrole The user role to test
      * @param bool $enableoutcomes Whether to enable outcomes
      * @param array $expectedoptions The expected options returned in the general action selector
      * @covers \core_grades\output\general_action_bar::export_for_template
      */
-    public function test_export_for_template(string $userrole, bool $enableoutcomes, array $expectedoptions) {
+    public function test_export_for_template(string $userrole, bool $enableoutcomes, array $expectedoptions): void {
         global $PAGE;
+
         // There may be additional plugins installed in the codebase where this
         // test is being run, therefore, we need to know which links can be
         // present in a standard Moodle install, and only check them.
         $allcorenavlinks = [
-                'View' => [
-                        'Grader report',
-                        'Grade history',
-                        'Grade summary',
-                        'Outcomes report',
-                        'Overview report',
-                        'Single view',
-                        'User report',
-                ],
-                'Setup' => [
-                        'Gradebook setup',
-                        'Course grade settings',
-                        'Preferences: Grader report',
-                ],
-                'More' => [
-                        'Scales',
-                        'Outcomes',
-                        'Grade letters',
-                        'Import',
-                        'Export',
-                ]
+            'View' => [
+                'Grader report',
+                'Grade history',
+                'Grade summary',
+                'Outcomes report',
+                'Overview report',
+                'Single view',
+                'User report',
+            ],
+            'Setup' => [
+                'Gradebook setup',
+                'Course grade settings',
+                'Preferences: Grader report',
+            ],
+            'More' => [
+                'Scales',
+                'Outcomes',
+                'Grade letters',
+                'Import',
+                'Export',
+            ],
         ];
 
         $this->resetAfterTest();
@@ -146,7 +147,7 @@ class general_action_bar_test extends advanced_testcase {
      *
      * @return array
      */
-    public function test_export_for_template_provider() : array {
+    public function export_for_template_provider(): array {
         return [
             'Gradebook general navigation for admin; outcomes disabled.' => [
                 'admin',
