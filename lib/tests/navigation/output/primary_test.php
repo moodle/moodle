@@ -47,7 +47,7 @@ class primary_test extends \advanced_testcase {
     /**
      * Test the primary export to confirm we are getting the nodes
      *
-     * @dataProvider test_primary_export_provider
+     * @dataProvider primary_export_provider
      * @param bool $withcustom Setup with custom menu
      * @param bool $withlang Setup with langs
      * @param string $userloggedin The type of user ('admin' or 'guest') if creating setup with logged in user,
@@ -113,7 +113,7 @@ class primary_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function test_primary_export_provider(): array {
+    public function primary_export_provider(): array {
         return [
             "Export the menu data when: custom menu exists; multiple langs installed; user is not logged in." => [
                 true, true, '', ['mobileprimarynav', 'moremenu', 'lang', 'user']
