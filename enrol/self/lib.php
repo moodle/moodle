@@ -231,7 +231,7 @@ class enrol_self_plugin extends enrol_plugin {
      * @return bool|string true if successful, else error message or false.
      */
     public function can_self_enrol(stdClass $instance, $checkuserenrolment = true) {
-        global $CFG, $DB, $OUTPUT, $USER;
+        global $DB, $OUTPUT, $USER;
 
         if ($checkuserenrolment) {
             if (isguestuser()) {
@@ -244,12 +244,31 @@ class enrol_self_plugin extends enrol_plugin {
             }
         }
 
-        if ($instance->status != ENROL_INSTANCE_ENABLED) {
-            return get_string('canntenrol', 'enrol_self');
+        // Check if self enrolment is available right now for users.
+        $result = $this->is_self_enrol_available($instance);
+        if ($result !== true) {
+            return $result;
         }
 
         // Check if user has the capability to enrol in this context.
         if (!has_capability('enrol/self:enrolself', context_course::instance($instance->courseid))) {
+            return get_string('canntenrol', 'enrol_self');
+        }
+
+        return true;
+    }
+
+    /**
+     * Does this plugin support some way to self enrol?
+     * This function doesn't check user capabilities. Use can_self_enrol to check capabilities.
+     *
+     * @param stdClass $instance enrolment instance
+     * @return bool - true means "Enrol me in this course" link could be available
+     */
+    public function is_self_enrol_available(stdClass $instance) {
+        global $CFG, $DB, $USER;
+
+        if ($instance->status != ENROL_INSTANCE_ENABLED) {
             return get_string('canntenrol', 'enrol_self');
         }
 
