@@ -70,6 +70,13 @@ class system_report_exporter extends persistent_exporter {
             'filterspresent' => ['type' => PARAM_BOOL],
             'filtersapplied' => ['type' => PARAM_INT],
             'filtersform' => ['type' => PARAM_RAW],
+            'attributes' => [
+                'type' => [
+                    'name' => ['type' => PARAM_TEXT],
+                    'value' => ['type' => PARAM_TEXT]
+                ],
+                'multiple' => true,
+            ],
         ];
     }
 
@@ -109,12 +116,18 @@ class system_report_exporter extends persistent_exporter {
             $filtersform->set_data_for_dynamic_submission();
         }
 
+        // Get the report attributes.
+        $attributes = array_map(static function($key, $value): array {
+            return ['name' => $key, 'value' => $value];
+        }, array_keys($source->get_attributes()), $source->get_attributes());
+
         return [
             'table' => $output->render($table),
             'parameters' => $parameters,
             'filterspresent' => $filterspresent,
             'filtersapplied' => $source->get_applied_filter_count(),
             'filtersform' => $filterspresent ? $filtersform->render() : '',
+            'attributes' => $attributes,
         ];
     }
 }
