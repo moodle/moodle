@@ -71,3 +71,5 @@ match,core_user
 matchofthefollowing,core_user
 placeholdertypeorselect,core_user
 selectfiltertype,core_user
+confirmaddadmin,core_role
+confirmdeladmin,core_role

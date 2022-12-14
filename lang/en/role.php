@@ -142,8 +142,8 @@ $string['competency:usercompetencyview'] = 'View a user competency';
 $string['competency:userevidencemanage'] = 'Manage evidence of prior learning';
 $string['competency:userevidencemanageown'] = 'Manage own evidence of prior learning';
 $string['competency:userevidenceview'] = 'View evidence of prior learning of a user';
-$string['confirmaddadmin'] = 'Do you really want to add user <strong>{$a}</strong> as new site administrator?';
-$string['confirmdeladmin'] = 'Do you really want to remove user <strong>{$a}</strong> from the list of site administrators?';
+$string['confirmaddadmins'] = 'Are you sure you want to add the following users to the list of site administrators?';
+$string['confirmremoveadmins'] = 'Are you sure you want to remove the following users from the list of site administrators?';
 $string['confirmroleprevent'] = 'Do you really want to remove <strong>"{$a->role}"</strong> from the list of allowed roles for capability "{$a->cap}" in context "{$a->context}"?';
 $string['confirmroleunprohibit'] = 'Do you really want to remove <strong>"{$a->role}"</strong> from the list of prohibited roles for capability "{$a->cap}" in context "{$a->context}"?';
 $string['confirmunassign'] = 'Are you sure you wish to remove this role from this user?';
@@ -519,3 +519,7 @@ $string['privacy:metadata:role_capabilities:tableexplanation'] = 'The capabiliti
 $string['privacy:metadata:role_capabilities:timemodified'] = 'The date when the capability was created or modified.';
 $string['privacy:metadata:role_cohortroles'] = 'Roles to cohort';
 $string['course:togglecompletion'] = 'Manually mark activities as complete';
+
+// Deprecated since Moodle 4.2.
+$string['confirmaddadmin'] = 'Do you really want to add user <strong>{$a}</strong> as new site administrator?';
+$string['confirmdeladmin'] = 'Do you really want to remove user <strong>{$a}</strong> from the list of site administrators?';
