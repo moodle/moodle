@@ -823,7 +823,7 @@ class renderer extends plugin_renderer_base {
             }
             $this->page->requires->js_call_amd('mod_quiz/submission_confirmation', 'init', [$totalunanswered]);
         }
-        $button->primary = true;
+        $button->type = \single_button::BUTTON_PRIMARY;
 
         $duedate = $attemptobj->get_due_date();
         $message = '';
@@ -935,7 +935,7 @@ class renderer extends plugin_renderer_base {
             preflight_check_form $preflightcheckform = null,
             $popuprequired = false, $popupoptions = null) {
 
-        $button = new single_button($url, $buttontext, 'post', true);
+        $button = new single_button($url, $buttontext, 'post', single_button::BUTTON_PRIMARY);
         $button->class .= ' quizstartbuttondiv';
         if ($popuprequired) {
             $button->class .= ' quizsecuremoderequired';

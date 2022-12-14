@@ -170,7 +170,7 @@ class renderer extends plugin_renderer_base {
             $link,
             get_string('schedule:requestanalysis', manager::PLUGINNAME),
             'post',
-            true,
+            \single_button::BUTTON_PRIMARY,
             ['class' => $classname]
         );
 

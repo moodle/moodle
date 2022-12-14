@@ -502,7 +502,7 @@ class main implements renderable, templatable {
                     new \moodle_url('/course/request.php', ['category' => $category->id]),
                     get_string('requestcourse'),
                     'post',
-                    true
+                    \single_button::BUTTON_PRIMARY
                 );
                 return $this->generate_zero_state_data($nocoursesimg, [$button], 'request');
             }
@@ -523,7 +523,7 @@ class main implements renderable, templatable {
                     new \moodle_url('/course/edit.php', ['category' => $category->id]),
                     get_string('createcourse', 'block_myoverview'),
                     'post',
-                    true
+                    \single_button::BUTTON_PRIMARY
                 );
                 $buttons[] = $createbutton->export_for_template($output);
                 return $this->generate_zero_state_data($nocoursesimg, $buttons, 'nocourses');
@@ -534,7 +534,7 @@ class main implements renderable, templatable {
                     new \moodle_url('/course/edit.php', ['category' => $categorytocreate->id]),
                     get_string('createcourse', 'block_myoverview'),
                     'post',
-                    true
+                    \single_button::BUTTON_PRIMARY
                 );
                 $buttons = [$createbutton->export_for_template($output)];
                 if ($categorytomanage = \core_course_category::get_nearest_editable_subcategory($coursecat, ['manage'])) {

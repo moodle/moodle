@@ -1225,7 +1225,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
                     if (!$workshop->get_submission_by_author($USER->id)) {
                         $btnurl = new moodle_url($workshop->submission_url(), ['edit' => 'on']);
                         $btntxt = get_string('createsubmission', 'workshop');
-                        $output .= $this->single_button($btnurl, $btntxt, 'get', ['primary' => true]);
+                        $output .= $this->single_button($btnurl, $btntxt, 'get', ['type' => single_button::BUTTON_PRIMARY]);
                     }
                 }
                 break;
@@ -1236,7 +1236,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
                         if ($workshop->creating_submission_allowed($USER->id)) {
                             $btnurl = new moodle_url($workshop->submission_url(), ['edit' => 'on']);
                             $btntxt = get_string('createsubmission', 'workshop');
-                            $output .= $this->single_button($btnurl, $btntxt, 'get', ['primary' => true]);
+                            $output .= $this->single_button($btnurl, $btntxt, 'get', ['type' => single_button::BUTTON_PRIMARY]);
                         }
                     }
                 }

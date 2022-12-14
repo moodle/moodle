@@ -56,7 +56,7 @@ class scales_action_bar extends action_bar {
         // Add a button to the action bar with a link to the 'add new scale' page.
         $addnewscalelink = new moodle_url('/grade/edit/scale/edit.php', ['courseid' => $courseid]);
         $addnewscalebutton = new \single_button($addnewscalelink, get_string('scalescustomcreate'),
-            'get', true);
+            'get', \single_button::BUTTON_PRIMARY);
         $data['addnewscalebutton'] = $addnewscalebutton->export_for_template($output);
 
         return $data;
