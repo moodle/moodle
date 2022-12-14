@@ -22,7 +22,7 @@ use context_course;
 use core_user;
 use moodle_recordset;
 use question_display_options;
-use mod_quiz_display_options;
+use mod_quiz\question\display_options;
 use quiz_attempt;
 
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
@@ -103,7 +103,7 @@ class quiz_notify_attempt_manual_grading_completed extends \core\task\scheduled_
 
             $quiz = quiz_update_effective_access($quiz, $attempt->userid);
             $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false);
-            $options = mod_quiz_display_options::make_from_quiz($quiz, quiz_attempt_state($quiz, $attempt));
+            $options = display_options::make_from_quiz($quiz, quiz_attempt_state($quiz, $attempt));
 
             if ($options->manualcomment == question_display_options::HIDDEN) {
                 // User cannot currently see the feedback, so don't message them.

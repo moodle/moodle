@@ -24,6 +24,7 @@
 
 namespace mod_quiz;
 use mod_quiz\question\bank\qbank_helper;
+use mod_quiz\question\qubaids_for_quiz;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -1043,7 +1044,7 @@ class structure {
         $previousmaxmark = $slot->maxmark;
         $slot->maxmark = $maxmark;
         $DB->update_record('quiz_slots', $slot);
-        \question_engine::set_max_mark_in_attempts(new \qubaids_for_quiz($slot->quizid),
+        \question_engine::set_max_mark_in_attempts(new qubaids_for_quiz($slot->quizid),
                 $slot->slot, $maxmark);
         $trans->allow_commit();
 

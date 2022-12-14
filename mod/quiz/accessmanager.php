@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use mod_quiz\question\display_options;
 
 /**
  * This class keeps track of the various access rules that apply to a particular
@@ -528,7 +529,7 @@ class quiz_access_manager {
         }
 
         $when = quiz_attempt_state($this->quizobj->get_quiz(), $attempt);
-        $reviewoptions = mod_quiz_display_options::make_from_quiz(
+        $reviewoptions = display_options::make_from_quiz(
                 $this->quizobj->get_quiz(), $when);
 
         if (!$reviewoptions->attempt) {

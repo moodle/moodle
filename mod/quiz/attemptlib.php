@@ -28,6 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use mod_quiz\question\bank\qbank_helper;
+use mod_quiz\question\display_options;
 
 
 /**
@@ -476,7 +477,7 @@ class quiz {
      * If $reviewoptions->attempt is false, meaning that students can't review this
      * attempt at the moment, return an appropriate string explaining why.
      *
-     * @param int $when One of the mod_quiz_display_options::DURING,
+     * @param int $when One of the display_options::DURING,
      *      IMMEDIATELY_AFTER, LATER_WHILE_OPEN or AFTER_CLOSE constants.
      * @param bool $short if true, return a shorter string.
      * @return string an appropraite message.
@@ -491,11 +492,11 @@ class quiz {
             $dateformat = '';
         }
 
-        if ($when == mod_quiz_display_options::DURING ||
-                $when == mod_quiz_display_options::IMMEDIATELY_AFTER) {
+        if ($when == display_options::DURING ||
+                $when == display_options::IMMEDIATELY_AFTER) {
             return '';
-        } else if ($when == mod_quiz_display_options::LATER_WHILE_OPEN && $this->quiz->timeclose &&
-                $this->quiz->reviewattempt & mod_quiz_display_options::AFTER_CLOSE) {
+        } else if ($when == display_options::LATER_WHILE_OPEN && $this->quiz->timeclose &&
+                $this->quiz->reviewattempt & display_options::AFTER_CLOSE) {
             return get_string('noreviewuntil' . $langstrsuffix, 'quiz',
                     userdate($this->quiz->timeclose, $dateformat));
         } else {
@@ -631,7 +632,7 @@ class quiz_attempt {
     /** @var array slot => page number for this slot. */
     protected $questionpages;
 
-    /** @var mod_quiz_display_options cache for the appropriate review options. */
+    /** @var display_options cache for the appropriate review options. */
     protected $reviewoptions = null;
 
     // Constructor =============================================================
@@ -1080,7 +1081,7 @@ class quiz_attempt {
      * If not, prints an error.
      */
     public function check_review_capability() {
-        if ($this->get_attempt_state() == mod_quiz_display_options::IMMEDIATELY_AFTER) {
+        if ($this->get_attempt_state() == display_options::IMMEDIATELY_AFTER) {
             $capability = 'mod/quiz:attempt';
         } else {
             $capability = 'mod/quiz:reviewmyattempts';
@@ -1132,7 +1133,7 @@ class quiz_attempt {
     }
 
     /**
-     * @return int one of the mod_quiz_display_options::DURING,
+     * @return int one of the display_options::DURING,
      *      IMMEDIATELY_AFTER, LATER_WHILE_OPEN or AFTER_CLOSE constants.
      */
     public function get_attempt_state() {
@@ -1140,7 +1141,7 @@ class quiz_attempt {
     }
 
     /**
-     * Wrapper that the correct mod_quiz_display_options for this quiz at the
+     * Wrapper that the correct display_options for this quiz at the
      * moment.
      *
      * @param bool $reviewing true for options when reviewing, false for when attempting.
@@ -1160,15 +1161,15 @@ class quiz_attempt {
             return $this->reviewoptions;
 
         } else {
-            $options = mod_quiz_display_options::make_from_quiz($this->get_quiz(),
-                    mod_quiz_display_options::DURING);
+            $options = display_options::make_from_quiz($this->get_quiz(),
+                    display_options::DURING);
             $options->flags = quiz_get_flag_option($this->attempt, $this->quizobj->get_context());
             return $options;
         }
     }
 
     /**
-     * Wrapper that the correct mod_quiz_display_options for this quiz at the
+     * Wrapper that the correct display_options for this quiz at the
      * moment.
      *
      * @param bool $reviewing true for review page, else attempt page.

@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use mod_quiz\question\display_options;
+
 
 /**
  * The renderer for the quiz module.
@@ -41,12 +43,12 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param int $page the current page number
      * @param bool $showall whether to show entire attempt on one page.
      * @param bool $lastpage if true the current page is the last page.
-     * @param mod_quiz_display_options $displayoptions instance of mod_quiz_display_options.
+     * @param display_options $displayoptions instance of display_options.
      * @param array $summarydata contains all table data
      * @return $output containing html data.
      */
     public function review_page(quiz_attempt $attemptobj, $slots, $page, $showall,
-                                $lastpage, mod_quiz_display_options $displayoptions,
+                                $lastpage, display_options $displayoptions,
                                 $summarydata) {
 
         $output = '';
@@ -67,12 +69,12 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param quiz_attempt $attemptobj an instance of quiz_attempt.
      * @param int $slot which question to display.
      * @param int $seq which step of the question attempt to show. null = latest.
-     * @param mod_quiz_display_options $displayoptions instance of mod_quiz_display_options.
+     * @param display_options $displayoptions instance of display_options.
      * @param array $summarydata contains all table data
      * @return $output containing html data.
      */
     public function review_question_page(quiz_attempt $attemptobj, $slot, $seq,
-            mod_quiz_display_options $displayoptions, $summarydata) {
+            display_options $displayoptions, $summarydata) {
 
         $output = '';
         $output .= $this->header();
@@ -177,10 +179,10 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param array $slots array of intgers relating to questions
      * @param int $page current page number
      * @param bool $showall if true shows attempt on single page
-     * @param mod_quiz_display_options $displayoptions instance of mod_quiz_display_options
+     * @param display_options $displayoptions instance of display_options
      */
     public function questions(quiz_attempt $attemptobj, $reviewing, $slots, $page, $showall,
-                              mod_quiz_display_options $displayoptions) {
+                              display_options $displayoptions) {
         $output = '';
         foreach ($slots as $slot) {
             $output .= $attemptobj->render_question($slot, $reviewing, $this,
@@ -194,7 +196,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      *
      * @param array $summarydata contain row data for table
      * @param int $page current page number
-     * @param mod_quiz_display_options $displayoptions instance of mod_quiz_display_options
+     * @param display_options $displayoptions instance of display_options
      * @param $content contains each question
      * @param quiz_attempt $attemptobj instance of quiz_attempt
      * @param bool $showall if true display attempt on one page
@@ -662,7 +664,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * Create the summary page
      *
      * @param quiz_attempt $attemptobj
-     * @param mod_quiz_display_options $displayoptions
+     * @param display_options $displayoptions
      */
     public function summary_page($attemptobj, $displayoptions) {
         $output = '';
@@ -680,7 +682,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * Generates the table of summarydata
      *
      * @param quiz_attempt $attemptobj
-     * @param mod_quiz_display_options $displayoptions
+     * @param display_options $displayoptions
      */
     public function summary_table($attemptobj, $displayoptions) {
         // Prepare the summary table header.

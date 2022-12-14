@@ -309,11 +309,17 @@ class manager {
 
         $classname = null;
 
-        // Getting the appropiate class to get the correct setting value.
+        // Getting the appropriate class to get the correct setting value.
         $settingtype = get_class($settingdata);
-
         // Check if it is a setting from a plugin.
-        $plugindata = explode('_', $settingtype);
+        $namespacedata = explode('\\', $settingtype);
+        if (count($namespacedata) > 1) {
+            $plugindata = explode('_', $namespacedata[0]);
+            $settingtype = end($namespacedata);
+        } else {
+            $plugindata = explode('_', $settingtype, 2);
+        }
+
         $types = \core_component::get_plugin_types();
         if (array_key_exists($plugindata[0], $types)) {
             $plugins = \core_component::get_plugin_list($plugindata[0]);

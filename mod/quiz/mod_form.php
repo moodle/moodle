@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
+use mod_quiz\question\display_options;
 
 /**
  * Settings form for the quiz module.
@@ -204,13 +205,13 @@ class mod_quiz_mod_form extends moodleform_mod {
 
         // Review options.
         $this->add_review_options_group($mform, $quizconfig, 'during',
-                mod_quiz_display_options::DURING, true);
+                display_options::DURING, true);
         $this->add_review_options_group($mform, $quizconfig, 'immediately',
-                mod_quiz_display_options::IMMEDIATELY_AFTER);
+                display_options::IMMEDIATELY_AFTER);
         $this->add_review_options_group($mform, $quizconfig, 'open',
-                mod_quiz_display_options::LATER_WHILE_OPEN);
+                display_options::LATER_WHILE_OPEN);
         $this->add_review_options_group($mform, $quizconfig, 'closed',
-                mod_quiz_display_options::AFTER_CLOSE);
+                display_options::AFTER_CLOSE);
 
         foreach ($behaviours as $behaviour => $notused) {
             $unusedoptions = question_engine::get_behaviour_unused_display_options($behaviour);
@@ -459,13 +460,13 @@ class mod_quiz_mod_form extends moodleform_mod {
         }
 
         $this->preprocessing_review_settings($toform, 'during',
-                mod_quiz_display_options::DURING);
+                display_options::DURING);
         $this->preprocessing_review_settings($toform, 'immediately',
-                mod_quiz_display_options::IMMEDIATELY_AFTER);
+                display_options::IMMEDIATELY_AFTER);
         $this->preprocessing_review_settings($toform, 'open',
-                mod_quiz_display_options::LATER_WHILE_OPEN);
+                display_options::LATER_WHILE_OPEN);
         $this->preprocessing_review_settings($toform, 'closed',
-                mod_quiz_display_options::AFTER_CLOSE);
+                display_options::AFTER_CLOSE);
         $toform['attemptduring'] = true;
         $toform['overallfeedbackduring'] = false;
 

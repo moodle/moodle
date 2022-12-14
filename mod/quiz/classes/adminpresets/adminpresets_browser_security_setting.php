@@ -16,39 +16,19 @@
 
 namespace mod_quiz\adminpresets;
 
-use ReflectionMethod;
-use core_adminpresets\local\setting\adminpresets_setting;
+use core_adminpresets\local\setting\adminpresets_admin_setting_configselect_with_advanced;
 
 /**
- * Admin settings class for the quiz review options.
+ * Admin settings class for the quiz browser security option.
  *
  * @package          mod_quiz
  * @copyright        2021 Pimenko <support@pimenko.com><pimenko.com>
  * @author           Jordan Kesraoui | Sylvain Revenu | Pimenko based on David Monllaó <david.monllao@urv.cat> code
  * @license          http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class adminpresets_mod_quiz_admin_review_setting extends adminpresets_setting {
+class adminpresets_browser_security_setting extends adminpresets_admin_setting_configselect_with_advanced {
 
-    /**
-     * The setting value is a sum of 'mod_quiz_admin_review_setting::times'
-     */
-    protected function set_visiblevalue() {
-
-        // Getting the masks descriptions (mod_quiz_admin_review_setting protected method).
-        $reflectiontimes = new ReflectionMethod('mod_quiz_admin_review_setting', 'times');
-        $reflectiontimes->setAccessible(true);
-        $times = $reflectiontimes->invoke(null);
-
-        $visiblevalue = '';
-        foreach ($times as $timemask => $namestring) {
-
-            // If the value is checked.
-            if ($this->value & $timemask) {
-                $visiblevalue .= $namestring . ', ';
-            }
-        }
-        $visiblevalue = rtrim($visiblevalue, ', ');
-
-        $this->visiblevalue = $visiblevalue;
+    public function set_behaviors() {
+        $this->behaviors['loadchoices'] = &$this->settingdata;
     }
 }

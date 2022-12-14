@@ -14,46 +14,38 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_quiz\admin;
+
 /**
  * Admin settings class for the quiz review options.
  *
  * @package   mod_quiz
- * @copyright 2008 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-
-defined('MOODLE_INTERNAL') || die();
-
-
-/**
- * Admin settings class for the quiz review options.
- *
+ * @category  admin
  * @copyright  2008 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_quiz_admin_review_setting extends admin_setting {
+class review_setting extends \admin_setting {
     /**
      * @var integer should match the constants defined in
-     * {@link mod_quiz_display_options}. Copied for performance reasons.
+     * {@see display_options}. Copied for performance reasons.
      */
     const DURING            = 0x10000;
 
     /**
      * @var integer should match the constants defined in
-     * {@link mod_quiz_display_options}. Copied for performance reasons.
+     * {@see display_options}. Copied for performance reasons.
      */
     const IMMEDIATELY_AFTER = 0x01000;
 
     /**
      * @var integer should match the constants defined in
-     * {@link mod_quiz_display_options}. Copied for performance reasons.
+     * {@see display_options}. Copied for performance reasons.
      */
     const LATER_WHILE_OPEN  = 0x00100;
 
     /**
      * @var integer should match the constants defined in
-     * {@link mod_quiz_display_options}. Copied for performance reasons.
+     * {@see display_options}. Copied for performance reasons.
      */
     const AFTER_CLOSE       = 0x00010;
 

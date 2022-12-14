@@ -40,6 +40,7 @@ require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/questionlib.php');
 
 use mod_quiz\question\bank\qbank_helper;
+use mod_quiz\question\display_options;
 
 /**
  * @var int We show the countdown timer if there is less than this amount of time left before the
@@ -1450,8 +1451,8 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
  */
 function quiz_question_preview_url($quiz, $question, $variant = null) {
     // Get the appropriate display options.
-    $displayoptions = mod_quiz_display_options::make_from_quiz($quiz,
-            mod_quiz_display_options::DURING);
+    $displayoptions = display_options::make_from_quiz($quiz,
+            display_options::DURING);
 
     $maxmark = null;
     if (isset($question->maxmark)) {
@@ -1500,33 +1501,32 @@ function quiz_get_flag_option($attempt, $context) {
  * quiz_get_review_options, not in the sense of $attempt->state.
  * @param object $quiz the quiz settings
  * @param object $attempt the quiz_attempt database row.
- * @return int one of the mod_quiz_display_options::DURING,
+ * @return int one of the display_options::DURING,
  *      IMMEDIATELY_AFTER, LATER_WHILE_OPEN or AFTER_CLOSE constants.
  */
 function quiz_attempt_state($quiz, $attempt) {
     if ($attempt->state == quiz_attempt::IN_PROGRESS) {
-        return mod_quiz_display_options::DURING;
+        return display_options::DURING;
     } else if ($quiz->timeclose && time() >= $quiz->timeclose) {
-        return mod_quiz_display_options::AFTER_CLOSE;
+        return display_options::AFTER_CLOSE;
     } else if (time() < $attempt->timefinish + 120) {
-        return mod_quiz_display_options::IMMEDIATELY_AFTER;
+        return display_options::IMMEDIATELY_AFTER;
     } else {
-        return mod_quiz_display_options::LATER_WHILE_OPEN;
+        return display_options::LATER_WHILE_OPEN;
     }
 }
 
 /**
- * The the appropraite mod_quiz_display_options object for this attempt at this
- * quiz right now.
+ * The appropriate display_options object for this attempt at this quiz right now.
  *
  * @param stdClass $quiz the quiz instance.
  * @param stdClass $attempt the attempt in question.
  * @param context $context the quiz context.
  *
- * @return mod_quiz_display_options
+ * @return display_options
  */
 function quiz_get_review_options($quiz, $attempt, $context) {
-    $options = mod_quiz_display_options::make_from_quiz($quiz, quiz_attempt_state($quiz, $attempt));
+    $options = display_options::make_from_quiz($quiz, quiz_attempt_state($quiz, $attempt));
 
     $options->readonly = true;
     $options->flags = quiz_get_flag_option($attempt, $context);
@@ -1595,7 +1595,7 @@ function quiz_get_combined_reviewoptions($quiz, $attempts) {
     }
 
     foreach ($attempts as $attempt) {
-        $attemptoptions = mod_quiz_display_options::make_from_quiz($quiz,
+        $attemptoptions = display_options::make_from_quiz($quiz,
                 quiz_attempt_state($quiz, $attempt));
         foreach ($fields as $field) {
             $someoptions->$field = $someoptions->$field || $attemptoptions->$field;
@@ -2065,137 +2065,6 @@ function quiz_get_js_module() {
     );
 }
 
-
-/**
- * An extension of question_display_options that includes the extra options used
- * by the quiz.
- *
- * @copyright  2010 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class mod_quiz_display_options extends question_display_options {
-    /**#@+
-     * @var integer bits used to indicate various times in relation to a
-     * quiz attempt.
-     */
-    const DURING =            0x10000;
-    const IMMEDIATELY_AFTER = 0x01000;
-    const LATER_WHILE_OPEN =  0x00100;
-    const AFTER_CLOSE =       0x00010;
-    /**#@-*/
-
-    /**
-     * @var boolean if this is false, then the student is not allowed to review
-     * anything about the attempt.
-     */
-    public $attempt = true;
-
-    /**
-     * @var boolean if this is false, then the student is not allowed to review
-     * anything about the attempt.
-     */
-    public $overallfeedback = self::VISIBLE;
-
-    /**
-     * Set up the various options from the quiz settings, and a time constant.
-     * @param object $quiz the quiz settings.
-     * @param int $one of the {@link DURING}, {@link IMMEDIATELY_AFTER},
-     * {@link LATER_WHILE_OPEN} or {@link AFTER_CLOSE} constants.
-     * @return mod_quiz_display_options set up appropriately.
-     */
-    public static function make_from_quiz($quiz, $when) {
-        $options = new self();
-
-        $options->attempt = self::extract($quiz->reviewattempt, $when, true, false);
-        $options->correctness = self::extract($quiz->reviewcorrectness, $when);
-        $options->marks = self::extract($quiz->reviewmarks, $when,
-                self::MARK_AND_MAX, self::MAX_ONLY);
-        $options->feedback = self::extract($quiz->reviewspecificfeedback, $when);
-        $options->generalfeedback = self::extract($quiz->reviewgeneralfeedback, $when);
-        $options->rightanswer = self::extract($quiz->reviewrightanswer, $when);
-        $options->overallfeedback = self::extract($quiz->reviewoverallfeedback, $when);
-
-        $options->numpartscorrect = $options->feedback;
-        $options->manualcomment = $options->feedback;
-
-        if ($quiz->questiondecimalpoints != -1) {
-            $options->markdp = $quiz->questiondecimalpoints;
-        } else {
-            $options->markdp = $quiz->decimalpoints;
-        }
-
-        return $options;
-    }
-
-    protected static function extract($bitmask, $bit,
-            $whenset = self::VISIBLE, $whennotset = self::HIDDEN) {
-        if ($bitmask & $bit) {
-            return $whenset;
-        } else {
-            return $whennotset;
-        }
-    }
-}
-
-/**
- * A {@link qubaid_condition} for finding all the question usages belonging to
- * a particular quiz.
- *
- * @copyright  2010 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class qubaids_for_quiz extends qubaid_join {
-    public function __construct($quizid, $includepreviews = true, $onlyfinished = false) {
-        $where = 'quiza.quiz = :quizaquiz';
-        $params = array('quizaquiz' => $quizid);
-
-        if (!$includepreviews) {
-            $where .= ' AND preview = 0';
-        }
-
-        if ($onlyfinished) {
-            $where .= ' AND state = :statefinished';
-            $params['statefinished'] = quiz_attempt::FINISHED;
-        }
-
-        parent::__construct('{quiz_attempts} quiza', 'quiza.uniqueid', $where, $params);
-    }
-}
-
-/**
- * A {@link qubaid_condition} for finding all the question usages belonging to a particular user and quiz combination.
- *
- * @copyright  2018 Andrew Nicols <andrwe@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class qubaids_for_quiz_user extends qubaid_join {
-    /**
-     * Constructor for this qubaid.
-     *
-     * @param   int     $quizid The quiz to search.
-     * @param   int     $userid The user to filter on
-     * @param   bool    $includepreviews Whether to include preview attempts
-     * @param   bool    $onlyfinished Whether to only include finished attempts or not
-     */
-    public function __construct($quizid, $userid, $includepreviews = true, $onlyfinished = false) {
-        $where = 'quiza.quiz = :quizaquiz AND quiza.userid = :quizauserid';
-        $params = [
-            'quizaquiz' => $quizid,
-            'quizauserid' => $userid,
-        ];
-
-        if (!$includepreviews) {
-            $where .= ' AND preview = 0';
-        }
-
-        if ($onlyfinished) {
-            $where .= ' AND state = :statefinished';
-            $params['statefinished'] = quiz_attempt::FINISHED;
-        }
-
-        parent::__construct('{quiz_attempts} quiza', 'quiza.uniqueid', $where, $params);
-    }
-}
 
 /**
  * Creates a textual representation of a question for display.

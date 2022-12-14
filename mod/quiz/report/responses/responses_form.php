@@ -14,19 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file defines the setting form for the quiz responses report.
- *
- * @package   quiz_responses
- * @copyright 2008 Jean-Michel Vedrine
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport_form.php');
-
+use mod_quiz\local\reports\attempts_report;
+use mod_quiz\local\reports\attempts_report_options_form;
 
 /**
  * Quiz responses report settings form.
@@ -34,7 +23,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport_form.php');
  * @copyright 2008 Jean-Michel Vedrine
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_responses_settings_form extends mod_quiz_attempts_report_form {
+class quiz_responses_settings_form extends attempts_report_options_form {
 
     protected function other_preference_fields(MoodleQuickForm $mform) {
         $mform->addGroup(array(
@@ -45,15 +34,15 @@ class quiz_responses_settings_form extends mod_quiz_attempts_report_form {
             $mform->createElement('advcheckbox', 'right', '',
                 get_string('rightanswer', 'quiz_responses')),
         ), 'coloptions', get_string('showthe', 'quiz_responses'), array(' '), false);
-        $mform->disabledIf('qtext', 'attempts', 'eq', quiz_attempts_report::ENROLLED_WITHOUT);
-        $mform->disabledIf('resp',  'attempts', 'eq', quiz_attempts_report::ENROLLED_WITHOUT);
-        $mform->disabledIf('right', 'attempts', 'eq', quiz_attempts_report::ENROLLED_WITHOUT);
+        $mform->disabledIf('qtext', 'attempts', 'eq', attempts_report::ENROLLED_WITHOUT);
+        $mform->disabledIf('resp',  'attempts', 'eq', attempts_report::ENROLLED_WITHOUT);
+        $mform->disabledIf('right', 'attempts', 'eq', attempts_report::ENROLLED_WITHOUT);
     }
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        if ($data['attempts'] != quiz_attempts_report::ENROLLED_WITHOUT && !(
+        if ($data['attempts'] != attempts_report::ENROLLED_WITHOUT && !(
                 $data['qtext'] || $data['resp'] || $data['right'])) {
             $errors['coloptions'] = get_string('reportmustselectstate', 'quiz');
         }
@@ -70,7 +59,7 @@ class quiz_responses_settings_form extends mod_quiz_attempts_report_form {
                                            question_attempt::ALL_TRIES    => get_string('alltries', 'question'))
             );
             $mform->setDefault('whichtries', question_attempt::LAST_TRY);
-            $mform->disabledIf('whichtries', 'attempts', 'eq', quiz_attempts_report::ENROLLED_WITHOUT);
+            $mform->disabledIf('whichtries', 'attempts', 'eq', attempts_report::ENROLLED_WITHOUT);
         }
     }
 }

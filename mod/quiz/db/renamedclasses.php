@@ -27,4 +27,28 @@ defined('MOODLE_INTERNAL') || die();
 $renamedclasses = [
     // Since Moodle 4.1.
     'mod_quiz\local\views\secondary' => 'mod_quiz\navigation\views\secondary',
+    // Since Moodle 4.2.
+    'mod_quiz_display_options' => 'mod_quiz\question\display_options',
+    'qubaids_for_quiz' => 'mod_quiz\question\qubaids_for_quiz',
+    'qubaids_for_quiz_user' => 'mod_quiz\question\qubaids_for_quiz_user',
+    'mod_quiz_admin_setting_browsersecurity' => 'mod_quiz\admin\browser_security_setting',
+    'mod_quiz_admin_setting_grademethod' => 'mod_quiz\admin\grade_method_setting',
+    'mod_quiz_admin_setting_overduehandling' => 'mod_quiz\admin\overdue_handling_setting',
+    'mod_quiz_admin_review_setting' => 'mod_quiz\admin\review_setting',
+    'mod_quiz_admin_setting_user_image' => 'mod_quiz\admin\user_image_setting',
+    'mod_quiz\adminpresets\adminpresets_mod_quiz_admin_setting_browsersecurity' =>
+            'mod_quiz\adminpresets\adminpresets_browser_security_setting',
+    'mod_quiz\adminpresets/adminpresets_mod_quiz_admin_setting_grademethod' =>
+            'mod_quiz\adminpresets\adminpresets_grade_method_setting',
+    'mod_quiz\adminpresets\adminpresets_mod_quiz_admin_setting_overduehandling' =>
+            'mod_quiz\adminpresets\adminpresets_overdue_handling_setting',
+    'mod_quiz\adminpresets\adminpresets_mod_quiz_admin_review_setting' =>
+            'mod_quiz\adminpresets\adminpresets_review_setting',
+    'mod_quiz\adminpresets\adminpresets_mod_quiz_admin_setting_user_image' =>
+            'mod_quiz\adminpresets\adminpresets_user_image_setting',
+    'quiz_default_report' => 'mod_quiz\local\reports\report_base',
+    'quiz_attempts_report' => 'mod_quiz\local\reports\attempts_report',
+    'mod_quiz_attempts_report_form' => 'mod_quiz\local\reports\attempts_report_options_form',
+    'mod_quiz_attempts_report_options' => 'mod_quiz\local\reports\attempts_report_options',
+    'quiz_attempts_report_table' => 'mod_quiz\local\reports\attempts_report_table',
 ];
