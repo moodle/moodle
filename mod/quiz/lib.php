@@ -28,6 +28,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use mod_quiz\access_manager;
 use mod_quiz\question\bank\custom_view;
 use mod_quiz\question\display_options;
 use mod_quiz\question\qubaids_for_quiz;
@@ -190,7 +191,7 @@ function quiz_delete_instance($id) {
 
     $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
 
-    quiz_access_manager::delete_settings($quiz);
+    access_manager::delete_settings($quiz);
 
     $events = $DB->get_records('event', array('modulename' => 'quiz', 'instance' => $quiz->id));
     foreach ($events as $event) {
@@ -1236,7 +1237,7 @@ function quiz_after_add_or_update($quiz) {
     }
 
     // Store any settings belonging to the access rules.
-    quiz_access_manager::save_settings($quiz);
+    access_manager::save_settings($quiz);
 
     // Update the events relating to this quiz.
     quiz_update_events($quiz);

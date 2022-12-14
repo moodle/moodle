@@ -35,14 +35,16 @@ This files describes API changes in the quiz code.
   - mod_quiz_attempts_report_form => mod_quiz\local\reports\attempts_report_options_form
   - mod_quiz_attempts_report_options => mod_quiz\local\reports\attempts_report_options
   - quiz_attempts_report_table => mod_quiz\local\reports\attempts_report_table
+  - quiz_access_manager => mod_quiz\access_manager
 
-  As part of the clean-up, the following files are no longer required, and if you try to
+* As part of the clean-up, the following files are no longer required, and if you try to
   include them, you will get a debugging notices telling you not to:
   - mod/quiz/report/attemptsreport.php
   - mod/quiz/report/attemptsreport_form.php
   - mod/quiz/report/attemptsreport_options.php
   - mod/quiz/report/attemptsreport_table.php
   - mod/quiz/report/default.php
+  - mod/quiz/accessmanager.php
 
 
 === 4.1 ===

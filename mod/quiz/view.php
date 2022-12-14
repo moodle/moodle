@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\access_manager;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir.'/gradelib.php');
@@ -65,7 +66,7 @@ $canpreview = has_capability('mod/quiz:preview', $context);
 // Create an object to manage all the other (non-roles) access rules.
 $timenow = time();
 $quizobj = quiz::create($cm->instance, $USER->id);
-$accessmanager = new quiz_access_manager($quizobj, $timenow,
+$accessmanager = new access_manager($quizobj, $timenow,
         has_capability('mod/quiz:ignoretimelimits', $context, null, false));
 $quiz = $quizobj->get_quiz();
 

@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\access_manager;
+
 /**
  * Internal function used in quiz_get_completion_state. Check passing grade (or no attempts left) requirement for completion.
  *
@@ -69,7 +71,7 @@ function quiz_completion_check_passing_grade_or_all_attempts($course, $cm, $user
     $lastfinishedattempt = end($attempts);
     $context = context_module::instance($cm->id);
     $quizobj = quiz::create($quiz->id, $userid);
-    $accessmanager = new quiz_access_manager($quizobj, time(),
+    $accessmanager = new access_manager($quizobj, time(),
             has_capability('mod/quiz:ignoretimelimits', $context, $userid, false));
 
     return $accessmanager->is_finished(count($attempts), $lastfinishedattempt);

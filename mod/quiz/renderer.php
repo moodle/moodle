@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use mod_quiz\access_manager;
 use mod_quiz\question\display_options;
 
 
@@ -444,7 +445,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      *
      * @param quiz_attempt $attemptobj Instance of quiz_attempt
      * @param int $page Current page number
-     * @param quiz_access_manager $accessmanager Instance of quiz_access_manager
+     * @param access_manager $accessmanager Instance of access_manager
      * @param array $messages An array of messages
      * @param array $slots Contains an array of integers that relate to questions
      * @param int $id The ID of an attempt
@@ -912,7 +913,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
             // Calling code was not updated since the API change.
             debugging('The third argument to start_attempt_button should now be the ' .
                     'mod_quiz_preflight_check_form from ' .
-                    'quiz_access_manager::get_preflight_check_form, not a warning message string.');
+                    'access_manager::get_preflight_check_form, not a warning message string.');
         }
 
         $button = new single_button($url, $buttontext, 'post', true);
@@ -1430,7 +1431,7 @@ class mod_quiz_view_object {
     public $attempts;
     /** @var array $attemptobjs quiz_attempt objects corresponding to $attempts. */
     public $attemptobjs;
-    /** @var quiz_access_manager $accessmanager contains various access rules. */
+    /** @var access_manager $accessmanager contains various access rules. */
     public $accessmanager;
     /** @var bool $canreviewmine whether the current user has the capability to
      *       review their own attempts. */

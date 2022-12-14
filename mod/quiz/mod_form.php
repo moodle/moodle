@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
+use mod_quiz\access_manager;
 use mod_quiz\question\display_options;
 
 /**
@@ -289,11 +290,11 @@ class mod_quiz_mod_form extends moodleform_mod {
 
         // Browser security choices.
         $mform->addElement('select', 'browsersecurity', get_string('browsersecurity', 'quiz'),
-                quiz_access_manager::get_browser_security_choices());
+                access_manager::get_browser_security_choices());
         $mform->addHelpButton('browsersecurity', 'browsersecurity', 'quiz');
 
         // Any other rule plugins.
-        quiz_access_manager::add_settings_form_fields($this, $mform);
+        access_manager::add_settings_form_fields($this, $mform);
 
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'overallfeedbackhdr', get_string('overallfeedback', 'quiz'));
@@ -479,7 +480,7 @@ class mod_quiz_mod_form extends moodleform_mod {
 
         // Load any settings belonging to the access rules.
         if (!empty($toform['instance'])) {
-            $accesssettings = quiz_access_manager::load_settings($toform['instance']);
+            $accesssettings = access_manager::load_settings($toform['instance']);
             foreach ($accesssettings as $name => $value) {
                 $toform[$name] = $value;
             }
@@ -589,7 +590,7 @@ class mod_quiz_mod_form extends moodleform_mod {
             unset($errors['gradepass']);
         }
         // Any other rule plugins.
-        $errors = quiz_access_manager::validate_settings_form_fields($errors, $data, $files, $this);
+        $errors = access_manager::validate_settings_form_fields($errors, $data, $files, $this);
 
         return $errors;
     }

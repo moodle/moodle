@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
 require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 require_once($CFG->libdir . '/filelib.php');
-require_once($CFG->dirroot . '/mod/quiz/accessmanager.php');
 
 use mod_quiz\question\display_options;
 

@@ -29,7 +29,6 @@ use quiz;
 use quizaccess_seb\event\access_prevented;
 use quizaccess_seb\access_manager;
 
-require_once($CFG->dirroot . '/mod/quiz/accessmanager.php');
 require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 require_once($CFG->libdir . '/externallib.php');
 

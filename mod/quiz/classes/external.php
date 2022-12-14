@@ -25,6 +25,7 @@
  */
 
 use core_course\external\helper_for_get_mods_by_courses;
+use mod_quiz\access_manager;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -112,7 +113,7 @@ class mod_quiz_external extends external_api {
 
                     $timenow = time();
                     $quizobj = quiz::create($quiz->id, $USER->id);
-                    $accessmanager = new quiz_access_manager($quizobj, $timenow, has_capability('mod/quiz:ignoretimelimits',
+                    $accessmanager = new access_manager($quizobj, $timenow, has_capability('mod/quiz:ignoretimelimits',
                                                                 $context, null, false));
 
                     // Fields the user could see if have access to the quiz.
@@ -1810,7 +1811,7 @@ class mod_quiz_external extends external_api {
         $quizobj = quiz::create($cm->instance, $USER->id);
         $ignoretimelimits = has_capability('mod/quiz:ignoretimelimits', $context, null, false);
         $timenow = time();
-        $accessmanager = new quiz_access_manager($quizobj, $timenow, $ignoretimelimits);
+        $accessmanager = new access_manager($quizobj, $timenow, $ignoretimelimits);
 
         $result['accessrules'] = $accessmanager->describe_rules();
         $result['activerulenames'] = $accessmanager->get_active_rule_names();
@@ -1896,7 +1897,7 @@ class mod_quiz_external extends external_api {
         $quizobj = quiz::create($cm->instance, $USER->id);
         $ignoretimelimits = has_capability('mod/quiz:ignoretimelimits', $context, null, false);
         $timenow = time();
-        $accessmanager = new quiz_access_manager($quizobj, $timenow, $ignoretimelimits);
+        $accessmanager = new access_manager($quizobj, $timenow, $ignoretimelimits);
 
         $attempts = quiz_get_user_attempts($quiz->id, $USER->id, 'finished', true);
         $lastfinishedattempt = end($attempts);

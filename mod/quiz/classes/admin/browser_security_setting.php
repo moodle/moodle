@@ -16,6 +16,8 @@
 
 namespace mod_quiz\admin;
 
+use mod_quiz\access_manager;
+
 /**
  * Admin settings class for the quiz browser security option.
  *
@@ -35,7 +37,7 @@ class browser_security_setting extends \admin_setting_configselect_with_advanced
         }
 
         require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-        $this->choices = \quiz_access_manager::get_browser_security_choices();
+        $this->choices = access_manager::get_browser_security_choices();
 
         return true;
     }

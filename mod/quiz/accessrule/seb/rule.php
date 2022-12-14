@@ -228,7 +228,7 @@ class quizaccess_seb extends quiz_access_rule_base {
     /**
      * Return the bits of SQL needed to load all the settings from all the access
      * plugins in one DB query. The easiest way to understand what you need to do
-     * here is probalby to read the code of {@link quiz_access_manager::load_settings()}.
+     * here is probably to read the code of {@see \mod\quiz\access_manager::load_settings()}.
      *
      * If you have some settings that cannot be loaded in this way, then you can
      * use the {@link get_extra_settings()} method instead, but that has

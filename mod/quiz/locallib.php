@@ -31,7 +31,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
-require_once($CFG->dirroot . '/mod/quiz/accessmanager.php');
 require_once($CFG->dirroot . '/mod/quiz/accessmanager_form.php');
 require_once($CFG->dirroot . '/mod/quiz/renderer.php');
 require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
@@ -39,6 +38,7 @@ require_once($CFG->libdir . '/completionlib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/questionlib.php');
 
+use mod_quiz\access_manager;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
 
@@ -2438,7 +2438,7 @@ function quiz_view($quiz, $course, $cm, $context) {
  * Validate permissions for creating a new attempt and start a new preview attempt if required.
  *
  * @param  quiz $quizobj quiz object
- * @param  quiz_access_manager $accessmanager quiz access manager
+ * @param  access_manager $accessmanager quiz access manager
  * @param  bool $forcenew whether was required to start a new preview attempt
  * @param  int $page page to jump to in the attempt
  * @param  bool $redirect whether to redirect or throw exceptions (for web or ws usage)
@@ -2446,7 +2446,7 @@ function quiz_view($quiz, $course, $cm, $context) {
  * @throws moodle_quiz_exception
  * @since Moodle 3.1
  */
-function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessmanager, $forcenew, $page, $redirect) {
+function quiz_validate_new_attempt(quiz $quizobj, access_manager $accessmanager, $forcenew, $page, $redirect) {
     global $DB, $USER;
     $timenow = time();
 

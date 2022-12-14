@@ -27,6 +27,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use mod_quiz\access_manager;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
 
@@ -89,7 +90,7 @@ class quiz {
     protected $questions = null;
     /** @var stdClass[] of quiz_section rows. */
     protected $sections = null;
-    /** @var quiz_access_manager the access manager for this quiz. */
+    /** @var access_manager the access manager for this quiz. */
     protected $accessmanager = null;
     /** @var bool whether the current user has capability mod/quiz:preview. */
     protected $ispreviewuser = null;
@@ -123,7 +124,7 @@ class quiz {
     public static function create($quizid, $userid = null) {
         global $DB;
 
-        $quiz = quiz_access_manager::load_quiz_and_settings($quizid);
+        $quiz = access_manager::load_quiz_and_settings($quizid);
         $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
@@ -360,16 +361,16 @@ class quiz {
     }
 
     /**
-     * Return quiz_access_manager and instance of the quiz_access_manager class
+     * Return access_manager and instance of the access_manager class
      * for this quiz at this time.
      *
      * @param int $timenow the current time as a unix timestamp.
-     * @return quiz_access_manager and instance of the quiz_access_manager class
+     * @return access_manager and instance of the access_manager class
      *      for this quiz at this time.
      */
     public function get_access_manager($timenow) {
         if (is_null($this->accessmanager)) {
-            $this->accessmanager = new quiz_access_manager($this, $timenow,
+            $this->accessmanager = new access_manager($this, $timenow,
                     has_capability('mod/quiz:ignoretimelimits', $this->context, null, false));
         }
         return $this->accessmanager;
@@ -665,7 +666,7 @@ class quiz_attempt {
         global $DB;
 
         $attempt = $DB->get_record('quiz_attempts', $conditions, '*', MUST_EXIST);
-        $quiz = quiz_access_manager::load_quiz_and_settings($attempt->quiz);
+        $quiz = access_manager::load_quiz_and_settings($attempt->quiz);
         $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
@@ -894,7 +895,7 @@ class quiz_attempt {
 
     /**
      * @param int $timenow the current time as a unix timestamp.
-     * @return quiz_access_manager and instance of the quiz_access_manager class
+     * @return access_manager and instance of the access_manager class
      *      for this quiz at this time.
      */
     public function get_access_manager($timenow) {
