@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use mod_quiz\access_manager;
+use mod_quiz\form\preflight_check_form;
 use mod_quiz\question\display_options;
 
 
@@ -428,7 +429,17 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return implode(', ', $attemptlinks);
     }
 
-    public function start_attempt_page(quiz $quizobj, mod_quiz_preflight_check_form $mform) {
+    /**
+     * Render the 'start attempt' page.
+     *
+     * The student gets here if their interaction with the preflight check
+     * from fails in some way (e.g. they typed the wrong password).
+     *
+     * @param quiz $quizobj
+     * @param preflight_check_form $mform
+     * @return string
+     */
+    public function start_attempt_page(quiz $quizobj, preflight_check_form $mform) {
         $output = '';
         $output .= $this->header();
         $output .= $this->during_attempt_tertiary_nav($quizobj->view_url());
@@ -900,21 +911,14 @@ class mod_quiz_renderer extends plugin_renderer_base {
      *
      * @param string $buttontext the label to display on the button.
      * @param moodle_url $url The URL to POST to in order to start the attempt.
-     * @param mod_quiz_preflight_check_form $preflightcheckform deprecated.
+     * @param preflight_check_form $preflightcheckform deprecated.
      * @param bool $popuprequired whether the attempt needs to be opened in a pop-up.
      * @param array $popupoptions the options to use if we are opening a popup.
      * @return string HTML fragment.
      */
     public function start_attempt_button($buttontext, moodle_url $url,
-            mod_quiz_preflight_check_form $preflightcheckform = null,
+            preflight_check_form $preflightcheckform = null,
             $popuprequired = false, $popupoptions = null) {
-
-        if (is_string($preflightcheckform)) {
-            // Calling code was not updated since the API change.
-            debugging('The third argument to start_attempt_button should now be the ' .
-                    'mod_quiz_preflight_check_form from ' .
-                    'access_manager::get_preflight_check_form, not a warning message string.');
-        }
 
         $button = new single_button($url, $buttontext, 'post', true);
         $button->class .= ' quizstartbuttondiv';
@@ -1474,7 +1478,7 @@ class mod_quiz_view_object {
     public $buttontext;
     /** @var moodle_url $startattempturl URL to start an attempt. */
     public $startattempturl;
-    /** @var mod_quiz_preflight_check_form|null $preflightcheckform confirmation form that must be
+    /** @var preflight_check_form|null $preflightcheckform confirmation form that must be
      *       submitted before an attempt is started, if required. */
     public $preflightcheckform;
     /** @var moodle_url $startattempturl URL for any Back to the course button. */

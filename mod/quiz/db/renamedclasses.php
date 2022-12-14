@@ -52,4 +52,5 @@ $renamedclasses = [
     'mod_quiz_attempts_report_options' => 'mod_quiz\local\reports\attempts_report_options',
     'quiz_attempts_report_table' => 'mod_quiz\local\reports\attempts_report_table',
     'quiz_access_manager' => 'mod_quiz\access_manager',
+    'mod_quiz_preflight_check_form' => 'mod_quiz\form\preflight_check_form',
 ];

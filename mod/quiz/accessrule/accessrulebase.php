@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\form\preflight_check_form;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -108,12 +109,12 @@ abstract class quiz_access_rule_base {
      * Add any field you want to pre-flight check form. You should only do
      * something here if {@link is_preflight_check_required()} returned true.
      *
-     * @param mod_quiz_preflight_check_form $quizform the form being built.
+     * @param preflight_check_form $quizform the form being built.
      * @param MoodleQuickForm $mform The wrapped MoodleQuickForm.
      * @param int|null $attemptid the id of the current attempt, if there is one,
      *      otherwise null.
      */
-    public function add_preflight_check_form_fields(mod_quiz_preflight_check_form $quizform,
+    public function add_preflight_check_form_fields(preflight_check_form $quizform,
             MoodleQuickForm $mform, $attemptid) {
         // Do nothing by default.
     }

@@ -36,6 +36,7 @@ This files describes API changes in the quiz code.
   - mod_quiz_attempts_report_options => mod_quiz\local\reports\attempts_report_options
   - quiz_attempts_report_table => mod_quiz\local\reports\attempts_report_table
   - quiz_access_manager => mod_quiz\access_manager
+  - mod_quiz_preflight_check_form => mod_quiz\form\preflight_check_form
 
 * As part of the clean-up, the following files are no longer required, and if you try to
   include them, you will get a debugging notices telling you not to:
@@ -45,6 +46,7 @@ This files describes API changes in the quiz code.
   - mod/quiz/report/attemptsreport_table.php
   - mod/quiz/report/default.php
   - mod/quiz/accessmanager.php
+  - mod/quiz/accessmanager_form.php
 
 
 === 4.1 ===

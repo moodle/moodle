@@ -17,9 +17,9 @@
 namespace mod_quiz;
 
 use core_component;
+use mod_quiz\form\preflight_check_form;
 use mod_quiz\question\display_options;
 use mod_quiz_mod_form;
-use mod_quiz_preflight_check_form;
 use mod_quiz_renderer;
 use moodle_page;
 use moodle_url;
@@ -384,17 +384,17 @@ class access_manager {
      * @param moodle_url $url the form action URL.
      * @param int|null $attemptid the id of the current attempt, if there is one,
      *      otherwise null.
-     * @return mod_quiz_preflight_check_form the form.
+     * @return preflight_check_form the form.
      */
-    public function get_preflight_check_form(moodle_url $url, ?int $attemptid): mod_quiz_preflight_check_form {
+    public function get_preflight_check_form(moodle_url $url, ?int $attemptid): preflight_check_form {
         // This form normally wants POST submissions. However, it also needs to
         // accept GET submissions. Since formslib is strict, we have to detect
         // which case we are in, and set the form property appropriately.
         $method = 'post';
-        if (!empty($_GET['_qf__mod_quiz_preflight_check_form'])) {
+        if (!empty($_GET['_qf__preflight_check_form'])) {
             $method = 'get';
         }
-        return new mod_quiz_preflight_check_form($url->out_omit_querystring(),
+        return new preflight_check_form($url->out_omit_querystring(),
                 ['rules' => $this->rules, 'quizobj' => $this->quizobj,
                       'attemptid' => $attemptid, 'hidden' => $url->params()], $method);
     }

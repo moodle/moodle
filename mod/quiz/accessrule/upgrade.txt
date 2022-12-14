@@ -2,6 +2,12 @@ This files describes API changes for quiz access rule plugins.
 
 Overview of this plugin type at http://docs.moodle.org/dev/Quiz_access_rules
 
+=== 4.2 ===
+
+* Note that class mod_quiz_preflight_check_form has been renamed to
+  mod_quiz\form\preflight_check_form.
+
+
 === 2.8, 2.7.1, 2.6.4 and 2.5.7 ===
 
 * New static method delete_settings for access rules, which is called when a
