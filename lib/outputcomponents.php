@@ -223,14 +223,14 @@ class user_picture implements renderable {
             if (!property_exists($user, $field)) {
                 $needrec = true;
                 debugging('Missing '.$field.' property in $user object, this is a performance problem that needs to be fixed by a developer. '
-                          .'Please use the \core_user\fields API to get the full list of required fields.', DEBUG_DEVELOPER);
+                    .'Please use the \core_user\fields API to get the full list of required fields.', DEBUG_DEVELOPER);
                 break;
             }
         }
 
         if ($needrec) {
             $this->user = $DB->get_record('user', array('id' => $user->id),
-                    implode(',', \core_user\fields::get_picture_fields()), MUST_EXIST);
+                implode(',', \core_user\fields::get_picture_fields()), MUST_EXIST);
         } else {
             $this->user = clone($user);
         }
@@ -387,7 +387,7 @@ class user_picture implements renderable {
             }
             // Set the image URL to the URL for the uploaded file and return.
             $url = moodle_url::make_pluginfile_url(
-                    $contextid, 'user', 'icon', null, $path, $filename, false, $this->includetoken);
+                $contextid, 'user', 'icon', null, $path, $filename, false, $this->includetoken);
             $url->param('rev', $this->user->picture);
             return $url;
         }
@@ -790,6 +790,43 @@ class pix_emoticon extends pix_icon implements renderable {
 class single_button implements renderable {
 
     /**
+     * Possible button types. From boostrap.
+     */
+    const BUTTON_TYPES = [
+        self::BUTTON_PRIMARY,
+        self::BUTTON_SECONDARY,
+        self::BUTTON_SUCCESS,
+        self::BUTTON_DANGER,
+        self::BUTTON_WARNING,
+        self::BUTTON_INFO
+    ];
+
+    /**
+     * Possible button types - Primary.
+     */
+    const BUTTON_PRIMARY = 'primary';
+    /**
+     * Possible button types - Secondary.
+     */
+    const BUTTON_SECONDARY = 'secondary';
+    /**
+     * Possible button types - Danger.
+     */
+    const BUTTON_DANGER = 'danger';
+    /**
+     * Possible button types - Success.
+     */
+    const BUTTON_SUCCESS = 'success';
+    /**
+     * Possible button types - Warning.
+     */
+    const BUTTON_WARNING = 'warning';
+    /**
+     * Possible button types - Info.
+     */
+    const BUTTON_INFO = 'info';
+
+    /**
      * @var moodle_url Target url
      */
     public $url;
@@ -810,9 +847,15 @@ class single_button implements renderable {
     public $class = 'singlebutton';
 
     /**
-     * @var bool True if button is primary button. Used for styling.
+     * @var string Type of button (from defined types). Used for styling.
      */
-    public $primary = false;
+    protected $type;
+
+    /**
+     * @var bool True if button is primary button. Used for styling.
+     * @deprecated since Moodle 4.2
+     */
+    private $primary = false;
 
     /**
      * @var bool True if button disabled, false if normal
@@ -851,17 +894,24 @@ class single_button implements renderable {
 
     /**
      * Constructor
+     *
      * @param moodle_url $url
      * @param string $label button text
      * @param string $method get or post submit method
-     * @param bool $primary whether this is a primary button, used for styling
+     * @param string $type whether this is a primary button or another type, used for styling
      * @param array $attributes Attributes for the HTML button tag
      */
-    public function __construct(moodle_url $url, $label, $method='post', $primary=false, $attributes = []) {
-        $this->url    = clone($url);
-        $this->label  = $label;
+    public function __construct(moodle_url $url, $label, $method = 'post', $type = self::BUTTON_SECONDARY,
+        $attributes = []) {
+        if (is_bool($type)) {
+            debugging('The boolean $primary is deprecated and replaced by $type,
+            use single_button::BUTTON_PRIMARY or self::BUTTON_SECONDARY instead');
+            $type = $type ? self::BUTTON_PRIMARY : self::BUTTON_SECONDARY;
+        }
+        $this->url = clone($url);
+        $this->label = $label;
         $this->method = $method;
-        $this->primary = $primary;
+        $this->type = $type;
         $this->attributes = $attributes;
     }
 
@@ -895,6 +945,49 @@ class single_button implements renderable {
     }
 
     /**
+     * Magic setter method.
+     *
+     * This method manages access to some properties and will display deprecation message when accessing 'primary' property.
+     *
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set($name, $value) {
+        switch ($name) {
+            case 'primary':
+                debugging('The primary field is deprecated, use the type field instead');
+                // Here just in case we modified the primary field from outside {@see \mod_quiz_renderer::summary_page_controls}.
+                $this->type = $value ? self::BUTTON_PRIMARY : self::BUTTON_SECONDARY;
+                break;
+            case 'type':
+                $this->type = in_array($value, self::BUTTON_TYPES) ? $value : self::BUTTON_SECONDARY;
+                break;
+            default:
+                $this->$name = $value;
+        }
+    }
+
+    /**
+     * Magic method getter.
+     *
+     * This method manages access to some properties and will display deprecation message when accessing 'primary' property.
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function __get($name) {
+        switch ($name) {
+            case 'primary':
+                debugging('The primary field is deprecated, use type field instead');
+                return $this->type == self::BUTTON_PRIMARY;
+            case 'type':
+                return $this->type;
+            default:
+                return $this->$name;
+        }
+    }
+
+    /**
      * Export data.
      *
      * @param renderer_base $output Renderer.
@@ -912,8 +1005,7 @@ class single_button implements renderable {
         $data->classes = $this->class;
         $data->disabled = $this->disabled;
         $data->tooltip = $this->tooltip;
-        $data->primary = $this->primary;
-
+        $data->type = $this->type;
         $data->attributes = [];
         foreach ($this->attributes as $key => $value) {
             $data->attributes[] = ['name' => $key, 'value' => $value];
@@ -1401,8 +1493,8 @@ class url_select implements renderable, templatable {
             $value = key($nothing);
             $name = reset($nothing);
             $flattened = [
-                $value => ['name' => $name, 'value' => $value, 'selected' => $this->selected == $value]
-            ] + $flattened;
+                    $value => ['name' => $name, 'value' => $value, 'selected' => $this->selected == $value]
+                ] + $flattened;
         }
 
         // Make non-associative array.
@@ -1525,10 +1617,10 @@ class action_link implements renderable {
      * @param pix_icon $icon optional pix_icon to render with the link text
      */
     public function __construct(moodle_url $url,
-                                $text,
-                                component_action $action=null,
-                                array $attributes=null,
-                                pix_icon $icon=null) {
+        $text,
+        component_action $action=null,
+        array $attributes=null,
+        pix_icon $icon=null) {
         $this->url = clone($url);
         $this->text = $text;
         if (empty($attributes['id'])) {
@@ -1790,7 +1882,7 @@ class html_writer {
      * @return string html fragment
      */
     public static function checkbox($name, $value, $checked = true, $label = '',
-            array $attributes = null, array $labelattributes = null) {
+        array $attributes = null, array $labelattributes = null) {
         $attributes = (array) $attributes;
         $output = '';
 
@@ -2143,12 +2235,12 @@ class html_writer {
         // explicitly assigned properties override those defined via $table->attributes
         $table->attributes['class'] = trim($table->attributes['class']);
         $attributes = array_merge($table->attributes, array(
-                'id'            => $table->id,
-                'width'         => $table->width,
-                'summary'       => $table->summary,
-                'cellpadding'   => $table->cellpadding,
-                'cellspacing'   => $table->cellspacing,
-            ));
+            'id'            => $table->id,
+            'width'         => $table->width,
+            'summary'       => $table->summary,
+            'cellpadding'   => $table->cellpadding,
+            'cellspacing'   => $table->cellspacing,
+        ));
         $output = html_writer::start_tag('table', $attributes) . "\n";
 
         $countcols = 0;
@@ -2261,9 +2353,9 @@ class html_writer {
                     // Explicitly assigned properties should override those defined in the attributes.
                     $row->attributes['class'] = trim($row->attributes['class']);
                     $trattributes = array_merge($row->attributes, array(
-                            'id'            => $row->id,
-                            'style'         => $row->style,
-                        ));
+                        'id'            => $row->id,
+                        'style'         => $row->style,
+                    ));
                     $output .= html_writer::start_tag('tr', $trattributes) . "\n";
                     $keys2 = array_keys($row->cells);
                     $lastkey = end($keys2);
@@ -2300,13 +2392,13 @@ class html_writer {
                         $tdstyle .= isset($table->wrap[$key]) ? $table->wrap[$key] : '';
                         $cell->attributes['class'] = trim($cell->attributes['class']);
                         $tdattributes = array_merge($cell->attributes, array(
-                                'style' => $tdstyle . $cell->style,
-                                'colspan' => $cell->colspan,
-                                'rowspan' => $cell->rowspan,
-                                'id' => $cell->id,
-                                'abbr' => $cell->abbr,
-                                'scope' => $cell->scope,
-                            ));
+                            'style' => $tdstyle . $cell->style,
+                            'colspan' => $cell->colspan,
+                            'rowspan' => $cell->rowspan,
+                            'id' => $cell->id,
+                            'abbr' => $cell->abbr,
+                            'scope' => $cell->scope,
+                        ));
                         $tagtype = 'td';
                         if ($cell->header === true) {
                             $tagtype = 'th';
@@ -3516,7 +3608,7 @@ class custom_menu_item implements renderable, templatable {
      * @param array $attributes Array of other HTML attributes for the custom menu item.
      */
     public function __construct($text, moodle_url $url = null, $title = null, $sort = null, custom_menu_item $parent = null,
-                                array $attributes = []) {
+        array $attributes = []) {
         $this->text = $text;
         $this->url = $url;
         $this->title = $title;
@@ -4069,7 +4161,7 @@ class context_header implements renderable {
             }
             // Add the bootstrap 'btn' class for formatting.
             $this->additionalbuttons[$buttontype]['linkattributes'] = array_merge($button['linkattributes'],
-                    array('class' => $class));
+                array('class' => $class));
         }
     }
 }
@@ -5042,7 +5134,7 @@ class progress_bar implements renderable, templatable {
 
         if (empty($this->time_start)) {
             throw new coding_exception('You must call create() (or use the $autostart ' .
-                    'argument to the constructor) before you try updating the progress bar.');
+                'argument to the constructor) before you try updating the progress bar.');
         }
 
         $estimate = $this->estimate($percent);
