@@ -28,7 +28,8 @@ require_once('lib.php');
 $courseid = required_param('id', PARAM_INT);
 $groupid  = optional_param('group', false, PARAM_INT);
 $userid   = optional_param('user', false, PARAM_INT);
-$action   = groups_param_action();
+$action = optional_param('action', false, PARAM_TEXT);
+
 // Support either single group= parameter, or array groups[].
 if ($groupid) {
     $groupids = array($groupid);
@@ -249,35 +250,3 @@ $output = $PAGE->get_renderer('core_group');
 echo $output->render($renderable);
 
 echo $OUTPUT->footer();
-
-/**
- * Returns the first button action with the given prefix, taken from
- * POST or GET, otherwise returns false.
- * @see /lib/moodlelib.php function optional_param().
- * @param string $prefix 'act_' as in 'action'.
- * @return string The action without the prefix, or false if no action found.
- */
-function groups_param_action($prefix = 'act_') {
-    $action = false;
-
-    if ($_POST) {
-        $formvars = $_POST;
-    } else if ($_GET) {
-        $formvars = $_GET;
-    }
-
-    if ($formvars) {
-        foreach ($formvars as $key => $value) {
-            if (preg_match("/$prefix(.+)/", $key, $matches)) {
-                $action = $matches[1];
-                break;
-            }
-        }
-    }
-    if ($action && !preg_match('/^\w+$/', $action)) {
-        $action = false;
-        throw new \moodle_exception('unknowaction');
-    }
-
-    return $action;
-}
