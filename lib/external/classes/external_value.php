@@ -22,7 +22,6 @@ namespace core_external;
  * @package    core_external
  * @copyright  2009 Petr Skodak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
  */
 class external_value extends external_description {
 
@@ -37,10 +36,9 @@ class external_value extends external_description {
      *
      * @param mixed $type
      * @param string $desc
-     * @param bool $required
+     * @param int $required
      * @param mixed $default
      * @param bool $allownull
-     * @since Moodle 2.0
      */
     public function __construct(
         $type,
@@ -50,7 +48,7 @@ class external_value extends external_description {
         $allownull = NULL_ALLOWED
     ) {
         parent::__construct($desc, $required, $default);
-        $this->type      = $type;
+        $this->type = $type;
         $this->allownull = $allownull;
     }
 }
