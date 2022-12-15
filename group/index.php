@@ -155,6 +155,18 @@ switch ($action) {
     case 'updatemembers': // Currently reloading.
         break;
 
+    case 'enablemessaging':
+        set_groups_messaging($groupids, true);
+        redirect($returnurl, get_string('messagingenabled', 'group', count($groupids)), null,
+            \core\output\notification::NOTIFY_SUCCESS);
+        break;
+
+    case 'disablemessaging':
+        set_groups_messaging($groupids, false);
+        redirect($returnurl, get_string('messagingdisabled', 'group', count($groupids)), null,
+            \core\output\notification::NOTIFY_SUCCESS);
+        break;
+
     default: // ERROR.
         throw new \moodle_exception('unknowaction', '', $returnurl);
         break;
@@ -244,8 +256,10 @@ if ($singlegroup) {
 
 $disableaddedit = !$singlegroup;
 $disabledelete = !empty($groupids);
+$caneditmessaging = \core_message\api::can_create_group_conversation($USER->id, $context);
+
 $renderable = new \core_group\output\index_page($courseid, $groupoptions, $selectedname, $members, $disableaddedit, $disabledelete,
-        $preventgroupremoval);
+        $preventgroupremoval, $caneditmessaging);
 $output = $PAGE->get_renderer('core_group');
 echo $output->render($renderable);
 

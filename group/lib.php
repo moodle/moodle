@@ -1208,3 +1208,17 @@ function core_group_inplace_editable($itemtype, $itemid, $newvalue) {
         return \core_group\output\user_groups_editable::update($itemid, $newvalue);
     }
 }
+
+/**
+ * Updates group messaging to enable/disable in bulk.
+ *
+ * @param array $groupids array of group id numbers.
+ * @param bool $enabled if true, enables messaging else disables messaging
+ */
+function set_groups_messaging(array $groupids, bool $enabled): void {
+    foreach ($groupids as $groupid) {
+        $data = groups_get_group($groupid, '*', MUST_EXIST);
+        $data->enablemessaging = $enabled;
+        groups_update_group($data);
+    }
+}
