@@ -19,10 +19,9 @@ namespace core_external;
 /**
  * External structure representing a set of files.
  *
- * @package    core_webservice
+ * @package    core_external
  * @copyright  2016 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.2
  */
 class external_files extends external_multiple_structure {
     /**
@@ -31,23 +30,19 @@ class external_files extends external_multiple_structure {
      * @param int $required The type of value (VALUE_REQUIRED OR VALUE_OPTIONAL).
      */
     public function __construct($desc = 'List of files.', $required = VALUE_REQUIRED) {
-
         parent::__construct(
-            new external_single_structure(
-                array(
-                    'filename' => new external_value(PARAM_FILE, 'File name.', VALUE_OPTIONAL),
-                    'filepath' => new external_value(PARAM_PATH, 'File path.', VALUE_OPTIONAL),
-                    'filesize' => new external_value(PARAM_INT, 'File size.', VALUE_OPTIONAL),
-                    'fileurl' => new external_value(PARAM_URL, 'Downloadable file url.', VALUE_OPTIONAL),
-                    'timemodified' => new external_value(PARAM_INT, 'Time modified.', VALUE_OPTIONAL),
-                    'mimetype' => new external_value(PARAM_RAW, 'File mime type.', VALUE_OPTIONAL),
-                    'isexternalfile' => new external_value(PARAM_BOOL, 'Whether is an external file.', VALUE_OPTIONAL),
-                    'repositorytype' => new external_value(PARAM_PLUGIN, 'The repository type for external files.', VALUE_OPTIONAL),
-                ),
-                'File.'
-            ),
+            new external_single_structure([
+                'filename' => new external_value(PARAM_FILE, 'File name.', VALUE_OPTIONAL),
+                'filepath' => new external_value(PARAM_PATH, 'File path.', VALUE_OPTIONAL),
+                'filesize' => new external_value(PARAM_INT, 'File size.', VALUE_OPTIONAL),
+                'fileurl' => new external_value(PARAM_URL, 'Downloadable file url.', VALUE_OPTIONAL),
+                'timemodified' => new external_value(PARAM_INT, 'Time modified.', VALUE_OPTIONAL),
+                'mimetype' => new external_value(PARAM_RAW, 'File mime type.', VALUE_OPTIONAL),
+                'isexternalfile' => new external_value(PARAM_BOOL, 'Whether is an external file.', VALUE_OPTIONAL),
+                'repositorytype' => new external_value(PARAM_PLUGIN, 'The repository type for external files.', VALUE_OPTIONAL),
+            ], 'File.'),
             $desc,
-            $required
+            $required,
         );
     }
 
@@ -59,54 +54,54 @@ class external_files extends external_multiple_structure {
      */
     public static function get_properties_for_exporter() {
         return [
-            'filename' => array(
+            'filename' => [
                 'type' => PARAM_FILE,
                 'description' => 'File name.',
                 'optional' => true,
                 'null' => NULL_NOT_ALLOWED,
-            ),
-            'filepath' => array(
+            ],
+            'filepath' => [
                 'type' => PARAM_PATH,
                 'description' => 'File path.',
                 'optional' => true,
                 'null' => NULL_NOT_ALLOWED,
-            ),
-            'filesize' => array(
+            ],
+            'filesize' => [
                 'type' => PARAM_INT,
                 'description' => 'File size.',
                 'optional' => true,
                 'null' => NULL_NOT_ALLOWED,
-            ),
-            'fileurl' => array(
+            ],
+            'fileurl' => [
                 'type' => PARAM_URL,
                 'description' => 'Downloadable file url.',
                 'optional' => true,
                 'null' => NULL_NOT_ALLOWED,
-            ),
-            'timemodified' => array(
+            ],
+            'timemodified' => [
                 'type' => PARAM_INT,
                 'description' => 'Time modified.',
                 'optional' => true,
                 'null' => NULL_NOT_ALLOWED,
-            ),
-            'mimetype' => array(
+            ],
+            'mimetype' => [
                 'type' => PARAM_RAW,
                 'description' => 'File mime type.',
                 'optional' => true,
                 'null' => NULL_NOT_ALLOWED,
-            ),
-            'isexternalfile' => array(
+            ],
+            'isexternalfile' => [
                 'type' => PARAM_BOOL,
                 'description' => 'Whether is an external file.',
                 'optional' => true,
                 'null' => NULL_NOT_ALLOWED,
-            ),
-            'repositorytype' => array(
+            ],
+            'repositorytype' => [
                 'type' => PARAM_PLUGIN,
                 'description' => 'The repository type for the external files.',
                 'optional' => true,
                 'null' => NULL_ALLOWED,
-            ),
+            ],
         ];
     }
 }
