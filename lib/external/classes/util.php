@@ -31,10 +31,8 @@ use stdClass;
  * @package    core_webservice
  * @copyright  2015 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 3.0
  */
 class util {
-
     /**
      * Validate a list of courses, returning the complete course objects for valid courses.
      *
@@ -47,13 +45,17 @@ class util {
      * @param  bool $keepfails  True to keep all the course objects even if validation fails
      * @return array            An array of courses and the validation warnings
      */
-    public static function validate_courses($courseids, $courses = array(), $addcontext = false,
-            $keepfails = false) {
+    public static function validate_courses(
+        $courseids,
+        $courses = [],
+        $addcontext = false,
+        $keepfails = false
+    ) {
         global $DB;
 
         // Delete duplicates.
         $courseids = array_unique($courseids);
-        $warnings = array();
+        $warnings = [];
 
         // Remove courses which are not even requested.
         $courses = array_intersect_key($courses, array_flip($courseids));
@@ -67,16 +69,18 @@ class util {
             }
         }
         if ($newcourseids) {
-            list ($listsql, $listparams) = $DB->get_in_or_equal($newcourseids);
+            [$listsql, $listparams] = $DB->get_in_or_equal($newcourseids);
 
             // Load list of courses, and preload associated contexts.
             $contextselect = context_helper::get_preload_record_columns_sql('x');
-            $newcourses = $DB->get_records_sql("
+            $newcourses = $DB->get_records_sql(
+                "
                             SELECT c.*, $contextselect
                               FROM {course} c
                               JOIN {context} x ON x.instanceid = c.id
                              WHERE x.contextlevel = ? AND c.id $listsql",
-                    array_merge([CONTEXT_COURSE], $listparams));
+                array_merge([CONTEXT_COURSE], $listparams)
+            );
             foreach ($newcourseids as $cid) {
                 if (array_key_exists($cid, $newcourses)) {
                     $course = $newcourses[$cid];
@@ -96,22 +100,22 @@ class util {
                     $courses[$cid]->context = $context;
                 }
                 $courses[$cid]->contextvalidated = true;
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 if ($keepfails) {
                     $courses[$cid]->contextvalidated = false;
                 } else {
                     unset($courses[$cid]);
                 }
-                $warnings[] = array(
+                $warnings[] = [
                     'item' => 'course',
                     'itemid' => $cid,
                     'warningcode' => '1',
-                    'message' => 'No access rights in course context'
-                );
+                    'message' => 'No access rights in course context',
+                ];
             }
         }
 
-        return array($courses, $warnings);
+        return [$courses, $warnings];
     }
 
     /**
@@ -126,12 +130,12 @@ class util {
      * @since Moodle 3.2
      */
     public static function get_area_files($contextid, $component, $filearea, $itemid = false, $useitemidinurl = true) {
-        $files = array();
+        $files = [];
         $fs = get_file_storage();
 
         if ($areafiles = $fs->get_area_files($contextid, $component, $filearea, $itemid, 'itemid, filepath, filename', false)) {
             foreach ($areafiles as $areafile) {
-                $file = array();
+                $file = [];
                 $file['filename'] = $areafile->get_filename();
                 $file['filepath'] = $areafile->get_filepath();
                 $file['mimetype'] = $areafile->get_mimetype();
@@ -142,8 +146,14 @@ class util {
                     $file['repositorytype'] = $areafile->get_repository_type();
                 }
                 $fileitemid = $useitemidinurl ? $areafile->get_itemid() : null;
-                $file['fileurl'] = moodle_url::make_webservice_pluginfile_url($contextid, $component, $filearea,
-                                    $fileitemid, $areafile->get_filepath(), $areafile->get_filename())->out(false);
+                $file['fileurl'] = moodle_url::make_webservice_pluginfile_url(
+                    $contextid,
+                    $component,
+                    $filearea,
+                    $fileitemid,
+                    $areafile->get_filepath(),
+                    $areafile->get_filename()
+                )->out(false);
                 $files[] = $file;
             }
         }
