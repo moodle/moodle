@@ -29,7 +29,7 @@ $courseid = required_param('id', PARAM_INT);
 $groupid  = optional_param('group', false, PARAM_INT);
 $userid   = optional_param('user', false, PARAM_INT);
 $action   = groups_param_action();
-// Support either single group= parameter, or array groups[]
+// Support either single group= parameter, or array groups[].
 if ($groupid) {
     $groupids = array($groupid);
 } else {
@@ -40,11 +40,10 @@ $singlegroup = (count($groupids) == 1);
 $returnurl = $CFG->wwwroot.'/group/index.php?id='.$courseid;
 
 // Get the course information so we can print the header and
-// check the course id is valid
+// check the course id is valid.
+$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
-$course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
-
-$url = new moodle_url('/group/index.php', array('id'=>$courseid));
+$url = new moodle_url('/group/index.php', array('id' => $courseid));
 navigation_node::override_active_url($url);
 if ($userid) {
     $url->param('user', $userid);
@@ -63,7 +62,7 @@ require_capability('moodle/course:managegroups', $context);
 $PAGE->requires->js('/group/clientlib.js', true);
 $PAGE->requires->js('/group/module.js', true);
 
-// Check for multiple/no group errors
+// Check for multiple/no group errors.
 if (!$singlegroup) {
     switch($action) {
         case 'ajax_getmembersingroup':
@@ -75,7 +74,7 @@ if (!$singlegroup) {
 }
 
 switch ($action) {
-    case false: //OK, display form.
+    case false: // OK, display form.
         break;
 
     case 'ajax_getmembersingroup':
@@ -93,11 +92,11 @@ switch ($action) {
 
             $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
-            foreach($groupmemberroles as $roleid=>$roledata) {
+            foreach ($groupmemberroles as $roleid => $roledata) {
                 $shortroledata = new stdClass();
                 $shortroledata->name = $roledata->name;
                 $shortroledata->users = array();
-                foreach($roledata->users as $member) {
+                foreach ($roledata->users as $member) {
                     $shortmember = new stdClass();
                     $shortmember->id = $member->id;
                     $shortmember->name = fullname($member, $viewfullnames);
@@ -123,48 +122,48 @@ switch ($action) {
             throw new \moodle_exception('errorselectsome', 'group', $returnurl);
         }
         $groupidlist = implode(',', $groupids);
-        redirect(new moodle_url('/group/delete.php', array('courseid'=>$courseid, 'groups'=>$groupidlist)));
+        redirect(new moodle_url('/group/delete.php', array('courseid' => $courseid, 'groups' => $groupidlist)));
         break;
 
     case 'showcreateorphangroupform':
-        redirect(new moodle_url('/group/group.php', array('courseid'=>$courseid)));
+        redirect(new moodle_url('/group/group.php', array('courseid' => $courseid)));
         break;
 
     case 'showautocreategroupsform':
-        redirect(new moodle_url('/group/autogroup.php', array('courseid'=>$courseid)));
+        redirect(new moodle_url('/group/autogroup.php', array('courseid' => $courseid)));
         break;
 
     case 'showimportgroups':
-        redirect(new moodle_url('/group/import.php', array('id'=>$courseid)));
+        redirect(new moodle_url('/group/import.php', array('id' => $courseid)));
         break;
 
     case 'showgroupsettingsform':
-        redirect(new moodle_url('/group/group.php', array('courseid'=>$courseid, 'id'=>$groupids[0])));
+        redirect(new moodle_url('/group/group.php', array('courseid' => $courseid, 'id' => $groupids[0])));
         break;
 
-    case 'updategroups': //Currently reloading.
+    case 'updategroups': // Currently reloading.
         break;
 
     case 'removemembers':
         break;
 
     case 'showaddmembersform':
-        redirect(new moodle_url('/group/members.php', array('group'=>$groupids[0])));
+        redirect(new moodle_url('/group/members.php', array('group' => $groupids[0])));
         break;
 
-    case 'updatemembers': //Currently reloading.
+    case 'updatemembers': // Currently reloading.
         break;
 
-    default: //ERROR.
+    default: // ERROR.
         throw new \moodle_exception('unknowaction', '', $returnurl);
         break;
 }
 
-// Print the page and form
+// Print the page and form.
 $strgroups = get_string('groups');
 $strparticipants = get_string('participants');
 
-/// Print header
+// Print header.
 $PAGE->set_title($strgroups);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('standard');
@@ -260,16 +259,15 @@ echo $OUTPUT->footer();
  */
 function groups_param_action($prefix = 'act_') {
     $action = false;
-//($_SERVER['QUERY_STRING'] && preg_match("/$prefix(.+?)=(.+)/", $_SERVER['QUERY_STRING'], $matches)) { //b_(.*?)[&;]{0,1}/
 
     if ($_POST) {
-        $form_vars = $_POST;
+        $formvars = $_POST;
+    } else if ($_GET) {
+        $formvars = $_GET;
     }
-    elseif ($_GET) {
-        $form_vars = $_GET;
-    }
-    if ($form_vars) {
-        foreach ($form_vars as $key => $value) {
+
+    if ($formvars) {
+        foreach ($formvars as $key => $value) {
             if (preg_match("/$prefix(.+)/", $key, $matches)) {
                 $action = $matches[1];
                 break;
@@ -280,6 +278,6 @@ function groups_param_action($prefix = 'act_') {
         $action = false;
         throw new \moodle_exception('unknowaction');
     }
-    ///if (debugging()) echo 'Debug: '.$action;
+
     return $action;
 }
