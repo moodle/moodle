@@ -16,10 +16,16 @@
 
 namespace core;
 
+// phpcs:disable moodle.PHPUnit.TestCaseNames.Missing
 /**
  * Just a wrapper to access protected apis for testing.
  *
  * Note: This is deprecated. Please use Reflection instead.
+ *
+ * @package    core
+ * @subpackage phpunit
+ * @copyright  2009 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class test_exernal_api extends \core_external\external_api {
     public static function get_context_wrapper($params) {
