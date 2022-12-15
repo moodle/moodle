@@ -17,27 +17,26 @@
 namespace core_external;
 
 /**
- * Singleton to handle the external settings.
+ * Singleton to handle the external settings..
  *
- * We use singleton to encapsulate the "logic"
+ * We use singleton to encapsulate the "logic".
  *
- * @package    core_webservice
+ * @package    core_external
  * @copyright  2012 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.3
  */
 class external_settings {
 
-    /** @var object the singleton instance */
+    /** @var settings|null the singleton instance */
     public static $instance = null;
 
-    /** @var boolean Should the external function return raw text or formatted */
+    /** @var bool Should the external function return raw text or formatted */
     private $raw = false;
 
-    /** @var boolean Should the external function filter the text */
+    /** @var bool Should the external function filter the text */
     private $filter = false;
 
-    /** @var boolean Should the external function rewrite plugin file url */
+    /** @var bool Should the external function rewrite plugin file url */
     private $fileurl = true;
 
     /** @var string In which file should the urls be rewritten */
