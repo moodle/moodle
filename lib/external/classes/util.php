@@ -429,14 +429,14 @@ class util {
      * All web service servers must set this singleton when parsing the $_GET and $_POST.
      *
      * <pre>
-     * Options are the same that in {@link format_string()} with some changes:
-     *      filter      : Can be set to false to force filters off, else observes {@link settings}.
+     * Options are the same that in {@see format_string()} with some changes:
+     *      filter      : Can be set to false to force filters off, else observes {@see settings}.
      * </pre>
      *
      * @param string|null $content The string to be filtered. Should be plain text, expect
      * possibly for multilang tags.
+     * @param context $context The id of the context for the string or the context (affects filters).
      * @param boolean $striplinks To strip any link in the result text. Moodle 1.8 default changed from false to true! MDL-8713
-     * @param context $contextorid The id of the context for the string or the context (affects filters).
      * @param array $options options array/object or courseid
      * @return string text
      */
@@ -472,11 +472,11 @@ class util {
      * All web service servers must set this singleton when parsing the $_GET and $_POST.
      *
      * <pre>
-     * Options are the same that in {@link format_text()} with some changes in defaults to provide backwards compatibility:
+     * Options are the same that in {@see format_text()} with some changes in defaults to provide backwards compatibility:
      *      trusted     :   If true the string won't be cleaned. Default false.
      *      noclean     :   If true the string won't be cleaned only if trusted is also true. Default false.
      *      nocache     :   If true the string will not be cached and will be formatted every call. Default false.
-     *      filter      :   Can be set to false to force filters off, else observes {@link \core_external\settings}.
+     *      filter      :   Can be set to false to force filters off, else observes {@see \core_external\settings}.
      *      para        :   If true then the returned string will be wrapped in div tags.
      *                      Default (different from format_text) false.
      *                      Default changed because div tags are not commonly needed.
@@ -578,14 +578,14 @@ class util {
      * @since Moodle 2.3
      */
     public static function validate_format($format) {
-        $allowedformats = array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN);
+        $allowedformats = [FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN];
         if (!in_array($format, $allowedformats)) {
             throw new moodle_exception(
                 'formatnotsupported',
                 'webservice',
                 '',
                 null,
-                'The format with value=' . $format . ' is not supported by this Moodle site'
+                "The format with value={$format} is not supported by this Moodle site"
             );
         }
         return $format;
