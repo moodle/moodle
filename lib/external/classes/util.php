@@ -168,9 +168,9 @@ class util {
      * returned token will be somehow passed into the client app being embedded in the page.
      *
      * @param int $tokentype EXTERNAL_TOKEN_EMBEDDED|EXTERNAL_TOKEN_PERMANENT
-     * @param stdClass|int $serviceorid service linked to the token
+     * @param stdClass $service service linked to the token
      * @param int $userid user linked to the token
-     * @param context $contextorid
+     * @param context $context
      * @param int $validuntil date when the token expired
      * @param string $iprestriction allowed ip - if 0 or empty then all ips are allowed
      * @return string generated token
@@ -188,7 +188,7 @@ class util {
         // Make sure the token doesn't exist (even if it should be almost impossible with the random generation).
         $numtries = 0;
         do {
-            $numtries ++;
+            $numtries++;
             $generatedtoken = md5(uniqid((string) rand(), true));
             if ($numtries > 5) {
                 throw new moodle_exception('tokengenerationfailed');
@@ -281,9 +281,6 @@ class util {
             return;
         }
 
-        $useragent = \core_useragent::get_user_agent_string();
-        $ismoodleapp = \core_useragent::is_moodle_app();
-
         // Schedule adhoc task to sent a login notification to the user.
         $task = new \core\task\send_login_notifications();
         $task->set_userid($USER->id);
@@ -350,7 +347,6 @@ class util {
 
         // A bit of sanity checks.
         foreach ($tokens as $key => $token) {
-
             // Checks related to a specific token. (script execution continue).
             $unsettoken = false;
             // If sid is set then there must be a valid associated session no matter the token type.
@@ -389,9 +385,8 @@ class util {
                 ($isofficialservice && has_capability('moodle/webservice:createmobiletoken', $context)) ||
                 (!is_siteadmin($USER) && has_capability('moodle/webservice:createtoken', $context))
             ) {
-
                 // Create a new token.
-                $token = new stdClass;
+                $token = new stdClass();
                 $token->token = md5(uniqid((string) rand(), true));
                 $token->userid = $USER->id;
                 $token->tokentype = EXTERNAL_TOKEN_PERMANENT;
