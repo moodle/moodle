@@ -28,7 +28,6 @@ Overview of this plugin type at http://docs.moodle.org/dev/Quiz_reports
   - mod/quiz/report/default.php
 
 
->>>>>>> 40c14e4712e... MDL-74923 quiz: move report base classes to local folder
 === 3.9 ===
 
 * Quiz report plugins defining capabilities used to require an extra string like
