@@ -32,11 +32,16 @@ class external_function_parameters extends external_single_structure {
      * @param int $required
      * @param array $default
      */
-    public function __construct(array $keys, $desc = '', $required = VALUE_REQUIRED, $default = null) {
+    public function __construct(
+        array $keys,
+        $desc = '',
+        $required = VALUE_REQUIRED,
+        $default = null
+    ) {
         global $CFG;
 
         if ($CFG->debugdeveloper) {
-            foreach ($keys as $key => $value) {
+            foreach (array_values($keys) as $value) {
                 if ($value instanceof external_value) {
                     if ($value->required == VALUE_OPTIONAL) {
                         debugging('External function parameters: invalid OPTIONAL value specified.', DEBUG_DEVELOPER);
