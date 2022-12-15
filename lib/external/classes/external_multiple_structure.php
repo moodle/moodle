@@ -22,7 +22,6 @@ namespace core_external;
  * @package    core_external
  * @copyright  2009 Petr Skodak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
  */
 class external_multiple_structure extends external_description {
 
@@ -34,9 +33,8 @@ class external_multiple_structure extends external_description {
      *
      * @param external_description $content
      * @param string $desc
-     * @param bool $required
+     * @param int $required
      * @param array $default
-     * @since Moodle 2.0
      */
     public function __construct(
         external_description $content,
