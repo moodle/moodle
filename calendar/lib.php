@@ -2360,7 +2360,8 @@ function calendar_edit_event_allowed($event, $manualedit = false) {
         return has_capability('moodle/calendar:manageentries', $event->context);
     } else if (!empty($event->userid) && $event->userid == $USER->id) {
         // If course is not set, but userid id set, it's a user event.
-        return (has_capability('moodle/calendar:manageownentries', $event->context));
+        return (has_capability('moodle/calendar:manageownentries',
+            context_user::instance($event->userid)));
     } else if (!empty($event->userid)) {
         return calendar_can_manage_user_event($event);
     }
