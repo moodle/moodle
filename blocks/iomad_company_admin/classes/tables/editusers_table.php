@@ -56,7 +56,8 @@ class editusers_table extends table_sql {
         if (!empty($row->suspended)) {
             $name = format_string("$name (S)");
         }
-        return $name;
+        $profileurl = new moodle_url('/user/profile.php', ['id' => $row->id]);
+        return html_writer::tag('a', $name, ['href' => $profileurl]);
     }
 
     /**
