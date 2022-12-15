@@ -591,20 +591,20 @@ class grade_report_grader extends grade_report {
      * @return array Array of html_table_row objects
      */
     public function get_left_rows($displayaverages) {
-        global $CFG, $USER, $OUTPUT;
+        global $CFG, $OUTPUT;
 
-        $rows = array();
+        $rows = [];
 
         $showuserimage = $this->get_pref('showuserimage');
         // FIXME: MDL-52678 This get_capability_info is hacky and we should have an API for inserting grade row links instead.
         $canseeuserreport = false;
         $canseesingleview = false;
-        if (get_capability_info('gradereport/'.$CFG->grade_profilereport.':view')) {
-            $canseeuserreport = has_capability('gradereport/'.$CFG->grade_profilereport.':view', $this->context);
+        if (get_capability_info('gradereport/' . $CFG->grade_profilereport.':view')) {
+            $canseeuserreport = has_capability('gradereport/' . $CFG->grade_profilereport.':view', $this->context);
         }
         if (get_capability_info('gradereport/singleview:view')) {
-            $canseesingleview = has_all_capabilities(array('gradereport/singleview:view', 'moodle/grade:viewall',
-            'moodle/grade:edit'), $this->context);
+            $canseesingleview = has_all_capabilities(['gradereport/singleview:view',
+                'moodle/grade:viewall', 'moodle/grade:edit'], $this->context);
         }
         $hasuserreportcell = $canseeuserreport || $canseesingleview;
         $viewfullnames = has_capability('moodle/site:viewfullnames', $this->context);
@@ -1662,7 +1662,7 @@ class grade_report_grader extends grade_report {
             $lockunlockicon = $this->gtree->get_locking_icon($element, $this->gpr);
         }
 
-        $gradeanalysisicon   = '';
+        $gradeanalysisicon = '';
         if ($element['type'] == 'grade') {
             $gradeanalysisicon .= $this->gtree->get_grade_analysis_icon($element['object']);
         }
