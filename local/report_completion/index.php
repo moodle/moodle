@@ -53,7 +53,7 @@ $coursesearch = optional_param('coursesearch', '', PARAM_CLEAN);// Search string
 $departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $completiontype = optional_param('completiontype', 0, PARAM_INT);
 $charttype = optional_param('charttype', '', PARAM_CLEAN);
-$showchart = optional_param('showchart', false, PARAM_BOOL);
+$showcharts = optional_param('showcharts', false, PARAM_BOOL);
 $confirm = optional_param('confirm', 0, PARAM_INT);
 $fromraw = optional_param_array('compfromraw', null, PARAM_INT);
 $toraw = optional_param_array('comptoraw', null, PARAM_INT);
@@ -69,11 +69,16 @@ $rowid = optional_param('rowid', 0, PARAM_INT);
 $redocertificate = optional_param('redocertificate', 0, PARAM_INT);
 $userid = optional_param('userid', 0, PARAM_INT);
 $delete = optional_param('delete', 0, PARAM_INT);
+$viewchildren = optional_param('viewchildren', true, PARAM_BOOL);
+$showsummary = optional_param('showsummary', true, PARAM_BOOL);
+
 
 
 require_login();
 $context = context_system::instance();
 iomad::require_capability('local/report_completion:view', $context);
+
+$canseechildren = true; //iomad::has_capability('block/iomad_company_admin:canviewchildren', $systemcontext);
 
 $params['courseid'] = $courseid;
 if ($firstname) {
@@ -115,6 +120,10 @@ if ($showsuspended) {
 if ($completiontype) {
     $params['completiontype'] = $completiontype;
 }
+$params['viewchildren'] = $viewchildren;
+$params['showsummary'] = $showsummary;
+$params['showcharts'] = $showcharts;
+
 if ($fromraw) {
     if (is_array($fromraw)) {
         $from = mktime(0, 0, 0, $fromraw['month'], $fromraw['day'], $fromraw['year']);
@@ -189,7 +198,9 @@ if (empty($courseid)) {
 
 if (!empty($courseid)) {
     $buttoncaption = get_string('pluginname', 'local_report_completion');
-    $buttonlink = new moodle_url($CFG->wwwroot . "/local/report_completion/index.php");
+    $buttonparams = $params;
+    unset($buttonparams['courseid']);
+    $buttonlink = new moodle_url($CFG->wwwroot . "/local/report_completion/index.php", $buttonparams);
     $buttons .= $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
     // Non boost theme edit buttons.
     if ($PAGE->user_allowed_editing()) {
@@ -437,11 +448,33 @@ if (!empty($action)) {
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Set the companyid
-$companyid = iomad::get_my_companyid($context);
+if ($viewchildren && $canseechildren && !empty($departmentid) && company::can_manage_department($departmentid)) {
+    $departmentrec = $DB->get_record('department', ['id' => $departmentid]);
+    $realcompanyid = iomad::get_my_companyid($systemcontext);
+    $companyid = $departmentrec->company;
+    $realcompany = new company($realcompanyid);
+    $selectedcompany = new company($companyid);
+} else {
+    $companyid = iomad::get_my_companyid($systemcontext);
+    $realcompanyid = $companyid;
+    $realcompany = new company($realcompanyid);
+}
+
+$haschildren = false;
+if ($childcompanies = $realcompany->get_child_companies_recursive()) {
+    $childcompanies[$realcompany->id] = (array) $realcompany;
+    $haschildren = true;
+} else {
+    $showsummary = false;
+}
 
 // Work out department level.
 $company = new company($companyid);
-$parentlevel = company::get_company_parentnode($company->id);
+if ($viewchildren && $canseechildren) {
+    $parentlevel = company::get_company_parentnode($realcompany->id);
+} else {
+    $parentlevel = company::get_company_parentnode($company->id);
+}
 $companydepartment = $parentlevel->id;
 
 // Work out where the user sits in the company department tree.
@@ -487,13 +520,69 @@ if (empty($courseid)) {
     $coursetable->is_downloading($download, format_string($company->get('name')) . ' course completion report all courses', 'local_report_coursecompletion_course123');
 
     if (!$coursetable->is_downloading()) {
+        // Display the control buttons.
+        $buttons = "";
+        $alluserslink = new moodle_url($url, array(
+            'courseid' => 1,
+            'departmentid' => $departmentid,
+        ));
+        $buttons = $output->single_button($alluserslink, get_string("allusers", 'local_report_completion'));
 
-        // Display the header.
-        echo $output->header();
+        // Also for suspended user controls.
+        $showsuspendedparams = $params;
+        if (!$showsuspended) {
+            $showsuspendedparams['showsuspended'] = 1;
+            $suspendeduserslink = new moodle_url($url, $showsuspendedparams);
+            $buttons = $buttons ."&nbsp" . $output->single_button($suspendeduserslink, get_string("showsuspendedusers", 'local_report_completion'));
+        } else {
+            $showsuspendedparams['showsuspended'] = 0;
+            $suspendeduserslink = new moodle_url($url, $showsuspendedparams);
+            $buttons = $buttons ."&nbsp" . $output->single_button($suspendeduserslink, get_string("hidesuspendedusers", 'local_report_completion'));
+        }
 
-        // Display the department selector.
-        echo $output->display_tree_selector($company, $parentlevel, $selecturl, $selectparams, $departmentid);
-        echo html_writer::start_tag('div', array('class' => 'reporttablecontrols'));
+        // Also for percentage of user controls.
+        $showpercentageoptions= [get_string("hidepercentageusers", 'block_iomad_company_admin'),
+                                 get_string("showpercentageusers", 'block_iomad_company_admin'),
+                                 get_string("showpercentagecourseusers", 'block_iomad_company_admin')];
+        $percentageuserslink = new moodle_url($url, $params);
+        $percentageselect = new single_select($percentageuserslink, 'showpercentage', $showpercentageoptions, $showpercentage);
+
+        $buttons = $buttons ."&nbsp" . $output->render($percentageselect);
+
+        // Also for validonly courses user controls.
+        $validonlyparams = $params;
+        $validonlyparams['validonly'] = !$validonly;
+        if (!$validonly) {
+            $validonlystring = get_string('hidevalidcourses', 'block_iomad_company_admin');
+        } else {
+            $validonlystring = get_string('showvalidcourses', 'block_iomad_company_admin');
+        }
+        $validonlylink = new moodle_url($url, $validonlyparams);
+        $buttons = $buttons ."&nbsp" . $output->single_button($validonlylink, $validonlystring);
+
+        // Also for Summary courses user controls.
+        if ($viewchildren && $canseechildren) {
+            $showsummaryparams = $params;
+            $showsummaryparams['showsummary'] = !$showsummary;
+            if ($showsummary) {
+                $showsummarystring = get_string('showcompanydetail', 'block_iomad_company_admin');
+            } else {
+                $showsummarystring = get_string('showcompanysummary', 'block_iomad_company_admin');
+            }
+            $showsummarylink = new moodle_url($url, $showsummaryparams);
+        $buttons = $buttons ."&nbsp" . $output->single_button($showsummarylink, $showsummarystring);
+        }
+
+        // Also for validonly courses user controls.
+        $showchartsparams = $params;
+        $showchartsparams['showcharts'] = !$showcharts;
+        if (!$showcharts) {
+            $showchartsstring = get_string('showcharts', 'block_iomad_company_admin');
+        } else {
+            $showchartsstring = get_string('showdata', 'block_iomad_company_admin');
+        }
+        $showchartslink = new moodle_url($url, $showchartsparams);
+        $buttons = $buttons ."&nbsp" . $output->single_button($showchartslink, $showchartsstring);
 
         $mform = new iomad_course_search_form($url, $params);
         $mform->set_data($params);
@@ -507,64 +596,21 @@ if (empty($courseid)) {
         $datemform->set_data($options);
         $datemform->get_data();
 
-        // Display the control buttons.
-        $alluserslink = new moodle_url($url, array(
-            'courseid' => 1,
-            'departmentid' => $departmentid,
-        ));
-        echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
-        echo $output->single_button($alluserslink, get_string("allusers", 'local_report_completion'));
-        echo html_writer::end_tag('div');
 
-        // Also for suspended user controls.
-        $showsuspendedparams = $params;
-        if (!$showsuspended) {
-            $showsuspendedparams['showsuspended'] = 1;
-            $suspendeduserslink = new moodle_url($url, $showsuspendedparams);
-            echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
-            echo $output->single_button($suspendeduserslink, get_string("showsuspendedusers", 'local_report_completion'));
-            echo html_writer::end_tag('div');
-        } else {
-            $showsuspendedparams['showsuspended'] = 0;
-            $suspendeduserslink = new moodle_url($url, $showsuspendedparams);
-            echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
-            echo $output->single_button($suspendeduserslink, get_string("hidesuspendedusers", 'local_report_completion'));
-            echo html_writer::end_tag('div');
-        }
+        // Display the controls.
+        $PAGE->set_button($buttons);
 
-        // Also for percentage of user controls.
-        $showpercentageparams = $params;
-        if (!$showpercentage) {
-            $showpercentageparams['showpercentage'] = 1;
-            $percentageuserslink = new moodle_url($url, $showpercentageparams);
-            echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
-            echo $output->single_button($percentageuserslink, get_string("showpercentageusers", 'local_report_completion'));
-            echo html_writer::end_tag('div');
-        } else {
-            $showpercentageparams['showpercentage'] = 0;
-            $percentageuserslink = new moodle_url($url, $showpercentageparams);
-            echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
-            echo $output->single_button($percentageuserslink, get_string("hidepercentageusers", 'local_report_completion'));
-            echo html_writer::end_tag('div');
-        }
+        // Display the header.
+        echo $output->header();
 
-        // Also for validonly courses user controls.
-        $validonlyparams = $params;
-        $validonlyparams['validonly'] = !$validonly;
-        if (!$validonly) {
-            $validonlystring = get_string('hidevalidcourses', 'block_iomad_company_admin');
-        } else {
-            $validonlystring = get_string('showvalidcourses', 'block_iomad_company_admin');
-        }
-        $validonlylink = new moodle_url($url, $validonlyparams);
-        echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
-        echo $output->single_button($validonlylink, $validonlystring);
-        echo html_writer::end_tag('div');
-
+        // Display the department selector.
+        $selectorparams['showsummary'] = false;
+        echo $output->display_tree_selector($company, $parentlevel, $selecturl, $selectparams, $departmentid);
+        echo html_writer::start_tag('div', array('class' => 'reporttablecontrols', 'style' => 'padding-left: 15px'));
         echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
         $mform->display();
         echo html_writer::end_tag('div');
-        echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
+        echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol', 'style' => 'padding-left: 30px'));
         $datemform->display();
         echo html_writer::end_tag('div');
         echo html_writer::end_tag('div');
@@ -586,19 +632,34 @@ if (empty($courseid)) {
 
     $wheresql = "companyid = :companyid $coursesearchsql group by courseid, coursename, companyid";
 
-    // Set up the headers for the table.
+    // Set up the headers.
+    $courseheaders = [get_string('coursename', 'local_report_completion')];
+    $coursecolumns = ['coursename'];
+
+    // Set up the rest of th headers for the table.
     if (iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $context)) {
-        $courseheaders = array(get_string('coursename', 'local_report_completion'),
-                         get_string('licenseallocated', 'local_report_user_license_allocations'),
-                         get_string('usersummary', 'local_report_completion'));
-        $coursecolumns = array('coursename',
-                         'licenseallocated',
-                         'usersummary');
+        if ($showcharts) {
+            $courseheaders[] = get_string('licenseallocated', 'local_report_user_license_allocations');
+            $courseheaders[] = get_string('usersummary', 'local_report_completion');
+            $coursecolumns[] = 'licenseallocated';
+            $coursecolumns[] = 'usersummary';
+        } else {
+            $courseheaders[] = get_string('licenseallocated', 'local_report_user_license_allocations');
+            $courseheaders[] = get_string('licenseused', 'block_iomad_company_admin');
+            $coursecolumns[] = 'licenseuserallocated';
+            $coursecolumns[] = 'licenseuserused';
+        }
+    }
+    if ($showcharts) {
+        $courseheaders[] = get_string('usersummary', 'local_report_completion');
+        $coursecolumns[] = 'usersummary';
     } else {
-        $courseheaders = array(get_string('coursename', 'local_report_completion'),
-                         get_string('usersummary', 'local_report_completion'));
-        $coursecolumns = array('coursename',
-                         'usersummary');
+        $courseheaders[] = get_string('started', 'question');
+        $courseheaders[] = get_string('inprogressusers', 'local_report_completion');
+        $courseheaders[] = get_string('completedusers', 'local_report_completion');
+        $coursecolumns[] = 'userstarted';
+        $coursecolumns[] = 'userinprogress';
+        $coursecolumns[] = 'usercompleted';
     }
 
     $coursetable->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
@@ -646,34 +707,6 @@ if (empty($courseid)) {
         $table->sort_default_column = 'coursename';
     }
 
-    if (!$table->is_downloading()) {
-        echo $output->header();
-
-        // Display the search form and department picker.
-        if (!empty($companyid)) {
-            if (empty($table->is_downloading())) {
-                echo $output->display_tree_selector($company, $parentlevel, $selecturl, $selectparams, $departmentid);
-
-                // Set up the filter form.
-                $options = $params;
-                $options['companyid'] = $companyid;
-                $options['addfrom'] = 'compfromraw';
-                $options['addto'] = 'comptoraw';
-                $options['adddodownload'] = false;
-                $options['compfromraw'] = $from;
-                $options['comptoraw'] = $to;
-                $options['addvalidonly'] = true;
-                $mform = new iomad_user_filter_form(null, $options);
-                $mform->set_data(array('departmentid' => $departmentid, 'validonly' => $validonly));
-                $mform->set_data($options);
-                $mform->get_data();
-
-                // Display the user filter form.
-                $mform->display();
-            }
-        }
-    }
-
     $sqlparams = array('companyid' => $companyid, 'courseid' => $courseid);
 
     // Deal with where we are on the department tree.
@@ -683,17 +716,20 @@ if (empty($courseid)) {
     $departmentsql = " AND d.id IN (" . implode(',', array_keys($showdepartments)) . ")";
 
     // all companies?
-    if ($parentslist = $company->get_parent_companies_recursive()) {
+    if (!$viewchildren && !$canseechildren && $parentslist = $company->get_parent_companies_recursive()) {
         $companysql = " AND u.id NOT IN (
                         SELECT userid FROM {company_users}
                         WHERE companyid IN (" . implode(',', array_keys($parentslist)) ."))";
+    } else if ($showsummary) {
+        // Deal with the company list..
+        $companysql = " AND lit.companyid IN (" . implode(',', array_keys($childcompanies)) . ")";
     } else {
-        $companysql = "";
+        $companysql = " AND lit.companyid = :companyid";
     }
 
     // All courses or just the one?
     if ($courseid != 1) {
-        $coursesql = " AND lit.courseid = :courseid AND lit.courseid IN (" . join(',', array_keys($company->get_menu_courses(true))) . ") ";
+        $coursesql = " AND lit.courseid = :courseid ";
     } else {
         $coursesql = " AND lit.courseid IN (" . join(',', array_keys($company->get_menu_courses(true))) . ") ";
     }
@@ -740,17 +776,32 @@ if (empty($courseid)) {
                   lit.coursecleared
                   {$fieldsql->selects}";
     $fromsql = "{user} u JOIN {local_iomad_track} lit ON (u.id = lit.userid) JOIN {company_users} cu ON (u.id = cu.userid AND lit.userid = cu.userid AND lit.companyid = cu.companyid) JOIN {department} d ON (cu.departmentid = d.id)";
-    $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $datesql $coursesql $validsql";
+    $wheresql = $searchinfo->sqlsearch . " AND 1=1 $departmentsql $companysql $datesql $coursesql $validsql";
     $sqlparams = $sqlparams + $searchinfo->searchparams;
 
-    // Set up the headers for the form.
-    $headers = array(get_string('fullname'),
-                     get_string('department', 'block_iomad_company_admin'),
-                     get_string('email'));
+    // Are we showing this rolled up?
+    if ($haschildren && $showsummary) {
+        $headers = [get_string('company', 'block_iomad_company_admin')];
+        $columns = ['company'];
+    } else {
+        $headers = [];
+        $columns = [];
+    }
 
-    $columns = array('fullname',
-                     'department',
-                     'email');
+    // Set up the headers for the form.
+    $headers[] = get_string('fullname');
+    $headers[] = get_string('department', 'block_iomad_company_admin');
+    $headers[] = get_string('email');
+
+    $columns[] = 'fullname';
+    $columns[] = 'department';
+    $columns[] = 'email';
+
+    // Are we showing this rolled up?
+    if ($haschildren && $showsummary) {
+        $headers = [get_string('company', 'block_iomad_company_admin')] + $headers;
+        $columns = ['company'] + $columns;
+    }
 
     if (empty($USER->editing)) {
         // Deal with optional report fields.
@@ -830,6 +881,82 @@ if (empty($courseid)) {
         $columns[] = 'actions';
     }
 
+    // Also for Summary courses user controls.
+    if ($viewchildren && $canseechildren) {
+        $showsummaryparams = $params;
+        $showsummaryparams['showsummary'] = !$showsummary;
+        if ($showsummary) {
+            $showsummarystring = get_string('showcompanydetail', 'block_iomad_company_admin');
+        } else {
+            $showsummarystring = get_string('showcompanysummary', 'block_iomad_company_admin');
+        }
+        $showsummarylink = new moodle_url($url, $showsummaryparams);
+        $buttons = $output->single_button($showsummarylink, $showsummarystring) . "&nbsp" .$buttons;
+    }
+
+    // Also for percentage of user controls.
+    $showpercentageoptions= [get_string("hidepercentageusers", 'block_iomad_company_admin'),
+                             get_string("showpercentageusers", 'block_iomad_company_admin'),
+                             get_string("showpercentagecourseusers", 'block_iomad_company_admin')];
+    $percentageuserslink = new moodle_url($url, $params);
+    $percentageselect = new single_select($percentageuserslink, 'showpercentage', $showpercentageoptions, $showpercentage);
+
+    $buttons = $output->render($percentageselect) . "&nbsp" .$buttons;;
+
+    $total = $DB->count_records_sql("SELECT count(DISTINCT lit.id) FROM $fromsql WHERE $wheresql", $sqlparams);
+    $totalcompleted = $DB->count_records_sql("SELECT count(DISTINCT lit.id) FROM $fromsql WHERE lit.timecompleted > 0 AND $wheresql", $sqlparams);
+    $totalstarted = $DB->count_records_sql("SELECT count(DISTINCT lit.id) FROM $fromsql WHERE lit.timecompleted > 0 AND $wheresql", $sqlparams);
+
+    if ($showpercentage == 2) {
+        if (!empty($total)) {
+            $totalstarted = get_string('percents','moodle', number_format($totalstarted * 100 / $total,2 )); 
+            $totalcompleted = get_string('percents', 'moodle', number_format($totalcompleted * 100 / $total, 2));
+        } 
+    } else if ($showpercentage == 1) {
+        $totalcompanyusers = $DB->count_records_sql("SELECT count(DISTINCT lit.userid) FROM {company_users} lit
+                                                     JOIN {user} u ON (lit.userid = u.id)
+                                                     JOIN {department} d ON (lit.departmentid = d.id)
+                                                     WHERE 1=1 $companysql $departmentsql",
+                                                     $sqlparams);
+        if (!empty($total)) {
+            $total = get_string('percents','moodle', number_format($total * 100 / $totalcompanyusers, 2)); 
+            $totalstarted = get_string('percents','moodle', number_format($totalstarted * 100 / $totalcompanyusers, 2)); 
+            $totalcompleted = get_string('percents', 'moodle', number_format($totalcompleted * 100 / $totalcompanyusers, 2));
+        }
+        
+    }
+    $summarystring = get_string('usercoursetotal', 'block_iomad_company_admin', (object) ['total' => $total, 'totalstarted' => $totalstarted, 'totalcompleted' => $totalcompleted]);
+    $buttons = $summarystring . "&nbsp $buttons";
+    $PAGE->set_button($buttons);
+
+    if (!$table->is_downloading()) {
+        echo $output->header();
+
+        // Display the search form and department picker.
+        if (!empty($companyid)) {
+            if (empty($table->is_downloading())) {
+                echo $output->display_tree_selector($company, $parentlevel, $selecturl, $selectparams, $departmentid);
+
+                // Set up the filter form.
+                $options = $params;
+                $options['companyid'] = $companyid;
+                $options['addfrom'] = 'compfromraw';
+                $options['addto'] = 'comptoraw';
+                $options['adddodownload'] = false;
+                $options['compfromraw'] = $from;
+                $options['comptoraw'] = $to;
+                $options['addvalidonly'] = true;
+                $mform = new iomad_user_filter_form(null, $options);
+                $mform->set_data(array('departmentid' => $departmentid, 'validonly' => $validonly));
+                $mform->set_data($options);
+                $mform->get_data();
+
+                // Display the user filter form.
+                $mform->display();
+            }
+        }
+    }
+
     // Set up the form.
     if (!empty($USER->editing) && !$table->is_downloading()) {
         echo html_writer::start_tag('form', array('action' => $url,
@@ -854,7 +981,7 @@ if (empty($courseid)) {
         echo html_writer::end_tag('div');
         echo html_writer::start_tag('div', array('class' => 'iomadclear'));
 
-    }
+    }  
 
     // Set up the table and display it.
     $table->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);

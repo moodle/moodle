@@ -312,7 +312,7 @@ class company {
     public function get_child_companies() {
         global $DB;
 
-        $childcompanies = $DB->get_records('company', array('parentid' => $this->id));
+        $childcompanies = $DB->get_records('company', array('parentid' => $this->id), 'name');
 
         return $childcompanies;
     }
@@ -2029,7 +2029,7 @@ class company {
      * @param int companyid
      * @return array
      */
-    public static function get_all_subdepartments_raw($departmentid, $ignorecurrentbranch = false) {
+    public static function get_all_subdepartments_raw($departmentid, $ignorecurrentbranch = false, $addchildcompanies = true) {
 
         // Are we trimming a current branch?
         if ($departmentid == $ignorecurrentbranch) {
@@ -2038,6 +2038,17 @@ class company {
 
         $departmentnode = self::get_departmentbyid($departmentid);
         $departmenttree = self::get_subdepartments($departmentnode, $ignorecurrentbranch);
+
+        if ($addchildcompanies) {
+            $currentcompany = new company($departmentnode->company);
+            if ($childcompanies = $currentcompany->get_child_companies_recursive()) {
+                foreach ($childcompanies as $childcompany) {
+                    $childnode = self::get_company_parentnode($childcompany->id);
+                    $departmenttree->children[] = self::get_subdepartments($childnode, $ignorecurrentbranch);
+                    
+                }
+            }
+        }
 
         return $departmenttree;
     }
@@ -2079,13 +2090,27 @@ class company {
      * Returns array()
      *
      **/
-    public static function get_all_subdepartments($parentnodeid) {
+    public static function get_all_subdepartments($parentnodeid, $addchildcompanies = true) {
         $parentnode = self::get_departmentbyid($parentnodeid);
         $parentlist = array();
-        $parentlist[$parentnodeid] = $parentnode->name;
+        $parentlist[$parentnodeid] = format_string($parentnode->name);
         $departmenttree = self::get_subdepartments($parentnode);
+        if ($addchildcompanies) {
+            $currentcompany = new company($parentnode->company);
+            if ($childcompanies = $currentcompany->get_child_companies_recursive()) {
+                foreach ($childcompanies as $childcompany) {
+                    $childnode = self::get_company_parentnode($childcompany->id);
+                    $childtree = self::get_subdepartments($childnode);
+                    $childlist[$childnode->id] = format_string($childnode->name);
+                    $departmenttree->children[] = $childtree;
+                    
+                }
+            }
+        }
+
         $departmentlist = self::array_flatten($parentlist +
                                               self::get_department_list($departmenttree));
+
         return $departmentlist;
     }
 

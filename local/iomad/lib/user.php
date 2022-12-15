@@ -1278,8 +1278,12 @@ class iomad_date_filter_form extends moodleform {
         }
 
         if (empty($this->params['yearonly'])) {
-            $mform->addElement('date_selector', 'compfromraw', get_string('compfromraw', 'block_iomad_company_admin'), array('optional' => 'yes'));
-            $mform->addElement('date_selector', 'comptoraw', get_string('comptoraw', 'block_iomad_company_admin'), array('optional' => 'yes'));
+            $dategroup =[];
+            $dategroup[] = $mform->createElement('date_selector', 'compfromraw', get_string('compfromraw', 'block_iomad_company_admin'), ['optional' => 'yes']);
+            $dategroup[] = $mform->createElement('html', '&nbsp');
+            $dategroup[] = $mform->createElement('date_selector', 'comptoraw', get_string('comptoraw', 'block_iomad_company_admin'), ['optional' => 'yes']);
+            $dategroup[] = $mform->createElement('submit', 'submit', get_string('datefilter', 'block_iomad_company_admin'));
+            $mform->addGroup($dategroup);
         } else {
             // Get the calendar type used - see MDL-18375.
             $calendartype = \core_calendar\type_factory::get_calendar_instance();
@@ -1312,8 +1316,8 @@ class iomad_date_filter_form extends moodleform {
             }
             $mform->disabledIf('fromarray', 'fromarray[yearfromoptional]');
             $mform->disabledIf('toarray', 'toarray[yeartooptional]');
+            $this->add_action_buttons(false, get_string('userfilter', 'local_iomad'));
         }
-        $this->add_action_buttons(false, get_string('userfilter', 'local_iomad'));
     }
 
 }
@@ -1346,7 +1350,7 @@ class iomad_course_search_form extends moodleform {
         $sarcharray = array();
         $searcharray[] = $mform->createElement('text', 'coursesearch');
         $searcharray[] = $mform->createElement('submit', 'searchbutton', get_string('coursenamesearch', 'block_iomad_company_admin'));
-        $mform->addGroup($searcharray, 'searcharray', get_string('coursenamesearch', 'block_iomad_company_admin'), ' ', false);
+        $mform->addGroup($searcharray, 'searcharray', '', ' ', false);
         $mform->setType('coursesearch', PARAM_CLEAN);
     }
 }

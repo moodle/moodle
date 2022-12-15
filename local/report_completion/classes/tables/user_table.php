@@ -97,6 +97,40 @@ class user_table extends table_sql {
     }
 
     /**
+     * Generate the display of the user's companies 
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_company($row) {
+        global $DB;
+        $companies = $DB->get_records_sql("SELECT c.name FROM {company} c
+                                           JOIN {company_users} cu ON (c.id = cu.companyid)
+                                           WHERE cu.userid = :userid",
+                                           ['userid' => $row->userid]);
+        $returnstr = "";
+        $count = count($companies);
+        $current = 1;
+        if ($count > 5) {
+            $returnstr = "<details><summary>" . get_string('show') . "</summary>";
+        }
+
+        foreach($companies as $company) {
+            $returnstr .= format_string($company->name);
+            if ($current < $count) {
+                $returnstr .= ",</br>";
+            }
+            $current++;
+        }
+
+        if ($count > 5) {
+            $returnstr .= "</details>";
+        }
+
+        return $returnstr;
+
+    }
+
+    /**
      * Generate the display of the user's license allocated timestamp
      * @param object $user the table row being output.
      * @return string HTML content to go inside the td.
@@ -590,4 +624,5 @@ class user_table extends table_sql {
         echo html_writer::end_tag('tr');
         echo html_writer::end_tag('thead');
     }
+
 }
