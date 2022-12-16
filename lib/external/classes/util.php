@@ -586,4 +586,32 @@ class util {
         return $format;
     }
 
+    /**
+     * Delete all pre-built services (+ related tokens) and external functions information defined in the specified component.
+     *
+     * @param string $component name of component (moodle, mod_assignment, etc.)
+     */
+    public static function delete_service_descriptions($component) {
+        global $DB;
+
+        $params = array($component);
+
+        $DB->delete_records_select(
+            'external_tokens',
+            "externalserviceid IN (SELECT id FROM {external_services} WHERE component = ?)",
+            $params
+        );
+        $DB->delete_records_select(
+            'external_services_users',
+            "externalserviceid IN (SELECT id FROM {external_services} WHERE component = ?)",
+            $params
+        );
+        $DB->delete_records_select(
+            'external_services_functions',
+            "functionname IN (SELECT name FROM {external_functions} WHERE component = ?)",
+            $params
+        );
+        $DB->delete_records('external_services', array('component' => $component));
+        $DB->delete_records('external_functions', array('component' => $component));
+    }
 }
