@@ -51,3 +51,22 @@ Feature: Moving a question to another category should not affect random question
     And I should see "Random (Used category)" on quiz page "1"
     And I click on "(See questions)" "link"
     And I should see "Used category"
+
+  @javascript
+  Scenario: Renaming a random question category should update the random question
+    Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
+    When I open the "last" add to quiz menu
+    And I follow "a random question"
+    And I set the field "Category" to "Used category"
+    And I press "Add random question"
+    And I should see "Random (Used category)" on quiz page "1"
+    And I am on the "Course 1" "core_question > course question categories" page
+    And I click on "Edit this category" "link" in the "Used category" "list_item"
+    And I set the following fields to these values:
+      | Name            | Used category new |
+      | Category info   | I was edited      |
+    And I press "Save changes"
+    Then I should see "Used category new"
+    And I should see "I was edited" in the "Used category new" "list_item"
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
+    And I should see "Random (Used category new)" on quiz page "1"
