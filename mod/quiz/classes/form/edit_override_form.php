@@ -18,6 +18,7 @@ namespace mod_quiz\form;
 
 use cm_info;
 use context;
+use context_module;
 use mod_quiz_mod_form;
 use moodle_url;
 use moodleform;
@@ -43,7 +44,7 @@ class edit_override_form extends moodleform {
     /** @var stdClass the quiz settings object. */
     protected $quiz;
 
-    /** @var context the quiz context. */
+    /** @var context_module the quiz context. */
     protected $context;
 
     /** @var bool editing group override (true) or user override (false). */
@@ -57,14 +58,17 @@ class edit_override_form extends moodleform {
 
     /**
      * Constructor.
+     *
      * @param moodle_url $submiturl the form action URL.
-     * @param object course module object.
-     * @param object the quiz settings object.
-     * @param context the quiz context.
-     * @param bool editing group override (true) or user override (false).
-     * @param object $override the override being edited, if it already exists.
+     * @param cm_info $cm course module object.
+     * @param stdClass $quiz the quiz settings object.
+     * @param context_module $context the quiz context.
+     * @param bool $groupmode editing group override (true) or user override (false).
+     * @param stdClass|null $override the override being edited, if it already exists.
      */
-    public function __construct($submiturl, $cm, $quiz, $context, $groupmode, $override) {
+    public function __construct(moodle_url $submiturl,
+            cm_info $cm, stdClass $quiz, context_module $context,
+            bool $groupmode, ?stdClass $override) {
 
         $this->cm = $cm;
         $this->quiz = $quiz;
@@ -91,7 +95,7 @@ class edit_override_form extends moodleform {
             // Group override.
             if ($this->groupid) {
                 // There is already a groupid, so freeze the selector.
-                $groupchoices = array();
+                $groupchoices = [];
                 $groupchoices[$this->groupid] = groups_get_group_name($this->groupid);
                 $mform->addElement('select', 'groupid',
                         get_string('overridegroup', 'quiz'), $groupchoices);
@@ -102,11 +106,11 @@ class edit_override_form extends moodleform {
                 $groups = $accessallgroups ? groups_get_all_groups($cm->course) : groups_get_activity_allowed_groups($cm);
                 if (empty($groups)) {
                     // Generate an error.
-                    $link = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$cm->id));
+                    $link = new moodle_url('/mod/quiz/overrides.php', ['cmid' => $cm->id]);
                     throw new \moodle_exception('groupsnone', 'quiz', $link);
                 }
 
-                $groupchoices = array();
+                $groupchoices = [];
                 foreach ($groups as $group) {
                     $groupchoices[$group->id] = $group->name;
                 }
@@ -128,7 +132,7 @@ class edit_override_form extends moodleform {
                 // There is already a userid, so freeze the selector.
                 $user = $DB->get_record('user', ['id' => $this->userid]);
                 profile_load_custom_fields($user);
-                $userchoices = array();
+                $userchoices = [];
                 $userchoices[$this->userid] = self::display_user_name($user, $extrauserfields);
                 $mform->addElement('select', 'userid',
                         get_string('overrideuser', 'quiz'), $userchoices);
@@ -164,7 +168,7 @@ class edit_override_form extends moodleform {
 
                 if (empty($users)) {
                     // Generate an error.
-                    $link = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$cm->id));
+                    $link = new moodle_url('/mod/quiz/overrides.php', ['cmid' => $cm->id]);
                     throw new \moodle_exception('usersnone', 'quiz', $link);
                 }
 
@@ -199,12 +203,12 @@ class edit_override_form extends moodleform {
 
         // Time limit.
         $mform->addElement('duration', 'timelimit',
-                get_string('timelimit', 'quiz'), array('optional' => true));
+                get_string('timelimit', 'quiz'), ['optional' => true]);
         $mform->addHelpButton('timelimit', 'timelimit', 'quiz');
         $mform->setDefault('timelimit', $this->quiz->timelimit);
 
         // Number of attempts.
-        $attemptoptions = array('0' => get_string('unlimited'));
+        $attemptoptions = ['0' => get_string('unlimited')];
         for ($i = 1; $i <= QUIZ_MAX_ATTEMPT_OPTION; $i++) {
             $attemptoptions[$i] = $i;
         }
@@ -217,14 +221,14 @@ class edit_override_form extends moodleform {
         $mform->addElement('submit', 'resetbutton',
                 get_string('reverttodefaults', 'quiz'));
 
-        $buttonarray = array();
+        $buttonarray = [];
         $buttonarray[] = $mform->createElement('submit', 'submitbutton',
                 get_string('save', 'quiz'));
         $buttonarray[] = $mform->createElement('submit', 'againbutton',
                 get_string('saveoverrideandstay', 'quiz'));
         $buttonarray[] = $mform->createElement('cancel');
 
-        $mform->addGroup($buttonarray, 'buttonbar', '', array(' '), false);
+        $mform->addGroup($buttonarray, 'buttonbar', '', [' '], false);
         $mform->closeHeaderBefore('buttonbar');
     }
 
@@ -281,7 +285,7 @@ class edit_override_form extends moodleform {
 
         // Ensure that at least one quiz setting was changed.
         $changed = false;
-        $keys = array('timeopen', 'timeclose', 'timelimit', 'attempts', 'password');
+        $keys = ['timeopen', 'timeclose', 'timelimit', 'attempts', 'password'];
         foreach ($keys as $key) {
             if ($data[$key] != $quiz->{$key}) {
                 $changed = true;
