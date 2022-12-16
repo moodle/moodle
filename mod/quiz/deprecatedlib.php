@@ -23,6 +23,7 @@
  */
 
 use mod_quiz\access_manager;
+use mod_quiz\task\update_overdue_attempts;
 
 /**
  * Internal function used in quiz_get_completion_state. Check passing grade (or no attempts left) requirement for completion.
@@ -133,4 +134,31 @@ function quiz_get_completion_state($course, $cm, $userid, $type) {
     }
 
     return true;
+}
+
+/**
+ * @copyright 2012 the Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since Moodle 4.2. Code moved to mod_quiz\task\update_overdue_attempts.
+ * @todo MDL-71196 Final deprecation in Moodle 4.3
+ */
+class mod_quiz_overdue_attempt_updater {
+
+    /**
+     * @deprecated since Moodle 4.2. Code moved to mod_quiz\task\update_overdue_attempts. that was.
+     */
+    public function update_overdue_attempts($timenow, $processto) {
+        debugging('mod_quiz_overdue_attempt_updater has been deprecated. The code wsa moved to ' .
+                'mod_quiz\task\update_overdue_attempts.');
+        return (new update_overdue_attempts())->update_all_overdue_attempts((int) $timenow, (int) $processto);
+    }
+
+    /**
+     * @deprecated since Moodle 4.2. Code moved to mod_quiz\task\update_overdue_attempts.
+     */
+    public function get_list_of_overdue_attempts($processto) {
+        debugging('mod_quiz_overdue_attempt_updater has been deprecated. The code wsa moved to ' .
+                'mod_quiz\task\update_overdue_attempts.');
+        return (new update_overdue_attempts())->get_list_of_overdue_attempts((int) $processto);
+    }
 }
