@@ -30,16 +30,6 @@ use stdClass;
  * @coversDefaultClass \core_courseformat\stateactions
  */
 class stateactions_test extends \advanced_testcase {
-
-    /**
-     * Setup to ensure that fixtures are loaded.
-     */
-    public static function setupBeforeClass(): void {
-        global $CFG;
-        // State data uses external_format_string.
-        require_once($CFG->dirroot . '/lib/externallib.php');
-    }
-
     /**
      * Helper method to create an activity into a section and add it to the $sections and $activities arrays.
      *

@@ -745,13 +745,18 @@ class externallib_test extends externallib_advanced_testcase {
             $coursecontext = context_course::instance($course['id']);
             $dbcourse = $generatedcourses[$course['id']];
             $this->assertEquals($course['idnumber'], $dbcourse->idnumber);
-            $this->assertEquals($course['fullname'], external_format_string($dbcourse->fullname, $coursecontext->id));
-            $this->assertEquals($course['displayname'], external_format_string(get_course_display_name_for_list($dbcourse),
-                $coursecontext->id));
+            $this->assertEquals(
+                $course['fullname'],
+                \core_external\util::format_string($dbcourse->fullname, $coursecontext->id)
+            );
+            $this->assertEquals(
+                $course['displayname'],
+                \core_external\util::format_string(get_course_display_name_for_list($dbcourse), $coursecontext->id)
+            );
             // Summary was converted to the HTML format.
             $this->assertEquals($course['summary'], format_text($dbcourse->summary, FORMAT_MOODLE, array('para' => false)));
             $this->assertEquals($course['summaryformat'], FORMAT_HTML);
-            $this->assertEquals($course['shortname'], external_format_string($dbcourse->shortname, $coursecontext->id));
+            $this->assertEquals($course['shortname'], \core_external\util::format_string($dbcourse->shortname, $coursecontext->id));
             $this->assertEquals($course['categoryid'], $dbcourse->category);
             $this->assertEquals($course['format'], $dbcourse->format);
             $this->assertEquals($course['showgrades'], $dbcourse->showgrades);

@@ -1222,8 +1222,7 @@ function external_update_descriptions($component) {
     $defpath = core_component::get_component_directory($component).'/db/services.php';
 
     if (!file_exists($defpath)) {
-        require_once($CFG->dirroot.'/lib/externallib.php');
-        external_delete_descriptions($component);
+        \core_external\util::delete_service_descriptions($component);
         return;
     }
 

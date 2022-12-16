@@ -3664,20 +3664,16 @@ class custom_menu_item implements renderable, templatable {
      * @return array
      */
     public function export_for_template(renderer_base $output) {
-        global $CFG;
-
-        require_once($CFG->libdir . '/externallib.php');
-
         $syscontext = context_system::instance();
 
         $context = new stdClass();
         $context->moremenuid = uniqid();
-        $context->text = external_format_string($this->text, $syscontext->id);
+        $context->text = \core_external\util::format_string($this->text, $syscontext->id);
         $context->url = $this->url ? $this->url->out() : null;
         // No need for the title if it's the same with text.
         if ($this->text !== $this->title) {
             // Show the title attribute only if it's different from the text.
-            $context->title = external_format_string($this->title, $syscontext->id);
+            $context->title = \core_external\util::format_string($this->title, $syscontext->id);
         }
         $context->sort = $this->sort;
         if (!empty($this->attributes)) {

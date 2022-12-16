@@ -24,9 +24,10 @@
 
 namespace core_course\output;
 
-use context_module;
-use lang_string;
 use cm_info;
+use context_module;
+use core_external\external_api;
+use lang_string;
 
 /**
  * Class to prepare a course module name for display and in-place editing
@@ -93,7 +94,7 @@ class course_module_name extends \core\output\inplace_editable {
     public static function update($itemid, $newvalue) {
         $context = context_module::instance($itemid);
         // Check access.
-        \external_api::validate_context($context);
+        external_api::validate_context($context);
         require_capability('moodle/course:manageactivities', $context);
 
         // Trim module name and Update value.

@@ -17,6 +17,7 @@
 namespace core_enrol;
 
 use core_enrol_external;
+use core_external\external_api;
 use enrol_user_enrolment_form;
 use externallib_advanced_testcase;
 
@@ -348,7 +349,7 @@ class externallib_test extends externallib_advanced_testcase {
             $enrolledusers = core_enrol_external::get_enrolled_users($course->id, $options);
 
             // We need to execute the return values cleaning process to simulate the web service server.
-            $enrolledusers = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
+            $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
 
             // We are only interested in ids to check visibility.
             $viewed = array();
@@ -405,7 +406,7 @@ class externallib_test extends externallib_advanced_testcase {
         $suspendedusers = core_enrol_external::get_enrolled_users($course->id, $options);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $suspendedusers = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $suspendedusers);
+        $suspendedusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $suspendedusers);
         $this->assertCount(2, $suspendedusers);
 
         foreach ($suspendedusers as $suspendeduser) {
@@ -420,7 +421,7 @@ class externallib_test extends externallib_advanced_testcase {
         $activeusers = core_enrol_external::get_enrolled_users($course->id, $options);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $activeusers = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $activeusers);
+        $activeusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $activeusers);
         $this->assertCount(4, $activeusers);
 
         foreach ($activeusers as $activeuser) {
@@ -434,7 +435,7 @@ class externallib_test extends externallib_advanced_testcase {
         $allusers = core_enrol_external::get_enrolled_users($course->id, $options);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $allusers = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $allusers);
+        $allusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $allusers);
         $this->assertCount(6, $allusers);
 
         // Active and suspended. Test exception is thrown.
@@ -462,8 +463,10 @@ class externallib_test extends externallib_advanced_testcase {
 
         $timenow = time();
         $coursedata1 = array(
-            'fullname'         => '<b>Course 1</b>',                // Adding tags here to check that external_format_string works.
-            'shortname'         => '<b>Course 1</b>',               // Adding tags here to check that external_format_string works.
+            // Adding tags here to check that \core_external\util::format_string works.
+            'fullname'         => '<b>Course 1</b>',
+            // Adding tags here to check that \core_external\util::format_string works.
+            'shortname'         => '<b>Course 1</b>',
             'summary'          => 'Lightwork Course 1 description',
             'summaryformat'    => FORMAT_MOODLE,
             'lang'             => 'en',
@@ -523,19 +526,25 @@ class externallib_test extends externallib_advanced_testcase {
         $enrolledincourses = core_enrol_external::get_users_courses($student->id, true);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $enrolledincourses = \external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
+        $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
 
         // Check we retrieve the good total number of enrolled users.
         $this->assertEquals(2, count($enrolledincourses));
 
         // We need to format summary and summaryformat before to compare them with those values returned by the webservice.
-        list($course1->summary, $course1->summaryformat) =
-             external_format_text($course1->summary, $course1->summaryformat, $contexts[$course1->id]->id, 'course', 'summary', 0);
+        [$course1->summary, $course1->summaryformat] = \core_external\util::format_text(
+            $course1->summary,
+            $course1->summaryformat,
+            $contexts[$course1->id],
+            'course',
+            'summary',
+            0
+        );
 
         // Check there are no differences between $course1 properties and course values returned by the webservice
         // only for those fields listed in the $coursedata1 array.
-        $course1->fullname = external_format_string($course1->fullname, $contexts[$course1->id]->id);
-        $course1->shortname = external_format_string($course1->shortname, $contexts[$course1->id]->id);
+        $course1->fullname = \core_external\util::format_string($course1->fullname, $contexts[$course1->id]->id);
+        $course1->shortname = \core_external\util::format_string($course1->shortname, $contexts[$course1->id]->id);
         foreach ($enrolledincourses as $courseenrol) {
             if ($courseenrol['id'] == $course1->id) {
                 foreach ($coursedata1 as $fieldname => $value) {
@@ -572,7 +581,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Check that returnusercount works correctly.
         $enrolledincourses = core_enrol_external::get_users_courses($student->id, false);
-        $enrolledincourses = \external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
+        $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
         foreach ($enrolledincourses as $courseenrol) {
             $this->assertFalse(isset($courseenrol['enrolledusercount']));
         }
@@ -581,7 +590,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setAdminUser();
 
         $enrolledincourses = core_enrol_external::get_users_courses($student->id, true);
-        $enrolledincourses = \external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
+        $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
         $this->assertEquals(2, count($enrolledincourses));
         foreach ($enrolledincourses as $courseenrol) {
             if ($courseenrol['id'] == $course1->id) {
@@ -604,7 +613,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($otherstudent);
 
         $enrolledincourses = core_enrol_external::get_users_courses($student->id, true);
-        $enrolledincourses = \external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
+        $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
         $this->assertEquals(1, count($enrolledincourses));
 
         $this->assertEquals($timenow, $enrolledincourses[0]['lastaccess']); // I can see this, not hidden.
@@ -613,7 +622,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Change some global profile visibility fields.
         $CFG->hiddenuserfields = 'lastaccess';
         $enrolledincourses = core_enrol_external::get_users_courses($student->id, true);
-        $enrolledincourses = \external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
+        $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
 
         $this->assertEquals(0, $enrolledincourses[0]['lastaccess']); // I can't see this, hidden by global setting.
     }
@@ -728,16 +737,22 @@ class externallib_test extends externallib_advanced_testcase {
         $enrolledincourses = core_enrol_external::get_users_courses($student->id, true);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $enrolledincourses = \external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
+        $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
 
         // Check that the amount of courses is the right one.
         $this->assertCount(1, $enrolledincourses);
 
         // Filter the values to compare them with the returned ones.
-        $course->fullname = external_format_string($course->fullname, $context->id);
-        $course->shortname = external_format_string($course->shortname, $context->id);
-        list($course->summary, $course->summaryformat) =
-             external_format_text($course->summary, $course->summaryformat, $context->id, 'course', 'summary', 0);
+        $course->fullname = \core_external\util::format_string($course->fullname, $context->id);
+        $course->shortname = \core_external\util::format_string($course->shortname, $context->id);
+        [$course->summary, $course->summaryformat] = \core_external\util::format_text(
+            $course->summary,
+            $course->summaryformat,
+            $context,
+            'course',
+            'summary',
+            0
+        );
 
         // Compare the values.
         $this->assertStringContainsString('<span class="filter_mathjaxloader_equation">', $enrolledincourses[0]['fullname']);
@@ -789,7 +804,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Check if information is returned.
         $enrolmentmethods = core_enrol_external::get_course_enrolment_methods($course1->id);
-        $enrolmentmethods = \external_api::clean_returnvalue(core_enrol_external::get_course_enrolment_methods_returns(),
+        $enrolmentmethods = external_api::clean_returnvalue(core_enrol_external::get_course_enrolment_methods_returns(),
                                                             $enrolmentmethods);
         // Enrolment information is currently returned by self enrolment plugin, so count == 1.
         // This should be changed as we implement get_enrol_info() for other enrolment plugins.
@@ -807,7 +822,7 @@ class externallib_test extends externallib_advanced_testcase {
                                                                 'customint6' => 1,
                                                                 'password' => 'test'));
         $enrolmentmethods = core_enrol_external::get_course_enrolment_methods($course2->id);
-        $enrolmentmethods = \external_api::clean_returnvalue(core_enrol_external::get_course_enrolment_methods_returns(),
+        $enrolmentmethods = external_api::clean_returnvalue(core_enrol_external::get_course_enrolment_methods_returns(),
                                                             $enrolmentmethods);
         $this->assertCount(1, $enrolmentmethods);
 
@@ -865,7 +880,7 @@ class externallib_test extends externallib_advanced_testcase {
         $enrolledusers = core_enrol_external::get_enrolled_users($data->course->id);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $enrolledusers = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
+        $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
 
         // Check the result set.
         $this->assertEquals(3, count($enrolledusers));
@@ -887,7 +902,7 @@ class externallib_test extends externallib_advanced_testcase {
         ));
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $enrolledusers = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
+        $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
 
         // Check the result set, we should only get the 3rd result, which is $user3.
         $this->assertCount(1, $enrolledusers);
@@ -908,7 +923,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Call the external function.
         $enrolledusers = core_enrol_external::get_enrolled_users($data->course->id);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $enrolledusers = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
+        $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
 
         // Check the result set.
         $this->assertEquals(3, count($enrolledusers));
@@ -927,7 +942,7 @@ class externallib_test extends externallib_advanced_testcase {
         $DB->insert_record('user_lastaccess', $lastaccess);
 
         $enrolledusers = core_enrol_external::get_enrolled_users($data->course->id);
-        $enrolledusers = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
+        $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
 
         // Check the result set.
         $this->assertEquals(3, count($enrolledusers));
@@ -1009,7 +1024,7 @@ class externallib_test extends externallib_advanced_testcase {
         );
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
+        $result = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
 
         // Check an array containing the expected user for the course capability is returned.
         $expecteduserlist = $result[0];
@@ -1042,7 +1057,7 @@ class externallib_test extends externallib_advanced_testcase {
         );
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
+        $result = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
 
         // Check an array containing the expected user for the course capability is returned.
         $expecteduserlist = $result[0]['users'];
@@ -1070,7 +1085,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $result = core_enrol_external::get_enrolled_users_with_capability($parameters, array());
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
+        $result = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
 
         // Check an array containing the expected user for the course capability is returned.
         $expecteduserlist = $result[0];
@@ -1092,7 +1107,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $result = core_enrol_external::get_enrolled_users_with_capability($parameters, array());
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = \external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
+        $result = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
 
         // Check the result set.
         $expecteduserlist = $result[0];
@@ -1234,7 +1249,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $querystring = http_build_query($formdata, '', '&');
 
-        $result = \external_api::clean_returnvalue(
+        $result = external_api::clean_returnvalue(
                 core_enrol_external::submit_user_enrolment_form_returns(),
                 core_enrol_external::submit_user_enrolment_form($querystring)
         );
@@ -1299,13 +1314,13 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Invalid data by passing invalid ueid.
         $data = core_enrol_external::unenrol_user_enrolment(101010);
-        $data = \external_api::clean_returnvalue(core_enrol_external::unenrol_user_enrolment_returns(), $data);
+        $data = external_api::clean_returnvalue(core_enrol_external::unenrol_user_enrolment_returns(), $data);
         $this->assertFalse($data['result']);
         $this->assertNotEmpty($data['errors']);
 
         // Valid data.
         $data = core_enrol_external::unenrol_user_enrolment($ueid);
-        $data = \external_api::clean_returnvalue(core_enrol_external::unenrol_user_enrolment_returns(), $data);
+        $data = external_api::clean_returnvalue(core_enrol_external::unenrol_user_enrolment_returns(), $data);
         $this->assertTrue($data['result']);
         $this->assertEmpty($data['errors']);
 

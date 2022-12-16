@@ -25,6 +25,7 @@
 
 namespace core_rating;
 
+use core_external\external_api;
 use core_rating_external;
 use externallib_advanced_testcase;
 
@@ -129,7 +130,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $ratings = core_rating_external::get_item_ratings('module', $this->forum->cmid, 'mod_forum', 'post', $this->post->id, 100, '');
         // We need to execute the return values cleaning process to simulate the web service server.
-        $ratings = \external_api::clean_returnvalue(core_rating_external::get_item_ratings_returns(), $ratings);
+        $ratings = external_api::clean_returnvalue(core_rating_external::get_item_ratings_returns(), $ratings);
         $this->assertCount(2, $ratings['ratings']);
 
         $indexedratings = array();
@@ -147,7 +148,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $ratings = core_rating_external::get_item_ratings('module', $this->forum->cmid, 'mod_forum', 'post', $this->post->id, 100, '');
         // We need to execute the return values cleaning process to simulate the web service server.
-        $ratings = \external_api::clean_returnvalue(core_rating_external::get_item_ratings_returns(), $ratings);
+        $ratings = external_api::clean_returnvalue(core_rating_external::get_item_ratings_returns(), $ratings);
         $this->assertCount(2, $ratings['ratings']);
 
         // Invalid item.
@@ -186,7 +187,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($this->teacher1);
         $ratings = core_rating_external::get_item_ratings('module', $this->forum->cmid, 'mod_forum', 'post', $this->post->id, 100, '');
         // We need to execute the return values cleaning process to simulate the web service server.
-        $ratings = \external_api::clean_returnvalue(core_rating_external::get_item_ratings_returns(), $ratings);
+        $ratings = external_api::clean_returnvalue(core_rating_external::get_item_ratings_returns(), $ratings);
         $this->assertCount(2, $ratings['ratings']);
 
         $this->setUser($this->teacher3);
@@ -209,7 +210,7 @@ class externallib_test extends externallib_advanced_testcase {
         $rating = core_rating_external::add_rating('module', $this->forum->cmid, 'mod_forum', 'post', $this->post->id, 100,
                                                     50, $this->student1->id, RATING_AGGREGATE_AVERAGE);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $rating = \external_api::clean_returnvalue(core_rating_external::add_rating_returns(), $rating);
+        $rating = external_api::clean_returnvalue(core_rating_external::add_rating_returns(), $rating);
         $this->assertTrue($rating['success']);
         $this->assertEquals(50, $rating['aggregate']);
         $this->assertEquals(1, $rating['count']);
@@ -217,7 +218,7 @@ class externallib_test extends externallib_advanced_testcase {
         // New different rate (it will replace the existing one).
         $rating = core_rating_external::add_rating('module', $this->forum->cmid, 'mod_forum', 'post', $this->post->id, 100,
                                                     100, $this->student1->id, RATING_AGGREGATE_AVERAGE);
-        $rating = \external_api::clean_returnvalue(core_rating_external::add_rating_returns(), $rating);
+        $rating = external_api::clean_returnvalue(core_rating_external::add_rating_returns(), $rating);
                 $this->assertTrue($rating['success']);
         $this->assertEquals(100, $rating['aggregate']);
         $this->assertEquals(1, $rating['count']);
@@ -226,7 +227,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($this->teacher2);
         $rating = core_rating_external::add_rating('module', $this->forum->cmid, 'mod_forum', 'post', $this->post->id, 100,
                                                     50, $this->student1->id, RATING_AGGREGATE_AVERAGE);
-        $rating = \external_api::clean_returnvalue(core_rating_external::add_rating_returns(), $rating);
+        $rating = external_api::clean_returnvalue(core_rating_external::add_rating_returns(), $rating);
         $this->assertEquals(75, $rating['aggregate']);
         $this->assertEquals(2, $rating['count']);
 

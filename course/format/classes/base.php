@@ -38,7 +38,7 @@ use coding_exception;
 use moodle_url;
 use lang_string;
 use completion_info;
-use external_api;
+use core_external\external_api;
 use stdClass;
 use cache;
 use core_courseformat\output\legacy_renderer;

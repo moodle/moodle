@@ -16,18 +16,14 @@
 
 namespace gradereport_singleview\external;
 
-use coding_exception;
 use context_course;
 use core_course_external;
-use external_function_parameters;
-use external_multiple_structure;
-use external_single_structure;
-use external_value;
-use external_warnings;
-use invalid_parameter_exception;
-use moodle_exception;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
 use moodle_url;
-use restricted_context_exception;
 use grade_tree;
 
 defined('MOODLE_INTERNAL') || die;

@@ -27,23 +27,15 @@ namespace core_external;
  */
 class external_api_test extends \advanced_testcase {
     /**
-     * Setup the test to include the current externallib.
-     */
-    public static function setUpBeforeClass(): void {
-        global $CFG;
-        require_once("{$CFG->libdir}/externallib.php");
-    }
-
-    /**
      * Test the validate_parameters method.
      *
      * @covers \core_external\external_api::validate_parameters
      */
     public function test_validate_params(): void {
         $params = ['text' => 'aaa', 'someid' => '6'];
-        $description = new \external_function_parameters([
-            'someid' => new \external_value(PARAM_INT, 'Some int value'),
-            'text'   => new \external_value(PARAM_ALPHA, 'Some text value'),
+        $description = new external_function_parameters([
+            'someid' => new external_value(PARAM_INT, 'Some int value'),
+            'text'   => new external_value(PARAM_ALPHA, 'Some text value'),
         ]);
         $result = external_api::validate_parameters($description, $params);
         $this->assertCount(2, $result);
@@ -56,9 +48,9 @@ class external_api_test extends \advanced_testcase {
             'someids' => ['1', 2, 'a' => '3'],
             'scalar' => 666,
         ];
-        $description = new \external_function_parameters([
-            'someids' => new \external_multiple_structure(new \external_value(PARAM_INT, 'Some ID')),
-            'scalar'  => new \external_value(PARAM_ALPHANUM, 'Some text value'),
+        $description = new external_function_parameters([
+            'someids' => new external_multiple_structure(new external_value(PARAM_INT, 'Some ID')),
+            'scalar'  => new external_value(PARAM_ALPHANUM, 'Some text value'),
         ]);
         $result = external_api::validate_parameters($description, $params);
         $this->assertCount(2, $result);
@@ -68,9 +60,9 @@ class external_api_test extends \advanced_testcase {
         $this->assertSame('666', $result['scalar']);
 
         $params = ['text' => 'aaa'];
-        $description = new \external_function_parameters([
-            'someid' => new \external_value(PARAM_INT, 'Some int value', false),
-            'text'   => new \external_value(PARAM_ALPHA, 'Some text value'),
+        $description = new external_function_parameters([
+            'someid' => new external_value(PARAM_INT, 'Some int value', false),
+            'text'   => new external_value(PARAM_ALPHA, 'Some text value'),
         ]);
         $result = external_api::validate_parameters($description, $params);
         $this->assertCount(2, $result);
@@ -80,9 +72,9 @@ class external_api_test extends \advanced_testcase {
         $this->assertSame('aaa', $result['text']);
 
         $params = ['text' => 'aaa'];
-        $description = new \external_function_parameters([
-            'someid' => new \external_value(PARAM_INT, 'Some int value', false, 6),
-            'text'   => new \external_value(PARAM_ALPHA, 'Some text value'),
+        $description = new external_function_parameters([
+            'someid' => new external_value(PARAM_INT, 'Some int value', false, 6),
+            'text'   => new external_value(PARAM_ALPHA, 'Some text value'),
         ]);
         $result = external_api::validate_parameters($description, $params);
         $this->assertCount(2, $result);
@@ -98,8 +90,8 @@ class external_api_test extends \advanced_testcase {
      * @covers \core_external\external_api::clean_returnvalue
      */
     public function test_clean_returnvalue_return_php_type(): void {
-        $returndesc = new \external_single_structure([
-            'value' => new \external_value(PARAM_RAW, 'Some text', VALUE_OPTIONAL, null, NULL_NOT_ALLOWED),
+        $returndesc = new external_single_structure([
+            'value' => new external_value(PARAM_RAW, 'Some text', VALUE_OPTIONAL, null, NULL_NOT_ALLOWED),
         ]);
 
         // Check return type on exception because the external values does not allow NULL values.
@@ -119,12 +111,12 @@ class external_api_test extends \advanced_testcase {
      */
     public function test_clean_returnvalue(): void {
         // Build some return value decription.
-        $returndesc = new \external_multiple_structure(
-            new \external_single_structure(
+        $returndesc = new external_multiple_structure(
+            new external_single_structure(
                 [
-                    'object' => new \external_single_structure(
-                                ['value1' => new \external_value(PARAM_INT, 'this is a int')]),
-                    'value2' => new \external_value(PARAM_TEXT, 'some text', VALUE_OPTIONAL),
+                    'object' => new external_single_structure(
+                                ['value1' => new external_value(PARAM_INT, 'this is a int')]),
+                    'value2' => new external_value(PARAM_TEXT, 'some text', VALUE_OPTIONAL),
                 ]
             ));
 
@@ -296,9 +288,9 @@ class external_api_test extends \advanced_testcase {
         $this->assertNotEmpty($desc->classname);
         $this->assertNotEmpty($desc->methodname);
         $this->assertEquals($desc->component, clean_param($desc->component, PARAM_COMPONENT));
-        $this->assertInstanceOf(\external_function_parameters::class, $desc->parameters_desc);
+        $this->assertInstanceOf(external_function_parameters::class, $desc->parameters_desc);
         if ($desc->returns_desc != null) {
-            $this->assertInstanceOf(\external_description::class, $desc->returns_desc);
+            $this->assertInstanceOf(external_description::class, $desc->returns_desc);
         }
     }
 

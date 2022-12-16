@@ -170,12 +170,12 @@ class api {
         // Check if contacting site support is available to all visitors.
         $sitesupportavailable = (isset($CFG->supportavailability) && $CFG->supportavailability == CONTACT_SUPPORT_ANYONE);
 
-        list($authinstructions, $notusedformat) = external_format_text($CFG->auth_instructions, FORMAT_MOODLE, $context->id);
-        list($maintenancemessage, $notusedformat) = external_format_text($CFG->maintenance_message, FORMAT_MOODLE, $context->id);
+        [$authinstructions] = \core_external\util::format_text($CFG->auth_instructions, FORMAT_MOODLE, $context->id);
+        [$maintenancemessage] = \core_external\util::format_text($CFG->maintenance_message, FORMAT_MOODLE, $context->id);
         $settings = array(
             'wwwroot' => $CFG->wwwroot,
             'httpswwwroot' => $CFG->wwwroot,
-            'sitename' => external_format_string($SITE->fullname, $context->id, true),
+            'sitename' => \core_external\util::format_string($SITE->fullname, $context->id, true),
             'guestlogin' => $CFG->guestloginbutton,
             'rememberusername' => $CFG->rememberusername,
             'authloginviaemail' => $CFG->authloginviaemail,
@@ -265,12 +265,12 @@ class api {
         if (empty($section) or $section == 'frontpagesettings') {
             require_once($CFG->dirroot . '/course/format/lib.php');
             // First settings that anyone can deduce.
-            $settings->fullname = external_format_string($SITE->fullname, $context->id);
-            $settings->shortname = external_format_string($SITE->shortname, $context->id);
+            $settings->fullname = \core_external\util::format_string($SITE->fullname, $context->id);
+            $settings->shortname = \core_external\util::format_string($SITE->shortname, $context->id);
 
             // Return to a var instead of directly to $settings object because of differences between
             // list() in php5 and php7. {@link http://php.net/manual/en/function.list.php}
-            $formattedsummary = external_format_text($SITE->summary, $SITE->summaryformat,
+            $formattedsummary = \core_external\util::format_text($SITE->summary, $SITE->summaryformat,
                                                                                         $context->id);
             $settings->summary = $formattedsummary[0];
             $settings->summaryformat = $formattedsummary[1];

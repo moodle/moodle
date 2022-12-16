@@ -23,16 +23,16 @@ namespace core_external;
  * @category    test
  * @copyright   2022 Andrew Lyons <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @covers      \core_external\files
+ * @covers      \core_external\external_files
  */
 class external_files_test extends \advanced_testcase {
     /**
      * Text external files structure.
      *
-     * @covers \core_external\files
+     * @covers \core_external\external_files
      */
     public function test_files_structure(): void {
-        $description = new files();
+        $description = new external_files();
 
         // First check that the expected default values and keys are returned.
         $expectedkeys = array_flip([

@@ -25,10 +25,18 @@
  */
 
 use core_course\external\helper_for_get_mods_by_courses;
+use core_external\external_api;
+use core_external\external_files;
+use core_external\external_format_value;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
+use core_external\util;
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/mod/wiki/lib.php');
 require_once($CFG->dirroot . '/mod/wiki/locallib.php');
 
@@ -83,7 +91,7 @@ class mod_wiki_external extends external_api {
         // Ensure there are courseids to loop through.
         if (!empty($params['courseids'])) {
 
-            list($courses, $warnings) = external_util::validate_courses($params['courseids'], $mycourses);
+            list($courses, $warnings) = util::validate_courses($params['courseids'], $mycourses);
 
             // Get the wikis in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
@@ -467,7 +475,7 @@ class mod_wiki_external extends external_api {
                 $retpage = array(
                         'id' => $page->id,
                         'subwikiid' => $page->subwikiid,
-                        'title' => external_format_string($page->title, $context->id),
+                        'title' => \core_external\util::format_string($page->title, $context),
                         'timecreated' => $page->timecreated,
                         'timemodified' => $page->timemodified,
                         'timerendered' => $page->timerendered,
@@ -485,8 +493,14 @@ class mod_wiki_external extends external_api {
                         $page = $content['page'];
                     }
                 }
-                list($cachedcontent, $contentformat) = external_format_text(
-                            $page->cachedcontent, FORMAT_HTML, $context->id, 'mod_wiki', 'attachments', $subwiki->id);
+                list($cachedcontent, $contentformat) = \core_external\util::format_text(
+                    $page->cachedcontent,
+                    FORMAT_HTML,
+                    $context,
+                    'mod_wiki',
+                    'attachments',
+                    $subwiki->id
+                );
 
                 if ($options['includecontent']) {
                     // Return the page content.
@@ -623,8 +637,14 @@ class mod_wiki_external extends external_api {
             }
         }
 
-        list($returnedpage['cachedcontent'], $returnedpage['contentformat']) = external_format_text(
-                            $page->cachedcontent, FORMAT_HTML, $context->id, 'mod_wiki', 'attachments', $subwiki->id);
+        list($returnedpage['cachedcontent'], $returnedpage['contentformat']) = \core_external\util::format_text(
+            $page->cachedcontent,
+            FORMAT_HTML,
+            $context,
+            'mod_wiki',
+            'attachments',
+            $subwiki->id
+        );
         $returnedpage['caneditpage'] = wiki_user_can_edit($subwiki);
 
         // Get page version.
@@ -730,7 +750,7 @@ class mod_wiki_external extends external_api {
             throw new moodle_exception('cannotviewfiles', 'wiki');
         } else if ($subwiki->id != -1) {
             // The subwiki exists, let's get the files.
-            $returnedfiles = external_util::get_area_files($context->id, 'mod_wiki', 'attachments', $subwiki->id);
+            $returnedfiles = util::get_area_files($context->id, 'mod_wiki', 'attachments', $subwiki->id);
         }
 
         $result = array();

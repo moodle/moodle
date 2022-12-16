@@ -14,31 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Mustache helper to load strings from string_manager.
- *
- * @package    core
- * @category   output
- * @copyright  2015 Damyon Wiese
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\output;
 
-use external_api;
-use external_function_parameters;
-use external_multiple_structure;
-use external_single_structure;
-use external_value;
-use core_component;
-use moodle_exception;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 use context_system;
-use theme_config;
 use core\external\output\icon_system\load_fontawesome_map;
 
 /**
  * This class contains a list of webservice functions related to output.
  *
+ * @package    core
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      2.9
@@ -90,7 +79,7 @@ class external extends external_api {
     /**
      * Returns description of load_template() result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function load_template_returns() {
         return new external_value(PARAM_RAW, 'template');
@@ -177,7 +166,7 @@ class external extends external_api {
     /**
      * Returns description of load_template_with_dependencies() result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function load_template_with_dependencies_returns() {
         $resourcestructure = new external_single_structure([
@@ -216,7 +205,7 @@ class external extends external_api {
     /**
      * Returns description of load_icon_map() result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function load_fontawesome_icon_map_returns() {
         return load_fontawesome_map::execute_returns();
