@@ -3051,5 +3051,18 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022120900.01);
     }
 
+    if ($oldversion < 2022121600.01) {
+        // Define index blocknameindex (not unique) to be added to block_instances.
+        $table = new xmldb_table('block_instances');
+        $index = new xmldb_index('blocknameindex', XMLDB_INDEX_NOTUNIQUE, ['blockname']);
+
+        // Conditionally launch add index blocknameindex.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022121600.01);
+    }
+
     return true;
 }
