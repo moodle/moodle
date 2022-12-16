@@ -22,12 +22,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\form\edit_override_form;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot.'/mod/quiz/lib.php');
 require_once($CFG->dirroot.'/mod/quiz/locallib.php');
-require_once($CFG->dirroot.'/mod/quiz/override_form.php');
-
 
 $cmid = optional_param('cmid', 0, PARAM_INT);
 $overrideid = optional_param('id', 0, PARAM_INT);
@@ -119,7 +118,7 @@ if (!$groupmode) {
 }
 
 // Setup the form.
-$mform = new quiz_override_form($url, $cm, $quiz, $context, $groupmode, $override);
+$mform = new edit_override_form($url, $cm, $quiz, $context, $groupmode, $override);
 $mform->set_data($data);
 
 if ($mform->is_cancelled()) {
