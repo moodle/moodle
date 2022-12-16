@@ -18,6 +18,7 @@ namespace mod_quiz;
 
 use core_component;
 use mod_quiz\form\preflight_check_form;
+use mod_quiz\local\access_rule_base;
 use mod_quiz\question\display_options;
 use mod_quiz_mod_form;
 use mod_quiz_renderer;
@@ -46,7 +47,7 @@ class access_manager {
     /** @var int the time to be considered as 'now'. */
     protected $timenow;
 
-    /** @var \quiz_access_rule_base instances of the active rules for this quiz. */
+    /** @var access_rule_base instances of the active rules for this quiz. */
     protected $rules = [];
 
     /**
@@ -71,7 +72,7 @@ class access_manager {
      * @param int $timenow the time that should be considered as 'now'.
      * @param bool $canignoretimelimits whether the current user is exempt from
      *      time limits by the mod/quiz:ignoretimelimits capability.
-     * @return array of {@see quiz_access_rule_base}s.
+     * @return access_rule_base[] rules that apply to this quiz.
      */
     protected function make_rules(quiz $quizobj, int $timenow, bool $canignoretimelimits): array {
 

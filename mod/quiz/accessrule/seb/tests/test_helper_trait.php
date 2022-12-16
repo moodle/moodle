@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\local\access_rule_base;
 use quizaccess_seb\access_manager;
 use quizaccess_seb\settings_provider;
 
@@ -247,7 +248,7 @@ trait quizaccess_seb_test_helper_trait {
     /**
      * A helper method to make the rule form the currently created quiz and  course.
      *
-     * @return \quiz_access_rule_base|null
+     * @return access_rule_base|null
      */
     protected function make_rule() {
         return \quizaccess_seb::make(

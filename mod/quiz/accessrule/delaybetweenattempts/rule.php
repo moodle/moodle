@@ -14,28 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Implementaton of the quizaccess_delaybetweenattempts plugin.
- *
- * @package    quizaccess
- * @subpackage delaybetweenattempts
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
-
+use mod_quiz\local\access_rule_base;
 
 /**
  * A rule imposing the delay between attempts settings.
  *
- * @copyright  2009 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quizaccess_delaybetweenattempts
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_delaybetweenattempts extends quiz_access_rule_base {
+class quizaccess_delaybetweenattempts extends access_rule_base {
 
     public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
         if (empty($quizobj->get_quiz()->delay1) && empty($quizobj->get_quiz()->delay2)) {

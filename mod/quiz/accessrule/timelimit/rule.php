@@ -14,30 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Implementaton of the quizaccess_timelimit plugin.
- *
- * @package    quizaccess
- * @subpackage timelimit
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 use mod_quiz\form\preflight_check_form;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
-
+use mod_quiz\local\access_rule_base;
 
 /**
- * A rule representing the time limit. It does not actually restrict access, but we use this
+ * A rule representing the time limit.
+ *
+ * It does not actually restrict access, but we use this
  * class to encapsulate some of the relevant code.
  *
- * @copyright  2009 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quizaccess_timelimit
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_timelimit extends quiz_access_rule_base {
+class quizaccess_timelimit extends access_rule_base {
 
     public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
 

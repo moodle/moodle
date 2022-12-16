@@ -14,28 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Implementaton of the quizaccess_offlineattempts plugin.
- *
- * @package    quizaccess_offlineattempts
- * @copyright  2016 Juan Leyva
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 use mod_quiz\form\preflight_check_form;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
+use mod_quiz\local\access_rule_base;
 
 /**
  * A rule implementing the offlineattempts check.
  *
+ * @package    quizaccess_offlineattempts
  * @copyright  2016 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.2
  */
-class quizaccess_offlineattempts extends quiz_access_rule_base {
+class quizaccess_offlineattempts extends access_rule_base {
 
     public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
         global $CFG;

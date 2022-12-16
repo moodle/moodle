@@ -14,29 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Implementaton of the quizaccess_password plugin.
- *
- * @package    quizaccess
- * @subpackage password
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 use mod_quiz\form\preflight_check_form;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
-
+use mod_quiz\local\access_rule_base;
 
 /**
  * A rule implementing the password check.
  *
- * @copyright  2009 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quizaccess_password
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_password extends quiz_access_rule_base {
+class quizaccess_password extends access_rule_base {
 
     public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
         if (empty($quizobj->get_quiz()->password)) {

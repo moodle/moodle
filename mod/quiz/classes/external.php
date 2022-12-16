@@ -822,7 +822,7 @@ class mod_quiz_external extends external_api {
 
         // Check that this attempt belongs to this user.
         if ($attemptobj->get_userid() != $USER->id) {
-            throw new moodle_exception('notyourattempt', 'quiz', $quizobj->view_url());
+            throw new moodle_exception('notyourattempt', 'quiz', $attemptobj->view_url());
         }
 
         // General capabilities check.
@@ -840,7 +840,7 @@ class mod_quiz_external extends external_api {
 
             $messages = $accessmanager->prevent_access();
             if (!$ispreviewuser && $messages) {
-                throw new moodle_exception('attempterror', 'quiz', $quizobj->view_url());
+                throw new moodle_exception('attempterror', 'quiz', $attemptobj->view_url());
             }
         }
 

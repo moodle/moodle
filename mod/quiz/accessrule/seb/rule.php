@@ -14,6 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use mod_quiz\local\access_rule_base;
+use quizaccess_seb\access_manager;
+use quizaccess_seb\quiz_settings;
+use quizaccess_seb\settings_provider;
+use quizaccess_seb\event\access_prevented;
+
 /**
  * Implementation of the quizaccess_seb plugin.
  *
@@ -23,24 +29,7 @@
  * @copyright  2019 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-use quizaccess_seb\access_manager;
-use quizaccess_seb\quiz_settings;
-use quizaccess_seb\settings_provider;
-use \quizaccess_seb\event\access_prevented;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
-
-/**
- * Implementation of the quizaccess_seb plugin.
- *
- * @copyright  2020 Catalyst IT
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class quizaccess_seb extends quiz_access_rule_base {
+class quizaccess_seb extends access_rule_base {
 
     /** @var access_manager $accessmanager Instance to manage the access to the quiz for this plugin. */
     private $accessmanager;
@@ -65,9 +54,9 @@ class quizaccess_seb extends quiz_access_rule_base {
      * @param int $timenow the time that should be considered as 'now'.
      * @param bool $canignoretimelimits whether the current user is exempt from
      *      time limits by the mod/quiz:ignoretimelimits capability.
-     * @return quiz_access_rule_base|null the rule, if applicable, else null.
+     * @return access_rule_base|null the rule, if applicable, else null.
      */
-    public static function make (quiz $quizobj, $timenow, $canignoretimelimits) {
+    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
         $accessmanager = new access_manager($quizobj);
         // If Safe Exam Browser is not required, this access rule is not applicable.
         if (!$accessmanager->seb_required()) {
