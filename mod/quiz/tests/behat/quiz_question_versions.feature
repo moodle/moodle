@@ -34,7 +34,7 @@ Feature: Quiz question versioning
     Then I should see "First question"
     And I should see "Answer the first question"
     And the field "version" matches value "Always latest"
-    And "v1 (latest)" "option" should exist in the "version" "select"
+    And the "version" select box should contain "v1 (latest)"
     # We check that the corresponding version is the appropriate one in preview
     And I click on "Preview question" "link"
     And I switch to "questionpreview" window
@@ -54,7 +54,7 @@ Feature: Quiz question versioning
       | Correct answer | False                         |
     And I press "id_submitbutton"
     And the field "version" matches value "Always latest"
-    And "v1" "option" should exist in the "version" "select"
+    And the "version" select box should contain "v1"
     And I set the field "version" to "v2 (latest)"
     Then I should see "First question (v2)"
     And I should see "Answer the new first question"
@@ -79,9 +79,9 @@ Feature: Quiz question versioning
     Then I should see "First question"
     And I should see "Answer the first question"
     And the field "version" matches value "Always latest"
-    And "v1 (latest)" "option" should exist in the "version" "select"
-    And "v2" "option" should not exist in the "version" "select"
-    And "v2 (latest)" "option" should not exist in the "version" "select"
+    And the "version" select box should contain "v1 (latest)"
+    And the "version" select box should not contain "v2"
+    And the "version" select box should not contain "v2 (latest)"
     And I am on the "Quiz 1" "mod_quiz > View" page
     And I press "Preview quiz"
     And I should see "Answer the first question"
