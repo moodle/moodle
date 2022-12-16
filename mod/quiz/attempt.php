@@ -57,7 +57,7 @@ if ($attemptobj->get_userid() != $USER->id) {
     if ($attemptobj->has_capability('mod/quiz:viewreports')) {
         redirect($attemptobj->review_url(null, $page));
     } else {
-        throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
+        throw new moodle_exception('notyourattempt', 'quiz', $quizobj->view_url());
     }
 }
 
@@ -107,7 +107,7 @@ $slots = $attemptobj->get_slots($page);
 
 // Check.
 if (empty($slots)) {
-    throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noquestionsfound');
+    throw new moodle_exception('noquestionsfound', 'quiz', $quizobj->view_url());
 }
 
 // Update attempt page, redirecting the user if $page is not valid.

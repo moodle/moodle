@@ -140,7 +140,7 @@ function quiz_get_completion_state($course, $cm, $userid, $type) {
  * @copyright 2012 the Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 4.2. Code moved to mod_quiz\task\update_overdue_attempts.
- * @todo MDL-71196 Final deprecation in Moodle 4.3
+ * @todo MDL-76612 Final deprecation in Moodle 4.6
  */
 class mod_quiz_overdue_attempt_updater {
 
@@ -160,5 +160,35 @@ class mod_quiz_overdue_attempt_updater {
         debugging('mod_quiz_overdue_attempt_updater has been deprecated. The code wsa moved to ' .
                 'mod_quiz\task\update_overdue_attempts.');
         return (new update_overdue_attempts())->get_list_of_overdue_attempts((int) $processto);
+    }
+}
+
+/**
+ * Class for quiz exceptions. Just saves a couple of arguments on the
+ * constructor for a moodle_exception.
+ *
+ * @copyright 2008 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ * @deprecated since Moodle 4.2. Please just use moodle_exception.
+ * @todo MDL-76612 Final deprecation in Moodle 4.6
+ */
+class moodle_quiz_exception extends moodle_exception {
+    /**
+     * Constructor.
+     *
+     * @param quiz $quizobj the quiz the error relates to.
+     * @param string $errorcode The name of the string from error.php to print.
+     * @param mixed $a Extra words and phrases that might be required in the error string.
+     * @param string $link The url where the user will be prompted to continue.
+     *      If no url is provided the user will be directed to the site index page.
+     * @param string|null $debuginfo optional debugging information.
+     * @deprecated since Moodle 4.2. Please just use moodle_exception.
+     */
+    public function __construct($quizobj, $errorcode, $a = null, $link = '', $debuginfo = null) {
+        if (!$link) {
+            $link = $quizobj->view_url();
+        }
+        parent::__construct($errorcode, 'quiz', $link, $a, $debuginfo);
     }
 }

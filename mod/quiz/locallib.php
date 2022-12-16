@@ -2442,7 +2442,6 @@ function quiz_view($quiz, $course, $cm, $context) {
  * @param  int $page page to jump to in the attempt
  * @param  bool $redirect whether to redirect or throw exceptions (for web or ws usage)
  * @return array an array containing the attempt information, access error messages and the page to jump to in the attempt
- * @throws moodle_quiz_exception
  * @since Moodle 3.1
  */
 function quiz_validate_new_attempt(quiz $quizobj, access_manager $accessmanager, $forcenew, $page, $redirect) {
@@ -2485,7 +2484,7 @@ function quiz_validate_new_attempt(quiz $quizobj, access_manager $accessmanager,
             if ($redirect) {
                 redirect($quizobj->review_url($lastattempt->id));
             } else {
-                throw new moodle_quiz_exception($quizobj, 'attemptalreadyclosed');
+                throw new moodle_exception('attemptalreadyclosed', 'quiz', $quizobj->view_url());
             }
         }
 

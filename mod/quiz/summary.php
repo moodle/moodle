@@ -44,7 +44,7 @@ if ($attemptobj->get_userid() != $USER->id) {
     if ($attemptobj->has_capability('mod/quiz:viewreports')) {
         redirect($attemptobj->review_url(null));
     } else {
-        throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
+        throw new moodle_exception('notyourattempt', 'quiz', $attemptobj->view_url());
     }
 }
 

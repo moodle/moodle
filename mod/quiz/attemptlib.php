@@ -31,35 +31,6 @@ use mod_quiz\access_manager;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
 
-
-/**
- * Class for quiz exceptions. Just saves a couple of arguments on the
- * constructor for a moodle_exception.
- *
- * @copyright 2008 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class moodle_quiz_exception extends moodle_exception {
-    /**
-     * Constructor.
-     *
-     * @param quiz $quizobj the quiz the error relates to.
-     * @param string $errorcode The name of the string from error.php to print.
-     * @param mixed $a Extra words and phrases that might be required in the error string.
-     * @param string $link The url where the user will be prompted to continue.
-     *      If no url is provided the user will be directed to the site index page.
-     * @param string|null $debuginfo optional debugging information.
-     */
-    public function __construct($quizobj, $errorcode, $a = null, $link = '', $debuginfo = null) {
-        if (!$link) {
-            $link = $quizobj->view_url();
-        }
-        parent::__construct($errorcode, 'quiz', $link, $a, $debuginfo);
-    }
-}
-
-
 /**
  * A class encapsulating a quiz and the questions it contains, and making the
  * information available to scripts like view.php.
@@ -525,7 +496,7 @@ class quiz {
      */
     protected function ensure_question_loaded($id) {
         if (isset($this->questions[$id]->_partiallyloaded)) {
-            throw new moodle_quiz_exception($this, 'questionnotloaded', $id);
+            throw new moodle_exception('questionnotloaded', 'quiz', $this->view_url(), $id);
         }
     }
 
