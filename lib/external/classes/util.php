@@ -592,14 +592,14 @@ class util {
     }
 
     /**
-     * Delete all pre-built services (+ related tokens) and external functions information defined in the specified component.
+     * Delete all pre-built services, related tokens, and external functions information defined for the specified component.
      *
-     * @param string $component name of component (moodle, mod_assignment, etc.)
+     * @param string $component The frankenstyle component name
      */
-    public static function delete_service_descriptions($component) {
+    public static function delete_service_descriptions(string $component): void {
         global $DB;
 
-        $params = array($component);
+        $params = [$component];
 
         $DB->delete_records_select(
             'external_tokens',
@@ -616,7 +616,7 @@ class util {
             "functionname IN (SELECT name FROM {external_functions} WHERE component = ?)",
             $params
         );
-        $DB->delete_records('external_services', array('component' => $component));
-        $DB->delete_records('external_functions', array('component' => $component));
+        $DB->delete_records('external_services', ['component' => $component]);
+        $DB->delete_records('external_functions', ['component' => $component]);
     }
 }
