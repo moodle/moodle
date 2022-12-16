@@ -34945,7 +34945,6 @@ p.arrow_button {
 .path-grade-report-grader .gradeparent tr.lastrow {
   position: sticky;
   bottom: 0;
-  z-index: 1;
 }
 .path-grade-report-grader .gradeparent tr.lastrow td,
 .path-grade-report-grader .gradeparent tr.lastrow th {
@@ -34954,6 +34953,7 @@ p.arrow_button {
 .path-grade-report-grader .gradeparent th.header {
   position: sticky;
   left: -3rem;
+  z-index: 1;
 }
 .path-grade-report-grader .gradeparent td.noborder {
   border-right: transparent;

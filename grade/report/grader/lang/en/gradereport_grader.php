@@ -48,6 +48,7 @@ $string['privacy:request:preference:grade_report_grader_collapsed_categories'] =
 $string['summarygrader'] = 'A table with the names of students in the first column, with assessable activities grouped by course and category across the top.';
 $string['useractivitygrade'] = '{$a} grade';
 $string['overriddengrade'] = 'Overridden grade';
+$string['advancedgrading'] = 'View {$a} results';
 $string['cellactions'] = 'Cell actions';
 
 // Deprecated since Moodle 4.2.

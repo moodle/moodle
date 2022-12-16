@@ -2,11 +2,16 @@ This files describes API changes in /grade/report/*,
 information provided here is intended especially for developers.
 
 === 4.2 ===
+* The grade_report_grader:get_icons(), grade_report_grader:get_left_icons_row()
+  and grade_report_grader:get_right_icons_row() functions have been deprecated and are not used anymore.
 * 'Show grade analysis icon' setting has been removed from grader report (link is moved to grade action menu)
 * 'Show locks' setting has been removed from grader report (link is moved to grade action menu)
 * 'Show show/hide icons' setting has been removed from grader report (link is moved to grade action menu)
 * 'Enable AJAX' interface has been deprecated for grader report
 * 'Quick feedback' interface has been deprecated for grader report
+* A new method grade_report::get_report_links() is created to obtain links to other grade plugins report pages.
+ It loops through all installed grade report plugins and checks if callback function gradereport_*_get_report_link
+ is implemented in for given grade report plugin in the corresponding lib.php
 
 === 3.6 ===
 * External function gradereport_user_external::get_grade_items now return the following information (only for course managers).
