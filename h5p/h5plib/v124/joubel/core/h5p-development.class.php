@@ -1,7 +1,5 @@
 <?php
 
-namespace Moodle;
-
 /**
  * This is a data layer which uses the file system so it isn't specific to any framework.
  */
@@ -97,7 +95,9 @@ class H5PDevelopment {
       $this->h5pF->saveLibraryData($library, $library['libraryId'] === FALSE);
 
       // Need to decode it again, since it is served from here.
-      $library['metadataSettings'] = json_decode($library['metadataSettings']);
+      $library['metadataSettings'] = isset($library['metadataSettings'])
+        ? json_decode($library['metadataSettings'])
+        : NULL;
 
       $library['path'] = 'development/' . $contents[$i];
       $this->libraries[H5PDevelopment::libraryToString($library['machineName'], $library['majorVersion'], $library['minorVersion'])] = $library;

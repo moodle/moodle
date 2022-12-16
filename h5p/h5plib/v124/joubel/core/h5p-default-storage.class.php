@@ -1,7 +1,5 @@
 <?php
 
-namespace Moodle;
-
 /**
  * File info?
  */
@@ -11,13 +9,13 @@ namespace Moodle;
  * operations using PHP's standard file operation functions.
  *
  * Some implementations of H5P that doesn't use the standard file system will
- * want to create their own implementation of the H5P\FileStorage interface.
+ * want to create their own implementation of the \H5P\FileStorage interface.
  *
  * @package    H5P
  * @copyright  2016 Joubel AS
  * @license    MIT
  */
-class H5PDefaultStorage implements H5PFileStorage {
+class H5PDefaultStorage implements \H5PFileStorage {
   private $path, $alteditorpath;
 
   /**
@@ -41,13 +39,17 @@ class H5PDefaultStorage implements H5PFileStorage {
    *  Library properties
    */
   public function saveLibrary($library) {
-    $dest = $this->path . '/libraries/' . H5PCore::libraryToString($library, TRUE);
+    $dest = $this->path . '/libraries/' . \H5PCore::libraryToFolderName($library);
 
     // Make sure destination dir doesn't exist
-    H5PCore::deleteFileTree($dest);
+    \H5PCore::deleteFileTree($dest);
 
     // Move library folder
     self::copyFileTree($library['uploadDirectory'], $dest);
+  }
+
+  public function deleteLibrary($library) {
+    // TODO
   }
 
   /**
@@ -62,7 +64,7 @@ class H5PDefaultStorage implements H5PFileStorage {
     $dest = "{$this->path}/content/{$content['id']}";
 
     // Remove any old content
-    H5PCore::deleteFileTree($dest);
+    \H5PCore::deleteFileTree($dest);
 
     self::copyFileTree($source, $dest);
   }
@@ -74,7 +76,7 @@ class H5PDefaultStorage implements H5PFileStorage {
    *  Content properties
    */
   public function deleteContent($content) {
-    H5PCore::deleteFileTree("{$this->path}/content/{$content['id']}");
+    \H5PCore::deleteFileTree("{$this->path}/content/{$content['id']}");
   }
 
   /**
@@ -135,7 +137,8 @@ class H5PDefaultStorage implements H5PFileStorage {
    *  Folder that library resides in
    */
   public function exportLibrary($library, $target, $developmentPath=NULL) {
-    $folder = H5PCore::libraryToString($library, TRUE);
+    $folder = \H5PCore::libraryToFolderName($library);
+
     $srcPath = ($developmentPath === NULL ? "/libraries/{$folder}" : $developmentPath);
     self::copyFileTree("{$this->path}{$srcPath}", "{$target}/{$folder}");
   }
@@ -294,7 +297,7 @@ class H5PDefaultStorage implements H5PFileStorage {
    * Save files uploaded through the editor.
    * The files must be marked as temporary until the content form is saved.
    *
-   * @param H5peditorFile $file
+   * @param \H5peditorFile $file
    * @param int $contentid
    */
   public function saveFile($file, $contentId) {
