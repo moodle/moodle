@@ -18,9 +18,10 @@ namespace mod_quiz;
 
 use action_link;
 use block_contents;
+use cm_info;
 use coding_exception;
 use context_module;
-use dml_exception;
+use Exception;
 use html_writer;
 use mod_quiz\output\links_to_other_attempts;
 use mod_quiz\output\renderer;
@@ -41,7 +42,7 @@ use quiz;
 use stdClass;
 
 /**
- * This class represents one user's attept at a particular quiz.
+ * This class represents one user's attempt at a particular quiz.
  *
  * @package   mod_quiz
  * @copyright 2008 Tim Hunt
@@ -74,7 +75,7 @@ class quiz_attempt {
      * @var array of slot information. These objects contain ->slot (int),
      *      ->requireprevious (bool), ->questionids (int) the original question for random questions,
      *      ->firstinsection (bool), ->section (stdClass from $this->sections).
-     *      This does not contain page - get that from {@link get_question_page()} -
+     *      This does not contain page - get that from {@see get_question_page()} -
      *      or maxmark - get that from $this->quba.
      */
     protected $slots;
@@ -94,14 +95,14 @@ class quiz_attempt {
     /** @var display_options cache for the appropriate review options. */
     protected $reviewoptions = null;
 
-    // Constructor =============================================================
+    // Constructor =============================================================.
     /**
      * Constructor assuming we already have the necessary data loaded.
      *
-     * @param object $attempt the row of the quiz_attempts table.
-     * @param object $quiz the quiz object for this attempt and user.
-     * @param object $cm the course_module object for this quiz.
-     * @param object $course the row from the course table for the course we belong to.
+     * @param stdClass $attempt the row of the quiz_attempts table.
+     * @param stdClass $quiz the quiz object for this attempt and user.
+     * @param stdClass|cm_info $cm the course_module object for this quiz.
+     * @param stdClass $course the row from the course table for the course we belong to.
      * @param bool $loadquestions (optional) if true, the default, load all the details
      *      of the state of each question. Else just set up the basic details of the attempt.
      */
@@ -125,7 +126,7 @@ class quiz_attempt {
 
         $attempt = $DB->get_record('quiz_attempts', $conditions, '*', MUST_EXIST);
         $quiz = access_manager::load_quiz_and_settings($attempt->quiz);
-        $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+        $course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
         // Update quiz with override information.
@@ -141,7 +142,7 @@ class quiz_attempt {
      * @return quiz_attempt the new quiz_attempt object
      */
     public static function create($attemptid) {
-        return self::create_helper(array('id' => $attemptid));
+        return self::create_helper(['id' => $attemptid]);
     }
 
     /**
@@ -151,10 +152,12 @@ class quiz_attempt {
      * @return quiz_attempt the new quiz_attempt object
      */
     public static function create_from_usage_id($usageid) {
-        return self::create_helper(array('uniqueid' => $usageid));
+        return self::create_helper(['uniqueid' => $usageid]);
     }
 
     /**
+     * Get a human-readable name for one of the quiz attempt states.
+     *
      * @param string $state one of the state constants like IN_PROGRESS.
      * @return string the human-readable state name.
      */
@@ -163,7 +166,7 @@ class quiz_attempt {
     }
 
     /**
-     * This method can be called later if the object was constructed with $loadqusetions = false.
+     * This method can be called later if the object was constructed with $loadquestions = false.
      */
     public function load_questions() {
         global $DB;
@@ -185,8 +188,6 @@ class quiz_attempt {
 
     /**
      * Preload all attempt step users to show in Response history.
-     *
-     * @throws dml_exception
      */
     public function preload_all_attempt_step_users(): void {
         $this->quba->preload_all_step_users();
@@ -209,10 +210,9 @@ class quiz_attempt {
     }
 
     /**
-     * Parse attempt->layout to populate the other arrays the represent the layout.
+     * Parse attempt->layout to populate the other arrays that represent the layout.
      */
     protected function determine_layout() {
-        $this->pagelayout = array();
 
         // Break up the layout string into pages.
         $pagelayouts = explode(',0', $this->attempt->layout);
@@ -228,7 +228,7 @@ class quiz_attempt {
         // may be shuffled, so $section->firstslot (the lowest numbered slot in
         // the section) may not be the first one.
         $unseensections = $this->sections;
-        $this->pagelayout = array();
+        $this->pagelayout = [];
         foreach ($pagelayouts as $page => $pagelayout) {
             $pagelayout = trim($pagelayout, ',');
             if ($pagelayout == '') {
@@ -272,7 +272,7 @@ class quiz_attempt {
 
     /**
      * If the given page number is out of range (before the first page, or after
-     * the last page, chnage it to be within range).
+     * the last page, change it to be within range).
      *
      * @param int $page the requested page number.
      * @return int a safe page number to use.
@@ -281,16 +281,31 @@ class quiz_attempt {
         return min(max($page, 0), count($this->pagelayout) - 1);
     }
 
-    // Simple getters ==========================================================
+    // Simple getters ==========================================================.
+
+    /**
+     * Get the raw quiz settings object.
+     *
+     * @return stdClass
+     */
     public function get_quiz() {
         return $this->quizobj->get_quiz();
     }
 
+    /**
+     * Get the {@see quiz} object for this quiz.
+     *
+     * @return quiz
+     */
     public function get_quizobj() {
         return $this->quizobj;
     }
 
-    /** @return int the course id. */
+    /**
+     * Git the id of the course this quiz belongs to.
+     *
+     * @return int the course id.
+     */
     public function get_courseid() {
         return $this->quizobj->get_courseid();
     }
@@ -304,22 +319,38 @@ class quiz_attempt {
         return $this->quizobj->get_course();
     }
 
-    /** @return int the quiz id. */
+    /**
+     * Get the quiz id.
+     *
+     * @return int the quiz id.
+     */
     public function get_quizid() {
         return $this->quizobj->get_quizid();
     }
 
-    /** @return string the name of this quiz. */
+    /**
+     * Get the name of this quiz.
+     *
+     * @return string Quiz name, directly from the database (format_string must be called before output).
+     */
     public function get_quiz_name() {
         return $this->quizobj->get_quiz_name();
     }
 
-    /** @return int the quiz navigation method. */
+    /**
+     * Get the quiz navigation method.
+     *
+     * @return int QUIZ_NAVMETHOD_FREE or QUIZ_NAVMETHOD_SEQ.
+     */
     public function get_navigation_method() {
         return $this->quizobj->get_navigation_method();
     }
 
-    /** @return object the course_module object. */
+    /**
+     * Get the course_module for this quiz.
+     *
+     * @return stdClass|cm_info the course_module object.
+     */
     public function get_cm() {
         return $this->quizobj->get_cm();
     }
@@ -334,24 +365,35 @@ class quiz_attempt {
     }
 
     /**
-     * @return bool whether the current user is someone who previews the quiz,
-     * rather than attempting it.
+     * Is the current user is someone who previews the quiz, rather than attempting it?
+     *
+     * @return bool true user is a preview user. False, if they can do real attempts.
      */
     public function is_preview_user() {
         return $this->quizobj->is_preview_user();
     }
 
-    /** @return int the number of attempts allowed at this quiz (0 = infinite). */
+    /**
+     * Get the number of attempts the user is allowed at this quiz.
+     *
+     * @return int the number of attempts allowed at this quiz (0 = infinite).
+     */
     public function get_num_attempts_allowed() {
         return $this->quizobj->get_num_attempts_allowed();
     }
 
-    /** @return int number fo pages in this quiz. */
+    /**
+     * Get the number of quizzes in the quiz attempt.
+     *
+     * @return int number pages.
+     */
     public function get_num_pages() {
         return count($this->pagelayout);
     }
 
     /**
+     * Get the access_manager for this quiz attempt.
+     *
      * @param int $timenow the current time as a unix timestamp.
      * @return access_manager and instance of the access_manager class
      *      for this quiz at this time.
@@ -360,61 +402,99 @@ class quiz_attempt {
         return $this->quizobj->get_access_manager($timenow);
     }
 
-    /** @return int the attempt id. */
+    /**
+     * Get the id of this attempt.
+     *
+     * @return int the attempt id.
+     */
     public function get_attemptid() {
         return $this->attempt->id;
     }
 
-    /** @return int the attempt unique id. */
+    /**
+     * Get the question-usage id corresponding to this quiz attempt.
+     *
+     * @return int the attempt unique id.
+     */
     public function get_uniqueid() {
         return $this->attempt->uniqueid;
     }
 
-    /** @return object the row from the quiz_attempts table. */
+    /**
+     * Get the raw quiz attempt object.
+     *
+     * @return stdClass the row from the quiz_attempts table.
+     */
     public function get_attempt() {
         return $this->attempt;
     }
 
-    /** @return int the number of this attemp (is it this user's first, second, ... attempt). */
+    /**
+     * Get the attempt number.
+     *
+     * @return int the number of this attempt (is it this user's first, second, ... attempt).
+     */
     public function get_attempt_number() {
         return $this->attempt->attempt;
     }
 
-    /** @return string one of the quiz_attempt::IN_PROGRESS, FINISHED, OVERDUE or ABANDONED constants. */
+    /**
+     * Get the state of this attempt.
+     *
+     * @return string {@see IN_PROGRESS}, {@see FINISHED}, {@see OVERDUE} or {@see ABANDONED}.
+     */
     public function get_state() {
         return $this->attempt->state;
     }
 
-    /** @return int the id of the user this attempt belongs to. */
+    /**
+     * Get the id of the user this attempt belongs to.
+     * @return int user id.
+     */
     public function get_userid() {
         return $this->attempt->userid;
     }
 
-    /** @return int the current page of the attempt. */
+    /**
+     * Get the current page of the attempt
+     * @return int page number.
+     */
     public function get_currentpage() {
         return $this->attempt->currentpage;
     }
 
+    /**
+     * Get the total number of marks that the user had scored on all the questions.
+     *
+     * @return float
+     */
     public function get_sum_marks() {
         return $this->attempt->sumgrades;
     }
 
     /**
-     * @return bool whether this attempt has been finished (true) or is still
-     *     in progress (false). Be warned that this is not just state == self::FINISHED,
-     *     it also includes self::ABANDONED.
+     * Has this attempt been finished?
+     *
+     * States {@see FINISHED} and {@see ABANDONED} are both considered finished in this state.
+     * Other states are not.
+     *
+     * @return bool
      */
     public function is_finished() {
         return $this->attempt->state == self::FINISHED || $this->attempt->state == self::ABANDONED;
     }
 
-    /** @return bool whether this attempt is a preview attempt. */
+    /**
+     * Is this attempt a preview?
+     *
+     * @return bool true if it is.
+     */
     public function is_preview() {
         return $this->attempt->preview;
     }
 
     /**
-     * Is this someone dealing with their own attempt or preview?
+     * Does this attempt belong to the current user?
      *
      * @return bool true => own attempt/preview. false => reviewing someone else's.
      */
@@ -424,7 +504,9 @@ class quiz_attempt {
     }
 
     /**
-     * @return bool whether this attempt is a preview belonging to the current user.
+     * Is this attempt is a preview belonging to the current user.
+     *
+     * @return bool true if it is.
      */
     public function is_own_preview() {
         return $this->is_own_attempt() &&
@@ -433,7 +515,7 @@ class quiz_attempt {
 
     /**
      * Is the current user allowed to review this attempt. This applies when
-     * {@link is_own_attempt()} returns false.
+     * {@see is_own_attempt()} returns false.
      *
      * @return bool whether the review should be allowed.
      */
@@ -492,7 +574,7 @@ class quiz_attempt {
      * about the attempt as a whole, and this method provides access to that data.
      * To see how this works, try setting a quiz to one of the CBM behaviours,
      * and then look at the extra information displayed at the top of the quiz
-     * review page once you have sumitted an attempt.
+     * review page once you have submitted an attempt.
      *
      * In the return value, the array keys are identifiers of the form
      * qbehaviour_behaviourname_meaningfullkey. For qbehaviour_deferredcbm_highsummary.
@@ -518,12 +600,12 @@ class quiz_attempt {
     }
 
     /**
-     * Wrapper round the has_capability funciton that automatically passes in the quiz context.
+     * Wrapper round the has_capability function that automatically passes in the quiz context.
      *
      * @param string $capability the name of the capability to check. For example mod/forum:view.
-     * @param int|null $userid A user id. By default (null) checks the permissions of the current user.
+     * @param int|null $userid A user id. If null checks the permissions of the current user.
      * @param bool $doanything If false, ignore effect of admin role assignment.
-     * @return boolean true if the user has this capability. Otherwise false.
+     * @return boolean true if the user has this capability, otherwise false.
      */
     public function has_capability($capability, $userid = null, $doanything = true) {
         return $this->quizobj->has_capability($capability, $userid, $doanything);
@@ -533,7 +615,7 @@ class quiz_attempt {
      * Wrapper round the require_capability function that automatically passes in the quiz context.
      *
      * @param string $capability the name of the capability to check. For example mod/forum:view.
-     * @param int|null $userid A user id. By default (null) checks the permissions of the current user.
+     * @param int|null $userid A user id. If null checks the permissions of the current user.
      * @param bool $doanything If false, ignore effect of admin role assignment.
      */
     public function require_capability($capability, $userid = null, $doanything = true) {
@@ -551,9 +633,9 @@ class quiz_attempt {
             $capability = 'mod/quiz:reviewmyattempts';
         }
 
-        // These next tests are in a slighly funny order. The point is that the
-        // common and most performance-critical case is students attempting a quiz
-        // so we want to check that permisison first.
+        // These next tests are in a slightly funny order. The point is that the
+        // common and most performance-critical case is students attempting a quiz,
+        // so we want to check that permission first.
 
         if ($this->has_capability($capability)) {
             // User has the permission that lets you do the quiz as a student. Fine.
@@ -568,7 +650,7 @@ class quiz_attempt {
 
         // They should not be here. Trigger the standard no-permission error
         // but using the name of the student capability.
-        // We know this will fail. We just want the stadard exception thown.
+        // We know this will fail. We just want the standard exception thrown.
         $this->require_capability($capability);
     }
 
@@ -585,20 +667,14 @@ class quiz_attempt {
             return false;
         }
 
-        switch ($this->get_navigation_method()) {
-            case QUIZ_NAVMETHOD_FREE:
-                return true;
-                break;
-            case QUIZ_NAVMETHOD_SEQ:
-                return false;
-                break;
-        }
-        return true;
+        return $this->get_navigation_method() == QUIZ_NAVMETHOD_FREE;
     }
 
     /**
-     * @return int one of the display_options::DURING,
-     *      IMMEDIATELY_AFTER, LATER_WHILE_OPEN or AFTER_CLOSE constants.
+     * Get where we are time-wise in relation to this attempt and the quiz settings.
+     *
+     * @return int one of {@see display_options::DURING}, {@see display_options::IMMEDIATELY_AFTER},
+     *      {@see display_options::LATER_WHILE_OPEN} or {@see display_options::AFTER_CLOSE}.
      */
     public function get_attempt_state() {
         return quiz_attempt_state($this->get_quiz(), $this->attempt);
@@ -667,8 +743,10 @@ class quiz_attempt {
     }
 
     /**
-     * @param int $page page number
-     * @return bool true if this is the last page of the quiz.
+     * Is a particular page the last one in the quiz?
+     *
+     * @param int $page a page number
+     * @return bool true if that is the last page of the quiz.
      */
     public function is_last_page($page) {
         return $page == count($this->pagelayout) - 1;
@@ -683,7 +761,7 @@ class quiz_attempt {
      */
     public function get_slots($page = 'all') {
         if ($page === 'all') {
-            $numbers = array();
+            $numbers = [];
             foreach ($this->pagelayout as $numbersonpage) {
                 $numbers = array_merge($numbers, $numbersonpage);
             }
@@ -701,7 +779,7 @@ class quiz_attempt {
      * @return array the requested list of slot numbers.
      */
     public function get_active_slots($page = 'all') {
-        $activeslots = array();
+        $activeslots = [];
         foreach ($this->get_slots($page) as $slot) {
             if (!$this->is_blocked_by_previous_question($slot)) {
                 $activeslots[] = $slot;
@@ -742,7 +820,7 @@ class quiz_attempt {
      * @return question_attempt[] the attempts.
      */
     public function all_question_attempts_originally_in_slot($slot) {
-        $qas = array();
+        $qas = [];
         foreach ($this->quba->get_attempt_iterator() as $qa) {
             if ($qa->get_metadata('originalslot') == $slot) {
                 $qas[] = $qa;
@@ -831,7 +909,7 @@ class quiz_attempt {
      * If the section heading, if any, that should come just before this slot.
      *
      * @param int $slot identifies a particular question in this attempt.
-     * @return string the required heading, or null if there is not one here.
+     * @return string|null the required heading, or null if there is not one here.
      */
     public function get_heading_before_slot($slot) {
         if ($this->slots[$slot]->firstinsection) {
@@ -865,7 +943,7 @@ class quiz_attempt {
     }
 
     /**
-     * Return the {@link question_state} that this question is in.
+     * Return the {@see question_state} that this question is in.
      *
      * @param int $slot the number used to identify this question within this attempt.
      * @return question_state the state this question is in.
@@ -931,7 +1009,6 @@ class quiz_attempt {
      *
      * @param int $slot the number used to identify this question within this attempt.
      * @return string the question type name.
-     * @since  Moodle 3.1
      */
     public function get_question_type_name($slot) {
         return $this->quba->get_question($slot, false)->get_type_name();
@@ -954,8 +1031,9 @@ class quiz_attempt {
 
 
     /**
-     * @return int the time when this attempt was submitted. 0 if it has not been
-     * submitted yet.
+     * Get the time when this attempt was submitted.
+     *
+     * @return int timestamp, or 0 if it has not been submitted yet.
      */
     public function get_submitted_date() {
         return $this->attempt->timefinish;
@@ -968,7 +1046,7 @@ class quiz_attempt {
      * @return int timestamp by which the student needs to do something.
      */
     public function get_due_date() {
-        $deadlines = array();
+        $deadlines = [];
         if ($this->quizobj->get_quiz()->timelimit) {
             $deadlines[] = $this->attempt->timestart + $this->quizobj->get_quiz()->timelimit;
         }
@@ -993,12 +1071,15 @@ class quiz_attempt {
         }
     }
 
-    // URLs related to this attempt ============================================
+    // URLs related to this attempt ============================================.
+
     /**
-     * @return string quiz view url.
+     * Get the URL of this quiz's view.php page.
+     *
+     * @return moodle_url quiz view url.
      */
     public function view_url() {
-        return $this->quizobj->view_url();
+        return new moodle_url($this->quizobj->view_url());
     }
 
     /**
@@ -1006,7 +1087,7 @@ class quiz_attempt {
      *
      * @param int|null $slot which question in the attempt to go to after starting (optional).
      * @param int $page which page in the attempt to go to after starting.
-     * @return string the URL of this quiz's edit page. Needs to be POSTed to with a cmid parameter.
+     * @return moodle_url the URL of this quiz's edit page. Needs to be POSTed to with a cmid parameter.
      */
     public function start_attempt_url($slot = null, $page = -1) {
         if ($page == -1 && !is_null($slot)) {
@@ -1038,12 +1119,14 @@ class quiz_attempt {
     }
 
     /**
+     * Get the URL of a particular page within this attempt.
+     *
      * @param int|null $slot if specified, the slot number of a specific question to link to.
      * @param int $page if specified, a particular page to link to. If not given deduced
      *      from $slot, or goes to the first page.
      * @param int $thispage if not -1, the current page. Will cause links to other things on
-     * this page to be output as only a fragment.
-     * @return string the URL to continue this attempt.
+     *      this page to be output as only a fragment.
+     * @return moodle_url the URL to continue this attempt.
      */
     public function attempt_url($slot = null, $page = -1, $thispage = -1) {
         return $this->page_and_question_url('attempt', $slot, $page, false, $thispage);
@@ -1059,13 +1142,17 @@ class quiz_attempt {
     }
 
     /**
+     * Get the URL of the summary page of this attempt.
+     *
      * @return moodle_url the URL of this quiz's summary page.
      */
     public function summary_url() {
-        return new moodle_url('/mod/quiz/summary.php', array('attempt' => $this->attempt->id, 'cmid' => $this->get_cmid()));
+        return new moodle_url('/mod/quiz/summary.php', ['attempt' => $this->attempt->id, 'cmid' => $this->get_cmid()]);
     }
 
     /**
+     * Get the URL to which the attempt data should be submitted.
+     *
      * @return moodle_url the URL of this quiz's summary page.
      */
     public function processattempt_url() {
@@ -1094,6 +1181,8 @@ class quiz_attempt {
     }
 
     /**
+     * Get the URL of a particular page in the review of this attempt.
+     *
      * @param int|null $slot indicates which question to link to.
      * @param int $page if specified, the URL of this particular page of the attempt, otherwise
      *      the URL will go to the first page.  If -1, deduce $page from $slot.
@@ -1101,7 +1190,7 @@ class quiz_attempt {
      *      and $page will be ignored. If null, a sensible default will be chosen.
      * @param int $thispage if not -1, the current page. Will cause links to other things on
      *      this page to be output as only a fragment.
-     * @return string the URL to review this attempt.
+     * @return moodle_url the URL to review this attempt.
      */
     public function review_url($slot = null, $page = -1, $showall = null, $thispage = -1) {
         return $this->page_and_question_url('review', $slot, $page, $showall, $thispage);
@@ -1117,7 +1206,7 @@ class quiz_attempt {
         return $script === 'review' && count($this->questionpages) < self::MAX_SLOTS_FOR_DEFAULT_REVIEW_SHOW_ALL;
     }
 
-    // Bits of content =========================================================
+    // Bits of content =========================================================.
 
     /**
      * If $reviewoptions->attempt is false, meaning that students can't review this
@@ -1135,7 +1224,7 @@ class quiz_attempt {
      * Initialise the JS etc. required all the questions on a page.
      *
      * @param int|string $page a page number, or 'all'.
-     * @param bool $showall if true forces page number to all.
+     * @param bool $showall if true, forces page number to all.
      * @return string HTML to output - mostly obsolete, will probably be an empty string.
      */
     public function get_html_head_contributions($page = 'all', $showall = false) {
@@ -1171,7 +1260,7 @@ class quiz_attempt {
         global $OUTPUT;
         if ($this->is_preview() && $this->is_preview_user()) {
             return $OUTPUT->single_button(new moodle_url(
-                    $this->start_attempt_url(), array('forcenew' => true)),
+                    $this->start_attempt_url(), ['forcenew' => true]),
                     get_string('startnewpreview', 'quiz'));
         } else {
             return '';
@@ -1179,7 +1268,7 @@ class quiz_attempt {
     }
 
     /**
-     * Generate the HTML that displayes the question in its current state, with
+     * Generate the HTML that displays the question in its current state, with
      * the appropriate display options.
      *
      * @param int $slot identifies the question in the attempt.
@@ -1206,7 +1295,7 @@ class quiz_attempt {
     }
 
     /**
-     * Helper used by {@link render_question()} and {@link render_question_at_step()}.
+     * Helper used by {@see render_question()} and {@see render_question_at_step()}.
      *
      * @param int $slot identifies the question in the attempt.
      * @param bool $reviewing is the being printed on an attempt or a review page.
@@ -1291,7 +1380,7 @@ class quiz_attempt {
     }
 
     /**
-     * Like {@link render_question()} but displays the question at the past step
+     * Like {@see render_question()} but displays the question at the past step
      * indicated by $seq, rather than showing the latest step.
      *
      * @param int $slot the slot number of a question in this quiz attempt.
@@ -1321,7 +1410,7 @@ class quiz_attempt {
     }
 
     /**
-     * Check wheter access should be allowed to a particular file.
+     * Check whether access should be allowed to a particular file.
      *
      * @param int $slot the slot of a question in this quiz attempt.
      * @param bool $reviewing is the being printed on an attempt or a review page.
@@ -1330,7 +1419,7 @@ class quiz_attempt {
      * @param string $filearea the file area from the request.
      * @param array $args extra part components from the request.
      * @param bool $forcedownload whether to force download.
-     * @return string HTML for the question in its current state.
+     * @return bool true if the file can be accessed.
      */
     public function check_file_access($slot, $reviewing, $contextid, $component,
             $filearea, $args, $forcedownload) {
@@ -1378,7 +1467,7 @@ class quiz_attempt {
      *
      * The {@see links_to_other_attempts} object returned contains an
      * array with keys that are the attempt number, 1, 2, 3.
-     * The array values are either a {@link moodle_url} with the attempt parameter
+     * The array values are either a {@see moodle_url} with the attempt parameter
      * updated to point to the attempt id of the other attempt, or null corresponding
      * to the current attempt number.
      *
@@ -1397,7 +1486,7 @@ class quiz_attempt {
             if ($at->id == $this->attempt->id) {
                 $links->links[$at->attempt] = null;
             } else {
-                $links->links[$at->attempt] = new moodle_url($url, array('attempt' => $at->id));
+                $links->links[$at->attempt] = new moodle_url($url, ['attempt' => $at->id]);
             }
         }
         return $links;
@@ -1433,18 +1522,18 @@ class quiz_attempt {
             if ($qa->get_slot() == $slot) {
                 $links->links[$index] = null;
             } else {
-                $url = new moodle_url($baseurl, array('slot' => $qa->get_slot()));
+                $url = new moodle_url($baseurl, ['slot' => $qa->get_slot()]);
                 $links->links[$index] = new action_link($url, $index,
                         new popup_action('click', $url, 'reviewquestion',
-                                array('width' => 450, 'height' => 650)),
-                        array('title' => get_string('reviewresponse', 'question')));
+                                ['width' => 450, 'height' => 650]),
+                        ['title' => get_string('reviewresponse', 'question')]);
             }
             $index++;
         }
         return $links;
     }
 
-    // Methods for processing ==================================================
+    // Methods for processing ==================================================.
 
     /**
      * Check this attempt, to see if there are any state transitions that should
@@ -1472,7 +1561,7 @@ class quiz_attempt {
             if ($timeoverdue >= $graceperiod) {
                 $this->process_abandon($timestamp, $studentisonline);
             } else {
-                // Overdue time has not yet expired
+                // Overdue time has not yet expired.
                 $this->update_timecheckstate($timeclose + $graceperiod);
             }
             return; // ... and we are done.
@@ -1501,7 +1590,6 @@ class quiz_attempt {
 
         // This is an overdue attempt with no overdue handling defined, so just abandon.
         $this->process_abandon($timestamp, $studentisonline);
-        return;
     }
 
     /**
@@ -1512,9 +1600,9 @@ class quiz_attempt {
      * @param bool $becomingoverdue
      * @param array|null $simulatedresponses If not null, then we are testing, and this is an array of simulated data.
      *      There are two formats supported here, for historical reasons. The newer approach is to pass an array created by
-     *      {@link core_question_generator::get_simulated_post_data_for_questions_in_usage()}.
+     *      {@see core_question_generator::get_simulated_post_data_for_questions_in_usage()}.
      *      the second is to pass an array slot no => contains arrays representing student
-     *      responses which will be passed to {@link question_definition::prepare_simulated_post_data()}.
+     *      responses which will be passed to {@see question_definition::prepare_simulated_post_data()}.
      *      This second method will probably get deprecated one day.
      */
     public function process_submitted_actions($timestamp, $becomingoverdue = false, $simulatedresponses = null) {
@@ -1557,7 +1645,7 @@ class quiz_attempt {
      * Replace a question in an attempt with a new attempt at the same question.
      *
      * Well, for randomised questions, it won't be the same question, it will be
-     * a different randomised selection.
+     * a different randomly selected pick from the available question.
      *
      * @param int $slot the question to restart.
      * @param int $timestamp the timestamp to record for this action.
@@ -1585,7 +1673,7 @@ class quiz_attempt {
         if ($newquestion->get_num_variants() == 1) {
             $variant = 1;
         } else {
-            $variantstrategy = new core_question\engine\variants\least_used_strategy(
+            $variantstrategy = new \core_question\engine\variants\least_used_strategy(
                     $this->quba, $qubaids);
             $variant = $variantstrategy->choose_variant($newquestion->get_num_variants(),
                     $newquestion->get_variants_selection_seed());
@@ -1695,7 +1783,7 @@ class quiz_attempt {
         global $DB;
         if ($this->attempt->timecheckstate !== $time) {
             $this->attempt->timecheckstate = $time;
-            $DB->set_field('quiz_attempts', 'timecheckstate', $time, array('id' => $this->attempt->id));
+            $DB->set_field('quiz_attempts', 'timecheckstate', $time, ['id' => $this->attempt->id]);
         }
     }
 
@@ -1712,7 +1800,7 @@ class quiz_attempt {
         $this->attempt->timemodified = $timestamp;
         $this->attempt->state = self::OVERDUE;
         // If we knew the attempt close time, we could compute when the graceperiod ends.
-        // Instead we'll just fix it up through cron.
+        // Instead, we'll just fix it up through cron.
         $this->attempt->timecheckstate = $timestamp;
         $DB->update_record('quiz_attempts', $this->attempt);
 
@@ -1753,30 +1841,30 @@ class quiz_attempt {
     protected function fire_state_transition_event($eventclass, $timestamp, $studentisonline) {
         global $USER;
         $quizrecord = $this->get_quiz();
-        $params = array(
+        $params = [
             'context' => $this->get_quizobj()->get_context(),
             'courseid' => $this->get_courseid(),
             'objectid' => $this->attempt->id,
             'relateduserid' => $this->attempt->userid,
-            'other' => array(
+            'other' => [
                 'submitterid' => CLI_SCRIPT ? null : $USER->id,
                 'quizid' => $quizrecord->id,
                 'studentisonline' => $studentisonline
-            )
-        );
+            ]
+        ];
         $event = $eventclass::create($params);
         $event->add_record_snapshot('quiz', $this->get_quiz());
         $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
         $event->trigger();
     }
 
-    // Private methods =========================================================
+    // Private methods =========================================================.
 
     /**
      * Get a URL for a particular question on a particular page of the quiz.
-     * Used by {@link attempt_url()} and {@link review_url()}.
+     * Used by {@see attempt_url()} and {@see review_url()}.
      *
-     * @param string $script. Used in the URL like /mod/quiz/$script.php.
+     * @param string $script e.g. 'attempt' or 'review'. Used in the URL like /mod/quiz/$script.php.
      * @param int $slot identifies the specific question on the page to jump to.
      *      0 to just use the $page parameter.
      * @param int $page -1 to look up the page number from the slot, otherwise
@@ -1826,7 +1914,7 @@ class quiz_attempt {
 
         } else {
             $url = new moodle_url('/mod/quiz/' . $script . '.php' . $fragment,
-                    array('attempt' => $this->attempt->id, 'cmid' => $this->get_cmid()));
+                    ['attempt' => $this->attempt->id, 'cmid' => $this->get_cmid()]);
             if ($page == 0 && $showall != $defaultshowall) {
                 $url->param('showall', (int) $showall);
             } else if ($page > 0) {
@@ -2005,7 +2093,7 @@ class quiz_attempt {
         global $DB;
 
         if ($this->check_page_access($page)) {
-            $DB->set_field('quiz_attempts', 'currentpage', $page, array('id' => $this->get_attemptid()));
+            $DB->set_field('quiz_attempts', 'currentpage', $page, ['id' => $this->get_attemptid()]);
             return true;
         }
         return false;
@@ -2017,16 +2105,16 @@ class quiz_attempt {
      * @since Moodle 3.1
      */
     public function fire_attempt_viewed_event() {
-        $params = array(
+        $params = [
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
             'context' => context_module::instance($this->get_cmid()),
-            'other' => array(
+            'other' => [
                 'quizid' => $this->get_quizid(),
                 'page' => $this->get_currentpage()
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\attempt_viewed::create($params);
         $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
         $event->trigger();
@@ -2106,15 +2194,15 @@ class quiz_attempt {
      */
     public function fire_attempt_summary_viewed_event() {
 
-        $params = array(
+        $params = [
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
             'context' => context_module::instance($this->get_cmid()),
-            'other' => array(
+            'other' => [
                 'quizid' => $this->get_quizid()
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\attempt_summary_viewed::create($params);
         $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
         $event->trigger();
@@ -2127,15 +2215,15 @@ class quiz_attempt {
      */
     public function fire_attempt_reviewed_event() {
 
-        $params = array(
+        $params = [
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
             'context' => context_module::instance($this->get_cmid()),
-            'other' => array(
+            'other' => [
                 'quizid' => $this->get_quizid()
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\attempt_reviewed::create($params);
         $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
         $event->trigger();
