@@ -32,7 +32,6 @@ use popup_action;
 use question_display_options;
 use quiz;
 use quiz_attempt;
-use quiz_nav_panel_base;
 use renderable;
 use single_button;
 use stdClass;
@@ -325,9 +324,9 @@ class renderer extends plugin_renderer_base {
     /**
      * Outputs the navigation block panel
      *
-     * @param quiz_nav_panel_base $panel instance of quiz_nav_panel_base
+     * @param navigation_panel_base $panel
      */
-    public function navigation_panel(quiz_nav_panel_base $panel) {
+    public function navigation_panel(navigation_panel_base $panel) {
 
         $output = '';
         $userpicture = $panel->user_picture();
