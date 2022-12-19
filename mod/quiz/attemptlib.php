@@ -28,6 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use mod_quiz\access_manager;
+use mod_quiz\output\links_to_other_attempts;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
 
@@ -1889,14 +1890,14 @@ class quiz_attempt {
      *
      * The $url passed in must contain an attempt parameter.
      *
-     * The {@link mod_quiz_links_to_other_attempts} object returned contains an
+     * The {@see links_to_other_attempts} object returned contains an
      * array with keys that are the attempt number, 1, 2, 3.
      * The array values are either a {@link moodle_url} with the attempt parameter
      * updated to point to the attempt id of the other attempt, or null corresponding
      * to the current attempt number.
      *
      * @param moodle_url $url a URL.
-     * @return mod_quiz_links_to_other_attempts|bool containing array int => null|moodle_url.
+     * @return links_to_other_attempts|bool containing array int => null|moodle_url.
      *      False if none.
      */
     public function links_to_other_attempts(moodle_url $url) {
@@ -1905,7 +1906,7 @@ class quiz_attempt {
             return false;
         }
 
-        $links = new mod_quiz_links_to_other_attempts();
+        $links = new links_to_other_attempts();
         foreach ($attempts as $at) {
             if ($at->id == $this->attempt->id) {
                 $links->links[$at->attempt] = null;
@@ -1921,15 +1922,15 @@ class quiz_attempt {
      *
      * The $url passed in must contain a slot parameter.
      *
-     * The {@link mod_quiz_links_to_other_attempts} object returned contains an
+     * The {@see links_to_other_attempts} object returned contains an
      * array with keys that are the redo number, 1, 2, 3.
-     * The array values are either a {@link moodle_url} with the slot parameter
+     * The array values are either a {@see moodle_url} with the slot parameter
      * updated to point to the slot that has that redo of this question; or null
      * corresponding to the redo identified by $slot.
      *
      * @param int $slot identifies a question in this attempt.
      * @param moodle_url $baseurl the base URL to modify to generate each link.
-     * @return mod_quiz_links_to_other_attempts|null containing array int => null|moodle_url,
+     * @return links_to_other_attempts|null containing array int => null|moodle_url,
      *      or null if the question in this slot has not been redone.
      */
     public function links_to_other_redos($slot, moodle_url $baseurl) {
@@ -1940,7 +1941,7 @@ class quiz_attempt {
             return null;
         }
 
-        $links = new mod_quiz_links_to_other_attempts();
+        $links = new links_to_other_attempts();
         $index = 1;
         foreach ($qas as $qa) {
             if ($qa->get_slot() == $slot) {

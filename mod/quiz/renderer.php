@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use mod_quiz\access_manager;
 use mod_quiz\form\preflight_check_form;
+use mod_quiz\output\links_to_other_attempts;
 use mod_quiz\question\display_options;
 
 
@@ -410,12 +411,13 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     /**
-     * outputs the link the other attempts.
+     * Renders a list of links the other attempts.
      *
-     * @param mod_quiz_links_to_other_attempts $links
+     * @param links_to_other_attempts $links
+     * @return string HTML fragment.
      */
-    protected function render_mod_quiz_links_to_other_attempts(
-            mod_quiz_links_to_other_attempts $links) {
+    protected function render_links_to_other_attempts(
+            links_to_other_attempts $links) {
         $attemptlinks = array();
         foreach ($links->links as $attempt => $url) {
             if (!$url) {
@@ -1416,15 +1418,19 @@ class mod_quiz_renderer extends plugin_renderer_base {
                     array('id' => 'connection-error', 'style' => 'display: none;', 'role' => 'alert')) .
                     html_writer::tag('div', $ok, array('id' => 'connection-ok', 'style' => 'display: none;', 'role' => 'alert'));
     }
-}
 
 
-class mod_quiz_links_to_other_attempts implements renderable {
     /**
-     * @var array string attempt number => url, or null for the current attempt.
-     * url may be either a moodle_url, or a renderable.
+     * Deprecated version of render_links_to_other_attempts.
+     *
+     * @param links_to_other_attempts $links
+     * @return string HTML fragment.
+     * @deprecated since Moodle 4.2. Please use render_links_to_other_attempts instead.
+     * @todo MDL-76612 Final deprecation in Moodle 4.6
      */
-    public $links = array();
+    protected function render_mod_quiz_links_to_other_attempts(links_to_other_attempts $links) {
+        return $this->render_links_to_other_attempts($links);
+    }
 }
 
 
