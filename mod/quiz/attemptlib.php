@@ -30,8 +30,6 @@ defined('MOODLE_INTERNAL') || die();
 use mod_quiz\access_manager;
 use mod_quiz\output\links_to_other_attempts;
 use mod_quiz\output\navigation_panel_base;
-use mod_quiz\output\navigation_question_button;
-use mod_quiz\output\navigation_section_heading;
 use mod_quiz\output\renderer;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
@@ -1872,7 +1870,7 @@ class quiz_attempt {
      * Get the navigation panel object for this attempt.
      *
      * @param renderer $output the quiz renderer to use to output things.
-     * @param string $panelclass The type of panel, quiz_attempt_nav_panel or quiz_review_nav_panel
+     * @param string $panelclass The type of panel, navigation_panel_attempt::class or quiz_review_nav_panel
      * @param int $page the current page number.
      * @param bool $showall whether we are showing the whole quiz on one page. (Used by review.php.)
      * @return block_contents the requested object.
@@ -2710,39 +2708,6 @@ class quiz_attempt {
             }
         }
         return $totalunanswered;
-    }
-}
-
-
-/**
- * Specialisation of {@see navigation_panel_base} for the attempt quiz page.
- *
- * @copyright  2008 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 2.0
- */
-class quiz_attempt_nav_panel extends navigation_panel_base {
-    public function get_question_url($slot) {
-        if ($this->attemptobj->can_navigate_to($slot)) {
-            return $this->attemptobj->attempt_url($slot, -1, $this->page);
-        } else {
-            return null;
-        }
-    }
-
-    public function render_before_button_bits(renderer $output) {
-        return html_writer::tag('div', get_string('navnojswarning', 'quiz'),
-                array('id' => 'quiznojswarning'));
-    }
-
-    public function render_end_bits(renderer $output) {
-        if ($this->page == -1) {
-            // Don't link from the summary page to itself.
-            return '';
-        }
-        return html_writer::link($this->attemptobj->summary_url(),
-                get_string('endtest', 'quiz'), array('class' => 'endtestlink aalink')) .
-                $this->render_restart_preview_link($output);
     }
 }
 
