@@ -16,6 +16,7 @@
 
 namespace mod_quiz\output;
 
+use moodle_page;
 use moodle_url;
 use question_attempt;
 use question_display_options;
@@ -25,7 +26,7 @@ use renderable;
 use user_picture;
 
 /**
- * Represents the navigation panel, and builds a {@link block_contents} to allow it to be output.
+ * Represents the navigation panel, and builds a {@see block_contents} to allow it to be output.
  *
  * This class is not currently renderable or templatable, but it probably should be in the future,
  * which is why it is already in the output namespace.
@@ -45,6 +46,14 @@ abstract class navigation_panel_base {
     /** @var boolean */
     protected $showall;
 
+    /**
+     * Constructor.
+     *
+     * @param quiz_attempt $attemptobj construct the panel for this attempt.
+     * @param question_display_options $options display options in force.
+     * @param int $page which page of the quiz attempt is being shown, -1 if all.
+     * @param bool $showall whether all pages are being shown at once.
+     */
     public function __construct(quiz_attempt $attemptobj,
             question_display_options $options, $page, $showall) {
         $this->attemptobj = $attemptobj;
@@ -96,6 +105,13 @@ abstract class navigation_panel_base {
         return $buttons;
     }
 
+    /**
+     * Get the human-readable description of the current state of a particular question.
+     *
+     * @param question_attempt $qa the attempt at the question of interest.
+     * @param bool $showcorrectness whether the current use is allowed to see if they have got the question right.
+     * @return string Human-readable description of the state.
+     */
     protected function get_state_string(question_attempt $qa, $showcorrectness) {
         if ($qa->get_question(false)->length > 0) {
             return $qa->get_state_string($showcorrectness);
@@ -110,7 +126,7 @@ abstract class navigation_panel_base {
     }
 
     /**
-     * Hook for subclasses to override.
+     * Hook for subclasses to override to do output above the question buttons.
      *
      * @param renderer $output the quiz renderer to use.
      * @return string HTML to output.
@@ -119,6 +135,12 @@ abstract class navigation_panel_base {
         return '';
     }
 
+    /**
+     * Hook that subclasses must override to do output after the question buttons.
+     *
+     * @param renderer $output the quiz renderer to use.
+     * @return string HTML to output.
+     */
     abstract public function render_end_bits(renderer $output);
 
     /**
@@ -135,8 +157,19 @@ abstract class navigation_panel_base {
                 $this->attemptobj->start_attempt_url(), array('forcenew' => true)));
     }
 
-    protected abstract function get_question_url($slot);
+    /**
+     * Get the URL to navigate to a particular question.
+     *
+     * @param int $slot slot number, to identify the question.
+     * @return moodle_url|null URL if the user can navigate there, or null if they cannot.
+     */
+    abstract protected function get_question_url($slot);
 
+    /**
+     * Get the user picture which should be displayed, if required.
+     *
+     * @return user_picture|null
+     */
     public function user_picture() {
         global $DB;
         if ($this->attemptobj->get_quiz()->showuserpicture == QUIZ_SHOWIMAGE_NONE) {
