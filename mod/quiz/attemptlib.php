@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use mod_quiz\access_manager;
 use mod_quiz\output\links_to_other_attempts;
+use mod_quiz\output\navigation_question_button;
 use mod_quiz\output\renderer;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
@@ -2733,35 +2734,6 @@ class quiz_nav_section_heading implements renderable {
 
 
 /**
- * Represents a single link in the navigation panel.
- *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 2.1
- */
-class quiz_nav_question_button implements renderable {
-    /** @var string id="..." to add to the HTML for this button. */
-    public $id;
-    /** @var string number to display in this button. Either the question number of 'i'. */
-    public $number;
-    /** @var string class to add to the class="" attribute to represnt the question state. */
-    public $stateclass;
-    /** @var string Textual description of the question state, e.g. to use as a tool tip. */
-    public $statestring;
-    /** @var int the page number this question is on. */
-    public $page;
-    /** @var bool true if this question is on the current page. */
-    public $currentpage;
-    /** @var bool true if this question has been flagged. */
-    public $flagged;
-    /** @var moodle_url the link this button goes to, or null if there should not be a link. */
-    public $url;
-    /** @var int QUIZ_NAVMETHOD_FREE or QUIZ_NAVMETHOD_SEQ. */
-    public $navmethod;
-}
-
-
-/**
  * Represents the navigation panel, and builds a {@link block_contents} to allow
  * it to be output.
  *
@@ -2806,7 +2778,7 @@ abstract class quiz_nav_panel_base {
             $qa = $this->attemptobj->get_question_attempt($slot);
             $showcorrectness = $this->options->correctness && $qa->has_marks();
 
-            $button = new quiz_nav_question_button();
+            $button = new navigation_question_button();
             $button->id          = 'quiznavbutton' . $slot;
             $button->number      = $this->attemptobj->get_question_number($slot);
             $button->stateclass  = $qa->get_state_class($showcorrectness);

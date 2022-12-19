@@ -59,4 +59,5 @@ $renamedclasses = [
     'mod_quiz_links_to_other_attempts' => 'mod_quiz\output\links_to_other_attempts',
     'mod_quiz_view_object' => 'mod_quiz\output\view_page',
     'mod_quiz_renderer' => 'mod_quiz\output\renderer',
+    'quiz_nav_question_button' => 'mod_quiz\output\navigation_question_button',
 ];

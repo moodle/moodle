@@ -33,7 +33,6 @@ use question_display_options;
 use quiz;
 use quiz_attempt;
 use quiz_nav_panel_base;
-use quiz_nav_question_button;
 use quiz_nav_section_heading;
 use renderable;
 use single_button;
@@ -61,8 +60,7 @@ class renderer extends plugin_renderer_base {
      * @return string HTML to display.
      */
     public function review_page(quiz_attempt $attemptobj, $slots, $page, $showall,
-                                $lastpage, display_options $displayoptions,
-                                $summarydata) {
+            $lastpage, display_options $displayoptions, $summarydata) {
 
         $output = '';
         $output .= $this->header();
@@ -175,8 +173,8 @@ class renderer extends plugin_renderer_base {
             }
 
             $output .= html_writer::tag('tr',
-                html_writer::tag('th', $title, ['class' => 'cell', 'scope' => 'row']) .
-                        html_writer::tag('td', $content, ['class' => 'cell'])
+                    html_writer::tag('th', $title, ['class' => 'cell', 'scope' => 'row']) .
+                    html_writer::tag('td', $content, ['class' => 'cell'])
             );
         }
 
@@ -196,7 +194,7 @@ class renderer extends plugin_renderer_base {
      * @param display_options $displayoptions instance of display_options
      */
     public function questions(quiz_attempt $attemptobj, $reviewing, $slots, $page, $showall,
-                              display_options $displayoptions) {
+            display_options $displayoptions) {
         $output = '';
         foreach ($slots as $slot) {
             $output .= $attemptobj->render_question($slot, $reviewing, $this,
@@ -313,7 +311,7 @@ class renderer extends plugin_renderer_base {
             $this->initialise_timer($timerstartvalue, $ispreview);
         }
 
-        return $this->output->render_from_template('mod_quiz/timer', (object)[]);
+        return $this->output->render_from_template('mod_quiz/timer', (object) []);
     }
 
     /**
@@ -363,10 +361,10 @@ class renderer extends plugin_renderer_base {
     /**
      * Display a quiz navigation button.
      *
-     * @param quiz_nav_question_button $button
+     * @param navigation_question_button $button
      * @return string HTML fragment.
      */
-    protected function render_quiz_nav_question_button(quiz_nav_question_button $button) {
+    protected function render_navigation_question_button(navigation_question_button $button) {
         $classes = ['qnbutton', $button->stateclass, $button->navmethod, 'btn'];
         $extrainfo = [];
 
@@ -394,10 +392,10 @@ class renderer extends plugin_renderer_base {
         $a->number = $button->number;
         $a->attributes = implode(' ', $extrainfo);
         $tagcontents = html_writer::tag('span', '', ['class' => 'thispageholder']) .
-                        html_writer::tag('span', '', ['class' => 'trafficlight']) .
-                        get_string($qnostring, 'quiz', $a);
+                html_writer::tag('span', '', ['class' => 'trafficlight']) .
+                get_string($qnostring, 'quiz', $a);
         $tagattributes = ['class' => implode(' ', $classes), 'id' => $button->id,
-                                  'title' => $button->statestring, 'data-quiz-page' => $button->page];
+                'title' => $button->statestring, 'data-quiz-page' => $button->page];
 
         if ($button->url) {
             return html_writer::link($button->url, $tagcontents, $tagattributes);
@@ -435,10 +433,12 @@ class renderer extends plugin_renderer_base {
         foreach ($links->links as $attempt => $url) {
             if (!$url) {
                 $attemptlinks[] = html_writer::tag('strong', $attempt);
-            } else if ($url instanceof renderable) {
-                $attemptlinks[] = $this->render($url);
             } else {
-                $attemptlinks[] = html_writer::link($url, $attempt);
+                if ($url instanceof renderable) {
+                    $attemptlinks[] = $this->render($url);
+                } else {
+                    $attemptlinks[] = html_writer::link($url, $attempt);
+                }
             }
         }
         return implode(', ', $attemptlinks);
@@ -519,9 +519,9 @@ class renderer extends plugin_renderer_base {
             return '';
         }
         return $this->notification(
-            html_writer::tag('p', get_string('accessnoticesheader', 'quiz')) . $this->access_messages($messages),
-            'warning',
-            false
+                html_writer::tag('p', get_string('accessnoticesheader', 'quiz')) . $this->access_messages($messages),
+                'warning',
+                false
         );
     }
 
@@ -540,9 +540,9 @@ class renderer extends plugin_renderer_base {
         // Start the form.
         $output .= html_writer::start_tag('form',
                 ['action' => new moodle_url($attemptobj->processattempt_url(),
-                ['cmid' => $attemptobj->get_cmid()]), 'method' => 'post',
-                'enctype' => 'multipart/form-data', 'accept-charset' => 'utf-8',
-                'id' => 'responseform']);
+                        ['cmid' => $attemptobj->get_cmid()]), 'method' => 'post',
+                        'enctype' => 'multipart/form-data', 'accept-charset' => 'utf-8',
+                        'id' => 'responseform']);
         $output .= html_writer::start_tag('div');
 
         // Print all the questions.
@@ -622,9 +622,9 @@ class renderer extends plugin_renderer_base {
      * @return string HTML fragment.
      */
     public function redo_question_button($slot, $disabled) {
-        $attributes = ['type' => 'submit',  'name' => 'redoslot' . $slot,
-            'value' => get_string('redoquestion', 'quiz'),
-            'class' => 'mod_quiz-redo_question_button btn btn-secondary'];
+        $attributes = ['type' => 'submit', 'name' => 'redoslot' . $slot,
+                'value' => get_string('redoquestion', 'quiz'),
+                'class' => 'mod_quiz-redo_question_button btn btn-secondary'];
         if ($disabled) {
             $attributes['disabled'] = 'disabled';
         }
@@ -638,13 +638,14 @@ class renderer extends plugin_renderer_base {
      * @param bool $ispreview true if this is a preview attempt.
      */
     public function initialise_timer($timerstartvalue, $ispreview) {
-        $options = [$timerstartvalue, (bool)$ispreview];
+        $options = [$timerstartvalue, (bool) $ispreview];
         $this->page->requires->js_init_call('M.mod_quiz.timer.init', $options, false, quiz_get_js_module());
     }
 
     /**
      * Output a page with an optional message, and JavaScript code to close the
      * current window and redirect the parent window to a new URL.
+     *
      * @param moodle_url $url the URL to redirect the parent window to.
      * @param string $message message to display before closing the window. (optional)
      * @return string HTML to output.
@@ -737,11 +738,13 @@ class renderer extends plugin_renderer_base {
                 $rowclasses = 'quizsummaryheading';
                 if ($heading) {
                     $heading = format_string($heading);
-                } else if (count($attemptobj->get_quizobj()->get_sections()) > 1) {
-                    // If this is the start of an unnamed section, and the quiz has more
-                    // than one section, then add a default heading.
-                    $heading = get_string('sectionnoname', 'quiz');
-                    $rowclasses .= ' dimmed_text';
+                } else {
+                    if (count($attemptobj->get_quizobj()->get_sections()) > 1) {
+                        // If this is the start of an unnamed section, and the quiz has more
+                        // than one section, then add a default heading.
+                        $heading = get_string('sectionnoname', 'quiz');
+                        $rowclasses .= ' dimmed_text';
+                    }
                 }
                 $cell = new html_table_cell(format_string($heading));
                 $cell->header = true;
@@ -768,14 +771,14 @@ class renderer extends plugin_renderer_base {
                         $attemptobj->get_question_status($slot, $displayoptions->correctness)];
             } else {
                 $row = [$attemptobj->get_question_number($slot) . $flag,
-                                $attemptobj->get_question_status($slot, $displayoptions->correctness)];
+                        $attemptobj->get_question_status($slot, $displayoptions->correctness)];
             }
             if ($markscolumn) {
                 $row[] = $attemptobj->get_question_mark($slot);
             }
             $table->data[] = $row;
             $table->rowclasses[] = 'quizsummary' . $slot . ' ' . $attemptobj->get_question_state_class(
-                    $slot, $displayoptions->correctness);
+                            $slot, $displayoptions->correctness);
         }
 
         // Print the summary table.
@@ -801,12 +804,12 @@ class renderer extends plugin_renderer_base {
 
         // Finish attempt button.
         $options = [
-            'attempt' => $attemptobj->get_attemptid(),
-            'finishattempt' => 1,
-            'timeup' => 0,
-            'slots' => '',
-            'cmid' => $attemptobj->get_cmid(),
-            'sesskey' => sesskey(),
+                'attempt' => $attemptobj->get_attemptid(),
+                'finishattempt' => 1,
+                'timeup' => 0,
+                'slots' => '',
+                'cmid' => $attemptobj->get_cmid(),
+                'sesskey' => sesskey(),
         ];
 
         $button = new single_button(
@@ -829,13 +832,15 @@ class renderer extends plugin_renderer_base {
         if ($attemptobj->get_state() == quiz_attempt::OVERDUE) {
             $message = get_string('overduemustbesubmittedby', 'quiz', userdate($duedate));
 
-        } else if ($duedate) {
-            $message = get_string('mustbesubmittedby', 'quiz', userdate($duedate));
+        } else {
+            if ($duedate) {
+                $message = get_string('mustbesubmittedby', 'quiz', userdate($duedate));
+            }
         }
 
         $output .= $this->countdown_timer($attemptobj, time());
         $output .= $this->container($message . $this->container(
-                $this->render($button), 'controls'), 'submitbtns mdl-align');
+                        $this->render($button), 'controls'), 'submitbtns mdl-align');
 
         return $output;
     }
@@ -946,7 +951,7 @@ class renderer extends plugin_renderer_base {
 
         $this->page->requires->js_call_amd('mod_quiz/preflightcheck', 'init',
                 ['.quizstartbuttondiv [type=submit]', get_string('startattempt', 'quiz'),
-                       '#mod_quiz_preflight_form', $popupjsoptions]);
+                        '#mod_quiz_preflight_form', $popupjsoptions]);
 
         return $this->render($button) . ($preflightcheckform ? $preflightcheckform->render() : '');
     }
@@ -994,7 +999,7 @@ class renderer extends plugin_renderer_base {
         $guestno = html_writer::tag('p', get_string('guestsno', 'quiz'));
         $liketologin = html_writer::tag('p', get_string('liketologin'));
         $referer = get_local_referer(false);
-        $output .= $this->confirm($guestno."\n\n".$liketologin."\n", get_login_url(), $referer);
+        $output .= $this->confirm($guestno . "\n\n" . $liketologin . "\n", get_login_url(), $referer);
         return $output;
     }
 
@@ -1016,7 +1021,7 @@ class renderer extends plugin_renderer_base {
         $youneedtoenrol = html_writer::tag('p', get_string('youneedtoenrol', 'quiz'));
         $button = html_writer::tag('p',
                 $this->continue_button($CFG->wwwroot . '/course/view.php?id=' . $course->id));
-        $output .= $this->box($youneedtoenrol."\n\n".$button."\n", 'generalbox', 'notice');
+        $output .= $this->box($youneedtoenrol . "\n\n" . $button . "\n", 'generalbox', 'notice');
         return $output;
     }
 
@@ -1058,6 +1063,7 @@ class renderer extends plugin_renderer_base {
 
     /**
      * Output the quiz intro.
+     *
      * @param object $quiz the quiz settings.
      * @param object $cm the course_module object.
      * @return string HTML to output.
@@ -1212,15 +1218,15 @@ class renderer extends plugin_renderer_base {
 
             case quiz_attempt::OVERDUE:
                 return get_string('stateoverdue', 'quiz') . html_writer::tag('span',
-                        get_string('stateoverduedetails', 'quiz',
-                                userdate($attemptobj->get_due_date())),
-                        ['class' => 'statedetails']);
+                                get_string('stateoverduedetails', 'quiz',
+                                        userdate($attemptobj->get_due_date())),
+                                ['class' => 'statedetails']);
 
             case quiz_attempt::FINISHED:
                 return get_string('statefinished', 'quiz') . html_writer::tag('span',
-                        get_string('statefinisheddetails', 'quiz',
-                                userdate($attemptobj->get_submitted_date())),
-                        ['class' => 'statedetails']);
+                                get_string('statefinisheddetails', 'quiz',
+                                        userdate($attemptobj->get_submitted_date())),
+                                ['class' => 'statedetails']);
 
             case quiz_attempt::ABANDONED:
                 return get_string('stateabandoned', 'quiz');
@@ -1265,7 +1271,7 @@ class renderer extends plugin_renderer_base {
         if ($viewobj->mygradeoverridden) {
 
             $resultinfo .= html_writer::tag('p', get_string('overriddennotice', 'grades'),
-                    ['class' => 'overriddennotice'])."\n";
+                            ['class' => 'overriddennotice']) . "\n";
         }
         if ($viewobj->gradebookfeedback) {
             $resultinfo .= $this->heading(get_string('comment', 'quiz'), 3);
@@ -1274,8 +1280,8 @@ class renderer extends plugin_renderer_base {
         if ($viewobj->feedbackcolumn) {
             $resultinfo .= $this->heading(get_string('overallfeedback', 'quiz'), 3);
             $resultinfo .= html_writer::div(
-                    quiz_feedback_for_grade($viewobj->mygrade, $quiz, $context),
-                    'quizgradefeedback') . "\n";
+                            quiz_feedback_for_grade($viewobj->mygrade, $quiz, $context),
+                            'quizgradefeedback') . "\n";
         }
 
         if ($resultinfo) {
@@ -1308,6 +1314,7 @@ class renderer extends plugin_renderer_base {
     /**
      * Displayed where there might normally be a review link, to explain why the
      * review is not available at this time.
+     *
      * @param string $message optional message explaining why the review is not possible.
      * @return string HTML to output.
      */
@@ -1330,7 +1337,7 @@ class renderer extends plugin_renderer_base {
      * @return string HTML fragment for the link.
      */
     public function quiz_attempt_summary_link_to_reports($quiz, $cm, $context,
-                                                          $returnzero = false, $currentgroup = 0) {
+            $returnzero = false, $currentgroup = 0) {
         global $CFG;
         $summary = quiz_num_attempt_summary($quiz, $cm, $returnzero, $currentgroup);
         if (!$summary) {
@@ -1396,11 +1403,12 @@ class renderer extends plugin_renderer_base {
      */
     public function chart(\core\chart_base $chart, $title, $attrs = []) {
         return $this->heading($title, 3) . html_writer::tag('div',
-            $this->render($chart), array_merge(['class' => 'graph'], $attrs));
+                        $this->render($chart), array_merge(['class' => 'graph'], $attrs));
     }
 
     /**
      * Output a graph, or a message saying that GD is required.
+     *
      * @param moodle_url $url the URL of the graph.
      * @param string $title the title to display above the graph.
      * @return string HTML of the graph.
@@ -1420,8 +1428,8 @@ class renderer extends plugin_renderer_base {
         $warning = format_text(get_string('connectionerror', 'quiz'), FORMAT_MARKDOWN, $options);
         $ok = format_text(get_string('connectionok', 'quiz'), FORMAT_MARKDOWN, $options);
         return html_writer::tag('div', $warning,
-                    ['id' => 'connection-error', 'style' => 'display: none;', 'role' => 'alert']) .
-                    html_writer::tag('div', $ok, ['id' => 'connection-ok', 'style' => 'display: none;', 'role' => 'alert']);
+                        ['id' => 'connection-error', 'style' => 'display: none;', 'role' => 'alert']) .
+                html_writer::tag('div', $ok, ['id' => 'connection-ok', 'style' => 'display: none;', 'role' => 'alert']);
     }
 
     /**
@@ -1434,5 +1442,17 @@ class renderer extends plugin_renderer_base {
      */
     protected function render_mod_quiz_links_to_other_attempts(links_to_other_attempts $links) {
         return $this->render_links_to_other_attempts($links);
+    }
+
+    /**
+     * Deprecated version of render_navigation_question_button.
+     *
+     * @param navigation_question_button $button
+     * @return string HTML fragment.
+     * @deprecated since Moodle 4.2. Please use render_links_to_other_attempts instead.
+     * @todo MDL-76612 Final deprecation in Moodle 4.6
+     */
+    protected function render_quiz_nav_question_button(navigation_question_button $button) {
+        return $this->render_navigation_question_button($button);
     }
 }
