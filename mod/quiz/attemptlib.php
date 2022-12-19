@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use mod_quiz\access_manager;
 use mod_quiz\output\links_to_other_attempts;
+use mod_quiz\output\renderer;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
 
@@ -1698,11 +1699,11 @@ class quiz_attempt {
      *
      * @param int $slot identifies the question in the attempt.
      * @param bool $reviewing is the being printed on an attempt or a review page.
-     * @param mod_quiz_renderer $renderer the quiz renderer.
+     * @param renderer $renderer the quiz renderer.
      * @param moodle_url $thispageurl the URL of the page this question is being printed on.
      * @return string HTML for the question in its current state.
      */
-    public function render_question($slot, $reviewing, mod_quiz_renderer $renderer, $thispageurl = null) {
+    public function render_question($slot, $reviewing, renderer $renderer, $thispageurl = null) {
         if ($this->is_blocked_by_previous_question($slot)) {
             $placeholderqa = $this->make_blocked_question_placeholder($slot);
 
@@ -1725,12 +1726,12 @@ class quiz_attempt {
      * @param int $slot identifies the question in the attempt.
      * @param bool $reviewing is the being printed on an attempt or a review page.
      * @param moodle_url $thispageurl the URL of the page this question is being printed on.
-     * @param mod_quiz_renderer $renderer the quiz renderer.
+     * @param renderer $renderer the quiz renderer.
      * @param int|null $seq the seq number of the past state to display.
      * @return string HTML fragment.
      */
     protected function render_question_helper($slot, $reviewing, $thispageurl,
-            mod_quiz_renderer $renderer, $seq) {
+            renderer $renderer, $seq) {
         $originalslot = $this->get_original_slot($slot);
         $number = $this->get_question_number($originalslot);
         $displayoptions = $this->get_display_options_with_edit_link($reviewing, $slot, $thispageurl);
@@ -1811,12 +1812,12 @@ class quiz_attempt {
      * @param int $slot the slot number of a question in this quiz attempt.
      * @param int $seq the seq number of the past state to display.
      * @param bool $reviewing is the being printed on an attempt or a review page.
-     * @param mod_quiz_renderer $renderer the quiz renderer.
+     * @param renderer $renderer the quiz renderer.
      * @param moodle_url $thispageurl the URL of the page this question is being printed on.
      * @return string HTML for the question in its current state.
      */
     public function render_question_at_step($slot, $seq, $reviewing,
-            mod_quiz_renderer $renderer, $thispageurl = null) {
+            renderer $renderer, $thispageurl = null) {
         return $this->render_question_helper($slot, $reviewing, $thispageurl, $renderer, $seq);
     }
 
@@ -1867,13 +1868,13 @@ class quiz_attempt {
     /**
      * Get the navigation panel object for this attempt.
      *
-     * @param mod_quiz_renderer $output the quiz renderer to use to output things.
+     * @param renderer $output the quiz renderer to use to output things.
      * @param string $panelclass The type of panel, quiz_attempt_nav_panel or quiz_review_nav_panel
      * @param int $page the current page number.
      * @param bool $showall whether we are showing the whole quiz on one page. (Used by review.php.)
      * @return block_contents the requested object.
      */
-    public function get_navigation_panel(mod_quiz_renderer $output,
+    public function get_navigation_panel(renderer $output,
              $panelclass, $page, $showall = false) {
         $panel = new $panelclass($this, $this->get_display_options(true), $page, $showall);
 
@@ -2845,19 +2846,19 @@ abstract class quiz_nav_panel_base {
     /**
      * Hook for subclasses to override.
      *
-     * @param mod_quiz_renderer $output the quiz renderer to use.
+     * @param renderer $output the quiz renderer to use.
      * @return string HTML to output.
      */
-    public function render_before_button_bits(mod_quiz_renderer $output) {
+    public function render_before_button_bits(renderer $output) {
         return '';
     }
 
-    abstract public function render_end_bits(mod_quiz_renderer $output);
+    abstract public function render_end_bits(renderer $output);
 
     /**
      * Render the restart preview button.
      *
-     * @param mod_quiz_renderer $output the quiz renderer to use.
+     * @param renderer $output the quiz renderer to use.
      * @return string HTML to output.
      */
     protected function render_restart_preview_link($output) {
@@ -2917,12 +2918,12 @@ class quiz_attempt_nav_panel extends quiz_nav_panel_base {
         }
     }
 
-    public function render_before_button_bits(mod_quiz_renderer $output) {
+    public function render_before_button_bits(renderer $output) {
         return html_writer::tag('div', get_string('navnojswarning', 'quiz'),
                 array('id' => 'quiznojswarning'));
     }
 
-    public function render_end_bits(mod_quiz_renderer $output) {
+    public function render_end_bits(renderer $output) {
         if ($this->page == -1) {
             // Don't link from the summary page to itself.
             return '';
@@ -2946,7 +2947,7 @@ class quiz_review_nav_panel extends quiz_nav_panel_base {
         return $this->attemptobj->review_url($slot, -1, $this->showall, $this->page);
     }
 
-    public function render_end_bits(mod_quiz_renderer $output) {
+    public function render_end_bits(renderer $output) {
         $html = '';
         if ($this->attemptobj->get_num_pages() > 1) {
             if ($this->showall) {

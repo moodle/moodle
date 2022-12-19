@@ -24,6 +24,7 @@
  */
 namespace mod_quiz;
 
+use mod_quiz\output\renderer;
 use quiz_attempt;
 use mod_quiz\question\display_options;
 
@@ -517,7 +518,7 @@ class locallib_test extends \advanced_testcase {
         $generator = $this->getDataGenerator();
         /** @var mod_quiz_generator $quizgenerator */
         $quizgenerator = $generator->get_plugin_generator('mod_quiz');
-        /** @var mod_quiz_renderer $renderer */
+        /** @var renderer $renderer */
         $renderer = $PAGE->get_renderer('mod_quiz');
 
         // Course with quiz and a group - plus some others, to verify they don't get counted.

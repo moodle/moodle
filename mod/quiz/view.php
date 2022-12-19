@@ -24,6 +24,7 @@
  */
 
 use mod_quiz\access_manager;
+use mod_quiz\output\renderer;
 use mod_quiz\output\view_page;
 
 require_once(__DIR__ . '/../../config.php');
@@ -149,7 +150,7 @@ if (html_is_blank($quiz->intro)) {
     $PAGE->activityheader->set_description('');
 }
 $PAGE->add_body_class('limitedwidth');
-/** @var mod_quiz_renderer $output */
+/** @var renderer $output */
 $output = $PAGE->get_renderer('mod_quiz');
 
 // Print table with existing attempts.

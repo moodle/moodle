@@ -58,4 +58,5 @@ $renamedclasses = [
     'quiz_add_random_form' => 'mod_quiz\form\add_random_form',
     'mod_quiz_links_to_other_attempts' => 'mod_quiz\output\links_to_other_attempts',
     'mod_quiz_view_object' => 'mod_quiz\output\view_page',
+    'mod_quiz_renderer' => 'mod_quiz\output\renderer',
 ];

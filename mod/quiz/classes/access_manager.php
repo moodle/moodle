@@ -21,7 +21,7 @@ use mod_quiz\form\preflight_check_form;
 use mod_quiz\local\access_rule_base;
 use mod_quiz\question\display_options;
 use mod_quiz_mod_form;
-use mod_quiz_renderer;
+use mod_quiz\output\renderer;
 use moodle_page;
 use moodle_url;
 use MoodleQuickForm;
@@ -524,10 +524,10 @@ class access_manager {
      *
      * This method does not return;
      *
-     * @param mod_quiz_renderer $output the quiz renderer.
+     * @param renderer $output the quiz renderer.
      * @param string $message optional message to output while redirecting.
      */
-    public function back_to_view_page(mod_quiz_renderer $output, string $message = ''): void {
+    public function back_to_view_page(renderer $output, string $message = ''): void {
          // Actually return type 'never' on the previous line, once 8.1 is our minimum PHP version.
         if ($this->attempt_must_be_in_popup()) {
             echo $output->close_attempt_popup(new moodle_url($this->quizobj->view_url()), $message);
@@ -542,11 +542,11 @@ class access_manager {
      *
      * @param stdClass $attempt the attempt object
      * @param mixed $nolongerused not used any more.
-     * @param mod_quiz_renderer $output quiz renderer instance.
+     * @param renderer $output quiz renderer instance.
      * @return string some HTML, the $linktext either unmodified or wrapped in a
      *      link to the review page.
      */
-    public function make_review_link(stdClass $attempt, $nolongerused, mod_quiz_renderer $output): string {
+    public function make_review_link(stdClass $attempt, $nolongerused, renderer $output): string {
 
         // If the attempt is still open, don't link.
         if (in_array($attempt->state, [quiz_attempt::IN_PROGRESS, quiz_attempt::OVERDUE])) {
