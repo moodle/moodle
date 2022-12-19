@@ -55,4 +55,5 @@ $renamedclasses = [
     'mod_quiz_preflight_check_form' => 'mod_quiz\form\preflight_check_form',
     'quiz_override_form' => 'mod_quiz\form\edit_override_form',
     'quiz_access_rule_base' => 'mod_quiz\local\access_rule_base',
+    'quiz_add_random_form' => 'mod_quiz\form\add_random_form',
 ];
