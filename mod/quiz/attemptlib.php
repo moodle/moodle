@@ -1870,7 +1870,7 @@ class quiz_attempt {
      * Get the navigation panel object for this attempt.
      *
      * @param renderer $output the quiz renderer to use to output things.
-     * @param string $panelclass The type of panel, navigation_panel_attempt::class or quiz_review_nav_panel
+     * @param string $panelclass The type of panel, navigation_panel_attempt::class or navigation_panel_review::class
      * @param int $page the current page number.
      * @param bool $showall whether we are showing the whole quiz on one page. (Used by review.php.)
      * @return block_contents the requested object.
@@ -2708,35 +2708,5 @@ class quiz_attempt {
             }
         }
         return $totalunanswered;
-    }
-}
-
-
-/**
- * Specialisation of {@see navigation_panel_base} for the review quiz page.
- *
- * @copyright  2008 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 2.0
- */
-class quiz_review_nav_panel extends navigation_panel_base {
-    public function get_question_url($slot) {
-        return $this->attemptobj->review_url($slot, -1, $this->showall, $this->page);
-    }
-
-    public function render_end_bits(renderer $output) {
-        $html = '';
-        if ($this->attemptobj->get_num_pages() > 1) {
-            if ($this->showall) {
-                $html .= html_writer::link($this->attemptobj->review_url(null, 0, false),
-                        get_string('showeachpage', 'quiz'));
-            } else {
-                $html .= html_writer::link($this->attemptobj->review_url(null, 0, true),
-                        get_string('showall', 'quiz'));
-            }
-        }
-        $html .= $output->finish_review_link($this->attemptobj);
-        $html .= $this->render_restart_preview_link($output);
-        return $html;
     }
 }

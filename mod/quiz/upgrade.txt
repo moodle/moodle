@@ -47,6 +47,7 @@ This files describes API changes in the quiz code.
   - quiz_nav_section_heading => mod_quiz\output\navigation_section_heading
   - quiz_nav_panel_base => mod_quiz\output\navigation_panel_base
   - quiz_attempt_nav_panel => mod_quiz\output\navigation_panel_attempt
+  - quiz_review_nav_panel => mod_quiz\output\navigation_panel_review
 
 * The following classes have been deprecated:
   - mod_quiz_overdue_attempt_updater - merged into mod_quiz\task\update_overdue_attempts

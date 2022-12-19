@@ -25,6 +25,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\output\navigation_panel_review;
+use mod_quiz\output\renderer;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
@@ -254,10 +256,11 @@ if ($showall) {
     $lastpage = $attemptobj->is_last_page($page);
 }
 
+/** @var renderer $output */
 $output = $PAGE->get_renderer('mod_quiz');
 
 // Arrange for the navigation to be displayed.
-$navbc = $attemptobj->get_navigation_panel($output, 'quiz_review_nav_panel', $page, $showall);
+$navbc = $attemptobj->get_navigation_panel($output, navigation_panel_review::class, $page, $showall);
 $regions = $PAGE->blocks->get_regions();
 $PAGE->blocks->add_fake_block($navbc, reset($regions));
 
