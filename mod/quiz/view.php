@@ -26,6 +26,7 @@
 use mod_quiz\access_manager;
 use mod_quiz\output\renderer;
 use mod_quiz\output\view_page;
+use mod_quiz\quiz_attempt;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir.'/gradelib.php');

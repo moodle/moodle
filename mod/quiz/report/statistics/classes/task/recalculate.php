@@ -16,7 +16,7 @@
 
 namespace quiz_statistics\task;
 
-use quiz_attempt;
+use mod_quiz\quiz_attempt;
 use quiz;
 use quiz_statistics_report;
 

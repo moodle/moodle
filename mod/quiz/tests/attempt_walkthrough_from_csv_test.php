@@ -18,7 +18,6 @@ namespace mod_quiz;
 
 use question_engine;
 use quiz;
-use quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 

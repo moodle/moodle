@@ -39,6 +39,7 @@ require_once($CFG->libdir . '/questionlib.php');
 use mod_quiz\access_manager;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
+use mod_quiz\quiz_attempt;
 
 /**
  * @var int We show the countdown timer if there is less than this amount of time left before the
@@ -80,7 +81,7 @@ define('QUIZ_SHOWIMAGE_LARGE', 2);
  *
  * @param object $quizobj the quiz object to create an attempt for.
  * @param int $attemptnumber the sequence number for the attempt.
- * @param stdClass|null $lastattempt the previous attempt by this user, if any. Only needed
+ * @param stdClass|false $lastattempt the previous attempt by this user, if any. Only needed
  *         if $attemptnumber > 1 and $quiz->attemptonlast is true.
  * @param int $timenow the time the attempt was started at.
  * @param bool $ispreview whether this new attempt is a preview.
@@ -1353,7 +1354,7 @@ function quiz_questions_per_page_options() {
 
 /**
  * Get the human-readable name for a quiz attempt state.
- * @param string $state one of the state constants like {@link quiz_attempt::IN_PROGRESS}.
+ * @param string $state one of the state constants like {@see quiz_attempt::IN_PROGRESS}.
  * @return string The lang string to describe that state.
  */
 function quiz_attempt_state_name($state) {

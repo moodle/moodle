@@ -30,7 +30,6 @@ use context_module;
 use mod_quiz\task\quiz_notify_attempt_manual_grading_completed;
 use question_engine;
 use quiz;
-use quiz_attempt;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();

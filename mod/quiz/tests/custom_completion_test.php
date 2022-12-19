@@ -25,7 +25,6 @@ use grade_item;
 use mod_quiz\completion\custom_completion;
 use question_engine;
 use quiz;
-use quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 

@@ -24,6 +24,7 @@
  */
 
 use mod_quiz\local\access_rule_base;
+use mod_quiz\quiz_attempt;
 use quizaccess_seb\access_manager;
 use quizaccess_seb\settings_provider;
 
@@ -201,7 +202,7 @@ trait quizaccess_seb_test_helper_trait {
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
         // Answer the questions.
-        $attemptobj = \quiz_attempt::create($attempt->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
 
         $tosubmit = [
             1 => ['answer' => 'frog'],
@@ -211,7 +212,7 @@ trait quizaccess_seb_test_helper_trait {
         $attemptobj->process_submitted_actions($starttime, false, $tosubmit);
 
         // Finish the attempt.
-        $attemptobj = \quiz_attempt::create($attempt->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
         $attemptobj->process_finish($starttime, false);
 
         $this->setUser();

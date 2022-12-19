@@ -18,6 +18,7 @@ namespace mod_quiz\output;
 
 use mod_quiz\access_manager;
 use mod_quiz\form\preflight_check_form;
+use mod_quiz\quiz_attempt;
 use moodle_url;
 
 /**
@@ -36,7 +37,7 @@ class view_page {
     public $infomessages;
     /** @var array $attempts contains all the user's attempts at this quiz. */
     public $attempts;
-    /** @var array $attemptobjs quiz_attempt objects corresponding to $attempts. */
+    /** @var quiz_attempt[] $attemptobjs objects corresponding to $attempts. */
     public $attemptobjs;
     /** @var access_manager $accessmanager contains various access rules. */
     public $accessmanager;

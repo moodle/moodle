@@ -16,6 +16,8 @@
 
 namespace tool_recyclebin;
 
+use mod_quiz\quiz_attempt;
+
 /**
  * Recycle bin course tests.
  *
@@ -237,7 +239,7 @@ class course_bin_test extends \advanced_testcase {
         $attempts = quiz_get_user_attempts($cm->instance, $student->id);
         $this->assertEquals(1, count($attempts));
         $attempt = array_pop($attempts);
-        $attemptobj = \quiz_attempt::create($attempt->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
         $this->assertEquals($student->id, $attemptobj->get_userid());
         $this->assertEquals(true, $attemptobj->is_finished());
     }
@@ -307,10 +309,10 @@ class course_bin_test extends \advanced_testcase {
         $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $student->id);
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
         quiz_attempt_save_started($quizobj, $quba, $attempt);
-        $attemptobj = \quiz_attempt::create($attempt->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
         $tosubmit = array(1 => array('answer' => '0'));
         $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
-        $attemptobj = \quiz_attempt::create($attempt->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
         $attemptobj->process_finish($timenow, false);
     }
 }

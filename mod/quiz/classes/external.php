@@ -26,6 +26,7 @@
 
 use core_course\external\helper_for_get_mods_by_courses;
 use mod_quiz\access_manager;
+use mod_quiz\quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die;
 

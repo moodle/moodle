@@ -26,7 +26,6 @@ use moodle_page;
 use moodle_url;
 use MoodleQuickForm;
 use quiz;
-use quiz_attempt;
 use stdClass;
 
 /**

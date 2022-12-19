@@ -27,11 +27,11 @@
 namespace mod_quiz\external;
 
 use externallib_advanced_testcase;
+use mod_quiz\quiz_attempt;
 use mod_quiz_external;
 use mod_quiz\question\display_options;
 use moodle_exception;
 use quiz;
-use quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 

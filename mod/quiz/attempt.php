@@ -24,6 +24,7 @@
 
 use mod_quiz\output\navigation_panel_attempt;
 use mod_quiz\output\renderer;
+use mod_quiz\quiz_attempt;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');

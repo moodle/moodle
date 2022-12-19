@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+use mod_quiz\quiz_attempt;
 
 /**
  * Helper trait for quiz question unit tests.

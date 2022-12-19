@@ -24,9 +24,9 @@
  */
 namespace mod_quiz\task;
 
+use mod_quiz\quiz_attempt;
 use moodle_exception;
 use moodle_recordset;
-use quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 

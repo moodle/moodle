@@ -31,6 +31,7 @@ require_once(__DIR__ . '/../../../../question/tests/behat/behat_question_base.ph
 use Behat\Gherkin\Node\TableNode as TableNode;
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException;
+use mod_quiz\quiz_attempt;
 
 /**
  * Steps definitions related to mod_quiz.

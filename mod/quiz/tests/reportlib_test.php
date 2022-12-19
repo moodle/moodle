@@ -16,8 +16,6 @@
 
 namespace mod_quiz;
 
-use quiz_attempt;
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;

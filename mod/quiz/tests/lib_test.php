@@ -24,10 +24,7 @@
  */
 namespace mod_quiz;
 
-use mod_quiz\external\submit_question_version;
-use mod_quiz\question\bank\qbank_helper;
 use quiz;
-use quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 

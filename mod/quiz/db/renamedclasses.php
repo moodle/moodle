@@ -64,4 +64,5 @@ $renamedclasses = [
     'quiz_nav_panel_base' => 'mod_quiz\output\navigation_panel_base',
     'quiz_attempt_nav_panel' => 'mod_quiz\output\navigation_panel_attempt',
     'quiz_review_nav_panel' => 'mod_quiz\output\navigation_panel_review',
+    'quiz_attempt' => 'mod_quiz\quiz_attempt',
 ];

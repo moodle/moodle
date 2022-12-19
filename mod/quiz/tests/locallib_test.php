@@ -25,7 +25,6 @@
 namespace mod_quiz;
 
 use mod_quiz\output\renderer;
-use quiz_attempt;
 use mod_quiz\question\display_options;
 
 defined('MOODLE_INTERNAL') || die();

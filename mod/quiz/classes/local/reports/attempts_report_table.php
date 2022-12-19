@@ -23,6 +23,7 @@ require_once($CFG->libdir.'/tablelib.php');
 use coding_exception;
 use context_module;
 use html_writer;
+use mod_quiz\quiz_attempt;
 use moodle_url;
 use popup_action;
 use question_state;
@@ -30,7 +31,6 @@ use qubaid_condition;
 use qubaid_join;
 use qubaid_list;
 use question_engine_data_mapper;
-use quiz_attempt;
 use stdClass;
 
 /**

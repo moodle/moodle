@@ -34,6 +34,7 @@ use core_privacy\local\metadata\collection;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use core_privacy\manager;
+use mod_quiz\quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -526,7 +527,7 @@ class provider implements
 
                 // Store the quiz attempt data.
                 $data = (object) [
-                    'state' => \quiz_attempt::state_name($attempt->state),
+                    'state' => quiz_attempt::state_name($attempt->state),
                 ];
 
                 if (!empty($attempt->timestart)) {

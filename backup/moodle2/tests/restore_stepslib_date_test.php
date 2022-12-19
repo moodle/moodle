@@ -16,6 +16,8 @@
 
 namespace core_backup;
 
+use mod_quiz\quiz_attempt;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -393,7 +395,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
         // Process some responses from the student.
-        $attemptobj = \quiz_attempt::create($attempt->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
 
         $prefix1 = $quba->get_field_prefix(1);
         $prefix2 = $quba->get_field_prefix(2);
@@ -404,7 +406,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
         $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
 
         // Finish the attempt.
-        $attemptobj = \quiz_attempt::create($attempt->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
         $attemptobj->process_finish($timenow, false);
 
         $questionattemptstepdates = [];

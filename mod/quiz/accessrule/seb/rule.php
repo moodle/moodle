@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 use mod_quiz\local\access_rule_base;
+use mod_quiz\quiz_attempt;
 use quizaccess_seb\access_manager;
 use quizaccess_seb\quiz_settings;
 use quizaccess_seb\settings_provider;

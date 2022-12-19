@@ -18,9 +18,9 @@ namespace quiz_overview;
 
 use core_question\local\bank\question_version_status;
 use mod_quiz\external\submit_question_version;
+use mod_quiz\quiz_attempt;
 use question_engine;
 use quiz;
-use quiz_attempt;
 use mod_quiz\local\reports\attempts_report;
 use quiz_overview_options;
 use quiz_overview_report;

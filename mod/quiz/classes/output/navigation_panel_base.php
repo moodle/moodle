@@ -16,12 +16,11 @@
 
 namespace mod_quiz\output;
 
-use moodle_page;
+use mod_quiz\quiz_attempt;
 use moodle_url;
 use question_attempt;
 use question_display_options;
 use question_state;
-use quiz_attempt;
 use renderable;
 use user_picture;
 

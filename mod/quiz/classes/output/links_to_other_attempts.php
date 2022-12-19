@@ -32,7 +32,7 @@ class links_to_other_attempts implements renderable {
      * - null if this is the current attempt, and so should not be linked. (Just the number is output.)
      * - moodle_url if this is a different attempt. (Output as a link to the URL with the number as link text.)
      * - a renderable, in which case the results of rendering the renderable is output.
-     * (This is used by {@see quiz_attempt::links_to_other_redos()}.)
+     * (The third option is used by {@see quiz_attempt::links_to_other_redos()}.)
      */
     public $links = [];
 }
