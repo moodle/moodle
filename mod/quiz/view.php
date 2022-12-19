@@ -24,6 +24,7 @@
  */
 
 use mod_quiz\access_manager;
+use mod_quiz\output\view_page;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir.'/gradelib.php');
@@ -77,7 +78,7 @@ quiz_view($quiz, $course, $cm, $context);
 $PAGE->set_url('/mod/quiz/view.php', array('id' => $cm->id));
 
 // Create view object which collects all the information the renderer will need.
-$viewobj = new mod_quiz_view_object();
+$viewobj = new view_page();
 $viewobj->accessmanager = $accessmanager;
 $viewobj->canreviewmine = $canreviewmine || $canpreview;
 

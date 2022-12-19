@@ -840,7 +840,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param stdClass $quiz the quiz settings row from the database.
      * @param stdClass $cm the course_module settings row from the database.
      * @param context_module $context the quiz context.
-     * @param mod_quiz_view_object $viewobj
+     * @param view_page $viewobj
      * @return string HTML to display
      */
     public function view_page($course, $quiz, $cm, $context, $viewobj) {
@@ -857,10 +857,10 @@ class mod_quiz_renderer extends plugin_renderer_base {
     /**
      * Render the tertiary navigation for the view page.
      *
-     * @param mod_quiz_view_object $viewobj the information required to display the view page.
+     * @param view_page $viewobj the information required to display the view page.
      * @return string HTML to output.
      */
-    public function view_page_tertiary_nav(mod_quiz_view_object $viewobj): string {
+    public function view_page_tertiary_nav(view_page $viewobj): string {
         $content = '';
 
         if ($viewobj->buttontext) {
@@ -886,10 +886,10 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * Work out, and render, whatever buttons, and surrounding info, should appear
      * at the end of the review page.
      *
-     * @param mod_quiz_view_object $viewobj the information required to display the view page.
+     * @param view_page $viewobj the information required to display the view page.
      * @return string HTML to output.
      */
-    public function view_page_buttons(mod_quiz_view_object $viewobj) {
+    public function view_page_buttons(view_page $viewobj) {
         $output = '';
 
         if (!$viewobj->quizhasquestions) {
@@ -981,7 +981,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param stdClass $cm the course_module settings row from the database.
      * @param context_module $context the quiz context.
      * @param array $messages Array containing any messages
-     * @param mod_quiz_view_object $viewobj
+     * @param view_page $viewobj
      */
     public function view_page_guest($course, $quiz, $cm, $context, $messages, $viewobj) {
         $output = '';
@@ -1002,7 +1002,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param stdClass $cm the course_module settings row from the database.
      * @param context_module $context the quiz context.
      * @param array $messages Array containing any messages
-     * @param mod_quiz_view_object $viewobj
+     * @param view_page $viewobj
      */
     public function view_page_notenrolled($course, $quiz, $cm, $context, $messages, $viewobj) {
         global $CFG;
@@ -1078,7 +1078,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      *
      * @param array $quiz Array contining quiz data
      * @param int $context The page context ID
-     * @param mod_quiz_view_object $viewobj
+     * @param view_page $viewobj
      */
     public function view_table($quiz, $context, $viewobj) {
         if (!$viewobj->attempts) {
@@ -1229,7 +1229,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param array $quiz Array containing quiz data
      * @param int $context The page context ID
      * @param int $cm The Course Module Id
-     * @param mod_quiz_view_object $viewobj
+     * @param view_page $viewobj
      */
     public function view_result_info($quiz, $context, $cm, $viewobj) {
         $output = '';
@@ -1430,83 +1430,5 @@ class mod_quiz_renderer extends plugin_renderer_base {
      */
     protected function render_mod_quiz_links_to_other_attempts(links_to_other_attempts $links) {
         return $this->render_links_to_other_attempts($links);
-    }
-}
-
-
-class mod_quiz_view_object {
-    /** @var array $infomessages of messages with information to display about the quiz. */
-    public $infomessages;
-    /** @var array $attempts contains all the user's attempts at this quiz. */
-    public $attempts;
-    /** @var array $attemptobjs quiz_attempt objects corresponding to $attempts. */
-    public $attemptobjs;
-    /** @var access_manager $accessmanager contains various access rules. */
-    public $accessmanager;
-    /** @var bool $canreviewmine whether the current user has the capability to
-     *       review their own attempts. */
-    public $canreviewmine;
-    /** @var bool $canedit whether the current user has the capability to edit the quiz. */
-    public $canedit;
-    /** @var moodle_url $editurl the URL for editing this quiz. */
-    public $editurl;
-    /** @var int $attemptcolumn contains the number of attempts done. */
-    public $attemptcolumn;
-    /** @var int $gradecolumn contains the grades of any attempts. */
-    public $gradecolumn;
-    /** @var int $markcolumn contains the marks of any attempt. */
-    public $markcolumn;
-    /** @var int $overallstats contains all marks for any attempt. */
-    public $overallstats;
-    /** @var string $feedbackcolumn contains any feedback for and attempt. */
-    public $feedbackcolumn;
-    /** @var string $timenow contains a timestamp in string format. */
-    public $timenow;
-    /** @var int $numattempts contains the total number of attempts. */
-    public $numattempts;
-    /** @var float $mygrade contains the user's final grade for a quiz. */
-    public $mygrade;
-    /** @var bool $moreattempts whether this user is allowed more attempts. */
-    public $moreattempts;
-    /** @var int $mygradeoverridden contains an overriden grade. */
-    public $mygradeoverridden;
-    /** @var string $gradebookfeedback contains any feedback for a gradebook. */
-    public $gradebookfeedback;
-    /** @var bool $unfinished contains 1 if an attempt is unfinished. */
-    public $unfinished;
-    /** @var object $lastfinishedattempt the last attempt from the attempts array. */
-    public $lastfinishedattempt;
-    /** @var array $preventmessages of messages telling the user why they can't
-     *       attempt the quiz now. */
-    public $preventmessages;
-    /** @var string $buttontext caption for the start attempt button. If this is null, show no
-     *      button, or if it is '' show a back to the course button. */
-    public $buttontext;
-    /** @var moodle_url $startattempturl URL to start an attempt. */
-    public $startattempturl;
-    /** @var preflight_check_form|null $preflightcheckform confirmation form that must be
-     *       submitted before an attempt is started, if required. */
-    public $preflightcheckform;
-    /** @var moodle_url $startattempturl URL for any Back to the course button. */
-    public $backtocourseurl;
-    /** @var bool $showbacktocourse should we show a back to the course button? */
-    public $showbacktocourse;
-    /** @var bool whether the attempt must take place in a popup window. */
-    public $popuprequired;
-    /** @var array options to use for the popup window, if required. */
-    public $popupoptions;
-    /** @var bool $quizhasquestions whether the quiz has any questions. */
-    public $quizhasquestions;
-
-    public function __get($field) {
-        switch ($field) {
-            case 'startattemptwarning':
-                debugging('startattemptwarning has been deprecated. It is now always blank.');
-                return '';
-
-            default:
-                debugging('Unknown property ' . $field);
-                return null;
-        }
     }
 }
