@@ -33,7 +33,6 @@ use question_display_options;
 use quiz;
 use quiz_attempt;
 use quiz_nav_panel_base;
-use quiz_nav_section_heading;
 use renderable;
 use single_button;
 use stdClass;
@@ -407,10 +406,10 @@ class renderer extends plugin_renderer_base {
     /**
      * Display a quiz navigation heading.
      *
-     * @param quiz_nav_section_heading $heading the heading.
+     * @param navigation_section_heading $heading the heading.
      * @return string HTML fragment.
      */
-    protected function render_quiz_nav_section_heading(quiz_nav_section_heading $heading) {
+    protected function render_navigation_section_heading(navigation_section_heading $heading) {
         if (empty($heading->heading)) {
             $headingtext = get_string('sectionnoname', 'quiz');
             $class = ' dimmed_text';
@@ -1454,5 +1453,17 @@ class renderer extends plugin_renderer_base {
      */
     protected function render_quiz_nav_question_button(navigation_question_button $button) {
         return $this->render_navigation_question_button($button);
+    }
+
+    /**
+     * Deprecated version of render_navigation_section_heading.
+     *
+     * @param navigation_section_heading $heading the heading.
+     * @return string HTML fragment.
+     * @deprecated since Moodle 4.2. Please use render_links_to_other_attempts instead.
+     * @todo MDL-76612 Final deprecation in Moodle 4.6
+     */
+    protected function render_quiz_nav_section_heading(navigation_section_heading $heading) {
+        return $this->render_navigation_section_heading($heading);
     }
 }

@@ -60,4 +60,5 @@ $renamedclasses = [
     'mod_quiz_view_object' => 'mod_quiz\output\view_page',
     'mod_quiz_renderer' => 'mod_quiz\output\renderer',
     'quiz_nav_question_button' => 'mod_quiz\output\navigation_question_button',
+    'quiz_nav_section_heading' => 'mod_quiz\output\navigation_section_heading',
 ];

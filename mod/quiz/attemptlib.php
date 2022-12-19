@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 use mod_quiz\access_manager;
 use mod_quiz\output\links_to_other_attempts;
 use mod_quiz\output\navigation_question_button;
+use mod_quiz\output\navigation_section_heading;
 use mod_quiz\output\renderer;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
@@ -2713,27 +2714,6 @@ class quiz_attempt {
 
 
 /**
- * Represents a heading in the navigation panel.
- *
- * @copyright  2015 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 2.9
- */
-class quiz_nav_section_heading implements renderable {
-    /** @var string the heading text. */
-    public $heading;
-
-    /**
-     * Constructor.
-     * @param string $heading the heading text
-     */
-    public function __construct($heading) {
-        $this->heading = $heading;
-    }
-}
-
-
-/**
  * Represents the navigation panel, and builds a {@link block_contents} to allow
  * it to be output.
  *
@@ -2771,7 +2751,7 @@ abstract class quiz_nav_panel_base {
             if (!is_null($heading)) {
                 $sections = $this->attemptobj->get_quizobj()->get_sections();
                 if (!(empty($heading) && count($sections) == 1)) {
-                    $buttons[] = new quiz_nav_section_heading(format_string($heading));
+                    $buttons[] = new navigation_section_heading(format_string($heading));
                 }
             }
 
