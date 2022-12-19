@@ -584,8 +584,8 @@ function quiz_feedback_record_for_grade($grade, $quiz) {
  * got this grade on this quiz. The feedback is processed ready for diplay.
  *
  * @param float $grade a grade on this quiz.
- * @param object $quiz the quiz settings.
- * @param object $context the quiz context.
+ * @param stdClass $quiz the quiz settings.
+ * @param context_module $context the quiz context.
  * @return string the comment that corresponds to this grade (empty string if there is not one.
  */
 function quiz_feedback_for_grade($grade, $quiz, $context) {
@@ -2692,8 +2692,7 @@ function quiz_retrieve_tags_for_slot_ids($slotids) {
  *
  * @param int $attemptid the id of the current attempt.
  * @param int|null $cmid the course_module id for this quiz.
- * @return quiz_attempt $attemptobj all the data about the quiz attempt.
- * @throws moodle_exception
+ * @return quiz_attempt all the data about the quiz attempt.
  */
 function quiz_create_attempt_handling_errors($attemptid, $cmid = null) {
     try {
