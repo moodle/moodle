@@ -202,6 +202,26 @@ class exporter_test extends \advanced_testcase {
         // Assert nested elements are formatted correctly.
         $this->assertEquals('id', $properties['nestedarray']['type']['id']['description']);
     }
+
+    public function test_format_properties_with_optional() {
+        $testable = new class([]) extends \core\external\exporter {
+        public static function define_properties() {
+            return [
+                'content' => [
+                    'type' => PARAM_RAW,
+                    'optional' => true,
+                ],
+                'contentformat' => [
+                    'type' => PARAM_INT,
+                    'optional' => true,
+                ]
+            ];
+        }
+        };
+        $definition = $testable::get_read_structure();
+        $this->assertEquals(VALUE_OPTIONAL, $definition->keys['content']->required);
+        $this->assertEquals(VALUE_OPTIONAL, $definition->keys['contentformat']->required);
+    }
 }
 
 /**
