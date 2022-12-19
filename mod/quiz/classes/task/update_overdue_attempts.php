@@ -30,6 +30,7 @@ use quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 /**
@@ -43,7 +44,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  */
 class update_overdue_attempts extends \core\task\scheduled_task {
 
-    public function get_name() {
+    public function get_name(): string {
         return get_string('updateoverdueattemptstask', 'mod_quiz');
     }
 
@@ -51,8 +52,6 @@ class update_overdue_attempts extends \core\task\scheduled_task {
      * Close off any overdue attempts.
      */
     public function execute() {
-        global $CFG;
-
         $timenow = time();
         $processto = $timenow - get_config('quiz', 'graceperiodmin');
 
@@ -65,11 +64,12 @@ class update_overdue_attempts extends \core\task\scheduled_task {
 
     /**
      * Do the processing required.
+     *
      * @param int $timenow the time to consider as 'now' during the processing.
      * @param int $processto only process attempt with timecheckstate longer ago than this.
      * @return array with two elements, the number of attempt considered, and how many different quizzes that was.
      */
-    public function update_all_overdue_attempts($timenow, $processto) {
+    public function update_all_overdue_attempts(int $timenow, int $processto): array {
         global $DB;
 
         $attemptstoprocess = $this->get_list_of_overdue_attempts($processto);
@@ -107,7 +107,7 @@ class update_overdue_attempts extends \core\task\scheduled_task {
 
             } catch (moodle_exception $e) {
                 // If an error occurs while processing one attempt, don't let that kill cron.
-                mtrace("Error while processing attempt {$attempt->id} at {$attempt->quiz} quiz:");
+                mtrace("Error while processing attempt $attempt->id at $attempt->quiz quiz:");
                 mtrace($e->getMessage());
                 mtrace($e->getTraceAsString());
                 // Close down any currently open transactions, otherwise one error
@@ -121,10 +121,15 @@ class update_overdue_attempts extends \core\task\scheduled_task {
     }
 
     /**
+     * Get a recordset of all the attempts that need to be processed now.
+     *
+     * (Only public to allow unit testing. Do not use!)
+     *
+     * @param int $processto timestamp to process up to.
      * @return moodle_recordset of quiz_attempts that need to be processed because time has
-     *     passed. The array is sorted by courseid then quizid.
+     *     passed, sorted by courseid then quizid.
      */
-    public function get_list_of_overdue_attempts($processto) {
+    public function get_list_of_overdue_attempts(int $processto): moodle_recordset {
         global $DB;
 
         // SQL to compute timeclose and timelimit for each attempt.
