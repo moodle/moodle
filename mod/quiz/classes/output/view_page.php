@@ -94,16 +94,4 @@ class view_page {
     public $popupoptions;
     /** @var bool $quizhasquestions whether the quiz has any questions. */
     public $quizhasquestions;
-
-    public function __get($field) {
-        switch ($field) {
-            case 'startattemptwarning':
-                debugging('startattemptwarning has been deprecated. It is now always blank.');
-                return '';
-
-            default:
-                debugging('Unknown property ' . $field);
-                return null;
-        }
-    }
 }
