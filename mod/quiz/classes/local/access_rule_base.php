@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Base class for rules that restrict the ability to attempt a quiz.
- *
- * @package   mod_quiz
- * @copyright 2011 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_quiz\local;
 
 use mod_quiz\form\preflight_check_form;
@@ -37,7 +29,9 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 
 /**
- * A base class that defines the interface for the various quiz access rules.
+ * Base class for rules that restrict the ability to attempt a quiz.
+ *
+ * Quiz access rule plugins must sublclass this one to form their main 'rule' class.
  * Most of the methods are defined in a slightly unnatural way because we either
  * want to say that access is allowed, or explain the reason why it is block.
  * Therefore instead of is_access_allowed(...) we have prevent_access(...) that
@@ -45,6 +39,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * as true) if access should be blocked. Slighly unnatural, but actually the easiest
  * way to implement this.
  *
+ * @package   mod_quiz
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.2
@@ -82,8 +77,9 @@ abstract class access_rule_base {
     }
 
     /**
-     * Whether or not a user should be allowed to start a new attempt at this quiz now.
-     * @param int $numattempts the number of previous attempts this user has made.
+     * Whether a user should be allowed to start a new attempt at this quiz now.
+     *
+     * @param int $numprevattempts the number of previous attempts this user has made.
      * @param object $lastattempt information about the user's last completed attempt.
      * @return string false if access should be allowed, a message explaining the
      *      reason if access should be prevented.
@@ -103,6 +99,8 @@ abstract class access_rule_base {
     }
 
     /**
+     * Does this rule require a UI check with the user before an attempt is started?
+     *
      * @param int|null $attemptid the id of the current attempt, if there is one,
      *      otherwise null.
      * @return bool whether a check is required before the user starts/continues
@@ -114,7 +112,7 @@ abstract class access_rule_base {
 
     /**
      * Add any field you want to pre-flight check form. You should only do
-     * something here if {@link is_preflight_check_required()} returned true.
+     * something here if {@see is_preflight_check_required()} returned true.
      *
      * @param preflight_check_form $quizform the form being built.
      * @param MoodleQuickForm $mform The wrapped MoodleQuickForm.
@@ -128,7 +126,7 @@ abstract class access_rule_base {
 
     /**
      * Validate the pre-flight check form submission. You should only do
-     * something here if {@link is_preflight_check_required()} returned true.
+     * something here if {@see is_preflight_check_required()} returned true.
      *
      * If the form validates, the user will be allowed to continue.
      *
@@ -162,10 +160,13 @@ abstract class access_rule_base {
     }
 
     /**
-     * Information, such as might be shown on the quiz view page, relating to this restriction.
-     * There is no obligation to return anything. If it is not appropriate to tell students
-     * about this rule, then just return ''.
-     * @return mixed a message, or array of messages, explaining the restriction
+     * Return a brief summary of this rule, to show to users, if required.
+     *
+     * This information is show shown, for example, on the quiz view page, to explain this
+     * restriction. There is no obligation to return anything. If it is not appropriate to
+     * tell students about this rule, then just return ''.
+     *
+     * @return string a message, or array of messages, explaining the restriction
      *         (may be '' if no message is appropriate).
      */
     public function description() {
@@ -173,11 +174,15 @@ abstract class access_rule_base {
     }
 
     /**
+     * Is the current user unable to start any more attempts in future, because of this rule?
+     *
      * If this rule can determine that this user will never be allowed another attempt at
-     * this quiz, then return true. This is used so we can know whether to display a
+     * this quiz, for example because the last possible start time is past, or all attempts
+     * have been used up, then return true. This is used to know whether to display a
      * final grade on the view page. This will only be called if there is not a currently
      * active attempt for this user.
-     * @param int $numattempts the number of previous attempts this user has made.
+     *
+     * @param int $numprevattempts the number of previous attempts this user has made.
      * @param object $lastattempt information about the user's last completed attempt.
      * @return bool true if this rule means that this user will never be allowed another
      * attempt at this quiz.
@@ -187,10 +192,10 @@ abstract class access_rule_base {
     }
 
     /**
-     * If, because of this rule, the user has to finish their attempt by a certain time,
-     * you should override this method to return the attempt end time.
-     * @param object $attempt the current attempt
-     * @return mixed the attempt close time, or false if there is no close time.
+     * Time by which, according to this rule, the user has to finish their attempt.
+     *
+     * @param stdClass $attempt the current attempt
+     * @return int|false the attempt close time, or false if there is no close time.
      */
     public function end_time($attempt) {
         return false;
@@ -213,19 +218,22 @@ abstract class access_rule_base {
     }
 
     /**
-     * @return boolean whether this rule requires that the attemp (and review)
-     *      pages must be displayed in a pop-up window.
+     * Does this rule requires the attempt (and review) to be displayed in a pop-up window?
+     *
+     * @return bool true if it does.
      */
     public function attempt_must_be_in_popup() {
         return false;
     }
 
     /**
+     * Any options required when showing the attempt in a pop-up.
+     *
      * @return array any options that are required for showing the attempt page
      *      in a popup window.
      */
     public function get_popup_options() {
-        return array();
+        return [];
     }
 
     /**
@@ -246,15 +254,15 @@ abstract class access_rule_base {
      * if they want. See, for example MDL-13592.
      *
      * @return array plugin names of other rules that this one replaces.
-     *      For example array('ipaddress', 'password').
+     *      For example ['ipaddress', 'password'].
      */
     public function get_superceded_rules() {
-        return array();
+        return [];
     }
 
     /**
      * Add any fields that this rule requires to the quiz settings form. This
-     * method is called from {@link mod_quiz_mod_form::definition()}, while the
+     * method is called from {@see mod_quiz_mod_form::definition()}, while the
      * security seciton is being built.
      * @param mod_quiz_mod_form $quizform the quiz settings form that is being built.
      * @param MoodleQuickForm $mform the wrapped MoodleQuickForm.
@@ -265,7 +273,7 @@ abstract class access_rule_base {
     }
 
     /**
-     * Validate the data from any form fields added using {@link add_settings_form_fields()}.
+     * Validate the data from any form fields added using {@see add_settings_form_fields()}.
      * @param array $errors the errors found so far.
      * @param array $data the submitted form data.
      * @param array $files information about any uploaded files.
@@ -279,16 +287,18 @@ abstract class access_rule_base {
     }
 
     /**
+     * Get any options this rule adds to the 'Browser security' quiz setting.
+     *
      * @return array key => lang string any choices to add to the quiz Browser
      *      security settings menu.
      */
     public static function get_browser_security_choices() {
-        return array();
+        return [];
     }
 
     /**
      * Save any submitted settings when the quiz settings form is submitted. This
-     * is called from {@link quiz_after_add_or_update()} in lib.php.
+     * is called from {@see quiz_after_add_or_update()} in lib.php.
      * @param object $quiz the data from the quiz form, including $quiz->id
      *      which is the id of the quiz being saved.
      */
@@ -298,7 +308,7 @@ abstract class access_rule_base {
 
     /**
      * Delete any rule-specific settings when the quiz is deleted. This is called
-     * from {@link quiz_delete_instance()} in lib.php.
+     * from {@see quiz_delete_instance()} in lib.php.
      * @param object $quiz the data from the database, including $quiz->id
      *      which is the id of the quiz being deleted.
      * @since Moodle 2.7.1, 2.6.4, 2.5.7
@@ -313,7 +323,7 @@ abstract class access_rule_base {
      * here is probably to read the code of {@see access_manager::load_settings()}.
      *
      * If you have some settings that cannot be loaded in this way, then you can
-     * use the {@link get_extra_settings()} method instead, but that has
+     * use the {@see get_extra_settings()} method instead, but that has
      * performance implications.
      *
      * @param int $quizid the id of the quiz we are loading settings for. This
@@ -328,7 +338,7 @@ abstract class access_rule_base {
      *        plugin name, to avoid collisions.
      */
     public static function get_settings_sql($quizid) {
-        return array('', '', array());
+        return ['', '', []];
     }
 
     /**
@@ -339,6 +349,6 @@ abstract class access_rule_base {
      *      start with the name of your plugin to avoid collisions.
      */
     public static function get_extra_settings($quizid) {
-        return array();
+        return [];
     }
 }
