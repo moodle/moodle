@@ -292,7 +292,7 @@ class quiz_attempt {
     }
 
     /**
-     * Get the {@see quiz_settings} object for this quiz.
+     * Get the {@see seb_quiz_settings} object for this quiz.
      *
      * @return quiz_settings
      */

@@ -39,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class access_manager {
+class seb_access_manager {
 
     /** Header sent by Safe Exam Browser containing the Config Key hash. */
     private const CONFIG_KEY_HEADER = 'HTTP_X_SAFEEXAMBROWSER_CONFIGKEYHASH';
@@ -50,7 +50,7 @@ class access_manager {
     /** @var quiz_settings $quiz A quiz object containing all information pertaining to current quiz. */
     private $quiz;
 
-    /** @var quiz_settings $quizsettings A quiz settings persistent object containing plugin settings */
+    /** @var seb_quiz_settings $quizsettings A quiz settings persistent object containing plugin settings */
     private $quizsettings;
 
     /** @var context_module $context Context of this quiz activity. */
@@ -67,8 +67,8 @@ class access_manager {
     public function __construct(quiz_settings $quiz) {
         $this->quiz = $quiz;
         $this->context = context_module::instance($quiz->get_cmid());
-        $this->quizsettings = quiz_settings::get_by_quiz_id($quiz->get_quizid());
-        $this->validconfigkey = quiz_settings::get_config_key_by_quiz_id($quiz->get_quizid());
+        $this->quizsettings = seb_quiz_settings::get_by_quiz_id($quiz->get_quizid());
+        $this->validconfigkey = seb_quiz_settings::get_config_key_by_quiz_id($quiz->get_quizid());
     }
 
     /**

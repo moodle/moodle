@@ -25,7 +25,7 @@
 
 use mod_quiz\local\access_rule_base;
 use mod_quiz\quiz_attempt;
-use quizaccess_seb\access_manager;
+use quizaccess_seb\seb_access_manager;
 use quizaccess_seb\settings_provider;
 
 defined('MOODLE_INTERNAL') || die();
@@ -239,10 +239,10 @@ trait quizaccess_seb_test_helper_trait {
     /**
      * Get access manager for testing.
      *
-     * @return \quizaccess_seb\access_manager
+     * @return \quizaccess_seb\seb_access_manager
      */
     protected function get_access_manager() {
-        return new access_manager(new mod_quiz\quiz_settings($this->quiz,
+        return new seb_access_manager(new mod_quiz\quiz_settings($this->quiz,
             get_coursemodule_from_id('quiz', $this->quiz->cmid), $this->course));
     }
 

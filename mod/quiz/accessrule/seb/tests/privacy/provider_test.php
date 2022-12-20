@@ -31,7 +31,7 @@ use core_privacy\local\request\writer;
 use core_privacy\tests\request\approved_contextlist;
 use core_privacy\tests\provider_testcase;
 use quizaccess_seb\privacy\provider;
-use quizaccess_seb\quiz_settings;
+use quizaccess_seb\seb_quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -62,7 +62,7 @@ class provider_test extends provider_testcase {
 
         $template = $this->create_template();
 
-        $quizsettings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $quizsettings = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
 
         // Modify settings so usermodified is updated. This is the user data we are testing for.
         $quizsettings->set('requiresafeexambrowser', \quizaccess_seb\settings_provider::USE_SEB_TEMPLATE);
@@ -126,7 +126,7 @@ class provider_test extends provider_testcase {
         $index = '1'; // Get first data returned from the quizsettings table metadata.
         $data = $writer->get_data([
             get_string('pluginname', 'quizaccess_seb'),
-            quiz_settings::TABLE,
+            seb_quiz_settings::TABLE,
             $index,
         ]);
         $this->assertNotEmpty($data);
@@ -142,7 +142,7 @@ class provider_test extends provider_testcase {
         $index = '2'; // There should not be more than one instance with data.
         $data = $writer->get_data([
             get_string('pluginname', 'quizaccess_seb'),
-            quiz_settings::TABLE,
+            seb_quiz_settings::TABLE,
             $index,
         ]);
         $this->assertEmpty($data);
@@ -180,11 +180,11 @@ class provider_test extends provider_testcase {
                 'quizaccess_seb', [$this->user->id]);
 
         // Test data exists.
-        $this->assertNotEmpty(quiz_settings::get_record(['quizid' => $this->quiz->id]));
+        $this->assertNotEmpty(seb_quiz_settings::get_record(['quizid' => $this->quiz->id]));
 
         // Test data is deleted.
         provider::delete_data_for_users($approveduserlist);
-        $record = quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $record = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $this->assertEmpty($record->get('usermodified'));
 
         $template = \quizaccess_seb\template::get_record(['id' => $record->get('templateid')]);
@@ -202,11 +202,11 @@ class provider_test extends provider_testcase {
                 'quizaccess_seb', [$context->id]);
 
         // Test data exists.
-        $this->assertNotEmpty(quiz_settings::get_record(['quizid' => $this->quiz->id]));
+        $this->assertNotEmpty(seb_quiz_settings::get_record(['quizid' => $this->quiz->id]));
 
         // Test data is deleted.
         provider::delete_data_for_user($approvedcontextlist);
-        $record = quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $record = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $this->assertEmpty($record->get('usermodified'));
 
         $template = \quizaccess_seb\template::get_record(['id' => $record->get('templateid')]);
@@ -222,7 +222,7 @@ class provider_test extends provider_testcase {
         $context = \context_module::instance($this->quiz->cmid);
 
         // Test data exists.
-        $record = quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $record = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $template = \quizaccess_seb\template::get_record(['id' => $record->get('templateid')]);
         $this->assertNotEmpty($record->get('usermodified'));
         $this->assertNotEmpty($template->get('usermodified'));
@@ -230,7 +230,7 @@ class provider_test extends provider_testcase {
         // Test data is deleted.
         provider::delete_data_for_all_users_in_context($context);
 
-        $record = quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $record = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $template = \quizaccess_seb\template::get_record(['id' => $record->get('templateid')]);
         $this->assertEmpty($record->get('usermodified'));
         $this->assertEmpty($template->get('usermodified'));

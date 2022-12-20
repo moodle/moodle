@@ -16,8 +16,8 @@
 
 use mod_quiz\local\access_rule_base;
 use mod_quiz\quiz_attempt;
-use quizaccess_seb\access_manager;
-use quizaccess_seb\quiz_settings;
+use quizaccess_seb\seb_access_manager;
+use quizaccess_seb\seb_quiz_settings;
 use quizaccess_seb\settings_provider;
 use quizaccess_seb\event\access_prevented;
 
@@ -32,7 +32,7 @@ use quizaccess_seb\event\access_prevented;
  */
 class quizaccess_seb extends access_rule_base {
 
-    /** @var access_manager $accessmanager Instance to manage the access to the quiz for this plugin. */
+    /** @var seb_access_manager $accessmanager Instance to manage the access to the quiz for this plugin. */
     private $accessmanager;
 
     /**
@@ -40,9 +40,9 @@ class quizaccess_seb extends access_rule_base {
      *
      * @param \mod_quiz\quiz_settings $quizobj information about the quiz in question.
      * @param int $timenow the time that should be considered as 'now'.
-     * @param access_manager $accessmanager the quiz accessmanager.
+     * @param seb_access_manager $accessmanager the quiz accessmanager.
      */
-    public function __construct(\mod_quiz\quiz_settings $quizobj, int $timenow, access_manager $accessmanager) {
+    public function __construct(\mod_quiz\quiz_settings $quizobj, int $timenow, seb_access_manager $accessmanager) {
         parent::__construct($quizobj, $timenow);
         $this->accessmanager = $accessmanager;
     }
@@ -58,7 +58,7 @@ class quizaccess_seb extends access_rule_base {
      * @return access_rule_base|null the rule, if applicable, else null.
      */
     public static function make(\mod_quiz\quiz_settings $quizobj, $timenow, $canignoretimelimits) {
-        $accessmanager = new access_manager($quizobj);
+        $accessmanager = new seb_access_manager($quizobj);
         // If Safe Exam Browser is not required, this access rule is not applicable.
         if (!$accessmanager->seb_required()) {
             return null;
@@ -110,7 +110,7 @@ class quizaccess_seb extends access_rule_base {
         $settings = settings_provider::filter_plugin_settings((object) $data);
 
         // Validate basic settings using persistent class.
-        $quizsettings = (new quiz_settings())->from_record($settings);
+        $quizsettings = (new seb_quiz_settings())->from_record($settings);
         // Set non-form fields.
         $quizsettings->set('quizid', $quizid);
         $quizsettings->set('cmid', $cmid);
@@ -176,9 +176,9 @@ class quizaccess_seb extends access_rule_base {
         $settings->cmid = $cm->id;
 
         // Get existing settings or create new settings if none exist.
-        $quizsettings = quiz_settings::get_by_quiz_id($quiz->id);
+        $quizsettings = seb_quiz_settings::get_by_quiz_id($quiz->id);
         if (empty($quizsettings)) {
-            $quizsettings = new quiz_settings(0, $settings);
+            $quizsettings = new seb_quiz_settings(0, $settings);
         } else {
             $settings->id = $quizsettings->get('id');
             $quizsettings->from_record($settings);
@@ -208,7 +208,7 @@ class quizaccess_seb extends access_rule_base {
      *      which is the id of the quiz being deleted.
      */
     public static function delete_settings($quiz) {
-        $quizsettings = quiz_settings::get_by_quiz_id($quiz->id);
+        $quizsettings = seb_quiz_settings::get_by_quiz_id($quiz->id);
         // Check that there are existing settings.
         if ($quizsettings !== false) {
             $quizsettings->delete();

@@ -43,7 +43,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_settings extends persistent {
+class seb_quiz_settings extends persistent {
 
     /** Table name for the persistent. */
     const TABLE = 'quizaccess_seb_quizsettings';
@@ -193,7 +193,7 @@ class quiz_settings extends persistent {
      * This method gets data from cache before doing any DB calls.
      *
      * @param int $quizid Quiz id.
-     * @return false|\quizaccess_seb\quiz_settings
+     * @return false|\quizaccess_seb\seb_quiz_settings
      */
     public static function get_by_quiz_id(int $quizid) {
         if ($data = self::get_quiz_settings_cache()->get($quizid)) {
@@ -567,7 +567,7 @@ class quiz_settings extends persistent {
     }
 
     /**
-     * Sets the quitURL if found in the mod_quiz\quiz_settings.
+     * Sets the quitURL if found in the seb_quiz_settings.
      */
     private function process_quit_url_from_settings() {
         $settings = $this->to_record();
