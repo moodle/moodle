@@ -74,10 +74,6 @@ class repaginate_test extends \advanced_testcase {
         $this->repaginate = new mod_quiz_repaginate_testable(0, $this->quizslots);
     }
 
-    public function tearDown(): void {
-        $this->repaginate = null;
-    }
-
     /**
      * Create a quiz, add five questions to the quiz
      * which are all on one page and return the quiz object.
