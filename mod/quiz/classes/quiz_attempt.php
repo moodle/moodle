@@ -38,7 +38,6 @@ use question_engine;
 use question_out_of_sequence_exception;
 use question_state;
 use question_usage_by_activity;
-use mod_quiz\quiz_settings;
 use stdClass;
 
 /**
@@ -1079,7 +1078,7 @@ class quiz_attempt {
      * @return moodle_url quiz view url.
      */
     public function view_url() {
-        return new moodle_url($this->quizobj->view_url());
+        return $this->quizobj->view_url();
     }
 
     /**

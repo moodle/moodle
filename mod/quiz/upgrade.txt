@@ -2,6 +2,10 @@ This files describes API changes in the quiz code.
 
 === 4.2 ===
 
+* The methods in the quiz_settings class which return a URL now all return a moodle_url. Previously
+  some returns a moodle_url and others aa string.
+* The method quiz_settings::confirm_start_attempt_message, which was deprecated in Moodle 3.1, is now completely removed.
+* The field view_page::$startattemptwarning, which was deprecated in Moodle 3.1, is now completely removed.
 * The quiz has a lot of old classes in lib.php files. These have now been moved into the classes folder,
   and so are now in namespaces. Because of Moodle's class renaming support, your code should continue
   working, but output deprecated warnings, so you probably want to update. This should mostly be
@@ -67,7 +71,7 @@ This files describes API changes in the quiz code.
   - mod/quiz/cronlib.php
   - mod/quiz/override_form.php
   - mod/quiz/accessrule/accessrulebase.php
-  - mod/quiz/renderer.php
+  - mod/quiz/renderer.php - actually, no debugging ouput for this one because of how renderer factories work.
   - mod/quiz/attemptlib.php
 
 

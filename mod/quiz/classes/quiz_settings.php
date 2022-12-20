@@ -36,9 +36,9 @@ use stdClass;
  * extra information only when necessary or when asked. The class tracks which questions
  * are loaded.
  *
- * @copyright  2008 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 2.0
+ * @package   mod_quiz
+ * @copyright 2008 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_settings {
     /** @var stdClass the course settings from the database. */
@@ -63,7 +63,7 @@ class quiz_settings {
     /** @var bool whether the current user has capability mod/quiz:preview. */
     protected $ispreviewuser = null;
 
-    // Constructor =============================================================
+    // Constructor =============================================================.
 
     /**
      * Constructor, assuming we already have the necessary data loaded.
@@ -94,7 +94,7 @@ class quiz_settings {
         global $DB;
 
         $quiz = access_manager::load_quiz_and_settings($quizid);
-        $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+        $course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
         // Update quiz with override information.
@@ -115,7 +115,7 @@ class quiz_settings {
         return new quiz_attempt($attemptdata, $this->quiz, $this->cm, $this->course);
     }
 
-    // Functions for loading more data =========================================
+    // Functions for loading more data =========================================.
 
     /**
      * Load just basic information about all the questions in this quiz.
@@ -130,7 +130,7 @@ class quiz_settings {
 
     /**
      * Fully load some or all of the questions for this quiz. You must call
-     * {@link preload_questions()} first.
+     * {@see preload_questions()} first.
      *
      * @param array|null $deprecated no longer supported (it was not used).
      */
@@ -162,7 +162,7 @@ class quiz_settings {
         return structure::create_for_quiz($this);
     }
 
-    // Simple getters ==========================================================
+    // Simple getters ==========================================================.
 
     /**
      * Get the id of the course this quiz belongs to.
@@ -218,7 +218,11 @@ class quiz_settings {
         return $this->quiz->navmethod;
     }
 
-    /** @return int the number of attempts allowed at this quiz (0 = infinite). */
+    /**
+     * How many attepts is the user allowed at this quiz?
+     *
+     * @return int the number of attempts allowed at this quiz (0 = infinite).
+     */
     public function get_num_attempts_allowed() {
         return $this->quiz->attempts;
     }
@@ -251,8 +255,9 @@ class quiz_settings {
     }
 
     /**
-     * @return bool whether the current user is someone who previews the quiz,
-     * rather than attempting it.
+     * Is the current user is someone who previews the quiz, rather than attempting it?
+     *
+     * @return bool true user is a preview user. False, if they can do real attempts.
      */
     public function is_preview_user() {
         if (is_null($this->ispreviewuser)) {
@@ -281,6 +286,8 @@ class quiz_settings {
     }
 
     /**
+     * Have any questions been added to this quiz yet?
+     *
      * @return bool whether any questions have been added to this quiz.
      */
     public function has_questions() {
@@ -291,6 +298,8 @@ class quiz_settings {
     }
 
     /**
+     * Get a particular question in this quiz, by its id.
+     *
      * @param int $id the question id.
      * @return stdClass the question object with that id.
      */
@@ -299,6 +308,8 @@ class quiz_settings {
     }
 
     /**
+     * Get some of the question in this quiz.
+     *
      * @param array|null $questionids question ids of the questions to load. null for all.
      * @return stdClass[] the question data objects.
      */
@@ -306,7 +317,7 @@ class quiz_settings {
         if (is_null($questionids)) {
             $questionids = array_keys($this->questions);
         }
-        $questions = array();
+        $questions = [];
         foreach ($questionids as $id) {
             if (!array_key_exists($id, $this->questions)) {
                 throw new moodle_exception('cannotstartmissingquestion', 'quiz', $this->view_url());
@@ -326,7 +337,7 @@ class quiz_settings {
         global $DB;
         if ($this->sections === null) {
             $this->sections = array_values($DB->get_records('quiz_sections',
-                    array('quizid' => $this->get_quizid()), 'firstslot'));
+                    ['quizid' => $this->get_quizid()], 'firstslot'));
         }
         return $this->sections;
     }
@@ -370,37 +381,39 @@ class quiz_settings {
         require_capability($capability, $this->context, $userid, $doanything);
     }
 
-    // URLs related to this attempt ============================================
+    // URLs related to this attempt ============================================.
 
     /**
-     * @return string the URL of this quiz's view page.
+     * Get the URL of this quiz's view.php page.
+     *
+     * @return moodle_url the URL of this quiz's view page.
      */
     public function view_url() {
-        global $CFG;
-        return $CFG->wwwroot . '/mod/quiz/view.php?id=' . $this->cm->id;
+        return new moodle_url('/mod/quiz/view.php', ['id' => $this->cm->id]);
     }
 
     /**
-     * @return string the URL of this quiz's edit page.
+     * Get the URL of this quiz's edit questions page.
+     *
+     * @return moodle_url the URL of this quiz's edit page.
      */
     public function edit_url() {
-        global $CFG;
-        return $CFG->wwwroot . '/mod/quiz/edit.php?cmid=' . $this->cm->id;
+        return new moodle_url('/mod/quiz/edit.php', ['cmid' => $this->cm->id]);
     }
 
     /**
+     * Get the URL of a particular page within an attempt.
+     *
      * @param int $attemptid the id of an attempt.
      * @param int $page optional page number to go to in the attempt.
-     * @return string the URL of that attempt.
+     * @return moodle_url the URL of that attempt.
      */
     public function attempt_url($attemptid, $page = 0) {
-        global $CFG;
-        $url = $CFG->wwwroot . '/mod/quiz/attempt.php?attempt=' . $attemptid;
+        $params = ['attempt' => $attemptid, 'cmid' => $this->get_cmid()];
         if ($page) {
-            $url .= '&page=' . $page;
+            $params['page'] = $page;
         }
-        $url .= '&cmid=' . $this->get_cmid();
-        return $url;
+        return new moodle_url('/mod/quiz/attempt.php', $params);
     }
 
     /**
@@ -410,7 +423,7 @@ class quiz_settings {
      * @return moodle_url the URL of this quiz's edit page. Needs to be POSTed to with a cmid parameter.
      */
     public function start_attempt_url($page = 0) {
-        $params = array('cmid' => $this->cm->id, 'sesskey' => sesskey());
+        $params = ['cmid' => $this->cm->id, 'sesskey' => sesskey()];
         if ($page) {
             $params['page'] = $page;
         }
@@ -418,33 +431,26 @@ class quiz_settings {
     }
 
     /**
+     * Get the URL to review a particular quiz attempt.
+     *
      * @param int $attemptid the id of an attempt.
      * @return string the URL of the review of that attempt.
      */
     public function review_url($attemptid) {
-        return new moodle_url('/mod/quiz/review.php', array('attempt' => $attemptid, 'cmid' => $this->get_cmid()));
+        return new moodle_url('/mod/quiz/review.php', ['attempt' => $attemptid, 'cmid' => $this->get_cmid()]);
     }
 
     /**
+     * Get the URL for the summary page for a particular attempt.
+     *
      * @param int $attemptid the id of an attempt.
      * @return string the URL of the review of that attempt.
      */
     public function summary_url($attemptid) {
-        return new moodle_url('/mod/quiz/summary.php', array('attempt' => $attemptid, 'cmid' => $this->get_cmid()));
+        return new moodle_url('/mod/quiz/summary.php', ['attempt' => $attemptid, 'cmid' => $this->get_cmid()]);
     }
 
-    // Bits of content =========================================================
-
-    /**
-     * @param bool $notused not used.
-     * @return string an empty string.
-     * @deprecated since 3.1. This sort of functionality is now entirely handled by quiz access rules.
-     */
-    public function confirm_start_attempt_message($notused) {
-        debugging('confirm_start_attempt_message is deprecated. ' .
-                'This sort of functionality is now entirely handled by quiz access rules.');
-        return '';
-    }
+    // Bits of content =========================================================.
 
     /**
      * If $reviewoptions->attempt is false, meaning that students can't review this
@@ -491,7 +497,7 @@ class quiz_settings {
         return '';
     }
 
-    // Private methods =========================================================
+    // Private methods =========================================================.
 
     /**
      * Check that the definition of a particular question is loaded, and if not throw an exception.
@@ -514,10 +520,10 @@ class quiz_settings {
      * @since  Moodle 3.1
      */
     public function get_all_question_types_used($includepotential = false) {
-        $questiontypes = array();
+        $questiontypes = [];
 
         // To control if we need to look in categories for questions.
-        $qcategories = array();
+        $qcategories = [];
 
         foreach ($this->get_questions() as $questiondata) {
             if ($questiondata->qtype === 'random' && $includepotential) {
@@ -537,7 +543,7 @@ class quiz_settings {
 
         if (!empty($qcategories)) {
             // We have to look for all the question types in these categories.
-            $categoriestolook = array();
+            $categoriestolook = [];
             foreach ($qcategories as $cat => $includesubcats) {
                 if ($includesubcats) {
                     $categoriestolook = array_merge($categoriestolook, question_categorylist($cat));

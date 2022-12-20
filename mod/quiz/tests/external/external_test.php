@@ -2130,8 +2130,13 @@ class external_test extends externallib_advanced_testcase {
      * @return quiz_attempt
      * @throws moodle_exception
      */
-    private function create_quiz_attempt_object(quiz_settings $quizobj, ?int $userid = null, ?bool $ispreview = false): quiz_attempt {
+    private function create_quiz_attempt_object(
+        quiz_settings $quizobj,
+        ?int $userid = null,
+        ?bool $ispreview = false
+    ): quiz_attempt {
         global $USER;
+
         $timenow = time();
         // Now, do one attempt.
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
