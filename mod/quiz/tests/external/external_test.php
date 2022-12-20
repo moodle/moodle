@@ -31,7 +31,7 @@ use mod_quiz\quiz_attempt;
 use mod_quiz_external;
 use mod_quiz\question\display_options;
 use moodle_exception;
-use quiz;
+use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -149,7 +149,7 @@ class external_test extends externallib_advanced_testcase {
             quiz_add_quiz_question($question->id, $quiz);
         }
 
-        $quizobj = quiz::create($quiz->id, $this->student->id);
+        $quizobj = quiz_settings::create($quiz->id, $this->student->id);
 
         // Set grade to pass.
         $item = \grade_item::fetch(array('courseid' => $this->course->id, 'itemtype' => 'mod',
@@ -545,8 +545,8 @@ class external_test extends externallib_advanced_testcase {
         quiz_add_quiz_question($question->id, $quizapi2);
 
         // Create quiz object.
-        $quizapiobj1 = quiz::create($quizapi1->id, $this->student->id);
-        $quizapiobj2 = quiz::create($quizapi2->id, $this->student->id);
+        $quizapiobj1 = quiz_settings::create($quizapi1->id, $this->student->id);
+        $quizapiobj2 = quiz_settings::create($quizapi2->id, $this->student->id);
 
         // Set grade to pass.
         $item = \grade_item::fetch([
@@ -700,7 +700,7 @@ class external_test extends externallib_advanced_testcase {
         $question = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
         quiz_add_quiz_question($question->id, $quiz);
 
-        $quizobj = quiz::create($quiz->id, $this->student->id);
+        $quizobj = quiz_settings::create($quiz->id, $this->student->id);
 
         // Set grade to pass.
         $item = \grade_item::fetch(array('courseid' => $this->course->id, 'itemtype' => 'mod',
@@ -1866,7 +1866,7 @@ class external_test extends externallib_advanced_testcase {
 
         quiz_add_random_questions($quiz, 0, $cat->id, 1, false);
 
-        $quizobj = quiz::create($quiz->id, $this->student->id);
+        $quizobj = quiz_settings::create($quiz->id, $this->student->id);
 
         // Set grade to pass.
         $item = \grade_item::fetch(array('courseid' => $this->course->id, 'itemtype' => 'mod',
@@ -2087,9 +2087,9 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Prepare quiz for sequential navigation tests
      *
-     * @return quiz
+     * @return quiz_settings
      */
-    private function prepare_sequential_quiz(): quiz {
+    private function prepare_sequential_quiz(): quiz_settings {
         // Create a new quiz with 5 questions and one attempt started.
         // Create a new quiz with attempts.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
@@ -2112,7 +2112,7 @@ class external_test extends externallib_advanced_testcase {
             quiz_add_quiz_question($question->id, $quiz, $pageindex);
         }
 
-        $quizobj = quiz::create($quiz->id, $this->student->id);
+        $quizobj = quiz_settings::create($quiz->id, $this->student->id);
         // Set grade to pass.
         $item = \grade_item::fetch(array('courseid' => $this->course->id, 'itemtype' => 'mod',
             'itemmodule' => 'quiz', 'iteminstance' => $quiz->id, 'outcomeid' => null));
@@ -2124,13 +2124,13 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Create question attempt
      *
-     * @param quiz $quizobj
+     * @param quiz_settings $quizobj
      * @param int|null $userid
      * @param bool|null $ispreview
      * @return quiz_attempt
      * @throws moodle_exception
      */
-    private function create_quiz_attempt_object(quiz $quizobj, ?int $userid = null, ?bool $ispreview = false): quiz_attempt {
+    private function create_quiz_attempt_object(quiz_settings $quizobj, ?int $userid = null, ?bool $ispreview = false): quiz_attempt {
         global $USER;
         $timenow = time();
         // Now, do one attempt.

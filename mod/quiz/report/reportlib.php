@@ -26,7 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
-require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 require_once($CFG->libdir . '/filelib.php');
 
 use mod_quiz\question\display_options;
@@ -97,7 +96,7 @@ function quiz_has_questions($quizid) {
  */
 function quiz_report_get_significant_questions($quiz) {
     global $DB;
-    $quizobj = \quiz::create($quiz->id);
+    $quizobj = mod_quiz\quiz_settings::create($quiz->id);
     $structure = \mod_quiz\structure::create_for_quiz($quizobj);
     $slots = $structure->get_slots();
 

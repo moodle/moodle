@@ -381,7 +381,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
         // Make a user to do the quiz.
         $user1 = $this->getDataGenerator()->create_user();
 
-        $quizobj = \quiz::create($quiz->id, $user1->id);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->id, $user1->id);
 
         // Start the attempt.
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
@@ -421,7 +421,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
 
         // Get the quiz for this new restored course.
         $quizdata = $DB->get_record('quiz', ['course' => $newcourseid]);
-        $quizobj = \quiz::create($quizdata->id, $user1->id);
+        $quizobj = \mod_quiz\quiz_settings::create($quizdata->id, $user1->id);
 
         $questionusage = $DB->get_record('question_usages', [
                 'component' => 'mod_quiz',

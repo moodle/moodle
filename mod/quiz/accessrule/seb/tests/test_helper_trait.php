@@ -191,7 +191,7 @@ trait quizaccess_seb_test_helper_trait {
         $this->setUser($user);
 
         $starttime = time();
-        $quizobj = \quiz::create($quiz->id, $user->id);
+        $quizobj = mod_quiz\quiz_settings::create($quiz->id, $user->id);
 
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
@@ -242,7 +242,7 @@ trait quizaccess_seb_test_helper_trait {
      * @return \quizaccess_seb\access_manager
      */
     protected function get_access_manager() {
-        return new access_manager(new \quiz($this->quiz,
+        return new access_manager(new mod_quiz\quiz_settings($this->quiz,
             get_coursemodule_from_id('quiz', $this->quiz->cmid), $this->course));
     }
 
@@ -253,7 +253,7 @@ trait quizaccess_seb_test_helper_trait {
      */
     protected function make_rule() {
         return \quizaccess_seb::make(
-            new \quiz($this->quiz, get_coursemodule_from_id('quiz', $this->quiz->cmid), $this->course),
+            new mod_quiz\quiz_settings($this->quiz, get_coursemodule_from_id('quiz', $this->quiz->cmid), $this->course),
             0,
             true
         );

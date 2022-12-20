@@ -23,7 +23,6 @@ use qubaid_condition;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/engine/bank.php');
-require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 
 /**
  * Helper class for question bank and its associated data.

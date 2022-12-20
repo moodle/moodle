@@ -17,7 +17,7 @@
 namespace mod_quiz;
 
 use mod_quiz\question\display_options;
-use quiz;
+use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -41,7 +41,7 @@ class quizobj_test extends \basic_testcase {
         $cm = new \stdClass();
         $cm->id = 123;
 
-        $quizobj = new quiz($quiz, $cm, new \stdClass(), false);
+        $quizobj = new quiz_settings($quiz, $cm, new \stdClass(), false);
 
         $this->assertEquals('',
             $quizobj->cannot_review_message(display_options::DURING));
@@ -54,7 +54,7 @@ class quizobj_test extends \basic_testcase {
 
         $closetime = time() + 10000;
         $quiz->timeclose = $closetime;
-        $quizobj = new quiz($quiz, $cm, new \stdClass(), false);
+        $quizobj = new quiz_settings($quiz, $cm, new \stdClass(), false);
 
         $this->assertEquals(get_string('noreviewuntil', 'quiz', userdate($closetime)),
             $quizobj->cannot_review_message(display_options::LATER_WHILE_OPEN));

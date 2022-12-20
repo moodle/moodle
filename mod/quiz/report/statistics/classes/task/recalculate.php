@@ -17,7 +17,7 @@
 namespace quiz_statistics\task;
 
 use mod_quiz\quiz_attempt;
-use quiz;
+use mod_quiz\quiz_settings;
 use quiz_statistics_report;
 
 defined('MOODLE_INTERNAL') || die();
@@ -60,7 +60,7 @@ class recalculate extends \core\task\scheduled_task {
         $latestattempts = $DB->get_records_sql($sql, $params);
 
         foreach ($latestattempts as $attempt) {
-            $quizobj = quiz::create($attempt->quiz);
+            $quizobj = quiz_settings::create($attempt->quiz);
             $quiz = $quizobj->get_quiz();
             // Hash code for question stats option in question bank.
             $qubaids = quiz_statistics_qubaids_condition($quiz->id, new \core\dml\sql_join(), $quiz->grademethod);

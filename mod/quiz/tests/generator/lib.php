@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -117,7 +118,7 @@ class mod_quiz_generator extends testing_module_generator {
     public function create_attempt($quizid, $userid, array $forcedrandomquestions = [],
             array $forcedvariants = []) {
         // Build quiz object and load questions.
-        $quizobj = quiz::create($quizid, $userid);
+        $quizobj = quiz_settings::create($quizid, $userid);
 
         $attemptnumber = 1;
         $attempt = null;

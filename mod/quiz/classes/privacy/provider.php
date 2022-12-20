@@ -277,7 +277,7 @@ class provider implements
         $quizzes = $DB->get_recordset_sql($sql, $params);
         foreach ($quizzes as $quiz) {
             list($course, $cm) = get_course_and_cm_from_cmid($quiz->cmid, 'quiz');
-            $quizobj = new \quiz($quiz, $cm, $course);
+            $quizobj = new \mod_quiz\quiz_settings($quiz, $cm, $course);
             $context = $quizobj->get_context();
 
             $quizdata = \core_privacy\local\request\helper::get_context_data($context, $contextlist->get_user());
@@ -354,7 +354,7 @@ class provider implements
             return;
         }
 
-        $quizobj = \quiz::create($cm->instance);
+        $quizobj = \mod_quiz\quiz_settings::create($cm->instance);
         $quiz = $quizobj->get_quiz();
 
         // Handle the 'quizaccess' subplugin.
@@ -393,7 +393,7 @@ class provider implements
             }
 
             // Fetch the details of the data to be removed.
-            $quizobj = \quiz::create($cm->instance);
+            $quizobj = \mod_quiz\quiz_settings::create($cm->instance);
             $quiz = $quizobj->get_quiz();
             $user = $contextlist->get_user();
 
@@ -441,7 +441,7 @@ class provider implements
             return;
         }
 
-        $quizobj = \quiz::create($cm->instance);
+        $quizobj = \mod_quiz\quiz_settings::create($cm->instance);
         $quiz = $quizobj->get_quiz();
 
         $userids = $userlist->get_userids();

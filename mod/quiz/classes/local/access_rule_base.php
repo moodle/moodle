@@ -20,7 +20,7 @@ use mod_quiz\form\preflight_check_form;
 use mod_quiz_mod_form;
 use moodle_page;
 use MoodleQuickForm;
-use quiz;
+use mod_quiz\quiz_settings;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
@@ -47,14 +47,15 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 abstract class access_rule_base {
     /** @var stdClass the quiz settings. */
     protected $quiz;
-    /** @var quiz the quiz object. */
+    /** @var quiz_settings the quiz object. */
     protected $quizobj;
     /** @var int the time to use as 'now'. */
     protected $timenow;
 
     /**
      * Create an instance of this rule for a particular quiz.
-     * @param quiz $quizobj information about the quiz in question.
+     *
+     * @param quiz_settings $quizobj information about the quiz in question.
      * @param int $timenow the time that should be considered as 'now'.
      */
     public function __construct($quizobj, $timenow) {
@@ -66,13 +67,14 @@ abstract class access_rule_base {
     /**
      * Return an appropriately configured instance of this rule, if it is applicable
      * to the given quiz, otherwise return null.
-     * @param quiz $quizobj information about the quiz in question.
+     *
+     * @param quiz_settings $quizobj information about the quiz in question.
      * @param int $timenow the time that should be considered as 'now'.
      * @param bool $canignoretimelimits whether the current user is exempt from
      *      time limits by the mod/quiz:ignoretimelimits capability.
      * @return self|null the rule, if applicable, else null.
      */
-    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
+    public static function make(quiz_settings $quizobj, $timenow, $canignoretimelimits) {
         return null;
     }
 

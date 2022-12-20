@@ -38,7 +38,7 @@ use question_engine;
 use question_out_of_sequence_exception;
 use question_state;
 use question_usage_by_activity;
-use quiz;
+use mod_quiz\quiz_settings;
 use stdClass;
 
 /**
@@ -62,7 +62,7 @@ class quiz_attempt {
     /** @var int maximum number of slots in the quiz for the review page to default to show all. */
     const MAX_SLOTS_FOR_DEFAULT_REVIEW_SHOW_ALL = 50;
 
-    /** @var quiz object containing the quiz settings. */
+    /** @var quiz_settings object containing the quiz settings. */
     protected $quizobj;
 
     /** @var stdClass the quiz_attempts row. */
@@ -108,7 +108,7 @@ class quiz_attempt {
      */
     public function __construct($attempt, $quiz, $cm, $course, $loadquestions = true) {
         $this->attempt = $attempt;
-        $this->quizobj = new quiz($quiz, $cm, $course);
+        $this->quizobj = new quiz_settings($quiz, $cm, $course);
 
         if ($loadquestions) {
             $this->load_questions();
@@ -293,9 +293,9 @@ class quiz_attempt {
     }
 
     /**
-     * Get the {@see quiz} object for this quiz.
+     * Get the {@see quiz_settings} object for this quiz.
      *
-     * @return quiz
+     * @return quiz_settings
      */
     public function get_quizobj() {
         return $this->quizobj;

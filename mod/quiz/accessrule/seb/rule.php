@@ -38,11 +38,11 @@ class quizaccess_seb extends access_rule_base {
     /**
      * Create an instance of this rule for a particular quiz.
      *
-     * @param quiz $quizobj information about the quiz in question.
+     * @param \mod_quiz\quiz_settings $quizobj information about the quiz in question.
      * @param int $timenow the time that should be considered as 'now'.
      * @param access_manager $accessmanager the quiz accessmanager.
      */
-    public function __construct(quiz $quizobj, int $timenow, access_manager $accessmanager) {
+    public function __construct(\mod_quiz\quiz_settings $quizobj, int $timenow, access_manager $accessmanager) {
         parent::__construct($quizobj, $timenow);
         $this->accessmanager = $accessmanager;
     }
@@ -51,13 +51,13 @@ class quizaccess_seb extends access_rule_base {
      * Return an appropriately configured instance of this rule, if it is applicable
      * to the given quiz, otherwise return null.
      *
-     * @param quiz $quizobj information about the quiz in question.
+     * @param \mod_quiz\quiz_settings $quizobj information about the quiz in question.
      * @param int $timenow the time that should be considered as 'now'.
      * @param bool $canignoretimelimits whether the current user is exempt from
      *      time limits by the mod/quiz:ignoretimelimits capability.
      * @return access_rule_base|null the rule, if applicable, else null.
      */
-    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
+    public static function make(\mod_quiz\quiz_settings $quizobj, $timenow, $canignoretimelimits) {
         $accessmanager = new access_manager($quizobj);
         // If Safe Exam Browser is not required, this access rule is not applicable.
         if (!$accessmanager->seb_required()) {
@@ -218,7 +218,7 @@ class quizaccess_seb extends access_rule_base {
     /**
      * Return the bits of SQL needed to load all the settings from all the access
      * plugins in one DB query. The easiest way to understand what you need to do
-     * here is probably to read the code of {@see \mod\quiz\access_manager::load_settings()}.
+     * here is probably to read the code of {@see \mod_quiz\access_manager::load_settings()}.
      *
      * If you have some settings that cannot be loaded in this way, then you can
      * use the {@link get_extra_settings()} method instead, but that has

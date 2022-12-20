@@ -20,7 +20,7 @@ use core_question_generator;
 use mod_quiz\task\update_overdue_attempts;
 use mod_quiz_generator;
 use question_engine;
-use quiz;
+use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -560,7 +560,7 @@ class attempts_test extends \advanced_testcase {
         // Add them to the quiz.
         quiz_add_quiz_question($saq->id, $quiz);
         quiz_add_quiz_question($numq->id, $quiz);
-        $quizobj = quiz::create($quiz->id, $user1->id);
+        $quizobj = quiz_settings::create($quiz->id, $user1->id);
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
         $timenow = time();

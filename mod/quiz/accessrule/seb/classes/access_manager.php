@@ -29,7 +29,7 @@
 namespace quizaccess_seb;
 
 use context_module;
-use quiz;
+use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -47,7 +47,7 @@ class access_manager {
     /** Header sent by Safe Exam Browser containing the Browser Exam Key hash. */
     private const BROWSER_EXAM_KEY_HEADER = 'HTTP_X_SAFEEXAMBROWSER_REQUESTHASH';
 
-    /** @var quiz $quiz A quiz object containing all information pertaining to current quiz. */
+    /** @var quiz_settings $quiz A quiz object containing all information pertaining to current quiz. */
     private $quiz;
 
     /** @var quiz_settings $quizsettings A quiz settings persistent object containing plugin settings */
@@ -62,9 +62,9 @@ class access_manager {
     /**
      * The access_manager constructor.
      *
-     * @param quiz $quiz The details of the quiz.
+     * @param quiz_settings $quiz The details of the quiz.
      */
-    public function __construct(quiz $quiz) {
+    public function __construct(quiz_settings $quiz) {
         $this->quiz = $quiz;
         $this->context = context_module::instance($quiz->get_cmid());
         $this->quizsettings = quiz_settings::get_by_quiz_id($quiz->get_quizid());
@@ -219,9 +219,9 @@ class access_manager {
     /**
      * Getter for the quiz object.
      *
-     * @return quiz
+     * @return \mod_quiz\quiz_settings
      */
-    public function get_quiz() : quiz {
+    public function get_quiz() : quiz_settings {
         return $this->quiz;
     }
 

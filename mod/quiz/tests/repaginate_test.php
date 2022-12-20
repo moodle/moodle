@@ -24,7 +24,7 @@
 
 namespace mod_quiz;
 
-use quiz;
+use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -113,7 +113,7 @@ class repaginate_test extends \advanced_testcase {
         quiz_add_quiz_question($match->id, $quiz);
 
         // Return the quiz object.
-        $quizobj = new quiz($quiz, $cm, $SITE);
+        $quizobj = new quiz_settings($quiz, $cm, $SITE);
         return structure::create_for_quiz($quizobj);
     }
 

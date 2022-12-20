@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 use mod_quiz\local\access_rule_base;
+use mod_quiz\quiz_settings;
 
 /**
  * A rule controlling the number of attempts allowed.
@@ -25,7 +26,7 @@ use mod_quiz\local\access_rule_base;
  */
 class quizaccess_numattempts extends access_rule_base {
 
-    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
+    public static function make(quiz_settings $quizobj, $timenow, $canignoretimelimits) {
 
         if ($quizobj->get_num_attempts_allowed() == 0) {
             return null;

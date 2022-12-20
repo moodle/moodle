@@ -68,7 +68,7 @@ class quiz_question_version_test extends \advanced_testcase {
         $questiongenerator->update_question($numq, null, ['name' => 'This is the third version']);
         quiz_add_quiz_question($numq->id, $quiz);
         // Create the quiz object.
-        $quizobj = \quiz::create($quiz->id);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->id);
         $structure = \mod_quiz\structure::create_for_quiz($quizobj);
         $slots = $structure->get_slots();
         $slot = reset($slots);
@@ -151,7 +151,7 @@ class quiz_question_version_test extends \advanced_testcase {
         list($quizobj, $quba, $attemptobj) = $this->attempt_quiz($quiz, $this->student);
         $this->assertEquals('This is the third version', $attemptobj->get_question_attempt(1)->get_question()->name);
         // Create the quiz object.
-        $quizobj = \quiz::create($quiz->id);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->id);
         $structure = \mod_quiz\structure::create_for_quiz($quizobj);
         $slots = $structure->get_slots();
         $slot = reset($slots);

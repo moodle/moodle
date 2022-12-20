@@ -17,7 +17,7 @@
 namespace mod_quiz;
 
 use question_engine;
-use quiz;
+use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -245,7 +245,7 @@ class attempt_walkthrough_from_csv_test extends \advanced_testcase {
 
             if (!isset($attemptids[$step['quizattempt']])) {
                 // Start the attempt.
-                $quizobj = quiz::create($this->quiz->id, $user->id);
+                $quizobj = quiz_settings::create($this->quiz->id, $user->id);
                 $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
                 $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 

@@ -27,6 +27,7 @@ use mod_quiz\access_manager;
 use mod_quiz\output\renderer;
 use mod_quiz\output\view_page;
 use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir.'/gradelib.php');
@@ -68,7 +69,7 @@ $canpreview = has_capability('mod/quiz:preview', $context);
 
 // Create an object to manage all the other (non-roles) access rules.
 $timenow = time();
-$quizobj = quiz::create($cm->instance, $USER->id);
+$quizobj = quiz_settings::create($cm->instance, $USER->id);
 $accessmanager = new access_manager($quizobj, $timenow,
         has_capability('mod/quiz:ignoretimelimits', $context, null, false));
 $quiz = $quizobj->get_quiz();

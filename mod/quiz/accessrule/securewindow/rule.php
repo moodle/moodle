@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 use mod_quiz\local\access_rule_base;
+use mod_quiz\quiz_settings;
 
 /**
  * A rule for ensuring that the quiz is opened in a popup, with some JavaScript
@@ -40,7 +41,7 @@ class quizaccess_securewindow extends access_rule_base {
         'menubar' => false,
     );
 
-    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
+    public static function make(quiz_settings $quizobj, $timenow, $canignoretimelimits) {
 
         if ($quizobj->get_quiz()->browsersecurity !== 'securewindow') {
             return null;

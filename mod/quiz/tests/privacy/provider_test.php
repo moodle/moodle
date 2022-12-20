@@ -247,7 +247,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         // Run as the user and make an attempt on the quiz.
         $this->setUser($user);
         $starttime = time();
-        $quizobj = \quiz::create($quiz->id, $user->id);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->id, $user->id);
         $context = $quizobj->get_context();
 
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
@@ -430,7 +430,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $this->setUser($user);
 
         $starttime = time();
-        $quizobj = \quiz::create($quiz->id, $user->id);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->id, $user->id);
         $context = $quizobj->get_context();
 
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());

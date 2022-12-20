@@ -27,6 +27,7 @@
  */
 
 use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
@@ -43,7 +44,7 @@ if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
     throw new \moodle_exception("coursemisconf");
 }
 
-$quizobj = quiz::create($cm->instance, $USER->id);
+$quizobj = quiz_settings::create($cm->instance, $USER->id);
 // This script should only ever be posted to, so set page URL to the view page.
 $PAGE->set_url($quizobj->view_url());
 // During quiz attempts, the browser back/forwards buttons should force a reload.

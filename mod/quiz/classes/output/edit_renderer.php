@@ -44,14 +44,14 @@ class edit_renderer extends \plugin_renderer_base {
     /**
      * Render the edit page
      *
-     * @param \quiz $quizobj object containing all the quiz settings information.
+     * @param \mod_quiz\quiz_settings $quizobj object containing all the quiz settings information.
      * @param structure $structure object containing the structure of the quiz.
      * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @param array $pagevars the variables from {@link question_edit_setup()}.
      * @return string HTML to output.
      */
-    public function edit_page(\quiz $quizobj, structure $structure,
+    public function edit_page(\mod_quiz\quiz_settings $quizobj, structure $structure,
         \core_question\local\bank\question_edit_contexts $contexts, \moodle_url $pageurl, array $pagevars) {
         $output = '';
 

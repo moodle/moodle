@@ -27,6 +27,7 @@
 use core_course\external\helper_for_get_mods_by_courses;
 use mod_quiz\access_manager;
 use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -113,7 +114,7 @@ class mod_quiz_external extends external_api {
                     $quizdetails['hasfeedback'] = (!empty($hasfeedback)) ? 1 : 0;
 
                     $timenow = time();
-                    $quizobj = quiz::create($quiz->id, $USER->id);
+                    $quizobj = quiz_settings::create($quiz->id, $USER->id);
                     $accessmanager = new access_manager($quizobj, $timenow, has_capability('mod/quiz:ignoretimelimits',
                                                                 $context, null, false));
 
@@ -727,7 +728,7 @@ class mod_quiz_external extends external_api {
 
         list($quiz, $course, $cm, $context) = self::validate_quiz($params['quizid']);
 
-        $quizobj = quiz::create($cm->instance, $USER->id);
+        $quizobj = quiz_settings::create($cm->instance, $USER->id);
 
         // Check questions.
         if (!$quizobj->has_questions()) {
@@ -1798,7 +1799,7 @@ class mod_quiz_external extends external_api {
         $result['canviewreports'] = has_capability('mod/quiz:viewreports', $context);;
 
         // Access manager now.
-        $quizobj = quiz::create($cm->instance, $USER->id);
+        $quizobj = quiz_settings::create($cm->instance, $USER->id);
         $ignoretimelimits = has_capability('mod/quiz:ignoretimelimits', $context, null, false);
         $timenow = time();
         $accessmanager = new access_manager($quizobj, $timenow, $ignoretimelimits);
@@ -1883,7 +1884,7 @@ class mod_quiz_external extends external_api {
         }
 
         // Access manager now.
-        $quizobj = quiz::create($cm->instance, $USER->id);
+        $quizobj = quiz_settings::create($cm->instance, $USER->id);
         $ignoretimelimits = has_capability('mod/quiz:ignoretimelimits', $context, null, false);
         $timenow = time();
         $accessmanager = new access_manager($quizobj, $timenow, $ignoretimelimits);
@@ -1977,7 +1978,7 @@ class mod_quiz_external extends external_api {
 
         list($quiz, $course, $cm, $context) = self::validate_quiz($params['quizid']);
 
-        $quizobj = quiz::create($cm->instance, $USER->id);
+        $quizobj = quiz_settings::create($cm->instance, $USER->id);
         $quizobj->preload_questions();
         $quizobj->load_questions();
 

@@ -25,7 +25,6 @@ use mod_quiz\output\renderer;
 use moodle_page;
 use moodle_url;
 use MoodleQuickForm;
-use quiz;
 use stdClass;
 
 /**
@@ -40,7 +39,7 @@ use stdClass;
  * @since     Moodle 2.2
  */
 class access_manager {
-    /** @var quiz the quiz settings object. */
+    /** @var quiz_settings the quiz settings object. */
     protected $quizobj;
 
     /** @var int the time to be considered as 'now'. */
@@ -52,13 +51,13 @@ class access_manager {
     /**
      * Create an instance for a particular quiz.
      *
-     * @param quiz $quizobj An instance of the class quiz from attemptlib.php.
+     * @param quiz_settings $quizobj the quiz settings.
      *      The quiz we will be controlling access to.
      * @param int $timenow The time to use as 'now'.
      * @param bool $canignoretimelimits Whether this user is exempt from time
      *      limits (has_capability('mod/quiz:ignoretimelimits', ...)).
      */
-    public function __construct(quiz $quizobj, int $timenow, bool $canignoretimelimits) {
+    public function __construct(quiz_settings $quizobj, int $timenow, bool $canignoretimelimits) {
         $this->quizobj = $quizobj;
         $this->timenow = $timenow;
         $this->rules = $this->make_rules($quizobj, $timenow, $canignoretimelimits);
@@ -67,13 +66,13 @@ class access_manager {
     /**
      * Make all the rules relevant to a particular quiz.
      *
-     * @param quiz $quizobj information about the quiz in question.
+     * @param quiz_settings $quizobj information about the quiz in question.
      * @param int $timenow the time that should be considered as 'now'.
      * @param bool $canignoretimelimits whether the current user is exempt from
      *      time limits by the mod/quiz:ignoretimelimits capability.
      * @return access_rule_base[] rules that apply to this quiz.
      */
-    protected function make_rules(quiz $quizobj, int $timenow, bool $canignoretimelimits): array {
+    protected function make_rules(quiz_settings $quizobj, int $timenow, bool $canignoretimelimits): array {
 
         $rules = [];
         foreach (self::get_rule_classes() as $ruleclass) {

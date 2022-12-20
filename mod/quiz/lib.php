@@ -36,9 +36,9 @@ use mod_quiz\question\qubaids_for_quiz;
 use mod_quiz\question\qubaids_for_users_attempts;
 use core_question\statistics\questions\all_calculated_for_qubaid_condition;
 use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 
 require_once($CFG->dirroot . '/calendar/lib.php');
-require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 
 /**#@+
  * Option controlling what options are offered on the quiz settings form.
@@ -1183,7 +1183,7 @@ function mod_quiz_inplace_editable(string $itemtype, int $itemid, string $newval
         // Check permission of the user to update this item (customise question number).
         require_capability('mod/quiz:manage', $context);
 
-        $quizobj = new quiz($quiz, $cm, $course);
+        $quizobj = new quiz_settings($quiz, $cm, $course);
         $structure = $quizobj->get_structure();
         $warning = false;
         // Clean input and update the record.
@@ -1963,7 +1963,7 @@ function quiz_check_updates_since(cm_info $cm, $from, $filter = array()) {
 
     // Check if questions were updated.
     $updates->questions = (object) array('updated' => false);
-    $quizobj = quiz::create($cm->instance, $USER->id);
+    $quizobj = quiz_settings::create($cm->instance, $USER->id);
     $quizobj->preload_questions();
     $quizobj->load_questions();
     $questionids = array_keys($quizobj->get_questions());
@@ -2060,7 +2060,7 @@ function mod_quiz_core_calendar_provide_event_action(calendar_event $event,
     }
 
     $cm = get_fast_modinfo($event->courseid, $userid)->instances['quiz'][$event->instance];
-    $quizobj = quiz::create($cm->instance, $userid);
+    $quizobj = quiz_settings::create($cm->instance, $userid);
     $quiz = $quizobj->get_quiz();
 
     // Check they have capabilities allowing them to view the quiz.

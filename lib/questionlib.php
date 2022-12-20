@@ -841,7 +841,7 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
 /**
  * Given a list of ids, load the basic information about a set of questions from
  * the questions table. The $join and $extrafields arguments can be used together
- * to pull in extra data. See, for example, the usage in mod/quiz/attemptlib.php, and
+ * to pull in extra data. See, for example, the usage in {@see \mod_quiz\quiz_attempt}, and
  * read the code below to see how the SQL is assembled. Throws exceptions on error.
  *
  * @param array $questionids array of question ids to load. If null, then all

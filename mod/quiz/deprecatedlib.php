@@ -23,6 +23,7 @@
  */
 
 use mod_quiz\access_manager;
+use mod_quiz\quiz_settings;
 use mod_quiz\task\update_overdue_attempts;
 
 /**
@@ -71,7 +72,7 @@ function quiz_completion_check_passing_grade_or_all_attempts($course, $cm, $user
     }
     $lastfinishedattempt = end($attempts);
     $context = context_module::instance($cm->id);
-    $quizobj = quiz::create($quiz->id, $userid);
+    $quizobj = quiz_settings::create($quiz->id, $userid);
     $accessmanager = new access_manager($quizobj, time(),
             has_capability('mod/quiz:ignoretimelimits', $context, $userid, false));
 
@@ -177,7 +178,7 @@ class moodle_quiz_exception extends moodle_exception {
     /**
      * Constructor.
      *
-     * @param quiz $quizobj the quiz the error relates to.
+     * @param quiz_settings $quizobj the quiz the error relates to.
      * @param string $errorcode The name of the string from error.php to print.
      * @param mixed $a Extra words and phrases that might be required in the error string.
      * @param string $link The url where the user will be prompted to continue.

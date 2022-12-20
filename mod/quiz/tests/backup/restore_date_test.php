@@ -50,7 +50,7 @@ class restore_date_test extends \restore_date_testcase {
 
         // Create an attempt.
         $timestamp = 100;
-        $quizobj = \quiz::create($quiz->id);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->id);
         $attempt = quiz_create_attempt($quizobj, 1, false, $timestamp, false);
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);

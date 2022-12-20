@@ -16,14 +16,6 @@
 
 namespace mod_quiz;
 
-use mod_quiz\question\bank\qbank_helper;
-use quiz;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
-
 /**
  * Unit tests for quiz events.
  *
@@ -74,7 +66,7 @@ class structure_test extends \advanced_testcase {
      * The elements in the question array are name, page number, and question type.
      *
      * @param array $layout as above.
-     * @return quiz the created quiz.
+     * @return quiz_settings the created quiz.
      */
     protected function create_test_quiz($layout) {
         list($quiz, $cm, $course) = $this->prepare_quiz_data();
@@ -105,7 +97,7 @@ class structure_test extends \advanced_testcase {
             }
         }
 
-        $quizobj = new quiz($quiz, $cm, $course);
+        $quizobj = new quiz_settings($quiz, $cm, $course);
         $structure = structure::create_for_quiz($quizobj);
         if (isset($headings[1])) {
             list($heading, $shuffle) = $this->parse_section_name($headings[1]);

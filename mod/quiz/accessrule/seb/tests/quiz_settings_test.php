@@ -21,7 +21,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/test_helper_trait.php');
 
 /**
- * PHPUnit tests for quiz_settings class.
+ * PHPUnit tests for mod_quiz\quiz_settings class.
  *
  * @package   quizaccess_seb
  * @author    Andrew Madden <andrewmadden@catalyst-au.net>
@@ -748,7 +748,7 @@ class quiz_settings_test extends \advanced_testcase {
     }
 
     /**
-     * Test that we can get quiz_settings by quiz id.
+     * Test that we can get mod_quiz\quiz_settings by quiz id.
      */
     public function test_get_quiz_settings_by_quiz_id() {
         $expected = quiz_settings::get_record(['quizid' => $this->quiz->id]);

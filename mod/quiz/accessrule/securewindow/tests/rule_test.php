@@ -16,7 +16,7 @@
 
 namespace quizaccess_securewindow;
 
-use quiz;
+use mod_quiz\quiz_settings;
 use quizaccess_securewindow;
 
 defined('MOODLE_INTERNAL') || die();
@@ -42,7 +42,7 @@ class rule_test extends \basic_testcase {
         $quiz->browsersecurity = 'securewindow';
         $cm = new \stdClass();
         $cm->id = 0;
-        $quizobj = new quiz($quiz, $cm, null);
+        $quizobj = new quiz_settings($quiz, $cm, null);
         $rule = new quizaccess_securewindow($quizobj, 0);
         $attempt = new \stdClass();
 

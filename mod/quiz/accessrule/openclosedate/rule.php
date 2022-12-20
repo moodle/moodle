@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 use mod_quiz\local\access_rule_base;
-
+use mod_quiz\quiz_settings;
 
 /**
  * A rule enforcing open and close dates.
@@ -26,7 +26,7 @@ use mod_quiz\local\access_rule_base;
  */
 class quizaccess_openclosedate extends access_rule_base {
 
-    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
+    public static function make(quiz_settings $quizobj, $timenow, $canignoretimelimits) {
         // This rule is always used, even if the quiz has no open or close date.
         return new self($quizobj, $timenow);
     }

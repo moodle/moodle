@@ -26,13 +26,8 @@
 namespace mod_quiz\event;
 
 use mod_quiz\quiz_attempt;
-use quiz;
+use mod_quiz\quiz_settings;
 use context_module;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 
 /**
  * Unit tests for quiz events.
@@ -47,7 +42,7 @@ class events_test extends \advanced_testcase {
     /**
      * Setup a quiz.
      *
-     * @return quiz the generated quiz.
+     * @return quiz_settings the generated quiz.
      */
     protected function prepare_quiz() {
 
@@ -79,13 +74,13 @@ class events_test extends \advanced_testcase {
         $user1 = $this->getDataGenerator()->create_user();
         $this->setUser($user1);
 
-        return quiz::create($quiz->id, $user1->id);
+        return quiz_settings::create($quiz->id, $user1->id);
     }
 
     /**
      * Setup a quiz attempt at the quiz created by {@link prepare_quiz()}.
      *
-     * @param quiz $quizobj the generated quiz.
+     * @param \mod_quiz\quiz_settings $quizobj the generated quiz.
      * @param bool $ispreview Make the attempt a preview attempt when true.
      * @return array with three elements, array($quizobj, $quba, $attempt)
      */

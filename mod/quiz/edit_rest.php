@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\quiz_settings;
+
 if (!defined('AJAX_SCRIPT')) {
     define('AJAX_SCRIPT', true);
 }
@@ -57,7 +59,7 @@ $cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
 $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
 require_login($course, false, $cm);
 
-$quizobj = new quiz($quiz, $cm, $course);
+$quizobj = new quiz_settings($quiz, $cm, $course);
 $structure = $quizobj->get_structure();
 $modcontext = context_module::instance($cm->id);
 

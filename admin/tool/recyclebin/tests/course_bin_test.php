@@ -17,6 +17,7 @@
 namespace tool_recyclebin;
 
 use mod_quiz\quiz_attempt;
+use stdClass;
 
 /**
  * Recycle bin course tests.
@@ -302,7 +303,7 @@ class course_bin_test extends \advanced_testcase {
         quiz_add_quiz_question($numq->id, $quiz);
 
         // Create quiz attempt.
-        $quizobj = \quiz::create($quiz->id, $student->id);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->id, $student->id);
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
         $timenow = time();

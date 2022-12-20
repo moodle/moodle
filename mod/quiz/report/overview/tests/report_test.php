@@ -20,7 +20,7 @@ use core_question\local\bank\question_version_status;
 use mod_quiz\external\submit_question_version;
 use mod_quiz\quiz_attempt;
 use question_engine;
-use quiz;
+use mod_quiz\quiz_settings;
 use mod_quiz\local\reports\attempts_report;
 use quiz_overview_options;
 use quiz_overview_report;
@@ -122,7 +122,7 @@ class report_test extends \advanced_testcase {
             list($quiz, $student, $attemptnumber, $sumgrades, $state) = $attemptdata;
             $timestart = $timestamp + $attemptnumber * 3600;
 
-            $quizobj = quiz::create($quiz->id, $student->id);
+            $quizobj = quiz_settings::create($quiz->id, $student->id);
             $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
             $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 
@@ -312,7 +312,7 @@ class report_test extends \advanced_testcase {
         $quizattemptsreport = new \testable_quiz_attempts_report();
 
         // Create the new attempt and initialize the question sessions.
-        $quizobj = quiz::create($quiz->id, $student->id);
+        $quizobj = quiz_settings::create($quiz->id, $student->id);
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
         $attempt = quiz_create_attempt($quizobj, 1, null, $timestart, false, $student->id);
@@ -358,7 +358,7 @@ class report_test extends \advanced_testcase {
         quiz_add_quiz_question($q2->id, $quiz, 0, 10);
 
         // Attempt the quiz, submitting response 'toad'.
-        $quizobj = quiz::create($quiz->id);
+        $quizobj = quiz_settings::create($quiz->id);
         $attempt = quiz_prepare_and_start_new_attempt($quizobj, 1, null);
         $attemptobj = quiz_attempt::create($attempt->id);
         $attemptobj->process_submitted_actions(time(), false, [1 => ['answer' => 'toad']]);

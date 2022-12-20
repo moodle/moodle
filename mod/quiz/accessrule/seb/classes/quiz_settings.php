@@ -567,7 +567,7 @@ class quiz_settings extends persistent {
     }
 
     /**
-     * Sets the quitURL if found in the quiz_settings.
+     * Sets the quitURL if found in the mod_quiz\quiz_settings.
      */
     private function process_quit_url_from_settings() {
         $settings = $this->to_record();

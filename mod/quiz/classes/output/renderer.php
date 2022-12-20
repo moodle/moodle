@@ -31,7 +31,7 @@ use moodle_url;
 use plugin_renderer_base;
 use popup_action;
 use question_display_options;
-use quiz;
+use mod_quiz\quiz_settings;
 use renderable;
 use single_button;
 use stdClass;
@@ -448,11 +448,11 @@ class renderer extends plugin_renderer_base {
      * The student gets here if their interaction with the preflight check
      * from fails in some way (e.g. they typed the wrong password).
      *
-     * @param quiz $quizobj
+     * @param \mod_quiz\quiz_settings $quizobj
      * @param preflight_check_form $mform
      * @return string
      */
-    public function start_attempt_page(quiz $quizobj, preflight_check_form $mform) {
+    public function start_attempt_page(quiz_settings $quizobj, preflight_check_form $mform) {
         $output = '';
         $output .= $this->header();
         $output .= $this->during_attempt_tertiary_nav($quizobj->view_url());

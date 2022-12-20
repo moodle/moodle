@@ -31,7 +31,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
-require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 require_once($CFG->libdir . '/completionlib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/questionlib.php');
@@ -40,6 +39,7 @@ use mod_quiz\access_manager;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
 use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 
 /**
  * @var int We show the countdown timer if there is less than this amount of time left before the
@@ -89,7 +89,7 @@ define('QUIZ_SHOWIMAGE_LARGE', 2);
  *
  * @return object the newly created attempt object.
  */
-function quiz_create_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $timenow, $ispreview = false, $userid = null) {
+function quiz_create_attempt(quiz_settings $quizobj, $attemptnumber, $lastattempt, $timenow, $ispreview = false, $userid = null) {
     global $USER;
 
     if ($userid === null) {
@@ -145,7 +145,7 @@ function quiz_create_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $timen
 /**
  * Start a normal, new, quiz attempt.
  *
- * @param quiz      $quizobj            the quiz object to start an attempt for.
+ * @param quiz_settings      $quizobj            the quiz object to start an attempt for.
  * @param question_usage_by_activity $quba
  * @param object    $attempt
  * @param integer   $attemptnumber      starting from 1
@@ -155,8 +155,8 @@ function quiz_create_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $timen
  * @param array     $forcedvariantsbyslot slot number => variant. Used for questions with variants,
  *                                          to force the choice of a particular variant. Intended for testing
  *                                          purposes only.
- * @throws moodle_exception
  * @return object   modified attempt object
+ *@throws moodle_exception
  */
 function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow,
                                 $questionids = array(), $forcedvariantsbyslot = array()) {
@@ -340,7 +340,7 @@ function quiz_start_attempt_built_on_last($quba, $attempt, $lastattempt) {
 /**
  * The save started question usage and quiz attempt in db and log the started attempt.
  *
- * @param quiz                       $quizobj
+ * @param quiz_settings $quizobj
  * @param question_usage_by_activity $quba
  * @param object                     $attempt
  * @return object                    attempt object with uniqueid and id set.
@@ -2436,7 +2436,7 @@ function quiz_view($quiz, $course, $cm, $context) {
 /**
  * Validate permissions for creating a new attempt and start a new preview attempt if required.
  *
- * @param  quiz $quizobj quiz object
+ * @param  quiz_settings $quizobj quiz object
  * @param  access_manager $accessmanager quiz access manager
  * @param  bool $forcenew whether was required to start a new preview attempt
  * @param  int $page page to jump to in the attempt
@@ -2444,7 +2444,7 @@ function quiz_view($quiz, $course, $cm, $context) {
  * @return array an array containing the attempt information, access error messages and the page to jump to in the attempt
  * @since Moodle 3.1
  */
-function quiz_validate_new_attempt(quiz $quizobj, access_manager $accessmanager, $forcenew, $page, $redirect) {
+function quiz_validate_new_attempt(quiz_settings $quizobj, access_manager $accessmanager, $forcenew, $page, $redirect) {
     global $DB, $USER;
     $timenow = time();
 
@@ -2520,7 +2520,7 @@ function quiz_validate_new_attempt(quiz $quizobj, access_manager $accessmanager,
 /**
  * Prepare and start a new attempt deleting the previous preview attempts.
  *
- * @param quiz $quizobj quiz object
+ * @param quiz_settings $quizobj quiz object
  * @param int $attemptnumber the attempt number
  * @param object $lastattempt last attempt object
  * @param bool $offlineattempt whether is an offline attempt or not
@@ -2532,7 +2532,7 @@ function quiz_validate_new_attempt(quiz $quizobj, access_manager $accessmanager,
  * @return object the new attempt
  * @since  Moodle 3.1
  */
-function quiz_prepare_and_start_new_attempt(quiz $quizobj, $attemptnumber, $lastattempt,
+function quiz_prepare_and_start_new_attempt(quiz_settings $quizobj, $attemptnumber, $lastattempt,
         $offlineattempt = false, $forcedrandomquestions = [], $forcedvariants = [], $userid = null) {
     global $DB, $USER;
 

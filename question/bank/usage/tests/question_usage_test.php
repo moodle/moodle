@@ -45,7 +45,7 @@ class question_usage_test extends \advanced_testcase {
         $quiz = $quizgenerator->create_instance(['course' => $course->id,
             'grade' => 100.0, 'sumgrades' => 2, 'layout' => $layout]);
 
-        $quizobj = \quiz::create($quiz->id, $user->id);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->id, $user->id);
 
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);

@@ -18,7 +18,7 @@ namespace mod_quiz;
 
 use question_bank;
 use question_engine;
-use quiz;
+use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -67,7 +67,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
         // Make a user to do the quiz.
         $user1 = $this->getDataGenerator()->create_user();
 
-        $quizobj = quiz::create($quiz->id, $user1->id);
+        $quizobj = quiz_settings::create($quiz->id, $user1->id);
 
         // Start the attempt.
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
@@ -188,7 +188,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
         // Make a user to do the quiz.
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
-        $quizobj = quiz::create($quiz->id, $user->id);
+        $quizobj = quiz_settings::create($quiz->id, $user->id);
 
         // Start the attempt.
         $attempt = quiz_prepare_and_start_new_attempt($quizobj, 1, null);
@@ -234,7 +234,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
         // Make a user to do the quiz.
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
-        $quizobj = quiz::create($quiz->id, $user->id);
+        $quizobj = quiz_settings::create($quiz->id, $user->id);
 
         // Start the attempt.
         $attempt = quiz_prepare_and_start_new_attempt($quizobj, 1, null);
@@ -307,7 +307,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
             $user1 = $this->getDataGenerator()->create_user();
             $this->setUser($user1);
 
-            $quizobj = quiz::create($quiz->id, $user1->id);
+            $quizobj = quiz_settings::create($quiz->id, $user1->id);
 
             // Start the attempt.
             $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
@@ -408,7 +408,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
         // Make a new user to do the quiz.
         $user1 = $this->getDataGenerator()->create_user();
         $this->setUser($user1);
-        $quizobj = quiz::create($this->quizwithvariants->id, $user1->id);
+        $quizobj = quiz_settings::create($this->quizwithvariants->id, $user1->id);
 
         // Start the attempt.
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
