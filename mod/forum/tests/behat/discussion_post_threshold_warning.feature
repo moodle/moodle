@@ -85,3 +85,42 @@ Feature: An admin or teacher sets the post threshold for blocking and warning
     And I click on "Test post subject two" "link"
     When I press "Reply"
     Then I should see "You are approaching the posting threshold. You have posted 2 times in the last 2 days and the limit is 3 posts."
+
+  @javascript
+  Scenario: A student with postwithoutthrottling capability should be able to post unlimited number of times
+    Given the following "permission overrides" exist:
+      | capability                  | permission | role           | contextlevel | reference |
+      | mod/forum:postwithoutthrottling       | Allow      | student        | Course       | C1        |
+    And I am on the "Test forum name" "forum activity" page logged in as "teacher1"
+    And I navigate to "Settings" in current page administration
+    And I expand all fieldsets
+    And I set the field "Time period for blocking" to "2 days"
+    And I set the field "Post threshold for blocking" to "3"
+    And I set the field "Post threshold for warning" to "2"
+    And I press "Save and display"
+    And I log out
+    And I am on the "Test forum name" "forum activity" page logged in as student1
+    And I should see "This forum has a limit to the number of forum postings you can make in a given time period - this is currently set at 3 posting(s) in 2 days"
+    When I add a new discussion to "Test forum name" forum with:
+      | Subject | Test post subject one |
+      | Message | Test post message one |
+    And I add a new discussion to "Test forum name" forum with:
+      | Subject | Test post subject two |
+      | Message | Test post message two |
+    And I should see "Add discussion topic"
+    # Verify that when navigated to one of the topics and then click reply the warning notification is shown.
+    And I click on "Test post subject two" "link"
+    And I click on "Reply" "link"
+    # With mod/forum:postwithoutthrottling capability the message below should not be displayed.
+    And I should not see "You are approaching the posting threshold. You have posted 2 times in the last 2 days and the limit is 3 posts."
+    And I click on "Test forum name" "link"
+    And I add a new discussion to "Test forum name" forum with:
+      | Subject | Test post subject three |
+      | Message | Test post message three |
+    Then I should see "Add discussion topic"
+    # Verify that reply link is available in the posts.
+    And I click on "Test post subject three" "link"
+    And I should see "Reply"
+    And I am on the "Test forum name" "forum activity" page
+    And I click on "Test post subject two" "link"
+    And I should see "Reply"
