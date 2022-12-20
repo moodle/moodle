@@ -40,20 +40,20 @@ $q = optional_param('q',  0, PARAM_INT);  // Quiz ID.
 
 if ($id) {
     if (!$cm = get_coursemodule_from_id('quiz', $id)) {
-        throw new \moodle_exception('invalidcoursemodule');
+        throw new moodle_exception('invalidcoursemodule');
     }
-    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-        throw new \moodle_exception('coursemisconf');
+    if (!$course = $DB->get_record('course', ['id' => $cm->course])) {
+        throw new moodle_exception('coursemisconf');
     }
 } else {
-    if (!$quiz = $DB->get_record('quiz', array('id' => $q))) {
-        throw new \moodle_exception('invalidquizid', 'quiz');
+    if (!$quiz = $DB->get_record('quiz', ['id' => $q])) {
+        throw new moodle_exception('invalidquizid', 'quiz');
     }
-    if (!$course = $DB->get_record('course', array('id' => $quiz->course))) {
-        throw new \moodle_exception('invalidcourseid');
+    if (!$course = $DB->get_record('course', ['id' => $quiz->course])) {
+        throw new moodle_exception('invalidcourseid');
     }
     if (!$cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
-        throw new \moodle_exception('invalidcoursemodule');
+        throw new moodle_exception('invalidcoursemodule');
     }
 }
 
@@ -78,7 +78,7 @@ $quiz = $quizobj->get_quiz();
 quiz_view($quiz, $course, $cm, $context);
 
 // Initialize $PAGE, compute blocks.
-$PAGE->set_url('/mod/quiz/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/quiz/view.php', ['id' => $cm->id]);
 
 // Create view object which collects all the information the renderer will need.
 $viewobj = new view_page();
@@ -108,7 +108,7 @@ if ($unfinishedattempt = quiz_get_user_attempt_unfinished($quiz->id, $USER->id))
 $numattempts = count($attempts);
 
 $viewobj->attempts = $attempts;
-$viewobj->attemptobjs = array();
+$viewobj->attemptobjs = [];
 foreach ($attempts as $attempt) {
     $viewobj->attemptobjs[] = new quiz_attempt($attempt, $quiz, $cm, $course, false);
 }
@@ -179,8 +179,8 @@ $viewobj->mygradeoverridden = $mygradeoverridden;
 $viewobj->gradebookfeedback = $gradebookfeedback;
 $viewobj->lastfinishedattempt = $lastfinishedattempt;
 $viewobj->canedit = has_capability('mod/quiz:manage', $context);
-$viewobj->editurl = new moodle_url('/mod/quiz/edit.php', array('cmid' => $cm->id));
-$viewobj->backtocourseurl = new moodle_url('/course/view.php', array('id' => $course->id));
+$viewobj->editurl = new moodle_url('/mod/quiz/edit.php', ['cmid' => $cm->id]);
+$viewobj->backtocourseurl = new moodle_url('/course/view.php', ['id' => $course->id]);
 $viewobj->startattempturl = $quizobj->start_attempt_url();
 
 if ($accessmanager->is_preflight_check_required($unfinishedattemptid)) {
@@ -205,9 +205,9 @@ if ($item && grade_floats_different($item->gradepass, 0)) {
     $viewobj->infomessages[] = get_string('gradetopassoutof', 'quiz', $a);
 }
 
-// Determine wheter a start attempt button should be displayed.
+// Determine whether a start attempt button should be displayed.
 $viewobj->quizhasquestions = $quizobj->has_questions();
-$viewobj->preventmessages = array();
+$viewobj->preventmessages = [];
 if (!$viewobj->quizhasquestions) {
     $viewobj->buttontext = '';
 
