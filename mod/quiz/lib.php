@@ -655,11 +655,11 @@ function quiz_get_user_grades($quiz, $userid = 0) {
 }
 
 /**
- * Round a grade to to the correct number of decimal places, and format it for display.
+ * Round a grade to the correct number of decimal places, and format it for display.
  *
  * @param stdClass $quiz The quiz table row, only $quiz->decimalpoints is used.
  * @param float $grade The grade to round.
- * @return float
+ * @return string
  */
 function quiz_format_grade($quiz, $grade) {
     if (is_null($grade)) {

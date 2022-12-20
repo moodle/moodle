@@ -24,8 +24,6 @@
 
 namespace mod_quiz;
 
-use mod_quiz\quiz_settings;
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -33,7 +31,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/mod/quiz/classes/repaginate.php');
 
 /**
- * Testable subclass, giving access to the protected methods of {@link \mod_quiz\repaginate}
+ * Test for {@see \mod_quiz\repaginate}
  * @copyright 2014 The Open Univsersity
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
