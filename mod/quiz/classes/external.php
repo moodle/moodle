@@ -1067,6 +1067,7 @@ class mod_quiz_external extends external_api {
      * @throws moodle_quiz_exceptions
      */
     public static function get_attempt_data($attemptid, $page, $preflightdata = array()) {
+        global $PAGE;
 
         $warnings = array();
 
@@ -1084,6 +1085,10 @@ class mod_quiz_external extends external_api {
         } else {
             $nextpage = $params['page'] + 1;
         }
+
+        // TODO: Remove the code once the long-term solution (MDL-76728) has been applied.
+        // Set a default URL to stop the debugging output.
+        $PAGE->set_url('/fake/url');
 
         $result = array();
         $result['attempt'] = $attemptobj->get_attempt();
