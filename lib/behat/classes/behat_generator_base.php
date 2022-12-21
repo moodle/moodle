@@ -166,6 +166,15 @@ abstract class behat_generator_base {
     protected abstract function get_creatable_entities(): array;
 
     /**
+     * Get the list of available generators for this class.
+     *
+     * @return array
+     */
+    final public function get_available_generators(): array {
+        return $this->get_creatable_entities();
+    }
+
+    /**
      * Do the work to generate an entity.
      *
      * This is called by {@link behat_data_generators::the_following_entities_exist()}.
