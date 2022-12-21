@@ -72,13 +72,13 @@
     echo $OUTPUT->notification(get_string('noteunneededblocks', 'admin'), 'info');
 /// Main display starts here
 
-/// Get and sort the existing blocks
+// Get & sort the existing blocks, Select the id, name & visible fields along with count of number of total blocks & course blocks.
 
-$sql = "SELECT b.* , COUNT(DISTINCT binst.id) as totalcount, COUNT(DISTINCT bcinst.id) as courseviewcount
+$sql = "SELECT b.id, b.name, b.visible, COUNT(DISTINCT binst.id) as totalcount, COUNT(DISTINCT bcinst.id) as courseviewcount
           FROM {block} b
      LEFT JOIN {block_instances} binst ON binst.blockname = b.name
      LEFT JOIN {block_instances} bcinst ON bcinst.blockname = b.name AND bcinst.pagetypepattern = 'course-view-*'
-      GROUP BY b.id, binst.blockname, bcinst.blockname
+      GROUP BY b.id, b.name, b.visible, binst.blockname, bcinst.blockname
       ORDER BY b.name ASC";
 if (!$blocks = $DB->get_records_sql($sql)) {
     throw new \moodle_exception('noblocks', 'error');  // Should never happen.
