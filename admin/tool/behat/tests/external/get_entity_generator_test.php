@@ -47,7 +47,7 @@ class get_entity_generator_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_execute_core_entity() : void {
+    public function test_execute_core_entity(): void {
         $generator = get_entity_generator::execute('users');
         $this->assertEquals(['required' => ['username']], $generator);
     }
@@ -57,7 +57,7 @@ class get_entity_generator_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_execute_plugin_entity() : void {
+    public function test_execute_plugin_entity(): void {
         $generator = get_entity_generator::execute('mod_book > chapters');
         $this->assertEquals(['required' => ['book', 'title', 'content']], $generator);
     }
@@ -67,7 +67,7 @@ class get_entity_generator_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_execute_no_requried() : void {
+    public function test_execute_no_requried(): void {
         $generator = get_entity_generator::execute('mod_forum > posts');
         $this->assertEquals(['required' => []], $generator);
     }
@@ -77,7 +77,7 @@ class get_entity_generator_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_execute_invalid_entity() : void {
+    public function test_execute_invalid_entity(): void {
         $this->expectException('coding_exception');
         get_entity_generator::execute('foo');
     }
@@ -87,7 +87,7 @@ class get_entity_generator_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_execute_invalid_plugin() : void {
+    public function test_execute_invalid_plugin(): void {
         $this->expectException('coding_exception');
         get_entity_generator::execute('foo > bar');
     }
@@ -97,7 +97,7 @@ class get_entity_generator_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_execute_invalid_plugin_entity() : void {
+    public function test_execute_invalid_plugin_entity(): void {
         $this->expectException('coding_exception');
         get_entity_generator::execute('mod_book > bar');
     }
