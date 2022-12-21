@@ -1,4 +1,103 @@
-<?php
+<?php /** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection PhpCSValidationInspection */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,9 +121,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_h5p\local\library\autoloader;
+
 defined('MOODLE_INTERNAL') || die();
 
 // H5P overview.
+/* @var admin_root $ADMIN */
 $ADMIN->add('h5p', new admin_externalpage('h5poverview', get_string('h5poverview', 'core_h5p'),
     new moodle_url('/h5p/overview.php'), ['moodle/site:config']));
 
@@ -33,7 +135,7 @@ $ADMIN->add('h5p', new admin_externalpage('h5pmanagelibraries', get_string('h5pm
     new moodle_url('/h5p/libraries.php'), ['moodle/site:config', 'moodle/h5p:updatelibraries']));
 
 // H5P settings.
-$defaulth5plib = \core_h5p\local\library\autoloader::get_default_handler_library();
+$defaulth5plib = autoloader::get_default_handler_library();
 if (!empty($defaulth5plib)) {
     // As for now this page only has this setting, it will be hidden if there isn't any H5P libraries handler defined.
     $settings = new admin_settingpage('h5psettings', new lang_string('h5psettings', 'core_h5p'));
@@ -42,9 +144,9 @@ if (!empty($defaulth5plib)) {
     $settings->add(new admin_settings_h5plib_handler_select('h5plibraryhandler', new lang_string('h5plibraryhandler', 'core_h5p'),
         new lang_string('h5plibraryhandler_help', 'core_h5p'), $defaulth5plib));
     $settings->add(new admin_setting_heading('rtlckeditor_buttons', new lang_string('rtlckeditorbuttons', 'core_h5p'), ''));
-    $settings->add(new admin_setting_configcheckbox('h5pbidi', new lang_string('ckeditorbutton_bidi', 'core_h5p'),
+    $settings->add(new admin_setting_configcheckbox('h5pbidi', new lang_string('ckeditorbutton_bidi',
+        'core_h5p'),
         new  lang_string('ckeditorbutton_bidi_help', 'core_h5p'), 1, '1'));
     $settings->add(new admin_setting_configcheckbox('h5peditordirsupport', new lang_string('editordirsupport', 'core_h5p'),
         new lang_string('editordirsupport_help', 'core_h5p'), 1, '1'));
 }
-
