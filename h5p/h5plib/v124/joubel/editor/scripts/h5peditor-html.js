@@ -80,6 +80,13 @@ ns.Html.prototype.createToolbar = function () {
     name: "justify",
     items: ["JustifyLeft", "JustifyCenter", "JustifyRight"]
   });
+  if (H5PIntegration.editor.bidi === '1') {
+    // Directionality is added to all wysiwygs
+    toolbar.push({
+      name: "bidi",
+      items: ["BidiLtr", "BidiRtl"]
+    });
+  }
 
   // Paragraph styles
   if (this.inTags("ul")) {
@@ -387,6 +394,12 @@ ns.Html.prototype.appendTo = function ($wrapper) {
         }
         return cssLength;
     };
+
+    // Set ckEditor language to match current editing user preferred UI language
+    // set by the hosting LMS (Moodle)
+    // (Which will affect RTL/LTR and Alignment toolbar buttons inline style modifications.
+    //parentlang = window.parent.document.dir;
+    CKEDITOR.config.language = window.parent.document.getElementsByTagName('html')[0].getAttribute('lang');
 
     ns.Html.current = that;
     ckConfig.width = this.offsetWidth - 8; // Avoid miscalculations

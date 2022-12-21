@@ -202,3 +202,29 @@ Feature: Content bank use editor feature
     And I navigate to "Content bank" in current page administration
     And I follow "filltheblanks.h5p"
     Then "Edit" "link" should not exist in the "region-main" "region"
+
+  Scenario: Admin Can enable BIDI support in h5p editor
+    Given the following "contentbank content" exist:
+      | contextlevel | reference | contenttype     | user  | contentname             | filepath                                    |
+      | System       |           | contenttype_h5p | admin | filltheblanks.h5p       | /h5p/tests/fixtures/filltheblanks.h5p       |
+    And I click on "Site pages" "list_item" in the "Navigation" "block"
+    And I click on "Content bank" "link" in the "Navigation" "block"
+    And I click on "filltheblanks.h5p" "link"
+    And I click on "Edit" "link"
+    And I switch to "h5p-editor-iframe" class iframe
+    When I click on ".field-name-text .ckeditor" "css_element"
+    Then ".cke_button.cke_button__bidiltr.cke_button_on" "css_element" should exist
+
+  Scenario: Admin Can Disable BIDI support in h5p editor
+    Given the following "contentbank content" exist:
+      | contextlevel | reference | contenttype     | user  | contentname             | filepath                                    |
+      | System       |           | contenttype_h5p | admin | filltheblanks.h5p       | /h5p/tests/fixtures/filltheblanks.h5p       |
+    And I set the following administration settings values:
+      | BIDI buttons | 0 |
+    And I click on "Site pages" "list_item" in the "Navigation" "block"
+    And I click on "Content bank" "link" in the "Navigation" "block"
+    And I click on "filltheblanks.h5p" "link"
+    And I click on "Edit" "link"
+    And I switch to "h5p-editor-iframe" class iframe
+    When I click on ".field-name-text .ckeditor" "css_element"
+    Then ".cke_button.cke_button__bidiltr.cke_button_on" "css_element" should not exist

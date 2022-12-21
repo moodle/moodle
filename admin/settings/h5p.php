@@ -41,4 +41,10 @@ if (!empty($defaulth5plib)) {
 
     $settings->add(new admin_settings_h5plib_handler_select('h5plibraryhandler', new lang_string('h5plibraryhandler', 'core_h5p'),
         new lang_string('h5plibraryhandler_help', 'core_h5p'), $defaulth5plib));
+    $settings->add(new admin_setting_heading('rtlckeditor_buttons', new lang_string('rtlckeditorbuttons', 'core_h5p'), ''));
+    $settings->add(new admin_setting_configcheckbox('h5pbidi', new lang_string('ckeditorbutton_bidi', 'core_h5p'),
+        new  lang_string('ckeditorbutton_bidi_help', 'core_h5p'), 1, '1'));
+    $settings->add(new admin_setting_configcheckbox('h5peditordirsupport', new lang_string('editordirsupport', 'core_h5p'),
+        new lang_string('editordirsupport_help', 'core_h5p'), 1, '1'));
 }
+

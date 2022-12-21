@@ -595,6 +595,311 @@ iframe.h5peditor-semi-fullscreen {
   outline: none !important;
 }
 
+.h5p-dir-rtl,
+.h5peditor-dir-rtl {
+  direction: rtl;
+}
+/* h5p-multichoice */
+.h5p-dir-rtl.h5p-multichoice .h5p-alternative-container {
+  text-align: right;
+  padding: 0.25em 2.1em 0.25em 0.75em;
+}
+
+.h5p-dir-rtl.h5p-multichoice .h5p-alternative-inner {
+  margin: 0 2em 0 0.75em;
+}
+.h5p-dir-rtl.h5p-multichoice .h5p-answer .h5p-alternative-container:before {
+  right: 2.5em;
+  left: auto;
+}
+.h5p-dir-rtl.h5p-multichoice .h5p-question-image {
+  text-align: right;
+  padding-right: 2em;
+}
+.h5p-dir-rtl.h5p-multichoice .h5p-question-image-scalable:before {
+  left: 0.7em;
+  right: auto;
+}
+
+/* Quiz */
+.h5p-dir-rtl .h5p-multichoice .h5p-alternative-container {
+  text-align: right;
+  padding: 0.25em 2.1em 0.25em 0.75em;
+}
+.h5p-dir-rtl .h5p-multichoice .h5p-alternative-inner {
+  margin: 0 2em 0 0.75em;
+}
+.h5p-dir-rtl .h5p-multichoice .h5p-answer .h5p-alternative-container:before {
+  right: 2.5em;
+  left: auto;
+}
+.h5p-dir-rtl.h5p-blanks .h5p-wrong:after {
+  left: 0.5em;
+  right: auto;
+}
+.h5p-dir-rtl.h5p-blanks .h5p-correct:after {
+  left: 0.5em;
+  right: auto;
+}
+.h5p-dir-rtl.h5p-blanks .has-tip.h5p-correct:after,
+.h5p-dir-rtl.h5p-blanks .has-tip.h5p-wrong:after {
+  left: 0.5em;
+  right: auto;
+}
+.h5p-dir-rtl .h5p-question .h5p-question-prev,
+.h5p-dir-rtl .h5p-question .h5p-question-finish,
+.h5p-dir-rtl .h5p-question .h5p-question-next {
+  float: left;
+}
+.h5p-dir-rtl .h5p-question .h5p-question-prev:before {
+  content: "\f054";
+}
+.h5p-dir-rtl .h5p-question .h5p-question-next:before {
+  content: "\f053";
+}
+.h5p-dir-rtl .h5p-joubelui-button:first-child {
+  margin: 0 0 1em 0.5em;
+}
+.h5p-dir-rtl .h5p-joubelui-button:before {
+  padding-left: 0.5em;
+}
+
+/* Memory game */
+.h5p-dir-rtl.h5p-memory-game .h5p-status > dt {
+  float: right;
+  margin: 0 0 0 1em;
+}
+.h5p-dir-rtl.h5p-memory-game .h5p-status {
+  clear: right;
+}
+/* summary */
+.h5p-dir-rtl.h5p-summary .summary-evaluation-content {
+  float: right;
+  padding: 0.1em 0 0.1em 2em;
+}
+
+/* Presentation */
+.h5p-dir-rtl.h5p-course-presentation .h5p-footer .h5p-footer-next-slide:after {
+  content: "\F0D9";
+}
+.h5p-dir-rtl.h5p-course-presentation .h5p-footer .h5p-footer-previous-slide:before {
+  font-family: H5PFontAwesome4;
+  content: "\F0DA";
+}
+
+.h5p-dir-rtl.h5p-course-presentation ol.list-unstyled,
+.h5p-dir-rtl.h5p-course-presentation ul.list-unstyled {
+  padding-right: 0;
+}
+.h5p-dir-rtl.h5p-course-presentation .h5p-footer .h5p-footer-center-adjusted {
+  /*rtl:ignore*/
+  direction: rtl;
+}
+.h5p-dir-rtl.h5p-course-presentation {
+  font-family: Alef, sans-serif;
+}
+.h5p-dir-rtl.h5p-course-presentation .h5p-presentation-wrapper {
+  /*rtl:ignore*/
+  direction: rtl;
+  text-align: right;
+}
+.h5p-dir-rtl .h5p-advanced-text ul,
+.h5p-dir-rtl .h5p-advanced-text ol {
+  text-align: right;
+}
+
+/* fill-in the words, drag and drop */
+.h5p-dir-rtl .h5p-drag-text .h5p-drag-dropzone {
+  padding: 0;
+}
+.h5p-dir-rtl .h5p-drag-text .h5p-drag-droppable-words {
+  direction: rtl;
+  text-align: right;
+  padding-right: 1em;
+}
+
+/* accordion */
+.h5p-dir-rtl .h5p-accordion .h5p-panel-title {
+  padding: 0.8em 2.25em 0.8em 0.8em;
+}
+.h5p-dir-rtl .h5p-accordion .h5p-panel-title:before {
+  content: "\f104";
+  right: 0.95em;
+  left: auto;
+}
+
+.h5p-dir-rtl li.h5p-sc-alternative .h5p-sc-status {
+  left: 0;
+  right: auto;
+}
+
+/* course presentation (and in general) */
+.h5p-dir-rtl p[dir=rtl] {
+  direction: rtl;
+  text-align: right;
+}
+.h5p-dir-rtl.h5p-course-presentation .h5p-footer {
+  direction: ltr;
+  flex-direction: inherit;
+}
+
+.h5p-dir-rtl .h5p-advanced-text ul li,
+.h5p-dir-rtl .h5p-advanced-text ol li {
+  margin: 0 1.5em 1em 0;
+}
+
+/* timeline */
+.h5p-dir-rtl.h5p-timeline .vco-slider .nav-next {
+  float: left;
+  text-align: left;
+}
+.h5p-dir-rtl.h5p-timeline .vco-slider .nav-previous {
+  float: right;
+  text-align: right;
+}
+.h5p-dir-rtl.h5p-timeline .vco-slider .nav-previous {
+  left:0;
+}
+/* not really affective :-( */
+.h5p-dir-rtl.h5p-timeline .vco-timeline:not(.vco-skinny) .vco-slider .slider-item .content .content-container .media {
+  float: left !important;
+}
+.h5p-dir-rtl.h5p-timeline .vco-timeline:not(.vco-skinny) .vco-slider .slider-item .content .content-container .text {
+  float: right;
+}
+
+.h5p-dir-rtl #h5p-timeline .vco-slider .slider-item .content .text .container {
+  text-align: right;
+}
+.h5p-dir-rtl #h5p-timeline .vco-slider .slider-item .content .content-container {
+  display: inline-block !important;
+}
+
+/* h5p-interactive-video */
+.h5p-dir-rtl.h5p-interactive-video :not([aria-disabled=true]).h5p-slider .ui-slider-handle:before {
+  margin: -5px -20px 0 0;
+}
+.h5p-dir-rtl.h5p-interactive-video .h5p-controls {
+  flex-direction: row-reverse;
+}.h5p-dir-rtl .h5p-question-image {
+   text-align: right;
+ }
+.h5p-dir-rtl .field.wizard .h5peditor-tab-a span {
+  padding-right: 45px;
+  padding-left: unset;
+}
+.h5p-interactivevideo-editor.h5p-dir-rtl .h5p-controls {
+  direction: ltr;
+}
+.h5p-interactivevideo-editor.h5p-dir-rtl .h5p-editor-table-list {
+  direction: ltr;
+}
+.h5p-dir-rtl .h5p-hub .h5p-hub-client-drop-down .icon-hub-icon:after {
+  margin-left: 1.8em;
+  left: 0;
+  right: auto;
+}
+.h5p-dir-rtl .h5p-metadata-toggler {
+  margin-right: -11px;
+  padding: 0.217rem 0.217rem 0.217rem 0.3rem;
+  border-right: none;
+}
+.h5p-interactivevideo-editor.h5p-dir-rtl .h5p-dialog-buttons {
+  left: 0;
+  right: auto;
+}
+
+/* documentation-tool */
+.h5p-dir-rtl .h5p-documentation-tool-nav-button.next:before {
+  left: -0.5em;
+  right: auto;
+  content: "\f104";
+}
+.h5p-dir-rtl .h5p-documentation-tool-nav-button.prev {
+  margin-left: 3em;
+  margin-right: auto;
+}
+.h5p-dir-rtl .h5p-documentation-tool-nav-button.prev:before {
+  content: "\f105";
+}
+.h5p-dir-rtl .h5p-documentation-tool-nav-button:before {
+  left: -0.375em;
+  right: auto;
+}
+.h5p-dir-rtl.h5p-documentation-tool .h5p-documentation-tool-nav-button {
+  left: 1em;
+  right: auto;
+}
+
+/* Drag n Drop text */
+.h5p-dir-rtl.h5p-drag-text [aria-dropeffect] {
+  padding: .1em 0 .1em 1.65em;
+}
+.h5p-dir-rtl.h5p-drag-text .h5p-drag-correct-feedback:before {
+  left: .5em;
+  right: auto;
+}
+.h5p-dir-rtl .h5p-drag-droppable-words {
+  margin: 0 !important;
+  clear: both;
+}
+.h5p-dir-rtl.h5p-drag-text .h5p-drag-wide-screen {
+  float: right;
+  border: 1px dashed #ccc;
+}
+.h5p-dir-rtl.h5p-drag-text .h5p-drag-draggable-wide-screen {
+  display: inline-block;
+}
+
+/* 360 tour */
+.h5p-dir-rtl .button-wrapper {
+  left: 20px;
+  right: auto;
+}
+
+/* Branching Scenario - switch to LTR in RTL mode, for now */
+.h5p-dir-rtl.h5peditor.h5p-branchingscenario-editor>.h5peditor-form,
+.h5p-dir-rtl .h5peditor-semi-fullscreen {
+  direction: ltr;
+}
+
+/* dialogcards */
+.h5p-dir-rtl .h5p-dialogcards .h5p-dialogcards-prev {
+  right: 1em;
+  left: auto;
+}
+.h5p-dir-rtl .h5p-dialogcards .h5p-dialogcards-prev:before {
+  content: "\F054";
+  margin-left: .2em;
+  margin-right: 0;
+}
+.h5p-dir-rtl .h5p-dialogcards .h5p-dialogcards-next,
+.h5p-dir-rtl .h5p-dialogcards .h5p-dialogcards-retry {
+  left: 1em;
+  right: auto;
+}
+.h5p-dir-rtl .h5p-dialogcards .h5p-dialogcards-next:after {
+  content: "\F053";
+  margin-right: .2em;
+  margin-left: 0;
+}
+
+.h5p-dir-rtl .h5p-slide .ui-draggable.h5p-drag-dropped {
+  right: -22%;
+  left: auto !important;
+}
+.h5p-dir-rtl .h5p-popup-dialog .h5p-close:after {
+￼right: auto;
+￼left: 0;
+}
+.h5p-dir-rtl .h5p-embed-dialog .h5p-inner,
+.h5p-dir-rtl .h5p-reuse-dialog .h5p-inner,
+.h5p-dir-rtl .h5p-content-user-data-reset-dialog .h5p-inner {
+  direction: rtl;
+  right: 0;
+  left: auto;
+}
+
 .h5p-content-hub-button:before {
   font-family: "h5p";
   margin-right: 0.5em;

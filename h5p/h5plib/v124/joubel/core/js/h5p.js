@@ -375,6 +375,14 @@ H5P.init = function (target) {
     }
   });
 
+  // RTL support in iframe, based on Moodle calculated user language
+  if (H5PIntegration.contentlang == false) {
+    var rtlclss = '';
+    if (this.$body.hasClass('dir-rtl')) {
+      rtlclss = 'h5p-dir-rtl';
+    }
+  }
+
   // Insert H5Ps that should be in iframes.
   H5P.jQuery('iframe.h5p-iframe:not(.h5p-initialized)', target).each(function () {
     const iframe = this;
