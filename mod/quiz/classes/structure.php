@@ -26,8 +26,6 @@ namespace mod_quiz;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\qubaids_for_quiz;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Quiz structure class.
  *
@@ -75,6 +73,7 @@ class structure {
 
     /**
      * Create an instance of this class representing an empty quiz.
+     *
      * @return structure
      */
     public static function create() {
@@ -83,6 +82,7 @@ class structure {
 
     /**
      * Create an instance of this class representing the structure of a given quiz.
+     *
      * @param \quiz $quizobj the quiz.
      * @return structure
      */
@@ -95,6 +95,7 @@ class structure {
 
     /**
      * Whether there are any questions in the quiz.
+     *
      * @return bool true if there is at least one question in the quiz.
      */
     public function has_questions() {
@@ -103,6 +104,7 @@ class structure {
 
     /**
      * Get the number of questions in the quiz.
+     *
      * @return int the number of questions in the quiz.
      */
     public function get_question_count() {
@@ -111,6 +113,7 @@ class structure {
 
     /**
      * Get the information about the question with this id.
+     *
      * @param int $questionid The question id.
      * @return \stdClass the data from the questions table, augmented with
      * question_category.contextid, and the quiz_slots data for the question in this quiz.
@@ -121,6 +124,7 @@ class structure {
 
     /**
      * Get the information about the question in a given slot.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return \stdClass the data from the questions table, augmented with
      * question_category.contextid, and the quiz_slots data for the question in this quiz.
@@ -131,6 +135,7 @@ class structure {
 
     /**
      * Get the information about the question name in a given slot.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return \stdClass the data from the questions table, augmented with
      */
@@ -140,6 +145,7 @@ class structure {
 
     /**
      * Get the displayed question number (or 'i') for a given slot.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return string the question number ot display for this slot.
      */
@@ -148,7 +154,67 @@ class structure {
     }
 
     /**
+     * Check whether the question number can be customised.
+     *
+     * @param int $slotnumber
+     * @return bool
+     */
+    public function can_display_number_be_customised(int $slotnumber): bool {
+        if (!$this->is_real_question($slotnumber)) {
+            return false;
+        }
+        $slot = $this->get_slot_by_number($slotnumber);
+        if ($slot->section->shufflequestions) {
+            return false;
+        }
+        if (quiz_has_attempts($this->quizobj->get_quizid())) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Check whether the question number is customised.
+     * @param int $slotid
+     * @return bool
+     */
+    public function is_display_number_customised(int $slotid): bool {
+        $slotobj = $this->get_slot_by_id($slotid);
+        return $slotobj->displayednumber === $slotobj->displaynumber;
+    }
+
+    /**
+     * Make slot display number in place editable api call.
+
+     * @param int $slotid
+     * @param \context $context
+     * @return \core\output\inplace_editable
+     */
+    public function make_slot_display_number_in_place_editable(int $slotid, \context $context): \core\output\inplace_editable {
+        // Check permission of the user to update this item (customise question number).
+        $editable = has_capability('mod/quiz:manage', $context);
+
+        $this->populate_structure();
+        $slot = $this->get_slot_by_id($slotid);
+
+        // Whether the displaynumber field in quiz_slots table is set and it is not empty or null.
+        if ($this->is_display_number_customised($slotid)) {
+            $displayvalue = format_string($slot->displaynumber);
+            $value = $slot->displaynumber;
+        } else {
+            $displayednumber = $this->get_displayed_number_for_slot($slot->slot);
+            $displayvalue = format_string($displayednumber);
+            $value = $displayednumber;
+        }
+        return new \core\output\inplace_editable('mod_quiz', 'slotdisplaynumber', $slotid,
+                $editable, $displayvalue, $value,
+                get_string('edit_slotdisplaynumber_hint', 'mod_quiz'),
+                get_string('edit_slotdisplaynumber_label', 'mod_quiz', $displayvalue));
+    }
+
+    /**
      * Get the page a given slot is on.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return int the page number of the page that slot is on.
      */
@@ -158,6 +224,7 @@ class structure {
 
     /**
      * Get the slot id of a given slot slot.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return int the page number of the page that slot is on.
      */
@@ -167,6 +234,7 @@ class structure {
 
     /**
      * Get the question type in a given slot.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return string the question type (e.g. multichoice).
      */
@@ -178,6 +246,7 @@ class structure {
      * Whether it would be possible, given the question types, etc. for the
      * question in the given slot to require that the previous question had been
      * answered before this one is displayed.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return bool can this question require the previous one.
      */
@@ -189,6 +258,7 @@ class structure {
      * Whether it is possible for another question to depend on this one finishing.
      * Note that the answer is not exact, because of random questions, and sometimes
      * questions cannot be depended upon because of quiz options.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return bool can this question finish naturally during the attempt?
      */
@@ -229,6 +299,7 @@ class structure {
      * Whether it would be possible, given the question types, etc. for the
      * question in the given slot to require that the previous question had been
      * answered before this one is displayed.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return bool can this question require the previous one.
      */
@@ -238,6 +309,7 @@ class structure {
 
     /**
      * Is a particular question in this attempt a real question, or something like a description.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return bool whether that question is a real question.
      */
@@ -266,6 +338,7 @@ class structure {
 
     /**
      * Get the course id that the quiz belongs to.
+     *
      * @return int the course.id for the quiz.
      */
     public function get_courseid() {
@@ -274,6 +347,7 @@ class structure {
 
     /**
      * Get the course module id of the quiz.
+     *
      * @return int the course_modules.id for the quiz.
      */
     public function get_cmid() {
@@ -282,6 +356,7 @@ class structure {
 
     /**
      * Get id of the quiz.
+     *
      * @return int the quiz.id for the quiz.
      */
     public function get_quizid() {
@@ -290,6 +365,7 @@ class structure {
 
     /**
      * Get the quiz object.
+     *
      * @return \stdClass the quiz settings row from the database.
      */
     public function get_quiz() {
@@ -299,6 +375,7 @@ class structure {
     /**
      * Quizzes can only be repaginated if they have not been attempted, the
      * questions are not shuffled, and there are two or more questions.
+     *
      * @return bool whether this quiz can be repaginated.
      */
     public function can_be_repaginated() {
@@ -307,6 +384,7 @@ class structure {
 
     /**
      * Quizzes can only be edited if they have not been attempted.
+     *
      * @return bool whether the quiz can be edited.
      */
     public function can_be_edited() {
@@ -333,6 +411,7 @@ class structure {
      * How many questions are allowed per page in the quiz.
      * This setting controls how frequently extra page-breaks should be inserted
      * automatically when questions are added to the quiz.
+     *
      * @return int the number of questions that should be on each page of the
      * quiz by default.
      */
@@ -342,6 +421,7 @@ class structure {
 
     /**
      * Get quiz slots.
+     *
      * @return \stdClass[] the slots in this quiz.
      */
     public function get_slots() {
@@ -350,6 +430,7 @@ class structure {
 
     /**
      * Is this slot the first one on its page?
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return bool whether this slot the first one on its page.
      */
@@ -362,6 +443,7 @@ class structure {
 
     /**
      * Is this slot the last one on its page?
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return bool whether this slot the last one on its page.
      */
@@ -374,6 +456,7 @@ class structure {
 
     /**
      * Is this slot the last one in its section?
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return bool whether this slot the last one on its section.
      */
@@ -383,6 +466,7 @@ class structure {
 
     /**
      * Is this slot the only one in its section?
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return bool whether this slot the only one on its section.
      */
@@ -393,6 +477,7 @@ class structure {
 
     /**
      * Is this slot the last one in the quiz?
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return bool whether this slot the last one in the quiz.
      */
@@ -403,6 +488,7 @@ class structure {
 
     /**
      * Is this the first section in the quiz?
+     *
      * @param \stdClass $section the quiz_sections row.
      * @return bool whether this is first section in the quiz.
      */
@@ -412,6 +498,7 @@ class structure {
 
     /**
      * Is this the last section in the quiz?
+     *
      * @param \stdClass $section the quiz_sections row.
      * @return bool whether this is first section in the quiz.
      */
@@ -421,6 +508,7 @@ class structure {
 
     /**
      * Does this section only contain one slot?
+     *
      * @param \stdClass $section the quiz_sections row.
      * @return bool whether this section contains only one slot.
      */
@@ -430,6 +518,7 @@ class structure {
 
     /**
      * Get the final slot in the quiz.
+     *
      * @return \stdClass the quiz_slots for for the final slot in the quiz.
      */
     public function get_last_slot() {
@@ -438,6 +527,7 @@ class structure {
 
     /**
      * Get a slot by it's id. Throws an exception if it is missing.
+     *
      * @param int $slotid the slot id.
      * @return \stdClass the requested quiz_slots row.
      * @throws \coding_exception
@@ -468,6 +558,7 @@ class structure {
 
     /**
      * Check whether adding a section heading is possible
+     *
      * @param int $pagenumber the number of the page.
      * @return boolean
      */
@@ -498,6 +589,7 @@ class structure {
 
     /**
      * Get all the slots in a section of the quiz.
+     *
      * @param int $sectionid the section id.
      * @return int[] slot numbers.
      */
@@ -513,6 +605,7 @@ class structure {
 
     /**
      * Get all the sections of the quiz.
+     *
      * @return \stdClass[] the sections in this quiz.
      */
     public function get_sections() {
@@ -521,6 +614,7 @@ class structure {
 
     /**
      * Get a particular section by id.
+     *
      * @return \stdClass the section.
      */
     public function get_section_by_id($sectionid) {
@@ -529,6 +623,7 @@ class structure {
 
     /**
      * Get the number of questions in the quiz.
+     *
      * @return int the number of questions in the quiz.
      */
     public function get_section_count() {
@@ -537,6 +632,7 @@ class structure {
 
     /**
      * Get the overall quiz grade formatted for display.
+     *
      * @return string the maximum grade for this quiz.
      */
     public function formatted_quiz_grade() {
@@ -545,6 +641,7 @@ class structure {
 
     /**
      * Get the maximum mark for a question, formatted for display.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return string the maximum mark for the question in this slot.
      */
@@ -554,6 +651,7 @@ class structure {
 
     /**
      * Get the number of decimal places for displyaing overall quiz grades or marks.
+     *
      * @return int the number of decimal places.
      */
     public function get_decimal_places_for_grades() {
@@ -562,6 +660,7 @@ class structure {
 
     /**
      * Get the number of decimal places for displyaing question marks.
+     *
      * @return int the number of decimal places.
      */
     public function get_decimal_places_for_question_marks() {
@@ -667,6 +766,10 @@ class structure {
             }
             for ($slot = $section->firstslot; $slot <= $section->lastslot; $slot += 1) {
                 $this->slotsinorder[$slot]->section = $section;
+                if ($section->shufflequestions) {
+                    // Hide customised value and disable editing while shuffle checkbox is enabled.
+                    $this->slotsinorder[$slot]->displaynumber = null;
+                }
             }
         }
     }
@@ -680,7 +783,12 @@ class structure {
             if ($this->questions[$slot->questionid]->length == 0) {
                 $slot->displayednumber = get_string('infoshort', 'quiz');
             } else {
-                $slot->displayednumber = $number;
+                // Whether question numbering is customised or is numeric and automatically incremented.
+                if (!empty($slot->displaynumber)) {
+                    $slot->displayednumber = $slot->displaynumber;
+                } else {
+                    $slot->displayednumber = $number;
+                }
                 $number += 1;
             }
         }
@@ -1081,6 +1189,31 @@ class structure {
                 'quizid' => $this->get_quizid(),
                 'requireprevious' => $requireprevious ? 1 : 0
             ]
+        ]);
+        $event->trigger();
+    }
+
+    /**
+     * Update the question display number when is set as customised display number or empy string.
+     * When the field displaynumber is set to empty string, the automated numbering is used.
+     * Log the updated displatnumber field.
+     *
+     * @param int $slotid id of slot.
+     * @param string $displaynumber set to customised string as question number or empty string fo autonumbering.
+     */
+    public function update_slot_display_number(int $slotid, string $displaynumber): void {
+        global $DB;
+        $DB->set_field('quiz_slots', 'displaynumber', $displaynumber, ['id' => $slotid]);
+        $this->populate_structure();
+
+        // Log slot displaynumber event (customised question number).
+        $event = \mod_quiz\event\slot_displaynumber_updated::create([
+                'context' => $this->quizobj->get_context(),
+                'objectid' => $slotid,
+                'other' => [
+                        'quizid' => $this->get_quizid(),
+                        'displaynumber' => $displaynumber
+                ]
         ]);
         $event->trigger();
     }

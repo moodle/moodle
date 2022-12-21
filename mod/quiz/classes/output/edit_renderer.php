@@ -23,7 +23,6 @@
  */
 
 namespace mod_quiz\output;
-defined('MOODLE_INTERNAL') || die();
 
 use mod_quiz\question\bank\qbank_helper;
 use \mod_quiz\structure;
@@ -742,11 +741,19 @@ class edit_renderer extends \plugin_renderer_base {
             $output .= $this->question_move_icon($structure, $slot);
         }
 
+        if ($structure->can_display_number_be_customised($slot)) {
+            $questionnumbercustomised = $this->output->render($structure->make_slot_display_number_in_place_editable(
+                    $slotid, \context_module::instance($structure->get_cmid())));
+            $questionnumber = $questionnumbercustomised;
+        } else {
+            $questionnumber = $structure->get_displayed_number_for_slot($slot);
+        }
+
         $data = [
             'slotid' => $slotid,
             'canbeedited' => $structure->can_be_edited(),
             'checkbox' => $this->get_checkbox_render($structure, $slot),
-            'questionnumber' => $this->question_number($structure->get_displayed_number_for_slot($slot)),
+            'questionnumber' => $this->question_number($questionnumber),
             'questionname' => $this->get_question_name_for_slot($structure, $slot, $pageurl),
             'questionicons' => $this->get_action_icon($structure, $slot, $pageurl),
             'questiondependencyicon' => ($structure->can_be_edited() ? $this->question_dependency_icon($structure, $slot) : ''),
@@ -851,10 +858,10 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function question_number($number) {
-        if (is_numeric($number)) {
+        if ($number !== get_string('infoshort', 'quiz')) {
             $number = html_writer::span(get_string('question'), 'accesshide') . ' ' . $number;
         }
-        return html_writer::tag('span', $number, array('class' => 'slotnumber'));
+        return html_writer::tag('span', $number, ['class' => 'slotnumber']);
     }
 
     /**

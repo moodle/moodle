@@ -35,7 +35,7 @@ use mod_quiz\question\qubaids_for_users_attempts;
 use core_question\statistics\questions\all_calculated_for_qubaid_condition;
 
 require_once($CFG->dirroot . '/calendar/lib.php');
-
+require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 
 /**#@+
  * Option controlling what options are offered on the quiz settings form.
@@ -1160,6 +1160,46 @@ function quiz_review_option_form_to_db($fromform, $field) {
     }
 
     return $review;
+}
+
+/**
+ * In place editable callback for slot displaynumber.
+ *
+ * @param string $itemtype slotdisplarnumber
+ * @param int $itemid the id of the slot in the quiz_slots table
+ * @param string $newvalue the new value for displaynumber field for a given slot in the quiz_slots table
+ * @return \core\output\inplace_editable|void
+ */
+function mod_quiz_inplace_editable(string $itemtype, int $itemid, string $newvalue): \core\output\inplace_editable {
+    if ($itemtype === 'slotdisplaynumber') {
+        global $DB;
+        $record = $DB->get_record('quiz_slots', ['id' => $itemid], '*', MUST_EXIST);
+        $quiz = $DB->get_record('quiz', array('id' => $record->quizid), '*', MUST_EXIST);
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
+        $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+
+        // Call validate_context for course module to check access and set current context.
+        $context = context_module::instance($cm->id);
+        \external_api::validate_context($context);
+
+        // Check permission of the user to update this item (customise question number).
+        require_capability('mod/quiz:manage', $context);
+
+        $quizobj = new quiz($quiz, $cm, $course);
+        $structure = $quizobj->get_structure();
+        $warning = false;
+        // Clean input and update the record.
+        $record->displaynumber = s(clean_param($newvalue, PARAM_RAW));
+
+        // Truncate the string if the input string exceeds the size of the displaynumber field (16 chars) in the database.
+        if (strlen($record->displaynumber) > 16) {
+            $record->displaynumber = substr($record->displaynumber, 0, 16);
+        }
+        $structure->update_slot_display_number($itemid, $record->displaynumber);
+
+        // Prepare the element for the output.
+        return $structure->make_slot_display_number_in_place_editable($itemid, $context);
+    }
 }
 
 /**
