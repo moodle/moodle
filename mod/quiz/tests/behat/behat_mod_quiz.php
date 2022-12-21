@@ -510,9 +510,12 @@ class behat_mod_quiz extends behat_question_base {
      * @param number $number the number (or 'i') that should be displayed beside that question.
      */
     public function should_have_number_on_the_edit_quiz_page($questionname, $number) {
+        if ($number !== get_string('infoshort', 'quiz')) {
+            // Logic here copied from edit_renderer, which is not ideal, but necessary.
+            $number = get_string('question') . ' ' . $number;
+        }
         $xpath = "//li[contains(@class, 'slot') and contains(., '" . $this->escape($questionname) .
-                "')]//span[contains(@class, 'slotnumber') and normalize-space(.) = '" . $this->escape($number) . "')]";
-
+                "')]//span[contains(@class, 'slotnumber') and normalize-space(.) = '" . $this->escape($number) . "']";
         $this->execute('behat_general::should_exist', array($xpath, 'xpath_element'));
     }
 
