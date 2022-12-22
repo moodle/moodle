@@ -307,3 +307,19 @@ Feature: Within the grader report, test that we can search for users
     # Begin the search checking if we are adhering the filters.
     When I set the field "Search users" to "Turtle"
     Then "Turtle Manatee" "list_item" should not exist in the ".user-search" "css_element"
+
+  Scenario: As a teacher I can dynamically find users whilst ignoring pagination
+    Given "42" "users" exist with the following data:
+      | username  | students[count]             |
+      | firstname | Student                     |
+      | lastname  | s[count]                    |
+      | email     | students[count]@example.com |
+    And "42" "course enrolments" exist with the following data:
+      | user   | students[count] |
+      | course | C1              |
+      | role   |student          |
+    And I reload the page
+    And the field "perpage" matches value "20"
+    When I set the field "Search users" to "42"
+    And I wait until "View all results for \"42\"" "link" exists
+    Then "Student s42" "list_item" should exist in the ".user-search" "css_element"
