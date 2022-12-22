@@ -1674,13 +1674,13 @@ class question_file_saver implements question_response_files {
      *
      * @param int $draftitemid the draft area to save the files from.
      * @param string $component the component for the file area to save into.
-     * @param string $filearea the name of the file area to save into.
+     * @param string $uncleanedfilearea the name of the file area to save into - but before it has been cleaned up.
      * @param string $text optional content containing file links.
      */
-    public function __construct($draftitemid, $component, $filearea, $text = null) {
+    public function __construct($draftitemid, $component, $uncleanedfilearea, $text = null) {
         $this->draftitemid = $draftitemid;
         $this->component = $component;
-        $this->filearea = $filearea;
+        $this->filearea = self::clean_file_area_name($uncleanedfilearea);
         $this->value = $this->compute_value($draftitemid, $text);
     }
 
@@ -1742,6 +1742,29 @@ class question_file_saver implements question_response_files {
     public function save_files($itemid, $context) {
         file_save_draft_area_files($this->draftitemid, $context->id,
                 $this->component, $this->filearea, $itemid);
+    }
+
+    /**
+     * Clean up a possible file area name to ensure that it matches the required rules.
+     *
+     * @param string $uncleanedfilearea the proposed file area name (e.g. 'response_-attachments').
+     * @return string a similar valid file area name. E.g: response_attachments.
+     */
+    public static function clean_file_area_name(string $uncleanedfilearea): string {
+        $filearea = $uncleanedfilearea;
+        if ($filearea !== clean_param($filearea, PARAM_AREA)) {
+            // Only lowercase ascii letters, numbers and underscores are allowed.
+            // Remove the invalid character in the filearea string.
+            $filearea = preg_replace('~[^a-z0-9_]~', '', core_text::strtolower($filearea));
+            // Replace multiple underscore to a single underscore.
+            $filearea = preg_replace('~_+~', '_', $filearea);
+            // If, after attempted cleaning, the filearea is not valid, throw a clear error to avoid subtle bugs.
+            if ($filearea !== clean_param($filearea, PARAM_AREA)) {
+                throw new coding_exception('Name ' . $filearea .
+                    ' cannot be used with question_file_saver because it does not match the rules for file area names');
+            }
+        }
+        return $filearea;
     }
 
     /**
