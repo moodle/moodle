@@ -59,7 +59,7 @@ function iplookup_find_location($ip) {
         $info['title'][] = $info['country'];
 
         $info['longitude'] = $record->location->longitude;
-        $info['latitude']  = $record->location->latitude;
+        $info['latitude'] = $record->location->latitude;
         $info['note'] = get_string('iplookupmaxmindnote', 'admin');
 
         return $info;
@@ -82,9 +82,10 @@ function iplookup_find_location($ip) {
             $info['error'] = get_string('cannotgeoplugin', 'error');
             return $info;
         }
-        $info['latitude']  = (float)$ipdata['geoplugin_latitude'];
+        $info['latitude'] = (float)$ipdata['geoplugin_latitude'];
         $info['longitude'] = (float)$ipdata['geoplugin_longitude'];
-        $info['city']      = s($ipdata['geoplugin_city']);
+        $info['city'] = s($ipdata['geoplugin_city']);
+        $info['accuracyRadius'] = (int)$ipdata['geoplugin_locationAccuracyRadius']; // Unit is in Miles.
 
         $countrycode = $ipdata['geoplugin_countryCode'];
         $countries = get_string_manager()->get_list_of_countries(true);
