@@ -574,6 +574,8 @@ function(
         unreadCount.text('0');
         unreadCount.addClass('hidden');
         decrementTotalUnreadConversationCount(root);
+        // Publish CONVERSATION_DECREMENT to decrement the number of message notification
+        PubSub.publish(MessageDrawerEvents.CONVERSATION_DECREMENT);
     };
 
     /**
