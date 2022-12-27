@@ -668,6 +668,15 @@ $CFG->admin = 'admin';
 //      $CFG->adhoctaskagewarn = 10 * 60;
 //      $CFG->adhoctaskageerror = 4 * 60 * 60;
 //
+// Moodle 4.2+ checks how long tasks have been running for at warns at 12 hours
+// and errors at 24 hours. Set these to override these limits:
+//
+// $CFG->taskruntimewarn = 12 * 60 * 60;
+// $CFG->taskruntimeerror = 24 * 60 * 60;
+//
+// This is not to be confused with $CFG->task_adhoc_max_runtime which is how long the
+// php process should be allowed to run for, not each specific task.
+//
 // Session lock warning threshold. Long running pages should release the session using \core\session\manager::write_close().
 // Set this threshold to any value greater than 0 to add developer warnings when a page locks the session for too long.
 // The session should rarely be locked for more than 1 second. The input should be in seconds and may be a float.
