@@ -11732,7 +11732,7 @@ ul {
   right: 2rem; }
 
 .hasstickyfooter .btn-footer-popover {
-  bottom: calc(2rem + 50px); }
+  bottom: calc(1rem + clamp(96px, calc(0.9375rem * 3), calc(0.9375rem * 3))); }
 
 .popover.footer .popover-body {
   padding: 0; }
@@ -20082,12 +20082,13 @@ body {
   position: fixed;
   right: 0;
   left: 0;
-  height: 51px;
-  bottom: -50px;
+  height: clamp(96px, calc(0.9375rem * 3), calc(0.9375rem * 3));
+  bottom: calc(clamp(96px, calc(0.9375rem * 3), calc(0.9375rem * 3)) * -1);
   transition: bottom .5s;
   z-index: 1000;
   overflow: hidden;
-  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.15); }
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.15);
+  font-size: calc(0.9375rem * 1.10); }
 
 .hasstickyfooter .stickyfooter {
   bottom: 0; }
@@ -20095,6 +20096,9 @@ body {
 /* Standard components fixes for sticky footer. */
 .stickyfooter ul.pagination {
   margin-bottom: 0.25rem; }
+
+.stickyfooter .btn {
+  font-size: calc(0.9375rem * 1.10); }
 
 /* Breakpoints fixes. */
 @media (min-width: 576px) {
@@ -20730,7 +20734,7 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
   .hasstickyfooter .drawer-left,
   .hasstickyfooter .drawer-right {
     top: 50px;
-    height: calc(100vh - 50px - 50px); }
+    height: calc(100vh - 50px - clamp(96px, calc(0.9375rem * 3), calc(0.9375rem * 3))); }
   #page.drawers {
     position: relative;
     overflow-y: auto;
@@ -20757,7 +20761,7 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
       margin-left: 285px;
       margin-right: 315px; }
     #page.drawers.hasstickyfooter {
-      height: calc(100vh - 50px - 50px); } }
+      height: calc(100vh - 50px - clamp(96px, calc(0.9375rem * 3), calc(0.9375rem * 3))); } }
 
 .drawercontrolbuttons {
   margin-top: 92px; }
@@ -22343,4 +22347,4 @@ body {
   padding-bottom: 0.5rem; }
 
 body.hasstickyfooter #page-footer {
-  padding-bottom: calc(1rem * .5 + 50px); }
+  padding-bottom: calc(1rem * .5 + clamp(96px, calc(0.9375rem * 3), calc(0.9375rem * 3))); }

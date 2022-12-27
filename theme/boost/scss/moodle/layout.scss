@@ -209,7 +209,7 @@
         .drawer-left,
         .drawer-right {
             top: $navbar-height;
-            height: calc(100vh - #{$navbar-height} - #{$navbar-height});
+            height: calc(100vh - #{$navbar-height} - #{$stickyfooter-height});
         }
     }
 
@@ -238,7 +238,7 @@
             margin-right: $drawer-right-width;
         }
         &.hasstickyfooter {
-            height: calc(100vh - #{$navbar-height} - #{$navbar-height});
+            height: calc(100vh - #{$navbar-height} - #{$stickyfooter-height});
         }
     }
 }
