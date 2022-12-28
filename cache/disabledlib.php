@@ -229,6 +229,8 @@ class cache_disabled extends cache {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cache_factory_disabled extends cache_factory {
+    /** @var array Array of temporary caches in use. */
+    protected static $tempcaches = [];
 
     /**
      * Returns an instance of the cache_factor method.
@@ -283,6 +285,22 @@ class cache_factory_disabled extends cache_factory {
      * @return cache_application|cache_session|cache_request
      */
     public function create_cache_from_definition($component, $area, array $identifiers = array(), $unused = null) {
+        // Temporary in-memory caches are sometimes allowed when caching is disabled.
+        if (\core_cache\allow_temporary_caches::is_allowed() && !$identifiers) {
+            $key = $component . '/' . $area;
+            if (array_key_exists($key, self::$tempcaches)) {
+                $cache = self::$tempcaches[$key];
+            } else {
+                $definition = $this->create_definition($component, $area);
+                // The cachestore_static class returns true to all three 'SUPPORTS_' checks so it
+                // can be used with all definitions.
+                $cache = new cachestore_static('TEMP:' . $component . '/' . $area);
+                $cache->initialise($definition);
+                self::$tempcaches[$key] = $cache;
+            }
+            return $cache;
+        }
+
         // Regular cache definitions are cached inside create_definition().  This is not the case for disabledlib.php
         // definitions as they use load_adhoc().  They are built as a new object on each call.
         // We do not need to clone the definition because we know it's new.
@@ -290,6 +308,15 @@ class cache_factory_disabled extends cache_factory {
         $definition->set_identifiers($identifiers);
         $cache = $this->create_cache($definition);
         return $cache;
+    }
+
+    /**
+     * Removes all temporary caches.
+     *
+     * Don't call this directly - used by {@see \core_cache\allow_temporary_caches}.
+     */
+    public static function clear_temporary_caches(): void {
+        self::$tempcaches = [];
     }
 
     /**

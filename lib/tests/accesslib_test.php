@@ -4224,6 +4224,114 @@ class accesslib_test extends advanced_testcase {
     }
 
     /**
+     * Checks install performance in update_capabilities.
+     *
+     * @covers ::update_capabilities()
+     */
+    public function test_update_capabilities_install_performance(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Get rid of all the capabilities for forum.
+        $testmodule = 'forum';
+        $DB->delete_records_select('capabilities', 'name LIKE ?', ['mod/' . $testmodule . ':%']);
+
+        $beforeq = $DB->perf_get_queries();
+        update_capabilities('mod_' . $testmodule);
+        $afterq = $DB->perf_get_queries();
+
+        // In my testing there are currently 237 queries; there were 373 before a performance
+        // fix. This test confirms performance doesn't degrade to near the previous level.
+        $this->assertLessThan(300, $afterq - $beforeq);
+    }
+
+    /**
+     * Checks install performance in update_capabilities when a new capability is cloned.
+     *
+     * This only has impact if there are a significant number of overrides of the existing
+     * capability.
+     *
+     * @covers ::update_capabilities()
+     */
+    public function test_update_capabilities_clone_performance(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create a bunch of activities in a course. In each one, override so manager doesn't have
+        // moodle/course:manageactivities.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $roleid = $DB->get_field('role', 'id', ['shortname' => 'manager']);
+        for ($i = 0; $i < 100; $i++) {
+            $page = $generator->create_module('page', ['course' => $course->id]);
+            $contextid = context_module::instance($page->cmid)->id;
+            assign_capability('moodle/course:manageactivities', CAP_PREVENT, $roleid, $contextid);
+        }
+
+        // Get rid of one of the capabilities for forum, which clones moodle/course:manageactivities.
+        $DB->delete_records('capabilities', ['name' => 'mod/forum:addinstance']);
+
+        // Clear the context cache to simulate a realistic situation where we don't already have
+        // all those contexts in the cache.
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $beforeq = $DB->perf_get_queries();
+        update_capabilities('mod_forum');
+        $afterq = $DB->perf_get_queries();
+
+        // In my testing there are currently 214 queries after performance was improved for cloning,
+        // compared to 414 before. This test confirms performance doesn't degrade to near the
+        // previous level.
+        $this->assertLessThan(300, $afterq - $beforeq);
+    }
+
+    /**
+     * Tests update_capabilities when a capability is cloned, but there are existing settings
+     * for that capability.
+     *
+     * Under normal circumstances this shouldn't happen as it is only used for new capabilities,
+     * but it's possible there could be incorrect data in database.)
+     *
+     * @covers ::update_capabilities()
+     */
+    public function test_update_capabilities_clone_existing(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create activities in a course. In each one, override so manager doesn't have
+        // moodle/course:manageactivities. In one of them, also override mod/forum:addinstance
+        // to something different.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $roleid = $DB->get_field('role', 'id', ['shortname' => 'manager']);
+        $page1 = $generator->create_module('page', ['course' => $course->id]);
+        $context1 = context_module::instance($page1->cmid);
+        assign_capability('moodle/course:manageactivities', CAP_PREVENT, $roleid, $context1->id);
+        $page2 = $generator->create_module('page', ['course' => $course->id]);
+        $context2 = context_module::instance($page2->cmid);
+        assign_capability('moodle/course:manageactivities', CAP_PREVENT, $roleid, $context2->id);
+        assign_capability('mod/forum:addinstance', CAP_PROHIBIT, $roleid, $context2->id);
+
+        // Get rid of one of the capabilities for forum, which clones moodle/course:manageactivities.
+        $DB->delete_records('capabilities', ['name' => 'mod/forum:addinstance']);
+
+        // Reinstall the capability.
+        update_capabilities('mod_forum');
+
+        // Check the results: we should duplicate the manageactivities setting (PREVENT).
+        $rec1 = $DB->get_record('role_capabilities', ['roleid' => $roleid,
+                'contextid' => $context1->id, 'capability' => 'mod/forum:addinstance']);
+        $this->assertEquals(CAP_PREVENT, $rec1->permission);
+        // The second page, we should overwrite the previous existing permission setting.
+        $rec2 = $DB->get_record('role_capabilities', ['roleid' => $roleid,
+                'contextid' => $context2->id, 'capability' => 'mod/forum:addinstance']);
+        $this->assertEquals(CAP_PREVENT, $rec2->permission);
+    }
+
+    /**
      * Tests reset_role_capabilities function.
      *
      * @covers ::reset_role_capabilities
