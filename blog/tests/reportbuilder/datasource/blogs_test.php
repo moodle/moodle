@@ -124,15 +124,27 @@ class blogs_test extends core_reportbuilder_testcase {
         // Tag entity (course/user presence already checked by default columns).
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:name']);
 
+        // File entity.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'file:size']);
+
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(1, $content);
 
-        [$body, $attachment, $publishstate, $timemodified, $tags] = array_values($content[0]);
+        [
+            $body,
+            $attachment,
+            $publishstate,
+            $timemodified,
+            $tags,
+            $filesize,
+        ] = array_values($content[0]);
+
         $this->assertStringContainsString('Horses', $body);
         $this->assertStringContainsString('hello.txt', $attachment);
         $this->assertEquals('Yourself (draft)', $publishstate);
         $this->assertEquals(userdate($blog->lastmodified), $timemodified);
         $this->assertEquals('horse', $tags);
+        $this->assertEquals("5\xc2\xa0bytes", $filesize);
     }
 
     /**
