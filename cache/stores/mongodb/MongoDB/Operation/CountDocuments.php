@@ -17,6 +17,7 @@
 
 namespace MongoDB\Operation;
 
+use MongoDB\Driver\Cursor;
 use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
 use MongoDB\Driver\Server;
 use MongoDB\Exception\InvalidArgumentException;
@@ -24,6 +25,7 @@ use MongoDB\Exception\UnexpectedValueException;
 use MongoDB\Exception\UnsupportedException;
 
 use function array_intersect_key;
+use function assert;
 use function count;
 use function current;
 use function is_array;
@@ -93,7 +95,7 @@ class CountDocuments implements Executable
      * @param array        $options        Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
-    public function __construct($databaseName, $collectionName, $filter, array $options = [])
+    public function __construct(string $databaseName, string $collectionName, $filter, array $options = [])
     {
         if (! is_array($filter) && ! is_object($filter)) {
             throw InvalidArgumentException::invalidType('$filter', $filter, 'array or object');
@@ -107,8 +109,8 @@ class CountDocuments implements Executable
             throw InvalidArgumentException::invalidType('"skip" option', $options['skip'], 'integer');
         }
 
-        $this->databaseName = (string) $databaseName;
-        $this->collectionName = (string) $collectionName;
+        $this->databaseName = $databaseName;
+        $this->collectionName = $collectionName;
         $this->filter = $filter;
 
         $this->aggregateOptions = array_intersect_key($options, ['collation' => 1, 'comment' => 1, 'hint' => 1, 'maxTimeMS' => 1, 'readConcern' => 1, 'readPreference' => 1, 'session' => 1]);
@@ -121,7 +123,6 @@ class CountDocuments implements Executable
      * Execute the operation.
      *
      * @see Executable::execute()
-     * @param Server $server
      * @return integer
      * @throws UnexpectedValueException if the command response was malformed
      * @throws UnsupportedException if collation or read concern is used and unsupported
@@ -130,6 +131,8 @@ class CountDocuments implements Executable
     public function execute(Server $server)
     {
         $cursor = $this->aggregate->execute($server);
+        assert($cursor instanceof Cursor);
+
         $allResults = $cursor->toArray();
 
         /* If there are no documents to count, the aggregation pipeline has no items to group, and
@@ -139,17 +142,14 @@ class CountDocuments implements Executable
         }
 
         $result = current($allResults);
-        if (! isset($result->n) || ! (is_integer($result->n) || is_float($result->n))) {
+        if (! is_object($result) || ! isset($result->n) || ! (is_integer($result->n) || is_float($result->n))) {
             throw new UnexpectedValueException('count command did not return a numeric "n" value');
         }
 
         return (integer) $result->n;
     }
 
-    /**
-     * @return Aggregate
-     */
-    private function createAggregate()
+    private function createAggregate(): Aggregate
     {
         $pipeline = [
             ['$match' => (object) $this->filter],

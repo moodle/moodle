@@ -90,7 +90,7 @@ class Count implements Executable, Explainable
      * @param array        $options        Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
-    public function __construct($databaseName, $collectionName, $filter = [], array $options = [])
+    public function __construct(string $databaseName, string $collectionName, $filter = [], array $options = [])
     {
         if (! is_array($filter) && ! is_object($filter)) {
             throw InvalidArgumentException::invalidType('$filter', $filter, 'array or object');
@@ -132,8 +132,8 @@ class Count implements Executable, Explainable
             unset($options['readConcern']);
         }
 
-        $this->databaseName = (string) $databaseName;
-        $this->collectionName = (string) $collectionName;
+        $this->databaseName = $databaseName;
+        $this->collectionName = $collectionName;
         $this->filter = $filter;
         $this->options = $options;
     }
@@ -142,7 +142,6 @@ class Count implements Executable, Explainable
      * Execute the operation.
      *
      * @see Executable::execute()
-     * @param Server $server
      * @return integer
      * @throws UnexpectedValueException if the command response was malformed
      * @throws UnsupportedException if read concern is used and unsupported
@@ -159,7 +158,7 @@ class Count implements Executable, Explainable
         $result = current($cursor->toArray());
 
         // Older server versions may return a float
-        if (! isset($result->n) || ! (is_integer($result->n) || is_float($result->n))) {
+        if (! is_object($result) || ! isset($result->n) || ! (is_integer($result->n) || is_float($result->n))) {
             throw new UnexpectedValueException('count command did not return a numeric "n" value');
         }
 
@@ -170,7 +169,6 @@ class Count implements Executable, Explainable
      * Returns the command document for this operation.
      *
      * @see Explainable::getCommandDocument()
-     * @param Server $server
      * @return array
      */
     public function getCommandDocument(Server $server)
@@ -180,10 +178,8 @@ class Count implements Executable, Explainable
 
     /**
      * Create the count command document.
-     *
-     * @return array
      */
-    private function createCommandDocument()
+    private function createCommandDocument(): array
     {
         $cmd = ['count' => $this->collectionName];
 
@@ -212,9 +208,8 @@ class Count implements Executable, Explainable
      * Create options for executing the command.
      *
      * @see https://php.net/manual/en/mongodb-driver-server.executereadcommand.php
-     * @return array
      */
-    private function createOptions()
+    private function createOptions(): array
     {
         $options = [];
 

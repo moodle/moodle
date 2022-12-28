@@ -18,6 +18,7 @@
 namespace MongoDB\Operation;
 
 use MongoDB\Driver\Command;
+use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
 use MongoDB\Driver\Server;
 use MongoDB\Driver\Session;
 use MongoDB\Driver\WriteConcern;
@@ -104,7 +105,6 @@ class RenameCollection implements Executable
      * Execute the operation.
      *
      * @see Executable::execute()
-     * @param Server $server
      * @return array|object Command result document
      * @throws UnsupportedException if write concern is used and unsupported
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
@@ -127,10 +127,8 @@ class RenameCollection implements Executable
 
     /**
      * Create the renameCollection command.
-     *
-     * @return Command
      */
-    private function createCommand()
+    private function createCommand(): Command
     {
         $cmd = [
             'renameCollection' => $this->fromNamespace,
@@ -150,9 +148,8 @@ class RenameCollection implements Executable
      * Create options for executing the command.
      *
      * @see https://php.net/manual/en/mongodb-driver-server.executewritecommand.php
-     * @return array
      */
-    private function createOptions()
+    private function createOptions(): array
     {
         $options = [];
 

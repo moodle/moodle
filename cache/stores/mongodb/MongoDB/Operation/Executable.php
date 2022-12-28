@@ -32,7 +32,6 @@ interface Executable
     /**
      * Execute the operation.
      *
-     * @param Server $server
      * @return mixed
      */
     public function execute(Server $server);

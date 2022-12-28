@@ -44,6 +44,8 @@ use function is_string;
 
 class Client
 {
+    public const DEFAULT_URI = 'mongodb://127.0.0.1/';
+
     /** @var array */
     private static $defaultTypeMap = [
         'array' => BSONArray::class,
@@ -91,14 +93,14 @@ class Client
      * @see https://mongodb.com/docs/manual/reference/connection-string/
      * @see https://php.net/manual/en/mongodb-driver-manager.construct.php
      * @see https://php.net/manual/en/mongodb.persistence.php#mongodb.persistence.typemaps
-     * @param string $uri           MongoDB connection string
-     * @param array  $uriOptions    Additional connection string options
-     * @param array  $driverOptions Driver-specific options
+     * @param string|null $uri           MongoDB connection string. If none is provided, this defaults to self::DEFAULT_URI.
+     * @param array       $uriOptions    Additional connection string options
+     * @param array       $driverOptions Driver-specific options
      * @throws InvalidArgumentException for parameter/option parsing errors
      * @throws DriverInvalidArgumentException for parameter/option parsing errors in the driver
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
-    public function __construct($uri = 'mongodb://127.0.0.1/', array $uriOptions = [], array $driverOptions = [])
+    public function __construct(?string $uri = null, array $uriOptions = [], array $driverOptions = [])
     {
         $driverOptions += ['typeMap' => self::$defaultTypeMap];
 
@@ -116,8 +118,8 @@ class Client
 
         $driverOptions['driver'] = $this->mergeDriverInfo($driverOptions['driver'] ?? []);
 
-        $this->uri = (string) $uri;
-        $this->typeMap = $driverOptions['typeMap'] ?? null;
+        $this->uri = $uri ?? self::DEFAULT_URI;
+        $this->typeMap = $driverOptions['typeMap'];
 
         unset($driverOptions['typeMap']);
 
@@ -155,7 +157,7 @@ class Client
      * @param string $databaseName Name of the database to select
      * @return Database
      */
-    public function __get($databaseName)
+    public function __get(string $databaseName)
     {
         return $this->selectDatabase($databaseName);
     }
@@ -201,7 +203,7 @@ class Client
      * @throws InvalidArgumentException for parameter/option parsing errors
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
-    public function dropDatabase($databaseName, array $options = [])
+    public function dropDatabase(string $databaseName, array $options = [])
     {
         if (! isset($options['typeMap'])) {
             $options['typeMap'] = $this->typeMap;
@@ -290,7 +292,6 @@ class Client
      * List databases.
      *
      * @see ListDatabases::__construct() for supported options
-     * @param array $options
      * @return DatabaseInfoIterator
      * @throws UnexpectedValueException if the command response was malformed
      * @throws InvalidArgumentException for parameter/option parsing errors
@@ -314,7 +315,7 @@ class Client
      * @return Collection
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
-    public function selectCollection($databaseName, $collectionName, array $options = [])
+    public function selectCollection(string $databaseName, string $collectionName, array $options = [])
     {
         $options += ['typeMap' => $this->typeMap];
 
@@ -330,7 +331,7 @@ class Client
      * @return Database
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
-    public function selectDatabase($databaseName, array $options = [])
+    public function selectDatabase(string $databaseName, array $options = [])
     {
         $options += ['typeMap' => $this->typeMap];
 
