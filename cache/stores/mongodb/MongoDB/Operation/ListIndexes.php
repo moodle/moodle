@@ -73,7 +73,7 @@ class ListIndexes implements Executable
      * @param array  $options        Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
-    public function __construct($databaseName, $collectionName, array $options = [])
+    public function __construct(string $databaseName, string $collectionName, array $options = [])
     {
         if (isset($options['maxTimeMS']) && ! is_integer($options['maxTimeMS'])) {
             throw InvalidArgumentException::invalidType('"maxTimeMS" option', $options['maxTimeMS'], 'integer');
@@ -83,8 +83,8 @@ class ListIndexes implements Executable
             throw InvalidArgumentException::invalidType('"session" option', $options['session'], Session::class);
         }
 
-        $this->databaseName = (string) $databaseName;
-        $this->collectionName = (string) $collectionName;
+        $this->databaseName = $databaseName;
+        $this->collectionName = $collectionName;
         $this->options = $options;
     }
 
@@ -92,7 +92,6 @@ class ListIndexes implements Executable
      * Execute the operation.
      *
      * @see Executable::execute()
-     * @param Server $server
      * @return IndexInfoIterator
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
@@ -108,9 +107,8 @@ class ListIndexes implements Executable
      * the command be executed on the primary.
      *
      * @see https://php.net/manual/en/mongodb-driver-server.executecommand.php
-     * @return array
      */
-    private function createOptions()
+    private function createOptions(): array
     {
         $options = [];
 
@@ -125,11 +123,9 @@ class ListIndexes implements Executable
      * Returns information for all indexes for this collection using the
      * listIndexes command.
      *
-     * @param Server $server
-     * @return IndexInfoIteratorIterator
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
-    private function executeCommand(Server $server)
+    private function executeCommand(Server $server): IndexInfoIteratorIterator
     {
         $cmd = ['listIndexes' => $this->collectionName];
 

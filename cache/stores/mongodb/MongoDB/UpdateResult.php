@@ -43,7 +43,7 @@ class UpdateResult
      * This method should only be called if the write was acknowledged.
      *
      * @see UpdateResult::isAcknowledged()
-     * @return integer
+     * @return integer|null
      * @throws BadMethodCallException is the write result is unacknowledged
      */
     public function getMatchedCount()
@@ -82,7 +82,7 @@ class UpdateResult
      * This method should only be called if the write was acknowledged.
      *
      * @see UpdateResult::isAcknowledged()
-     * @return integer
+     * @return integer|null
      * @throws BadMethodCallException is the write result is unacknowledged
      */
     public function getUpsertedCount()

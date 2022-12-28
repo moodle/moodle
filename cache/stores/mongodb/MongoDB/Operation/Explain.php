@@ -78,7 +78,7 @@ class Explain implements Executable
      * @param array       $options      Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
-    public function __construct($databaseName, Explainable $explainable, array $options = [])
+    public function __construct(string $databaseName, Explainable $explainable, array $options = [])
     {
         if (isset($options['readPreference']) && ! $options['readPreference'] instanceof ReadPreference) {
             throw InvalidArgumentException::invalidType('"readPreference" option', $options['readPreference'], ReadPreference::class);
@@ -105,7 +105,6 @@ class Explain implements Executable
      * Execute the operation.
      *
      * @see Executable::execute()
-     * @param Server $server
      * @return array|object
      * @throws UnsupportedException if the server does not support explaining the operation
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
@@ -127,11 +126,8 @@ class Explain implements Executable
 
     /**
      * Create the explain command.
-     *
-     * @param Server $server
-     * @return Command
      */
-    private function createCommand(Server $server)
+    private function createCommand(Server $server): Command
     {
         $cmd = ['explain' => $this->explainable->getCommandDocument($server)];
 
@@ -148,9 +144,8 @@ class Explain implements Executable
      * Create options for executing the command.
      *
      * @see https://php.net/manual/en/mongodb-driver-server.executecommand.php
-     * @return array
      */
-    private function createOptions()
+    private function createOptions(): array
     {
         $options = [];
 

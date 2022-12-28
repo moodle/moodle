@@ -75,9 +75,9 @@ class DropIndexes implements Executable
      * @param array  $options        Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
-    public function __construct($databaseName, $collectionName, $indexName, array $options = [])
+    public function __construct(string $databaseName, string $collectionName, string $indexName, array $options = [])
     {
-        $indexName = (string) $indexName;
+        $indexName = $indexName;
 
         if ($indexName === '') {
             throw new InvalidArgumentException('$indexName cannot be empty');
@@ -103,8 +103,8 @@ class DropIndexes implements Executable
             unset($options['writeConcern']);
         }
 
-        $this->databaseName = (string) $databaseName;
-        $this->collectionName = (string) $collectionName;
+        $this->databaseName = $databaseName;
+        $this->collectionName = $collectionName;
         $this->indexName = $indexName;
         $this->options = $options;
     }
@@ -113,7 +113,6 @@ class DropIndexes implements Executable
      * Execute the operation.
      *
      * @see Executable::execute()
-     * @param Server $server
      * @return array|object Command result document
      * @throws UnsupportedException if write concern is used and unsupported
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
@@ -136,10 +135,8 @@ class DropIndexes implements Executable
 
     /**
      * Create the dropIndexes command.
-     *
-     * @return Command
      */
-    private function createCommand()
+    private function createCommand(): Command
     {
         $cmd = [
             'dropIndexes' => $this->collectionName,
@@ -159,9 +156,8 @@ class DropIndexes implements Executable
      * Create options for executing the command.
      *
      * @see https://php.net/manual/en/mongodb-driver-server.executewritecommand.php
-     * @return array
      */
-    private function createOptions()
+    private function createOptions(): array
     {
         $options = [];
 
