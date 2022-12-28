@@ -1,6 +1,10 @@
 This files describes API changes in /mod/data - plugins,
 information provided here is intended especially for developers.
 
+== 4.2 ==
+* The field base class now has a method validate(). Overwrite it in the field type to provide validation of field type's
+  parameters in the field add/modify form.
+
 === 4.1 ===
 * The method data_view is now deprecated. Use $maganer->set_module_viewed instead.
 * The data_print_template function is now deprecated and replaced by mod_data\template class.
