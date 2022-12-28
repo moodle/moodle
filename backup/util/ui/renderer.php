@@ -754,9 +754,12 @@ class core_backup_renderer extends plugin_renderer_base {
                     $row->attributes['class'] .= ' dimmed';
                 }
                 $id = $this->make_unique_id('restore-course');
+                $attrs = ['type' => 'radio', 'name' => 'targetid', 'value' => $course->id, 'id' => $id];
+                if ($course->id == $component->get_current_course_id()) {
+                    $attrs['checked'] = 'checked';
+                }
                 $row->cells = [
-                    html_writer::empty_tag('input', ['type' => 'radio', 'name' => 'targetid', 'value' => $course->id,
-                        'id' => $id]),
+                    html_writer::empty_tag('input', $attrs),
                     html_writer::label(
                         format_string($course->shortname, true, ['context' => context_course::instance($course->id)]),
                         $id,
