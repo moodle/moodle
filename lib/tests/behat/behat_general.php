@@ -2157,4 +2157,43 @@ EOF;
         // Set the list new list of editors.
         set_config('texteditors', implode(',', $list));
     }
+
+    /**
+     * Allow to check for minimal Moodle version.
+     *
+     * @Given the site is running Moodle version :minversion or higher
+     * @param string $minversion The minimum version of Moodle required (inclusive).
+     */
+    public function the_site_is_running_moodle_version_or_higher(string $minversion): void {
+        global $CFG;
+        require_once($CFG->libdir . '/environmentlib.php');
+
+        $currentversion = normalize_version(get_config('', 'release'));
+
+        if (version_compare($currentversion, $minversion, '<')) {
+            throw new Moodle\BehatExtension\Exception\SkippedException(
+                'Site must be running Moodle version ' . $minversion . ' or higher'
+            );
+        }
+    }
+
+    /**
+     * Allow to check for maximum Moodle version.
+     *
+     * @Given the site is running Moodle version :maxversion or lower
+     * @param string $maxversion The maximum version of Moodle required (inclusive).
+     */
+    public function the_site_is_running_moodle_version_or_lower(string $maxversion): void {
+        global $CFG;
+        require_once($CFG->libdir . '/environmentlib.php');
+
+        $currentversion = normalize_version(get_config('', 'release'));
+
+        if (version_compare($currentversion, $maxversion, '>')) {
+            throw new Moodle\BehatExtension\Exception\SkippedException(
+                'Site must be running Moodle version ' . $maxversion . ' or lower'
+            );
+        }
+    }
+
 }
