@@ -1,9 +1,5 @@
 <?php
 
-namespace Moodle;
-
-use stdClass;
-
 class H5peditor {
 
   private static $hasWYSIWYGEditor = array(
@@ -60,9 +56,9 @@ class H5peditor {
   /**
    * Constructor for the core editor library.
    *
-   * @param H5PCore $h5p Instance of core
-   * @param H5peditorStorage $storage Instance of h5peditor storage interface
-   * @param H5PEditorAjaxInterface $ajaxInterface Instance of h5peditor ajax
+   * @param \H5PCore $h5p Instance of core
+   * @param \H5peditorStorage $storage Instance of h5peditor storage interface
+   * @param \H5PEditorAjaxInterface $ajaxInterface Instance of h5peditor ajax
    * interface
    */
   function __construct($h5p, $storage, $ajaxInterface) {
@@ -407,7 +403,7 @@ class H5peditor {
 
     // Get list of JS and CSS files that belongs to the dependencies
     $files = $this->h5p->getDependenciesFiles($libraries, $prefix);
-    $libraryName = H5PCore::libraryToString(compact('machineName', 'majorVersion', 'minorVersion'), true);
+    $libraryName = H5PCore::libraryToFolderName($library);
     if ($this->hasPresave($libraryName) === true) {
       $this->addPresaveFile($files, $library, $prefix);
     }
@@ -629,11 +625,13 @@ class H5peditor {
       // Check if icon is available locally:
       if ($local_lib->has_icon) {
         // Create path to icon:
-        $library_folder = H5PCore::libraryToString(array(
+        $library_folder = H5PCore::libraryToFolderName([
           'machineName' => $local_lib->machine_name,
           'majorVersion' => $local_lib->major_version,
-          'minorVersion' => $local_lib->minor_version
-        ), TRUE);
+          'minorVersion' => $local_lib->minor_version,
+          'patchVersion' => $local_lib->patch_version,
+          'patchVersionInFolderName' => $local_lib->patch_version_in_folder_name
+        ]);
         $icon_path = $this->h5p->h5pF->getLibraryFileUrl($library_folder, 'icon.svg');
       }
 
@@ -751,7 +749,7 @@ class H5peditor {
    * @param string $prefix
    */
   public function addPresaveFile(&$assets, $library, $prefix = ''){
-    $path = 'libraries' . '/' . H5PCore::libraryToString($library, true);
+    $path = 'libraries' . '/' . H5PCore::libraryToFolderName($library);
     if( array_key_exists('path', $library)){
       $path = $library['path'];
     }
