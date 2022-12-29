@@ -45,6 +45,8 @@ class mysqli_native_moodle_database extends moodle_database {
     protected $mysqli = null;
     /** @var bool is compressed row format supported cache */
     protected $compressedrowformatsupported = null;
+    /** @var string DB server actual version */
+    protected $serverversion = null;
 
     private $transactions_supported = null;
 
@@ -666,11 +668,102 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Returns database server info array
-     * @return array Array containing 'description' and 'version' info
+     * Returns the version of the MySQL server, as reported by the PHP client connection.
+     *
+     * Wrap $this->mysqli->server_info to improve testing strategy.
+     *
+     * @return string A string representing the version of the MySQL server that the MySQLi extension is connected to.
+     */
+    protected function get_mysqli_server_info(): string {
+        return $this->mysqli->server_info;
+    }
+
+    /**
+     * Returns the version of the MySQL server, as reported by 'SELECT VERSION()' query.
+     *
+     * @return string A string that indicates the MySQL server version.
+     * @throws dml_read_exception If the execution of 'SELECT VERSION()' query will fail.
+     */
+    protected function get_version_from_db(): string {
+        $version = null;
+        // Query the DB server for the server version.
+        $sql = "SELECT VERSION() version;";
+        try {
+            $result = $this->mysqli->query($sql);
+            if ($result) {
+                if ($row = $result->fetch_assoc()) {
+                    $version = $row['version'];
+                }
+                $result->close();
+                unset($row);
+            }
+        } catch (\Throwable $e) { // Exceptions in case of MYSQLI_REPORT_STRICT.
+            // It looks like we've an issue out of the expected boolean 'false' result above.
+            throw new dml_read_exception($e->getMessage(), $sql);
+        }
+        if (empty($version)) {
+            // Exception dml_read_exception usually reports raw mysqli errors i.e. not localised by Moodle.
+            throw new dml_read_exception("Unable to read the DB server version.", $sql);
+        }
+
+        return $version;
+    }
+
+    /**
+     * Returns whether $CFG->dboptions['versionfromdb'] has been set to boolean `true`.
+     *
+     * @return bool True if $CFG->dboptions['versionfromdb'] has been set to boolean `true`. Otherwise, `false`.
+     */
+    protected function should_db_version_be_read_from_db(): bool {
+        if (!empty($this->dboptions['versionfromdb'])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns database server info array.
+     * @return array Array containing 'description' and 'version' info.
+     * @throws dml_read_exception If the execution of 'SELECT VERSION()' query will fail.
      */
     public function get_server_info() {
-        return array('description'=>$this->mysqli->server_info, 'version'=>$this->mysqli->server_info);
+        $version = $this->serverversion;
+        if (empty($version)) {
+            $version = $this->get_mysqli_server_info();
+            // The version returned by the PHP client could not be the actual DB server version.
+            // For example in MariaDB, it was prefixed by the RPL_VERSION_HACK, "5.5.5-" (MDEV-4088), starting from 10.x,
+            // when not using an authentication plug-in.
+            // Strip the RPL_VERSION_HACK prefix off - it will be "always" there in MariaDB until MDEV-28910 will be implemented.
+            $version = str_replace('5.5.5-', '', $version);
+
+            // Should we use the VERSION function to get the actual DB version instead of the PHP client version above?
+            if ($this->should_db_version_be_read_from_db()) {
+                // Try to query the actual version of the target database server: indeed some cloud providers, e.g. Azure,
+                // put a gateway in front of the actual instance which reports its own version to the PHP client
+                // and it doesn't represent the actual version of the DB server the PHP client is connected to.
+                // Refs:
+                // - https://learn.microsoft.com/en-us/azure/mariadb/concepts-supported-versions
+                // - https://learn.microsoft.com/en-us/azure/mysql/single-server/concepts-connect-to-a-gateway-node .
+                // Reset the version returned by the PHP client with the actual DB version reported by 'VERSION' function.
+                $version = $this->get_version_from_db();
+            }
+
+            // The version here starts with the following naming scheme: 'X.Y.Z[-<suffix>]'.
+            // Example: in MariaDB at least one suffix is "always" there, hardcoded in 'mysql_version.h.in':
+            // #define MYSQL_SERVER_VERSION       "@VERSION@-MariaDB"
+            // MariaDB and MySQL server version could have extra suffixes too, set by the compilation environment,
+            // e.g. '-debug', '-embedded', '-log' or any other vendor specific suffix (e.g. build information).
+            // Strip out any suffix.
+            $parts = explode('-', $version, 2);
+            // Finally, keep just major, minor and patch versions (X.Y.Z) from the reported DB server version.
+            $this->serverversion = $parts[0];
+        }
+
+        return [
+            'description' => $this->get_mysqli_server_info(),
+            'version' => $this->serverversion
+        ];
     }
 
     /**
