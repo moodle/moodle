@@ -15,8 +15,8 @@ Feature: List the system steps definitions
     And I should not see "There aren't steps definitions matching this filter"
     And I should not see "the following \"ELEMENT_STRING\" exist:"
     And "entities1" "select" should exist
-    And "users" "option" should exist in the "entities1" "select"
-    And "mod_assign > submissions" "option" should exist in the "entities1" "select"
+    And the "entities1" select box should contain "users"
+    And the "entities1" select box should contain "mod_assign > submissions"
 
   @javascript
   Scenario: Filtering by type
