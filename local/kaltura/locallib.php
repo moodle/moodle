@@ -437,12 +437,14 @@ function local_kaltura_request_lti1p3_launch($ltirequest, $withblocks = true, $e
 
 	$config->lti_launchcontainer = local_kaltura_get_lti_launch_container($withblocks);
 
+	$instance = local_kaltura_format_lti_instance_object($ltirequest);
 	if(is_null($editor)) {
 		$editor = 'tinymce';
 	}
 
 	$SESSION->editor = $editor;
-	return lti_initiate_login($ltirequest['course']->id, $ltirequest['module'], null, $config, null, $ltirequest['title']);
+
+	return lti_initiate_login($ltirequest['course']->id, $ltirequest['module'], $instance, $config, null, $ltirequest['title']);
 }
 /**
  * Generates some of the tool configuration based on the admin configuration details
