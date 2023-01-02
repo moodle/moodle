@@ -423,6 +423,48 @@ class stateactions {
     }
 
     /**
+     * Delete course cms.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids section ids
+     * @param int $targetsectionid not used
+     * @param int $targetcmid not used
+     */
+    public function cm_delete(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+
+        $this->validate_cms($course, $ids, __FUNCTION__);
+
+        // Check capabilities on every activity context.
+        foreach ($ids as $cmid) {
+            $modcontext = context_module::instance($cmid);
+            require_capability('moodle/course:manageactivities', $modcontext);
+        }
+
+        $format = course_get_format($course->id);
+        $modinfo = get_fast_modinfo($course);
+        $affectedsections = [];
+
+        $cms = $this->get_cm_info($modinfo, $ids);
+        foreach ($cms as $cm) {
+            $section = $cm->get_section_info();
+            $affectedsections[$section->id] = $section;
+            $format->delete_module($cm, true);
+            $updates->add_cm_remove($cm->id);
+        }
+
+        foreach ($affectedsections as $sectionid => $section) {
+            $updates->add_section_put($sectionid);
+        }
+    }
+
+    /**
      * Extract several cm_info from the course_modinfo.
      *
      * @param course_modinfo $modinfo the course modinfo.

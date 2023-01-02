@@ -59,7 +59,7 @@ define(
         // component compatible formats and the default actions.js won't be necessary anymore.
         // Meanwhile, we filter the migrated actions.
         const componentActions = [
-            'moveSection', 'moveCm', 'addSection', 'deleteSection', 'sectionHide', 'sectionShow',
+            'moveSection', 'moveCm', 'addSection', 'deleteSection', 'cmDelete', 'sectionHide', 'sectionShow',
             'cmHide', 'cmShow', 'cmStealth', 'sectionHighlight', 'sectionUnhighlight',
         ];
 
