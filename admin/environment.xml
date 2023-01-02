@@ -3924,20 +3924,20 @@
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
-  <MOODLE version="4.2" requires="3.9">
+  <MOODLE version="4.2" requires="3.11.8">
     <UNICODE level="required">
       <FEEDBACK>
         <ON_ERROR message="unicoderequired" />
       </FEEDBACK>
     </UNICODE>
     <DATABASE level="required">
-      <VENDOR name="mariadb" version="10.4" />
-      <VENDOR name="mysql" version="5.7" />
-      <VENDOR name="postgres" version="12" />
+      <VENDOR name="mariadb" version="10.6.7" />
+      <VENDOR name="mysql" version="8.0" />
+      <VENDOR name="postgres" version="13" />
       <VENDOR name="mssql" version="14.0" />
       <VENDOR name="oracle" version="19" />
     </DATABASE>
-    <PHP version="7.4.0" level="required">
+    <PHP version="8.0.0" level="required">
     </PHP>
     <PCREUNICODE level="optional">
       <FEEDBACK>
@@ -4019,7 +4019,7 @@
       </PHP_EXTENSION>
       <PHP_EXTENSION name="hash" level="required"/>
       <PHP_EXTENSION name="fileinfo" level="required"/>
-      <PHP_EXTENSION name="sodium" level="optional"/>
+      <PHP_EXTENSION name="sodium" level="required"/>
       <PHP_EXTENSION name="exif" level="optional"/>
     </PHP_EXTENSIONS>
     <PHP_SETTINGS>
@@ -4095,9 +4095,9 @@
           <ON_CHECK message="incompleteunicodesupport" />
         </FEEDBACK>
       </CUSTOM_CHECK>
-      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_sixtyfour_bits" level="optional">
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_sixtyfour_bits" level="required">
         <FEEDBACK>
-          <ON_CHECK message="sixtyfourbitswarning" />
+          <ON_ERROR message="sixtyfourbitsrequired" />
         </FEEDBACK>
       </CUSTOM_CHECK>
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_max_input_vars" level="optional">
