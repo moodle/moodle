@@ -28,8 +28,6 @@ namespace tool_behat\external;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/externallib.php');
-require_once($CFG->dirroot . '/vendor/autoload.php'); // Ensure we can load Behat and Facebook namespaces in behat libraries.
-require_once($CFG->libdir . '/tests/behat/behat_data_generators.php');
 
 /**
  * External function for getting properties of entity generators.
@@ -59,6 +57,12 @@ class get_entity_generator extends \external_api {
      * @return array
      */
     public static function execute(string $entitytype): array {
+        global $CFG;
+
+        // Ensure we can load Behat and Facebook namespaces in behat libraries.
+        require_once("{$CFG->dirroot}/vendor/autoload.php");
+        require_once("{$CFG->libdir}/tests/behat/behat_data_generators.php");
+
         $params = self::validate_parameters(self::execute_parameters(), ['entitytype' => $entitytype]);
         $context = \context_system::instance();
         self::validate_context($context);
