@@ -92,112 +92,13 @@ function xmldb_main_upgrade($oldversion) {
     $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
     // Always keep this upgrade step with version being the minimum
-    // allowed version to upgrade from (v3.9.0 right now).
-    if ($oldversion < 2020061500) {
+    // allowed version to upgrade from (v3.11.8 right now).
+    if ($oldversion < 2021051708) {
         // Just in case somebody hacks upgrade scripts or env, we really can not continue.
-        echo("You need to upgrade to 3.9.x or higher first!\n");
+        echo("You need to upgrade to 3.11.8 or higher first!\n");
         exit(1);
         // Note this savepoint is 100% unreachable, but needed to pass the upgrade checks.
-        upgrade_main_savepoint(true, 2020061500);
-    }
-
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2020061500.02) {
-        // Update default digital age consent map according to the current legislation on each country.
-
-        // The default age of digital consent map for 38 and below.
-        $oldageofdigitalconsentmap = implode(PHP_EOL, [
-            '*, 16',
-            'AT, 14',
-            'ES, 14',
-            'US, 13'
-        ]);
-
-        // Check if the current age of digital consent map matches the old one.
-        if (get_config('moodle', 'agedigitalconsentmap') === $oldageofdigitalconsentmap) {
-            // If the site is still using the old defaults, upgrade to the new default.
-            $ageofdigitalconsentmap = implode(PHP_EOL, [
-                '*, 16',
-                'AT, 14',
-                'BE, 13',
-                'BG, 14',
-                'CY, 14',
-                'CZ, 15',
-                'DK, 13',
-                'EE, 13',
-                'ES, 14',
-                'FI, 13',
-                'FR, 15',
-                'GB, 13',
-                'GR, 15',
-                'IT, 14',
-                'LT, 14',
-                'LV, 13',
-                'MT, 13',
-                'NO, 13',
-                'PT, 13',
-                'SE, 13',
-                'US, 13'
-            ]);
-            set_config('agedigitalconsentmap', $ageofdigitalconsentmap);
-        }
-
-        upgrade_main_savepoint(true, 2020061500.02);
-    }
-
-    if ($oldversion < 2020062600.01) {
-        // Add index to the token field in the external_tokens table.
-        $table = new xmldb_table('external_tokens');
-        $index = new xmldb_index('token', XMLDB_INDEX_NOTUNIQUE, ['token']);
-
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
-        upgrade_main_savepoint(true, 2020062600.01);
-    }
-
-    if ($oldversion < 2020071100.01) {
-        // Clean up completion criteria records referring to NULL course prerequisites.
-        $select = 'criteriatype = :type AND courseinstance IS NULL';
-        $params = ['type' => 8]; // COMPLETION_CRITERIA_TYPE_COURSE.
-
-        $DB->delete_records_select('course_completion_criteria', $select, $params);
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2020071100.01);
-    }
-
-    if ($oldversion < 2020072300.01) {
-        // Restore and set the guest user if it has been previously removed via GDPR, or set to an nonexistent
-        // user account.
-        $currentguestuser = $DB->get_record('user', array('id' => $CFG->siteguest));
-
-        if (!$currentguestuser) {
-            if (!$guest = $DB->get_record('user', array('username' => 'guest', 'mnethostid' => $CFG->mnet_localhost_id))) {
-                // Create a guest user account.
-                $guest = new stdClass();
-                $guest->auth        = 'manual';
-                $guest->username    = 'guest';
-                $guest->password    = hash_internal_user_password('guest');
-                $guest->firstname   = get_string('guestuser');
-                $guest->lastname    = ' ';
-                $guest->email       = 'root@localhost';
-                $guest->description = get_string('guestuserinfo');
-                $guest->mnethostid  = $CFG->mnet_localhost_id;
-                $guest->confirmed   = 1;
-                $guest->lang        = $CFG->lang;
-                $guest->timemodified= time();
-                $guest->id = $DB->insert_record('user', $guest);
-            }
-            // Set the guest user.
-            set_config('siteguest', $guest->id);
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2020072300.01);
+        upgrade_main_savepoint(true, 2021051708);
     }
 
     if ($oldversion < 2021052500.01) {
