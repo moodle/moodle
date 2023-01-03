@@ -116,11 +116,13 @@
             <div class="mb-1">
                 <label>{{#str}} size, tiny_media {{/str}}</label>
                 <div class="form-inline tiny_media_poster_size">
-                    <label class="accesshide">{{#str}} videowidth, tiny_media {{/str}}</label>
-                    <input type="text" class="form-control mr-1 tiny_media_width_entry input-mini" size="4" value="{{video.width}}"/>
+                    <label for="vdisplayoptions_media-width-entry" class="accesshide">{{#str}} videowidth, tiny_media {{/str}}</label>
+                    <input id="vdisplayoptions_media-width-entry" type="text" class="form-control mr-1 tiny_media_width_entry input-mini"
+                           size="4" value="{{video.width}}"/>
                     x
-                    <label class="accesshide">{{#str}} videoheight, tiny_media {{/str}}</label>
-                    <input type="text" class="form-control ml-1 tiny_media_height_entry input-mini" size="4" value="{{video.height}}"/>
+                    <label for="vdisplayoptions_media-height-entry" class="accesshide">{{#str}} videoheight, tiny_media {{/str}}</label>
+                    <input id="vdisplayoptions_media-height-entry" type="text" class="form-control ml-1 tiny_media_height_entry input-mini"
+                           size="4" value="{{video.height}}"/>
                 </div>
             </div>
             <div class="clearfix"></div>
