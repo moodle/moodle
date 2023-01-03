@@ -1,7 +1,8 @@
-@mod @mod_glossary @javascript
-Feature: Create a glossary entry. As a user
-  I should be able to enter an entry without
-  using reserved keywords
+@mod @mod_glossary
+Feature: Create a glossary entry.
+  In order to create glossary entries
+  As a user
+  I should be able to enter an entry without using reserved keywords
 
   Background:
     Given the following "users" exist:
@@ -15,16 +16,14 @@ Feature: Create a glossary entry. As a user
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Glossary" to section "1" and I fill the form with:
-      | Name | Test glossary |
-      | Description | A glossary about dreams! |
-    And I log out
+    And the following "activity" exists:
+      | activity | glossary |
+      | course | C1 |
+      | name | Test glossary |
 
   Scenario: Glossary entry edition of custom tags works as expected
     Given I am on the "Test glossary" "glossary activity" page logged in as "teacher1"
-    And I press "Add entry"
+    When I press "Add entry"
     And I set the following fields to these values:
       | Concept    | Dummy first entry               |
       | Definition | Dream is the start of a journey |
