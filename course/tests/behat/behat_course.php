@@ -1092,8 +1092,14 @@ class behat_course extends behat_base {
                     "/ancestor::li[contains(concat(' ', normalize-space(@class), ' '), ' section ')]" .
                     "/descendant::div[contains(concat(' ', @class, ' '), ' lightbox ')][contains(@style, 'display: none')]";
 
-            $this->execute("behat_general::wait_until_exists",
-                    array($this->escape($hiddenlightboxxpath), "xpath_element")
+            // Component based courses do not use lightboxes anymore but js depending.
+            $sectionreadyxpath = "//*[contains(@id,'page-content')]" .
+                    "/descendant::*[contains(concat(' ', normalize-space(@class), ' '), ' stateready ')]";
+
+            $duplicationreadyxpath = "$hiddenlightboxxpath | $sectionreadyxpath";
+            $this->execute(
+                "behat_general::wait_until_exists",
+                [$this->escape($duplicationreadyxpath), "xpath_element"]
             );
 
             // Close the original activity actions menu.

@@ -423,6 +423,64 @@ class stateactions {
     }
 
     /**
+     * Duplicate a course modules instances into the same course.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids course modules ids to duplicate
+     * @param int $targetsectionid optional target section id destination
+     * @param int $targetcmid not used
+     */
+    public function cm_duplicate(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+        $this->validate_cms($course, $ids, __FUNCTION__);
+
+        $modinfo = get_fast_modinfo($course);
+        $cms = $this->get_cm_info($modinfo, $ids);
+
+        // Check capabilities on every activity context.
+        foreach ($cms as $cmid => $cm) {
+            $modcontext = context_module::instance($cmid);
+            require_all_capabilities(
+                ['moodle/course:manageactivities', 'moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport'],
+                $modcontext
+            );
+            if (!course_allowed_module($course, $cm->modname)) {
+                throw new moodle_exception('No permission to create that activity');
+            }
+        }
+
+        $targetsection = null;
+        if (!empty($targetsectionid)) {
+            $this->validate_sections($course, [$targetsectionid], __FUNCTION__);
+            $targetsection = $modinfo->get_section_info_by_id($targetsectionid, MUST_EXIST);
+        }
+
+        // Duplicate course modules.
+        $affectedcmids = [];
+        foreach ($cms as $cm) {
+            if ($newcm = duplicate_module($course, $cm)) {
+                if ($targetsection) {
+                    moveto_module($newcm, $targetsection);
+                } else {
+                    $affectedcmids[] = $newcm->id;
+                }
+            }
+        }
+
+        if ($targetsection) {
+            $this->section_state($updates, $course, [$targetsection->id]);
+        } else {
+            $this->cm_state($updates, $course, $affectedcmids);
+        }
+    }
+
+    /**
      * Delete course cms.
      *
      * @param stateupdates $updates the affected course elements track
