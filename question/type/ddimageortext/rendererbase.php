@@ -85,6 +85,7 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
                 $classes = [
                         'group' . $groupno,
                         'draghome',
+                        'user-select-none',
                         'choice' . $choiceno
                 ];
                 if ($dragimage->infinite) {
