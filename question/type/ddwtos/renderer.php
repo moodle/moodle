@@ -117,13 +117,13 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
                 $infinite = ' infinite';
             }
 
-            $boxes .= html_writer::tag('span', $content, array(
-                    'class' => 'draghome choice' . $key . ' group' .
-                            $choice->draggroup . $infinite)) . ' ';
+            $boxes .= html_writer::tag('span', $content, [
+                    'class' => 'draghome user-select-none choice' . $key . ' group' .
+                            $choice->draggroup . $infinite]) . ' ';
         }
 
         return html_writer::nonempty_tag('div', $boxes,
-                array('class' => 'draggrouphomes' . $choice->draggroup));
+            ['class' => 'user-select-none draggrouphomes' . $choice->draggroup]);
     }
 
     /**
