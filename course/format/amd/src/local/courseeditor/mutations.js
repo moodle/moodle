@@ -247,6 +247,19 @@ export default class {
     }
 
     /**
+     * Delete cms.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of section ids
+     */
+    async cmDelete(stateManager, cmIds) {
+        const course = stateManager.get('course');
+        this.cmLock(stateManager, cmIds, true);
+        const updates = await this._callEditWebservice('cm_delete', course.id, cmIds);
+        this.cmLock(stateManager, cmIds, false);
+        stateManager.processUpdates(updates);
+    }
+
+    /**
      * Mark or unmark course modules as dragging.
      *
      * @param {StateManager} stateManager the current state manager

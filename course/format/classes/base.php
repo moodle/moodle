@@ -26,6 +26,7 @@ namespace core_courseformat;
 
 use navigation_node;
 use moodle_page;
+use cm_info;
 use core_component;
 use course_modinfo;
 use html_writer;
@@ -1471,6 +1472,19 @@ abstract class base {
         }
 
         return true;
+    }
+
+    /**
+     * Wrapper for course_delete_module method.
+     *
+     * Format plugins can override this method to provide their own implementation of course_delete_module.
+     *
+     * @param cm_info $cm the course module information
+     * @param bool $async whether or not to try to delete the module using an adhoc task. Async also depends on a plugin hook.
+     * @throws moodle_exception
+     */
+    public function delete_module(cm_info $cm, bool $async = false) {
+        course_delete_module($cm->id, $async);
     }
 
     /**

@@ -4,6 +4,8 @@ Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
 === 4.2 ===
 * New core_courseformat\base::get_context() to get the course context directly from the format instance.
+* New core_courseformat\base::delete_module() method. Now format plugins can extend the activity deletion logic
+  by overriding this method.
 
 === 4.1 ===
 * New \core_courseformat\stateupdates methods add_section_remove() and add_cm_remove() have been added to replace

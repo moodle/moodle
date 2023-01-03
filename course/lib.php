@@ -1836,10 +1836,15 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     // Delete.
     if ($hasmanageactivities) {
         $actions['delete'] = new action_menu_link_secondary(
-            new moodle_url($baseurl, array('delete' => $mod->id)),
-            new pix_icon('t/delete', '', 'moodle', array('class' => 'iconsmall')),
+            new moodle_url($baseurl, ['delete' => $mod->id]),
+            new pix_icon('t/delete', '', 'moodle', ['class' => 'iconsmall']),
             $str->delete,
-            array('class' => 'editing_delete', 'data-action' => 'delete', 'data-sectionreturn' => $sr)
+            [
+                'class' => 'editing_delete',
+                'data-action' => ($usecomponents) ? 'cmDelete' : 'delete',
+                'data-sectionreturn' => $sr,
+                'data-id' => $mod->id,
+            ]
         );
     }
 

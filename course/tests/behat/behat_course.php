@@ -1039,7 +1039,7 @@ class behat_course extends behat_base {
         // JS modal windows and avoiding interacting them at the same time.
         if ($this->running_javascript()) {
             $this->execute('behat_general::i_click_on_in_the',
-                array(get_string('yes'), "button", "Confirm", "dialogue")
+                array(get_string('delete'), "button", "Confirm", "dialogue")
             );
         } else {
             $this->execute("behat_forms::press_button", get_string('yes'));
