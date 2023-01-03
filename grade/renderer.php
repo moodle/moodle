@@ -76,7 +76,7 @@ class core_grades_renderer extends plugin_renderer_base {
 
         if ($activegroup) {
             $group = groups_get_group($activegroup);
-            $data['selectedgroup'] = $group->name;
+            $data['selectedgroup'] = format_string($group->name, true, ['context' => $context]);
         } else if ($activegroup === 0) {
             $data['selectedgroup'] = get_string('allparticipants');
         }

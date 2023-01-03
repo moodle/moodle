@@ -110,14 +110,14 @@ class get_groups_for_search_widget extends external_api {
                 ]);
             }
 
-            $mappedgroups = array_map(function($group) use ($COURSE, $actionbaseurl) {
+            $mappedgroups = array_map(function($group) use ($COURSE, $actionbaseurl, $context) {
                 $url = new \moodle_url($actionbaseurl, [
                     'id' => $COURSE->id,
                     'group' => $group->id
                 ]);
                 return (object) [
                     'id' => $group->id,
-                    'name' => $group->name,
+                    'name' => format_string($group->name, true, ['context' => $context]),
                     'url' => $url->out(false),
                     'active' => false // @TODO MDL-76246
                 ];
