@@ -56,6 +56,11 @@
         "modstealth": true
     }
 }}
+{{#editing}}
+    <div class="divider divider-plus" data-action="insert-before-{{activityname}}">
+        {{> core_course/activitychooserbuttonactivity}}
+    </div>
+{{/editing}}
 <div class="activity-item {{#modstealth}}hiddenactivity{{/modstealth}}{{!
         }}{{#modhiddenfromstudents}}hiddenactivity{{/modhiddenfromstudents}}{{!
         }}{{#modinline}}activityinline{{/modinline}}" data-activityname="{{activityname}}">
