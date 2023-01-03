@@ -390,7 +390,6 @@ $string['configthemelist'] = 'Leave this blank to allow any valid theme to be us
 For example:  standard,orangewhite.';
 $string['configtimezone'] = 'This is the default timezone for displaying dates - each user can override this setting in their profile. Cron tasks and other server settings are specified in this timezone. You should change the setting if it shows as "Invalid timezone"';
 $string['configuseblogassociations'] = 'Should users be able to organize their blog by associating entries with courses and course modules?';
-$string['configuseexternalyui'] = 'Instead of using local files, use online files available on Yahoo&#145;s servers. WARNING: This requires an internet connection, or no AJAX will work on your site. This setting is not compatible with sites using https.';
 $string['configusesitenameforsitepages'] = 'If enabled the site\'s short name will be used for the site pages node in the navigation rather than the string \'Site pages\'.';
 $string['configusetags'] = 'Should tags functionality across the site be enabled?';
 $string['configvariables'] = 'Variables';
@@ -1509,7 +1508,6 @@ $string['upgradinglogs'] = 'Upgrading logs';
 $string['upgradingversion'] = 'Upgrading to new version';
 $string['upwards'] = 'upwards';
 $string['useblogassociations'] = 'Enable associations';
-$string['useexternalyui'] = 'Use online YUI libraries';
 $string['user'] = 'User';
 $string['userbulk'] = 'Bulk user actions';
 $string['userbulkdownload'] = 'Export users as';
