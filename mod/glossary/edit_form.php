@@ -107,6 +107,13 @@ class mod_glossary_entry_form extends moodleform {
 
         $id = (int)$data['id'];
         $data['concept'] = trim($data['concept']);
+        $aliases = explode("\r\n", trim($data['aliases']));
+        foreach ($aliases as $alias) {
+            // Check if the alias is just a single character and that it doesn't match reserved symbols.
+            if (strlen(trim($alias)) == 1 && preg_match('/[$-\/:-?{-~!"^_`\[\]]/', trim($alias))) {
+                $errors['aliases'] = get_string('errreservedkeywords', 'glossary');
+            }
+        }
 
         if ($id) {
             //We are updating an entry, so we compare current session user with
