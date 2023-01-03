@@ -38,6 +38,11 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
         new lang_string('enablesharingtomoodlenet', 'core_admin'),
         new lang_string('enablesharingtomoodlenet_desc', 'core_admin'), 0));
 
+    // New communication subsystem setting.
+    $temp->add(new admin_setting_configcheckbox('enablecommunicationsubsystem',
+        new lang_string('enablecommunicationsubsystem', 'core_admin'),
+        new lang_string('enablecommunicationsubsystem_desc', 'core_admin'), 0));
+
     $ADMIN->add('experimental', $temp);
 
     // "debugging" settingpage
