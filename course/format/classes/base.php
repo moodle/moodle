@@ -287,6 +287,15 @@ abstract class base {
     }
 
     /**
+     * Returns the course context.
+     *
+     * @return context_course the course context
+     */
+    final public function get_context(): context_course {
+        return context_course::instance($this->courseid);
+    }
+
+    /**
      * Returns a record from course database table plus additional fields
      * that course format defines
      *
