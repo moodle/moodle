@@ -17,6 +17,7 @@ information provided here is intended especially for developers.
 * The useexternalyui configuration setting has been removed as a part of the migration away from YUI.
   It only worked with http sites and did not officially support SSL, and is at risk of disappearing should Yahoo! decide
   to remove it.
+* New `properties_filter` method of persistent class for filtering properties of a record against persistent definition
 
 === 4.1 ===
 
