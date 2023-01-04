@@ -792,8 +792,6 @@ $string['showhiddenitems_help'] = 'Whether hidden grade items are hidden entirel
 * Only hidden until - Grade items with a "hide until" date set are hidden completely until the set date, after which the whole item is shown
 * Do not show - Hidden grade items are completely hidden';
 $string['showhiddenuntilonly'] = 'Only hidden until';
-$string['showlocks'] = 'Show locks';
-$string['showlocks_help'] = 'If enabled, when editing is turned on, a lock/unlock icon is shown for each grade for controlling whether the grade can be automatically updated by the related activity.';
 $string['shownohidden'] = 'Do not show';
 $string['shownooutcomes'] = 'Hide outcomes';
 $string['shownumberofgrades'] = 'Show number of grades in averages';
@@ -907,6 +905,8 @@ $string['tabs'] = 'Tabs';
 $string['combo'] = 'Tabs and drop-down menu';
 
 // Deprecated since Moodle 4.2.
+$string['showlocks'] = 'Show locks';
+$string['showlocks_help'] = 'If enabled, when editing is turned on, a lock/unlock icon is shown for each grade for controlling whether the grade can be automatically updated by the related activity.';
 $string['showeyecons'] = 'Show show/hide icons';
 $string['showeyecons_help'] = 'If enabled, when editing is turned on, a show/hide icon is shown for each grade for controlling its visibility to the student.';
 $string['showquickfeedback'] = 'Show quick feedback';

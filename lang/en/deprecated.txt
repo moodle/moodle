@@ -76,3 +76,5 @@ enableajax,core_grades
 enableajax_help,core_grades
 showeyecons,core_grades
 showeyecons_help,core_grades
+showlocks,core_grades
+showlocks_help,core_grades

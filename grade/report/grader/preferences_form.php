@@ -61,7 +61,6 @@ class grader_report_preferences_form extends moodleform {
             if ($canviewhidden) {
                 $preferences['prefshow']['showaverages']  = $checkbox_default;
             }
-            $preferences['prefshow']['showlocks']         = $checkbox_default;
 
             $preferences['prefrows'] = array(
                         'rangesdisplaytype'      => array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',

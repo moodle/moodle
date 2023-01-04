@@ -1659,10 +1659,7 @@ class grade_report_grader extends grade_report {
 
             $showhideicon = $this->gtree->get_hiding_icon($element, $this->gpr);
 
-            if ($this->get_pref('showlocks')) {
-                $lockunlockicon = $this->gtree->get_locking_icon($element, $this->gpr);
-            }
-
+            $lockunlockicon = $this->gtree->get_locking_icon($element, $this->gpr);
         }
 
         $gradeanalysisicon   = '';

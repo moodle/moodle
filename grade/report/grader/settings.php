@@ -53,9 +53,6 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('grade_report_showaverages', get_string('showaverages', 'grades'),
                                                 get_string('showaverages_help', 'grades'), 1));
 
-    $settings->add(new admin_setting_configcheckbox('grade_report_showlocks', get_string('showlocks', 'grades'),
-                                                get_string('showlocks_help', 'grades'), 0));
-
     $settings->add(new admin_setting_configcheckbox('grade_report_showranges', get_string('showranges', 'grades'),
                                                 get_string('showranges_help', 'grades'), 0));
 
