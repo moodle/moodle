@@ -2112,6 +2112,30 @@ class cache_test extends \advanced_testcase {
     }
 
     /**
+     * The application locking feature should work with caches that support multiple identifiers
+     * (static cache and MongoDB with a specific setting).
+     *
+     * @covers \cache_application
+     */
+    public function test_application_locking_multiple_identifier_cache() {
+        // Get an arbitrary definition (modinfo).
+        $instance = cache_config_testing::instance(true);
+        $definitions = $instance->get_definitions();
+        $definition = \cache_definition::load('phpunit', $definitions['core/coursemodinfo']);
+
+        // Set up a static cache using that definition, wrapped in cache_application so we can do
+        // locking.
+        $store = new \cachestore_static('test');
+        $store->initialise($definition);
+        $cache = new cache_application($definition, $store);
+
+        // Test the three locking functions.
+        $cache->acquire_lock('frog');
+        $this->assertTrue($cache->check_lock_state('frog'));
+        $cache->release_lock('frog');
+    }
+
+    /**
      * Test requiring a lock before attempting to set a key.
      *
      * @covers ::set_implementation
