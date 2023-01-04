@@ -183,9 +183,23 @@ class editor extends \texteditor {
                 'available' => get_string_manager()->get_list_of_languages()
             ],
 
+            // Placeholder selectors.
+            // Some contents (Example: placeholder elements) are only shown in the editor, and not to users. It is unrelated to the
+            // real display. We created a list of placeholder selectors, so we can decide to or not to apply rules, styles... to
+            // these elements.
+            // The default of this list will be empty.
+            // Other plugins can register their placeholder elements to placeholderSelectors list by calling
+            // editor_tiny/options::registerPlaceholderSelectors.
+            'placeholderSelectors' => [],
+
             // Plugin configuration.
             'plugins' => $this->manager->get_plugin_configuration($context, $options, $fpoptions, $this),
         ];
+
+        if (defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING) {
+            // Add sample selectors for Behat test.
+            $config->placeholderSelectors = ['.behat-tinymce-placeholder'];
+        }
 
         foreach ($fpoptions as $fp) {
             // Guess the draftitemid for the editor.
