@@ -1,4 +1,4 @@
-@editor @editor_tiny @tiny_media @javascript @_file_upload
+@editor @editor_tiny @tiny_h5p @javascript @_file_upload
 Feature: Use the TinyMCE editor to upload an h5p package
     In order to work with h5p
     As a content creator
