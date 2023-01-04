@@ -53,7 +53,6 @@ class provider implements
         // There are several user preferences (shared between different courses).
         // Show/hide toggles preferences.
         $items->add_user_preference('grade_report_showcalculations', 'privacy:metadata:preference:grade_report_showcalculations');
-        $items->add_user_preference('grade_report_showeyecons', 'privacy:metadata:preference:grade_report_showeyecons');
         $items->add_user_preference('grade_report_showaverages', 'privacy:metadata:preference:grade_report_showaverages');
         $items->add_user_preference('grade_report_showlocks', 'privacy:metadata:preference:grade_report_showlocks');
         $items->add_user_preference('grade_report_showuserimage', 'privacy:metadata:preference:grade_report_showuserimage');
@@ -92,7 +91,6 @@ class provider implements
             $transformedvalue = null;
             switch ($name) {
                 case 'grade_report_showcalculations':
-                case 'grade_report_showeyecons':
                 case 'grade_report_showaverages':
                 case 'grade_report_showlocks':
                 case 'grade_report_showuserimage':

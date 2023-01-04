@@ -784,8 +784,6 @@ $string['showaverages'] = 'Show column averages';
 $string['showaverages_help'] = 'If enabled, the grader report will contain an additional row displaying the average (mean) for each category and grade item.';
 $string['showcalculations'] = 'Show calculations';
 $string['showcalculations_help'] = 'If enabled, when editing, a calculator icon is shown for each grade item and category with a visual indicator that a grade item is calculated.';
-$string['showeyecons'] = 'Show show/hide icons';
-$string['showeyecons_help'] = 'If enabled, when editing is turned on, a show/hide icon is shown for each grade for controlling its visibility to the student.';
 $string['showgroups'] = 'Show groups';
 $string['showhiddenitems'] = 'Show hidden items';
 $string['showhiddenitems_help'] = 'Whether hidden grade items are hidden entirely or if the names of hidden grade items are visible to students.
@@ -909,6 +907,8 @@ $string['tabs'] = 'Tabs';
 $string['combo'] = 'Tabs and drop-down menu';
 
 // Deprecated since Moodle 4.2.
+$string['showeyecons'] = 'Show show/hide icons';
+$string['showeyecons_help'] = 'If enabled, when editing is turned on, a show/hide icon is shown for each grade for controlling its visibility to the student.';
 $string['showquickfeedback'] = 'Show quick feedback';
 $string['showquickfeedback_help'] = 'If enabled, when editing is turned on, a feedback text input box with a dotted border appears for each grade, allowing the feedback for many grades to be edited at the same time. Changes are saved and highlighted when the update button is clicked.
 

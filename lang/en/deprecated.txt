@@ -74,3 +74,5 @@ showquickfeedback,core_grades
 showquickfeedback_help,core_grades
 enableajax,core_grades
 enableajax_help,core_grades
+showeyecons,core_grades
+showeyecons_help,core_grades
