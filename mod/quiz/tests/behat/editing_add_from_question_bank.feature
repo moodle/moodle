@@ -126,3 +126,14 @@ Feature: Adding questions to a quiz from the question bank
     Then "question 01 name" "text" should appear before "question 03 name" "text"
     And I follow "Sort by Question type descending"
     Then "question 03 name" "text" should appear before "question 01 name" "text"
+
+  Scenario: Shuffle option could be set before adding any question to the quiz
+    Given the following "questions" exist:
+      | questioncategory | qtype | name             | questiontext     |
+      | Test questions   | essay | question 03 name | question 03 text |
+    And I log in as "teacher1"
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
+    When I set the field "Shuffle" to "1"
+    And I open the "last" add to quiz menu
+    And I follow "from question bank"
+    Then I should see "question 01 name"
