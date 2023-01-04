@@ -31,6 +31,14 @@ use moodle_url;
 class general_action_bar_test extends advanced_testcase {
 
     /**
+     * Load required test libraries
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+        require_once("{$CFG->dirroot}/grade/lib.php");
+    }
+
+    /**
      * Search array $options for an element which is an array containing 'name' => $name.
      *
      * @param array $options the array of options.
