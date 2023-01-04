@@ -80,7 +80,15 @@ class core_reportbuilder_generator extends component_generator_base {
             throw new coding_exception('Record must contain \'uniqueidentifier\' property');
         }
 
-        return helper::add_report_column($record['reportid'], $record['uniqueidentifier']);
+        $column = helper::add_report_column($record['reportid'], $record['uniqueidentifier']);
+
+        // Update additional record properties.
+        unset($record['reportid'], $record['uniqueidentifier']);
+        if ($properties = array_intersect_key($record, column::properties_definition())) {
+            $column->set_many($properties)->update();
+        }
+
+        return $column;
     }
 
     /**
@@ -100,7 +108,15 @@ class core_reportbuilder_generator extends component_generator_base {
             throw new coding_exception('Record must contain \'uniqueidentifier\' property');
         }
 
-        return helper::add_report_filter($record['reportid'], $record['uniqueidentifier']);
+        $filter = helper::add_report_filter($record['reportid'], $record['uniqueidentifier']);
+
+        // Update additional record properties.
+        unset($record['reportid'], $record['uniqueidentifier']);
+        if ($properties = array_intersect_key($record, filter::properties_definition())) {
+            $filter->set_many($properties)->update();
+        }
+
+        return $filter;
     }
 
     /**
@@ -120,7 +136,15 @@ class core_reportbuilder_generator extends component_generator_base {
             throw new coding_exception('Record must contain \'uniqueidentifier\' property');
         }
 
-        return helper::add_report_condition($record['reportid'], $record['uniqueidentifier']);
+        $condition = helper::add_report_condition($record['reportid'], $record['uniqueidentifier']);
+
+        // Update additional record properties.
+        unset($record['reportid'], $record['uniqueidentifier']);
+        if ($properties = array_intersect_key($record, filter::properties_definition())) {
+            $condition->set_many($properties)->update();
+        }
+
+        return $condition;
     }
 
     /**
