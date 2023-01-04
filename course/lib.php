@@ -1816,10 +1816,15 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             plugin_supports('mod', $mod->modname, FEATURE_BACKUP_MOODLE2) &&
             course_allowed_module($mod->get_course(), $mod->modname)) {
         $actions['duplicate'] = new action_menu_link_secondary(
-            new moodle_url($baseurl, array('duplicate' => $mod->id)),
+            new moodle_url($baseurl, ['duplicate' => $mod->id]),
             new pix_icon('t/copy', '', 'moodle', array('class' => 'iconsmall')),
             $str->duplicate,
-            array('class' => 'editing_duplicate', 'data-action' => 'duplicate', 'data-sectionreturn' => $sr)
+            [
+                'class' => 'editing_duplicate',
+                'data-action' => ($courseformat->supports_components()) ? 'cmDuplicate' : 'duplicate',
+                'data-sectionreturn' => $sr,
+                'data-id' => $mod->id,
+            ]
         );
     }
 

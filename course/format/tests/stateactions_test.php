@@ -16,6 +16,7 @@
 
 namespace core_courseformat;
 
+use course_modinfo;
 use moodle_exception;
 use stdClass;
 
@@ -35,6 +36,7 @@ class stateactions_test extends \advanced_testcase {
      */
     public static function setupBeforeClass(): void {
         global $CFG;
+        // State data uses external_format_string.
         require_once($CFG->dirroot . '/lib/externallib.php');
     }
 
@@ -175,6 +177,24 @@ class stateactions_test extends \advanced_testcase {
     }
 
     /**
+     * Enrol, set and create the test user depending on the role name.
+     *
+     * @param stdClass $course the course data
+     * @param string $rolename the testing role name
+     */
+    private function set_test_user_by_role(stdClass $course, string $rolename) {
+        if ($rolename == 'admin') {
+            $this->setAdminUser();
+        } else {
+            $user = $this->getDataGenerator()->create_user();
+            if ($rolename != 'unenroled') {
+                $this->getDataGenerator()->enrol_user($user->id, $course->id, $rolename);
+            }
+            $this->setUser($user);
+        }
+    }
+
+    /**
      * Test the behaviour course_state.
      *
      * @dataProvider get_state_provider
@@ -207,15 +227,7 @@ class stateactions_test extends \advanced_testcase {
         $references = $this->course_references($course);
 
         // Create and enrol user using given role.
-        if ($role == 'admin') {
-            $this->setAdminUser();
-        } else {
-            $user = $this->getDataGenerator()->create_user();
-            if ($role != 'unenroled') {
-                $this->getDataGenerator()->enrol_user($user->id, $course->id, $role);
-            }
-            $this->setUser($user);
-        }
+        $this->set_test_user_by_role($course, $role);
 
         // Add some activities to the course. One visible and one hidden in both sections 1 and 2.
         $references["cm0"] = $this->create_activity($course->id, 'assign', 1, true);
@@ -869,6 +881,155 @@ class stateactions_test extends \advanced_testcase {
             ],
             'guest' => [
                 'role' => 'guest',
+                'expectedexception' => true,
+            ],
+        ];
+    }
+
+    /**
+     * Duplicate course module method.
+     *
+     * @covers ::cm_duplicate
+     * @dataProvider cm_duplicate_provider
+     * @param string $targetsection the target section (empty for none)
+     * @param bool $validcms if uses valid cms
+     * @param string $role the current user role name
+     * @param bool $expectedexception if the test will raise an exception
+     */
+    public function test_cm_duplicate(
+        string $targetsection = '',
+        bool $validcms = true,
+        string $role = 'admin',
+        bool $expectedexception = false
+    ) {
+        $this->resetAfterTest();
+
+        // Create a course with 3 sections.
+        $course = $this->create_course('topics', 3, []);
+
+        $references = $this->course_references($course);
+
+        // Create and enrol user using given role.
+        $this->set_test_user_by_role($course, $role);
+
+        // Add some activities to the course. One visible and one hidden in both sections 1 and 2.
+        $references["cm0"] = $this->create_activity($course->id, 'assign', 1, true);
+        $references["cm1"] = $this->create_activity($course->id, 'page', 2, false);
+
+        if ($expectedexception) {
+            $this->expectException(moodle_exception::class);
+        }
+
+        // Initialise stateupdates.
+        $courseformat = course_get_format($course->id);
+        $updates = new stateupdates($courseformat);
+
+        // Execute method.
+        $targetsectionid = (!empty($targetsection)) ? $references[$targetsection] : null;
+        $cmrefs = ($validcms) ? ['cm0', 'cm1'] : ['invalidcm'];
+        $actions = new stateactions();
+        $actions->cm_duplicate(
+            $updates,
+            $course,
+            $this->translate_references($references, $cmrefs),
+            $targetsectionid,
+        );
+
+        // Check the new elements in the course structure.
+        $originalsections = [
+            'assign' => $references['section1'],
+            'page' => $references['section2'],
+        ];
+        $modinfo = course_modinfo::instance($course);
+        $cms = $modinfo->get_cms();
+        $i = 0;
+        foreach ($cms as $cmid => $cminfo) {
+            if ($cmid == $references['cm0'] || $cmid == $references['cm1']) {
+                continue;
+            }
+            $references["newcm$i"] = $cmid;
+            if ($targetsectionid) {
+                $this->assertEquals($targetsectionid, $cminfo->section);
+            } else {
+                $this->assertEquals($originalsections[$cminfo->modname], $cminfo->section);
+            }
+            $i++;
+        }
+
+        // Check the resulting updates.
+        $results = $this->summarize_updates($updates);
+
+        if ($targetsectionid) {
+            $this->assertArrayHasKey($references[$targetsection], $results['put']['section']);
+        } else {
+            $this->assertArrayHasKey($references['section1'], $results['put']['section']);
+            $this->assertArrayHasKey($references['section2'], $results['put']['section']);
+        }
+        $countcms = ($targetsection == 'section3' || $targetsection === '') ? 2 : 3;
+        $this->assertCount($countcms, $results['put']['cm']);
+        $this->assertArrayHasKey($references['newcm0'], $results['put']['cm']);
+        $this->assertArrayHasKey($references['newcm1'], $results['put']['cm']);
+    }
+
+    /**
+     * Duplicate course module data provider.
+     *
+     * @return array the testing scenarios
+     */
+    public function cm_duplicate_provider(): array {
+        return [
+            'valid cms without target section' => [
+                'targetsection' => '',
+                'validcms' => true,
+                'role' => 'admin',
+                'expectedexception' => false,
+            ],
+            'valid cms targeting an empty section' => [
+                'targetsection' => 'section3',
+                'validcms' => true,
+                'role' => 'admin',
+                'expectedexception' => false,
+            ],
+            'valid cms targeting a section with activities' => [
+                'targetsection' => 'section2',
+                'validcms' => true,
+                'role' => 'admin',
+                'expectedexception' => false,
+            ],
+            'invalid cms without target section' => [
+                'targetsection' => '',
+                'validcms' => false,
+                'role' => 'admin',
+                'expectedexception' => true,
+            ],
+            'invalid cms with target section' => [
+                'targetsection' => 'section3',
+                'validcms' => false,
+                'role' => 'admin',
+                'expectedexception' => true,
+            ],
+            'student role with target section' => [
+                'targetsection' => 'section3',
+                'validcms' => true,
+                'role' => 'student',
+                'expectedexception' => true,
+            ],
+            'student role without target section' => [
+                'targetsection' => '',
+                'validcms' => true,
+                'role' => 'student',
+                'expectedexception' => true,
+            ],
+            'unrenolled user with target section' => [
+                'targetsection' => 'section3',
+                'validcms' => true,
+                'role' => 'unenroled',
+                'expectedexception' => true,
+            ],
+            'unrenolled user without target section' => [
+                'targetsection' => '',
+                'validcms' => true,
+                'role' => 'unenroled',
                 'expectedexception' => true,
             ],
         ];
