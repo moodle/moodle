@@ -136,16 +136,6 @@ $card-gutter : $card-deck-margin * 2;
     .progress-text {
         color: $gray-600;
     }
-    .dashboard-card-footer.menu {
-        opacity: 0;
-    }
-    .dashboard-card {
-        @include hover-focus {
-            .dashboard-card-footer.menu {
-                opacity: 1;
-            }
-        }
-    }
     .multiline {
         white-space: normal;
     }
@@ -179,17 +169,6 @@ $card-gutter : $card-deck-margin * 2;
     background-size: cover;
     @include media-breakpoint-down(lg) {
         width: 100%;
-    }
-}
-
-.course-listitem .menu {
-    opacity: 0;
-}
-.course-listitem {
-    @include hover-focus {
-        .menu {
-            opacity: 1;
-        }
     }
 }
 
