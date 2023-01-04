@@ -13103,12 +13103,6 @@ body.dragging .dragging {
 .block .block-cards .progress-text {
   color: #6a737b; }
 
-.block .block-cards .dashboard-card-footer.menu {
-  opacity: 0; }
-
-.block .block-cards .dashboard-card:hover .dashboard-card-footer.menu, .block .block-cards .dashboard-card:focus .dashboard-card-footer.menu {
-  opacity: 1; }
-
 .block .block-cards .multiline {
   white-space: normal; }
 
@@ -13138,12 +13132,6 @@ body.dragging .dragging {
   @media (max-width: 1199.98px) {
     .dashboard-list-img {
       width: 100%; } }
-
-.course-listitem .menu {
-  opacity: 0; }
-
-.course-listitem:hover .menu, .course-listitem:focus .menu {
-  opacity: 1; }
 
 .dashboard-card-deck .dashboard-card {
   margin-bottom: 0.5rem;
