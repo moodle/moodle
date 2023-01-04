@@ -106,7 +106,6 @@ class grader_report_preferences_form extends moodleform {
                                                                        GRADE_REPORT_AGGREGATION_POSITION_LAST => get_string('positionlast', 'grades'));
 
             $preferences['prefshow']['showuserimage'] = $checkbox_default;
-            $preferences['prefshow']['showactivityicons'] = $checkbox_default;
             $preferences['prefshow']['showranges'] = $checkbox_default;
 
             if ($canviewhidden) {

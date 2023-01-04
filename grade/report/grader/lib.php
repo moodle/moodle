@@ -727,7 +727,6 @@ class grade_report_grader extends grade_report {
         $this->get_sort_arrows();
 
         // Get preferences once.
-        $showactivityicons = $this->get_pref('showactivityicons');
         $quickgrading = $this->get_pref('quickgrading');
 
         // Get strings which are re-used inside the loop.

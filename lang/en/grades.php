@@ -770,8 +770,6 @@ $string['showweight'] = 'Show weightings';
 $string['showweight_help'] = 'Whether to show a column for the grade weight.';
 $string['rangedecimals'] = 'Range decimal places';
 $string['rangedecimals_help'] = 'The number of decimal places to display for the range.';
-$string['showactivityicons'] = 'Show activity icons';
-$string['showactivityicons_help'] = 'If enabled, activity icons are shown next to activity names.';
 $string['showallgrades'] = 'Show all grades';
 $string['showallhidden'] = 'Show hidden';
 $string['showallstudents'] = 'Show all Students';
@@ -914,3 +912,5 @@ Note that when feedback is edited in the grader report, an overridden flag is se
 $string['enableajax'] = 'Enable AJAX';
 $string['enableajax_help'] = 'Adds a layer of AJAX functionality to the grader report, simplifying and speeding up common operations. Depends on Javascript being switched on at the user\'s browser level.';
 $string['controls'] = 'Controls';
+$string['showactivityicons'] = 'Show activity icons';
+$string['showactivityicons_help'] = 'If enabled, activity icons are shown next to activity names.';
