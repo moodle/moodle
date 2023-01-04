@@ -215,8 +215,8 @@ class behat_course extends behat_base {
         // Clicks add activity or resource section link.
         $sectionnode = $this->find('xpath', $sectionxpath);
         $this->execute('behat_general::i_click_on_in_the', [
-            get_string('addresourceoractivity', 'moodle'),
-            'button',
+            "//button[@data-action='open-chooser' and not(@data-beforemod)]",
+            'xpath',
             $sectionnode,
             'NodeElement',
         ]);
