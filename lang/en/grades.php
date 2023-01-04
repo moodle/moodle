@@ -753,9 +753,6 @@ $string['setting'] = 'Setting';
 $string['settings'] = 'Settings';
 $string['setup'] = 'Setup';
 $string['setweights'] = 'Set weights';
-$string['showanalysisicon'] = 'Show grade analysis icon';
-$string['showanalysisicon_desc'] = 'Whether to show grade analysis icon by default. If the activity module supports it, the grade analysis icon links to a page with more detailed explanation of the grade and how it was obtained.';
-$string['showanalysisicon_help'] = 'If the activity module supports it, the grade analysis icon links to a page with more detailed explanation of the grade and how it was obtained.';
 $string['showaverage'] = 'Show average';
 $string['showaverage_help'] = 'Whether to show an average column. Note that participants may be able to estimate others\' grades if the average is calculated from a small number of grades. For performance reasons the average is approximate if it is dependent on any hidden items.';
 $string['showcontributiontocoursetotal'] = 'Show contribution to course total';
@@ -905,6 +902,9 @@ $string['tabs'] = 'Tabs';
 $string['combo'] = 'Tabs and drop-down menu';
 
 // Deprecated since Moodle 4.2.
+$string['showanalysisicon'] = 'Show grade analysis icon';
+$string['showanalysisicon_desc'] = 'Whether to show grade analysis icon by default. If the activity module supports it, the grade analysis icon links to a page with more detailed explanation of the grade and how it was obtained.';
+$string['showanalysisicon_help'] = 'If the activity module supports it, the grade analysis icon links to a page with more detailed explanation of the grade and how it was obtained.';
 $string['showlocks'] = 'Show locks';
 $string['showlocks_help'] = 'If enabled, when editing is turned on, a lock/unlock icon is shown for each grade for controlling whether the grade can be automatically updated by the related activity.';
 $string['showeyecons'] = 'Show show/hide icons';

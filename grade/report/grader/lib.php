@@ -1663,7 +1663,7 @@ class grade_report_grader extends grade_report {
         }
 
         $gradeanalysisicon   = '';
-        if ($this->get_pref('showanalysisicon') && $element['type'] == 'grade') {
+        if ($element['type'] == 'grade') {
             $gradeanalysisicon .= $this->gtree->get_grade_analysis_icon($element['object']);
         }
 

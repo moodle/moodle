@@ -56,9 +56,6 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('grade_report_showranges', get_string('showranges', 'grades'),
                                                 get_string('showranges_help', 'grades'), 0));
 
-    $settings->add(new admin_setting_configcheckbox('grade_report_showanalysisicon', get_string('showanalysisicon', 'core_grades'),
-                                                get_string('showanalysisicon_desc', 'core_grades'), 1));
-
     $settings->add(new admin_setting_configcheckbox('grade_report_showuserimage', get_string('showuserimage', 'grades'),
                                                 get_string('showuserimage_help', 'grades'), 1));
 

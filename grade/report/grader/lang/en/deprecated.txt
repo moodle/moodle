@@ -8,3 +8,4 @@ ajaxfieldchanged,gradereport_grader
 ajaxchoosescale,gradereport_grader
 privacy:metadata:preference:grade_report_showeyecons,gradereport_grader
 privacy:metadata:preference:grade_report_showlocks,gradereport_grader
+privacy:metadata:preference:grade_report_showanalysisicon,gradereport_grader

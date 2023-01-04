@@ -78,3 +78,6 @@ showeyecons,core_grades
 showeyecons_help,core_grades
 showlocks,core_grades
 showlocks_help,core_grades
+showanalysisicon,core_grades
+showanalysisicon_desc,core_grades
+showanalysisicon_help,core_grades
