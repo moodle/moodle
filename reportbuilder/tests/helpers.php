@@ -61,7 +61,8 @@ abstract class core_reportbuilder_testcase extends advanced_testcase {
     }
 
     /**
-     * Stress test a report source by iterating over all it's columns and asserting we can create a report for each
+     * Stress test a report source by iterating over all it's columns, enabling sorting where possible and asserting we can
+     * create a report for each
      *
      * @param string $source
      */
@@ -74,9 +75,13 @@ abstract class core_reportbuilder_testcase extends advanced_testcase {
         $instance = manager::get_report_from_persistent($report);
 
         // Iterate over each available column, ensure each works correctly independent of any others.
-        $columnidentifiers = array_keys($instance->get_columns());
-        foreach ($columnidentifiers as $columnidentifier) {
+        foreach ($instance->get_columns() as $columnidentifier => $columninstance) {
             $column = report::add_report_column($report->get('id'), $columnidentifier);
+
+            // Enable sorting of the column where possible.
+            if ($columninstance->get_is_sortable()) {
+                report::toggle_report_column_sorting($report->get('id'), $column->get('id'), true, SORT_DESC);
+            }
 
             // We are only asserting the report returns content without errors, not the content itself.
             try {
