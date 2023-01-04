@@ -10,7 +10,7 @@ Information provided here is intended especially for developers.
   - `data-force-table` to force table view
 * New optional parameter `pagesize` in external method `core_reportbuilder_reports_get` to set the displayed rows per page.
 * Javascript reports repository module method `getReport` updated to accept new pagesize parameter.
-
+* The `datasource_stress_test_columns` test helper now enables sorting on those columns that support it
 
 === 4.1 ===
 
