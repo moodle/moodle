@@ -1,6 +1,10 @@
 This file describes API changes in /reportbuilder/*
 Information provided here is intended especially for developers.
 
+=== 4.0.6 ===
+
+* The `datasource_stress_test_columns` test helper now enables sorting on those columns that support it
+
 === 4.0.4 ===
 
 * New method `get_sample_values()` added to base filter class, to be overridden in all filter types to support stress testing
