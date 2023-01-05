@@ -88,6 +88,3 @@ $string['timeunit'] = 'Time unit';
 $string['timing'] = 'Timing';
 $string['unmaskpassword'] = 'Unmask';
 $string['year'] = 'Year';
-
-// Deprecated since Moodle 3.10.
-$string['filetypesnotwhitelisted'] = 'These file types are not allowed here: {$a}';
