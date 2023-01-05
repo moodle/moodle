@@ -79,7 +79,7 @@
                         {{activitystr}}
                     {{/courseview}}
                     {{^courseview}}
-                        {{#course.fullnamedisplay}}{{{course.fullnamedisplay}}} &middot; {{/course.fullnamedisplay}}{{activitystr}}
+                        {{activitystr}}{{#course.fullnamedisplay}} &middot; {{{course.fullnamedisplay}}}{{/course.fullnamedisplay}}
                     {{/courseview}}
                 </small>
             </div>
