@@ -2560,6 +2560,7 @@ input[disabled] {
 
 .custom-select {
     width: auto;
+    max-width: 100%;
 }
 
 .fade.in {
@@ -2975,5 +2976,19 @@ body.dragging {
                 @include border-right-radius($pagination-border-radius-sm);
             }
         }
+    }
+}
+
+/** Prevent long strings exceeding page width */
+.page-header-headings,
+.coursename,
+.categoryname,
+.breadcrumb-item,
+.dropdown-item {
+
+    &:not(.text-truncate) {
+        word-break: normal;
+        overflow-wrap: anywhere;
+        white-space: normal;
     }
 }
