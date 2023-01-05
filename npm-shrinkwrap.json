@@ -29,6 +29,7 @@
         "eslint-plugin-promise": "6.0.0",
         "fb-watchman": "2.0.1",
         "gherkin-lint": "^4.2.2",
+        "git-tags-remote": "^1.0.5",
         "glob": "7.2.0",
         "grunt": "^1.4.1",
         "grunt-contrib-uglify": "5.0.1",
@@ -6370,6 +6371,15 @@
       "dev": true,
       "engines": {
         "node": ">= 6"
+      }
+    },
+    "node_modules/git-tags-remote": {
+      "version": "1.0.5",
+      "resolved": "https://registry.npmjs.org/git-tags-remote/-/git-tags-remote-1.0.5.tgz",
+      "integrity": "sha512-BMPL7t5XWDTD1AAyc+0rtq5zAE6e6QPE8KYu1nLPI0+JZztmCWhUNzNLF3P8vPSvJ1YupCL9NYiM6OQevJYY1g==",
+      "dev": true,
+      "dependencies": {
+        "semver": "^7.3.2"
       }
     },
     "node_modules/glob": {
@@ -18987,6 +18997,15 @@
           "integrity": "sha512-VTyMAUfdm047mwKl+u79WIdrZxtFtn+nBxHeb844XBQ9uMNTuTHdx2hc5RiAJYqwTj3wc/xe5HLSdJSkJ+WfZw==",
           "dev": true
         }
+      }
+    },
+    "git-tags-remote": {
+      "version": "1.0.5",
+      "resolved": "https://registry.npmjs.org/git-tags-remote/-/git-tags-remote-1.0.5.tgz",
+      "integrity": "sha512-BMPL7t5XWDTD1AAyc+0rtq5zAE6e6QPE8KYu1nLPI0+JZztmCWhUNzNLF3P8vPSvJ1YupCL9NYiM6OQevJYY1g==",
+      "dev": true,
+      "requires": {
+        "semver": "^7.3.2"
       }
     },
     "glob": {
