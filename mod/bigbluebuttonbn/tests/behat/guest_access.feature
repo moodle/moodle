@@ -10,7 +10,7 @@ Feature: Guest access allows external users to connect to a meeting
     And the following "activities" exist:
       | activity        | name                    | intro                           | course | idnumber         | type | recordings_imported | guestallowed |
       | bigbluebuttonbn | RoomRecordings          | Test Room Recording description | C1     | bigbluebuttonbn1 | 0    | 0                   | 0            |
-      | bigbluebuttonbn | RoomRecordingsWithguest | Test Room with guest            | C1     | bigbluebuttonbn1 | 0    | 0                   | 1            |
+      | bigbluebuttonbn | RoomRecordingsWithGuest | Test Room with guest            | C1     | bigbluebuttonbn1 | 0    | 0                   | 1            |
 
   @javascript
   Scenario: I need to enable guest access to see the instance parameters
@@ -47,9 +47,8 @@ Feature: Guest access allows external users to connect to a meeting
   Scenario: I should be able to invite guest to the meeting
     Given the following config values are set as admin:
       | bigbluebuttonbn_guestaccess_enabled | 1 |
-    When I am on the "RoomRecordingsWithguest" "bigbluebuttonbn activity" page logged in as "admin"
-    Then I should see "Add guests"
-    And I click on "Add guests" "button"
+    When I am on the "RoomRecordingsWithGuest" "bigbluebuttonbn activity" page logged in as "admin"
+    Then I click on "Add guests" "button"
     And I should see "Meeting link"
     And I should see "Meeting password"
     And I should see "Copy link"
@@ -61,3 +60,10 @@ Feature: Guest access allows external users to connect to a meeting
     When I click on "OK" "button" in the "Add guests to this meeting" "dialogue"
     Then I should see "An invitation will be sent to testuser@email.com."
     Then I log out
+
+  Scenario: I should be able to invite guest to the meeting even if forcelogin is set
+    Given the following config values are set as admin:
+      | bigbluebuttonbn_guestaccess_enabled | 1 |
+      | forcelogin                          | 1 |
+    When I am on the "RoomRecordingsWithGuest" "mod_bigbluebuttonbn > BigblueButtonBN Guest" page
+    Then I should see "C1: RoomRecordingsWithGuest"

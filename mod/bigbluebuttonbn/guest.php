@@ -31,8 +31,8 @@ use mod_bigbluebuttonbn\plugin;
 
 require(__DIR__.'/../../config.php');
 global $PAGE, $OUTPUT, $DB, $SITE;
-// Still run through basic setup of the page.
-require_course_login($SITE);
+// Note here that we do not use require_login as the $CFG->forcelogin would prevent guest user from accessing this page.
+$PAGE->set_course($SITE); // Intialise the page and run through the setup.
 $uid = required_param('uid', PARAM_ALPHANUMEXT);
 
 $bbid = $DB->get_field('bigbluebuttonbn', 'id', ['guestlinkuid' => trim($uid)]);
