@@ -36,12 +36,6 @@ defined('MOODLE_INTERNAL') || die();
 // The old class name is the key, the new class name is the value.
 // The array must be called $renamedclasses.
 $renamedclasses = [
-    // Since Moodle 3.7.
-    'core\\analytics\\target\\course_dropout' => 'core_course\\analytics\\target\\course_dropout',
-    'core\\analytics\\target\\course_competencies' => 'core_course\\analytics\\target\\course_competencies',
-    'core\\analytics\\target\\course_completion' => 'core_course\\analytics\\target\\course_completion',
-    'core\\analytics\\target\\course_gradetopass' => 'core_course\\analytics\\target\\course_gradetopass',
-    'core\\analytics\\target\\no_teaching' => 'core_course\\analytics\\target\\no_teaching',
     // Since Moodle 4.0.
     'format_base' => 'core_courseformat\\base',
     'format_topics_renderer' => 'format_topics\\output\\renderer',
