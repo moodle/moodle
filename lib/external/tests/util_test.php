@@ -98,7 +98,7 @@ class util_test extends \advanced_testcase {
         $courses = [$c2->id => $c2, $c3->id => $c3, $c4->id => $c4];
 
         $this->setUser($u1);
-        list($courses, $warnings) = util::validate_courses($courseids, $courses);
+        [$courses, $warnings] = util::validate_courses($courseids, $courses);
         $this->assertCount(2, $courses);
         $this->assertCount(1, $warnings);
         $this->assertArrayHasKey($c1->id, $courses);
@@ -154,7 +154,7 @@ class util_test extends \advanced_testcase {
     public function test_get_area_files(): void {
         global $CFG, $DB;
 
-        $this->DB = $DB;
+        $this->db = $DB;
         $DB = $this->getMockBuilder('moodle_database')->getMock();
 
         $content = base64_encode("Let us create a nice simple file.");
@@ -178,7 +178,7 @@ class util_test extends \advanced_testcase {
         $filearea = 'area';
         $context = 12345;
 
-        $expectedfiles[] = [
+        $expectedfiles = [[
             'filename' => 'example.txt',
             'filepath' => '/',
             'fileurl' => "{$CFG->wwwroot}/webservice/pluginfile.php/{$context}/{$component}/{$filearea}/{$itemid}/example.txt",
@@ -186,6 +186,7 @@ class util_test extends \advanced_testcase {
             'filesize' => $filesize,
             'mimetype' => 'text/plain',
             'isexternalfile' => false,
+        ],
         ];
         // Get all the files for the area.
         $files = util::get_area_files($context, $component, $filearea, false);
@@ -237,9 +238,6 @@ class util_test extends \advanced_testcase {
      */
     public function test_format_text(): void {
         $settings = external_settings::get_instance();
-
-        $currentraw = $settings->get_raw();
-        $currentfilter = $settings->get_filter();
 
         $settings->set_raw(true);
         $settings->set_filter(false);
@@ -300,7 +298,7 @@ class util_test extends \advanced_testcase {
         $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0, $options), $correct);
         $this->assertSame(external_format_text($test, $testformat, $context, 'core', '', 0, $options), $correct);
 
-        $test = '<p><a id="test"></a><a href="#test">Text</a></p>'."\n".'Newline';
+        $test = '<p><a id="test"></a><a href="#test">Text</a></p>' . "\n" . 'Newline';
         $testformat = FORMAT_MOODLE;
         $correct = ['<p><a id="test"></a><a href="#test">Text</a></p> Newline', FORMAT_HTML];
         $options = new \stdClass();
@@ -313,7 +311,7 @@ class util_test extends \advanced_testcase {
 
         $test = '<p><a id="test"></a><a href="#test">Text</a></p>';
         $testformat = FORMAT_MOODLE;
-        $correct = ['<div class="text_to_html">'.$test.'</div>', FORMAT_HTML];
+        $correct = ['<div class="text_to_html">' . $test . '</div>', FORMAT_HTML];
         $options = new \stdClass();
         $options->para = true;
         $this->assertSame(util::format_text($test, $testformat, $context, 'core', '', 0, $options), $correct);
@@ -341,8 +339,6 @@ class util_test extends \advanced_testcase {
     public function test_external_format_string(): void {
         $this->resetAfterTest();
         $settings = external_settings::get_instance();
-        $currentraw = $settings->get_raw();
-        $currentfilter = $settings->get_filter();
 
         // Enable multilang filter to on content and heading.
         filter_set_global_state('multilang', TEXTFILTER_ON);
