@@ -784,12 +784,15 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function get_checkbox_render(structure $structure, int $slot) : string {
+        $questionslot = $structure->get_displayed_number_for_slot($slot);
         $checkbox = new \core\output\checkbox_toggleall($this->togglegroup, false,
             [
-                'id' => 'selectquestion-' . $structure->get_displayed_number_for_slot($slot),
+                'id' => 'selectquestion-' . $questionslot,
                 'name' => 'selectquestion[]',
-                'value' => $structure->get_displayed_number_for_slot($slot),
+                'value' => $questionslot,
                 'classes' => 'select-multiple-checkbox',
+                'label' => get_string('selectquestionslot', 'quiz', $questionslot),
+                'labelclasses' => 'sr-only',
             ]);
 
         return $this->render($checkbox);
