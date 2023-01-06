@@ -183,3 +183,30 @@ Feature: Attempt a quiz
     And I follow "Previous page"
     And I should see "First question"
     And I should not see "Second question"
+
+  @javascript
+  Scenario: Take a quiz with number of attempts set
+    Given the following "activities" exist:
+      | activity | name   | course | grade | navmethod  | attempts |
+      | quiz     | Quiz 5 | C1     | 100   | free       | 2        |
+    And the following "questions" exist:
+      | questioncategory | qtype       | name  | questiontext    |
+      | Test questions   | truefalse   | TF7   | First question  |
+    And quiz "Quiz 5" contains the following questions:
+      | question | page |
+      | TF7      | 1    |
+    And user "student" has attempted "Quiz 5" with responses:
+      | slot | response |
+      |   1  | True     |
+    When I am on the "Quiz 5" "mod_quiz > View" page logged in as "student"
+    Then I should see "Attempts allowed: 2"
+    And I should not see "No more attempts are allowed"
+    And I press "Re-attempt quiz"
+    And I should see "First question"
+    And I click on "Finish attempt ..." "button" in the "region-main" "region"
+    And I press "Submit all and finish"
+    And I should see "Once you submit your answers, you won’t be able to change them." in the "Submit all your answers and finish?" "dialogue"
+    And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
+    And I follow "Finish review"
+    And I should not see "Re-attempt quiz"
+    And I should see "No more attempts are allowed"
