@@ -444,6 +444,7 @@ $string['questionnamecopy'] = '{$a} (copy)';
 $string['questionpreviewdefaults'] = 'Question preview defaults';
 $string['questionpreviewdefaults_desc'] = 'These defaults are used when a user first previews a question in the question bank. Once a user has previewed a question, their personal preferences are stored as user preferences.';
 $string['questions'] = 'Questions';
+$string['question_version'] = 'Question version';
 $string['questionx'] = 'Question {$a}';
 $string['questiontext'] = 'Question text';
 $string['requiresgrading'] = 'Requires grading';
