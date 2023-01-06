@@ -93,7 +93,8 @@
             {{{ pagination }}}
         {{/discussion_top_pagination}}
         {{$discussion_list_output}}
-            <table class="table discussion-list">
+        <div class="no-overflow">
+            <table class="table discussion-list generaltable">
                 <caption id="discussion-table-description-{{uniqid}}" class="sr-only">
                     {{#str}} showingcountoftotaldiscussions, mod_forum, {"count": "{{visiblediscussioncount}}", "total":"{{totaldiscussioncount}}"} {{/str}}
                 </caption>
@@ -355,6 +356,7 @@
                 </tbody>
                 {{/discussion_list_body}}
             </table>
+	</div>
         {{/discussion_list_output}}
         {{$discussion_bottom_pagination}}
             {{{ pagination }}}
