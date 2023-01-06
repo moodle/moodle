@@ -88,7 +88,7 @@ Feature: Set email display preference
     And I set the following fields to these values:
       | maildisplay | 0 |
     And I click on "Update profile" "button"
-    Then I should see "(Hidden from all non-privileged users)"
+    Then I should see "(Hidden from everyone except users with appropriate permissions)"
     When I click on "Edit profile" "link" in the "region-main" "region"
     And I set the following fields to these values:
       | maildisplay | 1 |
