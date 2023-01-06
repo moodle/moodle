@@ -17,12 +17,14 @@ Feature: Group searching functionality within the user report.
       | student2  | C1     | student        |
     And the following "groups" exist:
       | name          | course | idnumber |
-      | Default group | C1     | dg       |
-      | Tutor group   | C1     | tg       |
-      | Marker group  | C1     | mg       |
+      | Default <span class="multilang" lang="de">Gruppe</span><span class="multilang" lang="en">group</span> | C1     | dg       |
+      | Tutor <span class="multilang" lang="de">Gruppe</span><span class="multilang" lang="en">group</span>   | C1     | tg       |
+      | Marker <span class="multilang" lang="de">Gruppe</span><span class="multilang" lang="en">group</span>  | C1     | mg       |
     And the following "group members" exist:
       | user     | group |
       | student1 | dg    |
+    And the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
     And I am on the "C1" "Course" page logged in as "teacher1"
     And I change window size to "large"
 
