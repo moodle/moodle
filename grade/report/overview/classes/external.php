@@ -92,12 +92,13 @@ class gradereport_overview_external extends external_api {
         $course = get_course(SITEID);
         $context = context_course::instance($course->id);
 
-        // Force a regrade if required.
-        grade_regrade_final_grades_if_required($course);
         // Get the course final grades now.
         $gpr = new grade_plugin_return(array('type' => 'report', 'plugin' => 'overview', 'courseid' => $course->id,
                                         'userid' => $userid));
         $report = new grade_report_overview($userid, $gpr, $context);
+        // Force a regrade if required. As this is the overview report, we need to do all courses
+        // the user is enrolled in, not just $course.
+        $report->regrade_all_courses_if_needed();
         $coursesgrades = $report->setup_courses_data(true);
 
         $grades = array();

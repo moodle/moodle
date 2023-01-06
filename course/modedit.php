@@ -166,6 +166,9 @@ if ($mform->is_cancelled()) {
         redirect(course_get_url($course, $cw->section, array('sr' => $sectionreturn)));
     }
 } else if ($fromform = $mform->get_data()) {
+    // Mark that this is happening in the front-end UI. This is used to indicate that we are able to
+    // do regrading with a progress bar and redirect, if necessary.
+    $fromform->frontend = true;
     if (!empty($fromform->update)) {
         list($cm, $fromform) = update_moduleinfo($cm, $fromform, $course, $mform);
     } else if (!empty($fromform->add)) {
@@ -176,14 +179,21 @@ if ($mform->is_cancelled()) {
 
     if (isset($fromform->submitbutton)) {
         $url = new moodle_url("/mod/$module->name/view.php", array('id' => $fromform->coursemodule, 'forceview' => 1));
-        if (empty($fromform->showgradingmanagement)) {
-            redirect($url);
-        } else {
-            redirect($fromform->gradingman->get_management_url($url));
+        if (!empty($fromform->showgradingmanagement)) {
+            $url = $fromform->gradingman->get_management_url($url);
         }
     } else {
-        redirect(course_get_url($course, $cw->section, array('sr' => $sectionreturn)));
+        $url = course_get_url($course, $cw->section, array('sr' => $sectionreturn));
     }
+
+    // If we need to regrade the course with a progress bar as a result of updating this module,
+    // redirect first to the page that will do this.
+    if (isset($fromform->needsfrontendregrade)) {
+        $url = new moodle_url('/course/modregrade.php', ['id' => $fromform->coursemodule,
+                'url' => $url->out_as_local_url(false)]);
+    }
+
+    redirect($url);
     exit;
 
 } else {

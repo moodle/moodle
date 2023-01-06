@@ -354,6 +354,10 @@ function grade_needs_regrade_final_grades($courseid) {
 function grade_needs_regrade_progress_bar($courseid) {
     global $DB;
     $grade_items = grade_item::fetch_all(array('courseid' => $courseid));
+    if (!$grade_items) {
+        // If there are no grade items then we definitely don't need a progress bar!
+        return false;
+    }
 
     list($sql, $params) = $DB->get_in_or_equal(array_keys($grade_items), SQL_PARAMS_NAMED, 'gi');
     $gradecount = $DB->count_records_select('grade_grades', 'itemid ' . $sql, $params);
