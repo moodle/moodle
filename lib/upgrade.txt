@@ -18,8 +18,8 @@ information provided here is intended especially for developers.
   It only worked with http sites and did not officially support SSL, and is at risk of disappearing should Yahoo! decide
   to remove it.
 * New `properties_filter` method of persistent class for filtering properties of a record against persistent definition
-* Added 'extrainfo' in the DB options config. Its extra information for the DB driver, e.g. SQL Server,
-  has additional configuration according to its environment, which the administrator can specify to alter and 
+* Added 'extrainfo' in the DB options config. Its extra information for the DB driver, e.g. SQL Server
+  has additional configuration according to its environment, which the administrator can specify to alter and
   override any connection options.
 
 === 4.1 ===
