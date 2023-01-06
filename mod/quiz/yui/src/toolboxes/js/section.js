@@ -113,7 +113,7 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
 
         // Create the confirmation dialogue.
         var confirm = new M.core.confirm({
-            question: M.util.get_string('confirmremovesectionheading', 'quiz', activity.get('aria-label')),
+            question: M.util.get_string('confirmremovesectionheading', 'quiz', activity.getData('sectionname')),
             modal: true
         });
 
