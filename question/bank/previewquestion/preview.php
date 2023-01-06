@@ -48,7 +48,7 @@ define('QUESTION_PREVIEW_MAX_VARIANTS', 100);
 
 // Get and validate question id.
 $id = required_param('id', PARAM_INT);
-$returnurl = optional_param('returnurl', null, PARAM_RAW);
+$returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
 
 $question = question_bank::load_question($id);
 
