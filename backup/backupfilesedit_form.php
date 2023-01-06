@@ -48,7 +48,7 @@ class backup_files_edit_form extends moodleform {
         $mform->setType('component', PARAM_COMPONENT);
 
         $mform->addElement('hidden', 'returnurl', $this->_customdata['returnurl']);
-        $mform->setType('returnurl', PARAM_URL);
+        $mform->setType('returnurl', PARAM_LOCALURL);
 
         $this->add_action_buttons(true, get_string('savechanges'));
         $this->set_data($this->_customdata['data']);
