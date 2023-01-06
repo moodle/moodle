@@ -27,22 +27,22 @@
 class qtype_calculated_qe2_attempt_updater extends question_qtype_attempt_updater {
     protected $selecteditem = null;
     /** @var array variable name => value */
-    protected $values;
+    protected $values = [];
 
     /** @var array variable names wrapped in {...}. Used by {@link substitute_values()}. */
-    protected $search;
+    protected $search = [];
 
     /**
      * @var array variable values, with negative numbers wrapped in (...).
      * Used by {@link substitute_values()}.
      */
-    protected $safevalue;
+    protected $safevalue = [];
 
     /**
      * @var array variable values, with negative numbers wrapped in (...).
      * Used by {@link substitute_values()}.
      */
-    protected $prettyvalue;
+    protected $prettyvalue = [];
 
     public function question_summary() {
         return ''; // Done later, after we know which dataset is used.
@@ -260,7 +260,7 @@ class qtype_calculated_qe2_attempt_updater extends question_qtype_attempt_update
      *      corresponding value.
      */
     protected function substitute_values_for_eval($expression) {
-        return str_replace($this->search ?? '', $this->safevalue ?? '', $expression ?? '');
+        return str_replace($this->search, $this->safevalue, $expression ?? '');
     }
 
     /**
@@ -272,7 +272,7 @@ class qtype_calculated_qe2_attempt_updater extends question_qtype_attempt_update
      *      corresponding value.
      */
     protected function substitute_values_pretty($text) {
-        return str_replace($this->search ?? '', $this->prettyvalue ?? '', $text ?? '');
+        return str_replace($this->search, $this->prettyvalue, $text ?? '');
     }
 
     /**
@@ -282,6 +282,9 @@ class qtype_calculated_qe2_attempt_updater extends question_qtype_attempt_update
      * @return string the text with values substituted.
      */
     public function replace_expressions_in_text($text, $length = null, $format = null) {
+        if ($text === null || $text === '') {
+            return $text;
+        }
         $vs = $this; // Can't see to use $this in a PHP closure.
         $text = preg_replace_callback(
             '~\{=([^{}]*(?:\{[^{}]+}[^{}]*)*)}~',
