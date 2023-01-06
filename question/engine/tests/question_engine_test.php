@@ -319,6 +319,10 @@ class question_engine_test extends advanced_testcase {
                 '',
                 '',
             ],
+            'Test with null' => [
+                null,
+                '',
+            ],
             'Test with number is 0' => [
                 0,
                 '<h3 class="no">Question <span class="qno">0</span></h3>',
