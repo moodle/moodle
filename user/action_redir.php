@@ -61,7 +61,7 @@ if ($formaction == 'bulkchange.php') {
 
     $userids = optional_param_array('userid', array(), PARAM_INT);
     $default = new moodle_url('/user/index.php', ['id' => $course->id]);
-    $returnurl = new moodle_url(optional_param('returnto', $default, PARAM_URL));
+    $returnurl = new moodle_url(optional_param('returnto', $default, PARAM_LOCALURL));
 
     if (empty($userids)) {
         $userids = optional_param_array('bulkuser', array(), PARAM_INT);
