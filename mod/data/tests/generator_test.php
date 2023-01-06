@@ -118,7 +118,9 @@ class mod_data_generator_testcase extends advanced_testcase {
 
         for ($i = 1; $i < $count; $i++) {
             $fieldname = 'field-' . $i;
-            $this->assertTrue(strpos($addtemplate, '[[' . $fieldname . ']]') >= 0);
+            $position = strpos($addtemplate, '[[' . $fieldname . ']]');
+            $this->assertIsNumeric($position);
+            $this->assertGreaterThanOrEqual(0, $position);
         }
     }
 
