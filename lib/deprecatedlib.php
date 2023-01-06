@@ -3204,6 +3204,13 @@ function make_categories_options() {
 }
 
 /**
+ * @deprecated since 3.10
+ */
+function message_count_unread_messages() {
+    throw new coding_exception('message_count_unread_messages has been removed.');
+}
+
+/**
  * Checks if current user is shown any extra fields when listing users.
  *
  * Does not include any custom profile fields.
