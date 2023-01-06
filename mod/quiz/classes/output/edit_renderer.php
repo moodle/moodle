@@ -404,8 +404,8 @@ class edit_renderer extends \plugin_renderer_base {
         }
 
         $output .= html_writer::start_tag('li', array('id' => 'section-'.$section->id,
-            'class' => 'section main clearfix'.$sectionstyle, 'role' => 'region',
-            'aria-label' => $sectionheadingtext));
+            'class' => 'section main clearfix'.$sectionstyle, 'role' => 'presentation',
+            'data-sectionname' => $sectionheadingtext));
 
         $output .= html_writer::start_div('content');
 
