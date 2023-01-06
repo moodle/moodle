@@ -148,8 +148,11 @@ function addslashes_js($var) {
  * @return string The remaining URL.
  */
 function strip_querystring($url) {
+    if ($url === null || $url === '') {
+        return '';
+    }
 
-    if ($commapos = strpos($url ?? '', '?')) {
+    if ($commapos = strpos($url, '?')) {
         return substr($url, 0, $commapos);
     } else {
         return $url;
