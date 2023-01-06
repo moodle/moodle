@@ -255,6 +255,12 @@ class component_test extends advanced_testcase {
             [['tool', '_example'], false],
             [['tool', 'example_'], false],
             [['tool', 'example__x1'], false],
+
+            // Some invalid cases.
+            [['mod', null], false],
+            [['mod', ''], false],
+            [['tool', null], false],
+            [['tool', ''], false],
         ];
     }
 
