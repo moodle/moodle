@@ -62,7 +62,7 @@ class answerprocessor_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass($ap);
         $rcm = $rc->getMethod('parse_response');
-        $rcm->setAccessible(True);
+        $rcm->setAccessible(true);
 
         $this->assertEquals($expected, $rcm->invoke($ap, $args));
     }
@@ -200,6 +200,9 @@ class answerprocessor_test extends \advanced_testcase {
 
             [1, 'frogs', null, '1 frogs'],
             [null, null, null, '. m/s'],
+            [null, null, null, null],
+            [null, null, null, ''],
+            [null, null, null, '    '],
         ];
     }
 
