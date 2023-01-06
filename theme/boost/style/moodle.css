@@ -12290,6 +12290,12 @@ body.dragging .dragging {
   border-top-right-radius: 0.2rem;
   border-bottom-right-radius: 0.2rem; }
 
+blockquote {
+  margin: 0 0.5rem 1rem;
+  padding-left: 1rem;
+  color: #495057;
+  border-left: 5px solid #ced4da; }
+
 .icon {
   font-size: 16px;
   width: 16px;

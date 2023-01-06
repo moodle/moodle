@@ -343,7 +343,10 @@ if (!empty($forum)) {
         $canreplyprivately = forum_user_can_reply_privately($modcontext, $parent);
     }
 
-    $post = trusttext_pre_edit($post, 'message', $modcontext);
+    // If markdown is used, the parser does the job already, otherwise clean text from arbitrary code that might be dangerous.
+    if ($post->messageformat != FORMAT_MARKDOWN) {
+        $post = trusttext_pre_edit($post, 'message', $modcontext);
+    }
 
     // Unsetting this will allow the correct return URL to be calculated later.
     unset($SESSION->fromdiscussion);
@@ -796,9 +799,10 @@ if ($mformpost->is_cancelled()) {
     // WARNING: the $fromform->message array has been overwritten, do not use it anymore!
     $fromform->messagetrust  = trusttext_trusted($modcontext);
 
-    // Clean message text.
-    $fromform = trusttext_pre_edit($fromform, 'message', $modcontext);
-
+    // Clean message text, unless markdown which should be saved as it is, otherwise editing messes things up.
+    if ($fromform->messageformat != FORMAT_MARKDOWN) {
+        $fromform = trusttext_pre_edit($fromform, 'message', $modcontext);
+    }
     if ($fromform->edit) {
         // Updating a post.
         unset($fromform->groupid);
