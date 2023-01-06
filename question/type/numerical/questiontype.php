@@ -647,10 +647,10 @@ class qtype_numerical_answer_processor {
      * default unit, by using the given unit multiplier.
      *
      * @param string $response a value, optionally with a unit.
-     * @return array(numeric, sting) the value with the unit stripped, and normalised
+     * @return array(numeric, string, multiplier) the value with the unit stripped, and normalised
      *      by the unit multiplier, if any, and the unit string, for reference.
      */
-    public function apply_units($response, $separateunit = null) {
+    public function apply_units($response, $separateunit = null): array {
         if ($response === null || trim($response) === '') {
             return [null, null, null];
         }
