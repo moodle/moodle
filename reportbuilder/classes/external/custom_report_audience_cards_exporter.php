@@ -44,6 +44,7 @@ class custom_report_audience_cards_exporter extends custom_report_menu_cards_exp
 
         // Iterate over all audience types.
         $audiences = core_component::get_component_classes_in_namespace(null, 'reportbuilder\\audience');
+        $audiencekeyindex = 0;
         foreach ($audiences as $class => $path) {
             if (is_subclass_of($class, base::class)) {
                 $audience = $class::instance();
@@ -60,7 +61,6 @@ class custom_report_audience_cards_exporter extends custom_report_menu_cards_exp
                 }
 
                 // New menu card per component.
-                $audiencekeyindex = 0;
                 if (!array_key_exists($componentname, $menucards)) {
                     $menucards[$componentname] = [
                         'name' => $componentname,
