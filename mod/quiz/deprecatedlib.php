@@ -187,6 +187,8 @@ class moodle_quiz_exception extends moodle_exception {
      * @deprecated since Moodle 4.2. Please just use moodle_exception.
      */
     public function __construct($quizobj, $errorcode, $a = null, $link = '', $debuginfo = null) {
+        debugging('Class moodle_quiz_exception is deprecated. ' .
+                'Please use a standard moodle_exception instead.', DEBUG_DEVELOPER);
         if (!$link) {
             $link = $quizobj->view_url();
         }
