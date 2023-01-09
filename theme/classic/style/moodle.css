@@ -11966,6 +11966,9 @@ input[disabled] {
 .border-radius {
   border-radius: 0.25rem; }
 
+.v-hidden {
+  visibility: hidden; }
+
 .emoji-picker {
   width: 350px;
   height: 400px; }
