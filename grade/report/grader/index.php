@@ -112,15 +112,14 @@ $reportname = get_string('pluginname', 'gradereport_grader');
 // Do this check just before printing the grade header (and only do it once).
 grade_regrade_final_grades_if_required($course);
 
-$actionbar = new \gradereport_grader\output\action_bar($context);
-// Print header
-print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons, true,
-    null, null, null, $actionbar);
-
 //Initialise the grader report object that produces the table
 //the class grade_report_grader_ajax was removed as part of MDL-21562
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
 $numusers = $report->get_numusers(true, true);
+
+$actionbar = new \gradereport_grader\output\action_bar($context, $report, $numusers);
+print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons, true,
+    null, null, null, $actionbar);
 
 // make sure separate group does not prevent view
 if ($report->currentgroup == -2) {
@@ -140,14 +139,6 @@ if ($isediting && ($data = data_submitted()) && confirm_sesskey()) {
 $report->load_users();
 $report->load_final_grades();
 echo $report->group_selector;
-
-// User search
-$url = new moodle_url('/grade/report/grader/index.php', array('id' => $course->id));
-$firstinitial = $SESSION->gradereport["filterfirstname-{$context->id}"] ?? '';
-$lastinitial  = $SESSION->gradereport["filtersurname-{$context->id}"] ?? '';
-$totalusers = $report->get_numusers(true, false);
-$renderer = $PAGE->get_renderer('core_user');
-echo $renderer->user_search($url, $firstinitial, $lastinitial, $numusers, $totalusers, $report->currentgroupname);
 
 //show warnings if any
 foreach ($warnings as $warning) {

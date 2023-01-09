@@ -41,9 +41,8 @@ Feature: We can use calculated grade totals
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
     And I log out
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on "Course 1" course homepage with editing mode on
     And I navigate to "View > Grader report" in the course gradebook
-    And I turn editing mode on
     And I change window size to "large"
     And I give the grade "60.00" to the user "Student 1" for the grade item "Test assignment one &"
     And I give the grade "20.00" to the user "Student 1" for the grade item "Test assignment two"

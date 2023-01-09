@@ -21,6 +21,9 @@ information provided here is intended especially for developers.
 * Added 'extrainfo' in the DB options config. Its extra information for the DB driver, e.g. SQL Server
   has additional configuration according to its environment, which the administrator can specify to alter and
   override any connection options.
+* In outputcomponents.php, initials_bar() can now be rendered in a smaller (mini) way. This provides purely the
+  initials bar without the bootstrapping and form handling on each initials bar. If you use this mini render,
+  you'll need to implement your own form handling. Example usage can be found within the grader report.
 
 === 4.1 ===
 

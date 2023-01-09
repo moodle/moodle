@@ -3183,6 +3183,11 @@ class initials_bar implements renderable, templatable {
     public $alpha;
 
     /**
+     * @var bool Omit links if we are doing a mini render.
+     */
+    public $minirender;
+
+    /**
      * Constructor initials_bar with only the required params.
      *
      * @param string $current the currently selected letter.
@@ -3191,14 +3196,16 @@ class initials_bar implements renderable, templatable {
      * @param string $urlvar URL parameter name for this initial.
      * @param string $url URL object.
      * @param array $alpha of letters in the alphabet.
+     * @param bool $minirender Return a trimmed down view of the initials bar.
      */
-    public function __construct($current, $class, $title, $urlvar, $url, $alpha = null) {
+    public function __construct($current, $class, $title, $urlvar, $url, $alpha = null, bool $minirender = false) {
         $this->current       = $current;
         $this->class    = $class;
         $this->title    = $title;
         $this->urlvar    = $urlvar;
         $this->url    = $url;
         $this->alpha    = $alpha;
+        $this->minirender = $minirender;
     }
 
     /**
@@ -3239,7 +3246,11 @@ class initials_bar implements renderable, templatable {
             }
             $groupletter = new stdClass();
             $groupletter->name = $letter;
-            $groupletter->url = $this->url->out(false, array($this->urlvar => $letter));
+            if (!$this->minirender) {
+                $groupletter->url = $this->url->out(false, array($this->urlvar => $letter));
+            } else {
+                $groupletter->input = $letter;
+            }
             if ($letter == $this->current) {
                 $groupletter->selected = $this->current;
             }
@@ -3251,7 +3262,11 @@ class initials_bar implements renderable, templatable {
 
         $data->class = $this->class;
         $data->title = $this->title;
-        $data->url = $this->url->out(false, array($this->urlvar => ''));
+        if (!$this->minirender) {
+            $data->url = $this->url->out(false, array($this->urlvar => ''));
+        } else {
+            $data->input = 'ALL';
+        }
         $data->current = $this->current;
         $data->all = get_string('all');
 
