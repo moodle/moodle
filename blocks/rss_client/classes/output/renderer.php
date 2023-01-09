@@ -92,7 +92,11 @@ class renderer extends \plugin_renderer_base {
      * @return string
      */
     public function format_published_date($timestamp) {
-        return \core_date::strftime(get_string('strftimerecentfull', 'langconfig'), $timestamp);
+        if (empty($timestamp)) {
+            return '';
+        } else {
+            return \core_date::strftime(get_string('strftimerecentfull', 'langconfig'), $timestamp);
+        }
     }
 
     /**
