@@ -19,12 +19,12 @@ Feature: Manage custom report columns
       | source  | core_user\reportbuilder\datasource\users |
       | default | 0                                        |
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
-    When I set the field "Search" in the "[data-region=sidebar-menu]" "css_element" to "Surname"
-    Then I should see "Surname" in the "[data-region=sidebar-menu]" "css_element"
+    When I set the field "Search" in the "[data-region=sidebar-menu]" "css_element" to "Last name"
+    Then I should see "Last name" in the "[data-region=sidebar-menu]" "css_element"
     And I should not see "Email address" in the "[data-region=sidebar-menu]" "css_element"
-    And I click on "Add column 'Surname'" "link"
-    And I should see "Added column 'Surname'"
-    And I should see "Surname" in the "reportbuilder-table" "table"
+    And I click on "Add column 'Last name'" "link"
+    And I should see "Added column 'Last name'"
+    And I should see "Last name" in the "reportbuilder-table" "table"
 
   Scenario: Rename column in report
     Given the following "core_reportbuilder > Report" exists:

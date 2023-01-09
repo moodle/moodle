@@ -136,7 +136,7 @@ class validate_quiz_access_test extends \advanced_testcase {
      */
     public function test_no_keys_provided() {
         $this->expectException(\invalid_parameter_exception::class);
-        $this->expectExceptionMessage('At least one SEB key must be provided.');
+        $this->expectExceptionMessage('At least one Safe Exam Browser key must be provided.');
         validate_quiz_keys::execute($this->quiz->cmid, 'https://www.example.com/moodle');
     }
 

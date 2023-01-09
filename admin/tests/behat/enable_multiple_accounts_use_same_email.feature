@@ -15,7 +15,7 @@ Feature: Allowing multiple accounts to have the same email address
     And I set the following fields to these values:
       | Username      | s2      |
       | First name    | Jane    |
-      | Surname       | Doe     |
+      | Last name     | Doe     |
       | Email address | <email> |
       | New password  | test    |
     And I press "Create user"
