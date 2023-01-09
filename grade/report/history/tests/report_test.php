@@ -54,6 +54,9 @@ class report_test extends \advanced_testcase {
         self::getDataGenerator()->enrol_user($u4->id, $c1->id, 'student');
         self::getDataGenerator()->enrol_user($u5->id, $c1->id, 'student');
 
+        self::getDataGenerator()->enrol_user($grader1->id, $c2->id, 'teacher');
+        self::getDataGenerator()->enrol_user($u5->id, $c2->id, 'student');
+
         // Modules.
         $c1m1 = $this->getDataGenerator()->create_module('assign', array('course' => $c1));
         $c1m2 = $this->getDataGenerator()->create_module('assign', array('course' => $c1));
@@ -126,11 +129,18 @@ class report_test extends \advanced_testcase {
         $this->assertEquals(8, $this->get_tablelog_results($c1ctx, array(), true));
         $this->assertEquals(13, $this->get_tablelog_results($c2ctx, array(), true));
 
-        // Filtering on 1 user.
-        $this->assertEquals(3, $this->get_tablelog_results($c1ctx, array('userids' => $u1->id), true));
+        // Filtering on 1 user the current user cannot access should return all records.
+        $this->assertEquals(8, $this->get_tablelog_results($c1ctx, array('userids' => $u1->id), true));
 
-        // Filtering on more users.
-        $this->assertEquals(4, $this->get_tablelog_results($c1ctx, array('userids' => "$u1->id,$u3->id"), true));
+        // Filtering on 2 users, only one of whom the current user can access.
+        $this->assertEquals(1, $this->get_tablelog_results($c1ctx, ['userids' => "$u1->id,$u3->id"], true));
+        $results = $this->get_tablelog_results($c1ctx, ['userids' => "$u1->id,$u3->id"]);
+        $this->assertGradeHistoryIds([$grades['c1m1u3']->id], $results);
+
+        // Filtering on 2 users, both of whom the current user can access.
+        $this->assertEquals(3, $this->get_tablelog_results($c1ctx, ['userids' => "$u2->id,$u3->id"], true));
+        $results = $this->get_tablelog_results($c1ctx, ['userids' => "$u2->id,$u3->id"]);
+        $this->assertGradeHistoryIds([$grades['c1m1u2']->id, $grades['c1m1u3']->id, $grades['c1m2u2']->id], $results);
 
         // Filtering based on one grade item.
         $gi = \grade_item::fetch($giparams + array('iteminstance' => $c1m1->id));
