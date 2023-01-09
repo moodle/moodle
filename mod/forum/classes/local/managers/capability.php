@@ -405,6 +405,10 @@ class capability {
      *
      */
     public function can_view_post_shell(stdClass $user, post_entity $post) : bool {
+        if ($post->is_owned_by_user($user)) {
+            return true;
+        }
+
         if (!$post->is_private_reply()) {
             return true;
         }
