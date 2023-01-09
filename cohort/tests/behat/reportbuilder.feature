@@ -83,15 +83,15 @@ Feature: Manage custom reports for cohorts
       | My report | user:lastname      |
     And I change window size to "large"
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
-    And I set the field "Rename column 'Surname'" to "Member count"
-    And I set the "Surname" column aggregation to "Count"
+    And I set the field "Rename column 'Last name'" to "Member count"
+    And I set the "Last name" column aggregation to "Count"
     And I click on "Show/hide 'Sorting'" "button"
-    And I click on "Move sorting for column 'Surname'" "button"
-    And I click on "To the top of the list" "link" in the "Move sorting for column 'Surname'" "dialogue"
-    And I click on "Enable sorting for column 'Surname'" "checkbox"
+    And I click on "Move sorting for column 'Last name'" "button"
+    And I click on "To the top of the list" "link" in the "Move sorting for column 'Last name'" "dialogue"
+    And I click on "Enable initial sorting for column Last name" "checkbox"
     # "New system cohort" has fewer members than "Another one" cohort.
     And "New system cohort" "table_row" should appear before "Another one" "table_row"
-    When I click on "Sort column 'Surname' descending" "button"
-    Then I should see "Updated sorting for column 'Surname'"
+    When I click on "Sort column 'Last name' descending" "button"
+    Then I should see "Updated sorting for column 'Last name'"
     # Switching sort direction should now show "Another one" cohort ahead of "New system cohort".
     And "Another one" "table_row" should appear before "New system cohort" "table_row"

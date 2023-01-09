@@ -67,7 +67,7 @@ Feature: Groups report filter is available if groups exist
     Then "Groups" "button" should exist
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |
-      | First name / Surname | -3-         | -4-     |
+      | First name / Last name | -3-         | -4-     |
       | Student 1            | 1           | 1       |
       | Student 2            | 0           | 0       |
       | Teacher 1            | 2           | 2       |
@@ -103,7 +103,7 @@ Feature: Groups report filter is available if groups exist
     And "Groups (all)" "button" should exist
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |
-      | First name / Surname | -3-         | -4-     |
+      | First name / Last name | -3-         | -4-     |
       | Student 1            | 1           | 1       |
       | Student 2            | 0           | 0       |
       | Teacher 1            | 2           | 2       |
@@ -115,7 +115,7 @@ Feature: Groups report filter is available if groups exist
     Then "Groups" "button" should exist
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |
-      | First name / Surname | -3-         | -4-     |
+      | First name / Last name | -3-         | -4-     |
       | Student 1            | 1           | 1       |
       | Student 2            | 0           | 0       |
       | Teacher 1            | 2           | 2       |
@@ -128,7 +128,7 @@ Feature: Groups report filter is available if groups exist
     And "Groups (3)" "button" should exist
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |
-      | First name / Surname | -3-         | -4-     |
+      | First name / Last name | -3-         | -4-     |
       | Student 1            | 1           | 1       |
       | Teacher 1            | 1           | 2       |
     And I should not see "Student 2"
@@ -137,7 +137,7 @@ Feature: Groups report filter is available if groups exist
     And "Groups (3)" "button" should exist
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |
-      | First name / Surname | -3-         | -4-     |
+      | First name / Last name | -3-         | -4-     |
       | Student 1            | 1           | 1       |
       | Teacher 1            | 1           | 2       |
     And I should not see "Student 2"
@@ -149,7 +149,7 @@ Feature: Groups report filter is available if groups exist
     Then "Groups" "button" should exist
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |
-      | First name / Surname | -3-         | -4-     |
+      | First name / Last name | -3-         | -4-     |
       | Student 1            | 0           | 0       |
       | Student 2            | 1           | 2       |
       | Teacher 1            | 3           | 1       |
@@ -161,7 +161,7 @@ Feature: Groups report filter is available if groups exist
     And "Groups (2)" "button" should exist
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |
-      | First name / Surname | -3-         | -4-     |
+      | First name / Last name | -3-         | -4-     |
       | Student 1            | 0           | 0       |
       | Student 2            | 1           | 1       |
       | Teacher 1            | 2           | 1       |
@@ -172,7 +172,7 @@ Feature: Groups report filter is available if groups exist
     And I navigate to "Reports" in current page administration
     Then the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |
-      | First name / Surname | -3-         | -4-     |
+      | First name / Last name | -3-         | -4-     |
       | Student 1            | 0           | 0       |
       | Student 2            | 1           | 2       |
       | Teacher 1            | 3           | 1       |
@@ -183,7 +183,7 @@ Feature: Groups report filter is available if groups exist
     And "Groups (1)" "button" should exist
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |
-      | First name / Surname | -3-         | -4-     |
+      | First name / Last name | -3-         | -4-     |
       | Student 1            | 0           | 0       |
       | Student 2            | 1           | 1       |
       | Teacher 1            | 1           | 0       |
@@ -196,7 +196,7 @@ Feature: Groups report filter is available if groups exist
     Then "Groups" "button" should exist
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |
-      | First name / Surname | -3-         | -4-     |
+      | First name / Last name | -3-         | -4-     |
       | Student 1            | 1           | 1       |
       | Student 2            | 0           | 0       |
       | Teacher 1            | 2           | 2       |
@@ -225,7 +225,7 @@ Feature: Groups report filter is available if groups exist
     And "Groups (2)" "button" should exist
     Then the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |
-      | First name / Surname | -3-         | -4-     |
+      | First name / Last name | -3-         | -4-     |
       | Student 1            | 1           | 1       |
       | Teacher 1            | 2           | 3       |
     And I should not see "Student 2"
@@ -234,7 +234,7 @@ Feature: Groups report filter is available if groups exist
     And "Groups (2)" "button" should exist
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |
-      | First name / Surname | -3-         | -4-     |
+      | First name / Last name | -3-         | -4-     |
       | Student 1            | 1           | 1       |
       | Teacher 1            | 2           | 3       |
     And I should not see "Student 2"
