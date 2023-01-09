@@ -56,7 +56,7 @@ Feature: A teacher checks the grade history report in a course
     And I navigate to "View > Grade history" in the course gradebook
     When I press "Submit"
     Then the following should exist in the "gradereport_history" table:
-      | First name/Surname | Email address        | Favourite food | Grade item                   | Original grade | Revised grade | Grader    |
+      | First name/Last name | Email address        | Favourite food | Grade item                   | Original grade | Revised grade | Grader    |
       | Student 1          | student1@example.com | apple          | The greatest assignment ever |                | 50.00         | Teacher 1 |
       | Student 1          | student1@example.com | apple          | Rewarding assignment         |                | 60.00         | Teacher 1 |
       | Student 2          | student2@example.com | orange         | The greatest assignment ever |                | 50.00         | Teacher 1 |
@@ -84,7 +84,7 @@ Feature: A teacher checks the grade history report in a course
     And I press "Finish selecting users"
     And I press "Submit"
     And the following should exist in the "gradereport_history" table:
-      | First name/Surname | Grade item                    | Original grade | Revised grade | Grader    |
+      | First name/Last name | Grade item                    | Original grade | Revised grade | Grader    |
       | Student 1          | The greatest assignment ever  |                | 50.00         | Teacher 1 |
       | Student 1          | Rewarding assignment          |                | 60.00         | Teacher 1 |
       | Student 1          | The greatest assignment ever  | 50.00          | 70.00         | Teacher 2 |
@@ -101,7 +101,7 @@ Feature: A teacher checks the grade history report in a course
     And I set the field "Grade item" to "The greatest assignment ever"
     And I press "Submit"
     And the following should exist in the "gradereport_history" table:
-      | First name/Surname | Grade item                    | Original grade | Revised grade | Grader    |
+      | First name/Last name | Grade item                    | Original grade | Revised grade | Grader    |
       | Student 1          | The greatest assignment ever  |                | 50.00         | Teacher 1 |
       | Student 1          | The greatest assignment ever  | 50.00          | 70.00         | Teacher 2 |
     And the following should not exist in the "gradereport_history" table:
@@ -111,7 +111,7 @@ Feature: A teacher checks the grade history report in a course
     And I set the field "Grader" to "Teacher 1"
     And I press "Submit"
     And the following should exist in the "gradereport_history" table:
-      | First name/Surname | Email address        | Favourite food | Grade item                    | Original grade | Revised grade | Grader    |
+      | First name/Last name | Email address        | Favourite food | Grade item                    | Original grade | Revised grade | Grader    |
       | Student 1          | student1@example.com | apple          | The greatest assignment ever  |                | 50.00         | Teacher 1 |
     And the following should not exist in the "gradereport_history" table:
       | Student 1          | The greatest assignment ever  | 50.00          | 70.00         | Teacher 2 |
@@ -119,5 +119,5 @@ Feature: A teacher checks the grade history report in a course
     And I click on "id_revisedonly" "checkbox"
     And I press "Submit"
     And the following should exist in the "gradereport_history" table:
-      | First name/Surname | Email address        | Favourite food | Grade item                    | Original grade | Revised grade | Grader    |
+      | First name/Last name | Email address        | Favourite food | Grade item                    | Original grade | Revised grade | Grader    |
       | Student 1          | student1@example.com | apple          | The greatest assignment ever  |                | 50.00         | Teacher 1 |

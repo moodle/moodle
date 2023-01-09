@@ -20,7 +20,7 @@ Feature: Tables can be sorted by additional names
   Scenario: All user names are show and sortable in the administration user list.
     Given I navigate to "Users > Accounts > Browse list of users" in site administration
     Then the following should exist in the "users" table:
-    | First name / Middle name / Alternate name / Surname | Email address |
+    | First name / Middle name / Alternate name / Last name | Email address |
     | Admin User | moodle@example.com |
     | Annie Faith Anne Edison | student1@example.com |
     | George David Gman Bradley | student2@example.com |
@@ -39,9 +39,9 @@ Feature: Tables can be sorted by additional names
     And I follow "Alternate name"
     And "Annie Faith Anne Edison" "table_row" should appear after "George David Gman Bradley" "table_row"
     And "George David Gman Bradley" "table_row" should appear after "Travis Peter Mr T Sutcliff" "table_row"
-    And I follow "Surname"
+    And I follow "Last name"
     And "George David Gman Bradley" "table_row" should appear before "Annie Faith Anne Edison" "table_row"
     And "Annie Faith Anne Edison" "table_row" should appear before "Travis Peter Mr T Sutcliff" "table_row"
-    And I follow "Surname"
+    And I follow "Last name"
     And "George David Gman Bradley" "table_row" should appear after "Annie Faith Anne Edison" "table_row"
     And "Annie Faith Anne Edison" "table_row" should appear after "Travis Peter Mr T Sutcliff" "table_row"

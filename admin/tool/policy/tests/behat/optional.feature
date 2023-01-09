@@ -86,7 +86,7 @@ Feature: Optional policies
       | Email address | user3@address.invalid |
       | Email (again) | user3@address.invalid |
       | First name    | User3                 |
-      | Surname       | L3                    |
+      | Last name       | L3                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
     And I should see "An email should have been sent to your address at user3@address.invalid"
