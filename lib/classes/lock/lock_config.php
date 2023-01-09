@@ -93,7 +93,7 @@ class lock_config {
         }
 
         // If tracking performance, insert a timing wrapper to keep track of lock delays.
-        if (defined('MDL_PERF') || !empty($CFG->perfdebug)) {
+        if ((defined('MDL_PERF') && MDL_PERF) || (!empty($CFG->perfdebug) && $CFG->perfdebug > 7)) {
             $wrapper = new timing_wrapper_lock_factory($type, $lockfactory);
             $lockfactory = $wrapper;
         }
