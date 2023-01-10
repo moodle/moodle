@@ -23,8 +23,12 @@ namespace mod_data;
  * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \mod_data_generator
  */
 class generator_test extends \advanced_testcase {
+    /**
+     * @covers ::create_instance
+     */
     public function test_generator() {
         global $DB;
 
@@ -39,9 +43,9 @@ class generator_test extends \advanced_testcase {
         $this->assertInstanceOf('mod_data_generator', $generator);
         $this->assertEquals('data', $generator->get_modulename());
 
-        $generator->create_instance(array('course' => $course->id));
-        $generator->create_instance(array('course' => $course->id));
-        $data = $generator->create_instance(array('course' => $course->id));
+        $generator->create_instance(['course' => $course->id]);
+        $generator->create_instance(['course' => $course->id]);
+        $data = $generator->create_instance(['course' => $course->id]);
         $this->assertEquals(3, $DB->count_records('data'));
 
         $cm = get_coursemodule_from_instance('data', $data->id);
@@ -52,16 +56,23 @@ class generator_test extends \advanced_testcase {
         $context = \context_module::instance($cm->id);
         $this->assertEquals($data->cmid, $context->instanceid);
 
-        // test gradebook integration using low level DB access - DO NOT USE IN PLUGIN CODE!
-        $data = $generator->create_instance(array('course' => $course->id, 'assessed' => 1, 'scale' => 100));
-        $gitem = $DB->get_record('grade_items', array('courseid' => $course->id, 'itemtype' => 'mod',
-                'itemmodule' => 'data', 'iteminstance' => $data->id));
+        // Test gradebook integration using low level DB access - DO NOT USE IN PLUGIN CODE!
+        $data = $generator->create_instance(['course' => $course->id, 'assessed' => 1, 'scale' => 100]);
+        $gitem = $DB->get_record('grade_items', [
+            'courseid' => $course->id,
+            'itemtype' => 'mod',
+            'itemmodule' => 'data',
+            'iteminstance' => $data->id,
+        ]);
         $this->assertNotEmpty($gitem);
         $this->assertEquals(100, $gitem->grademax);
         $this->assertEquals(0, $gitem->grademin);
         $this->assertEquals(GRADE_TYPE_VALUE, $gitem->gradetype);
     }
 
+    /**
+     * @covers ::create_field
+     */
     public function test_create_field() {
         global $DB;
 
@@ -77,7 +88,7 @@ class generator_test extends \advanced_testcase {
         $this->assertInstanceOf('mod_data_generator', $generator);
         $this->assertEquals('data', $generator->get_modulename());
 
-        $data = $generator->create_instance(array('course' => $course->id));
+        $data = $generator->create_instance(['course' => $course->id]);
         $this->assertEquals(1, $DB->count_records('data'));
 
         $cm = get_coursemodule_from_instance('data', $data->id);
@@ -88,13 +99,12 @@ class generator_test extends \advanced_testcase {
         $context = \context_module::instance($cm->id);
         $this->assertEquals($data->cmid, $context->instanceid);
 
-        $fieldtypes = array('checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url');
+        $fieldtypes = ['checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url'];
 
         $count = 1;
 
         // Creating test Fields with default parameter values.
         foreach ($fieldtypes as $fieldtype) {
-
             // Creating variables dynamically.
             $fieldname = 'field-' . $count;
             $record = new \stdClass();
@@ -107,17 +117,22 @@ class generator_test extends \advanced_testcase {
             $count++;
         }
 
-        $this->assertEquals(count($fieldtypes), $DB->count_records('data_fields', array('dataid' => $data->id)));
+        $this->assertEquals(count($fieldtypes), $DB->count_records('data_fields', ['dataid' => $data->id]));
 
-        $addtemplate = $DB->get_record('data', array('id' => $data->id), 'addtemplate');
+        $addtemplate = $DB->get_record('data', ['id' => $data->id], 'addtemplate');
         $addtemplate = $addtemplate->addtemplate;
 
         for ($i = 1; $i < $count; $i++) {
             $fieldname = 'field-' . $i;
-            $this->assertTrue(strpos($addtemplate, '[[' . $fieldname . ']]') >= 0);
+            $position = strpos($addtemplate, '[[' . $fieldname . ']]');
+            $this->assertIsNumeric($position);
+            $this->assertGreaterThanOrEqual(0, $position);
         }
     }
 
+    /**
+     * @covers ::create_entry
+     */
     public function test_create_entry() {
         global $DB;
 
@@ -130,15 +145,15 @@ class generator_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
 
-        $groupa = $this->getDataGenerator()->create_group(array('courseid' => $course->id, 'name' => 'groupA'));
-        $this->getDataGenerator()->create_group_member(array('userid' => $user1->id, 'groupid' => $groupa->id));
+        $groupa = $this->getDataGenerator()->create_group(['courseid' => $course->id, 'name' => 'groupA']);
+        $this->getDataGenerator()->create_group_member(['userid' => $user1->id, 'groupid' => $groupa->id]);
 
         /** @var mod_data_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
         $this->assertInstanceOf('mod_data_generator', $generator);
         $this->assertEquals('data', $generator->get_modulename());
 
-        $data = $generator->create_instance(array('course' => $course->id));
+        $data = $generator->create_instance(['course' => $course->id]);
         $this->assertEquals(1, $DB->count_records('data'));
 
         $cm = get_coursemodule_from_instance('data', $data->id);
@@ -149,14 +164,14 @@ class generator_test extends \advanced_testcase {
         $context = \context_module::instance($cm->id);
         $this->assertEquals($data->cmid, $context->instanceid);
 
-        $fieldtypes = array('checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url',
-            'latlong', 'file', 'picture');
+        $fieldtypes = ['checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url',
+            'latlong', 'file', 'picture',
+        ];
 
         $count = 1;
 
         // Creating test Fields with default parameter values.
         foreach ($fieldtypes as $fieldtype) {
-
             // Creating variables dynamically.
             $fieldname = 'field-' . $count;
             $record = new \stdClass();
@@ -164,30 +179,27 @@ class generator_test extends \advanced_testcase {
             $record->type = $fieldtype;
             $record->required = 1;
 
-            ${$fieldname} = $this->getDataGenerator()->get_plugin_generator('mod_data')->create_field($record, $data);
-            $this->assertInstanceOf('data_field_' . $fieldtype, ${$fieldname});
+            $this->getDataGenerator()->get_plugin_generator('mod_data')->create_field($record, $data);
             $count++;
         }
 
-        $this->assertEquals(count($fieldtypes), $DB->count_records('data_fields', array('dataid' => $data->id)));
+        $fields = $DB->get_records('data_fields', ['dataid' => $data->id], 'id');
 
-        $fields = $DB->get_records('data_fields', array('dataid' => $data->id), 'id');
-
-        $contents = array();
-        $contents[] = array('opt1', 'opt2', 'opt3', 'opt4');
+        $contents = [];
+        $contents[] = ['opt1', 'opt2', 'opt3', 'opt4'];
         $contents[] = '01-01-2037'; // It should be lower than 2038, to avoid failing on 32-bit windows.
         $contents[] = 'menu1';
-        $contents[] = array('multimenu1', 'multimenu2', 'multimenu3', 'multimenu4');
+        $contents[] = ['multimenu1', 'multimenu2', 'multimenu3', 'multimenu4'];
         $contents[] = '12345';
         $contents[] = 'radioopt1';
         $contents[] = 'text for testing';
         $contents[] = '<p>text area testing<br /></p>';
-        $contents[] = array('example.url', 'sampleurl');
+        $contents[] = ['example.url', 'sampleurl'];
         $contents[] = [-31.9489873, 115.8382036]; // Latlong.
         $contents[] = 'Filename.pdf'; // File - filename.
-        $contents[] = array('Cat1234.jpg', 'Cat'); // Picture - filename with alt text.
+        $contents[] = ['Cat1234.jpg', 'Cat']; // Picture - filename with alt text.
         $count = 0;
-        $fieldcontents = array();
+        $fieldcontents = [];
         foreach ($fields as $fieldrecord) {
             $fieldcontents[$fieldrecord->id] = $contents[$count++];
         }
@@ -195,16 +207,20 @@ class generator_test extends \advanced_testcase {
         $tags = ['Cats', 'mice'];
 
         $this->setUser($user1);
-        $datarecordid = $this->getDataGenerator()->get_plugin_generator('mod_data')->create_entry($data,
-            $fieldcontents, $groupa->id, $tags);
+        $datarecordid = $this->getDataGenerator()->get_plugin_generator('mod_data')->create_entry(
+            $data,
+            $fieldcontents,
+            $groupa->id,
+            $tags
+        );
 
-        $this->assertEquals(1, $DB->count_records('data_records', array('dataid' => $data->id)));
-        $this->assertEquals(count($contents), $DB->count_records('data_content', array('recordid' => $datarecordid)));
+        $this->assertEquals(1, $DB->count_records('data_records', ['dataid' => $data->id]));
+        $this->assertEquals(count($contents), $DB->count_records('data_content', ['recordid' => $datarecordid]));
 
-        $entry = $DB->get_record('data_records', array('id' => $datarecordid));
+        $entry = $DB->get_record('data_records', ['id' => $datarecordid]);
         $this->assertEquals($entry->groupid, $groupa->id);
 
-        $contents = $DB->get_records('data_content', array('recordid' => $datarecordid), 'id');
+        $contents = $DB->get_records('data_content', ['recordid' => $datarecordid], 'id');
 
         $contentstartid = 0;
         $flag = 0;
@@ -226,7 +242,9 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals($contents[$contentstartid]->content1, '1');
         $this->assertEquals($contents[++$contentstartid]->content, 'http://example.url');
         $this->assertEquals($contents[$contentstartid]->content1, 'sampleurl');
-        $this->assertEquals(array('Cats', 'mice'),
-            array_values(\core_tag_tag::get_item_tags_array('mod_data', 'data_records', $datarecordid)));
+        $this->assertEquals(
+            ['Cats', 'mice'],
+            array_values(\core_tag_tag::get_item_tags_array('mod_data', 'data_records', $datarecordid))
+        );
     }
 }
