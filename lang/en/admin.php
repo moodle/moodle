@@ -40,7 +40,7 @@ $string['adminseesallevents'] = 'Administrators see all events';
 $string['adminseesownevents'] = 'Administrators are just like other users';
 $string['advancedfeatures'] = 'Advanced features';
 $string['agedigitalconsentverification'] = 'Digital age of consent verification';
-$string['agedigitalconsentverification_desc'] = 'Enables verification of the digital age of consent before displaying the sign-up page for self-registration users. This protects your site from minors signing up without parental/guardian consent. <a target="_blank" href="{$a}">Support contact</a> details are provided to minors for further assistance.';
+$string['agedigitalconsentverification_desc'] = 'Enables verification of the digital age of consent before displaying the sign-up page for self-registration users. This protects your site from minors signing up without parental/guardian consent. <a target="_blank" href="{$a}">Support contact</a> details are provided for more help.';
 $string['ageofdigitalconsentmap'] = 'Digital age of consent';
 $string['ageofdigitalconsentmap_desc'] = 'The default digital age of consent, and the age in any country where it differs from the default, may be specified here. Enter each age on a new line with format: country code, age (separated by a comma). The default age is indicated by * in place of the country code. Country codes are as specified in ISO 3166-2.';
 $string['allcountrycodes'] = 'All country codes';
@@ -263,7 +263,7 @@ $string['configfrontpagecourselimithelp'] = 'Maximum number of courses to be dis
 $string['configfrontpageloggedin'] = 'The items selected above will be displayed on the site home when a user is logged in.';
 $string['configfullnamedisplay'] = 'This defines how names are shown when they are displayed in full. The default value, "language", leaves it to the string "fullnamedisplay" in the current language pack to decide. Some languages have different name display conventions.
 
-For most mono-lingual sites the most efficient setting is "firstname lastname", but you may choose to hide surnames altogether. Placeholders that can be used are: firstname, lastname, firstnamephonetic, lastnamephonetic, middlename, and alternatename.';
+For most mono-lingual sites the most efficient setting is "firstname lastname", but you may choose to hide last names altogether. Placeholders that can be used are: firstname, lastname, firstnamephonetic, lastnamephonetic, middlename, and alternatename.';
 $string['configgeoipfile'] = 'Location of GeoLite2 City binary data file. This file is not part of Moodle distribution and must be obtained separately from <a href="https://www.maxmind.com/">MaxMind</a>. You can either buy a commercial version or use the free version. You\'ll need to register to download the City database file, which you can do at <a href="https://dev.maxmind.com/geoip/geoip2/geolite2/" >https://dev.maxmind.com/geoip/geoip2/geolite2/</a>. Once you\'ve registered and downloaded the file, extract it into "{$a}" directory on your server.';
 $string['configgetremoteaddrconf'] = 'If your server is behind a reverse proxy, you can use this setting to specify which HTTP headers can be trusted to contain the remote IP address. The headers are read in order, using the first one that is available.';
 $string['configgradebookroles'] = 'This setting allows you to control who appears on the gradebook.  Users need to have at least one of these roles in a course to be shown in the gradebook for that course.';
