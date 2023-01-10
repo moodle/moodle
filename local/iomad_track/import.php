@@ -31,6 +31,9 @@ require_once($CFG->libdir.'/csvlib.class.php');
 
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $completions = optional_param('completions', 0, PARAM_BOOL);
+$checkcourses = optional_param('checkcourses', 0, PARAM_BOOL);
+$viewenabled = optional_param('viewenabled', 0, PARAM_BOOL);
+$viewcriteria = optional_param('viewcriteria', 0, PARAM_BOOL);
 $confirm = optional_param('confirm', null, PARAM_ALPHANUM);
 $submit = optional_param('submitbutton', '', PARAM_ALPHANUM);
 $fileimport = optional_param('fileimport', 0, PARAM_BOOL);
@@ -62,6 +65,12 @@ $PAGE->set_title($linktext);
 $stdfields = array('username', 'userid', 'courseid', 'coursename', 'coursecode', 'timeenrolled', 'timestarted', 'timecompleted',
         'finalscore', 'licensename', 'licenseallocated', 'licenseid', 'companyid', 'company', 'departmentid', 'department');
 
+// Check if there are any potential errors.
+$courseswithoutcompletionenabled = $DB->get_records_sql("SELECT * FROM {course} WHERE enablecompletion = 0 AND id != :siteid", ['siteid' => SITEID]);
+$courseswithoutcompletioncriteria = $DB->get_records_sql("SELECT * FROM {course} WHERE id != :siteid AND id NOT IN (SELECT course FROM {course_completion_criteria})", ['siteid' => SITEID]);
+$courseswithoutcompletionenabledcount = count($courseswithoutcompletionenabled);
+$courseswithoutcompletioncriteriacount = count($courseswithoutcompletioncriteria);
+
 // Process current completions.
 if (!empty($completions)) {
     if (confirm_sesskey() && $confirm == md5($completions)) {
@@ -71,8 +80,13 @@ if (!empty($completions)) {
     } else {
         echo $OUTPUT->header();
         $optionsyes = array('completions' => $completions, 'confirm' => md5($completions), 'sesskey' => sesskey());
-        echo $OUTPUT->confirm(get_string('importcompletionsfrommoodlefull', 'local_iomad_track'),
-                              new moodle_url('/local/iomad_track/import.php', $optionsyes), $linkurl);
+        if (empty($courseswithoutcompletionenabledcount) && empty($courseswithoutcompletioncriteriacount)) {
+            echo $OUTPUT->confirm(get_string('importcompletionsfrommoodlefull', 'local_iomad_track'),
+                                  new moodle_url('/local/iomad_track/import.php', $optionsyes), $linkurl);
+        } else {
+            echo $OUTPUT->confirm(get_string('importcompletionsfrommoodlefullwitherrors', 'local_iomad_track'),
+                                  new moodle_url('/local/iomad_track/import.php', $optionsyes), $linkurl);
+        }
         echo $OUTPUT->footer();
         die;
     }
@@ -323,9 +337,55 @@ if (!empty($fileimport)) {
     }
 
 }
+
 // Display the page.
 echo $OUTPUT->header();
 
+echo html_writer::start_tag('p');
+echo html_writer::tag('a',
+                      get_string('checkcoursestatusmoodle', 'local_iomad_track'),
+                      array('class' => 'btn-primary',
+                            'href' => new moodle_url('/local/iomad_track/import.php',
+                                                     array('checkcourses' => true,
+                                                           'sesskey' => sesskey()))));
+
+if ($checkcourses) {
+
+    echo html_writer::start_tag('p');
+    echo get_string('courseswithoutcompletionenabledcouunt', 'local_iomad_track', $courseswithoutcompletionenabledcount) . '&nbsp';
+    echo html_writer::tag('a', get_string('view'), ['href' => new moodle_url('/local/iomad_track/import.php', ['checkcourses' => 1, 'viewenabled' => 1])]);
+    if ($viewenabled) {
+        echo html_writer::start_tag('table');
+        foreach ($courseswithoutcompletionenabled as $course) {
+            echo html_writer::start_tag('tr');
+            echo html_writer::start_tag('td');
+            echo html_writer::tag('a', format_string($course->fullname), ['href' => new moodle_url('/course/edit.php', ['id' => $course->id]), 'target' => 'new']);
+            echo html_writer::end_tag('td');
+            echo html_writer::end_tag('tr');
+        }
+        echo html_writer::start_tag('table');
+    }
+    echo html_writer::end_tag('p');
+    echo html_writer::start_tag('p');
+    echo get_string('courseswithoutcompletioncriteriacouunt', 'local_iomad_track', $courseswithoutcompletioncriteriacount) . '&nbsp';
+    echo html_writer::tag('a', get_string('view'), ['href' => new moodle_url('/local/iomad_track/import.php', ['checkcourses' => 1, 'viewcriteria' => 1])]);
+    if ($viewcriteria) {
+        echo html_writer::start_tag('table');
+        foreach ($courseswithoutcompletioncriteria as $course) {
+            echo html_writer::start_tag('tr');
+            echo html_writer::start_tag('td');
+            echo html_writer::tag('a', format_string($course->fullname), ['href' => new moodle_url('/course/completion.php', ['id' => $course->id]), 'target' => 'new']);
+            echo html_writer::end_tag('td');
+            echo html_writer::end_tag('tr');
+        }
+        echo html_writer::start_tag('table');
+    }
+    echo html_writer::end_tag('p');
+
+}
+
+echo html_writer::end_tag('p');
+echo html_writer::start_tag('p');
 echo html_writer::tag('a',
                       get_string('importcompletionsfrommoodle', 'local_iomad_track'),
                       array('class' => 'btn-primary',
@@ -333,13 +393,15 @@ echo html_writer::tag('a',
                                                      array('completions' => true,
                                                            'sesskey' => sesskey()))));
 
-echo html_writer::empty_tag('/br');
+echo html_writer::end_tag('p');
+echo html_writer::start_tag('p');
 echo html_writer::tag('a',
                       get_string('importcompletionsfromfile', 'local_iomad_track'),
                       array('class' => 'btn-primary',
                             'href' => new moodle_url('/local/iomad_track/import.php',
                                                      array('fileimport' => true,
                                                            'sesskey' => sesskey()))));
+echo html_writer::end_tag('p');
 
 echo $OUTPUT->footer();
 
