@@ -6,6 +6,7 @@
         "mod": "mod",
         "auth": "auth",
         "calendartype": "calendar\/type",
+        "communication": "communication\/provider",
         "customfield": "customfield\/field",
         "enrol": "enrol",
         "message": "message\/output",
