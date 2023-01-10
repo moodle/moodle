@@ -15,26 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * PHPUnit data generator tests.
- *
- * @package    mod_data
- * @category   phpunit
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-
-/**
  * PHPUnit data generator testcase.
  *
  * @package    mod_data
  * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \mod_data_generator
  */
 class mod_data_generator_testcase extends advanced_testcase {
+    /**
+     * @covers ::create_instance
+     */
     public function test_generator() {
         global $DB;
 
@@ -72,6 +64,9 @@ class mod_data_generator_testcase extends advanced_testcase {
         $this->assertEquals(GRADE_TYPE_VALUE, $gitem->gradetype);
     }
 
+    /**
+     * @covers ::create_field
+     */
     public function test_create_field() {
         global $DB;
 
@@ -104,7 +99,6 @@ class mod_data_generator_testcase extends advanced_testcase {
 
         // Creating test Fields with default parameter values.
         foreach ($fieldtypes as $fieldtype) {
-
             // Creating variables dynamically.
             $fieldname = 'field-' . $count;
             $record = new StdClass();
@@ -128,6 +122,9 @@ class mod_data_generator_testcase extends advanced_testcase {
         }
     }
 
+    /**
+     * @covers ::create_entry
+     */
     public function test_create_entry() {
         global $DB;
 
@@ -166,7 +163,6 @@ class mod_data_generator_testcase extends advanced_testcase {
 
         // Creating test Fields with default parameter values.
         foreach ($fieldtypes as $fieldtype) {
-
             // Creating variables dynamically.
             $fieldname = 'field-' . $count;
             $record = new StdClass();
