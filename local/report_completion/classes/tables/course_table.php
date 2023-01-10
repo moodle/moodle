@@ -614,7 +614,7 @@ class course_table extends table_sql {
         global $output, $CFG, $USER, $DB, $params, $childcompanies;
 
         // Deal with expired results.
-        if (empty($params['showhistoric'])) {
+        if (!empty($params['validonly'])) {
             $expiredsql = " AND (lit.timeexpires > :runtime or (lit.timecompleted IS NULL) or (lit.timecompleted > 0 AND lit.timeexpires IS NULL))";
         } else {
             $expiredsql = "";
@@ -672,7 +672,9 @@ class course_table extends table_sql {
             }
             // Deal with any search dates.
             $datesql = "";
-            $sqlparams = array('companyid' => $company->id, 'courseid' => $row->id);
+            $sqlparams = ['companyid' => $company->id,
+                          'courseid' => $row->id,
+                          'runtime' => time()];
             if (!empty($params['from'])) {
                 $datesql = " AND (lit.timeenrolled > :enrolledfrom OR lit.timecompleted > :completedfrom ) ";
                 $sqlparams['enrolledfrom'] = $params['from'];
