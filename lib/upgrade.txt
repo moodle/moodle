@@ -62,6 +62,7 @@ information provided here is intended especially for developers.
   description being incorrectly passed for the $required parameter). A debugging notice will be shown when such cases occur.
 * The moodle-core-popuphelp YUI modal has been removed. It has not been actively used in Moodle since 3.3. It should be replaced with appropriate ESM/AMD JavaScript.
 * The moodle-core-tooltip YUI modal has been removed. It should be replaced with appropriate ESM/AMD JavaScript.
+* A `\core\event\role_created` event is now triggered when roles are created via the `create_role` API.
 
 === 4.1 ===
 

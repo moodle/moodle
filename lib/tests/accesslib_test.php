@@ -375,14 +375,28 @@ class accesslib_test extends advanced_testcase {
 
         $this->resetAfterTest();
 
+        // Create role and get event.
+        $sink = $this->redirectEvents();
         $id = create_role('New student role', 'student2', 'New student description', 'student');
-        $role = $DB->get_record('role', array('id'=>$id));
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+        $role = $DB->get_record('role', ['id' => $id]);
 
         $this->assertNotEmpty($role);
         $this->assertSame('New student role', $role->name);
         $this->assertSame('student2', $role->shortname);
         $this->assertSame('New student description', $role->description);
         $this->assertSame('student', $role->archetype);
+
+        // Test triggered event.
+        $this->assertInstanceOf('\core\event\role_created', $event);
+        $this->assertSame('role', $event->target);
+        $this->assertSame('role', $event->objecttable);
+        $this->assertSame((int)$role->id, $event->objectid);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+        $this->assertSame($role->shortname, $event->other['shortname']);
+        $this->assertSame($role->archetype, $event->other['archetype']);
     }
 
     /**

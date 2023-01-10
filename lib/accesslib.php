@@ -1316,9 +1316,21 @@ function create_role($name, $shortname, $description, $archetype = '') {
     if (empty($role->sortorder)) {
         $role->sortorder = 1;
     }
-    $id = $DB->insert_record('role', $role);
+    $role->id = $DB->insert_record('role', $role);
+    $event = \core\event\role_created::create([
+        'objectid' => $role->id,
+        'context' => context_system::instance(),
+        'other' => [
+            'name' => $role->name,
+            'shortname' => $role->shortname,
+            'archetype' => $role->archetype,
+        ]
+    ]);
 
-    return $id;
+    $event->add_record_snapshot('role', $role);
+    $event->trigger();
+
+    return $role->id;
 }
 
 /**
