@@ -121,7 +121,6 @@ if ($edit === 1 && !\mod_forum\subscriptions::is_forcesubscribed($forum)) {
     echo $OUTPUT->heading(get_string('managesubscriptionson', 'forum'), 2);
     echo $forumoutput->subscriber_selection_form($existingselector, $subscriberselector);
 } else {
-    echo $OUTPUT->heading(get_string('subscribers', 'forum'), 2);
     $subscribers = \mod_forum\subscriptions::fetch_subscribed_users($forum, $currentgroup, $context);
     if (\mod_forum\subscriptions::is_forcesubscribed($forum)) {
         $subscribers = mod_forum_filter_hidden_users($cm, $context, $subscribers);
