@@ -59,22 +59,26 @@ class api_test extends \externallib_advanced_testcase {
      */
     public function test_get_potential_config_issues() {
         global $CFG;
-        require_once($CFG->dirroot . '/message/lib.php');
 
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        $CFG->userquota = '73289234723498234723423489273423497234234';
+        // Set non-SSL wwwroot, to avoid spurious certificate checking.
+        $CFG->wwwroot = 'http://www.example.com';
         $CFG->debugdisplay = 1;
+
         set_config('debugauthdb', 1, 'auth_db');
         set_config('debugdb', 1, 'enrol_database');
-        $expectedissues = array('adodbdebugwarning', 'displayerrorswarning');
 
+        // Get potential issues, obtain their keys for comparison.
         $issues = api::get_potential_config_issues();
-        $this->assertCount(count($expectedissues), $issues);
-        foreach ($issues as $issue) {
-            $this->assertTrue(in_array($issue[0], $expectedissues));
-        }
+        $issuekeys = array_column($issues, 0);
+
+        $this->assertEqualsCanonicalizing([
+            'nohttpsformobilewarning',
+            'adodbdebugwarning',
+            'displayerrorswarning',
+        ], $issuekeys);
     }
 
     /**
