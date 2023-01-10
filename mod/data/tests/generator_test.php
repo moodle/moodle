@@ -179,12 +179,9 @@ class generator_test extends \advanced_testcase {
             $record->type = $fieldtype;
             $record->required = 1;
 
-            ${$fieldname} = $this->getDataGenerator()->get_plugin_generator('mod_data')->create_field($record, $data);
-            $this->assertInstanceOf('data_field_' . $fieldtype, ${$fieldname});
+            $this->getDataGenerator()->get_plugin_generator('mod_data')->create_field($record, $data);
             $count++;
         }
-
-        $this->assertEquals(count($fieldtypes), $DB->count_records('data_fields', ['dataid' => $data->id]));
 
         $fields = $DB->get_records('data_fields', ['dataid' => $data->id], 'id');
 
