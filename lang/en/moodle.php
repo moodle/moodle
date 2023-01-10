@@ -660,14 +660,16 @@ $string['emaildigestoff'] = 'No digest (single email per forum post)';
 $string['emaildigestsubjects'] = 'Subjects (daily email with subjects only)';
 $string['emaildisable'] = 'This email address is disabled';
 $string['emaildisableclick'] = 'Click here to disable all email from being sent to this address';
-$string['emaildisplay'] = 'Email display';
-$string['emaildisplay_help'] = 'Privileged users (such as teachers and managers) will always be able to see your email address.';
-$string['emaildisplaycourse'] = 'Allow only other course participants to see my email address';
+$string['emaildisplay'] = 'Email visibility';
+$string['emaildisplay_help'] = '* Hidden - Only users with appropriate permissions such as teachers can view your email address.
+* Visible to everyone - All users on the site can view your email address.
+* Visible to course participants - Only participants of courses you are enrolled in can view your email address.';
+$string['emaildisplaycourse'] = 'Visible to course participants';
 $string['emaildisplaycoursemembersonly'] = '(Visible to other course participants)';
 $string['emaildisplayeveryone'] = '(Visible to everyone)';
-$string['emaildisplayhide'] = '(Hidden from all non-privileged users)';
-$string['emaildisplayno'] = 'Hide my email address from non-privileged users';
-$string['emaildisplayyes'] = 'Allow everyone to see my email address';
+$string['emaildisplayhide'] = '(Hidden from everyone except users with appropriate permissions)';
+$string['emaildisplayno'] = 'Hidden';
+$string['emaildisplayyes'] = 'Visible to everyone';
 $string['emailenable'] = 'This email address is enabled';
 $string['emailenableclick'] = 'Click here to re-enable all email being sent to this address';
 $string['emailexists'] = 'This email address is already registered.';
