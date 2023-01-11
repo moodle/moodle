@@ -25,12 +25,10 @@ use external_function_parameters;
 use external_single_structure;
 use external_value;
 use invalid_parameter_exception;
-use quiz;
+use mod_quiz\quiz_settings;
 use quizaccess_seb\event\access_prevented;
-use quizaccess_seb\access_manager;
+use quizaccess_seb\seb_access_manager;
 
-require_once($CFG->dirroot . '/mod/quiz/accessmanager.php');
-require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 require_once($CFG->libdir . '/externallib.php');
 
 /**
@@ -97,7 +95,7 @@ class validate_quiz_keys extends external_api {
 
         $result = ['configkey' => true, 'browserexamkey' => true];
 
-        $accessmanager = new access_manager(quiz::create($quizid));
+        $accessmanager = new seb_access_manager(quiz_settings::create($quizid));
 
         // Check if there is a valid config key.
         if (!$accessmanager->validate_config_key($configkey, $url)) {

@@ -31,16 +31,15 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
-require_once($CFG->dirroot . '/mod/quiz/accessmanager.php');
-require_once($CFG->dirroot . '/mod/quiz/accessmanager_form.php');
-require_once($CFG->dirroot . '/mod/quiz/renderer.php');
-require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 require_once($CFG->libdir . '/completionlib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/questionlib.php');
 
+use mod_quiz\access_manager;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
+use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 
 /**
  * @var int We show the countdown timer if there is less than this amount of time left before the
@@ -82,7 +81,7 @@ define('QUIZ_SHOWIMAGE_LARGE', 2);
  *
  * @param object $quizobj the quiz object to create an attempt for.
  * @param int $attemptnumber the sequence number for the attempt.
- * @param stdClass|null $lastattempt the previous attempt by this user, if any. Only needed
+ * @param stdClass|false $lastattempt the previous attempt by this user, if any. Only needed
  *         if $attemptnumber > 1 and $quiz->attemptonlast is true.
  * @param int $timenow the time the attempt was started at.
  * @param bool $ispreview whether this new attempt is a preview.
@@ -90,7 +89,7 @@ define('QUIZ_SHOWIMAGE_LARGE', 2);
  *
  * @return object the newly created attempt object.
  */
-function quiz_create_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $timenow, $ispreview = false, $userid = null) {
+function quiz_create_attempt(quiz_settings $quizobj, $attemptnumber, $lastattempt, $timenow, $ispreview = false, $userid = null) {
     global $USER;
 
     if ($userid === null) {
@@ -146,17 +145,16 @@ function quiz_create_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $timen
 /**
  * Start a normal, new, quiz attempt.
  *
- * @param quiz      $quizobj            the quiz object to start an attempt for.
+ * @param quiz_settings $quizobj        the quiz object to start an attempt for.
  * @param question_usage_by_activity $quba
  * @param object    $attempt
  * @param integer   $attemptnumber      starting from 1
  * @param integer   $timenow            the attempt start time
  * @param array     $questionids        slot number => question id. Used for random questions, to force the choice
- *                                        of a particular actual question. Intended for testing purposes only.
+ *                                      of a particular actual question. Intended for testing purposes only.
  * @param array     $forcedvariantsbyslot slot number => variant. Used for questions with variants,
- *                                          to force the choice of a particular variant. Intended for testing
- *                                          purposes only.
- * @throws moodle_exception
+ *                                        to force the choice of a particular variant. Intended for testing
+ *                                        purposes only.
  * @return object   modified attempt object
  */
 function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow,
@@ -341,7 +339,7 @@ function quiz_start_attempt_built_on_last($quba, $attempt, $lastattempt) {
 /**
  * The save started question usage and quiz attempt in db and log the started attempt.
  *
- * @param quiz                       $quizobj
+ * @param quiz_settings $quizobj
  * @param question_usage_by_activity $quba
  * @param object                     $attempt
  * @return object                    attempt object with uniqueid and id set.
@@ -586,8 +584,8 @@ function quiz_feedback_record_for_grade($grade, $quiz) {
  * got this grade on this quiz. The feedback is processed ready for diplay.
  *
  * @param float $grade a grade on this quiz.
- * @param object $quiz the quiz settings.
- * @param object $context the quiz context.
+ * @param stdClass $quiz the quiz settings.
+ * @param context_module $context the quiz context.
  * @return string the comment that corresponds to this grade (empty string if there is not one.
  */
 function quiz_feedback_for_grade($grade, $quiz, $context) {
@@ -1355,7 +1353,7 @@ function quiz_questions_per_page_options() {
 
 /**
  * Get the human-readable name for a quiz attempt state.
- * @param string $state one of the state constants like {@link quiz_attempt::IN_PROGRESS}.
+ * @param string $state one of the state constants like {@see quiz_attempt::IN_PROGRESS}.
  * @return string The lang string to describe that state.
  */
 function quiz_attempt_state_name($state) {
@@ -2437,16 +2435,15 @@ function quiz_view($quiz, $course, $cm, $context) {
 /**
  * Validate permissions for creating a new attempt and start a new preview attempt if required.
  *
- * @param  quiz $quizobj quiz object
- * @param  quiz_access_manager $accessmanager quiz access manager
+ * @param  quiz_settings $quizobj quiz object
+ * @param  access_manager $accessmanager quiz access manager
  * @param  bool $forcenew whether was required to start a new preview attempt
  * @param  int $page page to jump to in the attempt
  * @param  bool $redirect whether to redirect or throw exceptions (for web or ws usage)
  * @return array an array containing the attempt information, access error messages and the page to jump to in the attempt
- * @throws moodle_quiz_exception
  * @since Moodle 3.1
  */
-function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessmanager, $forcenew, $page, $redirect) {
+function quiz_validate_new_attempt(quiz_settings $quizobj, access_manager $accessmanager, $forcenew, $page, $redirect) {
     global $DB, $USER;
     $timenow = time();
 
@@ -2486,7 +2483,7 @@ function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessman
             if ($redirect) {
                 redirect($quizobj->review_url($lastattempt->id));
             } else {
-                throw new moodle_quiz_exception($quizobj, 'attemptalreadyclosed');
+                throw new moodle_exception('attemptalreadyclosed', 'quiz', $quizobj->view_url());
             }
         }
 
@@ -2522,7 +2519,7 @@ function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessman
 /**
  * Prepare and start a new attempt deleting the previous preview attempts.
  *
- * @param quiz $quizobj quiz object
+ * @param quiz_settings $quizobj quiz object
  * @param int $attemptnumber the attempt number
  * @param object $lastattempt last attempt object
  * @param bool $offlineattempt whether is an offline attempt or not
@@ -2534,7 +2531,7 @@ function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessman
  * @return object the new attempt
  * @since  Moodle 3.1
  */
-function quiz_prepare_and_start_new_attempt(quiz $quizobj, $attemptnumber, $lastattempt,
+function quiz_prepare_and_start_new_attempt(quiz_settings $quizobj, $attemptnumber, $lastattempt,
         $offlineattempt = false, $forcedrandomquestions = [], $forcedvariants = [], $userid = null) {
     global $DB, $USER;
 
@@ -2695,8 +2692,7 @@ function quiz_retrieve_tags_for_slot_ids($slotids) {
  *
  * @param int $attemptid the id of the current attempt.
  * @param int|null $cmid the course_module id for this quiz.
- * @return quiz_attempt $attemptobj all the data about the quiz attempt.
- * @throws moodle_exception
+ * @return quiz_attempt all the data about the quiz attempt.
  */
 function quiz_create_attempt_handling_errors($attemptid, $cmid = null) {
     try {

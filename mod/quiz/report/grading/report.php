@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 use mod_quiz\local\reports\report_base;
+use mod_quiz\quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 

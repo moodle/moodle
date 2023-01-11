@@ -28,6 +28,7 @@ use core_privacy\local\request\deletion_criteria;
 use core_privacy\local\request\writer;
 use mod_quiz\privacy\provider;
 use mod_quiz\privacy\helper;
+use mod_quiz\quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -188,7 +189,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
 
         $attempt = $attemptobj->get_attempt();
         $this->assertTrue(isset($attemptdata->state));
-        $this->assertEquals(\quiz_attempt::state_name($attemptobj->get_state()), $attemptdata->state);
+        $this->assertEquals(quiz_attempt::state_name($attemptobj->get_state()), $attemptdata->state);
         $this->assertTrue(isset($attemptdata->timestart));
         $this->assertTrue(isset($attemptdata->timefinish));
         $this->assertTrue(isset($attemptdata->timemodified));
@@ -212,7 +213,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $this->setUser();
         provider::delete_data_for_user($approvedcontextlist);
         $this->expectException(\dml_missing_record_exception::class);
-        \quiz_attempt::create($attemptobj->get_quizid());
+        quiz_attempt::create($attemptobj->get_quizid());
     }
 
     /**
@@ -246,7 +247,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         // Run as the user and make an attempt on the quiz.
         $this->setUser($user);
         $starttime = time();
-        $quizobj = \quiz::create($quiz->id, $user->id);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->id, $user->id);
         $context = $quizobj->get_context();
 
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
@@ -258,7 +259,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
         // Answer the questions.
-        $attemptobj = \quiz_attempt::create($attempt->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
 
         $tosubmit = [
             1 => ['answer' => 'frog'],
@@ -268,7 +269,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $attemptobj->process_submitted_actions($starttime, false, $tosubmit);
 
         // Finish the attempt.
-        $attemptobj = \quiz_attempt::create($attempt->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
         $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
         $attemptobj->process_finish($starttime, false);
 
@@ -392,7 +393,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * Create a test quiz for the specified course.
      *
      * @param   \stdClass $course
-     * @return  array
+     * @return  \stdClass
      */
     protected function create_test_quiz($course) {
         global $DB;
@@ -429,7 +430,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $this->setUser($user);
 
         $starttime = time();
-        $quizobj = \quiz::create($quiz->id, $user->id);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->id, $user->id);
         $context = $quizobj->get_context();
 
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
@@ -441,7 +442,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
         // Answer the questions.
-        $attemptobj = \quiz_attempt::create($attempt->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
 
         $tosubmit = [
             1 => ['answer' => 'frog'],
@@ -451,7 +452,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $attemptobj->process_submitted_actions($starttime, false, $tosubmit);
 
         // Finish the attempt.
-        $attemptobj = \quiz_attempt::create($attempt->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
         $attemptobj->process_finish($starttime, false);
 
         $this->setUser();

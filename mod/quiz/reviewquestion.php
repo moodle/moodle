@@ -71,7 +71,7 @@ if ($attemptobj->is_own_attempt()) {
     }
 
 } else if (!$attemptobj->is_review_allowed()) {
-    throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noreviewattempt');
+    throw new moodle_exception('noreviewattempt', 'quiz', $attemptobj->view_url());
 }
 
 // Prepare summary informat about this question attempt.

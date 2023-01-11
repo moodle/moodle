@@ -259,7 +259,7 @@ class quiz_question_restore_test extends \advanced_testcase {
         // Get the information about the resulting course and check that it is set up correctly.
         $modinfo = get_fast_modinfo($newcourseid);
         $quiz = array_values($modinfo->get_instances_of('quiz'))[0];
-        $quizobj = \quiz::create($quiz->instance);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->instance);
         $structure = structure::create_for_quiz($quizobj);
 
         // Are the correct slots returned?
@@ -302,7 +302,7 @@ class quiz_question_restore_test extends \advanced_testcase {
         // Get the information about the resulting course and check that it is set up correctly.
         $modinfo = get_fast_modinfo($newcourseid);
         $quiz = array_values($modinfo->get_instances_of('quiz'))[0];
-        $quizobj = \quiz::create($quiz->instance);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->instance);
         $structure = structure::create_for_quiz($quizobj);
 
         // Are the correct slots returned?
@@ -354,7 +354,7 @@ class quiz_question_restore_test extends \advanced_testcase {
         // Get the information about the resulting course and check that it is set up correctly.
         $modinfo = get_fast_modinfo($newcourseid);
         $quiz = array_values($modinfo->get_instances_of('quiz'))[0];
-        $quizobj = \quiz::create($quiz->instance);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->instance);
         $structure = \mod_quiz\structure::create_for_quiz($quizobj);
 
         // Count the questions in quiz qbank.

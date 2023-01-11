@@ -20,7 +20,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-use quizaccess_seb\quiz_settings;
+use quizaccess_seb\seb_quiz_settings;
 
 require_once($CFG->libdir . '/externallib.php');
 
@@ -164,7 +164,7 @@ class validate_quiz_access_test extends \advanced_testcase {
         $url = 'https://www.example.com/moodle';
 
         // Create the quiz settings.
-        $quizsettings = new quiz_settings(0, $settings);
+        $quizsettings = new seb_quiz_settings(0, $settings);
         $quizsettings->save();
 
         $fullconfigkey = hash('sha256', $url . $quizsettings->get_config_key());
@@ -188,7 +188,7 @@ class validate_quiz_access_test extends \advanced_testcase {
         ]);
 
         // Create the quiz settings.
-        $quizsettings = new quiz_settings(0, $settings);
+        $quizsettings = new seb_quiz_settings(0, $settings);
         $quizsettings->save();
 
         $result = validate_quiz_keys::execute($this->quiz->cmid, 'https://www.example.com/moodle', 'badconfigkey');
@@ -217,7 +217,7 @@ class validate_quiz_access_test extends \advanced_testcase {
         ]);
 
         // Create the quiz settings.
-        $quizsettings = new quiz_settings(0, $settings);
+        $quizsettings = new seb_quiz_settings(0, $settings);
         $quizsettings->save();
 
         $fullbrowserexamkey = hash('sha256', $url . $validbrowserexamkey);
@@ -243,7 +243,7 @@ class validate_quiz_access_test extends \advanced_testcase {
         ]);
 
         // Create the quiz settings.
-        $quizsettings = new quiz_settings(0, $settings);
+        $quizsettings = new seb_quiz_settings(0, $settings);
         $quizsettings->save();
 
         $result = validate_quiz_keys::execute($this->quiz->cmid, 'https://www.example.com/moodle', null,

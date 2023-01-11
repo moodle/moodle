@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 use mod_quiz\local\reports\attempts_report_table;
-
+use mod_quiz\quiz_attempt;
 
 /**
  * This is a table subclass for displaying the quiz responses report.

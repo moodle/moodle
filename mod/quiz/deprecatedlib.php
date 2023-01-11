@@ -22,6 +22,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\access_manager;
+use mod_quiz\quiz_settings;
+use mod_quiz\task\update_overdue_attempts;
+
 /**
  * Internal function used in quiz_get_completion_state. Check passing grade (or no attempts left) requirement for completion.
  *
@@ -68,8 +72,8 @@ function quiz_completion_check_passing_grade_or_all_attempts($course, $cm, $user
     }
     $lastfinishedattempt = end($attempts);
     $context = context_module::instance($cm->id);
-    $quizobj = quiz::create($quiz->id, $userid);
-    $accessmanager = new quiz_access_manager($quizobj, time(),
+    $quizobj = quiz_settings::create($quiz->id, $userid);
+    $accessmanager = new access_manager($quizobj, time(),
             has_capability('mod/quiz:ignoretimelimits', $context, $userid, false));
 
     return $accessmanager->is_finished(count($attempts), $lastfinishedattempt);
@@ -131,4 +135,63 @@ function quiz_get_completion_state($course, $cm, $userid, $type) {
     }
 
     return true;
+}
+
+/**
+ * @copyright 2012 the Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since Moodle 4.2. Code moved to mod_quiz\task\update_overdue_attempts.
+ * @todo MDL-76612 Final deprecation in Moodle 4.6
+ */
+class mod_quiz_overdue_attempt_updater {
+
+    /**
+     * @deprecated since Moodle 4.2. Code moved to mod_quiz\task\update_overdue_attempts. that was.
+     */
+    public function update_overdue_attempts($timenow, $processto) {
+        debugging('mod_quiz_overdue_attempt_updater has been deprecated. The code wsa moved to ' .
+                'mod_quiz\task\update_overdue_attempts.');
+        return (new update_overdue_attempts())->update_all_overdue_attempts((int) $timenow, (int) $processto);
+    }
+
+    /**
+     * @deprecated since Moodle 4.2. Code moved to mod_quiz\task\update_overdue_attempts.
+     */
+    public function get_list_of_overdue_attempts($processto) {
+        debugging('mod_quiz_overdue_attempt_updater has been deprecated. The code wsa moved to ' .
+                'mod_quiz\task\update_overdue_attempts.');
+        return (new update_overdue_attempts())->get_list_of_overdue_attempts((int) $processto);
+    }
+}
+
+/**
+ * Class for quiz exceptions. Just saves a couple of arguments on the
+ * constructor for a moodle_exception.
+ *
+ * @copyright 2008 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ * @deprecated since Moodle 4.2. Please just use moodle_exception.
+ * @todo MDL-76612 Final deprecation in Moodle 4.6
+ */
+class moodle_quiz_exception extends moodle_exception {
+    /**
+     * Constructor.
+     *
+     * @param quiz_settings $quizobj the quiz the error relates to.
+     * @param string $errorcode The name of the string from error.php to print.
+     * @param mixed $a Extra words and phrases that might be required in the error string.
+     * @param string $link The url where the user will be prompted to continue.
+     *      If no url is provided the user will be directed to the site index page.
+     * @param string|null $debuginfo optional debugging information.
+     * @deprecated since Moodle 4.2. Please just use moodle_exception.
+     */
+    public function __construct($quizobj, $errorcode, $a = null, $link = '', $debuginfo = null) {
+        debugging('Class moodle_quiz_exception is deprecated. ' .
+                'Please use a standard moodle_exception instead.', DEBUG_DEVELOPER);
+        if (!$link) {
+            $link = $quizobj->view_url();
+        }
+        parent::__construct($errorcode, 'quiz', $link, $a, $debuginfo);
+    }
 }

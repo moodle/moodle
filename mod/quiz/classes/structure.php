@@ -39,7 +39,7 @@ use mod_quiz\question\qubaids_for_quiz;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class structure {
-    /** @var \quiz the quiz this is the structure of. */
+    /** @var \mod_quiz\quiz_settings the quiz this is the structure of. */
     protected $quizobj = null;
 
     /**
@@ -83,7 +83,7 @@ class structure {
     /**
      * Create an instance of this class representing the structure of a given quiz.
      *
-     * @param \quiz $quizobj the quiz.
+     * @param \mod_quiz\quiz_settings $quizobj the quiz.
      * @return structure
      */
     public static function create_for_quiz($quizobj) {

@@ -24,8 +24,7 @@ use core_completion\cm_completion_details;
 use grade_item;
 use mod_quiz\completion\custom_completion;
 use question_engine;
-use quiz;
-use quiz_attempt;
+use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -113,7 +112,7 @@ class custom_completion_test extends advanced_testcase {
      * @param array $attemptoptions ['quiz'] => object, ['student'] => object, ['tosubmit'] => array, ['attemptnumber'] => int
      */
     private function do_attempt_quiz(array $attemptoptions) {
-        $quizobj = quiz::create($attemptoptions['quiz']->id);
+        $quizobj = quiz_settings::create($attemptoptions['quiz']->id);
 
         // Start the passing attempt.
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());

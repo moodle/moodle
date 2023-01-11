@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\quiz_attempt;
+
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
@@ -71,7 +73,7 @@ require_sesskey();
 
 // Check that this attempt belongs to this user.
 if ($attemptobj->get_userid() != $USER->id) {
-    throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
+    throw new moodle_exception('notyourattempt', 'quiz', $attemptobj->view_url());
 }
 
 // Check capabilities.
@@ -81,8 +83,7 @@ if (!$attemptobj->is_preview_user()) {
 
 // If the attempt is already closed, send them to the review page.
 if ($attemptobj->is_finished()) {
-    throw new moodle_quiz_exception($attemptobj->get_quizobj(),
-            'attemptalreadyclosed', null, $attemptobj->review_url());
+    throw new moodle_exception('attemptalreadyclosed', 'quiz', $attemptobj->view_url());
 }
 
 // Process the attempt, getting the new status for the attempt.

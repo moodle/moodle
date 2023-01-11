@@ -25,6 +25,9 @@
  */
 
 use core_course\external\helper_for_get_mods_by_courses;
+use mod_quiz\access_manager;
+use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -111,8 +114,8 @@ class mod_quiz_external extends external_api {
                     $quizdetails['hasfeedback'] = (!empty($hasfeedback)) ? 1 : 0;
 
                     $timenow = time();
-                    $quizobj = quiz::create($quiz->id, $USER->id);
-                    $accessmanager = new quiz_access_manager($quizobj, $timenow, has_capability('mod/quiz:ignoretimelimits',
+                    $quizobj = quiz_settings::create($quiz->id, $USER->id);
+                    $accessmanager = new access_manager($quizobj, $timenow, has_capability('mod/quiz:ignoretimelimits',
                                                                 $context, null, false));
 
                     // Fields the user could see if have access to the quiz.
@@ -304,7 +307,6 @@ class mod_quiz_external extends external_api {
      * @param int $quizid quiz instance id
      * @return array of warnings and status result
      * @since Moodle 3.1
-     * @throws moodle_exception
      */
     public static function view_quiz($quizid) {
         global $DB;
@@ -365,10 +367,9 @@ class mod_quiz_external extends external_api {
      * @param bool $includepreviews whether to include previews or not
      * @return array of warnings and the list of attempts
      * @since Moodle 3.1
-     * @throws invalid_parameter_exception
      */
     public static function get_user_attempts($quizid, $userid = 0, $status = 'finished', $includepreviews = false) {
-        global $DB, $USER;
+        global $USER;
 
         $warnings = array();
 
@@ -710,7 +711,6 @@ class mod_quiz_external extends external_api {
      * @param bool $forcenew Whether to force a new attempt or not.
      * @return array of warnings and the attempt basic data
      * @since Moodle 3.1
-     * @throws moodle_quiz_exception
      */
     public static function start_attempt($quizid, $preflightdata = array(), $forcenew = false) {
         global $DB, $USER;
@@ -728,11 +728,11 @@ class mod_quiz_external extends external_api {
 
         list($quiz, $course, $cm, $context) = self::validate_quiz($params['quizid']);
 
-        $quizobj = quiz::create($cm->instance, $USER->id);
+        $quizobj = quiz_settings::create($cm->instance, $USER->id);
 
         // Check questions.
         if (!$quizobj->has_questions()) {
-            throw new moodle_quiz_exception($quizobj, 'noquestionsfound');
+            throw new moodle_exception('noquestionsfound', 'quiz', $quizobj->view_url());
         }
 
         // Create an object to manage all the other (non-roles) access rules.
@@ -766,7 +766,7 @@ class mod_quiz_external extends external_api {
                 $errors = $accessmanager->validate_preflight_check($provideddata, [], $currentattemptid);
 
                 if (!empty($errors)) {
-                    throw new moodle_quiz_exception($quizobj, array_shift($errors));
+                    throw new moodle_exception(array_shift($errors), 'quiz', $quizobj->view_url());
                 }
 
                 // Pre-flight check passed.
@@ -775,9 +775,9 @@ class mod_quiz_external extends external_api {
 
             if ($currentattemptid) {
                 if ($lastattempt->state == quiz_attempt::OVERDUE) {
-                    throw new moodle_quiz_exception($quizobj, 'stateoverdue');
+                    throw new moodle_exception('stateoverdue', 'quiz', $quizobj->view_url());
                 } else {
-                    throw new moodle_quiz_exception($quizobj, 'attemptstillinprogress');
+                    throw new moodle_exception('attemptstillinprogress', 'quiz', $quizobj->view_url());
                 }
             }
             $offlineattempt = WS_SERVER ? true : false;
@@ -812,7 +812,6 @@ class mod_quiz_external extends external_api {
      * @param  bool $checkaccessrules whether to check the quiz access rules or not
      * @param  bool $failifoverdue whether to return error if the attempt is overdue
      * @return  array containing the attempt object and access messages
-     * @throws moodle_quiz_exception
      * @since  Moodle 3.1
      */
     protected static function validate_attempt($params, $checkaccessrules = true, $failifoverdue = true) {
@@ -825,7 +824,7 @@ class mod_quiz_external extends external_api {
 
         // Check that this attempt belongs to this user.
         if ($attemptobj->get_userid() != $USER->id) {
-            throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
+            throw new moodle_exception('notyourattempt', 'quiz', $attemptobj->view_url());
         }
 
         // General capabilities check.
@@ -843,15 +842,15 @@ class mod_quiz_external extends external_api {
 
             $messages = $accessmanager->prevent_access();
             if (!$ispreviewuser && $messages) {
-                throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'attempterror');
+                throw new moodle_exception('attempterror', 'quiz', $attemptobj->view_url());
             }
         }
 
         // Attempt closed?.
         if ($attemptobj->is_finished()) {
-            throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'attemptalreadyclosed');
+            throw new moodle_exception('attemptalreadyclosed', 'quiz', $attemptobj->view_url());
         } else if ($failifoverdue && $attemptobj->get_state() == quiz_attempt::OVERDUE) {
-            throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'stateoverdue');
+            throw new moodle_exception('stateoverdue', 'quiz', $attemptobj->view_url());
         }
 
         // User submitted data (like the quiz password).
@@ -863,7 +862,7 @@ class mod_quiz_external extends external_api {
 
             $errors = $accessmanager->validate_preflight_check($provideddata, [], $params['attemptid']);
             if (!empty($errors)) {
-                throw new moodle_quiz_exception($attemptobj->get_quizobj(), array_shift($errors));
+                throw new moodle_exception(array_shift($errors), 'quiz', $attemptobj->view_url());
             }
             // Pre-flight check passed.
             $accessmanager->notify_preflight_check_passed($params['attemptid']);
@@ -872,19 +871,19 @@ class mod_quiz_external extends external_api {
         if (isset($params['page'])) {
             // Check if the page is out of range.
             if ($params['page'] != $attemptobj->force_page_number_into_range($params['page'])) {
-                throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'Invalid page number');
+                throw new moodle_exception('Invalid page number', 'quiz', $attemptobj->view_url());
             }
 
             // Prevent out of sequence access.
             if (!$attemptobj->check_page_access($params['page'])) {
-                throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'Out of sequence access');
+                throw new moodle_exception('Out of sequence access', 'quiz', $attemptobj->view_url());
             }
 
             // Check slots.
             $slots = $attemptobj->get_slots($params['page']);
 
             if (empty($slots)) {
-                throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noquestionsfound');
+                throw new moodle_exception('noquestionsfound', 'quiz', $attemptobj->view_url());
             }
         }
 
@@ -1047,7 +1046,6 @@ class mod_quiz_external extends external_api {
      * @param array $preflightdata preflight required data (like passwords)
      * @return array of warnings and the attempt data, next page, message and questions
      * @since Moodle 3.1
-     * @throws moodle_quiz_exceptions
      */
     public static function get_attempt_data($attemptid, $page, $preflightdata = array()) {
         global $PAGE;
@@ -1371,8 +1369,6 @@ class mod_quiz_external extends external_api {
      * @param  array $params Array of parameters including the attemptid
      * @return  array containing the attempt object and display options
      * @since  Moodle 3.1
-     * @throws  moodle_exception
-     * @throws  moodle_quiz_exception
      */
     protected static function validate_attempt_review($params) {
 
@@ -1382,13 +1378,13 @@ class mod_quiz_external extends external_api {
         $displayoptions = $attemptobj->get_display_options(true);
         if ($attemptobj->is_own_attempt()) {
             if (!$attemptobj->is_finished()) {
-                throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'attemptclosed');
+                throw new moodle_exception('attemptclosed', 'quiz', $attemptobj->view_url());
             } else if (!$displayoptions->attempt) {
-                throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noreview', null, '',
+                throw new moodle_exception('noreview', 'quiz', $attemptobj->view_url(), null,
                     $attemptobj->cannot_review_message());
             }
         } else if (!$attemptobj->is_review_allowed()) {
-            throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noreviewattempt');
+            throw new moodle_exception('noreviewattempt', 'quiz', $attemptobj->view_url());
         }
         return array($attemptobj, $displayoptions);
     }
@@ -1416,8 +1412,6 @@ class mod_quiz_external extends external_api {
      * @param int $page page number, empty for all the questions in all the pages
      * @return array of warnings and the attempt data, feedback and questions
      * @since Moodle 3.1
-     * @throws  moodle_exception
-     * @throws  moodle_quiz_exception
      */
     public static function get_attempt_review($attemptid, $page = -1) {
         global $PAGE;
@@ -1547,7 +1541,7 @@ class mod_quiz_external extends external_api {
 
         // Update attempt page, throwing an exception if $page is not valid.
         if (!$attemptobj->set_currentpage($params['page'])) {
-            throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'Out of sequence access');
+            throw new moodle_exception('Out of sequence access', 'quiz', $attemptobj->view_url());
         }
 
         $result = array();
@@ -1713,7 +1707,6 @@ class mod_quiz_external extends external_api {
      * @param float $grade the grade to check
      * @return array of warnings and status result
      * @since Moodle 3.1
-     * @throws moodle_exception
      */
     public static function get_quiz_feedback_for_grade($quizid, $grade) {
         global $DB;
@@ -1784,7 +1777,6 @@ class mod_quiz_external extends external_api {
      * @param int $quizid quiz instance id
      * @return array of warnings and the access information
      * @since Moodle 3.1
-     * @throws  moodle_quiz_exception
      */
     public static function get_quiz_access_information($quizid) {
         global $DB, $USER;
@@ -1807,10 +1799,10 @@ class mod_quiz_external extends external_api {
         $result['canviewreports'] = has_capability('mod/quiz:viewreports', $context);;
 
         // Access manager now.
-        $quizobj = quiz::create($cm->instance, $USER->id);
+        $quizobj = quiz_settings::create($cm->instance, $USER->id);
         $ignoretimelimits = has_capability('mod/quiz:ignoretimelimits', $context, null, false);
         $timenow = time();
-        $accessmanager = new quiz_access_manager($quizobj, $timenow, $ignoretimelimits);
+        $accessmanager = new access_manager($quizobj, $timenow, $ignoretimelimits);
 
         $result['accessrules'] = $accessmanager->describe_rules();
         $result['activerulenames'] = $accessmanager->get_active_rule_names();
@@ -1868,7 +1860,6 @@ class mod_quiz_external extends external_api {
      * @param int $attemptid attempt id, 0 for the user last attempt if exists
      * @return array of warnings and the access information
      * @since Moodle 3.1
-     * @throws  moodle_quiz_exception
      */
     public static function get_attempt_access_information($quizid, $attemptid = 0) {
         global $DB, $USER;
@@ -1883,20 +1874,20 @@ class mod_quiz_external extends external_api {
 
         list($quiz, $course, $cm, $context) = self::validate_quiz($params['quizid']);
 
-        $attempttocheck = 0;
+        $attempttocheck = null;
         if (!empty($params['attemptid'])) {
             $attemptobj = quiz_attempt::create($params['attemptid']);
             if ($attemptobj->get_userid() != $USER->id) {
-                throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
+                throw new moodle_exception('notyourattempt', 'quiz', $attemptobj->view_url());
             }
             $attempttocheck = $attemptobj->get_attempt();
         }
 
         // Access manager now.
-        $quizobj = quiz::create($cm->instance, $USER->id);
+        $quizobj = quiz_settings::create($cm->instance, $USER->id);
         $ignoretimelimits = has_capability('mod/quiz:ignoretimelimits', $context, null, false);
         $timenow = time();
-        $accessmanager = new quiz_access_manager($quizobj, $timenow, $ignoretimelimits);
+        $accessmanager = new access_manager($quizobj, $timenow, $ignoretimelimits);
 
         $attempts = quiz_get_user_attempts($quiz->id, $USER->id, 'finished', true);
         $lastfinishedattempt = end($attempts);
@@ -1913,7 +1904,7 @@ class mod_quiz_external extends external_api {
         $numattempts = count($attempts);
 
         if (!$attempttocheck) {
-            $attempttocheck = $unfinishedattempt ? $unfinishedattempt : $lastfinishedattempt;
+            $attempttocheck = $unfinishedattempt ?: $lastfinishedattempt;
         }
 
         $result = array();
@@ -1974,7 +1965,6 @@ class mod_quiz_external extends external_api {
      * @param int $quizid quiz instance id
      * @return array of warnings and the access information
      * @since Moodle 3.1
-     * @throws  moodle_quiz_exception
      */
     public static function get_quiz_required_qtypes($quizid) {
         global $DB, $USER;
@@ -1988,7 +1978,7 @@ class mod_quiz_external extends external_api {
 
         list($quiz, $course, $cm, $context) = self::validate_quiz($params['quizid']);
 
-        $quizobj = quiz::create($cm->instance, $USER->id);
+        $quizobj = quiz_settings::create($cm->instance, $USER->id);
         $quizobj->preload_questions();
         $quizobj->load_questions();
 

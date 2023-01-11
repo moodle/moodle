@@ -78,7 +78,7 @@ class qbank_helper_test extends \advanced_testcase {
         quiz_add_quiz_question($numq->id, $quiz);
 
         // Create the quiz object.
-        $quizobj = \quiz::create($quiz->id);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->id);
         $quizobj->preload_questions();
         $quizobj->load_questions();
         $questions = $quizobj->get_questions();
@@ -131,7 +131,7 @@ class qbank_helper_test extends \advanced_testcase {
         quiz_add_quiz_question($q->id, $quiz);
 
         // Load the quiz object and check.
-        $quizobj = \quiz::create($quiz->id);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->id);
         $quizobj->preload_questions();
         $quizobj->load_questions();
         $questions = $quizobj->get_questions();

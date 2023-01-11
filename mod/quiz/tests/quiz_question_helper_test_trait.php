@@ -13,6 +13,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 
 /**
  * Helper trait for quiz question unit tests.
@@ -105,7 +107,7 @@ trait quiz_question_helper_test_trait {
         $this->setUser($user);
 
         $starttime = time();
-        $quizobj = quiz::create($quiz->id, $user->id);
+        $quizobj = quiz_settings::create($quiz->id, $user->id);
 
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);

@@ -16,6 +16,8 @@
 
 namespace mod_quiz\question;
 
+use mod_quiz\quiz_attempt;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/engine/datalib.php');
@@ -47,7 +49,7 @@ class qubaids_for_quiz extends \qubaid_join {
 
         if ($onlyfinished) {
             $where .= ' AND state = :statefinished';
-            $params['statefinished'] = \quiz_attempt::FINISHED;
+            $params['statefinished'] = quiz_attempt::FINISHED;
         }
 
         parent::__construct('{quiz_attempts} quiza', 'quiza.uniqueid', $where, $params);

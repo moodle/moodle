@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\quiz_settings;
+
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
@@ -30,7 +32,7 @@ $slotnumber = required_param('slot', PARAM_INT);
 $repagtype = required_param('repag', PARAM_INT);
 
 require_sesskey();
-$quizobj = quiz::create($quizid);
+$quizobj = quiz_settings::create($quizid);
 require_login($quizobj->get_course(), false, $quizobj->get_cm());
 require_capability('mod/quiz:manage', $quizobj->get_context());
 if (quiz_has_attempts($quizid)) {

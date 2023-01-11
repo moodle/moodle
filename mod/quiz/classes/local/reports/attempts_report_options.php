@@ -17,8 +17,8 @@
 namespace mod_quiz\local\reports;
 
 use context_module;
+use mod_quiz\quiz_attempt;
 use moodle_url;
-use quiz_attempt;
 use stdClass;
 
 /**

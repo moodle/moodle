@@ -28,14 +28,17 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use mod_quiz\access_manager;
+use mod_quiz\form\add_random_form;
 use mod_quiz\question\bank\custom_view;
 use mod_quiz\question\display_options;
 use mod_quiz\question\qubaids_for_quiz;
 use mod_quiz\question\qubaids_for_users_attempts;
 use core_question\statistics\questions\all_calculated_for_qubaid_condition;
+use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 
 require_once($CFG->dirroot . '/calendar/lib.php');
-require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 
 /**#@+
  * Option controlling what options are offered on the quiz settings form.
@@ -190,7 +193,7 @@ function quiz_delete_instance($id) {
 
     $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
 
-    quiz_access_manager::delete_settings($quiz);
+    access_manager::delete_settings($quiz);
 
     $events = $DB->get_records('event', array('modulename' => 'quiz', 'instance' => $quiz->id));
     foreach ($events as $event) {
@@ -581,12 +584,7 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
  *      array if there are none.
  */
 function quiz_get_user_attempts($quizids, $userid, $status = 'finished', $includepreviews = false) {
-    global $DB, $CFG;
-    // TODO MDL-33071 it is very annoying to have to included all of locallib.php
-    // just to get the quiz_attempt::FINISHED constants, but I will try to sort
-    // that out properly for Moodle 2.4. For now, I will just do a quick fix for
-    // MDL-33048.
-    require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+    global $DB;
 
     $params = array();
     switch ($status) {
@@ -659,7 +657,7 @@ function quiz_get_user_grades($quiz, $userid = 0) {
 /**
  * Round a grade to to the correct number of decimal places, and format it for display.
  *
- * @param object $quiz The quiz table row, only $quiz->decimalpoints is used.
+ * @param stdClass $quiz The quiz table row, only $quiz->decimalpoints is used.
  * @param float $grade The grade to round.
  * @return float
  */
@@ -691,9 +689,9 @@ function quiz_get_grade_format($quiz) {
 /**
  * Round a grade to the correct number of decimal places, and format it for display.
  *
- * @param object $quiz The quiz table row, only $quiz->decimalpoints is used.
+ * @param stdClass $quiz The quiz table row, only $quiz->decimalpoints is used.
  * @param float $grade The grade to round.
- * @return float
+ * @return string
  */
 function quiz_format_question_grade($quiz, $grade) {
     return format_float($grade, quiz_get_grade_format($quiz));
@@ -1185,7 +1183,7 @@ function mod_quiz_inplace_editable(string $itemtype, int $itemid, string $newval
         // Check permission of the user to update this item (customise question number).
         require_capability('mod/quiz:manage', $context);
 
-        $quizobj = new quiz($quiz, $cm, $course);
+        $quizobj = new quiz_settings($quiz, $cm, $course);
         $structure = $quizobj->get_structure();
         $warning = false;
         // Clean input and update the record.
@@ -1236,7 +1234,7 @@ function quiz_after_add_or_update($quiz) {
     }
 
     // Store any settings belonging to the access rules.
-    quiz_access_manager::save_settings($quiz);
+    access_manager::save_settings($quiz);
 
     // Update the events relating to this quiz.
     quiz_update_events($quiz);
@@ -1965,7 +1963,7 @@ function quiz_check_updates_since(cm_info $cm, $from, $filter = array()) {
 
     // Check if questions were updated.
     $updates->questions = (object) array('updated' => false);
-    $quizobj = quiz::create($cm->instance, $USER->id);
+    $quizobj = quiz_settings::create($cm->instance, $USER->id);
     $quizobj->preload_questions();
     $quizobj->load_questions();
     $questionids = array_keys($quizobj->get_questions());
@@ -2062,7 +2060,7 @@ function mod_quiz_core_calendar_provide_event_action(calendar_event $event,
     }
 
     $cm = get_fast_modinfo($event->courseid, $userid)->instances['quiz'][$event->instance];
-    $quizobj = quiz::create($cm->instance, $userid);
+    $quizobj = quiz_settings::create($cm->instance, $userid);
     $quiz = $quizobj->get_quiz();
 
     // Check they have capabilities allowing them to view the quiz.
@@ -2459,7 +2457,6 @@ function mod_quiz_output_fragment_quiz_question_bank($args) {
  */
 function mod_quiz_output_fragment_add_random_question_form($args) {
     global $CFG;
-    require_once($CFG->dirroot . '/mod/quiz/addrandomform.php');
 
     $contexts = new \core_question\local\bank\question_edit_contexts($args['context']);
     $formoptions = [
@@ -2473,7 +2470,7 @@ function mod_quiz_output_fragment_add_random_question_form($args) {
         'cmid' => $args['cmid']
     ];
 
-    $form = new quiz_add_random_form(
+    $form = new add_random_form(
         new \moodle_url('/mod/quiz/addrandom.php'),
         $formoptions,
         'post',

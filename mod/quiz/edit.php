@@ -40,10 +40,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\quiz_settings;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-require_once($CFG->dirroot . '/mod/quiz/addrandomform.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
 // These params are only passed from page request to request while we stay on
@@ -63,7 +63,7 @@ $PAGE->set_secondary_active_tab("mod_quiz_edit");
 
 // Get the course object and related bits.
 $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
-$quizobj = new quiz($quiz, $cm, $course);
+$quizobj = new quiz_settings($quiz, $cm, $course);
 $structure = $quizobj->get_structure();
 
 // You need mod/quiz:manage in addition to question capabilities to access this page.

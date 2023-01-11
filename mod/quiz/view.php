@@ -23,6 +23,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\access_manager;
+use mod_quiz\output\renderer;
+use mod_quiz\output\view_page;
+use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir.'/gradelib.php');
@@ -35,20 +40,20 @@ $q = optional_param('q',  0, PARAM_INT);  // Quiz ID.
 
 if ($id) {
     if (!$cm = get_coursemodule_from_id('quiz', $id)) {
-        throw new \moodle_exception('invalidcoursemodule');
+        throw new moodle_exception('invalidcoursemodule');
     }
-    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-        throw new \moodle_exception('coursemisconf');
+    if (!$course = $DB->get_record('course', ['id' => $cm->course])) {
+        throw new moodle_exception('coursemisconf');
     }
 } else {
-    if (!$quiz = $DB->get_record('quiz', array('id' => $q))) {
-        throw new \moodle_exception('invalidquizid', 'quiz');
+    if (!$quiz = $DB->get_record('quiz', ['id' => $q])) {
+        throw new moodle_exception('invalidquizid', 'quiz');
     }
-    if (!$course = $DB->get_record('course', array('id' => $quiz->course))) {
-        throw new \moodle_exception('invalidcourseid');
+    if (!$course = $DB->get_record('course', ['id' => $quiz->course])) {
+        throw new moodle_exception('invalidcourseid');
     }
     if (!$cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
-        throw new \moodle_exception('invalidcoursemodule');
+        throw new moodle_exception('invalidcoursemodule');
     }
 }
 
@@ -64,8 +69,8 @@ $canpreview = has_capability('mod/quiz:preview', $context);
 
 // Create an object to manage all the other (non-roles) access rules.
 $timenow = time();
-$quizobj = quiz::create($cm->instance, $USER->id);
-$accessmanager = new quiz_access_manager($quizobj, $timenow,
+$quizobj = quiz_settings::create($cm->instance, $USER->id);
+$accessmanager = new access_manager($quizobj, $timenow,
         has_capability('mod/quiz:ignoretimelimits', $context, null, false));
 $quiz = $quizobj->get_quiz();
 
@@ -73,10 +78,10 @@ $quiz = $quizobj->get_quiz();
 quiz_view($quiz, $course, $cm, $context);
 
 // Initialize $PAGE, compute blocks.
-$PAGE->set_url('/mod/quiz/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/quiz/view.php', ['id' => $cm->id]);
 
 // Create view object which collects all the information the renderer will need.
-$viewobj = new mod_quiz_view_object();
+$viewobj = new view_page();
 $viewobj->accessmanager = $accessmanager;
 $viewobj->canreviewmine = $canreviewmine || $canpreview;
 
@@ -103,7 +108,7 @@ if ($unfinishedattempt = quiz_get_user_attempt_unfinished($quiz->id, $USER->id))
 $numattempts = count($attempts);
 
 $viewobj->attempts = $attempts;
-$viewobj->attemptobjs = array();
+$viewobj->attemptobjs = [];
 foreach ($attempts as $attempt) {
     $viewobj->attemptobjs[] = new quiz_attempt($attempt, $quiz, $cm, $course, false);
 }
@@ -147,7 +152,7 @@ if (html_is_blank($quiz->intro)) {
     $PAGE->activityheader->set_description('');
 }
 $PAGE->add_body_class('limitedwidth');
-/** @var mod_quiz_renderer $output */
+/** @var renderer $output */
 $output = $PAGE->get_renderer('mod_quiz');
 
 // Print table with existing attempts.
@@ -174,8 +179,8 @@ $viewobj->mygradeoverridden = $mygradeoverridden;
 $viewobj->gradebookfeedback = $gradebookfeedback;
 $viewobj->lastfinishedattempt = $lastfinishedattempt;
 $viewobj->canedit = has_capability('mod/quiz:manage', $context);
-$viewobj->editurl = new moodle_url('/mod/quiz/edit.php', array('cmid' => $cm->id));
-$viewobj->backtocourseurl = new moodle_url('/course/view.php', array('id' => $course->id));
+$viewobj->editurl = new moodle_url('/mod/quiz/edit.php', ['cmid' => $cm->id]);
+$viewobj->backtocourseurl = new moodle_url('/course/view.php', ['id' => $course->id]);
 $viewobj->startattempturl = $quizobj->start_attempt_url();
 
 if ($accessmanager->is_preflight_check_required($unfinishedattemptid)) {
@@ -200,9 +205,9 @@ if ($item && grade_floats_different($item->gradepass, 0)) {
     $viewobj->infomessages[] = get_string('gradetopassoutof', 'quiz', $a);
 }
 
-// Determine wheter a start attempt button should be displayed.
+// Determine whether a start attempt button should be displayed.
 $viewobj->quizhasquestions = $quizobj->has_questions();
-$viewobj->preventmessages = array();
+$viewobj->preventmessages = [];
 if (!$viewobj->quizhasquestions) {
     $viewobj->buttontext = '';
 

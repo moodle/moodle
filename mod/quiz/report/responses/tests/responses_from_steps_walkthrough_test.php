@@ -16,8 +16,8 @@
 
 namespace quiz_responses;
 
+use mod_quiz\quiz_attempt;
 use question_bank;
-use quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 

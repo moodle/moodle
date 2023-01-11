@@ -24,6 +24,7 @@
 
 use mod_quiz\local\reports\attempts_report;
 use mod_quiz\question\bank\qbank_helper;
+use mod_quiz\quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 
