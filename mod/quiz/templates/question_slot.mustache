@@ -36,7 +36,7 @@
     </div>
     <span class="actions">
         {{#versionselection}}
-            <label for="version-{{slotid}}"> </label>
+            <label for="version-{{slotid}}" class="sr-only">{{#str}}question_version, question{{/str}}</label>
             <select id="version-{{slotid}}" name="version" class="form-control mr-2 h-auto version-selection"
             data-action="mod_quiz-select_slot" data-slot-id="{{slotid}}">
                 {{#versionoption}}
