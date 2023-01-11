@@ -914,6 +914,17 @@ class settings {
                 $item,
                 $extendedcapabilitiessetting
             );
+            $item = new admin_setting_configcheckbox(
+                'bigbluebuttonbn_profile_picture_enabled',
+                get_string('config_profile_picture_enabled', 'bigbluebuttonbn'),
+                get_string('config_profile_picture_enabled_description', 'bigbluebuttonbn'),
+                false
+            );
+            $this->add_conditional_element(
+                'profile_picture_enabled',
+                $item,
+                $extendedcapabilitiessetting
+            );
         }
         $this->admin->add($this->parent, $extendedcapabilitiessetting);
         // Configuration for extended BN capabilities should go here.

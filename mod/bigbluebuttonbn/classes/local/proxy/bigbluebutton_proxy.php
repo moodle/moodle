@@ -26,6 +26,7 @@ use mod_bigbluebuttonbn\local\exceptions\bigbluebutton_exception;
 use mod_bigbluebuttonbn\local\exceptions\server_not_available_exception;
 use moodle_url;
 use stdClass;
+use user_picture;
 
 /**
  * The bigbluebutton proxy class.
@@ -120,7 +121,27 @@ class bigbluebutton_proxy extends proxy_base {
         if (!empty(trim($currentlang))) {
             $data['userdata-bbb_override_default_locale'] = $currentlang;
         }
+        if ($instance->is_profile_picture_enabled()) {
+            $user = $instance->get_user();
+            if (!empty($user->picture)) {
+                $data['avatarURL'] = self::get_avatar_url($user)->out(false);
+            }
+        }
         return self::action_url('join', $data);
+    }
+
+    /**
+     * Get user avatar URL
+     *
+     * @param object $user
+     * @return moodle_url
+     */
+    private static function get_avatar_url(object $user): moodle_url {
+        global $PAGE;
+        $userpicture = new user_picture($user);
+        $userpicture->includetoken = true;
+        $userpicture->size = 3; // Size f3.
+        return $userpicture->get_url($PAGE);
     }
 
     /**
