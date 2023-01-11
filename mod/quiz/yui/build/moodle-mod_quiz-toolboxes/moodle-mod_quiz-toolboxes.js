@@ -929,7 +929,7 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
 
         // Create the confirmation dialogue.
         var confirm = new M.core.confirm({
-            question: M.util.get_string('confirmremovesectionheading', 'quiz', activity.get('aria-label')),
+            question: M.util.get_string('confirmremovesectionheading', 'quiz', activity.getData('sectionname')),
             modal: true
         });
 
@@ -1027,7 +1027,18 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
         var spinner = M.util.add_spinner(Y, activity.one(SELECTOR.INSTANCESECTIONAREA));
         this.edit_section_title_clear(activity);
         if (newtext !== null && newtext !== oldtext) {
-            activity.one(SELECTOR.INSTANCESECTION).setContent(newtext);
+            var instancesection = activity.one(SELECTOR.INSTANCESECTION);
+            var instancesectiontext = newtext;
+            if (newtext.trim() === '') {
+                // Add a sr-only default section heading text to make sure we don't end up with an empty section heading.
+                instancesectiontext = M.util.get_string('sectionnoname', 'quiz');
+                instancesection.addClass('sr-only');
+            } else {
+                // Show the section heading when a non-empty value is set.
+                instancesection.removeClass('sr-only');
+            }
+            instancesection.setContent(instancesectiontext);
+
             var data = {
                 'class':      'section',
                 'field':      'updatesectiontitle',
@@ -1036,7 +1047,21 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
             };
             this.send_request(data, spinner, function(response) {
                 if (response) {
-                    activity.one(SELECTOR.INSTANCESECTION).setContent(response.instancesection);
+                    // Set the content of the section heading if for some reason the response is different from the new text.
+                    // e.g. filters were applied, the update failed, etc.
+                    if (newtext !== response.instancesection) {
+                        if (response.instancesection.trim() === '') {
+                            // Add a sr-only default section heading text.
+                            instancesectiontext = M.util.get_string('sectionnoname', 'quiz');
+                            instancesection.addClass('sr-only');
+                        } else {
+                            instancesectiontext = response.instancesection;
+                            // Show the section heading when a non-empty value is set.
+                            instancesection.removeClass('sr-only');
+                        }
+                        instancesection.setContent(instancesectiontext);
+                    }
+
                     activity.one(SELECTOR.EDITSECTIONICON).set('title',
                             M.util.get_string('sectionheadingedit', 'quiz', response.instancesection));
                     activity.one(SELECTOR.EDITSECTIONICON).set('alt',

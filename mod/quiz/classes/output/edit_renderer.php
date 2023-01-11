@@ -367,7 +367,7 @@ class edit_renderer extends \plugin_renderer_base {
         if ($structure->get_section_count() == 1) {
             $class .= ' only-one-section';
         }
-        return html_writer::start_tag('ul', array('class' => $class));
+        return html_writer::start_tag('ul', array('class' => $class, 'role' => 'presentation'));
     }
 
     /**
@@ -394,24 +394,32 @@ class edit_renderer extends \plugin_renderer_base {
             $sectionstyle = ' only-has-one-slot';
         }
 
+        if ($section->heading) {
+            $sectionheadingtext = format_string($section->heading);
+            $sectionheading = html_writer::span($sectionheadingtext, 'instancesection');
+        } else {
+            // Use a sr-only default section heading, so we don't end up with an empty section heading.
+            $sectionheadingtext = get_string('sectionnoname', 'quiz');
+            $sectionheading = html_writer::span($sectionheadingtext, 'instancesection sr-only');
+        }
+
         $output .= html_writer::start_tag('li', array('id' => 'section-'.$section->id,
-            'class' => 'section main clearfix'.$sectionstyle, 'role' => 'region',
-            'aria-label' => $section->heading));
+            'class' => 'section main clearfix'.$sectionstyle, 'role' => 'presentation',
+            'data-sectionname' => $sectionheadingtext));
 
         $output .= html_writer::start_div('content');
 
         $output .= html_writer::start_div('section-heading');
 
-        $headingtext = $this->heading(html_writer::span(
-                html_writer::span($section->heading, 'instancesection'), 'sectioninstance'), 3);
+        $headingtext = $this->heading(html_writer::span($sectionheading, 'sectioninstance'), 3);
 
         if (!$structure->can_be_edited()) {
             $editsectionheadingicon = '';
         } else {
             $editsectionheadingicon = html_writer::link(new \moodle_url('#'),
-                $this->pix_icon('t/editstring', get_string('sectionheadingedit', 'quiz', $section->heading),
+                $this->pix_icon('t/editstring', get_string('sectionheadingedit', 'quiz', $sectionheadingtext),
                         'moodle', array('class' => 'editicon visibleifjs')),
-                        array('class' => 'editing_section', 'data-action' => 'edit_section_title'));
+                        array('class' => 'editing_section', 'data-action' => 'edit_section_title', 'role' => 'button'));
         }
         $output .= html_writer::div($headingtext . $editsectionheadingicon, 'instancesectioncontainer');
 
@@ -482,7 +490,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function section_remove_icon($section) {
-        $title = get_string('sectionheadingremove', 'quiz', $section->heading);
+        $title = get_string('sectionheadingremove', 'quiz', format_string($section->heading));
         $url = new \moodle_url('/mod/quiz/edit.php',
                 array('sesskey' => sesskey(), 'removesection' => '1', 'sectionid' => $section->id));
         $image = $this->pix_icon('t/delete', $title);
@@ -776,12 +784,15 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function get_checkbox_render(structure $structure, int $slot) : string {
+        $questionslot = $structure->get_displayed_number_for_slot($slot);
         $checkbox = new \core\output\checkbox_toggleall($this->togglegroup, false,
             [
-                'id' => 'selectquestion-' . $structure->get_displayed_number_for_slot($slot),
+                'id' => 'selectquestion-' . $questionslot,
                 'name' => 'selectquestion[]',
-                'value' => $structure->get_displayed_number_for_slot($slot),
+                'value' => $questionslot,
                 'classes' => 'select-multiple-checkbox',
+                'label' => get_string('selectquestionslot', 'quiz', $questionslot),
+                'labelclasses' => 'sr-only',
             ]);
 
         return $this->render($checkbox);
@@ -1232,6 +1243,7 @@ class edit_renderer extends \plugin_renderer_base {
                 'numquestionsx',
                 'sectionheadingedit',
                 'sectionheadingremove',
+                'sectionnoname',
                 'removepagebreak',
                 'questiondependencyadd',
                 'questiondependencyfree',
