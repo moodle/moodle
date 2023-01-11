@@ -980,8 +980,9 @@ class core_user {
             'default' => get_default_home_page(),
             'choices' => $choices,
             'permissioncallback' => function ($user, $preferencename) {
-                global $CFG;
-                return (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_USER));
+                global $CFG, $USER;
+                return $user->id == $USER->id &&
+                    (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_USER));
             }
         ];
 
