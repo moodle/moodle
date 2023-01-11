@@ -112,23 +112,6 @@ class message_sent extends base {
     }
 
     /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        // The add_to_log function was only ever called when we sent a message from one user to another. We do not want
-        // to return the legacy log data if we are sending a system message, so check that the userid is valid.
-        if (\core_user::is_real_user($this->userid)) {
-            $messageid = $this->other['messageid'] ?? $this->objectid; // For BC we may have 'messageid' in other.
-            return array(SITEID, 'message', 'write', 'index.php?user=' . $this->userid . '&id=' . $this->relateduserid .
-                '&history=1#m' . $messageid, $this->userid);
-        }
-
-        return null;
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

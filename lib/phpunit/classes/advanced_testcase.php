@@ -450,9 +450,6 @@ abstract class advanced_testcase extends base_testcase {
         // Test event methods should not use event->context.
         $event->get_url();
         $event->get_description();
-        $event->get_legacy_eventname();
-        phpunit_event_mock::testable_get_legacy_eventdata($event);
-        phpunit_event_mock::testable_get_legacy_logdata($event);
 
         // Restore event->context.
         phpunit_event_mock::testable_set_event_context($event, $eventcontext);

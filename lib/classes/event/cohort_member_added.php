@@ -75,27 +75,6 @@ class cohort_member_added extends base {
     }
 
     /**
-     * Return legacy event name.
-     *
-     * @return string legacy event name.
-     */
-    public static function get_legacy_eventname() {
-        return 'cohort_member_added';
-    }
-
-    /**
-     * Return legacy event data.
-     *
-     * @return \stdClass
-     */
-    protected function get_legacy_eventdata() {
-        $data = new \stdClass();
-        $data->cohortid = $this->objectid;
-        $data->userid = $this->relateduserid;
-        return $data;
-    }
-
-    /**
      * Custom validations.
      *
      * @throws \coding_exception

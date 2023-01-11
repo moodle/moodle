@@ -706,39 +706,6 @@ abstract class base implements \IteratorAggregate {
     }
 
     /**
-     * Does this event replace legacy event?
-     *
-     * Note: do not use directly!
-     *
-     * @return null|string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return null;
-    }
-
-    /**
-     * Legacy event data if get_legacy_eventname() is not empty.
-     *
-     * Note: do not use directly!
-     *
-     * @return mixed
-     */
-    protected function get_legacy_eventdata() {
-        return null;
-    }
-
-    /**
-     * Doest this event replace add_to_log() statement?
-     *
-     * Note: do not use directly!
-     *
-     * @return null|array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        return null;
-    }
-
-    /**
      * Validate all properties right before triggering the event.
      *
      * This throws coding exceptions for fatal problems and debugging for minor problems.
@@ -817,22 +784,6 @@ abstract class base implements \IteratorAggregate {
         $this->validate_before_trigger();
 
         $this->triggered = true;
-
-        if (isset($CFG->loglifetime) and $CFG->loglifetime != -1) {
-            if ($data = $this->get_legacy_logdata()) {
-                $manager = get_log_manager();
-                if (method_exists($manager, 'legacy_add_to_log')) {
-                    if (is_array($data[0])) {
-                        // Some events require several entries in 'log' table.
-                        foreach ($data as $d) {
-                            call_user_func_array(array($manager, 'legacy_add_to_log'), $d);
-                        }
-                    } else {
-                        call_user_func_array(array($manager, 'legacy_add_to_log'), $data);
-                    }
-                }
-            }
-        }
 
         if (PHPUNIT_TEST and \phpunit_util::is_redirecting_events()) {
             $this->dispatched = true;

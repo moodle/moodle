@@ -2532,10 +2532,6 @@ EOF;
         // Test Event.
         $this->assertInstanceOf('\core\event\user_deleted', $event);
         $this->assertSame($user->id, $event->objectid);
-        $this->assertSame('user_deleted', $event->get_legacy_eventname());
-        $this->assertEventLegacyData($user, $event);
-        $expectedlogdata = array(SITEID, 'user', 'delete', "view.php?id=$user->id", $user->firstname.' '.$user->lastname);
-        $this->assertEventLegacyLogData($expectedlogdata, $event);
         $eventdata = $event->get_data();
         $this->assertSame($eventdata['other']['username'], $user->username);
         $this->assertSame($eventdata['other']['email'], $user->email);
@@ -3317,11 +3313,6 @@ EOF;
         // Test Event.
         $this->assertInstanceOf('\core\event\user_loggedout', $event);
         $this->assertSame($user->id, $event->objectid);
-        $this->assertSame('user_logout', $event->get_legacy_eventname());
-        $this->assertEventLegacyData($user, $event);
-        $expectedlogdata = array(SITEID, 'user', 'logout', 'view.php?id='.$event->objectid.'&course='.SITEID, $event->objectid, 0,
-            $event->objectid);
-        $this->assertEventLegacyLogData($expectedlogdata, $event);
         $this->assertEventContextNotUsed($event);
     }
 

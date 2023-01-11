@@ -103,20 +103,6 @@ class tag_added extends base {
     }
 
     /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        if ($this->other['itemtype'] === 'course') {
-            $url = 'tag/search.php?query=' . urlencode($this->other['tagrawname']);
-            return array($this->courseid, 'coursetags', 'add', $url, 'Course tagged');
-        }
-
-        return null;
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception when validation does not pass.

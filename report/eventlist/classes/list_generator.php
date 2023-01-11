@@ -302,7 +302,6 @@ class report_eventlist_list_generator {
 
         $eventdata[$eventfullpath]['crud'] = self::get_crud_string($eventdata[$eventfullpath]['crud']);
         $eventdata[$eventfullpath]['edulevel'] = self::get_edulevel_string($eventdata[$eventfullpath]['edulevel']);
-        $eventdata[$eventfullpath]['legacyevent'] = $eventfullpath::get_legacy_eventname();
 
         // Mess around getting since information.
         $ref = new \ReflectionClass($eventdata[$eventfullpath]['eventname']);

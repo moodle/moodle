@@ -46,17 +46,6 @@ class message_sent extends \core\event\base {
     }
 
     /**
-     * Return legacy log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        $message = $this->get_record_snapshot('chat_messages', $this->objectid);
-        return array($this->courseid, 'chat', 'talk', 'view.php?id=' . $this->contextinstanceid,
-            $message->chatid, $this->contextinstanceid, $this->relateduserid);
-    }
-
-    /**
      * Return localised event name.
      *
      * @return string

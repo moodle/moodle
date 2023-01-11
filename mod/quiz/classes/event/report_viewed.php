@@ -83,16 +83,6 @@ class report_viewed extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return [$this->courseid, 'quiz', 'report', 'report.php?id=' . $this->contextinstanceid . '&mode=' .
-            $this->other['reportname'], $this->other['quizid'], $this->contextinstanceid];
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception
