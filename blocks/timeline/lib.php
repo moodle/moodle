@@ -43,14 +43,17 @@ define('BLOCK_TIMELINE_ACTIVITIES_LIMIT_DEFAULT', 5);
 /**
  * Returns the name of the user preferences as well as the details this plugin uses.
  *
- * @return array
+ * @uses core_user::is_current_user
+ *
+ * @return array[]
  */
-function block_timeline_user_preferences() {
+function block_timeline_user_preferences(): array {
     $preferences['block_timeline_user_sort_preference'] = array(
         'null' => NULL_NOT_ALLOWED,
         'default' => BLOCK_TIMELINE_SORT_BY_DATES,
         'type' => PARAM_ALPHA,
-        'choices' => array(BLOCK_TIMELINE_SORT_BY_DATES, BLOCK_TIMELINE_SORT_BY_COURSES)
+        'choices' => array(BLOCK_TIMELINE_SORT_BY_DATES, BLOCK_TIMELINE_SORT_BY_COURSES),
+        'permissioncallback' => [core_user::class, 'is_current_user'],
     );
 
     $preferences['block_timeline_user_filter_preference'] = array(
@@ -64,13 +67,15 @@ function block_timeline_user_preferences() {
                 BLOCK_TIMELINE_FILTER_BY_30_DAYS,
                 BLOCK_TIMELINE_FILTER_BY_3_MONTHS,
                 BLOCK_TIMELINE_FILTER_BY_6_MONTHS
-        )
+        ),
+        'permissioncallback' => [core_user::class, 'is_current_user'],
     );
 
     $preferences['block_timeline_user_limit_preference'] = array(
         'null' => NULL_NOT_ALLOWED,
         'default' => BLOCK_TIMELINE_ACTIVITIES_LIMIT_DEFAULT,
-        'type' => PARAM_INT
+        'type' => PARAM_INT,
+        'permissioncallback' => [core_user::class, 'is_current_user'],
     );
 
     return $preferences;
