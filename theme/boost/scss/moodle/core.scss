@@ -2560,6 +2560,7 @@ input[disabled] {
 
 .custom-select {
     width: auto;
+    max-width: 100%;
 }
 
 .fade.in {
@@ -2983,4 +2984,18 @@ blockquote {
     padding-left: 1rem;
     color: $gray-700;
     border-left: 5px solid $gray-400;
+}
+
+/** Prevent long strings exceeding page width */
+.page-header-headings,
+.coursename,
+.categoryname,
+.breadcrumb-item,
+.dropdown-item {
+
+    &:not(.text-truncate) {
+        word-break: normal;
+        overflow-wrap: anywhere;
+        white-space: normal;
+    }
 }

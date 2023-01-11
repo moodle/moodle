@@ -11931,7 +11931,8 @@ input[disabled] {
   cursor: not-allowed; }
 
 .custom-select {
-  width: auto; }
+  width: auto;
+  max-width: 100%; }
 
 .fade.in {
   opacity: 1; }
@@ -12295,6 +12296,16 @@ blockquote {
   padding-left: 1rem;
   color: #495057;
   border-left: 5px solid #ced4da; }
+
+/** Prevent long strings exceeding page width */
+.page-header-headings:not(.text-truncate),
+.coursename:not(.text-truncate),
+.categoryname:not(.text-truncate),
+.breadcrumb-item:not(.text-truncate),
+.dropdown-item:not(.text-truncate) {
+  word-break: normal;
+  overflow-wrap: anywhere;
+  white-space: normal; }
 
 .icon {
   font-size: 16px;
@@ -13682,7 +13693,8 @@ table.calendartable caption {
     margin: 0; }
 
 .cal_courses_flt {
-  color: #6a737b; }
+  color: #6a737b;
+  max-width: 75%; }
 
 .content-bank-container .cb-content-wrapper {
   padding: 0.5rem;
