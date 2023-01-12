@@ -1,4 +1,4 @@
-@editor @editor_tiny
+@editor @editor_tiny @tiny_accessibilitychecker
 Feature: Tiny editor accessibility checker
   To write accessible content in Tiny, I need to check for accessibility warnings.
 
@@ -41,5 +41,13 @@ Feature: Tiny editor accessibility checker
     And I set the field "Height" to "1"
     And I click on "This image is decorative only" "checkbox"
     When I press "Save image"
+    And I click on the "Tools > Accessibility checker" menu item for the "Description" TinyMCE editor
+    Then I should see "Congratulations, no accessibility issues found!" in the "Accessibility checker" "dialogue"
+
+  @javascript
+  Scenario: Placeholder element will not be assessed by accessibility checker
+    Given I log in as "admin"
+    And I open my profile in edit mode
+    When I set the field "Description" to "<p>Some plain text</p><img src='/broken-image' width='1' height='1' class='behat-tinymce-placeholder'/><p>Some more text</p>"
     And I click on the "Tools > Accessibility checker" menu item for the "Description" TinyMCE editor
     Then I should see "Congratulations, no accessibility issues found!" in the "Accessibility checker" "dialogue"
