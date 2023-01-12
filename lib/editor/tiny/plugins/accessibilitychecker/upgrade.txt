@@ -1,0 +1,7 @@
+This files describes API changes in tiny_accessibilitychecker - TinyMCE Accessibility checker plugin,
+information provided here is intended especially for developers.
+
+=== 4.2 ===
+
+* The placeholder elements which were registered in placeholderSelectors in editor_tiny/options will not be
+  assessed by the accessibility checker plugin.
