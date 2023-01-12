@@ -82,7 +82,7 @@ class recalculate extends \core\task\scheduled_task {
             mtrace("  Examining quiz '$attempt->quizname' ($attempt->quizid) in course " .
                     "$attempt->courseshortname ($attempt->courseid) with most recent attempt at " .
                     userdate($attempt->mostrecentattempttime, $dateformat) . ".");
-            $quizobj = quiz_settings::create($attempt->quiz);
+            $quizobj = quiz_settings::create($attempt->quizid);
             $quiz = $quizobj->get_quiz();
             // Hash code for question stats option in question bank.
             $qubaids = quiz_statistics_qubaids_condition($quiz->id, new \core\dml\sql_join(), $quiz->grademethod);
