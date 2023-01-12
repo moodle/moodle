@@ -9308,6 +9308,25 @@ function mtrace($string, $eol="\n", $sleep=0) {
 }
 
 /**
+ * Helper to {@see mtrace()} an exception or throwable, including all relevant information.
+ *
+ * @param Throwable $e the error to ouptput.
+ */
+function mtrace_exception(Throwable $e): void {
+    $info = get_exception_info($e);
+
+    $message = $info->message;
+    if ($info->debuginfo) {
+        $message .= "\n\n" . $info->debuginfo;
+    }
+    if ($info->backtrace) {
+        $message .= "\n\n" . format_backtrace($info->backtrace, true);
+    }
+
+    mtrace($message);
+}
+
+/**
  * Replace 1 or more slashes or backslashes to 1 slash
  *
  * @param string $path The path to strip
