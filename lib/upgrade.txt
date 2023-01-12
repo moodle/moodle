@@ -24,6 +24,7 @@ information provided here is intended especially for developers.
 * In outputcomponents.php, initials_bar() can now be rendered in a smaller (mini) way. This provides purely the
   initials bar without the bootstrapping and form handling on each initials bar. If you use this mini render,
   you'll need to implement your own form handling. Example usage can be found within the grader report.
+* There is a new helper function mtrace_exception to help with reporting exceptions you have caught in scheduled tasks.
 
 === 4.1 ===
 
