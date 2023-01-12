@@ -1574,3 +1574,7 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         }
     }
 }
+
+.bulkenabled .bulk-hidden {
+    display: none !important; // stylelint-disable-line declaration-no-important
+}
