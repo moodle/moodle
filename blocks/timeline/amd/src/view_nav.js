@@ -25,17 +25,17 @@ define(
     'jquery',
     'core/custom_interaction_events',
     'block_timeline/view',
-    'core/ajax',
     'core/notification',
-    'core/utils'
+    'core/utils',
+    'core_user/repository'
 ],
 function(
     $,
     CustomEvents,
     View,
-    Ajax,
     Notification,
-    Utils
+    Utils,
+    UserRepository,
 ) {
 
     var SELECTORS = {
@@ -47,29 +47,6 @@ function(
         TIMELINE_SEARCH_INPUT: '[data-action="search"]',
         TIMELINE_SEARCH_CLEAR_ICON: '[data-action="clearsearch"]',
         NO_COURSES_EMPTY_MESSAGE: '[data-region="no-courses-empty-message"]',
-    };
-
-    /**
-     * Generic handler to persist user preferences
-     *
-     * @param {string} type The name of the attribute you're updating
-     * @param {string} value The value of the attribute you're updating
-     */
-    var updateUserPreferences = function(type, value) {
-        var request = {
-            methodname: 'core_user_update_user_preferences',
-            args: {
-                preferences: [
-                    {
-                        type: type,
-                        value: value
-                    }
-                ]
-            }
-        };
-
-        Ajax.call([request])[0]
-            .fail(Notification.exception);
     };
 
     /**
@@ -89,7 +66,8 @@ function(
                 // Update the user preference
                 var filtername = $(e.currentTarget).data('filtername');
                 var type = 'block_timeline_user_filter_preference';
-                updateUserPreferences(type, filtername);
+                UserRepository.setUserPreference(type, filtername)
+                    .catch(Notification.exception);
 
                 var option = $(e.target).closest(SELECTORS.TIMELINE_DAY_FILTER_OPTION);
 
@@ -151,7 +129,8 @@ function(
         viewSelector.on(CustomEvents.events.activate, "[data-toggle='tab']", function(e) {
             var filtername = $(e.currentTarget).data('filtername');
             var type = 'block_timeline_user_sort_preference';
-            updateUserPreferences(type, filtername);
+            UserRepository.setUserPreference(type, filtername)
+                .catch(Notification.exception);
         });
     };
 

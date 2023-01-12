@@ -21,8 +21,8 @@
  * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/str', 'core/notification'],
-        function($, Ajax, Str, Notification) {
+define(['jquery', 'core/str', 'core/notification', 'core_user/repository'],
+        function($, Str, Notification, UserRepository) {
 
     /**
      * Selectors.
@@ -46,19 +46,9 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification'],
     var changeVisibility = function(action, userid) {
 
         var value = action == "show" ? 1 : 0;
-        var preferences = [{
-            'name': 'block_online_users_uservisibility',
-            'value': value,
-            'userid': userid
-        }];
 
-        var request = {
-            methodname: 'core_user_set_user_preferences',
-            args: {
-                preferences: preferences
-            }
-        };
-        Ajax.call([request])[0].then(function(data) {
+        UserRepository.setUserPreference('block_online_users_uservisibility', value, userid)
+        .then(data => {
             if (data.saved) {
                 var newAction = oppositeAction(action);
                 changeVisibilityLinkAttr(newAction);
