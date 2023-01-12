@@ -74,8 +74,8 @@ class user_profile_fields {
      * @return profile_field_base[]
      */
     private function get_user_profile_fields(): array {
-        return array_filter(profile_get_user_fields_with_data(0), static function($profilefield): bool {
-            return (int)$profilefield->field->visible === (int)PROFILE_VISIBLE_ALL;
+        return array_filter(profile_get_user_fields_with_data(0), static function(profile_field_base $profilefield): bool {
+            return $profilefield->is_visible();
         });
     }
 
