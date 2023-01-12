@@ -127,7 +127,7 @@ Feature: Users can view and search database entries
     Then I should see "Student entry 1"
     And I should not see "Student entry 2"
     And I set the field "Author first name" to ""
-    And I set the field "Author surname" to "2"
+    And I set the field "Author last name" to "2"
     And I press "Save settings"
     And I should not see "Student entry 1"
     And I should see "Student entry 2"
