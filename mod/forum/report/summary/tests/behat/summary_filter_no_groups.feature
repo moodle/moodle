@@ -54,7 +54,7 @@ Feature: Groups report filter is not available if no groups exist
     Then "Groups" "button" should not exist
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions |
-      | First name / Surname | -3-         |
+      | First name / Last name | -3-         |
       | Teacher 1            | 2           |
       | Student 1            | 1           |
       | Student 2            | 0           |

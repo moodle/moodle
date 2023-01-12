@@ -29,4 +29,4 @@ Feature: Create a glossary entry.
       | Definition | Dream is the start of a journey |
       | Keyword(s) | "                               |
     And I press "Save changes"
-    Then I should see "Some/All of the entered keywords cannot be used as they are reserved."
+    Then I should see "One or more keywords contain a special character which cannot be used."

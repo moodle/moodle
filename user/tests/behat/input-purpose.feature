@@ -20,7 +20,7 @@ Feature: The purpose of each input field collecting information about the user c
     And I expand all fieldsets
     Then the field "Username" should not have purpose "username"
     And the field "First name" should not have purpose "given-name"
-    And the field "Surname" should not have purpose "family-name"
+    And the field "Last name" should not have purpose "family-name"
     And the field "Email" should not have purpose "email"
     And the field "Select a country" should not have purpose "country"
     And I press "Cancel"
@@ -34,7 +34,7 @@ Feature: The purpose of each input field collecting information about the user c
     And I click on "Edit profile" "link" in the "region-main" "region"
     And I expand all fieldsets
     Then the field "First name" should have purpose "given-name"
-    And the field "Surname" should have purpose "family-name"
+    And the field "Last name" should have purpose "family-name"
     And the field "Email" should have purpose "email"
     And the field "Select a country" should have purpose "country"
     And I press "Cancel"

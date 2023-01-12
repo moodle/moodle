@@ -22,7 +22,7 @@ Feature: Notification shown when user edit profile or preferences
     When I click on "Edit profile" "link" in the "region-main" "region"
     And I should see "Unicorn"
     And I should see "1"
-    Then I set the field "Surname" to "Lil"
+    Then I set the field "Last name" to "Lil"
     And I click on "Update profile" "button"
     And I should see "Changes saved"
     And I press "Dismiss this notification"
@@ -43,7 +43,7 @@ Feature: Notification shown when user edit profile or preferences
     When I click on "Edit profile" "link" in the "region-main" "region"
     And I should see "Unicorn"
     And I should see "1"
-    Then I set the field "Surname" to "Lil"
+    Then I set the field "Last name" to "Lil"
     And I click on "Cancel" "button"
     And I should not see "Changes saved"
 
@@ -53,6 +53,6 @@ Feature: Notification shown when user edit profile or preferences
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     When I click on "Edit" "link" in the "Unicorn 1" "table_row"
     And I expand all fieldsets
-    Then I set the field "Surname" to "Lil"
+    Then I set the field "Last name" to "Lil"
     And I click on "Update profile" "button"
     And I should see "Changes saved"

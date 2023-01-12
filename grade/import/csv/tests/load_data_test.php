@@ -34,17 +34,17 @@ require_once($CFG->libdir . '/grade/tests/fixtures/lib.php');
 class load_data_test extends \grade_base_testcase {
 
     /** @var string $oktext Text to be imported. This data should have no issues being imported. */
-    protected $oktext = '"First name",Surname,"ID number",Institution,Department,"Email address","Assignment: Assignment for grape group", "Feedback: Assignment for grape group","Assignment: Second new grade item","Course total"
+    protected $oktext = '"First name","Last name","ID number",Institution,Department,"Email address","Assignment: Assignment for grape group", "Feedback: Assignment for grape group","Assignment: Second new grade item","Course total"
 Anne,Able,,"Moodle HQ","Rock on!",student7@example.com,56.00,"We welcome feedback",,56.00
 Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,45.0,75.00';
 
     /** @var string $badtext Text to be imported. This data has an extra column and should not succeed in being imported. */
-    protected $badtext = '"First name",Surname,"ID number",Institution,Department,"Email address","Assignment: Assignment for grape group","Course total"
+    protected $badtext = '"First name","Last name","ID number",Institution,Department,"Email address","Assignment: Assignment for grape group","Course total"
 Anne,Able,,"Moodle HQ","Rock on!",student7@example.com,56.00,56.00,78.00
 Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,75.00';
 
     /** @var string $csvtext CSV data to be imported with Last download from this course column. */
-    protected $csvtext = '"First name",Surname,"ID number",Institution,Department,"Email address","Assignment: Assignment for grape group", "Feedback: Assignment for grape group","Course total","Last downloaded from this course"
+    protected $csvtext = '"First name","Last name","ID number",Institution,Department,"Email address","Assignment: Assignment for grape group", "Feedback: Assignment for grape group","Course total","Last downloaded from this course"
 Anne,Able,,"Moodle HQ","Rock on!",student7@example.com,56.00,"We welcome feedback",56.00,{exportdate}
 Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdate}';
 
@@ -121,7 +121,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
 
         $expectedheaders = array(
             'First name',
-            'Surname',
+            'Last name',
             'ID number',
             'Institution',
             'Department',

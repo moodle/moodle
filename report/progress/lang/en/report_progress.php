@@ -25,7 +25,7 @@
 
 $string['pluginname'] = 'Activity completion';
 $string['activityorder'] = 'Activity order';
-$string['activitysection'] = 'Activity section';
+$string['activitysection'] = 'Section';
 $string['allactivitiesandresources'] = 'All activities and resources';
 $string['alphabetical'] = 'Alphabetical ';
 $string['include'] = 'Include';

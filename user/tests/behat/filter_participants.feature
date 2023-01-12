@@ -617,7 +617,7 @@ Feature: Course participants can be filtered
     And I should see "Student 4" in the "participants" "table"
     And I should not see "Patricia Pea" in the "participants" "table"
 
-    When I click on "Surname" "link"
+    When I click on "Last name" "link"
     Then I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"

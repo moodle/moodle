@@ -93,7 +93,7 @@ Feature: We can use Single view
     And I press "Save"
     Then I should see "Grades were set for 1 items"
     And the following should exist in the "generaltable" table:
-        | First name (Alternate name) Surname | Grade |
+        | First name (Alternate name) Last name | Grade |
         | Ann, Jill, Grainne, Beauchamp | Very good |
     And I log out
     And I log in as "teacher2"

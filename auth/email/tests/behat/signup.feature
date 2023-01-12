@@ -18,7 +18,7 @@ Feature: User must accept policy when logging in and signing up
       | Email address | user1@address.invalid |
       | Email (again) | user1@address.invalid |
       | First name    | User1                 |
-      | Surname       | L1                    |
+      | Last name     | L1                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
     And I should see "An email should have been sent to your address at user1@address.invalid"
@@ -48,7 +48,7 @@ Feature: User must accept policy when logging in and signing up
       | Email address | user1@address.invalid |
       | Email (again) | user1@address.invalid |
       | First name    | User1                 |
-      | Surname       | L1                    |
+      | Last name     | L1                    |
       | I understand and agree | 1            |
     And I press "Create my new account"
     And I should see "Confirm your account"
@@ -81,7 +81,7 @@ Feature: User must accept policy when logging in and signing up
       | Email address | <email1> |
       | Email (again) | <email2> |
       | First name    | Jane    |
-      | Surname       | Doe     |
+      | Last name     | Doe     |
     And I press "Create my new account"
     Then I should <expect> "This email address is already registered. Perhaps you created an account in the past?"
     And I should <expect2> "Invalid email address"
