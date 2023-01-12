@@ -1538,4 +1538,36 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         // Try to retrieve other user private files info.
         core_user_external::get_private_files_info($user2->id);
     }
+
+    /**
+     * Test verifying that update_user_preferences prevents changes to the default homepage for other users.
+     */
+    public function test_update_user_preferences_homepage_permission_callback() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $user = self::getDataGenerator()->create_user();
+        $this->setUser($user);
+        $adminuser = get_admin();
+
+        // Allow user selection of the default homepage via preferences.
+        set_config('defaulthomepage', HOMEPAGE_USER);
+
+        // Try to save another user's home page preference which uses the permissioncallback.
+        $preferences = [
+            [
+                'name' => 'user_home_page_preference',
+                'value' => '3',
+                'userid' => $adminuser->id,
+            ]
+        ];
+        $result = core_user_external::set_user_preferences($preferences);
+        $result = \external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
+        $this->assertCount(1, $result['warnings']);
+        $this->assertCount(0, $result['saved']);
+
+        // Verify no change to the preference, checking from DB to avoid cache.
+        $this->assertEquals(null, $DB->get_field('user_preferences', 'value',
+            ['userid' => $adminuser->id, 'name' => 'user_home_page_preference']));
+    }
 }
