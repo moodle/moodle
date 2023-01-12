@@ -90,20 +90,12 @@ class renderer extends plugin_renderer_base {
      */
     private function department_leaf($leaf, $depth, $selected) {
         $haschildren = !empty($leaf->children);
-        $expand = self::id_in_tree($leaf, $selected);
-        if ($depth == 1 && $leaf->id == $selected) {
-            $expand = false;
-        }
         $style = 'style="margin-left: ' . $depth * 5 . 'px;"';
         $class = 'tree_item';
         $aria = '';
         if ($haschildren) {
             $class .= ' haschildren';
-            if ($expand) {
-                $aria = 'aria-expanded="true"';
-            } else {
-                $aria = 'aria-expanded="false"';
-            }
+            $aria = 'aria-expanded="false"';
         } else {
             $class .= ' nochildren';
         }
@@ -266,7 +258,7 @@ class renderer extends plugin_renderer_base {
     }
 
     public function display_tree_selector($company, $parentlevel, $linkurl, $urlparams, $departmentid = 0) {
-        global $USER;
+        global $DB, $USER;
 
         if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', \context_system::instance())) {
             $userlevels = array($parentlevel->id => $parentlevel->id);
@@ -290,7 +282,12 @@ class renderer extends plugin_renderer_base {
         $departmentselect->label = get_string('department', 'block_iomad_company_admin') .
                                    $this->help_icon('department', 'block_iomad_company_admin') . '&nbsp';
 
-        $returnhtml = html_writer::tag('h4', get_string('department', 'block_iomad_company_admin'));
+        if (empty($departmentid)) {
+            $returnhtml = html_writer::tag('h4', get_string('department', 'block_iomad_company_admin'));
+        } else {
+            $departmentrec = $DB->get_record('department', ['id' => $departmentid]);
+            $returnhtml = html_writer::tag('h4', get_string('departmentwithname', 'block_iomad_company_admin', $departmentrec));
+        }
         $returnhtml .=  \html_writer::start_tag('div', array('class' => 'iomadclear'));
         $returnhtml .= \html_writer::start_tag('div', array('class' => 'fitem'));
         $returnhtml .= $treehtml;

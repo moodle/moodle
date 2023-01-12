@@ -42,7 +42,7 @@ class course_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_coursename($row) {
-        global $output, $params;
+        global $output, $params, $haslicenses;
 
         if (!$this->is_downloading()) {
             $params['courseid'] = $row->id;
@@ -61,7 +61,7 @@ class course_table extends table_sql {
                 }
                 $cell .= $output->single_button($coursemonthlylink, get_string('pluginname', 'local_report_completion_monthly'));
             }
-            if (iomad::has_capability('local/report_user_license_allocations:view', $systemcontext)) {
+            if (iomad::has_capability('local/report_user_license_allocations:view', $systemcontext) && $haslicenses) {
                 if (!empty($cell)) {
                     $cell .= "</br>";
                 }

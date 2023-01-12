@@ -257,6 +257,7 @@ $string['deleteroletemplate'] = 'Delete role template';
 $string['deleteroletemplatefull'] = 'Are you sure you want to remove this role template?  This does not remove any restrictions from companies, it simply removes this template as an option which can be applied.';
 $string['deleteuser'] = 'Delete user -';
 $string['department'] = 'Department';
+$string['departmentwithname'] = 'Department: {$a->name}';
 $string['department_help'] = 'Select which department you are wanting to manage.';
 $string['departmentcreatedok'] = 'Department successfully created';
 $string['departmentimport'] = 'Import department';
