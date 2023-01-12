@@ -617,6 +617,8 @@ class manager {
         static::$allsearchareas = null;
         static::$instance = null;
         static::$searchareacategories = null;
+        static::$coursedeleting = [];
+        static::$phpunitfaketime = null;
 
         base_block::clear_static();
         engine::clear_users_cache();
