@@ -377,20 +377,9 @@ class fields {
                 $allowed = false;
                 if ($allowcustom) {
                     require_once($CFG->dirroot . '/user/profile/lib.php');
-                    $fieldinfo = profile_get_custom_field_data_by_shortname($matches[1]);
-                    switch ($fieldinfo->visible ?? -1) {
-                        case PROFILE_VISIBLE_NONE:
-                        case PROFILE_VISIBLE_PRIVATE:
-                            $allowed = !$context || has_capability('moodle/user:viewalldetails', $context);
-                            break;
-                        case PROFILE_VISIBLE_TEACHERS:
-                            // This is actually defined (in user/profile/lib.php) based on whether
-                            // you have moodle/site:viewuseridentity in context. We already checked
-                            // that, so treat it as visible (fall through).
-                        case PROFILE_VISIBLE_ALL:
-                            $allowed = true;
-                            break;
-                    }
+                    $field = profile_get_custom_field_data_by_shortname($matches[1], false);
+                    $fieldinstance = profile_get_user_field($field->datatype, $field->id, 0, $field);
+                    $allowed = $fieldinstance->is_visible($context);
                 }
                 if (!$allowed) {
                     unset($extra[$key]);
