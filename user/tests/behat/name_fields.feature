@@ -1,8 +1,8 @@
 @core @core_user
-Feature: Both first name and surname are always available for every user
+Feature: Both first name and last name are always available for every user
   In order to easily identify and display users on Moodle pages
   As any user
-  I need to rely on both first name and surname are always available
+  I need to rely on both first name and last name are always available
 
   Scenario: Attempting to self-register as a new user with empty names
     Given the following config values are set as admin:
@@ -20,7 +20,7 @@ Feature: Both first name and surname are always available for every user
     And I set the field "Last name" to " "
     And I press "Create my new account"
     Then I should see "Missing given name"
-    And I should see "Missing surname"
+    And I should see "Missing last name"
 
   Scenario: Attempting to change own names to whitespace
     Given the following "users" exist:
@@ -44,7 +44,7 @@ Feature: Both first name and surname are always available for every user
     And I set the field "Last name" to " "
     And I click on "Update profile" "button"
     Then I should see "Missing given name"
-    And I should see "Missing surname"
+    And I should see "Missing last name"
 
   Scenario: Attempting to change someone else's names to whitespace
     Given the following "users" exist:
@@ -65,4 +65,4 @@ Feature: Both first name and surname are always available for every user
     And I set the field "Last name" to " "
     And I click on "Update profile" "button"
     Then I should see "Missing given name"
-    And I should see "Missing surname"
+    And I should see "Missing last name"
