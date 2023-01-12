@@ -461,4 +461,21 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
             $this->execute('behat_general::i_click_on', [$button, 'NodeElement']);
         }
     }
+
+    /**
+     * Switch to the TinyMCE iframe using a selector.
+     *
+     * @param string $editorlocator
+     *
+     * @When /^I switch to the "(?P<editorlocator_string>(?:[^"]|\\")*)" TinyMCE editor iframe$/
+     */
+    public function switch_to_tiny_iframe(string $editorlocator): void {
+        $this->require_tiny_tags();
+
+        // Get the iframe name for this editor.
+        $iframename = $this->get_editor_iframe_name($editorlocator);
+
+        // Switch to it.
+        $this->execute('behat_general::switch_to_iframe', [$iframename]);
+    }
 }
