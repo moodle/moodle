@@ -35,7 +35,7 @@ Feature: Within the grader report, test that we can open our generic filter drop
     Given I should see "Filter by name"
     When I press "Filter by name"
     Then I should see "27" node occurrences of type "input" in the "First name" "core_grades > initials bar"
-    And I should see "27" node occurrences of type "input" in the "Surname" "core_grades > initials bar"
+    And I should see "27" node occurrences of type "input" in the "Last name" "core_grades > initials bar"
     And "input[data-action=cancel]" "css_element" should exist
     And "input[data-action=save]" "css_element" should exist
 
@@ -61,7 +61,7 @@ Feature: Within the grader report, test that we can open our generic filter drop
     # Business logic: If all is selected, we will not show it i.e. First (D) and NOT First (D) Last (All)
     And I press "First (D)"
     And I select "All" in the "First name" "core_grades > initials bar"
-    And I select "M" in the "Surname" "core_grades > initials bar"
+    And I select "M" in the "Last name" "core_grades > initials bar"
     And I press "Apply"
     And I wait to be redirected
     # We should only have one user that matches the "T" first name
@@ -79,7 +79,7 @@ Feature: Within the grader report, test that we can open our generic filter drop
     # Test filtering on first && last name
     And I press "Last (M)"
     And I select "U" in the "First name" "core_grades > initials bar"
-    And I select "T" in the "Surname" "core_grades > initials bar"
+    And I select "T" in the "Last name" "core_grades > initials bar"
     And I press "Apply"
     And I wait to be redirected
     # We should only have one user that matches the "T" first name
