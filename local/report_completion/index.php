@@ -636,8 +636,10 @@ if (empty($courseid)) {
     $courseheaders = [get_string('coursename', 'local_report_completion')];
     $coursecolumns = ['coursename'];
 
-    // Set up the rest of th headers for the table.
-    if (iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $context)) {
+    // Set up the rest of the headers for the table.
+    $haslicenses = $DB->get_records('companylicense', ['companyid' => $companyid]);
+    if (iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $context) &&
+        $haslicenses) {
         if ($showcharts) {
             $courseheaders[] = get_string('licenseallocated', 'local_report_user_license_allocations');
             $courseheaders[] = get_string('usersummary', 'local_report_completion');
