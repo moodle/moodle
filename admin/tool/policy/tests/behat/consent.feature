@@ -19,7 +19,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | Email address | user1@address.invalid |
       | Email (again) | user1@address.invalid |
       | First name    | User1                 |
-      | Surname       | L1                    |
+      | Last name     | L1                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
     And I should see "An email should have been sent to your address at user1@address.invalid"
@@ -53,7 +53,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | Email address | user1@address.invalid |
       | Email (again) | user1@address.invalid |
       | First name    | User1                 |
-      | Surname       | L1                    |
+      | Last name     | L1                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
     And I should see "An email should have been sent to your address at user1@address.invalid"
@@ -98,7 +98,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | Email address | user1@address.invalid |
       | Email (again) | user1@address.invalid |
       | First name    | User1                 |
-      | Surname       | L1                    |
+      | Last name     | L1                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
     And I should see "An email should have been sent to your address at user1@address.invalid"
@@ -157,7 +157,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | Email address | user1@address.invalid |
       | Email (again) | user1@address.invalid |
       | First name    | User1                 |
-      | Surname       | L1                    |
+      | Last name     | L1                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
     And I should see "An email should have been sent to your address at user1@address.invalid"
@@ -210,7 +210,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | Email address | user1@address.invalid |
       | Email (again) | user1@address.invalid |
       | First name    | User1                 |
-      | Surname       | L1                    |
+      | Last name     | L1                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
     And I should see "An email should have been sent to your address at user1@address.invalid"
@@ -522,7 +522,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | Email address | user1@address.invalid |
       | Email (again) | user1@address.invalid |
       | First name    | User1                 |
-      | Surname       | L1                    |
+      | Last name     | L1                    |
     When I press "Create my new account"
     Then I should see "Confirm your account"
     And I should see "An email should have been sent to your address at user1@address.invalid"
@@ -647,7 +647,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | Email address | user1@address.invalid |
       | Email (again) | user1@address.invalid |
       | First name    | User1                 |
-      | Surname       | L1                    |
+      | Last name     | L1                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
     And I should see "An email should have been sent to your address at user1@address.invalid"
@@ -716,7 +716,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | Email address | user1@address.invalid |
       | Email (again) | user1@address.invalid |
       | First name    | User1                 |
-      | Surname       | L1                    |
+      | Last name     | L1                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
     And I should see "An email should have been sent to your address at user1@address.invalid"
@@ -858,7 +858,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | Email address | user1@address.invalid |
       | Email (again) | user1@address.invalid |
       | First name    | User1                 |
-      | Surname       | L1                    |
+      | Last name     | L1                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
     And I should see "An email should have been sent to your address at user1@address.invalid"

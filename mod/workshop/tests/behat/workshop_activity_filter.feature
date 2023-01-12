@@ -21,7 +21,7 @@ Feature: View work shop activity submissions report.
       | activity | name          | intro                     | course |
       | workshop | Music history | Test workshop description | C1     |
 
-  Scenario Outline: Filter submissions report by surname/first name
+  Scenario Outline: Filter submissions report by last name/first name
     Given I am on the "Music history" "workshop activity" page logged in as teacher1
     When I change phase in workshop "Music history" to "<phase>"
     Then ".firstinitial" "css_element" should exist
@@ -38,7 +38,7 @@ Feature: View work shop activity submissions report.
       | Grading evaluation phase |
       | Closed                   |
 
-  Scenario: Filter submissions report by surname/first name is hidden in the Setup phase.
+  Scenario: Filter submissions report by last name/first name is hidden in the Setup phase.
     When I am on the "Music history" "workshop activity" page logged in as teacher1
     Then ".firstinitial" "css_element" should not exist
     And ".lastinitial" "css_element" should not exist
@@ -52,7 +52,7 @@ Feature: View work shop activity submissions report.
     And I should see "Beth Velvet" in the "grading-report" "table"
     And I should not see "Vinnie Money" in the "grading-report" "table"
 
-  Scenario: Filter submissions report by surname name as a teacher.
+  Scenario: Filter submissions report by last name name as a teacher.
     Given I am on the "Music history" "workshop activity" page logged in as teacher1
     And I change phase in workshop "Music history" to "Submission phase"
     When I click on "V" "link" in the ".lastinitial" "css_element"
@@ -60,7 +60,7 @@ Feature: View work shop activity submissions report.
     And I should not see "Beth Moe" in the "grading-report" "table"
     And I should not see "Vinnie Money" in the "grading-report" "table"
 
-  Scenario: Filter submissions report by first name and surname as a teacher.
+  Scenario: Filter submissions report by first name and last name as a teacher.
     Given I am on the "Music history" "workshop activity" page logged in as teacher1
     And I change phase in workshop "Music history" to "Submission phase"
     When I click on "V" "link" in the ".firstinitial" "css_element"
