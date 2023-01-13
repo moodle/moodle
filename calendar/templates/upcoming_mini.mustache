@@ -45,7 +45,14 @@
             }} data-region="event-item"{{!
         }}>
             <div class="activityiconcontainer small {{{purpose}}} courseicon mr-3">
-                {{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}
+                {{#icon}}
+                {{#iconurl}}
+                    <img alt="{{alttext}}" title="{{alttext}}" src="{{{ iconurl }}}" class="icon ">
+                {{/iconurl}}
+                {{^iconurl}}
+                    {{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}
+                {{/iconurl}}
+                {{/icon}}
             </div>
             <div class="overflow-auto">
                 <h6 class="d-flex mb-1">

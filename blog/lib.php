@@ -903,7 +903,7 @@ function blog_get_headers($courseid=null, $groupid=null, $userid=null, $tagid=nu
         if (!empty($search) && has_capability('moodle/blog:search', $sitecontext)) {
             $headers['filters']['search'] = $search;
             $blogurl->param('search', $search);
-            $PAGE->navbar->add(get_string('searchterm', 'blog', $search), $blogurl->out());
+            $PAGE->navbar->add(get_string('searchterm', 'blog', s($search)), $blogurl->out());
         }
     }
 

@@ -97,10 +97,7 @@ class participants_test extends core_reportbuilder_testcase {
         $generator->create_column(['reportid' => $report->get('id'),
             'uniqueidentifier' => 'user:fullname']);
         // Order by enrolment method.
-        $generator->create_column(['reportid' => $report->get('id'),
-            'uniqueidentifier' => 'enrolment:method'])
-            ->set('sortenabled', true)
-            ->update();
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'enrolment:method', 'sortenabled' => 1]);
         $generator->create_column(['reportid' => $report->get('id'),
             'uniqueidentifier' => 'group:name']);
         $generator->create_column(['reportid' => $report->get('id'),

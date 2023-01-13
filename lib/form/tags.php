@@ -254,7 +254,7 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
         // Submitted tag data will be encoded, we want original text.
         if (array_key_exists($this->getName(), $submitValues)) {
             array_walk($submitValues[$this->getName()], static function(string &$tag): void {
-                $tag = html_entity_decode($tag);
+                $tag = html_entity_decode($tag, ENT_COMPAT);
             });
         }
 

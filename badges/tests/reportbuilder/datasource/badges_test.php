@@ -72,16 +72,13 @@ class badges_test extends core_reportbuilder_testcase {
         $report = $generator->create_report(['name' => 'Badges', 'source' => badges::class, 'default' => 0]);
 
         // Badge course.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:fullname'])
-            ->set_many(['sortenabled' => true, 'sortdirection' => SORT_ASC])->update();
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:fullname', 'sortenabled' => 1]);
 
         // Badge name.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge:name'])
-            ->set_many(['sortenabled' => true, 'sortdirection' => SORT_ASC])->update();
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge:name', 'sortenabled' => 1]);
 
         // User fullname.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullname'])
-            ->set_many(['sortenabled' => true, 'sortdirection' => SORT_ASC])->update();
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullname', 'sortenabled' => 1]);
 
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(3, $content);

@@ -51,7 +51,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
     And I follow "Subscribe to forum"
-    And I should see "Student One will be notified of new posts in 'Test forum name'"
+    And I should see "You will be notified of new posts in the forum 'Test forum name'"
     And I can unsubscribe from this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
@@ -101,7 +101,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
     And I subscribe to this forum
-    And I should see "Student One will be notified of new posts in 'Test forum name'"
+    And I should see "You will be notified of new posts in the forum 'Test forum name'"
     And I can unsubscribe from this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
@@ -287,7 +287,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And "You are not subscribed to this discussion. Click to subscribe" "link" should exist
     And I follow "Test forum name"
     And I follow "Subscribe to forum"
-    And I should see "Student One will be notified of new posts in 'Test forum name'"
+    And I should see "You will be notified of new posts in the forum 'Test forum name'"
     And "Unsubscribe from forum" "link" should exist
     And I follow "Test post subject one"
     And "You are subscribed to this discussion. Click to unsubscribe" "link" should exist
@@ -302,10 +302,10 @@ Feature: A user can control their own subscription preferences for a discussion
     And I follow "Test post subject one"
     And "You are not subscribed to this discussion. Click to subscribe" "link" should exist
     And I follow "You are not subscribed to this discussion. Click to subscribe"
-    And I should see "Student One will be notified of new posts in 'Test post subject one' of 'Test forum name'"
+    And I should see "You will be notified of new posts in 'Test post subject one' in the forum 'Test forum name'."
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
     And I follow "Subscribe to forum"
-    And I should see "Student One will be notified of new posts in 'Test forum name'"
+    And I should see "You will be notified of new posts in the forum 'Test forum name'"
     And "Unsubscribe from forum" "link" should exist
     And I follow "Test post subject one"
     And "You are subscribed to this discussion. Click to unsubscribe" "link" should exist

@@ -653,7 +653,7 @@ class maildigest_test extends \advanced_testcase {
         ];
         $this->queue_tasks_and_assert($expect);
 
-        $tasks = $DB->get_records('task_adhoc');
+        $tasks = $DB->get_records('task_adhoc', ['component' => 'mod_forum']);
         $task = reset($tasks);
         $this->assertGreaterThanOrEqual(time(), $task->nextruntime);
     }
@@ -693,7 +693,7 @@ class maildigest_test extends \advanced_testcase {
         ];
         $this->queue_tasks_and_assert($expect);
 
-        $tasks = $DB->get_records('task_adhoc');
+        $tasks = $DB->get_records('task_adhoc', ['component' => 'mod_forum']);
         $task = reset($tasks);
         $digesttime = usergetmidnight(time(), \core_date::get_server_timezone()) + ($CFG->digestmailtime * 3600);
         $this->assertLessThanOrEqual($digesttime, $task->nextruntime);
@@ -746,7 +746,7 @@ class maildigest_test extends \advanced_testcase {
         $this->queue_tasks_and_assert($expect);
 
         // There should now be two tasks queued.
-        $tasks = $DB->get_records('task_adhoc');
+        $tasks = $DB->get_records('task_adhoc', ['component' => 'mod_forum']);
         $this->assertCount(2, $tasks);
 
         // Add yet another another discussions to forum 1.
@@ -762,7 +762,7 @@ class maildigest_test extends \advanced_testcase {
         $this->queue_tasks_and_assert($expect);
 
         // There should still be two tasks queued.
-        $tasks = $DB->get_records('task_adhoc');
+        $tasks = $DB->get_records('task_adhoc', ['component' => 'mod_forum']);
         $this->assertCount(2, $tasks);
     }
 

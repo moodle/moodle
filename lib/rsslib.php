@@ -491,7 +491,7 @@ function rss_end_tag($tag,$level=0,$endline=true) {
 function rss_full_tag($tag, $level, $endline, $content, $attributes = null) {
     $st = rss_start_tag($tag,$level,$endline,$attributes);
     $co="";
-    $co = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content));
+    $co = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content, ENT_COMPAT));
     $et = rss_end_tag($tag,0,true);
 
     return $st.$co.$et;

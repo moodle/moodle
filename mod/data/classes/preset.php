@@ -710,7 +710,7 @@ class preset {
         $presetxmldata = "<preset>\n\n";
 
         // Add description.
-        $presetxmldata .= '<description>' . htmlspecialchars($this->description) . "</description>\n\n";
+        $presetxmldata .= '<description>' . htmlspecialchars($this->description, ENT_COMPAT) . "</description>\n\n";
 
         // Add settings.
         // Raw settings are not preprocessed during saving of presets.
@@ -729,12 +729,12 @@ class preset {
         $instance = $this->manager->get_instance();
         // First, settings that do not require any conversion.
         foreach ($rawsettings as $setting) {
-            $presetxmldata .= "<$setting>" . htmlspecialchars($instance->$setting) . "</$setting>\n";
+            $presetxmldata .= "<$setting>" . htmlspecialchars($instance->$setting, ENT_COMPAT) . "</$setting>\n";
         }
 
         // Now specific settings.
         if ($instance->defaultsort > 0 && $sortfield = data_get_field_from_id($instance->defaultsort, $instance)) {
-            $presetxmldata .= '<defaultsort>' . htmlspecialchars($sortfield->field->name) . "</defaultsort>\n";
+            $presetxmldata .= '<defaultsort>' . htmlspecialchars($sortfield->field->name, ENT_COMPAT) . "</defaultsort>\n";
         } else {
             $presetxmldata .= "<defaultsort>0</defaultsort>\n";
         }
@@ -748,7 +748,7 @@ class preset {
                 $presetxmldata .= "<field>\n";
                 foreach ($field as $key => $value) {
                     if ($value != '' && $key != 'id' && $key != 'dataid') {
-                        $presetxmldata .= "<$key>" . htmlspecialchars($value) . "</$key>\n";
+                        $presetxmldata .= "<$key>" . htmlspecialchars($value, ENT_COMPAT) . "</$key>\n";
                     }
                 }
                 $presetxmldata .= "</field>\n\n";

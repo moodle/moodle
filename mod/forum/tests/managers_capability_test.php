@@ -1056,8 +1056,9 @@ class managers_capability_test extends \advanced_testcase {
         $discussion = $this->discussion;
         $post = $this->post;
 
+        $postproperties = ['parent' => $post->get_id(), 'userid' => $otheruser->id, 'privatereplyto' => $otheruser->id];
         $privatepost = $this->entityfactory->get_post_from_stdClass(
-            (object) array_merge((array) $this->postrecord, ['parent' => $post->get_id(), 'privatereplyto' => $otheruser->id])
+            (object) array_merge((array) $this->postrecord, $postproperties)
         );
 
         $this->prevent_capability('mod/forum:readprivatereplies');
@@ -1080,23 +1081,41 @@ class managers_capability_test extends \advanced_testcase {
 
         $discussion = $this->discussion;
         $post = $this->post;
-        $privatepost = $this->entityfactory->get_post_from_stdClass(
-            (object) array_merge((array) $this->postrecord, ['parent' => $post->get_id(), 'privatereplyto' => $otheruser->id])
-        );
-        $privateposttome = $this->entityfactory->get_post_from_stdClass(
-            (object) array_merge((array) $this->postrecord, ['parent' => $post->get_id(), 'privatereplyto' => $user->id])
+
+        $postproperties = ['parent' => $post->get_id(), 'userid' => $user->id, 'privatereplyto' => $user->id];
+        $privatepostfrommetome = $this->entityfactory->get_post_from_stdClass(
+            (object) array_merge((array) $this->postrecord, $postproperties)
         );
 
-        // Can always view public replies, and those to me.
+        $postproperties = ['parent' => $post->get_id(), 'userid' => $user->id, 'privatereplyto' => $otheruser->id];
+        $privatepostfrommetoother = $this->entityfactory->get_post_from_stdClass(
+            (object) array_merge((array) $this->postrecord, $postproperties)
+        );
+
+        $postproperties = ['parent' => $post->get_id(), 'userid' => $otheruser->id, 'privatereplyto' => $user->id];
+        $privatepostfromothertome = $this->entityfactory->get_post_from_stdClass(
+            (object) array_merge((array) $this->postrecord, $postproperties)
+        );
+
+        $postproperties = ['parent' => $post->get_id(), 'userid' => $otheruser->id, 'privatereplyto' => $otheruser->id];
+        $privatepostfromothertoother = $this->entityfactory->get_post_from_stdClass(
+            (object) array_merge((array) $this->postrecord, $postproperties)
+        );
+
+        // Can always view public replies, and private replies by me or to me.
         $this->prevent_capability('mod/forum:readprivatereplies');
         $this->assertTrue($capabilitymanager->can_view_post_shell($this->user, $post));
-        $this->assertTrue($capabilitymanager->can_view_post_shell($this->user, $privateposttome));
-        $this->assertFalse($capabilitymanager->can_view_post_shell($this->user, $privatepost));
+        $this->assertTrue($capabilitymanager->can_view_post_shell($this->user, $privatepostfrommetome));
+        $this->assertTrue($capabilitymanager->can_view_post_shell($this->user, $privatepostfrommetoother));
+        $this->assertTrue($capabilitymanager->can_view_post_shell($this->user, $privatepostfromothertome));
+        $this->assertFalse($capabilitymanager->can_view_post_shell($this->user, $privatepostfromothertoother));
 
         $this->give_capability('mod/forum:readprivatereplies');
         $this->assertTrue($capabilitymanager->can_view_post_shell($this->user, $post));
-        $this->assertTrue($capabilitymanager->can_view_post_shell($this->user, $privateposttome));
-        $this->assertTrue($capabilitymanager->can_view_post_shell($this->user, $privatepost));
+        $this->assertTrue($capabilitymanager->can_view_post_shell($this->user, $privatepostfrommetome));
+        $this->assertTrue($capabilitymanager->can_view_post_shell($this->user, $privatepostfrommetoother));
+        $this->assertTrue($capabilitymanager->can_view_post_shell($this->user, $privatepostfromothertome));
+        $this->assertTrue($capabilitymanager->can_view_post_shell($this->user, $privatepostfromothertoother));
     }
 
     /**

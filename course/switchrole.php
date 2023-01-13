@@ -34,7 +34,7 @@ require_once($CFG->dirroot.'/course/lib.php');
 
 $id         = required_param('id', PARAM_INT);
 $switchrole = optional_param('switchrole', -1, PARAM_INT);
-$returnurl  = optional_param('returnurl', '', PARAM_RAW);
+$returnurl  = optional_param('returnurl', '', PARAM_LOCALURL);
 
 if (strpos($returnurl, '?') === false) {
     // Looks like somebody did not set proper page url, better go to course page.
@@ -43,7 +43,7 @@ if (strpos($returnurl, '?') === false) {
     if (strpos($returnurl, $CFG->wwwroot) !== 0) {
         $returnurl = $CFG->wwwroot.$returnurl;
     }
-    $returnurl  = clean_param($returnurl, PARAM_URL);
+    $returnurl  = clean_param($returnurl, PARAM_LOCALURL);
 }
 
 $PAGE->set_url('/course/switchrole.php', array('id'=>$id, 'switchrole'=>$switchrole));
@@ -102,7 +102,7 @@ if ($switchrole > 0 && has_capability('moodle/role:switchroles', $context)) {
     foreach ($roles as $key => $role) {
         $url = new moodle_url('/course/switchrole.php', array('id' => $id, 'switchrole' => $key, 'returnurl' => $returnurl));
         // Button encodes special characters, apply htmlspecialchars_decode() to avoid double escaping.
-        echo $OUTPUT->container($OUTPUT->single_button($url, htmlspecialchars_decode($role)), 'mx-3 mb-1');
+        echo $OUTPUT->container($OUTPUT->single_button($url, htmlspecialchars_decode($role, ENT_COMPAT)), 'mx-3 mb-1');
     }
 
     $url = new moodle_url($returnurl);

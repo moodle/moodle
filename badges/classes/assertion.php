@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Open Badges Assertions specification 1.0 {@link https://github.com/mozilla/openbadges/wiki/Assertions}
+ * Open Badges Assertions specification 1.0 {@link https://github.com/mozilla/openbadges-backpack/wiki/Assertions}
  *
  * Badge asserion is defined by three parts:
  * - Badge Assertion (information regarding a specific badge that was awarded to a badge earner)

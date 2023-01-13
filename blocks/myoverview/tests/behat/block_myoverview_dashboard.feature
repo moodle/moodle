@@ -130,7 +130,6 @@ Feature: The my overview block allows users to easily access their courses
 
   Scenario: View favourite courses - w/ persistence
     Given I am on the "My courses" page logged in as "student1"
-    And I hover "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     And I click on "Star this course" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     And I click on "All" "button" in the "Course overview" "block"
@@ -201,7 +200,6 @@ Feature: The my overview block allows users to easily access their courses
     Given I am on the "My courses" page logged in as "student1"
     And I click on "All" "button" in the "Course overview" "block"
     When I click on "In progress" "link" in the "Course overview" "block"
-    And I hover "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     And I click on "Remove from view" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     And I reload the page
@@ -215,7 +213,6 @@ Feature: The my overview block allows users to easily access their courses
     Given I am on the "My courses" page logged in as "student1"
     And I click on "All" "button" in the "Course overview" "block"
     When I click on "Past" "link" in the "Course overview" "block"
-    And I hover "//div[@class='card dashboard-card' and contains(.,'Course 1')]" "xpath_element"
     And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 1')]" "xpath_element"
     And I click on "Remove from view" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 1')]" "xpath_element"
     And I reload the page
@@ -229,7 +226,6 @@ Feature: The my overview block allows users to easily access their courses
     Given I am on the "My courses" page logged in as "student1"
     And I click on "All" "button" in the "Course overview" "block"
     When I click on "Future" "link" in the "Course overview" "block"
-    And I hover "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
     And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
     And I click on "Remove from view" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
     And I reload the page
@@ -243,7 +239,6 @@ Feature: The my overview block allows users to easily access their courses
     Given I am on the "My courses" page logged in as "student1"
     And I click on "All" "button" in the "Course overview" "block"
     When I click on "All" "link" in the "Course overview" "block"
-    And I hover "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
     And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
     And I click on "Remove from view" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
     And I reload the page
@@ -261,7 +256,6 @@ Feature: The my overview block allows users to easily access their courses
     And I click on "All" "button" in the "Course overview" "block"
     # We have to click on the data attribute instead of the button element text as we might risk to click on the false positive "All (including removed from view)" element instead
     When I click on "[data-value='allincludinghidden']" "css_element" in the "Course overview" "block"
-    And I hover "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
     And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
     And I click on "Remove from view" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
     And I reload the page

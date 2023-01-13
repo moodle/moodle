@@ -29,6 +29,7 @@ require_once($CFG->dirroot.'/grade/report/grader/lib.php');
  * Tests grade_report_grader (the grader report)
  *
  * @package  core_grades
+ * @covers   \grade_report_grader
  * @category test
  * @copyright 2012 Andrew Davis
  * @license  http://www.gnu.org/copyleft/gpl.html GNU Public License
@@ -516,6 +517,47 @@ class report_graderlib_test extends \advanced_testcase {
         $report->load_final_grades();
         $result = $report->get_right_rows(false);
         $this->assertCount(3, $result);
+    }
+
+    /**
+     * Test loading report users when per page preferences are set
+     */
+    public function test_load_users_paging_preference(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+
+        // The report users will default to sorting by their lastname.
+        $user1 = $this->getDataGenerator()->create_and_enrol($course, 'student', ['lastname' => 'Apple']);
+        $user2 = $this->getDataGenerator()->create_and_enrol($course, 'student', ['lastname' => 'Banana']);
+        $user3 = $this->getDataGenerator()->create_and_enrol($course, 'student', ['lastname' => 'Carrot']);
+
+        // Set to empty string.
+        $report = $this->create_report($course);
+        $report->set_pref('studentsperpage', '');
+        $users = $report->load_users();
+        $this->assertEquals([$user1->id, $user2->id, $user3->id], array_column($users, 'id'));
+
+        // Set to valid value.
+        $report = $this->create_report($course);
+        $report->set_pref('studentsperpage', 2);
+        $users = $report->load_users();
+        $this->assertEquals([$user1->id, $user2->id], array_column($users, 'id'));
+    }
+
+    /**
+     * Test getting students per page report preference
+     */
+    public function test_get_students_per_page(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $report = $this->create_report($course);
+        $report->set_pref('studentsperpage', 10);
+
+        $perpage = $report->get_students_per_page();
+        $this->assertSame(10, $perpage);
     }
 
     private function create_grade_category($course) {

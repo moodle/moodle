@@ -187,6 +187,11 @@ class course_bin_test extends \advanced_testcase {
                 (object)['plugin' => 'backup', 'name' => 'backup_auto_storage', 'value' => 2],
                 (object)['plugin' => 'backup', 'name' => 'backup_auto_destination', 'value' => true],
             ]],
+
+            'restore/restore_general_users moodle' => [[
+                (object)['plugin' => 'restore', 'name' => 'restore_general_users', 'value' => 0],
+                (object)['plugin' => 'restore', 'name' => 'restore_general_groups', 'value' => 0],
+            ]],
         ];
     }
 

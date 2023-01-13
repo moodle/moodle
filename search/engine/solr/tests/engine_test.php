@@ -1242,20 +1242,20 @@ class engine_test extends \advanced_testcase {
         // It is possible to enter into a Moodle database content containing these characters,
         // which are Unicode non-characters / byte order marks. If sent to Solr, these cause
         // failures.
-        $boguscontent = html_entity_decode('&#xfffe;') . 'frog';
+        $boguscontent = html_entity_decode('&#xfffe;', ENT_COMPAT) . 'frog';
         $this->create_search_record($course1->id, $course1context->id, 'C1', $boguscontent);
-        $boguscontent = html_entity_decode('&#xffff;') . 'frog';
+        $boguscontent = html_entity_decode('&#xffff;', ENT_COMPAT) . 'frog';
         $this->create_search_record($course1->id, $course1context->id, 'C1', $boguscontent);
 
         // Unicode Standard Version 9.0 - Core Specification, section 23.7, lists 66 non-characters
         // in total. Here are some of them - these work OK for me but it may depend on platform.
-        $boguscontent = html_entity_decode('&#xfdd0;') . 'frog';
+        $boguscontent = html_entity_decode('&#xfdd0;', ENT_COMPAT) . 'frog';
         $this->create_search_record($course1->id, $course1context->id, 'C1', $boguscontent);
-        $boguscontent = html_entity_decode('&#xfdef;') . 'frog';
+        $boguscontent = html_entity_decode('&#xfdef;', ENT_COMPAT) . 'frog';
         $this->create_search_record($course1->id, $course1context->id, 'C1', $boguscontent);
-        $boguscontent = html_entity_decode('&#x1fffe;') . 'frog';
+        $boguscontent = html_entity_decode('&#x1fffe;', ENT_COMPAT) . 'frog';
         $this->create_search_record($course1->id, $course1context->id, 'C1', $boguscontent);
-        $boguscontent = html_entity_decode('&#x10ffff;') . 'frog';
+        $boguscontent = html_entity_decode('&#x10ffff;', ENT_COMPAT) . 'frog';
         $this->create_search_record($course1->id, $course1context->id, 'C1', $boguscontent);
 
         // Do the indexing (this will check it doesn't throw warnings).

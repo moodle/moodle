@@ -133,7 +133,11 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
             }
             $class = 'r' . ($value % 2);
             if ($options->correctness && $isselected) {
-                $feedbackimg[] = $this->feedback_image($this->is_right($ans));
+                // Feedback images will be rendered using Font awesome.
+                // Font awesome icons are actually characters(text) with special glyphs,
+                // so the icons cannot be aligned correctly even if the parent div wrapper is using align-items: flex-start.
+                // To make the Font awesome icons follow align-items: flex-start, we need to wrap them inside a span tag.
+                $feedbackimg[] = html_writer::span($this->feedback_image($this->is_right($ans)), 'ml-1');
                 $class .= ' ' . $this->feedback_class($this->is_right($ans));
             } else {
                 $feedbackimg[] = '';
@@ -323,7 +327,7 @@ class qtype_multichoice_single_renderer extends qtype_multichoice_renderer_base 
         // Adds an hidden radio that will be checked to give the impression the choice has been cleared.
         $clearchoiceradio = html_writer::empty_tag('input', $clearchoiceradioattrs);
         $clearchoice = html_writer::link('#', get_string('clearchoice', 'qtype_multichoice'),
-            ['tabindex' => $linktabindex, 'role' => 'button', 'class' => 'btn btn-link ml-3 mt-n1 mb-n1']);
+            ['tabindex' => $linktabindex, 'role' => 'button', 'class' => 'btn btn-link ml-3 mt-n1']);
         $clearchoiceradio .= html_writer::label($clearchoice, $clearchoiceid);
 
         // Now wrap the radio and label inside a div.

@@ -452,7 +452,7 @@ class core_text {
         if (!isset($trans_tbl)) {
             if (version_compare(phpversion(), '5.3.4') < 0) {
                 $trans_tbl = array();
-                foreach (get_html_translation_table(HTML_ENTITIES) as $val=>$key) {
+                foreach (get_html_translation_table(HTML_ENTITIES, ENT_COMPAT) as $val=>$key) {
                     $trans_tbl[$key] = self::convert($val, 'ISO-8859-1', 'utf-8');
                 }
 
@@ -574,12 +574,12 @@ class core_text {
             // characters of each code planes 0-16 inclusive...
             for ($plane = 0; $plane <= 16; $plane++) {
                 $base = ($plane === 0 ? '' : dechex($plane));
-                self::$noncharacters[] = html_entity_decode('&#x' . $base . 'fffe;');
-                self::$noncharacters[] = html_entity_decode('&#x' . $base . 'ffff;');
+                self::$noncharacters[] = html_entity_decode('&#x' . $base . 'fffe;', ENT_COMPAT);
+                self::$noncharacters[] = html_entity_decode('&#x' . $base . 'ffff;', ENT_COMPAT);
             }
             // ...And the character range U+FDD0 to U+FDEF.
             for ($char = 0xfdd0; $char <= 0xfdef; $char++) {
-                self::$noncharacters[] = html_entity_decode('&#x' . dechex($char) . ';');
+                self::$noncharacters[] = html_entity_decode('&#x' . dechex($char) . ';', ENT_COMPAT);
             }
         }
 

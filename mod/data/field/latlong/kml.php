@@ -171,7 +171,7 @@ function data_latlong_kml_get_item_name($content, $field) {
     $name = '';
 
     if($field->param2 > 0) {
-        $name = htmlspecialchars($DB->get_field('data_content', 'content', array('fieldid'=>$field->param2, 'recordid'=>$content->recordid)));
+        $name = htmlspecialchars($DB->get_field('data_content', 'content', array('fieldid'=>$field->param2, 'recordid'=>$content->recordid)), ENT_COMPAT);
     }elseif($field->param2 == -2) {
         $name = $content->content . ', ' . $content->content1;
     }

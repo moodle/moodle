@@ -96,8 +96,8 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals($deployedfile['mimetype'], $result['files'][0]['mimetype']);
         $this->assertEquals($deployedfile['filesize'], $result['files'][0]['filesize']);
         $this->assertEquals($deployedfile['timemodified'], $result['files'][0]['timemodified']);
-        $this->assertEquals($deployedfile['filename'], $result['files'][0]['filename']);
-        $this->assertEquals($deployedfile['fileurl'], $result['files'][0]['fileurl']);
+        $this->assertStringContainsString($deployedfile['filename'], $result['files'][0]['filename']);
+        $this->assertStringContainsString($deployedfile['fileurl'], $result['files'][0]['fileurl']);
     }
 
     /**
@@ -196,8 +196,8 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals($deployedfile['mimetype'], $result['files'][0]['mimetype']);
         $this->assertEquals($deployedfile['filesize'], $result['files'][0]['filesize']);
         $this->assertEquals($deployedfile['timemodified'], $result['files'][0]['timemodified']);
-        $this->assertEquals($deployedfile['filename'], $result['files'][0]['filename']);
-        $this->assertEquals($deployedfile['fileurl'], $result['files'][0]['fileurl']);
+        $this->assertStringContainsString($deployedfile['filename'], $result['files'][0]['filename']);
+        $this->assertStringContainsString($deployedfile['fileurl'], $result['files'][0]['fileurl']);
     }
 
     /**
@@ -244,7 +244,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals($deployedfile['mimetype'], $result['files'][0]['mimetype']);
         $this->assertEquals($deployedfile['filesize'], $result['files'][0]['filesize']);
         $this->assertEquals($deployedfile['timemodified'], $result['files'][0]['timemodified']);
-        $this->assertEquals($deployedfile['filename'], $result['files'][0]['filename']);
-        $this->assertEquals($deployedfile['fileurl'], $result['files'][0]['fileurl']);
+        $this->assertStringContainsString($deployedfile['filename'], $result['files'][0]['filename']);
+        $this->assertStringContainsString($deployedfile['fileurl'], $result['files'][0]['fileurl']);
     }
 }

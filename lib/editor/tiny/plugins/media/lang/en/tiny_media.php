@@ -98,5 +98,7 @@ $string['unusedfilesdesc'] = 'The following embedded files are not used in the t
 $string['unusedfilesheader'] = 'Unused files';
 $string['unusedfilesremovalnotice'] = 'Any unused files will be automatically deleted when saving changes.';
 $string['video'] = 'Video';
+$string['videoheight'] = 'Video height';
 $string['videosourcelabel'] = 'Video source URL';
+$string['videowidth'] = 'Video width';
 $string['width'] = 'Width';

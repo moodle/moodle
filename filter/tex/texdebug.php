@@ -248,7 +248,7 @@
         chdir($latex->temp_dir);
 
         // put the expression as a file into the temp area
-        $expression = html_entity_decode($expression);
+        $expression = html_entity_decode($expression, ENT_COMPAT);
         $output .= "<p>Processing TeX expression:</p><pre>$expression</pre>\n";
         $doc = $latex->construct_latex_document($expression);
         $fh = fopen($tex, 'w');

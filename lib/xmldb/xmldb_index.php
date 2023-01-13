@@ -248,7 +248,7 @@ class xmldb_index extends xmldb_object {
             $o.= ' HINTS="' . implode(', ', $this->hints) . '"';
         }
         if ($this->comment) {
-            $o.= ' COMMENT="' . htmlspecialchars($this->comment) . '"';
+            $o.= ' COMMENT="' . htmlspecialchars($this->comment, ENT_COMPAT) . '"';
         }
         $o.= '/>' . "\n";
 
