@@ -10,6 +10,12 @@ Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
   in the course content. Instead of using adhoc YUI methods and webservice, the new fragment methods are:
     - core_courseformat_output_fragment_cmitem
     - core_courseformat_output_fragment_section
+* New methods and outputs added for bulk editing (only available for formats compatible with reactive components):
+    - Mutations for editing the bulk data: bulkEnable, bulkReset, cmSelect, cmUnselect, sectionSelect and sectionUnselect.
+    - Output classes overridable by the plugins: content\bulkedittools, content\bulkedittoggler
+    - Renderer method: core_courseformat\output\section_renderer::bulk_editing_button
+    - New overridable checkboxes: content/cm/bulkselect.mustache and content/section/bulkselect.mustache
+* Plugins can use the CSS class "bulk-hidden" to hide elements when the bulk editing is enabled.
 
 === 4.1 ===
 * New \core_courseformat\stateupdates methods add_section_remove() and add_cm_remove() have been added to replace

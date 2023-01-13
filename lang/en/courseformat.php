@@ -22,6 +22,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['bulkedit'] = 'Bulk edit';
+$string['bulkeditoff'] = 'Close bulk edit';
+$string['bulkcancel'] = 'Close bulk editing';
+$string['bulkselection'] = '{$a} selected';
 $string['courseindex'] = 'Course index';
+$string['nobulkaction'] = 'No bulk actions available';
 $string['preference:coursesectionspreferences'] = 'Section user preferences for course {$a}';
 $string['privacy:metadata:preference:coursesectionspreferences'] = 'Section user preferences like collapsed and expanded.';
+$string['selectcm'] = 'Select activity {$a}';
+$string['selectsection'] = 'Select section {$a}';
