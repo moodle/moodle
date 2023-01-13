@@ -274,12 +274,7 @@ class report_log_table_log extends table_sql {
      */
     public function col_eventname($event) {
         // Event name.
-        if ($this->filterparams->logreader instanceof logstore_legacy\log\store) {
-            // Hack for support of logstore_legacy.
-            $eventname = $event->eventname;
-        } else {
-            $eventname = $event->get_name();
-        }
+        $eventname = $event->get_name();
         // Only encode as an action link if we're not downloading.
         if (($url = $event->get_url()) && empty($this->download)) {
             $eventname = $this->action_link($url, $eventname, 'action');
@@ -370,17 +365,7 @@ class report_log_table_log extends table_sql {
         global $DB;
 
         // In new logs we have a field to pick, and in legacy try get this from action.
-        if ($this->filterparams->logreader instanceof logstore_legacy\log\store) {
-            $action = $this->get_legacy_crud_action($this->filterparams->action);
-            $firstletter = substr($action, 0, 1);
-            if ($firstletter == '-') {
-                $sql = $DB->sql_like('action', ':action', false, true, true);
-                $params['action'] = '%'.substr($action, 1).'%';
-            } else {
-                $sql = $DB->sql_like('action', ':action', false);
-                $params['action'] = '%'.$action.'%';
-            }
-        } else if (!empty($this->filterparams->action)) {
+        if (!empty($this->filterparams->action)) {
              list($sql, $params) = $DB->get_in_or_equal(str_split($this->filterparams->action),
                     SQL_PARAMS_NAMED, 'crud');
             $sql = "crud " . $sql;
@@ -402,16 +387,10 @@ class report_log_table_log extends table_sql {
         $joins = array();
         $params = array();
 
-        if ($this->filterparams->logreader instanceof logstore_legacy\log\store) {
-            // The legacy store doesn't support context level.
-            $joins[] = "cmid = :cmid";
-            $params['cmid'] = $this->filterparams->modid;
-        } else {
-            $joins[] = "contextinstanceid = :contextinstanceid";
-            $joins[] = "contextlevel = :contextmodule";
-            $params['contextinstanceid'] = $this->filterparams->modid;
-            $params['contextmodule'] = CONTEXT_MODULE;
-        }
+        $joins[] = "contextinstanceid = :contextinstanceid";
+        $joins[] = "contextlevel = :contextmodule";
+        $params['contextinstanceid'] = $this->filterparams->modid;
+        $params['contextmodule'] = CONTEXT_MODULE;
 
         $sql = implode(' AND ', $joins);
         return array($sql, $params);
@@ -430,8 +409,7 @@ class report_log_table_log extends table_sql {
         $params = array();
 
         // If we filter by userid and module id we also need to filter by crud and edulevel to ensure DB index is engaged.
-        $useextendeddbindex = !($this->filterparams->logreader instanceof logstore_legacy\log\store)
-                && !empty($this->filterparams->userid) && !empty($this->filterparams->modid);
+        $useextendeddbindex = !empty($this->filterparams->userid) && !empty($this->filterparams->modid);
 
         $groupid = 0;
         if (!empty($this->filterparams->courseid) && $this->filterparams->courseid != SITEID) {
@@ -503,16 +481,14 @@ class report_log_table_log extends table_sql {
             }
         }
 
-        if (!($this->filterparams->logreader instanceof logstore_legacy\log\store)) {
-            // Filter out anonymous actions, this is N/A for legacy log because it never stores them.
-            if ($this->filterparams->modid) {
-                $context = context_module::instance($this->filterparams->modid);
-            } else {
-                $context = context_course::instance($this->filterparams->courseid);
-            }
-            if (!has_capability('moodle/site:viewanonymousevents', $context)) {
-                $joins[] = "anonymous = 0";
-            }
+        // Filter out anonymous actions, this is N/A for legacy log because it never stores them.
+        if ($this->filterparams->modid) {
+            $context = context_module::instance($this->filterparams->modid);
+        } else {
+            $context = context_course::instance($this->filterparams->courseid);
+        }
+        if (!has_capability('moodle/site:viewanonymousevents', $context)) {
+            $joins[] = "anonymous = 0";
         }
 
         $selector = implode(' AND ', $joins);

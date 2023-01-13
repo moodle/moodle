@@ -1745,6 +1745,7 @@ class core_plugin_manager {
                 'binarius', 'boxxie', 'brick', 'canvas', 'formal_white', 'formfactor', 'fusion', 'leatherbound',
                 'magazine', 'mymobile', 'nimble', 'nonzero', 'overlay', 'serenity', 'sky_high', 'splash',
                 'standard', 'standardold'),
+            'logstore' => ['legacy'],
             'webservice' => array('amf', 'xmlrpc'),
         );
 
@@ -1908,7 +1909,7 @@ class core_plugin_manager {
             ),
 
             'logstore' => array(
-                'database', 'legacy', 'standard',
+                'database', 'standard',
             ),
 
             'ltiservice' => array(
