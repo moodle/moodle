@@ -103,6 +103,13 @@ export default class extends Reactive {
             return;
         }
 
+        // The bulk editing only applies to the frontend and the state data is not created in the backend.
+        stateData.bulk = {
+            enabled: false,
+            selectedType: '',
+            selection: [],
+        };
+
         this.setInitialState(stateData);
 
         // In editing mode, the session cache is considered dirty always.
