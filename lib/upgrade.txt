@@ -52,6 +52,7 @@ information provided here is intended especially for developers.
 
   The old class locations have been aliased for backwards compatibility and will emit a deprecation notice in a future
   release.
+* Convert a floating value to an integer in lib/graphlib.php to avoid PHP 8.1 deprecated function error.
 
 === 4.1 ===
 
