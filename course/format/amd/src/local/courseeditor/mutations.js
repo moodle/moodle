@@ -199,6 +199,7 @@ export default class {
         this.sectionLock(stateManager, Array.from(sectionIds), true);
 
         const updates = await this._callEditWebservice('cm_duplicate', course.id, cmIds, targetSectionId, targetCmId);
+        this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
 
         this.sectionLock(stateManager, Array.from(sectionIds), false);

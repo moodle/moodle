@@ -328,7 +328,7 @@ export default class Component extends BaseComponent {
                 container.append(item);
                 return;
             }
-            if (currentitem !== item) {
+            if (currentitem !== item && item) {
                 container.insertBefore(item, currentitem);
             }
         });

@@ -97,3 +97,16 @@ Feature: Bulk course activity actions.
     And I click on "Apply" "button" in the "Availability" "dialogue"
     Then I should see "Available but not shown on course page" in the "Activity sample 1" "activity"
     And I should see "Available but not shown on course page" in the "Activity sample 3" "activity"
+
+  Scenario: Bulk duplicate activities
+    Given I click on "Select activity Activity sample 1" "checkbox"
+    And I click on "Select activity Activity sample 3" "checkbox"
+    And I should see "2 selected" in the "sticky-footer" "region"
+    When I click on "Duplicate" "button" in the "sticky-footer" "region"
+    Then I should see "Activity sample 1" in the "Topic 1" "section"
+    And I should see "Activity sample 1 (copy)" in the "Topic 1" "section"
+    And "Activity sample 1 (copy)" "activity" should appear after "Activity sample 1" "activity"
+    And I should see "Activity sample 3" in the "Topic 2" "section"
+    And I should see "Activity sample 3 (copy)" in the "Topic 2" "section"
+    And "Activity sample 3 (copy)" "activity" should appear after "Activity sample 3" "activity"
+    And I should see "0 selected" in the "sticky-footer" "region"

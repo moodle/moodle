@@ -472,13 +472,13 @@ export default class extends BaseComponent {
      * @param {Event} event the triggered event
      */
     async _requestCmDuplicate(target, event) {
-        const cmId = target.dataset.id;
-        if (!cmId) {
+        const cmIds = this._getTargetIds(target);
+        if (cmIds.length == 0) {
             return;
         }
         const sectionId = target.dataset.sectionid ?? null;
         event.preventDefault();
-        this.reactive.dispatch('cmDuplicate', [cmId], sectionId);
+        this.reactive.dispatch('cmDuplicate', cmIds, sectionId);
     }
 
     /**
