@@ -689,16 +689,18 @@ class recording extends persistent {
      * @return recording[]
      */
     protected static function fetch_records(array $selects, array $params): array {
-        global $DB;
+        global $DB, $CFG;
 
         $withindays = time() - (self::RECORDING_TIME_LIMIT_DAYS * DAYSECS);
+        // Sort for recordings when fetching from the database.
+        $recordingsort = $CFG->bigbluebuttonbn_recordings_asc_sort ? 'timecreated ASC' : 'timecreated DESC';
 
         // Fetch the local data. Arbitrary sort by id, so we get the same result on different db engines.
         $recordings = $DB->get_records_select(
             static::TABLE,
             implode(" AND ", $selects),
             $params,
-            self::DEFAULT_RECORDING_SORT
+            $recordingsort
         );
 
         // Grab the recording IDs.

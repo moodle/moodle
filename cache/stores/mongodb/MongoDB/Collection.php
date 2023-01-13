@@ -126,13 +126,13 @@ class Collection
      * @param array   $options        Collection options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
-    public function __construct(Manager $manager, $databaseName, $collectionName, array $options = [])
+    public function __construct(Manager $manager, string $databaseName, string $collectionName, array $options = [])
     {
-        if (strlen((string) $databaseName) < 1) {
+        if (strlen($databaseName) < 1) {
             throw new InvalidArgumentException('$databaseName is invalid: ' . $databaseName);
         }
 
-        if (strlen((string) $collectionName) < 1) {
+        if (strlen($collectionName) < 1) {
             throw new InvalidArgumentException('$collectionName is invalid: ' . $collectionName);
         }
 
@@ -153,8 +153,8 @@ class Collection
         }
 
         $this->manager = $manager;
-        $this->databaseName = (string) $databaseName;
-        $this->collectionName = (string) $collectionName;
+        $this->databaseName = $databaseName;
+        $this->collectionName = $collectionName;
         $this->readConcern = $options['readConcern'] ?? $this->manager->getReadConcern();
         $this->readPreference = $options['readPreference'] ?? $this->manager->getReadPreference();
         $this->typeMap = $options['typeMap'] ?? self::$defaultTypeMap;
@@ -446,13 +446,13 @@ class Collection
      * @param string       $fieldName Field for which to return distinct values
      * @param array|object $filter    Query by which to filter documents
      * @param array        $options   Command options
-     * @return mixed[]
+     * @return array
      * @throws UnexpectedValueException if the command response was malformed
      * @throws UnsupportedException if options are not supported by the selected server
      * @throws InvalidArgumentException for parameter/option parsing errors
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
-    public function distinct($fieldName, $filter = [], array $options = [])
+    public function distinct(string $fieldName, $filter = [], array $options = [])
     {
         if (! isset($options['readPreference']) && ! is_in_transaction($options)) {
             $options['readPreference'] = $this->readPreference;
@@ -938,7 +938,6 @@ class Collection
      * Returns information for all indexes for the collection.
      *
      * @see ListIndexes::__construct() for supported options
-     * @param array $options
      * @return IndexInfoIterator
      * @throws InvalidArgumentException for parameter/option parsing errors
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
@@ -1007,9 +1006,9 @@ class Collection
      * Renames the collection.
      *
      * @see RenameCollection::__construct() for supported options
-     * @param string  $toCollectionName New name of the collection
-     * @param ?string $toDatabaseName   New database name of the collection. Defaults to the original database.
-     * @param array   $options          Additional options
+     * @param string      $toCollectionName New name of the collection
+     * @param string|null $toDatabaseName   New database name of the collection. Defaults to the original database.
+     * @param array       $options          Additional options
      * @return array|object Command result document
      * @throws UnsupportedException if options are not supported by the selected server
      * @throws InvalidArgumentException for parameter/option parsing errors

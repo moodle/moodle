@@ -60,12 +60,12 @@ Feature: Course level forum summary report
     And I should see "Export posts"
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |                                 |                                |
-      | First name / Surname | -3-         | -4-     | Earliest post                   | Most recent post               |
+      | First name / Last name | -3-         | -4-     | Earliest post                   | Most recent post               |
       | Student 1            | 1           | 1       | Thursday, 28 March 2019, 11:50  | Thursday, 6 June 2019, 6:40    |
       | Student 2            | 0           | 0       | -                               | -                              |
       | Teacher 1            | 1           | 2       | Wednesday, 27 March 2019, 12:10 | Wednesday, 10 July 2019, 9:30  |
     And the following should not exist in the "forumreport_summary_table" table:
-      | First name / Surname |
+      | First name / Last name |
       | Student 3            |
     And the "Forum selected" select box should contain "All forums in course"
     And the "Forum selected" select box should contain "forum1"
@@ -76,12 +76,12 @@ Feature: Course level forum summary report
     And I should not see "Export posts"
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |                                 |                                  |
-      | First name / Surname | -3-         | -4-     | Earliest post                   | Most recent post                 |
+      | First name / Last name | -3-         | -4-     | Earliest post                   | Most recent post                 |
       | Student 1            | 2           | 3       | Thursday, 25 January 2018, 4:40 | Saturday, 25 January 2020, 11:50 |
       | Student 2            | 0           | 0       | -                               | -                                |
       | Teacher 1            | 4           | 3       | Sunday, 14 January 2018, 9:00   | Thursday, 26 December 2019, 9:30 |
     And the following should not exist in the "forumreport_summary_table" table:
-      | First name / Surname |
+      | First name / Last name |
       | Student 3            |
 
   Scenario: Course forum summary report correctly formats forum activity names
@@ -106,10 +106,10 @@ Feature: Course level forum summary report
     And I navigate to "Reports" in current page administration
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |                                 |                                 |
-      | First name / Surname | -2-         | -3-     | Earliest post                   | Most recent post                |
+      | First name / Last name | -2-         | -3-     | Earliest post                   | Most recent post                |
       | Student 1            | 0           | 1       | Thursday, 25 January 2018, 4:40 | Thursday, 25 January 2018, 4:40 |
     And the following should not exist in the "forumreport_summary_table" table:
-      | First name / Surname |
+      | First name / Last name |
       | Student 2            |
       | Student 3            |
       | Teacher 1            |
@@ -121,10 +121,10 @@ Feature: Course level forum summary report
     Then I select "All forums in course" from the "Forum selected" singleselect
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |                                 |                                  |
-      | First name / Surname | -2-         | -3-     | Earliest post                   | Most recent post                 |
+      | First name / Last name | -2-         | -3-     | Earliest post                   | Most recent post                 |
       | Student 1            | 2           | 3       | Thursday, 25 January 2018, 4:40 | Saturday, 25 January 2020, 11:50 |
     And the following should not exist in the "forumreport_summary_table" table:
-      | First name / Surname |
+      | First name / Last name |
       | Student 2            |
       | Student 3            |
       | Teacher 1            |

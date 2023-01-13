@@ -39,7 +39,7 @@ module.exports = grunt => {
                 {
                     rule: {
                         _attrs: {
-                            ref: './.phpcs.xml.dist',
+                            ref: './phpcs.xml.dist',
                         },
                     },
                 },
@@ -52,7 +52,7 @@ module.exports = grunt => {
             });
         });
 
-        grunt.file.write('.phpcs.xml', toXML(config, {
+        grunt.file.write('phpcs.xml', toXML(config, {
             header: true,
             indent: '  ',
         }) + "\n");

@@ -42,10 +42,14 @@ Feature: A teacher can put questions in categories in the question bank
     And I should see "(0)"
     And I should see "Created for testing category, HTML entity & its encoding" in the "'Test' & 'display'" "list_item"
     And I follow "Add category"
-    And "'Test' & 'display' [newcatidnumber]" "option" should exist in the "Parent category" "select"
+    And the "Parent category" select box should contain "'Test' & 'display' [newcatidnumber]"
 
   Scenario: A question category can be edited
     When I am on the "Course 1" "core_question > course question categories" page
+    # There have been bugs which only happened if a question category was not empty, so add a question.
+    And the following "questions" exist:
+      | questioncategory | qtype | name                                | questiontext                  |
+      | Subcategory      | essay | Test question for renaming category | Write about whatever you want |
     And I click on "Edit this category" "link" in the "Subcategory" "list_item"
     And the field "parent" matches value "&nbsp;&nbsp;&nbsp;Default for C1"
     And I set the following fields to these values:

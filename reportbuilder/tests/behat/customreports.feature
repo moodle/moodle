@@ -26,7 +26,7 @@ Feature: Manage custom reports
     # Confirm we see the default sorting in the report
     And "Admin User" "table_row" should appear before "User 2" "table_row"
     And I click on "Show/hide 'Sorting'" "button"
-    And "Disable sorting for column 'Full name'" "checkbox" should exist in the "#settingssorting" "css_element"
+    And "Disable initial sorting for column Full name" "checkbox" should exist in the "#settingssorting" "css_element"
     And I click on "Show/hide 'Sorting'" "button"
     # Confirm we only see not suspended users in the report.
     And I should see "Admin User" in the "reportbuilder-table" "table"
@@ -96,10 +96,9 @@ Feature: Manage custom reports
     And I click on "Close 'Manager report' editor" "button"
     # Manager can edit their own report, but not those of other users.
     And I set the field "Edit report name" in the "Manager report" "table_row" to "Manager report (renamed)"
-    And I open the action menu in "Manager report (renamed)" "table_row"
-    Then "Edit report content" "link" should be visible
+    Then the "Edit report content" item should exist in the "Actions" action menu of the "Manager report (renamed)" "table_row"
     And "Edit report name" "link" should not exist in the "My report" "table_row"
-    And ".dropdown-toggle" "css_element" should not exist in the "My report" "table_row"
+    And "Actions" "actionmenu" should not exist in the "My report" "table_row"
 
   Scenario: Rename custom report
     Given the following "core_reportbuilder > Reports" exist:

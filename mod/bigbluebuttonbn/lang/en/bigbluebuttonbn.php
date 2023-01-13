@@ -181,8 +181,8 @@ $string['config_recordings_preview_default'] = 'Preview is enabled by default';
 $string['config_recordings_preview_default_description'] = 'If enabled the table includes a preview of the presentation.';
 $string['config_recordings_preview_editable'] = 'Preview feature can be edited';
 $string['config_recordings_preview_editable_description'] = 'Preview feature can be edited when the instance is added or updated.';
-$string['config_recordings_sortorder'] = 'Order the recordings in ascending order.';
-$string['config_recordings_sortorder_description'] = 'By default recordings are displayed in descending order. When checked they will be sorted in ascending order.';
+$string['config_recordings_asc_sort'] = 'List recordings in chronological order';
+$string['config_recordings_asc_sort_description'] = 'Recordings are ordered by date, either chronological or reverse chronological order.';
 
 $string['config_importrecordings'] = 'Import recordings';
 $string['config_importrecordings_description'] = 'These settings are feature specific.';
@@ -325,14 +325,14 @@ $string['guestaccess_join_meeting'] = 'Join meeting';
 $string['guest_invitation_subject'] = 'Invitation: {$a->name} session in {$a->course_fullname}';
 $string['guest_invitation_small_message'] = 'Hi,
 
-You are invited to a BigBlueButton session {$a->name} in the course  {$a->course_fullname}.
+You are invited to a BigBlueButton session {$a->name} in the course {$a->course_fullname}.
 
 Link: {$a->guestjoinurl}
 Password: {$a->guestpassword}
 
 If you need help, please contact {$a->sender}.';
 $string['guest_invitation_full_message'] = 'Hi,
-<p>You are invited to a BigBlueButton session <strong>{$a->name}</strong> in the course  {$a->course_fullname}.</p>
+<p>You are invited to a BigBlueButton session <strong>{$a->name}</strong> in the course {$a->course_fullname}.</p>
 <p>Link: {$a->guestjoinurl}<br/>
 <p>Password: {$a->guestpassword}</p>
 <p>If you need help, please contact {$a->sender}.</p>';

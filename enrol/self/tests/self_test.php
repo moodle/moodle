@@ -631,6 +631,137 @@ class self_test extends \advanced_testcase {
     }
 
     /**
+     * Test is_self_enrol_available function behavior.
+     *
+     * @covers ::is_self_enrol_available
+     */
+    public function test_is_self_enrol_available() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+        $this->preventResetByRollback(); // Messaging does not like transactions...
+
+        $selfplugin = enrol_get_plugin('self');
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $studentrole = $DB->get_record('role', ['shortname' => 'student'], '*', MUST_EXIST);
+        $course = $this->getDataGenerator()->create_course();
+        $cohort1 = $this->getDataGenerator()->create_cohort();
+        $cohort2 = $this->getDataGenerator()->create_cohort();
+
+        // New enrolments are allowed and enrolment instance is enabled.
+        $instance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'self'], '*', MUST_EXIST);
+        $instance->customint6 = 1;
+        $DB->update_record('enrol', $instance);
+        $selfplugin->update_status($instance, ENROL_INSTANCE_ENABLED);
+        $this->setUser($user1);
+        $this->assertTrue($selfplugin->is_self_enrol_available($instance));
+        $this->setGuestUser();
+        $this->assertTrue($selfplugin->is_self_enrol_available($instance));
+
+        $canntenrolerror = get_string('canntenrol', 'enrol_self');
+
+        // New enrolments are not allowed, but enrolment instance is enabled.
+        $instance->customint6 = 0;
+        $DB->update_record('enrol', $instance);
+        $this->setUser($user1);
+        $this->assertEquals($canntenrolerror, $selfplugin->is_self_enrol_available($instance));
+        $this->setGuestUser();
+        $this->assertEquals($canntenrolerror, $selfplugin->is_self_enrol_available($instance));
+
+        // New enrolments are allowed, but enrolment instance is disabled.
+        $instance->customint6 = 1;
+        $DB->update_record('enrol', $instance);
+        $selfplugin->update_status($instance, ENROL_INSTANCE_DISABLED);
+        $this->setUser($user1);
+        $this->assertEquals($canntenrolerror, $selfplugin->is_self_enrol_available($instance));
+        $this->setGuestUser();
+        $this->assertEquals($canntenrolerror, $selfplugin->is_self_enrol_available($instance));
+
+        // New enrolments are not allowed and enrolment instance is disabled.
+        $instance->customint6 = 0;
+        $DB->update_record('enrol', $instance);
+        $this->setUser($user1);
+        $this->assertEquals($canntenrolerror, $selfplugin->is_self_enrol_available($instance));
+        $this->setGuestUser();
+        $this->assertEquals($canntenrolerror, $selfplugin->is_self_enrol_available($instance));
+
+        // Enable enrolment instance for the rest of the tests.
+        $selfplugin->update_status($instance, ENROL_INSTANCE_ENABLED);
+
+        // Enrol start date is in future.
+        $instance->customint6 = 1;
+        $instance->enrolstartdate = time() + 60;
+        $DB->update_record('enrol', $instance);
+        $error = get_string('canntenrolearly', 'enrol_self', userdate($instance->enrolstartdate));
+        $this->setUser($user1);
+        $this->assertEquals($error, $selfplugin->is_self_enrol_available($instance));
+        $this->setGuestUser();
+        $this->assertEquals($error, $selfplugin->is_self_enrol_available($instance));
+
+        // Enrol start date is in past.
+        $instance->enrolstartdate = time() - 60;
+        $DB->update_record('enrol', $instance);
+        $this->setUser($user1);
+        $this->assertTrue($selfplugin->is_self_enrol_available($instance));
+        $this->setGuestUser();
+        $this->assertTrue($selfplugin->is_self_enrol_available($instance));
+
+        // Enrol end date is in future.
+        $instance->enrolstartdate = 0;
+        $instance->enrolenddate = time() + 60;
+        $DB->update_record('enrol', $instance);
+        $this->setUser($user1);
+        $this->assertTrue($selfplugin->is_self_enrol_available($instance));
+        $this->setGuestUser();
+        $this->assertTrue($selfplugin->is_self_enrol_available($instance));
+
+        // Enrol end date is in past.
+        $instance->enrolenddate = time() - 60;
+        $DB->update_record('enrol', $instance);
+        $error = get_string('canntenrollate', 'enrol_self', userdate($instance->enrolenddate));
+        $this->setUser($user1);
+        $this->assertEquals($error, $selfplugin->is_self_enrol_available($instance));
+        $this->setGuestUser();
+        $this->assertEquals($error, $selfplugin->is_self_enrol_available($instance));
+
+        // Maximum enrolments reached.
+        $instance->customint3 = 1;
+        $instance->enrolenddate = 0;
+        $DB->update_record('enrol', $instance);
+        $selfplugin->enrol_user($instance, $user2->id, $studentrole->id);
+        $error = get_string('maxenrolledreached', 'enrol_self');
+        $this->setUser($user1);
+        $this->assertEquals($error, $selfplugin->is_self_enrol_available($instance));
+        $this->setGuestUser();
+        $this->assertEquals($error, $selfplugin->is_self_enrol_available($instance));
+
+        // Maximum enrolments not reached.
+        $instance->customint3 = 3;
+        $DB->update_record('enrol', $instance);
+        $this->setUser($user1);
+        $this->assertTrue($selfplugin->is_self_enrol_available($instance));
+        $this->setGuestUser();
+        $this->assertTrue($selfplugin->is_self_enrol_available($instance));
+
+        require_once("$CFG->dirroot/cohort/lib.php");
+        cohort_add_member($cohort1->id, $user2->id);
+
+        // Cohort test.
+        $instance->customint5 = $cohort1->id;
+        $DB->update_record('enrol', $instance);
+        $error = get_string('cohortnonmemberinfo', 'enrol_self', $cohort1->name);
+        $this->setUser($user1);
+        $this->assertStringContainsString($error, $selfplugin->is_self_enrol_available($instance));
+        $this->setGuestUser();
+        $this->assertStringContainsString($error, $selfplugin->is_self_enrol_available($instance));
+        $this->setUser($user2);
+        $this->assertEquals($canntenrolerror, $selfplugin->is_self_enrol_available($instance));
+    }
+
+    /**
      * Test enrol_self_check_group_enrolment_key
      */
     public function test_enrol_self_check_group_enrolment_key() {

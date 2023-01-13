@@ -63,7 +63,7 @@ class DropDatabase implements Executable
      * @param array  $options      Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
-    public function __construct($databaseName, array $options = [])
+    public function __construct(string $databaseName, array $options = [])
     {
         if (isset($options['session']) && ! $options['session'] instanceof Session) {
             throw InvalidArgumentException::invalidType('"session" option', $options['session'], Session::class);
@@ -81,7 +81,7 @@ class DropDatabase implements Executable
             unset($options['writeConcern']);
         }
 
-        $this->databaseName = (string) $databaseName;
+        $this->databaseName = $databaseName;
         $this->options = $options;
     }
 
@@ -89,7 +89,6 @@ class DropDatabase implements Executable
      * Execute the operation.
      *
      * @see Executable::execute()
-     * @param Server $server
      * @return array|object Command result document
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
@@ -106,10 +105,8 @@ class DropDatabase implements Executable
 
     /**
      * Create the dropDatabase command.
-     *
-     * @return Command
      */
-    private function createCommand()
+    private function createCommand(): Command
     {
         $cmd = ['dropDatabase' => 1];
 
@@ -124,9 +121,8 @@ class DropDatabase implements Executable
      * Create options for executing the command.
      *
      * @see https://php.net/manual/en/mongodb-driver-server.executewritecommand.php
-     * @return array
      */
-    private function createOptions()
+    private function createOptions(): array
     {
         $options = [];
 

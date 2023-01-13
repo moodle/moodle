@@ -288,17 +288,14 @@ class recording_proxy extends proxy_base {
     public static function sort_recordings(array $recordings): array {
         global $CFG;
 
-        $resultless = !empty($CFG->bigbluebuttonbn_recordings_sortorder) ? -1 : 1;
-        $resultmore = !empty($CFG->bigbluebuttonbn_recordings_sortorder) ? 1 : -1;
-
-        uasort($recordings, function($a, $b) use ($resultless, $resultmore) {
+        uasort($recordings, function($a, $b) {
             if ($a['startTime'] < $b['startTime']) {
-                return $resultless;
+                return -1;
             }
             if ($a['startTime'] == $b['startTime']) {
                 return 0;
             }
-            return $resultmore;
+            return 1;
         });
 
         return $recordings;

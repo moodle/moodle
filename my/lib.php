@@ -121,9 +121,10 @@ function my_copy_page(
         $newblockinstanceids[$originalid] = $instance->id;
         $blockcontext = context_block::instance($instance->id);  // Just creates the context record
         $block = block_instance($instance->blockname, $instance);
-        if (!$block->instance_copy($originalid)) {
-            debugging("Unable to copy block-specific data for original block instance: $originalid
-                to new block instance: $instance->id", DEBUG_DEVELOPER);
+        if (empty($block) || !$block->instance_copy($originalid)) {
+            debugging("Unable to copy block-specific data for original block
+                instance: $originalid to new block instance: $instance->id for
+                block: $instance->blockname", DEBUG_DEVELOPER);
         }
     }
 

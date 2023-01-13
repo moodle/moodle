@@ -99,7 +99,7 @@ class calculation_info {
             $samplekey = self::get_sample_key($uniquesampleid);
 
             // Update the cached data adding the new indicator data.
-            $cacheddata = $cache->get($samplekey);
+            $cacheddata = $cache->get($samplekey) ?: [];
             $cacheddata[$calculableclass] = $infokeys;
             $cache->set($samplekey, $cacheddata);
         }

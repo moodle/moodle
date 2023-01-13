@@ -112,7 +112,7 @@ class Update implements Executable, Explainable
      * @param array        $options        Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
-    public function __construct($databaseName, $collectionName, $filter, $update, array $options = [])
+    public function __construct(string $databaseName, string $collectionName, $filter, $update, array $options = [])
     {
         if (! is_array($filter) && ! is_object($filter)) {
             throw InvalidArgumentException::invalidType('$filter', $filter, 'array or object');
@@ -175,8 +175,8 @@ class Update implements Executable, Explainable
             unset($options['writeConcern']);
         }
 
-        $this->databaseName = (string) $databaseName;
-        $this->collectionName = (string) $collectionName;
+        $this->databaseName = $databaseName;
+        $this->collectionName = $collectionName;
         $this->filter = $filter;
         $this->update = $update;
         $this->options = $options;
@@ -186,7 +186,6 @@ class Update implements Executable, Explainable
      * Execute the operation.
      *
      * @see Executable::execute()
-     * @param Server $server
      * @return UpdateResult
      * @throws UnsupportedException if hint or write concern is used and unsupported
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
@@ -219,7 +218,6 @@ class Update implements Executable, Explainable
      * Returns the command document for this operation.
      *
      * @see Explainable::getCommandDocument()
-     * @param Server $server
      * @return array
      */
     public function getCommandDocument(Server $server)
@@ -241,9 +239,8 @@ class Update implements Executable, Explainable
      * Create options for constructing the bulk write.
      *
      * @see https://php.net/manual/en/mongodb-driver-bulkwrite.construct.php
-     * @return array
      */
-    private function createBulkWriteOptions()
+    private function createBulkWriteOptions(): array
     {
         $options = [];
 
@@ -264,9 +261,8 @@ class Update implements Executable, Explainable
      * Create options for executing the bulk write.
      *
      * @see https://php.net/manual/en/mongodb-driver-server.executebulkwrite.php
-     * @return array
      */
-    private function createExecuteOptions()
+    private function createExecuteOptions(): array
     {
         $options = [];
 
@@ -286,10 +282,8 @@ class Update implements Executable, Explainable
      *
      * Note that these options are different from the bulk write options, which
      * are created in createExecuteOptions().
-     *
-     * @return array
      */
-    private function createUpdateOptions()
+    private function createUpdateOptions(): array
     {
         $updateOptions = [
             'multi' => $this->options['multi'],

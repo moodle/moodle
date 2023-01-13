@@ -1,7 +1,13 @@
 This file describes API changes in /reportbuilder/*
 Information provided here is intended especially for developers.
 
+=== 4.1.1 ===
+
+* The `datasource_stress_test_columns` test helper now enables sorting on those columns that support it
+* The `create_[column|filter|condition]` test generator methods now allow for setting all persistent properties
+
 === 4.1 ===
+
 * New method `add_action_divider()` in base system report class, to allow adding a divider to the action menu.
 * New external method `core_reportbuilder_set_filters` for setting report filter values (plus `setFilters` AJAX repository
   export for calling from Javascript modules)

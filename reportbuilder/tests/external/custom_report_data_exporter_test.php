@@ -48,8 +48,12 @@ class custom_report_data_exporter_test extends advanced_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
 
         $report = $generator->create_report(['name' => 'My report', 'source' => users::class, 'default' => false]);
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullname'])
-            ->set_many(['heading' => 'Lovely user', 'sortenabled' => true])->update();
+        $generator->create_column([
+            'reportid' => $report->get('id'),
+            'uniqueidentifier' => 'user:fullname',
+            'heading' => 'Lovely user',
+            'sortenabled' => 1,
+        ]);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:email']);
 
         $reportinstance = manager::get_report_from_persistent($report);

@@ -1325,9 +1325,8 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
 
         case FORMAT_MARKDOWN:
             $text = markdown_to_html($text);
-            if (!$options['noclean']) {
-                $text = clean_text($text, FORMAT_HTML, $options);
-            }
+            // The markdown parser does not strip dangerous html so we need to clean it, even if noclean is set to true.
+            $text = clean_text($text, FORMAT_HTML, $options);
             $text = $filtermanager->filter_text($text, $context, $filteroptions);
             break;
 

@@ -1211,8 +1211,12 @@ function enrol_try_internal_enrol($courseid, $userid, $roleid = null, $timestart
     if (!$instances = $DB->get_records('enrol', array('enrol'=>'manual', 'courseid'=>$courseid, 'status'=>ENROL_INSTANCE_ENABLED), 'sortorder,id ASC')) {
         return false;
     }
-    $instance = reset($instances);
 
+    if ($roleid && !$DB->record_exists('role', ['id' => $roleid])) {
+        return false;
+    }
+
+    $instance = reset($instances);
     $enrol->enrol_user($instance, $userid, $roleid, $timestart, $timeend);
 
     return true;
@@ -1235,7 +1239,12 @@ function enrol_selfenrol_available($courseid) {
         if ($instance->enrol === 'guest') {
             continue;
         }
-        if ($plugins[$instance->enrol]->show_enrolme_link($instance)) {
+        if ((isguestuser() || !isloggedin()) &&
+            ($plugins[$instance->enrol]->is_self_enrol_available($instance) === true)) {
+            $result = true;
+            break;
+        }
+        if ($plugins[$instance->enrol]->show_enrolme_link($instance) === true) {
             $result = true;
             break;
         }
@@ -2008,6 +2017,17 @@ abstract class enrol_plugin {
      * @return bool - true means show "Enrol me in this course" link in course UI
      */
     public function show_enrolme_link(stdClass $instance) {
+        return false;
+    }
+
+    /**
+     * Does this plugin support some way to self enrol?
+     * This function doesn't check user capabilities. Use can_self_enrol to check capabilities.
+     *
+     * @param stdClass $instance enrolment instance
+     * @return bool - true means "Enrol me in this course" link could be available.
+     */
+    public function is_self_enrol_available(stdClass $instance) {
         return false;
     }
 

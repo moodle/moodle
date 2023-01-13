@@ -36,6 +36,7 @@ use MongoDB\Model\ChangeStreamIterator;
 use function array_intersect_key;
 use function array_key_exists;
 use function array_unshift;
+use function assert;
 use function count;
 use function is_array;
 use function is_bool;
@@ -85,7 +86,7 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
     /** @var string */
     private $databaseName;
 
-    /** @var integer|null */
+    /** @var integer */
     private $firstBatchSize;
 
     /** @var boolean */
@@ -201,7 +202,7 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
      * @param array       $options        Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
-    public function __construct(Manager $manager, $databaseName, $collectionName, array $pipeline, array $options = [])
+    public function __construct(Manager $manager, ?string $databaseName, ?string $collectionName, array $pipeline, array $options = [])
     {
         if (isset($collectionName) && ! isset($databaseName)) {
             throw new InvalidArgumentException('$collectionName should also be null if $databaseName is null');
@@ -263,31 +264,31 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
         }
 
         $this->manager = $manager;
-        $this->databaseName = (string) $databaseName;
-        $this->collectionName = isset($collectionName) ? (string) $collectionName : null;
+        $this->databaseName = $databaseName;
+        $this->collectionName = $collectionName;
         $this->pipeline = $pipeline;
 
         $this->aggregate = $this->createAggregate();
     }
 
     /** @internal */
-    final public function commandFailed(CommandFailedEvent $event)
+    final public function commandFailed(CommandFailedEvent $event): void
     {
     }
 
     /** @internal */
-    final public function commandStarted(CommandStartedEvent $event)
+    final public function commandStarted(CommandStartedEvent $event): void
     {
         if ($event->getCommandName() !== 'aggregate') {
             return;
         }
 
-        $this->firstBatchSize = null;
+        $this->firstBatchSize = 0;
         $this->postBatchResumeToken = null;
     }
 
     /** @internal */
-    final public function commandSucceeded(CommandSucceededEvent $event)
+    final public function commandSucceeded(CommandSucceededEvent $event): void
     {
         if ($event->getCommandName() !== 'aggregate') {
             return;
@@ -317,7 +318,6 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
      * Execute the operation.
      *
      * @see Executable::execute()
-     * @param Server $server
      * @return ChangeStream
      * @throws UnsupportedException if collation or read concern is used and unsupported
      * @throws RuntimeException for other driver errors (e.g. connection errors)
@@ -326,7 +326,7 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
     {
         return new ChangeStream(
             $this->createChangeStreamIterator($server),
-            function ($resumeToken, $hasAdvanced) {
+            function ($resumeToken, $hasAdvanced): ChangeStreamIterator {
                 return $this->resume($resumeToken, $hasAdvanced);
             }
         );
@@ -336,10 +336,8 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
      * Create the aggregate command for a change stream.
      *
      * This method is also used to recreate the aggregate command when resuming.
-     *
-     * @return Aggregate
      */
-    private function createAggregate()
+    private function createAggregate(): Aggregate
     {
         $pipeline = $this->pipeline;
         array_unshift($pipeline, ['$changeStream' => (object) $this->changeStreamOptions]);
@@ -349,11 +347,8 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
 
     /**
      * Create a ChangeStreamIterator by executing the aggregate command.
-     *
-     * @param Server $server
-     * @return ChangeStreamIterator
      */
-    private function createChangeStreamIterator(Server $server)
+    private function createChangeStreamIterator(Server $server): ChangeStreamIterator
     {
         return new ChangeStreamIterator(
             $this->executeAggregate($server),
@@ -368,16 +363,16 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
      *
      * The command will be executed using APM so that we can capture data from
      * its response (e.g. firstBatch size, postBatchResumeToken).
-     *
-     * @param Server $server
-     * @return Cursor
      */
-    private function executeAggregate(Server $server)
+    private function executeAggregate(Server $server): Cursor
     {
         addSubscriber($this);
 
         try {
-            return $this->aggregate->execute($server);
+            $cursor = $this->aggregate->execute($server);
+            assert($cursor instanceof Cursor);
+
+            return $cursor;
         } finally {
             removeSubscriber($this);
         }
@@ -411,11 +406,9 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
      *
      * @see https://github.com/mongodb/specifications/blob/master/source/change-streams/change-streams.rst#resume-process
      * @param array|object|null $resumeToken
-     * @param bool              $hasAdvanced
-     * @return ChangeStreamIterator
      * @throws InvalidArgumentException
      */
-    private function resume($resumeToken = null, $hasAdvanced = false)
+    private function resume($resumeToken = null, bool $hasAdvanced = false): ChangeStreamIterator
     {
         if (isset($resumeToken) && ! is_array($resumeToken) && ! is_object($resumeToken)) {
             throw InvalidArgumentException::invalidType('$resumeToken', $resumeToken, 'array or object');
@@ -453,10 +446,8 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
      * Determine whether to capture operation time from an aggregate response.
      *
      * @see https://github.com/mongodb/specifications/blob/master/source/change-streams/change-streams.rst#startatoperationtime
-     * @param Server $server
-     * @return boolean
      */
-    private function shouldCaptureOperationTime(Server $server)
+    private function shouldCaptureOperationTime(Server $server): bool
     {
         if ($this->hasResumed) {
             return false;
