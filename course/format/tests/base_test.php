@@ -235,6 +235,26 @@ class base_test extends advanced_testcase {
         $CFG->linkcoursesections = 1;
         $this->assertNotEmpty($format->get_view_url(1, ['navigation' => 1]));
         $this->assertNotEmpty($format->get_view_url(0, ['navigation' => 1]));
+
+        // Expand section.
+        // The current course format $format uses the format 'testformat' which does not use sections.
+        // Thus, the 'expanded' parameter does not do anything.
+        $viewurl = $format->get_view_url(1);
+        $this->assertNull($viewurl->get_param('expandsection'));
+        $viewurl = $format->get_view_url(1, ['expanded' => 1]);
+        $this->assertNull($viewurl->get_param('expandsection'));
+        $viewurl = $format->get_view_url(1, ['expanded' => 0]);
+        $this->assertNull($viewurl->get_param('expandsection'));
+        // We now use a course format which uses sections.
+        $course2 = $generator->create_course(['format' => 'testformatsections']);
+        course_create_sections_if_missing($course1, [0, 2]);
+        $formatwithsections = course_get_format($course2);
+        $viewurl = $formatwithsections->get_view_url(2);
+        $this->assertEquals(2, $viewurl->get_param('expandsection'));
+        $viewurl = $formatwithsections->get_view_url(2, ['expanded' => 1]);
+        $this->assertEquals(2, $viewurl->get_param('expandsection'));
+        $viewurl = $formatwithsections->get_view_url(2, ['expanded' => 0]);
+        $this->assertNull($viewurl->get_param('expandsection'));
     }
 
     /**
@@ -476,6 +496,27 @@ class format_testformat extends core_courseformat\base {
             BLOCK_POS_RIGHT => [],
             BLOCK_POS_LEFT => []
         ];
+    }
+}
+
+/**
+ * Class format_testformatsections.
+ *
+ * A test class that simulates a course format with sections.
+ *
+ * @package   core_courseformat
+ * @copyright 2023 ISB Bayern
+ * @author    Philipp Memmel
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class format_testformatsections extends core_courseformat\base {
+    /**
+     * Returns if this course format uses sections.
+     *
+     * @return true
+     */
+    public function uses_sections() {
+        return true;
     }
 }
 

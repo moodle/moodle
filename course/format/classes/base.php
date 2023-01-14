@@ -693,6 +693,7 @@ abstract class base {
      * @param array $options options for view URL. At the moment core uses:
      *     'navigation' (bool) if true and section has no separate page, the function returns null
      *     'sr' (int) used by multipage formats to specify to which section to return
+     *     'expanded' (bool) if true the section will be shown expanded, true by default
      * @return null|moodle_url
      */
     public function get_view_url($section, $options = array()) {
@@ -712,6 +713,14 @@ abstract class base {
             return null;
         }
         if ($this->uses_sections() && $sectionno !== null) {
+            // The url includes the parameter to expand the section by default.
+            if (!array_key_exists('expanded', $options)) {
+                $options['expanded'] = true;
+            }
+            if ($options['expanded']) {
+                // This parameter is being set by default.
+                $url->param('expandsection', $sectionno);
+            }
             $url->set_anchor('section-'.$sectionno);
         }
         return $url;
