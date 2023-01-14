@@ -96,8 +96,12 @@
     overflow: hidden;
 }
 
-.gradingform_rubric .criterion.even {
+.gradingform_rubric .criterion.even td {
     background: #f0f0f0;
+}
+
+.gradingform_rubric .criterion.odd td {
+    background: white;
 }
 
 .gradingform_rubric .criterion .description {
