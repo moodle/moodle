@@ -702,7 +702,11 @@ if (empty($courseid)) {
 
     // Set up the display table.
     $table = new \local_report_completion\tables\user_table('local_report_course_completion_user_table');
-    $table->is_downloading($download, format_string($company->get('name')) . ' course completion report ' . format_string($course->fullname), 'local_report_coursecompletion_course123');
+    if ($courseid == 1) {
+        $table->is_downloading($download, format_string($company->get('name')) . ' course completion report ' . format_string($SITE->fullname), 'local_report_coursecompletion_course123');
+    } else {
+        $table->is_downloading($download, format_string($company->get('name')) . ' course completion report ' . format_string($course->fullname), 'local_report_coursecompletion_course123');
+    }
 
     // Deal with sort by course for all courses if sort is empty.
     if (empty($sort) && $courseid == 1) {
