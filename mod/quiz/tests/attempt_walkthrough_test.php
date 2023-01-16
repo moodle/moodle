@@ -48,7 +48,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
         // Make a quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
 
-        $quiz = $quizgenerator->create_instance(['course'=>$SITE->id, 'questionsperpage' => 0, 'grade' => 100.0,
+        $quiz = $quizgenerator->create_instance(['course' => $SITE->id, 'questionsperpage' => 0, 'grade' => 100.0,
                                                       'sumgrades' => 3]);
 
         // Create a couple of questions.
@@ -392,7 +392,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
             // Make a quiz.
             $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
 
-            $this->quizwithvariants = $quizgenerator->create_instance(['course'=>$SITE->id,
+            $this->quizwithvariants = $quizgenerator->create_instance(['course' => $SITE->id,
                                                                             'questionsperpage' => 0,
                                                                             'grade' => 100.0,
                                                                             'sumgrades' => 1]);

@@ -1212,7 +1212,7 @@ function quiz_after_add_or_update($quiz) {
     $cmid = $quiz->coursemodule;
 
     // We need to use context now, so we need to make sure all needed info is already in db.
-    $DB->set_field('course_modules', 'instance', $quiz->id, ['id'=>$cmid]);
+    $DB->set_field('course_modules', 'instance', $quiz->id, ['id' => $cmid]);
     $context = context_module::instance($cmid);
 
     // Save the feedback.
@@ -1259,8 +1259,8 @@ function quiz_update_events($quiz, $override = null) {
     global $DB;
 
     // Load the old events relating to this quiz.
-    $conds = ['modulename'=>'quiz',
-                   'instance'=>$quiz->id];
+    $conds = ['modulename' => 'quiz',
+                   'instance' => $quiz->id];
     if (!empty($override)) {
         // Only load events for this override.
         if (isset($override->userid)) {
@@ -1656,7 +1656,7 @@ function quiz_reset_userdata($data) {
  */
 function quiz_num_attempt_summary($quiz, $cm, $returnzero = false, $currentgroup = 0) {
     global $DB, $USER;
-    $numattempts = $DB->count_records('quiz_attempts', ['quiz'=> $quiz->id, 'preview'=>0]);
+    $numattempts = $DB->count_records('quiz_attempts', ['quiz' => $quiz->id, 'preview' => 0]);
     if ($numattempts || $returnzero) {
         if (groups_get_activity_groupmode($cm)) {
             $a = new stdClass();
@@ -1834,7 +1834,7 @@ function quiz_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
 
     require_login($course, false, $cm);
 
-    if (!$quiz = $DB->get_record('quiz', ['id'=>$cm->instance])) {
+    if (!$quiz = $DB->get_record('quiz', ['id' => $cm->instance])) {
         return false;
     }
 
@@ -1845,7 +1845,7 @@ function quiz_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
     }
 
     $feedbackid = (int)array_shift($args);
-    if (!$feedback = $DB->get_record('quiz_feedback', ['id'=>$feedbackid])) {
+    if (!$feedback = $DB->get_record('quiz_feedback', ['id' => $feedbackid])) {
         return false;
     }
 
@@ -1918,7 +1918,7 @@ function quiz_question_pluginfile($course, $context, $component,
  * @param stdClass $currentcontext Current context of block
  */
 function quiz_page_type_list($pagetype, $parentcontext, $currentcontext) {
-    $module_pagetype = [
+    $modulepagetype = [
         'mod-quiz-*'       => get_string('page-mod-quiz-x', 'quiz'),
         'mod-quiz-view'    => get_string('page-mod-quiz-view', 'quiz'),
         'mod-quiz-attempt' => get_string('page-mod-quiz-attempt', 'quiz'),
@@ -1927,7 +1927,7 @@ function quiz_page_type_list($pagetype, $parentcontext, $currentcontext) {
         'mod-quiz-edit'    => get_string('page-mod-quiz-edit', 'quiz'),
         'mod-quiz-report'  => get_string('page-mod-quiz-report', 'quiz'),
     ];
-    return $module_pagetype;
+    return $modulepagetype;
 }
 
 /**

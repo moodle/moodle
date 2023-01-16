@@ -51,7 +51,7 @@ if ($overrideid) {
 } else {
     throw new \moodle_exception('invalidcoursemodule');
 }
-$course = $DB->get_record('course', ['id'=>$cm->course], '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
 $url = new moodle_url('/mod/quiz/overrideedit.php');
 if ($action) {
@@ -112,7 +112,7 @@ if ($action === 'duplicate') {
 // True if group-based override.
 $groupmode = !empty($data->groupid) || ($action === 'addgroup' && empty($overrideid));
 
-$overridelisturl = new moodle_url('/mod/quiz/overrides.php', ['cmid'=>$cm->id]);
+$overridelisturl = new moodle_url('/mod/quiz/overrides.php', ['cmid' => $cm->id]);
 if (!$groupmode) {
     $overridelisturl->param('mode', 'user');
 }
@@ -152,8 +152,8 @@ if ($mform->is_cancelled()) {
     if ($userorgroupchanged) {
         $conditions = [
                 'quiz' => $quiz->id,
-                'userid' => empty($fromform->userid)? null : $fromform->userid,
-                'groupid' => empty($fromform->groupid)? null : $fromform->groupid];
+                'userid' => empty($fromform->userid) ? null : $fromform->userid,
+                'groupid' => empty($fromform->groupid) ? null : $fromform->groupid];
         if ($oldoverride = $DB->get_record('quiz_overrides', $conditions)) {
             // There is an old override, so we merge any new settings on top of
             // the older override.
@@ -213,7 +213,7 @@ if ($mform->is_cancelled()) {
         $event->trigger();
     }
 
-    quiz_update_open_attempts(['quizid'=>$quiz->id]);
+    quiz_update_open_attempts(['quizid' => $quiz->id]);
     if ($groupmode) {
         // Priorities may have shifted, so we need to update all of the calendar events for group overrides.
         quiz_update_events($quiz);

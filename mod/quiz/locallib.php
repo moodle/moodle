@@ -718,7 +718,7 @@ function quiz_set_grade($newgrade, $quiz) {
                 UPDATE {quiz_grades}
                 SET grade = ? * grade, timemodified = ?
                 WHERE quiz = ?
-        ", [$newgrade/$oldgrade, $timemodified, $quiz->id]);
+        ", [$newgrade / $oldgrade, $timemodified, $quiz->id]);
     }
 
     if ($oldgrade > 1e-7) {

@@ -352,7 +352,7 @@ class stats_from_steps_walkthrough_test extends \mod_quiz\attempt_walkthrough_fr
      * @param string $whichattempts
      * @param string $whichtries
      * @param \core\dml\sql_join $groupstudentsjoins
-     * @return array with contents 0 => $questions, 1 => $quizstats, 2=> $questionstats, 3=> $qubaids Might be needed for further
+     * @return array with contents 0 => $questions, 1 => $quizstats, 2 => $questionstats, 3 => $qubaids Might be needed for further
      *               testing.
      */
     protected function check_stats_calculations_and_response_analysis($csvdata, $whichattempts, $whichtries,

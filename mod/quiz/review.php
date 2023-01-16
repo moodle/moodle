@@ -38,7 +38,7 @@ $page      = optional_param('page', 0, PARAM_INT);
 $showall   = optional_param('showall', null, PARAM_BOOL);
 $cmid      = optional_param('cmid', null, PARAM_INT);
 
-$url = new moodle_url('/mod/quiz/review.php', ['attempt'=>$attemptid]);
+$url = new moodle_url('/mod/quiz/review.php', ['attempt' => $attemptid]);
 if ($page !== 0) {
     $url->param('page', $page);
 } else if ($showall) {

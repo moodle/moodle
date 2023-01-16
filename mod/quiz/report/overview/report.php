@@ -242,7 +242,7 @@ class quiz_overview_report extends attempts_report {
                 }
             }
 
-            if ($DB->record_exists('quiz_grades', ['quiz'=> $quiz->id])) {
+            if ($DB->record_exists('quiz_grades', ['quiz' => $quiz->id])) {
                 $data = quiz_report_grade_bands($bandwidth, $bands, $quiz->id, new \core\dml\sql_join());
                 $chart = self::get_chart($labels, $data);
                 $graphname = get_string('overviewreportgraph', 'quiz_overview');

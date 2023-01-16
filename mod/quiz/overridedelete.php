@@ -40,7 +40,7 @@ if (! $quiz = $DB->get_record('quiz', ['id' => $override->quiz])) {
 if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $quiz->course)) {
     throw new \moodle_exception('invalidcoursemodule');
 }
-$course = $DB->get_record('course', ['id'=>$cm->course], '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
 $context = context_module::instance($cm->id);
 
@@ -59,9 +59,9 @@ if ($override->groupid) {
     }
 }
 
-$url = new moodle_url('/mod/quiz/overridedelete.php', ['id'=>$override->id]);
-$confirmurl = new moodle_url($url, ['id'=>$override->id, 'confirm'=>1]);
-$cancelurl = new moodle_url('/mod/quiz/overrides.php', ['cmid'=>$cm->id]);
+$url = new moodle_url('/mod/quiz/overridedelete.php', ['id' => $override->id]);
+$confirmurl = new moodle_url($url, ['id' => $override->id, 'confirm' => 1]);
+$cancelurl = new moodle_url('/mod/quiz/overrides.php', ['cmid' => $cm->id]);
 
 if (!empty($override->userid)) {
     $cancelurl->param('mode', 'user');
