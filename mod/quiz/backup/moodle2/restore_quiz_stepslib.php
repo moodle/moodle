@@ -44,7 +44,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
 
     protected function define_structure() {
 
-        $paths = array();
+        $paths = [];
         $userinfo = $this->get_setting_value('userinfo');
 
         $quiz = new restore_path_element('quiz', '/activity/quiz');
@@ -568,7 +568,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
 
         $this->process_quiz_attempt($data);
 
-        $quiz = $DB->get_record('quiz', array('id' => $this->get_new_parentid('quiz')));
+        $quiz = $DB->get_record('quiz', ['id' => $this->get_new_parentid('quiz')]);
         $quiz->oldquestions = $this->oldquizlayout;
         $this->process_legacy_quiz_attempt_data($data, $quiz);
     }
@@ -600,10 +600,10 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $this->add_related_files('mod_quiz', 'feedback', 'quiz_feedback');
 
         if (!$this->sectioncreated) {
-            $DB->insert_record('quiz_sections', array(
+            $DB->insert_record('quiz_sections', [
                     'quizid' => $this->get_new_parentid('quiz'),
                     'firstslot' => 1, 'heading' => '',
-                    'shufflequestions' => $this->legacyshufflequestionsoption));
+                    'shufflequestions' => $this->legacyshufflequestionsoption]);
         }
     }
 }

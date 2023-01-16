@@ -48,15 +48,15 @@ class attempt_walkthrough_test extends \advanced_testcase {
         // Make a quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
 
-        $quiz = $quizgenerator->create_instance(array('course'=>$SITE->id, 'questionsperpage' => 0, 'grade' => 100.0,
-                                                      'sumgrades' => 3));
+        $quiz = $quizgenerator->create_instance(['course'=>$SITE->id, 'questionsperpage' => 0, 'grade' => 100.0,
+                                                      'sumgrades' => 3]);
 
         // Create a couple of questions.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
         $cat = $questiongenerator->create_question_category();
-        $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
-        $numq = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        $numq = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
         $matchq = $questiongenerator->create_question('match', null, ['category' => $cat->id]);
 
         // Add them to the quiz.
@@ -87,8 +87,8 @@ class attempt_walkthrough_test extends \advanced_testcase {
         // The student has not answered any questions.
         $this->assertEquals(3, $attemptobj->get_number_of_unanswered_questions());
 
-        $tosubmit = array(1 => array('answer' => 'frog'),
-                          2 => array('answer' => '3.14'));
+        $tosubmit = [1 => ['answer' => 'frog'],
+                          2 => ['answer' => '3.14']];
 
         $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
         // The student has answered two questions, and only one remaining.
@@ -172,7 +172,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
         /** @var \core_question_generator $questiongenerator */
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
-        $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
+        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
 
         // Add them to the quiz.
         quiz_add_quiz_question($saq->id, $quiz, 0, 1);
@@ -275,34 +275,34 @@ class attempt_walkthrough_test extends \advanced_testcase {
         // Make a quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
 
-        $quiz = $quizgenerator->create_instance(array('course' => $SITE->id, 'questionsperpage' => 2, 'grade' => 100.0,
-                                                      'sumgrades' => 4));
+        $quiz = $quizgenerator->create_instance(['course' => $SITE->id, 'questionsperpage' => 2, 'grade' => 100.0,
+                                                      'sumgrades' => 4]);
 
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
         // Add two questions to question category.
         $cat = $questiongenerator->create_question_category();
-        $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
-        $numq = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        $numq = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
 
         // Add random question to the quiz.
         quiz_add_random_questions($quiz, 0, $cat->id, 1, false);
 
         // Make another category.
         $cat2 = $questiongenerator->create_question_category();
-        $match = $questiongenerator->create_question('match', null, array('category' => $cat->id));
+        $match = $questiongenerator->create_question('match', null, ['category' => $cat->id]);
 
         quiz_add_quiz_question($match->id, $quiz, 0);
 
-        $multichoicemulti = $questiongenerator->create_question('multichoice', 'two_of_four', array('category' => $cat->id));
+        $multichoicemulti = $questiongenerator->create_question('multichoice', 'two_of_four', ['category' => $cat->id]);
 
         quiz_add_quiz_question($multichoicemulti->id, $quiz, 0);
 
-        $multichoicesingle = $questiongenerator->create_question('multichoice', 'one_of_four', array('category' => $cat->id));
+        $multichoicesingle = $questiongenerator->create_question('multichoice', 'one_of_four', ['category' => $cat->id]);
 
         quiz_add_quiz_question($multichoicesingle->id, $quiz, 0);
 
-        foreach (array($saq->id => 'frog', $numq->id => '3.14') as $randomqidtoselect => $randqanswer) {
+        foreach ([$saq->id => 'frog', $numq->id => '3.14'] as $randomqidtoselect => $randqanswer) {
             // Make a new user to do the quiz each loop.
             $user1 = $this->getDataGenerator()->create_user();
             $this->setUser($user1);
@@ -316,7 +316,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
             $timenow = time();
             $attempt = quiz_create_attempt($quizobj, 1, false, $timenow);
 
-            quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow, array(1 => $randomqidtoselect));
+            quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow, [1 => $randomqidtoselect]);
             $this->assertEquals('1,2,0,3,4,0', $attempt->layout);
 
             quiz_attempt_save_started($quizobj, $quba, $attempt);
@@ -326,15 +326,15 @@ class attempt_walkthrough_test extends \advanced_testcase {
             $this->assertFalse($attemptobj->has_response_to_at_least_one_graded_question());
             $this->assertEquals(4, $attemptobj->get_number_of_unanswered_questions());
 
-            $tosubmit = array();
+            $tosubmit = [];
             $selectedquestionid = $quba->get_question_attempt(1)->get_question_id();
-            $tosubmit[1] = array('answer' => $randqanswer);
-            $tosubmit[2] = array(
+            $tosubmit[1] = ['answer' => $randqanswer];
+            $tosubmit[2] = [
                 'frog' => 'amphibian',
                 'cat'  => 'mammal',
-                'newt' => 'amphibian');
-            $tosubmit[3] = array('One' => '1', 'Two' => '0', 'Three' => '1', 'Four' => '0'); // First and third choice.
-            $tosubmit[4] = array('answer' => 'One'); // The first choice.
+                'newt' => 'amphibian'];
+            $tosubmit[3] = ['One' => '1', 'Two' => '0', 'Three' => '1', 'Four' => '0']; // First and third choice.
+            $tosubmit[4] = ['answer' => 'One']; // The first choice.
 
             $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
 
@@ -371,7 +371,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
 
 
     public function get_correct_response_for_variants() {
-        return array(array(1, 9.9), array(2, 8.5), array(5, 14.2), array(10, 6.8, true));
+        return [[1, 9.9], [2, 8.5], [5, 14.2], [10, 6.8, true]];
     }
 
     protected $quizwithvariants = null;
@@ -392,15 +392,15 @@ class attempt_walkthrough_test extends \advanced_testcase {
             // Make a quiz.
             $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
 
-            $this->quizwithvariants = $quizgenerator->create_instance(array('course'=>$SITE->id,
+            $this->quizwithvariants = $quizgenerator->create_instance(['course'=>$SITE->id,
                                                                             'questionsperpage' => 0,
                                                                             'grade' => 100.0,
-                                                                            'sumgrades' => 1));
+                                                                            'sumgrades' => 1]);
 
             $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
             $cat = $questiongenerator->create_question_category();
-            $calc = $questiongenerator->create_question('calculatedsimple', 'sumwithvariants', array('category' => $cat->id));
+            $calc = $questiongenerator->create_question('calculatedsimple', 'sumwithvariants', ['category' => $cat->id]);
             quiz_add_quiz_question($calc->id, $this->quizwithvariants, 0);
         }
 
@@ -418,7 +418,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
         $attempt = quiz_create_attempt($quizobj, 1, false, $timenow);
 
         // Select variant.
-        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow, array(), array(1 => $variantno));
+        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow, [], [1 => $variantno]);
         $this->assertEquals('1,0', $attempt->layout);
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
@@ -427,7 +427,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
         $this->assertFalse($attemptobj->has_response_to_at_least_one_graded_question());
         $this->assertEquals(1, $attemptobj->get_number_of_unanswered_questions());
 
-        $tosubmit = array(1 => array('answer' => $correctresponse));
+        $tosubmit = [1 => ['answer' => $correctresponse]];
         $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
 
         // Finish the attempt.

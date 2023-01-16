@@ -40,7 +40,7 @@ $page = optional_param('page', -1, PARAM_INT); // Page to jump to in the attempt
 if (!$cm = get_coursemodule_from_id('quiz', $id)) {
     throw new \moodle_exception('invalidcoursemodule');
 }
-if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
+if (!$course = $DB->get_record('course', ['id' => $cm->course])) {
     throw new \moodle_exception("coursemisconf");
 }
 

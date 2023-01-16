@@ -80,7 +80,7 @@ class quiz_grading_report extends report_base {
         $grade = optional_param('grade', null, PARAM_ALPHA);
 
         $includeauto = optional_param('includeauto', false, PARAM_BOOL);
-        if (!in_array($grade, array('all', 'needsgrading', 'autograded', 'manuallygraded'))) {
+        if (!in_array($grade, ['all', 'needsgrading', 'autograded', 'manuallygraded'])) {
             $grade = null;
         }
         $pagesize = optional_param('pagesize',
@@ -92,7 +92,7 @@ class quiz_grading_report extends report_base {
                 PARAM_ALPHAEXT);
 
         // Assemble the options required to reload this page.
-        $optparams = array('includeauto', 'page');
+        $optparams = ['includeauto', 'page'];
         foreach ($optparams as $param) {
             if ($$param) {
                 $this->viewoptions[$param] = $$param;
@@ -149,10 +149,10 @@ class quiz_grading_report extends report_base {
         // Get the group, and the list of significant users.
         $this->currentgroup = $this->get_current_group($cm, $course, $this->context);
         if ($this->currentgroup == self::NO_GROUPS_ALLOWED) {
-            $this->userssql = array();
+            $this->userssql = [];
         } else {
             $this->userssql = get_enrolled_sql($this->context,
-                    array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $this->currentgroup);
+                    ['mod/quiz:reviewmyattempts', 'mod/quiz:attempt'], $this->currentgroup);
         }
 
         $hasquestions = quiz_has_questions($this->quiz->id);
@@ -199,15 +199,15 @@ class quiz_grading_report extends report_base {
         $where = "quiza.quiz = :mangrquizid AND
                 quiza.preview = 0 AND
                 quiza.state = :statefinished";
-        $params = array('mangrquizid' => $this->cm->instance, 'statefinished' => quiz_attempt::FINISHED);
+        $params = ['mangrquizid' => $this->cm->instance, 'statefinished' => quiz_attempt::FINISHED];
 
         $usersjoin = '';
         $currentgroup = groups_get_activity_group($this->cm, true);
         $enrolleduserscount = count_enrolled_users($this->context,
-                array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $currentgroup);
+                ['mod/quiz:reviewmyattempts', 'mod/quiz:attempt'], $currentgroup);
         if ($currentgroup) {
             $userssql = get_enrolled_sql($this->context,
-                    array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $currentgroup);
+                    ['mod/quiz:reviewmyattempts', 'mod/quiz:attempt'], $currentgroup);
             if ($enrolleduserscount < 1) {
                 $where .= ' AND quiza.userid = 0';
             } else {
@@ -248,7 +248,7 @@ class quiz_grading_report extends report_base {
                 WHERE quiza.uniqueid $asql AND quiza.state = ? AND quiza.quiz = ?",
                 $params);
 
-        $attempts = array();
+        $attempts = [];
         foreach ($attemptsbyid as $attempt) {
             $attempts[$attempt->uniqueid] = $attempt;
         }

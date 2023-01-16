@@ -69,11 +69,11 @@ trait quiz_question_helper_test_trait {
         // Create a couple of questions.
         $cat = $questiongenerator->create_question_category($override);
 
-        $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
+        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
         // Create another version.
         $questiongenerator->update_question($saq);
         quiz_add_quiz_question($saq->id, $quiz);
-        $numq = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        $numq = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
         // Create two version.
         $questiongenerator->update_question($numq);
         $questiongenerator->update_question($numq);
@@ -90,8 +90,8 @@ trait quiz_question_helper_test_trait {
     protected function add_one_random_question($questiongenerator, \stdClass $quiz, $override = []): void {
         // Create a random question.
         $cat = $questiongenerator->create_question_category($override);
-        $questiongenerator->create_question('truefalse', null, array('category' => $cat->id));
-        $questiongenerator->create_question('essay', null, array('category' => $cat->id));
+        $questiongenerator->create_question('truefalse', null, ['category' => $cat->id]);
+        $questiongenerator->create_question('essay', null, ['category' => $cat->id]);
         quiz_add_random_questions($quiz, 0, $cat->id, 1, false);
     }
 

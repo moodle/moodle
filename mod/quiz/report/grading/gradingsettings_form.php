@@ -36,7 +36,7 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class quiz_grading_settings_form extends moodleform {
     protected $includeauto;
-    protected $hidden = array();
+    protected $hidden = [];
     protected $counts;
     protected $shownames;
 
@@ -71,8 +71,8 @@ class quiz_grading_settings_form extends moodleform {
 
         $mform->addElement('header', 'options', get_string('options', 'quiz_grading'));
 
-        $gradeoptions = array();
-        foreach (array('needsgrading', 'manuallygraded', 'autograded', 'all') as $type) {
+        $gradeoptions = [];
+        foreach (['needsgrading', 'manuallygraded', 'autograded', 'all'] as $type) {
             if (empty($this->counts->$type)) {
                 continue;
             }
@@ -86,7 +86,7 @@ class quiz_grading_settings_form extends moodleform {
                 $gradeoptions);
 
         $mform->addElement('text', 'pagesize', get_string('questionsperpage', 'quiz_grading'),
-                array('size' => 3));
+                ['size' => 3]);
         $mform->addRule('pagesize', null, 'positiveint', null, 'client');
         $mform->setType('pagesize', PARAM_INT);
 

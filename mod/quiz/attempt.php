@@ -37,7 +37,7 @@ if ($id = optional_param('id', 0, PARAM_INT)) {
         throw new \moodle_exception('invalidquizid', 'quiz');
     }
     redirect(new moodle_url('/mod/quiz/startattempt.php',
-            array('cmid' => $cm->id, 'sesskey' => sesskey())));
+            ['cmid' => $cm->id, 'sesskey' => sesskey()]));
 }
 
 // Get submitted parameters.
@@ -101,7 +101,7 @@ if ($accessmanager->is_preflight_check_required($attemptobj->get_attemptid())) {
 $autosaveperiod = get_config('quiz', 'autosaveperiod');
 if ($autosaveperiod) {
     $PAGE->requires->yui_module('moodle-mod_quiz-autosave',
-            'M.mod_quiz.autosave.init', array($autosaveperiod));
+            'M.mod_quiz.autosave.init', [$autosaveperiod]);
 }
 
 // Log this page view.

@@ -54,8 +54,8 @@ class events_test extends \advanced_testcase {
         // Make a quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
 
-        $quiz = $quizgenerator->create_instance(array('course' => $course->id, 'questionsperpage' => 0,
-                'grade' => 100.0, 'sumgrades' => 2));
+        $quiz = $quizgenerator->create_instance(['course' => $course->id, 'questionsperpage' => 0,
+                'grade' => 100.0, 'sumgrades' => 2]);
 
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id);
 
@@ -63,8 +63,8 @@ class events_test extends \advanced_testcase {
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
         $cat = $questiongenerator->create_question_category();
-        $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
-        $numq = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        $numq = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
 
         // Add them to the quiz.
         quiz_add_quiz_question($saq->id, $quiz);
@@ -94,7 +94,7 @@ class events_test extends \advanced_testcase {
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
-        return array($quizobj, $quba, $attempt);
+        return [$quizobj, $quba, $attempt];
     }
 
     /**
@@ -239,8 +239,8 @@ class events_test extends \advanced_testcase {
         $this->assertEquals('quiz_attempt_started', $event->get_legacy_eventname());
         $this->assertEquals(\context_module::instance($quizobj->get_cmid()), $event->get_context());
         // Check legacy log data.
-        $expected = array($quizobj->get_courseid(), 'quiz', 'attempt', 'review.php?attempt=' . $attempt->id,
-            $quizobj->get_quizid(), $quizobj->get_cmid());
+        $expected = [$quizobj->get_courseid(), 'quiz', 'attempt', 'review.php?attempt=' . $attempt->id,
+            $quizobj->get_quizid(), $quizobj->get_cmid()];
         $this->assertEventLegacyLogData($expected, $event);
         // Check legacy event data.
         $legacydata = new \stdClass();
@@ -369,15 +369,15 @@ class events_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $params = array(
+        $params = [
             'courseid' => $course->id,
             'context' => \context_module::instance($quiz->cmid),
-            'other' => array(
+            'other' => [
                 'quizid' => $quiz->id
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\edit_page_viewed::create($params);
 
         // Trigger and capture the event.
@@ -389,7 +389,7 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\edit_page_viewed', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'editquestions', 'view.php?id=' . $quiz->cmid, $quiz->id, $quiz->cmid);
+        $expected = [$course->id, 'quiz', 'editquestions', 'view.php?id=' . $quiz->cmid, $quiz->id, $quiz->cmid];
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -409,8 +409,8 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\attempt_deleted', $event);
         $this->assertEquals(\context_module::instance($quizobj->get_cmid()), $event->get_context());
-        $expected = array($quizobj->get_courseid(), 'quiz', 'delete attempt', 'report.php?id=' . $quizobj->get_cmid(),
-            $attempt->id, $quizobj->get_cmid());
+        $expected = [$quizobj->get_courseid(), 'quiz', 'delete attempt', 'report.php?id=' . $quizobj->get_cmid(),
+            $attempt->id, $quizobj->get_cmid()];
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -441,15 +441,15 @@ class events_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $params = array(
+        $params = [
             'context' => $context = \context_module::instance($quiz->cmid),
-            'other' => array(
+            'other' => [
                 'quizid' => $quiz->id,
                 'reportname' => 'overview'
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\report_viewed::create($params);
 
         // Trigger and capture the event.
@@ -461,8 +461,8 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\report_viewed', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'report', 'report.php?id=' . $quiz->cmid . '&mode=overview',
-            $quiz->id, $quiz->cmid);
+        $expected = [$course->id, 'quiz', 'report', 'report.php?id=' . $quiz->cmid . '&mode=overview',
+            $quiz->id, $quiz->cmid];
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -478,17 +478,17 @@ class events_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $params = array(
+        $params = [
             'objectid' => 1,
             'relateduserid' => 2,
             'courseid' => $course->id,
             'context' => \context_module::instance($quiz->cmid),
-            'other' => array(
+            'other' => [
                 'quizid' => $quiz->id
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\attempt_reviewed::create($params);
 
         // Trigger and capture the event.
@@ -500,7 +500,7 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\attempt_reviewed', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'review', 'review.php?attempt=1', $quiz->id, $quiz->cmid);
+        $expected = [$course->id, 'quiz', 'review', 'review.php?attempt=1', $quiz->id, $quiz->cmid];
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -516,17 +516,17 @@ class events_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $params = array(
+        $params = [
             'objectid' => 1,
             'relateduserid' => 2,
             'courseid' => $course->id,
             'context' => \context_module::instance($quiz->cmid),
-            'other' => array(
+            'other' => [
                 'quizid' => $quiz->id
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\attempt_summary_viewed::create($params);
 
         // Trigger and capture the event.
@@ -538,7 +538,7 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\attempt_summary_viewed', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'view summary', 'summary.php?attempt=1', $quiz->id, $quiz->cmid);
+        $expected = [$course->id, 'quiz', 'view summary', 'summary.php?attempt=1', $quiz->id, $quiz->cmid];
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -554,16 +554,16 @@ class events_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $params = array(
+        $params = [
             'objectid' => 1,
             'relateduserid' => 2,
             'context' => \context_module::instance($quiz->cmid),
-            'other' => array(
+            'other' => [
                 'quizid' => $quiz->id
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\user_override_created::create($params);
 
         // Trigger and capture the event.
@@ -589,16 +589,16 @@ class events_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $params = array(
+        $params = [
             'objectid' => 1,
             'context' => \context_module::instance($quiz->cmid),
-            'other' => array(
+            'other' => [
                 'quizid' => $quiz->id,
                 'groupid' => 2
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\group_override_created::create($params);
 
         // Trigger and capture the event.
@@ -624,16 +624,16 @@ class events_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $params = array(
+        $params = [
             'objectid' => 1,
             'relateduserid' => 2,
             'context' => \context_module::instance($quiz->cmid),
-            'other' => array(
+            'other' => [
                 'quizid' => $quiz->id
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\user_override_updated::create($params);
 
         // Trigger and capture the event.
@@ -645,7 +645,7 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\user_override_updated', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'edit override', 'overrideedit.php?id=1', $quiz->id, $quiz->cmid);
+        $expected = [$course->id, 'quiz', 'edit override', 'overrideedit.php?id=1', $quiz->id, $quiz->cmid];
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -661,16 +661,16 @@ class events_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $params = array(
+        $params = [
             'objectid' => 1,
             'context' => \context_module::instance($quiz->cmid),
-            'other' => array(
+            'other' => [
                 'quizid' => $quiz->id,
                 'groupid' => 2
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\group_override_updated::create($params);
 
         // Trigger and capture the event.
@@ -682,7 +682,7 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\group_override_updated', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'edit override', 'overrideedit.php?id=1', $quiz->id, $quiz->cmid);
+        $expected = [$course->id, 'quiz', 'edit override', 'overrideedit.php?id=1', $quiz->id, $quiz->cmid];
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -697,7 +697,7 @@ class events_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
         // Create an override.
         $override = new \stdClass();
@@ -714,7 +714,7 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\user_override_deleted', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'delete override', 'overrides.php?cmid=' . $quiz->cmid, $quiz->id, $quiz->cmid);
+        $expected = [$course->id, 'quiz', 'delete override', 'overrides.php?cmid=' . $quiz->cmid, $quiz->id, $quiz->cmid];
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -729,7 +729,7 @@ class events_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
         // Create an override.
         $override = new \stdClass();
@@ -746,7 +746,7 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\group_override_deleted', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'delete override', 'overrides.php?cmid=' . $quiz->cmid, $quiz->id, $quiz->cmid);
+        $expected = [$course->id, 'quiz', 'delete override', 'overrides.php?cmid=' . $quiz->cmid, $quiz->id, $quiz->cmid];
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -762,18 +762,18 @@ class events_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $params = array(
+        $params = [
             'objectid' => 1,
             'relateduserid' => 2,
             'courseid' => $course->id,
             'context' => \context_module::instance($quiz->cmid),
-            'other' => array(
+            'other' => [
                 'quizid' => $quiz->id,
                 'page' => 0
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\attempt_viewed::create($params);
 
         // Trigger and capture the event.
@@ -785,7 +785,7 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\attempt_viewed', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'continue attempt', 'review.php?attempt=1', $quiz->id, $quiz->cmid);
+        $expected = [$course->id, 'quiz', 'continue attempt', 'review.php?attempt=1', $quiz->id, $quiz->cmid];
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -812,8 +812,8 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\attempt_preview_started', $event);
         $this->assertEquals(\context_module::instance($quizobj->get_cmid()), $event->get_context());
-        $expected = array($quizobj->get_courseid(), 'quiz', 'preview', 'view.php?id=' . $quizobj->get_cmid(),
-            $quizobj->get_quizid(), $quizobj->get_cmid());
+        $expected = [$quizobj->get_courseid(), 'quiz', 'preview', 'view.php?id=' . $quizobj->get_cmid(),
+            $quizobj->get_quizid(), $quizobj->get_cmid()];
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -827,16 +827,16 @@ class events_test extends \advanced_testcase {
     public function test_question_manually_graded() {
         list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
 
-        $params = array(
+        $params = [
             'objectid' => 1,
             'courseid' => $quizobj->get_courseid(),
             'context' => \context_module::instance($quizobj->get_cmid()),
-            'other' => array(
+            'other' => [
                 'quizid' => $quizobj->get_quizid(),
                 'attemptid' => 2,
                 'slot' => 3
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\question_manually_graded::create($params);
 
         // Trigger and capture the event.
@@ -848,8 +848,8 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\question_manually_graded', $event);
         $this->assertEquals(\context_module::instance($quizobj->get_cmid()), $event->get_context());
-        $expected = array($quizobj->get_courseid(), 'quiz', 'manualgrade', 'comment.php?attempt=2&slot=3',
-            $quizobj->get_quizid(), $quizobj->get_cmid());
+        $expected = [$quizobj->get_courseid(), 'quiz', 'manualgrade', 'comment.php?attempt=2&slot=3',
+            $quizobj->get_quizid(), $quizobj->get_cmid()];
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -865,17 +865,17 @@ class events_test extends \advanced_testcase {
 
       $this->setAdminUser();
       $course = $this->getDataGenerator()->create_course();
-      $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+      $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-      $params = array(
+      $params = [
         'objectid' => 1,
         'relateduserid' => 2,
         'courseid' => $course->id,
         'context' => \context_module::instance($quiz->cmid),
-        'other' => array(
+        'other' => [
           'quizid' => $quiz->id
-        )
-      );
+        ]
+      ];
       $event = \mod_quiz\event\attempt_regraded::create($params);
 
       // Trigger and capture the event.

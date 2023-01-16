@@ -41,7 +41,7 @@ class responses_from_steps_walkthrough_test extends \mod_quiz\attempt_walkthroug
         return  __DIR__."/fixtures/{$setname}{$test}.csv";
     }
 
-    protected $files = array('questions', 'steps', 'responses');
+    protected $files = ['questions', 'steps', 'responses'];
 
     /**
      * Create a quiz add questions to it, walk through quiz attempts and then check results.
@@ -89,7 +89,7 @@ class responses_from_steps_walkthrough_test extends \mod_quiz\attempt_walkthroug
                 throw new \coding_exception("There is no step no {$responses['submittedstepno']} ".
                                            "for slot $slot in quizattempt {$responses['quizattempt']}!");
             }
-            foreach (array('responsesummary', 'fraction', 'state') as $column) {
+            foreach (['responsesummary', 'fraction', 'state'] as $column) {
                 if (isset($tests[$column]) && $tests[$column] != '') {
                     switch($column) {
                         case 'responsesummary' :

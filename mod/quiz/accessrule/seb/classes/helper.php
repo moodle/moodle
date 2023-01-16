@@ -47,7 +47,7 @@ class helper {
      * @param array $options Display options.
      * @return string
      */
-    public static function format_icon_link($url, $icon, $alt, $iconcomponent = 'moodle', $options = array()) {
+    public static function format_icon_link($url, $icon, $alt, $iconcomponent = 'moodle', $options = []) {
         global $OUTPUT;
 
         return $OUTPUT->action_icon(

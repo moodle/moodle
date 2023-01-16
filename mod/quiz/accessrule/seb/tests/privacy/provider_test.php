@@ -109,7 +109,7 @@ class provider_test extends provider_testcase {
         // per table, like postgres and mysql do, rendering this useless. In any
         // case better to have the situation covered by some DBs,
         // like sqlsrv or oracle than by none).
-        $this->getDataGenerator()->create_module('label', array('course' => $this->course->id));
+        $this->getDataGenerator()->create_module('label', ['course' => $this->course->id]);
 
         $contextlist = provider::get_contexts_for_userid($this->user->id);
         $approvedcontextlist = new approved_contextlist(

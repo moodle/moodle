@@ -79,7 +79,7 @@ class quiz_overview_report extends attempts_report {
         $questions = quiz_report_get_significant_questions($quiz);
         // Prepare for downloading, if applicable.
         $courseshortname = format_string($course->shortname, true,
-                array('context' => context_course::instance($course->id)));
+                ['context' => context_course::instance($course->id)]);
         $table = new quiz_overview_table($quiz, $this->context, $this->qmsubselect,
                 $options, $groupstudentsjoins, $studentsjoins, $questions, $options->get_url());
         $filename = quiz_report_download_filename(get_string('overviewfilename', 'quiz_overview'),
@@ -157,7 +157,7 @@ class quiz_overview_report extends attempts_report {
                         $regradealllabel =
                                 get_string('regradeall', 'quiz_overview');
                     }
-                    $displayurl = new moodle_url($options->get_url(), array('sesskey' => sesskey()));
+                    $displayurl = new moodle_url($options->get_url(), ['sesskey' => sesskey()]);
                     echo '<div class="mdl-align">';
                     echo '<form action="'.$displayurl->out_omit_querystring().'">';
                     echo '<div>';
@@ -181,8 +181,8 @@ class quiz_overview_report extends attempts_report {
             }
 
             // Define table columns.
-            $columns = array();
-            $headers = array();
+            $columns = [];
+            $headers = [];
 
             if (!$table->is_downloading() && $options->checkboxcolumn) {
                 $columnname = 'checkbox';
@@ -242,7 +242,7 @@ class quiz_overview_report extends attempts_report {
                 }
             }
 
-            if ($DB->record_exists('quiz_grades', array('quiz'=> $quiz->id))) {
+            if ($DB->record_exists('quiz_grades', ['quiz'=> $quiz->id])) {
                 $data = quiz_report_grade_bands($bandwidth, $bands, $quiz->id, new \core\dml\sql_join());
                 $chart = self::get_chart($labels, $data);
                 $graphname = get_string('overviewreportgraph', 'quiz_overview');
@@ -269,7 +269,7 @@ class quiz_overview_report extends attempts_report {
 
         if (empty($currentgroup) || $this->hasgroupstudents) {
             if (optional_param('regrade', 0, PARAM_BOOL) && confirm_sesskey()) {
-                if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
+                if ($attemptids = optional_param_array('attemptid', [], PARAM_INT)) {
                     $this->start_regrade($quiz, $cm);
                     $this->regrade_attempts($quiz, false, $groupstudentsjoins, $attemptids);
                     $this->finish_regrade($redirecturl);
@@ -381,14 +381,14 @@ class quiz_overview_report extends attempts_report {
         if (!$dryrun) {
             question_engine::save_questions_usage_by_activity($quba);
 
-            $params = array(
+            $params = [
               'objectid' => $attempt->id,
               'relateduserid' => $attempt->userid,
               'context' => $this->context,
-              'other' => array(
+              'other' => [
                 'quizid' => $attempt->quiz
-              )
-            );
+              ]
+            ];
             $event = \mod_quiz\event\attempt_regraded::create($params);
             $event->trigger();
         }
@@ -460,7 +460,7 @@ class quiz_overview_report extends attempts_report {
      * attempts whose id is in this list.
      */
     protected function regrade_attempts($quiz, $dryrun = false,
-            \core\dml\sql_join$groupstudentsjoins = null, $attemptids = array()) {
+            \core\dml\sql_join$groupstudentsjoins = null, $attemptids = []) {
         global $DB;
         $this->unlock_session();
 
@@ -469,7 +469,7 @@ class quiz_overview_report extends attempts_report {
                   FROM {quiz_attempts} quiza
                   JOIN {user} u ON u.id = quiza.userid";
         $where = "quiz = :qid AND preview = 0";
-        $params = array('qid' => $quiz->id);
+        $params = ['qid' => $quiz->id];
 
         if ($this->hasgroupstudents && !empty($groupstudentsjoins->joins)) {
             $sql .= "\n{$groupstudentsjoins->joins}";
@@ -505,7 +505,7 @@ class quiz_overview_report extends attempts_report {
 
         $join = '{quiz_overview_regrades} qqr ON qqr.questionusageid = quiza.uniqueid';
         $where = "quiza.quiz = :qid AND quiza.preview = 0 AND qqr.regraded = 0";
-        $params = array('qid' => $quiz->id);
+        $params = ['qid' => $quiz->id];
 
         // Fetch all attempts that need regrading.
         if ($this->hasgroupstudents && !empty($groupstudentsjoins->joins)) {
@@ -521,7 +521,7 @@ class quiz_overview_report extends attempts_report {
                   JOIN $join
                  WHERE $where", $params);
 
-        $attemptquestions = array();
+        $attemptquestions = [];
         foreach ($toregrade as $row) {
             $attemptquestions[$row->uniqueid][] = $row->slot;
         }
@@ -568,10 +568,10 @@ class quiz_overview_report extends attempts_report {
         $this->clear_regrade_table($quiz, $groupstudentsjoins);
 
         $progressbar = new progress_bar('quiz_overview_regrade', 500, true);
-        $a = array(
+        $a = [
             'count' => count($attempts),
             'done'  => 0,
-        );
+        ];
         foreach ($attempts as $attempt) {
             $a['done']++;
             $a['attemptnum'] = $attempt->attempt;
@@ -615,7 +615,7 @@ class quiz_overview_report extends attempts_report {
 
         $userjoin = '';
         $usertest = '';
-        $params = array();
+        $params = [];
         if ($this->hasgroupstudents) {
             $userjoin = "JOIN {user} u ON u.id = quiza.userid
                     {$groupstudentsjoins->joins}";
@@ -666,7 +666,7 @@ class quiz_overview_report extends attempts_report {
                     SELECT uniqueid
                       FROM {quiz_attempts} quiza";
         $where = "WHERE quiza.quiz = :qid";
-        $params = array('qid' => $quiz->id);
+        $params = ['qid' => $quiz->id];
         if ($this->hasgroupstudents && !empty($groupstudentsjoins->joins)) {
             $select .= "\nJOIN {user} u ON u.id = quiza.userid
                     {$groupstudentsjoins->joins}";

@@ -45,10 +45,10 @@ use mod_quiz\question\display_options;
  */
 function quiz_report_index_by_keys($datum, $keys, $keysunique = true) {
     if (!$datum) {
-        return array();
+        return [];
     }
     $key = array_shift($keys);
-    $datumkeyed = array();
+    $datumkeyed = [];
     foreach ($datum as $data) {
         if ($keys || !$keysunique) {
             $datumkeyed[$data->{$key}][]= $data;
@@ -68,7 +68,7 @@ function quiz_report_unindex($datum) {
     if (!$datum) {
         return $datum;
     }
-    $datumunkeyed = array();
+    $datumunkeyed = [];
     foreach ($datum as $value) {
         if (is_array($value)) {
             $datumunkeyed = array_merge($datumunkeyed, quiz_report_unindex($value));
@@ -85,7 +85,7 @@ function quiz_report_unindex($datum) {
  */
 function quiz_has_questions($quizid) {
     global $DB;
-    return $DB->record_exists('quiz_slots', array('quizid' => $quizid));
+    return $DB->record_exists('quiz_slots', ['quizid' => $quizid]);
 }
 
 /**
@@ -216,7 +216,7 @@ function quiz_report_grade_bands($bandwidth, $bands, $quizid, \core\dml\sql_join
     } else {
         $userjoin = '';
         $usertest = '1=1';
-        $params = array();
+        $params = [];
     }
     $sql = "
 SELECT band, COUNT(1)
@@ -280,10 +280,10 @@ function quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter)
 function quiz_report_feedback_for_grade($grade, $quizid, $context) {
     global $DB;
 
-    static $feedbackcache = array();
+    static $feedbackcache = [];
 
     if (!isset($feedbackcache[$quizid])) {
-        $feedbackcache[$quizid] = $DB->get_records('quiz_feedback', array('quizid' => $quizid));
+        $feedbackcache[$quizid] = $DB->get_records('quiz_feedback', ['quizid' => $quizid]);
     }
 
     // With CBM etc, it is possible to get -ve grades, which would then not match
@@ -350,7 +350,7 @@ function quiz_report_list($context) {
     $reportdirs = core_component::get_plugin_list('quiz');
 
     // Order the reports tab in descending order of displayorder.
-    $reportcaps = array();
+    $reportcaps = [];
     foreach ($reports as $key => $report) {
         if (array_key_exists($report->name, $reportdirs)) {
             $reportcaps[$report->name] = $report->capability;
@@ -363,7 +363,7 @@ function quiz_report_list($context) {
             $reportcaps[$reportname] = null;
         }
     }
-    $reportlist = array();
+    $reportlist = [];
     foreach ($reportcaps as $name => $capability) {
         if (empty($capability)) {
             $capability = 'mod/quiz:viewreports';
@@ -412,7 +412,7 @@ function quiz_no_questions_message($quiz, $cm, $context) {
     $output .= $OUTPUT->notification(get_string('noquestions', 'quiz'));
     if (has_capability('mod/quiz:manage', $context)) {
         $output .= $OUTPUT->single_button(new moodle_url('/mod/quiz/edit.php',
-        array('cmid' => $cm->id)), get_string('editquiz', 'quiz'), 'get');
+        ['cmid' => $cm->id]), get_string('editquiz', 'quiz'), 'get');
     }
 
     return $output;

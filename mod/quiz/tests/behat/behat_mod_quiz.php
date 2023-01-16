@@ -162,7 +162,7 @@ class behat_mod_quiz extends behat_question_base {
      */
     protected function get_quiz_by_name(string $name): stdClass {
         global $DB;
-        return $DB->get_record('quiz', array('name' => $name), '*', MUST_EXIST);
+        return $DB->get_record('quiz', ['name' => $name], '*', MUST_EXIST);
     }
 
     /**
@@ -209,9 +209,9 @@ class behat_mod_quiz extends behat_question_base {
         $firstrow = $data->getRow(0);
         if (!in_array('question', $firstrow) && !in_array('page', $firstrow)) {
             if (count($firstrow) == 2) {
-                $headings = array('question', 'page');
+                $headings = ['question', 'page'];
             } else if (count($firstrow) == 3) {
-                $headings = array('question', 'page', 'maxmark');
+                $headings = ['question', 'page', 'maxmark'];
             } else {
                 throw new ExpectationException('When adding questions to a quiz, you should give 2 or three 3 things: ' .
                         ' the question name, the page number, and optionally the maximum mark. ' .
@@ -296,9 +296,9 @@ class behat_mod_quiz extends behat_question_base {
             // Require previous.
             if (array_key_exists('requireprevious', $questiondata)) {
                 if ($questiondata['requireprevious'] === '1') {
-                    $slot = $DB->get_field('quiz_slots', 'MAX(slot)', array('quizid' => $quiz->id));
+                    $slot = $DB->get_field('quiz_slots', 'MAX(slot)', ['quizid' => $quiz->id]);
                     $DB->set_field('quiz_slots', 'requireprevious', 1,
-                            array('quizid' => $quiz->id, 'slot' => $slot));
+                            ['quizid' => $quiz->id, 'slot' => $slot]);
                 } else if ($questiondata['requireprevious'] !== '' && $questiondata['requireprevious'] !== '0') {
                     throw new ExpectationException('Require previous for question "' .
                             $questiondata['question'] . '" should be 0, 1 or blank.',
@@ -330,7 +330,7 @@ class behat_mod_quiz extends behat_question_base {
     public function quiz_contains_the_following_sections($quizname, TableNode $data) {
         global $DB;
 
-        $quiz = $DB->get_record('quiz', array('name' => $quizname), '*', MUST_EXIST);
+        $quiz = $DB->get_record('quiz', ['name' => $quizname], '*', MUST_EXIST);
 
         // Add the sections.
         $previousfirstslot = 0;
@@ -349,7 +349,7 @@ class behat_mod_quiz extends behat_question_base {
             }
 
             if ($rownumber == 0) {
-                $section = $DB->get_record('quiz_sections', array('quizid' => $quiz->id), '*', MUST_EXIST);
+                $section = $DB->get_record('quiz_sections', ['quizid' => $quiz->id], '*', MUST_EXIST);
             } else {
                 $section = new stdClass();
                 $section->quizid = $quiz->id;
@@ -386,7 +386,7 @@ class behat_mod_quiz extends behat_question_base {
             }
         }
 
-        if ($section->firstslot > $DB->count_records('quiz_slots', array('quizid' => $quiz->id))) {
+        if ($section->firstslot > $DB->count_records('quiz_slots', ['quizid' => $quiz->id])) {
             throw new ExpectationException('The section firstslot must be less than the total number of slots in the quiz.',
                     $this->getSession());
         }
@@ -412,8 +412,8 @@ class behat_mod_quiz extends behat_question_base {
         ]);
 
         if ($this->running_javascript()) {
-            $this->execute("behat_action_menu::i_open_the_action_menu_in", array('.slots', "css_element"));
-            $this->execute("behat_action_menu::i_choose_in_the_open_action_menu", array($addaquestion));
+            $this->execute("behat_action_menu::i_open_the_action_menu_in", ['.slots', "css_element"]);
+            $this->execute("behat_action_menu::i_choose_in_the_open_action_menu", [$addaquestion]);
         } else {
             $this->execute('behat_general::click_link', $addaquestion);
         }
@@ -431,7 +431,7 @@ class behat_mod_quiz extends behat_question_base {
     public function i_set_the_max_mark_for_quiz_question($questionname, $newmark) {
         $this->execute('behat_general::click_link', $this->escape(get_string('editmaxmark', 'quiz')));
 
-        $this->execute('behat_general::wait_until_exists', array("li input[name=maxmark]", "css_element"));
+        $this->execute('behat_general::wait_until_exists', ["li input[name=maxmark]", "css_element"]);
 
         $this->execute('behat_general::assert_page_contains_text', $this->escape(get_string('edittitleinstructions')));
 
@@ -472,7 +472,7 @@ class behat_mod_quiz extends behat_question_base {
             "')][./preceding-sibling::li[contains(@class, 'pagenumber')][1][contains(., 'Page " .
             $pagenumber . "')]]";
 
-        $this->execute('behat_general::should_exist', array($xpath, 'xpath_element'));
+        $this->execute('behat_general::should_exist', [$xpath, 'xpath_element']);
     }
 
     /**
@@ -486,7 +486,7 @@ class behat_mod_quiz extends behat_question_base {
                 "')][./preceding-sibling::li[contains(@class, 'pagenumber')][1][contains(., 'Page " .
                 $pagenumber . "')]]";
 
-        $this->execute('behat_general::should_not_exist', array($xpath, 'xpath_element'));
+        $this->execute('behat_general::should_not_exist', [$xpath, 'xpath_element']);
     }
 
     /**
@@ -501,7 +501,7 @@ class behat_mod_quiz extends behat_question_base {
                 "')]/following-sibling::li" .
                 "[contains(., '" . $this->escape($secondquestionname) . "')]";
 
-        $this->execute('behat_general::should_exist', array($xpath, 'xpath_element'));
+        $this->execute('behat_general::should_exist', [$xpath, 'xpath_element']);
     }
 
     /**
@@ -517,7 +517,7 @@ class behat_mod_quiz extends behat_question_base {
         }
         $xpath = "//li[contains(@class, 'slot') and contains(., '" . $this->escape($questionname) .
                 "')]//span[contains(@class, 'slotnumber') and normalize-space(.) = '" . $this->escape($number) . "']";
-        $this->execute('behat_general::should_exist', array($xpath, 'xpath_element'));
+        $this->execute('behat_general::should_exist', [$xpath, 'xpath_element']);
     }
 
     /**
@@ -540,7 +540,7 @@ class behat_mod_quiz extends behat_question_base {
     public function i_click_on_the_page_break_icon_after_question($addorremoves, $questionname) {
         $xpath = $this->get_xpath_page_break_icon_after_question($addorremoves, $questionname);
 
-        $this->execute("behat_general::i_click_on", array($xpath, "xpath_element"));
+        $this->execute("behat_general::i_click_on", [$xpath, "xpath_element"]);
     }
 
     /**
@@ -553,7 +553,7 @@ class behat_mod_quiz extends behat_question_base {
     public function the_page_break_icon_after_question_should_exist($addorremoves, $questionname) {
         $xpath = $this->get_xpath_page_break_icon_after_question($addorremoves, $questionname);
 
-        $this->execute('behat_general::should_exist', array($xpath, 'xpath_element'));
+        $this->execute('behat_general::should_exist', [$xpath, 'xpath_element']);
     }
 
     /**
@@ -566,7 +566,7 @@ class behat_mod_quiz extends behat_question_base {
     public function the_page_break_icon_after_question_should_not_exist($addorremoves, $questionname) {
         $xpath = $this->get_xpath_page_break_icon_after_question($addorremoves, $questionname);
 
-        $this->execute('behat_general::should_not_exist', array($xpath, 'xpath_element'));
+        $this->execute('behat_general::should_not_exist', [$xpath, 'xpath_element']);
     }
 
     /**
@@ -580,7 +580,7 @@ class behat_mod_quiz extends behat_question_base {
     public function the_page_break_link_after_question_should_contain($addorremoves, $questionname, $paramdata) {
         $xpath = $this->get_xpath_page_break_icon_after_question($addorremoves, $questionname);
 
-        $this->execute("behat_general::i_click_on", array($xpath, "xpath_element"));
+        $this->execute("behat_general::i_click_on", [$xpath, "xpath_element"]);
     }
 
     /**
@@ -661,7 +661,7 @@ class behat_mod_quiz extends behat_question_base {
                 "[contains(., '" . $this->escape($target) . "')]";
 
         $this->execute('behat_general::i_drag_and_i_drop_it_in',
-            array($iconxpath, 'xpath_element', $destinationxpath, 'xpath_element')
+            [$iconxpath, 'xpath_element', $destinationxpath, 'xpath_element']
         );
     }
 
@@ -677,10 +677,10 @@ class behat_mod_quiz extends behat_question_base {
                 "')]";
         $deletexpath = "//a[contains(@class, 'editing_delete')]";
 
-        $this->execute("behat_general::i_click_on", array($slotxpath . $deletexpath, "xpath_element"));
+        $this->execute("behat_general::i_click_on", [$slotxpath . $deletexpath, "xpath_element"]);
 
         $this->execute('behat_general::i_click_on_in_the',
-            array('Yes', "button", "Confirm", "dialogue")
+            ['Yes', "button", "Confirm", "dialogue"]
         );
     }
 

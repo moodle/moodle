@@ -289,7 +289,7 @@ class attempt_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
         $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student', [], 'manual', 0, 0, ENROL_USER_SUSPENDED);
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
         $quizobj = quiz_settings::create($quiz->id);
 
         // Login as student.

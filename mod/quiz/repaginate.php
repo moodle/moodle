@@ -39,7 +39,7 @@ if (quiz_has_attempts($quizid)) {
     $reportlink = quiz_attempt_summary_link_to_reports($quizobj->get_quiz(),
                     $quizobj->get_cm(), $quizobj->get_context());
     throw new \moodle_exception('cannoteditafterattempts', 'quiz',
-            new moodle_url('/mod/quiz/edit.php', array('cmid' => $quizobj->get_cmid())), $reportlink);
+            new moodle_url('/mod/quiz/edit.php', ['cmid' => $quizobj->get_cmid()]), $reportlink);
 }
 
 $slotnumber++;
@@ -49,4 +49,4 @@ $repage->repaginate_slots($slotnumber, $repagtype);
 $structure = $quizobj->get_structure();
 $slots = $structure->refresh_page_numbers_and_update_db();
 
-redirect(new moodle_url('edit.php', array('cmid' => $quizobj->get_cmid())));
+redirect(new moodle_url('edit.php', ['cmid' => $quizobj->get_cmid()]));

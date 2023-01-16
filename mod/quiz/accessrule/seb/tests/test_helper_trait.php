@@ -172,9 +172,9 @@ trait quizaccess_seb_test_helper_trait {
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
 
-        $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
+        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
         quiz_add_quiz_question($saq->id, $quiz);
-        $numq = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        $numq = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
         quiz_add_quiz_question($numq->id, $quiz);
 
         return $quiz;

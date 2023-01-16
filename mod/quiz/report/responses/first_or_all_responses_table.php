@@ -68,7 +68,7 @@ class quiz_first_or_all_responses_table extends quiz_last_responses_table {
         $this->questionusagesbyactivity = $dm->load_questions_usages_by_activity($qubaids);
 
         // Insert an extra field in attempt data and extra rows where necessary.
-        $newrawdata = array();
+        $newrawdata = [];
         foreach ($this->rawdata as $attempt) {
             if (!isset($this->questionusagesbyactivity[$attempt->usageid])) {
                 // This is a user without attempts.

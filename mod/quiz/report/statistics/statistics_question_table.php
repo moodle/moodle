@@ -73,8 +73,8 @@ class quiz_statistics_question_table extends flexible_table {
         $this->set_attribute('class', 'generaltable generalbox boxaligncenter quizresponseanalysis');
 
         // Define the table columns.
-        $columns = array();
-        $headers = array();
+        $columns = [];
+        $headers = [];
 
         if ($responseanalysis->has_subparts()) {
             $columns[] = 'part';

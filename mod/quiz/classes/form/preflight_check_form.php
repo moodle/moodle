@@ -33,7 +33,7 @@ class preflight_check_form extends moodleform {
 
     protected function definition() {
         $mform = $this->_form;
-        $this->_form->updateAttributes(array('id' => 'mod_quiz_preflight_form'));
+        $this->_form->updateAttributes(['id' => 'mod_quiz_preflight_form']);
 
         foreach ($this->_customdata['hidden'] as $name => $value) {
             if ($name === 'sesskey') {
