@@ -3,6 +3,7 @@ Information provided here is intended especially for developers.
 
 === 4.3 ===
 
+* New `set_is_deprecated` method in base `local\report\[column|filter]` classes to deprecate report entity columns and filters
 * Trying to add/annotate duplicate entity names to a report will now throw a coding exception
 * The `get_default_entity_name` method of the base entity class is now private, and shouldn't be overridden in extending classes
 

@@ -399,7 +399,15 @@ abstract class base {
      * @return column[]
      */
     public function get_active_columns(): array {
-        return $this->get_columns();
+        $columns = $this->get_columns();
+        foreach ($columns as $column) {
+            if ($column->get_is_deprecated()) {
+                debugging("The column '{$column->get_unique_identifier()}' is deprecated, please do not use it any more." .
+                    " {$column->get_is_deprecated_message()}", DEBUG_DEVELOPER);
+            }
+        }
+
+        return $columns;
     }
 
     /**
@@ -498,7 +506,15 @@ abstract class base {
      * @return filter[]
      */
     public function get_active_conditions(): array {
-        return $this->get_conditions();
+        $conditions = $this->get_conditions();
+        foreach ($conditions as $condition) {
+            if ($condition->get_is_deprecated()) {
+                debugging("The condition '{$condition->get_unique_identifier()}' is deprecated, please do not use it any more." .
+                    " {$condition->get_is_deprecated_message()}", DEBUG_DEVELOPER);
+            }
+        }
+
+        return $conditions;
     }
 
     /**
@@ -645,7 +661,15 @@ abstract class base {
      * @return filter[]
      */
     public function get_active_filters(): array {
-        return $this->get_filters();
+        $filters = $this->get_filters();
+        foreach ($filters as $filter) {
+            if ($filter->get_is_deprecated()) {
+                debugging("The filter '{$filter->get_unique_identifier()}' is deprecated, please do not use it any more." .
+                    " {$filter->get_is_deprecated_message()}", DEBUG_DEVELOPER);
+            }
+        }
+
+        return $filters;
     }
 
     /**

@@ -54,6 +54,9 @@ class custom_report_column_cards_exporter extends custom_report_menu_cards_expor
         $menucards = [];
 
         foreach ($report->get_columns() as $column) {
+            if ($column->get_is_deprecated()) {
+                continue;
+            }
 
             // New menu card per entity.
             $entityname = $column->get_entity_name();
