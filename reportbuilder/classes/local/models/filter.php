@@ -21,6 +21,7 @@ namespace core_reportbuilder\local\models;
 use context;
 use lang_string;
 use core\persistent;
+use core_reportbuilder\datasource;
 
 /**
  * Persistent class to represent a report filter/condition
@@ -82,6 +83,35 @@ class filter extends persistent {
         }
 
         return true;
+    }
+
+    /**
+     * Ensure report source is notified of new filter
+     */
+    protected function after_create(): void {
+        datasource::report_elements_modified($this->get('reportid'));
+    }
+
+    /**
+     * Ensure report source is notified of updated filter
+     *
+     * @param bool $result
+     */
+    protected function after_update($result): void {
+        if ($result) {
+            datasource::report_elements_modified($this->get('reportid'));
+        }
+    }
+
+    /**
+     * Ensure report source is notified of deleted filter
+     *
+     * @param bool $result
+     */
+    protected function after_delete($result): void {
+        if ($result) {
+            datasource::report_elements_modified($this->get('reportid'));
+        }
     }
 
     /**
