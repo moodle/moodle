@@ -26,6 +26,7 @@ information provided here is intended especially for developers.
   initials bar without the bootstrapping and form handling on each initials bar. If you use this mini render,
   you'll need to implement your own form handling. Example usage can be found within the grader report.
 * There is a new helper function mtrace_exception to help with reporting exceptions you have caught in scheduled tasks.
+* Box/Spout has been archived and is no longer maintained, so it has now been removed and replaced by OpenSpout.
 
 === 4.1 ===
 

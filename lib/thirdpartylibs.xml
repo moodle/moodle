@@ -374,15 +374,14 @@ All rights reserved.</copyright>
     </copyrights>
   </library>
   <library>
-    <location>spout</location>
-    <name>Spout</name>
-    <description>Library for importing and exporting csv / excel / ODS files.</description>
-    <version>3.3.0</version>
-    <license>Apache</license>
-    <licenseversion>2.0</licenseversion>
-    <repository>https://github.com/box/spout/</repository>
+    <location>openspout</location>
+    <name>OpenSpout</name>
+    <description>Library to read and write spreadsheet files (CSV, XLSX and ODS).</description>
+    <version>3.7.3</version>
+    <license>MIT</license>
+    <repository>https://github.com/openspout/openspout</repository>
     <copyrights>
-      <copyright>2022 Box, Inc. All rights reserved</copyright>
+      <copyright>OpenSpout</copyright>
     </copyrights>
   </library>
   <library>
