@@ -2080,39 +2080,6 @@ function quiz_require_question_use($questionid) {
 }
 
 /**
- * Verify that the question exists, and the user has permission to use it.
- *
- * @deprecated in 4.1 use mod_quiz\structure::has_use_capability(...) instead.
- *
- * @param object $quiz the quiz settings.
- * @param int $slot which question in the quiz to test.
- * @return bool whether the user can use this question.
- */
-function quiz_has_question_use($quiz, $slot) {
-    global $DB;
-
-    debugging('Deprecated. Please use mod_quiz\structure::has_use_capability instead.');
-
-    $sql = 'SELECT q.*
-              FROM {quiz_slots} slot
-              JOIN {question_references} qre ON qre.itemid = slot.id
-              JOIN {question_bank_entries} qbe ON qbe.id = qre.questionbankentryid
-              JOIN {question_versions} qve ON qve.questionbankentryid = qbe.id
-              JOIN {question} q ON q.id = qve.questionid
-             WHERE slot.quizid = ?
-               AND slot.slot = ?
-               AND qre.component = ?
-               AND qre.questionarea = ?';
-
-    $question = $DB->get_record_sql($sql, [$quiz->id, $slot, 'mod_quiz', 'slot']);
-
-    if (!$question) {
-        return false;
-    }
-    return question_has_capability_on($question, 'use');
-}
-
-/**
  * Add a question to a quiz
  *
  * Adds a question to a quiz by updating $quiz as well as the
@@ -2556,83 +2523,6 @@ function quiz_is_overriden_calendar_event(\calendar_event $event) {
     }
 
     return $DB->record_exists('quiz_overrides', $overrideparams);
-}
-
-/**
- * Retrieves tag information for the given list of quiz slot ids.
- * Currently the only slots that have tags are random question slots.
- *
- * Example:
- * If we have 3 slots with id 1, 2, and 3. The first slot has two tags, the second
- * has one tag, and the third has zero tags. The return structure will look like:
- * [
- *      1 => [
- *          quiz_slot_tags.id => { ...tag data... },
- *          quiz_slot_tags.id => { ...tag data... },
- *      ],
- *      2 => [
- *          quiz_slot_tags.id => { ...tag data... },
- *      ],
- *      3 => [],
- * ]
- *
- * @param int[] $slotids The list of id for the quiz slots.
- * @return array[] List of quiz_slot_tags records indexed by slot id.
- * @deprecated since Moodle 4.0
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-function quiz_retrieve_tags_for_slot_ids($slotids) {
-    debugging('Method quiz_retrieve_tags_for_slot_ids() is deprecated, ' .
-        'see filtercondition->tags from the question_set_reference table.', DEBUG_DEVELOPER);
-    global $DB;
-    if (empty($slotids)) {
-        return [];
-    }
-
-    $slottags = $DB->get_records_list('quiz_slot_tags', 'slotid', $slotids);
-    $tagsbyid = core_tag_tag::get_bulk(array_filter(array_column($slottags, 'tagid')), 'id, name');
-    $tagsbyname = false; // It will be loaded later if required.
-    $emptytagids = array_reduce($slotids, function($carry, $slotid) {
-        $carry[$slotid] = [];
-        return $carry;
-    }, []);
-
-    return array_reduce(
-        $slottags,
-        function($carry, $slottag) use ($slottags, $tagsbyid, $tagsbyname) {
-            if (isset($tagsbyid[$slottag->tagid])) {
-                // Make sure that we're returning the most updated tag name.
-                $slottag->tagname = $tagsbyid[$slottag->tagid]->name;
-            } else {
-                if ($tagsbyname === false) {
-                    // We were hoping that this query could be avoided, but life
-                    // showed its other side to us!
-                    $tagcollid = core_tag_area::get_collection('core', 'question');
-                    $tagsbyname = core_tag_tag::get_by_name_bulk(
-                        $tagcollid,
-                        array_column($slottags, 'tagname'),
-                        'id, name'
-                    );
-                }
-                if (isset($tagsbyname[$slottag->tagname])) {
-                    // Make sure that we're returning the current tag id that matches
-                    // the given tag name.
-                    $slottag->tagid = $tagsbyname[$slottag->tagname]->id;
-                } else {
-                    // The tag does not exist anymore (neither the tag id nor the tag name
-                    // matches an existing tag).
-                    // We still need to include this row in the result as some callers might
-                    // be interested in these rows. An example is the editing forms that still
-                    // need to display tag names even if they don't exist anymore.
-                    $slottag->tagid = null;
-                }
-            }
-
-            $carry[$slottag->slotid][$slottag->id] = $slottag;
-            return $carry;
-        },
-        $emptytagids
-    );
 }
 
 /**
