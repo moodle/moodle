@@ -352,6 +352,7 @@ $string['presetnotselected'] = 'No preset has been selected.';
 $string['presets'] = 'Presets';
 $string['presetshelp'] = 'Choose a preset to use as a starting point.';
 $string['preview'] = 'Preview of {$a}';
+$string['previewaction'] = 'Preview';
 $string['privacy:metadata:commentpurpose'] = 'Comments on database records';
 $string['privacy:metadata:data_content'] = 'The content of a field';
 $string['privacy:metadata:data_content:fieldid'] = 'Field definition ID';
