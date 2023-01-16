@@ -35,6 +35,9 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  */
 class attempt_walkthrough_from_csv_test extends \advanced_testcase {
 
+    /**
+     * @var string[] names of the files which contain the test data.
+     */
     protected $files = ['questions', 'steps', 'results'];
 
     /**

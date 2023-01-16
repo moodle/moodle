@@ -25,6 +25,7 @@ use mod_quiz\quiz_attempt;
  */
 class quiz_overview_table extends attempts_report_table {
 
+    /** @var array used to store information about which questoins have been regraded. */
     protected $regradedqs = [];
 
     /**

@@ -452,15 +452,16 @@ class quiz_overview_report extends attempts_report {
     /**
      * Regrade attempts for this quiz, exactly which attempts are regraded is
      * controlled by the parameters.
+     *
      * @param stdClass $quiz the quiz settings.
      * @param bool $dryrun if true, do a pretend regrade, otherwise do it for real.
-     * @param \core\dml\sql_join|array $groupstudentsjoins empty for all attempts, otherwise regrade attempts
+     * @param \core\dml\sql_join|null $groupstudentsjoins empty for all attempts, otherwise regrade attempts
      * for these users.
      * @param array $attemptids blank for all attempts, otherwise only regrade
      * attempts whose id is in this list.
      */
     protected function regrade_attempts($quiz, $dryrun = false,
-            \core\dml\sql_join$groupstudentsjoins = null, $attemptids = []) {
+            core\dml\sql_join $groupstudentsjoins = null, $attemptids = []) {
         global $DB;
         $this->unlock_session();
 
@@ -679,11 +680,9 @@ class quiz_overview_report extends attempts_report {
     }
 
     /**
-     * Update the final grades for all attempts. This method is used following
-     * a regrade.
+     * Update the final grades for all attempts. This method is used following a regrade.
+     *
      * @param stdClass $quiz the quiz settings.
-     * @param array $userids only update scores for these userids.
-     * @param array $attemptids attemptids only update scores for these attempt ids.
      */
     protected function update_overall_grades($quiz) {
         quiz_update_all_attempt_sumgrades($quiz);

@@ -41,8 +41,11 @@ class mod_quiz_mod_form extends moodleform_mod {
     /** @var array options to be used with date_time_selector fields in the quiz. */
     public static $datefieldoptions = ['optional' => true];
 
+    /** @var array caches the quiz overall feedback, for convenience. */
     protected $_feedbacks;
-    protected static $reviewfields = []; // Initialised in the constructor.
+
+    /** @var array for convenience stores the list of types of review option. Initialised in the constructor. */
+    protected static $reviewfields = [];
 
     /** @var int the max number of attempts allowed in any user or group override on this quiz. */
     protected $maxattemptsanyoverride = null;
@@ -61,7 +64,7 @@ class mod_quiz_mod_form extends moodleform_mod {
     }
 
     protected function definition() {
-        global $COURSE, $CFG, $DB, $PAGE;
+        global $CFG, $DB, $PAGE;
         $quizconfig = get_config('quiz');
         $mform = $this->_form;
 

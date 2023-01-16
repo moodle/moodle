@@ -25,6 +25,7 @@ use grade_item;
 use mod_quiz\completion\custom_completion;
 use question_engine;
 use mod_quiz\quiz_settings;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -462,14 +463,15 @@ class custom_completion_test extends advanced_testcase {
     /**
      * Set up moduleinfo object sample data for quiz instance.
      *
-     * @param stdClass $cm course-module instance
+     * @param cm_info $cm course-module instance
      * @param stdClass $quiz quiz instance data.
      * @param stdClass $course Course related data.
      * @param int $gradepass Grade to pass and completed completion.
      * @param string $grademethod grade attempt method.
-     * @return \stdClass
+     * @return stdClass
      */
-    private function prepare_module_info(object $cm, object $quiz, object $course, int $gradepass, string $grademethod): \stdClass {
+    private function prepare_module_info(cm_info $cm, stdClass $quiz, stdClass $course,
+            int $gradepass, string $grademethod): \stdClass {
         $grouping = $this->getDataGenerator()->create_grouping(['courseid' => $course->id]);
         // Module test values.
         $moduleinfo = new \stdClass();

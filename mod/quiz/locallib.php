@@ -79,13 +79,13 @@ define('QUIZ_SHOWIMAGE_LARGE', 2);
  * user starting at the current time. The ->id field is not set. The object is
  * NOT written to the database.
  *
- * @param stdClass $quizobj the quiz object to create an attempt for.
+ * @param quiz_settings $quizobj the quiz object to create an attempt for.
  * @param int $attemptnumber the sequence number for the attempt.
  * @param stdClass|false $lastattempt the previous attempt by this user, if any. Only needed
  *         if $attemptnumber > 1 and $quiz->attemptonlast is true.
  * @param int $timenow the time the attempt was started at.
  * @param bool $ispreview whether this new attempt is a preview.
- * @param int $userid  the id of the user attempting this quiz.
+ * @param int|null $userid  the id of the user attempting this quiz.
  *
  * @return stdClass the newly created attempt object.
  */
@@ -1379,7 +1379,6 @@ function quiz_attempt_state_name($state) {
  * @param stdClass $question the question.
  * @param string $returnurl url to return to after action is done.
  * @param int $variant which question variant to preview (optional).
- * @param bool $random if question is random, true.
  * @return string html for a number of icons linked to action pages for a
  * question - preview and edit / view icons depending on user capabilities.
  */
@@ -1610,6 +1609,7 @@ function quiz_get_combined_reviewoptions($quiz, $attempts) {
 /**
  * Sends a confirmation message to the student confirming that the attempt was processed.
  *
+ * @param stdClass $recipient user object for the recipient.
  * @param stdClass $a lots of useful information that can be used in the message
  *      subject and body.
  * @param bool $studentisonline is the student currently interacting with Moodle?
@@ -1660,6 +1660,7 @@ function quiz_send_confirmation($recipient, $a, $studentisonline) {
  * Sends notification messages to the interested parties that assign the role capability
  *
  * @param stdClass $recipient user object of the intended recipient
+ * @param stdClass $submitter user object for the user who submitted the attempt.
  * @param stdClass $a associative array of replaceable fields for the templates
  *
  * @return int|false as for {@link message_send()}.

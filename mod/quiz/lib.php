@@ -120,6 +120,7 @@ function quiz_add_instance($quiz) {
  * will update an existing instance with new data.
  *
  * @param stdClass $quiz the data that came from the form.
+ * @param stdClass $mform no longer used.
  * @return mixed true on success, false or a string error message on failure.
  */
 function quiz_update_instance($quiz, $mform) {
@@ -1251,9 +1252,8 @@ function quiz_after_add_or_update($quiz) {
  * If $override is non-zero, then it updates only the events
  * associated with the specified override.
  *
- * @uses QUIZ_MAX_EVENT_LENGTH
  * @param stdClass $quiz the quiz object.
- * @param stdClass optional $override limit to a specific override
+ * @param stdClass|null $override limit to a specific override
  */
 function quiz_update_events($quiz, $override = null) {
     global $DB;

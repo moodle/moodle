@@ -41,6 +41,9 @@ class responses_from_steps_walkthrough_test extends \mod_quiz\attempt_walkthroug
         return  __DIR__."/fixtures/{$setname}{$test}.csv";
     }
 
+    /**
+     * @var string[] names of the files which contain the test data.
+     */
     protected $files = ['questions', 'steps', 'responses'];
 
     /**
