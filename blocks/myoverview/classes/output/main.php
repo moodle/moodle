@@ -24,6 +24,7 @@
 namespace block_myoverview\output;
 defined('MOODLE_INTERNAL') || die();
 
+use core_competency\url;
 use renderable;
 use renderer_base;
 use templatable;
@@ -477,5 +478,107 @@ class main implements renderable, templatable {
         ];
         return array_merge($defaultvariables, $preferences);
 
+    }
+
+    /**
+     * Export this data so it can be used as the context for a mustache template.
+     *
+     * @param \renderer_base $output
+     * @return array Context variables for the template
+     * @throws \coding_exception
+     *
+     */
+    public function export_for_zero_state_template(renderer_base $output) {
+        global $CFG, $DB;
+
+        $nocoursesimg = $output->image_url('courses', 'block_myoverview');
+
+        $coursecat = \core_course_category::user_top();
+        if ($coursecat) {
+            $category = \core_course_category::get_nearest_editable_subcategory($coursecat, ['moodle/course:request']);
+            if ($category && $category->can_request_course()) {
+                // Add Request a course button.
+                $button = new \single_button(
+                    new \moodle_url('/course/request.php', ['category' => $category->id]),
+                    get_string('requestcourse'),
+                    'post',
+                    true
+                );
+                return $this->generate_zero_state_data($nocoursesimg, [$button], 'request');
+            }
+
+            $totalcourses = $DB->count_records_select('course', 'category > 0');
+            if (!$totalcourses && ($category = \core_course_category::get_nearest_editable_subcategory($coursecat, ['create']))) {
+                // Add Quickstart guide and Create course buttons.
+                $quickstarturl = $CFG->coursecreationguide;
+                if ($quickstarturl) {
+                    $quickstartbutton = new \single_button(
+                        new \moodle_url($quickstarturl, ['lang' => current_language()]),
+                        get_string('viewquickstart', 'block_myoverview'),
+                    );
+                    $buttons = [$quickstartbutton->export_for_template($output)];
+                }
+
+                $createbutton = new \single_button(
+                    new \moodle_url('/course/edit.php', ['category' => $category->id]),
+                    get_string('createcourse', 'block_myoverview'),
+                    'post',
+                    true
+                );
+                $buttons[] = $createbutton->export_for_template($output);
+                return $this->generate_zero_state_data($nocoursesimg, $buttons, 'nocourses');
+            }
+
+            if ($categorytocreate = \core_course_category::get_nearest_editable_subcategory($coursecat, ['create'])) {
+                $createbutton = new \single_button(
+                    new \moodle_url('/course/edit.php', ['category' => $categorytocreate->id]),
+                    get_string('createcourse', 'block_myoverview'),
+                    'post',
+                    true
+                );
+                $buttons = [$createbutton->export_for_template($output)];
+                if ($categorytomanage = \core_course_category::get_nearest_editable_subcategory($coursecat, ['manage'])) {
+                    // Add a Manage course button.
+                    $managebutton = new \single_button(
+                        new \moodle_url('/course/management.php', ['category' => $categorytomanage->id]),
+                        get_string('managecourses')
+                    );
+                    $buttons[] = $managebutton->export_for_template($output);
+                    return $this->generate_zero_state_data($nocoursesimg, array_reverse($buttons), 'createcourses');
+                }
+                return $this->generate_zero_state_data($nocoursesimg, $buttons, 'nomanagecourses');
+            }
+        }
+
+        return $this->generate_zero_state_data($nocoursesimg, [], 'nopermission');
+    }
+
+    /**
+     * Generate the state zero data.
+     *
+     * @param \moodle_url $imageurl The URL to the image to show
+     * @param \single_button[] $buttons
+     * @param string $scenario the scenario name (used to get title and intro strings)
+     * @return array Context variables for the template
+     */
+    private function generate_zero_state_data(\moodle_url $imageurl, array $buttons, string $scenario) {
+        global $CFG;
+        // Documentation data.
+        $dochref = new \moodle_url($CFG->docroot, ['lang' => current_language()]);
+        $quickstart = new \moodle_url($CFG->coursecreationguide, ['lang' => current_language()]);
+        $docparams = [
+            'quickhref' => $quickstart->out(),
+            'quicktitle' => get_string('viewquickstart', 'block_myoverview'),
+            'quicktarget' => '_blank',
+            'dochref' => $dochref->out(),
+            'doctitle' => get_string('documentation'),
+            'doctarget' => $CFG->doctonewwindow ? '_blank' : '_self',
+        ];
+        return [
+            'nocoursesimg' => $imageurl->out(),
+            'title' => get_string("zero_{$scenario}_title", 'block_myoverview'),
+            'intro' => get_string("zero_{$scenario}_intro", 'block_myoverview', $docparams),
+            'buttons' => $buttons,
+        ];
     }
 }

@@ -257,6 +257,13 @@ reports,core_reportbuilder|/reportbuilder/index.php',
     $ltemp += get_string_manager()->get_list_of_translations(true);
     $temp->add(new admin_setting_configselect('doclang', get_string('doclang', 'admin'), get_string('configdoclang', 'admin'), '', $ltemp));
     $temp->add(new admin_setting_configcheckbox('doctonewwindow', new lang_string('doctonewwindow', 'admin'), new lang_string('configdoctonewwindow', 'admin'), 0));
+    $temp->add(new admin_setting_configtext(
+        'coursecreationguide',
+        new lang_string('coursecreationguide', 'admin'),
+        new lang_string('coursecreationguide_help', 'admin'),
+        'https://moodle.academy/coursequickstart',
+        PARAM_URL
+    ));
     $ADMIN->add('appearance', $temp);
 
     if (!empty($CFG->enabledashboard)) {
