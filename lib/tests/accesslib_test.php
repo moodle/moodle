@@ -5190,7 +5190,7 @@ class accesslib_test extends advanced_testcase {
 /**
  * Context caching fixture
  */
-class context_inspection extends context_helper {
+abstract class context_inspection extends \core\context_helper {
     public static function test_context_cache_size() {
         return self::$cache_count;
     }

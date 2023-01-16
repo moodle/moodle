@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core\context;
 
@@ -26,27 +26,40 @@ use coding_exception, moodle_url;
  * @package   core_access
  * @category  access
  * @copyright Petr Skoda
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 4.2
  */
 class block extends context {
+    /** @var int numeric context level value matching legacy CONTEXT_BLOCK */
+    public const LEVEL = 80;
+
     /**
-     * Please use context_block::instance($blockinstanceid) if you need the instance of context.
-     * Alternatively if you know only the context id use context::instance_by_id($contextid)
+     * Please use \core\context\block::instance($blockinstanceid) if you need the instance of context.
+     * Alternatively if you know only the context id use \core\context::instance_by_id($contextid)
      *
      * @param stdClass $record
      */
     protected function __construct(stdClass $record) {
         parent::__construct($record);
-        if ($record->contextlevel != CONTEXT_BLOCK) {
-            throw new coding_exception('Invalid $record->contextlevel in context_block constructor');
+        if ($record->contextlevel != self::LEVEL) {
+            throw new coding_exception('Invalid $record->contextlevel in core\context\block constructor');
         }
+    }
+
+    /**
+     * Returns short context name.
+     *
+     * @since Moodle 4.2
+     *
+     * @return string
+     */
+    public static function get_short_name(): string {
+        return 'block';
     }
 
     /**
      * Returns human readable context level name.
      *
-     * @static
      * @return string the human readable context level name.
      */
     public static function get_level_name() {
@@ -65,13 +78,13 @@ class block extends context {
         global $DB, $CFG;
 
         $name = '';
-        if ($blockinstance = $DB->get_record('block_instances', array('id'=>$this->_instanceid))) {
+        if ($blockinstance = $DB->get_record('block_instances', array('id' => $this->_instanceid))) {
             global $CFG;
             require_once("$CFG->dirroot/blocks/moodleblock.class.php");
             require_once("$CFG->dirroot/blocks/$blockinstance->blockname/block_$blockinstance->blockname.php");
             $blockname = "block_$blockinstance->blockname";
             if ($blockobject = new $blockname()) {
-                if ($withprefix){
+                if ($withprefix) {
                     $name = get_string('block').': ';
                 }
                 $name .= $blockobject->title;
@@ -92,6 +105,19 @@ class block extends context {
     }
 
     /**
+     * Returns list of all possible parent context levels.
+     * @since Moodle 4.2
+     *
+     * @return int[]
+     */
+    public static function get_possible_parent_levels(): array {
+        // Blocks may be added to any other context instance.
+        $alllevels = \core\context_helper::get_all_levels();
+        unset($alllevels[self::LEVEL]);
+        return array_keys($alllevels);
+    }
+
+    /**
      * Returns array of relevant context capability records.
      *
      * @param string $sort
@@ -104,7 +130,7 @@ class block extends context {
 
         $select = '(contextlevel = :level AND component = :component)';
         $params = [
-            'level' => CONTEXT_BLOCK,
+            'level' => self::LEVEL,
             'component' => 'block_' . $bi->blockname,
         ];
 
@@ -132,7 +158,6 @@ class block extends context {
     /**
      * Returns block context instance.
      *
-     * @static
      * @param int $blockinstanceid id from {block_instances} table.
      * @param int $strictness
      * @return block|false context instance
@@ -140,14 +165,14 @@ class block extends context {
     public static function instance($blockinstanceid, $strictness = MUST_EXIST) {
         global $DB;
 
-        if ($context = context::cache_get(CONTEXT_BLOCK, $blockinstanceid)) {
+        if ($context = context::cache_get(self::LEVEL, $blockinstanceid)) {
             return $context;
         }
 
-        if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_BLOCK, 'instanceid' => $blockinstanceid))) {
+        if (!$record = $DB->get_record('context', array('contextlevel' => self::LEVEL, 'instanceid' => $blockinstanceid))) {
             if ($bi = $DB->get_record('block_instances', array('id' => $blockinstanceid), 'id,parentcontextid', $strictness)) {
                 $parentcontext = context::instance_by_id($bi->parentcontextid);
-                $record = context::insert_context_record(CONTEXT_BLOCK, $bi->id, $parentcontext->path);
+                $record = context::insert_context_record(self::LEVEL, $bi->id, $parentcontext->path);
             }
         }
 
@@ -170,7 +195,6 @@ class block extends context {
 
     /**
      * Create missing context instances at block context level
-     * @static
      */
     protected static function create_level_instances() {
         global $DB;
@@ -189,15 +213,14 @@ class block extends context {
         EOF;
 
         $DB->execute($sql, [
-            'contextlevel' => CONTEXT_BLOCK,
-            'existingcontextlevel' => CONTEXT_BLOCK,
+            'contextlevel' => self::LEVEL,
+            'existingcontextlevel' => self::LEVEL,
         ]);
     }
 
     /**
      * Returns sql necessary for purging of stale context instances.
      *
-     * @static
      * @return string cleanup SQL
      */
     protected static function get_cleanup_sql() {
@@ -205,7 +228,7 @@ class block extends context {
                   SELECT c.*
                     FROM {context} c
          LEFT OUTER JOIN {block_instances} bi ON c.instanceid = bi.id
-                   WHERE bi.id IS NULL AND c.contextlevel = ".CONTEXT_BLOCK."
+                   WHERE bi.id IS NULL AND c.contextlevel = ".self::LEVEL."
                ";
 
         return $sql;
@@ -214,24 +237,23 @@ class block extends context {
     /**
      * Rebuild context paths and depths at block context level.
      *
-     * @static
      * @param bool $force
      */
     protected static function build_paths($force) {
         global $DB;
 
-        if ($force or $DB->record_exists_select('context', "contextlevel = ".CONTEXT_BLOCK." AND (depth = 0 OR path IS NULL)")) {
+        if ($force || $DB->record_exists_select('context', "contextlevel = ".self::LEVEL." AND (depth = 0 OR path IS NULL)")) {
             if ($force) {
                 $ctxemptyclause = '';
             } else {
                 $ctxemptyclause = "AND (ctx.path IS NULL OR ctx.depth = 0)";
             }
 
-            // pctx.path IS NOT NULL prevents fatal problems with broken block instances that point to invalid context parent
+            // The pctx.path IS NOT NULL prevents fatal problems with broken block instances that point to invalid context parent.
             $sql = "INSERT INTO {context_temp} (id, path, depth, locked)
                     SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1, ctx.locked
                       FROM {context} ctx
-                      JOIN {block_instances} bi ON (bi.id = ctx.instanceid AND ctx.contextlevel = ".CONTEXT_BLOCK.")
+                      JOIN {block_instances} bi ON (bi.id = ctx.instanceid AND ctx.contextlevel = " . self::LEVEL . ")
                       JOIN {context} pctx ON (pctx.id = bi.parentcontextid)
                      WHERE (pctx.path IS NOT NULL AND pctx.depth > 0)
                            $ctxemptyclause";

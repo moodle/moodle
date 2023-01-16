@@ -184,6 +184,11 @@ class external_api_test extends \advanced_testcase {
         $fetchedcontext = $this->get_context_from_params(["contextlevel" => "course", "instanceid" => $course->id]);
         $this->assertEquals($realcontext, $fetchedcontext);
 
+        // Use context level numbers instead of legacy short level names.
+        $fetchedcontext = $this->get_context_from_params(
+            ["contextlevel" => \core\context\course::LEVEL, "instanceid" => $course->id]);
+        $this->assertEquals($realcontext, $fetchedcontext);
+
         // Passing empty values.
         try {
             $fetchedcontext = $this->get_context_from_params(["contextid" => 0]);
@@ -211,9 +216,23 @@ class external_api_test extends \advanced_testcase {
         $fetchedcontext = $this->get_context_from_params(["contextlevel" => "system", "instanceid" => 0]);
         $this->assertEquals($realcontext, $fetchedcontext);
 
-        // Passing wrong level.
-        $this->expectException('invalid_parameter_exception');
-        $fetchedcontext = $this->get_context_from_params(["contextlevel" => "random", "instanceid" => $course->id]);
+        // Passing wrong level name.
+        try {
+            $fetchedcontext = $this->get_context_from_params(["contextlevel" => "random", "instanceid" => $course->id]);
+            $this->fail('exception expected when level name is invalid');
+        } catch (\moodle_exception $e) {
+            $this->assertInstanceOf('invalid_parameter_exception', $e);
+            $this->assertSame('Invalid parameter value detected (Invalid context level = random)', $e->getMessage());
+        }
+
+        // Passing wrong level number.
+        try {
+            $fetchedcontext = $this->get_context_from_params(["contextlevel" => -10, "instanceid" => $course->id]);
+            $this->fail('exception expected when level name is invalid');
+        } catch (\moodle_exception $e) {
+            $this->assertInstanceOf('invalid_parameter_exception', $e);
+            $this->assertSame('Invalid parameter value detected (Invalid context level = -10)', $e->getMessage());
+        }
     }
 
     /**

@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core\context;
 
@@ -26,27 +26,40 @@ use coding_exception, moodle_url;
  * @package   core_access
  * @category  access
  * @copyright Petr Skoda
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 4.2
  */
 class module extends context {
+    /** @var int numeric context level value matching legacy CONTEXT_MODULE */
+    public const LEVEL = 70;
+
     /**
-     * Please use context_module::instance($cmid) if you need the instance of context.
-     * Alternatively if you know only the context id use context::instance_by_id($contextid)
+     * Please use \core\context\module::instance($cmid) if you need the instance of context.
+     * Alternatively if you know only the context id use \core\context::instance_by_id($contextid)
      *
      * @param stdClass $record
      */
     protected function __construct(stdClass $record) {
         parent::__construct($record);
-        if ($record->contextlevel != CONTEXT_MODULE) {
-            throw new coding_exception('Invalid $record->contextlevel in context_module constructor.');
+        if ($record->contextlevel != self::LEVEL) {
+            throw new coding_exception('Invalid $record->contextlevel in core\context\module constructor.');
         }
+    }
+
+    /**
+     * Returns short context name.
+     *
+     * @since Moodle 4.2
+     *
+     * @return string
+     */
+    public static function get_short_name(): string {
+        return 'module';
     }
 
     /**
      * Returns human readable context level name.
      *
-     * @static
      * @return string the human readable context level name.
      */
     public static function get_level_name() {
@@ -71,7 +84,7 @@ class module extends context {
                                          JOIN {modules} md ON md.id = cm.module
                                         WHERE cm.id = ?", array($this->_instanceid))) {
             if ($mod = $DB->get_record($cm->modname, array('id' => $cm->instance))) {
-                if ($withprefix){
+                if ($withprefix) {
                     $name = get_string('modulename', $cm->modname).': ';
                 }
                 if (!$escape) {
@@ -96,10 +109,50 @@ class module extends context {
                                              FROM {course_modules} cm
                                              JOIN {modules} md ON md.id = cm.module
                                             WHERE cm.id = ?", array($this->_instanceid))) {
-            return new moodle_url('/mod/' . $modname . '/view.php', array('id'=>$this->_instanceid));
+            return new moodle_url('/mod/' . $modname . '/view.php', array('id' => $this->_instanceid));
         }
 
         return new moodle_url('/');
+    }
+
+    /**
+     * Returns context instance database name.
+     *
+     * @return string|null table name for all levels except system.
+     */
+    protected static function get_instance_table(): ?string {
+        return 'course_modules';
+    }
+
+    /**
+     * Returns list of columns that can be used from behat
+     * to look up context by reference.
+     *
+     * @return array list of column names from instance table
+     */
+    protected static function get_behat_reference_columns(): array {
+        return ['idnumber'];
+    }
+
+    /**
+     * Returns list of all role archetypes that are compatible
+     * with role assignments in context level.
+     * @since Moodle 4.2
+     *
+     * @return int[]
+     */
+    protected static function get_compatible_role_archetypes(): array {
+        return ['editingteacher', 'teacher', 'student'];
+    }
+
+    /**
+     * Returns list of all possible parent context levels.
+     * @since Moodle 4.2
+     *
+     * @return int[]
+     */
+    public static function get_possible_parent_levels(): array {
+        return [course::LEVEL];
     }
 
     /**
@@ -111,8 +164,8 @@ class module extends context {
     public function get_capabilities(string $sort = self::DEFAULT_CAPABILITY_SORT) {
         global $DB, $CFG;
 
-        $cm = $DB->get_record('course_modules', array('id'=>$this->_instanceid));
-        $module = $DB->get_record('modules', array('id'=>$cm->module));
+        $cm = $DB->get_record('course_modules', array('id' => $this->_instanceid));
+        $module = $DB->get_record('modules', array('id' => $cm->module));
 
         $subcaps = array();
 
@@ -123,13 +176,13 @@ class module extends context {
             debugging('Use of subplugins.php has been deprecated. ' .
                 'Please update your plugin to provide a subplugins.json file instead.',
                 DEBUG_DEVELOPER);
-            $subplugins = array();  // should be redefined in the file
+            $subplugins = array();  // Should be redefined in the file.
             include("{$modulepath}/db/subplugins.php");
         }
 
         if (!empty($subplugins)) {
             foreach (array_keys($subplugins) as $subplugintype) {
-                foreach (array_keys(core_component::get_plugin_list($subplugintype)) as $subpluginname) {
+                foreach (array_keys(\core_component::get_plugin_list($subplugintype)) as $subpluginname) {
                     $subcaps = array_merge($subcaps, array_keys(load_capability_def($subplugintype.'_'.$subpluginname)));
                 }
             }
@@ -163,7 +216,6 @@ class module extends context {
         list($notcompsql, $notcompparams) = $DB->get_in_or_equal($componentnames, SQL_PARAMS_NAMED, 'notcomp', false);
         $params = array_merge($params, $notcompparams);
 
-
         // Exclude other component submodules.
         $i = 0;
         $ignorecomponents = [];
@@ -181,7 +233,7 @@ class module extends context {
 
         $sql = "SELECT *
                   FROM {capabilities}
-                 WHERE (contextlevel = ".CONTEXT_MODULE."
+                 WHERE (contextlevel = ".self::LEVEL."
                    AND component {$notcompsql}
                    AND {$notlikesql})
                        $extra
@@ -203,7 +255,6 @@ class module extends context {
     /**
      * Returns module context instance.
      *
-     * @static
      * @param int $cmid id of the record from {course_modules} table; pass cmid there, NOT id in the instance column
      * @param int $strictness
      * @return module|false context instance
@@ -211,14 +262,14 @@ class module extends context {
     public static function instance($cmid, $strictness = MUST_EXIST) {
         global $DB;
 
-        if ($context = context::cache_get(CONTEXT_MODULE, $cmid)) {
+        if ($context = context::cache_get(self::LEVEL, $cmid)) {
             return $context;
         }
 
-        if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_MODULE, 'instanceid' => $cmid))) {
+        if (!$record = $DB->get_record('context', array('contextlevel' => self::LEVEL, 'instanceid' => $cmid))) {
             if ($cm = $DB->get_record('course_modules', array('id' => $cmid), 'id,course', $strictness)) {
                 $parentcontext = course::instance($cm->course);
-                $record = context::insert_context_record(CONTEXT_MODULE, $cm->id, $parentcontext->path);
+                $record = context::insert_context_record(self::LEVEL, $cm->id, $parentcontext->path);
             }
         }
 
@@ -233,19 +284,18 @@ class module extends context {
 
     /**
      * Create missing context instances at module context level
-     * @static
      */
     protected static function create_level_instances() {
         global $DB;
 
-        $sql = "SELECT ".CONTEXT_MODULE.", cm.id
+        $sql = "SELECT " . self::LEVEL . ", cm.id
                   FROM {course_modules} cm
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
-                                    WHERE cm.id = cx.instanceid AND cx.contextlevel=".CONTEXT_MODULE.")";
+                                    WHERE cm.id = cx.instanceid AND cx.contextlevel=" . self::LEVEL . ")";
         $contextdata = $DB->get_recordset_sql($sql);
         foreach ($contextdata as $context) {
-            context::insert_context_record(CONTEXT_MODULE, $context->id, null);
+            context::insert_context_record(self::LEVEL, $context->id, null);
         }
         $contextdata->close();
     }
@@ -253,7 +303,6 @@ class module extends context {
     /**
      * Returns sql necessary for purging of stale context instances.
      *
-     * @static
      * @return string cleanup SQL
      */
     protected static function get_cleanup_sql() {
@@ -261,7 +310,7 @@ class module extends context {
                   SELECT c.*
                     FROM {context} c
          LEFT OUTER JOIN {course_modules} cm ON c.instanceid = cm.id
-                   WHERE cm.id IS NULL AND c.contextlevel = ".CONTEXT_MODULE."
+                   WHERE cm.id IS NULL AND c.contextlevel = " . self::LEVEL . "
                ";
 
         return $sql;
@@ -270,13 +319,12 @@ class module extends context {
     /**
      * Rebuild context paths and depths at module context level.
      *
-     * @static
      * @param bool $force
      */
     protected static function build_paths($force) {
         global $DB;
 
-        if ($force or $DB->record_exists_select('context', "contextlevel = ".CONTEXT_MODULE." AND (depth = 0 OR path IS NULL)")) {
+        if ($force || $DB->record_exists_select('context', "contextlevel = " . self::LEVEL . " AND (depth = 0 OR path IS NULL)")) {
             if ($force) {
                 $ctxemptyclause = '';
             } else {
@@ -286,8 +334,8 @@ class module extends context {
             $sql = "INSERT INTO {context_temp} (id, path, depth, locked)
                     SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1, ctx.locked
                       FROM {context} ctx
-                      JOIN {course_modules} cm ON (cm.id = ctx.instanceid AND ctx.contextlevel = ".CONTEXT_MODULE.")
-                      JOIN {context} pctx ON (pctx.instanceid = cm.course AND pctx.contextlevel = ".CONTEXT_COURSE.")
+                      JOIN {course_modules} cm ON (cm.id = ctx.instanceid AND ctx.contextlevel = " . self::LEVEL . ")
+                      JOIN {context} pctx ON (pctx.instanceid = cm.course AND pctx.contextlevel = " . course::LEVEL . ")
                      WHERE pctx.path IS NOT NULL AND pctx.depth > 0
                            $ctxemptyclause";
             $trans = $DB->start_delegated_transaction();
