@@ -27,6 +27,12 @@ Overview of this plugin type at http://docs.moodle.org/dev/Quiz_reports
   - mod/quiz/report/attemptsreport_table.php
   - mod/quiz/report/default.php
 
+* Final deprecation (complete removal) of the following functions which were deprecated long ago:
+  - attempts_report::load_relevant_students - deprecated in 3.2
+  - quiz_statistics_graph_get_new_colour - deprecated since 3.2
+  - The file mod/quiz/report/overview/overviewgraph.php - deprecated since 3.2
+  - The file mod/quiz/report/statistics/statistics_graph.php - deprecated since 3.2
+
 
 === 3.9 ===
 

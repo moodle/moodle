@@ -76,6 +76,16 @@ This files describes API changes in the quiz code.
   - mod/quiz/renderer.php - actually, no debugging ouput for this one because of how renderer factories work.
   - mod/quiz/attemptlib.php
 
+* Final deprecation (complete removal) of the following functions which were deprecated long ago:
+  - quiz_groups_member_added_handler - deprecated since 2.6
+  - quiz_groups_member_removed_handler - deprecated since 2.6
+  - quiz_groups_group_deleted_handler - deprecated since 2.6
+  - quiz_groups_members_removed_handler - deprecated since 2.6
+  - attempts_report::load_relevant_students - deprecated since 3.2
+  - quiz_statistics_graph_get_new_colour - deprecated since 3.2
+  - The file mod/quiz/report/overview/overviewgraph.php - deprecated since 3.2
+  - The file mod/quiz/report/statistics/statistics_graph.php - deprecated since 3.2
+  - quiz_print_overview - deprecated since 3.3
 
 === 4.1 ===
 

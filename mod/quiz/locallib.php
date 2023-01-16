@@ -1957,42 +1957,6 @@ function quiz_send_notify_manual_graded_message(quiz_attempt $attemptobj, object
     return message_send($eventdata);
 }
 
-/**
- * Handle groups_member_added event
- *
- * @param object $event the event object.
- * @deprecated since 2.6, see {@link \mod_quiz\group_observers::group_member_added()}.
- */
-function quiz_groups_member_added_handler($event) {
-    debugging('quiz_groups_member_added_handler() is deprecated, please use ' .
-        '\mod_quiz\group_observers::group_member_added() instead.', DEBUG_DEVELOPER);
-    quiz_update_open_attempts(array('userid'=>$event->userid, 'groupid'=>$event->groupid));
-}
-
-/**
- * Handle groups_member_removed event
- *
- * @param object $event the event object.
- * @deprecated since 2.6, see {@link \mod_quiz\group_observers::group_member_removed()}.
- */
-function quiz_groups_member_removed_handler($event) {
-    debugging('quiz_groups_member_removed_handler() is deprecated, please use ' .
-        '\mod_quiz\group_observers::group_member_removed() instead.', DEBUG_DEVELOPER);
-    quiz_update_open_attempts(array('userid'=>$event->userid, 'groupid'=>$event->groupid));
-}
-
-/**
- * Handle groups_group_deleted event
- *
- * @param object $event the event object.
- * @deprecated since 2.6, see {@link \mod_quiz\group_observers::group_deleted()}.
- */
-function quiz_groups_group_deleted_handler($event) {
-    global $DB;
-    debugging('quiz_groups_group_deleted_handler() is deprecated, please use ' .
-        '\mod_quiz\group_observers::group_deleted() instead.', DEBUG_DEVELOPER);
-    quiz_process_group_deleted_in_course($event->courseid);
-}
 
 /**
  * Logic to happen when a/some group(s) has/have been deleted in a course.
@@ -2023,22 +1987,6 @@ function quiz_process_group_deleted_in_course($courseid) {
         $cache->delete("{$record->quiz}_g_{$record->groupid}");
     }
     quiz_update_open_attempts(['quizid' => array_unique(array_column($records, 'quiz'))]);
-}
-
-/**
- * Handle groups_members_removed event
- *
- * @param object $event the event object.
- * @deprecated since 2.6, see {@link \mod_quiz\group_observers::group_member_removed()}.
- */
-function quiz_groups_members_removed_handler($event) {
-    debugging('quiz_groups_members_removed_handler() is deprecated, please use ' .
-        '\mod_quiz\group_observers::group_member_removed() instead.', DEBUG_DEVELOPER);
-    if ($event->userid == 0) {
-        quiz_update_open_attempts(array('courseid'=>$event->courseid));
-    } else {
-        quiz_update_open_attempts(array('courseid'=>$event->courseid, 'userid'=>$event->userid));
-    }
 }
 
 /**

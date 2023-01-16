@@ -1640,13 +1640,6 @@ function quiz_reset_userdata($data) {
 }
 
 /**
- * @deprecated since Moodle 3.3, when the block_course_overview block was removed.
- */
-function quiz_print_overview() {
-    throw new coding_exception('quiz_print_overview() can not be used any more and is obsolete.');
-}
-
-/**
  * Return a textual summary of the number of attempts that have been made at a particular quiz,
  * returns '' if no attempts have been made yet, unless $returnzero is passed as true.
  *
