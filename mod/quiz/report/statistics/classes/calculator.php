@@ -265,7 +265,7 @@ class calculator {
      * @param $fromqa
      * @param $whereqa
      * @param $qaparams
-     * @return object with properties power2, power3, power4
+     * @return stdClass with properties power2, power3, power4
      */
     protected function sum_of_powers_of_difference_to_mean($mean, $fromqa, $whereqa, $qaparams) {
         global $DB;

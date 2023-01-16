@@ -79,7 +79,7 @@ define('QUIZ_SHOWIMAGE_LARGE', 2);
  * user starting at the current time. The ->id field is not set. The object is
  * NOT written to the database.
  *
- * @param object $quizobj the quiz object to create an attempt for.
+ * @param stdClass $quizobj the quiz object to create an attempt for.
  * @param int $attemptnumber the sequence number for the attempt.
  * @param stdClass|false $lastattempt the previous attempt by this user, if any. Only needed
  *         if $attemptnumber > 1 and $quiz->attemptonlast is true.
@@ -87,7 +87,7 @@ define('QUIZ_SHOWIMAGE_LARGE', 2);
  * @param bool $ispreview whether this new attempt is a preview.
  * @param int $userid  the id of the user attempting this quiz.
  *
- * @return object the newly created attempt object.
+ * @return stdClass the newly created attempt object.
  */
 function quiz_create_attempt(quiz_settings $quizobj, $attemptnumber, $lastattempt, $timenow, $ispreview = false, $userid = null) {
     global $USER;
@@ -147,7 +147,7 @@ function quiz_create_attempt(quiz_settings $quizobj, $attemptnumber, $lastattemp
  *
  * @param quiz_settings $quizobj        the quiz object to start an attempt for.
  * @param question_usage_by_activity $quba
- * @param object    $attempt
+ * @param stdClass    $attempt
  * @param integer   $attemptnumber      starting from 1
  * @param integer   $timenow            the attempt start time
  * @param array     $questionids        slot number => question id. Used for random questions, to force the choice
@@ -155,7 +155,7 @@ function quiz_create_attempt(quiz_settings $quizobj, $attemptnumber, $lastattemp
  * @param array     $forcedvariantsbyslot slot number => variant. Used for questions with variants,
  *                                        to force the choice of a particular variant. Intended for testing
  *                                        purposes only.
- * @return object   modified attempt object
+ * @return stdClass   modified attempt object
  */
 function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow,
                                 $questionids = array(), $forcedvariantsbyslot = array()) {
@@ -306,9 +306,9 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
  * Start a subsequent new attempt, in each attempt builds on last mode.
  *
  * @param question_usage_by_activity    $quba         this question usage
- * @param object                        $attempt      this attempt
- * @param object                        $lastattempt  last attempt
- * @return object                       modified attempt object
+ * @param stdClass                        $attempt      this attempt
+ * @param stdClass                        $lastattempt  last attempt
+ * @return stdClass                       modified attempt object
  *
  */
 function quiz_start_attempt_built_on_last($quba, $attempt, $lastattempt) {
@@ -341,8 +341,8 @@ function quiz_start_attempt_built_on_last($quba, $attempt, $lastattempt) {
  *
  * @param quiz_settings $quizobj
  * @param question_usage_by_activity $quba
- * @param object                     $attempt
- * @return object                    attempt object with uniqueid and id set.
+ * @param stdClass                     $attempt
+ * @return stdClass                    attempt object with uniqueid and id set.
  */
 function quiz_attempt_save_started($quizobj, $quba, $attempt) {
     global $DB;
@@ -399,7 +399,7 @@ function quiz_get_user_attempt_unfinished($quizid, $userid) {
  * Delete a quiz attempt.
  * @param mixed $attempt an integer attempt id or an attempt object
  *      (row of the quiz_attempts table).
- * @param object $quiz the quiz object.
+ * @param stdClass $quiz the quiz object.
  */
 function quiz_delete_attempt($attempt, $quiz) {
     global $DB;
@@ -454,7 +454,7 @@ function quiz_delete_attempt($attempt, $quiz) {
 /**
  * Delete all the preview attempts at a quiz, or possibly all the attempts belonging
  * to one user.
- * @param object $quiz the quiz object.
+ * @param stdClass $quiz the quiz object.
  * @param int $userid (optional) if given, only delete the previews belonging to this user.
  */
 function quiz_delete_previews($quiz, $userid = null) {
@@ -536,7 +536,7 @@ function quiz_repaginate_questions($quizid, $slotsperpage) {
  * grade for this quiz.
  *
  * @param float $rawgrade the unadjusted grade, fof example $attempt->sumgrades
- * @param object $quiz the quiz object. Only the fields grade, sumgrades and decimalpoints are used.
+ * @param stdClass $quiz the quiz object. Only the fields grade, sumgrades and decimalpoints are used.
  * @param bool|string $format whether to format the results for display
  *      or 'question' to format a question grade (different number of decimal places.
  * @return float|string the rescaled grade, or null/the lang string 'notyetgraded'
@@ -562,7 +562,7 @@ function quiz_rescale_grade($rawgrade, $quiz, $format = true) {
  * Get the feedback object for this grade on this quiz.
  *
  * @param float $grade a grade on this quiz.
- * @param object $quiz the quiz settings.
+ * @param stdClass $quiz the quiz settings.
  * @return false|stdClass the record object or false if there is not feedback for the given grade
  * @since  Moodle 3.1
  */
@@ -611,7 +611,7 @@ function quiz_feedback_for_grade($grade, $quiz, $context) {
 }
 
 /**
- * @param object $quiz the quiz database row.
+ * @param stdClass $quiz the quiz database row.
  * @return bool Whether this quiz has any non-blank feedback text.
  */
 function quiz_has_feedback($quiz) {
@@ -633,7 +633,7 @@ function quiz_has_feedback($quiz) {
  *
  * You should call {@link quiz_delete_previews()} before you call this function.
  *
- * @param object $quiz a quiz.
+ * @param stdClass $quiz a quiz.
  */
 function quiz_update_sumgrades($quiz) {
     global $DB;
@@ -659,7 +659,7 @@ function quiz_update_sumgrades($quiz) {
 /**
  * Update the sumgrades field of the attempts at a quiz.
  *
- * @param object $quiz a quiz.
+ * @param stdClass $quiz a quiz.
  */
 function quiz_update_all_attempt_sumgrades($quiz) {
     global $DB;
@@ -685,7 +685,7 @@ function quiz_update_all_attempt_sumgrades($quiz) {
  * quiz_update_grades.
  *
  * @param float $newgrade the new maximum grade for the quiz.
- * @param object $quiz the quiz we are updating. Passed by reference so its
+ * @param stdClass $quiz the quiz we are updating. Passed by reference so its
  *      grade field can be updated too.
  * @return bool indicating success or failure.
  */
@@ -755,7 +755,7 @@ function quiz_set_grade($newgrade, $quiz) {
 /**
  * Save the overall grade for a user at a quiz in the quiz_grades table
  *
- * @param object $quiz The quiz for which the best grade is to be calculated and then saved.
+ * @param stdClass $quiz The quiz for which the best grade is to be calculated and then saved.
  * @param int $userid The userid to calculate the grade for. Defaults to the current user.
  * @param array $attempts The attempts of this user. Useful if you are
  * looping through many users. Attempts can be fetched in one master query to
@@ -803,7 +803,7 @@ function quiz_save_best_grade($quiz, $userid = null, $attempts = array()) {
 /**
  * Calculate the overall grade for a quiz given a number of attempts by a particular user.
  *
- * @param object $quiz    the quiz settings object.
+ * @param stdClass $quiz    the quiz settings object.
  * @param array $attempts an array of all the user's attempts at this quiz in order.
  * @return float          the overall grade
  */
@@ -851,7 +851,7 @@ function quiz_calculate_best_grade($quiz, $attempts) {
  * This function is equivalent to calling quiz_save_best_grade for all
  * users, but much more efficient.
  *
- * @param object $quiz the quiz settings.
+ * @param stdClass $quiz the quiz settings.
  */
 function quiz_update_all_final_grades($quiz) {
     global $DB;
@@ -1218,8 +1218,8 @@ function quiz_get_attempt_usertime_sql($redundantwhereclauses = '') {
  *
  * Which attempt is the best depends on $quiz->grademethod. If the grade
  * method is GRADEAVERAGE then this function simply returns the last attempt.
- * @return object         The attempt with the best grade
- * @param object $quiz    The quiz for which the best grade is to be calculated
+ * @return stdClass         The attempt with the best grade
+ * @param stdClass $quiz    The quiz for which the best grade is to be calculated
  * @param array $attempts An array of all the attempts of the user at the quiz
  */
 function quiz_calculate_best_attempt($quiz, $attempts) {
@@ -1303,7 +1303,7 @@ function quiz_get_user_image_options() {
  * Return an user's timeclose for all quizzes in a course, hereby taking into account group and user overrides.
  *
  * @param int $courseid the course id.
- * @return object An object with of all quizids and close unixdates in this course, taking into account the most lenient
+ * @return stdClass An object with of all quizids and close unixdates in this course, taking into account the most lenient
  * overrides, if existing and 0 if no close date is set.
  */
 function quiz_get_user_timeclose($courseid) {
@@ -1374,9 +1374,9 @@ function quiz_attempt_state_name($state) {
 // Other quiz functions ////////////////////////////////////////////////////////
 
 /**
- * @param object $quiz the quiz.
+ * @param stdClass $quiz the quiz.
  * @param int $cmid the course_module object for this quiz.
- * @param object $question the question.
+ * @param stdClass $question the question.
  * @param string $returnurl url to return to after action is done.
  * @param int $variant which question variant to preview (optional).
  * @param bool $random if question is random, true.
@@ -1394,7 +1394,7 @@ function quiz_question_action_icons($quiz, $cmid, $question, $returnurl, $varian
 
 /**
  * @param int $cmid the course_module.id for this quiz.
- * @param object $question the question.
+ * @param stdClass $question the question.
  * @param string $returnurl url to return to after action is done.
  * @param string $contentbeforeicon some HTML content to be added inside the link, before the icon.
  * @return the HTML for an edit icon, view icon, or nothing for a question
@@ -1442,8 +1442,8 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
 }
 
 /**
- * @param object $quiz the quiz settings
- * @param object $question the question
+ * @param stdClass $quiz the quiz settings
+ * @param stdClass $question the question
  * @param int $variant which question variant to preview (optional).
  * @return moodle_url to preview this question with the options from this quiz.
  */
@@ -1463,8 +1463,8 @@ function quiz_question_preview_url($quiz, $question, $variant = null) {
 }
 
 /**
- * @param object $quiz the quiz settings
- * @param object $question the question
+ * @param stdClass $quiz the quiz settings
+ * @param stdClass $question the question
  * @param bool $label if true, show the preview question label after the icon
  * @param int $variant which question variant to preview (optional).
  * @param bool $random if question is random, true.
@@ -1479,8 +1479,8 @@ function quiz_question_preview_button($quiz, $question, $label = false, $variant
 }
 
 /**
- * @param object $attempt the attempt.
- * @param object $context the quiz context.
+ * @param stdClass $attempt the attempt.
+ * @param stdClass $context the quiz context.
  * @return int whether flags should be shown/editable to the current user for this attempt.
  */
 function quiz_get_flag_option($attempt, $context) {
@@ -1497,8 +1497,8 @@ function quiz_get_flag_option($attempt, $context) {
 /**
  * Work out what state this quiz attempt is in - in the sense used by
  * quiz_get_review_options, not in the sense of $attempt->state.
- * @param object $quiz the quiz settings
- * @param object $attempt the quiz_attempt database row.
+ * @param stdClass $quiz the quiz settings
+ * @param stdClass $attempt the quiz_attempt database row.
  * @return int one of the display_options::DURING,
  *      IMMEDIATELY_AFTER, LATER_WHILE_OPEN or AFTER_CLOSE constants.
  */
@@ -1569,7 +1569,7 @@ function quiz_get_review_options($quiz, $attempt, $context) {
  * funciton is:
  * list($someoptions, $alloptions) = quiz_get_combined_reviewoptions(...)
  *
- * @param object $quiz the quiz instance.
+ * @param stdClass $quiz the quiz instance.
  * @param array $attempts an array of attempt objects.
  *
  * @return array of two options objects, one showing which options are true for
@@ -1610,7 +1610,7 @@ function quiz_get_combined_reviewoptions($quiz, $attempts) {
 /**
  * Sends a confirmation message to the student confirming that the attempt was processed.
  *
- * @param object $a lots of useful information that can be used in the message
+ * @param stdClass $a lots of useful information that can be used in the message
  *      subject and body.
  * @param bool $studentisonline is the student currently interacting with Moodle?
  *
@@ -1659,8 +1659,8 @@ function quiz_send_confirmation($recipient, $a, $studentisonline) {
 /**
  * Sends notification messages to the interested parties that assign the role capability
  *
- * @param object $recipient user object of the intended recipient
- * @param object $a associative array of replaceable fields for the templates
+ * @param stdClass $recipient user object of the intended recipient
+ * @param stdClass $a associative array of replaceable fields for the templates
  *
  * @return int|false as for {@link message_send()}.
  */
@@ -1706,11 +1706,11 @@ function quiz_send_notification($recipient, $submitter, $a) {
 /**
  * Send all the requried messages when a quiz attempt is submitted.
  *
- * @param object $course the course
- * @param object $quiz the quiz
- * @param object $attempt this attempt just finished
- * @param object $context the quiz context
- * @param object $cm the coursemodule for this quiz
+ * @param stdClass $course the course
+ * @param stdClass $quiz the quiz
+ * @param stdClass $attempt this attempt just finished
+ * @param stdClass $context the quiz context
+ * @param stdClass $cm the coursemodule for this quiz
  * @param bool $studentisonline is the student currently interacting with Moodle?
  *
  * @return bool true if all necessary messages were sent successfully, else false.
@@ -1885,7 +1885,7 @@ function quiz_send_overdue_message($attemptobj) {
  *
  * This sends the confirmation and notification messages, if required.
  *
- * @param object $event the event object.
+ * @param stdClass $event the event object.
  */
 function quiz_attempt_submitted_handler($event) {
     global $DB;
@@ -1916,7 +1916,7 @@ function quiz_attempt_submitted_handler($event) {
  * Send the notification message when a quiz attempt has been manual graded.
  *
  * @param quiz_attempt $attemptobj Some data about the quiz attempt.
- * @param object $userto
+ * @param stdClass $userto
  * @return int|false As for message_send.
  */
 function quiz_send_notify_manual_graded_message(quiz_attempt $attemptobj, object $userto): ?int {
@@ -2015,7 +2015,7 @@ function quiz_get_js_module() {
 /**
  * Creates a textual representation of a question for display.
  *
- * @param object $question A question object from the database questions table
+ * @param stdClass $question A question object from the database questions table
  * @param bool $showicon If true, show the question's icon with the question. False by default.
  * @param bool $showquestiontext If true (default), show question text after question name.
  *       If false, show only question name.
@@ -2085,7 +2085,7 @@ function quiz_require_question_use($questionid) {
  * Adds a question to a quiz by updating $quiz as well as the
  * quiz and quiz_slots tables. It also adds a page break if required.
  * @param int $questionid The id of the question to be added
- * @param object $quiz The extended quiz object as used by edit.php
+ * @param stdClass $quiz The extended quiz object as used by edit.php
  *      This is updated by this function
  * @param int $page Which page in quiz to add the question on. If 0 (default),
  *      add at the end
@@ -2436,14 +2436,14 @@ function quiz_validate_new_attempt(quiz_settings $quizobj, access_manager $acces
  *
  * @param quiz_settings $quizobj quiz object
  * @param int $attemptnumber the attempt number
- * @param object $lastattempt last attempt object
+ * @param stdClass $lastattempt last attempt object
  * @param bool $offlineattempt whether is an offline attempt or not
  * @param array $forcedrandomquestions slot number => question id. Used for random questions,
  *      to force the choice of a particular actual question. Intended for testing purposes only.
  * @param array $forcedvariants slot number => variant. Used for questions with variants,
  *      to force the choice of a particular variant. Intended for testing purposes only.
  * @param int $userid Specific user id to create an attempt for that user, null for current logged in user
- * @return object the new attempt
+ * @return stdClass the new attempt
  * @since  Moodle 3.1
  */
 function quiz_prepare_and_start_new_attempt(quiz_settings $quizobj, $attemptnumber, $lastattempt,

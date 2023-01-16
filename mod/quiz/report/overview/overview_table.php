@@ -29,7 +29,7 @@ class quiz_overview_table extends attempts_report_table {
 
     /**
      * Constructor
-     * @param object $quiz
+     * @param stdClass $quiz
      * @param context $context
      * @param string $qmsubselect
      * @param quiz_overview_options $options
@@ -176,7 +176,7 @@ class quiz_overview_table extends attempts_report_table {
 
     /**
      * Format an entry in an average row.
-     * @param object $record with fields grade and numaveraged.
+     * @param stdClass $record with fields grade and numaveraged.
      * @param bool $question true if this is a question score, false if it is an overall score.
      * @return string HTML fragment for an average score (with number of things included in the average).
      */
@@ -257,7 +257,7 @@ class quiz_overview_table extends attempts_report_table {
 
     /**
      * @param string $colname the name of the column.
-     * @param object $attempt the row of data - see the SQL in display() in
+     * @param stdClass $attempt the row of data - see the SQL in display() in
      * mod/quiz/report/overview/report.php to see what fields are present,
      * and what they are called.
      * @return string the contents of the cell.

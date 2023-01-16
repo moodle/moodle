@@ -86,7 +86,7 @@ require_once(__DIR__ . '/deprecatedlib.php');
  * will create a new instance and return the id number
  * of the new instance.
  *
- * @param object $quiz the data that came from the form.
+ * @param stdClass $quiz the data that came from the form.
  * @return mixed the id of the new instance on success,
  *          false or a string error message on failure.
  */
@@ -119,7 +119,7 @@ function quiz_add_instance($quiz) {
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
  *
- * @param object $quiz the data that came from the form.
+ * @param stdClass $quiz the data that came from the form.
  * @return mixed true on success, false or a string error message on failure.
  */
 function quiz_update_instance($quiz, $mform) {
@@ -211,7 +211,7 @@ function quiz_delete_instance($id) {
 /**
  * Deletes a quiz override from the database and clears any corresponding calendar events
  *
- * @param object $quiz The quiz object.
+ * @param stdClass $quiz The quiz object.
  * @param int $overrideid The id of the override being deleted
  * @param bool $log Whether to trigger logs.
  * @return bool true on success
@@ -276,7 +276,7 @@ function quiz_delete_override($quiz, $overrideid, $log = true) {
 /**
  * Deletes all quiz overrides from the database and clears any corresponding calendar events
  *
- * @param object $quiz The quiz object.
+ * @param stdClass $quiz The quiz object.
  * @param bool $log Whether to trigger logs.
  */
 function quiz_delete_all_overrides($quiz, $log = true) {
@@ -299,9 +299,9 @@ function quiz_delete_all_overrides($quiz, $log = true) {
  *   quiz->extrapasswords will contain an array of strings giving the remaining
  *   passwords.
  *
- * @param object $quiz The quiz object.
+ * @param stdClass $quiz The quiz object.
  * @param int $userid The userid.
- * @return object $quiz The updated quiz object.
+ * @return stdClass $quiz The updated quiz object.
  */
 function quiz_update_effective_access($quiz, $userid) {
     global $DB;
@@ -401,7 +401,7 @@ function quiz_update_effective_access($quiz, $userid) {
 /**
  * Delete all the attempts belonging to a quiz.
  *
- * @param object $quiz The quiz object.
+ * @param stdClass $quiz The quiz object.
  */
 function quiz_delete_all_attempts($quiz) {
     global $CFG, $DB;
@@ -414,8 +414,8 @@ function quiz_delete_all_attempts($quiz) {
 /**
  * Delete all the attempts belonging to a user in a particular quiz.
  *
- * @param object $quiz The quiz object.
- * @param object $user The user object.
+ * @param stdClass $quiz The quiz object.
+ * @param stdClass $user The user object.
  */
 function quiz_delete_user_attempts($quiz, $user) {
     global $CFG, $DB;
@@ -433,7 +433,7 @@ function quiz_delete_user_attempts($quiz, $user) {
 /**
  * Get the best current grade for a particular user in a quiz.
  *
- * @param object $quiz the quiz settings.
+ * @param stdClass $quiz the quiz settings.
  * @param int $userid the id of the user.
  * @return float the user's current grade for this quiz, or null if this user does
  * not have a grade on this quiz.
@@ -456,7 +456,7 @@ function quiz_get_best_grade($quiz, $userid) {
  * $quiz->grade and $quiz->sumgrades are non-zero (for example, if you want to
  * divide by them).
  *
- * @param object $quiz a row from the quiz table.
+ * @param stdClass $quiz a row from the quiz table.
  * @return bool whether this is a graded quiz.
  */
 function quiz_has_grades($quiz) {
@@ -480,11 +480,11 @@ function quiz_allows_multiple_tries($quiz) {
  * $return->time = the time they did it
  * $return->info = a short text description
  *
- * @param object $course
- * @param object $user
- * @param object $mod
- * @param object $quiz
- * @return object|null
+ * @param stdClass $course
+ * @param stdClass $user
+ * @param stdClass $mod
+ * @param stdClass $quiz
+ * @return stdClass|null
  */
 function quiz_user_outline($course, $user, $mod, $quiz) {
     global $DB, $CFG;
@@ -515,10 +515,10 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
  * Print a detailed representation of what a  user has done with
  * a given particular instance of this module, for user activity reports.
  *
- * @param object $course
- * @param object $user
- * @param object $mod
- * @param object $quiz
+ * @param stdClass $course
+ * @param stdClass $user
+ * @param stdClass $mod
+ * @param stdClass $quiz
  * @return bool
  */
 function quiz_user_complete($course, $user, $mod, $quiz) {
@@ -671,7 +671,8 @@ function quiz_format_grade($quiz, $grade) {
 /**
  * Determine the correct number of decimal places required to format a grade.
  *
- * @param object $quiz The quiz table row, only $quiz->decimalpoints is used.
+ * @param stdClass $quiz The quiz table row, only $quiz->decimalpoints and
+ *      ->questiondecimalpoints are used.
  * @return integer
  */
 function quiz_get_grade_format($quiz) {
@@ -701,7 +702,7 @@ function quiz_format_question_grade($quiz, $grade) {
  * Update grades in central gradebook
  *
  * @category grade
- * @param object $quiz the quiz settings.
+ * @param stdClass $quiz the quiz settings.
  * @param int $userid specific user only, 0 means all users.
  * @param bool $nullifnone If a single user is specified and $nullifnone is true a grade item with a null rawgrade will be inserted
  */
@@ -730,7 +731,7 @@ function quiz_update_grades($quiz, $userid = 0, $nullifnone = true) {
  * Create or update the grade item for given quiz
  *
  * @category grade
- * @param object $quiz object with extra cmidnumber
+ * @param stdClass $quiz object with extra cmidnumber
  * @param mixed $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int 0 if ok, error code otherwise
  */
@@ -834,8 +835,8 @@ function quiz_grade_item_update($quiz, $grades = null) {
  * Delete grade item for given quiz
  *
  * @category grade
- * @param object $quiz object
- * @return object quiz
+ * @param stdClass $quiz object
+ * @return int
  */
 function quiz_grade_item_delete($quiz) {
     global $CFG;
@@ -1031,7 +1032,7 @@ function quiz_print_recent_mod_activity($activity, $courseid, $detail, $modnames
  * Pre-process the quiz options form data, making any necessary adjustments.
  * Called by add/update instance in this file.
  *
- * @param object $quiz The variables set on the form.
+ * @param stdClass $quiz The variables set on the form.
  */
 function quiz_process_options($quiz) {
     global $CFG;
@@ -1137,7 +1138,7 @@ function quiz_process_options($quiz) {
 
 /**
  * Helper function for {@link quiz_process_options()}.
- * @param object $fromform the sumbitted form date.
+ * @param stdClass $fromform the sumbitted form date.
  * @param string $field one of the review option field names.
  */
 function quiz_review_option_form_to_db($fromform, $field) {
@@ -1204,7 +1205,7 @@ function mod_quiz_inplace_editable(string $itemtype, int $itemid, string $newval
  * This function is called at the end of quiz_add_instance
  * and quiz_update_instance, to do the common processing.
  *
- * @param object $quiz the quiz object.
+ * @param stdClass $quiz the quiz object.
  */
 function quiz_after_add_or_update($quiz) {
     global $DB;
@@ -1251,8 +1252,8 @@ function quiz_after_add_or_update($quiz) {
  * associated with the specified override.
  *
  * @uses QUIZ_MAX_EVENT_LENGTH
- * @param object $quiz the quiz object.
- * @param object optional $override limit to a specific override
+ * @param stdClass $quiz the quiz object.
+ * @param stdClass optional $override limit to a specific override
  */
 function quiz_update_events($quiz, $override = null) {
     global $DB;
@@ -1549,7 +1550,7 @@ function quiz_reset_gradebook($courseid, $type='') {
  *
  * Also, move the quiz open and close dates, if the course start date is changing.
  *
- * @param object $data the data submitted from the reset course.
+ * @param stdClass $data the data submitted from the reset course.
  * @return array status array
  */
 function quiz_reset_userdata($data) {
@@ -1643,8 +1644,8 @@ function quiz_reset_userdata($data) {
  * Return a textual summary of the number of attempts that have been made at a particular quiz,
  * returns '' if no attempts have been made yet, unless $returnzero is passed as true.
  *
- * @param object $quiz the quiz object. Only $quiz->id is used at the moment.
- * @param object $cm the cm object. Only $cm->course, $cm->groupmode and
+ * @param stdClass $quiz the quiz object. Only $quiz->id is used at the moment.
+ * @param stdClass $cm the cm object. Only $cm->course, $cm->groupmode and
  *      $cm->groupingid fields are used at the moment.
  * @param bool $returnzero if false (default), when no attempts have been
  *      made '' is returned instead of 'Attempts: 0'.
@@ -1686,10 +1687,10 @@ function quiz_num_attempt_summary($quiz, $cm, $returnzero = false, $currentgroup
  * Returns the same as {@link quiz_num_attempt_summary()} but wrapped in a link
  * to the quiz reports.
  *
- * @param object $quiz the quiz object. Only $quiz->id is used at the moment.
- * @param object $cm the cm object. Only $cm->course, $cm->groupmode and
+ * @param stdClass $quiz the quiz object. Only $quiz->id is used at the moment.
+ * @param stdClass $cm the cm object. Only $cm->course, $cm->groupmode and
  *      $cm->groupingid fields are used at the moment.
- * @param object $context the quiz context.
+ * @param stdClass $context the quiz context.
  * @param bool $returnzero if false (default), when no attempts have been made
  *      '' is returned instead of 'Attempts: 0'.
  * @param int $currentgroup if there is a concept of current group where this method is being called

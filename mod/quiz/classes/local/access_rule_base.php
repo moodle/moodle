@@ -82,7 +82,7 @@ abstract class access_rule_base {
      * Whether a user should be allowed to start a new attempt at this quiz now.
      *
      * @param int $numprevattempts the number of previous attempts this user has made.
-     * @param object $lastattempt information about the user's last completed attempt.
+     * @param stdClass $lastattempt information about the user's last completed attempt.
      * @return string false if access should be allowed, a message explaining the
      *      reason if access should be prevented.
      */
@@ -185,7 +185,7 @@ abstract class access_rule_base {
      * active attempt for this user.
      *
      * @param int $numprevattempts the number of previous attempts this user has made.
-     * @param object $lastattempt information about the user's last completed attempt.
+     * @param stdClass $lastattempt information about the user's last completed attempt.
      * @return bool true if this rule means that this user will never be allowed another
      * attempt at this quiz.
      */
@@ -206,7 +206,7 @@ abstract class access_rule_base {
     /**
      * If the user should be shown a different amount of time than $timenow - $this->end_time(), then
      * override this method.  This is useful if the time remaining is large enough to be omitted.
-     * @param object $attempt the current attempt
+     * @param stdClass $attempt the current attempt
      * @param int $timenow the time now. We don't use $this->timenow, so we can
      * give the user a more accurate indication of how much time is left.
      * @return mixed the time left in seconds (can be negative) or false if there is no limit.
@@ -301,7 +301,7 @@ abstract class access_rule_base {
     /**
      * Save any submitted settings when the quiz settings form is submitted. This
      * is called from {@see quiz_after_add_or_update()} in lib.php.
-     * @param object $quiz the data from the quiz form, including $quiz->id
+     * @param stdClass $quiz the data from the quiz form, including $quiz->id
      *      which is the id of the quiz being saved.
      */
     public static function save_settings($quiz) {
@@ -311,7 +311,7 @@ abstract class access_rule_base {
     /**
      * Delete any rule-specific settings when the quiz is deleted. This is called
      * from {@see quiz_delete_instance()} in lib.php.
-     * @param object $quiz the data from the database, including $quiz->id
+     * @param stdClass $quiz the data from the database, including $quiz->id
      *      which is the id of the quiz being deleted.
      * @since Moodle 2.7.1, 2.6.4, 2.5.7
      */

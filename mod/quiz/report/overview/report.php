@@ -256,8 +256,8 @@ class quiz_overview_report extends attempts_report {
     /**
      * Extends parent function processing any submitted actions.
      *
-     * @param object $quiz
-     * @param object $cm
+     * @param stdClass $quiz
+     * @param stdClass $cm
      * @param int $currentgroup
      * @param \core\dml\sql_join $groupstudentsjoins (joins, wheres, params)
      * @param \core\dml\sql_join $allowedjoins (joins, wheres, params)
@@ -296,8 +296,8 @@ class quiz_overview_report extends attempts_report {
 
     /**
      * Check necessary capabilities, and start the display of the regrade progress page.
-     * @param object $quiz the quiz settings.
-     * @param object $cm the cm object for the quiz.
+     * @param stdClass $quiz the quiz settings.
+     * @param stdClass $cm the cm object for the quiz.
      */
     protected function start_regrade($quiz, $cm) {
         require_capability('mod/quiz:regrade', $this->context);
@@ -333,7 +333,7 @@ class quiz_overview_report extends attempts_report {
      * Note, $attempt is not upgraded in the database. The caller needs to do that.
      * However, $attempt->sumgrades is updated, if this is not a dry run.
      *
-     * @param object $attempt the quiz attempt to regrade.
+     * @param stdClass $attempt the quiz attempt to regrade.
      * @param bool $dryrun if true, do a pretend regrade, otherwise do it for real.
      * @param array $slots if null, regrade all questions, otherwise, just regrade
      *      the questions with those slots.
@@ -452,7 +452,7 @@ class quiz_overview_report extends attempts_report {
     /**
      * Regrade attempts for this quiz, exactly which attempts are regraded is
      * controlled by the parameters.
-     * @param object $quiz the quiz settings.
+     * @param stdClass $quiz the quiz settings.
      * @param bool $dryrun if true, do a pretend regrade, otherwise do it for real.
      * @param \core\dml\sql_join|array $groupstudentsjoins empty for all attempts, otherwise regrade attempts
      * for these users.
@@ -495,7 +495,7 @@ class quiz_overview_report extends attempts_report {
     /**
      * Regrade those questions in those attempts that are marked as needing regrading
      * in the quiz_overview_regrades table.
-     * @param object $quiz the quiz settings.
+     * @param stdClass $quiz the quiz settings.
      * @param \core\dml\sql_join $groupstudentsjoins empty for all attempts, otherwise regrade attempts
      * for these users.
      */
@@ -557,7 +557,7 @@ class quiz_overview_report extends attempts_report {
      * In addition, if $attempt->regradeonlyslots is set, then only those slots
      * are regraded, otherwise all slots are regraded.
      *
-     * @param object $quiz the quiz settings.
+     * @param stdClass $quiz the quiz settings.
      * @param array $attempts of data from the quiz_attempts table, with extra data as above.
      * @param bool $dryrun if true, do a pretend regrade, otherwise do it for real.
      * @param \core\dml\sql_join $groupstudentsjoins empty for all attempts, otherwise regrade attempts
@@ -605,7 +605,7 @@ class quiz_overview_report extends attempts_report {
     /**
      * Count the number of attempts in need of a regrade.
      *
-     * @param object $quiz the quiz settings.
+     * @param stdClass $quiz the quiz settings.
      * @param \core\dml\sql_join $groupstudentsjoins (joins, wheres, params) If this is given, only data relating
      * to these users is cleared.
      * @return int the number of attempts.
@@ -654,7 +654,7 @@ class quiz_overview_report extends attempts_report {
 
     /**
      * Remove all information about pending/complete regrades from the database.
-     * @param object $quiz the quiz settings.
+     * @param stdClass $quiz the quiz settings.
      * @param \core\dml\sql_join $groupstudentsjoins (joins, wheres, params). If this is given, only data relating
      * to these users is cleared.
      */
@@ -681,7 +681,7 @@ class quiz_overview_report extends attempts_report {
     /**
      * Update the final grades for all attempts. This method is used following
      * a regrade.
-     * @param object $quiz the quiz settings.
+     * @param stdClass $quiz the quiz settings.
      * @param array $userids only update scores for these userids.
      * @param array $attemptids attemptids only update scores for these attempt ids.
      */
@@ -698,7 +698,7 @@ class quiz_overview_report extends attempts_report {
      * a chart based on the maximum grade to be given on a quiz. The width of
      * a band is the number of grade points it encapsulates.
      *
-     * @param object $quiz The quiz object.
+     * @param stdClass $quiz The quiz object.
      * @return array Contains the number of bands, and their width.
      */
     public static function get_bands_count_and_width($quiz) {
@@ -725,7 +725,7 @@ class quiz_overview_report extends attempts_report {
      *
      * @param int $bands The number of bands.
      * @param int $bandwidth The band width.
-     * @param object $quiz The quiz object.
+     * @param stdClass $quiz The quiz object.
      * @return string[] The labels.
      */
     public static function get_bands_labels($bands, $bandwidth, $quiz) {

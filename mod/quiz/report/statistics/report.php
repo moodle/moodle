@@ -284,7 +284,7 @@ class quiz_statistics_report extends report_base {
      * Display the statistical and introductory information about a question.
      * Only called when not downloading.
      *
-     * @param object                                         $quiz         the quiz settings.
+     * @param stdClass                                         $quiz         the quiz settings.
      * @param \core_question\statistics\questions\calculated $questionstat the question to report on.
      */
     protected function output_individual_question_data($quiz, $questionstat) {
@@ -353,7 +353,7 @@ class quiz_statistics_report extends report_base {
     /**
      * Output question text in a box with urls appropriate for a preview of the question.
      *
-     * @param object $question question data.
+     * @param stdClass $question question data.
      * @return string HTML of question text, ready for display.
      */
     protected function render_question_text($question) {
@@ -371,7 +371,7 @@ class quiz_statistics_report extends report_base {
     /**
      * Display the response analysis for a question.
      *
-     * @param object           $question  the question to report on.
+     * @param stdClass           $question  the question to report on.
      * @param int|null         $variantno the variant
      * @param int              $s
      * @param moodle_url       $reporturl the URL to redisplay this report.
@@ -617,7 +617,7 @@ class quiz_statistics_report extends report_base {
      * Get the quiz and question statistics, either by loading the cached results,
      * or by recomputing them.
      *
-     * @param object $quiz               the quiz settings.
+     * @param stdClass $quiz               the quiz settings.
      * @param string $whichattempts      which attempts to use, represented internally as one of the constants as used in
      *                                   $quiz->grademethod ie.
      *                                   QUIZ_GRADEAVERAGE, QUIZ_GRADEHIGHEST, QUIZ_ATTEMPTLAST or QUIZ_ATTEMPTFIRST
@@ -694,8 +694,8 @@ class quiz_statistics_report extends report_base {
     /**
      * Analyse responses for all questions and sub questions in this quiz.
      *
-     * @param object[] $questions as returned by self::load_and_initialise_questions_for_calculations
-     * @param object[] $subquestions full question objects.
+     * @param stdClass[] $questions as returned by self::load_and_initialise_questions_for_calculations
+     * @param stdClass[] $subquestions full question objects.
      * @param qubaid_condition $qubaids the question usages whose responses to analyse.
      * @param string $whichtries which tries to analyse \question_attempt::FIRST_TRY, LAST_TRY or ALL_TRIES.
      * @param null|\core\progress\base $progress Used to indicate progress of task.
@@ -720,7 +720,7 @@ class quiz_statistics_report extends report_base {
     /**
      * Analyse responses for an array of questions or sub questions.
      *
-     * @param object[] $questions  as returned by self::load_and_initialise_questions_for_calculations.
+     * @param stdClass[] $questions  as returned by self::load_and_initialise_questions_for_calculations.
      * @param qubaid_condition $qubaids the question usages whose responses to analyse.
      * @param string $whichtries which tries to analyse \question_attempt::FIRST_TRY, LAST_TRY or ALL_TRIES.
      * @param null|\core\progress\base $progress Used to indicate progress of task.
@@ -829,7 +829,7 @@ class quiz_statistics_report extends report_base {
     /**
      * Load the questions in this quiz and add some properties to the objects needed in the reports.
      *
-     * @param object $quiz the quiz.
+     * @param stdClass $quiz the quiz.
      * @return array of questions for this quiz.
      */
     public function load_and_initialise_questions_for_calculations($quiz) {

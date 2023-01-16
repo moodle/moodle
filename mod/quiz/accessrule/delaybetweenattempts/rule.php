@@ -59,7 +59,7 @@ class quizaccess_delaybetweenattempts extends access_rule_base {
      * Compute the next time a student would be allowed to start an attempt,
      * according to this rule.
      * @param int $numprevattempts number of previous attempts.
-     * @param object $lastattempt information about the previous attempt.
+     * @param stdClass $lastattempt information about the previous attempt.
      * @return number the time.
      */
     protected function compute_next_start_time($numprevattempts, $lastattempt) {

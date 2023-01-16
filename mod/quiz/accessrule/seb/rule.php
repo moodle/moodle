@@ -151,7 +151,7 @@ class quizaccess_seb extends access_rule_base {
      * Save any submitted settings when the quiz settings form is submitted. This
      * is called from {@link quiz_after_add_or_update()} in lib.php.
      *
-     * @param object $quiz the data from the quiz form, including $quiz->id
+     * @param stdClass $quiz the data from the quiz form, including $quiz->id
      *      which is the id of the quiz being saved.
      */
     public static function save_settings($quiz) {
@@ -204,7 +204,7 @@ class quizaccess_seb extends access_rule_base {
      * Delete any rule-specific settings when the quiz is deleted. This is called
      * from {@link quiz_delete_instance()} in lib.php.
      *
-     * @param object $quiz the data from the database, including $quiz->id
+     * @param stdClass $quiz the data from the database, including $quiz->id
      *      which is the id of the quiz being deleted.
      */
     public static function delete_settings($quiz) {

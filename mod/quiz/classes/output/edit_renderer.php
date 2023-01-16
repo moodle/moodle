@@ -485,7 +485,7 @@ class edit_renderer extends \plugin_renderer_base {
     /**
      * Render an icon to remove a section from the quiz.
      *
-     * @param object $section the section to be removed.
+     * @param stdClass $section the section to be removed.
      * @return string HTML to output.
      */
     public function section_remove_icon($section) {

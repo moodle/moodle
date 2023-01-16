@@ -27,7 +27,7 @@ class quiz_last_responses_table extends attempts_report_table {
 
     /**
      * Constructor
-     * @param object $quiz
+     * @param stdClass $quiz
      * @param context $context
      * @param string $qmsubselect
      * @param quiz_responses_options $options
@@ -94,7 +94,7 @@ class quiz_last_responses_table extends attempts_report_table {
     /**
      * Column text from the extra data loaded in load_extra_data(), before html formatting etc.
      *
-     * @param object $attempt
+     * @param stdClass $attempt
      * @param int $slot
      * @param string $field
      * @return string

@@ -672,9 +672,9 @@ class quiz_grading_report extends report_base {
     /**
      * Initialise some parts of $PAGE and start output.
      *
-     * @param object $cm the course_module information.
-     * @param object $course the course settings.
-     * @param object $quiz the quiz settings.
+     * @param stdClass $cm the course_module information.
+     * @param stdClass $course the course settings.
+     * @param stdClass $quiz the quiz settings.
      * @param string $reportmode the report name.
      */
     public function print_header_and_tabs($cm, $course, $quiz, $reportmode = 'overview') {

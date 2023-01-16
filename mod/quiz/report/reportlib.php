@@ -90,7 +90,7 @@ function quiz_has_questions($quizid) {
 
 /**
  * Get the slots of real questions (not descriptions) in this quiz, in order.
- * @param object $quiz the quiz.
+ * @param stdClass $quiz the quiz.
  * @return array of slot => objects with fields
  *      ->slot, ->id, ->qtype, ->length, ->number, ->maxmark, ->category (for random questions).
  */
@@ -125,7 +125,7 @@ function quiz_report_get_significant_questions($quiz) {
 }
 
 /**
- * @param object $quiz the quiz settings.
+ * @param stdClass $quiz the quiz settings.
  * @return bool whether, for this quiz, it is possible to filter attempts to show
  *      only those that gave the final grade.
  */
@@ -137,7 +137,7 @@ function quiz_report_can_filter_only_graded($quiz) {
  * This is a wrapper for {@link quiz_report_grade_method_sql} that takes the whole quiz object instead of just the grading method
  * as a param. See definition for {@link quiz_report_grade_method_sql} below.
  *
- * @param object $quiz
+ * @param stdClass $quiz
  * @param string $quizattemptsalias sql alias for 'quiz_attempts' table
  * @return string sql to test if this is an attempt that will contribute towards the grade of the user
  */
@@ -316,7 +316,7 @@ function quiz_report_feedback_for_grade($grade, $quizid, $context) {
 /**
  * Format a number as a percentage out of $quiz->sumgrades
  * @param number $rawgrade the mark to format.
- * @param object $quiz the quiz settings
+ * @param stdClass $quiz the quiz settings
  * @param bool $round whether to round the results ot $quiz->decimalpoints.
  */
 function quiz_report_scale_summarks_as_percentage($rawmark, $quiz, $round = true) {
@@ -390,7 +390,7 @@ function quiz_report_download_filename($report, $courseshortname, $quizname) {
 
 /**
  * Get the default report for the current user.
- * @param object $context the quiz context.
+ * @param stdClass $context the quiz context.
  */
 function quiz_report_default_report($context) {
     $reports = quiz_report_list($context);
@@ -400,9 +400,9 @@ function quiz_report_default_report($context) {
 /**
  * Generate a message saying that this quiz has no questions, with a button to
  * go to the edit page, if the user has the right capability.
- * @param object $quiz the quiz settings.
- * @param object $cm the course_module object.
- * @param object $context the quiz context.
+ * @param stdClass $quiz the quiz settings.
+ * @param stdClass $cm the course_module object.
+ * @param stdClass $context the quiz context.
  * @return string HTML to output.
  */
 function quiz_no_questions_message($quiz, $cm, $context) {
@@ -421,7 +421,7 @@ function quiz_no_questions_message($quiz, $cm, $context) {
 /**
  * Should the grades be displayed in this report. That depends on the quiz
  * display options, and whether the quiz is graded.
- * @param object $quiz the quiz settings.
+ * @param stdClass $quiz the quiz settings.
  * @param context $context the quiz context.
  * @return bool
  */

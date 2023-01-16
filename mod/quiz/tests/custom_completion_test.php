@@ -462,9 +462,9 @@ class custom_completion_test extends advanced_testcase {
     /**
      * Set up moduleinfo object sample data for quiz instance.
      *
-     * @param object $cm course-module instance
-     * @param object $quiz quiz instance data.
-     * @param object $course Course related data.
+     * @param stdClass $cm course-module instance
+     * @param stdClass $quiz quiz instance data.
+     * @param stdClass $course Course related data.
      * @param int $gradepass Grade to pass and completed completion.
      * @param string $grademethod grade attempt method.
      * @return \stdClass

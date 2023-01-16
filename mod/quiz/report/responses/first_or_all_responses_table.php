@@ -114,7 +114,7 @@ class quiz_first_or_all_responses_table extends quiz_last_responses_table {
     /**
      * Find the state for $slot given after this try.
      *
-     * @param object $tablerow row data
+     * @param stdClass $tablerow row data
      * @param int $slot Slot number.
      * @return question_state The question state after the attempt.
      */
@@ -137,7 +137,7 @@ class quiz_first_or_all_responses_table extends quiz_last_responses_table {
     /**
      * Get the summary of the response after the try.
      *
-     * @param object $tablerow row data
+     * @param stdClass $tablerow row data
      * @param int $slot Slot number.
      * @return string summary for the question after this try.
      */
@@ -170,7 +170,7 @@ class quiz_first_or_all_responses_table extends quiz_last_responses_table {
     /**
      * The grade for this slot after this try.
      *
-     * @param object $tablerow attempt data from db.
+     * @param stdClass $tablerow attempt data from db.
      * @param int $slot Slot number.
      * @return float The fraction.
      */
@@ -192,7 +192,7 @@ class quiz_first_or_all_responses_table extends quiz_last_responses_table {
     /**
      * Is this the last try in the question attempt?
      *
-     * @param object $tablerow attempt data from db.
+     * @param stdClass $tablerow attempt data from db.
      * @param int $slot Slot number
      * @param int $tryno try no
      * @return bool Is it the last try?
@@ -204,7 +204,7 @@ class quiz_first_or_all_responses_table extends quiz_last_responses_table {
     /**
      * How many tries were attempted at this question in this slot, during this usage?
      *
-     * @param object $tablerow attempt data from db.
+     * @param stdClass $tablerow attempt data from db.
      * @param int $slot Slot number
      * @return int the number of tries in the question attempt for slot $slot.
      */
@@ -237,7 +237,7 @@ class quiz_first_or_all_responses_table extends quiz_last_responses_table {
     /**
      * Cell value function for email column. This extracts the contents for any cell in the email column from the row data.
      *
-     * @param object $tablerow Row data.
+     * @param stdClass $tablerow Row data.
      * @return string   What to put in the cell for this column, for this row data.
      */
     public function col_email($tablerow) {
@@ -251,7 +251,7 @@ class quiz_first_or_all_responses_table extends quiz_last_responses_table {
     /**
      * Cell value function for sumgrades column. This extracts the contents for any cell in the sumgrades column from the row data.
      *
-     * @param object $tablerow Row data.
+     * @param stdClass $tablerow Row data.
      * @return string   What to put in the cell for this column, for this row data.
      */
     public function col_sumgrades($tablerow) {

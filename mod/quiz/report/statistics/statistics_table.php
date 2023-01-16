@@ -38,7 +38,7 @@ use \core_question\statistics\questions\calculated_question_summary;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_statistics_table extends flexible_table {
-    /** @var object the quiz settings. */
+    /** @var stdClass the quiz settings. */
     protected $quiz;
 
     /** @var integer the quiz course_module id. */
@@ -55,7 +55,7 @@ class quiz_statistics_table extends flexible_table {
      * Set up the columns and headers and other properties of the table and then
      * call flexible_table::setup() method.
      *
-     * @param object $quiz the quiz settings
+     * @param stdClass $quiz the quiz settings
      * @param int $cmid the quiz course_module id
      * @param moodle_url $reporturl the URL to redisplay this report.
      * @param int $s number of attempts included in the statistics.

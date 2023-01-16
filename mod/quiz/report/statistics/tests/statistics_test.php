@@ -53,7 +53,7 @@ class testable_all_calculated_for_qubaid_condition extends \core_question\statis
 class testable_question_statistics extends \core_question\statistics\questions\calculator {
 
     /**
-     * @var object[]
+     * @var stdClass[]
      */
     protected $lateststeps;
 

@@ -219,7 +219,7 @@ function quiz_retrieve_tags_for_slot_ids($slotids) {
  *
  * @deprecated in 4.1 use mod_quiz\structure::has_use_capability(...) instead.
  *
- * @param object $quiz the quiz settings.
+ * @param stdClass $quiz the quiz settings.
  * @param int $slot which question in the quiz to test.
  * @return bool whether the user can use this question.
  */
