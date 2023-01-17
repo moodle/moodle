@@ -62,6 +62,9 @@ information provided here is intended especially for developers.
   description being incorrectly passed for the $required parameter). A debugging notice will be shown when such cases occur.
 * The moodle-core-popuphelp YUI modal has been removed. It has not been actively used in Moodle since 3.3. It should be replaced with appropriate ESM/AMD JavaScript.
 * The moodle-core-tooltip YUI modal has been removed. It should be replaced with appropriate ESM/AMD JavaScript.
+* The core/modal module and all their versions (SAVE_CANCEL, DELETE_CANCEL...) now has a setButtonDisable to disable or enable
+  specific modal action buttons. This function allows developers to have modals that could only be submited if the user do some
+  action in the modal body like ticking a checkbox or selecting an element.
 
 === 4.1 ===
 
