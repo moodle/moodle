@@ -133,6 +133,16 @@ class course_bin extends base_bin {
             \backup::MODE_AUTOMATED,
             $user->id
         );
+
+        // When "backup_auto_activities" setting is disabled, activities can't be restored from recycle bin.
+        $plan = $controller->get_plan();
+        $activitiessettings = $plan->get_setting('activities');
+        $settingsvalue = $activitiessettings->get_value();
+        if (empty($settingsvalue)) {
+            $controller->destroy();
+            return;
+        }
+
         $controller->execute_plan();
 
         // We don't need the forced setting anymore, hence unsetting it.
