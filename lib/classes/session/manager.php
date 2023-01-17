@@ -1384,25 +1384,69 @@ class manager {
     }
 
     /**
-     * Compares two arrays outputs the difference.
+     * Compares two arrays and outputs the difference.
      *
-     * Note this does not use array_diff_assoc due to
-     * the use of stdClasses in Moodle sessions.
+     * Note - checking between objects and array type is only done at the top level.
+     * Any changes in types below the top level will not be detected.
+     * However, if their values are the same, they will be treated as equal.
      *
-     * @param array $array1
-     * @param array $array2
+     * Any changes, such as removals, edits or additions will be detected.
+     *
+     * @param array $previous
+     * @param array $current
      * @return array
      */
-    private static function array_session_diff(array $array1, array $array2) : array {
-        $difference = [];
-        foreach ($array1 as $key => $value) {
-            if (!isset($array2[$key])) {
-                $difference[$key] = $value;
-            } else if ($array2[$key] !== $value) {
-                $difference[$key] = $value;
-            }
-        }
+    private static function array_session_diff(array $previous, array $current) : array {
+        // To use array_udiff_uassoc, the first array must have the most keys; this ensures every key is checked.
+        // To do this, we first need to sort them by the length of their keys.
+        $arrays = [$current, $previous];
 
-        return $difference;
+        // Sort them by the length of their keys.
+        usort($arrays, function ($a, $b) {
+            return count(array_keys($b)) - count(array_keys($a));
+        });
+
+        // The largest is the first value in the $arrays, after sorting.
+        // The smallest is then the last one.
+        // If they are the same size, it does not matter which is which.
+        $largest = $arrays[0];
+        $smallest = $arrays[1];
+
+        // Defines a function that casts the values to arrays.
+        // This is so the properties are compared, instead any object's identities.
+        $casttoarray = function ($value) {
+            return json_decode(json_encode($value), true);
+        };
+
+        // Defines a function that compares all keys by their string value.
+        $keycompare = function ($a, $b) {
+            return strcmp($a, $b);
+        };
+
+        // Defines a function that compares all values by first their type, and then their values.
+        // If the value contains any objects, they are cast to arrays before comparison.
+        $valcompare = function ($a, $b) use ($casttoarray) {
+            // First compare type.
+            // If they are not the same type, they are definitely not the same.
+            // Note we do not check types recursively.
+            if (gettype($a) !== gettype($b)) {
+                return 1;
+            }
+
+            // Next compare value. Cast any objects to arrays to compare their properties,
+            // instead of the identitiy of the object itself.
+            $v1 = $casttoarray($a);
+            $v2 = $casttoarray($b);
+
+            if ($v1 !== $v2) {
+                return 1;
+            }
+
+            return 0;
+        };
+
+        // Apply the comparison functions to the two given session arrays,
+        // making sure to use the largest array first, so that all keys are considered.
+        return array_udiff_uassoc($largest, $smallest, $valcompare, $keycompare);
     }
 }
