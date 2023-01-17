@@ -96,6 +96,19 @@ abstract class restore_task extends base_task {
     }
 
     /**
+     * Given a commment area, return the itemname that contains the itemid mappings
+     *
+     * By default, both are the same (commentarea = itemname), so return it. If some
+     * plugins use a different approach, this method can be overriden in its task.
+     *
+     * @param string $commentarea area defined for this comment
+     * @return string itemname that contains the related itemid mapping
+     */
+    public function get_comment_mapping_itemname($commentarea) {
+        return $commentarea;
+    }
+
+    /**
      * If the task has been executed, launch its after_restore()
      * method if available
      */
