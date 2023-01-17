@@ -3,6 +3,9 @@ information provided here is intended especially for developers.
 
 === 4.2 ===
 
+* A new constant COMPLETION_COMPLETE_FAIL_HIDDEN is introduced to mark that user has received a failing grade
+  for a hidden grade item. This state can be currently returned only by get_core_completion_state() and
+  internal_get_grade_state() so we don't store it in database (for now).
 * \single_button constructor signature has been changed to manage more types than just primary buttons.
   The boolean "primary" parameter has been deprecated and replaced by a more generic type allowing to use
   Bootstrap styles of buttons (danger, warning...). The constructor will still manage the boolean primary
