@@ -1,6 +1,12 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.0.7 ===
+
+* A new constant COMPLETION_COMPLETE_FAIL_HIDDEN is introduced to mark that user has received a failing grade
+  for a hidden grade item. This state can be currently returned only by get_core_completion_state() and
+  internal_get_grade_state() so we don't store it in database (for now).
+
 === 4.0.6 ===
 
 * There is a new helper function mtrace_exception to help with reporting exceptions you have caught in scheduled tasks.
