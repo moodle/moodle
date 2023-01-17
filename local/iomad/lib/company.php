@@ -3352,6 +3352,16 @@ class company {
                                                 'company' => $companyid))) {
             return true;
         } else {
+            // is the department within a child company of the currently selected company?
+            $thiscompany = new company($companyid);
+            if ($childcompanies = $thiscompany->get_child_companies_recursive()) {
+                foreach ($childcompanies as $childid => $ignore) {
+                    if ($DB->get_record('department', array('id' => $departmentid,
+                                                            'company' => $childid))) {
+                        return true;
+                    }
+                }
+            } 
             return false;
         }
         // Shouldn't get here.  Return a false in case.
