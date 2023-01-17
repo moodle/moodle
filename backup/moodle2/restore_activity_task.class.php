@@ -247,16 +247,6 @@ abstract class restore_activity_task extends restore_task {
     }
 
     /**
-     * Given a commment area, return the itemname that contains the itemid mappings
-     *
-     * By default both are the same (commentarea = itemname), so return it. If some
-     * module uses a different approach, this method can be overriden in its taks
-     */
-    public function get_comment_mapping_itemname($commentarea) {
-        return $commentarea;
-    }
-
-    /**
      * Define (add) particular steps that each activity can have
      */
     abstract protected function define_my_steps();
