@@ -485,6 +485,20 @@ function xmldb_bigbluebuttonbn_upgrade($oldversion = 0) {
     }
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
+    if ($oldversion < 2023011800) {
+
+        // Define index course_bbbid_ix (not unique) to be added to bigbluebuttonbn_logs.
+        $table = new xmldb_table('bigbluebuttonbn_logs');
+        $index = new xmldb_index('course_bbbid_ix', XMLDB_INDEX_NOTUNIQUE, ['courseid', 'bigbluebuttonbnid']);
+
+        // Conditionally launch add index course_bbbid_ix.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Bigbluebuttonbn savepoint reached.
+        upgrade_mod_savepoint(true, 2023011800, 'bigbluebuttonbn');
+    }
 
     return true;
 }
