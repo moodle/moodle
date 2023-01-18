@@ -50,7 +50,7 @@
 }
 
 .mform fieldset {
-    margin-bottom: $spacer / 2;
+    margin-bottom: $spacer * 0.5;
     border-bottom: $border-width solid $table-border-color;
 }
 
@@ -412,7 +412,7 @@ textarea[data-auto-rows] {
     @include border-radius($card-border-radius);
     border: $card-border-width solid $card-border-color;
     padding: $card-spacer-x;
-    margin-left: $grid-gutter-width / 2;
+    margin-left: $grid-gutter-width * 0.5;
     max-width: 30rem;
 }
 
