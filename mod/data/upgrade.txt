@@ -1,6 +1,10 @@
 This files describes API changes in /mod/data - plugins,
 information provided here is intended especially for developers.
 
+== 4.0.7 ==
+* The field base class now has a method validate(). Overwrite it in the field type to provide validation of field type's
+  parameters in the field add/modify form.
+
 === 3.7 ===
 * External functions get_entries, get_entry and search_entries now return an additional field "tags" containing the entry tags.
 
