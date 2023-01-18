@@ -26,7 +26,6 @@
 namespace mod_h5pactivity\xapi;
 
 use \core_xapi\local\statement;
-use \core_xapi\local\statement\item;
 use \core_xapi\local\statement\item_agent;
 use \core_xapi\local\statement\item_activity;
 use \core_xapi\local\statement\item_definition;

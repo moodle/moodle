@@ -264,6 +264,14 @@ if ($hassiteconfig) {
         ]
     ));
 
+    $temp->add(new admin_setting_configduration(
+        'xapicleanupperiod',
+        new lang_string('xapicleanupperiod', 'xapi'),
+        new lang_string('xapicleanupperiod_help', 'xapi'),
+        WEEKSECS * 8,
+        WEEKSECS
+    ));
+
     $ADMIN->add('server', $temp);
 
     $temp->add(new admin_setting_configduration('filescleanupperiod',
