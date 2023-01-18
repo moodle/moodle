@@ -364,21 +364,4 @@ abstract class attempts_report extends report_base {
             quiz_delete_attempt($attempt, $quiz);
         }
     }
-
-    /**
-     * Get information about which students to show in the report.
-     * @param object $cm the coures module.
-     * @param object $course the course settings.
-     * @return array with four elements:
-     *      0 => integer the current group id (0 for none).
-     *      1 => array ids of all the students in this course.
-     *      2 => array ids of all the students in the current group.
-     *      3 => array ids of all the students to show in the report. Will be the
-     *              same as either element 1 or 2.
-     * @deprecated since Moodle 3.2 Please use get_students_joins() instead.
-     */
-    protected function load_relevant_students($cm, $course = null) {
-        $msg = 'The function load_relevant_students() is deprecated. Please use get_students_joins() instead.';
-        throw new coding_exception($msg);
-    }
 }

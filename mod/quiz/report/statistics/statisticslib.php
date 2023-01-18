@@ -82,23 +82,3 @@ function quiz_statistics_qubaids_condition($quizid, \core\dml\sql_join $groupstu
             $quizid, $groupstudentsjoins, $whichattempts, $includeungraded);
     return new qubaid_join($fromqa, 'quiza.uniqueid', $whereqa, $qaparams);
 }
-
-/**
- * This helper function returns a sequence of colours each time it is called.
- * Used for choosing colours for graph data series.
- * @return string colour name.
- * @deprecated since Moodle 3.2
- */
-function quiz_statistics_graph_get_new_colour() {
-    debugging('The function quiz_statistics_graph_get_new_colour() is deprecated, please do not use it any more. '
-        . 'Colours will be handled by the charting library directly.', DEBUG_DEVELOPER);
-
-    static $colourindex = -1;
-    $colours = array('red', 'green', 'yellow', 'orange', 'purple', 'black',
-        'maroon', 'blue', 'ltgreen', 'navy', 'ltred', 'ltltgreen', 'ltltorange',
-        'olive', 'gray', 'ltltred', 'ltorange', 'lime', 'ltblue', 'ltltblue');
-
-    $colourindex = ($colourindex + 1) % count($colours);
-
-    return $colours[$colourindex];
-}
