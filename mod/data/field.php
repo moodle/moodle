@@ -134,6 +134,13 @@ switch ($mode) {
                 $type = required_param('type', PARAM_FILE);
                 $field = data_get_field_new($type, $data);
 
+                if (!empty($validationerrors = $field->validate($fieldinput))) {
+                    $displaynoticebad = html_writer::alist($validationerrors);
+                    $mode = 'new';
+                    $newtype = $type;
+                    break;
+                }
+
                 $field->define_field($fieldinput);
                 $field->insert_field();
 
@@ -161,6 +168,11 @@ switch ($mode) {
 
             /// Create a field object to collect and store the data safely
                 $field = data_get_field_from_id($fid, $data);
+                if (!empty($validationerrors = $field->validate($fieldinput))) {
+                    $displaynoticebad = html_writer::alist($validationerrors);
+                    $mode = 'display';
+                    break;
+                }
                 $oldfieldname = $field->field->name;
 
                 $field->field->name = $fieldinput->name;
