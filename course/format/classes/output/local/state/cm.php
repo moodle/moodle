@@ -72,7 +72,7 @@ class cm implements renderable {
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(renderer_base $output): stdClass {
-        global $USER;
+        global $CFG, $USER;
 
         $format = $this->format;
         $section = $this->section;
@@ -113,6 +113,8 @@ class cm implements renderable {
             $completiondata = $completioninfo->get_data($cm);
             $data->completionstate = $completiondata->completionstate;
         }
+
+        $data->allowstealth = !empty($CFG->allowstealth) && $format->allow_stealth_module_visibility($cm, $section);
 
         return $data;
     }

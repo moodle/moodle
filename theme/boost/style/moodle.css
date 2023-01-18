@@ -12550,6 +12550,20 @@ blockquote {
   .activityiconcontainer.interface .icon {
     filter: brightness(0) invert(1); }
 
+.icon-box {
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 0.7rem; }
+  .icon-box .icon {
+    margin: 0;
+    height: 24px;
+    width: 24px; }
+
 :root {
   --activityadministration: #5d63f6;
   --activityassessment: #eb66a2;

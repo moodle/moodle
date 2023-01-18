@@ -31,7 +31,7 @@ import ModalEvents from 'core/modal_events';
 import Templates from 'core/templates';
 import {prefetchStrings} from 'core/prefetch';
 import {get_string as getString} from 'core/str';
-import {getList} from 'core/normalise';
+import {getList, getFirst} from 'core/normalise';
 import * as CourseEvents from 'core_course/events';
 import Pending from 'core/pending';
 import ContentTree from 'core_courseformat/local/courseeditor/contenttree';
@@ -72,6 +72,8 @@ export default class extends BaseComponent {
             CONTENTTREE: `#destination-selector`,
             ACTIONMENU: `.action-menu`,
             ACTIONMENUTOGGLER: `[data-toggle="dropdown"]`,
+            // Availability modal selectors.
+            OPTIONSRADIO: `[type='radio']`,
         };
         // Component css classes.
         this.classes = {
@@ -172,6 +174,31 @@ export default class extends BaseComponent {
     _checkSectionlist({state}) {
         // Disable "add section" actions if the course max sections has been exceeded.
         this._setAddSectionLocked(state.course.sectionlist.length > state.course.maxsections);
+    }
+
+    /**
+     * Return the ids represented by this element.
+     *
+     * Depending on the dataset attributes the action could represent a single id
+     * or a bulk actions with all the current selected ids.
+     *
+     * @param {HTMLElement} target
+     * @returns {Number[]} array of Ids
+     */
+    _getTargetIds(target) {
+        let ids = [];
+        if (target?.dataset?.id) {
+            ids.push(target.dataset.id);
+        }
+        const bulkType = target?.dataset?.bulk;
+        if (!bulkType) {
+            return ids;
+        }
+        const bulk = this.reactive.get('bulk');
+        if (bulk.enabled && bulk.selectedType === bulkType) {
+            ids = [...ids, ...bulk.selection];
+        }
+        return ids;
     }
 
     /**
@@ -494,6 +521,99 @@ export default class extends BaseComponent {
                 e.preventDefault();
                 modal.destroy();
                 this.reactive.dispatch('cmDelete', [cmId]);
+            }
+        );
+    }
+
+    /**
+     * Handle a cm availability change request.
+     *
+     * @param {Element} target the dispatch action element
+     */
+    async _requestCmAvailability(target) {
+        const cmIds = this._getTargetIds(target);
+        if (cmIds.length == 0) {
+            return;
+        }
+        // Show the availability modal to decide which action to trigger.
+        const exporter = this.reactive.getExporter();
+        const data = {
+            allowstealth: exporter.canUseStealth(this.reactive.state, cmIds),
+        };
+        const modalParams = {
+            title: getString('availability', 'core'),
+            body: Templates.render('core_courseformat/local/content/cm/availabilitymodal', data),
+            saveButtonText: getString('apply', 'core'),
+            type: ModalFactory.types.SAVE_CANCEL,
+        };
+        const modal = await this._modalBodyRenderedPromise(modalParams);
+
+        this._setupMutationRadioButtonModal(modal, cmIds);
+    }
+
+    /**
+     * Handle a section availability change request.
+     *
+     * @param {Element} target the dispatch action element
+     */
+    async _requestSectionAvailability(target) {
+        const sectionIds = this._getTargetIds(target);
+        if (sectionIds.length == 0) {
+            return;
+        }
+        // Show the availability modal to decide which action to trigger.
+        const modalParams = {
+            title: getString('availability', 'core'),
+            body: Templates.render('core_courseformat/local/content/section/availabilitymodal', []),
+            saveButtonText: getString('apply', 'core'),
+            type: ModalFactory.types.SAVE_CANCEL,
+        };
+        const modal = await this._modalBodyRenderedPromise(modalParams);
+
+        this._setupMutationRadioButtonModal(modal, sectionIds);
+    }
+
+    /**
+     * Add events to a mutation selector radio buttons modal.
+     * @param {Modal} modal
+     * @param {Number[]} ids the section or cm ids to apply the mutation
+     */
+    _setupMutationRadioButtonModal(modal, ids) {
+        // The save button is not enabled until the user selects an option.
+        modal.setButtonDisabled('save', true);
+
+        const submitFunction = (radio) => {
+            const mutation = radio?.value;
+            if (!mutation) {
+                return false;
+            }
+            this.reactive.dispatch(mutation, ids);
+            return true;
+        };
+
+        const modalBody = getFirst(modal.getBody());
+        const radioOptions = modalBody.querySelectorAll(this.selectors.OPTIONSRADIO);
+        radioOptions.forEach(radio => {
+            radio.addEventListener('change', () => {
+                modal.setButtonDisabled('save', false);
+            });
+            radio.parentNode.addEventListener('click', () => {
+                radio.checked = true;
+                modal.setButtonDisabled('save', false);
+            });
+            radio.parentNode.addEventListener('dblclick', dbClickEvent => {
+                if (submitFunction(radio)) {
+                    dbClickEvent.preventDefault();
+                    modal.destroy();
+                }
+            });
+        });
+
+        modal.getRoot().on(
+            ModalEvents.save,
+            () => {
+                const radio = modalBody.querySelector(`${this.selectors.OPTIONSRADIO}:checked`);
+                submitFunction(radio);
             }
         );
     }

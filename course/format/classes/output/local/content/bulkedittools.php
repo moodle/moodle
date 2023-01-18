@@ -82,7 +82,23 @@ class bulkedittools implements named_templatable, renderable {
      * @return array of edit control items
      */
     protected function cm_control_items(): array {
+        global $USER;
+        $format = $this->format;
+        $context = $format->get_context();
+        $user = $USER;
+
         $controls = [];
+
+        if (has_capability('moodle/course:activityvisibility', $context, $user)) {
+            $controls['availability'] = [
+                'icon' => 't/show',
+                'action' => 'cmAvailability',
+                'name' => get_string('availability'),
+                'title' => get_string('cmavailability', 'core_courseformat'),
+                'bulk' => 'cm',
+            ];
+        }
+
         return $controls;
     }
 
@@ -95,7 +111,23 @@ class bulkedittools implements named_templatable, renderable {
      * @return array of edit control items
      */
     protected function section_control_items(): array {
+        global $USER;
+        $format = $this->format;
+        $context = $format->get_context();
+        $user = $USER;
+
         $controls = [];
+
+        if (has_capability('moodle/course:sectionvisibility', $context, $user)) {
+            $controls['availability'] = [
+                'icon' => 't/show',
+                'action' => 'sectionAvailability',
+                'name' => get_string('availability'),
+                'title' => get_string('sectionavailability', 'core_courseformat'),
+                'bulk' => 'section',
+            ];
+        }
+
         return $controls;
     }
 }
