@@ -1275,7 +1275,7 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null,
             }
 
             // Let's update, calculate or aggregate.
-            $result = $grade_items[$gid]->regrade_final_grades($userid);
+            $result = $grade_items[$gid]->regrade_final_grades($userid, $progress);
 
             if ($result === true) {
 
