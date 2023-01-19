@@ -1,5 +1,8 @@
 This files describes API changes in the quiz code.
 
+=== 4.0.6 ===
+* 'firstslotid' value is not used in section_shuffle_updated event anymore.
+
 === 4.0.3, 4.1 ===
 
 * If a quiz is sequential the external functions mod_quiz_external::get_attempt_data, mod_quiz_external::get_attempt_summary will not return any data
