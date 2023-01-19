@@ -8,9 +8,6 @@ viewallmyentries,core_blog
 searchallavailablecourses_desc,core_admin
 search:mycourse,core_search
 calendarurl,core_calendar
-filetypesnotwhitelisted,core_form
-modeloutputdirinfo,core_analytics
-backpackneedsupdate,core_badges
 hidepicture,core_group
 hidepicture,core_moodle
 sitebackpack,core_badges
