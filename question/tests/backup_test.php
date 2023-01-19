@@ -83,7 +83,8 @@ class backup_test extends \advanced_testcase {
             $this->assertTrue($precheck);
         } else {
             $precheckresults = $rc->get_precheck_results();
-            $this->assertEquals(['warnings' => $expectedprecheckwarning], $precheckresults);
+            $this->assertEqualsCanonicalizing($expectedprecheckwarning, $precheckresults['warnings']);
+            $this->assertCount(1, $precheckresults);
         }
         $rc->execute_plan();
         $rc->destroy();
