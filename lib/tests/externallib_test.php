@@ -29,6 +29,33 @@ namespace core;
  */
 class test_exernal_api extends \core_external\external_api {
     public static function get_context_wrapper($params) {
+        debugging(
+            'test_exernal_api::get_context_wrapper() is deprecated. Please use Reflection instead.',
+            DEBUG_DEVELOPER
+        );
         return self::get_context_from_params($params);
+    }
+}
+
+/**
+ * Test external API functions.
+ *
+ * @package core
+ * @subpackage phpunit
+ */
+class core_externallib_test extends \advanced_testcase {
+    /**
+     * Test the get_context_wrapper helper.
+     *
+     * @covers \core\test_exernal_api::get_context_wrapper
+     */
+    public function test_get_context_wrapper(): void {
+        $this->assertEquals(
+            \context_system::instance(),
+            \core\test_exernal_api::get_context_wrapper(['contextid' => \context_system::instance()->id])
+        );
+        $this->assertDebuggingCalled(
+            'test_exernal_api::get_context_wrapper() is deprecated. Please use Reflection instead.'
+        );
     }
 }
