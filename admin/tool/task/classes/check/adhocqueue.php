@@ -38,6 +38,12 @@ use core\check\result;
  */
 class adhocqueue extends check {
 
+    /** @var string adhocqueue id. */
+    protected string $id = '';
+
+    /** @var string adhocqueue name. */
+    protected string $name = '';
+
     /**
      * Constructor
      */

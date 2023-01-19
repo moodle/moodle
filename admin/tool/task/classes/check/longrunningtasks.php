@@ -30,6 +30,12 @@ use core\task\manager;
  */
 class longrunningtasks extends check {
 
+    /** @var string adhocqueue id. */
+    protected string $id = '';
+
+    /** @var string adhocqueue name. */
+    protected string $name = '';
+
     /**
      * Constructor
      */

@@ -37,6 +37,15 @@ use core\check\result;
  */
 class cronrunning extends check {
 
+    /** @var string adhocqueue id. */
+    protected string $id = '';
+
+    /** @var string adhocqueue name. */
+    protected string $name = '';
+
+    /** @var \action_link action link. */
+    protected $actionlink;
+
     /**
      * Constructor
      */
