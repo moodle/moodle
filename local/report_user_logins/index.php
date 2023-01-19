@@ -327,7 +327,7 @@ if (!$showsummary) {
     $sqlparams = array('companyid' => $companyid) + $searchinfo->searchparams;
 
     $totalusers = $DB->count_records_sql($countsql, $sqlparams);
-    $loggedinusers = $DB->count_records_sql("SELECT COUNT(DISTINCT u.id) FROM $fromsql WHERE url.logincount > 1 AND $wheresql", $sqlparams); 
+    $loggedinusers = $DB->count_records_sql("SELECT COUNT(DISTINCT u.id) FROM $fromsql WHERE url.logincount > 0 AND $wheresql", $sqlparams); 
 
     // Set up the headers for the form.
     if ($viewchildren) {
@@ -399,15 +399,14 @@ if (!$showsummary) {
                                           JOIN {company} c ON (cu.companyid = c.id)
                                           WHERE u.deleted = 0 AND u.suspended = 0
                                           $companysql");
-                                          
+
     $loggedinusers = $DB->count_records_sql("SELECT COUNT(DISTINCT u.id)
                                           FROM {user} u
                                           JOIN {company_users} cu ON (u.id = cu.userid)
                                           JOIN {company} c ON (cu.companyid = c.id)
                                           WHERE u.deleted = 0 AND u.suspended = 0
-                                          AND u.currentlogin = 0
+                                          AND u.currentlogin > 0
                                           $companysql");
-
 
     // Set up the headers for the form.
     $headers = [get_string('company', 'block_iomad_company_admin'),
