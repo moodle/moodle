@@ -6,6 +6,7 @@ This files describes API changes in the quiz code.
   some returns a moodle_url and others aa string.
 * The method quiz_settings::confirm_start_attempt_message, which was deprecated in Moodle 3.1, is now completely removed.
 * The field view_page::$startattemptwarning, which was deprecated in Moodle 3.1, is now completely removed.
+* 'firstslotid' value is not used in section_shuffle_updated event anymore.
 * The quiz has a lot of old classes in lib.php files. These have now been moved into the classes folder,
   and so are now in namespaces. Because of Moodle's class renaming support, your code should continue
   working, but output deprecated warnings, so you probably want to update. This should mostly be

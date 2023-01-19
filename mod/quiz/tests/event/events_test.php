@@ -1131,7 +1131,6 @@ class events_test extends \advanced_testcase {
             'context' => context_module::instance($quizobj->get_cmid()),
             'other' => [
                 'quizid' => $quizobj->get_quizid(),
-                'firstslotid' => 1,
                 'firstslotnumber' => 2,
                 'shuffle' => true
             ]
