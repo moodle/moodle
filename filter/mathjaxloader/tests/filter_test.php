@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Provides the {@link filter_mathjaxloader_filter_testcase} class.
- *
- * @package     filter_mathjaxloader
- * @category    test
- * @copyright   2017 David Mudrák <david@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace filter_mathjaxloader;
 
 use filter_mathjaxloader;
@@ -35,6 +26,8 @@ require_once($CFG->dirroot.'/filter/mathjaxloader/filter.php');
 /**
  * Unit tests for the MathJax loader filter.
  *
+ * @package   filter_mathjaxloader
+ * @category  test
  * @copyright 2017 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -46,7 +39,7 @@ class filter_test extends \advanced_testcase {
      * @param string $moodlelangcode the user's current language
      * @param string $mathjaxlangcode the mathjax language to be used for the moodle language
      *
-     * @dataProvider test_map_language_code_expected_mappings
+     * @dataProvider map_language_code_expected_mappings
      */
     public function test_map_language_code($moodlelangcode, $mathjaxlangcode) {
 
@@ -59,7 +52,7 @@ class filter_test extends \advanced_testcase {
      *
      * @return array of [moodlelangcode, mathjaxcode] tuples
      */
-    public function test_map_language_code_expected_mappings() {
+    public function map_language_code_expected_mappings() {
 
         return [
             ['cz', 'cs'], // Explicit mapping.
