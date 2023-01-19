@@ -137,6 +137,7 @@ $string['criteria'] = 'Criteria';
 $string['criteriagroup'] = 'Criteria group';
 $string['criteriarequiredall'] = 'All criteria below are required';
 $string['criteriarequiredany'] = 'Any criteria below are required';
+$string['criteriasummary'] = '{$a->type}: {$a->summary}';
 $string['csvdownload'] = 'Download in spreadsheet format (UTF-8 .csv)';
 $string['datepassed'] = 'Date passed';
 $string['days'] = 'Days';

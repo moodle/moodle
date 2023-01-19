@@ -22,9 +22,13 @@ use core_reportbuilder\local\entities\base;
 use core_course\reportbuilder\local\formatters\completion as completion_formatter;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\date;
+use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\helpers\format;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
+use completion_criteria_completion;
+use completion_info;
+use html_writer;
 use lang_string;
 use stdClass;
 
@@ -109,6 +113,49 @@ class completion extends base {
                     return '';
                 }
                 return format::boolean_as_text($value);
+            });
+
+        // Completion criteria column.
+        $criterias = database::generate_alias();
+        $columns[] = (new column(
+            'criteria',
+            new lang_string('criteria', 'core_completion'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            // Determine whether any criteria exist for the course. We also group per course, rather than report each separately.
+            ->add_join("LEFT JOIN (
+                            SELECT DISTINCT course FROM {course_completion_criteria}
+                       ) {$criterias} ON {$criterias}.course = {$course}.id")
+            ->set_type(column::TYPE_TEXT)
+            // Select enough fields to determine user criteria for the course.
+            ->add_field("{$criterias}.course", 'courseid')
+            ->add_field("{$course}.enablecompletion")
+            ->add_field("{$user}.id", 'userid')
+            ->set_disabled_aggregation_all()
+            ->add_callback(static function($id, stdClass $record): string {
+                if (!$record->courseid) {
+                    return '';
+                }
+
+                $info = new completion_info((object) ['id' => $record->courseid, 'enablecompletion' => $record->enablecompletion]);
+                if ($info->get_aggregation_method() == COMPLETION_AGGREGATION_ALL) {
+                    $title = get_string('criteriarequiredall', 'core_completion');
+                } else {
+                    $title = get_string('criteriarequiredany', 'core_completion');
+                }
+
+                // Map all completion data to their criteria summaries.
+                $items = array_map(static function(completion_criteria_completion $completion): string {
+                    $criteria = $completion->get_criteria();
+
+                    return get_string('criteriasummary', 'core_completion', [
+                        'type' => $criteria->get_details($completion)['type'],
+                        'summary' => $criteria->get_title_detailed(),
+                    ]);
+                }, $info->get_completions((int) $record->userid));
+
+                return $title . html_writer::alist($items);
             });
 
         // Progress percentage column.

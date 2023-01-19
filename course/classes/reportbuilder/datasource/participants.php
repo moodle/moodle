@@ -113,18 +113,22 @@ class participants extends datasource {
         );
 
         // Join completion entity.
-        $completionentity = new completion();
+        $completionentity = (new completion())
+            ->set_table_aliases([
+                'course' => $course,
+                'user' => $user,
+            ]);
         $completion = $completionentity->get_table_alias('course_completion');
-        $completionentity->add_joins($userentity->get_joins());
-        $completionentity->add_join("
-            LEFT JOIN {course_completions} {$completion}
-                   ON {$completion}.course = {$course}.id AND {$completion}.userid = {$user}.id
-        ");
-        $completionentity->set_table_alias('user', $user);
-        $this->add_entity($completionentity);
+        $this->add_entity($completionentity
+            ->add_joins($userentity->get_joins())
+            ->add_join("
+                LEFT JOIN {course_completions} {$completion}
+                       ON {$completion}.course = {$course}.id AND {$completion}.userid = {$user}.id")
+        );
 
         // Join course access entity.
-        $accessentity = new access();
+        $accessentity = (new access())
+            ->set_table_alias('user', $user);
         $lastaccess = $accessentity->get_table_alias('user_lastaccess');
         $accessentity->add_joins($userentity->get_joins());
         $accessentity->add_join("
