@@ -113,4 +113,22 @@ class communication extends base {
         return true;
     }
 
+    /**
+     * Checks if a communication plugin is ready to be used.
+     * It checks the plugin status as well as the plugin is missing or not.
+     *
+     * @param string $fullpluginname the name of the plugin
+     * @return bool
+     */
+    public static function is_plugin_enabled($fullpluginname): bool {
+        $pluginmanager = \core_plugin_manager::instance();
+        $communicationinfo = $pluginmanager->get_plugin_info($fullpluginname);
+        if (empty($communicationinfo)) {
+            return false;
+        }
+        $communicationavailable = $communicationinfo->get_status();
+        return !($communicationavailable === \core_plugin_manager::PLUGIN_STATUS_MISSING ||
+            !empty(get_config($fullpluginname, 'disabled')));
+    }
+
 }
