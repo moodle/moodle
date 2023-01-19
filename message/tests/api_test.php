@@ -6806,7 +6806,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     /**
      * Test the get_conversation_counts() function.
      *
-     * @dataProvider test_get_conversation_counts_test_cases()
+     * @dataProvider get_conversation_counts_test_cases
      * @param array $conversationconfigs Conversations to create
      * @param int $deletemessagesuser The user who is deleting the messages
      * @param array $deletemessages The list of messages to delete (by index)
@@ -6929,7 +6929,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     /**
      * Test the get_unread_conversation_counts() function.
      *
-     * @dataProvider test_get_conversation_counts_test_cases()
+     * @dataProvider get_conversation_counts_test_cases
      * @param array $conversationconfigs Conversations to create
      * @param int $deletemessagesuser The user who is deleting the messages
      * @param array $deletemessages The list of messages to delete (by index)
