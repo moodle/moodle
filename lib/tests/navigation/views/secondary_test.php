@@ -90,7 +90,7 @@ class secondary_test extends \advanced_testcase {
      * @param string $activenode The expected active node
      * @param string $courseformat The used course format (only applicable in the course and module context).
      * @return void
-     * @dataProvider test_setting_initialise_provider
+     * @dataProvider setting_initialise_provider
      */
     public function test_setting_initialise(string $context, string $expectedfirstnode,
             string $header, string $activenode, string $courseformat = 'topics'): void {
@@ -140,7 +140,7 @@ class secondary_test extends \advanced_testcase {
      * Data provider for the test_setting_initialise function
      * @return array
      */
-    public function test_setting_initialise_provider(): array {
+    public function setting_initialise_provider(): array {
         return [
             'Testing in a course context' => ['course', 'coursehome', 'courseheader', 'Course'],
             'Testing in a course context using a single activity course format' =>
@@ -198,7 +198,7 @@ class secondary_test extends \advanced_testcase {
      * @param string|null $key The key set by user using set_secondary_active_tab.
      * @param string|null $seturl The url set by user.
      * @return void
-     * @dataProvider test_active_node_scan_provider
+     * @dataProvider active_node_scan_provider
      */
     public function test_active_node_scan(string $expectedkey, ?string $key = null, ?string $seturl = null): void {
         global $PAGE;
@@ -233,7 +233,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function test_active_node_scan_provider(): array {
+    public function active_node_scan_provider(): array {
         return [
             'Test by activating node adjacent to root node'
                 => ['firstchild', 'firstchild'],
@@ -261,7 +261,7 @@ class secondary_test extends \advanced_testcase {
      * @param int|null $maxdisplayednodes  The maximum limit of navigation nodes displayed in the secondary navigation
      * @param array $expecedmoremenunodes  The array containing the keys of the expected navigation nodes which are
      *                                     forced into the "more" menu
-     * @dataProvider test_force_nodes_into_more_menu_provider
+     * @dataProvider force_nodes_into_more_menu_provider
      */
     public function test_force_nodes_into_more_menu(array $secondarynavnodesdata, array $defaultmoremenunodes,
             ?int $maxdisplayednodes, array $expecedmoremenunodes) {
@@ -292,7 +292,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function test_force_nodes_into_more_menu_provider(): array {
+    public function force_nodes_into_more_menu_provider(): array {
         return [
             'The total number of navigation nodes exceeds the max display limit (5); ' .
             'navnode2 and navnode4 are forced into "more" menu by default.' =>
@@ -446,7 +446,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @param string $selectedurl
      * @param string $expectednode
-     * @dataProvider test_nodes_match_current_url_provider
+     * @dataProvider nodes_match_current_url_provider
      */
     public function test_nodes_match_current_url(string $selectedurl, string $expectednode) {
         global $PAGE;
@@ -476,7 +476,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return \string[][]
      */
-    public function test_nodes_match_current_url_provider(): array {
+    public function nodes_match_current_url_provider(): array {
         return [
             "Match url to a node that is a deep nested" => [
                 '/view/course.php',
@@ -496,7 +496,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @param string $selected
      * @param array $expected
-     * @dataProvider test_get_menu_array_provider
+     * @dataProvider get_menu_array_provider
      */
     public function test_get_menu_array(string $selected, array $expected) {
         global $PAGE;
@@ -534,7 +534,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function test_get_menu_array_provider(): array {
+    public function get_menu_array_provider(): array {
         return [
             "Fetch information from a node with action and no children" => [
                 'child1',
@@ -588,7 +588,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @param string $selectedkey
      * @param string|null $expectedkey
-     * @dataProvider test_get_node_with_first_action_provider
+     * @dataProvider get_node_with_first_action_provider
      */
     public function test_get_node_with_first_action(string $selectedkey, ?string $expectedkey) {
         global $PAGE;
@@ -640,7 +640,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function test_get_node_with_first_action_provider(): array {
+    public function get_node_with_first_action_provider(): array {
         return [
             "Search for action when parent has no action and multiple children with actions" => [
                 "child3",
@@ -807,7 +807,7 @@ class secondary_test extends \advanced_testcase {
      * @param string $selectedurl
      * @param bool $expectednull
      * @param bool $emptynode
-     * @dataProvider test_get_overflow_menu_data_provider
+     * @dataProvider get_overflow_menu_data_provider
      */
     public function test_get_overflow_menu_data(string $selectedurl, bool $expectednull, bool $emptynode = false) {
         global $PAGE;
@@ -870,7 +870,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return string[]
      */
-    public function test_get_overflow_menu_data_provider(): array {
+    public function get_overflow_menu_data_provider(): array {
         return [
             "Active node is the course home node" => [
                 '/coursehome.php',
@@ -899,7 +899,7 @@ class secondary_test extends \advanced_testcase {
     /**
      * Test the course administration settings return an overflow menu.
      *
-     * @dataProvider test_get_overflow_menu_data_course_admin_provider
+     * @dataProvider get_overflow_menu_data_course_admin_provider
      * @param string $url Url of the page we are testing.
      * @param string $contextidentifier id or contextid or something similar.
      * @param bool $expected The expected return. True to return the overflow menu otherwise false for nothing.
@@ -936,7 +936,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return array Provider information.
      */
-    public function test_get_overflow_menu_data_course_admin_provider(): array {
+    public function get_overflow_menu_data_course_admin_provider(): array {
         return [
             "Backup page returns overflow" => [
                 '/backup/backup.php',

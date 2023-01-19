@@ -2795,7 +2795,7 @@ class externallib_test extends externallib_advanced_testcase {
      *
      * @return array
      */
-    public function test_get_calendar_event_by_id_prevent_read_other_users_events_data_provider(): array {
+    public function get_calendar_event_by_id_prevent_read_other_users_events_data_provider(): array {
         $syscontext = \context_system::instance();
         $managerrole = 'manager';
         return [
@@ -2810,7 +2810,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Prevent user from reading other user's event.
      *
      * @covers \core_calendar_external::get_calendar_event_by_id
-     * @dataProvider test_get_calendar_event_by_id_prevent_read_other_users_events_data_provider
+     * @dataProvider get_calendar_event_by_id_prevent_read_other_users_events_data_provider
      *
      * @param bool          $isadminevent      Is admin's event
      * @param bool          $isadmin           Is current user admin user
@@ -2866,7 +2866,7 @@ class externallib_test extends externallib_advanced_testcase {
      *
      * @return array
      */
-    public function test_edit_or_delete_other_users_events_data_provider(): array {
+    public function edit_or_delete_other_users_events_data_provider(): array {
         $syscontext = \context_system::instance();
         $managerrole = 'manager';
         return [
@@ -2880,7 +2880,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test the behavior of deleting other users' user events.
      *
-     * @dataProvider test_edit_or_delete_other_users_events_data_provider
+     * @dataProvider edit_or_delete_other_users_events_data_provider
      * @covers \core_calendar_external::delete_calendar_events
      * @param bool          $isadmin Whether the current user is admin.
      * @param bool          $isadminevent Whether it's an admin event or not.
@@ -2927,7 +2927,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test the behavior of editing other users' user events
      *
-     * @dataProvider test_edit_or_delete_other_users_events_data_provider
+     * @dataProvider edit_or_delete_other_users_events_data_provider
      * @covers \core_calendar_external::submit_create_update_form
      * @param bool          $isadmin Whether the current user is admin.
      * @param bool          $isadminevent Whether it's an admin event or not.
