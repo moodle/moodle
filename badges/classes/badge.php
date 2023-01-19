@@ -129,6 +129,24 @@ class badge {
     /** @var array Badge criteria */
     public $criteria = array();
 
+    /** @var int|null Total users which have the award. Called from badges_get_badges() */
+    public $awards;
+
+    /** @var string|null The name of badge status. Called from badges_get_badges() */
+    public $statstring;
+
+    /** @var int|null The date the badges were issued. Called from badges_get_badges() */
+    public $dateissued;
+
+    /** @var string|null Unique hash. Called from badges_get_badges() */
+    public $uniquehash;
+
+    /** @var string|null Message format. Called from file_prepare_standard_editor() */
+    public $messageformat;
+
+    /** @var array Message editor. Called from file_prepare_standard_editor() */
+    public $message_editor = [];
+
     /**
      * Constructs with badge details.
      *
@@ -240,7 +258,16 @@ class badge {
         foreach (get_object_vars($this) as $k => $v) {
             $fordb->{$k} = $v;
         }
+        // TODO: We need to making it more simple.
+        // Since the variables are not exist in the badge table,
+        // unsetting them is a must to avoid errors.
         unset($fordb->criteria);
+        unset($fordb->awards);
+        unset($fordb->statstring);
+        unset($fordb->dateissued);
+        unset($fordb->uniquehash);
+        unset($fordb->messageformat);
+        unset($fordb->message_editor);
 
         $fordb->timemodified = time();
         if ($DB->update_record_raw('badge', $fordb)) {
