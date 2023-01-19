@@ -34,7 +34,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function test_get_candidate_adhoc_tasks_provider(): array {
+    public function get_candidate_adhoc_tasks_provider(): array {
         return [
             [
                 'concurrencylimit' => 5,
@@ -205,7 +205,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test that the candidate adhoc tasks are returned in the right order.
      *
-     * @dataProvider test_get_candidate_adhoc_tasks_provider
+     * @dataProvider get_candidate_adhoc_tasks_provider
      *
      * @param int $concurrencylimit The max number of runners each task can consume
      * @param int $limit SQL limit

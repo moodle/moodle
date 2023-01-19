@@ -260,7 +260,7 @@ class locallib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function test_get_last_attempt_dataprovider() {
+    public function get_last_attempt_dataprovider() {
         return [
             [0, [(object)['id' => 1], (object)['id' => 2], (object)['id' => 3]], (object)['id' => 3]],
             [1, [(object)['id' => 1], (object)['id' => 2], (object)['id' => 3]], (object)['id' => 1]],
@@ -273,7 +273,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test the get_last_attempt() method.
      *
-     * @dataProvider test_get_last_attempt_dataprovider
+     * @dataProvider get_last_attempt_dataprovider
      * @param int $maxattempts Lesson setting.
      * @param array $attempts The list of student attempts.
      * @param object $expected Expected result.
