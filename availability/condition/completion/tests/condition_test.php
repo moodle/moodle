@@ -380,7 +380,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests the is_available and get_description functions for previous activity option.
      *
-     * @dataProvider test_previous_activity_data
+     * @dataProvider previous_activity_data
      * @param int $grade the current assign grade (0 for none)
      * @param int $condition true for complete, false for incomplete
      * @param string $mark activity to mark as complete
@@ -469,7 +469,7 @@ class condition_test extends \advanced_testcase {
         $this->assertMatchesRegularExpression($description, $information);
     }
 
-    public function test_previous_activity_data(): array {
+    public function previous_activity_data(): array {
         // Assign grade, condition, activity to complete, activity to test, result, resultnot, description.
         return [
             'Missing previous activity complete' => [
@@ -561,7 +561,7 @@ class condition_test extends \advanced_testcase {
      * Tests the is_available and get_description functions for
      * previous activity option in course sections.
      *
-     * @dataProvider test_section_previous_activity_data
+     * @dataProvider section_previous_activity_data
      * @param int $condition condition value
      * @param bool $mark if Page 1 must be mark as completed
      * @param string $section section to add the availability
@@ -634,7 +634,7 @@ class condition_test extends \advanced_testcase {
 
     }
 
-    public function test_section_previous_activity_data(): array {
+    public function section_previous_activity_data(): array {
         return [
             // Condition, Activity completion, section to test, result, resultnot, description.
             'Completion complete Section with no previous activity' => [
