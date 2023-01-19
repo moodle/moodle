@@ -27,6 +27,31 @@ information provided here is intended especially for developers.
   you'll need to implement your own form handling. Example usage can be found within the grader report.
 * There is a new helper function mtrace_exception to help with reporting exceptions you have caught in scheduled tasks.
 * Box/Spout has been archived and is no longer maintained, so it has now been removed and replaced by OpenSpout.
+* The following parts of the external API have been moved to the core_external subsystem:
+  Classes:
+    - external_api                      => core_external\external_api
+    - external_description              => core_external\external_description
+    - external_files                    => core_external\files
+    - external_format_value             => core_external\external_format_value
+    - external_function_parameters      => core_external\external_function_parameters
+    - external_multiple_structure       => core_external\external_multiple_structure
+    - external_settings                 => core_external\external_settings
+    - external_single_structure         => core_external\external_single_structure
+    - external_util                     => core_external\util
+    - external_value                    => core_external\external_value
+    - external_warnings                 => core_external\external_warnings
+    - restricted_context_exception      => core_external\restricted_context_exception
+  Functions:
+    - external_format_string()          => core_external\util::format_string()
+    - external_format_text()            => core_external\util::format_text()
+    - external_create_service_token()   => core_external\util::generate_token()
+    - external_generate_token()         => core_external\util::generate_token()
+    - external_generate_token_for_current_user()
+                                        => core_external\util::generate_token_for_current_user()
+    - external_log_token_request        => core_external\util::log_token_request()
+
+  The old class locations have been aliased for backwards compatibility and will emit a deprecation notice in a future
+  release.
 
 === 4.1 ===
 

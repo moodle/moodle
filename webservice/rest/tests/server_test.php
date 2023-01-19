@@ -16,10 +16,13 @@
 
 namespace webservice_rest;
 
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/webservice/rest/locallib.php');
 
 /**
@@ -38,13 +41,13 @@ class server_test extends \advanced_testcase {
     public function xmlize_provider() {
         $data = [];
         $data[] = [null, null, ''];
-        $data[] = [new \external_value(PARAM_BOOL), false, "<VALUE>0</VALUE>\n"];
-        $data[] = [new \external_value(PARAM_BOOL), true, "<VALUE>1</VALUE>\n"];
-        $data[] = [new \external_value(PARAM_ALPHA), null, "<VALUE null=\"null\"/>\n"];
-        $data[] = [new \external_value(PARAM_ALPHA), 'a', "<VALUE>a</VALUE>\n"];
-        $data[] = [new \external_value(PARAM_INT), 123, "<VALUE>123</VALUE>\n"];
+        $data[] = [new external_value(PARAM_BOOL), false, "<VALUE>0</VALUE>\n"];
+        $data[] = [new external_value(PARAM_BOOL), true, "<VALUE>1</VALUE>\n"];
+        $data[] = [new external_value(PARAM_ALPHA), null, "<VALUE null=\"null\"/>\n"];
+        $data[] = [new external_value(PARAM_ALPHA), 'a', "<VALUE>a</VALUE>\n"];
+        $data[] = [new external_value(PARAM_INT), 123, "<VALUE>123</VALUE>\n"];
         $data[] = [
-            new \external_multiple_structure(new \external_value(PARAM_INT)),
+            new external_multiple_structure(new external_value(PARAM_INT)),
             [1, 2, 3],
             "<MULTIPLE>\n" .
             "<VALUE>1</VALUE>\n" .
@@ -53,7 +56,7 @@ class server_test extends \advanced_testcase {
             "</MULTIPLE>\n"
         ];
         $data[] = [ // Multiple structure with null value.
-            new \external_multiple_structure(new \external_value(PARAM_ALPHA)),
+            new external_multiple_structure(new external_value(PARAM_ALPHA)),
             ['A', null, 'C'],
             "<MULTIPLE>\n" .
             "<VALUE>A</VALUE>\n" .
@@ -62,16 +65,16 @@ class server_test extends \advanced_testcase {
             "</MULTIPLE>\n"
         ];
         $data[] = [ // Multiple structure without values.
-            new \external_multiple_structure(new \external_value(PARAM_ALPHA)),
+            new external_multiple_structure(new external_value(PARAM_ALPHA)),
             [],
             "<MULTIPLE>\n" .
             "</MULTIPLE>\n"
         ];
         $data[] = [
-            new \external_single_structure([
-                'one' => new \external_value(PARAM_INT),
-                'two' => new \external_value(PARAM_INT),
-                'three' => new \external_value(PARAM_INT),
+            new external_single_structure([
+                'one' => new external_value(PARAM_INT),
+                'two' => new external_value(PARAM_INT),
+                'three' => new external_value(PARAM_INT),
             ]),
             ['one' => 1, 'two' => 2, 'three' => 3],
             "<SINGLE>\n" .
@@ -81,10 +84,10 @@ class server_test extends \advanced_testcase {
             "</SINGLE>\n"
         ];
         $data[] = [ // Single structure with null value.
-            new \external_single_structure([
-                'one' => new \external_value(PARAM_INT),
-                'two' => new \external_value(PARAM_INT),
-                'three' => new \external_value(PARAM_INT),
+            new external_single_structure([
+                'one' => new external_value(PARAM_INT),
+                'two' => new external_value(PARAM_INT),
+                'three' => new external_value(PARAM_INT),
             ]),
             ['one' => 1, 'two' => null, 'three' => 3],
             "<SINGLE>\n" .
@@ -94,10 +97,10 @@ class server_test extends \advanced_testcase {
             "</SINGLE>\n"
         ];
         $data[] = [ // Single structure missing keys.
-            new \external_single_structure([
-                'one' => new \external_value(PARAM_INT),
-                'two' => new \external_value(PARAM_INT),
-                'three' => new \external_value(PARAM_INT),
+            new external_single_structure([
+                'one' => new external_value(PARAM_INT),
+                'two' => new external_value(PARAM_INT),
+                'three' => new external_value(PARAM_INT),
             ]),
             ['two' => null, 'three' => 3],
             "<SINGLE>\n" .
@@ -107,19 +110,19 @@ class server_test extends \advanced_testcase {
             "</SINGLE>\n"
         ];
         $data[] = [ // Nested structure.
-            new \external_single_structure([
-                'one' => new \external_multiple_structure(
-                    new \external_value(PARAM_INT)
+            new external_single_structure([
+                'one' => new external_multiple_structure(
+                    new external_value(PARAM_INT)
                 ),
-                'two' => new \external_multiple_structure(
-                    new \external_single_structure([
-                        'firstname' => new \external_value(PARAM_RAW),
-                        'lastname' => new \external_value(PARAM_RAW),
+                'two' => new external_multiple_structure(
+                    new external_single_structure([
+                        'firstname' => new external_value(PARAM_RAW),
+                        'lastname' => new external_value(PARAM_RAW),
                     ])
                 ),
-                'three' => new \external_single_structure([
-                    'firstname' => new \external_value(PARAM_RAW),
-                    'lastname' => new \external_value(PARAM_RAW),
+                'three' => new external_single_structure([
+                    'firstname' => new external_value(PARAM_RAW),
+                    'lastname' => new external_value(PARAM_RAW),
                 ]),
             ]),
             [
@@ -153,19 +156,19 @@ class server_test extends \advanced_testcase {
             "</SINGLE>\n"
         ];
         $data[] = [ // Nested structure with missing keys.
-            new \external_single_structure([
-                'one' => new \external_multiple_structure(
-                    new \external_value(PARAM_INT)
+            new external_single_structure([
+                'one' => new external_multiple_structure(
+                    new external_value(PARAM_INT)
                 ),
-                'two' => new \external_multiple_structure(
-                    new \external_single_structure([
-                        'firstname' => new \external_value(PARAM_RAW),
-                        'lastname' => new \external_value(PARAM_RAW),
+                'two' => new external_multiple_structure(
+                    new external_single_structure([
+                        'firstname' => new external_value(PARAM_RAW),
+                        'lastname' => new external_value(PARAM_RAW),
                     ])
                 ),
-                'three' => new \external_single_structure([
-                    'firstname' => new \external_value(PARAM_RAW),
-                    'lastname' => new \external_value(PARAM_RAW),
+                'three' => new external_single_structure([
+                    'firstname' => new external_value(PARAM_RAW),
+                    'lastname' => new external_value(PARAM_RAW),
                 ]),
             ]),
             [

@@ -24,38 +24,11 @@
 namespace tool_lp;
 defined('MOODLE_INTERNAL') || die();
 
-require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->libdir/grade/grade_scale.php");
 
-use context;
-use context_system;
 use context_course;
-use context_helper;
+use context_system;
 use context_user;
-use coding_exception;
-use external_api;
-use external_function_parameters;
-use external_value;
-use external_format_value;
-use external_single_structure;
-use external_multiple_structure;
-use invalid_parameter_exception;
-use required_capability_exception;
-
-use core_cohort\external\cohort_summary_exporter;
-use tool_lp\external\competency_path_exporter;
-use tool_lp\external\competency_summary_exporter;
-use tool_lp\external\course_competency_statistics_exporter;
-use core_course\external\course_module_summary_exporter;
-use core_course\external\course_summary_exporter;
-use tool_lp\external\template_statistics_exporter;
-use tool_lp\external\user_competency_summary_exporter;
-use tool_lp\external\user_competency_summary_in_course_exporter;
-use tool_lp\external\user_competency_summary_in_plan_exporter;
-use tool_lp\external\user_evidence_summary_exporter;
-use tool_lp\output\user_competency_summary_in_plan;
-use tool_lp\output\user_competency_summary_in_course;
-
 use core_competency\api;
 use core_competency\external\competency_exporter;
 use core_competency\external\competency_framework_exporter;
@@ -66,7 +39,24 @@ use core_competency\external\template_exporter;
 use core_competency\external\user_competency_course_exporter;
 use core_competency\external\user_competency_exporter;
 use core_competency\external\user_competency_plan_exporter;
+use core_course\external\course_module_summary_exporter;
+use core_course\external\course_summary_exporter;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 use core_user\external\user_summary_exporter;
+use tool_lp\external\competency_path_exporter;
+use tool_lp\external\competency_summary_exporter;
+use tool_lp\external\course_competency_statistics_exporter;
+use tool_lp\external\template_statistics_exporter;
+use tool_lp\external\user_competency_summary_exporter;
+use tool_lp\external\user_competency_summary_in_course_exporter;
+use tool_lp\external\user_competency_summary_in_plan_exporter;
+use tool_lp\external\user_evidence_summary_exporter;
+use tool_lp\output\user_competency_summary_in_course;
+use tool_lp\output\user_competency_summary_in_plan;
 
 /**
  * This is the external API for this tool.
@@ -109,7 +99,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_competency_frameworks_manage_page() parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function data_for_competency_frameworks_manage_page_parameters() {
         $params = array('pagecontext' => self::get_context_parameters());
@@ -145,7 +135,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_competency_frameworks_manage_page() result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function data_for_competency_frameworks_manage_page_returns() {
         return new external_single_structure(array (
@@ -164,7 +154,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_competencies_manage_page() parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function data_for_competencies_manage_page_parameters() {
         $competencyframeworkid = new external_value(
@@ -215,7 +205,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_competencies_manage_page() result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function data_for_competencies_manage_page_returns() {
         return new external_single_structure(array (
@@ -232,7 +222,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_competency_summary() parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function data_for_competency_summary_parameters() {
         $competencyid = new external_value(
@@ -291,7 +281,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_competency_summary_() result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function data_for_competency_summary_returns() {
         return competency_summary_exporter::get_read_structure();
@@ -300,7 +290,7 @@ class external extends external_api {
     /**
      * Returns description of list_courses_using_competency() parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function list_courses_using_competency_parameters() {
         $competencyid = new external_value(
@@ -345,7 +335,7 @@ class external extends external_api {
     /**
      * Returns description of list_courses_using_competency() result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function list_courses_using_competency_returns() {
         return new external_multiple_structure(course_summary_exporter::get_read_structure());
@@ -355,7 +345,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_course_competenies_page() parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function data_for_course_competencies_page_parameters() {
         $courseid = new external_value(
@@ -399,7 +389,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_course_competencies_page() result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function data_for_course_competencies_page_returns() {
         $ucc = user_competency_course_exporter::get_read_structure();
@@ -441,7 +431,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_templates_manage_page() parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function data_for_templates_manage_page_parameters() {
         $params = array('pagecontext' => self::get_context_parameters());
@@ -474,7 +464,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_templates_manage_page() result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function data_for_templates_manage_page_returns() {
         return new external_single_structure(array (
@@ -494,7 +484,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_template_competenies_page() parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function data_for_template_competencies_page_parameters() {
         $templateid = new external_value(
@@ -535,7 +525,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_template_competencies_page() result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function data_for_template_competencies_page_returns() {
         return new external_single_structure(array (
@@ -556,7 +546,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_plan_competenies_page() parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function data_for_plan_page_parameters() {
         $planid = new external_value(
@@ -593,7 +583,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_plan_page() result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function data_for_plan_page_returns() {
         $uc = user_competency_exporter::get_read_structure();
@@ -624,7 +614,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_plans_page() parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function data_for_plans_page_parameters() {
         $userid = new external_value(
@@ -661,7 +651,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_plans_page() result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function data_for_plans_page_returns() {
         return new external_single_structure(array (
@@ -681,7 +671,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function data_for_user_evidence_list_page_parameters() {
         return new external_function_parameters(array(
@@ -711,7 +701,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function data_for_user_evidence_list_page_returns() {
         return new external_single_structure(array (
@@ -728,7 +718,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function data_for_user_evidence_page_parameters() {
         return new external_function_parameters(array(
@@ -758,7 +748,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function data_for_user_evidence_page_returns() {
         return new external_single_structure(array(
@@ -805,7 +795,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_related_competencies_section_returns() result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function data_for_related_competencies_section_returns() {
         return new external_single_structure(array(
@@ -920,7 +910,7 @@ class external extends external_api {
     /**
      * Returns description of external function result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function search_users_returns() {
         global $CFG;
@@ -934,7 +924,7 @@ class external extends external_api {
     /**
      * Returns description of external function.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function data_for_user_competency_summary_parameters() {
         $userid = new external_value(
@@ -979,7 +969,7 @@ class external extends external_api {
     /**
      * Returns description of external function.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function data_for_user_competency_summary_returns() {
         return user_competency_summary_exporter::get_read_structure();
@@ -988,7 +978,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_user_competency_summary_in_plan() parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function data_for_user_competency_summary_in_plan_parameters() {
         $competencyid = new external_value(
@@ -1035,7 +1025,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_user_competency_summary_in_plan() result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function data_for_user_competency_summary_in_plan_returns() {
         return user_competency_summary_in_plan_exporter::get_read_structure();
@@ -1044,7 +1034,7 @@ class external extends external_api {
     /**
      * Returns description of data_for_user_competency_summary_in_course() parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function data_for_user_competency_summary_in_course_parameters() {
         $userid = new external_value(
@@ -1097,10 +1087,9 @@ class external extends external_api {
     /**
      * Returns description of data_for_user_competency_summary_in_course() result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function data_for_user_competency_summary_in_course_returns() {
         return user_competency_summary_in_course_exporter::get_read_structure();
     }
-
 }

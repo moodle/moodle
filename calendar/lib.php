@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_external\external_api;
+
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
@@ -975,7 +977,7 @@ class calendar_event {
             $this->editorcontext = $this->get_context();
         }
 
-        return external_format_string($this->properties->name, $this->editorcontext->id);
+        return \core_external\util::format_string($this->properties->name, $this->editorcontext->id);
     }
 
     /**
@@ -993,7 +995,11 @@ class calendar_event {
 
             if (!calendar_is_valid_eventtype($this->properties->eventtype)) {
                 // We don't have a context here, do a normal format_text.
-                return external_format_text($this->properties->description, $this->properties->format, $this->editorcontext->id);
+                return \core_external\util::format_text(
+                    $this->properties->description,
+                    $this->properties->format,
+                    $this->editorcontext
+                );
             }
         }
 
@@ -1004,8 +1010,14 @@ class calendar_event {
             $itemid = $this->properties->id;
         }
 
-        return external_format_text($this->properties->description, $this->properties->format, $this->editorcontext->id,
-            'calendar', 'event_description', $itemid);
+        return \core_external\util::format_text(
+            $this->properties->description,
+            $this->properties->format,
+            $this->editorcontext,
+            'calendar',
+            'event_description',
+            $itemid
+        );
     }
 }
 
@@ -4010,7 +4022,7 @@ function calendar_inplace_editable(string $itemtype, int $itemid, int $newvalue)
 
         $subscription = calendar_get_subscription($itemid);
         $context = calendar_get_calendar_context($subscription);
-        \external_api::validate_context($context);
+        external_api::validate_context($context);
 
         $updateresult = \core_calendar\output\refreshintervalcollection::update($itemid, $newvalue);
 
@@ -4025,5 +4037,5 @@ function calendar_inplace_editable(string $itemtype, int $itemid, int $newvalue)
         return $updateresult;
     }
 
-    \external_api::validate_context(context_system::instance());
+    external_api::validate_context(context_system::instance());
 }

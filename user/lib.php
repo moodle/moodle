@@ -423,8 +423,8 @@ function user_get_user_details($user, $course = null, array $userfields = array(
         if (in_array('description', $userfields)) {
             // Always return the descriptionformat if description is requested.
             list($userdetails['description'], $userdetails['descriptionformat']) =
-                    external_format_text($user->description, $user->descriptionformat,
-                            $usercontext->id, 'user', 'profile', null);
+                    \core_external\util::format_text($user->description, $user->descriptionformat,
+                            $usercontext, 'user', 'profile', null);
         }
     }
 
@@ -525,8 +525,8 @@ function user_get_user_details($user, $course = null, array $userfields = array(
         $userdetails['groups'] = array();
         foreach ($usergroups as $group) {
             list($group->description, $group->descriptionformat) =
-                external_format_text($group->description, $group->descriptionformat,
-                        $context->id, 'group', 'description', $group->id);
+                \core_external\util::format_text($group->description, $group->descriptionformat,
+                        $context, 'group', 'description', $group->id);
             $userdetails['groups'][] = array('id' => $group->id, 'name' => $group->name,
                 'description' => $group->description, 'descriptionformat' => $group->descriptionformat);
         }
@@ -1369,4 +1369,3 @@ function user_edit_map_field_purpose($userid, $fieldname) {
 
     return $purpose;
 }
-

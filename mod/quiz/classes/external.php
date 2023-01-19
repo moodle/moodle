@@ -25,13 +25,21 @@
  */
 
 use core_course\external\helper_for_get_mods_by_courses;
+use core_external\external_api;
+use core_external\external_files;
+use core_external\external_format_value;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
+use core_external\util;
 use mod_quiz\access_manager;
 use mod_quiz\quiz_attempt;
 use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 /**
@@ -89,7 +97,7 @@ class mod_quiz_external extends external_api {
         // Ensure there are courseids to loop through.
         if (!empty($params['courseids'])) {
 
-            list($courses, $warnings) = external_util::validate_courses($params['courseids'], $mycourses);
+            list($courses, $warnings) = util::validate_courses($params['courseids'], $mycourses);
 
             // Get the quizzes in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
@@ -105,7 +113,7 @@ class mod_quiz_external extends external_api {
                         $quiz, 'mod_quiz', 'mod/quiz:view', 'mod/quiz:view');
 
                 if (has_capability('mod/quiz:view', $context)) {
-                    $quizdetails['introfiles'] = external_util::get_area_files($context->id, 'mod_quiz', 'intro', false, false);
+                    $quizdetails['introfiles'] = util::get_area_files($context->id, 'mod_quiz', 'intro', false, false);
                     $viewablefields = array('timeopen', 'timeclose', 'attempts', 'timelimit', 'grademethod', 'decimalpoints',
                                             'questiondecimalpoints', 'sumgrades', 'grade', 'preferredbehaviour');
 
@@ -1726,11 +1734,17 @@ class mod_quiz_external extends external_api {
 
         $feedback = quiz_feedback_record_for_grade($params['grade'], $quiz);
         if (!empty($feedback->feedbacktext)) {
-            list($text, $format) = external_format_text($feedback->feedbacktext, $feedback->feedbacktextformat, $context->id,
-                                                        'mod_quiz', 'feedback', $feedback->id);
+            list($text, $format) = \core_external\util::format_text(
+                $feedback->feedbacktext,
+                $feedback->feedbacktextformat,
+                $context,
+                'mod_quiz',
+                'feedback',
+                $feedback->id
+            );
             $result['feedbacktext'] = $text;
             $result['feedbacktextformat'] = $format;
-            $feedbackinlinefiles = external_util::get_area_files($context->id, 'mod_quiz', 'feedback', $feedback->id);
+            $feedbackinlinefiles = util::get_area_files($context->id, 'mod_quiz', 'feedback', $feedback->id);
             if (!empty($feedbackinlinefiles)) {
                 $result['feedbackinlinefiles'] = $feedbackinlinefiles;
             }

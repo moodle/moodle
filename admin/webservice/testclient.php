@@ -26,7 +26,6 @@
 
 require('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once("$CFG->libdir/externallib.php");
 require_once($CFG->dirroot . "/" . $CFG->admin . "/webservice/testclient_forms.php");
 
 $function = optional_param('function', '', PARAM_PLUGIN);
@@ -49,7 +48,7 @@ admin_externalpage_setup('testclient');
 $allfunctions = $DB->get_records('external_functions', array(), 'name ASC');
 $functions = array();
 foreach ($allfunctions as $f) {
-    $finfo = external_api::external_function_info($f);
+    $finfo = \core_external\external_api::external_function_info($f);
     if (!empty($finfo->testclientpath) and file_exists($CFG->dirroot.'/'.$finfo->testclientpath)) {
         //some plugins may want to have own test client forms
         include_once($CFG->dirroot.'/'.$finfo->testclientpath);
@@ -115,7 +114,7 @@ if ($mform->is_cancelled()) {
 
 } else if ($data = $mform->get_data()) {
 
-    $functioninfo = external_api::external_function_info($function);
+    $functioninfo = \core_external\external_api::external_function_info($function);
 
     // first load lib of selected protocol
     require_once("$CFG->dirroot/webservice/$protocol/locallib.php");
@@ -140,7 +139,7 @@ if ($mform->is_cancelled()) {
     $params = $mform->get_params();
 
     // now test the parameters, this also fixes PHP data types
-    $params = external_api::validate_parameters($functioninfo->parameters_desc, $params);
+    $params = \core_external\external_api::validate_parameters($functioninfo->parameters_desc, $params);
 
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('pluginname', 'webservice_'.$protocol).': '.$function);

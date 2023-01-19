@@ -16,13 +16,11 @@
 
 namespace quizaccess_seb\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
 use quizaccess_seb\seb_quiz_settings;
 
-require_once($CFG->libdir . '/externallib.php');
+defined('MOODLE_INTERNAL') || die();
+
+require_once(__DIR__ . '/../test_helper_trait.php');
 
 /**
  * PHPUnit tests for external function.
@@ -115,7 +113,7 @@ class validate_quiz_access_test extends \advanced_testcase {
 
         $this->expectException(\invalid_parameter_exception::class);
         $this->expectExceptionMessageMatches($messageregex);
-        \external_api::validate_parameters(validate_quiz_keys::execute_parameters(), $params);
+        \core_external\external_api::validate_parameters(validate_quiz_keys::execute_parameters(), $params);
     }
 
     /**

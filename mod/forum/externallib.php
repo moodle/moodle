@@ -15,6 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use mod_forum\local\exporters\post as post_exporter;
+use mod_forum\local\exporters\discussion as discussion_exporter;
+use core_external\external_api;
+use core_external\external_files;
+use core_external\external_format_value;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
+use core_external\util as external_util;
+
 /**
  * External forum API
  *
@@ -22,14 +34,6 @@
  * @copyright  2012 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die;
-
-require_once("$CFG->libdir/externallib.php");
-
-use mod_forum\local\exporters\post as post_exporter;
-use mod_forum\local\exporters\discussion as discussion_exporter;
-
 class mod_forum_external extends external_api {
 
     /**
@@ -91,11 +95,18 @@ class mod_forum_external extends external_api {
                     continue;
                 }
 
-                $forum->name = external_format_string($forum->name, $context->id);
+                $forum->name = \core_external\util::format_string($forum->name, $context);
                 // Format the intro before being returning using the format setting.
                 $options = array('noclean' => true);
-                list($forum->intro, $forum->introformat) =
-                    external_format_text($forum->intro, $forum->introformat, $context->id, 'mod_forum', 'intro', null, $options);
+                [$forum->intro, $forum->introformat] = \core_external\util::format_text(
+                    $forum->intro,
+                    $forum->introformat,
+                    $context,
+                    'mod_forum',
+                    'intro',
+                    null,
+                    $options
+                );
                 $forum->introfiles = external_util::get_area_files($context->id, 'mod_forum', 'intro', false, false);
                 $forum->lang = clean_param($forum->lang, PARAM_LANG);
 
@@ -415,13 +426,13 @@ class mod_forum_external extends external_api {
                     $discussion->numreplies = (int) $replies[$discussion->discussion]->replies;
                 }
 
-                $discussion->name = external_format_string($discussion->name, $modcontext->id);
-                $discussion->subject = external_format_string($discussion->subject, $modcontext->id);
+                $discussion->name = \core_external\util::format_string($discussion->name, $modcontext);
+                $discussion->subject = \core_external\util::format_string($discussion->subject, $modcontext);
                 // Rewrite embedded images URLs.
                 $options = array('trusted' => $discussion->messagetrust);
                 list($discussion->message, $discussion->messageformat) =
-                    external_format_text($discussion->message, $discussion->messageformat,
-                                            $modcontext->id, 'mod_forum', 'post', $discussion->id, $options);
+                    \core_external\util::format_text($discussion->message, $discussion->messageformat,
+                                            $modcontext, 'mod_forum', 'post', $discussion->id, $options);
 
                 // List attachments.
                 if (!empty($discussion->attachment)) {
@@ -715,13 +726,13 @@ class mod_forum_external extends external_api {
                     $discussionobject->numreplies = (int) $replies[$discussion->get_id()];
                 }
 
-                $discussionobject->name = external_format_string($discussion->get_name(), $modcontext->id);
-                $discussionobject->subject = external_format_string($discussionobject->subject, $modcontext->id);
+                $discussionobject->name = \core_external\util::format_string($discussion->get_name(), $modcontext);
+                $discussionobject->subject = \core_external\util::format_string($discussionobject->subject, $modcontext);
                 // Rewrite embedded images URLs.
                 $options = array('trusted' => $discussionobject->messagetrust);
                 list($discussionobject->message, $discussionobject->messageformat) =
-                    external_format_text($discussionobject->message, $discussionobject->messageformat,
-                        $modcontext->id, 'mod_forum', 'post', $discussionobject->id, $options);
+                    \core_external\util::format_text($discussionobject->message, $discussionobject->messageformat,
+                        $modcontext, 'mod_forum', 'post', $discussionobject->id, $options);
 
                 // List attachments.
                 if (!empty($discussionobject->attachment)) {
@@ -877,7 +888,7 @@ class mod_forum_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 2.9
      */
     public static function view_forum_returns() {
@@ -948,7 +959,7 @@ class mod_forum_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 2.9
      */
     public static function view_forum_discussion_returns() {
@@ -1185,7 +1196,7 @@ class mod_forum_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.0
      */
     public static function add_discussion_post_returns() {
@@ -1257,7 +1268,7 @@ class mod_forum_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.0
      */
     public static function toggle_favourite_state_returns() {
@@ -1460,7 +1471,7 @@ class mod_forum_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.0
      */
     public static function add_discussion_returns() {
@@ -1528,7 +1539,7 @@ class mod_forum_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.1
      */
     public static function can_add_discussion_returns() {
@@ -1691,7 +1702,7 @@ class mod_forum_external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function set_subscription_state_returns() {
         return discussion_exporter::get_read_structure();
@@ -1759,7 +1770,7 @@ class mod_forum_external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function set_lock_state_returns() {
         return new external_single_structure([
@@ -1930,7 +1941,7 @@ class mod_forum_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.8
      */
     public static function delete_post_returns() {
@@ -2167,7 +2178,7 @@ class mod_forum_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.8
      */
     public static function get_discussion_post_returns() {
@@ -2321,7 +2332,7 @@ class mod_forum_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.8
      */
     public static function prepare_draft_area_for_post_returns() {
@@ -2535,7 +2546,7 @@ class mod_forum_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.8
      */
     public static function update_discussion_post_returns() {

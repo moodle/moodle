@@ -17,42 +17,41 @@
 /**
  * Data provider tests.
  *
- * @package    core_webservice
+ * @package    core_external
  * @category   test
  * @copyright  2018 Frédéric Massart
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_webservice\privacy;
+namespace core_external\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
-
-use core_privacy\tests\provider_testcase;
+use core_external\privacy\provider;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
-use core_webservice\privacy\provider;
-use core_privacy\local\request\approved_userlist;
-
-require_once($CFG->dirroot . '/webservice/lib.php');
+use core_privacy\tests\provider_testcase;
 
 /**
- * Data provider testcase class.
+ * External subsytem testcase class.
  *
- * @package    core_webservice
+ * @package    core_external
  * @category   test
  * @copyright  2018 Frédéric Massart
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider_test extends provider_testcase {
-
     public function setUp(): void {
         $this->resetAfterTest();
     }
 
-    public function test_get_contexts_for_userid() {
+    /**
+     * Test the external service get_contexts_for_userid function.
+     *
+     * @covers \core_external\privacy\provider::get_contexts_for_userid
+     */
+    public function test_get_contexts_for_userid(): void {
         $dg = $this->getDataGenerator();
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
@@ -90,7 +89,12 @@ class provider_test extends provider_testcase {
         $this->assertTrue(in_array($u5ctx->id, $contextids));
     }
 
-    public function test_delete_data_for_user() {
+    /**
+     * Test delete_data_for_user
+     *
+     * @covers \core_external\privacy\provider::delete_data_for_user
+     */
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $dg = $this->getDataGenerator();
@@ -112,20 +116,25 @@ class provider_test extends provider_testcase {
         $this->assertTrue($DB->record_exists('external_services_users', ['userid' => $u2->id]));
 
         // Delete in another context, nothing happens.
-        provider::delete_data_for_user(new approved_contextlist($u2, 'core_webservice', [$u1ctx->id]));
+        provider::delete_data_for_user(new approved_contextlist($u2, 'core_external', [$u1ctx->id]));
         $this->assertEquals(2, $DB->count_records('external_tokens', ['userid' => $u1->id]));
         $this->assertEquals(1, $DB->count_records('external_tokens', ['userid' => $u2->id]));
         $this->assertTrue($DB->record_exists('external_services_users', ['userid' => $u1->id]));
         $this->assertTrue($DB->record_exists('external_services_users', ['userid' => $u2->id]));
 
         // Delete in my context.
-        provider::delete_data_for_user(new approved_contextlist($u2, 'core_webservice', [$u2ctx->id]));
+        provider::delete_data_for_user(new approved_contextlist($u2, 'core_external', [$u2ctx->id]));
         $this->assertEquals(2, $DB->count_records('external_tokens', ['userid' => $u1->id]));
         $this->assertEquals(0, $DB->count_records('external_tokens', ['userid' => $u2->id]));
         $this->assertTrue($DB->record_exists('external_services_users', ['userid' => $u1->id]));
         $this->assertFalse($DB->record_exists('external_services_users', ['userid' => $u2->id]));
     }
 
+    /**
+     * Test delete_data_for_all_users_in_context
+     *
+     * @covers \core_external\privacy\provider::delete_data_for_all_users_in_context
+     */
     public function test_delete_data_for_all_users_in_context() {
         global $DB;
 
@@ -161,6 +170,10 @@ class provider_test extends provider_testcase {
 
     }
 
+    /**
+     * Test the export_user_data function.
+     * @covers \core_external\privacy\provider::export_user_data
+     */
     public function test_export_data_for_user() {
         global $DB;
 
@@ -170,21 +183,29 @@ class provider_test extends provider_testcase {
         $u1ctx = \context_user::instance($u1->id);
         $u2ctx = \context_user::instance($u2->id);
 
-        $path = [get_string('webservices', 'core_webservice')];
+        $path = [get_string('services', 'core_external')];
         $yearago = time() - YEARSECS;
         $hourago = time() - HOURSECS;
 
         $s = $this->create_service(['name' => 'Party time!']);
         $this->create_token(['userid' => $u1->id, 'timecreated' => $yearago]);
-        $this->create_token(['userid' => $u1->id, 'creatorid' => $u2->id, 'iprestriction' => '127.0.0.1',
-            'lastaccess' => $hourago]);
-        $this->create_token(['userid' => $u2->id, 'iprestriction' => '192.168.1.0/24', 'lastaccess' => $yearago,
-            'externalserviceid' => $s->id]);
+        $this->create_token([
+            'userid' => $u1->id,
+            'creatorid' => $u2->id,
+            'iprestriction' => '127.0.0.1',
+            'lastaccess' => $hourago,
+        ]);
+        $this->create_token([
+            'userid' => $u2->id,
+            'iprestriction' => '192.168.1.0/24',
+            'lastaccess' => $yearago,
+            'externalserviceid' => $s->id,
+        ]);
         $this->create_service_user(['externalserviceid' => $s->id, 'userid' => $u2->id]);
 
         // User 1 exporting user 2 context does not give anything.
         writer::reset();
-        provider::export_user_data(new approved_contextlist($u1, 'core_webservice', [$u2ctx->id]));
+        provider::export_user_data(new approved_contextlist($u1, 'core_external', [$u2ctx->id]));
         $data = writer::with_context($u1ctx)->get_data($path);
         $this->assertEmpty($data);
         $data = writer::with_context($u1ctx)->get_related_data($path, 'created_by_you');
@@ -196,7 +217,7 @@ class provider_test extends provider_testcase {
 
         // User 1 exporting their context.
         writer::reset();
-        provider::export_user_data(new approved_contextlist($u1, 'core_webservice', [$u1ctx->id, $u2ctx->id]));
+        provider::export_user_data(new approved_contextlist($u1, 'core_external', [$u1ctx->id, $u2ctx->id]));
         $data = writer::with_context($u1ctx)->get_data($path);
         $this->assertFalse(isset($data->services_user));
         $this->assertCount(2, $data->tokens);
@@ -213,7 +234,7 @@ class provider_test extends provider_testcase {
 
         // User 2 exporting their context.
         writer::reset();
-        provider::export_user_data(new approved_contextlist($u2, 'core_webservice', [$u1ctx->id, $u2ctx->id]));
+        provider::export_user_data(new approved_contextlist($u2, 'core_external', [$u1ctx->id, $u2ctx->id]));
         $data = writer::with_context($u2ctx)->get_data($path);
         $this->assertCount(1, $data->tokens);
         $this->assertEquals('Party time!', $data->tokens[0]['external_service']);
@@ -233,10 +254,12 @@ class provider_test extends provider_testcase {
 
     /**
      * Test that only users with a user context are fetched.
+     *
+     * @covers \core_external\privacy\provider::get_users_in_context
      */
     public function test_get_users_in_context() {
 
-        $component = 'core_webservice';
+        $component = 'core_external';
         // Create user u1.
         $u1 = $this->getDataGenerator()->create_user();
         $u1ctx = \context_user::instance($u1->id);
@@ -271,7 +294,7 @@ class provider_test extends provider_testcase {
         provider::get_users_in_context($userlist5);
         $this->assertCount(0, $userlist5);
 
-        // Create a webservice.
+        // Create a service.
         $s = $this->create_service();
         // Create a ws token for u1.
         $this->create_token(['userid' => $u1->id]);
@@ -317,10 +340,12 @@ class provider_test extends provider_testcase {
 
     /**
      * Test that data for users in approved userlist is deleted.
+     *
+     * @covers \core_external\privacy\provider::delete_data_for_users
      */
     public function test_delete_data_for_users() {
 
-        $component = 'core_webservice';
+        $component = 'core_external';
         // Create user u1.
         $u1 = $this->getDataGenerator()->create_user();
         $u1ctx = \context_user::instance($u1->id);
@@ -337,7 +362,7 @@ class provider_test extends provider_testcase {
         $u5 = $this->getDataGenerator()->create_user();
         $u5ctx = \context_user::instance($u5->id);
 
-        // Create a webservice.
+        // Create a service.
         $s = $this->create_service();
         // Create a ws token for u1.
         $this->create_token(['userid' => $u1->id]);
@@ -427,7 +452,7 @@ class provider_test extends provider_testcase {
             'enabled' => '1',
             'requiredcapability' => '',
             'restrictedusers' => '0',
-            'component' => 'core_webservice',
+            'component' => 'core_external',
             'timecreated' => time(),
             'timemodified' => time(),
             'shortname' => 'service' . $i,

@@ -128,9 +128,9 @@ class core_webservice_generator extends component_generator_base {
 
         $service = $webservicemanager->get_external_service_by_shortname($data['service']);
 
-        external_generate_token(
+        \core_external\util::generate_token(
             EXTERNAL_TOKEN_PERMANENT,
-            $service->id,
+            $service,
             $data['userid'],
             $data['context'],
             $data['validuntil'],

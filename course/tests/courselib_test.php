@@ -38,7 +38,7 @@ use course_capability_assignment;
 use course_request;
 use core_course_category;
 use enrol_imsenterprise\imsenterprise_test;
-use external_api;
+use core_external\external_api;
 use grade_item;
 use grading_manager;
 use moodle_exception;

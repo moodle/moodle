@@ -24,9 +24,16 @@
  * @since      Moodle 2.9
  */
 
+use core_external\external_api;
+use core_external\external_format_value;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
+
 defined('MOODLE_INTERNAL') || die();
 
-require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->dirroot/comment/lib.php");
 
 /**
@@ -118,7 +125,7 @@ class core_comment_external extends external_api {
 
         foreach ($comments as $key => $comment) {
 
-                list($comments[$key]->content, $comments[$key]->format) = external_format_text($comment->content,
+                list($comments[$key]->content, $comments[$key]->format) = \core_external\util::format_text($comment->content,
                                                                                                  $comment->format,
                                                                                                  $context->id,
                                                                                                  $params['component'],
@@ -140,7 +147,7 @@ class core_comment_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 2.9
      */
     public static function get_comments_returns() {
@@ -264,7 +271,7 @@ class core_comment_external extends external_api {
     /**
      * Returns description of method result value for the add_comments method.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.8
      */
     public static function add_comments_returns() {
@@ -356,7 +363,7 @@ class core_comment_external extends external_api {
     /**
      * Returns description of method result value for the delete_comments() method.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.8
      */
     public static function delete_comments_returns() {

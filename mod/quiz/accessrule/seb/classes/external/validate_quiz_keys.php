@@ -20,16 +20,14 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-use external_api;
-use external_function_parameters;
-use external_single_structure;
-use external_value;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
 use invalid_parameter_exception;
 use mod_quiz\quiz_settings;
 use quizaccess_seb\event\access_prevented;
 use quizaccess_seb\seb_access_manager;
-
-require_once($CFG->libdir . '/externallib.php');
 
 /**
  * Validate browser exam key and config key.
@@ -150,4 +148,3 @@ class validate_quiz_keys extends external_api {
         return $quizid;
     }
 }
-

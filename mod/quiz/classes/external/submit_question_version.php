@@ -18,16 +18,14 @@ namespace mod_quiz\external;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/question/engine/lib.php');
 require_once($CFG->dirroot . '/question/engine/datalib.php');
 require_once($CFG->libdir . '/questionlib.php');
 
-use external_api;
-use external_description;
-use external_function_parameters;
-use external_single_structure;
-use external_value;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
 use stdClass;
 
 /**
@@ -43,15 +41,13 @@ class submit_question_version extends external_api {
     /**
      * Parameters for the submit_question_version.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function execute_parameters(): external_function_parameters {
-        return new external_function_parameters (
-            [
-                'slotid' => new external_value(PARAM_INT, ''),
-                'newversion' => new external_value(PARAM_INT, '')
-            ]
-        );
+        return new external_function_parameters([
+            'slotid' => new external_value(PARAM_INT, ''),
+            'newversion' => new external_value(PARAM_INT, '')
+        ]);
     }
 
     /**
@@ -94,13 +90,12 @@ class submit_question_version extends external_api {
     /**
      * Define the webservice response.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function execute_returns() {
-        return new external_single_structure(
-            [
-                'result' => new external_value(PARAM_BOOL, '')
-            ]
-        );
+        return new external_single_structure([
+            'result' => new external_value(PARAM_BOOL, '')
+
+        ]);
     }
 }

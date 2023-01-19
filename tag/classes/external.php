@@ -14,18 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains class core_tag_external
- *
- * @package    core_tag
- * @copyright  2015 Marina Glancy
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once("$CFG->libdir/externallib.php");
-require_once("$CFG->dirroot/webservice/externallib.php");
+use core_external\external_api;
+use core_external\external_value;
+use core_external\external_format_value;
+use core_external\external_single_structure;
+use core_external\external_multiple_structure;
+use core_external\external_function_parameters;
+use core_external\external_warnings;
 
 /**
  * Tags-related web services
@@ -153,7 +148,7 @@ class core_tag_external extends external_api {
     /**
      * Return structure for update_tag()
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function update_tags_returns() {
         return new external_single_structure(
@@ -235,7 +230,7 @@ class core_tag_external extends external_api {
     /**
      * Return structure for get_tag()
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function get_tags_returns() {
         return new external_single_structure(
@@ -315,7 +310,7 @@ class core_tag_external extends external_api {
     /**
      * Return structure for get_tag()
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function get_tagindex_returns() {
         return new external_single_structure(
@@ -445,7 +440,7 @@ class core_tag_external extends external_api {
     /**
      * Return structure for get_tagindex_per_area
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since  Moodle 3.7
      */
     public static function get_tagindex_per_area_returns() {
@@ -507,7 +502,7 @@ class core_tag_external extends external_api {
     /**
      * Returns description of get_tag_areas() result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since  Moodle 3.7
      */
     public static function get_tag_areas_returns() {
@@ -566,7 +561,7 @@ class core_tag_external extends external_api {
     /**
      * Returns description of get_tag_collections() result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since  Moodle 3.7
      */
     public static function get_tag_collections_returns() {
@@ -657,7 +652,7 @@ class core_tag_external extends external_api {
     /**
      * Returns description of get_tag_cloud() result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since  Moodle 3.7
      */
     public static function get_tag_cloud_returns() {
