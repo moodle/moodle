@@ -84,7 +84,9 @@ class action_bar extends \core_grades\output\action_bar {
                 $initialscontent->buttonheader,
             );
             $data['initialselector'] = $initialselector->export_for_template($output);
+            $data['groupselector'] = $gradesrenderer->group_selector($course);
         }
+
         return $data;
     }
 }
