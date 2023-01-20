@@ -14,19 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for lib/classes/output/mustache_helper_collection
- *
- * @copyright 2019 Ryan Wyllie <ryan@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
 use core\output\mustache_helper_collection;
 
 /**
  * Unit tests for the mustache_helper_collection class.
+ *
+ * @package   core
+ * @copyright 2019 Ryan Wyllie <ryan@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \core\output\mustache_helper_collection
  */
 class core_output_mustache_helper_collection_testcase extends advanced_testcase {
     /**
@@ -71,7 +67,7 @@ class core_output_mustache_helper_collection_testcase extends advanced_testcase 
                 'input' => 'core, {{#js}} some nasty JS {{/js}}, test',
                 'expected' => 'core, {{}}, test'
             ],
-            'single blacklist 3' => [
+            'single blacklist 4' => [
                 'blacklist' => ['js'],
                 'input' => 'core, {{#ok}} this is ok {{/ok}}, {{#js}} some nasty JS {{/js}}',
                 'expected' => 'core, {{#ok}} this is ok {{/ok}}, {{}}'
@@ -116,7 +112,7 @@ class core_output_mustache_helper_collection_testcase extends advanced_testcase 
                 'input' => '{{#foo}} blah {{/foo}}, {{#js}} js {{/js}}, {{#foo}} blah {{/foo}}',
                 'expected' => '{{}}'
             ],
-            'multiple blacklist 4' => [
+            'multiple blacklist 5' => [
                 'blacklist' => ['js', 'foo'],
                 'input' => 'core, move, {{#js}} JS {{#foo}} blah {{/foo}} {{/js}}',
                 'expected' => 'core, move, {{}}'
