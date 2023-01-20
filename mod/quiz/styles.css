@@ -887,7 +887,8 @@ table.quizreviewsummary td.cell {
 }
 
 #categoryquestions td.modifiername,
-#categoryquestions td.creatorname {
+#categoryquestions td.creatorname,
+#categoryquestions td.questionlastused {
     line-height: 1em;
 }
 
