@@ -403,7 +403,7 @@ function trainingevent_user_removed($event) {
         $user = $DB->get_record('user', ['id' => $waitlistuser->userid]);
         $location = $DB->get_record('classroom', ['id' => $trainingevent->classroomid]);
         $usercompany = company::by_userid($user->id);
-        $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $trainingevent->startdatetime);
+        $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $trainingevent->startdatetime);
 
         // Send an email as long as it hasn't already started.
         if ($trainingevent->startdatetime > time()) {

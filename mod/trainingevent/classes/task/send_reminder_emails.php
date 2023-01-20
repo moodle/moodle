@@ -74,7 +74,7 @@ class send_reminder_emails extends \core\task\scheduled_task {
                         if (!$location = $DB->get_record('classroom', array('id' => $event->classroomid))) {
                             continue;
                         }
-                        $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
+                        $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $event->startdatetime);
 
                         // Send the reminders.
                         foreach ($eventusers as $eventuser) {

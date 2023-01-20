@@ -220,7 +220,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         print_error('error creating attendance record');
                     } else {
                         $course = $DB->get_record('course', array('id' => $event->course));
-                        $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
+                        $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $event->startdatetime);
 
                         // Send an email as long as it hasn't already started.
                         if ($event->startdatetime > time()) {
@@ -300,7 +300,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         print_error('error removing attendance record');
                     } else {
                         $course = $DB->get_record('course', array('id' => $event->course));
-                        $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
+                        $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $event->startdatetime);
 
                         // Send an email as long as it hasn't already started.
                         if ($event->startdatetime > time()) {
@@ -378,7 +378,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         $DB->delete_records('trainingevent_users', array('trainingeventid' => $event->id, 'userid' => $USER->id, 'waitlisted' => 1));
 
                         $course = $DB->get_record('course', array('id' => $event->course));
-                        $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
+                        $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $event->startdatetime);
                         // Get the list of managers we need to send an email to.
                         if ($event->approvaltype != 2 ) {
                             $mymanagers = $company->get_my_managers($USER->id, 2);
@@ -419,7 +419,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                     $userbooking->manager_ok = 0;
                     $DB->update_record('block_iomad_approve_access', $userbooking);
                     $course = $DB->get_record('course', array('id' => $event->course));
-                    $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
+                    $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $event->startdatetime);
                     // Get the list of managers we need to send an email to.
                     if ($event->approvaltype != 2 ) {
                         $mymanagers = $company->get_my_managers($USER->id, 2);
@@ -498,7 +498,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                             'trainingeventid' => $chosenevent->id,
                                                                             'waitlisted' => 0));
                             $messagestring = get_string('usermovedsuccessfully', 'trainingevent');
-                            $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $chosenevent->startdatetime);
+                            $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $chosenevent->startdatetime);
 
                             // Send an email as long as it hasn't already started.
                             if ($event->startdatetime > time()) {
@@ -569,7 +569,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                             $DB->delete_records('block_iomad_approve_access', array('userid' => $userid,
                                                                                     'activityid' => $event->id));
                         }
-                        $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
+                        $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $event->startdatetime);
 
                         // Send an email as long as it hasn't already started.
                         if ($event->startdatetime > time()) {
@@ -641,7 +641,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                 print_error('error creating attendance record');
                             } else {
                                 $course = $DB->get_record('course', array('id' => $event->course));
-                                $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $chosenevent->startdatetime);
+                                $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $chosenevent->startdatetime);
                                 $user = $DB->get_record('user', array('id' => $userid));
 
                                 // Send an email as long as it hasn't already started.
@@ -672,7 +672,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                             $userbooking->manager_ok = 1;
                             $DB->update_record('block_iomad_approve_access', $userbooking);
                             $course = $DB->get_record('course', array('id' => $event->course));
-                            $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
+                            $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $event->startdatetime);
                             $user = $DB->get_record('user', array('id' => $userid));
 
                             // Send an email as long as it hasn't already started.
@@ -705,7 +705,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                             $DB->delete_records('block_iomad_approve_access', array('userid' => $userid,
                                                                                     'activityid' => $event->id));
                         }
-                        $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
+                        $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $event->startdatetime);
 
                         // Send an email as long as it hasn't already started.
                         if ($event->startdatetime > time()) {
@@ -765,7 +765,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                 $messagestring = get_string('userremovedsuccessfully', 'trainingevent');
                 $user = $DB->get_record('user', array('id' => $userid));
                 $course = $DB->get_record('course', array('id' => $event->course));
-                $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
+                $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $event->startdatetime);
 
                 // Send an email as long as it hasn't already started.
                 if ($event->startdatetime > time()) {
@@ -851,7 +851,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         }
 
                         $messagestring = get_string('useraddedsuccessfully', 'trainingevent');
-                        $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
+                        $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $event->startdatetime);
 
                         // Send an email as long as it hasn't already started.
                         if ($event->startdatetime > time()) {
@@ -938,7 +938,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                             print_error('error creating attendance record');
                         } else {
                             $course = $DB->get_record('course', array('id' => $event->course));
-                            $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
+                            $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $event->startdatetime);
                             $user = $DB->get_record('user', array('id' => $userid));
 
                             // Send an email as long as it hasn't already started.
@@ -970,7 +970,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         $userbooking->manager_ok = 1;
                         $DB->update_record('block_iomad_approve_access', $userbooking);
                         $course = $DB->get_record('course', array('id' => $event->course));
-                        $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
+                        $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $event->startdatetime);
                         $user = $DB->get_record('user', array('id' => $userid));
 
                         // Send an email as long as it hasn't already started.
@@ -1045,7 +1045,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
             echo "<h2>".get_string('sendingemails', 'trainingevent')."</h2>";
             $course = $DB->get_record('course', array('id' => $event->course));
             $course->url = new moodle_url('course/view.php', array('id' => $course->id));
-            $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
+            $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $event->startdatetime);
             if ($waitingoption) {
                 $waiting = (array) $DB->get_records('trainingevent_users', array('trainingeventid' => $event->id, 'waitlisted' => 1));
                 $waitinglist = array_map(function($training_user) {return array('user' => $training_user->userid);}, $waiting);
