@@ -51,6 +51,7 @@ $string['aria:recommendedtab'] = 'Recommended activities';
 $string['aria:modulefavourite'] = 'Star {$a} activity';
 $string['browsecourseadminindex'] = 'Browse the course administration with this index.';
 $string['browsesettingindex'] = 'Browse settings with this index.';
+$string['communicationroomlink'] = 'Chat to course participants';
 $string['completion_automatic:done'] = 'Done:';
 $string['completion_automatic:failed'] = 'Failed:';
 $string['completion_automatic:todo'] = 'To do:';

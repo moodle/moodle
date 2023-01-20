@@ -4145,6 +4145,19 @@ function delete_user(stdClass $user) {
     // Keep a copy of user context, we need it for event.
     $usercontext = context_user::instance($user->id);
 
+    // Remove user from communication rooms immediately.
+    if (core_communication\api::is_enabled()) {
+        foreach (enrol_get_users_courses($user->id) as $course) {
+            $communication = \core_communication\communication_processor::load_by_instance(
+                'core_course',
+                'coursecommunication',
+                $course->id
+            );
+            $communication->get_room_user_provider()->remove_members_from_room([$user->id]);
+            $communication->delete_instance_user_mapping([$user->id]);
+        }
+    }
+
     // Delete all grades - backup is kept in grade_grades_history table.
     grade_user_delete($user->id);
 
@@ -5031,7 +5044,7 @@ function set_login_session_preferences() {
  *             failed, but you have no way of knowing which.
  */
 function delete_course($courseorid, $showfeedback = true) {
-    global $DB;
+    global $DB, $CFG;
 
     if (is_object($courseorid)) {
         $courseid = $courseorid->id;
@@ -5070,6 +5083,26 @@ function delete_course($courseorid, $showfeedback = true) {
 
     // Delete the course and related context instance.
     context_helper::delete_instance(CONTEXT_COURSE, $courseid);
+
+    // Communication provider delete associated information.
+    $communication = \core_communication\api::load_by_instance(
+        'core_course',
+        'coursecommunication',
+        $course->id
+    );
+
+    // Update communication room membership of enrolled users.
+    require_once($CFG->libdir . '/enrollib.php');
+    $courseusers = enrol_get_course_users($courseid);
+    $enrolledusers = [];
+
+    foreach ($courseusers as $user) {
+        $enrolledusers[] = $user->id;
+    }
+
+    $communication->remove_members_from_room($enrolledusers);
+
+    $communication->delete_room();
 
     $DB->delete_records("course", array("id" => $courseid));
     $DB->delete_records("course_format_options", array("courseid" => $courseid));

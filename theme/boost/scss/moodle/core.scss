@@ -2309,8 +2309,20 @@ $footer-link-color: $bg-inverse-link-color !default;
     @include box-shadow($popover-box-shadow);
 }
 
+.btn-footer-communication {
+    display: none;
+    position: fixed;
+    bottom: 5rem;
+    right: 2rem;
+    @include box-shadow($popover-box-shadow);
+}
+
 .hasstickyfooter .btn-footer-popover {
     bottom: calc(1rem + #{$stickyfooter-height});
+}
+
+.hasstickyfooter .btn-footer-communication {
+    bottom: calc(4rem + #{$stickyfooter-height});
 }
 
 .popover.footer {
@@ -2339,7 +2351,8 @@ $footer-link-color: $bg-inverse-link-color !default;
     .jsenabled #page-footer .footer-content-popover {
         display: none;
     }
-    .jsenabled .btn-footer-popover {
+    .jsenabled .btn-footer-popover,
+    .jsenabled .btn-footer-communication {
         display: block;
         z-index: $zindex-dropdown;
     }

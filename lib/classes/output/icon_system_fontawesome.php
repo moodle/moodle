@@ -414,6 +414,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/locktime' => 'fa-lock',
             'core:t/markasread' => 'fa-check',
             'core:t/messages' => 'fa-comments',
+            'core:t/messages-o' => 'fa-comments-o',
             'core:t/message' => 'fa-comment-o',
             'core:t/more' => 'fa-caret-down',
             'core:t/move' => 'fa-arrows-v',
