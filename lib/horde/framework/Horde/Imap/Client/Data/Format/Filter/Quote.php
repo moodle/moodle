@@ -31,6 +31,7 @@ class Horde_Imap_Client_Data_Format_Filter_Quote extends php_user_filter
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function onCreate()
     {
         $this->_prepend = false;
@@ -39,6 +40,7 @@ class Horde_Imap_Client_Data_Format_Filter_Quote extends php_user_filter
     /**
      * @see stream_filter_register()
      */
+    #[ReturnTypeWillChange]
     public function filter($in, $out, &$consumed, $closing)
     {
         if (!$this->_prepend) {
