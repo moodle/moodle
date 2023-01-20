@@ -3232,6 +3232,13 @@ function message_count_unread_messages() {
 }
 
 /**
+ * @deprecated since 3.10
+ */
+function serialise_tool_proxy() {
+    throw new coding_exception('serialise_tool_proxy has been removed.');
+}
+
+/**
  * Checks if current user is shown any extra fields when listing users.
  *
  * Does not include any custom profile fields.
