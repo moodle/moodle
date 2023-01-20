@@ -48,7 +48,7 @@ class Horde_Exception_LastError extends Horde_Exception
             $this->file = $code_or_lasterror['file'];
             $this->line = $code_or_lasterror['line'];
         } else {
-            parent::__construct($message, $code_or_lasterror);
+            parent::__construct($message, $code_or_lasterror ?? 0);
         }
     }
 

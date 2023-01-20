@@ -33,6 +33,7 @@ class Horde_Imap_Client_Data_Format_Filter_String extends php_user_filter
     /**
      * @see stream_filter_register()
      */
+    #[ReturnTypeWillChange]
     public function onCreate()
     {
         $this->params->binary = false;
@@ -47,6 +48,7 @@ class Horde_Imap_Client_Data_Format_Filter_String extends php_user_filter
     /**
      * @see stream_filter_register()
      */
+    #[ReturnTypeWillChange]
     public function filter($in, $out, &$consumed, $closing)
     {
         $p = $this->params;
