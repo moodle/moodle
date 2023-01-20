@@ -113,6 +113,10 @@ class company_logins_table extends table_sql {
                                            AND lrul.logincount > 0
                                            and cu.companyid = :companyid",
                                            ['companyid' => $row->id]);
-        return get_string('percents', 'moodle', number_format(($realusers->number / $totalusers->number) * 100, 2));
+        if (!empty($totalusers->number)) {        
+            return get_string('percents', 'moodle', number_format(($realusers->number / $totalusers->number) * 100, 2));
+        } else {
+            return 0;
+        }
     }
 }
