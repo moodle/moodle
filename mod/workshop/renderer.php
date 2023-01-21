@@ -1841,7 +1841,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
                         $output .= $this->render($workshop->prepare_submission_summary($submission, $shownames));
                         $output .= $this->box_end();
 
-                        if (strlen(trim($assessment->feedbackreviewer)) > 0) {
+                        if (!empty($assessment->feedbackreviewer) && strlen(trim($assessment->feedbackreviewer)) > 0) {
                             $output .= $this->render(new workshop_feedback_reviewer($assessment));
                         }
                     }
