@@ -40,6 +40,9 @@ class enrol_ldap_plugin extends enrol_plugin {
      */
     protected $userobjectclass;
 
+    /** @var LDAP\Connection LDAP connection. */
+    protected $ldapconnection;
+
     /**
      * Constructor for the plugin. In addition to calling the parent
      * constructor, we define and 'fix' some settings depending on the
