@@ -126,7 +126,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add($adminsetting);
     $temp->add(new admin_setting_configcheckbox('passwordchangelogout',
         new lang_string('passwordchangelogout', 'admin'),
-        new lang_string('passwordchangelogout_desc', 'admin'), 0));
+        new lang_string('passwordchangelogout_desc', 'admin'), 1));
 
     $temp->add(new admin_setting_configcheckbox('passwordchangetokendeletion',
         new lang_string('passwordchangetokendeletion', 'admin'),
