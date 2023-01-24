@@ -199,3 +199,44 @@ function expand_value(array &$dest, array $source, array $option, string $option
         $dest[$optionname] = clean_param($source[$optionname], $option['type'] ?? PARAM_RAW);
     }
 }
+
+/**
+ * Course-module fragment renderer method.
+ *
+ * The fragment arguments are id and sr (section return).
+ *
+ * @param array $args The fragment arguments.
+ * @return string The rendered cm item.
+ */
+function core_courseformat_output_fragment_cmitem($args): string {
+    global $PAGE;
+    list($course, $cm) = get_course_and_cm_from_cmid($args['id']);
+    $format = course_get_format($course);
+    if (!empty($args['sr'])) {
+        $format->set_section_number($args['sr']);
+    }
+    $renderer = $format->get_renderer($PAGE);
+    $section = $cm->get_section_info();
+    return $renderer->course_section_updated_cm_item($format, $section, $cm);
+}
+
+/**
+ * Section fragment renderer method.
+ *
+ * The fragment arguments are courseid, section id and sr (section return).
+ *
+ * @param array $args The fragment arguments.
+ * @return string The rendered section.
+ */
+function core_courseformat_output_fragment_section($args): string {
+    global $PAGE;
+    $course = get_course($args['courseid']);
+    $format = course_get_format($course);
+    if (!empty($args['sr'])) {
+        $format->set_section_number($args['sr']);
+    }
+    $renderer = $format->get_renderer($PAGE);
+    $modinfo = $format->get_modinfo();
+    $section = $modinfo->get_section_info_by_id($args['id'], MUST_EXIST);
+    return $renderer->course_section_updated($format, $section);
+}
