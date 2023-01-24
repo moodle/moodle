@@ -145,7 +145,12 @@ class repository_onedrive extends repository {
 
         $repositoryname = get_string('pluginname', 'repository_onedrive');
 
-        $button = new single_button($url, get_string('logintoaccount', 'repository', $repositoryname), 'post', true);
+        $button = new single_button(
+            $url,
+            get_string('logintoaccount', 'repository', $repositoryname),
+            'post',
+            single_button::BUTTON_PRIMARY
+        );
         $button->add_action(new popup_action('click', $url, 'Login'));
         $button->class = 'mdl-align';
         $button = $OUTPUT->render($button);

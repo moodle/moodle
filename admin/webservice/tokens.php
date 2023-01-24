@@ -148,7 +148,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('managetokens', 'core_webservice'));
 
 echo html_writer::div($OUTPUT->render(new single_button(new moodle_url($PAGE->url, ['action' => 'create']),
-    get_string('createtoken', 'core_webservice'), 'get', true)), 'my-3');
+    get_string('createtoken', 'core_webservice'), 'get', single_button::BUTTON_PRIMARY)), 'my-3');
 
 $filter->display();
 
