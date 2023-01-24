@@ -970,10 +970,9 @@ $cache = '.var_export($cache, true).';
             }
             // Modules MUST NOT have any underscores,
             // component normalisation would break very badly otherwise!
-            return (bool)preg_match('/^[a-z][a-z0-9]*$/', $pluginname);
-
+            return !is_null($pluginname) && (bool) preg_match('/^[a-z][a-z0-9]*$/', $pluginname);
         } else {
-            return (bool)preg_match('/^[a-z](?:[a-z0-9_](?!__))*[a-z0-9]+$/', $pluginname);
+            return !is_null($pluginname) && (bool) preg_match('/^[a-z](?:[a-z0-9_](?!__))*[a-z0-9]+$/', $pluginname);
         }
     }
 

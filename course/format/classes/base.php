@@ -608,7 +608,7 @@ abstract class base {
         $course = $this->get_course();
         try {
             $sectionpreferences = (array) json_decode(
-                get_user_preferences('coursesectionspreferences_' . $course->id, null, $USER->id)
+                get_user_preferences("coursesectionspreferences_{$course->id}", '', $USER->id)
             );
             if (empty($sectionpreferences)) {
                 $sectionpreferences = [];

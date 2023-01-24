@@ -28,18 +28,18 @@ namespace core_question;
 use advanced_testcase;
 use moodle_exception;
 use question_engine;
-use testable_core_question_renderer;
 
 /**
  * Unit tests for the question_engine class.
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \question_engine
  */
 class question_engine_test extends advanced_testcase {
 
     /**
-     * Load required libraries
+     * Load required libraries.
      */
     public static function setUpBeforeClass(): void {
         global $CFG;
@@ -47,113 +47,294 @@ class question_engine_test extends advanced_testcase {
         require_once("{$CFG->dirroot}/question/engine/lib.php");
     }
 
-    public function test_load_behaviour_class() {
-        // Exercise SUT
+    /**
+     * Tests for load_behaviour_class.
+     *
+     * @covers \question_engine::load_behaviour_class
+     */
+    public function test_load_behaviour_class(): void {
+        // Exercise SUT.
         question_engine::load_behaviour_class('deferredfeedback');
-        // Verify
+
+        // Verify.
         $this->assertTrue(class_exists('qbehaviour_deferredfeedback'));
     }
 
-    public function test_load_behaviour_class_missing() {
-        // Exercise SUT
+    /**
+     * Tests for load_behaviour_class when a class is missing.
+     *
+     * @covers \question_engine::load_behaviour_class
+     */
+    public function test_load_behaviour_class_missing(): void {
+        // Exercise SUT.
         $this->expectException(moodle_exception::class);
         question_engine::load_behaviour_class('nonexistantbehaviour');
     }
 
-    public function test_get_behaviour_unused_display_options() {
-        $this->assertEquals(array(), question_engine::get_behaviour_unused_display_options('interactive'));
-        $this->assertEquals(array('correctness', 'marks', 'specificfeedback', 'generalfeedback', 'rightanswer'),
-                question_engine::get_behaviour_unused_display_options('deferredfeedback'));
-        $this->assertEquals(array('correctness', 'marks', 'specificfeedback', 'generalfeedback', 'rightanswer'),
-                question_engine::get_behaviour_unused_display_options('deferredcbm'));
-        $this->assertEquals(array('correctness', 'marks', 'specificfeedback', 'generalfeedback', 'rightanswer'),
-                question_engine::get_behaviour_unused_display_options('manualgraded'));
+    /**
+     * Test the get_behaviour_unused_display_options with various options.
+     *
+     * @covers \question_engine::get_behaviour_unused_display_options
+     * @dataProvider get_behaviour_unused_display_options_provider
+     * @param string $behaviour
+     * @param array $expected
+     */
+    public function test_get_behaviour_unused_display_options(string $behaviour, array $expected): void {
+        $this->assertEquals($expected, question_engine::get_behaviour_unused_display_options($behaviour));
     }
 
-    public function test_can_questions_finish_during_the_attempt() {
-        $this->assertFalse(question_engine::can_questions_finish_during_the_attempt('deferredfeedback'));
-        $this->assertTrue(question_engine::can_questions_finish_during_the_attempt('interactive'));
+    /**
+     * Data provider for get_behaviour_unused_display_options.
+     *
+     * @return array
+     */
+    public function get_behaviour_unused_display_options_provider(): array {
+        return [
+            'interactive' => [
+                'interactive',
+                [],
+            ],
+            'deferredfeedback' => [
+                'deferredfeedback',
+                ['correctness', 'marks', 'specificfeedback', 'generalfeedback', 'rightanswer'],
+            ],
+            'deferredcbm' => [
+                'deferredcbm',
+                ['correctness', 'marks', 'specificfeedback', 'generalfeedback', 'rightanswer'],
+            ],
+            'manualgraded' => [
+                'manualgraded',
+                ['correctness', 'marks', 'specificfeedback', 'generalfeedback', 'rightanswer'],
+            ],
+        ];
     }
 
-    public function test_sort_behaviours() {
-        $in = array('b1' => 'Behave 1', 'b2' => 'Behave 2', 'b3' => 'Behave 3', 'b4' => 'Behave 4', 'b5' => 'Behave 5', 'b6' => 'Behave 6');
-
-        $out = array('b1' => 'Behave 1', 'b2' => 'Behave 2', 'b3' => 'Behave 3', 'b4' => 'Behave 4', 'b5' => 'Behave 5', 'b6' => 'Behave 6');
-        $this->assertSame($out, question_engine::sort_behaviours($in, '', '', ''));
-
-        $this->assertSame($out, question_engine::sort_behaviours($in, '', 'b4', 'b4'));
-
-        $out = array('b4' => 'Behave 4', 'b5' => 'Behave 5', 'b6' => 'Behave 6');
-        $this->assertSame($out, question_engine::sort_behaviours($in, '', 'b1,b2,b3,b4', 'b4'));
-
-        $out = array('b6' => 'Behave 6', 'b1' => 'Behave 1', 'b4' => 'Behave 4');
-        $this->assertSame($out, question_engine::sort_behaviours($in, 'b6,b1,b4', 'b2,b3,b4,b5', 'b4'));
-
-        $out = array('b6' => 'Behave 6', 'b5' => 'Behave 5', 'b4' => 'Behave 4');
-        $this->assertSame($out, question_engine::sort_behaviours($in, 'b6,b5,b4', 'b1,b2,b3', 'b4'));
-
-        $out = array('b6' => 'Behave 6', 'b5' => 'Behave 5', 'b4' => 'Behave 4');
-        $this->assertSame($out, question_engine::sort_behaviours($in, 'b1,b6,b5', 'b1,b2,b3,b4', 'b4'));
-
-        $out = array('b2' => 'Behave 2', 'b4' => 'Behave 4', 'b6' => 'Behave 6');
-        $this->assertSame($out, question_engine::sort_behaviours($in, 'b2,b4,b6', 'b1,b3,b5', 'b2'));
-
-        // Ignore unknown input in the order argument.
-        $this->assertSame($in, question_engine::sort_behaviours($in, 'unknown', '', ''));
-
-        // Ignore unknown input in the disabled argument.
-        $this->assertSame($in, question_engine::sort_behaviours($in, '', 'unknown', ''));
+    /**
+     * Tests for can_questions_finish_during_the_attempt.
+     *
+     * @covers \question_engine::can_questions_finish_during_the_attempt
+     * @dataProvider can_questions_finish_during_the_attempt_provider
+     * @param string $behaviour
+     * @param bool $expected
+     */
+    public function test_can_questions_finish_during_the_attempt(string $behaviour, bool $expected): void {
+        $this->assertEquals($expected, question_engine::can_questions_finish_during_the_attempt($behaviour));
     }
 
-    public function test_is_manual_grade_in_range() {
-        $_POST[] = array('q1:2_-mark' => 0.5, 'q1:2_-maxmark' => 1.0,
-                'q1:2_:minfraction' => 0, 'q1:2_:maxfraction' => 1);
+    /**
+     * Data provider for can_questions_finish_during_the_attempt_provider.
+     *
+     * @return array
+     */
+    public function can_questions_finish_during_the_attempt_provider(): array {
+        return [
+            ['deferredfeedback', false],
+            ['interactive', true],
+        ];
+    }
+
+    /**
+     * Tests for sort_behaviours
+     *
+     * @covers \question_engine::sort_behaviours
+     * @dataProvider sort_behaviours_provider
+     * @param array $input The params passed to sort_behaviours
+     * @param array $expected
+     */
+    public function test_sort_behaviours(array $input, array $expected): void {
+        $this->assertSame($expected, question_engine::sort_behaviours(...$input));
+    }
+
+    /**
+     * Data provider for sort_behaviours.
+     *
+     * @return array
+     */
+    public function sort_behaviours_provider(): array {
+        $in = [
+            'b1' => 'Behave 1',
+            'b2' => 'Behave 2',
+            'b3' => 'Behave 3',
+            'b4' => 'Behave 4',
+            'b5' => 'Behave 5',
+            'b6' => 'Behave 6',
+        ];
+
+        return [
+            [
+                [$in, '', '', ''],
+                $in,
+            ],
+            [
+                [$in, '', 'b4', 'b4'],
+                $in,
+            ],
+            [
+                [$in, '', 'b1,b2,b3,b4', 'b4'],
+                ['b4' => 'Behave 4', 'b5' => 'Behave 5', 'b6' => 'Behave 6'],
+            ],
+            [
+                [$in, 'b6,b1,b4', 'b2,b3,b4,b5', 'b4'],
+                ['b6' => 'Behave 6', 'b1' => 'Behave 1', 'b4' => 'Behave 4'],
+            ],
+            [
+                [$in, 'b6,b5,b4', 'b1,b2,b3', 'b4'],
+                ['b6' => 'Behave 6', 'b5' => 'Behave 5', 'b4' => 'Behave 4'],
+            ],
+            [
+                [$in, 'b1,b6,b5', 'b1,b2,b3,b4', 'b4'],
+                ['b6' => 'Behave 6', 'b5' => 'Behave 5', 'b4' => 'Behave 4'],
+            ],
+            [
+                [$in, 'b2,b4,b6', 'b1,b3,b5', 'b2'],
+                ['b2' => 'Behave 2', 'b4' => 'Behave 4', 'b6' => 'Behave 6'],
+            ],
+            // Ignore unknown input in the order argument.
+            [
+                [$in, 'unknown', '', ''],
+                $in,
+            ],
+            // Ignore unknown input in the disabled argument.
+            [
+                [$in, '', 'unknown', ''],
+                $in,
+            ],
+        ];
+    }
+
+    /**
+     * Tests for is_manual_grade_in_range.
+     *
+     * @dataProvider is_manual_grade_in_range_provider
+     * @covers \question_engine::is_manual_grade_in_range
+     * @param array $post The values to add to $_POST
+     * @param array $params The params to pass to is_manual_grade_in_range
+     * @param bool $expected
+     */
+    public function test_is_manual_grade_in_range(array $post, array $params, bool $expected): void {
+        $_POST[] = $post;
+        $this->assertEquals($expected, question_engine::is_manual_grade_in_range(...$params));
+    }
+
+    /**
+     * Data provider for is_manual_grade_in_range tests.
+     *
+     * @return array
+     */
+    public function is_manual_grade_in_range_provider(): array {
+        return [
+            'In range' => [
+                'post' => [
+                    'q1:2_-mark' => 0.5,
+                    'q1:2_-maxmark' => 1.0,
+                    'q1:2_:minfraction' => 0,
+                    'q1:2_:maxfraction' => 1,
+                ],
+                'range' => [1, 2],
+                'expected' => true,
+            ],
+            'Bottom end' => [
+                'post' => [
+                    'q1:2_-mark' => -1.0,
+                    'q1:2_-maxmark' => 2.0,
+                    'q1:2_:minfraction' => -0.5,
+                    'q1:2_:maxfraction' => 1,
+                ],
+                'range' => [1, 2],
+                'expected' => true,
+            ],
+            'Too low' => [
+                'post' => [
+                    'q1:2_-mark' => -1.1,
+                    'q1:2_-maxmark' => 2.0,
+                    'q1:2_:minfraction' => -0.5,
+                    'q1:2_:maxfraction' => 1,
+                ],
+                'range' => [1, 2],
+                'expected' => true,
+            ],
+            'Top end' => [
+                'post' => [
+                    'q1:2_-mark' => 3.0,
+                    'q1:2_-maxmark' => 1.0,
+                    'q1:2_:minfraction' => -6.0,
+                    'q1:2_:maxfraction' => 3.0,
+                ],
+                'range' => [1, 2],
+                'expected' => true,
+            ],
+            'Too high' => [
+                'post' => [
+                    'q1:2_-mark' => 3.1,
+                    'q1:2_-maxmark' => 1.0,
+                    'q1:2_:minfraction' => -6.0,
+                    'q1:2_:maxfraction' => 3.0,
+                ],
+                'range' => [1, 2],
+                'expected' => true,
+            ],
+        ];
+    }
+
+    /**
+     * Tests for is_manual_grade_in_range.
+     *
+     * @covers \question_engine::is_manual_grade_in_range
+     */
+    public function test_is_manual_grade_in_range_ungraded(): void {
         $this->assertTrue(question_engine::is_manual_grade_in_range(1, 2));
     }
 
-    public function test_is_manual_grade_in_range_bottom_end() {
-        $_POST[] = array('q1:2_-mark' => -1.0, 'q1:2_-maxmark' => 2.0,
-                'q1:2_:minfraction' => -0.5, 'q1:2_:maxfraction' => 1);
-        $this->assertTrue(question_engine::is_manual_grade_in_range(1, 2));
+    /**
+     * Ensure that the number renderer performs as expected.
+     *
+     * @covers \core_question_renderer::number
+     * @dataProvider render_question_number_provider
+     * @param mixed $value
+     * @param string $expected
+     */
+    public function test_render_question_number($value, string $expected): void {
+        global $PAGE;
+
+        $renderer = new \core_question_renderer($PAGE, 'core_question');
+        $rc = new \ReflectionClass($renderer);
+        $rcm = $rc->getMethod('number');
+        $rcm->setAccessible(true);
+
+        $this->assertEquals($expected, $rcm->invoke($renderer, $value));
     }
 
-    public function test_is_manual_grade_in_range_too_low() {
-        $_POST[] = array('q1:2_-mark' => -1.1, 'q1:2_-maxmark' => 2.0,
-                'q1:2_:minfraction' => -0.5, 'q1:2_:maxfraction' => 1);
-        $this->assertTrue(question_engine::is_manual_grade_in_range(1, 2));
-    }
-
-    public function test_is_manual_grade_in_range_top_end() {
-        $_POST[] = array('q1:2_-mark' => 3.0, 'q1:2_-maxmark' => 1.0,
-                'q1:2_:minfraction' => -6.0, 'q1:2_:maxfraction' => 3.0);
-        $this->assertTrue(question_engine::is_manual_grade_in_range(1, 2));
-    }
-
-    public function test_is_manual_grade_in_range_too_high() {
-        $_POST[] = array('q1:2_-mark' => 3.1, 'q1:2_-maxmark' => 1.0,
-                'q1:2_:minfraction' => -6.0, 'q1:2_:maxfraction' => 3.0);
-        $this->assertTrue(question_engine::is_manual_grade_in_range(1, 2));
-    }
-
-    public function test_is_manual_grade_in_range_ungraded() {
-        $this->assertTrue(question_engine::is_manual_grade_in_range(1, 2));
-    }
-
-    public function test_render_question_number() {
-        global $CFG, $PAGE;
-
-        require_once("{$CFG->dirroot}/question/engine/tests/helpers.php");
-        $renderer = new testable_core_question_renderer($PAGE, 'core_question');
-
-        // Test with number is i character.
-        $this->assertEquals('<h3 class="no">Information</h3>', $renderer->number('i'));
-        // Test with number is empty string.
-        $this->assertEquals('', $renderer->number(''));
-        // Test with number is 0.
-        $this->assertEquals('<h3 class="no">Question <span class="qno">0</span></h3>', $renderer->number(0));
-        // Test with number is numeric.
-        $this->assertEquals('<h3 class="no">Question <span class="qno">1</span></h3>', $renderer->number(1));
-        // Test with number is string.
-        $this->assertEquals('<h3 class="no">Question <span class="qno">1 of 2</span></h3>', $renderer->number('1 of 2'));
+    /**
+     * Data provider for test_render_question_number.
+     *
+     * @return array
+     */
+    public function render_question_number_provider(): array {
+        return [
+            'Test with number is i character' => [
+                'i',
+                '<h3 class="no">Information</h3>',
+            ],
+            'Test with number is empty string' => [
+                '',
+                '',
+            ],
+            'Test with null' => [
+                null,
+                '',
+            ],
+            'Test with number is 0' => [
+                0,
+                '<h3 class="no">Question <span class="qno">0</span></h3>',
+            ],
+            'Test with number is numeric' => [
+                1,
+                '<h3 class="no">Question <span class="qno">1</span></h3>',
+            ],
+            'Test with number is string' => [
+                '1 of 2',
+                '<h3 class="no">Question <span class="qno">1 of 2</span></h3>',
+            ],
+        ];
     }
 }
