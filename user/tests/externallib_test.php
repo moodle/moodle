@@ -1700,7 +1700,7 @@ class externallib_test extends externallib_advanced_testcase {
             ]
         ];
         $result = core_user_external::set_user_preferences($preferences);
-        $result = \external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
+        $result = external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
         $this->assertCount(1, $result['warnings']);
         $this->assertCount(0, $result['saved']);
 
