@@ -23,9 +23,7 @@
  * @author     T.J.Hunt@open.ac.uk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-
 class weblib_test extends advanced_testcase {
-
     /**
      * @covers ::format_string
      */
@@ -1118,5 +1116,33 @@ EXPECTED;
                 true
             ],
         ];
+    }
+
+    /**
+     * Data provider for strip_querystring tests.
+     *
+     * @return array
+     */
+    public function strip_querystring_provider(): array {
+        return [
+            'Null' => [null, ''],
+            'Empty string' => ['', ''],
+            'No querystring' => ['https://example.com', 'https://example.com'],
+            'Querystring' => ['https://example.com?foo=bar', 'https://example.com'],
+            'Querystring with fragment' => ['https://example.com?foo=bar#baz', 'https://example.com'],
+            'Querystring with fragment and path' => ['https://example.com/foo/bar?foo=bar#baz', 'https://example.com/foo/bar'],
+        ];
+    }
+
+    /**
+     * Test the strip_querystring function with various exampels.
+     *
+     * @dataProvider strip_querystring_provider
+     * @param mixed $value
+     * @param mixed $expected
+     * @covers ::strip_querystring
+     */
+    public function test_strip_querystring($value, $expected): void {
+        $this->assertEquals($expected, strip_querystring($value));
     }
 }

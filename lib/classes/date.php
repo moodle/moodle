@@ -319,7 +319,7 @@ class core_date {
         if (!defined('PHPUNIT_TEST')) {
             throw new coding_exception('core_date::phpunit_override_default_php_timezone() must be used only from unit tests');
         }
-        $result = timezone_open($tz); // This triggers error if $tz invalid.
+        $result = timezone_open($tz ?? ''); // This triggers error if $tz invalid.
         if ($result !== false) {
             self::$defaultphptimezone = $tz;
         } else {

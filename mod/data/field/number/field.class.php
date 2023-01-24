@@ -68,7 +68,7 @@ class data_field_number extends data_field_base {
             return '';
         }
         $number = $content->content;
-        $decimals = trim($this->field->param1);
+        $decimals = trim($this->field->param1 ?? '');
         // Only apply number formatting if param1 contains an integer number >= 0.
         if (preg_match("/^\d+$/", $decimals)) {
             $decimals = $decimals * 1;

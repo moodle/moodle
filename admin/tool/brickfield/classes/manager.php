@@ -205,7 +205,7 @@ class manager {
      * @return string
      */
     public static function get_contenthash(?string $content = null): string {
-        return sha1($content);
+        return sha1($content ?? '');
     }
 
     /**

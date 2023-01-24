@@ -437,7 +437,7 @@ function print_combined_run_output($processes, $stoponfail = false) {
                         $process->stop(0);
                     }
 
-                    $strlentoprint = strlen($update);
+                    $strlentoprint = strlen($update ?? '');
 
                     // If not enough dots printed on line then just print.
                     if ($strlentoprint < $remainingprintlen) {

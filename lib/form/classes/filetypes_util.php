@@ -62,7 +62,7 @@ class filetypes_util {
      */
     public function normalize_file_types($types) {
 
-        if ($types === '') {
+        if ($types === '' || $types === null) {
             return [];
         }
 

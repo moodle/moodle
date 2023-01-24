@@ -84,7 +84,7 @@ class frontpagesection implements named_templatable, renderable {
         $sectionoutput = new $this->sectionclass($format, $section);
         $sectionoutput->hide_controls();
 
-        if (trim($section->name) == '') {
+        if (trim($section->name ?? '') == '') {
             $sectionoutput->hide_title();
         }
 

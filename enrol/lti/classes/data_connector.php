@@ -88,16 +88,18 @@ class data_connector extends DataConnector {
         global $DB;
 
         $id = $consumer->getRecordId();
+        $key = $consumer->getKey();
+        $result = false;
 
         if (!empty($id)) {
             $result = $DB->get_record($this->consumertable, ['id' => $id]);
-        } else {
-            $key256 = DataConnector::getConsumerKey($consumer->getKey());
+        } else if (!empty($key)) {
+            $key256 = DataConnector::getConsumerKey($key);
             $result = $DB->get_record($this->consumertable, ['consumerkey256' => $key256]);
         }
 
         if ($result) {
-            if (empty($key256) || empty($result->consumerkey) || ($consumer->getKey() === $result->consumerkey)) {
+            if (empty($key256) || empty($result->consumerkey) || ($key === $result->consumerkey)) {
                 $this->build_tool_consumer_object($result, $consumer);
                 return true;
             }
@@ -997,7 +999,7 @@ class data_connector extends DataConnector {
         $consumer->consumerName = $record->consumername;
         $consumer->consumerVersion = $record->consumerversion;
         $consumer->consumerGuid = $record->consumerguid;
-        $consumer->profile = json_decode($record->profile);
+        $consumer->profile = json_decode($record->profile ?? '');
         $consumer->toolProxy = $record->toolproxy;
         $settings = unserialize($record->settings);
         if (!is_array($settings)) {

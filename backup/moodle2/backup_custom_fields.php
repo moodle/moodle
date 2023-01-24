@@ -197,7 +197,7 @@ class encrypted_final_element extends backup_final_element {
         $iv = self::generate_encryption_random_key(openssl_cipher_iv_length(backup::CIPHER));
 
         // Everything is ready, let's encrypt and prepend the 1-shot iv.
-        $value = $iv . openssl_encrypt($value, backup::CIPHER, $this->key, OPENSSL_RAW_DATA, $iv);
+        $value = $iv . openssl_encrypt($value ?? '', backup::CIPHER, $this->key, OPENSSL_RAW_DATA, $iv);
 
         // Calculate the hmac of the value (iv + encrypted) and prepend it.
         $hmac = hash_hmac('sha256', $value, $this->key, true);
