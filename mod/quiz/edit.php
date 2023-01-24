@@ -46,9 +46,7 @@ require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
-// These params are only passed from page request to request while we stay on
-// this page otherwise they would go in question_edit_setup.
-$scrollpos = optional_param('scrollpos', '', PARAM_INT);
+$mdlscrollto = optional_param('mdlscrollto', '', PARAM_INT);
 
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
         question_edit_setup('editq', '/mod/quiz/edit.php', true);
@@ -81,9 +79,6 @@ foreach ($params as $key => $value) {
 }
 
 $afteractionurl = new moodle_url($thispageurl);
-if ($scrollpos) {
-    $afteractionurl->param('scrollpos', $scrollpos);
-}
 
 if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
     // Re-paginate the quiz.
@@ -92,6 +87,10 @@ if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
     quiz_repaginate_questions($quiz->id, $questionsperpage );
     quiz_delete_previews($quiz);
     redirect($afteractionurl);
+}
+
+if ($mdlscrollto) {
+    $afteractionurl->param('mdlscrollto', $mdlscrollto);
 }
 
 if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sesskey()) {

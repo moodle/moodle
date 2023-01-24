@@ -1,5 +1,10 @@
 This files describes API changes for code that uses the question API.
 
+=== 4.2 ===
+
+1) The question/qengine.js has been deprecated. We create core_question/question_engine
+   and core/scroll_manager to replace it.
+
 === 4.1 ===
 
 1) get_bulk_action_key() in core_question\local\bank\bulk_action_base class is deprecated and renamed to get_key().
