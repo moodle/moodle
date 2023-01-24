@@ -90,9 +90,9 @@ class attempts_report_options {
      * Constructor.
      *
      * @param string $mode which report these options are for.
-     * @param object $quiz the settings for the quiz being reported on.
-     * @param object $cm the course module objects for the quiz being reported on.
-     * @param object $course the course settings for the coures this quiz is in.
+     * @param stdClass $quiz the settings for the quiz being reported on.
+     * @param stdClass $cm the course module objects for the quiz being reported on.
+     * @param stdClass $course the course settings for the coures this quiz is in.
      */
     public function __construct($mode, $quiz, $cm, $course) {
         $this->mode   = $mode;
@@ -137,7 +137,7 @@ class attempts_report_options {
      * Process the data we get when the settings form is submitted. This includes
      * updating the fields of this class, and updating the user preferences
      * where appropriate.
-     * @param object $fromform The data from $mform->get_data() from the settings form.
+     * @param stdClass $fromform The data from $mform->get_data() from the settings form.
      */
     public function process_settings_from_form($fromform) {
         $this->setup_from_form_data($fromform);
@@ -175,7 +175,7 @@ class attempts_report_options {
 
     /**
      * Set the fields of this object from the form data.
-     * @param object $fromform The data from $mform->get_data() from the settings form.
+     * @param stdClass $fromform The data from $mform->get_data() from the settings form.
      */
     public function setup_from_form_data($fromform) {
         $this->attempts   = $fromform->attempts;

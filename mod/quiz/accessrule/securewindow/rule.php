@@ -27,7 +27,7 @@ use mod_quiz\quiz_settings;
  */
 class quizaccess_securewindow extends access_rule_base {
     /** @var array options that should be used for opening the secure popup. */
-    protected static $popupoptions = array(
+    protected static $popupoptions = [
         'left' => 0,
         'top' => 0,
         'fullscreen' => true,
@@ -39,7 +39,7 @@ class quizaccess_securewindow extends access_rule_base {
         'location' => false,
         'status' => false,
         'menubar' => false,
-    );
+    ];
 
     public static function make(quiz_settings $quizobj, $timenow, $canignoretimelimits) {
 
@@ -77,7 +77,7 @@ class quizaccess_securewindow extends access_rule_base {
      *      security settings menu.
      */
     public static function get_browser_security_choices() {
-        return array('securewindow' =>
-                get_string('popupwithjavascriptsupport', 'quizaccess_securewindow'));
+        return ['securewindow' =>
+                get_string('popupwithjavascriptsupport', 'quizaccess_securewindow')];
     }
 }

@@ -151,7 +151,7 @@ class quizaccess_seb extends access_rule_base {
      * Save any submitted settings when the quiz settings form is submitted. This
      * is called from {@link quiz_after_add_or_update()} in lib.php.
      *
-     * @param object $quiz the data from the quiz form, including $quiz->id
+     * @param stdClass $quiz the data from the quiz form, including $quiz->id
      *      which is the id of the quiz being saved.
      */
     public static function save_settings($quiz) {
@@ -204,7 +204,7 @@ class quizaccess_seb extends access_rule_base {
      * Delete any rule-specific settings when the quiz is deleted. This is called
      * from {@link quiz_delete_instance()} in lib.php.
      *
-     * @param object $quiz the data from the database, including $quiz->id
+     * @param stdClass $quiz the data from the database, including $quiz->id
      *      which is the id of the quiz being deleted.
      */
     public static function delete_settings($quiz) {
@@ -543,7 +543,7 @@ class quizaccess_seb extends access_rule_base {
         // Rendering as a href and not as button in a form to circumvent browser warnings for sending to URL with unknown protocol.
         $seblink = \quizaccess_seb\link_generator::get_link($this->quiz->cmid, true, is_https());
 
-        $buttonlink = html_writer::start_tag('div', array('class' => 'singlebutton'));
+        $buttonlink = html_writer::start_tag('div', ['class' => 'singlebutton']);
         $buttonlink .= html_writer::link($seblink, get_string('seblinkbutton', 'quizaccess_seb'),
             ['class' => 'btn btn-secondary', 'title' => get_string('seblinkbutton', 'quizaccess_seb')]);
         $buttonlink .= html_writer::end_tag('div');
@@ -560,7 +560,7 @@ class quizaccess_seb extends access_rule_base {
         // Rendering as a href and not as button in a form to circumvent browser warnings for sending to URL with unknown protocol.
         $httplink = \quizaccess_seb\link_generator::get_link($this->quiz->cmid, false, is_https());
 
-        $buttonlink = html_writer::start_tag('div', array('class' => 'singlebutton'));
+        $buttonlink = html_writer::start_tag('div', ['class' => 'singlebutton']);
         $buttonlink .= html_writer::link($httplink, get_string('httplinkbutton', 'quizaccess_seb'),
             ['class' => 'btn btn-secondary', 'title' => get_string('httplinkbutton', 'quizaccess_seb')]);
         $buttonlink .= html_writer::end_tag('div');

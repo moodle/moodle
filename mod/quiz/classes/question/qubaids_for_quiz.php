@@ -41,7 +41,7 @@ class qubaids_for_quiz extends \qubaid_join {
      */
     public function __construct(int $quizid, bool $includepreviews = true, bool $onlyfinished = false) {
         $where = 'quiza.quiz = :quizaquiz';
-        $params = array('quizaquiz' => $quizid);
+        $params = ['quizaquiz' => $quizid];
 
         if (!$includepreviews) {
             $where .= ' AND preview = 0';

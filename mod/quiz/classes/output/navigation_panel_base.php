@@ -67,7 +67,7 @@ abstract class navigation_panel_base {
      * @return renderable[] the buttons, possibly interleaved with section headings.
      */
     public function get_question_buttons() {
-        $buttons = array();
+        $buttons = [];
         foreach ($this->attemptobj->get_slots() as $slot) {
             $heading = $this->attemptobj->get_heading_before_slot($slot);
             if (!is_null($heading)) {
@@ -153,7 +153,7 @@ abstract class navigation_panel_base {
             return '';
         }
         return $output->restart_preview_button(new moodle_url(
-                $this->attemptobj->start_attempt_url(), array('forcenew' => true)));
+                $this->attemptobj->start_attempt_url(), ['forcenew' => true]));
     }
 
     /**
@@ -174,7 +174,7 @@ abstract class navigation_panel_base {
         if ($this->attemptobj->get_quiz()->showuserpicture == QUIZ_SHOWIMAGE_NONE) {
             return null;
         }
-        $user = $DB->get_record('user', array('id' => $this->attemptobj->get_userid()));
+        $user = $DB->get_record('user', ['id' => $this->attemptobj->get_userid()]);
         $userpicture = new user_picture($user);
         $userpicture->courseid = $this->attemptobj->get_courseid();
         if ($this->attemptobj->get_quiz()->showuserpicture == QUIZ_SHOWIMAGE_LARGE) {

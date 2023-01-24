@@ -60,7 +60,7 @@ class review_setting extends \admin_setting {
      * @return array
      */
     public static function fields() {
-        return array(
+        return [
             'attempt'          => get_string('theattempt', 'quiz'),
             'correctness'      => get_string('whethercorrect', 'question'),
             'marks'            => get_string('marks', 'question'),
@@ -68,7 +68,7 @@ class review_setting extends \admin_setting {
             'generalfeedback'  => get_string('generalfeedback', 'question'),
             'rightanswer'      => get_string('rightanswer', 'question'),
             'overallfeedback'  => get_string('overallfeedback', 'quiz'),
-        );
+        ];
     }
 
     /**
@@ -101,12 +101,12 @@ class review_setting extends \admin_setting {
      * @return array an array of time constant => lang string.
      */
     protected static function times() {
-        return array(
+        return [
             self::DURING            => get_string('reviewduring', 'quiz'),
             self::IMMEDIATELY_AFTER => get_string('reviewimmediately', 'quiz'),
             self::LATER_WHILE_OPEN  => get_string('reviewopen', 'quiz'),
             self::AFTER_CLOSE       => get_string('reviewclosed', 'quiz'),
-        );
+        ];
     }
 
     protected function normalise_data($data) {

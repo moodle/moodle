@@ -77,7 +77,7 @@ $mform = new mod_quiz\form\randomquestion_form(new moodle_url('/mod/quiz/editran
 $toform = new stdClass();
 $toform->category = "{$category->id},{$category->contextid}";
 $toform->includesubcategories = $filterconditions->includingsubcategories;
-$toform->fromtags = array();
+$toform->fromtags = [];
 if (isset($filterconditions->tags)) {
     $currentslottags = $filterconditions->tags;
     foreach ($currentslottags as $slottag) {

@@ -50,10 +50,10 @@ function quiz_completion_check_passing_grade_or_all_attempts($course, $cm, $user
 
     // Check for passing grade.
     require_once($CFG->libdir . '/gradelib.php');
-    $item = grade_item::fetch(array('courseid' => $course->id, 'itemtype' => 'mod',
-            'itemmodule' => 'quiz', 'iteminstance' => $cm->instance, 'outcomeid' => null));
+    $item = grade_item::fetch(['courseid' => $course->id, 'itemtype' => 'mod',
+            'itemmodule' => 'quiz', 'iteminstance' => $cm->instance, 'outcomeid' => null]);
     if ($item) {
-        $grades = grade_grade::fetch_users_grades($item, array($userid), false);
+        $grades = grade_grade::fetch_users_grades($item, [$userid], false);
         if (!empty($grades[$userid]) && $grades[$userid]->is_passed($item)) {
             return true;
         }
@@ -121,7 +121,7 @@ function quiz_get_completion_state($course, $cm, $userid, $type) {
 
     // No need to call debugging here. Deprecation debugging notice already being called in \completion_info::internal_get_state().
 
-    $quiz = $DB->get_record('quiz', array('id' => $cm->instance), '*', MUST_EXIST);
+    $quiz = $DB->get_record('quiz', ['id' => $cm->instance], '*', MUST_EXIST);
     if (!$quiz->completionattemptsexhausted && !$cm->completionpassgrade && !$quiz->completionminattempts) {
         return $type;
     }
@@ -219,7 +219,7 @@ function quiz_retrieve_tags_for_slot_ids($slotids) {
  *
  * @deprecated in 4.1 use mod_quiz\structure::has_use_capability(...) instead.
  *
- * @param object $quiz the quiz settings.
+ * @param stdClass $quiz the quiz settings.
  * @param int $slot which question in the quiz to test.
  * @return bool whether the user can use this question.
  */

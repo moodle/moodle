@@ -75,7 +75,7 @@ class attempt_reviewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/quiz/review.php', array('attempt' => $this->objectid));
+        return new \moodle_url('/mod/quiz/review.php', ['attempt' => $this->objectid]);
     }
 
     /**
@@ -84,8 +84,8 @@ class attempt_reviewed extends \core\event\base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'quiz', 'review', 'review.php?attempt=' . $this->objectid,
-            $this->other['quizid'], $this->contextinstanceid);
+        return [$this->courseid, 'quiz', 'review', 'review.php?attempt=' . $this->objectid,
+            $this->other['quizid'], $this->contextinstanceid];
     }
 
     /**
@@ -107,12 +107,12 @@ class attempt_reviewed extends \core\event\base {
     }
 
     public static function get_objectid_mapping() {
-        return array('db' => 'quiz_attempts', 'restore' => 'quiz_attempt');
+        return ['db' => 'quiz_attempts', 'restore' => 'quiz_attempt'];
     }
 
     public static function get_other_mapping() {
-        $othermapped = array();
-        $othermapped['quizid'] = array('db' => 'quiz', 'restore' => 'quiz');
+        $othermapped = [];
+        $othermapped['quizid'] = ['db' => 'quiz', 'restore' => 'quiz'];
 
         return $othermapped;
     }

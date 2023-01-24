@@ -68,9 +68,9 @@ class quiz_settings {
     /**
      * Constructor, assuming we already have the necessary data loaded.
      *
-     * @param object $quiz the row from the quiz table.
-     * @param object $cm the course_module object for this quiz.
-     * @param object $course the row from the course table for the course we belong to.
+     * @param stdClass $quiz the row from the quiz table.
+     * @param stdClass $cm the course_module object for this quiz.
+     * @param stdClass $course the row from the course table for the course we belong to.
      * @param bool $getcontext intended for testing - stops the constructor getting the context.
      */
     public function __construct($quiz, $cm, $course, $getcontext = true) {
@@ -108,7 +108,7 @@ class quiz_settings {
     /**
      * Create a {@see quiz_attempt} for an attempt at this quiz.
      *
-     * @param object $attemptdata row from the quiz_attempts table.
+     * @param stdClass $attemptdata row from the quiz_attempts table.
      * @return quiz_attempt the new quiz_attempt object.
      */
     public function create_attempt_object($attemptdata) {
@@ -176,7 +176,7 @@ class quiz_settings {
     /**
      * Get the course settings object that this quiz belongs to.
      *
-     * @return object the row of the course table.
+     * @return stdClass the row of the course table.
      */
     public function get_course() {
         return $this->course;
@@ -239,7 +239,7 @@ class quiz_settings {
     /**
      * Get the course-module object for this quiz.
      *
-     * @return object the course_module object.
+     * @return stdClass the course_module object.
      */
     public function get_cm() {
         return $this->cm;

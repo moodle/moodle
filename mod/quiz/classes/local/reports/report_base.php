@@ -77,8 +77,8 @@ abstract class report_base {
     /**
      * Get the current group for the user user looking at the report.
      *
-     * @param object $cm the course_module information.
-     * @param object $course the course settings.
+     * @param stdClass $cm the course_module information.
+     * @param stdClass $course the course settings.
      * @param context $context the quiz context.
      * @return int the current group id, if applicable. 0 for all users,
      *      NO_GROUPS_ALLOWED if the user cannot see any group.

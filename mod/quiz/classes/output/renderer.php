@@ -1031,8 +1031,8 @@ class renderer extends plugin_renderer_base {
     /**
      * Output the page information
      *
-     * @param object $quiz the quiz settings.
-     * @param object $cm the course_module object.
+     * @param stdClass $quiz the quiz settings.
+     * @param stdClass $cm the course_module object.
      * @param context $context the quiz context.
      * @param array $messages any access messages that should be described.
      * @param bool $quizhasquestions does quiz has questions added.
@@ -1067,8 +1067,8 @@ class renderer extends plugin_renderer_base {
     /**
      * Output the quiz intro.
      *
-     * @param object $quiz the quiz settings.
-     * @param object $cm the course_module object.
+     * @param stdClass $quiz the quiz settings.
+     * @param stdClass $cm the course_module object.
      * @return string HTML to output.
      */
     public function quiz_intro($quiz, $cm) {

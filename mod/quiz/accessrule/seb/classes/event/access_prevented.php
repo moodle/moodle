@@ -110,7 +110,7 @@ class access_prevented extends base {
      * @return array Mapping of object id.
      */
     public static function get_objectid_mapping() : array {
-        return array('db' => 'quiz', 'restore' => 'quiz');
+        return ['db' => 'quiz', 'restore' => 'quiz'];
     }
 
     /**

@@ -60,7 +60,7 @@ $PAGE->set_url($thispageurl);
 $PAGE->set_secondary_active_tab("mod_quiz_edit");
 
 // Get the course object and related bits.
-$course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
 $quizobj = new quiz_settings($quiz, $cm, $course);
 $structure = $quizobj->get_structure();
 
@@ -70,7 +70,7 @@ require_capability('mod/quiz:manage', $contexts->lowest());
 // Process commands ============================================================.
 
 // Get the list of question ids had their check-boxes ticked.
-$selectedslots = array();
+$selectedslots = [];
 $params = (array) data_submitted();
 foreach ($params as $key => $value) {
     if (preg_match('!^s([0-9]+)$!', $key, $matches)) {
@@ -190,12 +190,12 @@ echo $OUTPUT->header();
 
 // Initialise the JavaScript.
 $quizeditconfig = new stdClass();
-$quizeditconfig->url = $thispageurl->out(true, array('qbanktool' => '0'));
-$quizeditconfig->dialoglisteners = array();
+$quizeditconfig->url = $thispageurl->out(true, ['qbanktool' => '0']);
+$quizeditconfig->dialoglisteners = [];
 $numberoflisteners = $DB->get_field_sql("
     SELECT COALESCE(MAX(page), 1)
       FROM {quiz_slots}
-     WHERE quizid = ?", array($quiz->id));
+     WHERE quizid = ?", [$quiz->id]);
 
 for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
     $quizeditconfig->dialoglisteners[] = 'addrandomdialoglaunch_' . $pageiter;
@@ -205,7 +205,7 @@ $PAGE->requires->data_for_js('quiz_edit_config', $quizeditconfig);
 $PAGE->requires->js('/question/qengine.js');
 
 // Questions wrapper start.
-echo html_writer::start_tag('div', array('class' => 'mod-quiz-edit-content'));
+echo html_writer::start_tag('div', ['class' => 'mod-quiz-edit-content']);
 
 echo $output->edit_page($quizobj, $structure, $contexts, $thispageurl, $pagevars);
 

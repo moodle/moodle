@@ -25,11 +25,12 @@ use mod_quiz\quiz_attempt;
  */
 class quiz_overview_table extends attempts_report_table {
 
-    protected $regradedqs = array();
+    /** @var array used to store information about which questoins have been regraded. */
+    protected $regradedqs = [];
 
     /**
      * Constructor
-     * @param object $quiz
+     * @param stdClass $quiz
      * @param context $context
      * @param string $qmsubselect
      * @param quiz_overview_options $options
@@ -109,12 +110,12 @@ class quiz_overview_table extends attempts_report_table {
         } else {
             $namekey = 'fullname';
         }
-        $averagerow = array(
+        $averagerow = [
             $namekey       => $label,
             'sumgrades'    => $this->format_average($record),
             'feedbacktext' => strip_tags(quiz_report_feedback_for_grade(
                                          $record->grade, $this->quiz->id, $this->context))
-        );
+        ];
 
         if ($this->options->slotmarks) {
             $dm = new question_engine_data_mapper();
@@ -150,10 +151,10 @@ class quiz_overview_table extends attempts_report_table {
      * @return array the (partial) row of data.
      */
     protected function format_average_grade_for_questions($gradeaverages) {
-        $row = array();
+        $row = [];
 
         if (!$gradeaverages) {
-            $gradeaverages = array();
+            $gradeaverages = [];
         }
 
         foreach ($this->questions as $question) {
@@ -176,7 +177,7 @@ class quiz_overview_table extends attempts_report_table {
 
     /**
      * Format an entry in an average row.
-     * @param object $record with fields grade and numaveraged.
+     * @param stdClass $record with fields grade and numaveraged.
      * @param bool $question true if this is a question score, false if it is an overall score.
      * @return string HTML fragment for an average score (with number of things included in the average).
      */
@@ -193,12 +194,12 @@ class quiz_overview_table extends attempts_report_table {
             return $average;
         } else if (is_null($record->numaveraged) || $record->numaveraged == 0) {
             return html_writer::tag('span', html_writer::tag('span',
-                    $average, array('class' => 'average')), array('class' => 'avgcell'));
+                    $average, ['class' => 'average']), ['class' => 'avgcell']);
         } else {
             return html_writer::tag('span', html_writer::tag('span',
-                    $average, array('class' => 'average')) . ' ' . html_writer::tag('span',
-                    '(' . $record->numaveraged . ')', array('class' => 'count')),
-                    array('class' => 'avgcell'));
+                    $average, ['class' => 'average']) . ' ' . html_writer::tag('span',
+                    '(' . $record->numaveraged . ')', ['class' => 'count']),
+                    ['class' => 'avgcell']);
         }
     }
 
@@ -251,13 +252,13 @@ class quiz_overview_table extends attempts_report_table {
                     html_writer::empty_tag('br') . $newsumgrade;
         }
         return html_writer::link(new moodle_url('/mod/quiz/review.php',
-                array('attempt' => $attempt->attempt)), $grade,
-                array('title' => get_string('reviewattempt', 'quiz')));
+                ['attempt' => $attempt->attempt]), $grade,
+                ['title' => get_string('reviewattempt', 'quiz')]);
     }
 
     /**
      * @param string $colname the name of the column.
-     * @param object $attempt the row of data - see the SQL in display() in
+     * @param stdClass $attempt the row of data - see the SQL in display() in
      * mod/quiz/report/overview/report.php to see what fields are present,
      * and what they are called.
      * @return string the contents of the cell.
@@ -368,6 +369,6 @@ class quiz_overview_table extends attempts_report_table {
         $qubaids = $this->get_qubaids_condition();
         $regradedqs = $DB->get_records_select('quiz_overview_regrades',
                 'questionusageid ' . $qubaids->usage_id_in(), $qubaids->usage_id_in_params());
-        return quiz_report_index_by_keys($regradedqs, array('questionusageid', 'slot'));
+        return quiz_report_index_by_keys($regradedqs, ['questionusageid', 'slot']);
     }
 }

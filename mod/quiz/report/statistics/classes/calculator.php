@@ -135,7 +135,7 @@ class calculator {
 
         $timemodified = time() - self::TIME_TO_CACHE;
         $fromdb = $DB->get_record_select('quiz_statistics', 'hashcode = ? AND timemodified > ?',
-                                         array($qubaids->get_hash_code(), $timemodified));
+                                         [$qubaids->get_hash_code(), $timemodified]);
         $stats = new calculated();
         $stats->populate_from_record($fromdb);
         return $stats;
@@ -152,7 +152,7 @@ class calculator {
 
         $timemodified = time() - self::TIME_TO_CACHE;
         return $DB->get_field_select('quiz_statistics', 'timemodified', 'hashcode = ? AND timemodified > ?',
-                                         array($qubaids->get_hash_code(), $timemodified));
+                                         [$qubaids->get_hash_code(), $timemodified]);
     }
 
     /**
@@ -265,7 +265,7 @@ class calculator {
      * @param $fromqa
      * @param $whereqa
      * @param $qaparams
-     * @return object with properties power2, power3, power4
+     * @return stdClass with properties power2, power3, power4
      */
     protected function sum_of_powers_of_difference_to_mean($mean, $fromqa, $whereqa, $qaparams) {
         global $DB;
@@ -276,7 +276,7 @@ class calculator {
                     SUM(POWER((quiza.sumgrades - $mean), 4)) AS power4
                   FROM $fromqa
                  WHERE $whereqa";
-        $params = array('mean1' => $mean, 'mean2' => $mean, 'mean3' => $mean) + $qaparams;
+        $params = ['mean1' => $mean, 'mean2' => $mean, 'mean3' => $mean] + $qaparams;
 
         return $DB->get_record_sql($sql, $params, MUST_EXIST);
     }

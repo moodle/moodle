@@ -70,7 +70,7 @@ class quiz_responses_report extends attempts_report {
 
         // Prepare for downloading, if applicable.
         $courseshortname = format_string($course->shortname, true,
-                array('context' => context_course::instance($course->id)));
+                ['context' => context_course::instance($course->id)]);
         if ($options->whichtries === question_attempt::LAST_TRY) {
             $tableclassname = 'quiz_last_responses_table';
         } else {
@@ -137,8 +137,8 @@ class quiz_responses_report extends attempts_report {
             }
 
             // Define table columns.
-            $columns = array();
-            $headers = array();
+            $columns = [];
+            $headers = [];
 
             if (!$table->is_downloading() && $options->checkboxcolumn) {
                 $columnname = 'checkbox';

@@ -68,9 +68,9 @@ abstract class attempts_report extends report_base {
      *
      * @param string $mode
      * @param string $formclass
-     * @param object $quiz
-     * @param object $cm
-     * @param object $course
+     * @param stdClass $quiz
+     * @param stdClass $cm
+     * @param stdClass $course
      * @return array with four elements:
      *      0 => integer the current group id (0 for none).
      *      1 => \core\dml\sql_join Contains joins, wheres, params for all the students in this course.
@@ -107,8 +107,8 @@ abstract class attempts_report extends report_base {
      * Get sql fragments (joins) which can be used to build queries that
      * will select an appropriate set of students to show in the reports.
      *
-     * @param object $cm the course module.
-     * @param object $course the course settings.
+     * @param stdClass $cm the course module.
+     * @param stdClass $course the course settings.
      * @return array with four elements:
      *      0 => integer the current group id (0 for none).
      *      1 => \core\dml\sql_join Contains joins, wheres, params for all the students in this course.
@@ -257,7 +257,7 @@ abstract class attempts_report extends report_base {
     /**
      * Add all the grade and feedback columns, if applicable, to the $columns
      * and $headers arrays.
-     * @param object $quiz the quiz settings.
+     * @param stdClass $quiz the quiz settings.
      * @param bool $usercanseegrades whether the user is allowed to see grades for this quiz.
      * @param array $columns the list of columns. Added to.
      * @param array $headers the columns headings. Added to.
@@ -305,8 +305,8 @@ abstract class attempts_report extends report_base {
 
     /**
      * Process any submitted actions.
-     * @param object $quiz the quiz settings.
-     * @param object $cm the cm object for the quiz.
+     * @param stdClass $quiz the quiz settings.
+     * @param stdClass $cm the cm object for the quiz.
      * @param int $currentgroup the currently selected group.
      * @param \core\dml\sql_join $groupstudentsjoins (joins, wheres, params) the students in the current group.
      * @param \core\dml\sql_join $allowedjoins (joins, wheres, params) the users whose attempt this user is allowed to modify.
@@ -327,9 +327,9 @@ abstract class attempts_report extends report_base {
 
     /**
      * Delete the quiz attempts
-     * @param object $quiz the quiz settings. Attempts that don't belong to
+     * @param stdClass $quiz the quiz settings. Attempts that don't belong to
      * this quiz are not deleted.
-     * @param object $cm the course_module object.
+     * @param stdClass $cm the course_module object.
      * @param array $attemptids the list of attempt ids to delete.
      * @param \core\dml\sql_join $allowedjoins (joins, wheres, params) This list of userids that are visible in the report.
      *      Users can only delete attempts that they are allowed to see in the report.

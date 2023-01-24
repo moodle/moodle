@@ -44,7 +44,7 @@ class restore_date_test extends \restore_date_testcase {
         // Create questions.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
-        $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
+        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
         // Add to the quiz.
         quiz_add_quiz_question($saq->id, $quiz);
 

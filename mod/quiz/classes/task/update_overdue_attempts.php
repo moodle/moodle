@@ -85,14 +85,14 @@ class update_overdue_attempts extends \core\task\scheduled_task {
 
                 // If we have moved on to a different quiz, fetch the new data.
                 if (!$quiz || $attempt->quiz != $quiz->id) {
-                    $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz), '*', MUST_EXIST);
+                    $quiz = $DB->get_record('quiz', ['id' => $attempt->quiz], '*', MUST_EXIST);
                     $cm = get_coursemodule_from_instance('quiz', $attempt->quiz);
                     $quizcount += 1;
                 }
 
                 // If we have moved on to a different course, fetch the new data.
                 if (!$course || $course->id != $quiz->course) {
-                    $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+                    $course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
                 }
 
                 // Make a specialised version of the quiz settings, with the relevant overrides.
@@ -117,7 +117,7 @@ class update_overdue_attempts extends \core\task\scheduled_task {
         }
 
         $attemptstoprocess->close();
-        return array($count, $quizcount);
+        return [$count, $quizcount];
     }
 
     /**
@@ -150,6 +150,6 @@ class update_overdue_attempts extends \core\task\scheduled_task {
             AND quiza.timecheckstate <= :processto
        ORDER BY quiz.course, quiza.quiz",
 
-                array('processto' => $processto, 'iprocessto' => $processto));
+                ['processto' => $processto, 'iprocessto' => $processto]);
     }
 }

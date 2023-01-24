@@ -34,7 +34,7 @@ class mod_quiz_generator extends testing_module_generator {
         require_once($CFG->dirroot.'/mod/quiz/locallib.php');
         $record = (object)(array)$record;
 
-        $defaultquizsettings = array(
+        $defaultquizsettings = [
             'timeopen'               => 0,
             'timeclose'              => 0,
             'preferredbehaviour'     => 'deferredfeedback',
@@ -88,7 +88,7 @@ class mod_quiz_generator extends testing_module_generator {
             'showuserpicture'        => 0,
             'showblocks'             => 0,
             'navmethod'              => QUIZ_NAVMETHOD_FREE,
-        );
+        ];
 
         foreach ($defaultquizsettings as $name => $value) {
             if (!isset($record->{$name})) {

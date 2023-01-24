@@ -72,7 +72,7 @@ class view_page {
     public $gradebookfeedback;
     /** @var bool $unfinished contains 1 if an attempt is unfinished. */
     public $unfinished;
-    /** @var object $lastfinishedattempt the last attempt from the attempts array. */
+    /** @var stdClass $lastfinishedattempt the last attempt from the attempts array. */
     public $lastfinishedattempt;
     /** @var array $preventmessages of messages telling the user why they can't
      *       attempt the quiz now. */

@@ -34,9 +34,9 @@ class testable_quiz_attempts_report extends attempts_report {
 
     /**
      * Override this function to displays the report.
-     * @param object $cm the course-module for this quiz.
-     * @param object $course the course we are in.
-     * @param object $quiz this quiz.
+     * @param stdClass $cm the course-module for this quiz.
+     * @param stdClass $course the course we are in.
+     * @param stdClass $quiz this quiz.
      */
     public function display($cm, $course, $quiz) {
 
@@ -45,8 +45,8 @@ class testable_quiz_attempts_report extends attempts_report {
     /**
      * Testable delete_selected_attempts function.
      *
-     * @param object $quiz
-     * @param object $cm
+     * @param stdClass $quiz
+     * @param stdClass $cm
      * @param array $attemptids
      * @param \core\dml\sql_join $allowedjoins
      */

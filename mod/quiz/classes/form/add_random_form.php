@@ -47,7 +47,7 @@ class add_random_form extends moodleform {
                 get_string('randomfromexistingcategory', 'quiz'));
 
         $mform->addElement('questioncategory', 'category', get_string('category'),
-                array('contexts' => $usablecontexts, 'top' => true));
+                ['contexts' => $usablecontexts, 'top' => true]);
         $mform->setDefault('category', $this->_customdata['cat']);
 
         $mform->addElement('checkbox', 'includesubcategories', '', get_string('recurse', 'quiz'));
@@ -56,15 +56,15 @@ class add_random_form extends moodleform {
         $mform->hideIf('includesubcategories', 'category', 'in', $tops);
 
         if ($CFG->usetags) {
-            $tagstrings = array();
+            $tagstrings = [];
             $tags = core_tag_tag::get_tags_by_area_in_contexts('core_question', 'question', $usablecontexts);
             foreach ($tags as $tag) {
                 $tagstrings["{$tag->id},{$tag->name}"] = $tag->name;
             }
-            $options = array(
+            $options = [
                 'multiple' => true,
                 'noselectionstring' => get_string('anytags', 'quiz'),
-            );
+            ];
             $mform->addElement('autocomplete', 'fromtags', get_string('randomquestiontags', 'mod_quiz'), $tagstrings, $options);
             $mform->addHelpButton('fromtags', 'randomquestiontags', 'mod_quiz');
         }
@@ -92,7 +92,7 @@ class add_random_form extends moodleform {
             $mform->setType('name', PARAM_TEXT);
 
             $mform->addElement('questioncategory', 'parent', get_string('parentcategory', 'question'),
-                    array('contexts' => $usablecontexts, 'top' => true));
+                    ['contexts' => $usablecontexts, 'top' => true]);
             $mform->addHelpButton('parent', 'parentcategory', 'question');
 
             $mform->addElement('submit', 'newcategory',
@@ -136,7 +136,7 @@ class add_random_form extends moodleform {
      * @return array of integers [1, 2, ..., 100] (or to the smaller of $maxrand and 100.)
      */
     private function get_number_of_questions_to_add_choices($maxrand = 100) {
-        $randomcount = array();
+        $randomcount = [];
         for ($i = 1; $i <= min(100, $maxrand); $i++) {
             $randomcount[$i] = $i;
         }

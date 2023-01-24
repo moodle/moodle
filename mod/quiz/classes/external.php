@@ -61,11 +61,11 @@ class mod_quiz_external extends external_api {
      */
     public static function get_quizzes_by_courses_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'courseids' => new external_multiple_structure(
-                    new external_value(PARAM_INT, 'course id'), 'Array of course ids', VALUE_DEFAULT, array()
+                    new external_value(PARAM_INT, 'course id'), 'Array of course ids', VALUE_DEFAULT, []
                 ),
-            )
+            ]
         );
     }
 
@@ -77,18 +77,18 @@ class mod_quiz_external extends external_api {
      * @return array of quizzes details
      * @since Moodle 3.1
      */
-    public static function get_quizzes_by_courses($courseids = array()) {
+    public static function get_quizzes_by_courses($courseids = []) {
         global $USER;
 
-        $warnings = array();
-        $returnedquizzes = array();
+        $warnings = [];
+        $returnedquizzes = [];
 
-        $params = array(
+        $params = [
             'courseids' => $courseids,
-        );
+        ];
         $params = self::validate_parameters(self::get_quizzes_by_courses_parameters(), $params);
 
-        $mycourses = array();
+        $mycourses = [];
         if (empty($params['courseids'])) {
             $mycourses = enrol_get_my_courses();
             $params['courseids'] = array_keys($mycourses);
@@ -114,8 +114,8 @@ class mod_quiz_external extends external_api {
 
                 if (has_capability('mod/quiz:view', $context)) {
                     $quizdetails['introfiles'] = util::get_area_files($context->id, 'mod_quiz', 'intro', false, false);
-                    $viewablefields = array('timeopen', 'timeclose', 'attempts', 'timelimit', 'grademethod', 'decimalpoints',
-                                            'questiondecimalpoints', 'sumgrades', 'grade', 'preferredbehaviour');
+                    $viewablefields = ['timeopen', 'timeclose', 'attempts', 'timelimit', 'grademethod', 'decimalpoints',
+                                            'questiondecimalpoints', 'sumgrades', 'grade', 'preferredbehaviour'];
 
                     // Sometimes this function returns just empty.
                     $hasfeedback = quiz_has_feedback($quiz);
@@ -131,12 +131,12 @@ class mod_quiz_external extends external_api {
                         $quizdetails['hasquestions'] = (int) $quizobj->has_questions();
                         $quizdetails['autosaveperiod'] = get_config('quiz', 'autosaveperiod');
 
-                        $additionalfields = array('attemptonlast', 'reviewattempt', 'reviewcorrectness', 'reviewmarks',
+                        $additionalfields = ['attemptonlast', 'reviewattempt', 'reviewcorrectness', 'reviewmarks',
                                                     'reviewspecificfeedback', 'reviewgeneralfeedback', 'reviewrightanswer',
                                                     'reviewoverallfeedback', 'questionsperpage', 'navmethod',
                                                     'browsersecurity', 'delay1', 'delay2', 'showuserpicture', 'showblocks',
                                                     'completionattemptsexhausted', 'overduehandling',
-                                                    'graceperiod', 'canredoquestions', 'allowofflineattempts');
+                                                    'graceperiod', 'canredoquestions', 'allowofflineattempts'];
                         $viewablefields = array_merge($viewablefields, $additionalfields);
 
                         // Any course module fields that previously existed in quiz.
@@ -145,7 +145,7 @@ class mod_quiz_external extends external_api {
 
                     // Fields only for managers.
                     if (has_capability('moodle/course:manageactivities', $context)) {
-                        $additionalfields = array('shuffleanswers', 'timecreated', 'timemodified', 'password', 'subnet');
+                        $additionalfields = ['shuffleanswers', 'timecreated', 'timemodified', 'password', 'subnet'];
                         $viewablefields = array_merge($viewablefields, $additionalfields);
                     }
 
@@ -156,7 +156,7 @@ class mod_quiz_external extends external_api {
                 $returnedquizzes[] = $quizdetails;
             }
         }
-        $result = array();
+        $result = [];
         $result['quizzes'] = $returnedquizzes;
         $result['warnings'] = $warnings;
         return $result;
@@ -170,7 +170,7 @@ class mod_quiz_external extends external_api {
      */
     public static function get_quizzes_by_courses_returns() {
         return new external_single_structure(
-            array(
+            [
                 'quizzes' => new external_multiple_structure(
                     new external_single_structure(array_merge(
                         helper_for_get_mods_by_courses::standard_coursemodule_elements_returns(true),
@@ -270,7 +270,7 @@ class mod_quiz_external extends external_api {
                     ))
                 ),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -286,13 +286,13 @@ class mod_quiz_external extends external_api {
         global $DB;
 
         // Request and permission validation.
-        $quiz = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
+        $quiz = $DB->get_record('quiz', ['id' => $quizid], '*', MUST_EXIST);
         list($course, $cm) = get_course_and_cm_from_instance($quiz, 'quiz');
 
         $context = context_module::instance($cm->id);
         self::validate_context($context);
 
-        return array($quiz, $course, $cm, $context);
+        return [$quiz, $course, $cm, $context];
     }
 
     /**
@@ -303,9 +303,9 @@ class mod_quiz_external extends external_api {
      */
     public static function view_quiz_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
-            )
+            ]
         );
     }
 
@@ -319,15 +319,15 @@ class mod_quiz_external extends external_api {
     public static function view_quiz($quizid) {
         global $DB;
 
-        $params = self::validate_parameters(self::view_quiz_parameters(), array('quizid' => $quizid));
-        $warnings = array();
+        $params = self::validate_parameters(self::view_quiz_parameters(), ['quizid' => $quizid]);
+        $warnings = [];
 
         list($quiz, $course, $cm, $context) = self::validate_quiz($params['quizid']);
 
         // Trigger course_module_viewed event and completion.
         quiz_view($quiz, $course, $cm, $context);
 
-        $result = array();
+        $result = [];
         $result['status'] = true;
         $result['warnings'] = $warnings;
         return $result;
@@ -341,10 +341,10 @@ class mod_quiz_external extends external_api {
      */
     public static function view_quiz_returns() {
         return new external_single_structure(
-            array(
+            [
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -356,13 +356,13 @@ class mod_quiz_external extends external_api {
      */
     public static function get_user_attempts_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
                 'userid' => new external_value(PARAM_INT, 'user id, empty for current user', VALUE_DEFAULT, 0),
                 'status' => new external_value(PARAM_ALPHA, 'quiz status: all, finished or unfinished', VALUE_DEFAULT, 'finished'),
                 'includepreviews' => new external_value(PARAM_BOOL, 'whether to include previews or not', VALUE_DEFAULT, false),
 
-            )
+            ]
         );
     }
 
@@ -379,19 +379,19 @@ class mod_quiz_external extends external_api {
     public static function get_user_attempts($quizid, $userid = 0, $status = 'finished', $includepreviews = false) {
         global $USER;
 
-        $warnings = array();
+        $warnings = [];
 
-        $params = array(
+        $params = [
             'quizid' => $quizid,
             'userid' => $userid,
             'status' => $status,
             'includepreviews' => $includepreviews,
-        );
+        ];
         $params = self::validate_parameters(self::get_user_attempts_parameters(), $params);
 
         list($quiz, $course, $cm, $context) = self::validate_quiz($params['quizid']);
 
-        if (!in_array($params['status'], array('all', 'finished', 'unfinished'))) {
+        if (!in_array($params['status'], ['all', 'finished', 'unfinished'])) {
             throw new invalid_parameter_exception('Invalid status value');
         }
 
@@ -421,7 +421,7 @@ class mod_quiz_external extends external_api {
             }
             $attemptresponse[] = $attempt;
         }
-        $result = array();
+        $result = [];
         $result['attempts'] = $attemptresponse;
         $result['warnings'] = $warnings;
         return $result;
@@ -434,7 +434,7 @@ class mod_quiz_external extends external_api {
      */
     private static function attempt_structure() {
         return new external_single_structure(
-            array(
+            [
                 'id' => new external_value(PARAM_INT, 'Attempt id.', VALUE_OPTIONAL),
                 'quiz' => new external_value(PARAM_INT, 'Foreign key reference to the quiz that was attempted.',
                                                 VALUE_OPTIONAL),
@@ -460,7 +460,7 @@ class mod_quiz_external extends external_api {
                 'sumgrades' => new external_value(PARAM_FLOAT, 'Total marks for this attempt.', VALUE_OPTIONAL),
                 'gradednotificationsenttime' => new external_value(PARAM_INT,
                     'Time when the student was notified that manual grading of their attempt was complete.', VALUE_OPTIONAL),
-            )
+            ]
         );
     }
 
@@ -472,10 +472,10 @@ class mod_quiz_external extends external_api {
      */
     public static function get_user_attempts_returns() {
         return new external_single_structure(
-            array(
+            [
                 'attempts' => new external_multiple_structure(self::attempt_structure()),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -487,10 +487,10 @@ class mod_quiz_external extends external_api {
      */
     public static function get_user_best_grade_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
                 'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT, 0),
-            )
+            ]
         );
     }
 
@@ -506,12 +506,12 @@ class mod_quiz_external extends external_api {
         global $DB, $USER, $CFG;
         require_once($CFG->libdir . '/gradelib.php');
 
-        $warnings = array();
+        $warnings = [];
 
-        $params = array(
+        $params = [
             'quizid' => $quizid,
             'userid' => $userid,
-        );
+        ];
         $params = self::validate_parameters(self::get_user_best_grade_parameters(), $params);
 
         list($quiz, $course, $cm, $context) = self::validate_quiz($params['quizid']);
@@ -529,7 +529,7 @@ class mod_quiz_external extends external_api {
             require_capability('mod/quiz:viewreports', $context);
         }
 
-        $result = array();
+        $result = [];
 
         // This code was mostly copied from mod/quiz/view.php. We need to make the web service logic consistent.
         // Get this user's attempts.
@@ -577,12 +577,12 @@ class mod_quiz_external extends external_api {
      */
     public static function get_user_best_grade_returns() {
         return new external_single_structure(
-            array(
+            [
                 'hasgrade' => new external_value(PARAM_BOOL, 'Whether the user has a grade on the given quiz.'),
                 'grade' => new external_value(PARAM_FLOAT, 'The grade (only if the user has a grade).', VALUE_OPTIONAL),
                 'gradetopass' => new external_value(PARAM_FLOAT, 'The grade to pass the quiz (only if set).', VALUE_OPTIONAL),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -594,11 +594,11 @@ class mod_quiz_external extends external_api {
      */
     public static function get_combined_review_options_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
                 'userid' => new external_value(PARAM_INT, 'user id (empty for current user)', VALUE_DEFAULT, 0),
 
-            )
+            ]
         );
     }
 
@@ -613,12 +613,12 @@ class mod_quiz_external extends external_api {
     public static function get_combined_review_options($quizid, $userid = 0) {
         global $DB, $USER;
 
-        $warnings = array();
+        $warnings = [];
 
-        $params = array(
+        $params = [
             'quizid' => $quizid,
             'userid' => $userid,
-        );
+        ];
         $params = self::validate_parameters(self::get_combined_review_options_parameters(), $params);
 
         list($quiz, $course, $cm, $context) = self::validate_quiz($params['quizid']);
@@ -638,18 +638,18 @@ class mod_quiz_external extends external_api {
 
         $attempts = quiz_get_user_attempts($quiz->id, $user->id, 'all', true);
 
-        $result = array();
+        $result = [];
         $result['someoptions'] = [];
         $result['alloptions'] = [];
 
         list($someoptions, $alloptions) = quiz_get_combined_reviewoptions($quiz, $attempts);
 
-        foreach (array('someoptions', 'alloptions') as $typeofoption) {
+        foreach (['someoptions', 'alloptions'] as $typeofoption) {
             foreach ($$typeofoption as $key => $value) {
-                $result[$typeofoption][] = array(
+                $result[$typeofoption][] = [
                     "name" => $key,
                     "value" => (!empty($value)) ? $value : 0
-                );
+                ];
             }
         }
 
@@ -665,25 +665,25 @@ class mod_quiz_external extends external_api {
      */
     public static function get_combined_review_options_returns() {
         return new external_single_structure(
-            array(
+            [
                 'someoptions' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'name' => new external_value(PARAM_ALPHANUMEXT, 'option name'),
                             'value' => new external_value(PARAM_INT, 'option value'),
-                        )
+                        ]
                     )
                 ),
                 'alloptions' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'name' => new external_value(PARAM_ALPHANUMEXT, 'option name'),
                             'value' => new external_value(PARAM_INT, 'option value'),
-                        )
+                        ]
                     )
                 ),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -695,19 +695,19 @@ class mod_quiz_external extends external_api {
      */
     public static function start_attempt_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
                 'preflightdata' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
                             'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
-                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
+                        ]
+                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, []
                 ),
                 'forcenew' => new external_value(PARAM_BOOL, 'Whether to force a new attempt or not.', VALUE_DEFAULT, false),
 
-            )
+            ]
         );
     }
 
@@ -720,17 +720,17 @@ class mod_quiz_external extends external_api {
      * @return array of warnings and the attempt basic data
      * @since Moodle 3.1
      */
-    public static function start_attempt($quizid, $preflightdata = array(), $forcenew = false) {
+    public static function start_attempt($quizid, $preflightdata = [], $forcenew = false) {
         global $DB, $USER;
 
-        $warnings = array();
-        $attempt = array();
+        $warnings = [];
+        $attempt = [];
 
-        $params = array(
+        $params = [
             'quizid' => $quizid,
             'preflightdata' => $preflightdata,
             'forcenew' => $forcenew,
-        );
+        ];
         $params = self::validate_parameters(self::start_attempt_parameters(), $params);
         $forcenew = $params['forcenew'];
 
@@ -755,18 +755,18 @@ class mod_quiz_external extends external_api {
         if (!$quizobj->is_preview_user() && $messages) {
             // Create warnings with the exact messages.
             foreach ($messages as $message) {
-                $warnings[] = array(
+                $warnings[] = [
                     'item' => 'quiz',
                     'itemid' => $quiz->id,
                     'warningcode' => '1',
                     'message' => clean_text($message, PARAM_TEXT)
-                );
+                ];
             }
         } else {
             if ($accessmanager->is_preflight_check_required($currentattemptid)) {
                 // Need to do some checks before allowing the user to continue.
 
-                $provideddata = array();
+                $provideddata = [];
                 foreach ($params['preflightdata'] as $data) {
                     $provideddata[$data['name']] = $data['value'];
                 }
@@ -792,7 +792,7 @@ class mod_quiz_external extends external_api {
             $attempt = quiz_prepare_and_start_new_attempt($quizobj, $attemptnumber, $lastattempt, $offlineattempt);
         }
 
-        $result = array();
+        $result = [];
         $result['attempt'] = $attempt;
         $result['warnings'] = $warnings;
         return $result;
@@ -806,10 +806,10 @@ class mod_quiz_external extends external_api {
      */
     public static function start_attempt_returns() {
         return new external_single_structure(
-            array(
+            [
                 'attempt' => self::attempt_structure(),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -843,7 +843,7 @@ class mod_quiz_external extends external_api {
 
         // Check the access rules.
         $accessmanager = $attemptobj->get_access_manager(time());
-        $messages = array();
+        $messages = [];
         if ($checkaccessrules) {
             // If the attempt is now overdue, or abandoned, deal with that.
             $attemptobj->handle_if_time_expired(time(), true);
@@ -863,7 +863,7 @@ class mod_quiz_external extends external_api {
 
         // User submitted data (like the quiz password).
         if ($accessmanager->is_preflight_check_required($attemptobj->get_attemptid())) {
-            $provideddata = array();
+            $provideddata = [];
             foreach ($params['preflightdata'] as $data) {
                 $provideddata[$data['name']] = $data['value'];
             }
@@ -895,7 +895,7 @@ class mod_quiz_external extends external_api {
             }
         }
 
-        return array($attemptobj, $messages);
+        return [$attemptobj, $messages];
     }
 
     /**
@@ -907,17 +907,17 @@ class mod_quiz_external extends external_api {
      */
     private static function question_structure() {
         return new external_single_structure(
-            array(
+            [
                 'slot' => new external_value(PARAM_INT, 'slot number'),
                 'type' => new external_value(PARAM_ALPHANUMEXT, 'question type, i.e: multichoice'),
                 'page' => new external_value(PARAM_INT, 'page of the quiz this question appears on'),
                 'html' => new external_value(PARAM_RAW, 'the question rendered'),
                 'responsefileareas' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'area' => new external_value(PARAM_NOTAGS, 'File area name'),
                             'files' => new external_files('Response files for the question', VALUE_OPTIONAL),
-                        )
+                        ]
                     ), 'Response file areas including files', VALUE_OPTIONAL
                 ),
                 'sequencecheck' => new external_value(PARAM_INT, 'the number of real steps in this attempt', VALUE_OPTIONAL),
@@ -938,7 +938,7 @@ class mod_quiz_external extends external_api {
                 'maxmark' => new external_value(PARAM_FLOAT, 'the maximum mark possible for this question attempt.
                     It will be returned only if the user is allowed to see it.', VALUE_OPTIONAL),
                 'settings' => new external_value(PARAM_RAW, 'Question settings (JSON encoded).', VALUE_OPTIONAL),
-            ),
+            ],
             'The question data. Some fields may not be returned depending on the quiz display settings.'
         );
     }
@@ -954,7 +954,7 @@ class mod_quiz_external extends external_api {
     private static function get_attempt_questions_data(quiz_attempt $attemptobj, $review, $page = 'all') {
         global $PAGE;
 
-        $questions = array();
+        $questions = [];
         $contextid = $attemptobj->get_quizobj()->get_context()->id;
         $displayoptions = $attemptobj->get_display_options($review);
         $renderer = $PAGE->get_renderer('mod_quiz');
@@ -973,14 +973,14 @@ class mod_quiz_external extends external_api {
                     $responsefileareas[$area]['files'] = [];
 
                     foreach ($files as $file) {
-                        $responsefileareas[$area]['files'][] = array(
+                        $responsefileareas[$area]['files'][] = [
                             'filename' => $file->get_filename(),
                             'fileurl' => $qattempt->get_response_file_url($file),
                             'filesize' => $file->get_filesize(),
                             'filepath' => $file->get_filepath(),
                             'mimetype' => $file->get_mimetype(),
                             'timemodified' => $file->get_timemodified(),
-                        );
+                        ];
                     }
                 }
             }
@@ -988,7 +988,7 @@ class mod_quiz_external extends external_api {
             // Check display settings for question.
             $settings = $questiondef->get_question_definition_for_external_rendering($qattempt, $displayoptions);
 
-            $question = array(
+            $question = [
                 'slot' => $slot,
                 'type' => $qtype,
                 'page' => $attemptobj->get_question_page($slot),
@@ -999,7 +999,7 @@ class mod_quiz_external extends external_api {
                 'lastactiontime' => $qattempt->get_last_step()->get_timecreated(),
                 'hasautosavedstep' => $qattempt->has_autosaved_step(),
                 'settings' => !empty($settings) ? json_encode($settings) : null,
-            );
+            ];
 
             if ($attemptobj->is_real_question($slot)) {
                 $question['number'] = $attemptobj->get_question_number($slot);
@@ -1031,18 +1031,18 @@ class mod_quiz_external extends external_api {
      */
     public static function get_attempt_data_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'attemptid' => new external_value(PARAM_INT, 'attempt id'),
                 'page' => new external_value(PARAM_INT, 'page number'),
                 'preflightdata' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
                             'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
-                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
+                        ]
+                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, []
                 )
-            )
+            ]
         );
     }
 
@@ -1055,16 +1055,16 @@ class mod_quiz_external extends external_api {
      * @return array of warnings and the attempt data, next page, message and questions
      * @since Moodle 3.1
      */
-    public static function get_attempt_data($attemptid, $page, $preflightdata = array()) {
+    public static function get_attempt_data($attemptid, $page, $preflightdata = []) {
         global $PAGE;
 
-        $warnings = array();
+        $warnings = [];
 
-        $params = array(
+        $params = [
             'attemptid' => $attemptid,
             'page' => $page,
             'preflightdata' => $preflightdata,
-        );
+        ];
         $params = self::validate_parameters(self::get_attempt_data_parameters(), $params);
 
         list($attemptobj, $messages) = self::validate_attempt($params);
@@ -1079,7 +1079,7 @@ class mod_quiz_external extends external_api {
         // Set a default URL to stop the debugging output.
         $PAGE->set_url('/fake/url');
 
-        $result = array();
+        $result = [];
         $result['attempt'] = $attemptobj->get_attempt();
         $result['messages'] = $messages;
         $result['nextpage'] = $nextpage;
@@ -1097,7 +1097,7 @@ class mod_quiz_external extends external_api {
      */
     public static function get_attempt_data_returns() {
         return new external_single_structure(
-            array(
+            [
                 'attempt' => self::attempt_structure(),
                 'messages' => new external_multiple_structure(
                     new external_value(PARAM_TEXT, 'access message'),
@@ -1106,7 +1106,7 @@ class mod_quiz_external extends external_api {
                 'nextpage' => new external_value(PARAM_INT, 'next page number'),
                 'questions' => new external_multiple_structure(self::question_structure()),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -1118,17 +1118,17 @@ class mod_quiz_external extends external_api {
      */
     public static function get_attempt_summary_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'attemptid' => new external_value(PARAM_INT, 'attempt id'),
                 'preflightdata' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
                             'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
-                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
+                        ]
+                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, []
                 )
-            )
+            ]
         );
     }
 
@@ -1140,19 +1140,19 @@ class mod_quiz_external extends external_api {
      * @return array of warnings and the attempt summary data for each question
      * @since Moodle 3.1
      */
-    public static function get_attempt_summary($attemptid, $preflightdata = array()) {
+    public static function get_attempt_summary($attemptid, $preflightdata = []) {
 
-        $warnings = array();
+        $warnings = [];
 
-        $params = array(
+        $params = [
             'attemptid' => $attemptid,
             'preflightdata' => $preflightdata,
-        );
+        ];
         $params = self::validate_parameters(self::get_attempt_summary_parameters(), $params);
 
         list($attemptobj, $messages) = self::validate_attempt($params, true, false);
 
-        $result = array();
+        $result = [];
         $result['warnings'] = $warnings;
         $result['questions'] = self::get_attempt_questions_data($attemptobj, false, 'all');
 
@@ -1167,10 +1167,10 @@ class mod_quiz_external extends external_api {
      */
     public static function get_attempt_summary_returns() {
         return new external_single_structure(
-            array(
+            [
                 'questions' => new external_multiple_structure(self::question_structure()),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -1182,25 +1182,25 @@ class mod_quiz_external extends external_api {
      */
     public static function save_attempt_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'attemptid' => new external_value(PARAM_INT, 'attempt id'),
                 'data' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'name' => new external_value(PARAM_RAW, 'data name'),
                             'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
+                        ]
                     ), 'the data to be saved'
                 ),
                 'preflightdata' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
                             'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
-                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
+                        ]
+                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, []
                 )
-            )
+            ]
         );
     }
 
@@ -1213,16 +1213,16 @@ class mod_quiz_external extends external_api {
      * @return array of warnings and execution result
      * @since Moodle 3.1
      */
-    public static function save_attempt($attemptid, $data, $preflightdata = array()) {
+    public static function save_attempt($attemptid, $data, $preflightdata = []) {
         global $DB, $USER;
 
-        $warnings = array();
+        $warnings = [];
 
-        $params = array(
+        $params = [
             'attemptid' => $attemptid,
             'data' => $data,
             'preflightdata' => $preflightdata,
-        );
+        ];
         $params = self::validate_parameters(self::save_attempt_parameters(), $params);
 
         // Add a page, required by validate_attempt.
@@ -1234,7 +1234,7 @@ class mod_quiz_external extends external_api {
         }
         $transaction = $DB->start_delegated_transaction();
         // Create the $_POST object required by the question engine.
-        $_POST = array();
+        $_POST = [];
         foreach ($data as $element) {
             $_POST[$element['name']] = $element['value'];
             // Some deep core functions like file_get_submitted_draft_itemid() also requires $_REQUEST to be filled.
@@ -1246,7 +1246,7 @@ class mod_quiz_external extends external_api {
         $attemptobj->process_auto_save($timenow);
         $transaction->allow_commit();
 
-        $result = array();
+        $result = [];
         $result['status'] = true;
         $result['warnings'] = $warnings;
         return $result;
@@ -1260,10 +1260,10 @@ class mod_quiz_external extends external_api {
      */
     public static function save_attempt_returns() {
         return new external_single_structure(
-            array(
+            [
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -1275,29 +1275,29 @@ class mod_quiz_external extends external_api {
      */
     public static function process_attempt_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'attemptid' => new external_value(PARAM_INT, 'attempt id'),
                 'data' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'name' => new external_value(PARAM_RAW, 'data name'),
                             'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
+                        ]
                     ),
-                    'the data to be saved', VALUE_DEFAULT, array()
+                    'the data to be saved', VALUE_DEFAULT, []
                 ),
                 'finishattempt' => new external_value(PARAM_BOOL, 'whether to finish or not the attempt', VALUE_DEFAULT, false),
                 'timeup' => new external_value(PARAM_BOOL, 'whether the WS was called by a timer when the time is up',
                                                 VALUE_DEFAULT, false),
                 'preflightdata' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
                             'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
-                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
+                        ]
+                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, []
                 )
-            )
+            ]
         );
     }
 
@@ -1312,18 +1312,18 @@ class mod_quiz_external extends external_api {
      * @return array of warnings and the attempt state after the processing
      * @since Moodle 3.1
      */
-    public static function process_attempt($attemptid, $data, $finishattempt = false, $timeup = false, $preflightdata = array()) {
+    public static function process_attempt($attemptid, $data, $finishattempt = false, $timeup = false, $preflightdata = []) {
         global $USER;
 
-        $warnings = array();
+        $warnings = [];
 
-        $params = array(
+        $params = [
             'attemptid' => $attemptid,
             'data' => $data,
             'finishattempt' => $finishattempt,
             'timeup' => $timeup,
             'preflightdata' => $preflightdata,
-        );
+        ];
         $params = self::validate_parameters(self::process_attempt_parameters(), $params);
 
         // Do not check access manager rules and evaluate fail if overdue.
@@ -1337,7 +1337,7 @@ class mod_quiz_external extends external_api {
             $USER->ignoresesskey = true;
         }
         // Create the $_POST object required by the question engine.
-        $_POST = array();
+        $_POST = [];
         foreach ($params['data'] as $element) {
             $_POST[$element['name']] = $element['value'];
             $_REQUEST[$element['name']] = $element['value'];
@@ -1346,7 +1346,7 @@ class mod_quiz_external extends external_api {
         $finishattempt = $params['finishattempt'];
         $timeup = $params['timeup'];
 
-        $result = array();
+        $result = [];
         // Update the timemodifiedoffline field.
         $attemptobj->set_offline_modified_time($timenow);
         $result['state'] = $attemptobj->process_attempt($timenow, $finishattempt, $timeup, 0);
@@ -1363,11 +1363,11 @@ class mod_quiz_external extends external_api {
      */
     public static function process_attempt_returns() {
         return new external_single_structure(
-            array(
+            [
                 'state' => new external_value(PARAM_ALPHANUMEXT, 'state: the new attempt state:
                                                                     inprogress, finished, overdue, abandoned'),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -1394,7 +1394,7 @@ class mod_quiz_external extends external_api {
         } else if (!$attemptobj->is_review_allowed()) {
             throw new moodle_exception('noreviewattempt', 'quiz', $attemptobj->view_url());
         }
-        return array($attemptobj, $displayoptions);
+        return [$attemptobj, $displayoptions];
     }
 
     /**
@@ -1405,11 +1405,11 @@ class mod_quiz_external extends external_api {
      */
     public static function get_attempt_review_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'attemptid' => new external_value(PARAM_INT, 'attempt id'),
                 'page' => new external_value(PARAM_INT, 'page number, empty for all the questions in all the pages',
                                                 VALUE_DEFAULT, -1),
-            )
+            ]
         );
     }
 
@@ -1424,12 +1424,12 @@ class mod_quiz_external extends external_api {
     public static function get_attempt_review($attemptid, $page = -1) {
         global $PAGE;
 
-        $warnings = array();
+        $warnings = [];
 
-        $params = array(
+        $params = [
             'attemptid' => $attemptid,
             'page' => $page,
-        );
+        ];
         $params = self::validate_parameters(self::get_attempt_review_parameters(), $params);
 
         list($attemptobj, $displayoptions) = self::validate_attempt_review($params);
@@ -1441,20 +1441,20 @@ class mod_quiz_external extends external_api {
         }
 
         // Prepare the output.
-        $result = array();
+        $result = [];
         $result['attempt'] = $attemptobj->get_attempt();
         $result['questions'] = self::get_attempt_questions_data($attemptobj, true, $page, true);
 
-        $result['additionaldata'] = array();
+        $result['additionaldata'] = [];
         // Summary data (from behaviours).
         $summarydata = $attemptobj->get_additional_summary_data($displayoptions);
         foreach ($summarydata as $key => $data) {
             // This text does not need formatting (no need for external_format_[string|text]).
-            $result['additionaldata'][] = array(
+            $result['additionaldata'][] = [
                 'id' => $key,
                 'title' => $data['title'], $attemptobj->get_quizobj()->get_context()->id,
                 'content' => $data['content'],
-            );
+            ];
         }
 
         // Feedback if there is any, and the user is allowed to see it now.
@@ -1462,11 +1462,11 @@ class mod_quiz_external extends external_api {
 
         $feedback = $attemptobj->get_overall_feedback($grade);
         if ($displayoptions->overallfeedback && $feedback) {
-            $result['additionaldata'][] = array(
+            $result['additionaldata'][] = [
                 'id' => 'feedback',
                 'title' => get_string('feedback', 'quiz'),
                 'content' => $feedback,
-            );
+            ];
         }
 
         $result['grade'] = $grade;
@@ -1482,21 +1482,21 @@ class mod_quiz_external extends external_api {
      */
     public static function get_attempt_review_returns() {
         return new external_single_structure(
-            array(
+            [
                 'grade' => new external_value(PARAM_RAW, 'grade for the quiz (or empty or "notyetgraded")'),
                 'attempt' => self::attempt_structure(),
                 'additionaldata' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'id' => new external_value(PARAM_ALPHANUMEXT, 'id of the data'),
                             'title' => new external_value(PARAM_TEXT, 'data title'),
                             'content' => new external_value(PARAM_RAW, 'data content'),
-                        )
+                        ]
                     )
                 ),
                 'questions' => new external_multiple_structure(self::question_structure()),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -1508,18 +1508,18 @@ class mod_quiz_external extends external_api {
      */
     public static function view_attempt_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'attemptid' => new external_value(PARAM_INT, 'attempt id'),
                 'page' => new external_value(PARAM_INT, 'page number'),
                 'preflightdata' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
                             'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
-                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
+                        ]
+                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, []
                 )
-            )
+            ]
         );
     }
 
@@ -1532,15 +1532,15 @@ class mod_quiz_external extends external_api {
      * @return array of warnings and status result
      * @since Moodle 3.1
      */
-    public static function view_attempt($attemptid, $page, $preflightdata = array()) {
+    public static function view_attempt($attemptid, $page, $preflightdata = []) {
 
-        $warnings = array();
+        $warnings = [];
 
-        $params = array(
+        $params = [
             'attemptid' => $attemptid,
             'page' => $page,
             'preflightdata' => $preflightdata,
-        );
+        ];
         $params = self::validate_parameters(self::view_attempt_parameters(), $params);
         list($attemptobj, $messages) = self::validate_attempt($params);
 
@@ -1552,7 +1552,7 @@ class mod_quiz_external extends external_api {
             throw new moodle_exception('Out of sequence access', 'quiz', $attemptobj->view_url());
         }
 
-        $result = array();
+        $result = [];
         $result['status'] = true;
         $result['warnings'] = $warnings;
         return $result;
@@ -1566,10 +1566,10 @@ class mod_quiz_external extends external_api {
      */
     public static function view_attempt_returns() {
         return new external_single_structure(
-            array(
+            [
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -1581,17 +1581,17 @@ class mod_quiz_external extends external_api {
      */
     public static function view_attempt_summary_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'attemptid' => new external_value(PARAM_INT, 'attempt id'),
                 'preflightdata' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
                             'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
-                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
+                        ]
+                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, []
                 )
-            )
+            ]
         );
     }
 
@@ -1603,21 +1603,21 @@ class mod_quiz_external extends external_api {
      * @return array of warnings and status result
      * @since Moodle 3.1
      */
-    public static function view_attempt_summary($attemptid, $preflightdata = array()) {
+    public static function view_attempt_summary($attemptid, $preflightdata = []) {
 
-        $warnings = array();
+        $warnings = [];
 
-        $params = array(
+        $params = [
             'attemptid' => $attemptid,
             'preflightdata' => $preflightdata,
-        );
+        ];
         $params = self::validate_parameters(self::view_attempt_summary_parameters(), $params);
         list($attemptobj, $messages) = self::validate_attempt($params);
 
         // Log action.
         $attemptobj->fire_attempt_summary_viewed_event();
 
-        $result = array();
+        $result = [];
         $result['status'] = true;
         $result['warnings'] = $warnings;
         return $result;
@@ -1631,10 +1631,10 @@ class mod_quiz_external extends external_api {
      */
     public static function view_attempt_summary_returns() {
         return new external_single_structure(
-            array(
+            [
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -1646,9 +1646,9 @@ class mod_quiz_external extends external_api {
      */
     public static function view_attempt_review_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'attemptid' => new external_value(PARAM_INT, 'attempt id'),
-            )
+            ]
         );
     }
 
@@ -1661,18 +1661,18 @@ class mod_quiz_external extends external_api {
      */
     public static function view_attempt_review($attemptid) {
 
-        $warnings = array();
+        $warnings = [];
 
-        $params = array(
+        $params = [
             'attemptid' => $attemptid,
-        );
+        ];
         $params = self::validate_parameters(self::view_attempt_review_parameters(), $params);
         list($attemptobj, $displayoptions) = self::validate_attempt_review($params);
 
         // Log action.
         $attemptobj->fire_attempt_reviewed_event();
 
-        $result = array();
+        $result = [];
         $result['status'] = true;
         $result['warnings'] = $warnings;
         return $result;
@@ -1686,10 +1686,10 @@ class mod_quiz_external extends external_api {
      */
     public static function view_attempt_review_returns() {
         return new external_single_structure(
-            array(
+            [
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -1701,10 +1701,10 @@ class mod_quiz_external extends external_api {
      */
     public static function get_quiz_feedback_for_grade_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
                 'grade' => new external_value(PARAM_FLOAT, 'the grade to check'),
-            )
+            ]
         );
     }
 
@@ -1719,16 +1719,16 @@ class mod_quiz_external extends external_api {
     public static function get_quiz_feedback_for_grade($quizid, $grade) {
         global $DB;
 
-        $params = array(
+        $params = [
             'quizid' => $quizid,
             'grade' => $grade,
-        );
+        ];
         $params = self::validate_parameters(self::get_quiz_feedback_for_grade_parameters(), $params);
-        $warnings = array();
+        $warnings = [];
 
         list($quiz, $course, $cm, $context) = self::validate_quiz($params['quizid']);
 
-        $result = array();
+        $result = [];
         $result['feedbacktext'] = '';
         $result['feedbacktextformat'] = FORMAT_MOODLE;
 
@@ -1762,12 +1762,12 @@ class mod_quiz_external extends external_api {
      */
     public static function get_quiz_feedback_for_grade_returns() {
         return new external_single_structure(
-            array(
+            [
                 'feedbacktext' => new external_value(PARAM_RAW, 'the comment that corresponds to this grade (empty for none)'),
                 'feedbacktextformat' => new external_format_value('feedbacktext', VALUE_OPTIONAL),
                 'feedbackinlinefiles' => new external_files('feedback inline files', VALUE_OPTIONAL),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -1779,9 +1779,9 @@ class mod_quiz_external extends external_api {
      */
     public static function get_quiz_access_information_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'quizid' => new external_value(PARAM_INT, 'quiz instance id')
-            )
+            ]
         );
     }
 
@@ -1795,16 +1795,16 @@ class mod_quiz_external extends external_api {
     public static function get_quiz_access_information($quizid) {
         global $DB, $USER;
 
-        $warnings = array();
+        $warnings = [];
 
-        $params = array(
+        $params = [
             'quizid' => $quizid
-        );
+        ];
         $params = self::validate_parameters(self::get_quiz_access_information_parameters(), $params);
 
         list($quiz, $course, $cm, $context) = self::validate_quiz($params['quizid']);
 
-        $result = array();
+        $result = [];
         // Capabilities first.
         $result['canattempt'] = has_capability('mod/quiz:attempt', $context);;
         $result['canmanage'] = has_capability('mod/quiz:manage', $context);;
@@ -1834,7 +1834,7 @@ class mod_quiz_external extends external_api {
      */
     public static function get_quiz_access_information_returns() {
         return new external_single_structure(
-            array(
+            [
                 'canattempt' => new external_value(PARAM_BOOL, 'Whether the user can do the quiz or not.'),
                 'canmanage' => new external_value(PARAM_BOOL, 'Whether the user can edit the quiz settings or not.'),
                 'canpreview' => new external_value(PARAM_BOOL, 'Whether the user can preview the quiz or not.'),
@@ -1848,7 +1848,7 @@ class mod_quiz_external extends external_api {
                 'preventaccessreasons' => new external_multiple_structure(
                                             new external_value(PARAM_TEXT, 'access restriction description'), 'list of reasons'),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -1860,10 +1860,10 @@ class mod_quiz_external extends external_api {
      */
     public static function get_attempt_access_information_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
                 'attemptid' => new external_value(PARAM_INT, 'attempt id, 0 for the user last attempt if exists', VALUE_DEFAULT, 0),
-            )
+            ]
         );
     }
 
@@ -1878,12 +1878,12 @@ class mod_quiz_external extends external_api {
     public static function get_attempt_access_information($quizid, $attemptid = 0) {
         global $DB, $USER;
 
-        $warnings = array();
+        $warnings = [];
 
-        $params = array(
+        $params = [
             'quizid' => $quizid,
             'attemptid' => $attemptid,
-        );
+        ];
         $params = self::validate_parameters(self::get_attempt_access_information_parameters(), $params);
 
         list($quiz, $course, $cm, $context) = self::validate_quiz($params['quizid']);
@@ -1921,7 +1921,7 @@ class mod_quiz_external extends external_api {
             $attempttocheck = $unfinishedattempt ?: $lastfinishedattempt;
         }
 
-        $result = array();
+        $result = [];
         $result['isfinished'] = $accessmanager->is_finished($numattempts, $lastfinishedattempt);
         $result['preventnewattemptreasons'] = $accessmanager->prevent_new_attempt($numattempts, $lastfinishedattempt);
 
@@ -1944,7 +1944,7 @@ class mod_quiz_external extends external_api {
      */
     public static function get_attempt_access_information_returns() {
         return new external_single_structure(
-            array(
+            [
                 'endtime' => new external_value(PARAM_INT, 'When the attempt must be submitted (determined by rules).',
                                                 VALUE_OPTIONAL),
                 'isfinished' => new external_value(PARAM_BOOL, 'Whether there is no way the user will ever be allowed to attempt.'),
@@ -1954,7 +1954,7 @@ class mod_quiz_external extends external_api {
                                                 new external_value(PARAM_TEXT, 'access restriction description'),
                                                                     'list of reasons'),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -1966,9 +1966,9 @@ class mod_quiz_external extends external_api {
      */
     public static function get_quiz_required_qtypes_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'quizid' => new external_value(PARAM_INT, 'quiz instance id')
-            )
+            ]
         );
     }
 
@@ -1983,11 +1983,11 @@ class mod_quiz_external extends external_api {
     public static function get_quiz_required_qtypes($quizid) {
         global $DB, $USER;
 
-        $warnings = array();
+        $warnings = [];
 
-        $params = array(
+        $params = [
             'quizid' => $quizid
-        );
+        ];
         $params = self::validate_parameters(self::get_quiz_required_qtypes_parameters(), $params);
 
         list($quiz, $course, $cm, $context) = self::validate_quiz($params['quizid']);
@@ -1997,7 +1997,7 @@ class mod_quiz_external extends external_api {
         $quizobj->load_questions();
 
         // Question types used.
-        $result = array();
+        $result = [];
         $result['questiontypes'] = $quizobj->get_all_question_types_used(true);
         $result['warnings'] = $warnings;
         return $result;
@@ -2011,11 +2011,11 @@ class mod_quiz_external extends external_api {
      */
     public static function get_quiz_required_qtypes_returns() {
         return new external_single_structure(
-            array(
+            [
                 'questiontypes' => new external_multiple_structure(
                                     new external_value(PARAM_PLUGIN, 'question type'), 'list of question types used in the quiz'),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 

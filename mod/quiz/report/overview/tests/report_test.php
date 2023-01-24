@@ -70,9 +70,9 @@ class report_test extends \advanced_testcase {
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
         $quizgenerator = $generator->get_plugin_generator('mod_quiz');
-        $quiz = $quizgenerator->create_instance(array('course' => $course->id,
+        $quiz = $quizgenerator->create_instance(['course' => $course->id,
                 'grademethod' => QUIZ_GRADEHIGHEST, 'grade' => 100.0, 'sumgrades' => 10.0,
-                'attempts' => 10));
+                'attempts' => 10]);
 
         // Add one question.
         /** @var core_question_generator $questiongenerator */
@@ -104,18 +104,18 @@ class report_test extends \advanced_testcase {
 
         // The test data.
         $timestamp = 1234567890;
-        $attempts = array(
-            array($quiz, $student1, 1, 0.0,  quiz_attempt::FINISHED),
-            array($quiz, $student1, 2, 5.0,  quiz_attempt::FINISHED),
-            array($quiz, $student1, 3, 8.0,  quiz_attempt::FINISHED),
-            array($quiz, $student1, 4, null, quiz_attempt::ABANDONED),
-            array($quiz, $student1, 5, null, quiz_attempt::IN_PROGRESS),
-            array($quiz, $student2, 1, null, quiz_attempt::ABANDONED),
-            array($quiz, $student2, 2, null, quiz_attempt::ABANDONED),
-            array($quiz, $student2, 3, 7.0,  quiz_attempt::FINISHED),
-            array($quiz, $student2, 4, null, quiz_attempt::ABANDONED),
-            array($quiz, $student2, 5, null, quiz_attempt::ABANDONED),
-        );
+        $attempts = [
+            [$quiz, $student1, 1, 0.0,  quiz_attempt::FINISHED],
+            [$quiz, $student1, 2, 5.0,  quiz_attempt::FINISHED],
+            [$quiz, $student1, 3, 8.0,  quiz_attempt::FINISHED],
+            [$quiz, $student1, 4, null, quiz_attempt::ABANDONED],
+            [$quiz, $student1, 5, null, quiz_attempt::IN_PROGRESS],
+            [$quiz, $student2, 1, null, quiz_attempt::ABANDONED],
+            [$quiz, $student2, 2, null, quiz_attempt::ABANDONED],
+            [$quiz, $student2, 3, 7.0,  quiz_attempt::FINISHED],
+            [$quiz, $student2, 4, null, quiz_attempt::ABANDONED],
+            [$quiz, $student2, 5, null, quiz_attempt::ABANDONED],
+        ];
 
         // Load it in to quiz attempts table.
         foreach ($attempts as $attemptdata) {
@@ -170,22 +170,22 @@ class report_test extends \advanced_testcase {
         $cm = get_coursemodule_from_id('quiz', $quiz->cmid);
         $qmsubselect = quiz_report_qm_filter_select($quiz);
         $studentsjoins = get_enrolled_with_capabilities_join($context, '',
-                array('mod/quiz:attempt', 'mod/quiz:reviewmyattempts'));
+                ['mod/quiz:attempt', 'mod/quiz:reviewmyattempts']);
         $empty = new \core\dml\sql_join();
 
         // Set the options.
         $reportoptions = new quiz_overview_options('overview', $quiz, $cm, null);
         $reportoptions->attempts = attempts_report::ENROLLED_ALL;
         $reportoptions->onlygraded = true;
-        $reportoptions->states = array(quiz_attempt::IN_PROGRESS, quiz_attempt::OVERDUE, quiz_attempt::FINISHED);
+        $reportoptions->states = [quiz_attempt::IN_PROGRESS, quiz_attempt::OVERDUE, quiz_attempt::FINISHED];
 
         // Now do a minimal set-up of the table class.
         $q->slot = 1;
         $q->maxmark = 10;
         $table = new quiz_overview_table($quiz, $context, $qmsubselect, $reportoptions,
-                $empty, $studentsjoins, array(1 => $q), null);
+                $empty, $studentsjoins, [1 => $q], null);
         $table->download = $isdownloading; // Cannot call the is_downloading API, because it gives errors.
-        $table->define_columns(array('fullname'));
+        $table->define_columns(['fullname']);
         $table->sortable(true, 'uniqueid');
         $table->define_baseurl(new \moodle_url('/mod/quiz/report.php'));
         $table->setup();

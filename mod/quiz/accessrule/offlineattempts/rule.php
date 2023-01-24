@@ -44,7 +44,7 @@ class quizaccess_offlineattempts extends access_rule_base {
 
         // First, check if the user did something offline.
         if (!empty($attemptid)) {
-            $timemodifiedoffline = $DB->get_field('quiz_attempts', 'timemodifiedoffline', array('id' => $attemptid));
+            $timemodifiedoffline = $DB->get_field('quiz_attempts', 'timemodifiedoffline', ['id' => $attemptid]);
             if (empty($timemodifiedoffline)) {
                 return false;
             }
@@ -59,7 +59,7 @@ class quizaccess_offlineattempts extends access_rule_base {
             MoodleQuickForm $mform, $attemptid) {
         global $DB;
 
-        $timemodifiedoffline = $DB->get_field('quiz_attempts', 'timemodifiedoffline', array('id' => $attemptid));
+        $timemodifiedoffline = $DB->get_field('quiz_attempts', 'timemodifiedoffline', ['id' => $attemptid]);
         $lasttime = format_time(time() - $timemodifiedoffline);
 
         $mform->addElement('header', 'offlineattemptsheader', get_string('mobileapp', 'quizaccess_offlineattempts'));

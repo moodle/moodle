@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 $attemptid = required_param('attempt', PARAM_INT); // The attempt to summarise.
 $cmid = optional_param('cmid', null, PARAM_INT);
 
-$PAGE->set_url('/mod/quiz/summary.php', array('attempt' => $attemptid));
+$PAGE->set_url('/mod/quiz/summary.php', ['attempt' => $attemptid]);
 // During quiz attempts, the browser back/forwards buttons should force a reload.
 $PAGE->set_cacheable(false);
 $PAGE->set_secondary_active_tab("modulepage");
