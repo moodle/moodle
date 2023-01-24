@@ -1,6 +1,9 @@
 This files describes API changes in /auth/* - plugins,
 information provided here is intended especially for developers.
 
+=== 4.2 ===
+* Support for configuration with the deprecated auth_config.php file has been removed.
+
 === 3.9 ===
 
 * The following functions, previously used (exclusively) by upgrade steps are not available anymore because of the upgrade cleanup performed for this version. See MDL-65809 for more info:
