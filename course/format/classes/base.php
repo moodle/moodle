@@ -86,6 +86,8 @@ abstract class base {
     private static $instances = array();
     /** @var array plugin name => class name. */
     private static $classesforformat = array('site' => 'site');
+    /** @var sectionmanager the format section manager. */
+    protected $sectionmanager = null;
 
     /**
      * Creates a new instance of class
@@ -810,6 +812,10 @@ abstract class base {
             'sectiondelete_info',
             'sectionsdelete_title',
             'sectionsdelete_info',
+            'sectionmove_title',
+            'sectionmove_info',
+            'sectionsmove_title',
+            'sectionsmove_info',
             'selectsection'
         ];
         foreach ($formatoverridbles as $key) {
@@ -1544,6 +1550,31 @@ abstract class base {
      */
     public function delete_module(cm_info $cm, bool $async = false) {
         course_delete_module($cm->id, $async);
+    }
+
+    /**
+     * Moves a section just after the target section.
+     *
+     * @param section_info $section the section to move
+     * @param section_info $destination the section that should be below the moved section
+     * @return boolean if the section can be moved or not
+     */
+    public function move_section_after(section_info $section, section_info $destination): bool {
+        if ($section->section == $destination->section || $section->section == $destination->section + 1) {
+            return true;
+        }
+        // The move_section_to moves relative to the section to move. However, this
+        // method will move the target section always after the destination.
+        if ($section->section > $destination->section) {
+            $newsectionnumber = $destination->section + 1;
+        } else {
+            $newsectionnumber = $destination->section;
+        }
+        return move_section_to(
+            $this->get_course(),
+            $section->section,
+            $newsectionnumber
+        );
     }
 
     /**

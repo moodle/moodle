@@ -537,6 +537,131 @@ class base_test extends advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test for the move_section_after method.
+     *
+     * @covers ::move_section_after
+     * @dataProvider move_section_after_provider
+     * @param string $movesection the reference of the section to move
+     * @param string $destination the reference of the destination section
+     * @param string[] $order the references of the final section order
+     */
+    public function test_move_section_after(string $movesection, string $destination, array $order) {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        course_create_sections_if_missing($course, [0, 1, 2, 3, 4, 5]);
+
+        $format = course_get_format($course);
+        $modinfo = $format->get_modinfo();
+        $sectionsinfo = $modinfo->get_section_info_all();
+
+        $references = [];
+        foreach ($sectionsinfo as $section) {
+            $references["section{$section->section}"] = $section;
+        }
+
+        $result = $format->move_section_after(
+            $references[$movesection],
+            $references[$destination]
+        );
+        $this->assertEquals(true, $result);
+        // Check the updated course section list.
+        $modinfo = $format->get_modinfo();
+        $sectionsinfo = $modinfo->get_section_info_all();
+        $this->assertCount(count($order), $sectionsinfo);
+        foreach ($sectionsinfo as $key => $section) {
+            $sectionreference = $order[$key];
+            $oldinfo = $references[$sectionreference];
+            $this->assertEquals($oldinfo->id, $section->id);
+        }
+    }
+
+    /**
+     * Data provider for test_move_section_after.
+     *
+     * @return array the testing scenarios
+     */
+    public function move_section_after_provider(): array {
+        return [
+            'Move top' => [
+                'movesection' => 'section3',
+                'destination' => 'section0',
+                'order' => [
+                    'section0',
+                    'section3',
+                    'section1',
+                    'section2',
+                    'section4',
+                    'section5',
+                ],
+            ],
+            'Move up' => [
+                'movesection' => 'section3',
+                'destination' => 'section1',
+                'order' => [
+                    'section0',
+                    'section1',
+                    'section3',
+                    'section2',
+                    'section4',
+                    'section5',
+                ],
+            ],
+            'Do not move' => [
+                'movesection' => 'section3',
+                'destination' => 'section2',
+                'order' => [
+                    'section0',
+                    'section1',
+                    'section2',
+                    'section3',
+                    'section4',
+                    'section5',
+                ],
+            ],
+            'Same position' => [
+                'movesection' => 'section3',
+                'destination' => 'section3',
+                'order' => [
+                    'section0',
+                    'section1',
+                    'section2',
+                    'section3',
+                    'section4',
+                    'section5',
+                ],
+            ],
+            'Move down' => [
+                'movesection' => 'section3',
+                'destination' => 'section4',
+                'order' => [
+                    'section0',
+                    'section1',
+                    'section2',
+                    'section4',
+                    'section3',
+                    'section5',
+                ],
+            ],
+            'Move bottom' => [
+                'movesection' => 'section3',
+                'destination' => 'section5',
+                'order' => [
+                    'section0',
+                    'section1',
+                    'section2',
+                    'section4',
+                    'section5',
+                    'section3',
+                ],
+            ],
+        ];
+    }
 }
 
 /**

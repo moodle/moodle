@@ -165,6 +165,91 @@ class stateactions {
     }
 
     /**
+     * Move course sections after to another location in the same course.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids the list of affected course module ids
+     * @param int $targetsectionid optional target section id
+     * @param int $targetcmid optional target cm id
+     */
+    public function section_move_after(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids,
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+        // Validate target elements.
+        if (!$targetsectionid) {
+            throw new moodle_exception("Action section_move_after requires targetsectionid");
+        }
+
+        $this->validate_sections($course, $ids, __FUNCTION__);
+
+        $coursecontext = context_course::instance($course->id);
+        require_capability('moodle/course:movesections', $coursecontext);
+
+        // Section will move after the target section. This means it should be processed in
+        // descending order to keep the relative course order.
+        $this->validate_sections($course, [$targetsectionid], __FUNCTION__);
+        $ids = $this->sort_section_ids_by_section_number($course, $ids, true);
+
+        $format = course_get_format($course->id);
+        $affectedsections = [$targetsectionid => true];
+
+        foreach ($ids as $id) {
+            // An update section_info is needed as section numbers can change on every section movement.
+            $modinfo = get_fast_modinfo($course);
+            $section = $modinfo->get_section_info_by_id($id, MUST_EXIST);
+            $targetsection = $modinfo->get_section_info_by_id($targetsectionid, MUST_EXIST);
+            $affectedsections[$section->id] = true;
+            $format->move_section_after($section, $targetsection);
+        }
+
+        // Use section_state to return the section and activities updated state.
+        $this->section_state($updates, $course, $ids, $targetsectionid);
+
+        // All course sections can be renamed because of the resort.
+        $modinfo = get_fast_modinfo($course);
+        $allsections = $modinfo->get_section_info_all();
+        foreach ($allsections as $section) {
+            // Ignore the affected sections because they are already in the updates.
+            if (isset($affectedsections[$section->id])) {
+                continue;
+            }
+            $updates->add_section_put($section->id);
+        }
+        // The section order is at a course level.
+        $updates->add_course_put();
+    }
+
+    /**
+     * Sort the sections ids depending on the section number.
+     *
+     * Some actions like move should be done in an specific order.
+     *
+     * @param stdClass $course the course object
+     * @param int[] $sectionids the array of section $ids
+     * @param bool $descending if the sort order must be descending instead of ascending
+     * @return int[] the array of section ids sorted by section number
+     */
+    protected function sort_section_ids_by_section_number(
+        stdClass $course,
+        array $sectionids,
+        bool $descending = false
+    ): array {
+        $sorting = ($descending) ? -1 : 1;
+        $sortfunction = function ($asection, $bsection) use ($sorting) {
+            return ($asection->section <=> $bsection->section) * $sorting;
+        };
+        $modinfo = get_fast_modinfo($course);
+        $sections = $this->get_section_info($modinfo, $sectionids);
+        uasort($sections, $sortfunction);
+        return array_keys($sections);
+    }
+
+    /**
      * Create a course section.
      *
      * This method follows the same logic as changenumsections.php.
