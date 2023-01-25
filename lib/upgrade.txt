@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.3 ===
+
+* Admin settings for passwords (admin_setting_configpasswordunmask) can now be a required field using the following class:
+    - admin_setting_requiredpasswordunmask
+
 === 4.2 ===
 
 * All context classes were moved to \core\context namespace while keeping full backwards compatibility.
