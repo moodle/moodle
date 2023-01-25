@@ -1,4 +1,4 @@
-@mod @mod_workshop @javascript
+@mod @mod_workshop
 Feature: Workshop self-assessment
   In order to use workshop activity
   As a student
@@ -6,11 +6,11 @@ Feature: Workshop self-assessment
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email            |
-      | student1 | Sam1      | Student1 | student1@example.com |
-      | student2 | Sam2      | Student2 | student2@example.com |
-      | student3 | Sam3      | Student3 | student3@example.com |
-      | teacher1 | Terry1    | Teacher1 | teacher1@example.com |
+      | username | firstname | lastname | email                |
+      | student1 | Student   | One      | student1@example.com |
+      | student2 | Student   | Two      | student2@example.com |
+      | student3 | Student   | Three    | student3@example.com |
+      | teacher1 | Teacher   | One      | teacher1@example.com |
     And the following "courses" exist:
       | fullname  | shortname |
       | Course1   | c1        |
@@ -24,17 +24,19 @@ Feature: Workshop self-assessment
       | activity | name         | course | idnumber  | useselfassessment |
       | workshop | TestWorkshop | c1     | workshop1 | 1                 |
     And I am on the "TestWorkshop" "workshop activity" page logged in as teacher1
+    And I edit assessment form in workshop "TestWorkshop" as:
+      | id_description__idx_0_editor | Aspect1 |
     And I change phase in workshop "TestWorkshop" to "Submission phase"
     And I am on the "TestWorkshop" "workshop activity" page logged in as student1
-    And I add a submission in workshop "TestWorkshop" as:"
+    And I add a submission in workshop "TestWorkshop" as:
       | Title              | Submission1  |
       | Submission content | Some content |
     And I am on the "TestWorkshop" "workshop activity" page logged in as student2
-    And I add a submission in workshop "TestWorkshop" as:"
+    And I add a submission in workshop "TestWorkshop" as:
       | Title              | Submission2  |
       | Submission content | Some content |
     And I am on the "TestWorkshop" "workshop activity" page logged in as student3
-    And I add a submission in workshop "TestWorkshop" as:"
+    And I add a submission in workshop "TestWorkshop" as:
       | Title              | Submission3  |
       | Submission content | Some content |
     And I am on the "TestWorkshop" "workshop activity" page logged in as teacher1
@@ -46,36 +48,23 @@ Feature: Workshop self-assessment
 
   Scenario: Student can assess their own submission
     When I select "Manual allocation" from the "jump" singleselect
-    Then the "by" select box should contain "Sam1 Student1"
-    And the "by" select box should contain "Sam2 Student2"
-    And the "by" select box should contain "Sam3 Student3"
-    And I should see "Sam1 Student1" in the "Sam1 Student1" "table_row"
-    And I should see "Sam2 Student2" in the "Sam2 Student2" "table_row"
-    And I should see "Sam3 Student3" in the "Sam3 Student3" "table_row"
-    # Then the following should exist in the "allocations" table:
-    #  | Participant is reviewed by | Participant   | Participant is reviewer of |
-    #  | Sam1 Student1              | Sam1 Student1 | Sam1 Student1              |
-    #  | Sam2 Student2              | Sam2 Student2 | Sam2 Student2              |
-    #  | Sam3 Student3              | Sam3 Student3 | Sam3 Student3              |
+    # Verify that each student has themself listed as a reviewer.
+    And the following should exist in the "allocations" table:
+      | -1-           | -2-           | -3-           |
+      | Student One   | Student One   | Student One   |
+      | Student Three | Student Three | Student Three |
+      | Student Two   | Student Two   | Student Two   |
     And I change phase in workshop "TestWorkshop" to "Assessment phase"
+    # Confirm that the student can assess their own submission.
     And I am on the "TestWorkshop" "workshop activity" page logged in as student1
-    And I should see "Assess yourself"
-    And I should see "Your submission"
-    And I should see "Assigned submissions to assess"
-    And I should see "Submission1"
-    And I should see "by Sam1 Student1"
+    Then I should see "Assess yourself"
     And the "Assess" "button" should be enabled
-    And I am on the "TestWorkshop" "workshop activity" page logged in as student2
-    And I should see "Assess yourself"
-    And I should see "Your submission"
-    And I should see "Assigned submissions to assess"
-    And I should see "Submission2"
-    And I should see "by Sam2 Student2"
-    And the "Assess" "button" should be enabled
-    And I am on the "TestWorkshop" "workshop activity" page logged in as student3
-    And I should see "Assess yourself"
-    And I should see "Your submission"
-    And I should see "Assigned submissions to assess"
-    And I should see "Submission3"
-    And I should see "by Sam3 Student3"
-    And the "Assess" "button" should be enabled
+    And I assess submission "Student One" in workshop "TestWorkshop" as:
+      | grade__idx_0            | 10 / 10                             |
+      | peercomment__idx_0      | My work is amazing hence the grade. |
+      | Feedback for the author | Good work as always                 |
+    And the "Re-assess" "button" should be enabled
+    And I should see "Already graded"
+    # As teacher, confirm that Student One assessed his own work and received a grade.
+    And I am on the TestWorkshop "workshop activity" page logged in as teacher1
+    And I should see grade "80" for workshop participant "Student One" set by peer "Student One"
