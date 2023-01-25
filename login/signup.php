@@ -38,10 +38,10 @@ if (empty($SESSION->company)) {
     $wantedcompanyid = optional_param('id', 0, PARAM_INT);
     if (!empty($wantedcompanyid)) {
         $wantedcompanyshort = required_param('code', PARAM_CLEAN);
+        $SESSION->company = new company($wantedcompanyid);
     } else {
         $wantedcompanyshort = '';
     }
-    $SESSION->company = $wantedcompany;
 } else {
     $wantedcompanyid = $SESSION->company->id;
     $wantedcompanyshort = $SESSION->company->shortname;
