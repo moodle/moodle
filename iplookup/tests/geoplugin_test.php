@@ -45,12 +45,12 @@ class geoplugin_test extends \advanced_testcase {
         $result = iplookup_find_location('50.0.184.0');
 
         $this->assertEquals('array', gettype($result));
-        $this->assertEquals('San Francisco', $result['city']);
-        $this->assertEqualsWithDelta(-122.3933, $result['longitude'], 0.1, 'Coordinates are out of accepted tolerance');
-        $this->assertEqualsWithDelta(37.7697, $result['latitude'], 0.1, 'Coordinates are out of accepted tolerance');
+        $this->assertEquals('Santa Rosa', $result['city']);
+        $this->assertEqualsWithDelta(-122.7128, $result['longitude'], 0.1, 'Coordinates are out of accepted tolerance');
+        $this->assertEqualsWithDelta(38.4354, $result['latitude'], 0.1, 'Coordinates are out of accepted tolerance');
         $this->assertNull($result['error']);
         $this->assertEquals('array', gettype($result['title']));
-        $this->assertEquals('San Francisco', $result['title'][0]);
+        $this->assertEquals('Santa Rosa', $result['title'][0]);
         $this->assertEquals('United States', $result['title'][1]);
     }
 
