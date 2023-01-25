@@ -2289,5 +2289,55 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022100700, 'local', 'iomad');
     }
 
+    if ($oldversion < 2023012500) {
+
+        // Define index comp_par (not unique) to be added to company.
+        $table = new xmldb_table('company');
+        $index = new xmldb_index('comp_par', XMLDB_INDEX_NOTUNIQUE, ['parentid']);
+
+        // Conditionally launch add index comp_par.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+        // Define index comp_shortname (not unique) to be added to company.
+        $table = new xmldb_table('company');
+        $index = new xmldb_index('comp_shortname', XMLDB_INDEX_NOTUNIQUE, ['shortname']);
+
+        // Conditionally launch add index comp_shortname.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index comp_name (not unique) to be added to company.
+        $table = new xmldb_table('company');
+        $index = new xmldb_index('comp_name', XMLDB_INDEX_NOTUNIQUE, ['name']);
+
+        // Conditionally launch add index comp_name.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index depa_idcom (not unique) to be added to department.
+        $table = new xmldb_table('department');
+        $index = new xmldb_index('depa_idcom', XMLDB_INDEX_NOTUNIQUE, ['id', 'company']);
+
+        // Conditionally launch add index depa_idcom.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index depa_idcompar (not unique) to be added to department.
+        $table = new xmldb_table('department');
+        $index = new xmldb_index('depa_idcompar', XMLDB_INDEX_NOTUNIQUE, ['id', 'company', 'parent']);
+
+        // Conditionally launch add index depa_idcompar.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2023012500, 'local', 'iomad');
+    }
+
     return $result;
 }
