@@ -177,7 +177,18 @@ class date_test extends advanced_testcase {
         }
     }
 
-    public function test_timezone_lang_strings() {
+    /**
+     * We are only checking lang strings existence here, not code.
+     *
+     * @coversNothing
+     */
+    public function test_timezone_all_lang_strings() {
+        // We only run this test when PHPUNIT_LONGTEST is enabled, test_get_localised_timezone()
+        // is already checking the names of a few, hopefully stable enough to be run always.
+        if (!PHPUNIT_LONGTEST) {
+            $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
+        }
+
         $phpzones = DateTimeZone::listIdentifiers();
         $manager = get_string_manager();
         foreach ($phpzones as $tz) {
@@ -196,6 +207,12 @@ class date_test extends advanced_testcase {
 
         $result = core_date::get_localised_timezone('Pacific/Auckland');
         $this->assertSame('Pacific/Auckland', $result);
+
+        $result = core_date::get_localised_timezone('Europe/Madrid');
+        $this->assertSame('Europe/Madrid', $result);
+
+        $result = core_date::get_localised_timezone('America/New_York');
+        $this->assertSame('America/New_York', $result);
 
         $result = core_date::get_localised_timezone('99');
         $this->assertSame('Server timezone (Pacific/Auckland)', $result);
