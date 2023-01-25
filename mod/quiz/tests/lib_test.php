@@ -24,6 +24,7 @@
  */
 namespace mod_quiz;
 
+use core_external\external_api;
 use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
@@ -1254,7 +1255,7 @@ class lib_test extends \advanced_testcase {
         $slotid = $structure->get_slot_id_for_slot($slotnumber);
         $inplaceeditable = mod_quiz_inplace_editable('slotdisplaynumber', $slotid, $newvalue);
         $res = \core_external::update_inplace_editable('mod_quiz', 'slotdisplaynumber', $slotid, $newvalue);
-        $res = \external_api::clean_returnvalue(\core_external::update_inplace_editable_returns(), $res);
+        $res = external_api::clean_returnvalue(\core_external::update_inplace_editable_returns(), $res);
 
         $this->assertEquals(count((array) $inplaceeditable), count($res));
         $this->assertEquals($slotid, $res['itemid']);

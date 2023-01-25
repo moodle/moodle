@@ -1180,7 +1180,7 @@ function mod_quiz_inplace_editable(string $itemtype, int $itemid, string $newval
 
         // Call validate_context for course module to check access and set current context.
         $context = context_module::instance($cm->id);
-        \external_api::validate_context($context);
+        \core_external\external_api::validate_context($context);
 
         // Check permission of the user to update this item (customise question number).
         require_capability('mod/quiz:manage', $context);
