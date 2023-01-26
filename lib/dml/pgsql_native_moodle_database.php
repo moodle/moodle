@@ -594,7 +594,7 @@ class pgsql_native_moodle_database extends moodle_database {
 
             } else if (preg_match('/int(\d)/i', $rawcolumn->type, $matches)) {
                 $info->type = 'int';
-                if (strpos($rawcolumn->adsrc, 'nextval') === 0) {
+                if (strpos($rawcolumn->adsrc ?? '', 'nextval') === 0) {
                     $info->primary_key   = true;
                     $info->meta_type     = 'R';
                     $info->unique        = true;

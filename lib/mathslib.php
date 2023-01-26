@@ -123,7 +123,7 @@ class calc_formula {
      * @return string localised formula
      */
     public static function localize($formula) {
-        $formula = str_replace('.', '$', $formula); // temp placeholder
+        $formula = str_replace('.', '$', $formula ?? ''); // Temp placeholder.
         $formula = str_replace(',', get_string('listsep', 'langconfig'), $formula);
         $formula = str_replace('$', get_string('decsep', 'langconfig'), $formula);
         return $formula;

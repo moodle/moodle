@@ -63,7 +63,7 @@ class media_youtube_plugin extends core_media_player_external {
 
     protected function embed_external(moodle_url $url, $name, $width, $height, $options) {
 
-        $info = trim($name);
+        $info = trim($name ?? '');
         if (empty($info) or strpos($info, 'http') === 0) {
             $info = get_string('pluginname', 'media_youtube');
         }
@@ -125,7 +125,7 @@ OET;
         if (is_numeric($rawtime)) {
             // Start time already specified as a number of seconds; ensure it's an integer.
             $seconds = $rawtime;
-        } else if (preg_match('/(\d+?h)?(\d+?m)?(\d+?s)?/i', $rawtime, $matches)) {
+        } else if (preg_match('/(\d+?h)?(\d+?m)?(\d+?s)?/i', $rawtime ?? '', $matches)) {
             // Convert into a raw number of seconds, as that's all embedded players accept.
             for ($i = 1; $i < count($matches); $i++) {
                 if (empty($matches[$i])) {

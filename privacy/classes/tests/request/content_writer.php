@@ -381,8 +381,8 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @param   string          $text       The text to be processed
      * @return  string                      The processed string
      */
-    public function rewrite_pluginfile_urls(array $subcontext, $component, $filearea, $itemid, $text) : string {
-        return str_replace('@@PLUGINFILE@@/', 'files/', $text);
+    public function rewrite_pluginfile_urls(array $subcontext, $component, $filearea, $itemid, $text): string {
+        return str_replace('@@PLUGINFILE@@/', 'files/', $text ?? '');
     }
 
     /**

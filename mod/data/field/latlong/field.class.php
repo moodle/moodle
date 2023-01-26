@@ -170,11 +170,11 @@ class data_field_latlong extends data_field_base {
         }
 
         $lat = $content->content;
-        if (strlen($lat) < 1) {
+        if (strlen($lat ?? '') < 1) {
             return '';
         }
         $long = $content->content1;
-        if (strlen($long) < 1) {
+        if (strlen($long ?? '') < 1) {
             return '';
         }
         // We use format_float to display in the regional format.
@@ -254,7 +254,7 @@ class data_field_latlong extends data_field_base {
         // When updating these values (which might be region formatted) we should format
         // the float to allow for a consistent float format in the database.
         $value = unformat_float($value);
-        $value = trim($value);
+        $value = trim($value ?? '');
         if (strlen($value) > 0) {
             $value = floatval($value);
         } else {

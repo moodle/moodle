@@ -405,16 +405,15 @@ class user extends tablelike implements selectable_items {
 
                 $gradeitem = grade_item::fetch([
                     'courseid' => $this->courseid,
-                    'id' => $matches[1]
+                    'id' => $matches[1],
                 ]);
 
                 $isscale = ($gradeitem->gradetype == GRADE_TYPE_SCALE);
 
-                $empties = (trim($value) === '' or ($isscale and $value == -1));
+                $empties = (trim($value ?? '') === '' || ($isscale && $value == -1));
 
-                if ($filter == 'all' or $empties) {
-                    $data->$varname = ($isscale and empty($insertvalue)) ?
-                        -1 : $insertvalue;
+                if ($filter == 'all' || $empties) {
+                    $data->$varname = ($isscale && empty($insertvalue)) ? -1 : $insertvalue;
                 }
             }
         }

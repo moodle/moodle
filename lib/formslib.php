@@ -3261,7 +3261,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $html = str_replace('{type}', $element->getType(), $html);
             $html = str_replace('{name}', $element->getName(), $html);
             $html = str_replace('{groupname}', '', $html);
-            $html = str_replace('{class}', $element->getAttribute('class'), $html);
+            $html = str_replace('{class}', $element->getAttribute('class') ?? '', $html);
             $emptylabel = '';
             if ($element->getLabel() == '') {
                 $emptylabel = 'femptylabel';

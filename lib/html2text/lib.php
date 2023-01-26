@@ -52,7 +52,7 @@ class core_html2text extends \Html2Text\Html2Text {
      */
     function __construct($html = '', $options = array()) {
         // Call the parent constructor.
-        parent::__construct($html, $options);
+        parent::__construct($html ?? '', $options);
 
         // MDL-27736: Trailing spaces before newline or tab.
         $this->entSearch[] = '/[ ]+([\n\t])/';

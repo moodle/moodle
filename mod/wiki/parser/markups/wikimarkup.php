@@ -332,7 +332,7 @@ abstract class wiki_markup_parser extends generic_parser {
 
     protected function real_path($url) {
         $callbackargs = array_merge(array($url), $this->realpathcallbackargs);
-        return call_user_func_array($this->realpathcallback, $callbackargs);
+        return call_user_func_array($this->realpathcallback, array_values($callbackargs));
     }
 
     /**

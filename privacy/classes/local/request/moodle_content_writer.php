@@ -14,16 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains the moodle format implementation of the content writer.
- *
- * @package core_privacy
- * @copyright 2018 Andrew Nicols <andrew@nicols.co.uk>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core_privacy\local\request;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * The moodle_content_writer is the default Moodle implementation of a content writer.
@@ -33,6 +24,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Objects of data are stored as JSON.
  *
+ * @package core_privacy
  * @copyright 2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -168,7 +160,10 @@ class moodle_content_writer implements content_writer {
      * @param   string          $text       The text to be processed
      * @return  string                      The processed string
      */
-    public function rewrite_pluginfile_urls(array $subcontext, $component, $filearea, $itemid, $text) : string {
+    public function rewrite_pluginfile_urls(array $subcontext, $component, $filearea, $itemid, $text): string {
+        if ($text === null || $text === '') {
+            return '';
+        }
         // Need to take into consideration the subcontext to provide the full path to this file.
         $subcontextpath = '';
         if (!empty($subcontext)) {

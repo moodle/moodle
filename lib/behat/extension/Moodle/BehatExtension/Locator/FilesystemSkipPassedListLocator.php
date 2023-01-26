@@ -64,7 +64,7 @@ final class FilesystemSkipPassedListLocator implements SpecificationLocator {
      * @return SpecificationIterator
      */
     public function locateSpecifications(Suite $suite, $locator) {
-        if (!is_file($locator) || 'passed' !== pathinfo($locator, PATHINFO_EXTENSION)) {
+        if (!$locator || !is_file($locator) || 'passed' !== pathinfo($locator, PATHINFO_EXTENSION)) {
             return new NoSpecificationsIterator($suite);
         }
 

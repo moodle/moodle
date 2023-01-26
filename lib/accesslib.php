@@ -4519,7 +4519,7 @@ function role_get_name(stdClass $role, $context = null, $rolenamedisplay = ROLEN
     }
 
     if ($rolenamedisplay == ROLENAME_ALIAS) {
-        if ($coursecontext and trim($role->coursealias) !== '') {
+        if ($coursecontext && $role->coursealias && trim($role->coursealias) !== '') {
             return format_string($role->coursealias, true, array('context'=>$coursecontext));
         } else {
             return $original;
@@ -4527,7 +4527,7 @@ function role_get_name(stdClass $role, $context = null, $rolenamedisplay = ROLEN
     }
 
     if ($rolenamedisplay == ROLENAME_BOTH) {
-        if ($coursecontext and trim($role->coursealias) !== '') {
+        if ($coursecontext && $role->coursealias && trim($role->coursealias) !== '') {
             return format_string($role->coursealias, true, array('context'=>$coursecontext)) . " ($original)";
         } else {
             return $original;

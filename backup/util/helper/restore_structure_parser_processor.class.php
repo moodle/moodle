@@ -55,8 +55,10 @@ class restore_structure_parser_processor extends grouped_parser_processor {
             return '';
         } else if (is_numeric($cdata)) {
             return $cdata;
-        } else if (strlen($cdata) < 32) { // Impossible to have one link in 32cc
-            return $cdata;                // (http://10.0.0.1/file.php/1/1.jpg, http://10.0.0.1/mod/url/view.php?id=)
+        } else if (strlen($cdata ?? '') < 32) {
+            // Impossible to have one link in 32cc.
+            // (http://10.0.0.1/file.php/1/1.jpg, http://10.0.0.1/mod/url/view.php?id=).
+            return $cdata;
         }
 
         if (strpos($cdata, '$@FILEPHP@$') !== false) {

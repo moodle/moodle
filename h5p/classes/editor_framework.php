@@ -274,7 +274,7 @@ class editor_framework implements H5peditorStorage {
                 if ($details) {
                     $library->title = $details->title;
                     $library->runnable = $details->runnable;
-                    $library->metadataSettings = json_decode($details->metadatasettings);
+                    $library->metadataSettings = json_decode($details->metadatasettings ?? '');
                     $library->example = $details->example;
                     $library->tutorial = $details->tutorial;
                     $librariesin[] = $library;
