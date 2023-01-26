@@ -94,7 +94,7 @@ echo $OUTPUT->header();
 
 if ($override->groupid) {
     $group = $DB->get_record('groups', array('id' => $override->groupid), 'id, name');
-    $confirmstr = get_string("overridedeletegroupsure", "assign", $group->name);
+    $confirmstr = get_string("overridedeletegroupsure", "assign", format_string($group->name, true, ['context' => $context]));
 } else {
     $userfieldsapi = \core_user\fields::for_name();
     $namefields = $userfieldsapi->get_sql('', false, '', '', false)->selects;

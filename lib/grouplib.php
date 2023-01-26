@@ -74,6 +74,8 @@ function groups_group_exists($groupid) {
 /**
  * Gets the name of a group with a specified id
  *
+ * Before output, you should call {@see format_string} on the result
+ *
  * @category group
  * @param int $groupid The id of the group
  * @return string The name of the group
@@ -85,6 +87,8 @@ function groups_get_group_name($groupid) {
 
 /**
  * Gets the name of a grouping with a specified id
+ *
+ * Before output, you should call {@see format_string} on the result
  *
  * @category group
  * @param int $groupingid The id of the grouping

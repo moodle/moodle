@@ -91,8 +91,9 @@ class quiz_override_form extends moodleform {
             // Group override.
             if ($this->groupid) {
                 // There is already a groupid, so freeze the selector.
-                $groupchoices = array();
-                $groupchoices[$this->groupid] = groups_get_group_name($this->groupid);
+                $groupchoices = [
+                    $this->groupid => format_string(groups_get_group_name($this->groupid), true, $this->context),
+                ];
                 $mform->addElement('select', 'groupid',
                         get_string('overridegroup', 'quiz'), $groupchoices);
                 $mform->freeze('groupid');
@@ -108,7 +109,7 @@ class quiz_override_form extends moodleform {
 
                 $groupchoices = array();
                 foreach ($groups as $group) {
-                    $groupchoices[$group->id] = $group->name;
+                    $groupchoices[$group->id] = format_string($group->name, true, $this->context);
                 }
                 unset($groups);
 
