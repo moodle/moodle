@@ -44,6 +44,7 @@ $string['companymanager'] = 'Company manager';
 $string['trainingevent:add'] = 'Ad a user to a classroom events';
 $string['trainingevent:grade'] = 'Allow grading of classroom events';
 $string['trainingevent:invite'] = 'Allow inviting of users to classroom event';
+$string['trainingevent:resetattendees'] = 'Clear atendees of classroom events';
 $string['trainingevent:viewattendees'] = 'View atendees of classroom events';
 $string['details'] = '* See more and booking';
 $string['emailssent'] = 'Emails have been sent';
