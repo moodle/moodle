@@ -662,7 +662,7 @@ class quiz_settings extends persistent {
      * @return array of string, the separate keys.
      */
     private function split_keys($keys) : array {
-        $keys = preg_split('~[ \t\n\r,;]+~', $keys, -1, PREG_SPLIT_NO_EMPTY);
+        $keys = preg_split('~[ \t\n\r,;]+~', $keys ?? '', -1, PREG_SPLIT_NO_EMPTY);
         foreach ($keys as $i => $key) {
             $keys[$i] = strtolower($key);
         }

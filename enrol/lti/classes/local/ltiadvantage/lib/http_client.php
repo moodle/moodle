@@ -78,8 +78,8 @@ class http_client implements IHttpClient {
         if (!$this->curlclient->get_errno() && !$this->curlclient->error) {
             // No errors, so format the response.
             $headersize = $info['header_size'];
-            $resheaders = substr($res, 0, $headersize);
-            $resbody = substr($res, $headersize);
+            $resheaders = substr($res ?? '', 0, $headersize);
+            $resbody = substr($res ?? '', $headersize);
             $headerlines = array_filter(explode("\r\n", $resheaders));
             $parsedresponseheaders = [
                 'httpstatus' => array_shift($headerlines)

@@ -1205,14 +1205,12 @@ class structure {
         $DB->update_record('quiz_sections', $section);
 
         // Log section shuffle updated event.
-        $firstslot = $DB->get_record('quiz_slots', array('quizid' => $this->get_quizid(), 'slot' => $section->firstslot));
         $event = \mod_quiz\event\section_shuffle_updated::create([
             'context' => $this->quizobj->get_context(),
             'objectid' => $id,
             'other' => [
                 'quizid' => $this->get_quizid(),
-                'firstslotid' => $firstslot->id,
-                'firstslotnumber' => $firstslot->slot,
+                'firstslotnumber' => $section->firstslot,
                 'shuffle' => $shuffle
             ]
         ]);

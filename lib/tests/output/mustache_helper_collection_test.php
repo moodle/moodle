@@ -22,8 +22,10 @@ namespace core\output;
  * @package   core
  * @copyright 2019 Ryan Wyllie <ryan@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \core\output\mustache_helper_collection
  */
 class mustache_helper_collection_test extends \advanced_testcase {
+
     /**
      * Test cases to confirm that disallowed helpers are stripped from the source
      * text by the helper before being passed to other another helper. This prevents
@@ -66,7 +68,7 @@ class mustache_helper_collection_test extends \advanced_testcase {
                 'input' => 'core, {{#js}} some nasty JS {{/js}}, test',
                 'expected' => 'core, {{}}, test'
             ],
-            'single disallowed 3' => [
+            'single disallowed 4' => [
                 'disallowed' => ['js'],
                 'input' => 'core, {{#ok}} this is ok {{/ok}}, {{#js}} some nasty JS {{/js}}',
                 'expected' => 'core, {{#ok}} this is ok {{/ok}}, {{}}'
@@ -111,7 +113,7 @@ class mustache_helper_collection_test extends \advanced_testcase {
                 'input' => '{{#foo}} blah {{/foo}}, {{#js}} js {{/js}}, {{#foo}} blah {{/foo}}',
                 'expected' => '{{}}'
             ],
-            'multiple disallowed 4' => [
+            'multiple disallowed 5' => [
                 'disallowed' => ['js', 'foo'],
                 'input' => 'core, move, {{#js}} JS {{#foo}} blah {{/foo}} {{/js}}',
                 'expected' => 'core, move, {{}}'

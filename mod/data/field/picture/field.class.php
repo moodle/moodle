@@ -137,6 +137,29 @@ class data_field_picture extends data_field_base {
         return $str;
     }
 
+    /**
+     * Validate the image field type parameters.
+     *
+     * This will check for valid numeric values in the width and height fields.
+     *
+     * @param stdClass $fieldinput the field input data
+     * @return array array of error messages if width or height parameters are not numeric
+     * @throws coding_exception
+     */
+    public function validate(stdClass $fieldinput): array {
+        $errors = [];
+        // These are the params we have to check if they are numeric, because they represent width and height of the image
+        // in single and list view.
+        $widthandheightparams = ['param1', 'param2', 'param4', 'param5'];
+
+        foreach ($widthandheightparams as $param) {
+            if (!empty($fieldinput->$param) && !is_numeric($fieldinput->$param)) {
+                $errors[$param] = get_string('error_invalid' . $param, 'datafield_picture');
+            }
+        }
+        return $errors;
+    }
+
     // TODO delete this function and instead subclass data_field_file - see MDL-16493
 
     function get_file($recordid, $content=null) {
@@ -317,7 +340,7 @@ class data_field_picture extends data_field_base {
                              'filename'=>'thumb_'.$file->get_filename(), 'userid'=>$file->get_userid());
         try {
             // this may fail for various reasons
-            $fs->convert_image($file_record, $file, $this->field->param4, $this->field->param5, true);
+            $fs->convert_image($file_record, $file, (int) $this->field->param4, (int) $this->field->param5, true);
             return true;
         } catch (Exception $e) {
             debugging($e->getMessage());

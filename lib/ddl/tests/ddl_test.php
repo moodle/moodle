@@ -2266,7 +2266,7 @@ class ddl_test extends \database_driver_testcase {
      *
      * @return array The type-value pair fixture.
      */
-    public function test_get_enc_quoted_provider() {
+    public function get_enc_quoted_provider() {
         return array(
             // Reserved: some examples from SQL-92.
             [true, 'from'],
@@ -2280,7 +2280,7 @@ class ddl_test extends \database_driver_testcase {
     /**
      * This is a test for sql_generator::getEncQuoted().
      *
-     * @dataProvider test_get_enc_quoted_provider
+     * @dataProvider get_enc_quoted_provider
      * @param bool $reserved Whether the column name is reserved or not.
      * @param string $columnname The column name to be quoted, according to the value of $reserved.
      **/
@@ -2315,7 +2315,7 @@ class ddl_test extends \database_driver_testcase {
      *
      * @return array The type-old-new tuple fixture.
      */
-    public function test_sql_generator_get_rename_field_sql_provider() {
+    public function sql_generator_get_rename_field_sql_provider() {
         return array(
             // Reserved: an example from SQL-92.
             // Both names should be reserved.
@@ -2328,7 +2328,7 @@ class ddl_test extends \database_driver_testcase {
     /**
      * This is a unit test for sql_generator::getRenameFieldSQL().
      *
-     * @dataProvider test_sql_generator_get_rename_field_sql_provider
+     * @dataProvider sql_generator_get_rename_field_sql_provider
      * @param bool $reserved Whether the column name is reserved or not.
      * @param string $oldcolumnname The column name to be renamed.
      * @param string $newcolumnname The new column name.

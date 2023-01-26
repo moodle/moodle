@@ -452,6 +452,19 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     }
 
     /**
+     * Validates params of fieldinput data. Overwrite to validate fieldtype specific data.
+     *
+     * You are expected to return an array like ['paramname' => 'Error message for paramname param'] if there is an error,
+     * return an empty array if everything is fine.
+     *
+     * @param stdClass $fieldinput The field input data to check
+     * @return array $errors if empty validation was fine, otherwise contains one or more error messages
+     */
+    public function validate(stdClass $fieldinput): array {
+        return [];
+    }
+
+    /**
      * Return the data_content of the field, or generate it if it is in preview mode.
      *
      * @param int $recordid the record id
@@ -827,19 +840,19 @@ function data_replace_field_in_templates($data, $searchfieldname, $newfieldname)
     $newdata = new stdClass();
     $newdata->id = $data->id;
     $newdata->singletemplate = str_ireplace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->singletemplate);
+            $prestring.$newfieldname.$poststring, $data->singletemplate ?? '');
 
     $newdata->listtemplate = str_ireplace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->listtemplate);
+            $prestring.$newfieldname.$poststring, $data->listtemplate ?? '');
 
     $newdata->addtemplate = str_ireplace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->addtemplate);
+            $prestring.$newfieldname.$poststring, $data->addtemplate ?? '');
 
     $newdata->addtemplate = str_ireplace('[['.$searchfieldname.'#id]]',
-            $prestring.$newfieldname.$idpart.$poststring, $data->addtemplate);
+            $prestring.$newfieldname.$idpart.$poststring, $data->addtemplate ?? '');
 
     $newdata->rsstemplate = str_ireplace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->rsstemplate);
+            $prestring.$newfieldname.$poststring, $data->rsstemplate ?? '');
 
     return $DB->update_record('data', $newdata);
 }

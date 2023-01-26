@@ -70,6 +70,7 @@ $string['automatedsettings'] = 'Automated backup settings';
 $string['automatedstorage'] = 'Automated backup storage';
 $string['automatedstoragehelp'] = 'Choose the location where you want backups to be stored when they are automatically created.';
 $string['backupactivity'] = 'Backup activity: {$a}';
+$string['backupautoactivitiesdescription'] = 'Sets the default for including activities in a backup. For the recycle bin to work, this setting must be enabled.';
 $string['backupcourse'] = 'Backup course: {$a}';
 $string['backupcoursedetails'] = 'Course details';
 $string['backupcoursesection'] = 'Section: {$a}';

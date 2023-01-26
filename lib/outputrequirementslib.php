@@ -720,7 +720,7 @@ class page_requirements_manager {
 
         if ($url instanceof moodle_url) {
             return $url;
-        } else if (strpos($url, '/') === 0) {
+        } else if (null !== $url && strpos($url, '/') === 0) {
             // Fix the admin links if needed.
             if ($CFG->admin !== 'admin') {
                 if (strpos($url, "/admin/") === 0) {

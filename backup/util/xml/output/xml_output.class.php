@@ -107,7 +107,7 @@ abstract class xml_output {
         if (!$this->running) {
             throw new xml_output_exception('xml_output_not_started');
         }
-        $lenc = strlen($content); // Get length in bytes
+        $lenc = strlen($content ?? ''); // Get length in bytes.
         if ($lenc == 0) { // 0 length contents, nothing to do
             return;
         }
