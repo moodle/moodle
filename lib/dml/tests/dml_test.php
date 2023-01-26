@@ -6292,10 +6292,10 @@ EOD;
         ['description' => $description, 'version' => $version] = $DB->get_server_info();
         // MariaDB RPL_VERSION_HACK sanity check: "5.5.5" has never been released!
         $this->assertNotSame('5.5.5', $version,
-            "Found invalid DB server version i.e. RPL_VERSION_HACK: '${version}' (${description}).");
+            "Found invalid DB server version i.e. RPL_VERSION_HACK: '{$version}' ({$description}).");
         // DB version format is: "X.Y.Z".
         $this->assertMatchesRegularExpression('/^\d+\.\d+\.\d+$/', $version,
-            "Found invalid DB server version format: '${version}' (${description}).");
+            "Found invalid DB server version format: '{$version}' ({$description}).");
 
         // Alter the DB options to force the read from DB and check for the same assertions above.
         $cfg->dboptions['versionfromdb'] = true;
@@ -6309,9 +6309,9 @@ EOD;
         $this->assertTrue($rcm->invokeArgs($db2, []), 'Invalid test state!');
         ['description' => $description, 'version' => $version] = $db2->get_server_info();
         $this->assertNotSame('5.5.5', $version,
-            "Found invalid DB server version when reading version from DB i.e. RPL_VERSION_HACK: '${version}' (${description}).");
+            "Found invalid DB server version when reading version from DB i.e. RPL_VERSION_HACK: '{$version}' ({$description}).");
         $this->assertMatchesRegularExpression('/^\d+\.\d+\.\d+$/', $version,
-            "Found invalid DB server version format when reading version from DB: '${version}' (${description}).");
+            "Found invalid DB server version format when reading version from DB: '{$version}' ({$description}).");
         $db2->dispose();
     }
 }

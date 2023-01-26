@@ -903,7 +903,7 @@ class component_test extends advanced_testcase {
         // Iterate over all apis and perform more validations.
         foreach ($apis as $apiname => $attributes) {
             // Message, to be used later and easier finding the problem.
-            $message = "Validation problem found with API: ${apiname}";
+            $message = "Validation problem found with API: {$apiname}";
 
             $this->assertIsObject($attributes, $message);
             $this->assertMatchesRegularExpression('/^[a-z][a-z0-9]+$/', $apiname, $message);
