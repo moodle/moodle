@@ -32,6 +32,29 @@ defined('MOODLE_INTERNAL') || die;
 class core_renderer extends \core_renderer {
 
     /**
+     * Returns HTML to display a "Turn editing on/off" button in a form.
+     *
+     * @param moodle_url $url The URL + params to send through when clicking the button
+     * @param string $method
+     * @return string HTML the button
+     */
+    public function edit_button(moodle_url $url, string $method = 'post') {
+        if ($this->page->theme->haseditswitch) {
+            return;
+        }
+        $url->param('sesskey', sesskey());
+        if ($this->page->user_is_editing()) {
+            $url->param('edit', 'off');
+            $editstring = get_string('turneditingoff');
+        } else {
+            $url->param('edit', 'on');
+            $editstring = get_string('turneditingon');
+        }
+        $button = new \single_button($url, $editstring, $method, ['class' => 'btn btn-primary']);
+        return $this->render_single_button($button);
+    }
+
+    /**
      * Renders the "breadcrumb" for all pages in iomadboost.
      *
      * @return string the HTML for the navbar.
@@ -247,7 +270,7 @@ class core_renderer extends \core_renderer {
         return $firstview;
     }
 
-    // IOMAD customisations.
+    // IOMAD Boost customisations.
 
     /**
      * The standard tags that should be included in the <head> tag
@@ -263,7 +286,7 @@ class core_renderer extends \core_renderer {
         $css = '';
 
         // Get company colours
-        $companyid = \iomad::get_my_companyid(\context_system::instance(), false);
+        $companyid = \iomadboost::get_my_companyid(\context_system::instance(), false);
         if ($companyrec = $DB->get_record('company', array('id' => $companyid))) {
             $company = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
             $linkcolor = $company->linkcolor;
@@ -304,7 +327,7 @@ class core_renderer extends \core_renderer {
 
         $custommenuitems = false;
         // Deal with company custom menu items.
-        if ($companyid = \iomad::get_my_companyid(\context_system::instance(), false)) {
+        if ($companyid = \iomadboost::get_my_companyid(\context_system::instance(), false)) {
             if ($companyrec = $DB->get_record('company', array('id' => $companyid))) {
                 if (!empty($companyrec->custommenuitems)) {
                     $custommenuitems = true;

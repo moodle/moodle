@@ -11,7 +11,8 @@
         border-top: $table-border-width solid $table-border-color;
     }
 
-    thead th {
+    thead th,
+    thead td {
         vertical-align: bottom;
         border-bottom: (2 * $table-border-width) solid $table-border-color;
     }

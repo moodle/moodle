@@ -14,34 +14,46 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace theme_iomad\privacy;
+
+use context_user;
+use core_privacy\local\request\writer;
+
 /**
  * Privacy tests for theme_iomad.
  *
  * @package    theme_iomad
  * @category   test
- * @copyright  2022 Derick Turner
- * @author    Derick Turner
- * @based on theme_boost by Adrian Greeve <adriangreeve.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-namespace theme_iomad\privacy;
-
-defined('MOODLE_INTERNAL') || die();
-
-use theme_iomad\privacy\provider;
-
-/**
- * Unit tests for theme_iomad/classes/privacy/policy
- *
+ * @covers     \theme_iomad\privacy\provider
  * @copyright  2018 Adrian Greeve <adriangreeve.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
-     * Test for provider::test_export_user_preferences().
+     * Data provider for {@see test_export_user_preferences}
+     *
+     * @return array[]
      */
-    public function test_export_user_preferences() {
+    public function export_user_preference_provider(): array {
+        return [
+            'Index drawer open' => [provider::DRAWER_OPEN_INDEX, true, 'privacy:drawerindexopen'],
+            'Index drawer closed' => [provider::DRAWER_OPEN_INDEX, false, 'privacy:drawerindexclosed'],
+            'Block drawer open' => [provider::DRAWER_OPEN_BLOCK, true, 'privacy:drawerblockopen'],
+            'Block drawer closed' => [provider::DRAWER_OPEN_BLOCK, false, 'privacy:drawerblockclosed'],
+        ];
+    }
+
+    /**
+     * Test for provider::test_export_user_preferences().
+     *
+     * @param string $preference
+     * @param bool $value
+     * @param string $expectdescription
+     *
+     * @dataProvider export_user_preference_provider
+     */
+    public function test_export_user_preferences(string $preference, bool $value, string $expectdescription): void {
         $this->resetAfterTest();
 
         // Test setup.
@@ -49,33 +61,16 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $this->setUser($user);
 
         // Add a user home page preference for the User.
-        set_user_preference(provider::DRAWER_OPEN_NAV, 'false', $user);
+        set_user_preference($preference, $value, $user);
 
         // Test the user preferences export contains 1 user preference record for the User.
         provider::export_user_preferences($user->id);
-        $contextuser = \context_user::instance($user->id);
-        $writer = \core_privacy\local\request\writer::with_context($contextuser);
+        $writer = writer::with_context(context_user::instance($user->id));
         $this->assertTrue($writer->has_any_data());
 
         $exportedpreferences = $writer->get_user_preferences('theme_iomad');
         $this->assertCount(1, (array) $exportedpreferences);
-        $this->assertEquals('false', $exportedpreferences->{provider::DRAWER_OPEN_NAV}->value);
-        $this->assertEquals(get_string('privacy:drawernavclosed', 'theme_iomad'),
-                $exportedpreferences->{provider::DRAWER_OPEN_NAV}->description);
-
-        // Add a user home page preference for the User.
-        set_user_preference(provider::DRAWER_OPEN_NAV, 'true', $user);
-
-        // Test the user preferences export contains 1 user preference record for the User.
-        provider::export_user_preferences($user->id);
-        $contextuser = \context_user::instance($user->id);
-        $writer = \core_privacy\local\request\writer::with_context($contextuser);
-        $this->assertTrue($writer->has_any_data());
-
-        $exportedpreferences = $writer->get_user_preferences('theme_iomad');
-        $this->assertCount(1, (array) $exportedpreferences);
-        $this->assertEquals('true', $exportedpreferences->{provider::DRAWER_OPEN_NAV}->value);
-        $this->assertEquals(get_string('privacy:drawernavopen', 'theme_iomad'),
-                $exportedpreferences->{provider::DRAWER_OPEN_NAV}->description);
+        $this->assertEquals($value, (bool) $exportedpreferences->{$preference}->value);
+        $this->assertEquals(get_string($expectdescription, 'theme_iomad'), $exportedpreferences->{$preference}->description);
     }
 }

@@ -471,10 +471,6 @@ $author-image-margin-sm: 8px;
 .filter-dates-popover {
     width: 100%;
     max-width: 41.5em;
-
-    .mform {
-        margin-left: -3em;
-    }
 }
 
 $grading-drawer-width: 430px !default;
@@ -1180,6 +1176,10 @@ div#dock {
     &.size-35 {
         width: 35px;
         height: 35px;
+    }
+    &.size-64 {
+        width: 64px;
+        height: 64px;
     }
     &.size-100 {
         width: 100px;

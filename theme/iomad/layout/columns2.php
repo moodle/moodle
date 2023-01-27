@@ -18,15 +18,12 @@
  * A two column layout for the iomad theme.
  *
  * @package   theme_iomad
- * @copyright 2022 Derick Turner
- * @author    Derick Turner
- * @based on theme_boost by Damyon Wiese
+ * @copyright 2016 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-user_preference_allow_ajax_update('drawer-open-nav', PARAM_ALPHA);
 require_once($CFG->libdir . '/behat/lib.php');
 
 // Add block button in editing mode.

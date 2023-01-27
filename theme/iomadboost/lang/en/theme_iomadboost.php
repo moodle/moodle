@@ -18,9 +18,7 @@
  * Language file.
  *
  * @package   theme_iomadboost
- * @copyright 2022 Derick Turner
- * @author    Derick Turner
- * @based on theme_boost by Frédéric Massart
+ * @copyright 2016 Frédéric Massart
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -34,7 +32,6 @@ $string['brandcolor_desc'] = 'The accent colour.';
 $string['bootswatch'] = 'Bootswatch';
 $string['bootswatch_desc'] = 'A bootswatch is a set of Bootstrap variables and css to style Bootstrap';
 $string['choosereadme'] = 'IOMAD Boost is a modern highly-customisable theme. This theme is intended to be used directly, or as a parent theme when creating new themes utilising Bootstrap 4.';
-$string['currentinparentheses'] = '(current)';
 $string['configtitle'] = 'IOMAD Boost';
 $string['generalsettings'] = 'General settings';
 $string['loginbackgroundimage'] = 'Login page background image';
@@ -61,8 +58,11 @@ $string['privacy:drawerindexclosed'] = 'The current preference for the index dra
 $string['privacy:drawerindexopen'] = 'The current preference for the index drawer is open.';
 $string['privacy:drawerblockclosed'] = 'The current preference for the block drawer is closed.';
 $string['privacy:drawerblockopen'] = 'The current preference for the block drawer is open.';
-$string['privacy:drawernavclosed'] = 'The current preference for the navigation drawer is closed.';
-$string['privacy:drawernavopen'] = 'The current preference for the navigation drawer is open.';
 
 // Deprecated since Moodle 4.0.
 $string['totop'] = 'Go to top';
+
+// Deprecated since Moodle 4.1.
+$string['currentinparentheses'] = '(current)';
+$string['privacy:drawernavclosed'] = 'The current preference for the navigation drawer is closed.';
+$string['privacy:drawernavopen'] = 'The current preference for the navigation drawer is open.';

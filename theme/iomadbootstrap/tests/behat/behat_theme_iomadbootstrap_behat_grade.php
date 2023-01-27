@@ -15,13 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Behat grade related step definition overrides for the Classic theme.
+ * Behat grade related step definition overrides for the IOMAD Bootstrap theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test
- * @copyright  2022 Derick Turner
- * @author    Derick Turner
- * @based on theme_clean by Michael Hawkins
+ * @copyright  2019 Michael Hawkins
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,7 +30,7 @@ require_once(__DIR__ . '/../../../../grade/tests/behat/behat_grade.php');
 use Behat\Gherkin\Node\TableNode as TableNode;
 
 /**
- * Behat grade overrides for the Classic theme.
+ * Behat grade overrides for the IOMAD Bootstrap theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test
@@ -54,6 +52,6 @@ class behat_theme_iomadbootstrap_behat_grade extends behat_grade {
                     get_string('pluginname', 'block_navigation'), 'block'));
         }
 
-        $this->select_in_gradebook_navigation_selector($gradepath, 'gradesactionselect');
+        $this->execute('behat_forms::i_set_the_field_to', [get_string('gradebooknavigationmenu', 'grades'), $gradepath]);
     }
 }

@@ -250,14 +250,14 @@
 .path-admin,
 .format-site {
     .header-maxwidth,
-    .secondary-navigation {
+    .secondary-navigation .navigation .nav-tabs {
         max-width: none;
     }
 }
 .path-admin.path-admin-roles:not(.format-site),
 .path-admin.path-admin-tool-lp {
     .header-maxwidth,
-    .secondary-navigation {
+    .secondary-navigation .navigation .nav-tabs {
         max-width: $course-content-maxwidth;
     }
 }

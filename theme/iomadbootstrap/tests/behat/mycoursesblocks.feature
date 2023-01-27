@@ -1,5 +1,5 @@
 @javascript @theme_iomadbootstrap
-Feature: My courses page block layout in Classic theme
+Feature: My courses page block layout in IOMAD Bootstrap theme
   In order to have a clear and consistent view on the my courses page
   As a student
   I need to see the blocks in the expected placement

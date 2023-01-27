@@ -18,7 +18,6 @@ $thin-scroll-bg-hover: $gray-700 !default;
 $font-size-xs: ($font-size-base * .75) !default;
 
 #region-main {
-    overflow-x: auto;
     overflow-y: visible;
     background-color: $body-bg;
 }
@@ -255,8 +254,11 @@ button.close,
     text-align: right;
 }
 
-a.autolink.glossary:hover {
-    cursor: help;
+a.autolink {
+    @extend .aalink;
+    &.glossary:hover {
+        cursor: help;
+    }
 }
 /* Block which is hidden if javascript enabled, prevents fickering visible when JS from footer used! */
 .collapsibleregioncaption {
@@ -1119,6 +1121,10 @@ tr.flagged-tag a {
 .label .mod-indent {
     float: left;
     padding-top: 20px;
+}
+
+.activity.label.modtype_label .mod-indent {
+    float: none;
 }
 
 @include media-breakpoint-up(sm) {
@@ -2124,6 +2130,9 @@ dd:after {
                 width: 330px;
                 vertical-align: text-bottom;
                 margin-bottom: 0;
+                &[role="combobox"] {
+                    width: auto;
+                }
             }
         }
 
@@ -2161,6 +2170,14 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
 
 /** Chart area. */
 .chart-area {
+    @include media-breakpoint-up(lg) {
+        .chart-image {
+            position: relative;
+            margin: auto;
+            height: 48vh;
+            width: 46vw;
+        }
+    }
 
     .chart-table-data {
         display: none;
@@ -2309,6 +2326,10 @@ $footer-link-color: $bg-inverse-link-color !default;
     @include box-shadow($popover-box-shadow);
 }
 
+.hasstickyfooter .btn-footer-popover {
+    bottom: calc(2rem + #{$navbar-height});
+}
+
 .popover.footer {
     .popover-body {
         padding: 0;
@@ -2325,6 +2346,10 @@ $footer-link-color: $bg-inverse-link-color !default;
             }
         }
     }
+}
+
+.footer-support-link {
+    padding-bottom: 5px;
 }
 
 @include media-breakpoint-up(sm) {
@@ -2358,6 +2383,7 @@ $footer-link-color: $bg-inverse-link-color !default;
         width: 100%;
         color: $body-color;
     }
+    &.active,
     &:active,
     &:hover,
     &:focus,
@@ -2369,13 +2395,14 @@ $footer-link-color: $bg-inverse-link-color !default;
             color: $dropdown-link-active-color;
         }
     }
-    &[aria-current="true"] {
+    &[aria-current="true"],
+    &[aria-selected="true"] {
         position: relative;
         display: flex;
         align-items: center;
         &:before {
             @include fa-icon();
-            content: $fa-var-circle;
+            content: $fa-var-check;
             position: absolute;
             left: 0.4rem;
             font-size: 0.7rem;
@@ -2675,8 +2702,15 @@ $picker-emojis-per-row: 7 !default;
 }
 
 @each $color, $value in $theme-colors {
-    .alert-#{$color} a {
-        color: darken(theme-color-level($color, $alert-color-level), 10%);
+    .alert-#{$color} {
+        a {
+            color: darken(theme-color-level($color, $alert-color-level), 10%);
+        }
+        // Darken the close button text colour inside notification alerts for better contrast.
+        .close {
+            color: darken(theme-color-level($color, $alert-color-level), 20%);
+            opacity: 0.6;
+        }
     }
 }
 .alert a {
@@ -2701,7 +2735,6 @@ $picker-emojis-per-row: 7 !default;
             padding-bottom: $spacer / 3;
             display: inline-flex;
             overflow: hidden;
-            flex-grow: 1;
         }
         .breadcrumb-item a,
         .breadcrumb-item span {
@@ -2924,4 +2957,69 @@ body.dragging {
     font-size: 9px;
     width: 9px;
     border: 0;
+}
+
+.select-menu {
+    li:first-child {
+        ul[role="group"] {
+            padding: 0;
+        }
+    }
+
+    ul[role="group"] {
+        padding: 0.3rem 0 0 0;
+        margin: 0;
+        li:first-child {
+            cursor: default;
+            color: $gray-600;
+            padding: 0.25rem 1.5rem;
+            display: block;
+        }
+        .dropdown-item {
+            padding-left: 2.5rem;
+        }
+    }
+    .dropdown-item {
+        cursor: pointer;
+
+        &[aria-selected="true"] {
+            font-weight: bold;
+        }
+    }
+}
+
+.initialbargroups ul {
+    -webkit-margin-start: 0; /* stylelint-disable-line */
+    margin-right: -1px;
+}
+
+.page-item {
+    &:first-child {
+        .page-link {
+            .initialbargroups & {
+                @include border-left-radius(0);
+                @include border-right-radius(0);
+            }
+            .initialbargroups .pagination-lg:first-child & {
+                @include border-left-radius($pagination-border-radius-lg);
+            }
+            .initialbargroups .pagination-sm:first-child & {
+                @include border-left-radius($pagination-border-radius-sm);
+            }
+        }
+    }
+    &:last-child {
+        .page-link {
+            .initialbargroups & {
+                @include border-left-radius(0);
+                @include border-right-radius(0);
+            }
+            .initialbargroups .pagination-lg:last-child & {
+                @include border-right-radius($pagination-border-radius-lg);
+            }
+            .initialbargroups .pagination-sm:last-child & {
+                @include border-right-radius($pagination-border-radius-sm);
+            }
+        }
+    }
 }

@@ -18,15 +18,12 @@
  * IOMAD.
  *
  * @package    theme_iomad
- * @copyright  2022 Derick Turner
- * @author    Derick Turner
- * @based on theme_boost by Frédéric Massart
+ * @copyright  2016 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->release  = '4.0.6 (Build: 20230116)'; // Human-friendly version name
-$plugin->version   = 2022041900;
-$plugin->requires  = 2022041200;
+$plugin->version   = 2022112800;
+$plugin->requires  = 2022111800;
 $plugin->component = 'theme_iomad';

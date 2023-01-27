@@ -284,6 +284,18 @@ $card-gutter : $card-deck-margin * 2;
     #block-region-content & [data-region="more-items-button-container"] {
         display: none;
     }
+
+    a.dashboard-card {
+        @include hover-focus {
+            text-decoration: none;
+            h6 {
+                text-decoration: underline;
+            }
+        }
+        small {
+            color: $body-color;
+        }
+    }
 }
 
 .block_myoverview {

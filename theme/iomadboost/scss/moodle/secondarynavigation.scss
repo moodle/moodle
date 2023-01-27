@@ -1,14 +1,14 @@
 .secondary-navigation {
-    max-width: $course-content-maxwidth;
-    margin: 0 auto;
     padding-bottom: 15px;
     .navigation {
-        border-top: 1px solid $nav-tabs-border-color;
         border-bottom: 1px solid $nav-tabs-border-color;
-        height: calc(#{$moremenu-height} + 2px);
         background-color: $body-bg;
+        margin: 0 -0.5rem;
+        padding: 0 0.5rem;
         .nav-tabs {
             border: none;
+            max-width: $course-content-maxwidth;
+            margin: 0 auto;
             .nav-link {
                 border-radius: initial;
             }
@@ -17,7 +17,7 @@
 }
 
 @include media-breakpoint-up(md) {
-    .secondary-navigation {
-        padding: 0 15px 15px;
+    .secondary-navigation .navigation {
+        padding: 0 calc(0.5rem + 15px);
     }
 }

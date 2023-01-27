@@ -15,13 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Navigation step definition overrides for the Classic theme.
+ * Navigation step definition overrides for the IOMAD Bootstrap theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test
- * @copyright  2022 Derick Turner
- * @author    Derick Turner
- * @based on theme_clean by Michael Hawkins
+ * @copyright  2019 Michael Hawkins
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,7 +31,7 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException;
 use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
 /**
- * Step definitions and overrides to navigate through the navigation tree nodes in the Classic theme.
+ * Step definitions and overrides to navigate through the navigation tree nodes in the IOMAD Bootstrap theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test

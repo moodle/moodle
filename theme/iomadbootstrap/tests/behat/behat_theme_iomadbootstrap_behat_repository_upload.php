@@ -15,13 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Override definitions for the upload repository type for the Classic theme.
+ * Override definitions for the upload repository type for the IOMAD Bootstrap theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test
- * @copyright  2022 Derick Turner
- * @author    Derick Turner
- * @based on theme_clean by Michael Hawkins
+ * @copyright  2019 Michael Hawkins
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,7 +30,7 @@ require_once(__DIR__ . '/../../../../repository/upload/tests/behat/behat_reposit
 use Behat\Mink\Exception\ExpectationException as ExpectationException;
 
 /**
- * Override step definitions to deal with the upload repository in the Classic theme.
+ * Override step definitions to deal with the upload repository in the IOMAD Bootstrap theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test
