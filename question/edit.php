@@ -29,11 +29,10 @@ require_once($CFG->dirroot . '/question/editlib.php');
 list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
         question_edit_setup('questions', '/question/edit.php');
 
-$url = new moodle_url($thispageurl);
 if (($lastchanged = optional_param('lastchanged', 0, PARAM_INT)) !== 0) {
-    $url->param('lastchanged', $lastchanged);
+    $thispageurl->param('lastchanged', $lastchanged);
 }
-$PAGE->set_url($url);
+$PAGE->set_url($thispageurl);
 
 if ($PAGE->course->id == $SITE->id) {
     $PAGE->set_primary_active_tab('home');
@@ -53,7 +52,7 @@ echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('core_question', 'bank');
 
 // Render the selection action.
-$qbankaction = new \core_question\output\qbank_action_menu($url);
+$qbankaction = new \core_question\output\qbank_action_menu($thispageurl);
 echo $renderer->render($qbankaction);
 
 // Print the question area.
