@@ -433,10 +433,20 @@ class company_edit_form extends \company_moodleform {
                                                       'block_iomad_company_admin'));
                 $mform->addElement('filemanager', 'companylogo',
                                     get_string('companylogo', 'block_iomad_company_admin'), null,
-                                    array('subdirs' => 0,
-                                         'maxbytes' => 150 * 1024,
-                                         'maxfiles' => 1,
-                                         'accepted_types' => array('*.jpg', '*.gif', '*.png')));
+                                    ['maxfiles' => 1,
+                                     'accepted_types' => ['.jpg', '.png']]);
+
+                $mform->addElement('filemanager', 'companylogocompact',
+                                    get_string('companylogocompact', 'block_iomad_company_admin'), null,
+                                    ['subdirs' => 0,
+                                     'maxbytes' => 150 * 1024,
+                                     'maxfiles' => 1,
+                                     'accepted_types' => ['.jpg', '.png']]);
+
+                $mform->addElement('filemanager', 'companyfavicon',
+                                    get_string('companyfavicon', 'block_iomad_company_admin'), null,
+                                    ['maxfiles' => 1,
+                                     'accepted_types' => ['image']]);
 
                 $mform->addElement('textarea', 'customcss',
                                     get_string('customcss', 'block_iomad_company_admin'),

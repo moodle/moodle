@@ -109,12 +109,25 @@ if (!$new) {
         if (!empty($SESSION->current_editing_company_data)) {
             foreach ($SESSION->current_editing_company_data as $index => $value) {
                 // Strip out certificate and CSS parts.
-                if ($index == 'customcss' || $index == 'maincolor' || $index == 'headingcolor' ||
-                    $index == 'linkcolor' || $index == 'bgcolor_header' || $index == 'bgcolor_content' ||
-                    $index == 'companylogo' || $index == 'uselogo' || $index == 'usesignature' ||
-                    $index == 'usewatermark' || $index == 'useborder' || $index == 'showgrade' ||
-                    $index == 'companycertificateseal' || $index == 'companycertificatesignatue' || $index == 'companycertificateborder' ||
-                    $index == 'companycertificatewatermark' || $index == 'currentparentid') {
+                if (in_array($index, ['bgcolor_content',
+                                      'bgcolor_header',
+                                      'companycertificateborder',
+                                      'companycertificateseal',
+                                      'companycertificatesignatue',
+                                      'companycertificatewatermark',
+                                      'compayfavicon',
+                                      'companylogo',
+                                      'companylogocompact',
+                                      'currentparentid',
+                                      'customcss',
+                                      'headingcolor',
+                                      'linkcolor',
+                                      'showgrade',
+                                      'maincolor',
+                                      'useborder',
+                                      'uselogo',
+                                      'usesignature',
+                                      'usewatermark'])) {
                     continue;
                 } else {
                     $companyrecord->$index = $value;
@@ -136,14 +149,30 @@ if ($returnurl) {
 }
 $companylist = new moodle_url('/blocks/iomad_company_admin/index.php', $urlparams);
 
-// Get the company logo.
+// Get the company logos etc.
 $draftcompanylogoid = file_get_submitted_draft_itemid('companylogo');
 file_prepare_draft_area($draftcompanylogoid,
                         $context->id,
-                        'theme_iomad',
-                        'companylogo', $companyid,
+                        'core_admin',
+                        'logo' . $companyid, 0,
                         array('subdirs' => 0, 'maxbytes' => 15 * 1024, 'maxfiles' => 1));
 $companyrecord->companylogo = $draftcompanylogoid;
+
+$draftcompanylogocompactid = file_get_submitted_draft_itemid('companylogocompact');
+file_prepare_draft_area($draftcompanylogocompactid,
+                        $context->id,
+                        'core_admin',
+                        'logocompact' . $companyid, 0,
+                        ['maxfiles' => 1]);
+$companyrecord->companylogocompact = $draftcompanylogocompactid;
+
+$draftcompanyfaviconid = file_get_submitted_draft_itemid('companyfavicon');
+file_prepare_draft_area($draftcompanyfaviconid,
+                        $context->id,
+                        'core_admin',
+                        'favicon' . $companyid, 0,
+                        ['maxfiles' => 1]);
+$companyrecord->companyfavicon = $draftcompanyfaviconid;
 
 // Are we creating a child company?
 if (!empty($new) && !empty($parentid)) {
@@ -214,10 +243,26 @@ if (!empty($new) && !empty($parentid)) {
     $draftcompanylogoid = file_get_submitted_draft_itemid('companylogo');
     file_prepare_draft_area($draftcompanylogoid,
                             $context->id,
-                            'theme_iomad',
-                            'companylogo', $parentid,
+                            'core_admin',
+                            'logo' . $parentid, 0,
                             array('subdirs' => 0, 'maxbytes' => 15 * 1024, 'maxfiles' => 1));
     $companyrecord->companylogo = $draftcompanylogoid;
+
+    $draftcompanylogocompactid = file_get_submitted_draft_itemid('companylogocompact');
+    file_prepare_draft_area($draftcompanylogocompactid,
+                            $context->id,
+                            'core_admin',
+                            'logocompact' . $parentid, 0,
+                            ['maxfiles' => 1]);
+    $companyrecord->companylogocompact = $draftcompanylogocompactid;
+
+    $draftcompanyfaviconid = file_get_submitted_draft_itemid('companyfavicon');
+    file_prepare_draft_area($draftcompanyfaviconid,
+                            $context->id,
+                            'core_admin',
+                            'favicon' . $parentid, 0,
+                            ['maxfiles' => 1]);
+    $companyrecord->companyfavicon = $draftcompanyfaviconid;
 } else {
     $draftcompanycertificatesealid = file_get_submitted_draft_itemid('companycertificateseal');
     file_prepare_draft_area($draftcompanycertificatesealid,
@@ -496,10 +541,26 @@ if ($mform->is_cancelled()) {
     if (!empty($data->companylogo)) {
         file_save_draft_area_files($data->companylogo,
                                    $context->id,
-                                   'theme_iomad',
-                                   'companylogo',
-                                   $data->id,
-                                   array('subdirs' => 0, 'maxbytes' => 150 * 1024, 'maxfiles' => 1));
+                                   'core_admin',
+                                   'logo' . $data->id,
+                                   0,
+                                   ['maxfiles' => 1]);
+    }
+    if (!empty($data->companylogocompact)) {
+        file_save_draft_area_files($data->companylogocompact,
+                                   $context->id,
+                                   'core_admin',
+                                   'logocompact' . $data->id,
+                                   0,
+                                   ['maxfiles' => 1]);
+    }
+    if (!empty($data->companyfavicon)) {
+        file_save_draft_area_files($data->companyfavicon,
+                                   $context->id,
+                                   'core_admin',
+                                   'favicon' . $data->id,
+                                   0,
+                                   ['maxfiles' => 1]);
     }
     if (!empty($data->companycertificateseal)) {
         file_save_draft_area_files($data->companycertificateseal,

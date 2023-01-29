@@ -200,5 +200,46 @@ function xmldb_block_iomad_company_admin_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019032103, 'block', 'iomad_company_admin');
     }
 
+    if ($oldversion < 2023012801) {
+
+        // Move all of the company logos over to the core_admin logo and logocompact areas.
+        $fs = get_file_storage();
+        $context = context_system::instance();
+
+        $companies = $DB->get_records('company', [], '', 'id');
+        foreach ($companies as $company) {
+
+            $files = $fs->get_area_files($context->id, 'theme_iomad', 'companylogo', $company->id );
+            $count = 0;
+        
+            foreach ($files as $file) {
+                $filerecord = new stdClass();
+                $filerecord->contextid = $context->id;
+                $filerecord->component = 'core_admin';
+                $filerecord->filearea  = 'logo' . $company->id;
+                $filerecord->itemid  = 0;
+                mtrace("copying logo file to core logo " . $company->id);
+                $fs->create_file_from_storedfile($filerecord, $file);
+
+                $filerecord = new stdClass();
+                $filerecord->contextid = $context->id;
+                $filerecord->component = 'core_admin';
+                $filerecord->filearea  = 'logocompact' . $company->id;
+                $filerecord->itemid  = 0;
+                mtrace("copying logo file to core logocompact " . $company->id);
+                $fs->create_file_from_storedfile($filerecord, $file);
+                $count += 1;
+            }
+
+            if ($count) {
+                mtrace("deleting old company logo file for companyid " . $company->id);
+                $fs->delete_area_files($context->id, 'theme_iomad', 'companylogo', $company->id);
+            }
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2023012801, 'block', 'iomad_company_admin');
+    }
+
     return true;
 }
