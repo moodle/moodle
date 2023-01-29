@@ -228,6 +228,12 @@ function xmldb_block_iomad_company_admin_upgrade($oldversion) {
                 $filerecord->itemid  = 0;
                 mtrace("copying logo file to core logocompact " . $company->id);
                 $fs->create_file_from_storedfile($filerecord, $file);
+
+                if ($file->get_filename() != '.') {
+                    // We need to save this to the config tables.
+                    set_config('logo' . $company->id, $file->get_filepath() . $file->get_filename(), 'core_admin');
+                    set_config('logocompact' . $company->id, $file->get_filepath() . $file->get_filename(), 'core_admin');
+                }
                 $count += 1;
             }
 

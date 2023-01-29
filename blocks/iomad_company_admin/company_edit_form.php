@@ -538,6 +538,8 @@ if ($mform->is_cancelled()) {
     }
     $company->assign_role_templates($data->templates, true);
 
+    // Deal with logo config settings.
+    $fs = get_file_storage();
     if (!empty($data->companylogo)) {
         file_save_draft_area_files($data->companylogo,
                                    $context->id,
@@ -545,6 +547,18 @@ if ($mform->is_cancelled()) {
                                    'logo' . $data->id,
                                    0,
                                    ['maxfiles' => 1]);
+
+        // Set the plugin config so it can actually be picked up.
+        if ($files = $fs->get_area_files($context->id, 'core_admin', 'logo'. $data->id)) {
+            foreach ($files as $file) {
+                if ($file->get_filename() != '.') {
+                    break;
+                }
+            }
+            set_config('logo' . $data->id, $file->get_filepath() . $file->get_filename(), 'core_admin');
+        } else {
+            set_config('logo' . $data->id, '', 'core_admin');
+        }
     }
     if (!empty($data->companylogocompact)) {
         file_save_draft_area_files($data->companylogocompact,
@@ -553,6 +567,18 @@ if ($mform->is_cancelled()) {
                                    'logocompact' . $data->id,
                                    0,
                                    ['maxfiles' => 1]);
+
+        // Set the plugin config so it can actually be picked up.
+        if ($files = $fs->get_area_files($context->id, 'core_admin', 'logocompact'. $data->id)) {
+            foreach ($files as $file) {
+                if ($file->get_filename() != '.') {
+                    break;
+                }
+            }
+            set_config('logocompact' . $data->id, $file->get_filepath() . $file->get_filename(), 'core_admin');
+        } else {
+            set_config('logocompact' . $data->id, '', 'core_admin');
+        }
     }
     if (!empty($data->companyfavicon)) {
         file_save_draft_area_files($data->companyfavicon,
@@ -561,6 +587,18 @@ if ($mform->is_cancelled()) {
                                    'favicon' . $data->id,
                                    0,
                                    ['maxfiles' => 1]);
+
+        // Set the plugin config so it can actually be picked up.
+        if ($files = $fs->get_area_files($context->id, 'core_admin', 'favicon'. $data->id)) {
+            foreach ($files as $file) {
+                if ($file->get_filename() != '.') {
+                    break;
+                }
+            }
+            set_config('favicon' . $data->id, $file->get_filepath() . $file->get_filename(), 'core_admin');
+        } else {
+            set_config('favicon' . $data->id, '', 'core_admin');
+        }
     }
     if (!empty($data->companycertificateseal)) {
         file_save_draft_area_files($data->companycertificateseal,
