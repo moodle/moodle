@@ -2986,12 +2986,11 @@ blockquote {
     border-left: 5px solid $gray-400;
 }
 
-/** Prevent long strings exceeding page width */
+/* Prevent long strings exceeding page width */
 .page-header-headings,
 .coursename,
 .categoryname,
-.breadcrumb-item,
-.dropdown-item {
+.breadcrumb-item {
 
     &:not(.text-truncate) {
         word-break: normal;
