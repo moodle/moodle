@@ -48,24 +48,26 @@ Feature: We can change what we are viewing on the grader report
     And I should see "Manual grade"
     And I should see "Course total"
     And the following should exist in the "user-grades" table:
-      | -1-                | -4-       | -5-       | -6-       | -7-       |
-      | Student 1          | 80        | 90        | 30        | 170       |
-    And I click on "Change to aggregates only" "link"
+      | -1-                | -1-                  | -3-       | -4-       | -5-       | -6-       |
+      | Student 1          | student1@example.com | 80        | 90        | 30        | 170       |
+    And I click on course grade category menu "Course 1"
+    And I choose "Show totals only" in the open action menu
     And I should not see "Test assignment name 1"
     And I should not see "Test assignment name 2"
     And I should not see "Manual grade"
     And I should see "Course total"
     And the following should exist in the "user-grades" table:
-      | -1-                | -4-       |
-      | Student 1          | 170       |
-    And I click on "Change to grades only" "link"
+      | -1-                | -1-                  | -3-       |
+      | Student 1          | student1@example.com | 170       |
+    And I click on course grade category menu "Course 1"
+    And I click on "Show grades only" "link"
     And I should see "Test assignment name 1"
     And I should see "Test assignment name 2"
     And I should see "Manual grade"
     And I should not see "Course total"
     And the following should exist in the "user-grades" table:
-      | -1-                | -4-       | -5-       | -6-       |
-      | Student 1          | 80        | 90        | 30        |
+      | -1-                | -1-                  | -3-       | -4-       | -5-       |
+      | Student 1          | student1@example.com | 80        | 90        | 30        |
 
   @javascript @skip_chrome_zerosize
   Scenario: View and minimise the grader report containing hidden activities without the 'moodle/grade:viewhidden' capability
@@ -86,21 +88,23 @@ Feature: We can change what we are viewing on the grader report
     And I should see "Manual grade"
     And I should see "Course total"
     And the following should exist in the "user-grades" table:
-      | -1-                | -4-       | -5-       | -6-       | -7-       |
-      | Student 1          | 80        | -         | 30        | 105.71    |
-    And I click on "Change to aggregates only" "link"
+      | -1-                | -1-                  | -3-       | -4-       | -5-       | -6-       |
+      | Student 1          | student1@example.com | 80        | -         | 30        | 105.71    |
+    And I click on course grade category menu "Course 1"
+    And I choose "Show totals only" in the open action menu
     And I should not see "Test assignment name 1"
     And I should not see "Test assignment name 2"
     And I should not see "Manual grade"
     And I should see "Course total"
     And the following should exist in the "user-grades" table:
-      | -1-                | -4-       |
-      | Student 1          | 105.71    |
-    And I click on "Change to grades only" "link"
+      | -1-                | -1-                  | -3-       |
+      | Student 1          | student1@example.com | 105.71    |
+    And I click on course grade category menu "Course 1"
+    And I click on "Show grades only" "link"
     And I should see "Test assignment name 1"
     And I should see "Test assignment name 2"
     And I should see "Manual grade"
     And I should not see "Course total"
     And the following should exist in the "user-grades" table:
-      | -1-                | -4-       | -5-       | -6-       |
-      | Student 1          | 80        | -         | 30        |
+      | -1-                | -1-                  | -3-       | -4-       | -5-       |
+      | Student 1          | student1@example.com | 80        | -         | 30        |

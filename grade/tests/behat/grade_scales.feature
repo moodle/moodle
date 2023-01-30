@@ -75,12 +75,12 @@ Feature: View gradebook when scales are used
   Scenario: Test displaying scales in gradebook in aggregation method Natural
     When I turn editing mode off
     Then the following should exist in the "user-grades" table:
-      | -1-                | -4-      | -5-            | -6-          |
-      | Student 1          | A        | 5.00           | 5.00         |
-      | Student 2          | B        | 4.00           | 4.00         |
-      | Student 3          | C        | 3.00           | 3.00         |
-      | Student 4          | D        | 2.00           | 2.00         |
-      | Student 5          | F        | 1.00           | 1.00         |
+      | -1-                | -1-                  | -3-      | -4-            | -5-          |
+      | Student 1          | student1@example.com | A        | 5.00           | 5.00         |
+      | Student 2          | student2@example.com | B        | 4.00           | 4.00         |
+      | Student 3          | student3@example.com | C        | 3.00           | 3.00         |
+      | Student 4          | student4@example.com | D        | 2.00           | 2.00         |
+      | Student 5          | student5@example.com | F        | 1.00           | 1.00         |
     And the following should exist in the "user-grades" table:
       | -1-                | -2-      | -3-            | -4-          |
       | Range              | F–A      | 0.00–5.00      | 0.00–5.00    |
@@ -109,24 +109,27 @@ Feature: View gradebook when scales are used
       | Course total        | 4.00  | 0–5   | 80.00 %    | -                            |
 
   Scenario Outline: Test displaying scales in gradebook in all other aggregation methods
-    When I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "<aggregation>"
+    Given I click on course grade category menu "Course 1"
+    And I choose "Edit category" in the open action menu
+    And I set the following fields to these values:
+      | Aggregation | <aggregation> |
     And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I expand all fieldsets
-    And I set the field "Aggregation" to "<aggregation>"
-    And I set the field "Category name" to "Sub category (<aggregation>)"
-    And I set the field "Maximum grade" to "5"
-    And I set the field "Minimum grade" to "1"
+    And I click on grade category menu "Sub category 1"
+    And I choose "Edit category" in the open action menu
+    And I set the following fields to these values:
+      | Aggregation   | <aggregation>                |
+      | Category name | Sub category (<aggregation>) |
+      | Maximum grade | 5                            |
+      | Minimum grade | 1                            |
     And I press "Save changes"
     And I turn editing mode off
     Then the following should exist in the "user-grades" table:
-      | -1-                | -4-      | -5-            | -6-            |
-      | Student 1          | A        | 5.00           | <coursetotal1> |
-      | Student 2          | B        | 4.00           | <coursetotal2> |
-      | Student 3          | C        | 3.00           | <coursetotal3> |
-      | Student 4          | D        | 2.00           | <coursetotal4> |
-      | Student 5          | F        | 1.00           | <coursetotal5> |
+      | -1-                | -1-                  | -3-      | -4-            | -5-            |
+      | Student 1          | student1@example.com | A        | 5.00           | <coursetotal1> |
+      | Student 2          | student2@example.com | B        | 4.00           | <coursetotal2> |
+      | Student 3          | student3@example.com | C        | 3.00           | <coursetotal3> |
+      | Student 4          | student4@example.com | D        | 2.00           | <coursetotal4> |
+      | Student 5          | student5@example.com | F        | 1.00           | <coursetotal5> |
     And the following should exist in the "user-grades" table:
       | -1-                | -2-      | -3-            | -4-            |
       | Range              | F–A      | 1.00–5.00      | 0.00–100.00    |
