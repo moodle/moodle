@@ -434,12 +434,12 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
             'type' => 'submit',
             'name' => 'cancel',
             'value' => get_string('cancel'),
-            'class' => 'btn btn-secondary mr-2'
+            'class' => 'btn btn-secondary mx-1'
         ]);
         $actionbuttons .= html_writer::tag('input', null, [
             'type' => 'submit',
             'value' => get_string('save'),
-            'class' => 'btn btn-primary'
+            'class' => 'btn btn-primary mx-1'
         ]);
         $actionbuttons .= html_writer::end_div();
 

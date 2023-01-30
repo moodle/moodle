@@ -23,6 +23,7 @@ $primary-nav-padding-y: ($spacer / 4) !default;
 $primary-nav-padding-x: ($spacer / 2) !default;
 
 $navbar-height: 60px !default;
+$stickyfooter-height: clamp(96px, calc(#{$font-size-base} * 3), calc(#{$font-size-base} * 3)) !default;
 $course-content-maxwidth: 830px !default;
 $medium-content-maxwidth: 1120px !default;
 $h5p-content-maxwidth: 960px !default;
