@@ -41,15 +41,18 @@ class facility_index extends column_base {
         return 'facility_index';
     }
 
+    public function get_required_statistics_fields(): array {
+        return ['facility'];
+    }
+
     protected function display_content($question, $rowclasses) {
         global $PAGE;
-        // Average facility index per quiz.
-        $facility = helper::calculate_average_question_facility($question->id);
+
+        $facility = $this->qbank->get_aggregate_statistic($question->id, 'facility');
         echo $PAGE->get_renderer('qbank_statistics')->render_facility_index($facility);
     }
 
     public function get_extra_classes(): array {
         return ['pr-3'];
     }
-
 }

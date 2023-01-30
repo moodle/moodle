@@ -17,7 +17,6 @@
 namespace qbank_statistics\columns;
 
 use core_question\local\bank\column_base;
-use qbank_statistics\helper;
 
 /**
  * This column show the average discriminative efficiency for this question.
@@ -41,10 +40,14 @@ class discriminative_efficiency extends column_base {
         return 'discriminative_efficiency';
     }
 
+    public function get_required_statistics_fields(): array {
+        return ['discriminativeefficiency'];
+    }
+
     protected function display_content($question, $rowclasses) {
         global $PAGE;
-        // Average discriminative efficiency per quiz.
-        $discriminativeefficiency = helper::calculate_average_question_discriminative_efficiency($question->id);
+
+        $discriminativeefficiency = $this->qbank->get_aggregate_statistic($question->id, 'discriminativeefficiency');
         echo $PAGE->get_renderer('qbank_statistics')->render_discriminative_efficiency($discriminativeefficiency);
     }
 

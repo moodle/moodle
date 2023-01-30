@@ -1,7 +1,17 @@
 This file describes core qbank plugin changes in /question/bank/*,
 information provided here is intended especially for developers.
 
+=== 4.2.1 ===
+
+* There is a new more effecient way to display statistics in the question bank, you should now override
+  the get_required_statistics_fields() method in your column class, and then
+  the values you need will be available from $this->qbank->get_aggregate_statistic(...).
+  If you are not in a question_bank_column class, you can directly access efficient
+  statistics-loading from the core_question\local\statistics\statistics_bulk_loader class.
+  The old method will be deprecated in 4.3.
+
 === 4.1 ===
+
 * New functions qbank_usage\helper::get_question_bank_usage_sql and
   qbank_usage\helper::get_question_attempt_usage_sql have been implemented.
   When calling a query with the SQL those methods returned, you have to be sure
