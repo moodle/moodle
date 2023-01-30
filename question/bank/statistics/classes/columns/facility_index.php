@@ -18,6 +18,7 @@ namespace qbank_statistics\columns;
 
 use core_question\local\bank\column_base;
 use qbank_statistics\helper;
+
 /**
  * This column show the average facility index for this question.
  *
@@ -28,11 +29,6 @@ use qbank_statistics\helper;
  */
 class facility_index extends column_base {
 
-    /**
-     * Title for this column.
-     *
-     * @return string column title
-     */
     public function get_title(): string {
         return get_string('facility_index', 'qbank_statistics');
     }
@@ -41,20 +37,10 @@ class facility_index extends column_base {
         return new \help_icon('facility_index', 'qbank_statistics');
     }
 
-    /**
-     * Column name.
-     *
-     * @return string column name
-     */
     public function get_name(): string {
         return 'facility_index';
     }
 
-    /**
-     * Output the contents of this column.
-     * @param object $question the row from the $question table, augmented with extra information.
-     * @param string $rowclasses CSS class names that should be applied to this row of output.
-     */
     protected function display_content($question, $rowclasses) {
         global $PAGE;
         // Average facility index per quiz.
