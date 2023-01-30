@@ -17,7 +17,6 @@
 namespace qbank_statistics\columns;
 
 use core_question\local\bank\column_base;
-use qbank_statistics\helper;
 
 /**
  * This columns shows a message about whether this question is OK or needs revision.
@@ -43,10 +42,14 @@ class discrimination_index extends column_base {
         return 'discrimination_index';
     }
 
+    public function get_required_statistics_fields(): array {
+        return ['discriminationindex'];
+    }
+
     protected function display_content($question, $rowclasses) {
         global $PAGE;
-        // Average discrimination index per quiz.
-        $discriminationindex = helper::calculate_average_question_discrimination_index($question->id);
+
+        $discriminationindex = $this->qbank->get_aggregate_statistic($question->id, 'discriminationindex');
         echo $PAGE->get_renderer('qbank_statistics')->render_discrimination_index($discriminationindex);
     }
 
