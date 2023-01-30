@@ -557,6 +557,7 @@ $string['targetcode_help'] = 'A unique string identifier for referencing the ext
 $string['testbackpack'] = 'Test backpack \'{$a}\'';
 $string['testsettings'] = 'Test settings';
 $string['type'] = 'Type';
+$string['userbadges'] = 'User badges';
 $string['variablesubstitution'] = 'Variable substitution in messages.';
 $string['variablesubstitution_help'] = 'In a badge message, certain variables can be inserted into the subject and/or body of a message so that they will be replaced with real values when the message is sent. The variables should be inserted into the text exactly as they are shown below. The following variables can be used:
 
