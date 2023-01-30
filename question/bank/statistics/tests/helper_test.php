@@ -225,6 +225,12 @@ class helper_test extends \advanced_testcase {
         foreach ($quiz2attempts as $attempt) {
             $this->submit_quiz($quiz2, $attempt);
         }
+
+        // Calculate the statistics.
+        $this->expectOutputRegex('~.*Calculations completed.*~');
+        $statisticstask = new \quiz_statistics\task\recalculate();
+        $statisticstask->execute();
+
         return [$quiz1, $quiz2, $questions];
     }
 
