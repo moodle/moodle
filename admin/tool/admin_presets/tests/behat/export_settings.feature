@@ -11,8 +11,11 @@ Feature: I can add a new preset with current settings
     And I set the field "Name" to "Starter"
     And I set the field "Description" to "Non-core starter preset"
     When I click on "Create preset" "button"
-    Then I should see "Moodle with all of the most popular features" in the "Starter" "table_row"
-    And I should see "Starter" in the "Non-core starter preset" "table_row"
+    Then the following should exist in the "Site admin presets table" table:
+      | Name    | Description                                                                                                                        |
+      | Starter | Moodle with all of the most popular features, including Assignment, Feedback, Forum, H5P, Quiz and Completion tracking.            |
+      | Full    | All the Starter features plus External (LTI) tool, SCORM, Workshop, Analytics, Badges, Competencies, Learning plans and lots more. |
+      | Starter | Non-core starter preset                                                                                                            |
 
   Scenario: Export current settings
     Given I click on "Create preset" "button"
