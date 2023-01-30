@@ -19,6 +19,10 @@ Information provided here is intended especially for developers.
   - `instance:contexturl` (tag) => `context:link`
 * The following report entity filters/conditions have been deprecated, with replacements as follows:
   - `enrolment:method` => `enrol:plugin`
+* The `local/audience/form` template outer region has renamed some of it's `data-` attributes (relevant for any themes that
+  have overridden this template):
+  - `data-instanceid` => `data-audience-id`
+  - `data-title` => `data-audience-title`
 * The `add_base_condition_sql` method of the base report class will now ignore empty where clauses
 * If a non-default column is specified in a datasource `get_default_column_sorting` method, a coding exception will be thrown
 * Trying to add/annotate duplicate entity names to a report will now throw a coding exception

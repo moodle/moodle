@@ -288,4 +288,36 @@ class audience_test extends advanced_testcase {
         $reports = $DB->get_fieldset_sql("SELECT r.id FROM {reportbuilder_report} r WHERE {$where}", $params);
         $this->assertEmpty($reports);
     }
+
+    /**
+     * Test getting list of audiences in use within schedules for a report
+     */
+    public function test_get_audiences_for_report_schedules(): void {
+        $this->resetAfterTest();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
+
+        $audienceone = $generator->create_audience(['reportid' => $report->get('id'), 'configdata' => []]);
+        $audiencetwo = $generator->create_audience(['reportid' => $report->get('id'), 'configdata' => []]);
+        $audiencethree = $generator->create_audience(['reportid' => $report->get('id'), 'configdata' => []]);
+
+        // The first schedule contains audience one and two.
+        $generator->create_schedule(['reportid' => $report->get('id'), 'name' => 'Schedule one', 'audiences' =>
+            json_encode([$audienceone->get_persistent()->get('id'), $audiencetwo->get_persistent()->get('id')])
+        ]);
+
+        // Second schedule contains only audience one.
+        $generator->create_schedule(['reportid' => $report->get('id'), 'name' => 'Schedule two', 'audiences' =>
+            json_encode([$audienceone->get_persistent()->get('id')])
+        ]);
+
+        // The first two audiences should be returned, the third omitted.
+        $audiences = audience::get_audiences_for_report_schedules($report->get('id'));
+        $this->assertEqualsCanonicalizing([
+            $audienceone->get_persistent()->get('id'),
+            $audiencetwo->get_persistent()->get('id'),
+        ], $audiences);
+    }
 }

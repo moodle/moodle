@@ -24,7 +24,7 @@ use context_system;
 use core_collator;
 use core_component;
 use core_reportbuilder\local\audiences\base;
-use core_reportbuilder\local\models\audience as audience_model;
+use core_reportbuilder\local\models\{audience as audience_model, schedule};
 
 /**
  * Class containing report audience helper methods
@@ -227,6 +227,25 @@ class audience {
         }
 
         return [$wheres, $params];
+    }
+
+    /**
+     * Return a list of audiences that are used by any schedule of the given report
+     *
+     * @param int $reportid
+     * @return int[] Array of audience IDs
+     */
+    public static function get_audiences_for_report_schedules(int $reportid): array {
+        global $DB;
+
+        $audiences = $DB->get_fieldset_select(schedule::TABLE, 'audiences', 'reportid = ?', [$reportid]);
+
+        // Reduce JSON encoded audience data of each schedule to an array of audience IDs.
+        $audienceids = array_reduce($audiences, static function(array $carry, string $audience): array {
+            return array_merge($carry, (array) json_decode($audience));
+        }, []);
+
+        return array_unique($audienceids, SORT_NUMERIC);
     }
 
     /**
