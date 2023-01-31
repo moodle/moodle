@@ -16083,6 +16083,7 @@ blockquote {
   margin: 1em 0 2em;
 }
 
+#page-admin-roles-override .capcurrent,
 #page-admin-roles-define .capdefault {
   background-color: rgba(0, 0, 0, 0.075);
 }
