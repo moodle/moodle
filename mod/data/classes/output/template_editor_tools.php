@@ -56,7 +56,7 @@ class template_editor_tools implements templatable, renderable {
     public function export_for_template(\renderer_base $output): array {
         $tools = [
             $this->get_field_tags($this->templatename),
-            $this->get_field_id_tags($this->templatename),
+            $this->get_field_info_tags($this->templatename),
             $this->get_action_tags($this->templatename),
             $this->get_other_tags($this->templatename),
         ];
@@ -90,29 +90,30 @@ class template_editor_tools implements templatable, renderable {
             $fieldname = $field->get_name();
             $taglist["[[$fieldname]]"] = $fieldname;
         }
+        $taglist['##otherfields##'] = get_string('otherfields', 'data');
         return $this->get_optgroup_data($name, $taglist);
     }
 
     /**
-     * Return the field IDs template tags.
+     * Return the field information template tags.
      *
      * @param string $templatename the template name
      * @return array|null array of tags.
      */
-    protected function get_field_id_tags(string $templatename): array {
-        $name = get_string('fieldids', 'data');
-        if ($templatename != 'addtemplate') {
-            return $this->get_optgroup_data($name, []);
-        }
+    protected function get_field_info_tags(string $templatename): array {
+        $name = get_string('fieldsinformationtags', 'data');
         $taglist = [];
-        // Field IDs.
         $fields = $this->manager->get_fields();
         foreach ($fields as $field) {
             if ($field->type === 'unknown') {
                 continue;
             }
             $fieldname = $field->get_name();
-            $taglist["[[$fieldname#id]]"] = "$fieldname id";
+            if ($templatename == 'addtemplate') {
+                $taglist["[[$fieldname#id]]"] = get_string('fieldtagid', 'mod_data', $fieldname);
+            }
+            $taglist["[[$fieldname#name]]"] = get_string('fieldtagname', 'mod_data', $fieldname);
+            $taglist["[[$fieldname#description]]"] = get_string('fieldtagdescription', 'mod_data', $fieldname);
         }
         return $this->get_optgroup_data($name, $taglist);
     }
@@ -129,11 +130,11 @@ class template_editor_tools implements templatable, renderable {
             return $this->get_optgroup_data($name, []);
         }
         $taglist = [
+            '##actionsmenu##' => get_string('actionsmenu', 'data'),
             '##edit##' => get_string('edit', 'data'),
             '##delete##' => get_string('delete', 'data'),
             '##approve##' => get_string('approve', 'data'),
             '##disapprove##' => get_string('disapprove', 'data'),
-            '##actionsmenu##' => get_string('actionsmenu', 'data'),
         ];
         if ($templatename != 'rsstemplate') {
             $taglist['##export##'] = get_string('export', 'data');
