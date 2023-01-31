@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+import {get_string as getString} from 'core/str';
 import {Reactive} from 'core/reactive';
 import notification from 'core/notification';
 import Exporter from 'core_courseformat/local/courseeditor/exporter';
@@ -179,10 +180,34 @@ export default class extends Reactive {
      * @param {boolean} setup.editing if the page is in edit mode
      * @param {boolean} setup.supportscomponents if the format supports components for content
      * @param {string} setup.cacherev the backend cached state revision
+     * @param {Array} setup.overriddenStrings optional overridden strings
      */
     setViewFormat(setup) {
         this._editing = setup.editing ?? false;
         this._supportscomponents = setup.supportscomponents ?? false;
+        const overriddenStrings = setup.overriddenStrings ?? [];
+        this._overriddenStrings = overriddenStrings.reduce(
+            (indexed, currentValue) => indexed.set(currentValue.key, currentValue),
+            new Map()
+        );
+    }
+
+    /**
+     * Execute a get string for a possible format overriden editor string.
+     *
+     * Return the proper getString promise for an editor string using the core_courseformat
+     * of the format_PLUGINNAME compoment depending on the current view format setup.
+     * @param {String} key the string key
+     * @param {string|undefined} param The param for variable expansion in the string.
+     * @returns {Promise<String>} a getString promise
+     */
+    getFormatString(key, param) {
+        if (this._overriddenStrings.has(key)) {
+            const override = this._overriddenStrings.get(key);
+            return getString(key, override.component ?? 'core_courseformat', param);
+        }
+        // All format overridable strings are from core_courseformat lang file.
+        return getString(key, 'core_courseformat', param);
     }
 
     /**

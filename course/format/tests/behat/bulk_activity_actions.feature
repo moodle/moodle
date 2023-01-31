@@ -9,7 +9,7 @@ Feature: Bulk course activity actions.
       | fullname    | Course 1 |
       | shortname   | C1       |
       | category    | 0        |
-      | numsections | 2        |
+      | numsections | 4        |
     And the following "activities" exist:
       | activity | name              | intro                       | course | idnumber | section |
       | assign   | Activity sample 1 | Test assignment description | C1     | sample1  | 1       |
@@ -109,4 +109,19 @@ Feature: Bulk course activity actions.
     And I should see "Activity sample 3" in the "Topic 2" "section"
     And I should see "Activity sample 3 (copy)" in the "Topic 2" "section"
     And "Activity sample 3 (copy)" "activity" should appear after "Activity sample 3" "activity"
+
+  Scenario: Bulk delete activities
+    Given I should see "Activity sample 1" in the "Topic 1" "section"
+    And I should see "Activity sample 2" in the "Topic 1" "section"
+    And I should see "Activity sample 3" in the "Topic 2" "section"
+    And I should see "Activity sample 4" in the "Topic 2" "section"
+    And I click on "Select activity Activity sample 1" "checkbox"
+    And I click on "Select activity Activity sample 3" "checkbox"
+    And I should see "2 selected" in the "sticky-footer" "region"
+    When I click on "Delete activities" "button" in the "sticky-footer" "region"
+    And I click on "Delete" "button" in the "Delete selected activities?" "dialogue"
+    Then I should not see "Activity sample 1" in the "Topic 1" "section"
+    And I should see "Activity sample 2" in the "Topic 1" "section"
+    And I should not see "Activity sample 3" in the "Topic 2" "section"
+    And I should see "Activity sample 4" in the "Topic 2" "section"
     And I should see "0 selected" in the "sticky-footer" "region"

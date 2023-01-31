@@ -158,7 +158,7 @@ class bulkedittools implements named_templatable, renderable {
                 'icon' => 'i/delete',
                 'action' => 'deleteSection',
                 'name' => get_string('delete'),
-                'title' => get_string('sectionsdelete', 'core_courseformat'),
+                'title' => $this->format->get_format_string('sectionsdelete'),
                 'bulk' => 'section',
             ];
         }

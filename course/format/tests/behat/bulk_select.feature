@@ -28,7 +28,7 @@ Feature: Bulk activity and section selection.
   Scenario: Enable and disable bulk editing
     When I click on "Bulk edit" "button"
     Then I should see "0 selected" in the "sticky-footer" "region"
-    And the focused element is "Select section Topic 1" "checkbox"
+    And the focused element is "Select topic Topic 1" "checkbox"
     And I click on "Close bulk edit" "button" in the "sticky-footer" "region"
     And "sticky-footer" "region" should not be visible
     And the focused element is "Bulk edit" "button"
@@ -38,12 +38,12 @@ Feature: Bulk activity and section selection.
     And I should see "0 selected" in the "sticky-footer" "region"
     When I click on "Select activity Activity sample 1" "checkbox"
     And I should see "1 selected" in the "sticky-footer" "region"
-    Then the "Select section Topic 1" "checkbox" should be disabled
+    Then the "Select topic Topic 1" "checkbox" should be disabled
 
   Scenario: Selecting sections disable activity selection
     Given I click on "Bulk edit" "button"
     And I should see "0 selected" in the "sticky-footer" "region"
-    When I click on "Select section Topic 1" "checkbox"
+    When I click on "Select topic Topic 1" "checkbox"
     And I should see "1 selected" in the "sticky-footer" "region"
     Then the "Select activity Activity sample 1" "checkbox" should be disabled
 
@@ -66,7 +66,7 @@ Feature: Bulk activity and section selection.
   Scenario: Select all is disabled until a section is selected
     Given I click on "Bulk edit" "button"
     And the "Select all" "checkbox" should be disabled
-    When I click on "Select section Topic 1" "checkbox"
+    When I click on "Select topic Topic 1" "checkbox"
     And I should see "1 selected" in the "sticky-footer" "region"
     Then the "Select all" "checkbox" should be enabled
 
@@ -80,7 +80,7 @@ Feature: Bulk activity and section selection.
 
   Scenario: Select all when a section is selected will select all sections
     Given I click on "Bulk edit" "button"
-    And I click on "Select section Topic 1" "checkbox"
+    And I click on "Select topic Topic 1" "checkbox"
     And I should see "1 selected" in the "sticky-footer" "region"
     And the "Select all" "checkbox" should be enabled
     When I click on "Select all" "checkbox" in the "sticky-footer" "region"
@@ -88,13 +88,13 @@ Feature: Bulk activity and section selection.
 
   Scenario: Click on a select all with all sections selected unselects all sections
     Given I click on "Bulk edit" "button"
-    And I click on "Select section Topic 1" "checkbox"
-    And I click on "Select section Topic 2" "checkbox"
+    And I click on "Select topic Topic 1" "checkbox"
+    And I click on "Select topic Topic 2" "checkbox"
     And I should see "2 selected" in the "sticky-footer" "region"
     And the "Select all" "checkbox" should be enabled
     When I click on "Select all" "checkbox" in the "sticky-footer" "region"
     Then I should see "0 selected" in the "sticky-footer" "region"
-    And the focused element is "Select section Topic 1" "checkbox"
+    And the focused element is "Select topic Topic 1" "checkbox"
 
   Scenario: Click on a select all with all activity selected unselects all activities
     Given I click on "Bulk edit" "button"
@@ -106,7 +106,7 @@ Feature: Bulk activity and section selection.
     And the "Select all" "checkbox" should be enabled
     When I click on "Select all" "checkbox" in the "sticky-footer" "region"
     Then I should see "0 selected" in the "sticky-footer" "region"
-    And the focused element is "Select section Topic 1" "checkbox"
+    And the focused element is "Select topic Topic 1" "checkbox"
 
   Scenario: Click an activity name in bulk mode select and unselects the activity
     Given I click on "Bulk edit" "button"

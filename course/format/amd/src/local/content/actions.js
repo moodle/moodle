@@ -403,15 +403,18 @@ export default class extends BaseComponent {
         }
 
         let bodyText = null;
+        let titleText = null;
         if (sectionIds.length == 1) {
+            titleText = this.reactive.getFormatString('sectiondelete_title');
             const sectionInfo = this.reactive.get('section', sectionIds[0]);
-            bodyText = getString('confirmdeletesection', 'moodle', sectionInfo.title);
+            bodyText = this.reactive.getFormatString('sectiondelete_info', {name: sectionInfo.title});
         } else {
-            bodyText = getString('sectionsdelete_confirm', 'core_courseformat');
+            titleText = this.reactive.getFormatString('sectionsdelete_title');
+            bodyText = this.reactive.getFormatString('sectionsdelete_info', {count: sectionIds.length});
         }
 
         const modalParams = {
-            title: getString('confirm', 'core'),
+            title: titleText,
             body: bodyText,
             type: ModalFactory.types.DELETE_CANCEL,
         };
@@ -505,22 +508,29 @@ export default class extends BaseComponent {
         event.preventDefault();
 
         let bodyText = null;
+        let titleText = null;
         if (cmIds.length == 1) {
             const cmInfo = this.reactive.get('cm', cmIds[0]);
+            titleText = getString('cmdelete_title', 'core_courseformat');
             bodyText = getString(
-                'deletechecktypename',
-                'moodle',
+                'cmdelete_info',
+                'core_courseformat',
                 {
                     type: cmInfo.modname,
                     name: cmInfo.name,
                 }
             );
         } else {
-            bodyText = getString('cmsdelete_confirm', 'core_courseformat');
+            titleText = getString('cmsdelete_title', 'core_courseformat');
+            bodyText = getString(
+                'cmsdelete_info',
+                'core_courseformat',
+                {count: cmIds.length}
+            );
         }
 
         const modalParams = {
-            title: getString('confirm', 'core'),
+            title: titleText,
             body: bodyText,
             type: ModalFactory.types.DELETE_CANCEL,
         };

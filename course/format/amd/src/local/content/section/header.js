@@ -25,12 +25,6 @@
  */
 
 import DndSectionItem from 'core_courseformat/local/courseeditor/dndsectionitem';
-import {get_string as getString} from 'core/str';
-import {prefetchStrings} from 'core/prefetch';
-
-prefetchStrings('core_courseformat', [
-    'selectsection',
-]);
 
 export default class extends DndSectionItem {
 
@@ -47,6 +41,7 @@ export default class extends DndSectionItem {
             ACTIONSMENU: `.section_action_menu`,
             BULKSELECT: `[data-for='sectionBulkSelect']`,
             BULKCHECKBOX: `[data-bulkcheckbox]`,
+            CHEVRON: `[data-for='sectiontoggler']`,
         };
         this.classes = {
             HIDE: 'd-none',
@@ -77,12 +72,27 @@ export default class extends DndSectionItem {
     getWatchers() {
         return [
             {watch: `bulk:updated`, handler: this._refreshBulk},
-            {watch: `section[${this.id}].title:updated`, handler: this._refreshSectionBulkSelector},
+            {watch: `section[${this.id}].title:updated`, handler: this._refreshSectionTitle},
         ];
     }
 
     /**
-     * Update the bulk checkbox when the topic name changes.
+     * Update the section when the section name changes.
+     *
+     * The section header have several HTML that uses the section name
+     * for accessibility and behat tests. This method updates them all.
+     *
+     * @param {object} param
+     * @param {Object} param.element the section info
+     */
+    _refreshSectionTitle(param) {
+        const element = param.element;
+        this.getElement(this.selectors.CHEVRON)?.setAttribute("aria-label", element.title);
+        this._refreshSectionBulkSelector(param);
+    }
+
+    /**
+     * Update the bulk checkbox when the section name changes.
      *
      * @param {object} param
      * @param {Object} param.element the section info
@@ -92,7 +102,7 @@ export default class extends DndSectionItem {
         if (!checkbox) {
             return;
         }
-        const newLabel = await getString('selectsection', 'core_courseformat', element.title);
+        const newLabel = await this.reactive.getFormatString('selectsection', element.title);
         checkbox.title = newLabel;
         const label = this.getElement(`label[for='${checkbox.id}']`);
         if (label) {
