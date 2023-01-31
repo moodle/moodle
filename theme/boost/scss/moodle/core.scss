@@ -2941,6 +2941,27 @@ body.dragging {
     font-size: 9px;
     width: 9px;
     border: 0;
+
+}
+
+.dropleft .dropdown-toggle::before {
+    border: 0;
+    content: $fa-var-chevron-left;
+    @include fa-icon();
+    font-size: 9px;
+    margin-left: 0;
+    margin-right: 4px;
+    width: 9px;
+}
+
+.dropright .dropdown-toggle::after {
+    border: 0;
+    content: $fa-var-chevron-right;
+}
+
+.dropup .dropdown-toggle::after {
+    border: 0;
+    content: $fa-var-chevron-up;
 }
 
 .initialbargroups ul {
