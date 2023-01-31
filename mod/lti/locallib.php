@@ -1368,6 +1368,10 @@ function lti_verify_with_keyset($jwtparam, $keyseturl, $clientid) {
         // Something went wrong, so attempt to update cached keyset and then try again.
         $keyset = file_get_contents($keyseturl);
         $keysetarr = json_decode($keyset, true);
+
+        // Fix for firebase/php-jwt's dependency on the optional 'alg' property in the JWK.
+        $keysetarr = jwks_helper::fix_jwks_alg($keysetarr, $jwtparam);
+
         // JWK::parseKeySet uses RS256 algorithm by default.
         $keys = JWK::parseKeySet($keysetarr);
         $jwt = JWT::decode($jwtparam, $keys);
