@@ -147,7 +147,7 @@ $iconsizes: map-merge((
 }
 
 @each $type, $value in $activity-icon-colors {
-    .activityiconcontainer.#{$type} {
+    .activityiconcontainer.#{$type}:not(.modicon_lti) {
         background-color: $value;
         .activityicon,
         .icon {
