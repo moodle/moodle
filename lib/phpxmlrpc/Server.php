@@ -558,14 +558,10 @@ class Server
             // makes the lib about 200% slower...
             //if (!is_valid_charset($reqEncoding, array('UTF-8')))
             if (!in_array($reqEncoding, array('UTF-8', 'US-ASCII')) && !XMLParser::hasEncoding($data)) {
-                if ($reqEncoding == 'ISO-8859-1') {
-                    $data = utf8_encode($data);
+                if (function_exists('mb_convert_encoding')) {
+                    $data = mb_convert_encoding($data, 'UTF-8', $reqEncoding);
                 } else {
-                    if (extension_loaded('mbstring')) {
-                        $data = mb_convert_encoding($data, 'UTF-8', $reqEncoding);
-                    } else {
-                        $this->getLogger()->errorLog('XML-RPC: ' . __METHOD__ . ': invalid charset encoding of received request: ' . $reqEncoding);
-                    }
+                    $this->getLogger()->errorLog('XML-RPC: ' . __METHOD__ . ': unsupported charset encoding of received request: ' . $reqEncoding);
                 }
             }
         }

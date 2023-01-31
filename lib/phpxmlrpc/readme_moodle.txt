@@ -20,3 +20,8 @@ Current version imported: 4.8.1 (c74cc31)
 
 Local changes:
  * readme_moodle.txt - this file ;-)
+
+ * 2023-01-31 lib/phpxmlrpc/* has minor changes for PHP 8.2 compatibility. See MDL-76412 for more details.
+    Since version 4.9.5, phpxmlrpc already has the fix, so if someone executing the upgrading version and
+    it has the patch, please ignore this note.
+ * 2023-01-31 Applied patch https://github.com/gggeek/phpxmlrpc/pull/110. See MDL-76412 for more details.
