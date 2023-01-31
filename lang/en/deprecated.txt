@@ -84,3 +84,5 @@ showanalysisicon_help,core_grades
 blockunprotect,core_admin
 showactivityicons,core_grades
 showactivityicons_help,core_grades
+showcalculations,core_grades
+showcalculations_help,core_grades

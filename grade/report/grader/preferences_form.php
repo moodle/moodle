@@ -56,8 +56,6 @@ class grader_report_preferences_form extends moodleform {
 
             $preferences['prefshow'] = array();
 
-            $preferences['prefshow']['showcalculations'] = $checkbox_default;
-
             if ($canviewhidden) {
                 $preferences['prefshow']['showaverages']  = $checkbox_default;
             }

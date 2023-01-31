@@ -1586,9 +1586,7 @@ class grade_report_grader extends grade_report {
         $lockunlockicon      = '';
 
         if (has_capability('moodle/grade:manage', $this->context)) {
-            if ($this->get_pref('showcalculations')) {
-                $editcalculationicon = $this->gtree->get_calculation_icon($element, $this->gpr);
-            }
+            $editcalculationicon = $this->gtree->get_calculation_icon($element, $this->gpr);
 
             $showhideicon = $this->gtree->get_hiding_icon($element, $this->gpr);
 
