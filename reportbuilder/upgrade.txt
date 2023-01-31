@@ -10,6 +10,8 @@ Information provided here is intended especially for developers.
   - `data-force-table` to force table view
 * New optional parameter `pagesize` in external method `core_reportbuilder_reports_get` to set the displayed rows per page.
 * Javascript reports repository module method `getReport` updated to accept new pagesize parameter.
+* The schedule helper `create_schedule` method accepts a `$timenow` parameter to use for comparisons against current date
+  during tests
 * The `datasource_stress_test_columns` test helper now enables sorting on those columns that support it
 * The `create_[column|filter|condition]` test generator methods now allow for setting all persistent properties
 
