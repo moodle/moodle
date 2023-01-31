@@ -1474,7 +1474,11 @@ class question_attempt {
         } else {
             $attemptstatedata = $this->get_question(false)->update_attempt_state_data_for_new_version(
                     $oldstep, $otherversion);
-            return array_merge($attemptstatedata, $oldstep->get_behaviour_data());
+
+            foreach ($oldstep->get_behaviour_data() as $name => $value) {
+                $attemptstatedata['-' . $name] = $value;
+            }
+            return $attemptstatedata;
         }
     }
 
