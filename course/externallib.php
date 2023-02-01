@@ -483,6 +483,7 @@ class core_course_external extends external_api {
                                                 'dataid' => new external_value(PARAM_NOTAGS, 'cm data id', VALUE_OPTIONAL),
                                             )
                                         ),
+                                        'Course dates',
                                         VALUE_DEFAULT,
                                         []
                                     ),
@@ -514,7 +515,7 @@ class core_course_external extends external_api {
                                                             VALUE_OPTIONAL
                                                    ),
                                               )
-                                          ), VALUE_DEFAULT, array()
+                                          ), 'Course contents', VALUE_DEFAULT, array()
                                       ),
                                     'contentsinfo' => new external_single_structure(
                                         array(
@@ -1305,7 +1306,7 @@ class core_course_external extends external_api {
                                 'value' => new external_value(PARAM_RAW, 'the value for the option 1 (yes) or 0 (no)'
                             )
                         )
-                    ), VALUE_DEFAULT, array()
+                    ), 'Course duplication options', VALUE_DEFAULT, array()
                 ),
             )
         );
@@ -1532,7 +1533,7 @@ class core_course_external extends external_api {
                                 'value' => new external_value(PARAM_RAW, 'the value for the option 1 (yes) or 0 (no)'
                             )
                         )
-                    ), VALUE_DEFAULT, array()
+                    ), 'Course import options', VALUE_DEFAULT, array()
                 ),
             )
         );
