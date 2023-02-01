@@ -345,6 +345,7 @@ class core_completion_external extends external_api {
                                         )
                                     ]
                                 ),
+                                'Completion status details',
                                 VALUE_DEFAULT,
                                 []
                             ),
