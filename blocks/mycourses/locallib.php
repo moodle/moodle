@@ -56,6 +56,16 @@ function mycourses_get_my_completion($datefrom = 0) {
                                           AND ue.timestart != 0",
                                           array('userid' => $USER->id));
 
+    // We need to de-duplicate this list.
+    $recs = [];
+    foreach ($myinprogress as $rec) {
+        $myrecs[$rec->courseid] = $rec;
+    }
+    $myinprogress = [];
+    foreach ($myrecs as $rec) {
+        $myinprogress[$rec->id] = $rec;
+    }
+
     // We dont care about these.  If you have enrolled then you are started.
     $mynotstartedenrolled = array();
     $unsortedcourses = array();
