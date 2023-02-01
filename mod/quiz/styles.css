@@ -326,19 +326,6 @@ body.path-mod-quiz table tbody tr.gradedattempt > td {
     background-color: #d9edf7;
 }
 
-.quizattemptcounts {
-    clear: left;
-    text-align: center;
-    display: inline;
-    margin-left: 20%;
-}
-
-#page-mod-quiz-view .quizattemptcounts {
-    display: block;
-    margin-left: 0;
-    margin-right: 0;
-}
-
 /** Mod quiz summary **/
 #page-mod-quiz-summary #content {
     text-align: center;
@@ -405,7 +392,6 @@ table.quizreviewsummary td.cell {
     clear: both;
 }
 
-#page-mod-quiz-report div#commands,
 #page-mod-quiz-report .controls {
     text-align: center;
 }
@@ -421,10 +407,6 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-report .negcovar {
     border: medium solid pink;
-}
-
-#page-mod-quiz-report .toggleincludeauto {
-    text-align: center;
 }
 
 #page-mod-quiz-report .gradetheselink {
@@ -456,7 +438,6 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-report table#attempts {
     clear: both;
-    width: 80%;
     margin: 0.2em auto;
 }
 

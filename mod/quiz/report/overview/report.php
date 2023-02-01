@@ -158,7 +158,7 @@ class quiz_overview_report extends attempts_report {
                                 get_string('regradeall', 'quiz_overview');
                     }
                     $displayurl = new moodle_url($options->get_url(), ['sesskey' => sesskey()]);
-                    echo '<div class="mdl-align">';
+                    echo '<div class="regradebuttons">';
                     echo '<form action="'.$displayurl->out_omit_querystring().'">';
                     echo '<div>';
                     echo html_writer::input_hidden_params($displayurl);
@@ -176,7 +176,7 @@ class quiz_overview_report extends attempts_report {
                 // Print information on the grading method.
                 if ($strattempthighlight = quiz_report_highlighting_grading_method(
                         $quiz, $this->qmsubselect, $options->onlygraded)) {
-                    echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
+                    echo '<div class="quizattemptcounts mt-3">' . $strattempthighlight . '</div>';
                 }
             }
 
