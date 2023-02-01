@@ -22,5 +22,13 @@ Feature: Duplicate a section
   @javascript
   Scenario: Duplicate section
     Given I open section "1" edit menu
-    And I click on "Duplicate" "link" in the "Topic 1" "section"
+    When I click on "Duplicate" "link" in the "Topic 1" "section"
     Then I should see "Activity sample 2" in the "Topic 2" "section"
+
+  @javascript
+  Scenario: Duplicate a named section
+    Given I set the field "Edit topic name" in the "Topic 1" "section" to "New name"
+    And I should see "New name" in the "New name" "section"
+    When I open section "1" edit menu
+    And I click on "Duplicate" "link" in the "New name" "section"
+    Then I should see "Activity sample 2" in the "New name (copy)" "section"

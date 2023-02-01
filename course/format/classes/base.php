@@ -1752,7 +1752,11 @@ abstract class base {
         $oldsectioninfo = get_fast_modinfo($course)->get_section_info($originalsection->section);
         $newsection = course_create_section($course, $oldsectioninfo->section + 1); // Place new section after existing one.
 
-        $newsection->name = $originalsection->name;
+        if (!empty($originalsection->name)) {
+            $newsection->name = get_string('duplicatedsection', 'moodle', $originalsection->name);
+        } else {
+            $newsection->name = $originalsection->name;
+        }
         $newsection->summary = $originalsection->summary;
         $newsection->summaryformat = $originalsection->summaryformat;
         $newsection->visible = $originalsection->visible;
