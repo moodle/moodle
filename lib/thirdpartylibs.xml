@@ -606,7 +606,23 @@ All rights reserved.</copyright>
     </copyrights>
   </library>
   <library>
-    <location>http-message</location>
+    <location>psr/http-client</location>
+    <name>http-client</name>
+    <description>Provides an abstraction that describe the components of a HTTP Client.</description>
+    <version>1.0.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/php-fig/http-client</repository>
+  </library>
+  <library>
+    <location>psr/http-factory</location>
+    <name>http-factory</name>
+    <description>Provides interfaces that describe the components of a HTTP Factory.</description>
+    <version>1.0.1</version>
+    <license>MIT</license>
+    <repository>https://github.com/php-fig/http-factory</repository>
+  </library>
+  <library>
+    <location>psr/http-message</location>
     <name>http-message</name>
     <description>Provide a set of common interfaces for HTTP messages as described in RFC 7230 and RFC 7231</description>
     <version>1.0.1</version>
@@ -625,5 +641,53 @@ All rights reserved.</copyright>
       <copyright>1999,2000,2001 Edd Dumbill, Useful Information Company</copyright>
     </copyrights>
     <customised/>
+  </library>
+  <library>
+    <location>guzzlehttp/guzzle</location>
+    <name>GuzzleHttp/Guzzle</name>
+    <description>Guzzle is a PHP HTTP client library</description>
+    <version>7.5.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/guzzle/guzzle</repository>
+  </library>
+  <library>
+    <location>guzzlehttp/promises</location>
+    <name>GuzzleHttp/Promises</name>
+    <description>Guzzle promises library</description>
+    <version>1.5.2</version>
+    <license>MIT</license>
+    <repository>https://github.com/guzzle/promises</repository>
+  </library>
+  <library>
+    <location>ralouphie/getallheaders</location>
+    <name>getallheaders polyfill</name>
+    <description>A polyfill for getallheaders</description>
+    <version>3.0.3</version>
+    <license>MIT</license>
+    <repository>https://github.com/ralouphie/getallheaders</repository>
+  </library>
+  <library>
+    <location>guzzlehttp/psr7</location>
+    <name>GuzzleHttp/PSR7</name>
+    <description>PSR-7 message implementation that also provides common utility methods</description>
+    <version>2.4.3</version>
+    <license>MIT</license>
+    <repository>https://github.com/guzzle/psr7</repository>
+  </library>
+  <library>
+    <location>symfony/deprecation-contracts</location>
+    <name>Symfony Deprecation contracts</name>
+    <description>A generic function and convention to trigger deprecation notices</description>
+    <version>3.1.1</version>
+    <license>MIT</license>
+    <repository>https://github.com/symfony/deprecation-contracts</repository>
+  </library>
+  <library>
+    <location>guzzlehttp/kevinrob/guzzlecache</location>
+    <name>Guzzle cache middleware</name>
+    <description>A HTTP Cache for Guzzle as a simple Middleware to be added in the HandlerStack.</description>
+    <version>4.0.2</version>
+    <license>MIT</license>
+    <repository>https://github.com/Kevinrob/guzzle-cache-middleware</repository>
   </library>
 </libraries>

@@ -109,8 +109,14 @@ class core_component {
         'Firebase\\JWT' => 'lib/php-jwt/src',
         'ZipStream' => 'lib/zipstream/src/',
         'MyCLabs\\Enum' => 'lib/php-enum/src',
-        'Psr\\Http\\Message' => 'lib/http-message/src',
         'PhpXmlRpc' => 'lib/phpxmlrpc',
+        'Psr\\Http\\Client' => 'lib/psr/http-client/src',
+        'Psr\\Http\\Factory' => 'lib/psr/http-factory/src',
+        'Psr\\Http\\Message' => 'lib/psr/http-message/src',
+        'GuzzleHttp\\Psr7' => 'lib/guzzlehttp/psr7/src',
+        'GuzzleHttp\\Promise' => 'lib/guzzlehttp/promises/src',
+        'GuzzleHttp' => 'lib/guzzlehttp/guzzle/src',
+        'Kevinrob\\GuzzleCache' => 'lib/guzzlehttp/kevinrob/guzzlecache/src',
     );
 
     /**
