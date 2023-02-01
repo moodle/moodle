@@ -165,6 +165,8 @@ if ($returnto === 'profile') {
     } else {
         $returnurl = new moodle_url('/user/profile.php', array('id' => $user->id));
     }
+} else if ($user->id === -1) {
+    $returnurl = new moodle_url("/admin/user.php");
 } else {
     $returnurl = new moodle_url('/user/preferences.php', array('userid' => $user->id));
 }
