@@ -67,12 +67,20 @@ class standard_action_bar extends base_action_bar {
                 null, ['class' => 'btn btn-secondary']);
         }
 
-        $previewlnk = new moodle_url('/mod/feedback/print.php', array('id' => $this->cmid));
-        if ($this->course->id) {
-            $previewlnk->param('courseid', $this->course->id);
-        }
-        $items['left'][]['actionlink'] = new action_link($previewlnk, get_string('previewquestions', 'feedback'),
+        // The preview icon should be displayed only to users with capability to edit or view reports (to include
+        // non-editing teachers too).
+        $capabilities = [
+            'mod/feedback:edititems',
+            'mod/feedback:viewreports',
+        ];
+        if (has_any_capability($capabilities, $this->context)) {
+            $previewlnk = new moodle_url('/mod/feedback/print.php', array('id' => $this->cmid));
+            if ($this->course->id) {
+                $previewlnk->param('courseid', $this->course->id);
+            }
+            $items['left'][]['actionlink'] = new action_link($previewlnk, get_string('previewquestions', 'feedback'),
             null, ['class' => 'btn btn-secondary']);
+        }
 
         if ($this->viewcompletion) {
             // Display a link to complete feedback or resume.
