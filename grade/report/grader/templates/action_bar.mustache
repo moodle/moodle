@@ -60,7 +60,8 @@
                 }
             ]
         },
-        "groupselector": "<div class='group-selector'></div>"
+        "groupselector": "<div class='group-selector'></div>",
+        "collapsedcolumns": "<div class='collapse-columns'></div>"
     }
 }}
 <div class="container-fluid tertiary-navigation full-width-bottom-border">
@@ -89,5 +90,12 @@
             </div>
             <div class="navitem-divider"></div>
         {{/initialselector}}
+        {{#collapsedcolumns}}
+            <div class="navitem flex-column align-self-center ml-auto {{#classes}}{{.}}{{/classes}}" aria-live="polite">
+                {{#content}}
+                    {{>core_grades/tertiary_navigation_dropdown}}
+                {{/content}}
+            </div>
+        {{/collapsedcolumns}}
     </div>
 </div>

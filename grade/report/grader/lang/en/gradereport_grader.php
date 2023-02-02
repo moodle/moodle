@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['collapsedcolumns'] = 'Collapsed columns <span class="badge badge-pill badge-primary ml-1" data-collapse="count">{$a}</span>';
 $string['eventgradereportviewed'] = 'Grader report viewed';
 $string['grader:manage'] = 'Manage the grader report';
 $string['grader:view'] = 'View grader report';
@@ -43,6 +44,7 @@ $string['privacy:metadata:preference:grade_report_showranges'] = 'Whether to dis
 $string['privacy:metadata:preference:grade_report_showuserimage'] = 'Whether to show the user\'s profile image next to the name';
 $string['privacy:metadata:preference:grade_report_studentsperpage'] = 'The number of students displayed per page in the grader report';
 $string['privacy:request:preference:grade_report_grader_collapsed_categories'] = 'You have some gradebook categories collapsed in the "{$a->name}" course';
+$string['reopencolumn'] = 'Reopen {$a} column';
 $string['summarygrader'] = 'A table with the names of students in the first column, with assessable activities grouped by course and category across the top.';
 $string['showingxofy'] = 'Showing {$a->found} of {$a->total}';
 $string['useractivitygrade'] = '{$a} grade';

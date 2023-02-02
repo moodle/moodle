@@ -127,8 +127,21 @@ class behat_gradereport_grader extends behat_base {
      */
     public function i_click_on_user_profile_field_menu(string $field) {
 
-        $xpath = "//table[@id='user-grades']//*[@data-type='" . $field . "']";
+        $xpath = "//table[@id='user-grades']//*[@data-type='" . mb_strtolower($field) . "']";
         $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
     }
 
+    /**
+     * Return the list of partial named selectors.
+     *
+     * @return array
+     */
+    public static function get_partial_named_selectors(): array {
+        return [
+            new behat_component_named_selector(
+                'collapse search',
+                [".//*[contains(concat(' ', @class, ' '), ' collapsecolumndropdown ')]"]
+            ),
+        ];
+    }
 }
