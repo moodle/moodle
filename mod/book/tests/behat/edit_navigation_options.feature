@@ -19,8 +19,8 @@ Feature: In a book, change the navigation options
   # The option to "Style of navigation" is removed from the settings.
   Scenario: Change navigation options
     Given the following "activities" exist:
-      | activity | name      | intro                    | course | idnumber | section | navstyle |
-      | book     | Test book | A book about lorem ipsum | C1     | book1    | 1       | 0        |
+      | activity | name      | course | idnumber | navstyle |
+      | book     | Test book | C1     | book1    | 0        |
     And I am on "Course 1" course homepage with editing mode on
     And I follow "Test book"
     And I should see "Add new chapter"
