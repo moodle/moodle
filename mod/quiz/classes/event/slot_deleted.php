@@ -42,7 +42,7 @@ class slot_deleted extends \core\event\base {
     protected function init() {
         $this->data['objecttable'] = 'quiz_slots';
         $this->data['crud'] = 'd';
-        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     public static function get_name() {
