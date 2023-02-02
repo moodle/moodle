@@ -139,7 +139,7 @@ class cohorts extends system_report {
             ->set_type(column::TYPE_TEXT)
             ->set_is_sortable(true)
             ->add_fields("{$entitymainalias}.idnumber, {$entitymainalias}.id, {$entitymainalias}.contextid")
-            ->add_callback(static function(string $idnumber, stdClass $cohort): string {
+            ->add_callback(static function(?string $idnumber, stdClass $cohort): string {
                 global $OUTPUT, $PAGE;
                 $renderer = $PAGE->get_renderer('core');
 
