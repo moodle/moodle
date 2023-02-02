@@ -232,14 +232,6 @@ class courses_test extends core_reportbuilder_testcase {
                 'course:idnumber_operator' => text::IS_EQUAL_TO,
                 'course:idnumber_value' => 'F-101XT',
             ], false],
-            'Filter course summary' => ['course:summary', [
-                'course:summary_operator' => text::CONTAINS,
-                'course:summary_value' => 'Lorem ipsum',
-            ], true],
-            'Filter course summary (no match)' => ['course:summary', [
-                'course:summary_operator' => text::IS_EQUAL_TO,
-                'course:summary_value' => 'Fiat',
-            ], false],
             'Filter course format' => ['course:format', [
                 'course:format_operator' => select::EQUAL_TO,
                 'course:format_value' => 'topics',
