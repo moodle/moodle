@@ -15,16 +15,13 @@ Feature: Block appearances
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And the following "activities" exist:
-      | activity | name             | description              | course | idnumber | section | template |
-      | survey   | Test survey name |                          | C1     | survey1  | 1       | 4        |
-      | book     | Test book name   | Test book description    | C1     | book1    | 1       |          |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I click on "Test book name" "link" in the "region-main" "region"
-    And I set the following fields to these values:
-      | Chapter title | Book title |
-      | Content       | Book content test test |
-    And I press "Save changes"
+      | activity | name             | course | idnumber | template |
+      | survey   | Test survey name | C1     | survey1  | 4        |
+      | book     | Test book name   | C1     | book1    |          |
+    And the following "mod_book > chapter" exists:
+      | book    | Test book name         |
+      | title   | Book title             |
+      | content | Book content test test |
     And I am on the "Course 1" course page logged in as teacher1
     And I turn editing mode on
     And I add the "Comments" block

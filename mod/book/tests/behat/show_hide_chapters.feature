@@ -20,36 +20,17 @@ Feature: Book activity chapter visibility management
       | course   | C1                  |
       | activity | book                |
       | name     | Test book           |
-    And I am on the "Test book" "book activity" page logged in as teacher1
-    And I set the following fields to these values:
-      | Chapter title | First chapter |
-      | Content | First chapter |
-    And I press "Save changes"
-    And I am on "Course 1" course homepage
+    And the following "mod_book > chapters" exist:
+      | book      | title          | content        | pagenum |subchapter |
+      | Test book | First chapter  | First chapter  | 1       | 0         |
+      | Test book | Second chapter | Second chapter | 2       | 0         |
+      | Test book | Sub chapter    | Sub chapter    | 3       | 1         |
+      | Test book | Third chapter  | Third chapter  | 4       | 0         |
+      | Test book | Fourth chapter | Fourth chapter | 5       | 0         |
+    And I am on the "Course 1" course page logged in as teacher1
     And I turn editing mode on
-    And I click on "Test book" "link" in the "region-main" "region"
-    And I click on "Add new chapter after \"First chapter\"" "link"
-    And I set the following fields to these values:
-      | Chapter title | Second chapter |
-      | Content | Second chapter |
-    And I press "Save changes"
-    And I click on "Add new chapter after \"Second chapter\"" "link"
-    And I set the following fields to these values:
-      | Chapter title | Sub chapter |
-      | subchapter | 1 |
-      | Content | Sub chapter |
-    And I press "Save changes"
-    And I click on "Add new chapter after \"Sub chapter\"" "link"
-    And I set the following fields to these values:
-      | Chapter title | Third chapter |
-      | subchapter | 0 |
-      | Content | Third chapter |
-    And I press "Save changes"
-    And I click on "Add new chapter after \"Third chapter\"" "link"
-    And I set the following fields to these values:
-      | Chapter title | Fourth chapter |
-      | Content | Fourth chapter |
-    And I press "Save changes"
+    And I am on the "Test book" "book activity" page
+    And I click on "4. Fourth chapter" "link" in the "Table of contents" "block"
 
   @javascript
   Scenario: Show/hide chapters and subchapters
@@ -61,8 +42,7 @@ Feature: Book activity chapter visibility management
     And I click on "Test book" "link" in the "region-main" "region"
     Then the "class" attribute of "a[title='Second chapter']" "css_element" should contain "dimmed_text"
     And the "class" attribute of "a[title='Third chapter']" "css_element" should contain "dimmed_text"
-    And I am on "Course 1" course homepage
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I click on "Test book" "link" in the "region-main" "region"
     And I follow "Next"
     And I should see "Second chapter" in the ".book_content" "css_element"
@@ -72,7 +52,6 @@ Feature: Book activity chapter visibility management
     And I should see "Third chapter" in the ".book_content" "css_element"
     And I follow "Next"
     And I should see "Fourth chapter" in the ".book_content" "css_element"
-    And I log out
     And I am on the "Test book" "book activity" page logged in as student1
     And I should not see "Second chapter" in the "Table of contents" "block"
     And I should not see "Third chapter" in the "Table of contents" "block"
