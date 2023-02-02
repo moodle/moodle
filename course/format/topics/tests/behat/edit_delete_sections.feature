@@ -14,7 +14,7 @@ Feature: Sections can be edited and deleted in topics format
     And the following "activities" exist:
       | activity   | name                   | intro                         | course | idnumber    | section |
       | assign     | Test assignment name   | Test assignment description   | C1     | assign1     | 0       |
-      | book       | Test book name         | Test book description         | C1     | book1       | 1       |
+      | book       | Test book name         |                               | C1     | book1       | 1       |
       | chat       | Test chat name         | Test chat description         | C1     | chat1       | 4       |
       | choice     | Test choice name       | Test choice description       | C1     | choice1     | 5       |
     And the following "course enrolments" exist:
