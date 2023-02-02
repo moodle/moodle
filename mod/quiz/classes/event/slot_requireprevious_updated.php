@@ -42,7 +42,7 @@ class slot_requireprevious_updated extends \core\event\base {
     protected function init() {
         $this->data['objecttable'] = 'quiz_slots';
         $this->data['crud'] = 'u';
-        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     public static function get_name() {

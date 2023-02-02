@@ -37,7 +37,7 @@ class slot_displaynumber_updated extends \core\event\base {
     protected function init(): void {
         $this->data['objecttable'] = 'quiz_slots';
         $this->data['crud'] = 'u';
-        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**
