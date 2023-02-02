@@ -58,12 +58,11 @@ const registerListenerEvents = () => {
     $(menuContainer).on('show.bs.dropdown', async(e) => {
         const courseID = e.relatedTarget.dataset.courseid;
         const groupId = e.relatedTarget.dataset.groupid;
-        const actionBaseUrl = Url.relativeUrl('/grade/report/user/index.php', {}, false);
         // Display a loading icon in the dropdown menu container until the body promise is resolved.
         await WidgetBase.showLoader(dropdownMenuContainer);
 
         // If an error occurs while fetching the data, display the error within the dropdown menu.
-        const data = await Repository.userFetch(courseID, actionBaseUrl, groupId).catch(async(e) => {
+        const data = await Repository.userFetch(courseID, groupId).catch(async(e) => {
             const errorTemplateData = {
                 'errormessage': e.message
             };

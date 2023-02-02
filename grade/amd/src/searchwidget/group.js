@@ -66,12 +66,11 @@ const registerListenerEvents = () => {
     // Handle the 'shown.bs.dropdown' event (Fired when the dropdown menu is fully displayed).
     $(menuContainer).on('show.bs.dropdown', async(e) => {
         const courseID = e.relatedTarget.dataset.courseid;
-        const actionBaseUrl = e.relatedTarget.dataset.actionBaseUrl;
         // Display a loading icon in the dropdown menu container until the body promise is resolved.
         await WidgetBase.showLoader(dropdownMenuContainer);
 
         // If an error occurs while fetching the data, display the error within the dropdown menu.
-        const data = await Repository.groupFetch(courseID, actionBaseUrl).catch(async(e) => {
+        const data = await Repository.groupFetch(courseID).catch(async(e) => {
             const errorTemplateData = {
                 'errormessage': e.message
             };

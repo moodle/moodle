@@ -91,8 +91,8 @@ $functions = array(
         'type'        => 'read',
         'ajax'          => true,
         'loginrequired' => true,
-   ),
-   'core_backup_get_async_backup_links_restore' => array(
+    ),
+    'core_backup_get_async_backup_links_restore' => array(
         'classname'   => 'core_backup_external',
         'classpath' => 'backup/externallib.php',
         'methodname'  => 'get_async_backup_links_restore',
@@ -965,13 +965,31 @@ $functions = array(
     ),
     'core_grades_get_enrolled_users_for_search_widget' => array (
         'classname' => 'core_grades\external\get_enrolled_users_for_search_widget',
+        'description' => '** DEPRECATED ** Please do not call this function any more. ' .
+            'Use core_grades_get_enrolled_users_for_selector instead. ' .
+            'Returns the enrolled users within and map some fields to the returned array of user objects.',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ),
+    'core_grades_get_enrolled_users_for_selector' => array (
+        'classname' => 'core_grades\external\get_enrolled_users_for_selector',
         'description' => 'Returns the enrolled users within and map some fields to the returned array of user objects.',
         'type' => 'read',
         'ajax' => true,
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ),
     'core_grades_get_groups_for_search_widget' => [
-        'classname' =>  'core_grades\external\get_groups_for_search_widget',
+        'classname' => 'core_grades\external\get_groups_for_selector',
+        'description' => '** DEPRECATED ** Please do not call this function any more. ' .
+            'Use core_grades_get_groups_for_selector instead. ' .
+            'Get the group/(s) for a course',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_grades_get_groups_for_selector' => [
+        'classname' => 'core_grades\external\get_groups_for_selector',
         'description' => 'Get the group/(s) for a course',
         'type' => 'read',
         'ajax' => true,
