@@ -18,16 +18,14 @@ Feature: In a book, change the navigation options
 
   Scenario: Change navigation options
     Given the following "activities" exist:
-      | activity | name      | intro                    | course | idnumber | section | navstyle |
-      | book     | Test book | A book about lorem ipsum | C1     | book1    | 1       | 0        |
+      | activity | name      | course | idnumber | navstyle |
+      | book     | Test book | C1     | book1    | 0        |
+    And the following "mod_book > chapter" exists:
+      | book    | Test book                  |
+      | title   | Test chapter 1             |
+      | content | Lorem ipsum dolor sit amet |
     And I am on "Course 1" course homepage with editing mode on
     And I follow "Test book"
-    And I should see "Add new chapter"
-    And I set the following fields to these values:
-      | Chapter title | Test chapter 1 |
-      | Content | Lorem ipsum dolor sit amet |
-    And I press "Save changes"
-    And I should see "Test book"
     And I should see "1. Test chapter 1"
     And I click on "Add new chapter" "link" in the "Table of contents" "block"
     And I set the following fields to these values:
