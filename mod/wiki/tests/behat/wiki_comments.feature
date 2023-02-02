@@ -22,7 +22,6 @@ Feature: Users can comment on wiki pages
       | activity       | wiki                  |
       | course         | C1                    |
       | name           | Test wiki name        |
-      | intro          | Test wiki description |
       | firstpagetitle | First page            |
       | wikimode       | collaborative         |
     And I am on the "Test wiki name" "wiki activity" page logged in as teacher1
@@ -30,7 +29,6 @@ Feature: Users can comment on wiki pages
     And I set the following fields to these values:
       | HTML format | First edition |
     And I press "Save"
-    And I log out
     And I am on the "Test wiki name" "wiki activity" page logged in as student1
     And I select "Comments" from the "jump" singleselect
     And I follow "Add comment"
@@ -54,16 +52,14 @@ Feature: Users can comment on wiki pages
 
   @javascript
   Scenario: Student cannot edit another student's comment
-    When I log out
-    And I am on the "Test wiki name" "wiki activity" page logged in as student2
+    When I am on the "Test wiki name" "wiki activity" page logged in as student2
     And I select "Comments" from the "jump" singleselect
     Then "Edit" "link" should not exist in the "wiki-comments" "table"
     And "Delete" "link" should not exist in the "wiki-comments" "table"
 
   @javascript
   Scenario: Teacher can delete a student comment
-    When I log out
-    And I am on the "Test wiki name" "wiki activity" page logged in as teacher1
+    When I am on the "Test wiki name" "wiki activity" page logged in as teacher1
     And I select "Comments" from the "jump" singleselect
     Then "Edit" "link" should not exist in the "wiki-comments" "table"
     And "Delete" "link" should exist in the "wiki-comments" "table"
