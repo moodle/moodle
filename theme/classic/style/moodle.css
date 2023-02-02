@@ -25854,10 +25854,14 @@ body.dragging .dragging {
 .select-menu ul[role=group] .dropdown-item {
   padding-left: 2.5rem;
 }
-.select-menu .dropdown-item {
+.select-menu .dropdown-item[aria-selected=true] {
+  font-weight: bold;
+}
+
+[role=listbox] [role=option] {
   cursor: pointer;
 }
-.select-menu .dropdown-item[aria-selected=true] {
+[role=listbox] [role=option][aria-selected=true] {
   font-weight: bold;
 }
 

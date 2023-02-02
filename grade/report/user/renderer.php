@@ -92,6 +92,7 @@ class gradereport_user_renderer extends plugin_renderer_base {
     public function users_selector(object $course, ?int $userid = null, ?int $groupid = null): string {
 
         $data = [
+            'name' => 'userid',
             'courseid' => $course->id,
             'groupid' => $groupid ?? 0,
         ];
@@ -124,6 +125,8 @@ class gradereport_user_renderer extends plugin_renderer_base {
                     'text' => get_string('allusersnum', 'gradereport_user', $totalusersnum),
                 ];
             }
+
+            $data['userid'] = $userid;
         }
 
         $this->page->requires->js_call_amd('gradereport_user/user', 'init');

@@ -3031,12 +3031,16 @@ body.dragging {
             padding-left: 2.5rem;
         }
     }
-    .dropdown-item {
-        cursor: pointer;
+    .dropdown-item[aria-selected="true"] {
+        font-weight: bold;
+    }
+}
 
-        &[aria-selected="true"] {
-            font-weight: bold;
-        }
+[role="listbox"] [role="option"] {
+    cursor: pointer;
+
+    &[aria-selected="true"] {
+        font-weight: bold;
     }
 }
 

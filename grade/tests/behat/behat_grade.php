@@ -477,7 +477,11 @@ class behat_grade extends behat_base {
 
         $this->execute("behat_general::i_click_on", [$triggercssselector, "css_element"]);
         $this->execute("behat_general::wait_until_the_page_is_ready");
-        $this->execute('behat_general::i_click_on_in_the',
-            [$needle, "link", "{$triggercssselector} .dropdown-menu", "css_element"]);
+        $this->execute('behat_general::i_click_on_in_the', [
+            "//li[@role='option'][contains(., '" . $needle . "')] | //a[contains(., '" . $needle . "')]",
+            "xpath_element",
+            "{$triggercssselector} .dropdown-menu",
+            "css_element"
+        ]);
     }
 }
