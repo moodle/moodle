@@ -57,7 +57,7 @@ class external_value_test extends advanced_testcase {
     public function test_required_param_validation($required, $debuggingexpected, $requiredstr = '') {
         $externalvalue = new external_value(PARAM_INT, 'Cool description', $required);
         if ($debuggingexpected) {
-            $this->assertDebuggingCalled("Invalid \$required parameter value: '{$requiredstr}'. 
+            $this->assertDebuggingCalled("Invalid \$required parameter value: '{$requiredstr}' .
                 It must be either VALUE_DEFAULT, VALUE_REQUIRED, or VALUE_OPTIONAL", DEBUG_DEVELOPER);
         }
         $this->assertEquals(PARAM_INT, $externalvalue->type);

@@ -46,7 +46,7 @@ abstract class external_description {
             if (is_array($required)) {
                 $requiredstr = "Array: " . implode(" ", $required);
             }
-            debugging("Invalid \$required parameter value: '{$requiredstr}'. 
+            debugging("Invalid \$required parameter value: '{$requiredstr}' .
                 It must be either VALUE_DEFAULT, VALUE_REQUIRED, or VALUE_OPTIONAL", DEBUG_DEVELOPER);
         }
         $this->desc = $desc;
