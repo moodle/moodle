@@ -190,7 +190,7 @@ class mod_url_external extends external_api {
                             'course' => new external_value(PARAM_INT, 'Course id'),
                             'name' => new external_value(PARAM_RAW, 'URL name'),
                             'intro' => new external_value(PARAM_RAW, 'Summary'),
-                            'introformat' => new external_format_value('intro', 'Summary format'),
+                            'introformat' => new external_format_value('intro', VALUE_REQUIRED, 'Summary format'),
                             'introfiles' => new external_files('Files in the introduction text'),
                             'externalurl' => new external_value(PARAM_RAW_TRIMMED, 'External URL'),
                             'display' => new external_value(PARAM_INT, 'How to display the url'),

@@ -195,7 +195,7 @@ class mod_page_external extends external_api {
                             'course' => new external_value(PARAM_INT, 'Course id'),
                             'name' => new external_value(PARAM_RAW, 'Page name'),
                             'intro' => new external_value(PARAM_RAW, 'Summary'),
-                            'introformat' => new external_format_value('intro', 'Summary format'),
+                            'introformat' => new external_format_value('intro', VALUE_REQUIRED, 'Summary format'),
                             'introfiles' => new external_files('Files in the introduction text'),
                             'content' => new external_value(PARAM_RAW, 'Page content'),
                             'contentformat' => new external_format_value('content', VALUE_REQUIRED, 'Content format'),
