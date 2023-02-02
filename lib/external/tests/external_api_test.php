@@ -61,7 +61,7 @@ class external_api_test extends \advanced_testcase {
 
         $params = ['text' => 'aaa'];
         $description = new external_function_parameters([
-            'someid' => new external_value(PARAM_INT, 'Some int value', false),
+            'someid' => new external_value(PARAM_INT, 'Some int value', VALUE_DEFAULT),
             'text'   => new external_value(PARAM_ALPHA, 'Some text value'),
         ]);
         $result = external_api::validate_parameters($description, $params);
@@ -73,7 +73,7 @@ class external_api_test extends \advanced_testcase {
 
         $params = ['text' => 'aaa'];
         $description = new external_function_parameters([
-            'someid' => new external_value(PARAM_INT, 'Some int value', false, 6),
+            'someid' => new external_value(PARAM_INT, 'Some int value', VALUE_DEFAULT, 6),
             'text'   => new external_value(PARAM_ALPHA, 'Some text value'),
         ]);
         $result = external_api::validate_parameters($description, $params);
