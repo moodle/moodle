@@ -19,18 +19,10 @@ Feature: A teacher can set a wiki to be collaborative or individual
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
-    And the following "activity" exists:
-      | course         | C1                      |
-      | activity       | wiki                    |
-      | name           | Collaborative wiki name |
-      | firstpagetitle | Collaborative index     |
-      | wikimode       | collaborative           |
-    And the following "activity" exists:
-      | course         | C1                      |
-      | activity       | wiki                    |
-      | name           | Individual wiki name |
-      | firstpagetitle | Individual index     |
-      | wikimode       | individual           |
+    And the following "activities" exist:
+      | activity | course | name                    | firstpagetitle      | wikimode      |
+      | wiki     | C1     | Collaborative wiki name | Collaborative index | collaborative |
+      | wiki     | C1     | Individual wiki name    | Individual index    | individual    |
     And I am on the "Collaborative wiki name" "wiki activity" page logged in as teacher1
     And I press "Create page"
     And I set the following fields to these values:
@@ -41,7 +33,6 @@ Feature: A teacher can set a wiki to be collaborative or individual
     And I set the following fields to these values:
       | HTML format | Individual teacher1 edition |
     And I press "Save"
-    And I log out
     And I am on the "Collaborative wiki name" "wiki activity" page logged in as student1
     Then I should see "Collaborative teacher1 edition"
     And I select "Edit" from the "jump" singleselect
@@ -56,7 +47,6 @@ Feature: A teacher can set a wiki to be collaborative or individual
     And I set the following fields to these values:
       | HTML format | Individual student1 edition |
     And I press "Save"
-    And I log out
     And I am on the "Individual wiki name" "wiki activity" page logged in as student2
     And I should not see "Individual teacher1 edition"
     And I should not see "Individual student1 edition"
@@ -64,7 +54,6 @@ Feature: A teacher can set a wiki to be collaborative or individual
     And I set the following fields to these values:
       | HTML format | Individual student2 edition |
     And I press "Save"
-    And I log out
     And I am on the "Collaborative wiki name" "wiki activity" page logged in as teacher1
     And I should see "Collaborative student1 edition"
     And I am on the "Individual wiki name" "wiki activity" page

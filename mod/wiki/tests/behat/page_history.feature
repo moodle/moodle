@@ -30,13 +30,11 @@ Feature: A history of each wiki page is available
     And I set the following fields to these values:
       | HTML format | First edition |
     And I press "Save"
-    And I log out
     When I am on the "Test wiki name" "wiki activity" page logged in as student1
     And I select "Edit" from the "jump" singleselect
     And I set the following fields to these values:
       | HTML format | Second edition |
     And I press "Save"
-    And I log out
     When I am on the "Test wiki name" "wiki activity" page logged in as student2
     And I select "Edit" from the "jump" singleselect
     And I set the following fields to these values:
