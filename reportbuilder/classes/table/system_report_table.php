@@ -102,8 +102,8 @@ class system_report_table extends base_report_table {
 
         $columnheaders = $columnsattributes = [];
 
-        // Check whether report has checkbox toggle defined.
-        if ($checkbox = $this->report->get_checkbox_toggleall(true)) {
+        // Check whether report has checkbox toggle defined, note that select all is excluded during download.
+        if (($checkbox = $this->report->get_checkbox_toggleall(true)) && !$this->is_downloading()) {
             $columnheaders['selectall'] = $PAGE->get_renderer('core')->render($checkbox);
             $this->no_sorting('selectall');
         }

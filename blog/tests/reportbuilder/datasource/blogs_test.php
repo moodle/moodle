@@ -18,11 +18,11 @@ declare(strict_types=1);
 
 namespace core_blog\reportbuilder\datasource;
 
-use comment;
 use context_system;
 use context_user;
 use core_blog_generator;
 use core_collator;
+use core_comment_generator;
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
 use core_reportbuilder\local\filters\{boolean_select, date, select, text};
@@ -41,14 +41,6 @@ require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class blogs_test extends core_reportbuilder_testcase {
-
-    /**
-     * Required test libraries
-     */
-    public static function setUpBeforeClass(): void {
-        global $CFG;
-        require_once("{$CFG->dirroot}/comment/lib.php");
-    }
 
     /**
      * Test default datasource
@@ -118,14 +110,15 @@ class blogs_test extends core_reportbuilder_testcase {
             'filename' => 'hello.txt',
         ], 'hello');
 
-        // Add a comment.
-        $comment = new comment((object) [
+        /** @var core_comment_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_comment');
+        $generator->create_comment([
             'context' => context_user::instance($user->id),
             'component' => 'blog',
             'area' => 'format_blog',
             'itemid' => $blog->id,
+            'content' => 'Cool',
         ]);
-        $comment->add('Cool');
 
         // Manually update the created/modified date of the blog.
         $blog->created = 1654038000;
