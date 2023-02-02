@@ -152,14 +152,11 @@ Feature: Apply tour filters to a tour
       | fullname | shortname | format | enablecompletion |
       | Course 1 | C1        | topics | 1                |
       | Course 2 | C2        | topics | 1                |
+    And the following "activities" exist:
+      | activity | course | name           | firstpagetitle | wikimode      |
+      | wiki     | C1     | Test wiki name | First page     | collaborative |
     And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Wiki" to section "1" and I fill the form with:
-      | Wiki name       | Test wiki name        |
-      | Description     | Test wiki description |
-      | First page name | First page            |
-      | Wiki mode       | Collaborative wiki    |
-    And I am on "Course 2" course homepage
+    And I am on "Course 2" course homepage with editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name  | Test forum name                |
       | Forum type  | Standard forum for general use |
