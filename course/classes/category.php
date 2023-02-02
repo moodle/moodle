@@ -3266,6 +3266,11 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             return $parentcat;
         }
 
+        // IOMAD
+        if (!iomad::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
+            return null;
+        }
+
         // Check the child categories.
         $subcategoryids = $parentcat->get_all_children_ids();
         foreach ($subcategoryids as $subcategoryid) {
