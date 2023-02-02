@@ -46,6 +46,7 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
     public function users_selector(object $course, ?int $userid = null, ?int $groupid = null): string {
 
         $data = [
+            'name' => 'userid',
             'courseid' => $course->id,
             'groupid' => $groupid ?? 0,
         ];
@@ -58,6 +59,7 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
                 'text' => fullname($user),
                 'additionaltext' => $user->email,
             ];
+            $data['userid'] = $userid;
         }
 
         $this->page->requires->js_call_amd('gradereport_singleview/user', 'init');
