@@ -57,6 +57,9 @@ information provided here is intended especially for developers.
   The old class locations have been aliased for backwards compatibility and will emit a deprecation notice in a future
   release.
 * Convert a floating value to an integer in lib/graphlib.php to avoid PHP 8.1 deprecated function error.
+* The $required parameter for \core_external\external_description is now being validated in order to prevent
+  unintentionally passing incorrect parameters to the external_description's (and its subclasses') constructors (e.g. the parameter
+  description being incorrectly passed for the $required parameter). A debugging notice will be shown when such cases occur.
 
 === 4.1 ===
 
