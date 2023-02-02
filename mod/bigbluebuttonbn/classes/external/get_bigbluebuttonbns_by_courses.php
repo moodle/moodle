@@ -122,7 +122,7 @@ class get_bigbluebuttonbns_by_courses extends external_api {
                             'name' => new external_value(PARAM_RAW, 'Name'),
                             'intro' => new external_value(PARAM_RAW, 'Description'),
                             'meetingid' => new external_value(PARAM_RAW, 'Meeting id'),
-                            'introformat' => new external_format_value('intro', 'Summary format'),
+                            'introformat' => new external_format_value('intro', VALUE_REQUIRED, 'Summary format'),
                             'introfiles' => new external_files('Files in the introduction text'),
                             'timemodified' => new external_value(PARAM_INT, 'Last time the instance was modified'),
                             'section' => new external_value(PARAM_INT, 'Course section id'),

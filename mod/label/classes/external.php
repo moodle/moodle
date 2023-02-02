@@ -124,7 +124,7 @@ class mod_label_external extends external_api {
                             'course' => new external_value(PARAM_INT, 'Course id'),
                             'name' => new external_value(PARAM_RAW, 'Label name'),
                             'intro' => new external_value(PARAM_RAW, 'Label contents'),
-                            'introformat' => new external_format_value('intro', 'Content format'),
+                            'introformat' => new external_format_value('intro', VALUE_REQUIRED, 'Content format'),
                             'introfiles' => new external_files('Files in the introduction text'),
                             'timemodified' => new external_value(PARAM_INT, 'Last time the label was modified'),
                             'section' => new external_value(PARAM_INT, 'Course section id'),

@@ -190,7 +190,7 @@ class mod_folder_external extends external_api {
                             'course' => new external_value(PARAM_INT, 'Course id'),
                             'name' => new external_value(PARAM_RAW, 'Page name'),
                             'intro' => new external_value(PARAM_RAW, 'Summary'),
-                            'introformat' => new external_format_value('intro', 'Summary format'),
+                            'introformat' => new external_format_value('intro', VALUE_REQUIRED, 'Summary format'),
                             'introfiles' => new external_files('Files in the introduction text'),
                             'revision' => new external_value(PARAM_INT, 'Incremented when after each file changes, to avoid cache'),
                             'timemodified' => new external_value(PARAM_INT, 'Last time the folder was modified'),
