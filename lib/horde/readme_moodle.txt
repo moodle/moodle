@@ -13,6 +13,10 @@ Description of import of Horde libraries
   passing in your path to Horde (the directory you've cloned the repository):
     /tmp/copyhorde.sh ~/git/base/directory/from/step/2
 
+
+Notes:
+* 2023-01-20 Applied patch https://github.com/horde/Util/pull/10
+
 ====
 #!/bin/sh
 
