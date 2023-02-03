@@ -159,16 +159,6 @@ module.exports = grunt => {
                         ],
                         presets: [
                             ['@babel/preset-env', {
-                                targets: {
-                                    browsers: [
-                                        ">0.25%",
-                                        "last 2 versions",
-                                        "not ie <= 10",
-                                        "not op_mini all",
-                                        "not Opera > 0",
-                                        "not dead"
-                                    ]
-                                },
                                 modules: false,
                                 useBuiltIns: false
                             }]
