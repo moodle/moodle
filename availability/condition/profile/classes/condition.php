@@ -197,7 +197,12 @@ class condition extends \core_availability\condition {
                         $this->customfield);
             }
         } else {
-            $translatedfieldname = get_user_field_name($this->standardfield);
+            $standardfields = self::get_standard_profile_fields();
+            if (array_key_exists($this->standardfield, $standardfields)) {
+                $translatedfieldname = $standardfields[$this->standardfield];
+            } else {
+                $translatedfieldname = get_string('missing', 'availability_profile', $this->standardfield);
+            }
         }
         $context = \context_course::instance($course->id);
         $a = new \stdClass();
@@ -319,6 +324,33 @@ class condition extends \core_availability\condition {
                 break;
         }
         return $fieldconditionmet;
+    }
+
+    /**
+     * Return list of standard user profile fields used by the condition
+     *
+     * @return string[]
+     */
+    public static function get_standard_profile_fields(): array {
+        return [
+            'firstname' => get_user_field_name('firstname'),
+            'lastname' => get_user_field_name('lastname'),
+            'email' => get_user_field_name('email'),
+            'city' => get_user_field_name('city'),
+            'country' => get_user_field_name('country'),
+            'url' => get_user_field_name('url'),
+            'icq' => get_user_field_name('icq'),
+            'skype' => get_user_field_name('skype'),
+            'aim' => get_user_field_name('aim'),
+            'yahoo' => get_user_field_name('yahoo'),
+            'msn' => get_user_field_name('msn'),
+            'idnumber' => get_user_field_name('idnumber'),
+            'institution' => get_user_field_name('institution'),
+            'department' => get_user_field_name('department'),
+            'phone1' => get_user_field_name('phone1'),
+            'phone2' => get_user_field_name('phone2'),
+            'address' => get_user_field_name('address')
+        ];
     }
 
     /**
@@ -472,6 +504,11 @@ class condition extends \core_availability\condition {
             $valuefield = 'data';
             $default = $customfield->defaultdata;
         } else {
+            $standardfields = self::get_standard_profile_fields();
+            if (!array_key_exists($this->standardfield, $standardfields)) {
+                // If the field isn't found, nobody matches.
+                return [];
+            }
             $values = $DB->get_records_select('user', 'id ' . $sql, $params,
                     '', 'id, '. $this->standardfield);
             $valuefield = $this->standardfield;
@@ -595,6 +632,11 @@ class condition extends \core_availability\condition {
                 $where = "(ud.data IS NOT NULL AND $condition)";
             }
         } else {
+            $standardfields = self::get_standard_profile_fields();
+            if (!array_key_exists($this->standardfield, $standardfields)) {
+                // If the field isn't found, nobody matches.
+                return ['SELECT id FROM {user} WHERE 0 = 1', []];
+            }
             $tablesql = "JOIN {user} u ON u.id = userids.id";
             list ($where, $mainparams) = $this->get_condition_sql(
                     'u.' . $this->standardfield);
