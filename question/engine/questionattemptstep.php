@@ -362,7 +362,9 @@ class question_attempt_step {
 
     /**
      * Get all the behaviour variables.
-     * @param array name => value pairs.
+     *
+     * @return array name => value pairs. NOTE! the name has the leading - stripped off.
+     *      (If you don't understand the note, read the comment at the top of this class :-))
      */
     public function get_behaviour_data() {
         $result = array();
