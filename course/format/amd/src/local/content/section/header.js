@@ -25,6 +25,12 @@
  */
 
 import DndSectionItem from 'core_courseformat/local/courseeditor/dndsectionitem';
+import {get_string as getString} from 'core/str';
+import {prefetchStrings} from 'core/prefetch';
+
+prefetchStrings('core_courseformat', [
+    'selectsection',
+]);
 
 export default class extends DndSectionItem {
 
@@ -71,7 +77,27 @@ export default class extends DndSectionItem {
     getWatchers() {
         return [
             {watch: `bulk:updated`, handler: this._refreshBulk},
+            {watch: `section[${this.id}].title:updated`, handler: this._refreshSectionBulkSelector},
         ];
+    }
+
+    /**
+     * Update the bulk checkbox when the topic name changes.
+     *
+     * @param {object} param
+     * @param {Object} param.element the section info
+     */
+    async _refreshSectionBulkSelector({element}) {
+        const checkbox = this.getElement(this.selectors.BULKCHECKBOX);
+        if (!checkbox) {
+            return;
+        }
+        const newLabel = await getString('selectsection', 'core_courseformat', element.title);
+        checkbox.title = newLabel;
+        const label = this.getElement(`label[for='${checkbox.id}']`);
+        if (label) {
+            label.innerText = newLabel;
+        }
     }
 
     /**

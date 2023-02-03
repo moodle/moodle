@@ -384,42 +384,49 @@ export default class extends BaseComponent {
      * @param {Event} event the triggered event
      */
     async _requestDeleteSection(target, event) {
-        // Check we have an id.
-        const sectionId = target.dataset.id;
-
-        if (!sectionId) {
+        const sectionIds = this._getTargetIds(target);
+        if (sectionIds.length == 0) {
             return;
         }
-        const sectionInfo = this.reactive.get('section', sectionId);
 
         event.preventDefault();
 
-        const cmList = sectionInfo.cmlist ?? [];
-        if (cmList.length || sectionInfo.hassummary || sectionInfo.rawtitle) {
-            // We need confirmation if the section has something.
-            const modalParams = {
-                title: getString('confirm', 'core'),
-                body: getString('confirmdeletesection', 'moodle', sectionInfo.title),
-                saveButtonText: getString('delete', 'core'),
-                type: ModalFactory.types.SAVE_CANCEL,
-            };
-
-            const modal = await this._modalBodyRenderedPromise(modalParams);
-
-            modal.getRoot().on(
-                ModalEvents.save,
-                e => {
-                    // Stop the default save button behaviour which is to close the modal.
-                    e.preventDefault();
-                    modal.destroy();
-                    this.reactive.dispatch('sectionDelete', [sectionId]);
-                }
-            );
+        // We don't need confirmation to delete empty sections.
+        let needsConfirmation = sectionIds.some(sectionId => {
+            const sectionInfo = this.reactive.get('section', sectionId);
+            const cmList = sectionInfo.cmlist ?? [];
+            return (cmList.length || sectionInfo.hassummary || sectionInfo.rawtitle);
+        });
+        if (!needsConfirmation) {
+            this.reactive.dispatch('sectionDelete', sectionIds);
             return;
-        } else {
-            // We don't need confirmation to delete empty sections.
-            this.reactive.dispatch('sectionDelete', [sectionId]);
         }
+
+        let bodyText = null;
+        if (sectionIds.length == 1) {
+            const sectionInfo = this.reactive.get('section', sectionIds[0]);
+            bodyText = getString('confirmdeletesection', 'moodle', sectionInfo.title);
+        } else {
+            bodyText = getString('sectionsdelete_confirm', 'core_courseformat');
+        }
+
+        const modalParams = {
+            title: getString('confirm', 'core'),
+            body: bodyText,
+            type: ModalFactory.types.DELETE_CANCEL,
+        };
+
+        const modal = await this._modalBodyRenderedPromise(modalParams);
+
+        modal.getRoot().on(
+            ModalEvents.delete,
+            e => {
+                // Stop the default save button behaviour which is to close the modal.
+                e.preventDefault();
+                modal.destroy();
+                this.reactive.dispatch('sectionDelete', sectionIds);
+            }
+        );
     }
 
     /**
@@ -490,39 +497,43 @@ export default class extends BaseComponent {
      * @param {Event} event the triggered event
      */
     async _requestCmDelete(target, event) {
-        // Check we have an id.
-        const cmId = target.dataset.id;
-
-        if (!cmId) {
+        const cmIds = this._getTargetIds(target);
+        if (cmIds.length == 0) {
             return;
         }
-        const cmInfo = this.reactive.get('cm', cmId);
 
         event.preventDefault();
 
-        const modalParams = {
-            title: getString('confirm', 'core'),
-            body: getString(
+        let bodyText = null;
+        if (cmIds.length == 1) {
+            const cmInfo = this.reactive.get('cm', cmIds[0]);
+            bodyText = getString(
                 'deletechecktypename',
                 'moodle',
                 {
                     type: cmInfo.modname,
                     name: cmInfo.name,
                 }
-            ),
-            saveButtonText: getString('delete', 'core'),
-            type: ModalFactory.types.SAVE_CANCEL,
+            );
+        } else {
+            bodyText = getString('cmsdelete_confirm', 'core_courseformat');
+        }
+
+        const modalParams = {
+            title: getString('confirm', 'core'),
+            body: bodyText,
+            type: ModalFactory.types.DELETE_CANCEL,
         };
 
         const modal = await this._modalBodyRenderedPromise(modalParams);
 
         modal.getRoot().on(
-            ModalEvents.save,
+            ModalEvents.delete,
             e => {
                 // Stop the default save button behaviour which is to close the modal.
                 e.preventDefault();
                 modal.destroy();
-                this.reactive.dispatch('cmDelete', [cmId]);
+                this.reactive.dispatch('cmDelete', cmIds);
             }
         );
     }
@@ -665,6 +676,9 @@ export default class extends BaseComponent {
                 // Configure some extra modal params.
                 if (modalParams.saveButtonText !== undefined) {
                     modal.setSaveButtonText(modalParams.saveButtonText);
+                }
+                if (modalParams.deleteButtonText !== undefined) {
+                    modal.setDeleteButtonText(modalParams.saveButtonText);
                 }
                 modal.show();
                 return;
