@@ -42,20 +42,9 @@ class frontend extends \core_availability\frontend {
 
     protected function get_javascript_init_params($course, \cm_info $cm = null,
             \section_info $section = null) {
+
         // Standard user fields.
-        $standardfields = array(
-            'firstname' => \core_user\fields::get_display_name('firstname'),
-            'lastname' => \core_user\fields::get_display_name('lastname'),
-            'email' => \core_user\fields::get_display_name('email'),
-            'city' => \core_user\fields::get_display_name('city'),
-            'country' => \core_user\fields::get_display_name('country'),
-            'idnumber' => \core_user\fields::get_display_name('idnumber'),
-            'institution' => \core_user\fields::get_display_name('institution'),
-            'department' => \core_user\fields::get_display_name('department'),
-            'phone1' => \core_user\fields::get_display_name('phone1'),
-            'phone2' => \core_user\fields::get_display_name('phone2'),
-            'address' => \core_user\fields::get_display_name('address')
-        );
+        $standardfields = condition::get_standard_profile_fields();
         \core_collator::asort($standardfields);
 
         // Custom fields.
