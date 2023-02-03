@@ -23,7 +23,6 @@
     "git-tags-remote": "^1.0.5",
     "glob": "7.2.0",
     "grunt": "^1.6.1",
-    "grunt-contrib-uglify": "5.0.1",
     "grunt-contrib-watch": "1.1.0",
     "grunt-eslint": "24.0.0",
     "grunt-rollup": "^11.9.0",
