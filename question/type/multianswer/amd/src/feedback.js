@@ -24,12 +24,12 @@
 import 'theme_boost/popover';
 import $ from 'jquery';
 
-/** @type {object} Contains the list of selectors for this module. */
+/** @property {object} Contains the list of selectors for this module. */
 const SELECTORS = {
     FEEDBACK_TRIGGER: '.feedbacktrigger[data-toggle="popover"]',
 };
 
-/** @type {boolean} Flag to indicate whether the feedback popovers have been already initialised. */
+/** @property {boolean} Flag to indicate whether the feedback popovers have been already initialised. */
 let feedbackInitialised = false;
 
 /**
