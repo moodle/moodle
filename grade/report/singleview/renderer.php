@@ -76,6 +76,7 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
     public function grade_items_selector(object $course, ?int $gradeitemid = null): string {
 
         $data = [
+            'name' => 'itemid',
             'courseid' => $course->id,
         ];
 
@@ -85,6 +86,7 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
             $data['selectedoption'] = [
                 'text' => $gradeitemname,
             ];
+            $data['itemid'] = $gradeitemid;
         }
 
         $this->page->requires->js_call_amd('gradereport_singleview/grade', 'init');
