@@ -45,7 +45,9 @@ module.exports = grunt => {
         return {
             stylelint: {
                 scss: {
-                    options: {syntax: 'scss'},
+                    options: {
+                        customSyntax: 'postcss-scss',
+                    },
                     src: files,
                 },
             },
