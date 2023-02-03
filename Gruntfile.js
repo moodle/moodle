@@ -80,7 +80,9 @@ const registerStyleLintTasks = (grunt, files, fullRunDir) => {
         return {
             stylelint: {
                 scss: {
-                    options: {syntax: 'scss'},
+                    options: {
+                        customSyntax: 'postcss-scss',
+                    },
                     src: files,
                 },
             },
