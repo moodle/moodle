@@ -207,10 +207,17 @@ function expand_value(array &$dest, array $source, array $option, string $option
  *
  * @param array $args The fragment arguments.
  * @return string The rendered cm item.
+ *
+ * @throws require_login_exception
  */
 function core_courseformat_output_fragment_cmitem($args): string {
     global $PAGE;
-    list($course, $cm) = get_course_and_cm_from_cmid($args['id']);
+
+    [$course, $cm] = get_course_and_cm_from_cmid($args['id']);
+    if (!can_access_course($course, null, '', true) || !$cm->uservisible) {
+        throw new require_login_exception('Activity is not available');
+    }
+
     $format = course_get_format($course);
     if (!empty($args['sr'])) {
         $format->set_section_number($args['sr']);
@@ -227,16 +234,28 @@ function core_courseformat_output_fragment_cmitem($args): string {
  *
  * @param array $args The fragment arguments.
  * @return string The rendered section.
+ *
+ * @throws require_login_exception
  */
 function core_courseformat_output_fragment_section($args): string {
     global $PAGE;
+
     $course = get_course($args['courseid']);
+    if (!can_access_course($course, null, '', true)) {
+        throw new require_login_exception('Course is not available');
+    }
+
     $format = course_get_format($course);
     if (!empty($args['sr'])) {
         $format->set_section_number($args['sr']);
     }
-    $renderer = $format->get_renderer($PAGE);
+
     $modinfo = $format->get_modinfo();
     $section = $modinfo->get_section_info_by_id($args['id'], MUST_EXIST);
+    if (!$section->uservisible) {
+        throw new require_login_exception('Section is not available');
+    }
+
+    $renderer = $format->get_renderer($PAGE);
     return $renderer->course_section_updated($format, $section);
 }
