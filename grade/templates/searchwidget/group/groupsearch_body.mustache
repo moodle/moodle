@@ -29,6 +29,13 @@
     {{$placeholder}}{{#str}}
         searchgroups, core_grades
     {{/str}}{{/placeholder}}
+    {{$additionalattributes}}
+        role="combobox"
+        aria-expanded="true"
+        aria-controls="listbox-{{uniqid}}"
+        aria-autocomplete="list"
+        data-input-element="input-{{uniqid}}"
+    {{/additionalattributes}}
 {{/ core/search_input_auto }}
-
-<div class="searchresultscontainer" data-region="search-results-container-widget" aria-live="polite"></div>
+<input type="hidden" name="search" id="input-{{uniqid}}"/>
+<div role="listbox" id="listbox-{{uniqid}}" class="searchresultscontainer" data-region="search-results-container-widget"></div>
