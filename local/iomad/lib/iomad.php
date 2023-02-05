@@ -416,6 +416,13 @@ class iomad {
             $mycompanycategories = [];
         }
 
+        // Get the categories for the courses the user is enrolled on.
+        $usercourses = enrol_get_users_courses($USER->id);
+        $usercategories = [];
+        foreach ($usercourses as $usercourse) {
+            $usercategories[$usercourse->category] = $usercourse->category;
+        }
+
         // Set up the return array;
         $iomadcategories = array();
 
@@ -426,8 +433,14 @@ class iomad {
             if (!empty($mycompanycategories[$id])) {
                 $iomadcategories[$id] = $category;
             }
+
             // Is this another company category?
             if (empty($allcompanycategories[$id])) {
+                $iomadcategories[$id] = $category;
+            }
+
+            // Is this a category which has a course you are enrolled on?
+            if (!empty($usercategories[$id])) {
                 $iomadcategories[$id] = $category;
             }
         }
