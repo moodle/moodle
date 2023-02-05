@@ -58,6 +58,7 @@ function mycourses_get_my_completion($datefrom = 0) {
 
     // We need to de-duplicate this list.
     $recs = [];
+    $myrecs = [];
     foreach ($myinprogress as $rec) {
         $myrecs[$rec->courseid] = $rec;
     }
