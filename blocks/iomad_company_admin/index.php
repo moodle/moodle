@@ -267,38 +267,40 @@ if (!iomad::has_capability('block/iomad_company_admin:company_view_all', $system
         $company = $DB->get_record('company', array('id' => $companyuser->companyid), '*', MUST_EXIST);
         $companyselect->companyname = $company->name;
         $companyselect->onecompany = true;
-    }
-} else {
+    } else {
 
     // Possibly more than one company
     $companyselect->onecompany = false;
-
-    $content = '';
-
-    //  Check users session and profile settings to get the current editing company.
-    if (!empty($SESSION->currenteditingcompany)) {
-        $selectedcompany = $SESSION->currenteditingcompany;
-    } else if ($usercompany = company::by_userid($USER->id)) {
-        $selectedcompany = $usercompany->id;
-    } else {
-        $selectedcompany = "";
     }
+}
 
-    //  Check users session current show suspended setting.
-    if (!empty($SESSION->showsuspendedcompanies)) {
-        $showsuspendedcompanies = $SESSION->showsuspendedcompanies;
-    } else {
-        $showsuspendedcompanies = false;
-    }
+$content = '';
 
-    // Get the company name if set.
-    if (!empty($selectedcompany)) {
-        $companyname = company::get_companyname_byid($selectedcompany);
-    } else {
-        $companyname = "";
-    }
+//  Check users session and profile settings to get the current editing company.
+if (!empty($SESSION->currenteditingcompany)) {
+    $selectedcompany = $SESSION->currenteditingcompany;
+} else if ($usercompany = company::by_userid($USER->id)) {
+    $selectedcompany = $usercompany->id;
+} else {
+    $selectedcompany = "";
+}
 
-    // Get a list of companies.
+//  Check users session current show suspended setting.
+if (!empty($SESSION->showsuspendedcompanies)) {
+    $showsuspendedcompanies = $SESSION->showsuspendedcompanies;
+} else {
+    $showsuspendedcompanies = false;
+}
+
+// Get the company name if set.
+if (!empty($selectedcompany)) {
+    $companyname = company::get_companyname_byid($selectedcompany);
+} else {
+    $companyname = "";
+}
+
+// Get a list of companies if required.
+if (!$companyselect->onecompany) {
     $companylist = company::get_companies_select($showsuspendedcompanies);
     $select = new \block_iomad_company_admin\forms\iomad_company_select_form(new moodle_url('/blocks/iomad_company_admin/index.php'), $companylist, $selectedcompany);
     $select->set_data(array('company' => $selectedcompany, 'showsuspendedcompanies' => $showsuspendedcompanies));
