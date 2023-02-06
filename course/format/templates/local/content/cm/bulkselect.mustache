@@ -15,18 +15,25 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_courseformat/local/content/section/controlmenu
+    @template core_courseformat/local/content/cm/bulkselect
 
-    Displays a section control menu (dropdown menu).
+    Displays an activity bulk selector.
 
     Example context (json):
     {
-        "menu": "<a href=\"#\" class=\"d-inline-block dropdown-toggle icon-no-margin\">Edit<b class=\"caret\"></b></a>",
-        "hasmenu": true
+        "activityname": "Activity example",
+        "cmid": 42
     }
 }}
-{{#hasmenu}}
-<div class="section_action_menu bulk-hidden ml-auto" data-sectionid="{{id}}">
-    {{{menu}}}
+<div class="bulkselect d-none" data-for="cmBulkSelect">
+    <input
+        id="cmCheckbox{{cmid}}"
+        type="checkbox"
+        data-id="{{cmid}}"
+        data-action="toggleSelectionCm"
+        data-bulkcheckbox="1"
+    />
+    <label class="sr-only" for="cmCheckbox{{cmid}}">
+        {{#str}} selectcm, core_courseformat, {{activityname}}{{/str}}
+    </label>
 </div>
-{{/hasmenu}}

@@ -19,10 +19,20 @@
 
     Displays a page sticky footer element.
 
+    Classes required for JS:
+    * none
+
+    Data attributes optional for JS:
+    * data-disable Number|String - If the sticky footer should be disabled by default
+
+    Context variables required for this template:
+    * disable Boolean - if the sticky footer should be loaded hidden
+
     Example context (json):
     {
         "stickycontent": "<a href=\"#\">Moodle</a>",
         "stickyclasses": "justify-content-end",
+        "disable": false,
         "extras": [
             {
                 "attribute" : "data-example",
@@ -38,9 +48,14 @@
             }}{{# stickyclasses }}{{ stickyclasses }}{{/ stickyclasses }}{{!
             }}{{^ stickyclasses }}justify-content-end{{/ stickyclasses }}{{!
         }}{{/ stickyclasses }}"
-    {{#extras}}
-    {{attribute}}="{{value}}"
-    {{/extras}}
+    {{$ disable }}
+        {{#disable}} data-disable="true" {{/disable}}
+    {{/ disable }}
+    {{$ extradata }}
+        {{#extras}}
+        {{attribute}}="{{value}}"
+        {{/extras}}
+    {{/ extradata }}
 >
     {{$ stickycontent }}
         {{{stickycontent}}}

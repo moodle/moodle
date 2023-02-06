@@ -394,6 +394,36 @@ export default class extends BaseComponent {
     }
 
     /**
+     * Handle a toggle cm selection.
+     *
+     * @param {Element} target the dispatch action element
+     */
+    async _requestToggleSelectionCm(target) {
+        const cmId = target.dataset.id;
+        if (!cmId) {
+            return;
+        }
+        const value = target.checked ?? false;
+        const mutation = (value) ? 'cmSelect' : 'cmUnselect';
+        this.reactive.dispatch(mutation, [cmId]);
+    }
+
+    /**
+     * Handle a toggle section selection.
+     *
+     * @param {Element} target the dispatch action element
+     */
+    async _requestToggleSelectionSection(target) {
+        const sectionId = target.dataset.id;
+        if (!sectionId) {
+            return;
+        }
+        const value = target.checked ?? false;
+        const mutation = (value) ? 'sectionSelect' : 'sectionUnselect';
+        this.reactive.dispatch(mutation, [sectionId]);
+    }
+
+    /**
      * Basic mutation action helper.
      *
      * @param {Element} target the dispatch action element

@@ -137,7 +137,7 @@
     // Preload course format renderer before output starts.
     // This is a little hacky but necessary since
     // format.php is not included until after output starts
-    $format->get_renderer($PAGE);
+    $renderer = $format->get_renderer($PAGE);
 
     if ($reset_user_allowed_editing) {
         // ugly hack
@@ -234,6 +234,12 @@
         $PAGE->set_title(get_string('coursesectiontitle', 'moodle', array('course' => $course->fullname, 'sectiontitle' => $sectiontitle, 'sectionname' => $sectionname)));
     } else {
         $PAGE->set_title(get_string('coursetitle', 'moodle', array('course' => $course->fullname)));
+    }
+
+    // Add bulk editing control.
+    $bulkbutton = $renderer->bulk_editing_button($format);
+    if (!empty($bulkbutton)) {
+        $PAGE->add_header_action($bulkbutton);
     }
 
     $PAGE->set_heading($course->fullname);

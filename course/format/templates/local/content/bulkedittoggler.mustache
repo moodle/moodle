@@ -15,18 +15,23 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_courseformat/local/content/section/controlmenu
+    @template core_courseformat/content/bulkedittoggler
 
-    Displays a section control menu (dropdown menu).
+    Displays the bulk actions button in the page header.
 
     Example context (json):
     {
-        "menu": "<a href=\"#\" class=\"d-inline-block dropdown-toggle icon-no-margin\">Edit<b class=\"caret\"></b></a>",
-        "hasmenu": true
     }
 }}
-{{#hasmenu}}
-<div class="section_action_menu bulk-hidden ml-auto" data-sectionid="{{id}}">
-    {{{menu}}}
-</div>
-{{/hasmenu}}
+<button
+    id="bulk-enable-{{uniqid}}"
+    class="bulkEnable btn"
+    data-for="enableBulk"
+>
+    {{#str}} bulkedit, core_courseformat {{/str}} {{#pix}} i/edit, core {{/pix}}
+</button>
+{{#js}}
+require(['core_courseformat/local/content/bulkedittoggler'], function(component) {
+    component.init('#bulk-enable-{{uniqid}}');
+});
+{{/js}}

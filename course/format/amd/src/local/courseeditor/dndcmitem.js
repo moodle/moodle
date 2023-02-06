@@ -56,6 +56,15 @@ export default class extends BaseComponent {
         }
     }
 
+    /**
+     * Enable or disable the draggable property.
+     *
+     * @param {bool} value the new draggable value
+     */
+    setDraggable(value) {
+        this.dragdrop?.setDraggable(value);
+    }
+
     // Drag and drop methods.
 
     /**

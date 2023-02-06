@@ -480,6 +480,126 @@ export default class {
     }
 
     /**
+     * Enable/disable bulk editing.
+     *
+     * Note: reenabling the bulk will clean the current selection.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {Boolean} enabled the new bulk state.
+     */
+    bulkEnable(stateManager, enabled) {
+        const state = stateManager.state;
+        stateManager.setReadOnly(false);
+        state.bulk.enabled = enabled;
+        state.bulk.selectedType = '';
+        state.bulk.selection = [];
+        stateManager.setReadOnly(true);
+    }
+
+    /**
+     * Reset the current selection.
+     * @param {StateManager} stateManager the current state manager
+     */
+    bulkReset(stateManager) {
+        const state = stateManager.state;
+        stateManager.setReadOnly(false);
+        state.bulk.selectedType = '';
+        state.bulk.selection = [];
+        stateManager.setReadOnly(true);
+    }
+
+    /**
+     * Select a list of cms.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    cmSelect(stateManager, cmIds) {
+        this._addIdsToSelection(stateManager, 'cm', cmIds);
+    }
+
+    /**
+     * Unselect a list of cms.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    cmUnselect(stateManager, cmIds) {
+        this._removeIdsFromSelection(stateManager, 'cm', cmIds);
+    }
+
+    /**
+     * Select a list of sections.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the list of cm ids
+     */
+    sectionSelect(stateManager, sectionIds) {
+        this._addIdsToSelection(stateManager, 'section', sectionIds);
+    }
+
+    /**
+     * Unselect a list of sections.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the list of cm ids
+     */
+    sectionUnselect(stateManager, sectionIds) {
+        this._removeIdsFromSelection(stateManager, 'section', sectionIds);
+    }
+
+    /**
+     * Add some ids to the current bulk selection.
+     * @param {StateManager} stateManager the current state manager
+     * @param {String} typeName the type name (section/cm)
+     * @param {array} ids the list of ids
+     */
+    _addIdsToSelection(stateManager, typeName, ids) {
+        const bulk = stateManager.state.bulk;
+        if (!bulk?.enabled) {
+            throw new Error(`Bulk is not enabled`);
+        }
+        if (bulk?.selectedType !== "" && bulk?.selectedType !== typeName) {
+            throw new Error(`Cannot add ${typeName} to the current selection`);
+        }
+
+        // Stored ids are strings for compatability with HTML data attributes.
+        ids = ids.map(value => value.toString());
+
+        stateManager.setReadOnly(false);
+        bulk.selectedType = typeName;
+        const newSelection = new Set([...bulk.selection, ...ids]);
+        bulk.selection = [...newSelection];
+        stateManager.setReadOnly(true);
+    }
+
+    /**
+     * Remove some ids to the current bulk selection.
+     *
+     * The method resets the selection type if the current selection is empty.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {String} typeName the type name (section/cm)
+     * @param {array} ids the list of ids
+     */
+    _removeIdsFromSelection(stateManager, typeName, ids) {
+        const bulk = stateManager.state.bulk;
+        if (!bulk?.enabled) {
+            throw new Error(`Bulk is not enabled`);
+        }
+        if (bulk?.selectedType !== "" && bulk?.selectedType !== typeName) {
+            throw new Error(`Cannot remove ${typeName} from the current selection`);
+        }
+
+        // Stored ids are strings for compatability with HTML data attributes.
+        ids = ids.map(value => value.toString());
+
+        stateManager.setReadOnly(false);
+        const IdsToFilter = new Set(ids);
+        bulk.selection = bulk.selection.filter(current => !IdsToFilter.has(current));
+        if (bulk.selection.length === 0) {
+            bulk.selectedType = '';
+        }
+        stateManager.setReadOnly(true);
+    }
+
+    /**
      * Get updated state data related to some cm ids.
      *
      * @method cmState

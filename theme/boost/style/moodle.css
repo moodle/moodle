@@ -11966,6 +11966,9 @@ input[disabled] {
 .border-radius {
   border-radius: 0.5rem; }
 
+.v-hidden {
+  visibility: hidden; }
+
 .emoji-picker {
   width: 350px;
   height: 400px; }
@@ -14946,17 +14949,19 @@ span.editinstructions {
   cursor: move; }
   .editing .activity-item .a {
     cursor: pointer; }
-  .editing .activity-item:hover {
+  .editing .activity-item:hover, .editing .activity-item.selected {
     color: #1d2125;
     background-color: #f5f9fc;
     border-color: #3584c9; }
-    .editing .activity-item:hover hr {
+    .editing .activity-item:hover hr, .editing .activity-item.selected hr {
       border-top-color: #3077b5; }
-    .editing .activity-item:hover .alert-link {
+    .editing .activity-item:hover .alert-link, .editing .activity-item.selected .alert-link {
       color: #070808; }
     .editing .activity-item:hover .description .course-description-item,
     .editing .activity-item:hover .activityiconcontainer,
-    .editing .activity-item:hover .badge {
+    .editing .activity-item:hover .badge, .editing .activity-item.selected .description .course-description-item,
+    .editing .activity-item.selected .activityiconcontainer,
+    .editing .activity-item.selected .badge {
       mix-blend-mode: multiply; }
 
 .section .draggable .activity-item .dragicon {
@@ -15008,6 +15013,22 @@ span.editinstructions {
 .activity:not(.dragging) div.divider:focus-within button {
   opacity: 1;
   visibility: visible; }
+
+.bulkenabled .bulk-hidden {
+  display: none !important; }
+
+.activity-item .bulkselect {
+  position: absolute;
+  left: -2rem; }
+
+.course-section-header .bulkselect {
+  left: -2rem;
+  position: relative;
+  width: 0; }
+
+@media (max-width: 767.98px) {
+  .bulkenabled .course-content {
+    margin-left: 2rem; } }
 
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
 :target {

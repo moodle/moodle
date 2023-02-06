@@ -108,6 +108,7 @@ class cm implements named_templatable, renderable {
             'activityname' => $mod->get_formatted_name(),
             'textclasses' => $displayoptions['textclasses'],
             'classlist' => [],
+            'cmid' => $mod->id,
         ];
 
         // Add partial data segments.

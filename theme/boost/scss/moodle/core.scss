@@ -2607,6 +2607,10 @@ input[disabled] {
     }
 }
 
+.v-hidden {
+    visibility: hidden;
+}
+
 // Emoji picker.
 $picker-width: 350px !default;
 $picker-width-xs: 320px !default;
