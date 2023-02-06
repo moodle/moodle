@@ -404,6 +404,7 @@ class schedule_test extends advanced_testcase {
             'name' => 'My schedule',
             'recurrence' => $recurrence,
             'timescheduled' => $timescheduled,
+            'timenow' => $timenow,
         ]);
 
         $this->assertEquals($expected, schedule::calculate_next_send_time($schedule, $timenow));
