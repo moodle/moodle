@@ -275,6 +275,45 @@ class completion extends base {
                 date::DATE_CURRENT,
             ]);
 
+        // Time enrolled/started filter and condition.
+        $fields = ['timeenrolled', 'timestarted'];
+        foreach ($fields as $field) {
+            $filters[] = (new filter(
+                date::class,
+                $field,
+                new lang_string($field, 'enrol'),
+                $this->get_entity_name(),
+                "{$coursecompletion}.{$field}"
+            ))
+                ->add_joins($this->get_joins())
+                ->set_limited_operators([
+                    date::DATE_ANY,
+                    date::DATE_NOT_EMPTY,
+                    date::DATE_EMPTY,
+                    date::DATE_RANGE,
+                    date::DATE_LAST,
+                    date::DATE_CURRENT,
+                ]);
+        }
+
+        // Time reaggregated filter and condition.
+        $filters[] = (new filter(
+            date::class,
+            'reaggregate',
+            new lang_string('timereaggregated', 'enrol'),
+            $this->get_entity_name(),
+            "{$coursecompletion}.reaggregate"
+        ))
+            ->add_joins($this->get_joins())
+            ->set_limited_operators([
+                date::DATE_ANY,
+                date::DATE_NOT_EMPTY,
+                date::DATE_EMPTY,
+                date::DATE_RANGE,
+                date::DATE_LAST,
+                date::DATE_CURRENT,
+            ]);
+
         return $filters;
     }
 }
