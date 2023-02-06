@@ -205,6 +205,9 @@ class core_reportbuilder_generator extends component_generator_base {
             $record['timescheduled'] = usergetmidnight(time() + DAYSECS);
         }
 
-        return schedule_helper::create_schedule((object) $record);
+        // Time to use as comparison against current date (null means current time).
+        $timenow = $record['timenow'] ?? null;
+
+        return schedule_helper::create_schedule((object) $record, $timenow);
     }
 }
