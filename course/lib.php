@@ -3116,10 +3116,9 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
                 'ajaxurl' => $config->resourceurl,
                 'config' => $config,
             )), null, true);
-    }
 
-    // Require various strings for the command toolbox
-    $PAGE->requires->strings_for_js(array(
+        // Require various strings for the command toolbox.
+        $PAGE->requires->strings_for_js(array(
             'moveleft',
             'deletechecktype',
             'deletechecktypename',
@@ -3146,22 +3145,23 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
             'totopofsection',
         ), 'moodle');
 
-    // Include section-specific strings for formats which support sections.
-    if (course_format_uses_sections($course->format)) {
-        $PAGE->requires->strings_for_js(array(
-                'showfromothers',
-                'hidefromothers',
-            ), 'format_' . $course->format);
-    }
+        // Include section-specific strings for formats which support sections.
+        if (course_format_uses_sections($course->format)) {
+            $PAGE->requires->strings_for_js(array(
+                    'showfromothers',
+                    'hidefromothers',
+                ), 'format_' . $course->format);
+        }
 
-    // For confirming resource deletion we need the name of the module in question
-    foreach ($usedmodules as $module => $modname) {
-        $PAGE->requires->string_for_js('pluginname', $module);
-    }
+        // For confirming resource deletion we need the name of the module in question.
+        foreach ($usedmodules as $module => $modname) {
+            $PAGE->requires->string_for_js('pluginname', $module);
+        }
 
-    // Load drag and drop upload AJAX.
-    require_once($CFG->dirroot.'/course/dnduploadlib.php');
-    dndupload_add_to_course($course, $enabledmodules);
+        // Load drag and drop upload AJAX.
+        require_once($CFG->dirroot.'/course/dnduploadlib.php');
+        dndupload_add_to_course($course, $enabledmodules);
+    }
 
     $PAGE->requires->js_call_amd('core_course/actions', 'initCoursePage', array($course->format));
 

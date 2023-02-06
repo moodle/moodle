@@ -515,6 +515,12 @@ $functions = array(
         'type'        => 'read',
         'ajax'        => true,
     ),
+    'core_courseformat_file_handlers' => [
+        'classname'     => 'core_courseformat\external\file_handlers',
+        'description'   => 'Get the current course file hanlders.',
+        'type'          => 'read',
+        'ajax'          => true,
+    ],
     'core_courseformat_get_state' => [
         'classname'     => 'core_courseformat\external\get_state',
         'description'   => 'Get the current course state.',

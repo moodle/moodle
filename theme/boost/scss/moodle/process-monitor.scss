@@ -1,0 +1,30 @@
+// The popover process monitor.
+$popover-process-monitor-right: 2rem !default;
+$popover-process-monitor-bottom: 5rem !default;
+$popover-process-monitor-max-height: 30vh !default;
+$popover-process-monitor-width: 350px !default;
+$popover-process-monitor-scroll-bg: $gray-100 !default;
+
+.popover-process-monitor {
+    position: fixed;
+    right: $popover-process-monitor-right;
+    bottom: $popover-process-monitor-bottom;
+    width: $popover-process-monitor-width;
+    background-color: $white;
+    @include border-radius();
+    border: $border-width solid $border-color;
+
+    .process-list {
+        max-height: $popover-process-monitor-max-height;
+        overflow: auto;
+        @include thin-scrolls($popover-process-monitor-scroll-bg);
+    }
+
+    .queue-process {
+        border-bottom: 1px solid $gray-200;
+    }
+
+    .queue-process:last-child {
+        border-bottom: 0;
+    }
+}
