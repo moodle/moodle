@@ -36622,7 +36622,7 @@ span[data-flexitour=container][x-placement=right] div[data-role=arrow]:after, sp
   }
   #page.drawers {
     position: relative;
-    overflow-y: auto;
+    overflow-y: visible;
     transition: 0.2s;
     height: calc(100vh - 60px);
     left: 0;

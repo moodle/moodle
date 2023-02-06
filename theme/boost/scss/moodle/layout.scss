@@ -218,7 +218,7 @@
 
     #page.drawers {
         position: relative;
-        overflow-y: auto;
+        overflow-y: visible;
         @include transition(0.2s);
         height: calc(100vh - #{$navbar-height});
         left: 0;

@@ -486,7 +486,7 @@ export default class Drawers {
 
             if (isSmall()) {
                 const pageWrapper = document.getElementById('page');
-                pageWrapper.style.overflow = 'auto';
+                pageWrapper.style.overflow = 'visible';
             }
             return backdrop;
         })
