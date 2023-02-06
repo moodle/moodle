@@ -388,7 +388,6 @@ class iomad {
             return $categories;
         }
 
-        //if (empty($userid)) {
         $companyid = iomad::get_my_companyid(context_system::instance());
         $company = $DB->get_record('company', ['id' => $companyid]);
 
@@ -423,6 +422,13 @@ class iomad {
             $usercategories[$usercourse->category] = $usercourse->category;
         }
 
+        // Get all of the categories of courses assigned to the company.
+        $companycourses = $DB->get_records_sql("SELECT distinct c.category
+                                                FROM {course} c
+                                                JOIN {company_course} cc ON (c.id = cc.courseid)
+                                                WHERE cc.companyid = :companyid",
+                                                ['companyid' => $companyid]);
+
         // Set up the return array;
         $iomadcategories = array();
 
@@ -441,6 +447,11 @@ class iomad {
 
             // Is this a category which has a course you are enrolled on?
             if (!empty($usercategories[$id])) {
+                $iomadcategories[$id] = $category;
+            }
+
+            // Is this a category for a course assigned to the company?
+            if (!empty($companycourses[$id])) {
                 $iomadcategories[$id] = $category;
             }
         }
