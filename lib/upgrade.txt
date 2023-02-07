@@ -60,6 +60,8 @@ information provided here is intended especially for developers.
 * The $required parameter for \core_external\external_description is now being validated in order to prevent
   unintentionally passing incorrect parameters to the external_description's (and its subclasses') constructors (e.g. the parameter
   description being incorrectly passed for the $required parameter). A debugging notice will be shown when such cases occur.
+* The moodle-core-popuphelp YUI modal has been removed. It has not been actively used in Moodle since 3.3. It should be replaced with appropriate ESM/AMD JavaScript.
+* The moodle-core-tooltip YUI modal has been removed. It should be replaced with appropriate ESM/AMD JavaScript.
 
 === 4.1 ===
 
