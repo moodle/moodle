@@ -211,6 +211,7 @@ $string['eventsubmissionduplicated'] = 'The user duplicated their submission.';
 $string['eventsubmissionformviewed'] = 'Submission form viewed.';
 $string['eventsubmissiongraded'] = 'The submission has been graded.';
 $string['eventsubmissionlocked'] = 'The submissions have been locked for a user.';
+$string['eventsubmissionremoved'] = 'Submission removed.';
 $string['eventsubmissionstatusupdated'] = 'The status of the submission has been updated.';
 $string['eventsubmissionstatusviewed'] = 'The status of the submission has been viewed.';
 $string['eventsubmissionunlocked'] = 'The submissions have been unlocked for a user.';
@@ -483,6 +484,7 @@ $string['removesubmissionconfirmwithtimelimit'] = 'Are you sure you want to remo
 $string['revealidentities'] = 'Reveal student identities';
 $string['revealidentitiesconfirm'] = 'Are you sure you want to reveal student identities for this assignment? This operation cannot be undone. Once the student identities have been revealed, the marks will be released to the gradebook.';
 $string['reverttodefaults'] = 'Revert to assignment defaults';
+$string['reverttodraftforgroup'] = 'Revert submission to draft for group {$a}.';
 $string['reverttodraftforstudent'] = 'Revert submission to draft for student: (id={$a->id}, fullname={$a->fullname}).';
 $string['reverttodraft'] = 'Revert the submission to draft status';
 $string['reverttodraftshort'] = 'Revert the submission to draft';
