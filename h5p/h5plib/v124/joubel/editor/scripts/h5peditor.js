@@ -88,9 +88,11 @@ ns.renderableCommonFields = {};
     script.onload = function () {
       H5PIntegration.loadedJs.push(src);
       loading[src].forEach(cb => cb());
+      delete loading[src];
     };
     script.onerror = function (err) {
       loading[src].forEach(cb => cb(err));
+      delete loading[src];      
     };
     script.src = src;
     document.head.appendChild(script);
@@ -1753,6 +1755,7 @@ ns.supportedLanguages = {
   'hi': 'Hindi (हिन्दी)',
   'ho': 'Hiri Motu',
   'hr': 'Croatian (Hrvatski)',
+  'hsb': 'Upper Sorbian (hornjoserbšćina)',
   'ht': 'Haitian Creole',
   'hu': 'Hungarian (Magyar)',
   'hy': 'Armenian (Հայերեն)',

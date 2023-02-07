@@ -447,6 +447,9 @@ class framework implements H5PFrameworkInterface {
             'Keywords already exists!' => 'keywordsExits',
             'Some of these keywords already exist' => 'someKeywordsExits',
             'Assistive Technologies label' => 'a11yTitle:label',
+            'width' => 'width',
+            'height' => 'height',
+            'Missing main library @library' => 'missingmainlibrary',
         ];
 
         if (isset($translationsmap[$message])) {
