@@ -100,6 +100,7 @@ class Horde_Imap_Client_Data_Acl extends Horde_Imap_Client_Data_AclCommon implem
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return $this[$offset];
@@ -107,6 +108,7 @@ class Horde_Imap_Client_Data_Acl extends Horde_Imap_Client_Data_AclCommon implem
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return in_array($offset, $this->_rights);
@@ -114,6 +116,7 @@ class Horde_Imap_Client_Data_Acl extends Horde_Imap_Client_Data_AclCommon implem
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         if ($value) {
@@ -133,6 +136,7 @@ class Horde_Imap_Client_Data_Acl extends Horde_Imap_Client_Data_AclCommon implem
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         $this->_rights = array_values(array_diff($this->_rights, array($offset)));
@@ -140,6 +144,7 @@ class Horde_Imap_Client_Data_Acl extends Horde_Imap_Client_Data_AclCommon implem
 
     /* IteratorAggregate method. */
 
+    #[ReturnTypeWillChange]
     public function getIterator()
     {
         return new ArrayIterator($this->_rights);
@@ -151,14 +156,33 @@ class Horde_Imap_Client_Data_Acl extends Horde_Imap_Client_Data_AclCommon implem
      */
     public function serialize()
     {
-        return json_encode($this->_rights);
+        return serialize($this->__serialize());
     }
 
     /**
      */
     public function unserialize($data)
     {
-        $this->_rights = json_decode($data);
+        $data = @unserialize($data);
+        if (!is_array($data)) {
+            throw new Exception('Cache version changed.');
+        }
+        $this->__unserialize($data);
+    }
+
+    /**
+     * @return array
+     */
+    public function __serialize()
+    {
+        return array(
+            'rights' => $this->_rights
+        );
+    }
+
+    public function __unserialize(array $data)
+    {
+        $this->_rights = $data['rights'];
     }
 
 }

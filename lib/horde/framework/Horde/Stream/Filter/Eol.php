@@ -56,6 +56,7 @@ class Horde_Stream_Filter_Eol extends php_user_filter
     /**
      * @see stream_filter_register()
      */
+    #[ReturnTypeWillChange]
     public function onCreate()
     {
         $eol = isset($this->params['eol'])
@@ -82,6 +83,7 @@ class Horde_Stream_Filter_Eol extends php_user_filter
     /**
      * @see stream_filter_register()
      */
+    #[ReturnTypeWillChange]
     public function filter($in, $out, &$consumed, $closing)
     {
         while ($bucket = stream_bucket_make_writeable($in)) {

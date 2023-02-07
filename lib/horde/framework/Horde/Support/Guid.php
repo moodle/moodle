@@ -57,7 +57,7 @@ class Horde_Support_Guid
             . (isset($opts['prefix']) ? $opts['prefix'] . '.' : '')
             . strval(new Horde_Support_Randomid())
             . '@'
-            . (isset($opts['server']) ? $opts['server'] : (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : 'localhost'));
+            . (isset($opts['server']) ? $opts['server'] : (!empty($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : 'localhost'));
     }
 
     /**
