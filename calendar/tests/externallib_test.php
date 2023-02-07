@@ -2628,7 +2628,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
      *
      * @return array
      */
-    public function test_get_calendar_event_by_id_prevent_read_other_users_events_data_provider(): array {
+    public function get_calendar_event_by_id_prevent_read_other_users_events_data_provider(): array {
         $syscontext = context_system::instance();
         $managerrole = 'manager';
         return [
@@ -2699,7 +2699,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
      *
      * @return array
      */
-    public function test_edit_or_delete_other_users_events_data_provider(): array {
+    public function edit_or_delete_other_users_events_data_provider(): array {
         $syscontext = context_system::instance();
         $managerrole = 'manager';
         return [

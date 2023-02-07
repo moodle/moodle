@@ -6443,7 +6443,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     /**
      * Data provider for test_get_conversation_counts().
      */
-    public function test_get_conversation_counts_test_cases() {
+    public function get_conversation_counts_test_cases() {
         $typeindividual = \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL;
         $typegroup = \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP;
         $typeself = \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF;
