@@ -14,21 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core;
+namespace core\task;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/lib/externallib.php');
+use moodle_url;
 
 /**
- * Contains tests for course related notifications.
+ * Contains tests for login related notifications.
  *
  * @package    core
  * @copyright  2021 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \core\task\send_login_notifications
  */
-class login_notifications_test extends \advanced_testcase {
+class send_login_notifications_test extends \advanced_testcase {
 
     /**
      * Load required classes
@@ -154,6 +152,40 @@ class login_notifications_test extends \advanced_testcase {
         $sink->close();
 
         $this->assertCount(0, $messages);
+    }
+
+    /**
+     * Test new login notification where the user auth method provides a custom change password URL
+     */
+    public function test_login_notification_custom_change_password_url(): void {
+        global $SESSION;
+
+        $this->resetAfterTest();
+        $this->setUser(0);
+
+        // Set LDAP auth change password URL.
+        $changepasswordurl = (new moodle_url('/changepassword.php'))->out(false);
+        set_config('changepasswordurl', $changepasswordurl, 'auth_ldap');
+
+        $ldapuser = $this->getDataGenerator()->create_user(['auth' => 'ldap']);
+
+        // Mock data for test.
+        $ldapuser->lastip = '1.2.3.4';
+        $SESSION->isnewsessioncookie = true;
+        @complete_user_login($ldapuser);
+
+        // Redirect messages to sink and stop buffer output from CLI task.
+        $sink = $this->redirectMessages();
+        ob_start();
+        $this->runAdhocTasks(send_login_notifications::class);
+        ob_end_clean();
+        $messages = $sink->get_messages();
+        $sink->close();
+
+        // Send notification, assert custom change password URL is present.
+        $this->assertCount(1, $messages);
+        $this->assertStringContainsString("If you don't recognise this activity, please " .
+            "<a href=\"{$changepasswordurl}\">change your password</a>.", $messages[0]->fullmessagehtml);
     }
 
     /**
