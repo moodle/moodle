@@ -600,21 +600,40 @@ class Horde_Stream implements Serializable
      */
     public function serialize()
     {
-        $this->_params['_pos'] = $this->pos();
-
-        return json_encode(array(
-            strval($this),
-            $this->_params
-        ));
+        return serialize($this->__serialize());
     }
 
     /**
      */
     public function unserialize($data)
     {
-        $this->_init();
+        $data = @unserialize($data, true);
+        if ($data == null || !is_array($data)) {
+            throw new Exception('Cache version change.');
+        }
+        $this->__unserialize($data);
+    }
 
-        $data = json_decode($data, true);
+    /**
+     * @return array
+     */
+    public function __serialize()
+    {
+        $this->_params['_pos'] = $this->pos();
+
+        return array(
+            strval($this),
+            $this->_params
+        );
+    }
+
+    /**
+     * @param array $data
+     * @return void
+     */
+    public function __unserialize($data)
+    {
+        $this->_init();
         $this->add($data[0]);
         $this->seek($data[1]['_pos'], false);
         unset($data[1]['_pos']);

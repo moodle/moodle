@@ -90,6 +90,7 @@ extends Horde_Mime_Headers_ContentParam
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         if (strcasecmp($offset, 'size') === 0) {

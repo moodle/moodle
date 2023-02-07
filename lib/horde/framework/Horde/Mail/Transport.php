@@ -208,7 +208,7 @@ abstract class Horde_Mail_Transport
     protected function _sanitizeHeaders($headers)
     {
         foreach (array_diff(array_keys($headers), array('_raw')) as $key) {
-            $headers[$key] = preg_replace('=((<CR>|<LF>|0x0A/%0A|0x0D/%0D|\\n|\\r)\S).*=i', null, $headers[$key]);
+            $headers[$key] = preg_replace('=((<CR>|<LF>|0x0A/%0A|0x0D/%0D|\\n|\\r)\S).*=i', '', $headers[$key]);
         }
 
         return $headers;
@@ -251,7 +251,7 @@ abstract class Horde_Mail_Transport
             }
         }
 
-        if (!strlen($from)) {
+        if (empty($from)) {
             throw new Horde_Mail_Exception('No from address provided.');
         }
 

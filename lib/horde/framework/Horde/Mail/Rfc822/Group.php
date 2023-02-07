@@ -137,6 +137,7 @@ class Horde_Mail_Rfc822_Group
      *
      * @return integer  The number of addresses.
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return count($this->addresses);
