@@ -62,6 +62,8 @@ information provided here is intended especially for developers.
   description being incorrectly passed for the $required parameter). A debugging notice will be shown when such cases occur.
 * The moodle-core-popuphelp YUI modal has been removed. It has not been actively used in Moodle since 3.3. It should be replaced with appropriate ESM/AMD JavaScript.
 * The moodle-core-tooltip YUI modal has been removed. It should be replaced with appropriate ESM/AMD JavaScript.
+* Event \core\event\user_created is now triggered if the user is created during course restore. In this case
+  $event->other has properties 'restoreid' and 'courseid'.
 
 === 4.1 ===
 
