@@ -1,5 +1,7 @@
 This files describes API changes in /cache/stores/* - cache store plugins.
 Information provided here is intended especially for developers.
+=== 4.2 ===
+* The memcached cachestore has been removed.
 
 === 4.1 ===
 * Added new `requirelockingbeforewrite` option for cache definitions. This will check that a lock for a given cache key already

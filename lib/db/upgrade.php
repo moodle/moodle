@@ -3072,5 +3072,16 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023010300.00);
     }
 
+    if ($oldversion < 2023020700.00) {
+        // If cachestore_memcached is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/cache/stores/memcached/version.php')) {
+            // Clean config.
+            unset_all_config_for_plugin('cachestore_memcached');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023020700.00);
+    }
+
     return true;
 }
