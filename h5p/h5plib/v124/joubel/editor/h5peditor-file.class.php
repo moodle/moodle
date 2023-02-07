@@ -15,7 +15,7 @@ class H5peditorFile {
    * Constructor. Process data for file uploaded through the editor.
    */
   function __construct($interface) {
-    $field = filter_input(INPUT_POST, 'field', FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+    $field = filter_input(INPUT_POST, 'field', FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_FLAG_NO_ENCODE_QUOTES);
 
     // Check for file upload.
     if ($field === NULL || empty($_FILES) || !isset($_FILES['file'])) {
