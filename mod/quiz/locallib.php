@@ -629,27 +629,6 @@ function quiz_has_feedback($quiz) {
 }
 
 /**
- * Update the sumgrades field of the attempts at a quiz.
- *
- * @param stdClass $quiz a quiz.
- */
-function quiz_update_all_attempt_sumgrades($quiz) {
-    global $DB;
-    $dm = new question_engine_data_mapper();
-    $timenow = time();
-
-    $sql = "UPDATE {quiz_attempts}
-            SET
-                timemodified = :timenow,
-                sumgrades = (
-                    {$dm->sum_usage_marks_subquery('uniqueid')}
-                )
-            WHERE quiz = :quizid AND state = :finishedstate";
-    $DB->execute($sql, ['timenow' => $timenow, 'quizid' => $quiz->id,
-            'finishedstate' => quiz_attempt::FINISHED]);
-}
-
-/**
  * The quiz grade is the maximum that student's results are marked out of. When it
  * changes, the corresponding data in quiz_grades and quiz_feedback needs to be
  * rescaled. After calling this function, you probably need to call

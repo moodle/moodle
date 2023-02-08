@@ -16,6 +16,8 @@
 
 namespace mod_quiz;
 
+use question_engine_data_mapper;
+
 /**
  * This class contains all the logic for computing the grade of a quiz.
  *
@@ -83,5 +85,27 @@ class grade_calculator {
             // we will get a divide by zero error.
             quiz_set_grade(0, $quiz);
         }
+    }
+
+    /**
+     * Update the sumgrades field of attempts at this quiz.
+     */
+    public function recompute_all_attempt_sumgrades(): void {
+        global $DB;
+        $dm = new question_engine_data_mapper();
+        $timenow = time();
+
+        $DB->execute("
+                UPDATE {quiz_attempts}
+                   SET timemodified = :timenow,
+                       sumgrades = (
+                           {$dm->sum_usage_marks_subquery('uniqueid')}
+                       )
+                 WHERE quiz = :quizid AND state = :finishedstate
+            ", [
+                'timenow' => $timenow,
+                'quizid' => $this->quizobj->get_quizid(),
+                'finishedstate' => quiz_attempt::FINISHED
+            ]);
     }
 }

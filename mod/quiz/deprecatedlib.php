@@ -322,3 +322,16 @@ function quiz_update_sumgrades($quiz) {
         'Please use a standard grade_calculator::recompute_quiz_sumgrades instead.', DEBUG_DEVELOPER);
     quiz_settings::create($quiz->id)->get_grade_calculator()->recompute_quiz_sumgrades();
 }
+
+/**
+ * Update the sumgrades field of the attempts at a quiz.
+ *
+ * @param stdClass $quiz a quiz.
+ * @deprecated since Moodle 4.2. Please use grade_calculator::recompute_all_attempt_sumgrades.
+ * @todo MDL-76612 Final deprecation in Moodle 4.6
+ */
+function quiz_update_all_attempt_sumgrades($quiz) {
+    debugging('quiz_update_all_attempt_sumgrades is deprecated. ' .
+        'Please use a standard grade_calculator::recompute_all_attempt_sumgrades instead.', DEBUG_DEVELOPER);
+    quiz_settings::create($quiz->id)->get_grade_calculator()->recompute_all_attempt_sumgrades();
+}

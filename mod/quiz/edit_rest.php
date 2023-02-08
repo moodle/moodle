@@ -133,7 +133,7 @@ switch($requestmethod) {
                             // Grade has really changed.
                             quiz_delete_previews($quiz);
                             $gradecalculator->recompute_quiz_sumgrades();
-                            quiz_update_all_attempt_sumgrades($quiz);
+                            $gradecalculator->recompute_all_attempt_sumgrades();
                             quiz_update_all_final_grades($quiz);
                             quiz_update_grades($quiz, 0, true);
                         }
