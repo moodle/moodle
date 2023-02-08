@@ -530,6 +530,7 @@ function quiz_repaginate_questions($quizid, $slotsperpage) {
 }
 
 // Functions to do with quiz grades ////////////////////////////////////////////
+// Note a lot of logic related to this is now in the grade_calculator class.
 
 /**
  * Convert the raw grade stored in $attempt into a grade out of the maximum

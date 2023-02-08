@@ -347,7 +347,7 @@ class quiz_settings {
      * for this quiz at this time.
      *
      * @param int $timenow the current time as a unix timestamp.
-     * @return access_manager and instance of the access_manager class
+     * @return access_manager an instance of the access_manager class
      *      for this quiz at this time.
      */
     public function get_access_manager($timenow) {
@@ -356,6 +356,15 @@ class quiz_settings {
                     has_capability('mod/quiz:ignoretimelimits', $this->context, null, false));
         }
         return $this->accessmanager;
+    }
+
+    /**
+     * Return the grade_calculator object for this quiz.
+     *
+     * @return grade_calculator
+     */
+    public function get_grade_calculator(): grade_calculator {
+        return grade_calculator::create($this);
     }
 
     /**
