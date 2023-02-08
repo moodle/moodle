@@ -923,7 +923,7 @@ class template {
         // Then we generate strings to replace.
         $otherfields = [];
         foreach ($possiblefields as $field) {
-            $fieldinput = $this->get_field_input($processeddata, $entryid, $entrydata, $field);
+            $fieldinput = $this->get_field_input($processeddata, $field, $entryid, $entrydata);
             if (strpos($templatecontent, "[[" . $field->field->name . "]]") !== false) {
                 // Replace the field tag.
                 $patterns[] = "[[" . $field->field->name . "]]";
@@ -968,16 +968,16 @@ class template {
      * Return the input form html from a specific field.
      *
      * @param stdClass $processeddata the previous process data information.
+     * @param data_field_base $field the field object
      * @param int|null $entryid the possible entry id
      * @param stdClass|null $entrydata the entry data from a previous form or from a real entry
-     * @param data_field_base $field the field object
      * @return string the add entry HTML content
      */
     private function get_field_input(
         stdClass $processeddata,
+        data_field_base $field,
         ?int $entryid = null,
-        ?stdClass $entrydata = null,
-        data_field_base $field
+        ?stdClass $entrydata = null
     ): string {
         $renderer = $this->manager->get_renderer();
         $errors = '';
