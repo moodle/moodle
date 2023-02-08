@@ -423,6 +423,79 @@ class stateactions {
     }
 
     /**
+     * Move course cms to the right. Indent = 1.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids cm ids
+     * @param int $targetsectionid not used
+     * @param int $targetcmid not used
+     */
+    public function cm_moveright(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+        $this->set_cm_indentation($updates, $course, $ids, 1);
+    }
+
+    /**
+     * Move course cms to the left. Indent = 0.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids cm ids
+     * @param int $targetsectionid not used
+     * @param int $targetcmid not used
+     */
+    public function cm_moveleft(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+        $this->set_cm_indentation($updates, $course, $ids, 0);
+    }
+
+    /**
+     * Internal method to define the cm indentation level.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids cm ids
+     * @param int $indent new value for indentation
+     */
+    protected function set_cm_indentation(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids,
+        int $indent
+    ): void {
+        global $DB;
+
+        $this->validate_cms($course, $ids, __FUNCTION__);
+
+        // Check capabilities on every activity context.
+        foreach ($ids as $cmid) {
+            $modcontext = context_module::instance($cmid);
+            require_capability('moodle/course:manageactivities', $modcontext);
+        }
+        $modinfo = get_fast_modinfo($course);
+        $cms = $this->get_cm_info($modinfo, $ids);
+        list($insql, $inparams) = $DB->get_in_or_equal(array_keys($cms), SQL_PARAMS_NAMED);
+        $DB->set_field_select('course_modules', 'indent', $indent, "id $insql", $inparams);
+        rebuild_course_cache($course->id, false, true);
+        foreach ($cms as $cm) {
+            $modcontext = context_module::instance($cm->id);
+            course_module_updated::create_from_cm($cm, $modcontext)->trigger();
+            $updates->add_cm_put($cm->id);
+        }
+    }
+
+    /**
      * Extract several cm_info from the course_modinfo.
      *
      * @param course_modinfo $modinfo the course modinfo.

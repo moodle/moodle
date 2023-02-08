@@ -13994,6 +13994,12 @@ body:not(.editing) .sitetopic ul.section {
   .section .activity a.stealth:hover {
     color: #5babf2 !important;
     /* stylelint-disable-line declaration-no-important */ }
+  .section .activity.indented .activity-item {
+    border: 0;
+    margin-left: 1rem; }
+  .section .activity.indented + .indented .activity-item {
+    border-top: 1px solid #dee2e6;
+    border-radius: unset; }
 
 .section .label .contentwithoutlink,
 .section .label .activityinstance {
