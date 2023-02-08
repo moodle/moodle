@@ -90,7 +90,8 @@ install:
             sudo service mysql stop
             sudo mv /var/lib/mysql /mnt/ramdisk
             sudo ln -s /mnt/ramdisk/mysql /var/lib/mysql
-            sudo service mysql restart
+            echo -e "[mysqld]\nskip-log-bin" | sudo tee -a /etc/mysql/my.cnf
+            sudo service mysql start
         fi
     - >
         if [ "$DB" = 'pgsql' ];
@@ -101,6 +102,7 @@ install:
             sudo mv /var/lib/postgresql /mnt/ramdisk
             sudo ln -s /mnt/ramdisk/postgresql /var/lib/postgresql
             sudo service postgresql start
+            sh -c 'until pg_isready -p $PGPORT; do echo "Waiting for the DB to be up..."; sleep 2; done'
         fi
     - >
         if [ "$TASK" = 'PHPUNIT' ];
@@ -127,7 +129,6 @@ install:
         fi
 
 before_script:
-    - if [[ ${TRAVIS_PHP_VERSION:0:1} -gt 7 ]]; then pecl install xmlrpc-beta; fi
     - echo 'max_input_vars=5000' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
     - phpenv config-rm xdebug.ini
     - >
