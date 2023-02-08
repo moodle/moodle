@@ -72,12 +72,11 @@ class core_renderer extends \core_renderer {
      * @return string A rendered context header.
      */
     public function context_header($headerinfo = null, $headinglevel = 1): string {
-        global $DB, $USER, $CFG, $SITE;
+        global $DB, $USER, $CFG;
         require_once($CFG->dirroot . '/user/lib.php');
         $context = $this->page->context;
         $heading = null;
         $imagedata = null;
-        $subheader = null;
         $userbuttons = null;
 
         // Make sure to use the heading if it has been set.
@@ -167,10 +166,11 @@ class core_renderer extends \core_renderer {
                 $purposeclass .= ' activityiconcontainer';
                 $purposeclass .= ' modicon_' . $this->page->activityname;
                 $imagedata = html_writer::tag('div', $imagedata, ['class' => $purposeclass]);
-                $prefix = get_string('modulename', $this->page->activityname);
+                if (!empty($USER->editing)) {
+                    $prefix = get_string('modulename', $this->page->activityname);
+                }
             }
         }
-
 
         $contextheader = new \context_header($heading, $headinglevel, $imagedata, $userbuttons, $prefix);
         return $this->render_context_header($contextheader);
