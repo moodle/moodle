@@ -55,31 +55,32 @@ jobs:
       matrix:
         include:
           - os: ubuntu-22.04
-            php: 7.4
+            php: 8.0
             extensions:
             db: mysqli
           - os: ubuntu-22.04
             php: 8.0
             db: pgsql
-            extensions: xmlrpc-beta
 
     steps:
       - name: Setting up DB mysql
         if: ${{ matrix.db == 'mysqli' }}
-        uses: johanmeiring/mysql-action@tmpfs-patch
+        uses: moodlehq/mysql-action@v1
         with:
           collation server: utf8mb4_bin
-          mysql version: 5.7
+          mysql version: 8.0
           mysql database: test
           mysql user: test
           mysql password: test
           use tmpfs: true
+          tmpfs size: '1024M'
+          extra conf: --skip-log-bin
 
       - name: Setting up DB pgsql
         if: ${{ matrix.db == 'pgsql' }}
         uses: m4nu56/postgresql-action@v1
         with:
-          postgresql version: 12
+          postgresql version: 13
           postgresql db: test
           postgresql user: test
           postgresql password: test
