@@ -31,6 +31,9 @@ use question_engine_data_mapper;
  */
 class grade_calculator {
 
+    /** @var float a number that is effectively zero. Used to avoid division-by-zero or underflow problems. */
+    const ALMOST_ZERO = 0.000005;
+
     /** @var quiz_settings the quiz for which this instance computes grades. */
     protected $quizobj;
 
@@ -44,7 +47,7 @@ class grade_calculator {
     }
 
     /**
-     * Factory. Recommended way to get an instance is $quizobj->get_grade_calculator();
+     * Factory. The recommended way to get an instance is $quizobj->get_grade_calculator();
      *
      * @param quiz_settings $quizobj settings of a quiz.
      * @return grade_calculator instance of this class for the given quiz.
@@ -61,7 +64,7 @@ class grade_calculator {
      *
      * You should call {@see quiz_delete_previews()} before you call this function.
      */
-    public function recompute_quiz_sumgrades(): void {
+    public function recompute_quiz_sumgrades() {
         global $DB;
         $quiz = $this->quizobj->get_quiz();
 
@@ -79,7 +82,7 @@ class grade_calculator {
         // Update the value in memory.
         $quiz->sumgrades = $DB->get_field('quiz', 'sumgrades', ['id' => $quiz->id]);
 
-        if ($quiz->sumgrades < 0.000005 && quiz_has_attempts($quiz->id)) {
+        if ($quiz->sumgrades < self::ALMOST_ZERO && quiz_has_attempts($quiz->id)) {
             // If the quiz has been attempted, and the sumgrades has been
             // set to 0, then we must also set the maximum possible grade to 0, or
             // we will get a divide by zero error.
@@ -90,7 +93,7 @@ class grade_calculator {
     /**
      * Update the sumgrades field of attempts at this quiz.
      */
-    public function recompute_all_attempt_sumgrades(): void {
+    public function recompute_all_attempt_sumgrades() {
         global $DB;
         $dm = new question_engine_data_mapper();
         $timenow = time();
@@ -107,5 +110,154 @@ class grade_calculator {
                 'quizid' => $this->quizobj->get_quizid(),
                 'finishedstate' => quiz_attempt::FINISHED
             ]);
+    }
+
+    /**
+     * Update the final grade at this quiz for all students.
+     *
+     * This function is equivalent to calling quiz_save_best_grade for all
+     * users, but much more efficient.
+     */
+    public function recompute_all_final_grades(): void {
+        global $DB;
+        $quiz = $this->quizobj->get_quiz();
+
+        // If the quiz does not contain any graded questions, then there is nothing to do.
+        if (!$quiz->sumgrades) {
+            return;
+        }
+
+        $param = ['iquizid' => $quiz->id, 'istatefinished' => quiz_attempt::FINISHED];
+        $firstlastattemptjoin = "JOIN (
+                SELECT
+                    iquiza.userid,
+                    MIN(attempt) AS firstattempt,
+                    MAX(attempt) AS lastattempt
+
+                FROM {quiz_attempts} iquiza
+
+                WHERE
+                    iquiza.state = :istatefinished AND
+                    iquiza.preview = 0 AND
+                    iquiza.quiz = :iquizid
+
+                GROUP BY iquiza.userid
+            ) first_last_attempts ON first_last_attempts.userid = quiza.userid";
+
+        switch ($quiz->grademethod) {
+            case QUIZ_ATTEMPTFIRST:
+                // Because of the where clause, there will only be one row, but we
+                // must still use an aggregate function.
+                $select = 'MAX(quiza.sumgrades)';
+                $join = $firstlastattemptjoin;
+                $where = 'quiza.attempt = first_last_attempts.firstattempt AND';
+                break;
+
+            case QUIZ_ATTEMPTLAST:
+                // Because of the where clause, there will only be one row, but we
+                // must still use an aggregate function.
+                $select = 'MAX(quiza.sumgrades)';
+                $join = $firstlastattemptjoin;
+                $where = 'quiza.attempt = first_last_attempts.lastattempt AND';
+                break;
+
+            case QUIZ_GRADEAVERAGE:
+                $select = 'AVG(quiza.sumgrades)';
+                $join = '';
+                $where = '';
+                break;
+
+            default:
+            case QUIZ_GRADEHIGHEST:
+                $select = 'MAX(quiza.sumgrades)';
+                $join = '';
+                $where = '';
+                break;
+        }
+
+        if ($quiz->sumgrades >= self::ALMOST_ZERO) {
+            $finalgrade = $select . ' * ' . ($quiz->grade / $quiz->sumgrades);
+        } else {
+            $finalgrade = '0';
+        }
+        $param['quizid'] = $quiz->id;
+        $param['quizid2'] = $quiz->id;
+        $param['quizid3'] = $quiz->id;
+        $param['quizid4'] = $quiz->id;
+        $param['statefinished'] = quiz_attempt::FINISHED;
+        $param['statefinished2'] = quiz_attempt::FINISHED;
+        $param['almostzero'] = self::ALMOST_ZERO;
+        $finalgradesubquery = "
+                SELECT quiza.userid, $finalgrade AS newgrade
+                FROM {quiz_attempts} quiza
+                $join
+                WHERE
+                    $where
+                    quiza.state = :statefinished AND
+                    quiza.preview = 0 AND
+                    quiza.quiz = :quizid3
+                GROUP BY quiza.userid";
+
+        $changedgrades = $DB->get_records_sql("
+                SELECT users.userid, qg.id, qg.grade, newgrades.newgrade
+
+                FROM (
+                    SELECT userid
+                    FROM {quiz_grades} qg
+                    WHERE quiz = :quizid
+                UNION
+                    SELECT DISTINCT userid
+                    FROM {quiz_attempts} quiza2
+                    WHERE
+                        quiza2.state = :statefinished2 AND
+                        quiza2.preview = 0 AND
+                        quiza2.quiz = :quizid2
+                ) users
+
+                LEFT JOIN {quiz_grades} qg ON qg.userid = users.userid AND qg.quiz = :quizid4
+
+                LEFT JOIN (
+                    $finalgradesubquery
+                ) newgrades ON newgrades.userid = users.userid
+
+                WHERE
+                    ABS(newgrades.newgrade - qg.grade) > :almostzero OR
+                    ((newgrades.newgrade IS NULL OR qg.grade IS NULL) AND NOT
+                              (newgrades.newgrade IS NULL AND qg.grade IS NULL))",
+                    // The mess on the previous line is detecting where the value is
+                    // NULL in one column, and NOT NULL in the other, but SQL does
+                    // not have an XOR operator, and MS SQL server can't cope with
+                    // (newgrades.newgrade IS NULL) <> (qg.grade IS NULL).
+                $param);
+
+        $timenow = time();
+        $todelete = [];
+        foreach ($changedgrades as $changedgrade) {
+
+            if (is_null($changedgrade->newgrade)) {
+                $todelete[] = $changedgrade->userid;
+
+            } else if (is_null($changedgrade->grade)) {
+                $toinsert = new stdClass();
+                $toinsert->quiz = $quiz->id;
+                $toinsert->userid = $changedgrade->userid;
+                $toinsert->timemodified = $timenow;
+                $toinsert->grade = $changedgrade->newgrade;
+                $DB->insert_record('quiz_grades', $toinsert);
+
+            } else {
+                $toupdate = new stdClass();
+                $toupdate->id = $changedgrade->id;
+                $toupdate->grade = $changedgrade->newgrade;
+                $toupdate->timemodified = $timenow;
+                $DB->update_record('quiz_grades', $toupdate);
+            }
+        }
+
+        if (!empty($todelete)) {
+            list($test, $params) = $DB->get_in_or_equal($todelete);
+            $DB->delete_records_select('quiz_grades', 'quiz = ? AND userid ' . $test,
+                    array_merge([$quiz->id], $params));
+        }
     }
 }

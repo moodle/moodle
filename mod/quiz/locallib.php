@@ -37,6 +37,7 @@ require_once($CFG->libdir . '/questionlib.php');
 
 use mod_quiz\access_manager;
 use mod_quiz\event\attempt_submitted;
+use mod_quiz\grade_calculator;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
 use mod_quiz\quiz_attempt;
@@ -98,7 +99,7 @@ function quiz_create_attempt(quiz_settings $quizobj, $attemptnumber, $lastattemp
     }
 
     $quiz = $quizobj->get_quiz();
-    if ($quiz->sumgrades < 0.000005 && $quiz->grade > 0.000005) {
+    if ($quiz->sumgrades < grade_calculator::ALMOST_ZERO && $quiz->grade > grade_calculator::ALMOST_ZERO) {
         throw new moodle_exception('cannotstartgradesmismatch', 'quiz',
                 new moodle_url('/mod/quiz/view.php', ['q' => $quiz->id]),
                     ['grade' => quiz_format_grade($quiz, $quiz->grade)]);
@@ -547,7 +548,7 @@ function quiz_repaginate_questions($quizid, $slotsperpage) {
 function quiz_rescale_grade($rawgrade, $quiz, $format = true) {
     if (is_null($rawgrade)) {
         $grade = null;
-    } else if ($quiz->sumgrades >= 0.000005) {
+    } else if ($quiz->sumgrades >= grade_calculator::ALMOST_ZERO) {
         $grade = $rawgrade * $quiz->grade / $quiz->sumgrades;
     } else {
         $grade = 0;
@@ -632,8 +633,9 @@ function quiz_has_feedback($quiz) {
  * The quiz grade is the maximum that student's results are marked out of. When it
  * changes, the corresponding data in quiz_grades and quiz_feedback needs to be
  * rescaled. After calling this function, you probably need to call
- * quiz_update_all_attempt_sumgrades, quiz_update_all_final_grades and
- * quiz_update_grades.
+ * quiz_update_all_attempt_sumgrades, grade_calculator::recompute_all_final_grades();
+ * quiz_update_grades. (At least, that is what this comment has said for years, but
+ * it seems to call recompute_all_final_grades itself.)
  *
  * @param float $newgrade the new maximum grade for the quiz.
  * @param stdClass $quiz the quiz we are updating. Passed by reference so its
@@ -660,7 +662,8 @@ function quiz_set_grade($newgrade, $quiz) {
     if ($oldgrade < 1) {
         // If the old grade was zero, we cannot rescale, we have to recompute.
         // We also recompute if the old grade was too small to avoid underflow problems.
-        quiz_update_all_final_grades($quiz);
+        $gradecalculator = quiz_settings::create($quiz->id)->get_grade_calculator();
+        $gradecalculator->recompute_all_final_grades($quiz);
 
     } else {
         // We can rescale the grades efficiently.
@@ -793,154 +796,6 @@ function quiz_calculate_best_grade($quiz, $attempts) {
                 }
             }
             return $max;
-    }
-}
-
-/**
- * Update the final grade at this quiz for all students.
- *
- * This function is equivalent to calling quiz_save_best_grade for all
- * users, but much more efficient.
- *
- * @param stdClass $quiz the quiz settings.
- */
-function quiz_update_all_final_grades($quiz) {
-    global $DB;
-
-    if (!$quiz->sumgrades) {
-        return;
-    }
-
-    $param = ['iquizid' => $quiz->id, 'istatefinished' => quiz_attempt::FINISHED];
-    $firstlastattemptjoin = "JOIN (
-            SELECT
-                iquiza.userid,
-                MIN(attempt) AS firstattempt,
-                MAX(attempt) AS lastattempt
-
-            FROM {quiz_attempts} iquiza
-
-            WHERE
-                iquiza.state = :istatefinished AND
-                iquiza.preview = 0 AND
-                iquiza.quiz = :iquizid
-
-            GROUP BY iquiza.userid
-        ) first_last_attempts ON first_last_attempts.userid = quiza.userid";
-
-    switch ($quiz->grademethod) {
-        case QUIZ_ATTEMPTFIRST:
-            // Because of the where clause, there will only be one row, but we
-            // must still use an aggregate function.
-            $select = 'MAX(quiza.sumgrades)';
-            $join = $firstlastattemptjoin;
-            $where = 'quiza.attempt = first_last_attempts.firstattempt AND';
-            break;
-
-        case QUIZ_ATTEMPTLAST:
-            // Because of the where clause, there will only be one row, but we
-            // must still use an aggregate function.
-            $select = 'MAX(quiza.sumgrades)';
-            $join = $firstlastattemptjoin;
-            $where = 'quiza.attempt = first_last_attempts.lastattempt AND';
-            break;
-
-        case QUIZ_GRADEAVERAGE:
-            $select = 'AVG(quiza.sumgrades)';
-            $join = '';
-            $where = '';
-            break;
-
-        default:
-        case QUIZ_GRADEHIGHEST:
-            $select = 'MAX(quiza.sumgrades)';
-            $join = '';
-            $where = '';
-            break;
-    }
-
-    if ($quiz->sumgrades >= 0.000005) {
-        $finalgrade = $select . ' * ' . ($quiz->grade / $quiz->sumgrades);
-    } else {
-        $finalgrade = '0';
-    }
-    $param['quizid'] = $quiz->id;
-    $param['quizid2'] = $quiz->id;
-    $param['quizid3'] = $quiz->id;
-    $param['quizid4'] = $quiz->id;
-    $param['statefinished'] = quiz_attempt::FINISHED;
-    $param['statefinished2'] = quiz_attempt::FINISHED;
-    $finalgradesubquery = "
-            SELECT quiza.userid, $finalgrade AS newgrade
-            FROM {quiz_attempts} quiza
-            $join
-            WHERE
-                $where
-                quiza.state = :statefinished AND
-                quiza.preview = 0 AND
-                quiza.quiz = :quizid3
-            GROUP BY quiza.userid";
-
-    $changedgrades = $DB->get_records_sql("
-            SELECT users.userid, qg.id, qg.grade, newgrades.newgrade
-
-            FROM (
-                SELECT userid
-                FROM {quiz_grades} qg
-                WHERE quiz = :quizid
-            UNION
-                SELECT DISTINCT userid
-                FROM {quiz_attempts} quiza2
-                WHERE
-                    quiza2.state = :statefinished2 AND
-                    quiza2.preview = 0 AND
-                    quiza2.quiz = :quizid2
-            ) users
-
-            LEFT JOIN {quiz_grades} qg ON qg.userid = users.userid AND qg.quiz = :quizid4
-
-            LEFT JOIN (
-                $finalgradesubquery
-            ) newgrades ON newgrades.userid = users.userid
-
-            WHERE
-                ABS(newgrades.newgrade - qg.grade) > 0.000005 OR
-                ((newgrades.newgrade IS NULL OR qg.grade IS NULL) AND NOT
-                          (newgrades.newgrade IS NULL AND qg.grade IS NULL))",
-                // The mess on the previous line is detecting where the value is
-                // NULL in one column, and NOT NULL in the other, but SQL does
-                // not have an XOR operator, and MS SQL server can't cope with
-                // (newgrades.newgrade IS NULL) <> (qg.grade IS NULL).
-            $param);
-
-    $timenow = time();
-    $todelete = [];
-    foreach ($changedgrades as $changedgrade) {
-
-        if (is_null($changedgrade->newgrade)) {
-            $todelete[] = $changedgrade->userid;
-
-        } else if (is_null($changedgrade->grade)) {
-            $toinsert = new stdClass();
-            $toinsert->quiz = $quiz->id;
-            $toinsert->userid = $changedgrade->userid;
-            $toinsert->timemodified = $timenow;
-            $toinsert->grade = $changedgrade->newgrade;
-            $DB->insert_record('quiz_grades', $toinsert);
-
-        } else {
-            $toupdate = new stdClass();
-            $toupdate->id = $changedgrade->id;
-            $toupdate->grade = $changedgrade->newgrade;
-            $toupdate->timemodified = $timenow;
-            $DB->update_record('quiz_grades', $toupdate);
-        }
-    }
-
-    if (!empty($todelete)) {
-        list($test, $params) = $DB->get_in_or_equal($todelete);
-        $DB->delete_records_select('quiz_grades', 'quiz = ? AND userid ' . $test,
-                array_merge([$quiz->id], $params));
     }
 }
 

@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use mod_quiz\access_manager;
 use mod_quiz\form\add_random_form;
+use mod_quiz\grade_calculator;
 use mod_quiz\question\bank\custom_view;
 use mod_quiz\question\display_options;
 use mod_quiz\question\qubaids_for_quiz;
@@ -149,7 +150,8 @@ function quiz_update_instance($quiz, $mform) {
     quiz_after_add_or_update($quiz);
 
     if ($oldquiz->grademethod != $quiz->grademethod) {
-        quiz_update_all_final_grades($quiz);
+        $gradecalculator = quiz_settings::create($quiz->id)->get_grade_calculator();
+        $gradecalculator->recompute_all_final_grades();
         quiz_update_grades($quiz);
     }
 
@@ -461,7 +463,7 @@ function quiz_get_best_grade($quiz, $userid) {
  * @return bool whether this is a graded quiz.
  */
 function quiz_has_grades($quiz) {
-    return $quiz->grade >= 0.000005 && $quiz->sumgrades >= 0.000005;
+    return $quiz->grade >= grade_calculator::ALMOST_ZERO && $quiz->sumgrades >= grade_calculator::ALMOST_ZERO;
 }
 
 /**

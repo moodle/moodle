@@ -335,3 +335,19 @@ function quiz_update_all_attempt_sumgrades($quiz) {
         'Please use a standard grade_calculator::recompute_all_attempt_sumgrades instead.', DEBUG_DEVELOPER);
     quiz_settings::create($quiz->id)->get_grade_calculator()->recompute_all_attempt_sumgrades();
 }
+
+/**
+ * Update the final grade at this quiz for all students.
+ *
+ * This function is equivalent to calling quiz_save_best_grade for all
+ * users, but much more efficient.
+ *
+ * @param stdClass $quiz the quiz settings.
+ * @deprecated since Moodle 4.2. Please use grade_calculator::recompute_all_final_grades.
+ * @todo MDL-76612 Final deprecation in Moodle 4.6
+ */
+function quiz_update_all_final_grades($quiz) {
+    debugging('quiz_update_all_final_grades is deprecated. ' .
+        'Please use a standard grade_calculator::recompute_all_final_grades instead.', DEBUG_DEVELOPER);
+    quiz_settings::create($quiz->id)->get_grade_calculator()->recompute_all_final_grades();
+}

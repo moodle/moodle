@@ -690,7 +690,7 @@ class quiz_overview_report extends attempts_report {
     protected function update_overall_grades($quiz) {
         $gradecalculator = $this->quizobj->get_grade_calculator();
         $gradecalculator->recompute_all_attempt_sumgrades();
-        quiz_update_all_final_grades($quiz);
+        $gradecalculator->recompute_all_final_grades();
         quiz_update_grades($quiz);
     }
 

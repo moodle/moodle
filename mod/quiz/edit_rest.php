@@ -134,7 +134,7 @@ switch($requestmethod) {
                             quiz_delete_previews($quiz);
                             $gradecalculator->recompute_quiz_sumgrades();
                             $gradecalculator->recompute_all_attempt_sumgrades();
-                            quiz_update_all_final_grades($quiz);
+                            $gradecalculator->recompute_all_final_grades();
                             quiz_update_grades($quiz, 0, true);
                         }
                         $result = ['instancemaxmark' => quiz_format_question_grade($quiz, $maxmark),

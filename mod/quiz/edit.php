@@ -151,7 +151,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     $maxgrade = unformat_float(optional_param('maxgrade', '', PARAM_RAW_TRIMMED), true);
     if (is_float($maxgrade) && $maxgrade >= 0) {
         quiz_set_grade($maxgrade, $quiz);
-        quiz_update_all_final_grades($quiz);
+        $gradecalculator->recompute_all_final_grades();
         quiz_update_grades($quiz, 0, true);
     }
 
