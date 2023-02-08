@@ -50,6 +50,8 @@ const directMutations = {
     cmHide: 'cmHide',
     cmShow: 'cmShow',
     cmStealth: 'cmStealth',
+    cmMoveRight: 'cmMoveRight',
+    cmMoveLeft: 'cmMoveLeft',
 };
 
 export default class extends BaseComponent {
