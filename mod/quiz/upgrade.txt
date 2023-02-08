@@ -79,7 +79,7 @@ This files describes API changes in the quiz code.
 
 * Various functions related to calculating grades have moved into a new class mod_quiz\grade_calculator.
   You get that using $quizobj->get_grade_calculator(), then the following old functions have become these new methods.
-  - recompute_quiz_sumgrades ->
+  - recompute_quiz_sumgrades -> recompute_quiz_sumgrades
 
 * Final deprecation (complete removal) of the following functions which were deprecated long ago:
   - quiz_groups_member_added_handler - deprecated since 2.6

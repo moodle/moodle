@@ -23,6 +23,7 @@
  */
 
 use mod_quiz\form\edit_override_form;
+use mod_quiz\quiz_settings;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot.'/mod/quiz/lib.php');
@@ -31,18 +32,12 @@ require_once($CFG->dirroot.'/mod/quiz/locallib.php');
 $overrideid = required_param('id', PARAM_INT);
 $confirm = optional_param('confirm', false, PARAM_BOOL);
 
-if (! $override = $DB->get_record('quiz_overrides', ['id' => $overrideid])) {
-    throw new \moodle_exception('invalidoverrideid', 'quiz');
-}
-if (! $quiz = $DB->get_record('quiz', ['id' => $override->quiz])) {
-    throw new \moodle_exception('invalidcoursemodule');
-}
-if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $quiz->course)) {
-    throw new \moodle_exception('invalidcoursemodule');
-}
-$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
-
-$context = context_module::instance($cm->id);
+$override = $DB->get_record('quiz_overrides', ['id' => $overrideid], '*', MUST_EXIST);
+$quizobj = quiz_settings::create($override->quiz);
+$quiz = $quizobj->get_quiz();
+$cm = $quizobj->get_cm();
+$course = $quizobj->get_course();
+$context = $quizobj->get_context();
 
 require_login($course, false, $cm);
 

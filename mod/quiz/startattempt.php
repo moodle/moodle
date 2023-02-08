@@ -37,14 +37,8 @@ $id = required_param('cmid', PARAM_INT); // Course module id
 $forcenew = optional_param('forcenew', false, PARAM_BOOL); // Used to force a new preview
 $page = optional_param('page', -1, PARAM_INT); // Page to jump to in the attempt.
 
-if (!$cm = get_coursemodule_from_id('quiz', $id)) {
-    throw new \moodle_exception('invalidcoursemodule');
-}
-if (!$course = $DB->get_record('course', ['id' => $cm->course])) {
-    throw new \moodle_exception("coursemisconf");
-}
+$quizobj = quiz_settings::create_for_cmid($id, $USER->id);
 
-$quizobj = quiz_settings::create($cm->instance, $USER->id);
 // This script should only ever be posted to, so set page URL to the view page.
 $PAGE->set_url($quizobj->view_url());
 // During quiz attempts, the browser back/forwards buttons should force a reload.

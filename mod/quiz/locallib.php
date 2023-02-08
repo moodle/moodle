@@ -36,6 +36,7 @@ require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/questionlib.php');
 
 use mod_quiz\access_manager;
+use mod_quiz\event\attempt_submitted;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
 use mod_quiz\quiz_attempt;
@@ -971,14 +972,14 @@ function quiz_update_all_final_grades($quiz) {
  * quiz renderer method.
  *
  * @param stdClass $quiz the quiz settings. Only $quiz->id is used at the moment.
- * @param stdClass|cm_info $cm the cm object. Only $cm->course, $cm->groupmode and
+ * @param cm_info|stdClass $cm the cm object. Only $cm->course, $cm->groupmode and
  *      $cm->groupingid fields are used at the moment.
  * @param int $currentgroup if there is a concept of current group where this method is being called
  *      (e.g. a report) pass it in here. Default 0 which means no current group.
  * @return array like 'group' => 3, 'user' => 12] where 3 is the number of group overrides,
  *      and 12 is the number of user ones.
  */
-function quiz_override_summary(stdClass $quiz, stdClass $cm, int $currentgroup = 0): array {
+function quiz_override_summary(stdClass $quiz, cm_info|stdClass $cm, int $currentgroup = 0): array {
     global $DB;
 
     if ($currentgroup) {
@@ -1857,15 +1858,13 @@ function quiz_send_overdue_message($attemptobj) {
  *
  * This sends the confirmation and notification messages, if required.
  *
- * @param stdClass $event the event object.
+ * @param attempt_submitted $event the event object.
  */
 function quiz_attempt_submitted_handler($event) {
-    global $DB;
-
-    $course  = $DB->get_record('course', ['id' => $event->courseid]);
+    $course = get_course($event->courseid);
     $attempt = $event->get_record_snapshot('quiz_attempts', $event->objectid);
-    $quiz    = $event->get_record_snapshot('quiz', $attempt->quiz);
-    $cm      = get_coursemodule_from_id('quiz', $event->get_context()->instanceid, $event->courseid);
+    $quiz = $event->get_record_snapshot('quiz', $attempt->quiz);
+    $cm = get_coursemodule_from_id('quiz', $event->get_context()->instanceid, $event->courseid);
     $eventdata = $event->get_data();
 
     if (!($course && $quiz && $cm && $attempt)) {

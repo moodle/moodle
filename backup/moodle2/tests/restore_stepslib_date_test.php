@@ -17,6 +17,7 @@
 namespace core_backup;
 
 use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -381,7 +382,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
         // Make a user to do the quiz.
         $user1 = $this->getDataGenerator()->create_user();
 
-        $quizobj = \mod_quiz\quiz_settings::create($quiz->id, $user1->id);
+        $quizobj = quiz_settings::create($quiz->id, $user1->id);
 
         // Start the attempt.
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
