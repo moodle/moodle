@@ -65,11 +65,8 @@ Feature: availability_profile
     Given the following "custom profile fields" exist:
       | datatype | shortname  | name        |
       | text     | superfield | Super field |
-    And I log in as "admin"
-
     # Set field value for user.
-    And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I click on ".icon[title=Edit]" "css_element" in the "s@example.com" "table_row"
+    And I am on the "s@example.com" "user > editing" page logged in as "admin"
     And I expand all fieldsets
     And I set the field "Super field" to "Bananaman"
     And I click on "Update profile" "button"

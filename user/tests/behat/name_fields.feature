@@ -50,10 +50,7 @@ Feature: Both first name and last name are always available for every user
     Given the following "users" exist:
       | username | firstname | lastname | email       |
       | foobar   | Foo       | Bar      | foo@bar.com |
-    And I log in as "admin"
-    And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I follow "Foo Bar"
-    And I click on "Edit profile" "link" in the "region-main" "region"
+    And I am on the "foobar" "user > editing" page logged in as "admin"
     When I set the field "First name" to " "
     And I set the field "Last name" to " "
     And I click on "Cancel" "button"
