@@ -628,36 +628,6 @@ function quiz_has_feedback($quiz) {
 }
 
 /**
- * Update the sumgrades field of the quiz. This needs to be called whenever
- * the grading structure of the quiz is changed. For example if a question is
- * added or removed, or a question weight is changed.
- *
- * You should call {@link quiz_delete_previews()} before you call this function.
- *
- * @param stdClass $quiz a quiz.
- */
-function quiz_update_sumgrades($quiz) {
-    global $DB;
-
-    $sql = 'UPDATE {quiz}
-            SET sumgrades = COALESCE((
-                SELECT SUM(maxmark)
-                FROM {quiz_slots}
-                WHERE quizid = {quiz}.id
-            ), 0)
-            WHERE id = ?';
-    $DB->execute($sql, [$quiz->id]);
-    $quiz->sumgrades = $DB->get_field('quiz', 'sumgrades', ['id' => $quiz->id]);
-
-    if ($quiz->sumgrades < 0.000005 && quiz_has_attempts($quiz->id)) {
-        // If the quiz has been attempted, and the sumgrades has been
-        // set to 0, then we must also set the maximum possible grade to 0, or
-        // we will get a divide by zero error.
-        quiz_set_grade(0, $quiz);
-    }
-}
-
-/**
  * Update the sumgrades field of the attempts at a quiz.
  *
  * @param stdClass $quiz a quiz.

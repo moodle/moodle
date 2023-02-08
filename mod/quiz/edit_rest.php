@@ -54,13 +54,14 @@ $PAGE->set_url('/mod/quiz/edit-rest.php',
         ['quizid' => $quizid, 'class' => $class]);
 
 require_sesskey();
-$quiz = $DB->get_record('quiz', ['id' => $quizid], '*', MUST_EXIST);
-$cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
-$course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
+$quizobj = quiz_settings::create($quizid);
+$quiz = $quizobj->get_quiz();
+$cm = $quizobj->get_cm();
+$course = $quizobj->get_course();
 require_login($course, false, $cm);
 
-$quizobj = new quiz_settings($quiz, $cm, $course);
 $structure = $quizobj->get_structure();
+$gradecalculator = $quizobj->get_grade_calculator();
 $modcontext = context_module::instance($cm->id);
 
 echo $OUTPUT->header(); // Send headers.
@@ -131,7 +132,7 @@ switch($requestmethod) {
                         if ($structure->update_slot_maxmark($slot, $maxmark)) {
                             // Grade has really changed.
                             quiz_delete_previews($quiz);
-                            quiz_update_sumgrades($quiz);
+                            $gradecalculator->recompute_quiz_sumgrades();
                             quiz_update_all_attempt_sumgrades($quiz);
                             quiz_update_all_final_grades($quiz);
                             quiz_update_grades($quiz, 0, true);
@@ -163,7 +164,7 @@ switch($requestmethod) {
                             }
                         }
                         quiz_delete_previews($quiz);
-                        quiz_update_sumgrades($quiz);
+                        $gradecalculator->recompute_quiz_sumgrades();
 
                         $result = ['newsummarks' => quiz_format_grade($quiz, $quiz->sumgrades),
                                 'deleted' => true, 'newnumquestions' => $structure->get_question_count()];
@@ -203,7 +204,7 @@ switch($requestmethod) {
                 }
                 $structure->remove_slot($slot->slot);
                 quiz_delete_previews($quiz);
-                quiz_update_sumgrades($quiz);
+                $gradecalculator->recompute_quiz_sumgrades();
                 $result = ['newsummarks' => quiz_format_grade($quiz, $quiz->sumgrades),
                             'deleted' => true, 'newnumquestions' => $structure->get_question_count()];
                 break;

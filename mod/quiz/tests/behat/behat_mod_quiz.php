@@ -32,6 +32,7 @@ use Behat\Gherkin\Node\TableNode as TableNode;
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException;
 use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 
 /**
  * Steps definitions related to mod_quiz.
@@ -307,7 +308,8 @@ class behat_mod_quiz extends behat_question_base {
             }
         }
 
-        quiz_update_sumgrades($quiz);
+        $quizobj = quiz_settings::create($quiz->id);
+        $quizobj->get_grade_calculator()->recompute_quiz_sumgrades();
     }
 
     /**

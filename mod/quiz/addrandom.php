@@ -29,6 +29,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
 use mod_quiz\form\add_random_form;
+use mod_quiz\quiz_settings;
 use qbank_managecategories\question_category_object;
 
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
@@ -41,10 +42,9 @@ $addonpage = optional_param('addonpage', 0, PARAM_INT);
 $category = optional_param('category', 0, PARAM_INT);
 $mdlscrollto = optional_param('mdlscrollto', 0, PARAM_INT);
 
-// Get the course object and related bits.
-if (!$course = $DB->get_record('course', ['id' => $quiz->course])) {
-    throw new \moodle_exception('invalidcourseid');
-}
+$quizobj = quiz_settings::create($quiz->id);
+$course = $quizobj->get_course();
+
 // You need mod/quiz:manage in addition to question capabilities to access this page.
 // You also need the moodle/question:useall capability somewhere.
 require_capability('mod/quiz:manage', $contexts->lowest());
@@ -113,7 +113,7 @@ if ($data = $mform->get_data()) {
 
     quiz_add_random_questions($quiz, $addonpage, $categoryid, $data->numbertoadd, $includesubcategories, $tagids);
     quiz_delete_previews($quiz);
-    quiz_update_sumgrades($quiz);
+    $quizobj->get_grade_calculator()->recompute_quiz_sumgrades();
     redirect($returnurl);
 }
 

@@ -175,8 +175,9 @@ class attempt_walkthrough_test extends \advanced_testcase {
         $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
 
         // Add them to the quiz.
+        $quizobj = quiz_settings::create($quiz->id);
         quiz_add_quiz_question($saq->id, $quiz, 0, 1);
-        quiz_update_sumgrades($quiz);
+        $quizobj->get_grade_calculator()->recompute_quiz_sumgrades();
 
         return $quiz;
     }
