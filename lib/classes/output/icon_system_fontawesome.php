@@ -238,6 +238,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/enrolusers' => 'fa-user-plus',
             'core:i/expired' => 'fa-exclamation text-warning',
             'core:i/export' => 'fa-download',
+            'core:i/link' => 'fa-link',
             'core:i/externallink' => 'fa-external-link',
             'core:i/files' => 'fa-file',
             'core:i/filter' => 'fa-filter',

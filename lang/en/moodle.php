@@ -319,6 +319,7 @@ $string['cookiesenabledonlysession_help'] = 'This site uses one session cookie, 
 $string['cookiesnotenabled'] = 'Unfortunately, cookies are currently not enabled in your browser';
 $string['cookiesnotice'] = 'Cookies notice';
 $string['copy'] = 'copy';
+$string['copytoclipboard'] = 'Copy to clipboard';
 $string['copyasnoun'] = 'copy';
 $string['copycourse'] = 'Copy course';
 $string['copyingcoursefiles'] = 'Copying course files';

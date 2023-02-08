@@ -272,6 +272,29 @@ class controlmenu implements named_templatable, renderable {
                 ];
             }
         }
+        if (
+            has_any_capability([
+                'moodle/course:movesections',
+                'moodle/course:update',
+                'moodle/course:sectionvisibility',
+            ], $coursecontext)
+        ) {
+            $sectionlink = new moodle_url(
+                '/course/view.php',
+                ['id' => $course->id],
+                "sectionid-{$section->id}-title"
+            );
+            $controls['permalink'] = [
+                'url' => $sectionlink,
+                'icon' => 'i/link',
+                'name' => get_string('sectionlink', 'course'),
+                'pixattr' => ['class' => ''],
+                'attr' => [
+                    'class' => 'icon',
+                    'data-action' => 'permalink',
+                ],
+            ];
+        }
 
         return $controls;
     }
