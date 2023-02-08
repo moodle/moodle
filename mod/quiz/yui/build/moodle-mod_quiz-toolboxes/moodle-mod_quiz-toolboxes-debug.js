@@ -484,12 +484,12 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         var problemsection = this.find_sections_that_would_become_empty();
 
         if (typeof problemsection !== 'undefined') {
-            var alert = new M.core.alert({
-                title: M.util.get_string('cannotremoveslots', 'quiz'),
-                message: M.util.get_string('cannotremoveallsectionslots', 'quiz', problemsection)
+            require(['core/notification'], function(Notification) {
+                Notification.alert(
+                    M.util.get_string('cannotremoveslots', 'quiz'),
+                    M.util.get_string('cannotremoveallsectionslots', 'quiz', problemsection)
+                );
             });
-
-            alert.show();
         } else {
             this.delete_multiple_with_confirmation(ev);
         }
