@@ -414,7 +414,13 @@ class grade_report_grader extends grade_report {
                     $this->groupwheresql_params, $enrolledparams, $relatedctxparams);
 
             $sortjoin = "LEFT JOIN {grade_grades} g ON g.userid = u.id AND g.itemid = $this->sortitemid";
-            $sort = "g.finalgrade $this->sortorder, u.idnumber, u.lastname, u.firstname, u.email";
+
+            if ($this->sortorder == 'ASC') {
+                $sort = $DB->sql_order_by_null('g.finalgrade');
+            } else {
+                $sort = $DB->sql_order_by_null('g.finalgrade', SORT_DESC);
+            }
+            $sort .= ", u.idnumber, u.lastname, u.firstname, u.email";
         } else {
             $sortjoin = '';
 
