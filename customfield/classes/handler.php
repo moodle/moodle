@@ -638,7 +638,7 @@ abstract class handler {
         foreach ($fieldswithdata as $data) {
             $categoryid = $data->get_field()->get_category()->get('id');
             if ($categoryid != $lastcategoryid) {
-                $categoryname = format_string($data->get_field()->get_category()->get('name'));
+                $categoryname = $data->get_field()->get_category()->get_formatted_name();
 
                 // Load category header lang string if specified.
                 if (!empty($headerlangidentifier)) {
