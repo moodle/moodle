@@ -76,8 +76,6 @@ class mod_lti_mod_form extends moodleform_mod {
             $showtypes = !$typeid;
         }
 
-        $this->typeid = 0;
-
         $mform =& $this->_form;
 
         // Adding the "general" fieldset, where all the common settings are shown.
