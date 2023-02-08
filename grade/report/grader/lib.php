@@ -115,8 +115,9 @@ class grade_report_grader extends grade_report {
      * @param string $context
      * @param int $page The current page being viewed (when report is paged)
      * @param int $sortitemid The id of the grade_item by which to sort the table
+     * @param string $sort Sorting direction
      */
-    public function __construct($courseid, $gpr, $context, $page=null, $sortitemid=null) {
+    public function __construct($courseid, $gpr, $context, $page=null, $sortitemid=null, string $sort = '') {
         global $CFG;
         parent::__construct($courseid, $gpr, $context, $page);
 
@@ -155,7 +156,7 @@ class grade_report_grader extends grade_report {
 
         $this->setup_groups();
         $this->setup_users();
-        $this->setup_sortitemid();
+        $this->setup_sortitemid($sort);
 
         $this->overridecat = (bool)get_config('moodle', 'grade_overridecat');
     }
@@ -324,8 +325,10 @@ class grade_report_grader extends grade_report {
      * Setting the sort order, this depends on last state
      * all this should be in the new table class that we might need to use
      * for displaying grades.
+
+     * @param string $sort sorting direction
      */
-    private function setup_sortitemid() {
+    private function setup_sortitemid(string $sort = '') {
 
         global $SESSION;
 
@@ -336,7 +339,7 @@ class grade_report_grader extends grade_report {
         if ($this->sortitemid) {
             if (!isset($SESSION->gradeuserreport->sort)) {
                 $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
-            } else {
+            } else if (!$sort) {
                 // this is the first sort, i.e. by last name
                 if (!isset($SESSION->gradeuserreport->sortitemid)) {
                     $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
@@ -366,6 +369,12 @@ class grade_report_grader extends grade_report {
             } else {
                 $this->sortorder = 'ASC';
             }
+        }
+
+        // If explicit sorting direction exists.
+        if ($sort) {
+            $this->sortorder = $sort;
+            $SESSION->gradeuserreport->sort = $sort;
         }
     }
 
@@ -632,7 +641,9 @@ class grade_report_grader extends grade_report {
         $studentheader->scope = 'col';
         $studentheader->header = true;
         $studentheader->id = 'studentheader';
-        $studentheader->text = $arrows['studentname'];
+        $element = ['type' => 'userfield', 'name' => 'fullname'];
+        $studentheader->text = $arrows['studentname'] . $this->get_cell_action_menu($element, 'gradeitem');
+
         $headerrow->cells[] = $studentheader;
 
         foreach ($extrafields as $field) {
@@ -640,7 +651,8 @@ class grade_report_grader extends grade_report {
             $fieldheader->attributes['class'] = 'userfield user' . $field;
             $fieldheader->scope = 'col';
             $fieldheader->header = true;
-            $fieldheader->text = $arrows[$field];
+            $element = ['type' => 'userfield', 'name' => $field];
+            $fieldheader->text = $arrows[$field] . $this->get_cell_action_menu($element, 'gradeitem');
             $headerrow->cells[] = $fieldheader;
         }
 
@@ -724,7 +736,6 @@ class grade_report_grader extends grade_report {
         $numusers = count($this->users);
         $gradetabindex = 1;
         $strgrade = $this->get_lang_string('gradenoun');
-        $this->get_sort_arrows();
 
         // Get preferences once.
         $quickgrading = $this->get_pref('quickgrading');
@@ -796,9 +807,9 @@ class grade_report_grader extends grade_report {
                     $arrow = '';
                     if ($element['object']->id == $this->sortitemid) {
                         if ($this->sortorder == 'ASC') {
-                            $arrow = $this->get_sort_arrow('up', $sortlink);
-                        } else {
                             $arrow = $this->get_sort_arrow('down', $sortlink);
+                        } else {
+                            $arrow = $this->get_sort_arrow('up', $sortlink);
                         }
                     }
 
@@ -1632,6 +1643,9 @@ class grade_report_grader extends grade_report {
 
             $gradeanalysisstring = $this->get_lang_string('gradeanalysis', 'grades');
 
+            $titleasc = $this->get_lang_string('asc');
+            $titledesc = $this->get_lang_string('desc');
+
             if ($element['type'] == 'grade') {
                 $item = $element['object']->grade_item;
                 if ($item->is_course_item() || $item->is_category_item()) {
@@ -1649,7 +1663,8 @@ class grade_report_grader extends grade_report {
                 $context->gradeanalysisurl = $this->gtree->get_grade_analysis_link($element['object'], $gradeanalysisstring);
             } else if (($element['type'] == 'item') ||
                 ($element['type'] == 'categoryitem') ||
-                ($element['type'] == 'courseitem')) {
+                ($element['type'] == 'courseitem') ||
+                ($element['type'] == 'userfield')) {
 
                 if ($element['type'] == 'item') {
                     foreach ($this->get_report_links($this->context, $this->courseid, $element, $this->gpr, $mode)
@@ -1660,9 +1675,14 @@ class grade_report_grader extends grade_report {
                     $context->advancedgradingurl = $this->gtree->get_advanced_grading_link($element, $this->gpr);
                 }
 
+                if ($element['type'] == 'item') {
+                    $context->divider1 = true;
+                }
                 if (!empty($USER->editing)) {
-                    $context->divider = true;
-
+                    if ($element['type'] !== 'userfield') {
+                        $context->divider1 = true;
+                        $context->divider2 = true;
+                    }
                     if ($element['type'] == 'item') {
                         $context->editurl = $this->gtree->get_edit_link($element, $this->gpr, $editstrings);
                     }
@@ -1670,12 +1690,36 @@ class grade_report_grader extends grade_report {
                     $context->editcalculationurl =
                         $this->gtree->get_edit_calculation_link($element, $this->gpr, $editcalculationstrings);
 
-                    $object = $element['object'];
-                    if ($object->itemmodule !== 'quiz') {
-                        $context->hideurl = $this->gtree->get_hiding_link($element, $this->gpr, $hidestrings);
+                    if (isset($element['object'])) {
+                        $object = $element['object'];
+                        if ($object->itemmodule !== 'quiz') {
+                            $context->hideurl = $this->gtree->get_hiding_link($element, $this->gpr, $hidestrings);
+                        }
                     }
                     $context->lockurl = $this->gtree->get_locking_link($element, $this->gpr, $lockstrings);
                 }
+
+                // Sorting item.
+                $sortlink = clone($this->baseurl);
+                if (isset($element['object']->id)) {
+                    $sortlink->param('sortitemid', $element['object']->id);
+                } else if ($element['type'] == 'userfield') {
+                    $sortlink->param('sortitemid', $element['name']);
+                }
+
+                if (($element['type'] == 'userfield') && ($element['name'] == 'fullname')) {
+                    $sortlink->param('sortitemid', 'firstname');
+                    $context->ascendingfirstnameurl = $this->gtree->get_sorting_link($sortlink, $this->gpr, $titleasc);
+                    $context->descendingfirstnameurl = $this->gtree->get_sorting_link($sortlink, $this->gpr, $titledesc, 'desc');
+
+                    $sortlink->param('sortitemid', 'lastname');
+                    $context->ascendinglastnameurl = $this->gtree->get_sorting_link($sortlink, $this->gpr, $titleasc);
+                    $context->descendinglastnameurl = $this->gtree->get_sorting_link($sortlink, $this->gpr, $titledesc, 'desc');
+                } else {
+                    $context->ascendingurl = $this->gtree->get_sorting_link($sortlink, $this->gpr, $titleasc);
+                    $context->descendingurl = $this->gtree->get_sorting_link($sortlink, $this->gpr, $titledesc, 'desc');
+                }
+
             } else if ($element['type'] == 'category') {
                 $categoryid = $element['object']->id;
 
@@ -1705,7 +1749,7 @@ class grade_report_grader extends grade_report {
                     $this->gtree->get_category_view_mode_link($url, $strswitchwhole, 'switch_whole', $fullmode);
 
                 if (!empty($USER->editing)) {
-                    $context->divider = true;
+                    $context->divider1 = true;
                     $context->editurl = $this->gtree->get_edit_link($element, $this->gpr, $editstrings);
                     $context->hideurl = $this->gtree->get_hiding_link($element, $this->gpr, $hidestrings);
                     $context->lockurl = $this->gtree->get_locking_link($element, $this->gpr, $lockstrings);
@@ -1713,7 +1757,11 @@ class grade_report_grader extends grade_report {
 
             }
 
-            $context->dataid = $element['object']->id;
+            if (isset($element['object'])) {
+                $context->dataid = $element['object']->id;
+            } else if ($element['type'] == 'userfield') {
+                $context->dataid = $element['name'];
+            }
         } else if ($mode == 'user') {
             foreach ($this->get_report_links($this->context, $this->courseid, $element, $this->gpr, $mode)
                     as $count => $reportlink) {
@@ -1724,7 +1772,8 @@ class grade_report_grader extends grade_report {
         }
 
         if (!empty($USER->editing) || isset($context->gradeanalysisurl) || isset($context->gradesonlyurl)
-                || isset($context->aggregatesonlyurl) || isset($context->fullmodeurl) || isset($context->reporturl0)) {
+                || isset($context->aggregatesonlyurl) || isset($context->fullmodeurl) || isset($context->reporturl0)
+               || isset($context->ascendingurl) || isset($context->ascendingfirstnameurl)) {
             return $OUTPUT->render_from_template('gradereport_grader/cellmenu', $context);
         }
         return '';
@@ -1942,13 +1991,9 @@ class grade_report_grader extends grade_report {
      * @return array An associative array of HTML sorting links+arrows
      */
     public function get_sort_arrows(array $extrafields = array()) {
-        global $OUTPUT, $CFG;
+        global $CFG;
         $arrows = array();
-
-        $strsortasc   = $this->get_lang_string('sortasc', 'grades');
-        $strsortdesc  = $this->get_lang_string('sortdesc', 'grades');
-        $iconasc = $OUTPUT->pix_icon('t/sort_asc', $strsortasc, '', array('class' => 'iconsmall sorticon'));
-        $icondesc = $OUTPUT->pix_icon('t/sort_desc', $strsortdesc, '', array('class' => 'iconsmall sorticon'));
+        $sortlink = clone($this->baseurl);
 
         // Sourced from tablelib.php
         // Check the full name display for sortable fields.
@@ -1970,7 +2015,13 @@ class grade_report_grader extends grade_report {
                     new moodle_url($this->baseurl, array('sortitemid' => $name)), $this->get_lang_string($name)
                 );
                 if ($this->sortitemid == $name) {
-                    $arrows['studentname'] .= $this->sortorder == 'ASC' ? $iconasc : $icondesc;
+                    $sortlink->param('sortitemid', $name);
+                    if ($this->sortorder == 'ASC') {
+                        $sorticon = $this->get_sort_arrow('down', $sortlink);
+                    } else {
+                        $sorticon = $this->get_sort_arrow('up', $sortlink);
+                    }
+                    $arrows['studentname'] .= $sorticon;
                 }
                 $arrows['studentname'] .= ' / ';
             }
@@ -1984,11 +2035,14 @@ class grade_report_grader extends grade_report {
             $arrows[$field] = $fieldlink;
 
             if ($field == $this->sortitemid) {
+                $sortlink->param('sortitemid', $field);
+
                 if ($this->sortorder == 'ASC') {
-                    $arrows[$field] .= $iconasc;
+                    $sorticon = $this->get_sort_arrow('down', $sortlink);
                 } else {
-                    $arrows[$field] .= $icondesc;
+                    $sorticon = $this->get_sort_arrow('up', $sortlink);
                 }
+                $arrows[$field] .= $sorticon;
             }
         }
 

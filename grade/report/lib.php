@@ -443,7 +443,6 @@ abstract class grade_report {
         $pix = ['up' => 't/sort_desc', 'down' => 't/sort_asc'];
         $matrix = ['up' => 'desc', 'down' => 'asc'];
         $strsort = $this->get_lang_string($matrix[$direction], 'moodle');
-
         $arrow = $OUTPUT->pix_icon($pix[$direction], '', '', ['class' => 'sorticon']);
         return html_writer::link($sortlink, $arrow, ['title' => $strsort, 'aria-label' => $strsort]);
     }

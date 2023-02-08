@@ -174,7 +174,9 @@
 }
 
 .path-grade-report-grader .gradeparent .sorticon {
-    margin-left: 3px;
+    margin-left: 5px;
+    vertical-align: middle;
+    margin-right: 1px;
 }
 
 .path-grade-report-grader .gradeparent .gradevalue {
@@ -212,10 +214,6 @@
     margin: 0;
     padding: 0;
     text-align: center;
-}
-
-.path-grade-report-grader .action-menu {
-    padding-left: 10px;
 }
 
 .path-grade-report-grader .dropdown-menu {

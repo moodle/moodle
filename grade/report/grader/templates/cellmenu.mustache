@@ -23,7 +23,15 @@
         "editurl": "<a class='dropdown-item' aria-label='Edit grade' role='menuitem' href='grade/edit/tree/grade.php?courseid=13&itemid=608&userid=85&gpr_type=report&gpr_plugin=grader&gpr_courseid=13'>Edit grade</a>",
         "hideurl": "<a class='dropdown-item' aria-label='Hide' role='menuitem' href='grade/edit/tree/action.php?id=13&sesskey=sMAOMLAAN5&eid=n608u85&gpr_type=report&gpr_plugin=grader&gpr_courseid=13&action=hide'>Hide</a>",
         "reporturl0": "<a class='dropdown-item' aria-label='Single view for this user' role='menuitem' href='grade/report/singleview/index.php?id=13&amp;itemid=39&amp;item=user&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Single view for this user</a>",
-        "reporturl1": "<a class='dropdown-item' aria-label='User report' role='menuitem' href='grade/report/user/index.php?userid=39&amp;id=13&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>User report</a>"
+        "reporturl1": "<a class='dropdown-item' aria-label='User report' role='menuitem' href='grade/report/user/index.php?userid=39&amp;id=13&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>User report</a>",
+        "ascendingurl": "<a class='dropdown-item' aria-label='Ascending' role='menuitem' href='index.php?id=13&amp;sortitemid=email&amp;sort=asc&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Ascending</a>",
+        "descendingurl": "<a class='dropdown-item' aria-label='Descending' role='menuitem' href='index.php?id=13&amp;sortitemid=email&amp;sort=desc&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Descending</a>",
+        "ascendingfirstnameurl": "<a class='dropdown-item' aria-label='Ascending' role='menuitem' href='index.php?id=13&amp;sortitemid=firstname&amp;sort=asc&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Ascending</a>",
+        "descendingfirstnameurl": "<a class='dropdown-item' aria-label='Descending' role='menuitem' href='index.php?id=13&amp;sortitemid=firstname&amp;sort=desc&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Descending</a>",
+        "ascendinglastnameurl": "<a class='dropdown-item' aria-label='Ascending' role='menuitem' href='index.php?id=13&amp;sortitemid=lastname&amp;sort=asc&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Ascending</a>",
+        "descendinglastnameurl": "<a class='dropdown-item' aria-label='Descending' role='menuitem' href='index.php?id=13&amp;sortitemid=lastname&amp;sort=desc&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Descending</a>",
+        "divider1": "true",
+        "divider2": "true"
     }
 }}
 <div class="action-menu mb-1 moodle-actionmenu grader">
@@ -43,9 +51,25 @@
             {{#gradesonlyurl}}{{{gradesonlyurl}}}{{/gradesonlyurl}}
             {{#aggregatesonlyurl}}{{{aggregatesonlyurl}}}{{/aggregatesonlyurl}}
             {{#fullmodeurl}}{{{fullmodeurl}}}{{/fullmodeurl}}
-            {{#divider}}
+            {{#advancedgradingurl}}{{{advancedgradingurl}}}{{/advancedgradingurl}}
+            {{#divider1}}
                 <div class="dropdown-divider" role="separator"></div>
-            {{/divider}}
+            {{/divider1}}
+            {{#ascendingfirstnameurl}}
+                <h6 class="dropdown-header">{{#str}} firstname, moodle {{/str}}</h6>
+                {{{ascendingfirstnameurl}}}
+                {{{descendingfirstnameurl}}}
+                <h6 class="dropdown-header">{{#str}} lastname, moodle {{/str}}</h6>
+                {{{ascendinglastnameurl}}}
+                {{{descendinglastnameurl}}}
+            {{/ascendingfirstnameurl}}
+            {{#ascendingurl}}
+                {{{ascendingurl}}}
+                {{{descendingurl}}}
+            {{/ascendingurl}}
+            {{#divider2}}
+                <div class="dropdown-divider" role="separator"></div>
+            {{/divider2}}
             {{#hideurl}}{{{hideurl}}}{{/hideurl}}
             {{#lockurl}}{{{lockurl}}}{{/lockurl}}
         </div>
