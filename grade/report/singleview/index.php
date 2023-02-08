@@ -121,7 +121,7 @@ if ($itemtype == 'user') {
         true, null, null, $report->screen->item, $actionbar);
 } else {
     print_grade_page_head($course->id, 'report', 'singleview', $reportname, false, $button,
-        true, null, null, null, $actionbar, false);
+        true, null, null, null, $actionbar);
 }
 
 if ($data = data_submitted()) {
