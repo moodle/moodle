@@ -235,8 +235,8 @@ foreach ($overrides as $override) {
                 $OUTPUT->pix_icon('t/delete', get_string('delete')) . '</a> ';
 
     if ($groupmode) {
-        $usergroupstr = '<a href="' . $groupurl->out(true,
-                array('group' => $override->groupid)) . '" >' . $override->name . '</a>';
+        $usergroupstr = '<a href="' . $groupurl->out(true, ['group' => $override->groupid]) . '" >' .
+            format_string($override->name, true, ['context' => $context]) . '</a>';
 
         // Move up.
         if ($override->sortorder > 1) {
