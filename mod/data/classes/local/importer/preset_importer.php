@@ -240,7 +240,7 @@ abstract class preset_importer {
      * @return bool Wether the importing has been successful.
      */
     public function import(bool $overwritesettings): bool {
-        global $DB, $OUTPUT;
+        global $DB, $OUTPUT, $CFG;
 
         $settings = $this->settings->settings;
         $currentfields = $this->settings->currentfields;
@@ -250,8 +250,9 @@ abstract class preset_importer {
         foreach ($this->fieldstoupdate as $currentid => $updatable) {
             if ($currentid != -1 && isset($currentfields[$currentid])) {
                 $fieldobject = data_get_field_from_id($currentfields[$currentid]->id, $module);
+                $toupdate = false;
                 foreach ($updatable as $param => $value) {
-                    if ($param != "id") {
+                    if ($param != "id" && $fieldobject->field->$param !== $value) {
                         $fieldobject->field->$param = $value;
                     }
                 }
@@ -263,7 +264,7 @@ abstract class preset_importer {
 
         foreach ($this->fieldstocreate as $newfield) {
             /* Make a new field */
-            $filepath = "field/$newfield->type/field.class.php";
+            $filepath = $CFG->dirroot."/mod/data/field/$newfield->type/field.class.php";
             if (!file_exists($filepath)) {
                 $missingfieldtypes[] = $newfield->name;
                 continue;
@@ -285,10 +286,10 @@ abstract class preset_importer {
         // Get rid of all old unused data.
         foreach ($currentfields as $cid => $currentfield) {
             if (!array_key_exists($cid, $this->fieldstoupdate)) {
-                $id = $currentfield->id;
-                // Why delete existing data records and related comments/ratings??
-                $DB->delete_records('data_content', ['fieldid' => $id]);
-                $DB->delete_records('data_fields', ['id' => $id]);
+
+                // Delete all information related to fields.
+                $todelete = data_get_field_from_id($currentfield->id, $module);
+                $todelete->delete_field();
             }
         }
 
