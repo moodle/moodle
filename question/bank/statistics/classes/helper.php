@@ -51,11 +51,14 @@ class helper {
         [$questionidcondition, $params] = $DB->get_in_or_equal($questionids);
         // The MIN(qu.id) is just to ensure that the rows have a unique key.
         $places = $DB->get_records_sql("
-                SELECT MIN(qu.id) AS somethingunique, qu.component, qu.contextid
+                SELECT MIN(qu.id) AS somethingunique, qu.component, qu.contextid, " .
+                       \context_helper::get_preload_record_columns_sql('ctx') . "
                   FROM {question_usages} qu
-                  JOIN {question_attempts} qatt ON qatt.questionusageid = qu.id
-                 WHERE qatt.questionid $questionidcondition
-              GROUP BY qu.component, qu.contextid
+                  JOIN {question_attempts} qa ON qa.questionusageid = qu.id
+                  JOIN {context} ctx ON ctx.id = qu.contextid
+                 WHERE qa.questionid $questionidcondition
+              GROUP BY qu.component, qu.contextid, " .
+                       implode(', ', array_keys(\context_helper::get_preload_record_columns('ctx'))) . "
               ORDER BY qu.contextid ASC
                 ", $params);
 
@@ -63,6 +66,7 @@ class helper {
         $places = array_values($places);
         foreach ($places as $place) {
             unset($place->somethingunique);
+            \context_helper::preload_from_record($place);
         }
 
         return $places;
