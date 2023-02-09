@@ -7208,7 +7208,7 @@ class admin_setting_manageauths extends admin_setting {
             if (file_exists($CFG->dirroot.'/auth/'.$auth.'/settings.php')) {
                 $settings = "<a href=\"settings.php?section=authsetting$auth\">{$txt->settings}</a>";
             } else if (file_exists($CFG->dirroot.'/auth/'.$auth.'/config.html')) {
-                $settings = "<a href=\"auth_config.php?auth=$auth\">{$txt->settings}</a>";
+                throw new \coding_exception('config.html is no longer supported, please use settings.php instead.');
             } else {
                 $settings = '';
             }
