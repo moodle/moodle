@@ -4,6 +4,8 @@ Information provided here is intended especially for developers.
 === 4.2 ===
 
 * New method `set_checkbox_toggleall` in system report class to allow reports to easily create checkbox toggle columns
+* Column callbacks are now passed a fourth argument to indicate the aggregation type currently being applied, which allows
+  for columns to define how the aggregated data is displayed
 * New methods `[add|get]_attributes` added to report base class, for including custom attributes in report container HTML
 * The following attributes can be added to custom reports in order to control card view display (via the `add_attributes` method):
   - `data-force-card` to force cards view

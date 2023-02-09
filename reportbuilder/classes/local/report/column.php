@@ -473,18 +473,20 @@ final class column {
     }
 
     /**
-     * Adds column callback (in the case there are multiple, they will be applied one after another)
+     * Adds column callback (in the case there are multiple, they will be called iteratively - the result of each passed
+     * along to the next in the chain)
      *
      * The callback should implement the following signature (where $value is the first column field, $row is all column
-     * fields, and $additionalarguments are those passed on from this method):
+     * fields, $additionalarguments are those passed to this method, and $aggregation indicates the current aggregation type
+     * being applied to the column):
+     *
+     * function($value, stdClass $row, $additionalarguments, ?string $aggregation): string
      *
      * The type of the $value parameter passed to the callback is determined by calling {@see set_type}, this type is preserved
-     * if the column is part of a report source and is being aggregated.
-     * For entities that can to be left joined to a report, the first argument to their column callbacks must be nullable.
+     * if the column is part of a report source and is being aggregated. For entities that can be left joined to a report, the
+     * first argument of the callback must be nullable (as it should also be if the first column field is itself nullable).
      *
-     * function($value, stdClass $row[, $additionalarguments]): string
-     *
-     * @param callable $callable function that takes arguments ($value, \stdClass $row, $additionalarguments)
+     * @param callable $callable
      * @param mixed $additionalarguments
      * @return self
      */
@@ -687,7 +689,7 @@ final class column {
         } else {
             foreach ($this->callbacks as $callback) {
                 [$callable, $arguments] = $callback;
-                $value = ($callable)($value, (object) $values, $arguments);
+                $value = ($callable)($value, (object) $values, $arguments, null);
             }
         }
 
