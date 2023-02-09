@@ -65,6 +65,9 @@ class mod_resource_generator extends testing_module_generator {
         if (!isset($record->showtype)) {
             $record->showtype = 0;
         }
+        if (!isset($record->uploaded)) {
+            $record->uploaded = 0;
+        }
 
         // The 'files' value corresponds to the draft file area ID. If not
         // specified, create a default file.
@@ -74,6 +77,8 @@ class mod_resource_generator extends testing_module_generator {
             }
             $usercontext = context_user::instance($USER->id);
             $filename = $record->defaultfilename ?? 'resource' . ($this->instancecount + 1) . '.txt';
+            // Set filepath depending on filename.
+            $filepath = (isset($record->defaultfilename)) ? $CFG->dirroot . '/' : '/';
 
             // Pick a random context id for specified user.
             $record->files = file_get_unused_draft_itemid();
@@ -81,9 +86,15 @@ class mod_resource_generator extends testing_module_generator {
             // Add actual file there.
             $filerecord = ['component' => 'user', 'filearea' => 'draft',
                     'contextid' => $usercontext->id, 'itemid' => $record->files,
-                    'filename' => $filename, 'filepath' => '/'];
+                    'filename' => basename($filename), 'filepath' => $filepath];
             $fs = get_file_storage();
-            $fs->create_file_from_string($filerecord, 'Test resource ' . $filename . ' file');
+            if ($record->uploaded == 1) {
+                // Create file using pathname (defaultfilename) set.
+                $fs->create_file_from_pathname($filerecord, $filepath . $filename);
+            } else {
+                // If defaultfilename is not set, create file from string "resource 1.txt".
+                $fs->create_file_from_string($filerecord, 'Test resource ' . $filename . ' file');
+            }
         }
 
         // Do work to actually add the instance.
