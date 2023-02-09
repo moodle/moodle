@@ -7841,9 +7841,12 @@ function get_plugins_with_function($function, $file = 'lib.php', $include = true
     $cache = \cache::make('core', 'plugin_functions');
 
     // Including both although I doubt that we will find two functions definitions with the same name.
-    // Clearning the filename as cache_helper::hash_key only allows a-zA-Z0-9_.
-    $key = $function . '_' . clean_param($file, PARAM_ALPHA);
-    $pluginfunctions = $cache->get($key);
+    // Clean the filename as cache_helper::hash_key only allows a-zA-Z0-9_.
+    $pluginfunctions = false;
+    if (!empty($CFG->allversionshash)) {
+        $key = $CFG->allversionshash . '_' . $function . '_' . clean_param($file, PARAM_ALPHA);
+        $pluginfunctions = $cache->get($key);
+    }
     $dirty = false;
 
     // Use the plugin manager to check that plugins are currently installed.
@@ -7932,7 +7935,9 @@ function get_plugins_with_function($function, $file = 'lib.php', $include = true
 
         }
     }
-    $cache->set($key, $pluginfunctions);
+    if (!empty($CFG->allversionshash)) {
+        $cache->set($key, $pluginfunctions);
+    }
 
     return $pluginfunctions;
 
