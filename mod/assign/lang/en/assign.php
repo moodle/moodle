@@ -284,6 +284,7 @@ $string['gradedby'] = 'Graded by';
 $string['gradedfollowupsubmit'] = 'Graded - follow-up submission received';
 $string['gradedon'] = 'Graded on';
 $string['gradebelowzero'] = 'Grade must be greater than or equal to zero.';
+$string['gradebreakdown'] = 'Grade breakdown';
 $string['gradeabovemaximum'] = 'Grade must be less than or equal to {$a}.';
 $string['gradelocked'] = 'This grade is locked or overridden in the gradebook.';
 $string['gradeoutof'] = 'Grade out of {$a}';
