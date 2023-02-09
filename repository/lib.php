@@ -531,6 +531,10 @@ abstract class repository implements cacheable_object {
     public $instance;
     /** @var string Type of repository (webdav, google_docs, dropbox, ...). Read from $this->get_typename(). */
     protected $typename;
+    /** @var string instance name. */
+    public $name;
+    /** @var bool true if the super construct is called, otherwise false. */
+    public $super_called;
 
     /**
      * Constructor
@@ -2886,6 +2890,10 @@ final class repository_instance_form extends moodleform {
     protected $instance;
     /** @var string repository plugin type */
     protected $plugin;
+    /** @var string repository type ID */
+    protected $typeid;
+    /** @var string repository context ID */
+    protected $contextid;
 
     /**
      * Added defaults to moodle form
@@ -3008,6 +3016,8 @@ final class repository_type_form extends moodleform {
     protected $plugin;
     /** @var string action */
     protected $action;
+    /** @var string plugin name */
+    protected $pluginname;
 
     /**
      * Definition of the moodleform
