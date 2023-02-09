@@ -97,7 +97,7 @@ echo $OUTPUT->header();
 
 if ($override->groupid) {
     $group = $DB->get_record('groups', ['id' => $override->groupid], 'id, name');
-    $confirmstr = get_string("overridedeletegroupsure", "quiz", $group->name);
+    $confirmstr = get_string("overridedeletegroupsure", "quiz", format_string($group->name, true, ['context' => $context]));
 } else {
     $user = $DB->get_record('user', ['id' => $override->userid]);
     profile_load_custom_fields($user);
