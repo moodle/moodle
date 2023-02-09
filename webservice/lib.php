@@ -1255,6 +1255,9 @@ abstract class webservice_base_server extends webservice_server {
     /** @var  array List of struct classes generated for the web service methods. */
     protected $servicestructs;
 
+    /** @var string service class name. */
+    protected $serviceclass;
+
     /**
      * This method parses the request input, it needs to get:
      *  1/ user authentication - username+password or token
