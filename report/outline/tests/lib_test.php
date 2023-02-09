@@ -63,7 +63,6 @@ class lib_test extends \advanced_testcase {
 
     public function setUp(): void {
         $this->user = $this->getDataGenerator()->create_user();
-        $this->user2 = $this->getDataGenerator()->create_user();
         $this->course = $this->getDataGenerator()->create_course();
         $this->tree = new \core_user\output\myprofile\tree();
         $this->coursecontext = \context_course::instance($this->course->id);
