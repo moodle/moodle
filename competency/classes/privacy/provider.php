@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Data provider.
- *
- * @package    core_competency
- * @copyright  2018 Frédéric Massart
- * @author     Frédéric Massart <fred@branchup.tech>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_competency\privacy;
-defined('MOODLE_INTERNAL') || die();
 
 use context;
 use context_course;
@@ -584,9 +574,16 @@ class provider implements
     /**
      * Export all user data for the specified user, in the specified contexts.
      *
+     * We skip the enabled check for competencies, as there could be historical data. This avoids exceptions thrown from
+     * the {@see api::require_enabled} method, which is called at various points during export via the competency API
+     *
      * @param approved_contextlist $contextlist The approved contexts to export information for.
      */
     public static function export_user_data(approved_contextlist $contextlist) {
+
+        // Export even if competencies are not currently enabled.
+        api::skip_enabled();
+
         $user = $contextlist->get_user();
         $userid = $user->id;
 
