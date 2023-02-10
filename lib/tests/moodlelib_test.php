@@ -2326,8 +2326,12 @@ class moodlelib_test extends \advanced_testcase {
         // Call var_export() on a newly generated lang_string.
         $str = new lang_string('no');
 
+        // In PHP 8.2 exported class names are now fully qualified;
+        // previously, the leading backslash was omitted.
+        $leadingbackslash = (version_compare(PHP_VERSION, '8.2.0', '>=')) ? '\\' : '';
+
         $expected1 = <<<EOF
-lang_string::__set_state(array(
+{$leadingbackslash}lang_string::__set_state(array(
    'identifier' => 'no',
    'component' => 'moodle',
    'a' => NULL,
