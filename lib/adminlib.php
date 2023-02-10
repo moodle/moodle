@@ -4768,7 +4768,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
      * Constructor.
      */
     public function __construct() {
-        call_user_func_array(['parent', '__construct'], func_get_args());
+        call_user_func_array([parent::class, '__construct'], func_get_args());
         $this->set_force_ltr(false);
     }
 

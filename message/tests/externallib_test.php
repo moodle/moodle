@@ -2650,7 +2650,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Confirm the data is correct.
         $contacts = $result;
-        usort($contacts, ['static', 'sort_contacts_id']);
+        usort($contacts, [static::class, 'sort_contacts_id']);
         $this->assertCount(3, $contacts);
 
         $contact1 = array_shift($contacts);
@@ -2715,7 +2715,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Confirm the data is correct.
         $contacts = $result;
-        usort($contacts, ['static', 'sort_contacts_id']);
+        usort($contacts, [static::class, 'sort_contacts_id']);
         $this->assertCount(3, $contacts);
 
         $contact1 = array_shift($contacts);
