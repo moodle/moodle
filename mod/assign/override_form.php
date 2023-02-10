@@ -128,7 +128,7 @@ class assign_override_form extends moodleform {
 
                 $groupchoices = array();
                 foreach ($groups as $group) {
-                    if ($group->visibility != \core_group\visibility::NONE) {
+                    if ($group->visibility != GROUPS_VISIBILITY_NONE) {
                         $groupchoices[$group->id] = format_string($group->name, true, $this->context);
                     }
                 }
