@@ -108,9 +108,10 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
      * @chainable
      */
     delete_section_with_confirmation: function(ev, button, activity) {
+        ev.preventDefault();
         require(['core/notification'], function(Notification) {
             Notification.saveCancelPromise(
-                M.util.get_string('confirmation', 'admin'),
+                M.util.get_string('confirm', 'moodle'),
                 M.util.get_string('confirmremovesectionheading', 'quiz', activity.getData('sectionname')),
                 M.util.get_string('yes', 'moodle')
             ).then(function() {

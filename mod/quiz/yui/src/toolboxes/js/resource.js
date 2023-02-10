@@ -184,7 +184,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         // Create the confirmation dialogue.
         require(['core/notification'], function(Notification) {
             Notification.saveCancelPromise(
-                M.util.get_string('confirmation', 'admin'),
+                M.util.get_string('confirm', 'moodle'),
                 M.util.get_string('confirmremovequestion', 'quiz', qtypename),
                 M.util.get_string('yes', 'moodle')
             ).then(function() {
@@ -289,7 +289,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
 
         require(['core/notification'], function(Notification) {
             Notification.saveCancelPromise(
-                M.util.get_string('confirmation', 'admin'),
+                M.util.get_string('confirm', 'moodle'),
                 M.util.get_string('areyousureremoveselected', 'quiz'),
                 M.util.get_string('yes', 'moodle')
             ).then(function() {
