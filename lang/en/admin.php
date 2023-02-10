@@ -483,6 +483,8 @@ $string['debugsqltrace100'] = 'Show full stack trace';
 $string['debugsqltrace_desc'] = 'If enabled, a partial or full PHP stack trace is added into the SQL as a comment.';
 $string['debugstringids'] = 'Show origin of languages strings';
 $string['debugstringids_desc'] = 'If enabled, language string components and identifiers are displayed when ?strings=1 or &strings=1 is appended to the page URL.';
+$string['debugtemplateinfo'] = 'Show template information';
+$string['debugtemplateinfo_desc'] = 'If enabled, templates used for rendering are shown as comments in the page HTML. Use for temporary debugging only, as it produces HTML validation errors and could break some page scripts.';
 $string['debugvalidators'] = 'Show validator links';
 $string['defaultcity'] = 'Default city';
 $string['defaultcity_help'] = 'A city entered here will be the default city when creating new user accounts.';
