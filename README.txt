@@ -1,11 +1,11 @@
-**Moodle - The Open-Source Learning Management System**
+## Moodle - The Open-Source Learning Management System
 
   //_----.---_  .---.  .---.  .-.| || | .---.
   | |  _   _  |/  _  \/  _  \/  _  || |/  __ \
   * | | | | | || |_| || |_| || |_| || || |___/
     |_| |_| |_|\_____/\_____/\_____||_|\_____)
 
-**Description**
+### Description
 Moodle <https://moodle.org> is a learning platform designed to provide
 educators, administrators and learners with a single robust, secure and
 integrated system to create personalised learning environments.
@@ -16,7 +16,7 @@ all manner of organisations and individuals.
 Moodle is written in PHP and JavaScript and uses an SQL database for storing
 the data.
 
-**Key Features**
+### Key Features
 1. Create and manage courses with customizable structures and resources, such as text, images, audio, and video
 2. Assess student performance with quizzes, assignments, and other activities, while also providing feedback and grades
 3. Foster collaboration and communication among students and teachers with forums, wikis, and messaging tools
