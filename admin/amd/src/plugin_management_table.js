@@ -29,6 +29,7 @@ export default class {
 
     constructor() {
         this.addClickHandler(this.handleStateToggle);
+        this.addClickHandler(this.handleMoveUpDown);
         this.registerEventListeners();
     }
 
@@ -102,6 +103,16 @@ export default class {
         }])[0];
     }
 
+    setPluginOrder(methodname, plugin, direction) {
+        return fetchMany([{
+            methodname,
+            args: {
+                plugin,
+                direction,
+            },
+        }])[0];
+    }
+
     /**
      * Handle state toggling.
      *
@@ -129,5 +140,40 @@ export default class {
             updatedRoot.querySelector(`[data-action="togglestate"][data-plugin="${stateToggle.dataset.plugin}"]`).focus();
             pendingPromise.resolve();
         }
+    }
+
+    async handleMoveUpDown(tableRoot, e) {
+        const actionLink = e.target.closest('[data-action="move"][data-method][data-direction]');
+        if (!actionLink) {
+            return;
+        }
+
+        e.preventDefault();
+
+        const pendingPromise = new Pending('core_table/dynamic:processAction');
+
+        await this.setPluginOrder(
+            actionLink.dataset.method,
+            actionLink.dataset.plugin,
+            actionLink.dataset.direction === 'up' ? -1 : 1,
+        );
+
+        const [updatedRoot] = await Promise.all([
+            refreshTableContent(tableRoot),
+            fetchNotifications(),
+        ]);
+
+        // Refocus on the link that as pressed in the first place.
+        const exactMatch = updatedRoot.querySelector(
+            `[data-action="move"][data-plugin="${actionLink.dataset.plugin}"][data-direction="${actionLink.dataset.direction}"]`
+        );
+        if (exactMatch) {
+            exactMatch.focus();
+        } else {
+            // The move link is not present anymore, so we need to focus on the other one.
+            updatedRoot.querySelector(`[data-action="move"][data-plugin="${actionLink.dataset.plugin}"]`)?.focus();
+        }
+
+        pendingPromise.resolve();
     }
 }

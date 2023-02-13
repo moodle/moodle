@@ -2959,6 +2959,12 @@ $functions = array(
         'type' => 'write',
         'ajax' => true,
     ],
+    'core_admin_set_plugin_order' => [
+        'classname' => 'core_admin\external\set_plugin_order',
+        'description' => 'Set the order of a plugin',
+        'type' => 'write',
+        'ajax' => true,
+    ],
 );
 
 $services = array(

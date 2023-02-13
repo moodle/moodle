@@ -40,10 +40,6 @@ class editor_management_table extends \core_admin\table\plugin_management_table 
         return new moodle_url('/admin/editors.php', $params);
     }
 
-    protected function supports_ordering(): bool {
-        return true;
-    }
-
     protected function order_plugins(array $plugins): array {
         global $CFG;
 

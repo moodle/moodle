@@ -65,10 +65,6 @@ abstract class plugin_management_table extends flexible_table implements dynamic
             return $plugin->is_enabled();
         }));
 
-        $this->enabledplugincount = count(array_filter($this->plugins, function ($plugin) {
-            return $plugin->is_enabled();
-        }));
-
         $this->setup_column_configuration();
         $this->set_filterset(new plugin_management_table_filterset());
         $this->setup();
@@ -80,8 +76,12 @@ abstract class plugin_management_table extends flexible_table implements dynamic
      * @return \core\plugininfo\base[]
      */
     protected function get_sorted_plugins(): array {
-        $plugins = $this->pluginmanager->get_plugins_of_type($this->get_plugintype());
-        return self::sort_plugins($plugins);
+        if ($this->plugininfoclass::plugintype_supports_ordering()) {
+            return $this->plugininfoclass::get_sorted_plugins();
+        } else {
+            $plugins = $this->pluginmanager->get_plugins_of_type($this->get_plugintype());
+            return self::sort_plugins($plugins);
+        }
     }
 
     /**
@@ -176,7 +176,7 @@ abstract class plugin_management_table extends flexible_table implements dynamic
      * @return null|string
      */
     protected function get_sortorder_service(): ?string {
-        return null;
+        return 'core_admin_set_plugin_order';
     }
 
     /**
@@ -348,7 +348,7 @@ abstract class plugin_management_table extends flexible_table implements dynamic
             $hasdown = false;
         }
 
-        if ($this->get_sortorder_service()) {
+        if ($this->supports_ordering()) {
             $dataattributes = [
                 'data-method' => $this->get_sortorder_service(),
                 'data-action' => 'move',
@@ -490,6 +490,6 @@ abstract class plugin_management_table extends flexible_table implements dynamic
      * @return bool
      */
     protected function supports_ordering(): bool {
-        return false;
+        return $this->plugininfoclass::plugintype_supports_ordering();
     }
 }

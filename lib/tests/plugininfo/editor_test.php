@@ -65,4 +65,239 @@ class editor_test extends advanced_testcase {
         $this->assertCount(1, $plugins);
         $this->assertArrayHasKey('textarea', $plugins);
     }
+
+    /**
+     * Ensure that plugintype_supports_ordering() returns true.
+     */
+    public function test_plugintype_supports_ordering(): void {
+        $this->assertTrue(editor::plugintype_supports_ordering());
+    }
+
+    /**
+     * Ensure that get_sorted_plugins() returns the correct list of plugins.
+     *
+     * @dataProvider get_sorted_plugins_provider
+     * @param string $texteditors The $CFG->texteditors value to use as a base
+     * @param bool $enabledonly
+     * @param array $expected The expected order
+     */
+    public function test_get_sorted_plugins(
+        string $texteditors,
+        bool $enabledonly,
+        array $expected,
+    ): void {
+        global $CFG;
+        $this->resetAfterTest(true);
+
+        $CFG->texteditors = $texteditors;
+        $this->assertSame(
+            $expected,
+            array_keys(editor::get_sorted_plugins($enabledonly)),
+        );
+    }
+
+    /**
+     * Data provider for the get_sorted_plugins tests.
+     *
+     * @return array
+     */
+    public function get_sorted_plugins_provider(): array {
+        return [
+            [
+                'texteditors' => 'textarea,tiny',
+                'enabledonly' => true,
+                'expected' => [
+                    'textarea',
+                    'tiny',
+                ],
+            ],
+            [
+                'texteditors' => 'tiny,textarea',
+                'enabledonly' => true,
+                'expected' => [
+                    'tiny',
+                    'textarea',
+                ],
+            ],
+            [
+                'texteditors' => 'tiny',
+                'enabledonly' => true,
+                'expected' => [
+                    'tiny',
+                ],
+            ],
+            'Phantom values are removed from the list' => [
+                'texteditors' => 'fakeeditor',
+                'enabledonly' => true,
+                'expected' => [
+                ],
+            ],
+            [
+                'texteditors' => 'textarea,tiny',
+                'enabledonly' => false,
+                'expected' => [
+                    'textarea',
+                    'tiny',
+
+                    // Disabled editors are listed alphabetically at the end.
+                    'atto',
+                    'tinymce',
+                ],
+            ],
+            [
+                'texteditors' => 'tiny',
+                'enabledonly' => false,
+                'expected' => [
+                    'tiny',
+
+                    // Disabled editors are listed alphabetically at the end.
+                    'atto',
+                    'textarea',
+                    'tinymce',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Ensure that change_plugin_order() changes the order of the plugins.
+     *
+     * @dataProvider change_plugin_order_provider
+     * @param string $texteditors
+     * @param string $pluginname
+     * @param int $direction
+     * @param array $neworder
+     * @param string $newtexteditors
+     */
+    public function test_change_plugin_order(
+        string $texteditors,
+        string $pluginname,
+        int $direction,
+        array $neworder,
+        string $newtexteditors,
+    ): void {
+        global $CFG;
+        $this->resetAfterTest(true);
+
+        $CFG->texteditors = $texteditors;
+        editor::change_plugin_order($pluginname, $direction);
+
+        $this->assertSame(
+            $neworder,
+            array_keys(editor::get_sorted_plugins()),
+        );
+        $this->assertSame($newtexteditors, $CFG->texteditors);
+    }
+
+    /**
+     * Data provider fro the change_plugin_order() tests.
+     *
+     * @return array
+     */
+    public function change_plugin_order_provider(): array {
+        return [
+            [
+                'texteditors' => 'textarea,tiny',
+                'pluginname' => 'textarea',
+                'direction' => base::MOVE_DOWN,
+                'expected' => [
+                    'tiny',
+                    'textarea',
+                    'atto',
+                    'tinymce',
+                ],
+                'newtexteditors' => 'tiny,textarea',
+            ],
+            [
+                'texteditors' => 'textarea,tiny',
+                'pluginname' => 'tiny',
+                'direction' => base::MOVE_DOWN,
+                // Tiny is already at the bottom of the enabled plugins.
+                'expected' => [
+                    'textarea',
+                    'tiny',
+                    'atto',
+                    'tinymce',
+                ],
+                'newtexteditors' => 'textarea,tiny',
+            ],
+            [
+                'texteditors' => 'textarea,tiny',
+                'pluginname' => 'atto',
+                'direction' => base::MOVE_DOWN,
+                // Atto is not enabled. No change expected.
+                'expected' => [
+                    'textarea',
+                    'tiny',
+                    'atto',
+                    'tinymce',
+                ],
+                'newtexteditors' => 'textarea,tiny',
+            ],
+            [
+                'texteditors' => 'textarea,tiny',
+                'pluginname' => 'tiny',
+                'direction' => base::MOVE_UP,
+                'expected' => [
+                    'tiny',
+                    'textarea',
+                    'atto',
+                    'tinymce',
+                ],
+                'newtexteditors' => 'tiny,textarea',
+            ],
+            [
+                'texteditors' => 'textarea,tiny',
+                'pluginname' => 'tiny',
+                'direction' => base::MOVE_UP,
+                // Tiny is already at the top of the enabled plugins.
+                'expected' => [
+                    'tiny',
+                    'textarea',
+                    'atto',
+                    'tinymce',
+                ],
+                'newtexteditors' => 'tiny,textarea',
+            ],
+            [
+                'texteditors' => 'textarea,tiny',
+                'pluginname' => 'atto',
+                'direction' => base::MOVE_UP,
+                // Atto is not enabled. No change expected.
+                'expected' => [
+                    'textarea',
+                    'tiny',
+                    'atto',
+                    'tinymce',
+                ],
+                'newtexteditors' => 'textarea,tiny',
+            ],
+            [
+                'texteditors' => 'textarea,tiny',
+                'pluginname' => 'tinymce',
+                'direction' => base::MOVE_UP,
+                // TinyMCE is not enabled. No change expected.
+                'expected' => [
+                    'textarea',
+                    'tiny',
+                    'atto',
+                    'tinymce',
+                ],
+                'newtexteditors' => 'textarea,tiny',
+            ],
+            [
+                'texteditors' => 'textarea,tiny',
+                'pluginname' => 'fakeeditor',
+                'direction' => base::MOVE_UP,
+                // The fakeeditor plugin does not exist. No change expected.
+                'expected' => [
+                    'textarea',
+                    'tiny',
+                    'atto',
+                    'tinymce',
+                ],
+                'newtexteditors' => 'textarea,tiny',
+            ],
+        ];
+    }
 }
