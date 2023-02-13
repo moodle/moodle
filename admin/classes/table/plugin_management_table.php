@@ -65,6 +65,10 @@ abstract class plugin_management_table extends flexible_table implements dynamic
             return $plugin->is_enabled();
         }));
 
+        $this->enabledplugincount = count(array_filter($this->plugins, function ($plugin) {
+            return $plugin->is_enabled();
+        }));
+
         $this->setup_column_configuration();
         $this->set_filterset(new plugin_management_table_filterset());
         $this->setup();
@@ -127,7 +131,7 @@ abstract class plugin_management_table extends flexible_table implements dynamic
             } else if (!$a->is_enabled() && $b->is_enabled()) {
                 return 1;
             }
-            return strnatcasecmp($a->displayname, $b->displayname);
+            return strnatcasecmp($a->name, $b->name);
         });
 
         return $plugins;
@@ -167,6 +171,15 @@ abstract class plugin_management_table extends flexible_table implements dynamic
     }
 
     /**
+     * Get the web service method used to order plugins.
+     *
+     * @return null|string
+     */
+    protected function get_sortorder_service(): ?string {
+        return null;
+    }
+
+    /**
      * Get the ID of the table.
      *
      * @return string
@@ -187,6 +200,10 @@ abstract class plugin_management_table extends flexible_table implements dynamic
 
         if ($this->supports_disabling()) {
             $columns['enabled'] = get_string('pluginenabled', 'core_plugin');
+        }
+
+        if ($this->supports_ordering()) {
+            $columns['order'] = get_string('order', 'core');
         }
 
         $columns['settings'] = get_string('settings', 'core');
@@ -302,6 +319,77 @@ abstract class plugin_management_table extends flexible_table implements dynamic
         );
     }
 
+    protected function col_order(stdClass $row): string {
+        global $OUTPUT;
+
+        if (!$this->supports_ordering()) {
+            return '';
+        }
+
+        if (!$row->plugininfo->is_enabled()) {
+            return '';
+        }
+
+        if ($this->enabledplugincount <= 1) {
+            // There is only one row.
+            return '';
+        }
+
+        $hasup = true;
+        $hasdown = true;
+
+        if (empty($this->currentrow)) {
+            // This is the top row.
+            $hasup = false;
+        }
+
+        if ($this->currentrow === ($this->enabledplugincount - 1)) {
+            // This is the last row.
+            $hasdown = false;
+        }
+
+        if ($this->get_sortorder_service()) {
+            $dataattributes = [
+                'data-method' => $this->get_sortorder_service(),
+                'data-action' => 'move',
+                'data-plugin' => $row->plugin,
+            ];
+        } else {
+            $dataattributes = [];
+        }
+
+        if ($hasup) {
+            $upicon = html_writer::link(
+                $this->get_action_url([
+                    'sesskey' => sesskey(),
+                    'action' => 'up',
+                    'plugin' => $row->plugininfo->name,
+                ]),
+                $OUTPUT->pix_icon('t/up', get_string('moveup')),
+                array_merge($dataattributes, ['data-direction' => 'up']),
+            );
+        } else {
+            $upicon = $OUTPUT->spacer();
+        }
+
+        if ($hasdown) {
+            $downicon = html_writer::link(
+                $this->get_action_url([
+                    'sesskey' => sesskey(),
+                    'action' => 'down',
+                    'plugin' => $row->plugininfo->name,
+                ]),
+                $OUTPUT->pix_icon('t/down', get_string('movedown')),
+                array_merge($dataattributes, ['data-direction' => 'down']),
+            );
+        } else {
+            $downicon = $OUTPUT->spacer();
+        }
+
+        // For now just add the up/down icons.
+        return html_writer::span($upicon . $downicon);
+    }
+
     /**
      * Show the settings column content.
      *
@@ -394,5 +482,14 @@ abstract class plugin_management_table extends flexible_table implements dynamic
      */
     protected function supports_disabling(): bool {
         return $this->plugininfoclass::plugintype_supports_disabling();
+    }
+
+    /**
+     * Whether this table should show ordering fields.
+     *
+     * @return bool
+     */
+    protected function supports_ordering(): bool {
+        return false;
     }
 }

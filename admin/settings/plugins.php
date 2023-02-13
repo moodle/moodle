@@ -154,7 +154,12 @@ if ($hassiteconfig) {
 /// Editor plugins
     $ADMIN->add('modules', new admin_category('editorsettings', new lang_string('editors', 'editor')));
     $temp = new admin_settingpage('manageeditors', new lang_string('editorsettings', 'editor'));
-    $temp->add(new admin_setting_manageeditors());
+    $temp->add(new \core_admin\admin\admin_setting_plugin_manager(
+        'editor',
+        \core_admin\table\editor_management_table::class,
+        'editorsui',
+        get_string('editorsettings', 'editor'),
+    ));
     $ADMIN->add('editorsettings', $temp);
     $plugins = core_plugin_manager::instance()->get_plugins_of_type('editor');
     core_collator::asort_objects_by_property($plugins, 'displayname');
