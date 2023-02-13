@@ -115,6 +115,8 @@ information provided here is intended especially for developers.
   parameter. This information can be used by the plugins when enclosing the icons in `.activityiconcontainer .icon` or
   `.activityiconcontainer .activityicon` containers to determine whether CSS filtering should be applied to the icon. If the icon
   needs to be rendered as is and not whitened out, the `.nofilter` CSS class needs to be applied to the icon.
+* New moodle_url::export_params_for_template() returns the params as an array of key => value pairs. You should use this when
+  you want to pass URL params to a template. An example can be found in single button.
 
 === 4.1 ===
 

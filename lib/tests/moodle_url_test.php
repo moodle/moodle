@@ -19,9 +19,10 @@ namespace core;
 /**
  * Tests for moodle_url.
  *
- * @package     core
- * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core
+ * @copyright 2018 Andrew Nicols <andrew@nicols.co.uk>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \moodle_url
  */
 class moodle_url_test extends \advanced_testcase {
     /**
@@ -247,6 +248,74 @@ class moodle_url_test extends \advanced_testcase {
         // Should return an empty string if port not specified.
         $url = new \moodle_url('http://www.example.org/some/path/here.php');
         $this->assertSame('', $url->get_port());
+    }
+
+    /**
+     * Test exporting params for templates.
+     *
+     * @dataProvider moodle_url_export_params_for_template_provider
+     * @param string $url URL with params to test.
+     * @param array $expected The expected result.
+     */
+    public function test_moodle_url_export_params_for_template(string $url, array $expected) :void {
+        // Should return params in the URL.
+        $moodleurl = new \moodle_url($url);
+        $this->assertSame($expected, $moodleurl->export_params_for_template());
+    }
+
+    /**
+     * Data provider for moodle_url_export_params_for_template tests.
+     *
+     * @return array[] the array of test data.
+     */
+    public function moodle_url_export_params_for_template_provider() :array {
+        $baseurl = "http://example.com";
+        return [
+                'With indexed array params' => [
+                    'url' => "@{$baseurl}/?tags[0]=123&tags[1]=456",
+                    'expected' => [
+                        0 => ['name' => 'tags[0]', 'value' => '123'],
+                        1 => ['name' => 'tags[1]', 'value' => '456']
+                    ]
+                ],
+                'Without indexed array params' => [
+                    'url' => "@{$baseurl}/?tags[]=123&tags[]=456",
+                    'expected' => [
+                        0 => ['name' => 'tags[0]', 'value' => '123'],
+                        1 => ['name' => 'tags[1]', 'value' => '456']
+                    ]
+                ],
+                'with no params' => [
+                    'url' => "@{$baseurl}/",
+                    'expected' => []
+                ],
+                'with no array params' => [
+                    'url' => "@{$baseurl}/?param1=1&param2=2&param3=3",
+                    'expected' => [
+                        0 => ['name' => 'param1', 'value' => '1'],
+                        1 => ['name' => 'param2', 'value' => '2'],
+                        2 => ['name' => 'param3', 'value' => '3'],
+                    ]
+                ],
+                'array embedded with other params' => [
+                    'url' => "@{$baseurl}/?param1=1&tags[0]=123&tags[1]=456&param2=2&param3=3",
+                    'expected' => [
+                        0 => ['name' => 'param1', 'value' => '1'],
+                        1 => ['name' => 'tags[0]', 'value' => '123'],
+                        2 => ['name' => 'tags[1]', 'value' => '456'],
+                        3 => ['name' => 'param2', 'value' => '2'],
+                        4 => ['name' => 'param3', 'value' => '3'],
+                    ]
+                ],
+                'params with array at the end' => [
+                    'url' => "@{$baseurl}/?param1=1&tags[]=123&tags[]=456",
+                    'expected' => [
+                        0 => ['name' => 'param1', 'value' => '1'],
+                        1 => ['name' => 'tags[0]', 'value' => '123'],
+                        2 => ['name' => 'tags[1]', 'value' => '456'],
+                    ]
+                ],
+        ];
     }
 
     /**
