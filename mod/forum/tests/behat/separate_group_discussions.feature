@@ -12,6 +12,8 @@ Feature: Posting to all groups in a separate group discussion is restricted to u
       | noneditor2 | Non-editing teacher | 2 | noneditor2@example.com |
       | student1 | Student | 1 | student1@example.com |
       | student2 | Student | 2 | student2@example.com |
+      | student3 | Student | 3 | student3@example.com |
+      | student4 | Student | 4 | student4@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -22,11 +24,14 @@ Feature: Posting to all groups in a separate group discussion is restricted to u
       | noneditor2 | C1 | teacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
+      | student3 | C1 | student |
+      | student4 | C1 | student |
     And the following "groups" exist:
-      | name | course | idnumber |
-      | Group A | C1 | G1 |
-      | Group B | C1 | G2 |
-      | Group C | C1 | G3 |
+      | name    | course | idnumber | participation |
+      | Group A | C1     | G1       | 1             |
+      | Group B | C1     | G2       | 1             |
+      | Group C | C1     | G3       | 1             |
+      | Group D | C1     | G4       | 0             |
     And the following "group members" exist:
       | user | group |
       | teacher1 | G1 |
@@ -39,6 +44,7 @@ Feature: Posting to all groups in a separate group discussion is restricted to u
       | student1 | G1 |
       | student2 | G1 |
       | student2 | G2 |
+      | student3 | G4 |
     And the following "activities" exist:
       | activity   | name                   | intro                         | course | idnumber     | groupmode |
       | forum      | Standard forum name    | Standard forum description    | C1     | sepgroups    | 1         |
@@ -57,6 +63,7 @@ Feature: Posting to all groups in a separate group discussion is restricted to u
     And the "Separate groups" select box should contain "Group A"
     And the "Separate groups" select box should contain "Group B"
     And the "Separate groups" select box should contain "Group C"
+    And the "Separate groups" select box should not contain "Group D"
     And I select "All participants" from the "Separate groups" singleselect
     And I should see "Initial Disc ALL"
     And I should see "Initial Disc G1"
@@ -73,7 +80,7 @@ Feature: Posting to all groups in a separate group discussion is restricted to u
     But I should not see "Initial Disc G1"
     And I should not see "Initial Disc G3"
 
-  Scenario: Teacher with accessallgroups can select any group when posting
+  Scenario: Teacher with accessallgroups can select any participation group when posting
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Standard forum name"
@@ -83,6 +90,7 @@ Feature: Posting to all groups in a separate group discussion is restricted to u
     And the "Group" select box should contain "Group A"
     And the "Group" select box should contain "Group B"
     And the "Group" select box should contain "Group C"
+    And the "Group" select box should not contain "Group D"
     And I should see "Post a copy to all groups"
 
   Scenario: Teacher with accessallgroups can post in groups they are a member of
@@ -192,6 +200,24 @@ Feature: Posting to all groups in a separate group discussion is restricted to u
     And I wait to be redirected
     And I should see "Group A" in the "Student -> B" "table_row"
     And I should not see "Group B" in the "Student -> B" "table_row"
+
+  Scenario: Students in no group can see all group discussions, but not post.
+    Given I log in as "student4"
+    And I am on "Course 1" course homepage
+    When I follow "Standard forum name"
+    Then I should see "All participants"
+    And I should see "Initial Disc ALL"
+    And I should see "You are not able to create a discussion"
+    And I should not see "Add discussion topic"
+
+  Scenario: Students in non-participation groups can see all group discussions, but not post.
+    Given I log in as "student3"
+    And I am on "Course 1" course homepage
+    When I follow "Standard forum name"
+    Then I should see "All participants"
+    And I should see "Initial Disc ALL"
+    And I should see "You are not able to create a discussion"
+    And I should not see "Add discussion topic"
 
   Scenario: Students in multiple group can post in all of their group individually
     Given I log in as "student2"
