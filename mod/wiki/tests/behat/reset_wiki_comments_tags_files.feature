@@ -18,7 +18,6 @@ Feature: Teachers can reset wiki pages, tags and files
       | activity      | wiki                  |
       | course        | C1                    |
       | name          | Test wiki name        |
-      | intro         | Test wiki description |
       | wikimode      | collaborative         |
     And I am on the "Test wiki name" "wiki activity" page logged in as teacher1
     And I press "Create page"

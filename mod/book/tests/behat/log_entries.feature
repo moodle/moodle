@@ -13,7 +13,7 @@ Feature: In a book, verify log entries
       | course   | C1        |
       | activity | book      |
       | name     | Test book |
-    And I am on the "Course 1" course page logged in as admin
+    And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
     And I am on the "Test book" "book activity" page
     And I set the following fields to these values:
