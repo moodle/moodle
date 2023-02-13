@@ -11,6 +11,7 @@ Description
 Key Features
 Why Us
 Getting Started
+Architecture
 Resources
 License
 
@@ -28,7 +29,10 @@ Key Features
 -Provide mobile access to courses, which allows students to learn on the move from their personal devices
   
 Why Us
-Moodle is an easy-to-use, all-in-one platform that allows for great flexibility in customizations. Due to the nature of open source, the project can be transformed through personal plugins or integrated applications. We can scale to any size and be used for a variety of contexts including education, business, non-profit, government, and community. We are proud of our world-wide contributors and encourage everyone to lend a helping hand.
+Moodle is an easy-to-use, all-in-one platform that allows for great flexibility in customizations. 
+Due to the nature of open source, the project can be transformed through personal plugins or integrated applications. 
+We can scale to any size and be used for a variety of contexts including education, business, non-profit, government, and community. 
+We are proud of our world-wide contributors and encourage everyone to lend a helping hand.
 
 Getting Started
 1. Create an account on <[https://moodle.org](https://moodle.org/)>. This will give you access to the Moodle General Developer forum and download Moodle plugins.
@@ -40,8 +44,11 @@ you.
 4. Install the Moodle PHP CodeSniffer. This will be used to test your plugin for conformance with Moodle coding standards. Use this to develop good coding skills.
 5. Install the Moodle PHPdoc check plugin. This will be used to test your source code documentation. This will also help improve your coding skills.
 
-Resources
-You can locate more extensive  documentation, tutorials, and FAQs on the Moodle website. In additoning, connect with other users and contributors on the Moodle forums. 
+Architecture
+The Database: Moodle stores all of its data, including user profiles, course content, and activity results, in a database management system (such as MySQL, PostgreSQL, and Microsoft SQL Server)
+The PHP Codebase: The open source's core functionality uses a combination of PHP classes and functions.
+The JavaScript Client: JavaScript is used to create a changeable and interactive user experience (internal navigation, form verification and validation, and immediate updates to page content) 
+The Web Server: A web serveris responsible for dealing with HTTP requests and transmitting web pages to users
 
 License
 Moodle is provided freely as open source software, under the GNU General Public License (GPLv3 license) <[https://docs.moodle.org/dev/License](https://docs.moodle.org/dev/License)>.
