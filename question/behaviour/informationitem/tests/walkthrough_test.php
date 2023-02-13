@@ -32,6 +32,7 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
  * @category  test
  * @copyright 2009 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \qbehaviour_informationitem
  */
 class walkthrough_test extends \qbehaviour_walkthrough_test_base {
     public function test_informationitem_feedback_description() {
@@ -56,7 +57,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->displayoptions->readonly = false;
 
         // Process a submission indicating this question has been seen.
-        $this->process_submission(array('-seen' => 1));
+        $this->process_submission(['-seen' => 1]);
 
         $this->check_current_state(question_state::$complete);
         $this->check_current_mark(null);
@@ -86,5 +87,51 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         // Check that trying to process a manual comment with a grade causes an exception.
         $this->expectException('moodle_exception');
         $this->manual_grade('Not good enough!', 1, FORMAT_HTML);
+    }
+
+    public function test_informationitem_regrade() {
+
+        // Create a true-false question with correct answer true.
+        $description = \test_question_maker::make_question('description');
+        $this->start_attempt_at_question($description, 'deferredfeedback');
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output($this->get_contains_question_text_expectation($description),
+                $this->get_contains_hidden_expectation(
+                        $this->quba->get_field_prefix($this->slot) . '-seen', 1),
+                $this->get_does_not_contain_feedback_expectation());
+
+        // Process a submission indicating this question has been seen.
+        $this->process_submission(['-seen' => 1]);
+
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(null);
+        $this->check_current_output($this->get_does_not_contain_correctness_expectation(),
+                new \question_no_pattern_expectation(
+                '/type=\"hidden\"[^>]*name=\"[^"]*seen\"|name=\"[^"]*seen\"[^>]*type=\"hidden\"/'),
+                $this->get_does_not_contain_feedback_expectation());
+
+        // Finish the attempt.
+        $this->quba->finish_all_questions();
+
+        // Verify.
+        $this->check_current_state(question_state::$finished);
+        $this->check_current_mark(null);
+        $this->check_step_count(3);
+        $this->check_current_output(
+                $this->get_contains_question_text_expectation($description),
+                $this->get_contains_general_feedback_expectation($description));
+
+        // Regrade the attempt.
+        $this->quba->regrade_all_questions(true);
+
+        // Verify.
+        $this->check_current_mark(null);
+        $this->check_step_count(3);
+        $this->check_current_output(
+                $this->get_contains_question_text_expectation($description),
+                $this->get_contains_general_feedback_expectation($description));
     }
 }
