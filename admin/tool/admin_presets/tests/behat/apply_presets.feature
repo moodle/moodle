@@ -14,7 +14,7 @@ Feature: I can apply presets
   Scenario: Applying Starter Moodle preset changes status and settings
 #   Checking the settings before applying Full Moodle preset (we're only testing one of each type).
     Given I navigate to "Plugins > Activity modules > Manage activities" in site administration
-    And "Hide" "icon" should exist in the "Chat" "table_row"
+    And "Disable the Chat plugin" "icon" should exist in the "Chat" "table_row"
     And I navigate to "Plugins > Availability restrictions > Manage restrictions" in site administration
     And "Hide" "icon" should exist in the "Restriction by grouping" "table_row"
     And I navigate to "Plugins > Blocks > Manage blocks" in site administration
@@ -109,7 +109,7 @@ Feature: I can apply presets
     And the field "Enable badges" matches value "0"
     And the field "Enable competencies" matches value "0"
     And I navigate to "Plugins > Activity modules > Manage activities" in site administration
-    And "Hide" "icon" should not exist in the "Chat" "table_row"
+    And "Disable the Chat plugin" "icon" should not exist in the "Chat" "table_row"
     And I navigate to "Plugins > Availability restrictions > Manage restrictions" in site administration
     And "Hide" "icon" should not exist in the "Restriction by grouping" "table_row"
     And I navigate to "Plugins > Blocks > Manage blocks" in site administration
