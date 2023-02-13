@@ -51,6 +51,14 @@ class mod extends base {
 
         // Only set visibility if it's different from the current value.
         if ($module->visible != $enabled) {
+            if ($enabled && component_callback_exists("mod_{$pluginname}", 'pre_enable_plugin_actions')) {
+                // Invoking a callback function that enables plugins to force additional actions (e.g. displaying notifications,
+                // modals, etc.) and also specify through its returned value (bool) whether the process of enabling the plugin
+                // should continue after these actions or not.
+                if (!component_callback("mod_{$pluginname}", 'pre_enable_plugin_actions')) {
+                    return false;
+                }
+            }
             // Set module visibility.
             $DB->set_field('modules', 'visible', $enabled, ['id' => $module->id]);
             $haschanged = true;

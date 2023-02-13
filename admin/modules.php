@@ -31,29 +31,20 @@
 
     if (!empty($hide) and confirm_sesskey()) {
         $class = \core_plugin_manager::resolve_plugininfo_class('mod');
-        $class::enable_plugin($hide, false);
-
-        admin_get_root(true, false);  // settings not required - only pages
+        if ($class::enable_plugin($hide, false)) {
+            // Settings not required - only pages.
+            admin_get_root(true, false);
+        }
         redirect(new moodle_url('/admin/modules.php'));
     }
 
-    if (!empty($show) and confirm_sesskey()) {
-        $canenablemodule = true;
-        $modulename = $show;
-
-        // Invoking a callback function that enables plugins to force additional actions (e.g. displaying notifications,
-        // modals, etc.) and also specify through its returned value (bool) whether the process of enabling the plugin
-        // should continue after these actions or not.
-        if (component_callback_exists("mod_{$modulename}", 'pre_enable_plugin_actions')) {
-            $canenablemodule = component_callback("mod_{$modulename}", 'pre_enable_plugin_actions');
+    if (!empty($show) && confirm_sesskey()) {
+        $class = \core_plugin_manager::resolve_plugininfo_class('mod');
+        if ($class::enable_plugin($show, true)) {
+            // Settings not required - only pages.
+            admin_get_root(true, false);
         }
-
-        if ($canenablemodule) {
-            $class = \core_plugin_manager::resolve_plugininfo_class('mod');
-            $class::enable_plugin($show, true);
-            admin_get_root(true, false);  // Settings not required - only pages.
-            redirect(new moodle_url('/admin/modules.php'));
-        }
+        redirect(new moodle_url('/admin/modules.php'));
     }
 
     echo $OUTPUT->header();
