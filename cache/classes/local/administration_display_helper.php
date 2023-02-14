@@ -66,14 +66,14 @@ class administration_display_helper extends \core_cache\administration_helper {
             // Edit mappings.
             $actions[] = $OUTPUT->action_link(
                 new \moodle_url('/cache/admin.php', array('action' => 'editdefinitionmapping',
-                    'definition' => $definitionsummary['id'], 'sesskey' => sesskey())),
+                    'definition' => $definitionsummary['id'])),
                 get_string('editmappings', 'cache')
             );
             // Edit sharing.
             if (count($definitionsummary['sharingoptions']) > 1) {
                 $actions[] = $OUTPUT->action_link(
                     new \moodle_url('/cache/admin.php', array('action' => 'editdefinitionsharing',
-                        'definition' => $definitionsummary['id'], 'sesskey' => sesskey())),
+                        'definition' => $definitionsummary['id'])),
                     get_string('editsharing', 'cache')
                 );
             }
@@ -100,21 +100,22 @@ class administration_display_helper extends \core_cache\administration_helper {
         global $OUTPUT;
         $actions = array();
         if (has_capability('moodle/site:config', \context_system::instance())) {
-            $baseurl = new \moodle_url('/cache/admin.php', array('store' => $name, 'sesskey' => sesskey()));
+            $baseurl = new \moodle_url('/cache/admin.php', array('store' => $name));
             if (empty($storedetails['default'])) {
+                // Edit store.
                 $actions[] = $OUTPUT->action_link(
                     new \moodle_url($baseurl, array('action' => 'editstore', 'plugin' => $storedetails['plugin'])),
                     get_string('editstore', 'cache')
                 );
-
+                // Delete store.
                 $actions[] = $OUTPUT->action_link(
                     new \moodle_url($baseurl, array('action' => 'deletestore')),
                     get_string('deletestore', 'cache')
                 );
             }
-
+            // Purge store.
             $actions[] = $OUTPUT->action_link(
-                new \moodle_url($baseurl, array('action' => 'purgestore')),
+                new \moodle_url($baseurl, array('action' => 'purgestore', 'sesskey' => sesskey())),
                 get_string('purge', 'cache')
             );
         }
@@ -135,7 +136,7 @@ class administration_display_helper extends \core_cache\administration_helper {
         if (has_capability('moodle/site:config', \context_system::instance())) {
             if (!empty($plugindetails['canaddinstance'])) {
                 $url = new \moodle_url('/cache/admin.php',
-                    array('action' => 'addstore', 'plugin' => $name, 'sesskey' => sesskey()));
+                    array('action' => 'addstore', 'plugin' => $name));
                 $actions[] = $OUTPUT->action_link(
                     $url,
                     get_string('addinstance', 'cache')
@@ -429,6 +430,7 @@ class administration_display_helper extends \core_cache\administration_helper {
     public function action_rescan_definition() {
         global $PAGE;
 
+        require_sesskey();
         \cache_config_writer::update_definitions();
         redirect($PAGE->url);
     }
@@ -537,6 +539,7 @@ class administration_display_helper extends \core_cache\administration_helper {
                 echo $OUTPUT->footer();
                 exit;
             } else {
+                require_sesskey();
                 $writer = \cache_config_writer::instance();
                 $writer->delete_store_instance($store);
                 redirect($PAGE->url, get_string('deletestoresuccess', 'cache'), 5);
@@ -657,6 +660,7 @@ class administration_display_helper extends \core_cache\administration_helper {
     public function action_purgedefinition() {
         global $PAGE;
 
+        require_sesskey();
         $id = required_param('definition', PARAM_SAFEPATH);
         list($component, $area) = explode('/', $id, 2);
         $factory = cache_factory::instance();
@@ -688,6 +692,7 @@ class administration_display_helper extends \core_cache\administration_helper {
     public function action_purge() {
         global $PAGE;
 
+        require_sesskey();
         $store = required_param('store', PARAM_TEXT);
         cache_helper::purge_store($store);
         $message = get_string('purgexstoresuccess', 'cache', ['store' => $store]);
@@ -758,6 +763,7 @@ class administration_display_helper extends \core_cache\administration_helper {
                 echo $OUTPUT->footer();
                 exit;
             } else {
+                require_sesskey();
                 $writer = cache_config_writer::instance();
                 $writer->delete_lock_instance($lock);
                 redirect($PAGE->url, get_string('deletelocksuccess', 'cache'), 5);
@@ -790,7 +796,7 @@ class administration_display_helper extends \core_cache\administration_helper {
         $applicationstore = join(', ', $defaultmodestores[cache_store::MODE_APPLICATION]);
         $sessionstore = join(', ', $defaultmodestores[cache_store::MODE_SESSION]);
         $requeststore = join(', ', $defaultmodestores[cache_store::MODE_REQUEST]);
-        $editurl = new \moodle_url('/cache/admin.php', array('action' => 'editmodemappings', 'sesskey' => sesskey()));
+        $editurl = new \moodle_url('/cache/admin.php', array('action' => 'editmodemappings'));
         $html .= $renderer->mode_mappings($applicationstore, $sessionstore, $requeststore, $editurl);
 
         return $html;
