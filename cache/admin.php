@@ -52,7 +52,7 @@ $PAGE->set_primary_active_tab('siteadminnode');
 $PAGE->navbar->add(get_string('cacheconfig', 'cache'), new moodle_url('/cache/admin.php'));
 
 // Handle page actions in admin helper class.
-if (!empty($action) && confirm_sesskey()) {
+if (!empty($action)) {
     $forminfo = $adminhelper->perform_cache_actions($action, $forminfo);
 }
 
