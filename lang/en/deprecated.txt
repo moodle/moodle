@@ -81,3 +81,4 @@ showlocks_help,core_grades
 showanalysisicon,core_grades
 showanalysisicon_desc,core_grades
 showanalysisicon_help,core_grades
+blockunprotect,core_admin

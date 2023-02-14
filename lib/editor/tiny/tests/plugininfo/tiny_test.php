@@ -71,4 +71,18 @@ class tiny_test extends advanced_testcase {
         $this->assertArrayHasKey('autosave', $plugins);
         $this->assertArrayNotHasKey('h5p', $plugins);
     }
+
+    /**
+     * Ensure that the base implementation is used for plugins not supporting ordering.
+     */
+    public function test_sorting_not_supported(): void {
+        $this->assertFalse(tiny::plugintype_supports_ordering());
+
+        $this->assertNull(tiny::get_sorted_plugins());
+        $this->assertNull(tiny::get_sorted_plugins(true));
+        $this->assertNull(tiny::get_sorted_plugins(false));
+
+        $this->assertFalse(tiny::change_plugin_order('tiny_h5p', \core\plugininfo\base::MOVE_UP));
+        $this->assertFalse(tiny::change_plugin_order('tiny_h5p', \core\plugininfo\base::MOVE_DOWN));
+    }
 }

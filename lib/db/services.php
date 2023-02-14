@@ -2965,6 +2965,12 @@ $functions = array(
         'type' => 'write',
         'ajax' => true,
     ],
+    'core_admin_set_block_protection' => [
+        'classname' => 'core_admin\external\set_block_protection',
+        'description' => 'Set the protection state for a block plugin',
+        'type' => 'write',
+        'ajax' => true,
+    ],
 );
 
 $services = array(

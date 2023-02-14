@@ -18,7 +18,7 @@ Feature: I can apply presets
     And I navigate to "Plugins > Availability restrictions > Manage restrictions" in site administration
     And "Hide" "icon" should exist in the "Restriction by grouping" "table_row"
     And I navigate to "Plugins > Blocks > Manage blocks" in site administration
-    And "Hide" "icon" should exist in the "Logged in user" "table_row"
+    And "Disable the Logged in user plugin" "icon" should exist in the "Logged in user" "table_row"
     And I navigate to "Plugins > Course formats > Manage course formats" in site administration
     And "Disable" "icon" should exist in the "Social format" "table_row"
     And I navigate to "Plugins > Question behaviours > Manage question behaviours" in site administration
@@ -113,7 +113,7 @@ Feature: I can apply presets
     And I navigate to "Plugins > Availability restrictions > Manage restrictions" in site administration
     And "Hide" "icon" should not exist in the "Restriction by grouping" "table_row"
     And I navigate to "Plugins > Blocks > Manage blocks" in site administration
-    And "Hide" "icon" should not exist in the "Logged in user" "table_row"
+    And "Disable the Logged in user plugin" "icon" should not exist in the "Logged in user" "table_row"
     And I navigate to "Plugins > Course formats > Manage course formats" in site administration
     And "Disable" "icon" should not exist in the "Social format" "table_row"
     And I navigate to "Plugins > Question behaviours > Manage question behaviours" in site administration

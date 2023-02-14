@@ -95,10 +95,13 @@ $string['blockediplist'] = 'Blocked IP List';
 $string['blockinstances'] = 'Instances';
 $string['blockmultiple'] = 'Multiple';
 $string['blockprotect'] = 'Protect instances';
+$string['blockprotectblock'] = 'Protect instances of the {$a} block';
+$string['blockprotected'] = 'The {$a} block is now protected';
 $string['blockprotect_help'] = 'If you lock a particular type of block, then no-one will be able to add or delete instances. (You can, of course, unlock again if you need to edit instances.)
 
 This is intended to protect blocks like the navigation and settings which are very hard to get back if accidentally deleted.';
-$string['blockunprotect'] = 'Unprotect';
+$string['blockunprotectblock'] = 'Unprotect instances of the {$a} block';
+$string['blockunprotected'] = 'The {$a} block is no longer protected';
 $string['blocksettings'] = 'Manage blocks';
 $string['bloglevel'] = 'Blog visibility';
 $string['bookmarkadded'] = 'Bookmark added.';
@@ -1583,3 +1586,6 @@ $string['mediapluginswfnote'] = 'As a default security measure, normal users sho
 
 // Deprecated since Moodle 4.1.
 $string['multilangforceold'] = 'Force old multilang syntax: &lt;span&gt; without the class="multilang" and &lt;lang&gt;';
+
+// Deprecated since Moodle 4.2.
+$string['blockunprotect'] = 'Unprotect';
