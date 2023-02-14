@@ -12297,12 +12297,11 @@ blockquote {
   color: #495057;
   border-left: 5px solid #ced4da; }
 
-/** Prevent long strings exceeding page width */
+/* Prevent long strings exceeding page width */
 .page-header-headings:not(.text-truncate),
 .coursename:not(.text-truncate),
 .categoryname:not(.text-truncate),
-.breadcrumb-item:not(.text-truncate),
-.dropdown-item:not(.text-truncate) {
+.breadcrumb-item:not(.text-truncate) {
   word-break: normal;
   overflow-wrap: anywhere;
   white-space: normal; }
