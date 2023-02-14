@@ -808,7 +808,7 @@ function h5pactivity_fetch_recent_activity(array $submissions, int $courseid) : 
 
             if (!isset($usersgroups[$cm->groupingid][$submission->userid])) {
                 $usersgroups[$cm->groupingid][$submission->userid] =
-                    groups_get_all_groups($course->id, $submission->userid, $cm->groupingid);
+                    groups_get_all_groups($course->id, $submission->userid, $cm->groupingid, 'g.*', false, true);
             }
 
             if (is_array($usersgroups[$cm->groupingid][$submission->userid])) {
