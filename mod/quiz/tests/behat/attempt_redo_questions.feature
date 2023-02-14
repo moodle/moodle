@@ -177,7 +177,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     When I click on "update grades" "link" in the "SA1" "table_row"
     Then I set the field "Comment" to "I have adjusted your mark to 1.0"
     And I set the field "Mark" to "1.0"
-    And I press "Save and go to next page"
+    And I press "Save and show next"
     And I follow "Results"
     And I follow "Review attempt"
     And I should see "Teacher One" in the "I have adjusted your mark to 1.0" "table_row"
