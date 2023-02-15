@@ -60,6 +60,9 @@ class manager {
     /** @var array Stores the the SESSION before a request is performed, used to check incorrect read-only modes */
     private static $priorsession = [];
 
+    /** @var array Stores the the SESSION after write_close is called, used to check if it was mutated after the session is closed */
+    private static $sessionatclose = [];
+
     /**
      * @var bool Used to trigger the SESSION mutation warning without actually preventing SESSION mutation.
      * This variable is used to "copy" what the $requireslock parameter  does in start_session().
@@ -686,6 +689,12 @@ class manager {
         global $PERF, $ME, $CFG;
 
         if (self::$sessionactive) {
+            // If debugging, take a snapshot of session at close and compare on shutdown to detect any accidental mutations.
+            if (debugging()) {
+                self::$sessionatclose = (array) $_SESSION['SESSION'];
+                \core_shutdown_manager::register_function('\core\session\manager::check_mutated_closed_session');
+            }
+
             // Grab the time when session lock is released.
             $PERF->sessionlock['released'] = microtime(true);
             if (!empty($PERF->sessionlock['gained'])) {
@@ -733,6 +742,50 @@ class manager {
         }
 
         self::$sessionactive = false;
+    }
+
+    /**
+     * Checks if the session has been mutated since it was closed.
+     * In write_close the session is saved to the variable $sessionatclose
+     * If there is a difference between $sessionatclose and the current session,
+     * it means a script has erroneously closed the session too early.
+     * Script is usually called in shutdown_manager
+     */
+    public static function check_mutated_closed_session() {
+        global $ME;
+
+        // Session is still open, mutations are allowed.
+        if (self::$sessionactive) {
+            return;
+        }
+
+        // Detect if session was cleared.
+        if (!isset($_SESSION['SESSION']) && isset(self::$sessionatclose)) {
+            debugging("Script $ME cleared the session after it was closed.");
+            return;
+        } else if (!isset($_SESSION['SESSION'])) {
+            // Else session is empty, nothing to check.
+            return;
+        }
+
+        // Session is closed - compare the current session to the session when write_close was called.
+        $arraydiff = self::array_session_diff(
+            self::$sessionatclose,
+            (array) $_SESSION['SESSION']
+        );
+
+        if ($arraydiff) {
+            $error = "Script $ME mutated the session after it was closed:";
+            foreach ($arraydiff as $key => $value) {
+                $error .= ' $SESSION->' . $key;
+
+                // Extra debugging for cachestore session changes.
+                if (strpos($key, 'cachestore_') === 0 && is_array($value)) {
+                    $error .= ': ' . implode(',', array_keys($value));
+                }
+            }
+            debugging($error);
+        }
     }
 
     /**
@@ -1384,25 +1437,69 @@ class manager {
     }
 
     /**
-     * Compares two arrays outputs the difference.
+     * Compares two arrays and outputs the difference.
      *
-     * Note this does not use array_diff_assoc due to
-     * the use of stdClasses in Moodle sessions.
+     * Note - checking between objects and array type is only done at the top level.
+     * Any changes in types below the top level will not be detected.
+     * However, if their values are the same, they will be treated as equal.
      *
-     * @param array $array1
-     * @param array $array2
+     * Any changes, such as removals, edits or additions will be detected.
+     *
+     * @param array $previous
+     * @param array $current
      * @return array
      */
-    private static function array_session_diff(array $array1, array $array2) : array {
-        $difference = [];
-        foreach ($array1 as $key => $value) {
-            if (!isset($array2[$key])) {
-                $difference[$key] = $value;
-            } else if ($array2[$key] !== $value) {
-                $difference[$key] = $value;
-            }
-        }
+    private static function array_session_diff(array $previous, array $current) : array {
+        // To use array_udiff_uassoc, the first array must have the most keys; this ensures every key is checked.
+        // To do this, we first need to sort them by the length of their keys.
+        $arrays = [$current, $previous];
 
-        return $difference;
+        // Sort them by the length of their keys.
+        usort($arrays, function ($a, $b) {
+            return count(array_keys($b)) - count(array_keys($a));
+        });
+
+        // The largest is the first value in the $arrays, after sorting.
+        // The smallest is then the last one.
+        // If they are the same size, it does not matter which is which.
+        $largest = $arrays[0];
+        $smallest = $arrays[1];
+
+        // Defines a function that casts the values to arrays.
+        // This is so the properties are compared, instead any object's identities.
+        $casttoarray = function ($value) {
+            return json_decode(json_encode($value), true);
+        };
+
+        // Defines a function that compares all keys by their string value.
+        $keycompare = function ($a, $b) {
+            return strcmp($a, $b);
+        };
+
+        // Defines a function that compares all values by first their type, and then their values.
+        // If the value contains any objects, they are cast to arrays before comparison.
+        $valcompare = function ($a, $b) use ($casttoarray) {
+            // First compare type.
+            // If they are not the same type, they are definitely not the same.
+            // Note we do not check types recursively.
+            if (gettype($a) !== gettype($b)) {
+                return 1;
+            }
+
+            // Next compare value. Cast any objects to arrays to compare their properties,
+            // instead of the identitiy of the object itself.
+            $v1 = $casttoarray($a);
+            $v2 = $casttoarray($b);
+
+            if ($v1 !== $v2) {
+                return 1;
+            }
+
+            return 0;
+        };
+
+        // Apply the comparison functions to the two given session arrays,
+        // making sure to use the largest array first, so that all keys are considered.
+        return array_udiff_uassoc($largest, $smallest, $valcompare, $keycompare);
     }
 }
