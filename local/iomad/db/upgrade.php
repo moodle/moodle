@@ -2339,5 +2339,20 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2023012500, 'local', 'iomad');
     }
 
+    if ($oldversion < 2023021500) {
+
+        // Define field paymentaccount to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('paymentaccount', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'custom3');
+
+        // Conditionally launch add field paymentaccount.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2023021500, 'local', 'iomad');
+    }
+
     return $result;
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/iomad/db" VERSION="20230125" COMMENT="XMLDB file for Moodle local/iomad"
+<XMLDB PATH="local/iomad/db" VERSION="20230215" COMMENT="XMLDB file for Moodle local/iomad"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -51,6 +51,7 @@
         <FIELD NAME="custom1" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="custom2" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="custom3" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="paymentaccount" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

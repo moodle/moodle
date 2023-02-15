@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 use \iomad;
 use \company;
 use \moodle_url;
+use context_system;
 
 class company_edit_form extends \company_moodleform {
     protected $firstcompany;
@@ -247,8 +248,25 @@ class company_edit_form extends \company_moodleform {
         if (empty($CFG->commerce_admin_enableall) && iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
             $mform->addElement('selectyesno', 'ecommerce', get_string('enableecommerce', 'block_iomad_company_admin'));
             $mform->setDefault('ecommerce', 0);
+            $accounts = \core_payment\helper::get_payment_accounts_menu(context_system::instance());
+            if (empty($CFG->commerce_enable_external) && !empty($accounts)) {
+                if (empty($this->companyrecord->paymentaccount)) {
+                    $usedefaultpaymentaccountvalue = "checked";
+                } else {
+                    $usedefaultpaymentaccountvalue = "";
+                }
+                $mform->addElement('checkbox', 'usedefaultpaymentaccount', get_string('usedefaultpayment', 'block_iomad_company_admin'));
+                $mform->setDefault('usedefaultpaymentaccount', $usedefaultpaymentaccountvalue);
+                if ($accounts) {
+                   $accounts = ((count($accounts) > 1) ? ['' => ''] : []) + $accounts;
+                }
+                $mform->addElement('select', 'paymentaccount', get_string('paymentaccount', 'payment'), $accounts);
+                $mform->hideIf('paymentaccount', 'usedefaultpaymentaccount', 'checked');
+                $mform->disabledIf('paymentaccount', 'usedefaultpaymentaccount', 'checked');
+            }
         } else {
             $mform->addElement('hidden', 'ecommerce');
+            $mform->addElement('hidden', 'paymentaccount');
         }
 
         $mform->addElement('date_time_selector', 'validto', get_string('companyvalidto', 'block_iomad_company_admin'), array('optional' => true));
@@ -259,6 +277,7 @@ class company_edit_form extends \company_moodleform {
 
         $mform->setType('parentid', PARAM_INT);
         $mform->setType('ecommerce', PARAM_INT);
+        $mform->setType('paymentaccount', PARAM_INT);
         $mform->setType('templates', PARAM_RAW);
 
         if (!empty($this->companyid)) {

@@ -701,6 +701,7 @@ $string['uploadfilecontentsnovaliddata'] = 'The uploaded file is either in an in
 $string['uploadfromfile'] = 'Upload from file';
 $string['upload_no_company_no_courses'] = 'Courses can only be selected when a company is selected.';
 $string['upload_no_company_selected'] = 'No company selected, profile_field_company must be present in the uploaded file.';
+$string['usedefaultpayment'] = 'Use default site payment account';
 $string['user_bulk_download_title'] = 'User Bulk Download';
 $string['usercourses'] = 'Enrolled courses';
 $string['user_courses_for'] = 'Editing Course allocation for {$a}';

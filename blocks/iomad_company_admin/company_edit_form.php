@@ -412,6 +412,9 @@ if ($mform->is_cancelled()) {
 
     } else {
         $data->id = $companyid;
+        if (!empty($data->usedefaultpaymentaccount)) {
+            $data->paymentaccount = '';
+        }
 
         $company = new company($companyid);
         $oldcompany = $DB->get_record('company', array('id' => $companyid));
