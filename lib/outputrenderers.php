@@ -3830,16 +3830,21 @@ EOD;
             $iomadlink = "";
         }
 
-        // Deal with company custom menu items.
+        // Deal with company custom and shop menu items.
+        $shoplink = "";
         if ($companyid = \iomad::get_my_companyid(\context_system::instance(), false)) {
             if ($companyrec = $DB->get_record('company', array('id' => $companyid))) {
                 if (!empty($companyrec->custommenuitems)) {
                     $custommenuitems = $companyrec->custommenuitems;
                 }
+                if (\block_iomad_commerce\helper::is_commerce_configured() &&
+                    ($CFG->commerce_admin_enableall || !empty($companyrec->ecommerce))) {
+                    $shoplink = \block_iomad_commerce\helper::get_shop_menu_link($companyrec);
+                }
             }
         }
 
-        $custommenuitems = $iomadlink . $custommenuitems;
+        $custommenuitems = $iomadlink . $shoplink . $custommenuitems;
 
         $custommenu = new custom_menu($custommenuitems, current_language());
         return $this->render_custom_menu($custommenu);

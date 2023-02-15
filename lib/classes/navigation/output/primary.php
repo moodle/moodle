@@ -107,6 +107,11 @@ class primary implements renderable, templatable {
                 if (!empty($companyrec->custommenuitems)) {
                     $custommenuitems = $companyrec->custommenuitems;
                 }
+
+                if (\block_iomad_commerce\helper::is_commerce_configured() &&
+                    ($CFG->commerce_admin_enableall || !empty($companyrec->ecommerce))) {
+                    $custommenuitems = \block_iomad_commerce\helper::get_shop_menu_link($companyrec) . $custommenuitems;
+                }
             }
         }
 

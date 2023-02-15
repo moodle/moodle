@@ -74,7 +74,21 @@ $capabilities = array(
     'block/iomad_commerce:buyitnow' => array(
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW,
+            'companymanager' => CAP_ALLOW
+        ),
+    ),
+
+    'block/iomad_commerce:buyinbulk' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW,
+            'companymanager' => CAP_ALLOW
+        ),
     ),
 
     'block/iomad_commerce:delete_course' => array(
@@ -84,8 +98,15 @@ $capabilities = array(
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW
         ),
+    ),
+
+    'block/iomad_commerce:manage_default' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW
+        ),
     )
 
 );
-
-

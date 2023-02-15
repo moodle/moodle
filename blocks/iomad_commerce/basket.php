@@ -22,9 +22,8 @@
  */
 
 require_once(dirname(__FILE__) . '/../iomad_company_admin/lib.php');
-require_once('lib.php');
 
-require_commerce_enabled();
+\block_iomad_commerce\helper::require_commerce_enabled();
 
 $remove = optional_param('remove', 0, PARAM_INT);
 
@@ -42,7 +41,6 @@ $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
-$PAGE->set_heading($SITE->fullname);
 $PAGE->navbar->add($linktext, $linkurl);
 $PAGE->navbar->add(get_string('basket', 'block_iomad_commerce'));
 
@@ -65,26 +63,24 @@ if (!empty($SESSION->basketid)) {
                                              WHERE i.id = :basketid
                                              AND i.status = :status
                                              AND i.id = ii.invoiceid
-                                             )', array('basketid' => $SESSION->basketid, 'status' => INVOICESTATUS_BASKET, 'toberemoved' => $remove))) {
+                                             )', array('basketid' => $SESSION->basketid, 'status' => \block_iomad_commerce\helper::INVOICESTATUS_BASKET, 'toberemoved' => $remove))) {
             $DB->delete_records('invoiceitem', array('id' => $remove));
         }
     }
 
-    $baskethtml = get_basket_html(1);
+    $baskethtml = \block_iomad_commerce\helper::get_basket_html(1);
 
     if ($baskethtml) {
         echo $baskethtml;
-        echo '<p><a href="checkout.php">' . get_string('checkout', 'block_iomad_commerce') .
-              '</a></p> <p>' . get_string('or', 'block_iomad_commerce') .
-              '</p> <p><a href="shop.php">' . get_string('returntoshop', 'block_iomad_commerce') .
+        echo '<p><a href="' . new moodle_url($CFG->wwwroot . '/blocks/iomad_commerce/checkout.php') . '" class="btn btn-primary">' . get_string('checkout', 'block_iomad_commerce') .
+              '</a> ' . get_string('or', 'block_iomad_commerce') .
+              ' <a href="' . new moodle_url($CFG->wwwroot . '/blocks/iomad_commerce/shop.php') . '" class="btn btn-secondary">' . get_string('returntoshop', 'block_iomad_commerce') .
               '</a></p> ';
-
-        foreach (get_enabled_payment_providers_instances() as $pp) {
-            echo $pp->get_basketpage_html();
-        }
 
     } else {
         echo '<p>' . get_string('emptybasket', 'block_iomad_commerce') . '</p>';
+        echo '<p><a href="' . new moodle_url($CFG->wwwroot . '/blocks/iomad_commerce/shop.php') . '" class="btn btn-secondary">' . get_string('returntoshop', 'block_iomad_commerce') .
+              '</a></p> ';
     }
 } else {
     echo '<p>' . get_string('emptybasket', 'block_iomad_commerce') . '</p>';

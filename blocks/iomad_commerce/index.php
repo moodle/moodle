@@ -23,4 +23,4 @@
 
 require_once(dirname(__FILE__) . '/../../config.php');
 
-redirect(new moodle_url('/blocks/iomad_commerce/shop.php'));
+redirect(new moodle_url($CFG->wwwroot . '/blocks/iomad_commerce/shop.php'));

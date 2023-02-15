@@ -22,91 +22,9 @@
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
-require_once($CFG->libdir . '/formslib.php');
-require_once(dirname(__FILE__) . '/../iomad_company_admin/lib.php');
-require_once('lib.php');
+require_once($CFG->dirroot . '/blocks/iomad_company_admin/lib.php');
 
-require_commerce_enabled();
-
-class checkout_form extends moodleform {
-    public function __construct($actionurl) {
-        global $CFG;
-
-        parent::__construct($actionurl);
-    }
-
-    public function definition() {
-        global $CFG, $USER;
-
-        $mform =& $this->_form;
-
-        $mform->addElement('header', 'header', get_string('purchaser_details', 'block_iomad_commerce'));
-
-        $mform->addElement('html', get_string('checkoutpreamble', 'block_iomad_commerce'));
-
-        $strrequired = get_string('required');
-
-        $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="50"');
-        $mform->addRule('firstname', $strrequired, 'required', null, 'client');
-        $mform->setType('firstname', PARAM_NOTAGS);
-
-        $mform->addElement('text', 'lastname', get_string('lastname'), 'maxlength="100" size="50"');
-        $mform->addRule('lastname', $strrequired, 'required', null, 'client');
-        $mform->setType('lastname', PARAM_NOTAGS);
-
-        $mform->addElement('text', 'company', get_string('company', 'block_iomad_company_admin'), 'maxlength="40" size="50"');
-        $mform->addRule('company', $strrequired, 'required', null, 'client');
-        $mform->setType('company', PARAM_NOTAGS);
-
-        $mform->addElement('text', 'address', get_string('address'), 'maxlength="70" size="50"');
-        $mform->addRule('address', $strrequired, 'required', null, 'client');
-        $mform->setType('address', PARAM_NOTAGS);
-
-        $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="50"');
-        $mform->addRule('city', $strrequired, 'required', null, 'client');
-        $mform->setType('city', PARAM_NOTAGS);
-
-        $mform->addElement('text', 'postcode', get_string('postcode', 'block_iomad_commerce'), 'maxlength="20" size="20"');
-        $mform->addRule('postcode', $strrequired, 'required', null, 'client');
-        $mform->setType('postcode', PARAM_NOTAGS);
-
-        $mform->addElement('text', 'state', get_string('state', 'block_iomad_commerce'), 'maxlength="20" size="20"');
-        $mform->addRule('state', $strrequired, 'required', null, 'client');
-        $mform->setType('state', PARAM_NOTAGS);
-
-        $choices = get_string_manager()->get_list_of_countries();
-        $choices = array('' => get_string('selectacountry').'...') + $choices;
-        $mform->addElement('select', 'country', get_string('selectacountry'), $choices);
-        $mform->addRule('country', $strrequired, 'required', null, 'client');
-
-        $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="50"');
-        $mform->addRule('email', $strrequired, 'required', null, 'client');
-        $mform->setType('email', PARAM_NOTAGS);
-
-        $mform->addElement('text', 'phone1', get_string('phone'), 'maxlength="20" size="50"');
-        $mform->setType('phone1', PARAM_NOTAGS);
-
-        $mform->addElement('header', 'header', get_string('payment_options', 'block_iomad_commerce' ));
-
-        $choices = array();
-        foreach (get_enabled_payment_providers() as $p) {
-            $choices[$p] = get_payment_provider_displayname($p);
-        }
-
-        if (!$choices) {
-            $mform->addElement('html', '<div class="alert">' . get_string('noproviders', 'block_iomad_commerce') . '</div>');
-        } else {
-            $mform->addElement('select', 'paymentprovider', get_string('paymentprovider', 'block_iomad_commerce'), $choices);
-            $mform->addRule('paymentprovider', $strrequired, 'required', null, 'client');
-        }
-
-        $mform->addElement('hidden', 'userid', $USER->id);
-        $mform->setType('userid', PARAM_INT);
-
-        $this->add_action_buttons(true, get_string('continue'));
-    }
-
-}
+\block_iomad_commerce\helper::require_commerce_enabled();
 
 require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 $context = context_system::instance();
@@ -116,6 +34,7 @@ $context = context_system::instance();
 $linktext = get_string('course_shop_title', 'block_iomad_commerce');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_commerce/checkout.php');
+$shopurl = new moodle_url('/blocks/iomad_commerce/shop.php');
 
 // Print the page header.
 $PAGE->set_context($context);
@@ -125,45 +44,65 @@ $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string('checkout', 'block_iomad_commerce'));
 
 // Build the nav bar.
-$PAGE->navbar->add($linktext, $linkurl);
+$PAGE->navbar->add($linktext, $shopurl);
 $PAGE->navbar->add(get_string('checkout', 'block_iomad_commerce'));
 
+// JS For payment gateway.
+$PAGE->requires->js_call_amd('core_payment/gateways_modal', 'init');
 
 $data = clone $USER;
-if (!empty($USER->company->name)) {
-    $data->company = $USER->company->name;
-} else {
-    $data->company = "";
-}
+$companyid = iomad::get_my_companyid(context_system::instance());
+$companyrec = $DB->get_record('company', ['id' => $companyid]);
 
-$mform = new checkout_form($PAGE->url);
+$data->company = $companyrec->name;
+$data->address = $companyrec->address;
+$data->postcode = $companyrec->postcode;
+$data->city = $companyrec->city;
+$data->state = $companyrec->region;
+
+$mform = new \block_iomad_commerce\forms\checkout_form($PAGE->url);
 $mform->set_data($data);
 
 $error = '';
 $displaypage = 1;
 
-$basketid = get_basket_id();
+$basketid = \block_iomad_commerce\helper::get_basket_id();
 
-if ($mform->is_cancelled()) {
-    redirect('basket.php');
+if (empty($basketid) || $mform->is_cancelled()) {
+redirect(new moodle_url($CFG->wwwroot . '/blocks/iomad_commerce/basket.php'));
 
 } else if ($data = $mform->get_data()) {
-    $displaypage = 0;
 
     $data->id = $basketid;
 
     $DB->update_record('invoice', $data, array('id' => $data->id));
 
-    $pp = get_payment_provider_instance($data->paymentprovider);
-    $error = $pp->init();
-    if ($error) {
-        $displaypage = 1;
-    }
-}
+    echo $OUTPUT->header();
 
-if ($displaypage && !$error) {
-    require_once(dirname(__FILE__) . '/processor/processor.php');
-    processor::trigger_oncheckout($basketid);
+    $baskethtml = \block_iomad_commerce\helper::get_basket_html();
+
+    echo $baskethtml;
+
+    $paymentoptions = ['data-action' => "core_payment/triggerPayment",
+                       'data-component' => "block_iomad_commerce",
+                       'data-paymentarea' => 'invoice',
+                       'data-itemid' => $basketid,
+                       'data-cost' => \block_iomad_commerce\helper::get_basket_total(),
+                       'data-description' => '',
+                       'data-successurl' => \block_iomad_commerce\payment\service_provider::get_success_url('invoice', $basketid)->out(false),
+                       'class' => 'btn btn-primary'];
+
+    echo html_writer::start_tag('p');
+    echo html_writer::tag('button', get_string('sendpaymentbutton', 'enrol_fee'), $paymentoptions);
+    echo " " . get_string('or', 'block_iomad_commerce') . " ";
+    echo html_writer::tag('a', get_string('returntoshop', 'block_iomad_commerce'), ['class' => 'btn btn-secondary',
+                                                                                    'href' => new moodle_url($CFG->wwwroot . '/blocks/iomad_commerce/shop.php')]);
+    echo html_writer::end_tag('p');
+    
+
+    echo $OUTPUT->footer();
+    die;
+
 }
 
 echo $OUTPUT->header();
@@ -172,6 +111,6 @@ echo $error;
 
 $mform->display();
 
-echo get_basket_html();
+echo \block_iomad_commerce\helper::get_basket_html();
 
 echo $OUTPUT->footer();

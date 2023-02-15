@@ -24,10 +24,8 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../iomad_company_admin/lib.php');
-require_once('lib.php');
-require_once(dirname(__FILE__) . '/processor/processor.php');
 
-require_commerce_enabled();
+\block_iomad_commerce\helper::require_commerce_enabled();
 
 $invoicereference = required_param('u', PARAM_CLEAN);
 
@@ -55,10 +53,10 @@ $PAGE->navbar->add(get_string('confirmation', 'block_iomad_commerce'));
 
 echo $OUTPUT->header();
 
-$invoice = get_invoice_by_reference($invoicereference);
-$pp = get_payment_provider_instance($invoice->checkout_method);
+$invoice = \block_iomad_commerce\helper::get_invoice_by_reference($invoicereference);
+$pp = \block_iomad_commerce\helper::get_payment_provider_instance($invoice->checkout_method);
 echo $pp->get_confirmation_html($invoice);
-echo get_invoice_html($invoice->id);
+echo \block_iomad_commerce\helper::get_invoice_html($invoice->id);
 
 // Check if the user has a company.
 if (empty($USER->profile['company'])) {
@@ -108,8 +106,8 @@ if (empty($USER->profile['company'])) {
     company::assign_user_to_department($companydepartment->id, $USER->id);
 }
 
-if ($invoice->status == INVOICESTATUS_PAID) {
-    processor::trigger_onordercomplete($invoice);
+if ($invoice->status == \block_iomad_commerce\helper::INVOICESTATUS_PAID) {
+    block_iomad_commerce\processor::trigger_onordercomplete($invoice);
 }
 
 echo $OUTPUT->footer();

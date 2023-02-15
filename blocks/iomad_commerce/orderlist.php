@@ -22,9 +22,8 @@
  */
 
 require_once(dirname(__FILE__) . '/../iomad_company_admin/lib.php');
-require_once('lib.php');
 
-require_commerce_enabled();
+\block_iomad_commerce\helper::require_commerce_enabled();
 
 $sort         = optional_param('sort', 'name', PARAM_ALPHA);
 $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
@@ -58,7 +57,7 @@ echo $OUTPUT->header();
 iomad::require_capability('block/iomad_commerce:admin_view', $context);
 
 // Get the number of orders.
-$objectcount = $DB->count_records_sql("SELECT COUNT(*) FROM {invoice} WHERE Status != '" . INVOICESTATUS_BASKET . "'");
+$objectcount = $DB->count_records_sql("SELECT COUNT(*) FROM {invoice} WHERE Status != '" . \block_iomad_commerce\helper::INVOICESTATUS_BASKET . "'");
 echo $OUTPUT->paging_bar($objectcount, $page, $perpage, $baseurl);
 
 flush();
@@ -68,7 +67,7 @@ if ($orders = $DB->get_recordset_sql("SELECT
                                         (SELECT COUNT(*) FROM {invoiceitem} ii WHERE ii.invoiceid = i.id AND processed = 0)
                                          AS unprocesseditems
                                       FROM {invoice} i
-                                      WHERE i.Status != '" . INVOICESTATUS_BASKET . "'
+                                      WHERE i.Status != '" . \block_iomad_commerce\helper::INVOICESTATUS_BASKET . "'
                                       ORDER BY i.Status DESC, i.id DESC", null, $page, $perpage)) {
     if (!empty($orders)) {
         $stredit   = get_string('edit');

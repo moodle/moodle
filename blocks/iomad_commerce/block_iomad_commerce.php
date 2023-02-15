@@ -22,7 +22,6 @@
  */
 
 require_once(dirname(__FILE__) . '/../../config.php'); // Creates $PAGE.
-require_once($CFG->dirroot.'/blocks/iomad_commerce/lib.php');
 
 /**
  *
@@ -71,7 +70,7 @@ class block_iomad_commerce extends block_base {
             $this->content->text = "<a class='btn' href='$link'>" . get_string('gotoshop', 'block_iomad_commerce') . '</a>';
         } else {
             // Has this been setup properly
-            if (!is_commerce_configured()) {
+            if (!\block_iomad_commerce\helper::is_commerce_configured()) {
                 $link = new moodle_url('/admin/settings.php', array('section' => 'blocksettingiomad_commerce'));
                 $this->content->text = '<div class="alert alert-danger">' . get_string('notconfigured', 'block_iomad_commerce', $link->out()) . '</div>';
                 return $this->content;
@@ -82,7 +81,7 @@ class block_iomad_commerce extends block_base {
             $this->content->text .= ' <a href="' . new moodle_url('/blocks/iomad_commerce/shop.php') .
                                    '">' . get_string('shop_title', 'block_iomad_commerce') . '</a></p>';
 
-            $this->content->text .= get_basket_info();
+            $this->content->text .= \block_iomad_commerce\helper::get_basket_info();
         }
 
         return $this->content;

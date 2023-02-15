@@ -28,10 +28,10 @@ require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot . '/local/iomad/lib/company.php');
 require_once($CFG->dirroot . '/local/iomad/lib/user.php');
 
-require_once('lib/user_selectors.php');
-require_once('lib/course_selectors.php');
-require_once('lib/template_selectors.php');
-require_once('lib/framework_selectors.php');
+require_once($CFG->dirroot . '/blocks/iomad_company_admin/lib/user_selectors.php');
+require_once($CFG->dirroot . '/blocks/iomad_company_admin/lib/course_selectors.php');
+require_once($CFG->dirroot . '/blocks/iomad_company_admin/lib/template_selectors.php');
+require_once($CFG->dirroot . '/blocks/iomad_company_admin/lib/framework_selectors.php');
 
 /**
  * moodleform subclass that includes simple method for adding company select box

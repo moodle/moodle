@@ -113,5 +113,170 @@ function xmldb_block_iomad_commerce_upgrade($oldversion) {
         // Iomad_commerce savepoint reached.
         upgrade_block_savepoint(true, 2017030700, 'iomad_commerce');
     }
+
+    if ($oldversion < 2023021000) {
+
+        // Define field name to be added to course_shopsettings.
+        $table = new xmldb_table('course_shopsettings');
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, 'id');
+
+        // Conditionally launch add field name.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field companyid to be added to course_shopsettings.
+        $table = new xmldb_table('course_shopsettings');
+        $field = new xmldb_field('companyid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0', 'id');
+
+        // Conditionally launch add field companyid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field program to be added to course_shopsettings.
+        $table = new xmldb_table('course_shopsettings');
+        $field = new xmldb_field('program', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'single_purchase_shelflife');
+
+        // Conditionally launch add field program.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field instant to be added to course_shopsettings.
+        $table = new xmldb_table('course_shopsettings');
+        $field = new xmldb_field('instant', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'program');
+
+        // Conditionally launch add field instant.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field cutofftime to be added to course_shopsettings.
+        $table = new xmldb_table('course_shopsettings');
+        $field = new xmldb_field('cutofftime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'instant');
+
+        // Conditionally launch add field cutofftime.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field clearonexpire to be added to course_shopsettings.
+        $table = new xmldb_table('course_shopsettings');
+        $field = new xmldb_field('clearonexpire', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'cutofftime');
+
+        // Conditionally launch add field clearonexpire.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define table course_shopsettings_courses to be created.
+        $table = new xmldb_table('course_shopsettings_courses');
+
+        // Adding fields to table course_shopsettings_courses.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table course_shopsettings_courses.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Conditionally launch create table for course_shopsettings_courses.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Get all of the potential companies that have access to the shop.
+        if (!empty($CFG->commerce_admin_enableall)) {
+            $potentialcompanies = $DB->get_records('company');
+        } else {
+            $potentialcompanies = $DB->get_records('company', ['ecommerce' => 1]);
+        }
+
+        // Move all of the current courses over to the new tables.
+        if ($shopitems = $DB->get_records('course_shopsettings')) {
+            foreach ($shopitems as $shopitem) {
+                if (!empty($shopitem->courseid)) {
+                    $DB->insert_record('course_shopsettings_courses', ['itemid' => $shopitem->id, 'courseid' => $shopitem->courseid]);
+                    if ($course = $DB->get_record('course', ['id' => $shopitem->courseid])) {
+                        $shopitem->name = $course->fullname;
+                        $ignore = false;
+                    } else {
+                        $shopitem->name = "MISSING COURSE";
+                        $ignore = true;
+                    }
+                    $shopitem->single_purchase_validlength = $shopitem->single_purchase_validlength * 60 * 60 * 24;
+                    $shopitem->single_purchase_shelflife = $shopitem->single_purchase_shelflife * 60 * 60 * 24;
+                    $DB->update_record('course_shopsettings', $shopitem);
+                    $blockprices = $DB->get_records('course_shopblockprice', ['courseid' => $shopitem->courseid]);
+                    foreach ($blockprices as $blockid => $blockprice) {
+                        $blockprice->courseid = $shopitem->id;
+                        $DB->update_record('course_shopblockprice', $blockprice);
+                        $blockprices[$blockid]->courseid = $shopitem->id;
+                    }
+                    $shoptags = $DB->get_records('course_shoptag', ['courseid' => $shopitem->courseid]);
+                    foreach ($shoptags as $shoptagid => $shoptag) {
+                        $shoptag->courseid = $shopitem->id;
+                        $shoptags[$shoptagid]->courseid = $shopitem->id;
+                    }
+                    $DB->set_field('invoiceitem', 'invoiceableitemid', $shopitem->id, ['invoiceableitemid' => $shopitem->courseid]);
+
+                    // Deal with all of the companies which could see this product.
+                    if (!$ignore) {
+                        foreach ($potentialcompanies as $company) {
+                            if ($DB->get_record('company_course', ['companyid' => $company->id, 'courseid' => $course->id]) ||
+                                $DB->get_record('iomad_courses', ['courseid' => $course->id, 'shared' => 1])) {
+                                $companyitem = clone($shopitem);
+                                unset($companyitem->id);
+                                $companyitem->companyid = $company->id;
+                                $companyitemid = $DB->insert_record('course_shopsettings', $companyitem);
+                                $DB->insert_record('course_shopsettings_courses', ['itemid' => $companyitemid, 'courseid' => $course->id]);
+                                $companyblockprices = $blockprices;
+                                foreach ($companyblockprices as $companyblockprice) {
+                                    unset($companyblockprice->id);
+                                    $companyblockprice->courseid = $companyitemid;
+                                    $DB->insert_record('course_shopblockprice', $companyblockprice);
+                                }
+                                $companyshoptags = $shoptags;
+                                foreach ($companyshoptags as $companyshoptag) {
+                                    unset($companyshoptag->id);
+                                    $companyshoptag->courseid = $companyitemid;
+                                    $DB->insert_record('course_shoptag', $companyshoptag);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+            
+        // Drop the courseid field from the  course_shopsettings table.
+        // Define field courseid to be dropped from course_shopsettings.
+        $table = new xmldb_table('course_shopsettings');
+        $field = new xmldb_field('courseid');
+
+        // Conditionally launch drop field courseid.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Rename field itemid on table course_shopblockprice to itemid.
+        $table = new xmldb_table('course_shopblockprice');
+        $field = new xmldb_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'currency');
+
+        // Launch rename field itemid.
+        $dbman->rename_field($table, $field, 'itemid');
+
+        // Rename field courseid on table course_shoptag to itemid.
+        $table = new xmldb_table('course_shoptag');
+        $field = new xmldb_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'id');
+
+        // Launch rename field courseid.
+        $dbman->rename_field($table, $field, 'itemid');
+
+
+        // Iomad_commerce savepoint reached.
+        upgrade_block_savepoint(true, 2023021000, 'iomad_commerce');
+    }
     return $result;
 }

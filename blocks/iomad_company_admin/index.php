@@ -272,6 +272,8 @@ if (!iomad::has_capability('block/iomad_company_admin:company_view_all', $system
     // Possibly more than one company
     $companyselect->onecompany = false;
     }
+} else {
+    $companyselect->onecompany = false;
 }
 
 $content = '';

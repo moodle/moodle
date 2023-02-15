@@ -42,8 +42,6 @@ defined('MOODLE_INTERNAL') || die;
 $companyid = iomad::get_my_companyid(context_system::instance(), false);
 
 if ($ADMIN->fulltree) {
-    $dir = dirname(__FILE__);
-    require_once($dir .'/lib.php');
 
     $settings->add(new admin_setting_configcheckbox('commerce_enable_external',
                                                     get_string('useexternalshop', 'block_iomad_commerce'),
@@ -107,23 +105,6 @@ if ($ADMIN->fulltree) {
                                             get_string('commerce_admin_default_license_shelf_life_help', 'block_iomad_commerce'),
                                             365,
                                             PARAM_INT));
-
-    $pp = get_payment_providers();
-    foreach ($pp as $p) {
-
-        $pname = get_string('pp_' . $p . '_name', 'block_iomad_commerce');
-
-        $settings->add(new admin_setting_configcheckbox($p . '_enabled',
-                                        get_string('paymentprovider_enabled', 'block_iomad_commerce', $pname),
-                                        get_string('paymentprovider_enabled_help', 'block_iomad_commerce', $pname),
-                                        0));
-
-        $phpname = "$dir/checkout/$p/settings.php";
-
-        if (file_exists($phpname)) {
-            require_once($phpname);
-        }
-    }
 }
 
 
