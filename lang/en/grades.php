@@ -197,6 +197,7 @@ $string['errorupdatinggradecategoryaggregateoutcomes'] = 'Error updating the "In
 $string['errorupdatinggradecategoryaggregation'] = 'Error updating the aggregation type of grade category ID {$a->id}';
 $string['errorupdatinggradeitemaggregationcoef'] = 'Error updating the aggregation coefficient (weight or extra credit) of grade item ID {$a->id}';
 $string['eventgradedeleted'] = 'Grade deleted';
+$string['eventgradeexported'] = 'Grade exported';
 $string['eventgradeitemcreated'] = 'Grade item created';
 $string['eventgradeitemdeleted'] = 'Grade item deleted';
 $string['eventgradeitemupdated'] = 'Grade item updated';
