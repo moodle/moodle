@@ -52,9 +52,13 @@ class mod extends base {
         // Only set visibility if it's different from the current value.
         if ($module->visible != $enabled) {
             if ($enabled && component_callback_exists("mod_{$pluginname}", 'pre_enable_plugin_actions')) {
-                // Invoking a callback function that enables plugins to force additional actions (e.g. displaying notifications,
-                // modals, etc.) and also specify through its returned value (bool) whether the process of enabling the plugin
-                // should continue after these actions or not.
+                // This callback may be used to perform actions that must be completed prior to enabling a plugin.
+                // Example of this may include:
+                // - making a configuration change
+                // - adding an alert
+                // - checking a pre-requisite
+                //
+                // If the return value is falsy, then the change will be prevented.
                 if (!component_callback("mod_{$pluginname}", 'pre_enable_plugin_actions')) {
                     return false;
                 }
