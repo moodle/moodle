@@ -16,20 +16,25 @@ Feature: Set time spent as a completion condition for a lesson
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activity" exists:
+      | activity      | lesson                  |
+      | course        | C1                      |
+      | idnumber      | 0001                    |
+      | name          | Test lesson             |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
-    And I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Test lesson |
-      | Description | Test lesson description |
+    And I am on the "Test lesson" "lesson activity editing" page
+    And I set the following fields to these values:
       | Completion tracking | Show activity as complete when conditions are met |
       | completionview                | 0 |
       | completiontimespentenabled    | 1 |
       | completiontimespent[timeunit] | 1 |
-      | completiontimespent[number]   | 10 |
+      | completiontimespent[number]   | 5 |
+    And I press "Save and display"
     And I follow "Test lesson"
     And I follow "Add a content page"
     And I set the following fields to these values:
@@ -47,9 +52,7 @@ Feature: Set time spent as a completion condition for a lesson
       | id_answer_editor_1 | Next page |
       | id_jumpto_1 | Next page |
     And I press "Save page"
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     Then the "Test lesson" "lesson" activity with "auto" completion should be marked as not complete
     And I follow "Test lesson"
     And I press "Next page"
@@ -57,18 +60,15 @@ Feature: Set time spent as a completion condition for a lesson
     And I wait "1" seconds
     And I press "Next page"
     And I should see "You completed this lesson in"
-    And I should see ", which is less than the required time of 10 secs. You might need to attempt the lesson again."
+    And I should see ", which is less than the required time of 5 secs. You might need to attempt the lesson again."
     And I am on "Course 1" course homepage
     And the "Test lesson" "lesson" activity with "auto" completion should be marked as not complete
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson"
+    And I am on the "Test lesson" "lesson activity" page
     And I press "Next page"
-    And I wait "11" seconds
+    And I wait "5" seconds
     And I press "Next page"
     And I should not see "You might need to attempt the lesson again."
     And I am on "Course 1" course homepage
     And the "Test lesson" "lesson" activity with "auto" completion should be marked as complete
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as teacher1
     And "Student 1" user has completed "Test lesson" activity

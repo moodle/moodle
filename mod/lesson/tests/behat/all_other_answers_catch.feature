@@ -16,14 +16,15 @@ Feature: Numeric and short answer questions have a section to catch all other st
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1"
+    And the following "activity" exists:
+      | activity      | lesson                  |
+      | course        | C1                      |
+      | idnumber      | 0001                    |
+      | name          | Test lesson name        |
+      | maxattempts   | 3                       |
+    And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
       | Provide option to try a question again | Yes |
-      | Maximum number of attempts | 3 |
     And I press "Save and display"
 
   Scenario: I can create a numerical question with an option to catch all student responses.
@@ -45,10 +46,7 @@ Feature: Numeric and short answer questions have a section to catch all other st
       | id_answer_editor_0 | End this lesson |
       | id_jumpto_0 | End of lesson |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I set the field "Your answer" to "5"
     And I press "Submit"
     And I should see "That's the wrong answer"
@@ -79,10 +77,7 @@ Feature: Numeric and short answer questions have a section to catch all other st
       | id_answer_editor_0 | End this lesson |
       | id_jumpto_0 | End of lesson |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I set the field "Your answer" to "dog"
     And I press "Submit"
     And I should see "That's the wrong answer"

@@ -16,14 +16,14 @@ Feature: In a lesson activity, students can navigate through a series of pages i
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activities" exist:
+      | activity   | name             | course | idnumber    |
+      | lesson     | Test lesson name | C1     | lesson1     |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Student navigation with pages and questions
-    Given I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
-    And I follow "Test lesson name"
+    Given I am on the "Test lesson name" "lesson activity" page
     And I follow "Add a content page"
     And I set the following fields to these values:
       | Page title | First page name |
@@ -56,10 +56,7 @@ Feature: In a lesson activity, students can navigate through a series of pages i
       | id_jumpto_1 | Second page name |
       | id_score_1 | 0 |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "Test lesson name"
+    When I am on the "Test lesson name" "lesson activity" page logged in as student1
     Then I should see "First page contents"
     And I press "Next page"
     And I should see "Second page contents"
@@ -88,12 +85,11 @@ Feature: In a lesson activity, students can navigate through a series of pages i
     And I should see "Your score is 0 (out of 1)."
 
   Scenario: Student reattempts a question until out of attempts
-    Given I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
+    Given I am on the "Test lesson name" "lesson activity editing" page
+    And I set the following fields to these values:
       | id_review | Yes |
       | id_maxattempts | 3 |
-    And I follow "Test lesson name"
+    And I press "Save and display"
     And I follow "Add a question page"
     And I set the following fields to these values:
       | id_qtype | True/false |
@@ -104,10 +100,7 @@ Feature: In a lesson activity, students can navigate through a series of pages i
       | id_answer_editor_0 | right |
       | id_answer_editor_1 | wrong |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "Test lesson name"
+    When I am on the "Test lesson name" "lesson activity" page logged in as student1
     Then I should see "Test content"
     And I set the following fields to these values:
       | wrong | 1 |

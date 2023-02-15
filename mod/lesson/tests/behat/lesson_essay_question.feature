@@ -15,13 +15,10 @@ Feature: In a lesson activity, teacher can add an essay question
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
-      | Use default feedback | Yes |
-    And I follow "Test lesson name"
+    And the following "activities" exist:
+      | activity | name             | course | idnumber  | feedback |
+      | lesson   | Test lesson name | C1     | lesson1   | 1        |
+    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Add a question page"
     And I set the field "Select a question type" to "Essay"
     And I press "Add a question page"
@@ -29,10 +26,7 @@ Feature: In a lesson activity, teacher can add an essay question
       | Page title | Essay question |
       | Page contents | <p>Please write a story about a <b>frog</b>.</p> |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "Test lesson name"
+    When I am on the "Test lesson name" "lesson activity" page logged in as student1
     Then I should see "Please write a story about a frog."
     And I set the field "Your answer" to "<p>Once upon a time there was a little <b>green</b> frog."
     And I press "Submit"
@@ -44,10 +38,7 @@ Feature: In a lesson activity, teacher can add an essay question
     And I should see "You earned 0 out of 0 for the automatically graded questions."
     And I should see "Your 1 essay question(s) will be graded and added into your final score at a later date."
     And I should see "Your current grade without the essay question(s) is 0 out of 1."
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Grade essays"
     And I should see "Student 1"
     And I should see "Essay question"
