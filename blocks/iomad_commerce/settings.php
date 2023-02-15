@@ -105,6 +105,15 @@ if ($ADMIN->fulltree) {
                                             get_string('commerce_admin_default_license_shelf_life_help', 'block_iomad_commerce'),
                                             365,
                                             PARAM_INT));
+
+     $accounts = \core_payment\helper::get_payment_accounts_menu(context_system::instance());
+     if ($accounts) {
+         $accounts = ((count($accounts) > 1) ? ['' => ''] : []) + $accounts;
+     } else {
+         $accounts = ['' => ''];
+     }
+     $settings->add(new admin_setting_configselect('commerce_admin_paymentaccount', get_string('paymentaccount', 'payment'), '', '', $accounts));
+
 }
 
 

@@ -24,6 +24,10 @@
  */
 
 namespace block_iomad_commerce\payment;
+use iomad;
+use company;
+use context_system;
+
 
 /**
  * Payment subsystem callback implementation for block_iomad_commerce.
@@ -44,7 +48,11 @@ class service_provider implements \core_payment\local\callback\service_provider 
     public static function get_payable(string $paymentarea, int $instanceid): \core_payment\local\entities\payable {
         global $CFG;
 
-        return new \core_payment\local\entities\payable(\block_iomad_commerce\helper::get_basket_total($instanceid), $CFG->commerce_admin_currency, 1);
+        $companyid = iomad::get_my_companyid(context_system::instance());
+        $company = new company($companyid);
+        if ($paymentaccount = $company->get_payment_account()) {
+            return new \core_payment\local\entities\payable(\block_iomad_commerce\helper::get_basket_total($instanceid), $CFG->commerce_admin_currency, $paymentaccount);
+        }
     }
 
     /**

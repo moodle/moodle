@@ -103,6 +103,22 @@ class company {
     }
 
     /**
+     * Gets the company name for the current instance
+     *
+     * Returns text;
+     *
+     **/
+    public function get_payment_account() {
+        global $CFG;
+
+        if (!empty($this->companyrecord->paymentaccount)) {
+            return $this->companyrecord->paymentaccount;
+        } else {
+            return $CFG->commerce_admin_paymentaccount;
+        }
+    }
+
+    /**
      * Gets the types of managers available to the class
      *
      * Returns array();

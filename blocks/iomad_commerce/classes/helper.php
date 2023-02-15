@@ -509,7 +509,16 @@ class helper {
         global $CFG;
 
         // Confirm commerce admin has been defined
-        if (!$CFG->commerce_admin_firstname || !$CFG->commerce_admin_lastname || !$CFG->commerce_admin_email) {
+        if (!$CFG->commerce_enable_external &&
+             (!$CFG->commerce_admin_firstname ||
+              !$CFG->commerce_admin_lastname ||
+              !$CFG->commerce_admin_email ||
+              !$CFG->commerce_admin_paymentaccount)) {
+            return false;
+        }
+        // If we are using the external shop then also need the URL.
+        if ($CFG->commerce_enable_external &&
+            !$CFG->commerce_externalshop_url) {
             return false;
         }
 
