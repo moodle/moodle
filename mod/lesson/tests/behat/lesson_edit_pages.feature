@@ -17,11 +17,9 @@ Feature: In a lesson activity, teacher can edit lesson's pages
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And the following "activities" exist:
-      | activity | name             | intro                    | course | idnumber | section |
-      | lesson   | Test lesson name | Test lesson description  | C1     | lesson1  | 1       |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+      | activity | name             | course | idnumber |
+      | lesson   | Test lesson name | C1     | lesson1  |
+    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Add a content page"
     And I set the following fields to these values:
       | Page title | First page name |
@@ -67,10 +65,7 @@ Feature: In a lesson activity, teacher can edit lesson's pages
     And I press "Save page"
     Then I should see "Modified second page"
     And I should not see "Second page name"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "First page contents"
     And I press "Next page"
     And I should see "Modified contents"
@@ -106,10 +101,7 @@ Feature: In a lesson activity, teacher can edit lesson's pages
     And I press "Save page"
     Then I should see "New hardest question"
     And I should not see "Hardest question ever"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "First page contents"
     And I press "Next page"
     And I should see "Second page contents"

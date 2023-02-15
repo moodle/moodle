@@ -30,8 +30,8 @@ Feature: Lesson group override
       | student2 | G2 |
       | student3 | G1 |
     And the following "activities" exist:
-      | activity | name             | intro                   | groupmode  | course | idnumber |
-      | lesson   | Test lesson name | Test lesson description | 1          | C1     | lesson1  |
+      | activity | name             | groupmode  | course | idnumber |
+      | lesson   | Test lesson name | 1          | C1     | lesson1  |
     And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"
@@ -46,7 +46,6 @@ Feature: Lesson group override
       | id_response_editor_1 | Wrong |
       | id_jumpto_1          | This page |
     And I press "Save page"
-    And I log out
 
   Scenario: Add, modify then delete a group override
     Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1
@@ -105,7 +104,6 @@ Feature: Lesson group override
       | Re-takes allowed | 1 |
     And I press "Save"
     And I should see "Re-takes allowed"
-    And I log out
     Given I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
@@ -116,7 +114,6 @@ Feature: Lesson group override
     And I am on the "Test lesson name" "lesson activity" page
     Then I should not see "You are not allowed to retake this lesson."
     And I should see "Cat is an amphibian"
-    And I log out
     Given I am on the "Test lesson name" "lesson activity" page logged in as student2
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
@@ -140,7 +137,6 @@ Feature: Lesson group override
       | Password protected lesson | 12345 |
     And I press "Save"
     And I should see "Password protected lesson"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     Then I should see "Test lesson name is a password protected lesson"
     And I should not see "Cat is an amphibian"
@@ -156,7 +152,6 @@ Feature: Lesson group override
     And I press "Submit"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student2
     And I should see "Test lesson name is a password protected lesson"
     And I should not see "Cat is an amphibian"
@@ -189,11 +184,9 @@ Feature: Lesson group override
       | deadline[minute]    | 00 |
     And I press "Save"
     And I should see "Lesson closes"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student2
     Then the activity date in "Test lesson name" should contain "Closed: Saturday, 1 January 2000, 8:00"
     And I should not see "Cat is an amphibian"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
 
@@ -219,11 +212,9 @@ Feature: Lesson group override
       | available[minute]    | 00 |
     And I press "Save"
     And I should see "Lesson opens"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student2
     Then the activity date in "Test lesson name" should contain "Opens: Tuesday, 1 January 2030, 8:00"
     And I should not see "Cat is an amphibian"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
 
@@ -239,7 +230,6 @@ Feature: Lesson group override
       | Maximum number of attempts per question | 2 |
     And I press "Save"
     And I should see "Maximum number of attempts per question"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
@@ -252,7 +242,6 @@ Feature: Lesson group override
     And I press "Submit"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student2
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
@@ -298,13 +287,10 @@ Feature: Lesson group override
       | available[minute]    | 00 |
     And I press "Save"
     And I should see "Wednesday, 1 January 2031, 8:00"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And the activity date in "Test lesson name" should contain "Opens: Wednesday, 1 January 2031, 8:00"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student2
     And the activity date in "Test lesson name" should contain "Opens: Sunday, 1 January 2040, 8:00"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student3
     And the activity date in "Test lesson name" should contain "Opens: Tuesday, 1 January 2030, 8:00"
 
@@ -367,7 +353,6 @@ Feature: Lesson group override
       | available[hour]      | 08      |
       | available[minute]    | 00      |
     And I press "Save"
-    And I log out
     And I am on the "Lesson 2" "lesson activity" page logged in as teacher1
     And I navigate to "Group overrides" in current page administration
     Then I should see "Group 1" in the ".generaltable" "css_element"

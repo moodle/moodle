@@ -20,7 +20,6 @@ Feature: Using the lesson activities which support point scale
       | course      | C1                     |
       | activity    | lesson                 |
       | name        | Test lesson name       |
-      | intro       | Test forum description |
       | idnumber    | lesson1                |
 
   @javascript
@@ -37,11 +36,9 @@ Feature: Using the lesson activities which support point scale
       | id_enableotheranswers | 1 |
       | id_jumpto_6 | Next page |
     And I press "Save page"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I set the field "Your answer" to "5"
     And I press "Submit"
-    And I log out
     And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I expand all fieldsets
     Then the "Maximum grade" "field" should be disabled
