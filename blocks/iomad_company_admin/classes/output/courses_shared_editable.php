@@ -29,6 +29,7 @@ use core_external;
 use coding_exception;
 use company;
 use iomad;
+use cache_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -191,7 +192,6 @@ class courses_shared_editable extends \core\output\inplace_editable {
         // Process changes.
         $DB->set_field('iomad_courses', 'shared', $shared, ['courseid' => $courseid]);
 
-
         // Fire an event for this.
         $eventother = ['iomadcourse' => (array) $courserec];
         $event = \block_iomad_company_admin\event\company_course_updated::create(array('context' => $context,
@@ -199,6 +199,9 @@ class courses_shared_editable extends \core\output\inplace_editable {
                                                                                        'userid' => $USER->id,
                                                                                        'other' => $eventother));
         $event->trigger();
+
+        // Clear the caches.
+        cache_helper::purge_by_event('changesincompanycourses');
 
         return new self($company, $context, $courserec, $shared);
     }
