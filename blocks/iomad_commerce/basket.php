@@ -55,7 +55,6 @@ if (!empty($SESSION->basketid)) {
         // (and not on an invoice or on somebody else's basket).
         if ($DB->record_exists_sql('SELECT ii.id
                                       FROM {invoiceitem} ii
-                                INNER JOIN {course} c ON ii.invoiceableitemid = c.id
                                      WHERE ii.id = :toberemoved
                                        AND
                                     EXISTS ( SELECT id

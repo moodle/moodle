@@ -181,7 +181,11 @@ if ($itemcount) {
                      (iomad::has_capability('block/iomad_commerce:buyitnow', $context) || iomad::has_capability('block/iomad_commerce:buyinbulk', $context));
         $price = \block_iomad_commerce\helper::get_lowest_price_text($item);
         if ($available) {
-            $buynowurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_commerce/buynow.php", ['itemid' => $item->id]);
+            if ($item->allow_single_purchase) {
+                $buynowurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_commerce/buynow.php", ['itemid' => $item->id]);
+            } else {
+                $buynowurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_commerce/item.php", ['itemid' => $item->id]);
+            }
             $buynowbutton = "<a href='" . $buynowurl->out() . "' class='btn btn-primary'>$strbuynow</a>";
 
             $moreinfourl = new moodle_url($CFG->wwwroot . "/blocks/iomad_commerce/item.php", ['itemid' => $item->id]);
