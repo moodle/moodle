@@ -452,19 +452,48 @@ class mod_feedback_external extends external_api {
         $params = array('feedbackid' => $feedbackid, 'courseid' => $courseid);
         $params = self::validate_parameters(self::get_items_parameters(), $params);
         $warnings = array();
+        $returneditems = array();
 
         list($feedback, $course, $cm, $context, $completioncourse) = self::validate_feedback($params['feedbackid'],
             $params['courseid']);
 
-        $feedbackstructure = new mod_feedback_structure($feedback, $cm, $completioncourse->id);
-        $returneditems = array();
-        if ($items = $feedbackstructure->get_items()) {
-            foreach ($items as $item) {
-                $itemnumber = empty($item->itemnr) ? null : $item->itemnr;
-                unset($item->itemnr);   // Added by the function, not part of the record.
-                $exporter = new feedback_item_exporter($item, array('context' => $context, 'itemnumber' => $itemnumber));
-                $returneditems[] = $exporter->export($PAGE->get_renderer('core'));
+        $userhasaccess = true;
+        try {
+            // Check the user has access to the feedback.
+            self::validate_feedback_access($feedback, $completioncourse, $cm, $context, true);
+        } catch (moodle_exception $e) {
+            $userhasaccess = false;
+            $warnings[] = [
+                'item' => $feedback->id,
+                'warningcode' => clean_param($e->errorcode, PARAM_ALPHANUM),
+                'message' => $e->getMessage(),
+            ];
+        }
+
+        // For consistency with the web behaviour, the items should be returned only when the user can edit or view reports (to
+        // include non-editing teachers too).
+        $capabilities = [
+            'mod/feedback:edititems',
+            'mod/feedback:viewreports',
+        ];
+        if ($userhasaccess || has_any_capability($capabilities, $context)) {
+            // Remove previous warnings because, although the user might not have access, they have the proper capability.
+            $warnings = [];
+            $feedbackstructure = new mod_feedback_structure($feedback, $cm, $completioncourse->id);
+            if ($items = $feedbackstructure->get_items()) {
+                foreach ($items as $item) {
+                    $itemnumber = empty($item->itemnr) ? null : $item->itemnr;
+                    unset($item->itemnr);   // Added by the function, not part of the record.
+                    $exporter = new feedback_item_exporter($item, array('context' => $context, 'itemnumber' => $itemnumber));
+                    $returneditems[] = $exporter->export($PAGE->get_renderer('core'));
+                }
             }
+        } else if ($userhasaccess) {
+            $warnings[] = [
+                'item' => $feedback->id,
+                'warningcode' => 'nopermission',
+                'message' => 'nopermission',
+            ];
         }
 
         $result = array(
@@ -586,24 +615,59 @@ class mod_feedback_external extends external_api {
         $params = array('feedbackid' => $feedbackid, 'page' => $page, 'courseid' => $courseid);
         $params = self::validate_parameters(self::get_page_items_parameters(), $params);
         $warnings = array();
+        $returneditems = array();
+        $hasprevpage = false;
+        $hasnextpage = false;
 
         list($feedback, $course, $cm, $context, $completioncourse) = self::validate_feedback($params['feedbackid'],
             $params['courseid']);
 
-        $feedbackcompletion = new mod_feedback_completion($feedback, $cm, $completioncourse->id);
+        $userhasaccess = true;
+        $feedbackcompletion = null;
+        try {
+            // Check the user has access to the feedback.
+            $feedbackcompletion = self::validate_feedback_access($feedback, $completioncourse, $cm, $context, true);
+        } catch (moodle_exception $e) {
+            $userhasaccess = false;
+            $warnings[] = [
+                'item' => $feedback->id,
+                'warningcode' => str_replace('_', '', $e->errorcode),
+                'message' => $e->getMessage(),
+            ];
+        }
 
-        $page = $params['page'];
-        $pages = $feedbackcompletion->get_pages();
-        $pageitems = $pages[$page];
-        $hasnextpage = $page < count($pages) - 1; // Until we complete this page we can not trust get_next_page().
-        $hasprevpage = $page && ($feedbackcompletion->get_previous_page($page, false) !== null);
+        // For consistency with the web behaviour, the items should be returned only when the user can edit or view reports (to
+        // include non-editing teachers too).
+        $capabilities = [
+            'mod/feedback:edititems',
+            'mod/feedback:viewreports',
+        ];
+        if ($userhasaccess || has_any_capability($capabilities, $context)) {
+            // Remove previous warnings because, although the user might not have access, they have the proper capability.
+            $warnings = [];
 
-        $returneditems = array();
-        foreach ($pageitems as $item) {
-            $itemnumber = empty($item->itemnr) ? null : $item->itemnr;
-            unset($item->itemnr);   // Added by the function, not part of the record.
-            $exporter = new feedback_item_exporter($item, array('context' => $context, 'itemnumber' => $itemnumber));
-            $returneditems[] = $exporter->export($PAGE->get_renderer('core'));
+            if ($feedbackcompletion == null) {
+                $feedbackcompletion = new mod_feedback_completion($feedback, $cm, $completioncourse->id);
+            }
+
+            $page = $params['page'];
+            $pages = $feedbackcompletion->get_pages();
+            $pageitems = $pages[$page];
+            $hasnextpage = $page < count($pages) - 1; // Until we complete this page we can not trust get_next_page().
+            $hasprevpage = $page && ($feedbackcompletion->get_previous_page($page, false) !== null);
+
+            foreach ($pageitems as $item) {
+                $itemnumber = empty($item->itemnr) ? null : $item->itemnr;
+                unset($item->itemnr);   // Added by the function, not part of the record.
+                $exporter = new feedback_item_exporter($item, array('context' => $context, 'itemnumber' => $itemnumber));
+                $returneditems[] = $exporter->export($PAGE->get_renderer('core'));
+            }
+        } else if ($userhasaccess) {
+            $warnings[] = [
+                'item' => $feedback->id,
+                'warningcode' => 'nopermission',
+                'message' => get_string('nopermission', 'mod_feedback'),
+            ];
         }
 
         $result = array(
