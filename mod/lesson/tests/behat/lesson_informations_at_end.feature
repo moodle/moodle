@@ -18,15 +18,13 @@ Feature: In a lesson activity, if custom scoring is not enabled, student should 
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And the following "activities" exist:
-      | activity   | name             | intro                   | course | section | idnumber  |
-      | lesson     | Test lesson name | Test lesson description | C1     | 1       | lesson1   |
-    And I log in as "teacher1"
-    And I am on the "Test lesson name" "lesson activity editing" page
+      | activity   | name             | course | idnumber  |
+      | lesson     | Test lesson name | C1     | lesson1   |
+    And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | Maximum grade  | 75 |
       | Custom scoring | No    |
-    And I press "Save and return to course"
-    And I follow "Test lesson name"
+    And I press "Save and display"
     And I follow "Add a content page"
     And I set the following fields to these values:
       | Page title | First page name |
@@ -59,8 +57,7 @@ Feature: In a lesson activity, if custom scoring is not enabled, student should 
     And I log in as "student1"
 
   Scenario: Informations at end of lesson if custom scoring not enabled
-    Given I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    Given I am on the "Test lesson name" "lesson activity" page
     And I should see "First page contents"
     When I press "Next page"
     And I should see "1 + 1?"
@@ -79,8 +76,7 @@ Feature: In a lesson activity, if custom scoring is not enabled, student should 
     Given the following "language customisations" exist:
       | component       | stringid | value |
       | core_langconfig | decsep   | #     |
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page
     And I should see "First page contents"
     When I press "Next page"
     And I should see "1 + 1?"
@@ -96,8 +92,7 @@ Feature: In a lesson activity, if custom scoring is not enabled, student should 
     And I should see "Your current grade is 0#0 out of 75"
 
   Scenario: Current grade is displayed at end of lesson when grade type is set to scale
-    Given I am on "Course 1" course homepage
-    And I follow "Test lesson name 2"
+    Given I am on the "Test lesson name 2" "lesson activity" page
     When I press "Next page"
     And I should see "1 + 1?"
     And I set the following fields to these values:

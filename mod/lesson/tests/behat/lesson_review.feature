@@ -17,12 +17,9 @@ Feature: In a lesson activity, students can review the answers they gave to ques
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     Given the following "activities" exist:
-      | activity   | name             | intro                     | course | section | idnumber |
-      | lesson     | Test lesson name | Test lesson description   | C1     | 1       | lesson1  |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
-    And I navigate to "Settings" in current page administration
+      | activity   | name             | course | idnumber |
+      | lesson     | Test lesson name | C1     | lesson1  |
+    And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | Display ongoing score | Yes |
       | Slideshow | Yes |
@@ -31,8 +28,7 @@ Feature: In a lesson activity, students can review the answers they gave to ques
       | Maximum number of attempts per question | 3 |
       | Custom scoring | No |
       | Re-takes allowed | Yes |
-    And I press "Save and return to course"
-    And I follow "Test lesson name"
+    And I press "Save and display"
     And I follow "Add a question page"
     And I set the field "Select a question type" to "Numerical"
     And I press "Add a question page"
@@ -59,10 +55,7 @@ Feature: In a lesson activity, students can review the answers they gave to ques
       | id_response_editor_1 | Wrong |
       | id_jumpto_1 | This page |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "You have answered 0 correctly out of 0 attempts."
     And I set the following fields to these values:
       | Your answer | 1 |

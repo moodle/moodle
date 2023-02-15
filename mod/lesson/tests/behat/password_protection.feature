@@ -21,23 +21,16 @@ Feature: A teacher can password protect a lesson
       | course      | C1                      |
       | idnumber    | 0001                    |
       | name        | Test lesson             |
-      | intro       | Test lesson description |
-      | section     | 1                       |
       | usepassword | 1                       |
       | password    | moodle_rules            |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson"
+    And I am on the "Test lesson" "lesson activity" page logged in as teacher1
     And I follow "Add a content page"
     And I set the following fields to these values:
       | Page title | First page name |
       | Page contents | First page contents |
       | Description | The first one |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "Test lesson"
+    When I am on the "Test lesson" "lesson activity" page logged in as student1
     Then I should see "Test lesson is a password protected lesson"
     And I should not see "First page contents"
     And I set the field "userpassword" to "moodle"
