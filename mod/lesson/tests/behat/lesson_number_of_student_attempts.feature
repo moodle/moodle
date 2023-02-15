@@ -26,12 +26,8 @@ Feature: In Dashboard, teacher can see the number of student attempts to lessons
       | course   | C1                      |
       | idnumber | 0001                    |
       | name     | Test lesson name        |
-      | intro    | Test lesson description |
       | retake   | 1                       |
-      | section  | 1                       |
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
-    When I navigate to "Settings" in current page administration
+    When I am on the "Test lesson name" "lesson activity editing" page
     And I expand all fieldsets
     And I set the following fields to these values:
       | id_deadline_enabled | 1 |
@@ -40,8 +36,7 @@ Feature: In Dashboard, teacher can see the number of student attempts to lessons
       | deadline[year] | 2030 |
       | deadline[hour] | 08 |
       | deadline[minute] | 00 |
-    And I press "Save and return to course"
-    And I follow "Test lesson name"
+    And I press "Save and display"
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
@@ -82,10 +77,7 @@ Feature: In Dashboard, teacher can see the number of student attempts to lessons
       | id_response_editor_1 | Wrong |
       | id_jumpto_1 | This page |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
       | False | 1 |
@@ -123,9 +115,7 @@ Feature: In Dashboard, teacher can see the number of student attempts to lessons
     And I should see "Congratulations - end of lesson reached"
     And I should see "Your score is 3 (out of 3)."
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student2
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
       | True | 1 |
@@ -143,4 +133,3 @@ Feature: In Dashboard, teacher can see the number of student attempts to lessons
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
     And I should see "Your score is 2 (out of 3)."
-    And I log out
