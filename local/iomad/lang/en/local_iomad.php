@@ -26,6 +26,9 @@
  */
 
 $string['cannotemailnontemporarypasswords'] = 'It is insecure to send passwords by email without forcing them to be changed on first login.';
+$string['cachedef_companycategories'] = 'Cache to hold categories which are assigned to a company.';
+$string['cachedef_companycoursecategories'] = 'Cache to hold categories which a company has access to.';
+$string['cachedef_allcompanycategories'] = 'Cache to hold categories which any company has access to.';
 $string['companycityfilter'] = 'Company location contains';
 $string['companycountryfilter'] = 'Company country contains';
 $string['companycourses'] = 'Other company courses';

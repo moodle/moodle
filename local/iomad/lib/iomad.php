@@ -391,26 +391,37 @@ class iomad {
         $companyid = iomad::get_my_companyid(context_system::instance());
         $company = $DB->get_record('company', ['id' => $companyid]);
 
+        // Get the cache objects.
+        $allcompanycategoriescache = cache::make('local_iomad', 'allcompanycategories');
+        $companycategoriescache = cache::make('local_iomad', 'companycategories');
+        $companycoursecategoriescache = cache::make('local_iomad', 'companycoursecategories');
+
         // Get all of the company course categories including children.
-        $allcompanycategories = [];
-        $companyroots = $DB->get_records('company', [], 'category', 'category');
-        foreach ($companyroots as $companyroot) {
-            $allcompanycategories[$companyroot->category] = $companyroot->category;
-            $children = $DB->get_records_sql("SELECT DISTINCT id
-                                              FROM {course_categories}
-                                              WHERE " . $DB->sql_like("path", ":parentpath"),
-                                              ['parentpath' => "/" . $companyroot->category . "/%"]);
-            foreach ($children as $child) {
-                $allcompanycategories[$child->id] = $child->id;
+        if (!$allcompanycategories = $allcompanycategoriescache->get('all')) {
+            $allcompanycategories = [];
+            $companyroots = $DB->get_records('company', [], 'category', 'category');
+            foreach ($companyroots as $companyroot) {
+                $allcompanycategories[$companyroot->category] = $companyroot->category;
+                $children = $DB->get_records_sql("SELECT DISTINCT id
+                                                  FROM {course_categories}
+                                                  WHERE " . $DB->sql_like("path", ":parentpath"),
+                                                  ['parentpath' => "/" . $companyroot->category . "/%"]);
+                foreach ($children as $child) {
+                    $allcompanycategories[$child->id] = $child->id;
+                }
             }
+            $allcompanycategoriescache->set('all', $allcompanycategories);
         }
 
         // Get the current company course categories.
         if (!empty($company->category)) {
-            $mycompanycategories = $DB->get_records_sql("SELECT DISTINCT cc.id
-                                                         FROM {course_categories} cc
-                                                         WHERE " . $DB->sql_like('cc.path', ':companycategorysearch'),
-                                                         ['companycategorysearch' => '/' . $company->category . '%']);
+            if (!$mycompanycategories = $companycategoriescache->get($company->id)) {
+                $mycompanycategories = $DB->get_records_sql("SELECT DISTINCT cc.id
+                                                             FROM {course_categories} cc
+                                                             WHERE " . $DB->sql_like('cc.path', ':companycategorysearch'),
+                                                             ['companycategorysearch' => '/' . $company->category . '%']);
+                $companycategoriescache->set($company->id, $mycompanycategories);
+            }
         } else {
             $mycompanycategories = [];
         }
@@ -423,11 +434,14 @@ class iomad {
         }
 
         // Get all of the categories of courses assigned to the company.
-        $companycourses = $DB->get_records_sql("SELECT distinct c.category
-                                                FROM {course} c
-                                                JOIN {company_course} cc ON (c.id = cc.courseid)
-                                                WHERE cc.companyid = :companyid",
-                                                ['companyid' => $companyid]);
+        if (!$companycourses = $companycoursecategoriescache->get($company->id)) {
+            $companycourses = $DB->get_records_sql("SELECT distinct c.category
+                                                    FROM {course} c
+                                                    JOIN {company_course} cc ON (c.id = cc.courseid)
+                                                    WHERE cc.companyid = :companyid",
+                                                    ['companyid' => $companyid]);
+            $companycoursecategoriescache->set($company->id, $companycourses);
+        }
 
         // Set up the return array;
         $iomadcategories = array();
