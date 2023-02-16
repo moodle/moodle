@@ -57,7 +57,7 @@ export default {
         cell: '.cb-column',
         cbnavbarbreadcrumb: '.cb-navbar-breadbrumb',
         cbnavbartotalsearch: '.cb-navbar-totalsearch',
-        searchinput: '#searchinput',
+        searchinput: '[role="searchbox"]',
         sortbutton: '.cb-btnsort'
     },
 };
