@@ -14,20 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Events tests.
- *
- * @package    core
- * @category   test
- * @copyright  2016 Stephen Bourget
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_my\event;
+
+use context_system;
+use context_user;
 
 /**
  * Unit tests for the dashboard events.
  *
+ * @package    core
+ * @category   test
  * @copyright  2016 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -81,19 +77,35 @@ class events_test extends \advanced_testcase {
      *
      * We will reset the user dashboard to
      * trigger the event and ensure data is returned as expected.
+     *
+     * @covers ::my_reset_page
      */
     public function test_dashboard_reset() {
-        global $CFG;
+        global $CFG, $DB;
         require_once($CFG->dirroot . '/my/lib.php');
+
         $user = $this->user;
-        $sink = $this->redirectEvents();
+        $usercontext = context_user::instance($this->user->id);
+
+        // Create at least one dashboard.
+        my_copy_page($this->user->id);
+        $this->assertNotEmpty($DB->get_records('my_pages', ['userid' => $this->user->id, 'private' => MY_PAGE_PRIVATE,
+            'name' => MY_PAGE_DEFAULT]));
+        $this->assertNotEmpty($DB->get_records('block_instances', ['parentcontextid' => $usercontext->id]));
 
         // Reset the dashboard.
+        $sink = $this->redirectEvents();
         my_reset_page($user->id);
+
+        // Assert that the page and all th blocks were deleted.
+        $this->assertEmpty($DB->get_records('my_pages', ['userid' => $this->user->id, 'private' => MY_PAGE_PRIVATE,
+            'name' => MY_PAGE_DEFAULT]));
+        $this->assertEmpty($DB->get_records('block_instances', ['parentcontextid' => $usercontext->id]));
 
         // Trigger and capture the event.
         $events = $sink->get_events();
         $event = reset($events);
+        $sink->close();
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\dashboard_reset', $event);
@@ -103,12 +115,29 @@ class events_test extends \advanced_testcase {
         $this->assertDebuggingNotCalled();
 
         // Reset the dashboard with private parameter is set to MY_PAGE_PUBLIC and pagetype set to 'user-profile'.
+        $systempage = $DB->get_record('my_pages', ['userid' => null, 'name' => MY_PAGE_DEFAULT, 'private' => MY_PAGE_PUBLIC]);
+        $this->getDataGenerator()->create_block('online_users', [
+            'parentcontextid' => context_system::instance()->id,
+            'pagetypepattern' => 'user-profile',
+            'subpagepattern' => $systempage->id,
+        ]);
+
+        my_copy_page($this->user->id, MY_PAGE_PUBLIC, 'user-profile');
+        $this->assertNotEmpty($DB->get_records('my_pages', ['userid' => $this->user->id, 'private' => MY_PAGE_PUBLIC,
+            'name' => MY_PAGE_DEFAULT]));
+        $this->assertNotEmpty($DB->get_records('block_instances', ['parentcontextid' => $usercontext->id]));
+
         $sink = $this->redirectEvents();
         my_reset_page($user->id, MY_PAGE_PUBLIC, 'user-profile');
+        $this->assertEmpty($DB->get_records('my_pages', ['userid' => $this->user->id, 'private' => MY_PAGE_PUBLIC,
+            'name' => MY_PAGE_DEFAULT]));
+        $this->assertEmpty($DB->get_records('block_instances', ['parentcontextid' => $usercontext->id]));
 
         // Trigger and capture the event.
         $events = $sink->get_events();
         $event = reset($events);
+        $sink->close();
+
         $this->assertEquals(MY_PAGE_PUBLIC, $event->other['private']);
         $this->assertEquals('user-profile', $event->other['pagetype']);
     }
@@ -118,19 +147,34 @@ class events_test extends \advanced_testcase {
      *
      * We will reset all user dashboards to
      * trigger the event and ensure data is returned as expected.
+     *
+     * @covers ::my_reset_page_for_all_users
      */
     public function test_dashboards_reset() {
-        global $CFG, $USER;
+        global $CFG, $USER, $DB;
         require_once($CFG->dirroot . '/my/lib.php');
 
-        $sink = $this->redirectEvents();
+        $usercontext = context_user::instance($this->user->id);
+
+        // Create at least one dashboard.
+        my_copy_page($this->user->id);
+        $this->assertNotEmpty($DB->get_records('my_pages', ['userid' => $this->user->id, 'private' => MY_PAGE_PRIVATE,
+            'name' => MY_PAGE_DEFAULT]));
+        $this->assertNotEmpty($DB->get_records('block_instances', ['parentcontextid' => $usercontext->id]));
 
         // Reset all dashbaords.
+        $sink = $this->redirectEvents();
         my_reset_page_for_all_users();
+
+        // Assert that the page and all th blocks were deleted.
+        $this->assertEmpty($DB->get_records('my_pages', ['userid' => $this->user->id, 'private' => MY_PAGE_PRIVATE,
+            'name' => MY_PAGE_DEFAULT]));
+        $this->assertEmpty($DB->get_records('block_instances', ['parentcontextid' => $usercontext->id]));
 
         // Trigger and capture the event.
         $events = $sink->get_events();
         $event = reset($events);
+        $sink->close();
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\dashboards_reset', $event);
@@ -140,12 +184,29 @@ class events_test extends \advanced_testcase {
         $this->assertDebuggingNotCalled();
 
         // Reset the dashboards with private parameter is set to MY_PAGE_PUBLIC and pagetype set to 'user-profile'.
+        $systempage = $DB->get_record('my_pages', ['userid' => null, 'name' => MY_PAGE_DEFAULT, 'private' => MY_PAGE_PUBLIC]);
+        $this->getDataGenerator()->create_block('online_users', [
+            'parentcontextid' => context_system::instance()->id,
+            'pagetypepattern' => 'user-profile',
+            'subpagepattern' => $systempage->id,
+        ]);
+
+        my_copy_page($this->user->id, MY_PAGE_PUBLIC, 'user-profile');
+        $this->assertNotEmpty($DB->get_records('my_pages', ['userid' => $this->user->id, 'private' => MY_PAGE_PUBLIC,
+            'name' => MY_PAGE_DEFAULT]));
+        $this->assertNotEmpty($DB->get_records('block_instances', ['parentcontextid' => $usercontext->id]));
+
         $sink = $this->redirectEvents();
         my_reset_page_for_all_users(MY_PAGE_PUBLIC, 'user-profile');
+        $this->assertEmpty($DB->get_records('my_pages', ['userid' => $this->user->id, 'private' => MY_PAGE_PUBLIC,
+            'name' => MY_PAGE_DEFAULT]));
+        $this->assertEmpty($DB->get_records('block_instances', ['parentcontextid' => $usercontext->id]));
 
         // Trigger and capture the event.
         $events = $sink->get_events();
         $event = reset($events);
+        $sink->close();
+
         $this->assertEquals(MY_PAGE_PUBLIC, $event->other['private']);
         $this->assertEquals('user-profile', $event->other['pagetype']);
     }
