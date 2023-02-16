@@ -1,5 +1,9 @@
 This files describes API changes for code that uses the user API.
 
+=== 4.0.7 ===
+
+* New method `core_user::is_current_user`, useful for components implementing permission callbacks for their preferences
+
 === 4.0.6 ===
 * Added a new method is_transform_supported() in the profile_field_base class.
   The purpose is to allow the field to be transformed during the export process.
