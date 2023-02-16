@@ -78,7 +78,7 @@ class renderer_base {
     /**
      * @var array $templatecache The mustache template cache.
      */
-    protected $templatecache = array();
+    protected $templatecache = [];
 
     /**
      * Return an instance of the mustache class.
