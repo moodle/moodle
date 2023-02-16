@@ -26,7 +26,14 @@
 
 namespace auth_iomadoidc\loginflow;
 
+use auth_iomadoidc\event\user_authed;
+use auth_iomadoidc\jwt;
 use auth_iomadoidc\utils;
+use core\output\notification;
+use moodle_exception;
+use moodle_url;
+use pix_icon;
+use iomad;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -40,18 +47,15 @@ class authcode extends base {
      * Returns a list of potential IdPs that this authentication plugin supports. Used to provide links on the login page.
      *
      * @param string $wantsurl The relative url fragment the user wants to get to.
-     * @return array Array of idps.
+     * @return array Array of IdPs.
      */
     public function loginpage_idp_list($wantsurl) {
-        if (empty($this->config->clientid) || empty($this->config->clientsecret)) {
-            return [];
-        }
-        if (empty($this->config->authendpoint) || empty($this->config->tokenendpoint)) {
+        if (!auth_iomadoidc_is_setup_complete()) {
             return [];
         }
 
         if (!empty($this->config->customicon)) {
-            $icon = new \pix_icon('0/customicon', get_string('pluginname', 'auth_iomadoidc'), 'auth_iomadoidc');
+            $icon = new pix_icon('0/customicon', get_string('pluginname', 'auth_iomadoidc'), 'auth_iomadoidc');
         } else {
             $icon = (!empty($this->config->icon)) ? $this->config->icon : 'auth_iomadoidc:o365';
             $icon = explode(':', $icon);
@@ -61,14 +65,14 @@ class authcode extends base {
                 $iconcomponent = 'auth_iomadoidc';
                 $iconkey = 'o365';
             }
-            $icon = new \pix_icon($iconkey, get_string('pluginname', 'auth_iomadoidc'), $iconcomponent);
+            $icon = new pix_icon($iconkey, get_string('pluginname', 'auth_iomadoidc'), $iconcomponent);
         }
 
         return [
             [
-                'url' => new \moodle_url('/auth/iomadoidc/'),
+                'url' => new moodle_url('/auth/iomadoidc/'),
                 'icon' => $icon,
-                'name' => $this->config->opname,
+                'name' => strip_tags(format_text($this->config->opname)),
             ]
         ];
     }
@@ -88,7 +92,7 @@ class authcode extends base {
         $valclean = preg_replace('/[^A-Za-z0-9\_\-\.\+\/\=]/i', '', $val);
         if ($valclean !== $val) {
             utils::debug('Authorization error.', 'authcode::cleaniomadoidcparam', $name);
-            throw new \moodle_exception('errorauthgeneral', 'auth_iomadoidc');
+            throw new moodle_exception('errorauthgeneral', 'auth_iomadoidc');
         }
         return $valclean;
     }
@@ -100,6 +104,29 @@ class authcode extends base {
      */
     public function handleredirect() {
         global $CFG, $SESSION;
+
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
+        if (get_config('auth_iomadoidc', 'idptype' . $postfix) == AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT) {
+            $adminconsent = optional_param('admin_consent', '', PARAM_TEXT);
+            if ($adminconsent) {
+                $state = $this->getiomadoidcparam('state');
+                if (!empty($state)) {
+                    $requestparams = [
+                        'state' => $state,
+                        'error_description' => optional_param('error_description', '', PARAM_TEXT),
+                    ];
+                    $this->handlecertadminconsentresponse($requestparams);
+                }
+            }
+        }
 
         $state = $this->getiomadoidcparam('state');
         $code = $this->getiomadoidcparam('code');
@@ -120,7 +147,7 @@ class authcode extends base {
                     $urltogo = $SESSION->wantsurl;
                     unset($SESSION->wantsurl);
                 } else {
-                    $urltogo = new \moodle_url('/');
+                    $urltogo = new moodle_url('/');
                 }
                 redirect($urltogo);
                 die();
@@ -172,6 +199,74 @@ class authcode extends base {
     }
 
     /**
+     * Initiaite an admin consent request when using Microsoft Identity Platform.
+     *
+     * @param array $stateparams
+     * @param array $extraparams
+     * @return void
+     */
+    public function initiateadminconsentrequest(array $stateparams = [], array $extraparams = []) {
+        $client = $this->get_iomadoidcclient();
+        $client->adminconsentrequest($stateparams, $extraparams);
+    }
+
+    /**
+     * @param array $authparams
+     * @return void
+     * @throws moodle_exception
+     */
+    protected function handlecertadminconsentresponse(array $authparams) {
+        global $CFG, $DB, $SESSION;
+
+        if (!empty($authparams['error_description'])) {
+            utils::debug('Authorization error.', 'authcode::handleauthresponse', $authparams);
+            redirect($CFG->wwwroot, get_string('errorauthgeneral', 'auth_iomadoidc'), null, notification::NOTIFY_ERROR);
+        }
+
+        if (!isset($authparams['state'])) {
+            utils::debug('No state received.', 'authcode::handleauthresponse', $authparams);
+            throw new moodle_exception('errorauthunknownstate', 'auth_iomadoidc');
+        }
+
+        // Validate and expire state.
+        $staterec = $DB->get_record('auth_iomadoidc_state', ['state' => $authparams['state']]);
+        if (empty($staterec)) {
+            throw new moodle_exception('errorauthunknownstate', 'auth_iomadoidc');
+        }
+
+        $orignonce = $staterec->nonce;
+        $additionaldata = [];
+        if (!empty($staterec->additionaldata)) {
+            $additionaldata = @unserialize($staterec->additionaldata);
+            if (!is_array($additionaldata)) {
+                $additionaldata = [];
+            }
+        }
+        $SESSION->stateadditionaldata = $additionaldata;
+        $DB->delete_records('auth_iomadoidc_state', ['id' => $staterec->id]);
+
+        // Get token.
+        $client = $this->get_iomadoidcclient();
+        $tokenparams = $client->app_access_token_request();
+        if (!isset($tokenparams['access_token'])) {
+            throw new moodle_exception('errorauthnoaccesstoken', 'auth_iomadoidc');
+        }
+
+        $eventdata = [
+            'other' => [
+                'authparams' => $authparams,
+                'tokenparams' => $tokenparams,
+                'statedata' => $additionaldata,
+            ]
+        ];
+        $event = user_authed::create($eventdata);
+        $event->trigger();
+
+        $redirect = (!empty($additionaldata['redirect'])) ? $additionaldata['redirect'] : '/auth/iomadoidc/ucp.php';
+        redirect(new moodle_url($redirect));
+    }
+
+    /**
      * Handle an authorization request response received from the configured OP.
      *
      * @param array $authparams Received parameters.
@@ -179,26 +274,38 @@ class authcode extends base {
     protected function handleauthresponse(array $authparams) {
         global $DB, $SESSION, $USER, $CFG;
 
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
+        $sid = optional_param('session_state', '', PARAM_TEXT);
+
         if (!empty($authparams['error_description'])) {
             utils::debug('Authorization error.', 'authcode::handleauthresponse', $authparams);
-            redirect($CFG->wwwroot, get_string('errorauthgeneral', 'auth_iomadoidc'), null, \core\output\notification::NOTIFY_ERROR);
+            redirect($CFG->wwwroot, get_string('errorauthgeneral', 'auth_iomadoidc'), null, notification::NOTIFY_ERROR);
         }
 
         if (!isset($authparams['code'])) {
             utils::debug('No auth code received.', 'authcode::handleauthresponse', $authparams);
-            throw new \moodle_exception('errorauthnoauthcode', 'auth_iomadoidc');
+            throw new moodle_exception('errorauthnoauthcode', 'auth_iomadoidc');
         }
 
         if (!isset($authparams['state'])) {
             utils::debug('No state received.', 'authcode::handleauthresponse', $authparams);
-            throw new \moodle_exception('errorauthunknownstate', 'auth_iomadoidc');
+            throw new moodle_exception('errorauthunknownstate', 'auth_iomadoidc');
         }
 
         // Validate and expire state.
         $staterec = $DB->get_record('auth_iomadoidc_state', ['state' => $authparams['state']]);
         if (empty($staterec)) {
-            throw new \moodle_exception('errorauthunknownstate', 'auth_iomadoidc');
+            throw new moodle_exception('errorauthunknownstate', 'auth_iomadoidc');
         }
+
         $orignonce = $staterec->nonce;
         $additionaldata = [];
         if (!empty($staterec->additionaldata)) {
@@ -214,10 +321,10 @@ class authcode extends base {
         $client = $this->get_iomadoidcclient();
         $tokenparams = $client->tokenrequest($authparams['code']);
         if (!isset($tokenparams['id_token'])) {
-            throw new \moodle_exception('errorauthnoidtoken', 'auth_iomadoidc');
+            throw new moodle_exception('errorauthnoidtoken', 'auth_iomadoidc');
         }
 
-        // Decode and verify idtoken.
+        // Decode and verify ID token.
         [$iomadoidcuniqid, $idtoken] = $this->process_idtoken($tokenparams['id_token'], $orignonce);
 
         // Check restrictions.
@@ -225,7 +332,7 @@ class authcode extends base {
         if ($passed !== true && empty($additionaldata['ignorerestrictions'])) {
             $errstr = 'User prevented from logging in due to restrictions.';
             utils::debug($errstr, 'handleauthresponse', $idtoken);
-            throw new \moodle_exception('errorrestricted', 'auth_iomadoidc');
+            throw new moodle_exception('errorrestricted', 'auth_iomadoidc');
         }
 
         // This is for setting the system API user.
@@ -237,7 +344,7 @@ class authcode extends base {
                     'statedata' => $additionaldata,
                 ]
             ];
-            $event = \auth_iomadoidc\event\user_authed::create($eventdata);
+            $event = user_authed::create($eventdata);
             $event->trigger();
             return true;
         }
@@ -245,14 +352,24 @@ class authcode extends base {
         // Check if IOMADoIDC user is already migrated.
         $tokenrec = $DB->get_record('auth_iomadoidc_token', ['iomadoidcuniqid' => $iomadoidcuniqid]);
         if (isloggedin() && !isguestuser() && (empty($tokenrec) || (isset($USER->auth) && $USER->auth !== 'iomadoidc'))) {
-
             // If user is already logged in and trying to link Microsoft 365 account or use it for IOMADoIDC.
             // Check if that Microsoft 365 account already exists in moodle.
+            if (get_config('auth_iomadoidc', 'idptype' . $postfix) == AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT) {
+                $upn = $idtoken->claim('preferred_username');
+                if (empty($upn)) {
+                    $upn = $idtoken->claim('email');
+                }
+            } else {
+                $upn = $idtoken->claim('upn');
+                if (empty($upn)) {
+                    $upn = $idtoken->claim('unique_name');
+                }
+            }
             $userrec = $DB->count_records_sql('SELECT COUNT(*)
                                                  FROM {user}
                                                 WHERE username = ?
                                                       AND id != ?',
-                    [$idtoken->claim('upn'), $USER->id]);
+                    [$upn, $USER->id]);
 
             if (!empty($userrec)) {
                 if (empty($additionaldata['redirect'])) {
@@ -260,9 +377,9 @@ class authcode extends base {
                 } else if ($additionaldata['redirect'] == '/local/o365/ucp.php') {
                     $redirect = $additionaldata['redirect'].'?action=connection&o365accountconnected=true';
                 } else {
-                    throw new \moodle_exception('errorinvalidredirect_message', 'auth_iomadoidc');
+                    throw new moodle_exception('errorinvalidredirect_message', 'auth_iomadoidc');
                 }
-                redirect(new \moodle_url($redirect));
+                redirect(new moodle_url($redirect));
             }
 
             // If the user is already logged in we can treat this as a "migration" - a user switching to IOMADoIDC.
@@ -272,10 +389,13 @@ class authcode extends base {
             }
             $this->handlemigration($iomadoidcuniqid, $authparams, $tokenparams, $idtoken, $connectiononly);
             $redirect = (!empty($additionaldata['redirect'])) ? $additionaldata['redirect'] : '/auth/iomadoidc/ucp.php';
-            redirect(new \moodle_url($redirect));
+            redirect(new moodle_url($redirect));
         } else {
             // Otherwise it's a user logging in normally with IOMADoIDC.
             $this->handlelogin($iomadoidcuniqid, $authparams, $tokenparams, $idtoken);
+            if ($USER->id && $DB->record_exists('auth_iomadoidc_token', ['userid' => $USER->id])) {
+                $DB->set_field('auth_iomadoidc_token', 'sid', $sid, ['userid' => $USER->id]);
+            }
             redirect(core_login_get_return_url());
         }
     }
@@ -284,9 +404,9 @@ class authcode extends base {
      * Handle a user migration event.
      *
      * @param string $iomadoidcuniqid A unique identifier for the user.
-     * @param array $authparams Paramteres receieved from the auth request.
+     * @param array $authparams Parameters received from the auth request.
      * @param array $tokenparams Parameters received from the token request.
-     * @param \auth_iomadoidc\jwt $idtoken A JWT object representing the received id_token.
+     * @param jwt $idtoken A JWT object representing the received id_token.
      * @param bool $connectiononly Whether to just connect the user (true), or to connect and change login method (false).
      */
     protected function handlemigration($iomadoidcuniqid, $authparams, $tokenparams, $idtoken, $connectiononly = false) {
@@ -312,7 +432,7 @@ class authcode extends base {
                     return true;
                 } else {
                     // IOMADoIDC user connected to user that is not us. Can't continue.
-                    throw new \moodle_exception('errorauthuserconnectedtodifferent', 'auth_iomadoidc');
+                    throw new moodle_exception('errorauthuserconnectedtodifferent', 'auth_iomadoidc');
                 }
             }
         }
@@ -331,7 +451,7 @@ class authcode extends base {
                 $this->updatetoken($tokenrec->id, $authparams, $tokenparams);
                 return true;
             } else {
-                throw new \moodle_exception('errorauthuseralreadyconnected', 'auth_iomadoidc');
+                throw new moodle_exception('errorauthuseralreadyconnected', 'auth_iomadoidc');
             }
         }
 
@@ -418,18 +538,27 @@ class authcode extends base {
      * Handle a login event.
      *
      * @param string $iomadoidcuniqid A unique identifier for the user.
-     * @param array $authparams Parameters receieved from the auth request.
+     * @param array $authparams Parameters received from the auth request.
      * @param array $tokenparams Parameters received from the token request.
-     * @param \auth_iomadoidc\jwt $idtoken A JWT object representing the received id_token.
+     * @param jwt $idtoken A JWT object representing the received id_token.
      */
-    protected function handlelogin($iomadoidcuniqid, $authparams, $tokenparams, $idtoken) {
+    protected function handlelogin(string $iomadoidcuniqid, array $authparams, array $tokenparams, jwt $idtoken) {
         global $DB, $CFG;
+
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
 
         $tokenrec = $DB->get_record('auth_iomadoidc_token', ['iomadoidcuniqid' => $iomadoidcuniqid]);
 
         // Do not continue if auth plugin is not enabled.
         if (!is_enabled_auth('iomadoidc')) {
-            throw new \moodle_exception('erroriomadoidcnotenabled', 'auth_iomadoidc', null, null, '1');
+            throw new moodle_exception('erroriomadoidcnotenabled', 'auth_iomadoidc', null, null, '1');
         }
 
         if (!empty($tokenrec)) {
@@ -466,10 +595,9 @@ class authcode extends base {
                 complete_user_login($user);
             } else {
                 // There was a problem in authenticate_user_login.
-                throw new \moodle_exception('errorauthgeneral', 'auth_iomadoidc', null, null, '2');
+                throw new moodle_exception('errorauthgeneral', 'auth_iomadoidc', null, null, '2');
             }
 
-            return true;
         } else {
             /* No existing token, user not connected. Possibilities:
                 - Matched user.
@@ -478,8 +606,19 @@ class authcode extends base {
 
             // Generate a Moodle username.
             // Use 'upn' if available for username (Azure-specific), or fall back to lower-case iomadoidcuniqid.
-            $username = $idtoken->claim('upn');
+            if (get_config('auth_iomadoidc', 'idptype' . $postfix) == AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT) {
+                $username = $idtoken->claim('preferred_username');
+                if (empty($username)) {
+                    $username = $idtoken->claim('email');
+                }
+            } else {
+                $username = $idtoken->claim('upn');
+                if (empty($username)) {
+                    $username = $idtoken->claim('unique_name');
+                }
+            }
             $originalupn = null;
+
             if (empty($username)) {
                 $username = $iomadoidcuniqid;
 
@@ -501,7 +640,7 @@ class authcode extends base {
             if (!empty($matchedwith)) {
                 if ($matchedwith->auth != 'iomadoidc') {
                     $matchedwith->aadupn = $username;
-                    throw new \moodle_exception('errorusermatched', 'auth_iomadoidc', null, $matchedwith);
+                    throw new moodle_exception('errorusermatched', 'auth_iomadoidc', null, $matchedwith);
                 }
             }
             $username = trim(\core_text::strtolower($username));
@@ -511,6 +650,12 @@ class authcode extends base {
             if ($DB->record_exists('user', $existinguserparams) !== true) {
                 // User does not exist. Create user if site allows, otherwise fail.
                 if (empty($CFG->authpreventaccountcreation)) {
+                    if (!$CFG->allowaccountssameemail) {
+                        $userinfo = $this->get_userinfo($username);
+                        if ($DB->count_records('user', array('email' => $userinfo['email'], 'deleted' => 0)) > 0) {
+                            throw new moodle_exception('errorauthloginfaileddupemail', 'auth_iomadoidc', null, null, '1');
+                        }
+                    }
                     $user = create_user_record($username, null, 'iomadoidc');
                 } else {
                     // Trigger login failed event.
@@ -518,7 +663,7 @@ class authcode extends base {
                     $eventdata = ['other' => ['username' => $username, 'reason' => $failurereason]];
                     $event = \core\event\user_login_failed::create($eventdata);
                     $event->trigger();
-                    throw new \moodle_exception('errorauthloginfailednouser', 'auth_iomadoidc', null, null, '1');
+                    throw new moodle_exception('errorauthloginfailednouser', 'auth_iomadoidc', null, null, '1');
                 }
             }
 
@@ -540,10 +685,10 @@ class authcode extends base {
                     $DB->delete_records('auth_iomadoidc_token', ['id' => $tokenrec->id]);
                 }
 
-                redirect($CFG->wwwroot, get_string('errorauthgeneral', 'auth_iomadoidc'), null, \core\output\notification::NOTIFY_ERROR);
+                redirect($CFG->wwwroot, get_string('errorauthgeneral', 'auth_iomadoidc'), null, notification::NOTIFY_ERROR);
             }
 
-            return true;
         }
+        return true;
     }
 }

@@ -15,18 +15,33 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version information.
+ * Single Sign Out end point.
  *
  * @package auth_iomadoidc
- * @author James McQuillan <james.mcquillan@remote-learner.net>
+ * @author Lai Wei <lai.wei@enovation.ie>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
-defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/../../config.php');
 
-$plugin->version = 2022112800;
-$plugin->requires = 2022112800;
-$plugin->release = '4.1.0';
-$plugin->component = 'auth_iomadoidc';
-$plugin->maturity = MATURITY_STABLE;
+$PAGE->set_url('/auth/iomadoidc/logout.php');
+$PAGE->set_context(context_system::instance());
+
+$sid = optional_param('sid', '', PARAM_TEXT);
+
+if ($sid) {
+    if ($authiomadoidctokenrecord = $DB->get_record('auth_iomadoidc_token', ['sid' => $sid])) {
+        if ($authiomadoidctokenrecord->userid == $USER->id) {
+            $authsequence = get_enabled_auth_plugins(); // auths, in sequence
+            foreach($authsequence as $authname) {
+                $authplugin = get_auth_plugin($authname);
+                $authplugin->logoutpage_hook();
+            }
+
+            require_logout();
+        }
+    }
+}
+
+die();

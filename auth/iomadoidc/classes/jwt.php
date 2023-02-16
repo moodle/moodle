@@ -25,13 +25,14 @@
 
 namespace auth_iomadoidc;
 
+use moodle_exception;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class for working with JWTs.
  */
 class jwt {
-
     /** @var array Array of JWT header parameters. */
     protected $header = [];
 
@@ -46,33 +47,37 @@ class jwt {
      */
     public static function decode($encoded) {
         if (empty($encoded) || !is_string($encoded)) {
-            throw new \moodle_exception('errorjwtempty', 'auth_iomadoidc');
-        }
-        $jwtparts = explode('.', $encoded);
-        if (count($jwtparts) !== 3) {
-            throw new \moodle_exception('errorjwtmalformed', 'auth_iomadoidc');
+            throw new moodle_exception('errorjwtempty', 'auth_iomadoidc');
         }
 
+        // Separate JWT into parts.
+        $jwtparts = explode('.', $encoded);
+        if (count($jwtparts) !== 3) {
+            throw new moodle_exception('errorjwtmalformed', 'auth_iomadoidc');
+        }
+
+        // Process header.
         $header = base64_decode($jwtparts[0]);
         if (!empty($header)) {
             $header = @json_decode($header, true);
         }
         if (empty($header) || !is_array($header)) {
-            throw new \moodle_exception('errorjwtcouldnotreadheader', 'auth_iomadoidc');
+            throw new moodle_exception('errorjwtcouldnotreadheader', 'auth_iomadoidc');
         }
         if (!isset($header['alg'])) {
-            throw new \moodle_exception('errorjwtinvalidheader', 'auth_iomadoidc');
+            throw new moodle_exception('errorjwtinvalidheader', 'auth_iomadoidc');
         }
 
+        // Process payload.
         $jwsalgs = ['HS256', 'HS384', 'HS512', 'RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'PS256', 'none'];
         if (in_array($header['alg'], $jwsalgs, true) === true) {
-            $body = static::decode_jws($jwtparts);
+            $body = static::decode_jws($jwtparts[1]);
         } else {
-            throw new \moodle_exception('errorjwtunsupportedalg', 'auth_iomadoidc');
+            throw new moodle_exception('errorjwtunsupportedalg', 'auth_iomadoidc');
         }
 
         if (empty($body) || !is_array($body)) {
-            throw new \moodle_exception('errorjwtbadpayload', 'auth_iomadoidc');
+            throw new moodle_exception('errorjwtbadpayload', 'auth_iomadoidc');
         }
 
         return [$header, $body];
@@ -81,11 +86,11 @@ class jwt {
     /**
      * Decode the payload of a JWS.
      *
-     * @param array $jwtparts Array of JWT parts - header and body.
+     * @param string $jwtpayload JWT body part.
      * @return array|null An array of payload claims, or null if there was a problem decoding.
      */
-    public static function decode_jws(array $jwtparts) {
-        $body = strtr($jwtparts[1], '-_', '+/');
+    public static function decode_jws(string $jwtpayload) {
+        $body = strtr($jwtpayload, '-_', '+/');
         $body = base64_decode($body);
         if (!empty($body)) {
             $body = @json_decode($body, true);
@@ -97,10 +102,10 @@ class jwt {
      * Create an instance of the class from an encoded JWT string.
      *
      * @param string $encoded The encoded JWT.
-     * @return \auth_iomadoidc\jwt A JWT instance.
+     * @return jwt A JWT instance.
      */
     public static function instance_from_encoded($encoded) {
-        list($header, $body) = static::decode($encoded);
+        [$header, $body] = static::decode($encoded);
         $jwt = new static;
         $jwt->set_header($header);
         $jwt->set_claims($body);
@@ -134,5 +139,17 @@ class jwt {
      */
     public function claim($claim) {
         return (isset($this->claims[$claim])) ? $this->claims[$claim] : null;
+    }
+
+    /**
+     * Calculate client assertion using the key provided.
+     *
+     * @param string $privatekey
+     * @return string
+     */
+    public function assert_token(string $privatekey) {
+        $assertion = \Firebase\JWT\JWT::encode($this->claims, $privatekey, 'RS256', null, $this->header);
+
+        return $assertion;
     }
 }

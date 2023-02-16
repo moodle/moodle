@@ -24,6 +24,7 @@
  */
 
 namespace auth_iomadoidc\form;
+use iomad;
 
 defined('MOODLE_INTERNAL') || die();
 

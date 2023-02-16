@@ -24,6 +24,7 @@
  */
 
 namespace auth_iomadoidc;
+use iomad;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -117,8 +118,6 @@ class utils {
      * @param null $debugdata
      */
     public static function debug($message, $where = '', $debugdata = null) {
-
-        //Global $CFG missing here
         global $CFG;
 
         // IOMAD
@@ -130,7 +129,7 @@ class utils {
             $postfix = "";
         }
 
-        $debugmode = (bool)get_config('auth_iomadoidc' . $postfix, 'debugmode');
+        $debugmode = (bool)get_config('auth_iomadoidc', 'debugmode' . $postfix);
         if ($debugmode === true) {
             $fullmessage = (!empty($where)) ? $where : 'Unknown function';
             $fullmessage .= ': '.$message;
@@ -146,8 +145,17 @@ class utils {
      * @return string The redirect URL.
      */
     public static function get_redirecturl() {
-        global $CFG;
-        $wwwroot = (!empty($CFG->loginhttps)) ? str_replace('http://', 'https://', $CFG->wwwroot) : $CFG->wwwroot;
-        return $wwwroot.'/auth/iomadoidc/';
+        $redirecturl = new \moodle_url('/auth/iomadoidc/');
+        return $redirecturl->out(false);
+    }
+
+    /**
+     * Get the front channel logout URL that should be set in the identity provider.
+     *
+     * @return string The redirect URL.
+     */
+    public static function get_frontchannellogouturl() {
+        $logouturl = new \moodle_url('/auth/iomadoidc/logout.php');
+        return $logouturl->out(false);
     }
 }

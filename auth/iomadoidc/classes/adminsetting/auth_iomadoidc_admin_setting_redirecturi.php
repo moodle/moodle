@@ -33,6 +33,8 @@ defined('MOODLE_INTERNAL') || die();
  * Displays the redirect URI for easier config.
  */
 class auth_iomadoidc_admin_setting_redirecturi extends \admin_setting {
+    private $url;
+
     /**
      * Constructor.
      *
@@ -40,8 +42,9 @@ class auth_iomadoidc_admin_setting_redirecturi extends \admin_setting {
      * @param $heading
      * @param $description
      */
-    public function __construct($name, $heading, $description) {
+    public function __construct($name, $heading, $description, $url) {
         $this->nosave = true;
+        $this->url = $url;
         parent::__construct($name, $heading, $description, '');
     }
 
@@ -82,6 +85,7 @@ class auth_iomadoidc_admin_setting_redirecturi extends \admin_setting {
      */
     public function output_html($data, $query = '') {
         $redirecturl = utils::get_redirecturl();
+        $redirecturl = $this->url;
         $html = \html_writer::tag('h5', $redirecturl);
         return format_admin_setting($this, $this->visiblename, $html, $this->description, true, '', null, $query);
     }

@@ -312,5 +312,67 @@ function xmldb_auth_iomadoidc_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2021051701, 'auth', 'iomadoidc');
     }
 
+    if ($oldversion < 2022041901) {
+        // Define field sid to be added to auth_iomadoidc_token.
+        $table = new xmldb_table('auth_iomadoidc_token');
+        $field = new xmldb_field('sid', XMLDB_TYPE_CHAR, '36', null, null, null, null, 'idtoken');
+
+        // Conditionally launch add field sid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Oidc savepoint reached.
+        upgrade_plugin_savepoint(true, 2022041901, 'auth', 'iomadoidc');
+    }
+
+    if ($oldversion < 2022041906) {
+        // Update idptype config.
+        $idptypeconfig = get_config('auth_iomadoidc', 'idptype');
+        $authorizationendpoint = get_config('auth_iomadoidc', 'authendpoint');
+        if (empty($idptypeconfig)) {
+            if (!$authorizationendpoint) {
+                set_config('idptype', AUTH_IOMADoIDC_IDP_TYPE_AZURE_AD, 'auth_iomadoidc');
+            } else {
+                $endpointversion = auth_iomadoidc_determine_endpoint_version($authorizationendpoint);
+                switch ($endpointversion) {
+                    case AUTH_IOMADoIDC_AAD_ENDPOINT_VERSION_1:
+                        set_config('idptype', AUTH_IOMADoIDC_IDP_TYPE_AZURE_AD, 'auth_iomadoidc');
+                        break;
+                    case AUTH_IOMADoIDC_AAD_ENDPOINT_VERSION_2:
+                        set_config('idptype', AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT, 'auth_iomadoidc');
+                        break;
+                    default:
+                        set_config('idptype', AUTH_IOMADoIDC_IDP_TYPE_OTHER, 'auth_iomadoidc');
+                }
+            }
+        }
+
+        // Update client authentication type configuration settings.
+        $clientauthmethodconfig = get_config('auth_iomadoidc', 'clientauthmethod');
+        if (empty($clientauthmethodconfig)) {
+            $clientsecretconfig = get_config('auth_iomadoidc', 'clientsecret');
+            $clientcertificateconfig = get_config('auth_iomadoidc', 'clientcert');
+            $clientprivatekeyconfig = get_config('auth_iomadoidc', 'clientprivatekey');
+            if (empty($clientsecretconfig) && !empty($clientcertificateconfig) && !empty($clientprivatekeyconfig)) {
+                set_config('clientauthmethod', AUTH_IOMADoIDC_AUTH_METHOD_CERTIFICATE, 'auth_iomadoidc');
+            } else {
+                set_config('clientauthmethod', AUTH_IOMADoIDC_AUTH_METHOD_SECRET, 'auth_iomadoidc');
+            }
+        }
+
+        // Update tenantnameorguid config.
+        $tenantnameorguidconfig = get_config('auth_iomadoidc', 'tenantnameorguid');
+        if (empty($tenantnameorguidconfig)) {
+            $aadtenantconfig = get_config('local_o365', 'aadtenant');
+            if ($aadtenantconfig) {
+                set_config('tenantnameorguid', $aadtenantconfig, 'auth_iomadoidc');
+            }
+        }
+
+        // Oidc savepoint reached.
+        upgrade_plugin_savepoint(true, 2022041906, 'auth', 'iomadoidc');
+    }
+
     return true;
 }

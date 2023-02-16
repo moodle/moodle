@@ -18,10 +18,10 @@
  * Plugin settings.
  *
  * @package auth_iomadoidc
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @basedon   auth_oidc by James McQuillan <james.mcquillan@remote-learner.net>
+ * @author James McQuillan <james.mcquillan@remote-learner.net>
+ * @author Lai Wei <lai.wei@enovation.ie>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 use auth_iomadoidc\adminsetting\auth_iomadoidc_admin_setting_iconselect;
 use auth_iomadoidc\adminsetting\auth_iomadoidc_admin_setting_loginflow;
 use auth_iomadoidc\adminsetting\auth_iomadoidc_admin_setting_redirecturi;
-use auth_iomadoidc\adminsetting\auth_iomadoidc_admin_setting_label;
+use auth_iomadoidc\utils;
 
 require_once($CFG->dirroot . '/auth/iomadoidc/lib.php');
 
@@ -42,181 +42,204 @@ if (!empty($companyid)) {
     $postfix = "";
 }
 
+if ($hassiteconfig) {
+    // Add folder for IOMADoIDC settings.
+    $iomadoidcfolder = new admin_category('iomadoidcfolder', get_string('pluginname', 'auth_iomadoidc'));
+    $ADMIN->add('authsettings', $iomadoidcfolder);
 
-$configkey = new lang_string('cfg_opname_key', 'auth_iomadoidc');
-$configdesc = new lang_string('cfg_opname_desc', 'auth_iomadoidc');
-$configdefault = new lang_string('pluginname', 'auth_iomadoidc');
-$settings->add(new admin_setting_configtext('auth_iomadoidc/opname' . $postfix, $configkey, $configdesc, $configdefault, PARAM_TEXT));
+    // Application configuration page.
+    $ADMIN->add('iomadoidcfolder', new admin_externalpage('auth_iomadoidc_application', get_string('settings_page_application', 'auth_iomadoidc'),
+        new moodle_url('/auth/iomadoidc/manageapplication.php')));
 
-$configkey = new lang_string('cfg_clientid_key', 'auth_iomadoidc');
-$configdesc = new lang_string('cfg_clientid_desc', 'auth_iomadoidc');
-$settings->add(new admin_setting_configtext('auth_iomadoidc/clientid' . $postfix, $configkey, $configdesc, '', PARAM_TEXT));
+    // Other settings page and its settings.
+    $settings = new admin_settingpage($section, get_string('settings_page_other_settings', 'auth_iomadoidc'));
 
-$configkey = new lang_string('cfg_clientsecret_key', 'auth_iomadoidc');
-$configdesc = new lang_string('cfg_clientsecret_desc', 'auth_iomadoidc');
-$settings->add(new admin_setting_configtext('auth_iomadoidc/clientsecret' . $postfix, $configkey, $configdesc, '', PARAM_TEXT));
+    // Basic heading.
+    $settings->add(new admin_setting_heading('auth_iomadoidc/basic_heading', get_string('heading_basic', 'auth_iomadoidc'),
+        get_string('heading_basic_desc', 'auth_iomadoidc')));
 
-$configkey = new lang_string('cfg_authendpoint_key', 'auth_iomadoidc');
-$configdesc = new lang_string('cfg_authendpoint_desc', 'auth_iomadoidc');
-$configdefault = 'https://login.microsoftonline.com/common/oauth2/authorize';
-$settings->add(new admin_setting_configtext('auth_iomadoidc/authendpoint' . $postfix, $configkey, $configdesc, $configdefault, PARAM_TEXT));
+    // Redirect URI.
+    $settings->add(new auth_iomadoidc_admin_setting_redirecturi('auth_iomadoidc/redirecturi' . $postfix,
+        get_string('cfg_redirecturi_key', 'auth_iomadoidc'), get_string('cfg_redirecturi_desc', 'auth_iomadoidc'), utils::get_redirecturl()));
 
-$configkey = new lang_string('cfg_tokenendpoint_key', 'auth_iomadoidc');
-$configdesc = new lang_string('cfg_tokenendpoint_desc', 'auth_iomadoidc');
-$configdefault = 'https://login.microsoftonline.com/common/oauth2/token';
-$settings->add(new admin_setting_configtext('auth_iomadoidc/tokenendpoint' . $postfix, $configkey, $configdesc, $configdefault, PARAM_TEXT));
+    // Link to authentication options.
+    $authenticationconfigurationurl = new moodle_url('/auth/iomadoidc/manageapplication.php');
+    $settings->add(new admin_setting_description('auth_iomadoidc/authenticationlink' . $postfix,
+        get_string('settings_page_application', 'auth_iomadoidc'),
+        get_string('cfg_authenticationlink_desc', 'auth_iomadoidc', $authenticationconfigurationurl->out())));
 
-$configkey = new lang_string('cfg_iomadoidcresource_key', 'auth_iomadoidc');
-$configdesc = new lang_string('cfg_iomadoidcresource_desc', 'auth_iomadoidc');
-$configdefault = 'https://graph.microsoft.com';
-$settings->add(new admin_setting_configtext('auth_iomadoidc/iomadoidcresource' . $postfix, $configkey, $configdesc, $configdefault, PARAM_TEXT));
+    // Additional options heading.
+    $settings->add(new admin_setting_heading('auth_iomadoidc/additional_options_heading',
+        get_string('heading_additional_options', 'auth_iomadoidc'), get_string('heading_additional_options_desc', 'auth_iomadoidc')));
 
-$configkey = new lang_string('cfg_iomadoidcscope_key', 'auth_iomadoidc');
-$configdesc = new lang_string('cfg_iomadoidcscope_desc', 'auth_iomadoidc');
-$configdefault = 'openid profile email';
-$settings->add(new admin_setting_configtext('auth_iomadoidc/iomadoidcscope' . $postfix, $configkey, $configdesc, $configdefault, PARAM_TEXT));
+    // Force redirect.
+    $settings->add(new admin_setting_configcheckbox('auth_iomadoidc/forceredirect' . $postfix,
+        get_string('cfg_forceredirect_key', 'auth_iomadoidc'), get_string('cfg_forceredirect_desc', 'auth_iomadoidc'), 0));
 
-$configkey = new lang_string('cfg_redirecturi_key', 'auth_iomadoidc');
-$configdesc = new lang_string('cfg_redirecturi_desc', 'auth_iomadoidc');
-$settings->add(new auth_iomadoidc_admin_setting_redirecturi('auth_iomadoidc/redirecturi' . $postfix, $configkey, $configdesc));
+    // Auto-append.
+    $settings->add(new admin_setting_configtext('auth_iomadoidc/autoappend' . $postfix,
+        get_string('cfg_autoappend_key', 'auth_iomadoidc'), get_string('cfg_autoappend_desc', 'auth_iomadoidc'), '', PARAM_TEXT));
 
-$configkey = new lang_string('cfg_forceredirect_key', 'auth_iomadoidc');
-$configdesc = new lang_string('cfg_forceredirect_desc', 'auth_iomadoidc');
-$configdefault = 0;
-$settings->add(new admin_setting_configcheckbox('auth_iomadoidc/forceredirect' . $postfix, $configkey, $configdesc, $configdefault));
+    // Domain hint.
+    $settings->add(new admin_setting_configtext('auth_iomadoidc/domainhint' . $postfix,
+        get_string('cfg_domainhint_key', 'auth_iomadoidc'), get_string('cfg_domainhint_desc', 'auth_iomadoidc'), '' , PARAM_TEXT));
 
-$configkey = new lang_string('cfg_autoappend_key', 'auth_iomadoidc');
-$configdesc = new lang_string('cfg_autoappend_desc', 'auth_iomadoidc');
-$configdefault = '';
-$settings->add(new admin_setting_configtext('auth_iomadoidc/autoappend' . $postfix, $configkey, $configdesc, $configdefault, PARAM_TEXT));
+    // Login flow.
+    $settings->add(new auth_iomadoidc_admin_setting_loginflow('auth_iomadoidc/loginflow' . $postfix,
+        get_string('cfg_loginflow_key', 'auth_iomadoidc'), '', 'authcode'));
 
-$configkey = new lang_string('cfg_domainhint_key', 'auth_iomadoidc');
-$configdesc = new lang_string('cfg_domainhint_desc', 'auth_iomadoidc');
-$configdefault = '';
-$settings->add(new admin_setting_configtext('auth_iomadoidc/domainhint' . $postfix, $configkey, $configdesc, $configdefault, PARAM_TEXT));
+    // User restrictions heading.
+    $settings->add(new admin_setting_heading('auth_iomadoidc/user_restrictions_heading',
+        get_string('heading_user_restrictions', 'auth_iomadoidc'), get_string('heading_user_restrictions_desc', 'auth_iomadoidc')));
 
-$configkey = new lang_string('cfg_loginflow_key', 'auth_iomadoidc');
-$configdesc = '';
-$configdefault = 'authcode';
-$settings->add(new auth_iomadoidc_admin_setting_loginflow('auth_iomadoidc/loginflow' . $postfix, $configkey, $configdesc, $configdefault));
+    // User restrictions.
+    $settings->add(new admin_setting_configtextarea('auth_iomadoidc/userrestrictions' . $postfix,
+        get_string('cfg_userrestrictions_key', 'auth_iomadoidc'), get_string('cfg_userrestrictions_desc', 'auth_iomadoidc'), '', PARAM_TEXT));
 
-$configkey = new lang_string('cfg_userrestrictions_key', 'auth_iomadoidc');
-$configdesc = new lang_string('cfg_userrestrictions_desc', 'auth_iomadoidc');
-$configdefault = '';
-$settings->add(new admin_setting_configtextarea('auth_iomadoidc/userrestrictions' . $postfix, $configkey, $configdesc, $configdefault, PARAM_TEXT));
+    // User restrictions case sensitivity.
+    $settings->add(new admin_setting_configcheckbox('auth_iomadoidc/userrestrictionscasesensitive' . $postfix,
+        get_string('cfg_userrestrictionscasesensitive_key', 'auth_iomadoidc'),
+        get_string('cfg_userrestrictionscasesensitive_desc', 'auth_iomadoidc'), '1'));
 
-$configkey = new lang_string('cfg_userrestrictionscasesensitive_key', 'auth_iomadoidc');
-$configdesc = new lang_string('cfg_userrestrictioncasesensitive_desc', 'auth_iomadoidc');
-$settings->add(new admin_setting_configcheckbox('auth_iomadoidc/userrestrictionscasesensitive' . $postfix, $configkey, $configdesc, '1'));
+    // Sign out integration heading.
+    $settings->add(new admin_setting_heading('auth_iomadoidc/sign_out_heading',
+        get_string('heading_sign_out', 'auth_iomadoidc'), get_string('heading_sign_out_desc', 'auth_iomadoidc')));
 
-$configkey = new lang_string('cfg_signoffintegration_key', 'auth_iomadoidc');
-$configdesc = new lang_string('cfg_signoffintegration_desc', 'auth_iomadoidc', $CFG->wwwroot);
-$settings->add(new admin_setting_configcheckbox('auth_iomadoidc/single_sign_off' . $postfix, $configkey, $configdesc, '0'));
+    // Single sign out from Moodle to IdP.
+    $settings->add(new admin_setting_configcheckbox('auth_iomadoidc/single_sign_off' . $postfix,
+        get_string('cfg_signoffintegration_key', 'auth_iomadoidc'),
+        get_string('cfg_signoffintegration_desc', 'auth_iomadoidc', $CFG->wwwroot), '0'));
 
-$configkey = new lang_string('cfg_logoutendpoint_key', 'auth_iomadoidc');
-$configdesc = new lang_string('cfg_logoutendpoint_desc', 'auth_iomadoidc');
-$configdefault = 'https://login.microsoftonline.com/common/oauth2/logout';
-$settings->add(new admin_setting_configtext('auth_iomadoidc/logouturi' . $postfix, $configkey, $configdesc, $configdefault, PARAM_TEXT));
+    // IdP logout endpoint.
+    $settings->add(new admin_setting_configtext('auth_iomadoidc/logouturi' . $postfix,
+        get_string('cfg_logoutendpoint_key', 'auth_iomadoidc'), get_string('cfg_logoutendpoint_desc', 'auth_iomadoidc'),
+        'https://login.microsoftonline.com/common/oauth2/logout', PARAM_URL));
 
-$label = new lang_string('cfg_debugmode_key', 'auth_iomadoidc');
-$desc = new lang_string('cfg_debugmode_desc', 'auth_iomadoidc');
-$settings->add(new \admin_setting_configcheckbox('auth_iomadoidc/debugmode', $label, $desc, '0'));
+    // Front channel logout URL.
+    $settings->add(new auth_iomadoidc_admin_setting_redirecturi('auth_iomadoidc/logoutendpoint' . $postfix,
+        get_string('cfg_frontchannellogouturl_key', 'auth_iomadoidc'), get_string('cfg_frontchannellogouturl_desc', 'auth_iomadoidc'),
+        utils::get_frontchannellogouturl()));
 
-$configkey = new lang_string('cfg_icon_key', 'auth_iomadoidc');
-$configdesc = new lang_string('cfg_icon_desc', 'auth_iomadoidc');
-$configdefault = 'auth_iomadoidc:o365';
-$icons = [
-    [
-        'pix' => 'o365',
-        'alt' => new lang_string('cfg_iconalt_o365', 'auth_iomadoidc'),
-        'component' => 'auth_iomadoidc',
-    ],
-    [
-        'pix' => 't/locked',
-        'alt' => new lang_string('cfg_iconalt_locked', 'auth_iomadoidc'),
-        'component' => 'moodle',
-    ],
-    [
-        'pix' => 't/lock',
-        'alt' => new lang_string('cfg_iconalt_lock', 'auth_iomadoidc'),
-        'component' => 'moodle',
-    ],
-    [
-        'pix' => 't/go',
-        'alt' => new lang_string('cfg_iconalt_go', 'auth_iomadoidc'),
-        'component' => 'moodle',
-    ],
-    [
-        'pix' => 't/stop',
-        'alt' => new lang_string('cfg_iconalt_stop', 'auth_iomadoidc'),
-        'component' => 'moodle',
-    ],
-    [
-        'pix' => 't/user',
-        'alt' => new lang_string('cfg_iconalt_user', 'auth_iomadoidc'),
-        'component' => 'moodle',
-    ],
-    [
-        'pix' => 'u/user35',
-        'alt' => new lang_string('cfg_iconalt_user2', 'auth_iomadoidc'),
-        'component' => 'moodle',
-    ],
-    [
-        'pix' => 'i/permissions',
-        'alt' => new lang_string('cfg_iconalt_key', 'auth_iomadoidc'),
-        'component' => 'moodle',
-    ],
-    [
-        'pix' => 'i/cohort',
-        'alt' => new lang_string('cfg_iconalt_group', 'auth_iomadoidc'),
-        'component' => 'moodle',
-    ],
-    [
-        'pix' => 'i/groups',
-        'alt' => new lang_string('cfg_iconalt_group2', 'auth_iomadoidc'),
-        'component' => 'moodle',
-    ],
-    [
-        'pix' => 'i/mnethost',
-        'alt' => new lang_string('cfg_iconalt_mnet', 'auth_iomadoidc'),
-        'component' => 'moodle',
-    ],
-    [
-        'pix' => 'i/permissionlock',
-        'alt' => new lang_string('cfg_iconalt_userlock', 'auth_iomadoidc'),
-        'component' => 'moodle',
-    ],
-    [
-        'pix' => 't/more',
-        'alt' => new lang_string('cfg_iconalt_plus', 'auth_iomadoidc'),
-        'component' => 'moodle',
-    ],
-    [
-        'pix' => 't/approve',
-        'alt' => new lang_string('cfg_iconalt_check', 'auth_iomadoidc'),
-        'component' => 'moodle',
-    ],
-    [
-        'pix' => 't/right',
-        'alt' => new lang_string('cfg_iconalt_rightarrow', 'auth_iomadoidc'),
-        'component' => 'moodle',
-    ],
-];
-$settings->add(new auth_iomadoidc_admin_setting_iconselect('auth_iomadoidc/icon' . $postfix, $configkey, $configdesc, $configdefault, $icons));
+    // Display heading.
+    $settings->add(new admin_setting_heading('auth_iomadoidc/display_heading',
+        get_string('heading_display', 'auth_iomadoidc'), get_string('heading_display_desc', 'auth_iomadoidc')));
 
-$configkey = new lang_string('cfg_customicon_key', 'auth_iomadoidc');
-$configdesc = new lang_string('cfg_customicon_desc', 'auth_iomadoidc');
-$setting = new admin_setting_configstoredfile('auth_iomadoidc/customicon' . $postfix, $configkey, $configdesc, 'customicon');
-$setting->set_updatedcallback('auth_iomadoidc_initialize_customicon');
-$settings->add($setting);
+    // Provider Name (opname).
+    $settings->add(new admin_setting_configtext('auth_iomadoidc/opname' . $postfix,
+        get_string('cfg_opname_key', 'auth_iomadoidc'), get_string('cfg_opname_desc', 'auth_iomadoidc'),
+        get_string('pluginname', 'auth_iomadoidc'), PARAM_TEXT));
 
-// Tools to clean up tokens.
-$cleanupiomadoidctokensurl = new moodle_url('/auth/iomadoidc/cleanupiomadoidctokens.php');
-$cleanupiomadoidctokenslink = html_writer::link($cleanupiomadoidctokensurl, get_string('cfg_cleanupiomadoidctokens_key', 'auth_iomadoidc'));
-$settings->add(new auth_iomadoidc_admin_setting_label('auth_iomadoidc/cleaniodctokens', get_string('cfg_tools', 'auth_iomadoidc'),
-    $cleanupiomadoidctokenslink, get_string('cfg_cleanupiomadoidctokens_desc', 'auth_iomadoidc')));
+    // Icon.
+    $icons = [
+        [
+            'pix' => 'o365',
+            'alt' => new lang_string('cfg_iconalt_o365', 'auth_iomadoidc'),
+            'component' => 'auth_iomadoidc',
+        ],
+        [
+            'pix' => 't/locked',
+            'alt' => new lang_string('cfg_iconalt_locked', 'auth_iomadoidc'),
+            'component' => 'moodle',
+        ],
+        [
+            'pix' => 't/lock',
+            'alt' => new lang_string('cfg_iconalt_lock', 'auth_iomadoidc'),
+            'component' => 'moodle',
+        ],
+        [
+            'pix' => 't/go',
+            'alt' => new lang_string('cfg_iconalt_go', 'auth_iomadoidc'),
+            'component' => 'moodle',
+        ],
+        [
+            'pix' => 't/stop',
+            'alt' => new lang_string('cfg_iconalt_stop', 'auth_iomadoidc'),
+            'component' => 'moodle',
+        ],
+        [
+            'pix' => 't/user',
+            'alt' => new lang_string('cfg_iconalt_user', 'auth_iomadoidc'),
+            'component' => 'moodle',
+        ],
+        [
+            'pix' => 'u/user35',
+            'alt' => new lang_string('cfg_iconalt_user2', 'auth_iomadoidc'),
+            'component' => 'moodle',
+        ],
+        [
+            'pix' => 'i/permissions',
+            'alt' => new lang_string('cfg_iconalt_key', 'auth_iomadoidc'),
+            'component' => 'moodle',
+        ],
+        [
+            'pix' => 'i/cohort',
+            'alt' => new lang_string('cfg_iconalt_group', 'auth_iomadoidc'),
+            'component' => 'moodle',
+        ],
+        [
+            'pix' => 'i/groups',
+            'alt' => new lang_string('cfg_iconalt_group2', 'auth_iomadoidc'),
+            'component' => 'moodle',
+        ],
+        [
+            'pix' => 'i/mnethost',
+            'alt' => new lang_string('cfg_iconalt_mnet', 'auth_iomadoidc'),
+            'component' => 'moodle',
+        ],
+        [
+            'pix' => 'i/permissionlock',
+            'alt' => new lang_string('cfg_iconalt_userlock', 'auth_iomadoidc'),
+            'component' => 'moodle',
+        ],
+        [
+            'pix' => 't/more',
+            'alt' => new lang_string('cfg_iconalt_plus', 'auth_iomadoidc'),
+            'component' => 'moodle',
+        ],
+        [
+            'pix' => 't/approve',
+            'alt' => new lang_string('cfg_iconalt_check', 'auth_iomadoidc'),
+            'component' => 'moodle',
+        ],
+        [
+            'pix' => 't/right',
+            'alt' => new lang_string('cfg_iconalt_rightarrow', 'auth_iomadoidc'),
+            'component' => 'moodle',
+        ],
+    ];
+    $settings->add(new auth_iomadoidc_admin_setting_iconselect('auth_iomadoidc/icon' . $postfix,
+        get_string('cfg_icon_key', 'auth_iomadoidc'), get_string('cfg_icon_desc', 'auth_iomadoidc'), 'auth_iomadoidc:o365', $icons));
 
-// Display locking / mapping of profile fields.
-$authplugin = get_auth_plugin('iomadoidc');
-auth_iomadoidc_display_auth_lock_options($settings, $authplugin->authtype, $authplugin->userfields,
-    get_string('cfg_field_mapping_desc', 'auth_iomadoidc'), true, false, $authplugin->get_custom_user_profile_fields());
+    // Custom icon.
+    $configkey = new lang_string('cfg_customicon_key', 'auth_iomadoidc');
+    $configdesc = new lang_string('cfg_customicon_desc', 'auth_iomadoidc');
+    $customiconsetting = new admin_setting_configstoredfile('auth_iomadoidc/customicon' . $postfix,
+        get_string('cfg_customicon_key', 'auth_iomadoidc'), get_string('cfg_customicon_desc', 'auth_iomadoidc'), 'customicon');
+    $customiconsetting->set_updatedcallback('auth_iomadoidc_initialize_customicon');
+    $settings->add($customiconsetting);
+
+    // Debugging heading.
+    $settings->add(new admin_setting_heading('auth_iomadoidc/debugging_heading',
+        get_string('heading_debugging', 'auth_iomadoidc'), get_string('heading_debugging_desc', 'auth_iomadoidc')));
+
+    // Record debugging messages.
+    $settings->add(new admin_setting_configcheckbox('auth_iomadoidc/debugmode' . $postfix,
+        get_string('cfg_debugmode_key', 'auth_iomadoidc'), get_string('cfg_debugmode_desc', 'auth_iomadoidc'), '0'));
+
+    $ADMIN->add('iomadoidcfolder', $settings);
+
+    // Cleanup IOMADoIDC tokens page.
+    $ADMIN->add('iomadoidcfolder', new admin_externalpage('auth_iomadoidc_cleanup_iomadoidc_tokens' . $postfix,
+        get_string('settings_page_cleanup_iomadoidc_tokens', 'auth_iomadoidc'), new moodle_url('/auth/iomadoidc/cleanupiomadoidctokens.php')));
+
+    // Other settings page and its settings.
+    $fieldmappingspage = new admin_settingpage('auth_iomadoidc_field_mapping', get_string('settings_page_field_mapping', 'auth_iomadoidc'));
+    $ADMIN->add('iomadoidcfolder', $fieldmappingspage);
+
+    // Display locking / mapping of profile fields.
+    $authplugin = get_auth_plugin('iomadoidc');
+    auth_iomadoidc_display_auth_lock_options($fieldmappingspage, $authplugin->authtype, $authplugin->userfields,
+        get_string('cfg_field_mapping_desc', 'auth_iomadoidc'), true, false, $authplugin->get_custom_user_profile_fields());
+}
+
+$settings = null;

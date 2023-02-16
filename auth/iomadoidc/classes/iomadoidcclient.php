@@ -25,6 +25,10 @@
 
 namespace auth_iomadoidc;
 
+use moodle_exception;
+use moodle_url;
+use iomad;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/auth/iomadoidc/lib.php');
@@ -143,7 +147,7 @@ class iomadoidcclient {
     public function setendpoints($endpoints) {
         foreach ($endpoints as $type => $uri) {
             if (clean_param($uri, PARAM_URL) !== $uri) {
-                throw new \moodle_exception('erroriomadoidcclientinvalidendpoint', 'auth_iomadoidc');
+                throw new moodle_exception('erroriomadoidcclientinvalidendpoint', 'auth_iomadoidc');
             }
             $this->endpoints[$type] = $uri;
         }
@@ -167,27 +171,63 @@ class iomadoidcclient {
      * @return array Array of request parameters.
      */
     protected function getauthrequestparams($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {
-        global $SESSION;
+        globacl $CFG;
+
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
 
         $nonce = 'N'.uniqid();
+
         $params = [
             'response_type' => 'code',
             'client_id' => $this->clientid,
             'scope' => $this->scope,
             'nonce' => $nonce,
             'response_mode' => 'form_post',
-            'resource' => $this->tokenresource,
             'state' => $this->getnewstate($nonce, $stateparams),
             'redirect_uri' => $this->redirecturi
         ];
+
+        if (get_config('auth_iomadoidc', 'idptype' . $postfix) != AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT) {
+            $params['resource'] = $this->tokenresource;
+        }
+
         if ($promptlogin === true) {
             $params['prompt'] = 'login';
         }
 
-        $domainhint = get_config('auth_iomadoidc' . "_" . $SESSION->currenteditingcompany, 'domainhint');
+        $domainhint = get_config('auth_iomadoidc', 'domainhint' . $postfix);
         if (!empty($domainhint)) {
             $params['domain_hint'] = $domainhint;
         }
+
+        $params = array_merge($params, $extraparams);
+
+        return $params;
+    }
+
+    /**
+     * Return params for an admin consent request.
+     *
+     * @param array $stateparams
+     * @param array $extraparams
+     * @return array
+     */
+    protected function getadminconsentrequestparams(array $stateparams = [], array $extraparams = []) {
+        $nonce = 'N'.uniqid();
+
+        $params = [
+            'client_id' => $this->clientid,
+            'scope' => 'https://graph.microsoft.com/.default',
+            'state' => $this->getnewstate($nonce, $stateparams),
+            'redirect_uri' => $this->redirecturi,
+        ];
 
         $params = array_merge($params, $extraparams);
 
@@ -221,17 +261,42 @@ class iomadoidcclient {
      * @param array $extraparams Additional parameters to send with the IOMADoIDC request.
      */
     public function authrequest($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {
-        global $DB;
         if (empty($this->clientid)) {
-            throw new \moodle_exception('erroriomadoidcclientnocreds', 'auth_iomadoidc');
+            throw new moodle_exception('erroriomadoidcclientnocreds', 'auth_iomadoidc');
         }
 
         if (empty($this->endpoints['auth'])) {
-            throw new \moodle_exception('erroriomadoidcclientnoauthendpoint', 'auth_iomadoidc');
+            throw new moodle_exception('erroriomadoidcclientnoauthendpoint', 'auth_iomadoidc');
         }
 
         $params = $this->getauthrequestparams($promptlogin, $stateparams, $extraparams);
-        $redirecturl = new \moodle_url($this->endpoints['auth'], $params);
+        $redirecturl = new moodle_url($this->endpoints['auth'], $params);
+        redirect($redirecturl);
+    }
+
+    /**
+     * Perform an admin consent request when using a Microsoft Identity Platform type IdP.
+     *
+     * @param array $stateparams
+     * @param array $extraparams
+     * @return void
+     */
+    public function adminconsentrequest(array $stateparams = [], array $extraparams = []) {
+        global $CFG;
+
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
+        $adminconsentendpoint = 'https://login.microsoftonline.com/' . get_config('auth_iomadoidc', 'tenantnameorguid' . $postfix) .
+            '/v2.0/adminconsent';
+        $params = $this->getadminconsentrequestparams($stateparams, $extraparams);
+        $redirecturl = new moodle_url($adminconsentendpoint, $params);
         redirect($redirecturl);
     }
 
@@ -243,12 +308,23 @@ class iomadoidcclient {
      * @return array Received parameters.
      */
     public function rocredsrequest($username, $password) {
+        global $CFG;
+
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
         if (empty($this->endpoints['token'])) {
-            throw new \moodle_exception('erroriomadoidcclientnotokenendpoint', 'auth_iomadoidc');
+            throw new moodle_exception('erroriomadoidcclientnotokenendpoint', 'auth_iomadoidc');
         }
 
         if (strpos($this->endpoints['token'], 'https://') !== 0) {
-            throw new \moodle_exception('erroriomadoidcclientinsecuretokenendpoint', 'auth_iomadoidc');
+            throw new moodle_exception('erroriomadoidcclientinsecuretokenendpoint', 'auth_iomadoidc');
         }
 
         $params = [
@@ -256,10 +332,13 @@ class iomadoidcclient {
             'username' => $username,
             'password' => $password,
             'scope' => 'openid profile email',
-            'resource' => $this->tokenresource,
             'client_id' => $this->clientid,
             'client_secret' => $this->clientsecret,
         ];
+
+        if (get_config('auth_iomadoidc', 'idptype' . $postfix) != AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT) {
+            $params['resource'] = $this->tokenresource;
+        }
 
         try {
             $returned = $this->httpclient->post($this->endpoints['token'], $params);
@@ -277,19 +356,113 @@ class iomadoidcclient {
      * @return array Received parameters.
      */
     public function tokenrequest($code) {
+        $CFG;
+
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
         if (empty($this->endpoints['token'])) {
-            throw new \moodle_exception('erroriomadoidcclientnotokenendpoint', 'auth_iomadoidc');
+            throw new moodle_exception('erroriomadoidcclientnotokenendpoint', 'auth_iomadoidc');
         }
 
         $params = [
             'client_id' => $this->clientid,
-            'client_secret' => $this->clientsecret,
             'grant_type' => 'authorization_code',
             'code' => $code,
             'redirect_uri' => $this->redirecturi,
         ];
 
+        switch (get_config('auth_iomadoidc', 'clientauthmethod' . $postfix)) {
+            case AUTH_IOMADoIDC_AUTH_METHOD_CERTIFICATE:
+                $params['client_assertion_type'] = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer';
+                $params['client_assertion'] = static::generate_client_assertion();
+                $params['tenant'] = 'common';
+                break;
+            default:
+                $params['client_secret'] = $this->clientsecret;
+        }
         $returned = $this->httpclient->post($this->endpoints['token'], $params);
         return utils::process_json_response($returned, ['id_token' => null]);
+    }
+
+    /**
+     * Request an access token in Microsoft Identity Platform.
+     *
+     * @return array
+     */
+    public function app_access_token_request() {
+        global $CFG;
+
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
+        $params = [
+            'client_id' => $this->clientid,
+            'scope' => 'https://graph.microsoft.com/.default',
+            'grant_type' => 'client_credentials',
+        ];
+
+        switch (get_config('auth_iomadoidc', 'clientauthmethod' . $postfix)) {
+            case AUTH_IOMADoIDC_AUTH_METHOD_CERTIFICATE:
+                $params['client_assertion_type'] = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer';
+                $params['client_assertion'] = static::generate_client_assertion();
+                break;
+            default:
+                $params['client_secret'] = $this->clientsecret;
+        }
+
+        $tokenendpoint = $this->endpoints['token'];
+        $tokenendpoint = str_replace('/common/' , '/' . get_config('auth_iomadoidc', 'tenantnameorguid' . $postfix) . '/', $tokenendpoint);
+
+        $returned = $this->httpclient->post($tokenendpoint, $params);
+        return utils::process_json_response($returned, ['access_token' => null]);
+    }
+
+    /**
+     * Calculate the return the assertion used in the token request in certificate connection method.
+     *
+     * @return string
+     */
+    public static function generate_client_assertion() {
+        global $CFG;
+
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
+        $jwt = new jwt();
+        $authiomadoidcconfig = get_config('auth_iomadoidc');
+        $cert = openssl_x509_read($authiomadoidcconfig->clientcert . $postfix);
+        $sh1hash = openssl_x509_fingerprint($cert);
+        $x5t = base64_encode(hex2bin($sh1hash));
+        $jwt->set_header(['alg' => 'RS256', 'typ' => 'JWT', 'x5t' => $x5t]);
+        $jwt->set_claims([
+            'aud' => $authiomadoidcconfig->tokenendpoint,
+            'exp' => strtotime('+10min'),
+            'iss' => $authiomadoidcconfig->clientid,
+            'jti' => bin2hex(openssl_random_pseudo_bytes(16)),
+            'nbf' => time(),
+            'sub' => $authiomadoidcconfig->clientid,
+            'iat' => time(),
+        ]);
+
+        return $jwt->assert_token($authiomadoidcconfig->clientprivatekey);
     }
 }

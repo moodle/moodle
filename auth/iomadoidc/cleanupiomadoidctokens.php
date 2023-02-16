@@ -24,6 +24,7 @@
  */
 
 require_once(__DIR__ . '/../../config.php');
+require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/auth/iomadoidc/lib.php');
 
 require_login();
@@ -31,19 +32,15 @@ require_login();
 $context = context_system::instance();
 $pageurl = new moodle_url('/auth/iomadoidc/cleanupiomadoidctokens.php');
 
-require_capability('moodle/site:config', $context);
+admin_externalpage_setup('auth_iomadoidc_cleanup_iomadoidc_tokens');
+
+require_admin();
 
 $PAGE->set_url($pageurl);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_heading(get_string('cleanup_iomadoidc_tokens', 'auth_iomadoidc'));
 $PAGE->set_title(get_string('cleanup_iomadoidc_tokens', 'auth_iomadoidc'));
-
-$PAGE->navbar->add(get_string('administrationsite'), new moodle_url('/admin/search.php'));
-$PAGE->navbar->add(get_string('plugins', 'admin'), new moodle_url('/admin/category.php', ['category' => 'modules']));
-$PAGE->navbar->add(get_string('authentication', 'admin'), new moodle_url('/admin/category.php', ['category' => 'authsettings']));
-$PAGE->navbar->add(get_string('pluginname', 'auth_iomadoidc'), new moodle_url('/admin/settings.php', ['section' => 'authsettingiomadoidc']));
-$PAGE->navbar->add(get_string('cleanup_iomadoidc_tokens', 'auth_iomadoidc'));
 
 $emptyuseridtokens = auth_iomadoidc_get_tokens_with_empty_ids();
 $mismatchedtokens = auth_iomadoidc_get_tokens_with_mismatched_usernames();

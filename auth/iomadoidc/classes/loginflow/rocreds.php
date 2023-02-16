@@ -18,13 +18,13 @@
  * Resource Owner Password Credentials Grant login flow.
  *
  * @package auth_iomadoidc
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @basedon   auth_oidc by James McQuillan <james.mcquillan@remote-learner.net>
+ * @author James McQuillan <james.mcquillan@remote-learner.net>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
 namespace auth_iomadoidc\loginflow;
+use iomad;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -100,7 +100,7 @@ class rocreds extends base {
             }
         }
 
-        $autoappend = get_config('auth_iomadoidc' . $postfix, 'autoappend');
+        $autoappend = get_config('auth_iomadoidc', 'autoappend' . $postfix);
         if (empty($autoappend)) {
             // If we're not doing autoappend, just let things flow naturally.
             return true;
