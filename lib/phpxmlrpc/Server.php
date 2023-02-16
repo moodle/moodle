@@ -421,7 +421,7 @@ class Server
             }
         }
         if (isset($wanted)) {
-            return array(0, "Wanted ${wanted}, got ${got} at param ${pno}");
+            return array(0, "Wanted {$wanted}, got {$got} at param {$pno}"); // TODO: Remove this modification in MDL-76415.
         } else {
             return array(0, "No method signature matches number of parameters");
         }
@@ -669,7 +669,7 @@ class Server
                 return new Response(
                     0,
                     PhpXmlRpc::$xmlrpcerr['incorrect_params'],
-                    PhpXmlRpc::$xmlrpcstr['incorrect_params'] . ": ${errStr}"
+                    PhpXmlRpc::$xmlrpcstr['incorrect_params'] . ": {$errStr}" // TODO: Remove this modification in MDL-76415.
                 );
             }
         }
@@ -1020,8 +1020,8 @@ class Server
     public static function _xmlrpcs_multicall_error($err)
     {
         if (is_string($err)) {
-            $str = PhpXmlRpc::$xmlrpcstr["multicall_${err}"];
-            $code = PhpXmlRpc::$xmlrpcerr["multicall_${err}"];
+            $str = PhpXmlRpc::$xmlrpcstr["multicall_{$err}"]; // TODO: Remove this modification in MDL-76415.
+            $code = PhpXmlRpc::$xmlrpcerr["multicall_{$err}"]; // TODO: Remove this modification in MDL-76415.
         } else {
             $code = $err->faultCode();
             $str = $err->faultString();
