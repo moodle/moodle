@@ -25,7 +25,7 @@ Feature: Given we have opted to search for a grade item, Lets find and search th
     When I click on ".search-widget[data-searchtype='grade']" "css_element"
     Then I confirm "Test assignment one" in "grade" search within the gradebook widget exists
     And I confirm "Test assignment two" in "grade" search within the gradebook widget exists
-    And I set the field "searchinput" to "two"
+    And I set the field "Search grade items" to "two"
     And I wait "1" seconds
     And I confirm "Test assignment two" in "grade" search within the gradebook widget exists
     And I confirm "Test assignment one" in "grade" search within the gradebook widget does not exist

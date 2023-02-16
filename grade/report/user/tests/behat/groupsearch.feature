@@ -44,7 +44,7 @@ Feature: Group searching functionality within the user report.
     And I click on ".search-widget[data-searchtype='group']" "css_element"
     And I confirm "Tutor group" in "group" search within the gradebook widget exists
     And I confirm "Marker group" in "group" search within the gradebook widget exists
-    When I set the field "searchinput" to "tutor"
+    When I set the field "Search groups" to "tutor"
     And I wait "1" seconds
     Then I confirm "Tutor group" in "group" search within the gradebook widget exists
     And I confirm "Marker group" in "group" search within the gradebook widget does not exist
