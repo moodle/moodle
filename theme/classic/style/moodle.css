@@ -14886,6 +14886,13 @@ span.editinstructions {
       padding-bottom: 0;
       border-bottom: 0; }
 
+.course-content .description-inner ul {
+  list-style: disc; }
+  .course-content .description-inner ul ul {
+    list-style: circle; }
+    .course-content .description-inner ul ul ul {
+      list-style: square; }
+
 .activity-item {
   position: relative;
   border-radius: 0.25rem;
