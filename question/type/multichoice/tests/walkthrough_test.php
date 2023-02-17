@@ -302,8 +302,10 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->render();
 
         // Check for 'Show standard instruction'.
-        $standardinstruction = get_string('selectmulti', 'qtype_multichoice');
-        $this->assertStringNotContainsString($standardinstruction, $this->currentoutput);
+        $standardinstruction = \html_writer::tag('legend', get_string('selectmulti', 'qtype_multichoice'), [
+            'class' => 'prompt h6 font-weight-normal sr-only'
+        ]);
+        $this->assertStringContainsString($standardinstruction, $this->currentoutput);
     }
 
 }
