@@ -1562,8 +1562,7 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
             width: 2rem;
             height: 2rem;
             position: relative;
-            left: calc(50% - 1rem);
-            top: calc(50% - 1rem);
+            left: calc(50%);
             opacity: 0;
             visibility: hidden;
             transition: visibility 0.1s;
@@ -1574,8 +1573,8 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
                 width: 1.5rem;
                 font-size: 1.5rem;
                 position: absolute;
-                left: 0.25rem;
-                top: 0.25rem;
+                left: calc(0.25rem - 1px);
+                top: calc(0.25rem - 0.5px);
             }
         }
     }
