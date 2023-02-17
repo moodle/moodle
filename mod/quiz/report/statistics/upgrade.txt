@@ -7,6 +7,11 @@ information provided here is intended especially for developers.
   (which are really private to the quiz, and not part of any API you should be using) now have a new
   optional argument $calculateifrequired.
 
+* In the past, the methods \quiz_statistics\calculator::get_last_calculated_time() and calculator::get_cached()
+  only returned the pre-computed statistics if they were computed less than 15 minutes ago. Now, they will
+  always return any computed statistics that exist. The constant calculator::TIME_TO_CACHE will be
+  deprecated in Moodle 4.2.
+
 
 === 3.2 ===
 
