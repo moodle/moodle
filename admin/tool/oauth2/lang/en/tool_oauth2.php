@@ -103,6 +103,7 @@ $string['linkedin_service'] = 'LinkedIn';
 $string['logindisplay'] = 'Display on login page as';
 $string['loginissuer'] = 'Allow login';
 $string['microsoft_service'] = 'Microsoft';
+$string['moodlenet_service'] = 'MoodleNet';
 $string['nextcloud_service'] = 'Nextcloud';
 $string['notconfigured'] = 'Not configured';
 $string['notdiscovered'] = 'Service discovery not successful';
