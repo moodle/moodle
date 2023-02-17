@@ -30,6 +30,7 @@ use moodle_url;
 use context_system;
 use stdClass;
 use html_writer;
+use iomad;
 
 /**
  * Methods to use when registering the site at the moodle sites directory.
@@ -430,6 +431,9 @@ class registration {
             }
             $url->param($key, $value);
         }
+
+        // Register IOMAD site.
+        iomad::register_site($params);
 
         $SESSION->registrationredirect = $returnurl;
         redirect($url);

@@ -30,6 +30,23 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 class iomad {
 
     /**
+     * Registers the IOMAD site
+     * @param $parms - (array)
+     */
+    public static function register_site($data) {
+
+        // Add in the missing data.
+        $data['siteurl'] = $CFG->wwwroot;
+        $ch = curl_init('https://www.iomad.org/wp-json/contact-form-7/v1/contact-forms/4445/feedback');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+        $response = curl_exec($ch);
+
+        curl_close($ch);
+    }
+
+    /**
      * Gets the current users company ID depending on
      * if the user is an admin and editing a company or is a
      * company user tied to a company.
