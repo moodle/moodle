@@ -84,7 +84,9 @@ function(
             data.originalEvent.preventDefault();
         });
 
-        PubSub.subscribe(MessageDrawerEvents.CONVERSATION_READ, handleDecrementConversationCount(button));
+        // Decrement the unread conversation count in the nav bar by calling handleDecrementConversationCount
+        // If the following Events are published
+        PubSub.subscribe(MessageDrawerEvents.CONVERSATION_DECREMENT, handleDecrementConversationCount(button));
         PubSub.subscribe(MessageDrawerEvents.CONTACT_REQUEST_ACCEPTED, handleDecrementConversationCount(button));
         PubSub.subscribe(MessageDrawerEvents.CONTACT_REQUEST_DECLINED, handleDecrementConversationCount(button));
     };
