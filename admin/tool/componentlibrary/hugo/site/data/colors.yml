@@ -1,16 +1,26 @@
-- name: primary
+- name: blue
   hex: "#007bff"
-- name: secondary
-  hex: "#868e96"
-- name: success
-  hex: "#28a745"
-- name: danger
+- name: indigo
+  hex: "#6610f2"
+- name: purple
+  hex: "#6f42c1"
+- name: pink
+  hex: "#e83e8c"
+- name: red
   hex: "#dc3545"
-- name: warning
+- name: orange
+  hex: "#fd7e14"
+- name: yellow
   hex: "#ffc107"
-- name: info
+- name: green
+  hex: "#28a745"
+- name: teal
+  hex: "#20c997"
+- name: cyan
   hex: "#17a2b8"
-- name: light
-  hex: "#f8f9fa"
-- name: dark
+- name: white
+  hex: "#fff"
+- name: gray
+  hex: "#6c757d"
+- name: gray-dark
   hex: "#343a40"
