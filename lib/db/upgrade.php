@@ -3019,5 +3019,74 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023022000.00);
     }
 
+    if ($oldversion < 2023030300.01) {
+        $sql = "SELECT preset.*
+                  FROM {adminpresets} preset
+            INNER JOIN {adminpresets_it} it ON preset.id = it.adminpresetid
+                 WHERE it.name = :name AND it.value = :value AND preset.iscore > 0";
+        // Some settings and plugins have been added/removed to the Starter and Full preset. Add them to the core presets if
+        // they haven't been included yet.
+        $params = ['name' => get_string('starterpreset', 'core_adminpresets'), 'iscore' => 1];
+        $starterpreset = $DB->get_record('adminpresets', $params);
+        if (!$starterpreset) {
+            // Starter admin preset might have been created using the English name.
+            $name = get_string_manager()->get_string('starterpreset', 'core_adminpresets', null, 'en');
+            $params['name'] = $name;
+            $starterpreset = $DB->get_record('adminpresets', $params);
+        }
+        if (!$starterpreset) {
+            // We tried, but we didn't find starter by name. Let's find a core preset that sets 'usecomments' setting to 0.
+            $params = ['name' => 'usecomments', 'value' => '0'];
+            $starterpreset = $DB->get_record_sql($sql, $params);
+        }
+
+        $params = ['name' => get_string('fullpreset', 'core_adminpresets')];
+        $fullpreset = $DB->get_record_select('adminpresets', 'name = :name and iscore > 0', $params);
+        if (!$fullpreset) {
+            // Full admin preset might have been created using the English name.
+            $name = get_string_manager()->get_string('fullpreset', 'core_adminpresets', null, 'en');
+            $params['name'] = $name;
+            $fullpreset = $DB->get_record_select('adminpresets', 'name = :name and iscore > 0', $params);
+        }
+        if (!$fullpreset) {
+            // We tried, but we didn't find full by name. Let's find a core preset that sets 'usecomments' setting to 1.
+            $params = ['name' => 'usecomments', 'value' => '1'];
+            $fullpreset = $DB->get_record_sql($sql, $params);
+        }
+
+        $settings = [
+            // Settings. Set Activity chooser tabs to "Starred, Recommended, All"(5) for Starter and back it to default(3) for Full.
+            [
+                'presetid' => $starterpreset->id,
+                'plugin' => 'none',
+                'name' => 'activitychoosertabmode',
+                'value' => '4',
+            ],
+            [
+                'presetid' => $fullpreset->id,
+                'plugin' => 'none',
+                'name' => 'activitychoosertabmode',
+                'value' => '3',
+            ],
+        ];
+        foreach ($settings as $notused => $setting) {
+            $params = ['adminpresetid' => $setting['presetid'], 'plugin' => $setting['plugin'], 'name' => $setting['name']];
+            if (!$record = $DB->get_record('adminpresets_it', $params)) {
+                $record = new \stdClass();
+                $record->adminpresetid = $setting['presetid'];
+                $record->plugin = $setting['plugin'];
+                $record->name = $setting['name'];
+                $record->value = $setting['value'];
+                $DB->insert_record('adminpresets_it', $record);
+            } else {
+                $record->value = $setting['value'];
+                $DB->update_record('adminpresets_it', $record);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023030300.01);
+    }
+
     return true;
 }
