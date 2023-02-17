@@ -66,7 +66,7 @@ $form = new application(null, ['iomadoidcconfig' => $iomadoidcconfig]);
 $formdata = [];
 foreach (['idptype', 'clientid', 'clientauthmethod', 'clientsecret', 'clientprivatekey', 'clientcert', 'tenantnameorguid',
     'authendpoint', 'tokenendpoint', 'iomadoidcresource', 'iomadoidcscope'] as $field) {
-    if (isset($iomadoidcconfig->$field . $postfix)) {
+    if (!empty($iomadoidcconfig->$field . $postfix)) {
         $formdata[$field] = $iomadoidcconfig->$field;
     }
 }

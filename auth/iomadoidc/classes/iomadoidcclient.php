@@ -171,7 +171,7 @@ class iomadoidcclient {
      * @return array Array of request parameters.
      */
     protected function getauthrequestparams($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {
-        globacl $CFG;
+        global $CFG;
 
         // IOMAD
         require_once($CFG->dirroot . '/local/iomad/lib/company.php');
