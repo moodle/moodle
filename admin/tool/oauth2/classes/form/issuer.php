@@ -244,7 +244,6 @@ class issuer extends persistent {
      * @return array of additional errors, or overridden errors.
      */
     protected function extra_validation($data, $files, array &$errors) {
-        $errors = [];
         if ($data->showonloginpage != \core\oauth2\issuer::SERVICEONLY) {
             if (!strlen(trim($data->loginscopes))) {
                 $errors['loginscopes'] = get_string('required');
