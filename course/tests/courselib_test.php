@@ -5751,7 +5751,7 @@ class courselib_test extends advanced_testcase {
                     'shortname DESC, xyz ASC',
                     'Invalid field in the sort parameter, allowed fields: id, idnumber, summary, summaryformat, ' .
                     'startdate, enddate, category, shortname, fullname, timeaccess, component, visible, ' .
-                    'showactivitydates, showcompletionconditions.',
+                    'showactivitydates, showcompletionconditions, pdfexportfont.',
             ],
             'Sort uses invalid value for the sorting direction' =>
                 [

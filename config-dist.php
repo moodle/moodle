@@ -655,8 +655,12 @@ $CFG->admin = 'admin';
 // Font used in exported PDF files. When generating a PDF, Moodle embeds a subset of
 // the font in the PDF file so it will be readable on the widest range of devices.
 // The default font is 'freesans' which is part of the GNU FreeFont collection.
+// The font used to export can be set per-course - a drop down list in the course
+// settings shows all the options specified in the array here. The key must be the
+// font name (e.g., "kozminproregular") and the value is a friendly name, (e.g.,
+// "Kozmin Pro Regular").
 //
-//      $CFG->pdfexportfont = 'freesans';
+//      $CFG->pdfexportfont = ['freesans' => 'FreeSans'];
 //
 // Use the following flag to enable messagingallusers and set the default preference
 // value for existing users to allow them to be contacted by other site users.

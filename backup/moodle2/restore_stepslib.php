@@ -1933,6 +1933,9 @@ class restore_course_structure_step extends restore_structure_step {
         $showactivitydatesdefault = ($courseconfig->showactivitydates ?? null);
         $data->showactivitydates = $data->showactivitydates ?? $showactivitydatesdefault;
 
+        $pdffontdefault = ($courseconfig->pdfexportfont ?? null);
+        $data->pdfexportfont = $data->pdfexportfont ?? $pdffontdefault;
+
         $languages = get_string_manager()->get_list_of_translations(); // Get languages for quick search
         if (isset($data->lang) && !array_key_exists($data->lang, $languages)) {
             $data->lang = '';
