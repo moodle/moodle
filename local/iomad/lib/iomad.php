@@ -40,6 +40,7 @@ class iomad {
         $data['siteurl'] = $CFG->wwwroot;
         $ch = curl_init('https://www.iomad.org/wp-json/contact-form-7/v1/contact-forms/4445/feedback');
         curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
         $response = curl_exec($ch);
