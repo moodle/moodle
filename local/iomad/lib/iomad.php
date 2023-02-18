@@ -34,6 +34,7 @@ class iomad {
      * @param $parms - (array)
      */
     public static function register_site($data) {
+        global $CFG;
 
         // Add in the missing data.
         $data['siteurl'] = $CFG->wwwroot;
