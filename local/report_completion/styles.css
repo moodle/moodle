@@ -25,8 +25,13 @@
     border-bottom: 0px;
 }
 
-#page-local-report_completion-index .chart-area{
-    max-width: 400px;
+#page-local-report_completion-index .no-overflow {
+    overflow: unset !important;
+}
+
+#page-local-report_completion-index .chart-area, #page-local-report_completion-index .chart-image{
+    max-width: 200px;
+    max-height: 200px;
 }
 
 .reporttablecontrols {

@@ -23,16 +23,9 @@
 
 require_once(dirname(__FILE__).'/../../config.php');
 require_once($CFG->libdir.'/completionlib.php');
-//require_once($CFG->libdir.'/excellib.class.php');
 require_once($CFG->dirroot.'/local/iomad_track/lib.php');
 require_once($CFG->dirroot.'/local/iomad_track/db/install.php');
 require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
-//require_once(dirname(__FILE__).'/lib.php');
-//require_once(dirname(__FILE__).'/locallib.php');
-
-// chart stuff
-define('PCHART_SIZEX', 500);
-define('PCHART_SIZEY', 500);
 
 // Params.
 $courseid = optional_param('courseid', 0, PARAM_INT);
@@ -53,7 +46,7 @@ $coursesearch = optional_param('coursesearch', '', PARAM_CLEAN);// Search string
 $departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $completiontype = optional_param('completiontype', 0, PARAM_INT);
 $charttype = optional_param('charttype', '', PARAM_CLEAN);
-$showcharts = optional_param('showcharts', false, PARAM_BOOL);
+$showcharts = optional_param('showcharts', $CFG->iomad_showcharts, PARAM_BOOL);
 $confirm = optional_param('confirm', 0, PARAM_INT);
 $fromraw = optional_param_array('compfromraw', null, PARAM_INT);
 $toraw = optional_param_array('comptoraw', null, PARAM_INT);
@@ -78,7 +71,7 @@ require_login();
 $context = context_system::instance();
 iomad::require_capability('local/report_completion:view', $context);
 
-$canseechildren = true; //iomad::has_capability('block/iomad_company_admin:canviewchildren', $systemcontext);
+$canseechildren = iomad::has_capability('block/iomad_company_admin:canviewchildren', $context);
 
 $params['courseid'] = $courseid;
 if ($firstname) {
@@ -166,6 +159,7 @@ $params['userid'] = $userid;
 if ($edit != -1) {
     $USER->editing = $edit;
 }
+$buttons = "";
 
 // Url stuff.
 $url = new moodle_url('/local/report_completion/index.php', array('validonly' => $validonly));
@@ -450,12 +444,12 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 // Set the companyid
 if ($viewchildren && $canseechildren && !empty($departmentid) && company::can_manage_department($departmentid)) {
     $departmentrec = $DB->get_record('department', ['id' => $departmentid]);
-    $realcompanyid = iomad::get_my_companyid($systemcontext);
+    $realcompanyid = iomad::get_my_companyid($context);
     $companyid = $departmentrec->company;
     $realcompany = new company($realcompanyid);
     $selectedcompany = new company($companyid);
 } else {
-    $companyid = iomad::get_my_companyid($systemcontext);
+    $companyid = iomad::get_my_companyid($context);
     $realcompanyid = $companyid;
     $realcompany = new company($realcompanyid);
 }
@@ -637,7 +631,13 @@ if (empty($courseid)) {
     $coursecolumns = ['coursename'];
 
     // Set up the rest of the headers for the table.
-    $haslicenses = $DB->get_records('companylicense', ['companyid' => $companyid]);
+    $haslicenses = !empty($DB->count_records_sql("SELECT COUNT(id)
+                                                  FROM {local_iomad_track}
+                                                  WHERE courseid IN (
+                                                     SELECT courseid FROM {iomad_courses}
+                                                     WHERE licensed = 1)
+                                                  $coursesearchsql",
+                                                  $sqlparams));
     if (iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $context) &&
         $haslicenses) {
         if ($showcharts) {
@@ -651,17 +651,18 @@ if (empty($courseid)) {
             $coursecolumns[] = 'licenseuserallocated';
             $coursecolumns[] = 'licenseuserused';
         }
-    }
-    if ($showcharts) {
-        $courseheaders[] = get_string('usersummary', 'local_report_completion');
-        $coursecolumns[] = 'usersummary';
     } else {
-        $courseheaders[] = get_string('started', 'question');
-        $courseheaders[] = get_string('inprogressusers', 'local_report_completion');
-        $courseheaders[] = get_string('completedusers', 'local_report_completion');
-        $coursecolumns[] = 'userstarted';
-        $coursecolumns[] = 'userinprogress';
-        $coursecolumns[] = 'usercompleted';
+        if ($showcharts) {
+            $courseheaders[] = get_string('usersummary', 'local_report_completion');
+            $coursecolumns[] = 'usersummary';
+        } else {
+            $courseheaders[] = get_string('started', 'question');
+            $courseheaders[] = get_string('inprogressusers', 'local_report_completion');
+            $courseheaders[] = get_string('completedusers', 'local_report_completion');
+            $coursecolumns[] = 'userstarted';
+            $coursecolumns[] = 'userinprogress';
+            $coursecolumns[] = 'usercompleted';
+        }
     }
 
     $coursetable->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);

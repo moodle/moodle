@@ -89,10 +89,11 @@ class course_table extends table_sql {
             $expiredsql = "";
         }
 
+        // Get the company details.
+        $company = new company($row->companyid);
+
         // Is this rolled up or not?
         if (!$params['showsummary'] || empty($childcompanies)) {
-            // Get the company details.
-            $company = new company($row->companyid);
             $parentcompanies = $company->get_parent_companies_recursive();
     
             // Deal with parent company managers
@@ -153,6 +154,20 @@ class course_table extends table_sql {
                 $sqlparams['enrolledto'] = $params['to'];
                 $sqlparams['completedto'] = $params['to'];
             }
+
+            // Count the unused licenses.
+            $licensesunused = $DB->count_records_sql("SELECT COUNT(lit.id)
+                                                      FROM {local_iomad_track} lit
+                                                      JOIN {company_users} cu ON (lit.userid = cu.userid AND lit.companyid = cu.companyid)
+                                                      JOIN {user} u ON (lit.userid = u.id)
+                                                      WHERE lit.companyid = :companyid
+                                                      AND lit.courseid = :courseid
+                                                      AND lit.licenseallocated IS NOT NULL
+                                                      AND lit.timeenrolled IS NULL
+                                                      $datesql
+                                                      $suspendedsql
+                                                      $departmentsql",
+                                                      $sqlparams);
 
             // Count the allocated licenses.
             $licensesallocated = $DB->count_records_sql("SELECT count(lit.id) FROM {local_iomad_track} lit
@@ -218,6 +233,20 @@ class course_table extends table_sql {
                 $validcompletedsql = "";
             }
 
+            // Count the unused licenses.
+            $licensesunused = $DB->count_records_sql("SELECT COUNT(lit.id)
+                                                      FROM {local_iomad_track} lit
+                                                      JOIN {company_users} cu ON (lit.userid = cu.userid AND lit.companyid = cu.companyid)
+                                                      JOIN {user} u ON (lit.userid = u.id)
+                                                      WHERE lit.courseid = :courseid
+                                                      AND $litcompanysql
+                                                      AND lit.licenseallocated IS NOT NULL
+                                                      AND lit.timeenrolled IS NULL
+                                                      $datesql
+                                                      $suspendedsql
+                                                      $departmentsql",
+                                                      $sqlparams);
+
             // Count the used licenses.
             $licensesallocated = $DB->count_records_sql("SELECT count(lit.id) FROM {local_iomad_track} lit
                                                          JOIN {company_users} cu ON (lit.userid = cu.userid AND lit.companyid = cu.companyid)
@@ -278,10 +307,11 @@ class course_table extends table_sql {
             $expiredsql = "";
         }
 
+        // Get the company details.
+        $company = new company($row->companyid);
+
         // Is this rolled up or not?
         if (!$params['showsummary'] || empty($childcompanies)) {
-            // Get the company details.
-            $company = new company($row->companyid);
             $parentcompanies = $company->get_parent_companies_recursive();
     
             // Deal with parent company managers
@@ -448,10 +478,11 @@ class course_table extends table_sql {
             $expiredsql = "";
         }
 
+        // Get the company details.
+        $company = new company($row->companyid);
+
         // Is this rolled up or not?
         if (!$params['showsummary'] || empty($childcompanies)) {
-            // Get the company details.
-            $company = new company($row->companyid);
             $parentcompanies = $company->get_parent_companies_recursive();
     
             // Deal with parent company managers
@@ -620,10 +651,11 @@ class course_table extends table_sql {
             $expiredsql = "";
         }
 
+        // Get the company details.
+        $company = new company($row->companyid);
+
         // Is this rolled up or not?
         if (!$params['showsummary'] || empty($childcompanies)) {
-            // Get the company details.
-            $company = new company($row->companyid);
             $parentcompanies = $company->get_parent_companies_recursive();
 
             // Deal with parent company managers
@@ -795,10 +827,11 @@ class course_table extends table_sql {
             $expiredsql = "";
         }
 
+        // Get the company details.
+        $company = new company($row->companyid);
+
         // Is this rolled up or not?
         if (!$params['showsummary'] || empty($childcompanies)) {
-            // Get the company details.
-            $company = new company($row->companyid);
             $parentcompanies = $company->get_parent_companies_recursive();
 
             // Deal with parent company managers
@@ -958,10 +991,11 @@ class course_table extends table_sql {
             $expiredsql = "";
         }
 
+        // Get the company details.
+        $company = new company($row->companyid);
+
         // Is this rolled up or not?
         if (!$params['showsummary'] || empty($childcompanies)) {
-            // Get the company details.
-            $company = new company($row->companyid);
             $parentcompanies = $company->get_parent_companies_recursive();
 
             // Deal with parent company managers
