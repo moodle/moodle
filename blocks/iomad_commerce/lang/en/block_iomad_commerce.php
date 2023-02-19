@@ -196,3 +196,4 @@ $string['unprocessed'] = 'Unprocessed';
 $string['unprocesseditems'] = 'Unprocessed items';
 $string['useexternalshop'] = 'Use an external eCommerce solution for purchases';
 $string['useexternalshop_help'] = 'Enable this if you have an external eCommerce solution which has the correct Webservices to work with IOMAD.';
+$string['value'] = 'Value';

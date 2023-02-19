@@ -438,5 +438,35 @@ function xmldb_block_iomad_commerce_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2023021900, 'iomad_commerce');
     }
 
+    if ($oldversion < 2023021901) {
+
+        // Define field companyid to be added to invoice.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('companyid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0', 'paymentid');
+
+        // Conditionally launch add field companyid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // get all of the companies.
+        $companies = $DB->get_records('company');
+        foreach ($companies as $company) {
+            $DB->set_field('invoice', 'companyid', $company->id, ['company' => $company->name]);
+        }
+
+        // Define field company to be dropped from invoice.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('company');
+
+        // Conditionally launch drop field company.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Iomad_commerce savepoint reached.
+        upgrade_block_savepoint(true, 2023021901, 'iomad_commerce');
+    }
+
     return $result;
 }

@@ -84,24 +84,6 @@ if ($mform->is_cancelled()) {
     redirect($companylist);
 
 } else if ($data = $mform->get_data()) {
-    $data->userid = $USER->id;
-
-    $transaction = $DB->start_delegated_transaction();
-
-    $data->id = $invoiceid;
-    $DB->update_record('invoice', $data);
-
-    $count = 0;
-
-    while (array_key_exists('process_' . $count, $_POST)) {
-        $itemid = $_POST['process_' . $count];
-         block_iomad_commerce\processor::trigger_invoiceitem_onordercomplete($itemid, $invoice);
-
-        $count++;
-    }
-
-    $transaction->allow_commit();
-
     redirect($companylist);
 
 } else {

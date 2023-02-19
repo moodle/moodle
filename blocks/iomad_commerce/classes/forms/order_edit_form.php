@@ -66,6 +66,7 @@ class order_edit_form extends moodleform {
         }
         $mform->addElement('select', 'status', get_string('status'), $choices);
         $mform->addRule('status', $strrequired, 'required', null, 'client');
+        $mform->disabledIf('status', 'id', 'ne', 0);
 
         $mform->addElement('header', 'header', get_string('purchaser_details', 'block_iomad_commerce'));
 
@@ -84,7 +85,7 @@ class order_edit_form extends moodleform {
         $mform->addElement('header', 'header', get_string('basket', 'block_iomad_commerce'));
 
         $mform->addElement('html', '<p>' . get_string('process_help', 'block_iomad_commerce') . '</p>');
-        $mform->addElement('html', \block_iomad_commerce\helper::get_invoice_html($this->invoiceid, 0, 0, 1));
+        $mform->addElement('html', \block_iomad_commerce\helper::get_invoice_html($this->invoiceid, 0, 0, 0));
 
         $mform->addElement('header', 'header', get_string('paymentprocessing', 'block_iomad_commerce'));
 
@@ -94,6 +95,6 @@ class order_edit_form extends moodleform {
             $mform->addElement('static', 'pp_account', get_string('paymentaccount', 'payment'));
         }
 
-        $this->add_action_buttons();
+        $this->add_action_buttons(false, get_string('back'));
     }
 }
