@@ -67,6 +67,8 @@ $selectsql = "i.id,
               i.status,
               i.paymentid,
               i.date,
+              p.gateway,
+              p.accountid,
               (SELECT SUM(price) FROM {invoiceitem} ii WHERE ii.invoiceid = i.id)
               AS value,             
               (SELECT COUNT(*) FROM {invoiceitem} ii WHERE ii.invoiceid = i.id AND processed = 0)
@@ -75,7 +77,7 @@ $selectsql = "i.id,
               AS currency,             
               u.firstname AS firstname,
               u.lastname AS lastname " . $usersql->selects;
-$fromsql = "{invoice} i JOIN {user} u ON (i.userid = u.id)";
+$fromsql = "{invoice} i JOIN {user} u ON (i.userid = u.id) LEFT JOIN {payments} p ON (i.paymentid = p.id)";
 $wheresql = " i.companyid = :companyid";
 $sqlparams = ['companyid' => $companyid];
 
@@ -106,7 +108,7 @@ $table->define_baseurl($baseurl);
 $table->define_columns($columns);
 $table->define_headers($headers);
 $table->no_sorting('actions');
-//$table->no_sorting('unprocesseditems');
+$table->no_sorting('paymentprovider');
 $table->sort_default_column = 'date DESC';
 $table->is_downloading($download, format_string($company->get('name')) . ' invoices ' . format_string(date($CFG->iomad_date_format, time())), 'companyinvoices');
 
