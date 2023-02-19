@@ -37,6 +37,8 @@ $invoiceid = required_param('id', PARAM_INTEGER);
 $context = context_system::instance();
 require_login();
 
+iomad::require_capability('block/iomad_commerce:admin_view', $context);
+
 $urlparams = array();
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
@@ -45,11 +47,9 @@ $companylist = new moodle_url('/blocks/iomad_commerce/orderlist.php', $urlparams
 
 $invoice = \block_iomad_commerce\helper::get_invoice($invoiceid);
 
-iomad::require_capability('block/iomad_commerce:admin_view', $context);
-
-// Correct the navbar.
 // Set the name for the page.
 $linktext = get_string('orders', 'block_iomad_commerce');
+
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_commerce/orderlist.php');
 
@@ -62,9 +62,22 @@ $PAGE->set_heading(get_string('edit_invoice', 'block_iomad_commerce'));
 $PAGE->navbar->add($linktext, $linkurl);
 $PAGE->navbar->add(get_string('edit_invoice', 'block_iomad_commerce'));
 
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
+if (empty($invoice->paymentid)) {
+    $invoice->checkout_method = get_string('pp_historic', 'block_iomad_commerce');
+    $invoice->pp_account = get_string('notapplicable', 'local_report_completion');
+} else {
+    $payment = $DB->get_record('payments', ['id' => $invoice->paymentid]);
+    $invoice->checkout_method = get_string('pluginname', 'paygw_' . $payment->gateway);
+    $accounts = \core_payment\helper::get_payment_accounts_menu(context_system::instance());
+    $invoice->pp_account = $accounts[$payment->accountid];
 
-$mform = new \block_iomad_commerce\forms\order_edit_form($PAGE->url, $invoiceid);
+}
+
+$showaccount = false;
+if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+    $showaccount = true;
+}
+$mform = new \block_iomad_commerce\forms\order_edit_form($PAGE->url, $invoiceid, $showaccount);
 $mform->set_data($invoice);
 
 if ($mform->is_cancelled()) {

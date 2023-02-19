@@ -278,5 +278,165 @@ function xmldb_block_iomad_commerce_upgrade($oldversion) {
         // Iomad_commerce savepoint reached.
         upgrade_block_savepoint(true, 2023021000, 'iomad_commerce');
     }
+
+    if ($oldversion < 2023021900) {
+
+        // Rename field pp_payerid on table invoice to paymentid.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('pp_payerid');
+
+        // Conditionally launch drop field pp_payerid.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Rename field pp_payerstatus on table invoice to pp_accountid.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('pp_payerstatus');
+
+        // Conditionally launch drop field pp_payerstatus.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field pp_ack to be dropped from invoice.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('pp_ack');
+
+        // Conditionally launch drop field pp_ack.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field pp_transactionid to be dropped from invoice.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('pp_transactionid');
+
+        // Conditionally launch drop field pp_transactionid.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field pp_transactiontype to be dropped from invoice.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('pp_transactiontype');
+
+        // Conditionally launch drop field pp_transactiontype.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field pp_paymenttype to be dropped from invoice.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('pp_paymenttype');
+
+        // Conditionally launch drop field pp_paymenttype.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field pp_ordertime to be dropped from invoice.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('pp_ordertime');
+
+        // Conditionally launch drop field pp_ordertime.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field pp_currencycode to be dropped from invoice.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('pp_currencycode');
+
+        // Conditionally launch drop field pp_currencycode.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field pp_amount to be dropped from invoice.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('pp_amount');
+
+        // Conditionally launch drop field pp_amount.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field pp_feeamt to be dropped from invoice.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('pp_feeamt');
+
+        // Conditionally launch drop field pp_feeamt.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field pp_settleamt to be dropped from invoice.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('pp_settleamt');
+
+        // Conditionally launch drop field pp_settleamt.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field pp_taxamt to be dropped from invoice.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('pp_taxamt');
+
+        // Conditionally launch drop field pp_taxamt.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field pp_exchangerate to be dropped from invoice.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('pp_exchangerate');
+
+        // Conditionally launch drop field pp_exchangerate.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field pp_paymentstatus to be dropped from invoice.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('pp_paymentstatus');
+
+        // Conditionally launch drop field pp_paymentstatus.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field pp_pendingreason to be dropped from invoice.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('pp_pendingreason');
+
+        // Conditionally launch drop field pp_pendingreason.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field pp_reason to be dropped from invoice.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('pp_reason');
+
+        // Conditionally launch drop field pp_reason.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field paymentid to be added to invoice.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('paymentid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0', 'phone1');
+
+        // Conditionally launch add field paymentid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad_commerce savepoint reached.
+        upgrade_block_savepoint(true, 2023021900, 'iomad_commerce');
+    }
+
     return $result;
 }

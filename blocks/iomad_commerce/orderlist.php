@@ -63,10 +63,11 @@ echo $OUTPUT->paging_bar($objectcount, $page, $perpage, $baseurl);
 flush();
 
 if ($orders = $DB->get_recordset_sql("SELECT
-                                        i.*,
+                                        i.*, p.gateway, p.accountid,
                                         (SELECT COUNT(*) FROM {invoiceitem} ii WHERE ii.invoiceid = i.id AND processed = 0)
                                          AS unprocesseditems
                                       FROM {invoice} i
+                                      LEFT JOIN {payments} p ON (i.paymentid = p.id)
                                       WHERE i.Status != '" . \block_iomad_commerce\helper::INVOICESTATUS_BASKET . "'
                                       ORDER BY i.Status DESC, i.id DESC", null, $page, $perpage)) {
     if (!empty($orders)) {
@@ -90,12 +91,17 @@ if ($orders = $DB->get_recordset_sql("SELECT
             } else {
                     $editbutton = "";
             }
-                $table->data[] = array ($order->reference,
-                                    get_string('pp_' . $order->checkout_method . '_name', 'block_iomad_commerce'),
-                                    get_string('status_' . $order->status, 'block_iomad_commerce'),
-                                    $order->company,
-                                    ($order->unprocesseditems > 0 ? $order->unprocesseditems : ""),
-                                    $editbutton);
+            if (empty($order->gateway)) {
+                $pp_name = get_string('pp_historic', 'block_iomad_commerce');
+            } else {
+                $pp_name = get_string('pluginname', 'paygw_' . $order->gateway);
+            }
+            $table->data[] = [$order->reference,
+                              $pp_name,
+                              get_string('status_' . $order->status, 'block_iomad_commerce'),
+                              $order->company,
+                              ($order->unprocesseditems > 0 ? $order->unprocesseditems : ""),
+                              $editbutton];
         }
 
         if (!empty($table)) {

@@ -84,6 +84,7 @@ class service_provider implements \core_payment\local\callback\service_provider 
         \block_iomad_commerce\processor::trigger_oncheckout($instanceid);
 
         if ($invoice = $DB->get_record('invoice', ['id' => $instanceid])) {
+            $invoice->paymentid = $paymentid;
             \block_iomad_commerce\processor::trigger_onordercomplete($invoice);
         }
 

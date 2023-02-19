@@ -29,16 +29,19 @@ namespace block_iomad_commerce\forms;
 
 use \moodleform;
 use \context_system;
+use \block_iomad_commerce\helper;
 
 class order_edit_form extends moodleform {
     protected $invoiceid = 0;
+    protected $showaccount = false;
     protected $context = null;
 
-    public function __construct($actionurl, $invoiceid) {
+    public function __construct($actionurl, $invoiceid, $showaccount = false) {
         global $CFG;
 
         $this->invoiceid = $invoiceid;
         $this->context = context_system::instance();
+        $this->showaccount = $showaccount;
 
         parent::__construct($actionurl);
     }
@@ -81,17 +84,14 @@ class order_edit_form extends moodleform {
         $mform->addElement('header', 'header', get_string('basket', 'block_iomad_commerce'));
 
         $mform->addElement('html', '<p>' . get_string('process_help', 'block_iomad_commerce') . '</p>');
-        $mform->addElement('html', get_invoice_html($this->invoiceid, 0, 0, 1));
+        $mform->addElement('html', \block_iomad_commerce\helper::get_invoice_html($this->invoiceid, 0, 0, 1));
 
         $mform->addElement('header', 'header', get_string('paymentprocessing', 'block_iomad_commerce'));
 
         $mform->addElement('static', 'checkout_method', get_string('paymentprovider', 'block_iomad_commerce'));
 
-        foreach (['pp_payerid', 'pp_ordertime', 'pp_payerstatus', 'pp_transactionid', 'pp_ack',
-                  'pp_transactiontype', 'pp_paymenttype', 'pp_currencycode', 'pp_amount',
-                  'pp_feeamt', 'pp_settleamt', 'pp_taxamt', 'pp_exchangerrate',
-                  'pp_paymentstatus', 'pp_pendingreason', 'pp_reason'] as $ppfield) {
-            $mform->addElement('static', $ppfield, get_string($ppfield, 'block_iomad_commerce'));
+        if ($this->showaccount) {
+            $mform->addElement('static', 'pp_account', get_string('paymentaccount', 'payment'));
         }
 
         $this->add_action_buttons();
