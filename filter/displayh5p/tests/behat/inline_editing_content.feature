@@ -20,7 +20,7 @@ Feature: Inline editing H5P content anywhere
       | student1 | C1 | student        |
     And the following "contentbank content" exist:
       | contextlevel | reference | contenttype     | user     | contentname        | filepath                                  |
-      | Course       | C1        | contenttype_h5p | admin    | Greeting card      | /h5p/tests/fixtures/greeting-card-887.h5p |
+      | Course       | C1        | contenttype_h5p | admin    | Greeting card      | /h5p/tests/fixtures/greeting-card.h5p     |
     And the following "activities" exist:
       | activity | name       | intro      | introformat | course | content  | contentformat | idnumber |
       | page     | PageName1  | PageDesc1  | 1           | C1     | H5Ptest  | 1             | 1        |
@@ -42,7 +42,7 @@ Feature: Inline editing H5P content anywhere
     And I log in as "teacher1"
     # Upload the H5P to private user files.
     And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/greeting-card-887.h5p" file to "Files" filemanager
+    And I upload "h5p/tests/fixtures/greeting-card.h5p" file to "Files" filemanager
     And I click on "Save changes" "button"
     # Add H5P content to the page.
     And I am on "Course 1" course homepage
@@ -51,7 +51,7 @@ Feature: Inline editing H5P content anywhere
     And I click on "Insert H5P" "button" in the "#fitem_id_page" "css_element"
     And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
     And I select "Private files" repository in file picker
-    And I click on "greeting-card-887.h5p" "file" in repository content area
+    And I click on "greeting-card.h5p" "file" in repository content area
     And I click on "Link to the file" "radio"
     And I click on "Select this file" "button"
     And I click on "Insert H5P" "button" in the "Insert H5P" "dialogue"

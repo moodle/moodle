@@ -364,7 +364,7 @@ class contentbank_test extends advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
         $systemcontext = \context_system::instance();
-        $name = 'greeting-card-887.h5p';
+        $name = 'greeting-card.h5p';
 
         // Create a dummy H5P file.
         $dummyh5p = array(
