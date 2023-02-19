@@ -24,7 +24,7 @@ Feature: Select content bank files using the content bank files repository
       | contextlevel | reference | contenttype     | user  | contentname             | filepath                                    |
       | Course       | mscC1     | contenttype_h5p | admin | filltheblanks.h5p       | /h5p/tests/fixtures/filltheblanks.h5p       |
       | Course       | mscC2     | contenttype_h5p | admin | find-the-words.h5p      | /h5p/tests/fixtures/find-the-words.h5p      |
-      | Course       | subcat1C1 | contenttype_h5p | admin | greeting-card-887.h5p   | /h5p/tests/fixtures/greeting-card-887.h5p   |
+      | Course       | subcat1C1 | contenttype_h5p | admin | greeting-card.h5p       | /h5p/tests/fixtures/greeting-card.h5p       |
       | Category     | CAT1      | contenttype_h5p | admin | ipsums.h5p              | /h5p/tests/fixtures/ipsums.h5p              |
       | Category     | SUBCAT1   | contenttype_h5p | admin | multiple-choice-2-6.h5p | /h5p/tests/fixtures/multiple-choice-2-6.h5p |
       | System       |           | contenttype_h5p | admin | filltheblanks.h5p       | /h5p/tests/fixtures/filltheblanks.h5p       |
@@ -76,7 +76,7 @@ Feature: Select content bank files using the content bank files repository
     And I click on "SubCategory1Course1" "folder" in repository content area
     And I should see "System > Category1 > SubCategory1 > SubCategory1Course1" breadcrumb navigation in repository
     And I should see "1" elements in repository content area
-    And I should see "greeting-card-887.h5p" "file" in repository content area
+    And I should see "greeting-card.h5p" "file" in repository content area
 
   Scenario: Admin can select and re-use content bank files using the content bank repository
     Given I am on the Folder "Folder activity" page logged in as admin
