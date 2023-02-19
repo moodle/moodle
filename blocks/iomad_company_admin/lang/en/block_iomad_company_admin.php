@@ -343,6 +343,7 @@ $string['iomad_company_admin:classrooms_delete'] = 'Remove teaching locations';
 $string['iomad_company_admin:classrooms_edit'] = 'Edit teaching locations';
 $string['iomad_company_admin:company_add'] = 'Add a company';
 $string['iomad_company_admin:company_add_child'] = 'Add a child company';
+$string['iomad_company_admin:canviewchildren'] = 'Can view child companies of current company';
 $string['iomad_company_admin:company_course'] = 'Add a course to a company';
 $string['iomad_company_admin:company_course_unenrol'] = 'Add/remove a course with existing enrolments';
 $string['iomad_company_admin:company_course_users'] = 'Enrol/unenrol users on company courses';
