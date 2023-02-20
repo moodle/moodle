@@ -249,7 +249,7 @@ class local_email_renderer extends plugin_renderer_base {
                                            '<a class="btn btn-primary" href="'.$editlink.'">' .
                                            get_string('edittemplateset', 'local_email') . '</a> ' .
                                            '<a class="btn btn-primary" href="'.$applylink.'">' .
-                                           get_string('applytemplateset', 'local_email') . '</a>');
+                                           get_string('applytemplateset', 'local_email', $template->templatesetname) . '</a>');
 
             $table->data[] = $row;
         }
