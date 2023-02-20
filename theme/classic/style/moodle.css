@@ -19855,6 +19855,13 @@ p.arrow_button {
 .path-grade-report-singleview .reporttable .dropdown-toggle::after {
   display: none; }
 
+.gradereport-grader-table input[name^="grade"] {
+  width: 80px;
+  display: inline-block; }
+
+.gradereport-grader-table .dropdown-toggle::after {
+  display: none; }
+
 .search-widget .dropdown-menu {
   padding: 0.8rem 1.2rem; }
   .search-widget .dropdown-menu.wide {
