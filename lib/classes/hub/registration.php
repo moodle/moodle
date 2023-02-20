@@ -60,6 +60,8 @@ class registration {
         2019022200 => ['analyticsenabledmodels', 'analyticspredictions', 'analyticsactions', 'analyticsactionsnotuseful'],
         // Active users stats added in Moodle 3.9.
         2020022600 => ['activeusers', 'activeparticipantnumberaverage'],
+        // Database type, course date info, site theme, primary auth type added in Moodle 4.2.
+        2023021700 => ['dbtype', 'coursesnodates', 'sitetheme', 'primaryauthtype'],
     ];
 
     /** @var Site privacy: not displayed */
@@ -180,6 +182,12 @@ class registration {
         $siteinfo['participantnumberaverage'] = average_number_of_participants();
         $siteinfo['activeparticipantnumberaverage'] = average_number_of_participants(true, time() - DAYSECS * 30);
         $siteinfo['modulenumberaverage'] = average_number_of_courses_modules();
+        $siteinfo['dbtype'] = $CFG->dbtype;
+        $siteinfo['coursesnodates'] = $DB->count_records_select('course', 'startdate = ? AND enddate = ?', [0, 0]) - 1;
+        $siteinfo['sitetheme'] = get_config('core', 'theme');
+        $siteinfo['primaryauthtype'] = $DB->get_field_sql(
+                'SELECT auth, count(auth) as tc FROM {user} GROUP BY auth ORDER BY tc DESC LIMIT 1'
+        );
 
         // Version and url.
         $siteinfo['moodlerelease'] = $CFG->release;
@@ -254,6 +262,10 @@ class registration {
             'analyticspredictions' => get_string('analyticspredictions', 'hub', $siteinfo['analyticspredictions']),
             'analyticsactions' => get_string('analyticsactions', 'hub', $siteinfo['analyticsactions']),
             'analyticsactionsnotuseful' => get_string('analyticsactionsnotuseful', 'hub', $siteinfo['analyticsactionsnotuseful']),
+            'dbtype' => get_string('dbtype', 'hub', $siteinfo['dbtype']),
+            'coursesnodates' => get_string('coursesnodates', 'hub', $siteinfo['coursesnodates']),
+            'sitetheme' => get_string('sitetheme', 'hub', $siteinfo['sitetheme']),
+            'primaryauthtype' => get_string('primaryauthtype', 'hub', $siteinfo['primaryauthtype']),
         ];
 
         foreach ($senddata as $key => $str) {
