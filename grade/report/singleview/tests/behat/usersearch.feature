@@ -27,7 +27,7 @@ Feature: Within the singleview report, a teacher can search for users.
     Then I confirm "Student 1" in "user" search within the gradebook widget exists
     And I confirm "Student 2" in "user" search within the gradebook widget exists
     And I confirm "Student 32" in "user" search within the gradebook widget exists
-    And I set the field "searchinput" to "2"
+    And I set the field "Search users" to "2"
     And I wait "1" seconds
     And I confirm "Student 2" in "user" search within the gradebook widget exists
     And I confirm "Student 32" in "user" search within the gradebook widget exists
