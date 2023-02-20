@@ -17,6 +17,7 @@
 namespace qbank_viewquestiontext;
 
 use core_question\local\bank\row_base;
+use question_utils;
 
 /**
  * A column type for the name of the question name.
@@ -28,13 +29,17 @@ use core_question\local\bank\row_base;
  */
 class question_text_row extends row_base {
 
-    /**
-     * To initialise subclasses
-     * @var $formatoptions
-     */
+    /** @var bool if true, we will show the question text reduced to plain text, else it is fully rendered. */
+    protected $plain;
+
+    /** @var \stdClass $formatoptions options used when displaying the question text as HTML. */
     protected $formatoptions;
 
     protected function init(): void {
+
+        // Cannot use $this->get_preference because of PHP type hints.
+        $preference = question_get_display_preference($this->get_preference_key(), 0, PARAM_INT, new \moodle_url(''));
+        $this->plain = 1 === (int) $preference;
         $this->formatoptions = new \stdClass();
         $this->formatoptions->noclean = true;
         $this->formatoptions->para = false;
@@ -49,11 +54,16 @@ class question_text_row extends row_base {
     }
 
     protected function display_content($question, $rowclasses): void {
-        $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
-                $question->contextid, 'question', 'questiontext', $question->id,
-                $question->contextid, 'core_question');
-        $text = format_text($text, $question->questiontextformat,
-                $this->formatoptions);
+        if ($this->plain) {
+            $text = question_utils::to_plain_text($question->questiontext,
+                    $question->questiontextformat, ['noclean' => true, 'para' => false, 'filter' => false]);
+        } else {
+            $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
+                    $question->contextid, 'question', 'questiontext', $question->id,
+                    $question->contextid, 'core_question');
+            $text = format_text($text, $question->questiontextformat,
+                    $this->formatoptions);
+        }
         if ($text == '') {
             $text = '&#160;';
         }
