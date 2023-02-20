@@ -215,11 +215,13 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
             $errors["bgimage"] = get_string('formerror_nobgimage', 'qtype_ddmarker');
         }
 
+        $dropfound = false;
         for ($i = 0; $i < $data['nodropzone']; $i++) {
             $choice = $data['drops'][$i]['choice'];
             $choicepresent = ($choice !== '0');
 
             if ($choicepresent) {
+                $dropfound = true;
                 // Test coords here.
                 if ($bgimagesize !== null) {
                     $shape = $data['drops'][$i]['shape'];
@@ -236,20 +238,32 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
                 }
             } else {
                 if (trim($data['drops'][$i]['coords']) !== '') {
+                    $dropfound = true;
                     $errorcode = 'noitemselected';
                     $errors["drops[{$i}]"] = get_string('formerror_'.$errorcode, 'qtype_ddmarker');
                 }
             }
-
         }
+        if (!$dropfound) {
+            $errors['drops[0]'] = get_string('formerror_droprequired', 'qtype_ddmarker');
+        }
+
+        $markerfound = false;
         for ($dragindex = 0; $dragindex < $data['noitems']; $dragindex++) {
             $label = $data['drags'][$dragindex]['label'];
+            if ($label !== '') {
+                $markerfound = true;
+            }
             if ($label != strip_tags($label, QTYPE_DDMARKER_ALLOWED_TAGS_IN_MARKER)) {
                 $errors["drags[{$dragindex}]"]
                     = get_string('formerror_onlysometagsallowed', 'qtype_ddmarker',
                                   s(QTYPE_DDMARKER_ALLOWED_TAGS_IN_MARKER));
             }
         }
+        if (!$markerfound) {
+            $errors['drags[0]'] = get_string('formerror_dragrequired', 'qtype_ddmarker');
+        }
+
         return $errors;
     }
 
