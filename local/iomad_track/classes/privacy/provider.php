@@ -205,7 +205,10 @@ class provider implements
         $DB->delete_records('local_iomad_track', array('userid' => $userid));
 
         // Get the certs.
-        if ($certs = $DB->get_records('local_iomad_track_certs', array('userid' => $userid))) {
+        if ($certs = $DB->get_records_sql("SELECT litc* FROM {local_iomad_track_certs}
+                                           JOIN {local_iomad_track} lit ON (litc.trackid = lit.id)
+                                           WHERE lit.userid = :userid",
+                                           array('userid' => $userid))) {
             // Delete the files.
             require_once($CFG->libdir . '/filelib.php');
             foreach ($certs as $cert) {
