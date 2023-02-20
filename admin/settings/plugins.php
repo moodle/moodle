@@ -278,7 +278,12 @@ if ($hassiteconfig) {
     $temp = new admin_settingpage('managemediaplayers', new lang_string('managemediaplayers', 'media'));
     $temp->add(new admin_setting_heading('mediaformats', get_string('mediaformats', 'core_media'),
         format_text(get_string('mediaformats_desc', 'core_media'), FORMAT_MARKDOWN)));
-    $temp->add(new admin_setting_managemediaplayers());
+    $temp->add(new \core_admin\admin\admin_setting_plugin_manager(
+        'media',
+        \core_admin\table\media_management_table::class,
+        'managemediaplayers',
+        new lang_string('managemediaplayers', 'core_media'),
+    ));
     $temp->add(new admin_setting_heading('managemediaplayerscommonheading', new lang_string('commonsettings', 'admin'), ''));
     $temp->add(new admin_setting_configtext('media_default_width',
         new lang_string('defaultwidth', 'core_media'), new lang_string('defaultwidthdesc', 'core_media'),

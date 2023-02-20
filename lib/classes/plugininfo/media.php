@@ -204,4 +204,66 @@ class media extends base {
         }
         return '';
     }
+
+    public static function plugintype_supports_ordering(): bool {
+        return true;
+    }
+
+    // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+    public static function get_sorted_plugins(bool $enabledonly = false): ?array {
+        $pluginmanager = \core_plugin_manager::instance();
+
+        $plugins = $pluginmanager->get_plugins_of_type('media');
+        $enabledplugins = $pluginmanager->get_enabled_plugins('media');
+
+        // Sort plugins so enabled plugins are displayed first and all others are displayed in the end sorted by rank.
+        \core_collator::asort_objects_by_method($plugins, 'get_rank', \core_collator::SORT_NUMERIC);
+
+        $order = array_values($enabledplugins);
+        if (!$enabledonly) {
+            $order = array_merge($order, array_diff(array_reverse(array_keys($plugins)), $order));
+        }
+
+        $sortedplugins = [];
+        foreach ($order as $name) {
+            $sortedplugins[$name] = $plugins[$name];
+        }
+
+        return $sortedplugins;
+    }
+
+    public static function change_plugin_order(string $pluginname, int $direction): bool {
+        $activeeditors = array_keys(self::get_sorted_plugins(true));
+        $key = array_search($pluginname, $activeeditors);
+        [$media] = explode('_', $pluginname, 2);
+
+        if ($key === false) {
+            return false;
+        }
+
+        $sortorder = array_values(self::get_enabled_plugins());
+
+        if ($direction === self::MOVE_DOWN) {
+            // Move down the list.
+            if ((($pos = array_search($media, $sortorder)) !== false) && ($pos < count($sortorder) - 1)) {
+                $tmp = $sortorder[$pos + 1];
+                $sortorder[$pos + 1] = $sortorder[$pos];
+                $sortorder[$pos] = $tmp;
+                self::set_enabled_plugins($sortorder);
+
+                return true;
+            }
+        } else if ($direction === self::MOVE_UP) {
+            if (($pos = array_search($media, $sortorder)) > 0) {
+                $tmp = $sortorder[$pos - 1];
+                $sortorder[$pos - 1] = $sortorder[$pos];
+                $sortorder[$pos] = $tmp;
+                self::set_enabled_plugins($sortorder);
+
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
