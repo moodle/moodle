@@ -728,8 +728,14 @@ if ($hassiteconfig) {
 /// Add all admin tools
 if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('tools', new lang_string('tools', 'admin')));
-    $ADMIN->add('tools', new admin_externalpage('managetools', new lang_string('toolsmanage', 'admin'),
-                                                     $CFG->wwwroot . '/' . $CFG->admin . '/tools.php'));
+    $settingspage = new admin_settingpage('toolsmanagement', new lang_string('toolsmanage', 'admin'));
+    $ADMIN->add('tools', $settingspage);
+    $settingspage->add(new \core_admin\admin\admin_setting_plugin_manager(
+        'tool',
+        \core_admin\table\tool_plugin_management_table::class,
+        'managetools',
+        new lang_string('toolsmanage', 'admin')
+    ));
 }
 
 // Now add various admin tools.
