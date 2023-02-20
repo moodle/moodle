@@ -28,6 +28,7 @@ namespace core\event;
  * }
  *
  * @package    core
+ * @since      Moodle 4.2
  * @copyright  2023 The Open University.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
