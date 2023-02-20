@@ -621,6 +621,7 @@ class core_course_external extends external_api {
                 // For backward-compartibility
                 $courseinfo['numsections'] = $courseformatoptions['numsections'];
             }
+            $courseinfo['pdfexportfont'] = $course->pdfexportfont;
 
             $handler = core_course\customfield\course_handler::create();
             if ($customfields = $handler->export_instance_data($course->id)) {
