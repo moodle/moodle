@@ -74,6 +74,7 @@ export default class {
             targetSectionId,
             targetCmId
         );
+        this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
         this.sectionLock(stateManager, sectionIds, false);
     }
@@ -96,6 +97,7 @@ export default class {
             targetSectionId,
             targetCmId
         );
+        this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
         this.cmLock(stateManager, cmIds, false);
     }

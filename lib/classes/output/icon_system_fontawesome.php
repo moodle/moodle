@@ -435,6 +435,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/sort_asc' => 'fa-sort-asc',
             'core:t/sort_desc' => 'fa-sort-desc',
             'core:t/sort' => 'fa-sort',
+            'core:t/stealth' => 'fa-low-vision',
             'core:t/stop' => 'fa-stop',
             'core:t/switch_minus' => 'fa-minus',
             'core:t/switch_plus' => 'fa-plus',
