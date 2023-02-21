@@ -131,7 +131,7 @@ function lti_get_jwt_claim_mapping() {
     foreach ($services as $service) {
         $mapping = array_merge($mapping, $service->get_jwt_claim_mappings());
     }
-    $mapping = array_merge($mapping, array(
+    $mapping = array_merge($mapping, [
         'accept_copy_advice' => [
             'suffix' => 'dl',
             'group' => 'deep_linking_settings',
@@ -449,7 +449,7 @@ function lti_get_jwt_claim_mapping() {
             'claim' => 'url',
             'isarray' => false
         ]
-    ));
+    ]);
     return $mapping;
 }
 
