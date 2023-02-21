@@ -40,11 +40,21 @@
         </span>
     {{/name}}
     {{^name}}
-        <span class="w-50 pull-left text-truncate mr-2">
-            {{fullname}}
-        </span>
-        <span class="w-50 pull-left text-truncate small email">
-            {{email}}
-        </span>
+        <div class="d-block pr-2 w-25">
+            {{#profileimage}}
+                <img class="userpicture w-75 mx-auto d-block" src="{{profileimage}}" alt="" />
+            {{/profileimage}}
+            {{^profileimage}}
+                <span class="userinitials"></span>
+            {{/profileimage}}
+        </div>
+        <div class="d-block pr-3 w-75">
+            <span class="w-100 p-0 font-weight-bold">
+                {{fullname}}
+            </span>
+            <span class="w-100 pull-left text-truncate small">
+                {{email}}
+            </span>
+        </div>
     {{/name}}
 </li>
