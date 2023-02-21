@@ -561,17 +561,19 @@ class memberships extends \mod_lti\local\ltiservice\service_base {
      * @return array Key/value pairs of params to claim mapping.
      */
     public function get_jwt_claim_mappings(): array {
-        return array('custom_context_memberships_v2_url' => [
-            'suffix' => 'nrps',
-            'group' => 'namesroleservice',
-            'claim' => 'context_memberships_url',
-            'isarray' => false
+        return [
+            'custom_context_memberships_v2_url' => [
+                'suffix' => 'nrps',
+                'group' => 'namesroleservice',
+                'claim' => 'context_memberships_url',
+                'isarray' => false
             ],
             'custom_context_memberships_versions' => [
                 'suffix' => 'nrps',
                 'group' => 'namesroleservice',
                 'claim' => 'service_versions',
                 'isarray' => true
-            ]);
+            ]
+        ];
     }
 }

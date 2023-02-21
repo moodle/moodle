@@ -190,50 +190,51 @@ class gradebookservices extends service_base {
      * @return array Key/value pairs of params to claim mapping.
      */
     public function get_jwt_claim_mappings(): array {
-        return array('custom_gradebookservices_scope' => [
-            'suffix' => 'ags',
-            'group' => 'endpoint',
-            'claim' => 'scope',
-            'isarray' => true
-        ],
-        'custom_lineitems_url' => [
-            'suffix' => 'ags',
-            'group' => 'endpoint',
-            'claim' => 'lineitems',
-            'isarray' => false
-        ],
-        'custom_lineitem_url' => [
-            'suffix' => 'ags',
-            'group' => 'endpoint',
-            'claim' => 'lineitem',
-            'isarray' => false
-        ],
-        'custom_results_url' => [
-            'suffix' => 'ags',
-            'group' => 'endpoint',
-            'claim' => 'results',
-            'isarray' => false
-        ],
-        'custom_result_url' => [
-            'suffix' => 'ags',
-            'group' => 'endpoint',
-            'claim' => 'result',
-            'isarray' => false
-        ],
-        'custom_scores_url' => [
-            'suffix' => 'ags',
-            'group' => 'endpoint',
-            'claim' => 'scores',
-            'isarray' => false
-        ],
-        'custom_score_url' => [
-            'suffix' => 'ags',
-            'group' => 'endpoint',
-            'claim' => 'score',
-            'isarray' => false
-        ]);
+        return [
+            'custom_gradebookservices_scope' => [
+                'suffix' => 'ags',
+                'group' => 'endpoint',
+                'claim' => 'scope',
+                'isarray' => true
+            ],
+            'custom_lineitems_url' => [
+                'suffix' => 'ags',
+                'group' => 'endpoint',
+                'claim' => 'lineitems',
+                'isarray' => false
+            ],
+            'custom_lineitem_url' => [
+                'suffix' => 'ags',
+                'group' => 'endpoint',
+                'claim' => 'lineitem',
+                'isarray' => false
+            ],
+            'custom_results_url' => [
+                'suffix' => 'ags',
+                'group' => 'endpoint',
+                'claim' => 'results',
+                'isarray' => false
+            ],
+            'custom_result_url' => [
+                'suffix' => 'ags',
+                'group' => 'endpoint',
+                'claim' => 'result',
+                'isarray' => false
+            ],
+            'custom_scores_url' => [
+                'suffix' => 'ags',
+                'group' => 'endpoint',
+                'claim' => 'scores',
+                'isarray' => false
+            ],
+            'custom_score_url' => [
+                'suffix' => 'ags',
+                'group' => 'endpoint',
+                'claim' => 'score',
+                'isarray' => false
+            ]
+        ];
     }
-
 
     /**
      * Return an array of key/values to add to the launch parameters.
