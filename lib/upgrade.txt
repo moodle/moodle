@@ -63,6 +63,8 @@ information provided here is intended especially for developers.
 * The moodle-core-popuphelp YUI modal has been removed. It has not been actively used in Moodle since 3.3. It should be replaced with appropriate ESM/AMD JavaScript.
 * The moodle-core-tooltip YUI modal has been removed. It should be replaced with appropriate ESM/AMD JavaScript.
 * A `\core\event\role_created` event is now triggered when roles are created via the `create_role` API.
+* Event \core\event\user_created is now triggered if the user is created during course restore. In this case
+  $event->other has properties 'restoreid' and 'courseid'.
 
 === 4.1 ===
 
