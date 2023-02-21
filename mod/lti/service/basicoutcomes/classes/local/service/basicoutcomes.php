@@ -97,7 +97,8 @@ class basicoutcomes extends \mod_lti\local\ltiservice\service_base {
      * @return array Key/value pairs of params to claim mapping.
      */
     public function get_jwt_claim_mappings(): array {
-        return array('lis_outcome_service_url' => [
+        return [
+            'lis_outcome_service_url' => [
                 'suffix' => 'bo',
                 'group' => 'basicoutcome',
                 'claim' => 'lis_outcome_service_url',
@@ -108,7 +109,8 @@ class basicoutcomes extends \mod_lti\local\ltiservice\service_base {
                 'group' => 'basicoutcome',
                 'claim' => 'lis_result_sourcedid',
                 'isarray' => false
-            ]);
+            ]
+        ];
     }
 
 }

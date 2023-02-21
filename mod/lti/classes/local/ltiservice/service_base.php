@@ -343,7 +343,7 @@ abstract class service_base {
      * @return array Key/value pairs of params to claim mapping.
      */
     public function get_jwt_claim_mappings(): array {
-        return array();
+        return [];
     }
 
     /**
