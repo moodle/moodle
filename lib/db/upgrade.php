@@ -3019,5 +3019,26 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023022000.00);
     }
 
+    if ($oldversion < 2023021700.01) {
+        // If editor_tinymce is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/lib/editor/tinymce/version.php')) {
+            // Clean config.
+            uninstall_plugin('editor', 'tinymce');
+            $DB->delete_records('user_preferences', [
+                'name' => 'htmleditor',
+                'value' => 'tinymce',
+            ]);
+
+            if ($editors = get_config('core', 'texteditors')) {
+                $editors = array_flip(explode(',', $editors));
+                unset($editors['tinymce']);
+                set_config('texteditors', implode(',', array_flip($editors)));
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023021700.01);
+    }
+
     return true;
 }

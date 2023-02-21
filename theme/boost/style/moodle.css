@@ -10836,18 +10836,8 @@ tr.flagged-tag a {
 audio.mediaplugin_html5audio {
   width: 300px; }
 
-/* TinyMCE moodle media preview frame should not have padding */
-.core_media_preview.pagelayout-embedded #content {
-  padding: 0; }
-
 .core_media_preview.pagelayout-embedded #maincontent {
   height: 0; }
-
-body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
-  padding: 0;
-  margin: 0;
-  min-width: 0;
-  background: none; }
 
 .path-rating .ratingtable {
   width: 100%;
@@ -12801,8 +12791,7 @@ blockquote {
 #adminsettings fieldset.error legend {
   display: block; }
 
-#admin-spelllanguagelist textarea,
-#page-admin-setting-editorsettingstinymce .form-textarea textarea {
+#admin-spelllanguagelist textarea {
   /* rtl:ignore */
   text-align: left;
   /* rtl:ignore */

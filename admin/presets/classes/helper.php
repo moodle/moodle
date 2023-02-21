@@ -278,9 +278,6 @@ class helper {
         static::add_plugin($presetid, 'repository', 'url', false);
         static::add_plugin($presetid, 'repository', 'wikimedia', false);
 
-        // Text editors: Disable TinyMCE HTML editor.
-        static::add_plugin($presetid, 'editor', 'tinymce', false);
-
         // Create the "Full" site admin preset.
         $data = [
             'name' => get_string('fullpreset', 'core_adminpresets'),
@@ -383,8 +380,5 @@ class helper {
         static::add_plugin($presetid, 'repository', 'local', true);
         static::add_plugin($presetid, 'repository', 'url', true);
         static::add_plugin($presetid, 'repository', 'wikimedia', true);
-
-        // Text editors: Enable TinyMCE HTML editor.
-        static::add_plugin($presetid, 'editor', 'tinymce', true);
     }
 }

@@ -2266,7 +2266,7 @@ EOF;
         }
 
         // Make the provided editor the default one in $CFG->texteditors by
-        // moving it to the first [editor],atto,tiny,tinymce,textarea on the list.
+        // moving it to the first [editor],atto,tiny,textarea on the list.
         $list = explode(',', $CFG->texteditors);
         array_unshift($list, $editor);
         $list = array_unique($list);

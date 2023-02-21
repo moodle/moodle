@@ -1057,8 +1057,8 @@ EXPECTED;
                 '/h5p/js/embed.js'
             ],
             'A Moodle JS resource using the full path including the proper JS Handler' => [
-                new \moodle_url($wwwroot . '/lib/javascript.php/1/lib/editor/tinymce/tiny_mce/M.m.p/tiny_mce.js'),
-                '/lib/javascript.php/1/lib/editor/tinymce/tiny_mce/M.m.p/tiny_mce.js'
+                new \moodle_url($wwwroot . '/lib/javascript.php/1/lib/editor/tiny/js/tinymce/tinymce.js'),
+                '/lib/javascript.php/1/lib/editor/tiny/js/tinymce/tinymce.js'
             ],
         ];
     }
@@ -1109,10 +1109,6 @@ EXPECTED;
             ],
             'H5P JS internal resource' => [
                 new \moodle_url('/h5p/js/embed.js'),
-                true
-            ],
-            'A Moodle JS resource using the full path including the proper JS Handler' => [
-                new \moodle_url($wwwroot . '/lib/javascript.php/1/lib/editor/tinymce/tiny_mce/M.m.p/tiny_mce.js'),
                 true
             ],
         ];

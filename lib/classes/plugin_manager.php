@@ -25,12 +25,6 @@
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Singleton class providing general plugins management functionality.
- */
 class core_plugin_manager {
 
     /** the plugin is shipped with standard Moodle distribution */
@@ -1730,6 +1724,7 @@ class core_plugin_manager {
             'auth' => array('radius', 'fc', 'nntp', 'pam', 'pop3', 'imap'),
             'block' => array('course_overview', 'messages', 'community', 'participants', 'quiz_results'),
             'cachestore' => array('memcache', 'memcached'),
+            'editor' => array('tinymce'),
             'enrol' => array('authorize'),
             'filter' => array('censor'),
             'media' => array('swf'),
@@ -1739,7 +1734,10 @@ class core_plugin_manager {
             'quizaccess' => array('safebrowser'),
             'report' => array('search'),
             'repository' => array('alfresco', 'picasa', 'skydrive', 'boxnet'),
-            'tinymce' => array('dragmath'),
+            'tinymce' => array('dragmath', 'ctrlhelp', 'managefiles', 'moodleemoticon', 'moodleimage',
+                'moodlemedia', 'moodlenolink', 'pdw', 'spellchecker', 'wrap'
+            ),
+
             'tool' => array('bloglevelupgrade', 'qeupgradehelper', 'timezoneimport', 'assignmentupgrade', 'health'),
             'theme' => array('bootstrapbase', 'clean', 'more', 'afterburner', 'anomaly', 'arialist', 'base',
                 'binarius', 'boxxie', 'brick', 'canvas', 'formal_white', 'formfactor', 'fusion', 'leatherbound',
@@ -1861,7 +1859,7 @@ class core_plugin_manager {
             ),
 
             'editor' => array(
-                'atto', 'textarea', 'tiny', 'tinymce'
+                'atto', 'textarea', 'tiny',
             ),
 
             'enrol' => array(
@@ -2036,11 +2034,6 @@ class core_plugin_manager {
                 'media',
                 'recordrtc',
             ],
-
-            'tinymce' => array(
-                'ctrlhelp', 'managefiles', 'moodleemoticon', 'moodleimage',
-                'moodlemedia', 'moodlenolink', 'pdw', 'spellchecker', 'wrap'
-            ),
 
             'theme' => array(
                 'boost', 'classic'
