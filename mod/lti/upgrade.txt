@@ -1,5 +1,10 @@
 This files describes API changes in the lti code.
 
+=== 4.0.7 ===
+
+* get_jwt_claim_mappings() function has been added to service_base class. It allows a service subplugin to be
+  compatible with LTI 1.3 by exposing its 1.1 custom parameters to LTI 1.3 claim mapping.
+
 === 3.10 ===
 
 * Select Content supports multiple, allowing a tool to return more than one link at a time.
