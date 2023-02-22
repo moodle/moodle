@@ -95,7 +95,6 @@ function quiz_has_questions($quizid) {
  *      ->slot, ->id, ->qtype, ->length, ->number, ->maxmark, ->category (for random questions).
  */
 function quiz_report_get_significant_questions($quiz) {
-    global $DB;
     $quizobj = \quiz::create($quiz->id);
     $structure = \mod_quiz\structure::create_for_quiz($quizobj);
     $slots = $structure->get_slots();
