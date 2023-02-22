@@ -249,4 +249,54 @@ class behat_core_question extends behat_question_base {
         $this->execute("behat_general::i_click_on",
             ["#bulkactionsui-container input[name='$action']", "css_element"]);
     }
+
+    /**
+     * Change the question type of the give question to a type that does not exist.
+     *
+     * This is useful for testing robustness of the code when a question type
+     * has been uninstalled, even though there are still questions of that type
+     * or attempts at them.
+     *
+     * In order to set things up, you probably need to start by generating
+     * questions of a valid type, then using this to change the type once the
+     * data is created.
+     *
+     * @Given question :questionname is changed to simulate being of an uninstalled type
+     * @param string $questionname the question name.
+     */
+    public function change_question_to_nonexistant_type($questionname) {
+        global $DB;
+        [$id] = $this->find_question_by_name($questionname);
+
+        // Check our assumption.
+        $nonexistanttype = 'invalidqtype';
+        if (question_bank::is_qtype_installed($nonexistanttype)) {
+            throw new coding_exception('This code assumes that the qtype_' . $nonexistanttype .
+                    ' is not a valid plugin name, but that plugin now seems to exist!');
+        }
+
+        $DB->set_field('question', 'qtype', $nonexistanttype, ['id' => $id]);
+        question_bank::notify_question_edited($id);
+    }
+
+    /**
+     * Forcibly delete a question from the database.
+     *
+     * This is useful for testing robustness of the code when a question
+     * record is no longer in the database, even though it is referred to.
+     * Obviously, this should never happen, but it has been known to in the past
+     * and so we sometimes need to be able to test the code can handle this situation.
+     *
+     * In order to set things up, you probably need to start by generating
+     * a valid questions, then using this to remove it once the data is created.
+     *
+     * @Given question :questionname no longer exists in the database
+     * @param string $questionname the question name.
+     */
+    public function remove_question_from_db($questionname) {
+        global $DB;
+        [$id] = $this->find_question_by_name($questionname);
+        $DB->delete_records('question', ['id' => $id]);
+        question_bank::notify_question_edited($id);
+    }
 }
