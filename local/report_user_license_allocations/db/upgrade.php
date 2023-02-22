@@ -111,49 +111,64 @@ function xmldb_local_report_user_license_allocations_upgrade($oldversion) {
                 }
             }
         }
-        // Populate the report table from any previous users.
-        $users = $DB->get_records('user', array('deleted' => 0));
-        foreach ($users as $user) {
-            // Deal with any license allocations.
-            $licenseallocations = $DB->get_records('logstore_standard_log', array('userid' => $user->id, 'eventname' => '\block_iomad_company_admin\event\user_license_assigned'));
-            foreach ($licenseallocations as $event) {
-                // Get the payload.
-                $evententries = unserialize($event->other);
+        $firstrec2 = $DB->get_records_sql("SELECT * FROM {logstore_standard_log}
+                                           WHERE eventname = :eventname
+                                           ORDER BY ID",
+                                           array('eventname' => '\block_iomad_company_admin\event\user_license_unassigned'),
+                                           0,1);
+        if (count($firstrec2) > 0 || count($firstrec) > 0) {
+            // Populate the report table from any previous users.
+            $users = $DB->get_records_sql("SELECT id FROM {user} u
+                                           WHERE  u.deleted=0
+                                           AND EXISTS (
+                                             SELECT 1 FROM {logstore_standard_log} l
+                                             WHERE u.id = l.userid
+                                             AND eventname IN (:eventname,:eventname2))",
+                                           array('eventname' => '\block_iomad_company_admin\event\user_license_assigned',
+                                                 'eventname2' => '\block_iomad_company_admin\event\user_license_unassigned'));
 
-                if (!$DB->get_record('local_report_user_lic_allocs', array('userid' => $user->id,
-                                                                          'licenseid' => $evententries['licenseid'],
-                                                                          'courseid' => $event->courseid,
-                                                                          'action' => 1,
-                                                                          'issuedate' => $event->timecreated))) {
+            foreach ($users as $user) {
+                // Deal with any license allocations.
+                $licenseallocations = $DB->get_records('logstore_standard_log', array('userid' => $user->id, 'eventname' => '\block_iomad_company_admin\event\user_license_assigned'));
+                foreach ($licenseallocations as $event) {
+                    // Get the payload.
+                    $evententries = unserialize($event->other);
 
-                    // Insert the record.
-                    $DB->insert_record('local_report_user_lic_allocs', array('userid' => $user->id,
+                    if (!$DB->get_record('local_report_user_lic_allocs', array('userid' => $user->id,
                                                                               'licenseid' => $evententries['licenseid'],
                                                                               'courseid' => $event->courseid,
                                                                               'action' => 1,
-                                                                              'issuedate' => $event->timecreated,
-                                                                              'modifiedtime' => time()));
+                                                                              'issuedate' => $event->timecreated))) {
+
+                        // Insert the record.
+                        $DB->insert_record('local_report_user_lic_allocs', array('userid' => $user->id,
+                                                                                  'licenseid' => $evententries['licenseid'],
+                                                                                  'courseid' => $event->courseid,
+                                                                                  'action' => 1,
+                                                                                  'issuedate' => $event->timecreated,
+                                                                                  'modifiedtime' => time()));
+                    }
                 }
-            }
 
-            // Deal with any license unallocations.
-            $licenseunallocations = $DB->get_records('logstore_standard_log', array('userid' => $user->id, 'eventname' => '\block_iomad_company_admin\event\user_license_unassigned'));
-            foreach ($licenseunallocations as $event) {
-                // Get the payload.
-                $evententries = unserialize($event->other);
+                // Deal with any license unallocations.
+                $licenseunallocations = $DB->get_records('logstore_standard_log', array('userid' => $user->id, 'eventname' => '\block_iomad_company_admin\event\user_license_unassigned'));
+                foreach ($licenseunallocations as $event) {
+                    // Get the payload.
+                    $evententries = unserialize($event->other);
 
-                if (!$DB->get_record('local_report_user_lic_allocs', array('userid' => $user->id,
-                                                                          'licenseid' => $evententries['licenseid'],
-                                                                          'courseid' => $event->courseid,
-                                                                          'action' => 0,
-                                                                          'issuedate' => $event->timecreated))) {
-                    // Insert the record.
-                    $DB->insert_record('local_report_user_lic_allocs', array('userid' => $user->id,
+                    if (!$DB->get_record('local_report_user_lic_allocs', array('userid' => $user->id,
                                                                               'licenseid' => $evententries['licenseid'],
                                                                               'courseid' => $event->courseid,
                                                                               'action' => 0,
-                                                                              'issuedate' => $event->timecreated,
-                                                                              'modifiedtime' => time()));
+                                                                              'issuedate' => $event->timecreated))) {
+                        // Insert the record.
+                        $DB->insert_record('local_report_user_lic_allocs', array('userid' => $user->id,
+                                                                                  'licenseid' => $evententries['licenseid'],
+                                                                                  'courseid' => $event->courseid,
+                                                                                  'action' => 0,
+                                                                                  'issuedate' => $event->timecreated,
+                                                                                  'modifiedtime' => time()));
+                    }
                 }
             }
         }

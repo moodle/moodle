@@ -71,63 +71,80 @@ function xmldb_local_report_user_license_allocations_install() {
             }
         }
     }
-    // Populate the report table from any previous users.
-    $users = $DB->get_records('user', array('deleted' => 0));
-    foreach ($users as $user) {
-        // Deal with any license allocations.
-        $licenseallocations = $DB->get_records('logstore_standard_log', array('userid' => $user->id, 'eventname' => '\block_iomad_company_admin\event\user_license_assigned'));
-        $licensecount = count($licenseallocations);
-        $currentcount = 0;
-        $warn = 10;
-        foreach ($licenseallocations as $event) {
-            // Get the payload.
-            $evententries = unserialize($event->other);
+    $firstrec2 = $DB->get_records_sql("SELECT * FROM {logstore_standard_log}
+                                       WHERE eventname = :eventname
+                                       ORDER BY ID",
+                                       array('eventname' => '\block_iomad_company_admin\event\user_license_unassigned'),
+                                       0,1);
 
-            if (!$DB->get_record('local_report_user_lic_allocs', array('userid' => $user->id,
-                                                                      'licenseid' => $evententries['licenseid'],
-                                                                      'courseid' => $event->courseid,
-                                                                      'action' => 1,
-                                                                      'issuedate' => $event->timecreated))) {
+    if ( count($firstrec2) > 0 || count($firstrec) > 0 ) {
+        // Populate the report table from any previous users.
+        $users = $DB->get_records_sql("SELECT id FROM {user} u
+                                       WHERE  u.deleted=0
+                                       AND EXISTS (
+                                         SELECT 1 FROM {logstore_standard_log} l
+                                         WHERE u.id = l.userid
+                                         AND eventname IN (:eventname,:eventname2))",
+                                       array( 'eventname' => '\block_iomad_company_admin\event\user_license_assigned',
+                                              'eventname2' => '\block_iomad_company_admin\event\user_license_unassigned'));
 
-                // Insert the record.
-                $DB->insert_record('local_report_user_lic_allocs', array('userid' => $user->id,
+        // Populate the report table from any previous users.
+        foreach ($users as $user) {
+            // Deal with any license allocations.
+            $licenseallocations = $DB->get_records('logstore_standard_log', array('userid' => $user->id, 'eventname' => '\block_iomad_company_admin\event\user_license_assigned'));
+            $licensecount = count($licenseallocations);
+            $currentcount = 0;
+            $warn = 10;
+            foreach ($licenseallocations as $event) {
+                // Get the payload.
+                $evententries = unserialize($event->other);
+
+                if (!$DB->get_record('local_report_user_lic_allocs', array('userid' => $user->id,
                                                                           'licenseid' => $evententries['licenseid'],
                                                                           'courseid' => $event->courseid,
                                                                           'action' => 1,
-                                                                          'issuedate' => $event->timecreated,
-                                                                          'modifiedtime' => time()));
-            }
-            $currentcount++;
-            if ($currentcount * 100 / $licensecount > $warn) {
-                $warn = $warn + 10;
-            }
-        }
+                                                                          'issuedate' => $event->timecreated))) {
 
-        // Deal with any license unallocations.
-        $licenseunallocations = $DB->get_records('logstore_standard_log', array('userid' => $user->id, 'eventname' => '\block_iomad_company_admin\event\user_license_unassigned'));
-        $licensecount = count($licenseunallocations);
-        $currentcount = 0;
-        $warn = 10;
-        foreach ($licenseunallocations as $event) {
-            // Get the payload.
-            $evententries = unserialize($event->other);
+                    // Insert the record.
+                    $DB->insert_record('local_report_user_lic_allocs', array('userid' => $user->id,
+                                                                              'licenseid' => $evententries['licenseid'],
+                                                                              'courseid' => $event->courseid,
+                                                                              'action' => 1,
+                                                                              'issuedate' => $event->timecreated,
+                                                                              'modifiedtime' => time()));
+                }
+                $currentcount++;
+                if ($currentcount * 100 / $licensecount > $warn) {
+                    $warn = $warn + 10;
+                }
+            }
 
-            if (!$DB->get_record('local_report_user_lic_allocs', array('userid' => $user->id,
-                                                                      'licenseid' => $evententries['licenseid'],
-                                                                      'courseid' => $event->courseid,
-                                                                      'action' => 0,
-                                                                      'issuedate' => $event->timecreated))) {
-                // Insert the record.
-                $DB->insert_record('local_report_user_lic_allocs', array('userid' => $user->id,
+            // Deal with any license unallocations.
+            $licenseunallocations = $DB->get_records('logstore_standard_log', array('userid' => $user->id, 'eventname' => '\block_iomad_company_admin\event\user_license_unassigned'));
+            $licensecount = count($licenseunallocations);
+            $currentcount = 0;
+            $warn = 10;
+            foreach ($licenseunallocations as $event) {
+                // Get the payload.
+                $evententries = unserialize($event->other);
+
+                if (!$DB->get_record('local_report_user_lic_allocs', array('userid' => $user->id,
                                                                           'licenseid' => $evententries['licenseid'],
                                                                           'courseid' => $event->courseid,
                                                                           'action' => 0,
-                                                                          'issuedate' => $event->timecreated,
-                                                                          'modifiedtime' => time()));
-            }
-            $currentcount++;
-            if ($currentcount * 100 / $totalold > $warn) {
-                $warn = $warn + 10;
+                                                                          'issuedate' => $event->timecreated))) {
+                    // Insert the record.
+                    $DB->insert_record('local_report_user_lic_allocs', array('userid' => $user->id,
+                                                                              'licenseid' => $evententries['licenseid'],
+                                                                              'courseid' => $event->courseid,
+                                                                              'action' => 0,
+                                                                              'issuedate' => $event->timecreated,
+                                                                              'modifiedtime' => time()));
+                }
+                $currentcount++;
+                if ($currentcount * 100 / $totalold > $warn) {
+                    $warn = $warn + 10;
+                }
             }
         }
     }
