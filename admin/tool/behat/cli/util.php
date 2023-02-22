@@ -360,7 +360,7 @@ function print_combined_drop_output($processes) {
                 $op = $process->getIncrementalOutput();
                 if (trim($op)) {
                     $update = preg_filter('#^\s*([FS\.\-]+)(?:\s+\d+)?\s*$#', '$1', $op);
-                    $strlentoprint = strlen($update);
+                    $strlentoprint = $update ? strlen($update) : 0;
 
                     // If not enough dots printed on line then just print.
                     if ($strlentoprint < $remainingprintlen) {
