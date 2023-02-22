@@ -183,7 +183,6 @@ class qbank_helper {
                 $slot->category = 0;
                 $slot->qtype = 'missingtype';
                 $slot->name = get_string('missingquestion', 'quiz');
-                $slot->maxmark = 0;
                 $slot->questiontext = ' ';
                 $slot->questiontextformat = FORMAT_HTML;
                 $slot->length = 1;
