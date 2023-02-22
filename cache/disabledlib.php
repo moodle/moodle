@@ -294,8 +294,13 @@ class cache_factory_disabled extends cache_factory {
                 $definition = $this->create_definition($component, $area);
                 // The cachestore_static class returns true to all three 'SUPPORTS_' checks so it
                 // can be used with all definitions.
-                $cache = new cachestore_static('TEMP:' . $component . '/' . $area);
-                $cache->initialise($definition);
+                $store = new cachestore_static('TEMP:' . $component . '/' . $area);
+                $store->initialise($definition);
+                // We need to use a cache loader wrapper rather than directly returning the store,
+                // or it wouldn't have support for versioning. The cache_application class is used
+                // (rather than cache_request which might make more sense logically) because it
+                // includes support for locking, which might be necessary for some caches.
+                $cache = new cache_application($definition, $store);
                 self::$tempcaches[$key] = $cache;
             }
             return $cache;

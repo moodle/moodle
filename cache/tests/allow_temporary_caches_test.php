@@ -62,4 +62,38 @@ class allow_temporary_caches_test extends \advanced_testcase {
         $gecko = new allow_temporary_caches();
         $this->assertTrue(allow_temporary_caches::is_allowed());
     }
+
+    /**
+     * Tests that the temporary caches actually work, including normal and versioned get and set.
+     */
+    public function test_temporary_cache(): void {
+        $this->resetAfterTest();
+
+        // Disable the cache.
+        \cache_phpunit_factory::phpunit_disable();
+        try {
+            // Try using the cache now - it returns false/null for everything.
+            $cache = \cache::make('core', 'coursemodinfo');
+            $cache->set('frog', 'ribbit');
+            $this->assertFalse($cache->get('frog'));
+            $cache->set_versioned('toad', 2, 'croak');
+            $this->assertFalse($cache->get_versioned('toad', 2));
+
+            // But when we allow temporary caches, it should work as normal.
+            $allow = new allow_temporary_caches();
+            $cache = \cache::make('core', 'coursemodinfo');
+            $cache->set('frog', 'ribbit');
+            $this->assertEquals('ribbit', $cache->get('frog'));
+            $cache->set_versioned('toad', 2, 'croak');
+            $this->assertEquals('croak', $cache->get_versioned('toad', 2));
+
+            // Let's actually use modinfo, to check it works with locking too.
+            $course = $this->getDataGenerator()->create_course();
+            get_fast_modinfo($course);
+        } finally {
+            // You have to do this after phpunit_disable or it breaks later tests.
+            \cache_factory::reset();
+            \cache_factory::instance(true);
+        }
+    }
 }
