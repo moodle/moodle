@@ -30,7 +30,6 @@ use externallib_advanced_testcase;
 use feedback_item_multichoice;
 use mod_feedback_external;
 use moodle_exception;
-use required_capability_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -50,6 +49,17 @@ require_once($CFG->dirroot . '/mod/feedback/lib.php');
  * @covers     \mod_feedback_external
  */
 class external_test extends externallib_advanced_testcase {
+
+    // TODO These should be removed.
+    // Testcase classes should not have any properties or store state.
+    protected $course;
+    protected $feedback;
+    protected $context;
+    protected $cm;
+    protected $student;
+    protected $teacher;
+    protected $studentrole;
+    protected $teacherrole;
 
     /**
      * Set up for every test
@@ -122,12 +132,14 @@ class external_test extends externallib_advanced_testcase {
         // Execute real Moodle enrolment as we'll call unenrol() method on the instance later.
         $enrol = enrol_get_plugin('manual');
         $enrolinstances = enrol_get_instances($course2->id, true);
+        $instance2 = (object) [];
         foreach ($enrolinstances as $courseenrolinstance) {
             if ($courseenrolinstance->enrol == "manual") {
                 $instance2 = $courseenrolinstance;
                 break;
             }
         }
+
         $enrol->enrol_user($instance2, $this->student->id, $this->studentrole->id);
 
         self::setUser($this->student);
@@ -273,7 +285,7 @@ class external_test extends externallib_advanced_testcase {
      */
     public function test_view_feedback_invalid_id() {
         // Test invalid instance id.
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         mod_feedback_external::view_feedback(0);
     }
     /**
@@ -282,7 +294,7 @@ class external_test extends externallib_advanced_testcase {
     public function test_view_feedback_not_enrolled_user() {
         $usernotenrolled = self::getDataGenerator()->create_user();
         $this->setUser($usernotenrolled);
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         mod_feedback_external::view_feedback(0);
     }
     /**
@@ -293,7 +305,7 @@ class external_test extends externallib_advanced_testcase {
         // We need a explicit prohibit since this capability is allowed for students by default.
         assign_capability('mod/feedback:view', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
         accesslib_clear_all_caches_for_unit_testing();
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         mod_feedback_external::view_feedback(0);
     }
     /**
@@ -964,7 +976,7 @@ class external_test extends externallib_advanced_testcase {
      */
     public function test_get_non_respondents_no_permissions() {
         $this->setUser($this->student);
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         mod_feedback_external::get_non_respondents($this->feedback->id);
     }
 
@@ -973,7 +985,7 @@ class external_test extends externallib_advanced_testcase {
      */
     public function test_get_non_respondents_from_anonymous_feedback() {
         $this->setUser($this->student);
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         $this->expectExceptionMessage(get_string('anonymous', 'feedback'));
         mod_feedback_external::get_non_respondents($this->feedback->id);
     }
@@ -1156,7 +1168,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->student);
 
         $this->expectExceptionMessage(get_string('anonymous', 'feedback'));
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         mod_feedback_external::get_last_completed($this->feedback->id);
     }
 
@@ -1183,7 +1195,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->student);
 
         $this->expectExceptionMessage(get_string('anonymous', 'feedback'));
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         mod_feedback_external::get_last_completed($this->feedback->id);
     }
 
@@ -1226,7 +1238,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->student);
 
         $this->expectExceptionMessage(get_string('not_completed_yet', 'feedback'));
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         mod_feedback_external::get_last_completed($this->feedback->id);
     }
 
@@ -1252,7 +1264,7 @@ class external_test extends externallib_advanced_testcase {
         // Access the site feedback via course where I'm not enrolled.
         $othercourse = $this->getDataGenerator()->create_course();
 
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         mod_feedback_external::get_feedback_access_information($sitefeedback->id, $othercourse->id);
     }
 
@@ -1276,7 +1288,7 @@ class external_test extends externallib_advanced_testcase {
         $othercourse = $this->getDataGenerator()->create_course();
         $this->getDataGenerator()->enrol_user($this->student->id, $othercourse->id, $this->studentrole->id, 'manual');
 
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         $this->expectExceptionMessage(get_string('cannotaccess', 'mod_feedback'));
         mod_feedback_external::get_feedback_access_information($sitefeedback->id, $othercourse->id);
     }
