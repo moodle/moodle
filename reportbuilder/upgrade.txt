@@ -16,6 +16,7 @@ Information provided here is intended especially for developers.
   during tests
 * The `datasource_stress_test_columns` test helper now enables sorting on those columns that support it
 * The `create_[column|filter|condition]` test generator methods now allow for setting all persistent properties
+* The `get_category` method of the base audience class has been deprecated, callers should instead use `get_component_displayname`
 
 === 4.1 ===
 
