@@ -235,7 +235,9 @@ class Charset
 
             case 'ISO-8859-1_UTF-8':
                 $escapedData = str_replace(array('&', '"', "'", '<', '>'), array('&amp;', '&quot;', '&apos;', '&lt;', '&gt;'), $data);
-                $escapedData = utf8_encode($escapedData);
+                if (function_exists('mb_convert_encoding')) {
+                    $escapedData = mb_convert_encoding($escapedData, 'UTF-8', 'ISO-8859-1');
+                }
                 break;
 
             case 'ISO-8859-1_US-ASCII':
@@ -256,7 +258,7 @@ class Charset
                 $escapedData = str_replace(array('&', '"', "'", '<', '>'), array('&amp;', '&quot;', '&apos;', '&lt;', '&gt;'), $data);
                 /// @todo we could use real UTF8 chars here instead of xml entities... (note that utf_8 encode all alone will NOT convert them)
                 $escapedData = str_replace($this->xml_cp1252_Entities['in'], $this->xml_cp1252_Entities['out'], $escapedData);
-                $escapedData = utf8_encode($escapedData);
+                $escapedData =  mb_convert_encoding($escapedData, 'UTF-8', 'ISO-8859-1');
                 break;
             case 'CP1252_ISO-8859-1':
                 $this->buildConversionTable('xml_cp1252_Entities');
