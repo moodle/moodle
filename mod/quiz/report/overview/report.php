@@ -419,7 +419,6 @@ class quiz_overview_report extends quiz_attempts_report {
      */
     protected function get_new_question_for_regrade(stdClass $attempt,
             question_usage_by_activity $quba, int $slot): question_definition {
-        global $DB;
 
         // If the cache is empty, get information about all the slots.
         if ($this->structureforregrade === null) {
@@ -429,14 +428,17 @@ class quiz_overview_report extends quiz_attempts_report {
                     $attempt->quiz, $this->context);
         }
 
+        // Because of 'Redo question in attempt' feature, we need to find the original slot number.
+        $originalslot = $quba->get_question_attempt_metadata($slot, 'originalslot') ?? $slot;
+
         // If this is a non-random slot, we will have the right info cached.
-        if ($this->structureforregrade[$slot]->qtype != 'random') {
+        if ($this->structureforregrade[$originalslot]->qtype != 'random') {
             // This is a non-random slot.
-            return question_bank::load_question($this->structureforregrade[$slot]->questionid);
+            return question_bank::load_question($this->structureforregrade[$originalslot]->questionid);
         }
 
         // We must be dealing with a random question. Check that cache.
-        $currentquestion = $quba->get_question_attempt($slot)->get_question(false);
+        $currentquestion = $quba->get_question_attempt($originalslot)->get_question(false);
         if (isset($this->newquestionidsforold[$currentquestion->id])) {
             return question_bank::load_question($this->newquestionidsforold[$currentquestion->id]);
         }
