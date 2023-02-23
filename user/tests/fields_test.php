@@ -51,7 +51,7 @@ class fields_test extends \advanced_testcase {
      * Tests getting the identity fields.
      */
     public function test_get_identity_fields() {
-        global $DB, $CFG;
+        global $DB, $CFG, $COURSE;
 
         $this->resetAfterTest();
 
@@ -81,9 +81,8 @@ class fields_test extends \advanced_testcase {
         $usercontext = \context_user::instance($anotheruser->id);
         $generator->enrol_user($user->id, $course->id, 'student');
 
-        // When no context is provided, it does no access checks and should return all specified.
-        $this->assertEquals(['email', 'department', 'profile_field_a', 'profile_field_b',
-                'profile_field_c', 'profile_field_d'],
+        // When no context is provided, it does no access checks and should return all specified (other than non-visible).
+        $this->assertEquals(['email', 'department', 'profile_field_a', 'profile_field_b', 'profile_field_d'],
                 fields::get_identity_fields(null));
 
         // If you turn off custom profile fields, you don't get those.
@@ -104,6 +103,7 @@ class fields_test extends \advanced_testcase {
 
         // Give the student the basic identity fields permission (also makes them count as 'teacher'
         // for the teacher-restricted field).
+        $COURSE = $course; // Horrible hack, because PROFILE_VISIBLE_TEACHERS relies on this global.
         $roleid = $DB->get_field('role', 'id', ['shortname' => 'student']);
         role_change_permission($roleid, $coursecontext, 'moodle/site:viewuseridentity', CAP_ALLOW);
         $this->assertEquals(['department', 'profile_field_a', 'profile_field_d'],
