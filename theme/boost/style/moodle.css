@@ -11732,7 +11732,7 @@ ul {
   right: 2rem; }
 
 .hasstickyfooter .btn-footer-popover {
-  bottom: calc(1rem + clamp(96px, calc(0.9375rem * 3), calc(0.9375rem * 3))); }
+  bottom: calc(1rem + calc(max(96px, calc(0.9375rem * 3)))); }
 
 .popover.footer .popover-body {
   padding: 0; }
@@ -20212,8 +20212,8 @@ body {
   position: fixed;
   right: 0;
   left: 0;
-  height: clamp(96px, calc(0.9375rem * 3), calc(0.9375rem * 3));
-  bottom: calc(clamp(96px, calc(0.9375rem * 3), calc(0.9375rem * 3)) * -1);
+  height: calc(max(96px, calc(0.9375rem * 3)));
+  bottom: calc(calc(max(96px, calc(0.9375rem * 3))) * -1);
   transition: bottom .5s;
   z-index: 1000;
   overflow: hidden;
@@ -20864,7 +20864,7 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
   .hasstickyfooter .drawer-left,
   .hasstickyfooter .drawer-right {
     top: 60px;
-    height: calc(100vh - 60px - clamp(96px, calc(0.9375rem * 3), calc(0.9375rem * 3))); }
+    height: calc(100vh - 60px - calc(max(96px, calc(0.9375rem * 3)))); }
   #page.drawers {
     position: relative;
     overflow-y: auto;
@@ -20891,7 +20891,7 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
       margin-left: 285px;
       margin-right: 315px; }
     #page.drawers.hasstickyfooter {
-      height: calc(100vh - 60px - clamp(96px, calc(0.9375rem * 3), calc(0.9375rem * 3))); } }
+      height: calc(100vh - 60px - calc(max(96px, calc(0.9375rem * 3)))); } }
 
 .drawercontrolbuttons {
   margin-top: 92px; }
