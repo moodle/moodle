@@ -14,16 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Defines the \mod_quiz\structure class.
- *
- * @package   mod_quiz
- * @copyright 2013 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_quiz;
-defined('MOODLE_INTERNAL') || die();
+
+use mod_quiz\question\bank\qbank_helper;
+use mod_quiz\question\qubaids_for_quiz;
+use stdClass;
 
 /**
  * Quiz structure class.
@@ -34,27 +29,28 @@ defined('MOODLE_INTERNAL') || die();
  * has been started, then the attempt holds the specific set of questions
  * that that student should answer, and we no longer use this class.
  *
+ * @package   mod_quiz
  * @copyright 2014 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class structure {
-    /** @var \quiz the quiz this is the structure of. */
+    /** @var quiz_settings the quiz this is the structure of. */
     protected $quizobj = null;
 
     /**
-     * @var \stdClass[] the questions in this quiz. Contains the row from the questions
+     * @var stdClass[] the questions in this quiz. Contains the row from the questions
      * table, with the data from the quiz_slots table added, and also question_categories.contextid.
      */
-    protected $questions = array();
+    protected $questions = [];
 
-    /** @var \stdClass[] quiz_slots.slot => the quiz_slots rows for this quiz, agumented by sectionid. */
-    protected $slotsinorder = array();
+    /** @var stdClass[] quiz_slots.slot => the quiz_slots rows for this quiz, augmented by sectionid. */
+    protected $slotsinorder = [];
 
     /**
-     * @var \stdClass[] currently a dummy. Holds data that will match the
+     * @var stdClass[] currently a dummy. Holds data that will match the
      * quiz_sections, once it exists.
      */
-    protected $sections = array();
+    protected $sections = [];
 
     /** @var bool caches the results of can_be_edited. */
     protected $canbeedited = null;
@@ -62,16 +58,9 @@ class structure {
     /** @var bool caches the results of can_add_random_question. */
     protected $canaddrandom = null;
 
-    /** @var bool tracks whether tags have been loaded */
-    protected $hasloadedtags = false;
-
-    /**
-     * @var \stdClass[] the tags for slots. Indexed by slot id.
-     */
-    protected $slottags = array();
-
     /**
      * Create an instance of this class representing an empty quiz.
+     *
      * @return structure
      */
     public static function create() {
@@ -80,18 +69,20 @@ class structure {
 
     /**
      * Create an instance of this class representing the structure of a given quiz.
-     * @param \quiz $quizobj the quiz.
+     *
+     * @param quiz_settings $quizobj the quiz.
      * @return structure
      */
     public static function create_for_quiz($quizobj) {
         $structure = self::create();
         $structure->quizobj = $quizobj;
-        $structure->populate_structure($quizobj->get_quiz());
+        $structure->populate_structure();
         return $structure;
     }
 
     /**
      * Whether there are any questions in the quiz.
+     *
      * @return bool true if there is at least one question in the quiz.
      */
     public function has_questions() {
@@ -100,6 +91,7 @@ class structure {
 
     /**
      * Get the number of questions in the quiz.
+     *
      * @return int the number of questions in the quiz.
      */
     public function get_question_count() {
@@ -108,8 +100,9 @@ class structure {
 
     /**
      * Get the information about the question with this id.
+     *
      * @param int $questionid The question id.
-     * @return \stdClass the data from the questions table, augmented with
+     * @return stdClass the data from the questions table, augmented with
      * question_category.contextid, and the quiz_slots data for the question in this quiz.
      */
     public function get_question_by_id($questionid) {
@@ -118,8 +111,9 @@ class structure {
 
     /**
      * Get the information about the question in a given slot.
+     *
      * @param int $slotnumber the index of the slot in question.
-     * @return \stdClass the data from the questions table, augmented with
+     * @return stdClass the data from the questions table, augmented with
      * question_category.contextid, and the quiz_slots data for the question in this quiz.
      */
     public function get_question_in_slot($slotnumber) {
@@ -127,7 +121,18 @@ class structure {
     }
 
     /**
+     * Get the name of the question in a given slot.
+     *
+     * @param int $slotnumber the index of the slot in question.
+     * @return stdClass the data from the questions table, augmented with
+     */
+    public function get_question_name_in_slot($slotnumber) {
+        return $this->questions[$this->slotsinorder[$slotnumber]->name];
+    }
+
+    /**
      * Get the displayed question number (or 'i') for a given slot.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return string the question number ot display for this slot.
      */
@@ -136,7 +141,67 @@ class structure {
     }
 
     /**
+     * Check whether the question number can be customised.
+     *
+     * @param int $slotnumber
+     * @return bool
+     */
+    public function can_display_number_be_customised(int $slotnumber): bool {
+        if (!$this->is_real_question($slotnumber)) {
+            return false;
+        }
+        $slot = $this->get_slot_by_number($slotnumber);
+        if ($slot->section->shufflequestions) {
+            return false;
+        }
+        if (quiz_has_attempts($this->quizobj->get_quizid())) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Check whether the question number is customised.
+     * @param int $slotid
+     * @return bool
+     */
+    public function is_display_number_customised(int $slotid): bool {
+        $slotobj = $this->get_slot_by_id($slotid);
+        return $slotobj->displayednumber === $slotobj->displaynumber;
+    }
+
+    /**
+     * Make slot display number in place editable api call.
+
+     * @param int $slotid
+     * @param \context $context
+     * @return \core\output\inplace_editable
+     */
+    public function make_slot_display_number_in_place_editable(int $slotid, \context $context): \core\output\inplace_editable {
+        // Check permission of the user to update this item (customise question number).
+        $editable = has_capability('mod/quiz:manage', $context);
+
+        $this->populate_structure();
+        $slot = $this->get_slot_by_id($slotid);
+
+        // Whether the displaynumber field in quiz_slots table is set and it is not empty or null.
+        if ($this->is_display_number_customised($slotid)) {
+            $displayvalue = format_string($slot->displaynumber);
+            $value = $slot->displaynumber;
+        } else {
+            $displayednumber = $this->get_displayed_number_for_slot($slot->slot);
+            $displayvalue = format_string($displayednumber);
+            $value = $displayednumber;
+        }
+        return new \core\output\inplace_editable('mod_quiz', 'slotdisplaynumber', $slotid,
+                $editable, $displayvalue, $value,
+                get_string('edit_slotdisplaynumber_hint', 'mod_quiz'),
+                get_string('edit_slotdisplaynumber_label', 'mod_quiz', $displayvalue));
+    }
+
+    /**
      * Get the page a given slot is on.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return int the page number of the page that slot is on.
      */
@@ -146,6 +211,7 @@ class structure {
 
     /**
      * Get the slot id of a given slot slot.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return int the page number of the page that slot is on.
      */
@@ -155,6 +221,7 @@ class structure {
 
     /**
      * Get the question type in a given slot.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return string the question type (e.g. multichoice).
      */
@@ -166,6 +233,7 @@ class structure {
      * Whether it would be possible, given the question types, etc. for the
      * question in the given slot to require that the previous question had been
      * answered before this one is displayed.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return bool can this question require the previous one.
      */
@@ -177,6 +245,7 @@ class structure {
      * Whether it is possible for another question to depend on this one finishing.
      * Note that the answer is not exact, because of random questions, and sometimes
      * questions cannot be depended upon because of quiz options.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return bool can this question finish naturally during the attempt?
      */
@@ -189,7 +258,7 @@ class structure {
             return false;
         }
 
-        if (in_array($this->get_question_type_for_slot($slotnumber), array('random', 'missingtype'))) {
+        if (in_array($this->get_question_type_for_slot($slotnumber), ['random', 'missingtype'])) {
             return \question_engine::can_questions_finish_during_the_attempt(
                     $this->quizobj->get_quiz()->preferredbehaviour);
         }
@@ -217,6 +286,7 @@ class structure {
      * Whether it would be possible, given the question types, etc. for the
      * question in the given slot to require that the previous question had been
      * answered before this one is displayed.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return bool can this question require the previous one.
      */
@@ -226,6 +296,7 @@ class structure {
 
     /**
      * Is a particular question in this attempt a real question, or something like a description.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return bool whether that question is a real question.
      */
@@ -234,7 +305,27 @@ class structure {
     }
 
     /**
+     * Does the current user have '...use' capability over the question(s) in a given slot?
+     *
+     *
+     * @param int $slotnumber the index of the slot in question.
+     * @return bool true if they have the required capability.
+     */
+    public function has_use_capability(int $slotnumber): bool {
+        $slot = $this->slotsinorder[$slotnumber];
+        if (is_numeric($slot->questionid)) {
+            // Non-random question.
+            return question_has_capability_on($this->get_question_by_id($slot->questionid), 'use');
+        } else {
+            // Random question.
+            $context = \context::instance_by_id($slot->contextid);
+            return has_capability('moodle/question:useall', $context);
+        }
+    }
+
+    /**
      * Get the course id that the quiz belongs to.
+     *
      * @return int the course.id for the quiz.
      */
     public function get_courseid() {
@@ -243,6 +334,7 @@ class structure {
 
     /**
      * Get the course module id of the quiz.
+     *
      * @return int the course_modules.id for the quiz.
      */
     public function get_cmid() {
@@ -251,6 +343,7 @@ class structure {
 
     /**
      * Get id of the quiz.
+     *
      * @return int the quiz.id for the quiz.
      */
     public function get_quizid() {
@@ -259,7 +352,8 @@ class structure {
 
     /**
      * Get the quiz object.
-     * @return \stdClass the quiz settings row from the database.
+     *
+     * @return stdClass the quiz settings row from the database.
      */
     public function get_quiz() {
         return $this->quizobj->get_quiz();
@@ -268,6 +362,7 @@ class structure {
     /**
      * Quizzes can only be repaginated if they have not been attempted, the
      * questions are not shuffled, and there are two or more questions.
+     *
      * @return bool whether this quiz can be repaginated.
      */
     public function can_be_repaginated() {
@@ -276,6 +371,7 @@ class structure {
 
     /**
      * Quizzes can only be edited if they have not been attempted.
+     *
      * @return bool whether the quiz can be edited.
      */
     public function can_be_edited() {
@@ -294,7 +390,7 @@ class structure {
             $reportlink = quiz_attempt_summary_link_to_reports($this->get_quiz(),
                     $this->quizobj->get_cm(), $this->quizobj->get_context());
             throw new \moodle_exception('cannoteditafterattempts', 'quiz',
-                    new \moodle_url('/mod/quiz/edit.php', array('cmid' => $this->get_cmid())), $reportlink);
+                    new \moodle_url('/mod/quiz/edit.php', ['cmid' => $this->get_cmid()]), $reportlink);
         }
     }
 
@@ -302,6 +398,7 @@ class structure {
      * How many questions are allowed per page in the quiz.
      * This setting controls how frequently extra page-breaks should be inserted
      * automatically when questions are added to the quiz.
+     *
      * @return int the number of questions that should be on each page of the
      * quiz by default.
      */
@@ -311,7 +408,8 @@ class structure {
 
     /**
      * Get quiz slots.
-     * @return \stdClass[] the slots in this quiz.
+     *
+     * @return stdClass[] the slots in this quiz.
      */
     public function get_slots() {
         return array_column($this->slotsinorder, null, 'id');
@@ -319,6 +417,7 @@ class structure {
 
     /**
      * Is this slot the first one on its page?
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return bool whether this slot the first one on its page.
      */
@@ -331,6 +430,7 @@ class structure {
 
     /**
      * Is this slot the last one on its page?
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return bool whether this slot the last one on its page.
      */
@@ -343,6 +443,7 @@ class structure {
 
     /**
      * Is this slot the last one in its section?
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return bool whether this slot the last one on its section.
      */
@@ -352,6 +453,7 @@ class structure {
 
     /**
      * Is this slot the only one in its section?
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return bool whether this slot the only one on its section.
      */
@@ -362,6 +464,7 @@ class structure {
 
     /**
      * Is this slot the last one in the quiz?
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return bool whether this slot the last one in the quiz.
      */
@@ -372,7 +475,8 @@ class structure {
 
     /**
      * Is this the first section in the quiz?
-     * @param \stdClass $section the quiz_sections row.
+     *
+     * @param stdClass $section the quiz_sections row.
      * @return bool whether this is first section in the quiz.
      */
     public function is_first_section($section) {
@@ -381,7 +485,8 @@ class structure {
 
     /**
      * Is this the last section in the quiz?
-     * @param \stdClass $section the quiz_sections row.
+     *
+     * @param stdClass $section the quiz_sections row.
      * @return bool whether this is first section in the quiz.
      */
     public function is_last_section($section) {
@@ -390,7 +495,8 @@ class structure {
 
     /**
      * Does this section only contain one slot?
-     * @param \stdClass $section the quiz_sections row.
+     *
+     * @param stdClass $section the quiz_sections row.
      * @return bool whether this section contains only one slot.
      */
     public function is_only_one_slot_in_section($section) {
@@ -399,17 +505,18 @@ class structure {
 
     /**
      * Get the final slot in the quiz.
-     * @return \stdClass the quiz_slots for for the final slot in the quiz.
+     *
+     * @return stdClass the quiz_slots for the final slot in the quiz.
      */
     public function get_last_slot() {
         return end($this->slotsinorder);
     }
 
     /**
-     * Get a slot by it's id. Throws an exception if it is missing.
+     * Get a slot by its id. Throws an exception if it is missing.
+     *
      * @param int $slotid the slot id.
-     * @return \stdClass the requested quiz_slots row.
-     * @throws \coding_exception
+     * @return stdClass the requested quiz_slots row.
      */
     public function get_slot_by_id($slotid) {
         foreach ($this->slotsinorder as $slot) {
@@ -422,10 +529,10 @@ class structure {
     }
 
     /**
-     * Get a slot by it's slot number. Throws an exception if it is missing.
+     * Get a slot by its slot number. Throws an exception if it is missing.
      *
      * @param int $slotnumber The slot number
-     * @return \stdClass
+     * @return stdClass
      * @throws \coding_exception
      */
     public function get_slot_by_number($slotnumber) {
@@ -437,6 +544,7 @@ class structure {
 
     /**
      * Check whether adding a section heading is possible
+     *
      * @param int $pagenumber the number of the page.
      * @return boolean
      */
@@ -447,7 +555,7 @@ class structure {
             return false;
         }
         // Get an array of firstslots.
-        $firstslots = array();
+        $firstslots = [];
         foreach ($this->sections as $section) {
             $firstslots[] = $section->firstslot;
         }
@@ -467,11 +575,12 @@ class structure {
 
     /**
      * Get all the slots in a section of the quiz.
+     *
      * @param int $sectionid the section id.
      * @return int[] slot numbers.
      */
     public function get_slots_in_section($sectionid) {
-        $slots = array();
+        $slots = [];
         foreach ($this->slotsinorder as $slot) {
             if ($slot->section->id == $sectionid) {
                 $slots[] = $slot->slot;
@@ -482,7 +591,8 @@ class structure {
 
     /**
      * Get all the sections of the quiz.
-     * @return \stdClass[] the sections in this quiz.
+     *
+     * @return stdClass[] the sections in this quiz.
      */
     public function get_sections() {
         return $this->sections;
@@ -490,7 +600,8 @@ class structure {
 
     /**
      * Get a particular section by id.
-     * @return \stdClass the section.
+     *
+     * @return stdClass the section.
      */
     public function get_section_by_id($sectionid) {
         return $this->sections[$sectionid];
@@ -498,6 +609,7 @@ class structure {
 
     /**
      * Get the number of questions in the quiz.
+     *
      * @return int the number of questions in the quiz.
      */
     public function get_section_count() {
@@ -506,6 +618,7 @@ class structure {
 
     /**
      * Get the overall quiz grade formatted for display.
+     *
      * @return string the maximum grade for this quiz.
      */
     public function formatted_quiz_grade() {
@@ -514,6 +627,7 @@ class structure {
 
     /**
      * Get the maximum mark for a question, formatted for display.
+     *
      * @param int $slotnumber the index of the slot in question.
      * @return string the maximum mark for the question in this slot.
      */
@@ -522,7 +636,8 @@ class structure {
     }
 
     /**
-     * Get the number of decimal places for displyaing overall quiz grades or marks.
+     * Get the number of decimal places for displaying overall quiz grades or marks.
+     *
      * @return int the number of decimal places.
      */
     public function get_decimal_places_for_grades() {
@@ -530,7 +645,8 @@ class structure {
     }
 
     /**
-     * Get the number of decimal places for displyaing question marks.
+     * Get the number of decimal places for displaying question marks.
+     *
      * @return int the number of decimal places.
      */
     public function get_decimal_places_for_question_marks() {
@@ -542,7 +658,7 @@ class structure {
      * @return string[] array of strings.
      */
     public function get_edit_page_warnings() {
-        $warnings = array();
+        $warnings = [];
 
         if (quiz_has_attempts($this->quizobj->get_quizid())) {
             $reviewlink = quiz_attempt_summary_link_to_reports($this->quizobj->get_quiz(),
@@ -563,7 +679,7 @@ class structure {
         $quiz = $this->quizobj->get_quiz();
 
         // Exact open and close dates for the tool-tip.
-        $dates = array();
+        $dates = [];
         if ($quiz->timeopen > 0) {
             if ($timenow > $quiz->timeopen) {
                 $dates[] = get_string('quizopenedon', 'quiz', userdate($quiz->timeopen));
@@ -596,77 +712,31 @@ class structure {
             $currentstatus = get_string('quizisopen', 'quiz');
         }
 
-        return array($currentstatus, $explanation);
+        return [$currentstatus, $explanation];
     }
 
     /**
      * Set up this class with the structure for a given quiz.
-     * @param \stdClass $quiz the quiz settings.
      */
-    public function populate_structure($quiz) {
+    protected function populate_structure() {
         global $DB;
 
-        $slots = $DB->get_records_sql("
-                SELECT slot.id AS slotid, slot.slot, slot.questionid, slot.page, slot.maxmark,
-                        slot.requireprevious, q.*, qc.contextid
-                  FROM {quiz_slots} slot
-                  LEFT JOIN {question} q ON q.id = slot.questionid
-                  LEFT JOIN {question_categories} qc ON qc.id = q.category
-                 WHERE slot.quizid = ?
-              ORDER BY slot.slot", array($quiz->id));
+        $slots = qbank_helper::get_question_structure($this->quizobj->get_quizid(), $this->quizobj->get_context());
 
-        $slots = $this->populate_missing_questions($slots);
-
-        $this->questions = array();
-        $this->slotsinorder = array();
+        $this->questions = [];
+        $this->slotsinorder = [];
         foreach ($slots as $slotdata) {
             $this->questions[$slotdata->questionid] = $slotdata;
 
-            $slot = new \stdClass();
-            $slot->id = $slotdata->slotid;
-            $slot->slot = $slotdata->slot;
-            $slot->quizid = $quiz->id;
-            $slot->page = $slotdata->page;
-            $slot->questionid = $slotdata->questionid;
-            $slot->maxmark = $slotdata->maxmark;
-            $slot->requireprevious = $slotdata->requireprevious;
-
+            $slot = clone($slotdata);
+            $slot->quizid = $this->quizobj->get_quizid();
             $this->slotsinorder[$slot->slot] = $slot;
         }
 
         // Get quiz sections in ascending order of the firstslot.
-        $this->sections = $DB->get_records('quiz_sections', array('quizid' => $quiz->id), 'firstslot ASC');
+        $this->sections = $DB->get_records('quiz_sections', ['quizid' => $this->quizobj->get_quizid()], 'firstslot');
         $this->populate_slots_with_sections();
         $this->populate_question_numbers();
-    }
-
-    /**
-     * Used by populate. Make up fake data for any missing questions.
-     * @param \stdClass[] $slots the data about the slots and questions in the quiz.
-     * @return \stdClass[] updated $slots array.
-     */
-    protected function populate_missing_questions($slots) {
-        // Address missing question types.
-        foreach ($slots as $slot) {
-            if ($slot->qtype === null) {
-                // If the questiontype is missing change the question type.
-                $slot->id = $slot->questionid;
-                $slot->category = 0;
-                $slot->qtype = 'missingtype';
-                $slot->name = get_string('missingquestion', 'quiz');
-                $slot->slot = $slot->slot;
-                $slot->maxmark = 0;
-                $slot->requireprevious = 0;
-                $slot->questiontext = ' ';
-                $slot->questiontextformat = FORMAT_HTML;
-                $slot->length = 1;
-
-            } else if (!\question_bank::qtype_exists($slot->qtype)) {
-                $slot->qtype = 'missingtype';
-            }
-        }
-
-        return $slots;
     }
 
     /**
@@ -682,6 +752,10 @@ class structure {
             }
             for ($slot = $section->firstslot; $slot <= $section->lastslot; $slot += 1) {
                 $this->slotsinorder[$slot]->section = $section;
+                if ($section->shufflequestions) {
+                    // Hide customised value and disable editing while shuffle checkbox is enabled.
+                    $this->slotsinorder[$slot]->displaynumber = null;
+                }
             }
         }
     }
@@ -695,24 +769,65 @@ class structure {
             if ($this->questions[$slot->questionid]->length == 0) {
                 $slot->displayednumber = get_string('infoshort', 'quiz');
             } else {
-                $slot->displayednumber = $number;
+                // Whether question numbering is customised or is numeric and automatically incremented.
+                if (!empty($slot->displaynumber)) {
+                    $slot->displayednumber = $slot->displaynumber;
+                } else {
+                    $slot->displayednumber = $number;
+                }
                 $number += 1;
             }
         }
     }
 
     /**
+     * Get the version options to show on the 'Questions' page for a particular question.
+     *
+     * @param int $slotnumber which slot to get the choices for.
+     * @return stdClass[] other versions of this question. Each object has fields versionid,
+     *       version and selected. Array is returned most recent version first.
+     */
+    public function get_version_choices_for_slot(int $slotnumber): array {
+        $slot = $this->get_slot_by_number($slotnumber);
+
+        // Get all the versions which exist.
+        $versions = qbank_helper::get_version_options($slot->questionid);
+        $latestversion = reset($versions);
+
+        // Format the choices for display.
+        $versionoptions = [];
+        foreach ($versions as $version) {
+            $version->selected = $version->version === $slot->requestedversion;
+
+            if ($version->version === $latestversion->version) {
+                $version->versionvalue = get_string('questionversionlatest', 'quiz', $version->version);
+            } else {
+                $version->versionvalue = get_string('questionversion', 'quiz', $version->version);
+            }
+
+            $versionoptions[] = $version;
+        }
+
+        // Make a choice for 'Always latest'.
+        $alwaysuselatest = new stdClass();
+        $alwaysuselatest->versionid = 0;
+        $alwaysuselatest->version = 0;
+        $alwaysuselatest->versionvalue = get_string('alwayslatest', 'quiz');
+        $alwaysuselatest->selected = $slot->requestedversion === null;
+        array_unshift($versionoptions, $alwaysuselatest);
+
+        return $versionoptions;
+    }
+
+    /**
      * Move a slot from its current location to a new location.
      *
-     * After callig this method, this class will be in an invalid state, and
+     * After calling this method, this class will be in an invalid state, and
      * should be discarded if you want to manipulate the structure further.
      *
      * @param int $idmove id of slot to be moved
      * @param int $idmoveafter id of slot to come before slot being moved
      * @param int $page new page number of slot being moved
-     * @param bool $insection if the question is moving to a place where a new
-     *      section starts, include it in that section.
-     * @return void
      */
     public function move_slot($idmove, $idmoveafter, $page) {
         global $DB;
@@ -739,7 +854,7 @@ class structure {
         }
 
         $followingslotnumber = $moveafterslotnumber + 1;
-        // Prevent checking against non-existance slot when already at the last slot.
+        // Prevent checking against non-existence slot when already at the last slot.
         if ($followingslotnumber == $movingslotnumber && !$this->is_last_slot_in_quiz($followingslotnumber)) {
             $followingslotnumber += 1;
         }
@@ -757,7 +872,7 @@ class structure {
         }
 
         // Work out how things are being moved.
-        $slotreorder = array();
+        $slotreorder = [];
         if ($moveafterslotnumber > $movingslotnumber) {
             // Moving down.
             $slotreorder[$movingslotnumber] = $moveafterslotnumber;
@@ -816,13 +931,13 @@ class structure {
         // Slot has moved record new order.
         if ($slotreorder) {
             update_field_with_unique_index('quiz_slots', 'slot', $slotreorder,
-                    array('quizid' => $this->get_quizid()));
+                    ['quizid' => $this->get_quizid()]);
         }
 
         // Page has changed. Record it.
         if ($movingslot->page != $page) {
             $DB->set_field('quiz_slots', 'page', $page,
-                    array('id' => $movingslot->id));
+                    ['id' => $movingslot->id]);
         }
 
         // Update section fist slots.
@@ -837,34 +952,47 @@ class structure {
                    AND page > 1
                    AND NOT EXISTS (SELECT 1 FROM {quiz_slots} WHERE quizid = ? AND page = slot.page - 1)
               ORDER BY page - 1 DESC
-                ", array($this->get_quizid(), $this->get_quizid()));
+                ", [$this->get_quizid(), $this->get_quizid()]);
 
-        foreach ($emptypages as $page) {
+        foreach ($emptypages as $emptypage) {
             $DB->execute("
                     UPDATE {quiz_slots}
                        SET page = page - 1
                      WHERE quizid = ?
                        AND page > ?
-                    ", array($this->get_quizid(), $page));
+                    ", [$this->get_quizid(), $emptypage]);
         }
 
         $trans->allow_commit();
+
+        // Log slot moved event.
+        $event = \mod_quiz\event\slot_moved::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $idmove,
+            'other' => [
+                'quizid' => $this->quizobj->get_quizid(),
+                'previousslotnumber' => $movingslotnumber,
+                'afterslotnumber' => $moveafterslotnumber,
+                'page' => $page
+             ]
+        ]);
+        $event->trigger();
     }
 
     /**
      * Refresh page numbering of quiz slots.
-     * @param \stdClass[] $slots (optional) array of slot objects.
-     * @return \stdClass[] array of slot objects.
+     * @param stdClass[] $slots (optional) array of slot objects.
+     * @return stdClass[] array of slot objects.
      */
-    public function refresh_page_numbers($slots = array()) {
+    public function refresh_page_numbers($slots = []) {
         global $DB;
         // Get slots ordered by page then slot.
         if (!count($slots)) {
-            $slots = $DB->get_records('quiz_slots', array('quizid' => $this->get_quizid()), 'slot, page');
+            $slots = $DB->get_records('quiz_slots', ['quizid' => $this->get_quizid()], 'slot, page');
         }
 
-        // Loop slots. Start Page number at 1 and increment as required.
-        $pagenumbers = array('new' => 0, 'old' => 0);
+        // Loop slots. Start the page number at 1 and increment as required.
+        $pagenumbers = ['new' => 0, 'old' => 0];
 
         foreach ($slots as $slot) {
             if ($slot->page !== $pagenumbers['old']) {
@@ -883,8 +1011,8 @@ class structure {
 
     /**
      * Refresh page numbering of quiz slots and save to the database.
-     * @param \stdClass $quiz the quiz object.
-     * @return \stdClass[] array of slot objects.
+     *
+     * @return stdClass[] array of slot objects.
      */
     public function refresh_page_numbers_and_update_db() {
         global $DB;
@@ -895,14 +1023,14 @@ class structure {
         // Record new page order.
         foreach ($slots as $slot) {
             $DB->set_field('quiz_slots', 'page', $slot->page,
-                    array('id' => $slot->id));
+                    ['id' => $slot->id]);
         }
 
         return $slots;
     }
 
     /**
-     * Remove a slot from a quiz
+     * Remove a slot from a quiz.
      *
      * @param int $slotnumber The number of the slot to be deleted.
      * @throws \coding_exception
@@ -916,27 +1044,33 @@ class structure {
             throw new \coding_exception('You cannot remove the last slot in a section.');
         }
 
-        $slot = $DB->get_record('quiz_slots', array('quizid' => $this->get_quizid(), 'slot' => $slotnumber));
+        $slot = $DB->get_record('quiz_slots', ['quizid' => $this->get_quizid(), 'slot' => $slotnumber]);
         if (!$slot) {
             return;
         }
-        $maxslot = $DB->get_field_sql('SELECT MAX(slot) FROM {quiz_slots} WHERE quizid = ?', array($this->get_quizid()));
+        $maxslot = $DB->get_field_sql('SELECT MAX(slot) FROM {quiz_slots} WHERE quizid = ?', [$this->get_quizid()]);
 
         $trans = $DB->start_delegated_transaction();
-        $DB->delete_records('quiz_slot_tags', array('slotid' => $slot->id));
-        $DB->delete_records('quiz_slots', array('id' => $slot->id));
+        // Delete the reference if it is a question.
+        $questionreference = $DB->get_record('question_references',
+                ['component' => 'mod_quiz', 'questionarea' => 'slot', 'itemid' => $slot->id]);
+        if ($questionreference) {
+            $DB->delete_records('question_references', ['id' => $questionreference->id]);
+        }
+        // Delete the set reference if it is a random question.
+        $questionsetreference = $DB->get_record('question_set_references',
+                ['component' => 'mod_quiz', 'questionarea' => 'slot', 'itemid' => $slot->id]);
+        if ($questionsetreference) {
+            $DB->delete_records('question_set_references',
+                ['id' => $questionsetreference->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
+        }
+        $DB->delete_records('quiz_slots', ['id' => $slot->id]);
         for ($i = $slot->slot + 1; $i <= $maxslot; $i++) {
             $DB->set_field('quiz_slots', 'slot', $i - 1,
-                    array('quizid' => $this->get_quizid(), 'slot' => $i));
+                    ['quizid' => $this->get_quizid(), 'slot' => $i]);
             $this->slotsinorder[$i]->slot = $i - 1;
             $this->slotsinorder[$i - 1] = $this->slotsinorder[$i];
             unset($this->slotsinorder[$i]);
-        }
-
-        $qtype = $DB->get_field('question', 'qtype', array('id' => $slot->questionid));
-        if ($qtype === 'random') {
-            // This function automatically checks if the question is in use, and won't delete if it is.
-            question_delete_question($slot->questionid);
         }
 
         quiz_update_section_firstslots($this->get_quizid(), -1, $slotnumber);
@@ -947,21 +1081,46 @@ class structure {
         }
         $this->populate_slots_with_sections();
         $this->populate_question_numbers();
-        unset($this->questions[$slot->questionid]);
+        $this->unset_question($slot->id);
 
         $this->refresh_page_numbers_and_update_db();
 
         $trans->allow_commit();
+
+        // Log slot deleted event.
+        $event = \mod_quiz\event\slot_deleted::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $slot->id,
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'slotnumber' => $slotnumber,
+            ]
+        ]);
+        $event->trigger();
+    }
+
+    /**
+     * Unset the question object after deletion.
+     *
+     * @param int $slotid
+     */
+    public function unset_question($slotid) {
+        foreach ($this->questions as $key => $question) {
+            if ($question->slotid === $slotid) {
+                unset($this->questions[$key]);
+            }
+        }
     }
 
     /**
      * Change the max mark for a slot.
      *
-     * Saves changes to the question grades in the quiz_slots table and any
+     * Save changes to the question grades in the quiz_slots table and any
      * corresponding question_attempts.
+     *
      * It does not update 'sumgrades' in the quiz table.
      *
-     * @param \stdClass $slot row from the quiz_slots table.
+     * @param stdClass $slot row from the quiz_slots table.
      * @param float $maxmark the new maxmark.
      * @return bool true if the new grade is different from the old one.
      */
@@ -974,11 +1133,25 @@ class structure {
         }
 
         $trans = $DB->start_delegated_transaction();
+        $previousmaxmark = $slot->maxmark;
         $slot->maxmark = $maxmark;
         $DB->update_record('quiz_slots', $slot);
-        \question_engine::set_max_mark_in_attempts(new \qubaids_for_quiz($slot->quizid),
+        \question_engine::set_max_mark_in_attempts(new qubaids_for_quiz($slot->quizid),
                 $slot->slot, $maxmark);
         $trans->allow_commit();
+
+        // Log slot mark updated event.
+        // We use $num + 0 as a trick to remove the useless 0 digits from decimals.
+        $event = \mod_quiz\event\slot_mark_updated::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $slot->id,
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'previousmaxmark' => $previousmaxmark + 0,
+                'newmaxmark' => $maxmark + 0
+            ]
+        ]);
+        $event->trigger();
 
         return true;
     }
@@ -990,28 +1163,88 @@ class structure {
      */
     public function update_question_dependency($slotid, $requireprevious) {
         global $DB;
-        $DB->set_field('quiz_slots', 'requireprevious', $requireprevious, array('id' => $slotid));
+        $DB->set_field('quiz_slots', 'requireprevious', $requireprevious, ['id' => $slotid]);
+
+        // Log slot require previous event.
+        $event = \mod_quiz\event\slot_requireprevious_updated::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $slotid,
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'requireprevious' => $requireprevious ? 1 : 0
+            ]
+        ]);
+        $event->trigger();
+    }
+
+    /**
+     * Update the question display number when is set as customised display number or empy string.
+     * When the field displaynumber is set to empty string, the automated numbering is used.
+     * Log the updated displatnumber field.
+     *
+     * @param int $slotid id of slot.
+     * @param string $displaynumber set to customised string as question number or empty string fo autonumbering.
+     */
+    public function update_slot_display_number(int $slotid, string $displaynumber): void {
+        global $DB;
+        $DB->set_field('quiz_slots', 'displaynumber', $displaynumber, ['id' => $slotid]);
+        $this->populate_structure();
+
+        // Log slot displaynumber event (customised question number).
+        $event = \mod_quiz\event\slot_displaynumber_updated::create([
+                'context' => $this->quizobj->get_context(),
+                'objectid' => $slotid,
+                'other' => [
+                        'quizid' => $this->get_quizid(),
+                        'displaynumber' => $displaynumber
+                ]
+        ]);
+        $event->trigger();
     }
 
     /**
      * Add/Remove a pagebreak.
      *
-     * Saves changes to the slot page relationship in the quiz_slots table and reorders the paging
+     * Save changes to the slot page relationship in the quiz_slots table and reorders the paging
      * for subsequent slots.
      *
-     * @param int $slotid id of slot.
+     * @param int $slotid id of slot which we will add/remove the page break before.
      * @param int $type repaginate::LINK or repaginate::UNLINK.
-     * @return \stdClass[] array of slot objects.
+     * @return stdClass[] array of slot objects.
      */
     public function update_page_break($slotid, $type) {
         global $DB;
 
         $this->check_can_be_edited();
 
-        $quizslots = $DB->get_records('quiz_slots', array('quizid' => $this->get_quizid()), 'slot');
-        $repaginate = new \mod_quiz\repaginate($this->get_quizid(), $quizslots);
+        $quizslots = $DB->get_records('quiz_slots', ['quizid' => $this->get_quizid()], 'slot');
+        $repaginate = new repaginate($this->get_quizid(), $quizslots);
         $repaginate->repaginate_slots($quizslots[$slotid]->slot, $type);
         $slots = $this->refresh_page_numbers_and_update_db();
+
+        if ($type == repaginate::LINK) {
+            // Log page break created event.
+            $event = \mod_quiz\event\page_break_deleted::create([
+                'context' => $this->quizobj->get_context(),
+                'objectid' => $slotid,
+                'other' => [
+                    'quizid' => $this->get_quizid(),
+                    'slotnumber' => $quizslots[$slotid]->slot
+                ]
+            ]);
+            $event->trigger();
+        } else {
+            // Log page deleted created event.
+            $event = \mod_quiz\event\page_break_created::create([
+                'context' => $this->quizobj->get_context(),
+                'objectid' => $slotid,
+                'other' => [
+                    'quizid' => $this->get_quizid(),
+                    'slotnumber' => $quizslots[$slotid]->slot
+                ]
+            ]);
+            $event->trigger();
+        }
 
         return $slots;
     }
@@ -1023,17 +1256,33 @@ class structure {
      */
     public function add_section_heading($pagenumber, $heading = null) {
         global $DB;
-        $section = new \stdClass();
+        $section = new stdClass();
         if ($heading !== null) {
             $section->heading = $heading;
         } else {
             $section->heading = get_string('newsectionheading', 'quiz');
         }
         $section->quizid = $this->get_quizid();
-        $slotsonpage = $DB->get_records('quiz_slots', array('quizid' => $this->get_quizid(), 'page' => $pagenumber), 'slot DESC');
-        $section->firstslot = end($slotsonpage)->slot;
+        $slotsonpage = $DB->get_records('quiz_slots', ['quizid' => $this->get_quizid(), 'page' => $pagenumber], 'slot DESC');
+        $firstslot = end($slotsonpage);
+        $section->firstslot = $firstslot->slot;
         $section->shufflequestions = 0;
-        return $DB->insert_record('quiz_sections', $section);
+        $sectionid = $DB->insert_record('quiz_sections', $section);
+
+        // Log section break created event.
+        $event = \mod_quiz\event\section_break_created::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $sectionid,
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'firstslotnumber' => $firstslot->slot,
+                'firstslotid' => $firstslot->id,
+                'title' => $section->heading,
+            ]
+        ]);
+        $event->trigger();
+
+        return $sectionid;
     }
 
     /**
@@ -1043,9 +1292,23 @@ class structure {
      */
     public function set_section_heading($id, $newheading) {
         global $DB;
-        $section = $DB->get_record('quiz_sections', array('id' => $id), '*', MUST_EXIST);
+        $section = $DB->get_record('quiz_sections', ['id' => $id], '*', MUST_EXIST);
         $section->heading = $newheading;
         $DB->update_record('quiz_sections', $section);
+
+        // Log section title updated event.
+        $firstslot = $DB->get_record('quiz_slots', ['quizid' => $this->get_quizid(), 'slot' => $section->firstslot]);
+        $event = \mod_quiz\event\section_title_updated::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $id,
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'firstslotid' => $firstslot ? $firstslot->id : null,
+                'firstslotnumber' => $firstslot ? $firstslot->slot : null,
+                'newtitle' => $newheading
+            ]
+        ]);
+        $event->trigger();
     }
 
     /**
@@ -1055,9 +1318,21 @@ class structure {
      */
     public function set_section_shuffle($id, $shuffle) {
         global $DB;
-        $section = $DB->get_record('quiz_sections', array('id' => $id), '*', MUST_EXIST);
+        $section = $DB->get_record('quiz_sections', ['id' => $id], '*', MUST_EXIST);
         $section->shufflequestions = $shuffle;
         $DB->update_record('quiz_sections', $section);
+
+        // Log section shuffle updated event.
+        $event = \mod_quiz\event\section_shuffle_updated::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $id,
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'firstslotnumber' => $section->firstslot,
+                'shuffle' => $shuffle
+            ]
+        ]);
+        $event->trigger();
     }
 
     /**
@@ -1066,35 +1341,24 @@ class structure {
      */
     public function remove_section_heading($sectionid) {
         global $DB;
-        $section = $DB->get_record('quiz_sections', array('id' => $sectionid), '*', MUST_EXIST);
+        $section = $DB->get_record('quiz_sections', ['id' => $sectionid], '*', MUST_EXIST);
         if ($section->firstslot == 1) {
             throw new \coding_exception('Cannot remove the first section in a quiz.');
         }
-        $DB->delete_records('quiz_sections', array('id' => $sectionid));
-    }
+        $DB->delete_records('quiz_sections', ['id' => $sectionid]);
 
-    /**
-     * Set up this class with the slot tags for each of the slots.
-     */
-    protected function populate_slot_tags() {
-        $slotids = array_column($this->slotsinorder, 'id');
-        $this->slottags = quiz_retrieve_tags_for_slot_ids($slotids);
-    }
-
-    /**
-     * Retrieve the list of slot tags for the given slot id.
-     *
-     * @param  int $slotid The id for the slot
-     * @return \stdClass[] The list of slot tag records
-     */
-    public function get_slot_tags_for_slot_id($slotid) {
-        if (!$this->hasloadedtags) {
-            // Lazy load the tags just in case they are never required.
-            $this->populate_slot_tags();
-            $this->hasloadedtags = true;
-        }
-
-        return isset($this->slottags[$slotid]) ? $this->slottags[$slotid] : [];
+        // Log page deleted created event.
+        $firstslot = $DB->get_record('quiz_slots', ['quizid' => $this->get_quizid(), 'slot' => $section->firstslot]);
+        $event = \mod_quiz\event\section_break_deleted::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $sectionid,
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'firstslotid' => $firstslot->id,
+                'firstslotnumber' => $firstslot->slot
+            ]
+        ]);
+        $event->trigger();
     }
 
     /**
@@ -1107,12 +1371,29 @@ class structure {
     public function can_add_random_questions() {
         if ($this->canaddrandom === null) {
             $quizcontext = $this->quizobj->get_context();
-            $relatedcontexts = new \question_edit_contexts($quizcontext);
+            $relatedcontexts = new \core_question\local\bank\question_edit_contexts($quizcontext);
             $usablecontexts = $relatedcontexts->having_cap('moodle/question:useall');
 
             $this->canaddrandom = !empty($usablecontexts);
         }
 
         return $this->canaddrandom;
+    }
+
+
+    /**
+     * Retrieve the list of slot tags for the given slot id.
+     *
+     * @param int $slotid The id for the slot
+     * @return stdClass[] The list of slot tag records
+     * @deprecated since Moodle 4.0 MDL-71573
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
+     */
+    public function get_slot_tags_for_slot_id($slotid) {
+        debugging('Function get_slot_tags_for_slot_id() has been deprecated and the structure
+         for this method have been moved to filtercondition in question_set_reference table, please
+          use the new structure instead.', DEBUG_DEVELOPER);
+        // All the associated code for this method have been removed to get rid of accidental call or errors.
+        return [];
     }
 }

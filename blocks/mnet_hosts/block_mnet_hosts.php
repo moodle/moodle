@@ -153,4 +153,14 @@ class block_mnet_hosts extends block_list {
 
         return $this->content;
     }
+
+    /**
+     * This block shouldn't be added to a page if the mnet authentication method is disabled.
+     *
+     * @param moodle_page $page
+     * @return bool
+     */
+    public function can_block_be_added(moodle_page $page): bool {
+        return is_enabled_auth('mnet');
+    }
 }

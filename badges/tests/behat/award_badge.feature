@@ -63,7 +63,7 @@ Feature: Award badges
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge 1"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     # Award course badge 1 to student 1.
     And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
@@ -71,7 +71,7 @@ Feature: Award badges
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge 1"
-    And I follow "Recipients (1)"
+    And I select "Recipients (1)" from the "jump" singleselect
     Then I should see "Recipients (1)"
     And I log out
     # Student 1 should have both badges.
@@ -98,11 +98,13 @@ Feature: Award badges
     # Teacher 1 should NOT have access to manage/create site badges in the Site badges section.
     When I am on homepage
     And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
    # TODO MDL-57120 site "Badges" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Site badges" "link" in the "Navigation" "block"
-    Then I should see "There are no badges available."
+    Then I should see "There are currently no badges available for users to earn."
     And I should not see "Manage badges"
     And I should not see "Add a new badge"
 
@@ -136,7 +138,7 @@ Feature: Award badges
     And I press "Update profile"
     And I follow "Profile" in the user menu
     Then I should see "Profile Badge"
-    And I should not see "There are no badges available."
+    And I should not see "There are currently no badges available for users to earn."
 
   @javascript
   Scenario: Award site badge
@@ -152,7 +154,7 @@ Feature: Award badges
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Teacher 1 (teacher1@example.com)"
     And I press "Award badge"
@@ -181,7 +183,7 @@ Feature: Award badges
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Student 2 (student2@example.com)"
     And I press "Award badge"
@@ -284,7 +286,7 @@ Feature: Award badges
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     # Award course badge 1 to student 1.
     And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
@@ -292,7 +294,7 @@ Feature: Award badges
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge 1"
-    And I follow "Recipients (1)"
+    And I select "Recipients (1)" from the "jump" singleselect
     Then I should see "Recipients (1)"
     # Add course badge 2.
     And I am on "Course 1" course homepage
@@ -310,7 +312,7 @@ Feature: Award badges
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     # Award course badge 2 to student 2.
     And I set the field "potentialrecipients[]" to "Student 2 (student2@example.com)"
@@ -318,7 +320,7 @@ Feature: Award badges
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge 2"
-    And I follow "Recipients (1)"
+    And I select "Recipients (1)" from the "jump" singleselect
     Then I should see "Recipients (1)"
     And I log out
     And I trigger cron
@@ -351,7 +353,7 @@ Feature: Award badges
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Student 2 (student2@example.com)"
     And I press "Award badge"
@@ -361,7 +363,7 @@ Feature: Award badges
     And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge"
     Then I should see "Recipients (2)"
-    And I follow "Recipients (2)"
+    And I select "Recipients (2)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "existingrecipients[]" to "Student 2 (student2@example.com)"
     And I press "Revoke badge"

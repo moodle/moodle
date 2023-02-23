@@ -45,7 +45,7 @@ Feature: Unenrol action to disable course enrolment
     And I select "Disable course enrolment" from the "External unenrol action" singleselect
     And I press "Save changes"
     And I navigate to "Users > Accounts > Cohorts" in site administration
-    When I click on "Assign" "link" in the "System cohort" "table_row"
+    When I press "Assign" action in the "System cohort" report row
     And I set the field "removeselect_searchtext" to "Student 001"
     And I set the field "Current users" to "Student 001 (student001@example.com)"
     And I wait "1" seconds
@@ -77,7 +77,7 @@ Feature: Unenrol action to disable course enrolment
     And I select "Disable course enrolment" from the "External unenrol action" singleselect
     And I press "Save changes"
     And I navigate to "Users > Accounts > Cohorts" in site administration
-    When I click on "Delete" "link" in the "System cohort" "table_row"
+    When I press "Delete" action in the "System cohort" report row
     And I press "Continue"
     And I am on "Course 001" course homepage
     And I navigate to course participants

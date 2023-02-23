@@ -44,9 +44,9 @@
     M.util.js_pending('core_dynamic_tabs_init');
 </script>
 
-<div class="dynamictabs" {{#dataattributes}}data-{{name}}="{{value}}" {{/dataattributes}} >
+<div class="dynamictabs">
     {{#showtabsnavigation}}
-        <ul class="nav nav-tabs mb-4" id="dynamictabs-tabs" role="tablist">
+        <ul class="nav nav-tabs mb-4 moodle-has-zindex" id="dynamictabs-tabs" role="tablist">
             {{#tabs}}
                 <li class="nav-item" role="presentation">
                     <a class="nav-link {{#active}}active{{/active}} {{^enabled}}disabled{{/enabled}}" id="{{shortname}}-tab" data-toggle="tab" href="#{{shortname}}" role="tab" aria-controls="{{shortname}}">
@@ -58,10 +58,14 @@
     {{/showtabsnavigation}}
     <div class="tab-content" id="dynamictabs-content">
         {{#tabs}}
-            <div class="tab-pane fade {{#active}}show active{{/active}}" id="{{shortname}}" role="tabpanel" aria-labelledby="{{shortname}}-tab">
-                <div class="container-fluid" data-tab-content="{{shortname}}" data-tab-class="{{tabclass}}">
-                    {{{content}}}
-                </div>
+            <div class="tab-pane fade container-fluid {{#active}}show active{{/active}}"
+                 id="{{shortname}}"
+                 role="tabpanel"
+                 aria-labelledby="{{shortname}}-tab"
+                 data-tab-content="{{shortname}}"
+                 data-tab-class="{{tabclass}}"
+                {{#dataattributes}}data-{{name}}="{{value}}"{{/dataattributes}}>
+                {{{content}}}
             </div>
         {{/tabs}}
     </div>

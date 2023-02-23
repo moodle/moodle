@@ -66,7 +66,7 @@ class Normalizer implements Preprocessor
         $this->fitted = true;
     }
 
-    public function transform(array &$samples): void
+    public function transform(array &$samples, ?array &$targets = null): void
     {
         $methods = [
             self::NORM_L1 => 'normalizeL1',

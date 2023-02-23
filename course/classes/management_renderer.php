@@ -64,12 +64,16 @@ class core_course_management_renderer extends plugin_renderer_base {
     /**
      * Displays a heading for the management pages.
      *
+     * @deprecated since Moodle 4.0. This is now handled/replaced with the tertiary navigation
+     * @todo Final deprecation MDL-73975
      * @param string $heading The heading to display
      * @param string|null $viewmode The current view mode if there are options.
      * @param int|null $categoryid The currently selected category if there is one.
      * @return string
      */
     public function management_heading($heading, $viewmode = null, $categoryid = null) {
+        debugging('management_heading() is deprecated. Use the class manage_categories_action_bar instead.', DEBUG_DEVELOPER);
+
         $html = html_writer::start_div('coursecat-management-header clearfix');
         if (!empty($heading)) {
             $html .= $this->heading($heading);
@@ -378,6 +382,10 @@ class core_course_management_renderer extends plugin_renderer_base {
         if (!$hasitems) {
             return '';
         }
+
+        // If the action menu has items, add the menubar role to the main element containing it.
+        $menu->attributes['role'] = 'menubar';
+
         return $this->render($menu);
     }
 
@@ -632,7 +640,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $viewcourseurl = new moodle_url($this->page->url, array('courseid' => $course->id));
 
         $html  = html_writer::start_tag('li', $attributes);
-        $html .= html_writer::start_div('clearfix');
+        $html .= html_writer::start_div('d-flex flex-wrap');
 
         if ($category->can_resort_courses()) {
             // In order for dnd to be available the user must be able to resort the category children..
@@ -648,8 +656,10 @@ class core_course_management_renderer extends plugin_renderer_base {
             'for' => 'courselistitem' . $course->id));
         $html .= html_writer::end_div();
         $html .= html_writer::end_div();
-        $html .= html_writer::link($viewcourseurl, $text, array('class' => 'float-left coursename aalink'));
-        $html .= html_writer::start_div('float-right');
+        $html .= html_writer::link(
+            $viewcourseurl, $text, array('class' => 'text-break col pl-0 mb-2 coursename aalink')
+        );
+        $html .= html_writer::start_div('flex-shrink-0 ml-auto');
         if ($course->idnumber) {
             $html .= html_writer::tag('span', s($course->idnumber), array('class' => 'text-muted idnumber'));
         }
@@ -758,7 +768,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             $action['attributes']['role'] = 'button';
             $actionshtml[] = $this->output->action_icon($action['url'], $action['icon'], null, $action['attributes']);
         }
-        return html_writer::span(join('', $actionshtml), 'course-item-actions item-actions');
+        return html_writer::span(join('', $actionshtml), 'course-item-actions item-actions mr-0');
     }
 
     /**
@@ -959,6 +969,9 @@ class core_course_management_renderer extends plugin_renderer_base {
         }
 
         $yuigridclass = "col-sm";
+        if (in_array($size, [4, 5, 7])) {
+            $yuigridclass = "col-12 col-lg-6";
+        }
 
         if (is_null($class)) {
             $class = $yuigridclass . ' ' . $bootstrapclass;
@@ -1290,11 +1303,13 @@ class core_course_management_renderer extends plugin_renderer_base {
     /**
      * Renders html to display a course search form
      *
+     * @deprecated since Moodle 4.0. This is now handled within manage_categories_action_bar
+     * @todo Final deprecation MDL-73975
      * @param string $value default value to populate the search field
      * @return string
      */
     public function course_search_form($value = '') {
-
+        debugging('course_search_form() is deprecated. Use the class manage_categories_action_bar instead.', DEBUG_DEVELOPER);
         $data = [
             'action' => new moodle_url('/course/management.php'),
             'btnclass' => 'btn-primary',
@@ -1333,4 +1348,13 @@ class core_course_management_renderer extends plugin_renderer_base {
         return $html;
     }
 
+    /**
+     * Render the tertiary nav for the manage categories page.
+     *
+     * @param \core_course\output\manage_categories_action_bar $actionbar
+     * @return string The renderered template
+     */
+    public function render_action_bar(\core_course\output\manage_categories_action_bar $actionbar): string {
+        return $this->render_from_template('core_course/manage_category_actionbar', $actionbar->export_for_template($this));
+    }
 }

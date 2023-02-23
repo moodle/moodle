@@ -36,6 +36,7 @@ $string['installer'] = '<h3>Component library setup</h3>
     <p>For more info see the README.md file in this plugin.</p>';
 $string['pluginname'] = 'UI Component library';
 $string['privacy:metadata'] = 'The Component library plugin does not store any personal data.';
+$string['runjsdoc'] = 'JavaScript documentation is generated separately to the component library. To generate it please run `grunt jsdoc`';
 $string['showboth'] = 'Show with both';
 $string['showdefault'] = 'Show default';
 $string['showhelp'] = 'Show with help';

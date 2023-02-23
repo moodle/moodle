@@ -23,7 +23,7 @@
     {}
 }}
 
-<div id="block-timeline-{{uniqid}}" class="block-timeline" data-region="timeline">
+<div id="block-timeline-{{uniqid}}-{{timelineinstanceid}}" class="block-timeline" data-region="timeline">
     <div class="p-0 px-2">
         <div class="row no-gutters">
             <div class="mr-2 mb-1">
@@ -32,7 +32,7 @@
             <div class="mr-auto mb-1">
                 {{> block_timeline/nav-view-selector }}
             </div>
-            <div class="col-md-6 col-sm-8 col-12 mb-1 d-flex justify-content-end">
+            <div class="col-md-6 col-sm-8 col-12 mb-1 d-flex justify-content-end nav-search">
                 {{> block_timeline/nav-search }}
             </div>
         </div>
@@ -52,7 +52,7 @@ function(
     $,
     Main
 ) {
-    var root = $('#block-timeline-{{uniqid}}');
+    var root = $('#block-timeline-{{uniqid}}-{{timelineinstanceid}}');
     Main.init(root);
 });
 {{/js}}

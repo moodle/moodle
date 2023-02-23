@@ -19,11 +19,35 @@ Feature: Export calendar events
   Scenario: Viewing calendar export options
     Given I follow "Full calendar"
     When I click on "Import or export calendars" "link"
+    And "Calendar" "link" should exist in the ".breadcrumb" "css_element"
+    And "Import or export calendars" "text" should exist in the ".breadcrumb" "css_element"
     And I click on "Export calendar" "button"
+    And "Calendar" "link" should exist in the ".breadcrumb" "css_element"
+    And "Import or export calendars" "link" should exist in the ".breadcrumb" "css_element"
+    And "Export calendar" "text" should exist in the ".breadcrumb" "css_element"
     Then I should see "All events"
     And I should see "Events related to courses"
     And I should see "Events related to groups"
     And I should see "My personal events"
+
+  @javascript
+  Scenario: Export calendar in ics format
+    And I follow "Full calendar"
+    And I press "New event"
+    And I set the following fields to these values:
+      | Event title         | My event |
+      | id_timestart_hour   | 13       |
+      | id_timestart_minute | 00       |
+    And I press "Save"
+    When I click on "Import or export calendars" "link"
+    And I click on "Export calendar" "button"
+    And I set the field "All events" to "1"
+    And I set the field "Recent and next 60 days" to "1"
+    And I press "Export"
+    And I should see "SUMMARY:My event"
+    # We need to split the step in two because Bennu library use days with leading zero and moodle removes it.
+    And I should see "##today##DTSTART:%Y%m##"
+    And I should see "##today##%dT050000Z##"
 
   Scenario: Generating calendar URL for all events
     Given I follow "Full calendar"

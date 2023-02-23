@@ -18,8 +18,11 @@ declare(strict_types=1);
 
 namespace core_reportbuilder;
 
+use action_menu_filler;
 use coding_exception;
+use html_writer;
 use stdClass;
+use core\output\checkbox_toggleall;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\report\action;
 use core_reportbuilder\local\report\base;
@@ -40,7 +43,13 @@ abstract class system_report extends base {
     /** @var string[] $basefields List of base fields */
     private $basefields = [];
 
-    /** @var action[] $actions */
+    /** @var callable $checkboxcallback */
+    private $checkboxcallback = null;
+
+    /** @var bool $filterformdefault Whether to use the default filters form */
+    private $filterformdefault = true;
+
+    /** @var action|action_menu_filler[] $actions */
     private $actions = [];
 
     /** @var column $initialsortcolumn */
@@ -120,12 +129,81 @@ abstract class system_report extends base {
     }
 
     /**
+     * Define toggle all checkbox for the report, required row data should be defined by calling {@see add_base_fields}
+     *
+     * @param callable $callback Callback to return value/label for each checkbox, implementing the following signature:
+     *      function(stdClass $row): array containing value/label pair
+     */
+    final protected function set_checkbox_toggleall(callable $callback): void {
+        $this->checkboxcallback = $callback;
+    }
+
+    /**
+     * Return instance of toggle all checkbox, if previously defined by {@see set_checkbox_toggleall}
+     *
+     * @param bool $ismaster
+     * @param stdClass|null $row
+     * @return checkbox_toggleall|null
+     */
+    final public function get_checkbox_toggleall(bool $ismaster, ?stdClass $row = null): ?checkbox_toggleall {
+        if (!is_callable($this->checkboxcallback)) {
+            return null;
+        }
+
+        // Generic content for the master checkbox, execute callback for those belonging to each row.
+        if ($ismaster) {
+            $value = '';
+            $label = get_string('selectall');
+        } else {
+            [$value, $label] = ($this->checkboxcallback)($row);
+        }
+
+        return new checkbox_toggleall('report-select-all', $ismaster, [
+            'id' => html_writer::random_id(),
+            'name' => 'report-select-row[]',
+            'value' => $value,
+            'label' => $label,
+            'labelclasses' => 'accesshide',
+        ]);
+    }
+
+    /**
+     * Override whether to use the default system report filters form, for instance this can be disabled if the UI requires
+     * it's own custom filter management form for a specific report
+     *
+     * @param bool $filterformdefault
+     */
+    final public function set_filter_form_default(bool $filterformdefault = true): void {
+        $this->filterformdefault = $filterformdefault;
+    }
+
+    /**
+     * Whether to use the default filters form
+     *
+     * @return bool
+     */
+    final public function get_filter_form_default(): bool {
+        return $this->filterformdefault;
+    }
+
+    /**
      * Adds an action to the report
      *
      * @param action $action
      */
     final public function add_action(action $action): void {
         $this->actions[] = $action;
+    }
+
+    /**
+     * Adds action divider to the report
+     *
+     */
+    final public function add_action_divider(): void {
+        $divider = new action_menu_filler();
+        // We need to set as not primary action because we just need add an action divider, not a new action item.
+        $divider->primary = false;
+        $this->actions[] = $divider;
     }
 
     /**
@@ -140,7 +218,7 @@ abstract class system_report extends base {
     /**
      * Return report actions
      *
-     * @return action[]
+     * @return action|action_menu_filler[]
      */
     final public function get_actions(): array {
         return $this->actions;
@@ -206,15 +284,6 @@ abstract class system_report extends base {
      */
     public function get_row_class(stdClass $row): string {
         return '';
-    }
-
-    /**
-     * Default 'per page' size. Can be overridden by system reports to define a different paging value
-     *
-     * @return int
-     */
-    public function get_default_per_page(): int {
-        return self::DEFAULT_PAGESIZE;
     }
 
     /**

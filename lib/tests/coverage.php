@@ -34,20 +34,86 @@ defined('MOODLE_INTERNAL') || die();
 return new class extends phpunit_coverage_info {
     /** @var array The list of folders relative to the plugin root to include in coverage generation. */
     protected $includelistfolders = [
-        'classes',
-
         // This is a legacy hangup which relates to parts of the file storage API being placed in the wrong location.
         'filestorage',
     ];
 
     /** @var array The list of files relative to the plugin root to include in coverage generation. */
-    protected $includelistfiles = [];
+    protected $includelistfiles = [
+        'accesslib.php',
+        'adminlib.php',
+        'authlib.php',
+        'badgeslib.php',
+        'blocklib.php',
+        'boxlib.php',
+        'clilib.php',
+        'completionlib.php',
+        'conditionlib.php',
+        'configonlylib.php',
+        'cronlib.php',
+        'csslib.php',
+        'customcheckslib.php',
+        'dataformatlib.php',
+        'datalib.php',
+        'ddllib.php',
+        'deprecatedlib.php',
+        'dmllib.php',
+        'dtllib.php',
+        'editorlib.php',
+        'enrollib.php',
+        'environmentlib.php',
+        'externallib.php',
+        'filelib.php',
+        'filterlib.php',
+        'flickrlib.php',
+        'formslib.php',
+        'gdlib.php',
+        'gradelib.php',
+        'graphlib.php',
+        'grouplib.php',
+        'installlib.php',
+        'jslib.php',
+        'ldaplib.php',
+        'licenselib.php',
+        'listlib.php',
+        'mathslib.php',
+        'messagelib.php',
+        'modinfolib.php',
+        'moodlelib.php',
+        'myprofilelib.php',
+        'navigationlib.php',
+        'oauthlib.php',
+        'outputactions.php',
+        'outputcomponents.php',
+        'outputfactories.php',
+        'outputfragmentrequirementslib.php',
+        'outputlib.php',
+        'outputrenderers.php',
+        'outputrequirementslib.php',
+        'pagelib.php',
+        'pdflib.php',
+        'phpminimumversionlib.php',
+        'plagiarismlib.php',
+        'portfoliolib.php',
+        'questionlib.php',
+        'resourcelib.php',
+        'rsslib.php',
+        'searchlib.php',
+        'sessionlib.php',
+        'setuplib.php',
+        'soaplib.php',
+        'statslib.php',
+        'tablelib.php',
+        'tokeniserlib.php',
+        'upgradelib.php',
+        'uploadlib.php',
+        'webdavlib.php',
+        'weblib.php',
+        'xsendfilelib.php',
+    ];
 
     /** @var array The list of folders relative to the plugin root to exclude from coverage generation. */
     protected $excludelistfolders = [
         'filestorage/tests',
     ];
-
-    /** @var array The list of files relative to the plugin root to exclude from coverage generation. */
-    protected $excludelistfiles = [];
 };

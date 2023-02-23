@@ -14,27 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_lesson;
+
+use mod_lesson\local\numeric\helper;
+
 /**
- * Unit tests for page types classes
+ * This class contains the test cases for the numeric helper functions
  *
  * @package   mod_lesson
  * @category  test
  * @copyright 2020 Peter Dias
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-use mod_lesson\local\numeric\helper;
-
-/**
- * This class contains the test cases for the numeric helper functions
- *
- * @copyright 2020 Peter Dias
- * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
-class mod_lesson_numeric_type_helper_test extends advanced_testcase {
+class numeric_helper_test extends \advanced_testcase {
     /**
      * Test the lesson_unformat_numeric_value function.
      *
@@ -148,9 +140,7 @@ class mod_lesson_numeric_type_helper_test extends advanced_testcase {
      * It is not possible to directly change the result of get_string in
      * a unit test. Instead, we create a language pack for language 'xx' in
      * dataroot and make langconfig.php with the string we need to change.
-     * The default example separator used here is 'X'; on PHP 5.3 and before this
-     * must be a single byte character due to PHP bug/limitation in
-     * number_format, so you can't use UTF-8 characters.
+     * The default example separator used here is 'X'.
      *
      * @param string $decsep Separator character. Defaults to `'X'`.
      */

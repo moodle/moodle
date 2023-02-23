@@ -153,7 +153,7 @@ Feature: Testing multichoice questions in feedback
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I open the action menu in "//div[contains(@class, 'feedback_itemlist') and contains(.,'multichoice1')]" "xpath_element"
     And I choose "Edit question" in the open action menu
-    And I set the field "Do not analyse empty submits" to "Yes"
+    And I set the field "Omit empty submits in analysis" to "Yes"
     And I press "Save changes to question"
     And I am on the "Learning experience" "feedback activity" page
     And I navigate to "Analysis" in current page administration
@@ -293,7 +293,7 @@ Feature: Testing multichoice questions in feedback
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I open the action menu in "//div[contains(@class, 'feedback_itemlist') and contains(.,'multichoice1')]" "xpath_element"
     And I choose "Edit question" in the open action menu
-    And I set the field "Do not analyse empty submits" to "Yes"
+    And I set the field "Omit empty submits in analysis" to "Yes"
     And I press "Save changes to question"
     And I am on the "Learning experience" "feedback activity" page
     And I navigate to "Analysis" in current page administration
@@ -412,7 +412,7 @@ Feature: Testing multichoice questions in feedback
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I open the action menu in "//div[contains(@class, 'feedback_itemlist') and contains(.,'multichoice1')]" "xpath_element"
     And I choose "Edit question" in the open action menu
-    And I set the field "Do not analyse empty submits" to "Yes"
+    And I set the field "Omit empty submits in analysis" to "Yes"
     And I press "Save changes to question"
     And I am on the "Learning experience" "feedback activity" page
     And I navigate to "Analysis" in current page administration

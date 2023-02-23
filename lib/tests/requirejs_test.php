@@ -14,16 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for requirejs loader.
- *
- * @package   core
- * @author    Damyon Wiese <damyon@moodle.com>
- * @copyright 2016 Damyon Wiese
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
 
-defined('MOODLE_INTERNAL') || die();
+use core_requirejs;
 
 /**
  * Unit tests for requirejs.
@@ -33,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2016 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_requirejs_testcase extends advanced_testcase {
+class requirejs_test extends \advanced_testcase {
 
     /**
      * Test requirejs loader
@@ -42,46 +35,21 @@ class core_requirejs_testcase extends advanced_testcase {
         global $CFG;
 
         // Find a core module.
-        $result = core_requirejs::find_one_amd_module('core', 'templates', false);
+        $result = core_requirejs::find_one_amd_module('core', 'templates');
         $expected = ['core/templates' => $CFG->dirroot . '/lib/amd/build/templates.min.js'];
         $this->assertEquals($expected, $result);
 
-        $result = core_requirejs::find_one_amd_module('core', 'templates', true);
-        $expected = ['core/templates' => $CFG->dirroot . '/lib/amd/src/templates.js'];
-        $this->assertEquals($expected, $result);
-
         // Find a subsystem module (none exist yet).
-        $result = core_requirejs::find_one_amd_module('core_group', 'doesnotexist', false);
+        $result = core_requirejs::find_one_amd_module('core_group', 'doesnotexist');
         $expected = [];
         $this->assertEquals($expected, $result);
 
-        // Find a plugin module.
-        $result = core_requirejs::find_one_amd_module('mod_assign', 'grading_panel', true);
-        $expected = ['mod_assign/grading_panel' => $CFG->dirroot . '/mod/assign/amd/src/grading_panel.js'];
-        $this->assertEquals($expected, $result);
-
-        // Find all modules - no debugging.
-        $result = core_requirejs::find_all_amd_modules(true);
+        // Find all modules.
+        $result = core_requirejs::find_all_amd_modules();
         foreach ($result as $key => $path) {
             // Lets verify the first part of the key is a valid component name and the second part correctly contains "min" or not.
             list($component, $template) = explode('/', $key, 2);
-            // Can we resolve it to a valid dir?
-            $dir = core_component::get_component_directory($component);
-            $this->assertNotEmpty($dir);
-
-            // Only "core" is allowed to have no _ in component names.
-            if (strpos($component, '_') === false) {
-                $this->assertEquals('core', $component);
-            }
-            $this->assertStringNotContainsString('.min', $path);
-        }
-
-        // Find all modules - debugging.
-        $result = core_requirejs::find_all_amd_modules(false);
-        foreach ($result as $key => $path) {
-            // Lets verify the first part of the key is a valid component name and the second part correctly contains "min" or not.
-            list($component, $template) = explode('/', $key, 2);
-            $dir = core_component::get_component_directory($component);
+            $dir = \core_component::get_component_directory($component);
             $this->assertNotEmpty($dir);
             // Only "core" is allowed to have no _ in component names.
             if (strpos($component, '_') === false) {

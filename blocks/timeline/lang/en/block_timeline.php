@@ -27,7 +27,6 @@ $string['ariadayfilteroption'] = '{$a} filter option';
 $string['ariaeventlistitem'] = '{$a->name} activity in {$a->course} is due on {$a->date}';
 $string['ariaviewselector'] = 'Sort timeline items';
 $string['ariaviewselectoroption'] = '{$a} sort option';
-$string['clearsearch'] = 'Clear search';
 $string['duedate'] = 'Due date';
 $string['moreactivities'] = 'Show more activities';
 $string['morecourses'] = 'Show more courses';

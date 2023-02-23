@@ -33,4 +33,11 @@ interface Mustache_Cache
      * @param string $value
      */
     public function cache($key, $value);
+
+    /**
+     * Set a logger instance.
+     *
+     * @param Mustache_Logger|Psr\Log\LoggerInterface $logger
+     */
+    public function setLogger($logger = null);
 }

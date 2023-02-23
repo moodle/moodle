@@ -22,8 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The renderer for the quiz_grading module.
  *
@@ -35,9 +33,9 @@ class quiz_grading_renderer extends plugin_renderer_base {
     /**
      * Render no question notification.
      *
-     * @param object $quiz The quiz settings.
-     * @param object $cm The course-module for this quiz.
-     * @param object $context The quiz context.
+     * @param stdClass $quiz The quiz settings.
+     * @param stdClass $cm The course-module for this quiz.
+     * @param stdClass $context The quiz context.
      * @return string The HTML for the no questions message.
      */
     public function render_quiz_no_question_notification($quiz, $cm, $context) {
@@ -99,7 +97,7 @@ class quiz_grading_renderer extends plugin_renderer_base {
     /**
      * Render grade link for question.
      *
-     * @param object $counts
+     * @param stdClass $counts
      * @param string $type Type of grade.
      * @param string $gradestring Lang string.
      * @param moodle_url $gradequestionurl Url to grade question.
@@ -120,11 +118,11 @@ class quiz_grading_renderer extends plugin_renderer_base {
     /**
      * Render grading page.
      *
-     * @param object $questioninfo Information of a question.
+     * @param stdClass $questioninfo Information of a question.
      * @param moodle_url $listquestionsurl Url of the page that list all questions.
      * @param quiz_grading_settings_form $filterform Question filter form.
-     * @param object $paginginfo Pagination information.
-     * @param object $pagingbar Pagination bar information.
+     * @param stdClass $paginginfo Pagination information.
+     * @param stdClass $pagingbar Pagination bar information.
      * @param moodle_url $formaction Form submit url.
      * @param array $hiddeninputs List of hidden input fields.
      * @param string $gradequestioncontent HTML string of question content.
@@ -148,9 +146,7 @@ class quiz_grading_renderer extends plugin_renderer_base {
 
         $output .= $this->heading(get_string('gradingattemptsxtoyofz', 'quiz_grading', $paginginfo), 3);
 
-        if ($pagingbar->count > $pagingbar->pagesize && $pagingbar->order != 'random') {
-            $output .= $this->paging_bar($pagingbar->count, $pagingbar->page, $pagingbar->pagesize, $pagingbar->pagingurl);
-        }
+        $output .= $this->render_paging_bar($pagingbar);
 
         $output .= html_writer::start_tag('form', [
                 'method' => 'post',
@@ -169,6 +165,8 @@ class quiz_grading_renderer extends plugin_renderer_base {
                 'value' => get_string('saveandnext', 'quiz_grading')
         ]), ['class' => 'mdl-align']);
         $output .= html_writer::end_tag('div') . html_writer::end_tag('form');
+
+        $output .= $this->render_paging_bar($pagingbar);
 
         // Add the form change checker.
         $this->page->requires->js_call_amd('core_form/changechecker', 'watchFormById', ['manualgradingform']);
@@ -196,5 +194,18 @@ class quiz_grading_renderer extends plugin_renderer_base {
         $output .= $questionusage->render_question($slot, $displayoptions, $questionnumber);
 
         return $output;
+    }
+
+    /**
+     * Render paging bar.
+     *
+     * @param object $pagingbar Pagination bar information.
+     * @return string The HTML for the question display.
+     */
+    public function render_paging_bar(object $pagingbar): string {
+        if ($pagingbar->count > $pagingbar->pagesize && $pagingbar->order != 'random') {
+            return $this->paging_bar($pagingbar->count, $pagingbar->page, $pagingbar->pagesize, $pagingbar->pagingurl);
+        }
+        return '';
     }
 }

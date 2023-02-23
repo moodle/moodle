@@ -317,6 +317,7 @@ class player {
 
         $systemcontext = \context_system::instance();
         $slug = $this->content['slug'] ? $this->content['slug'] . '-' : '';
+        $filename = "{$slug}{$this->content['id']}.h5p";
         // We have to build the right URL.
         // Depending the request was made through webservice/pluginfile.php or pluginfile.php.
         if (strpos($this->url, '/webservice/pluginfile.php')) {
@@ -326,7 +327,7 @@ class player {
                 \core_h5p\file_storage::EXPORT_FILEAREA,
                 '',
                 '',
-                "{$slug}{$this->content['id']}.h5p"
+                $filename
             );
         } else {
             // If the request is made by tokenpluginfile.php we need to indicates to generate a token for current user.
@@ -340,12 +341,17 @@ class player {
                 \core_h5p\file_storage::EXPORT_FILEAREA,
                 '',
                 '',
-                "{$slug}{$this->content['id']}.h5p",
+                $filename,
                 false,
                 $includetoken
             );
         }
 
+        // Get the required info from the export file to be able to get the export file by third apps.
+        $file = helper::get_export_info($filename, $url);
+        if ($file) {
+            $url->param('modified', $file['timemodified']);
+        }
         return $url;
     }
 
@@ -514,13 +520,16 @@ class player {
     /**
      * Return the info export file for Mobile App.
      *
-     * @return array
+     * @return array or null
      */
-    public function get_export_file(): array {
+    public function get_export_file(): ?array {
         // Get the export url.
         $exporturl = $this->get_export_settings(true);
         // Get the filename of the export url.
         $path = $exporturl->out_as_local_url();
+        // Check if the URL has parameters.
+        $parts = explode('?', $path);
+        $path = array_shift($parts);
         $parts = explode('/', $path);
         $filename = array_pop($parts);
         // Get the required info from the export file to be able to get the export file by third apps.

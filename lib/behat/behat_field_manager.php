@@ -190,6 +190,12 @@ class behat_field_manager {
             }
         }
 
+        if ($tagname == 'div') {
+            if ($node->getAttribute('role') == 'combobox') {
+                return 'select_menu';
+            }
+        }
+
         // We can not provide a closer field type.
         return false;
     }
@@ -336,47 +342,18 @@ class behat_field_manager {
     }
 
     /**
-     * Gets an instance of the form field.
-     *
-     * Not all the fields are part of a moodle form, in this
-     * cases it fallsback to the generic form field. Also note
-     * that this generic field type is using a generic setValue()
-     * method from the Behat API, which is not always good to set
-     * the value of form elements.
-     *
      * @deprecated since Moodle 2.6 MDL-39634 - please do not use this function any more.
-     * @todo MDL-XXXXX This will be deleted in Moodle 2.8
-     * @see behat_field_manager::get_form_field()
-     * @param NodeElement $fieldnode
-     * @param string $locator
-     * @param Session $session The behat browser session
-     * @return behat_form_field
      */
-    public static function get_field(NodeElement $fieldnode, $locator, Session $session) {
-        debugging('Function behat_field_manager::get_field() is deprecated, ' .
-            'please use function behat_field_manager::get_form_field() instead', DEBUG_DEVELOPER);
-
-        return self::get_form_field($fieldnode, $session);
+    public static function get_field() {
+        throw new coding_exception('behat_field_manager::get_field() can not be used any more, ' .
+            'function behat_field_manager::get_form_field() instead');
     }
 
     /**
-     * Recursive method to find the field type.
-     *
-     * Depending on the field the felement class node is in a level or in another. We
-     * look recursively for a parent node with a 'felement' class to find the field type.
-     *
      * @deprecated since Moodle 2.6 MDL-39634 - please do not use this function any more.
-     * @todo MDL-XXXXX This will be deleted in Moodle 2.8
-     * @see behat_field_manager::get_field_node_type()
-     * @param NodeElement $fieldnode The current node.
-     * @param string $locator
-     * @param Session $session The behat browser session
-     * @return mixed A NodeElement if we continue looking for the element type and String or false when we are done.
      */
-    protected static function get_node_type(NodeElement $fieldnode, $locator, Session $session) {
-        debugging('Function behat_field_manager::get_node_type() is deprecated, ' .
-            'please use function behat_field_manager::get_field_node_type() instead', DEBUG_DEVELOPER);
-
-        return self::get_field_node_type($fieldnode, $session);
+    protected static function get_node_type() {
+        throw new coding_exception('behat_field_manager::get_node_type() can not be used any more, ' .
+            'function behat_field_manager::get_field_node_type() instead');
     }
 }

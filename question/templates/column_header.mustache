@@ -17,18 +17,36 @@
 {{!
     @template core_question/column_header
 
+    Displays the <th> header cell for a column in the question bank.
+
+    Context variables required for this template:
+        * extraclasses: CSS classes to add to the th. E.g. "questionstatus pr-3".
+        * help: (optional, may be omitted) help icon. The structure here needs to be as from help_icon::export_for_template().
+
+        Other fields vary, depending on whether the column is sortable.
+
+        Column with plain title, not sortable:
+            * sortable: false
+            * tiptitle: Column name (e.g. "Status")
+            * sorttip: (optional) must be true if tip is present.
+            * tip: (optional) a tool tip to show, if the title needs explanation. E.g. "Select questions for bulk actions".
+
+        Sortable column, with a single type of sort (e.g. question type)
+            * sortable: true
+            * sortlinks: HTML of the title, in a link to sort by this. E.g. "<a href=\"http:\/\/localhost\/moodle_head\/question\/edit.php?courseid=100000&amp;qbs1=-qbank_viewquestiontype%5Cquestion_type_column&amp;qbs2=qbank_viewquestionname%5Cquestion_name_idnumber_tags_column-name\" title=\"Sort by Question type descending\">\n    T<i class=\"icon fa fa-sort-asc fa-fw iconsort\"  title=\"Ascending\" role=\"img\" aria-label=\"Ascending\"><\/i>\n<\/a>"
+
+        Sortable column, with an overall title, and multiple sort types (e.g. question name/idnumber)
+            * sortable: true
+            * title: "Question"
+            * sortlinks: Several sort links concatenated. E.g. "<a href=\"http:\/\/localhost\/moodle_head\/question\/edit.php?courseid=100000&amp;qbs1=qbank_viewquestionname%5Cquestion_name_idnumber_tags_column-name&amp;qbs2=qbank_viewquestiontype%5Cquestion_type_column\" title=\"Sort by Question name ascending\">\n    Question name\n<\/a> \/ <a href=\"http:\/\/localhost\/moodle_head\/question\/edit.php?courseid=100000&amp;qbs1=qbank_viewquestionname%5Cquestion_name_idnumber_tags_column-idnumber&amp;qbs2=qbank_viewquestiontype%5Cquestion_type_column&amp;qbs3=qbank_viewquestionname%5Cquestion_name_idnumber_tags_column-name\" title=\"Sort by ID number ascending\">\n    ID number\n<\/a>"
+
     Example context (json):
     {
-        "qbankheaderdata": [
-          {
-                "extraclasses": "checkbox",
-                "sortable": false,
-                "tiptitle": "Element title",
-                "sorttip": true,
-                "tip": "Select questions for bulk actions",
-                "sortlinks": "sort / sort"
-          }
-        ]
+        "sortable": false,
+        "extraclasses": "checkbox pr-3",
+        "tiptitle": "<input id=\"qbheadercheckbox\" name=\"qbheadercheckbox\" type=\"checkbox\"  value=\"1\"\n       data-action=\"toggle\"\n       data-toggle=\"master\"\n       data-togglegroup=\"qbank\"\n       data-toggle-selectall=\"Select all\"\n       data-toggle-deselectall=\"Deselect all\"\n       \n\/>\n    <label for=\"qbheadercheckbox\" class=\"accesshide\">Select all<\/label>",
+        "sorttip": true,
+        "tip": "Select questions for bulk actions"
     }
 }}
 <th class="header {{extraclasses}}" scope="col">
@@ -48,5 +66,8 @@
             {{{sortlinks}}}
         </div>
     {{/sortable}}
+    {{#help}}
+        {{>core/help_icon}}
+    {{/help}}
 </th>
 

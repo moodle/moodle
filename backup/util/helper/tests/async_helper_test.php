@@ -14,13 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Asyncronhous helper tests.
- *
- * @package    core_backup
- * @copyright  2018 Matt Porritt <mattp@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use async_helper;
+use backup;
+use backup_controller;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,10 +29,12 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 /**
  * Asyncronhous helper tests.
  *
+ * @package    core_backup
+ * @covers     \async_helper
  * @copyright  2018 Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_backup_async_helper_testcase extends \core_privacy\tests\provider_testcase {
+class async_helper_test extends \advanced_testcase {
 
     /**
      * Tests sending message for asynchronous backup.
@@ -48,7 +48,7 @@ class core_backup_async_helper_testcase extends \core_privacy\tests\provider_tes
         set_config('backup_async_message_users', '1', 'backup');
         set_config('backup_async_message_subject', 'Moodle {operation} completed sucessfully', 'backup');
         set_config('backup_async_message',
-                'Dear {user_firstname} {user_lastname}, <br/> Your {operation} (ID: {backupid}) has completed successfully!',
+                'Dear {user_firstname} {user_lastname}, your {operation} (ID: {backupid}) has completed successfully!',
                 'backup');
         set_config('allowedemaildomains', 'example.com');
 
@@ -77,15 +77,17 @@ class core_backup_async_helper_testcase extends \core_privacy\tests\provider_tes
         $this->assertCount(1, $emails);
         $email = reset($emails);
 
-        $this->assertSame($USER->email, $email->from);
-        $this->assertSame($user2->email, $email->to);
-        $this->assertSame('Moodle backup completed sucessfully', $email->subject);
-        $this->assertNotEmpty($email->header);
-        $this->assertNotEmpty($email->body);
-        $this->assertMatchesRegularExpression("/$backupid/", $email->body);
-        $this->assertThat($email->body, $this->logicalNot($this->stringContains('{')));
         $this->assertGreaterThan(0, $messageid);
         $sink->clear();
+
+        $this->assertSame($USER->email, $email->from);
+        $this->assertSame($user2->email, $email->to);
+        $this->assertSame('Moodle Backup completed sucessfully', $email->subject);
+
+        // Assert body placeholders have all been replaced.
+        $this->assertStringContainsString('Dear test human, your Backup', $email->body);
+        $this->assertStringContainsString("(ID: {$backupid})", $email->body);
+        $this->assertStringNotContainsString('{', $email->body);
     }
 
     /**
@@ -113,7 +115,7 @@ class core_backup_async_helper_testcase extends \core_privacy\tests\provider_tes
         // We need a grade, easiest is to add an assignment.
         $assignrow = $generator->create_module('assign', array(
             'course' => $course->id));
-        $assign = new assign(context_module::instance($assignrow->cmid), false, false);
+        $assign = new \assign(\context_module::instance($assignrow->cmid), false, false);
         $item = $assign->get_grade_item();
 
         // Make a test grouping as well.
@@ -137,7 +139,7 @@ class core_backup_async_helper_testcase extends \core_privacy\tests\provider_tes
         $bc->destroy();
         unset($bc);
 
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $renderer = $PAGE->get_renderer('core', 'backup');
 
         $result = \async_helper::get_async_backups($renderer, $coursecontext->instanceid);

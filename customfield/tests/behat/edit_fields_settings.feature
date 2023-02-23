@@ -1,4 +1,5 @@
-@core @core_course @core_customfield @javascript
+# This feature has Atto-specific steps. See MDL-75913 for further details.
+@core @core_course @core_customfield @javascript @editor_atto
 Feature: Teachers can edit course custom fields
   In order to have additional data on the course
   As a teacher
@@ -24,6 +25,9 @@ Feature: Teachers can edit course custom fields
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
 
   Scenario: Display custom fields on course edit form
     When I log in as "teacher1"

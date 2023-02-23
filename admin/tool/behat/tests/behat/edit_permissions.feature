@@ -83,10 +83,10 @@ Feature: Edit capabilities
     And I should see "Teacher < \"editing\" (Non-editing teacher)" in the "Teaching Assistant" "table_row"
     And I should see "Studier & 'learner' (Student)" in the "Student One" "table_row"
     And I am on the "C1" "permissions" page
-    And I should see "Teacher >= editing" in the "mod/forum:replypost" "table_row"
-    And I should see "Teacher < \"editing\"" in the "mod/forum:replypost" "table_row"
-    And I should see "Studier & 'learner'" in the "mod/forum:replypost" "table_row"
+    And I should see "Teacher >= editing (Teacher)" in the "mod/forum:replypost" "table_row"
+    And I should see "Teacher < \"editing\" (Non-editing teacher)" in the "mod/forum:replypost" "table_row"
+    And I should see "Studier & 'learner' (Student)" in the "mod/forum:replypost" "table_row"
     And I follow "Prohibit"
-    And "Teacher >= editing" "button" in the "Prohibit role" "dialogue" should be visible
-    And "Teacher < \"editing\"" "button" in the "Prohibit role" "dialogue" should be visible
-    And "Studier & 'learner'" "button" in the "Prohibit role" "dialogue" should be visible
+    And "Teacher >= editing (Teacher)" "button" in the "Prohibit role" "dialogue" should be visible
+    And "Teacher < \"editing\" (Non-editing teacher)" "button" in the "Prohibit role" "dialogue" should be visible
+    And "Studier & 'learner' (Student)" "button" in the "Prohibit role" "dialogue" should be visible

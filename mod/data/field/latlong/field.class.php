@@ -43,6 +43,23 @@ class data_field_latlong extends data_field_base {
     );
     // Other map sources listed at http://kvaleberg.com/extensions/mapsources/index.php?params=51_30.4167_N_0_7.65_W_region:earth
 
+    public function supports_preview(): bool {
+        return true;
+    }
+
+    public function get_data_content_preview(int $recordid): stdClass {
+        return (object)[
+            'id' => 0,
+            'fieldid' => $this->field->id,
+            'recordid' => $recordid,
+            'content' => 41.391205,
+            'content1' => 2.163873,
+            'content2' => null,
+            'content3' => null,
+            'content4' => null,
+        ];
+    }
+
     function display_add_field($recordid = 0, $formdata = null) {
         global $CFG, $DB, $OUTPUT;
 
@@ -145,70 +162,79 @@ class data_field_latlong extends data_field_base {
     }
 
     function display_browse_field($recordid, $template) {
-        global $CFG, $DB;
-        if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
-            $lat = $content->content;
-            if (strlen($lat) < 1) {
-                return false;
-            }
-            $long = $content->content1;
-            if (strlen($long) < 1) {
-                return false;
-            }
-            // We use format_float to display in the regional format.
-            if($lat < 0) {
-                $compasslat = format_float(-$lat, 4) . '°S';
-            } else {
-                $compasslat = format_float($lat, 4) . '°N';
-            }
-            if($long < 0) {
-                $compasslong = format_float(-$long, 4) . '°W';
-            } else {
-                $compasslong = format_float($long, 4) . '°E';
-            }
+        global $CFG;
 
-            // Now let's create the jump-to-services link
-            $servicesshown = explode(',', $this->field->param1);
-
-            // These are the different things that can be magically inserted into URL schemes
-            $urlreplacements = array(
-                '@lat@'=> $lat,
-                '@long@'=> $long,
-                '@wwwroot@'=> $CFG->wwwroot,
-                '@contentid@'=> $content->id,
-                '@dataid@'=> $this->data->id,
-                '@courseid@'=> $this->data->course,
-                '@fieldid@'=> $content->fieldid,
-                '@recordid@'=> $content->recordid,
-            );
-
-            if(sizeof($servicesshown)==1 && $servicesshown[0]) {
-                $str = " <a href='"
-                          . str_replace(array_keys($urlreplacements), array_values($urlreplacements), $this->linkoutservices[$servicesshown[0]])
-                          ."' title='$servicesshown[0]'>$compasslat $compasslong</a>";
-            } elseif (sizeof($servicesshown)>1) {
-                $str = '<form id="latlongfieldbrowse">';
-                $str .= "$compasslat, $compasslong\n";
-                $str .= "<label class='accesshide' for='jumpto'>". get_string('jumpto') ."</label>";
-                $str .= '<select id="jumpto" name="jumpto" class="custom-select">';
-                foreach($servicesshown as $servicename){
-                    // Add a link to a service
-                    $str .= "\n  <option value='"
-                               . str_replace(array_keys($urlreplacements), array_values($urlreplacements), $this->linkoutservices[$servicename])
-                               . "'>".htmlspecialchars($servicename)."</option>";
-                }
-                // NB! If you are editing this, make sure you don't break the javascript reference "previousSibling"
-                //   which allows the "Go" button to refer to the drop-down selector.
-                $str .= '\n</select><input type="button" class="btn ml-1 btn-secondary" value="' . get_string('go');
-                $str .= '" onclick="if(previousSibling.value){self.location=previousSibling.value}"/>';
-                $str .= '</form>';
-            } else {
-                $str = "$compasslat, $compasslong";
-            }
-
-            return $str;
+        $content = $this->get_data_content($recordid);
+        if (!$content) {
+            return '';
         }
-        return false;
+
+        $lat = $content->content;
+        if (strlen($lat ?? '') < 1) {
+            return '';
+        }
+        $long = $content->content1;
+        if (strlen($long ?? '') < 1) {
+            return '';
+        }
+        // We use format_float to display in the regional format.
+        if ($lat < 0) {
+            $compasslat = format_float(-$lat, 4) . '°S';
+        } else {
+            $compasslat = format_float($lat, 4) . '°N';
+        }
+        if ($long < 0) {
+            $compasslong = format_float(-$long, 4) . '°W';
+        } else {
+            $compasslong = format_float($long, 4) . '°E';
+        }
+
+        // Now let's create the jump-to-services link.
+        $servicesshown = explode(',', $this->field->param1);
+
+        // These are the different things that can be magically inserted into URL schemes.
+        $urlreplacements = array(
+            '@lat@' => $lat,
+            '@long@' => $long,
+            '@wwwroot@' => $CFG->wwwroot,
+            '@contentid@' => $content->id,
+            '@dataid@' => $this->data->id,
+            '@courseid@' => $this->data->course,
+            '@fieldid@' => $content->fieldid,
+            '@recordid@' => $content->recordid,
+        );
+
+        if (count($servicesshown) == 1 && $servicesshown[0]) {
+            $str = " <a class=\"data-field-link\" href='"
+                        . str_replace(
+                            array_keys($urlreplacements),
+                            array_values($urlreplacements),
+                            $this->linkoutservices[$servicesshown[0]]
+                        ) . "' title='$servicesshown[0]'>$compasslat $compasslong</a>";
+        } else if (count($servicesshown) > 1) {
+            $str = '<form id="latlongfieldbrowse" class="data-field-html">';
+            $str .= "$compasslat, $compasslong\n";
+            $str .= "<label class='accesshide' for='jumpto'>". get_string('jumpto') ."</label>";
+            $str .= '<select id="jumpto" name="jumpto" class="custom-select">';
+            foreach ($servicesshown as $servicename) {
+                // Add a link to a service.
+                $str .= "\n  <option value='"
+                            . str_replace(
+                                array_keys($urlreplacements),
+                                array_values($urlreplacements),
+                                $this->linkoutservices[$servicename]
+                            ) . "'>".htmlspecialchars($servicename, ENT_COMPAT)."</option>";
+            }
+            // NB! If you are editing this, make sure you don't break the javascript reference "previousSibling"
+            // which allows the "Go" button to refer to the drop-down selector.
+            $str .= '\n</select><input type="button" class="btn ml-1 btn-secondary" value="' . get_string('go');
+            $str .= '" onclick="if(previousSibling.value){self.location=previousSibling.value}"/>';
+            $str .= '</form>';
+        } else {
+            $str = "$compasslat, $compasslong";
+        }
+
+        return $str;
     }
 
     function update_content_import($recordid, $value, $name='') {
@@ -228,7 +254,7 @@ class data_field_latlong extends data_field_base {
         // When updating these values (which might be region formatted) we should format
         // the float to allow for a consistent float format in the database.
         $value = unformat_float($value);
-        $value = trim($value);
+        $value = trim($value ?? '');
         if (strlen($value) > 0) {
             $value = floatval($value);
         } else {

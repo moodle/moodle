@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="enrol/lti/db" VERSION="20170113" COMMENT="XMLDB file for Moodle enrol/lti"
+<XMLDB PATH="enrol/lti/db" VERSION="20220211" COMMENT="XMLDB file for Moodle enrol/lti"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -9,6 +9,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="enrolid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="ltiversion" TYPE="char" LENGTH="15" NOTNULL="true" DEFAULT="LTI-1p3" SEQUENCE="false"/>
         <FIELD NAME="institution" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="lang" TYPE="char" LENGTH="30" NOTNULL="true" DEFAULT="en" SEQUENCE="false"/>
         <FIELD NAME="timezone" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="99" SEQUENCE="false"/>
@@ -23,6 +24,9 @@
         <FIELD NAME="roleinstructor" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="rolelearner" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="secret" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="uuid" TYPE="char" LENGTH="36" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="provisioningmodelearner" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="provisioningmodeinstructor" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
@@ -30,6 +34,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="enrolid" TYPE="foreign" FIELDS="enrolid" REFTABLE="enrol" REFFIELDS="id"/>
         <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id"/>
+        <KEY NAME="uuid" TYPE="unique" FIELDS="uuid"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="enrol_lti_users" COMMENT="User access log and gradeback data">
@@ -39,6 +44,7 @@
         <FIELD NAME="toolid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="serviceurl" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="sourceid" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="ltideploymentid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="consumerkey" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="consumersecret" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="membershipsurl" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
@@ -51,6 +57,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
         <KEY NAME="toolid" TYPE="foreign" FIELDS="toolid" REFTABLE="enrol_lti_tools" REFFIELDS="id"/>
+        <KEY NAME="ltideploymentid" TYPE="foreign" FIELDS="ltideploymentid" REFTABLE="enrol_lti_deployment" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="enrol_lti_lti2_consumer" COMMENT="LTI consumers interacting with moodle">
@@ -69,11 +76,11 @@
         <FIELD NAME="settings" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="protected" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="enablefrom" TYPE="int" LENGTH="10"  NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="enableuntil" TYPE="int" LENGTH="10"  NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="lastaccess" TYPE="int" LENGTH="10"  NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="enablefrom" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="enableuntil" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="lastaccess" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="created" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="updated" TYPE="int" LENGTH="10"  NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -89,7 +96,7 @@
         <FIELD NAME="consumerid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="toolproxy" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="created" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="updated" TYPE="int" LENGTH="10"  NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -105,7 +112,7 @@
         <FIELD NAME="type" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="settings" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="created" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="updated" TYPE="int" LENGTH="10"  NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -117,7 +124,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="consumerid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="value" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="expires" TYPE="int" LENGTH="10"  NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="expires" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -134,7 +141,7 @@
         <FIELD NAME="primaryresourcelinkid" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="shareapproved" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="created" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="updated" TYPE="int" LENGTH="10"  NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -149,11 +156,11 @@
         <FIELD NAME="sharekey" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="resourcelinkid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="autoapprove" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="expires" TYPE="int" LENGTH="10"  NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="expires" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="sharekey" TYPE="unique" FIELDS="sharekey" />
+        <KEY NAME="sharekey" TYPE="unique" FIELDS="sharekey"/>
         <KEY NAME="resourcelinkid" TYPE="foreign-unique" FIELDS="resourcelinkid" REFTABLE="enrol_lti_lti2_resource_link" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
@@ -164,7 +171,7 @@
         <FIELD NAME="ltiuserkey" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="ltiresultsourcedid" TYPE="char" LENGTH="1024" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="created" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="updated" TYPE="int" LENGTH="10"  NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -182,6 +189,107 @@
         <KEY NAME="toolid" TYPE="foreign" FIELDS="toolid" REFTABLE="enrol_lti_tools" REFFIELDS="id"/>
         <KEY NAME="consumerid" TYPE="foreign" FIELDS="consumerid" REFTABLE="enrol_lti_lti2_consumer" REFFIELDS="id"/>
       </KEYS>
+    </TABLE>
+    <TABLE NAME="enrol_lti_app_registration" COMMENT="Details of each application that has been registered with the tool">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Common name to identify this platform to users"/>
+        <FIELD NAME="platformid" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The issuer URL"/>
+        <FIELD NAME="clientid" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="The clientid string, generated by the platform when setting up the tool."/>
+        <FIELD NAME="uniqueid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="A unique local id, which can be used in the initiate login URI to provide {iss, clientid} uniqueness in the absence of the optional client_id claim."/>
+        <FIELD NAME="platformclienthash" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false" COMMENT="SHA256 hash of the platformid (issuer) and clientid"/>
+        <FIELD NAME="platformuniqueidhash" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false" COMMENT="SHA256 hash of the platformid (issuer) and uniqueid"/>
+        <FIELD NAME="authenticationrequesturl" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The authorisation endpoint of the platform"/>
+        <FIELD NAME="jwksurl" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The JSON Web Key Set URL for the platform"/>
+        <FIELD NAME="accesstokenurl" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Status of the registration, used to denote draft (incomplete) or active (complete)"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="uniqueid" TYPE="unique" FIELDS="uniqueid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="platformclienthash" UNIQUE="true" FIELDS="platformclienthash"/>
+        <INDEX NAME="platformuniqueidhash" UNIQUE="true" FIELDS="platformuniqueidhash"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_lti_deployment" COMMENT="Each row represents a deployment of a tool within a platform.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="A short name identifying the tool deployment to users"/>
+        <FIELD NAME="deploymentid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the deployment, as defined in the platform"/>
+        <FIELD NAME="platformid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The platformid to which this deployment belongs"/>
+        <FIELD NAME="legacyconsumerkey" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The legacy consumer key mapped to this deployment, if the deployment represents a migrated tool."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="platformid" TYPE="foreign" FIELDS="platformid" REFTABLE="enrol_lti_app_registration" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="platformid-deploymentid" UNIQUE="true" FIELDS="platformid, deploymentid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_lti_resource_link" COMMENT="Each row represents a resource link for a platform and deployment">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="resourcelinkid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The platform-and-deployment-unique id of the resource link"/>
+        <FIELD NAME="ltideploymentid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the enrol_lti_deployment record containing the deployment information."/>
+        <FIELD NAME="resourceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the local enrol_lti_tools record containing information about the published resource to which this resource link relates."/>
+        <FIELD NAME="lticontextid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the enrol_lti_context record containing information about the context from which this resource link originates."/>
+        <FIELD NAME="lineitemsservice" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="The URL for the line items service for this resource link"/>
+        <FIELD NAME="lineitemservice" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="The URL for the line item service (if only one line item present)."/>
+        <FIELD NAME="lineitemscope" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The ags line items authorization scope"/>
+        <FIELD NAME="resultscope" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The ags result authorization scope"/>
+        <FIELD NAME="scorescope" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The ags score items authorization scope"/>
+        <FIELD NAME="contextmembershipsurl" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="The NRPS membership URL"/>
+        <FIELD NAME="nrpsserviceversions" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The NRPS supported service versions"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="ltideploymentid" TYPE="foreign" FIELDS="ltideploymentid" REFTABLE="enrol_lti_deployment" REFFIELDS="id"/>
+        <KEY NAME="lticontextid" TYPE="foreign" FIELDS="lticontextid" REFTABLE="enrol_lti_context" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="resourcelinkid-ltideploymentid" UNIQUE="true" FIELDS="resourcelinkid, ltideploymentid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_lti_context" COMMENT="Each row represents a context in the platform, where resource links are added within a deployment.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="contextid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the context on the platform"/>
+        <FIELD NAME="ltideploymentid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the enrol_lti_deployment record containing the deployment information."/>
+        <FIELD NAME="type" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The type of the context on the platform"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="ltideploymentid" TYPE="foreign" FIELDS="ltideploymentid" REFTABLE="enrol_lti_deployment" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ltideploymentid-contextid" UNIQUE="true" FIELDS="ltideploymentid, contextid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_lti_user_resource_link" COMMENT="Join table mapping users to resource links as this is a many:many relationship">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="ltiuserid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the enrol_lti_users record"/>
+        <FIELD NAME="resourcelinkid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the enrol_lti_resource_link record."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="ltiuserid" TYPE="foreign" FIELDS="ltiuserid" REFTABLE="enrol_lti_users" REFFIELDS="id"/>
+        <KEY NAME="resourcelinkid" TYPE="foreign" FIELDS="resourcelinkid" REFTABLE="enrol_lti_resource_link" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ltiuserid-resourcelinkid" UNIQUE="true" FIELDS="ltiuserid, resourcelinkid"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>

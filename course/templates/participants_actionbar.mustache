@@ -99,15 +99,15 @@
         "renderedcontent":"<div data-region=\"wrapper\" data-table-uniqueid=\"user-index-participants-4\"><\/div>"
     }
 }}
-<div class="container-fluid pl-0 pb-2" id="action_bar">
-    <div class="row pl-0 ml-0">
+<div class="container-fluid tertiary-navigation" id="action_bar">
+    <div class="row">
         {{#urlselect}}
-            <div class="col-xs-4 pr-1">
+            <div class="navitem">
                 {{> core/url_select }}
             </div>
         {{/urlselect}}
         {{#renderedcontent}}
-            <div class="col-xs-4 pr-1">
+            <div class="navitem">
                 {{{renderedcontent}}}
             </div>
         {{/renderedcontent}}

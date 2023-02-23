@@ -14,15 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests for the question_state class and subclasses.
- *
- * @package    moodlecore
- * @subpackage questionengine
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_question;
 
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,14 +24,15 @@ global $CFG;
 require_once(__DIR__ . '/../lib.php');
 require_once($CFG->libdir . '/questionlib.php');
 
-
 /**
  * Unit tests for the {@link question_state} class and subclasses.
  *
+ * @package    core_question
+ * @category   test
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_state_test extends advanced_testcase {
+class questionstate_test extends \advanced_testcase {
     public function test_is_active() {
         $this->assertFalse(question_state::$notstarted->is_active());
         $this->assertFalse(question_state::$unprocessed->is_active());

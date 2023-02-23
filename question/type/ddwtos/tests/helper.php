@@ -97,6 +97,7 @@ class qtype_ddwtos_test_helper extends question_test_helper {
         test_question_maker::set_standard_combined_feedback_form_data($fromform);
         $fromform->shownumcorrect = 0;
         $fromform->penalty = 0.3333333;
+        $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         return $fromform;
     }
@@ -124,6 +125,7 @@ class qtype_ddwtos_test_helper extends question_test_helper {
         test_question_maker::set_standard_combined_feedback_form_data($fromform);
         $fromform->shownumcorrect = 0;
         $fromform->penalty = 0.3333333;
+        $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         return $fromform;
     }
@@ -149,6 +151,7 @@ class qtype_ddwtos_test_helper extends question_test_helper {
         test_question_maker::set_standard_combined_feedback_form_data($fromform);
         $fromform->shownumcorrect = 0;
         $fromform->penalty = 0.3333333;
+        $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         return $fromform;
     }
@@ -207,6 +210,7 @@ class qtype_ddwtos_test_helper extends question_test_helper {
         test_question_maker::set_standard_combined_feedback_form_data($fromform);
         $fromform->shownumcorrect = 0;
         $fromform->penalty = 0.3333333;
+        $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         return $fromform;
     }

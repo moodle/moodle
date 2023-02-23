@@ -33,7 +33,7 @@ $userid   = optional_param('userid', $USER->id, PARAM_INT);
 $PAGE->set_url(new moodle_url('/grade/report/overview/index.php', array('id' => $courseid, 'userid' => $userid)));
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 require_login(null, false);
 $PAGE->set_course($course);
@@ -52,7 +52,7 @@ if (empty($userid)) {
 
 } else {
     if (!$DB->get_record('user', array('id'=>$userid, 'deleted'=>0)) or isguestuser($userid)) {
-        print_error('invaliduserid');
+        throw new \moodle_exception('invaliduserid');
     }
     $personalcontext = context_user::instance($userid);
 }
@@ -75,7 +75,7 @@ $access = grade_report_overview::check_access($systemcontext, $context, $persona
 
 if (!$access) {
     // no access to grades!
-    print_error('nopermissiontoviewgrades', 'error',  $CFG->wwwroot.'/course/view.php?id='.$courseid);
+    throw new \moodle_exception('nopermissiontoviewgrades', 'error',  $CFG->wwwroot.'/course/view.php?id='.$courseid);
 }
 
 /// return tracking object
@@ -86,9 +86,6 @@ if (!isset($USER->grade_last_report)) {
     $USER->grade_last_report = array();
 }
 $USER->grade_last_report[$course->id] = 'overview';
-
-// First make sure we have proper final grades.
-grade_regrade_final_grades_if_required($course);
 
 $actionbar = new \core_grades\output\general_action_bar($context,
     new moodle_url('/grade/report/overview/index.php', ['id' => $courseid]), 'report', 'overview');
@@ -126,6 +123,9 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
 
     } else { // Only show one user's report
         $report = new grade_report_overview($userid, $gpr, $context);
+        // Make sure we have proper final grades - this report shows grades from other courses, not just the
+        // selected one, so we need to check and regrade all courses the user is enrolled in.
+        $report->regrade_all_courses_if_needed(true);
         print_grade_page_head($courseid, 'report', 'overview', get_string('pluginname', 'gradereport_overview') .
             ' - ' . fullname($report->user), false, false, true, null, null,
             $report->user, $actionbar);

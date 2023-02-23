@@ -14,6 +14,9 @@ Feature: Restrict activities availability
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "activities" exist:
+      | activity | course | name           |
+      | chat     | C1     | Test chat name |
 
   @javascript
   Scenario: Activities can be added with the default permissions
@@ -22,9 +25,6 @@ Feature: Restrict activities availability
     When I add a "Glossary" to section "1" and I fill the form with:
       | Name | Test glossary name |
       | Description | Test glossary description |
-    And I add a "Chat" to section "1" and I fill the form with:
-      | Name of this chat room | Test chat name |
-      | Description | Test chat description |
     Then I should see "Test glossary name"
     And I should see "Test chat name"
 

@@ -37,8 +37,7 @@ export default {
     ICON_NOT_FAVOURITE: '[data-region="not-favourite"]',
     region: {
         selectBlock: '[data-region="myoverview"]',
-        clearIcon: '[data-region="clear-icon"]',
-        searchIcon: '[data-region="search-icon"]',
-        searchInput: '[data-region="search-input"]',
+        clearIcon: '[data-action="clearsearch"]',
+        searchInput: '[data-action="search"]',
     },
 };

@@ -14,15 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace qbehaviour_adaptive;
 
-/**
- * This file contains tests that just test the display mark/penalty information.
- *
- * @package   qbehaviour_adaptive
- * @copyright 2012 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
+use qbehaviour_adaptive_mark_details;
+use question_display_options;
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,14 +26,14 @@ global $CFG;
 require_once(__DIR__ . '/../../../engine/lib.php');
 require_once(__DIR__ . '/../behaviour.php');
 
-
 /**
  * Unit tests for the adaptive behaviour the display of mark/penalty information.
  *
+ * @package   qbehaviour_adaptive
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_adaptive_mark_display_test extends basic_testcase {
+class mark_display_test extends \basic_testcase {
     /** @var qbehaviour_adaptive_renderer the renderer to test. */
     protected $renderer;
 

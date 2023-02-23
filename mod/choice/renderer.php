@@ -22,9 +22,6 @@
  * @copyright 2010 Rossiani Wijaya
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
-define ('DISPLAY_HORIZONTAL_LAYOUT', 0);
-define ('DISPLAY_VERTICAL_LAYOUT', 1);
-
 class mod_choice_renderer extends plugin_renderer_base {
 
     /**
@@ -140,7 +137,6 @@ class mod_choice_renderer extends plugin_renderer_base {
      */
     public function display_publish_name_vertical($choices) {
         $html ='';
-        $html .= html_writer::tag('h3',format_string(get_string("responses", "choice")));
 
         $attributes = array('method'=>'POST');
         $attributes['action'] = new moodle_url($this->page->url);
@@ -375,7 +371,7 @@ class mod_choice_renderer extends plugin_renderer_base {
      * Can be displayed either in the vertical or horizontal position.
      *
      * @param stdClass $choices Choices responses object.
-     * @param int $displaylayout The constants DISPLAY_HORIZONTAL_LAYOUT or DISPLAY_VERTICAL_LAYOUT.
+     * @param int $displaylayout The constants CHOICE_DISPLAY_HORIZONTAL or CHOICE_DISPLAY_VERTICAL.
      * @return string the rendered chart.
      */
     public function display_publish_anonymous($choices, $displaylayout) {
@@ -398,8 +394,8 @@ class mod_choice_renderer extends plugin_renderer_base {
         }
 
         $chart = new \core\chart_bar();
-        if ($displaylayout == DISPLAY_HORIZONTAL_LAYOUT) {
-            $chart->set_horizontal(true);
+        if ($displaylayout == CHOICE_DISPLAY_VERTICAL) {
+            $chart->set_horizontal(true); // Horizontal bars when choices are vertical.
         }
         $series = new \core\chart_series(format_string(get_string("responses", "choice")), $data['series']);
         $series->set_labels($data['series_labels']);

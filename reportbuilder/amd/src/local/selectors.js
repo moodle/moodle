@@ -38,6 +38,7 @@ const SELECTORS = {
         filtersForm: '[data-region="filters-form"]',
         sidebarMenu: '[data-region="sidebar-menu"]',
         sidebarCard: '[data-region="sidebar-card"]',
+        sidebarItem: '[data-region="sidebar-item"]',
         settingsConditions: '[data-region="settings-conditions"]',
         activeConditions: '[data-region="active-conditions"]',
         activeCondition: '[data-region="active-condition"]',
@@ -48,6 +49,7 @@ const SELECTORS = {
         audiencesContainer: '[data-region="audiences"]',
         audienceFormContainer: '[data-region="audience-form-container"]',
         audienceCard: '[data-region="audience-card"]',
+        audienceHeading: '[data-region="audience-heading"]',
         audienceForm: '[data-region="audience-form"]',
         audienceEmptyMessage: '[data-region=no-instances-message]',
         audienceDescription: '[data-region=audience-description]',
@@ -73,6 +75,11 @@ const SELECTORS = {
         audienceEdit: '[data-action="edit-audience"]',
         audienceDelete: '[data-action="delete-audience"]',
         toggleCardView: '[data-action="toggle-card"]',
+        scheduleCreate: '[data-action="schedule-create"]',
+        scheduleToggle: '[data-action="schedule-toggle"]',
+        scheduleEdit: '[data-action="schedule-edit"]',
+        scheduleSend: '[data-action="schedule-send"]',
+        scheduleDelete: '[data-action="schedule-delete"]',
     },
 };
 

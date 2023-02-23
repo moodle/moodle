@@ -13,13 +13,11 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-/**
- * Unit tests for (some of) mod/feedback/classes/lib.php.
- *
- * @package    mod_feedback
- * @copyright  2019 Tobias Reischmann
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+
+namespace mod_feedback;
+
+use mod_feedback_completion;
+
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/mod/feedback/classes/completion.php');
@@ -27,10 +25,11 @@ require_once($CFG->dirroot . '/mod/feedback/classes/completion.php');
 /**
  * Unit tests for (some of) mod/feedback/classes/completion.php.
  *
+ * @package    mod_feedback
  * @copyright  2019 Tobias Reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_feedback_completion_testcase extends advanced_testcase {
+class completion_test extends \advanced_testcase {
     /**
      * Returns the number of pages with visible elements for the current state of the feedback completion.
      * @param mod_feedback_completion $completion

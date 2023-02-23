@@ -276,7 +276,7 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
 
         $this->xmlwriter->begin_tag('answers');
 
-        $numanswers = count($answers);
+        $numanswers = $answers ? count($answers) : 0;
         if ($numanswers) { //if there are any answers (possible there are none!)
             if ($numanswers > 3 && $page->data['qtype'] == 5) { //fix only jumpto only for matching question types.
                 if ($answers[0]['jumpto'] !== '0' || $answers[1]['jumpto'] !== '0') {

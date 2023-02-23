@@ -68,15 +68,15 @@ class files {
     /**
      * Helper for getting pluginfile.
      *
-     * @param stdClass $course course object
-     * @param \cm_info $cm course module object
+     * @param stdClass|null $course course object
+     * @param stdClass|null $cm course module object
      * @param context $context context object
      * @param string $filearea file area
      * @param array $args extra arguments
      *
      * @return \stored_file|bool
      */
-    public static function pluginfile_file(stdClass $course, \cm_info $cm, context $context, string $filearea, array $args) {
+    public static function pluginfile_file(?stdClass $course, ?stdClass $cm, context $context, string $filearea, array $args) {
         $filename = self::get_plugin_filename($course, $cm, $context, $args);
         if (!$filename) {
             return false;
@@ -140,36 +140,37 @@ class files {
         global $CFG;
         $fs = get_file_storage();
         $files = [];
-        if (empty($presentation)) {
-            if ($CFG->bigbluebuttonbn_preuploadpresentation_enabled) {
-                // Item has not presentation but presentation is enabled..
-                // Check if exist some file by default in general mod setting ("presentationdefault").
-                $files = $fs->get_area_files(
-                    context_system::instance()->id,
-                    'mod_bigbluebuttonbn',
-                    'presentationdefault',
-                    0,
-                    "filename",
-                    false
-                );
-                $id = null; // This is the general presentation/default so we will generate
-                // an id as if the activity was null.
+        $defaultpresentation = $fs->get_area_files(
+            context_system::instance()->id,
+            'mod_bigbluebuttonbn',
+            'presentationdefault',
+            0,
+            "filename",
+            false
+        );
+        $activitypresentation = $files = $fs->get_area_files(
+            $context->id,
+            'mod_bigbluebuttonbn',
+            'presentation',
+            false,
+            'itemid, filepath, filename',
+            false
+        );
+        // Presentation upload logic based on config settings.
+        if (empty($defaultpresentation)) {
+            if (empty($activitypresentation) || !\mod_bigbluebuttonbn\local\config::get('preuploadpresentation_editable')) {
+                return null;
             }
+            $files = $activitypresentation;
+
         } else {
-            $files = $fs->get_area_files(
-                $context->id,
-                'mod_bigbluebuttonbn',
-                'presentation',
-                false,
-                'itemid, filepath, filename',
-                false
-            );
+            if (empty($activitypresentation) || !\mod_bigbluebuttonbn\local\config::get('preuploadpresentation_editable')) {
+                $files = $defaultpresentation;
+                $id = null;
+            } else {
+                $files = $activitypresentation;
+            }
         }
-
-        if (count($files) == 0) {
-            return null; // No presentation.
-        }
-
         $pnoncevalue = 0;
         if ($withnonce) {
             $nonceid = 0;
@@ -213,14 +214,14 @@ class files {
     /**
      * Helper for getting pluginfile name.
      *
-     * @param stdClass $course course object
-     * @param \cm_info $cm course module object
+     * @param stdClass|null $course course object
+     * @param stdClass|null $cm course module object
      * @param context $context context object
      * @param array $args extra arguments
      *
      * @return string|null
      */
-    public static function get_plugin_filename(stdClass $course, \cm_info $cm, context $context, array $args): ?string {
+    public static function get_plugin_filename(?stdClass $course, ?stdClass $cm, context $context, array $args): ?string {
         global $DB;
         if ($context->contextlevel != CONTEXT_SYSTEM) {
             // Plugin has a file to use as default in general setting.
@@ -245,7 +246,11 @@ class files {
             return ($args['0'] == $actualnonce) ? $args['1'] : null;
 
         }
-        require_course_login($course, true, $cm, true, true);
+        if (!empty($course)) {
+            require_course_login($course, true, $cm, true, true);
+        } else {
+            require_login(null, true, $cm, true, true);
+        }
         if (!has_capability('mod/bigbluebuttonbn:join', $context)) {
             return null;
         }
@@ -257,7 +262,6 @@ class files {
      *
      * @param int $id
      * @return int
-     * @throws \coding_exception
      */
     protected static function get_nonce(int $id): int {
         $cache = static::get_nonce_cache();

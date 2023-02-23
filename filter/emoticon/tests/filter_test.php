@@ -23,6 +23,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace filter_emoticon;
+
+use filter_emoticon;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -31,7 +35,7 @@ require_once($CFG->dirroot . '/filter/emoticon/filter.php'); // Include the code
 /**
  * Skype icons filter testcase.
  */
-class filter_emoticon_testcase extends advanced_testcase {
+class filter_test extends \advanced_testcase {
 
     /**
      * Test that filter ignores nolink/pre element, and processes remaining text
@@ -185,7 +189,7 @@ class filter_emoticon_testcase extends advanced_testcase {
         // Empty the emoticons array.
         $CFG->emoticons = null;
 
-        $filter = new filter_emoticon(context_system::instance(), array('originalformat' => FORMAT_HTML));
+        $filter = new filter_emoticon(\context_system::instance(), array('originalformat' => FORMAT_HTML));
 
         $input = '(grr)';
         $expected = '(grr)';
@@ -205,7 +209,7 @@ class testable_filter_emoticon extends filter_emoticon {
         parent::$emoticontexts = array();
         parent::$emoticonimgs = array();
         // Use this context for filtering.
-        $this->context = context_system::instance();
+        $this->context = \context_system::instance();
         // Define FORMAT_HTML as only one filtering in DB.
         set_config('formats', implode(',', array(FORMAT_HTML)), 'filter_emoticon');
     }

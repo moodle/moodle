@@ -1,5 +1,8 @@
 This files describes API changes in the lesson code.
 
+=== 4.0 ===
+* Deprecated the function lesson_add_header_buttons in favour of tertiary navigation.
+
 === 3.6.1 ===
 
 * A new function update_form_data() has been added to lesson_page class. This can be overridden by the individual page types

@@ -1,4 +1,4 @@
-@core @core_completion
+@core @core_completion @javascript
 Feature: Students will be marked as completed and pass/fail
   if they have viewed an activity and achieved a grade.
 
@@ -67,3 +67,25 @@ Feature: Students will be marked as completed and pass/fail
     And the "View" completion condition of "Test assignment name" is displayed as "todo"
     And the "Receive a grade" completion condition of "Test assignment name" is displayed as "done"
     And the "Receive a passing grade" completion condition of "Test assignment name" is displayed as "failed"
+
+  @javascript
+  Scenario: Keep current view completion condition when the teacher does the action 'Unlock completion settings'.
+    Given I am on the "Course 1" course page logged in as teacher1
+    And I navigate to "View > Grader report" in the course gradebook
+    And I turn editing mode on
+    And I give the grade "21" to the user "Student First" for the grade item "Test assignment name"
+    And I give the grade "50" to the user "Student Second" for the grade item "Test assignment name"
+    And I press "Save changes"
+    And I am on the "Test assignment name" "assign activity" page logged in as teacher1
+    And I navigate to "Settings" in current page administration
+    And I expand all fieldsets
+    And I press "Unlock completion settings"
+    And I expand all fieldsets
+    And I should see "Completion options unlocked"
+    And I click on "Save and display" "button"
+    And I log out
+    When I am on the "Course 1" course page logged in as student1
+    Then the "View" completion condition of "Test assignment name" is displayed as "done"
+    And I log out
+    When I am on the "Course 1" course page logged in as student2
+    Then the "View" completion condition of "Test assignment name" is displayed as "done"

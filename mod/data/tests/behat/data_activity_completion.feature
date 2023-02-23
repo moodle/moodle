@@ -1,4 +1,4 @@
-@mod @mod_data @core_completion
+@mod @mod_data @core_completion @javascript
 Feature: View activity completion in the database activity
   In order to have visibility of database completion requirements
   As a student
@@ -34,41 +34,20 @@ Feature: View activity completion in the database activity
       | Require view             | 1                                                 |
       | Require grade            | 1                                                 |
     And I press "Save and display"
-    And I add a "Text input" field to "Music history" database and I fill the form with:
+    And I add a "Short text" field to "Music history" database and I fill the form with:
       | Field name | Instrument types |
-    And I navigate to "Templates" in current page administration
-    And I press "Save template"
     And I log out
 
-  Scenario: View automatic completion items as a teacher and confirm all tabs display conditions
+  Scenario: View automatic completion items as a teacher
     Given I am on the "Music history" "data activity" page logged in as teacher1
+#   We add an entry to let the user change to a different view.
+    When I add an entry to "Music history" database with:
+      | Instrument types | Drums |
+    And I press "Save"
     Then "Music history" should have the "View" completion condition
     And "Music history" should have the "Make entries: 2" completion condition
     And "Music history" should have the "Receive a grade" completion condition
     And I select "Single view" from the "jump" singleselect
-    And "Music history" should have the "View" completion condition
-    And "Music history" should have the "Make entries: 2" completion condition
-    And "Music history" should have the "Receive a grade" completion condition
-    And I press "Add entry"
-    And "Music history" should have the "View" completion condition
-    And "Music history" should have the "Make entries: 2" completion condition
-    And "Music history" should have the "Receive a grade" completion condition
-    And I set the following fields to these values:
-      | Instrument types | Hurdygurdy |
-    And I press "Save"
-    And I press "Export entries"
-    And "Music history" should have the "View" completion condition
-    And "Music history" should have the "Make entries: 2" completion condition
-    And "Music history" should have the "Receive a grade" completion condition
-    And I navigate to "Templates" in current page administration
-    And "Music history" should have the "View" completion condition
-    And "Music history" should have the "Make entries: 2" completion condition
-    And "Music history" should have the "Receive a grade" completion condition
-    And I navigate to "Fields" in current page administration
-    And "Music history" should have the "View" completion condition
-    And "Music history" should have the "Make entries: 2" completion condition
-    And "Music history" should have the "Receive a grade" completion condition
-    And I navigate to "Presets" in current page administration
     And "Music history" should have the "View" completion condition
     And "Music history" should have the "Make entries: 2" completion condition
     And "Music history" should have the "Receive a grade" completion condition
@@ -98,7 +77,6 @@ Feature: View activity completion in the database activity
     And I am on the "Music history" "data activity" page logged in as teacher1
     And I select "Single view" from the "jump" singleselect
     And I set the field "rating" to "3"
-    And I press "Rate"
     And I log out
 
     When I am on the "Music history" "data activity" page logged in as student1

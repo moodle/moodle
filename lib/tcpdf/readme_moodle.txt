@@ -1,16 +1,24 @@
-Description of TCPDF library import 6.3.5
-==========================================
-* download library from https://github.com/tecnickcom/TCPDF/releases
+Description of TCPDF library import
+===================================
+* download library from https://github.com/tecnickcom/TCPDF/tags
 * delete examples/, tools/ VERSION and tcpdf_import.php
 * remove tcpdf_import.php from composer.json
 * remove all fonts that were not already present
 * visit http://127.0.0.1/lib/tests/other/pdflibtestpage.php and view the pdf
 * modify getTCPDFProducer lib/tcpdf/include/tcpdf_static.php to remove the version number
+* Check the status of https://github.com/tecnickcom/TCPDF/pull/548 , apply if it is still
+  not included or delete this entry
+* modify `TCPDF::Output` method for multi-byte character filename support (see https://github.com/tecnickcom/TCPDF/pull/562)
 
 Important
 ---------
 A new version of the libray is being developed @ https://github.com/tecnickcom/tc-lib-pdf . Check periodically when it's ready
 and if it's a drop-in replacement for the legacy tcpdf one.
+
+2022/09/27
+----------
+Upgrade to tcpdf TCPDF 6.5.0 (MDL-75468)
+by Paul Holden <paulh@moodle.com>
 
 2021/04/20
 ----------

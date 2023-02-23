@@ -3,7 +3,8 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
   As a teacher
   I need to add questions with images in answers and responses
 
-  @javascript @_file_upload
+  # This scenario has Atto-specific steps. See MDL-75913 for further details.
+  @javascript @_file_upload @editor_atto
   Scenario: questions with images in answers and responses
     Given the following "users" exist:
       | username | firstname | lastname | email |
@@ -20,6 +21,9 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
       | course   | C1               |
       | activity | lesson           |
       | name     | Test lesson name |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
     And I log in as "teacher1"
     And I follow "Manage private files"
     And I upload "mod/lesson/tests/fixtures/moodle_logo.jpg" file to "Files" filemanager
@@ -75,7 +79,6 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
     And I set the field "Describe this image for someone who cannot see it" to "It's the logo"
     And I click on "Save image" "button"
     And I press "Save page"
-    And I log out
     When I am on the "Test lesson name" "lesson activity" page logged in as student1
     Then I should see "What animal is an amphibian?"
     And "//*[contains(@class, 'answeroption')]//img[contains(@src, 'pluginfile.php')]" "xpath_element" should exist

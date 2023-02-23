@@ -561,6 +561,9 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element implements tem
             $optiongroups[] = $og;
         }
         $context['optiongroups'] = $optiongroups;
+        // If the select is a static element and does not allow the user to change the value (Ex: Auth method),
+        // we need to change the label to static.
+        $context['staticlabel'] = $this->_flagFrozen;
 
         return $context;
     }

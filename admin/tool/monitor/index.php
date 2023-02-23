@@ -46,7 +46,7 @@ if (empty($courseid)) {
             $choose = true;
         } else {
             // return error.
-            print_error('rulenopermission', 'tool_monitor');
+            throw new \moodle_exception('rulenopermission', 'tool_monitor');
         }
     }
 } else {

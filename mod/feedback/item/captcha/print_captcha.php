@@ -22,20 +22,20 @@ $PAGE->set_url('/mod/feedback/item/captcha/print_captcha.php', array('id'=>$id))
 
 if ($id) {
     if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
 
     if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
 
     if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
 }
 
 if (!isset($SESSION->feedback->item->captcha)) {
-    print_error('captchanotset', 'feedback');
+    throw new \moodle_exception('captchanotset', 'feedback');
 }
 
 $height = 40;

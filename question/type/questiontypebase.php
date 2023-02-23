@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/engine/lib.php');
+require_once($CFG->libdir . '/questionlib.php');
 
 
 /**
@@ -367,8 +368,9 @@ class question_type {
         // The actual update/insert done with multiple DB access, so we do it in a transaction.
         $transaction = $DB->start_delegated_transaction ();
 
-        list($question->category) = explode(',', $form->category);
-        $context = $this->get_context_by_category_id($question->category);
+        list($form->category) = explode(',', $form->category);
+        $context = $this->get_context_by_category_id($form->category);
+        $question->category = $form->category;
 
         // This default implementation is suitable for most
         // question types.
@@ -413,6 +415,31 @@ class question_type {
             $question->defaultmark = $form->defaultmark;
         }
 
+        // Only create a new bank entry if the question is not a new version (New question or duplicating a question).
+        $questionbankentry = null;
+        if (isset($question->id)) {
+            $oldparent = $question->id;
+            if (!empty($question->id)) {
+                // Get the bank entry record where the question is referenced.
+                $questionbankentry = get_question_bank_entry($question->id);
+            }
+        }
+
+        // Get the bank entry old id (this is when there are questions related with a parent, e.g.: qtype_multianswers).
+        if (isset($question->oldid)) {
+            if (!empty($question->oldid)) {
+                $questionbankentry = get_question_bank_entry($question->oldid);
+            }
+        }
+
+        // Always creates a new question and version record.
+        // Set the unique code.
+        $question->stamp = make_unique_id_code();
+        $question->createdby = $USER->id;
+        $question->timecreated = time();
+
+        // Idnumber validation.
+        $question->idnumber = null;
         if (isset($form->idnumber)) {
             if ((string) $form->idnumber === '') {
                 $question->idnumber = null;
@@ -425,23 +452,56 @@ class question_type {
                 } else {
                     $category = $form->category;
                 }
-                if (!$DB->record_exists('question',
-                        ['idnumber' => $form->idnumber, 'category' => $category])) {
+                $params = ['idnumber' => $form->idnumber, 'categoryid' => $category];
+                $andcondition = '';
+                if (isset($question->id) && isset($questionbankentry->id)) {
+                    $andcondition = 'AND qbe.id != :notid';
+                    $params['notid'] = $questionbankentry->id;
+                }
+                $sql = "SELECT qbe.id
+                          FROM {question_bank_entries} qbe
+                         WHERE qbe.idnumber = :idnumber
+                               AND qbe.questioncategoryid = :categoryid
+                           $andcondition";
+                if (!$DB->record_exists_sql($sql, $params)) {
                     $question->idnumber = $form->idnumber;
                 }
             }
         }
 
-        // If the question is new, create it.
-        $newquestion = false;
-        if (empty($question->id)) {
-            // Set the unique code.
-            $question->stamp = make_unique_id_code();
-            $question->createdby = $USER->id;
-            $question->timecreated = time();
-            $question->id = $DB->insert_record('question', $question);
-            $newquestion = true;
+        // Create the question.
+        $question->id = $DB->insert_record('question', $question);
+        if (!$questionbankentry) {
+            // Create a record for question_bank_entries, question_versions and question_references.
+            $questionbankentry = new \stdClass();
+            $questionbankentry->questioncategoryid = $form->category;
+            $questionbankentry->idnumber = $question->idnumber;
+            $questionbankentry->ownerid = $question->createdby;
+            $questionbankentry->id = $DB->insert_record('question_bank_entries', $questionbankentry);
+        } else {
+            $questionbankentryold = new \stdClass();
+            $questionbankentryold->id = $questionbankentry->id;
+            $questionbankentryold->idnumber = $question->idnumber;
+            $DB->update_record('question_bank_entries', $questionbankentryold);
         }
+
+        // Create question_versions records.
+        $questionversion = new \stdClass();
+        $questionversion->questionbankentryid = $questionbankentry->id;
+        $questionversion->questionid = $question->id;
+        // Get the version and status from the parent question if parent is set.
+        if (!$question->parent) {
+            // Get the status field. It comes from the form, but for testing we can.
+            $status = $form->status ?? $question->status ??
+                \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+            $questionversion->version = get_next_version($questionbankentry->id);
+            $questionversion->status = $status;
+        } else {
+            $parentversion = get_question_version($form->parent);
+            $questionversion->version = $parentversion[array_key_first($parentversion)]->version;
+            $questionversion->status = $parentversion[array_key_first($parentversion)]->status;
+        }
+        $questionversion->id = $DB->insert_record('question_versions', $questionversion);
 
         // Now, whether we are updating a existing question, or creating a new
         // one, we have to do the files processing and update the record.
@@ -465,16 +525,20 @@ class question_type {
         // Now to save all the answers and type-specific options.
         $form->id = $question->id;
         $form->qtype = $question->qtype;
-        $form->category = $question->category;
         $form->questiontext = $question->questiontext;
         $form->questiontextformat = $question->questiontextformat;
         // Current context.
         $form->context = $context;
-
+        // Old parent question id is used when there are questions related with a parent, e.g.: qtype_multianswers).
+        if (isset($oldparent)) {
+            $form->oldparent = $oldparent;
+        } else {
+            $form->oldparent = $question->parent;
+        }
         $result = $this->save_question_options($form);
 
         if (!empty($result->error)) {
-            print_error($result->error);
+            throw new \moodle_exception($result->error);
         }
 
         if (!empty($result->notice)) {
@@ -486,19 +550,9 @@ class question_type {
                     '$result->noticeyesno no longer supported in save_question.');
         }
 
-        // Give the question a unique version stamp determined by question_hash().
-        $DB->set_field('question', 'version', question_hash($question),
-                array('id' => $question->id));
-
-        if ($newquestion) {
-            // Log the creation of this question.
-            $event = \core\event\question_created::create_from_question_instance($question, $context);
-            $event->trigger();
-        } else {
-            // Log the update of this question.
-            $event = \core\event\question_updated::create_from_question_instance($question, $context);
-            $event->trigger();
-        }
+        // Log the creation of this question.
+        $event = \core\event\question_created::create_from_question_instance($question, $context);
+        $event->trigger();
 
         $transaction->allow_commit();
 
@@ -849,7 +903,7 @@ class question_type {
      *                         specific information (it is passed by reference).
      */
     public function get_question_options($question) {
-        global $CFG, $DB, $OUTPUT;
+        global $DB, $OUTPUT;
 
         if (!isset($question->options)) {
             $question->options = new stdClass();
@@ -945,13 +999,12 @@ class question_type {
         $question->length = $questiondata->length;
         $question->penalty = $questiondata->penalty;
         $question->stamp = $questiondata->stamp;
-        $question->version = $questiondata->version;
-        $question->hidden = $questiondata->hidden;
-        $question->idnumber = $questiondata->idnumber;
         $question->timecreated = $questiondata->timecreated;
         $question->timemodified = $questiondata->timemodified;
         $question->createdby = $questiondata->createdby;
         $question->modifiedby = $questiondata->modifiedby;
+
+        $this->initialise_core_question_metadata($question, $questiondata);
 
         // Fill extra question fields values.
         $extraquestionfields = $this->extra_question_fields();
@@ -967,6 +1020,29 @@ class question_type {
 
         // Add the custom fields.
         $this->initialise_custom_fields($question, $questiondata);
+    }
+
+    /**
+     * Initialise the question metadata.
+     *
+     * @param question_definition $question the question_definition we are creating.
+     * @param object $questiondata the question data loaded from the database.
+     */
+    protected function initialise_core_question_metadata(question_definition $question, $questiondata) {
+        $fields =
+            [
+                'status',
+                'versionid',
+                'version',
+                'questionbankentryid',
+                'idnumber',
+            ];
+
+        foreach ($fields as $field) {
+            if (isset($questiondata->{$field})) {
+                $question->{$field} = $questiondata->{$field};
+            }
+        }
     }
 
     /**
@@ -1320,6 +1396,7 @@ class question_type {
         $form->questiontext = 'test question, generated by script';
         $form->defaultmark = 1;
         $form->penalty = 0.3333333;
+        $form->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $form->generalfeedback = "Well done";
 
         $context = context_course::instance($courseid);

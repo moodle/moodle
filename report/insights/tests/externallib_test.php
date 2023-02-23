@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace report_insights;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../../../analytics/tests/fixtures/test_indicator_max.php');
@@ -34,7 +36,7 @@ require_once(__DIR__ . '/../../../analytics/tests/fixtures/test_target_shortname
  * @copyright 2019 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class report_insights_external_testcase extends advanced_testcase {
+class externallib_test extends \advanced_testcase {
 
     /**
      * test_action_executed

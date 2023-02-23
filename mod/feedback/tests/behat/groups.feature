@@ -50,43 +50,28 @@ Feature: Feedbacks in courses with groups
       | feedback   | Site feedback   | Acceptance test site | feedback0 | 2         | 1             | 1         | 1       |
       | feedback   | Course feedback | C1                   | feedback1 | 2         | 1             | 1         | 0       |
       | feedback   | Course anon feedback | C1              | feedback2 | 1         | 1             | 1         | 0       |
-    And I am on the "Site feedback" "feedback activity" page logged in as manager
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
-    And I add a "Multiple choice" question to the feedback with:
-      | Question                       | Do you like our site?              |
-      | Label                          | multichoice2                       |
-      | Multiple choice type           | Multiple choice - single answer    |
-      | Hide the "Not selected" option | Yes                                |
-      | Multiple choice values         | Yes of course\nNot at all\nI don't know |
-    And I log out
 
   @javascript
   Scenario: Non anonymous feedback with groups in a course
-    Given I am on the "Course feedback" "feedback activity" page logged in as teacher
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
-    And I add a "Multiple choice" question to the feedback with:
-      | Question                       | Do you like this course?           |
-      | Label                          | multichoice1                       |
-      | Multiple choice type           | Multiple choice - single answer    |
-      | Hide the "Not selected" option | Yes                                |
-      | Multiple choice values         | Yes of course\nNot at all\nI don't know |
-    And I log out
-    And I log in as "user1" and complete feedback "Course feedback" in course "Course 1" with:
-      | Not at all | 1 |
-    And I log in as "user2" and complete feedback "Course feedback" in course "Course 1" with:
-      | I don't know | 1 |
-    And I log in as "user3" and complete feedback "Course feedback" in course "Course 1" with:
-      | Not at all | 1 |
-    And I log in as "user4" and complete feedback "Course feedback" in course "Course 1" with:
-      | Yes of course | 1 |
-    And I log in as "user5" and complete feedback "Course feedback" in course "Course 1" with:
-      | Yes of course | 1 |
-    And I log in as "user6" and complete feedback "Course feedback" in course "Course 1" with:
-      | Not at all | 1 |
-    And I log in as "user7" and complete feedback "Course feedback" in course "Course 1" with:
-      | I don't know | 1 |
+    Given the following "mod_feedback > question" exists:
+      | activity        | feedback1                               |
+      | name            | Do you like this course?                |
+      | questiontype    | multichoice                             |
+      | label           | multichoice1                            |
+      | subtype         | r                                       |
+      | hidenoselect    | 1                                       |
+      | values          | Yes of course\nNot at all\nI don't know |
+    And the following "mod_feedback > responses" exist:
+      | activity  | user  | Do you like this course? |
+      | feedback1 | user1 | Not at all               |
+      | feedback1 | user2 | I don't know             |
+      | feedback1 | user3 | Not at all               |
+      | feedback1 | user4 | Yes of course            |
+      | feedback1 | user5 | Yes of course            |
+      | feedback1 | user6 | Not at all               |
+      | feedback1 | user7 | I don't know             |
     # View analysis, user1 should only see one group - group 1
-    And I am on the "Course feedback" "feedback activity" page logged in as user1
+    When I am on the "Course feedback" "feedback activity" page logged in as user1
     And I follow "Analysis"
     And I should see "Separate groups: Group 1"
     And I show chart data for the "multichoice1" feedback
@@ -152,37 +137,44 @@ Feature: Feedbacks in courses with groups
     And I should see "Username 3"
 
   @javascript
-  Scenario: Anonymous feedback with groups in a course
-    Given I am on the "Course anon feedback" "feedback activity" page logged in as teacher
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
-    And I add a "Multiple choice" question to the feedback with:
-      | Question                       | Do you like this course?           |
-      | Label                          | multichoice1                       |
-      | Multiple choice type           | Multiple choice - single answer    |
-      | Hide the "Not selected" option | Yes                                |
-      | Multiple choice values         | Yes of course\nNot at all\nI don't know |
-    And I log out
-    And I log in as "user1" and complete feedback "Course anon feedback" in course "Course 1" with:
-      | Not at all | 1 |
-    And I am on the "Course anon feedback" "feedback activity" page logged in as user1
+  Scenario: Anonymous feedback with groups in a course - insufficient responses
+    Given the following "mod_feedback > question" exists:
+      | activity        | feedback2                               |
+      | name            | Do you like this course?                |
+      | questiontype    | multichoice                             |
+      | label           | multichoice1                            |
+      | subtype         | r                                       |
+      | hidenoselect    | 1                                       |
+      | values          | Yes of course\nNot at all\nI don't know |
+    And the following "mod_feedback > responses" exist:
+      | activity  | user  | Do you like this course? |
+      | feedback2 | user1 | Not at all               |
+    When I am on the "Course anon feedback" "feedback activity" page logged in as user1
     And I follow "Analysis"
+    Then I should not see "Yes of course"
     And I should see "There are insufficient responses for this group"
-    And I should not see "Yes of course"
-    And I log out
-    And I log in as "user2" and complete feedback "Course anon feedback" in course "Course 1" with:
-      | I don't know | 1 |
-    And I log in as "user3" and complete feedback "Course anon feedback" in course "Course 1" with:
-      | Not at all | 1 |
-    And I log in as "user4" and complete feedback "Course anon feedback" in course "Course 1" with:
-      | Yes of course | 1 |
-    And I log in as "user5" and complete feedback "Course anon feedback" in course "Course 1" with:
-      | Yes of course | 1 |
-    And I log in as "user6" and complete feedback "Course anon feedback" in course "Course 1" with:
-      | Not at all | 1 |
-    And I log in as "user7" and complete feedback "Course anon feedback" in course "Course 1" with:
-      | I don't know | 1 |
+
+  @javascript
+  Scenario: Anonymous feedback with groups in a course
+    Given the following "mod_feedback > question" exists:
+      | activity        | feedback2                               |
+      | name            | Do you like this course?                |
+      | questiontype    | multichoice                             |
+      | label           | multichoice1                            |
+      | subtype         | r                                       |
+      | hidenoselect    | 1                                       |
+      | values          | Yes of course\nNot at all\nI don't know |
+    And the following "mod_feedback > responses" exist:
+      | activity  | user  | Do you like this course? |
+      | feedback2 | user1 | Not at all               |
+      | feedback2 | user2 | I don't know             |
+      | feedback2 | user3 | Not at all               |
+      | feedback2 | user4 | Yes of course            |
+      | feedback2 | user5 | Yes of course            |
+      | feedback2 | user6 | Not at all               |
+      | feedback2 | user7 | I don't know             |
     # View analysis, user1 should only see one group - group 1
-    And I am on the "Course anon feedback" "feedback activity" page logged in as user1
+    When I am on the "Course anon feedback" "feedback activity" page logged in as user1
     And I follow "Analysis"
     And I should see "Separate groups: Group 1"
     And I show chart data for the "multichoice1" feedback

@@ -56,17 +56,19 @@ class behat_form_date extends behat_form_group {
             // Disable the given date selector field.
             $this->set_child_field_value('enabled', false);
         } else if (is_numeric($value)) { // The value is numeric (unix timestamp).
-            // First, reset the day always to an existing one (1st). Without that
-            // undesired modifications (JS) happens when changing of month and day if
-            // the interim combination doesn't exists (for example, 31 March => 01 April).
-            // Note that instead of always setting the day to 1, this could be a little more
-            // clever, for example only changing when the day > 28, or only when the
-            // months (current or changed) have less days that the other. But that would
-            // require more complex calculations than the simpler line below.
-            $this->set_child_field_value('day', 1);
             // Assign the mapped values to each form element in the date selector field.
             foreach ($this->get_mapped_fields($value) as $childname => $childvalue) {
                 $this->set_child_field_value($childname, $childvalue);
+                if ($childname === 'enabled') {
+                    // As soon as the form is enabled, reset the day to an existing one (1st). Without that
+                    // undesired modifications (JS) happens when changing of month and day if
+                    // the interim combination doesn't exists (for example, 31 March => 01 April).
+                    // Note that instead of always setting the day to 1, this could be a little more
+                    // clever, for example only changing when the day > 28, or only when the
+                    // months (current or changed) have less days that the other. But that would
+                    // require more complex calculations than the simpler line below.
+                    $this->set_child_field_value('day', 1);
+                }
             }
         } else { // Invalid value.
             // Get the name of the field.

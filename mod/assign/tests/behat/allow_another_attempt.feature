@@ -146,5 +146,5 @@ Feature: In an assignment, students start a new attempt based on their previous 
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I select "Group 2" from the "group" singleselect
-    And I click on "Grade" "link" in the ".submissionlinks" "css_element"
+    And I click on "Grade" "link" in the ".tertiary-navigation" "css_element"
     And I should see "2" in the "#id_attemptsettings" "css_element"

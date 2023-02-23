@@ -1,65 +1,32 @@
 <?php
-/*
- @version   v5.21.0  2021-02-27
- @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
- @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-  Released under both BSD license and Lesser GPL library license.
-  Whenever there is any discrepancy between the two licenses,
-  the BSD license will take precedence.
-  Set tabs to 8.
-
-  Original version derived from Alberto Cerezal (acerezalp@dbnet.es) - DBNet Informatica & Comunicaciones.
-  08 Nov 2000 jlim - Minor corrections, removing mysql stuff
-  09 Nov 2000 jlim - added insertid support suggested by "Christopher Kings-Lynne" <chriskl@familyhealth.com.au>
-			  jlim - changed concat operator to || and data types to MetaType to match documented pgsql types
-					 see http://www.postgresql.org/devel-corner/docs/postgres/datatype.htm
-  22 Nov 2000 jlim - added changes to FetchField() and MetaTables() contributed by "raser" <raser@mail.zen.com.tw>
-  27 Nov 2000 jlim - added changes to _connect/_pconnect from ideas by "Lennie" <leen@wirehub.nl>
-  15 Dec 2000 jlim - added changes suggested by Additional code changes by "Eric G. Werk" egw@netguide.dk.
-  31 Jan 2002 jlim - finally installed postgresql. testing
-  01 Mar 2001 jlim - Freek Dijkstra changes, also support for text type
-
-  See http://www.varlena.com/varlena/GeneralBits/47.php
-
-	-- What indexes are on my table?
-	select * from pg_indexes where tablename = 'tablename';
-
-	-- What triggers are on my table?
-	select c.relname as "Table", t.tgname as "Trigger Name",
-	   t.tgconstrname as "Constraint Name", t.tgenabled as "Enabled",
-	   t.tgisconstraint as "Is Constraint", cc.relname as "Referenced Table",
-	   p.proname as "Function Name"
-	from pg_trigger t, pg_class c, pg_class cc, pg_proc p
-	where t.tgfoid = p.oid and t.tgrelid = c.oid
-	   and t.tgconstrrelid = cc.oid
-	   and c.relname = 'tablename';
-
-	-- What constraints are on my table?
-	select r.relname as "Table", c.conname as "Constraint Name",
-	   contype as "Constraint Type", conkey as "Key Columns",
-	   confkey as "Foreign Columns", consrc as "Source"
-	from pg_class r, pg_constraint c
-	where r.oid = c.conrelid
-	   and relname = 'tablename';
-
-*/
+/**
+ * ADOdb PostgreSQL 6.4 driver
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
 
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
-
-function adodb_addslashes($s)
-{
-	$len = strlen($s);
-	if ($len == 0) return "''";
-	if (strncmp($s,"'",1) === 0 && substr($s,$len-1) == "'") return $s; // already quoted
-
-	return "'".addslashes($s)."'";
-}
 
 class ADODB_postgres64 extends ADOConnection{
 	var $databaseType = 'postgres64';
 	var $dataProvider = 'postgres';
 	var $hasInsertID = true;
+	/** @var PgSql\Connection|resource|false */
 	var $_resultid = false;
 	var $concat_operator='||';
 	var $metaDatabasesSQL = "select datname from pg_database where datname not in ('template0','template1') order by 1";
@@ -183,10 +150,12 @@ class ADODB_postgres64 extends ADOConnection{
 	 * Using a OID as a unique identifier is not generally wise.
 	 * Unless you are very careful, you might end up with a tuple having
 	 * a different OID if a database must be reloaded.
+	 *
+	 * @inheritDoc
 	 */
-	function _insertid($table,$column)
+	protected function _insertID($table = '', $column = '')
 	{
-		if (!is_resource($this->_resultid) || get_resource_type($this->_resultid) !== 'pgsql result') return false;
+		if ($this->_resultid === false) return false;
 		$oid = pg_last_oid($this->_resultid);
 		// to really return the id, we need the table and column-name, else we can only return the oid != id
 		return empty($table) || empty($column) ? $oid : $this->GetOne("SELECT $column FROM $table WHERE oid=".(int)$oid);
@@ -194,13 +163,13 @@ class ADODB_postgres64 extends ADOConnection{
 
 	function _affectedrows()
 	{
-		if (!is_resource($this->_resultid) || get_resource_type($this->_resultid) !== 'pgsql result') return false;
+		if ($this->_resultid === false) return false;
 		return pg_affected_rows($this->_resultid);
 	}
 
 
 	/**
-	 * @return true/false
+	 * @return bool
 	 */
 	function BeginTrans()
 	{
@@ -410,7 +379,7 @@ class ADODB_postgres64 extends ADOConnection{
 	function BlobDelete( $blob )
 	{
 		pg_query($this->_connectionID, 'begin');
-		$result = @pg_lo_unlink($blob);
+		$result = @pg_lo_unlink($this->_connectionID, $blob);
 		pg_query($this->_connectionID, 'commit');
 		return( $result );
 	}
@@ -705,35 +674,57 @@ class ADODB_postgres64 extends ADOConnection{
 		return $indexes;
 	}
 
-	// returns true or false
-	//
-	// examples:
-	// 	$db->Connect("host=host1 user=user1 password=secret port=4341");
-	// 	$db->Connect('host1','user1','secret');
-	function _connect($str,$user='',$pwd='',$db='',$ctype=0)
+	/**
+	 * Connect to a database.
+	 *
+	 * Examples:
+	 *   $db->Connect("host=host1 user=user1 password=secret port=4341");
+	 *   $db->Connect('host1:4341', 'user1', 'secret');
+	 *
+	 * @param string $str  pg_connect() Connection string or Hostname[:port]
+	 * @param string $user (Optional) The username to connect as.
+	 * @param string $pwd  (Optional) The password to connect with.
+	 * @param string $db   (Optional) The name of the database to start in when connected.
+	 * @param int $ctype   Connection type
+	 * @return bool|null   True if connected successfully, false if connection failed, or
+	 *                     null if the PostgreSQL extension is not loaded.
+	 */
+	function _connect($str, $user='', $pwd='', $db='', $ctype=0)
 	{
-		if (!function_exists('pg_connect')) return null;
+		if (!function_exists('pg_connect')) {
+			return null;
+		}
 
 		$this->_errorMsg = false;
 
+		// If $user, $pwd and $db are all null, then $str is a pg_connect()
+		// connection string. Otherwise we expect it to be a hostname,
+		// with optional port separated by ':'
 		if ($user || $pwd || $db) {
-			$user = adodb_addslashes($user);
-			$pwd = adodb_addslashes($pwd);
-			if (strlen($db) == 0) $db = 'template1';
-			$db = adodb_addslashes($db);
-			if ($str)  {
-				$host = explode(":", $str);
-				if ($host[0]) $str = "host=".adodb_addslashes($host[0]);
-				else $str = '';
-				if (isset($host[1])) $str .= " port=$host[1]";
-				else if (!empty($this->port)) $str .= " port=".$this->port;
+			// Hostname & port
+			if ($str) {
+				$host = explode(':', $str);
+				if ($host[0]) {
+					$conn['host'] = $host[0];
+				}
+				if (isset($host[1])) {
+					$conn['port'] = (int)$host[1];
+				} elseif (!empty($this->port)) {
+					$conn['port'] = $this->port;
+				}
 			}
-			if ($user) $str .= " user=".$user;
-			if ($pwd)  $str .= " password=".$pwd;
-			if ($db)   $str .= " dbname=".$db;
-		}
+			$conn['user'] = $user;
+			$conn['password'] = $pwd;
+			// @TODO not sure why we default to 'template1', pg_connect() uses the username when dbname is empty
+			$conn['dbname'] = $db ?: 'template1';
 
-		//if ($user) $linea = "user=$user host=$linea password=$pwd dbname=$db port=5432";
+			// Generate connection string
+			$str = '';
+			foreach ($conn as $param => $value) {
+				// Escaping single quotes and backslashes per pg_connect() documentation
+				$str .= $param . "='" . addcslashes($value, "'\\") . "' ";
+			}
+		}
 
 		if ($ctype === 1) { // persistent
 			$this->_connectionID = pg_pconnect($str);
@@ -761,11 +752,11 @@ class ADODB_postgres64 extends ADOConnection{
 		# PHP does not handle 'hex' properly ('x74657374' is returned as 't657374')
 		# https://bugs.php.net/bug.php?id=59831 states this is in fact not a bug,
 		# so we manually set bytea_output
-		if (!empty($this->connection->noBlobs) && version_compare($info['version'], '9.0', '>=')) {
-			$version = pg_version($this->connectionID);
-			if (version_compare($info['client'], '9.2', '<')) {
-				$this->Execute('set bytea_output=escape');
-			}
+		if (!empty($this->connection->noBlobs)
+			&& version_compare($info['version'], '9.0', '>=')
+			&& version_compare($info['client'], '9.2', '<')
+		) {
+			$this->Execute('set bytea_output=escape');
 		}
 
 		return true;
@@ -818,8 +809,7 @@ class ADODB_postgres64 extends ADOConnection{
 			if ($execp) $exsql = "EXECUTE $plan ($execp)";
 			else $exsql = "EXECUTE $plan";
 
-
-			$rez = @pg_execute($this->_connectionID,$exsql);
+			$rez = @pg_query($this->_connectionID, $exsql);
 			if (!$rez) {
 			# Perhaps plan does not exist? Prepare/compile plan.
 				$params = '';
@@ -843,18 +833,18 @@ class ADODB_postgres64 extends ADOConnection{
 				}
 				$s = "PREPARE $plan ($params) AS ".substr($sql,0,strlen($sql)-2);
 				//adodb_pr($s);
-				$rez = pg_execute($this->_connectionID,$s);
+				$rez = pg_query($this->_connectionID, $s);
 				//echo $this->ErrorMsg();
 			}
 			if ($rez)
-				$rez = pg_execute($this->_connectionID,$exsql);
+				$rez = pg_query($this->_connectionID, $exsql);
 		} else {
 			//adodb_backtrace();
-			$rez = pg_query($this->_connectionID,$sql);
+			$rez = pg_query($this->_connectionID, $sql);
 		}
 		// check if no data returned, then no need to create real recordset
 		if ($rez && pg_num_fields($rez) <= 0) {
-			if (is_resource($this->_resultid) && get_resource_type($this->_resultid) === 'pgsql result') {
+			if ($this->_resultid !== false) {
 				pg_free_result($this->_resultid);
 			}
 			$this->_resultid = $rez;
@@ -876,7 +866,7 @@ class ADODB_postgres64 extends ADOConnection{
 		if ($this->_errorMsg !== false) {
 			return $this->_errorMsg;
 		}
-		
+
 		if (!empty($this->_resultid)) {
 			$this->_errorMsg = @pg_result_error($this->_resultid);
 			if ($this->_errorMsg) {
@@ -974,10 +964,9 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 		return $row;
 	}
 
-
-	function _initrs()
+	function _initRS()
 	{
-	global $ADODB_COUNTRECS;
+		global $ADODB_COUNTRECS;
 		$qid = $this->_queryID;
 		$this->_numOfRows = ($ADODB_COUNTRECS)? @pg_num_rows($qid):-1;
 		$this->_numOfFields = @pg_num_fields($qid);
@@ -992,10 +981,11 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 		}
 	}
 
-		/* Use associative array to get fields array */
-	function Fields($colname)
+	function fields($colname)
 	{
-		if ($this->fetchMode != PGSQL_NUM) return @$this->fields[$colname];
+		if ($this->fetchMode != PGSQL_NUM) {
+			return @$this->fields[$colname];
+		}
 
 		if (!$this->bind) {
 			$this->bind = array();
@@ -1007,14 +997,14 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 		return $this->fields[$this->bind[strtoupper($colname)]];
 	}
 
-	function FetchField($off = 0)
+	function fetchField($fieldOffset = 0)
 	{
 		// offsets begin at 0
 
-		$o= new ADOFieldObject();
-		$o->name = @pg_field_name($this->_queryID,$off);
-		$o->type = @pg_field_type($this->_queryID,$off);
-		$o->max_length = @pg_field_size($this->_queryID,$off);
+		$o = new ADOFieldObject();
+		$o->name = @pg_field_name($this->_queryID, $fieldOffset);
+		$o->type = @pg_field_type($this->_queryID, $fieldOffset);
+		$o->max_length = @pg_field_size($this->_queryID, $fieldOffset);
 		return $o;
 	}
 
@@ -1030,8 +1020,20 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 		return pg_unescape_bytea($blob);
 	}
 
-	function _fixblobs()
+	/**
+	 * Fetches and prepares the RecordSet's fields.
+	 *
+	 * Fixes the blobs if there are any.
+	 */
+	protected function _prepFields()
 	{
+		$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
+
+		// Check prerequisites and bail early if we do not have what we need.
+		if (!isset($this->_blobArr) || $this->fields === false) {
+			return;
+		}
+
 		if ($this->fetchMode == PGSQL_NUM || $this->fetchMode == PGSQL_BOTH) {
 			foreach($this->_blobArr as $k => $v) {
 				$this->fields[$k] = ADORecordSet_postgres64::_decode($this->fields[$k]);
@@ -1050,9 +1052,8 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 		if (!$this->EOF) {
 			$this->_currentRow++;
 			if ($this->_numOfRows < 0 || $this->_numOfRows > $this->_currentRow) {
-				$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
-				if (is_array($this->fields) && $this->fields) {
-					if (isset($this->_blobArr)) $this->_fixblobs();
+				$this->_prepfields();
+				if ($this->fields !== false) {
 					return true;
 				}
 			}
@@ -1064,22 +1065,17 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 
 	function _fetch()
 	{
-
-		if ($this->_currentRow >= $this->_numOfRows && $this->_numOfRows >= 0)
+		if ($this->_currentRow >= $this->_numOfRows && $this->_numOfRows >= 0) {
 			return false;
+		}
 
-		$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
-
-		if ($this->fields && isset($this->_blobArr)) $this->_fixblobs();
-
-		return (is_array($this->fields));
+		$this->_prepfields();
+		return $this->fields !== false;
 	}
 
 	function _close()
 	{
-		if (!is_resource($this->_queryID)
-			|| get_resource_type($this->_queryID) != 'pgsql result'
-		) {
+		if ($this->_queryID === false) {
 			return true;
 		}
 		return pg_free_result($this->_queryID);
@@ -1092,7 +1088,13 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 			$t = $fieldobj->type;
 			$len = $fieldobj->max_length;
 		}
-		switch (strtoupper($t)) {
+
+		$t = strtoupper($t);
+
+		if (array_key_exists($t,$this->connection->customActualTypes))
+			return  $this->connection->customActualTypes[$t];
+
+		switch ($t) {
 				case 'MONEY': // stupid, postgres expects money to be a string
 				case 'INTERVAL':
 				case 'CHAR':
@@ -1104,6 +1106,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 				case 'CIDR':
 				case 'INET':
 				case 'MACADDR':
+				case 'UUID':
 					if ($len <= $this->blobSize) return 'C';
 
 				case 'TEXT':
@@ -1143,6 +1146,12 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 				case 'OID':
 				case 'SERIAL':
 					return 'R';
+
+				case 'NUMERIC':
+				case 'DECIMAL':
+				case 'FLOAT4':
+				case 'FLOAT8':
+					return 'N';
 
 				default:
 					return ADODB_DEFAULT_METATYPE;

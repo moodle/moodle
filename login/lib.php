@@ -85,7 +85,7 @@ function core_login_process_password_reset($username, $email) {
     global $CFG, $DB;
 
     if (empty($username) && empty($email)) {
-        print_error('cannotmailconfirm');
+        throw new \moodle_exception('cannotmailconfirm');
     }
 
     // Next find the user account in the database which the requesting user claims to own.
@@ -135,7 +135,7 @@ function core_login_process_password_reset($username, $email) {
             if (send_password_change_info($user)) {
                 $pwresetstatus = PWRESET_STATUS_OTHEREMAILSENT;
             } else {
-                print_error('cannotmailconfirm');
+                throw new \moodle_exception('cannotmailconfirm');
             }
         } else {
             // The account the requesting user claims to be is entitled to change their password.
@@ -170,7 +170,7 @@ function core_login_process_password_reset($username, $email) {
                 if ($sendresult) {
                     $pwresetstatus = PWRESET_STATUS_TOKENSENT;
                 } else {
-                    print_error('cannotmailconfirm');
+                    throw new \moodle_exception('cannotmailconfirm');
                 }
             }
         }
@@ -253,13 +253,13 @@ function core_login_process_password_set($token) {
     if ($user->auth === 'nologin' or !is_enabled_auth($user->auth)) {
         // Bad luck - user is not able to login, do not let them set password.
         echo $OUTPUT->header();
-        print_error('forgotteninvalidurl');
+        throw new \moodle_exception('forgotteninvalidurl');
         die; // Never reached.
     }
 
     // Check this isn't guest user.
     if (isguestuser($user)) {
-        print_error('cannotresetguestpwd');
+        throw new \moodle_exception('cannotresetguestpwd');
     }
 
     // Token is correct, and unexpired.
@@ -284,7 +284,7 @@ function core_login_process_password_set($token) {
         $DB->delete_records('user_password_resets', array('id' => $user->tokenid));
         $userauth = get_auth_plugin($user->auth);
         if (!$userauth->user_update_password($user, $data->password)) {
-            print_error('errorpasswordupdate', 'auth');
+            throw new \moodle_exception('errorpasswordupdate', 'auth');
         }
         user_add_password_history($user->id, $data->password);
         if (!empty($CFG->passwordchangelogout)) {

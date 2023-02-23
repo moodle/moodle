@@ -24,11 +24,12 @@
 
 namespace core_courseformat\output\local\content\section;
 
-use core_courseformat\base as course_format;
-use section_info;
 use completion_info;
+use core\output\named_templatable;
+use core_courseformat\base as course_format;
+use core_courseformat\output\local\courseformat_named_templatable;
 use renderable;
-use templatable;
+use section_info;
 use stdClass;
 
 /**
@@ -38,7 +39,9 @@ use stdClass;
  * @copyright 2020 Ferran Recio <ferran@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cmsummary implements renderable, templatable {
+class cmsummary implements named_templatable, renderable {
+
+    use courseformat_named_templatable;
 
     /** @var course_format the course format class */
     protected $format;
@@ -65,13 +68,14 @@ class cmsummary implements renderable, templatable {
      */
     public function export_for_template(\renderer_base $output): stdClass {
 
-        list($mods, $complete, $total) = $this->calculate_section_stats();
+        list($mods, $complete, $total, $showcompletion) = $this->calculate_section_stats();
 
         if (empty($mods)) {
             return new stdClass();
         }
 
         $data = (object)[
+            'showcompletion' => $showcompletion,
             'total' => $total,
             'complete' => $complete,
             'mods' => array_values($mods),
@@ -101,6 +105,7 @@ class cmsummary implements renderable, templatable {
         $cmids = $modinfo->sections[$section->section] ?? [];
 
         $cancomplete = isloggedin() && !isguestuser();
+        $showcompletion = false;
         foreach ($cmids as $cmid) {
             $thismod = $modinfo->cms[$cmid];
 
@@ -113,6 +118,7 @@ class cmsummary implements renderable, templatable {
                     $mods[$thismod->modname]['count'] = 1;
                 }
                 if ($cancomplete && $completioninfo->is_enabled($thismod) != COMPLETION_TRACKING_NONE) {
+                    $showcompletion = true;
                     $total++;
                     $completiondata = $completioninfo->get_data($thismod, true);
                     if ($completiondata->completionstate == COMPLETION_COMPLETE ||
@@ -123,6 +129,6 @@ class cmsummary implements renderable, templatable {
             }
         }
 
-        return [$mods, $complete, $total];
+        return [$mods, $complete, $total, $showcompletion];
     }
 }

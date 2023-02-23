@@ -6,21 +6,19 @@ Feature: Test creating a Short answer question
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email               |
-      | teacher1 | T1        | Teacher1 | teacher1@moodle.com |
+      | username |
+      | teacher  |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
     And the following "course enrolments" exist:
-      | user     | course | role           |
-      | teacher1 | C1     | editingteacher |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
+      | user    | course | role           |
+      | teacher | C1     | editingteacher |
 
   @javascript
   Scenario: Create a Short answer question
-    Given I add a "Short answer" question filling the form with:
+    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
+    And I add a "Short answer" question filling the form with:
       | Question name        | shortanswer-001                           |
       | Question text        | What is the national langauge in France?  |
       | General feedback     | The national langauge in France is French |
@@ -32,10 +30,10 @@ Feature: Test creating a Short answer question
       | id_answer_1          | *                                         |
       | id_fraction_1        | None                                      |
       | id_feedback_1        | Your answer is incorrect.                 |
-    And I should see "shortanswer-001"
+    Then I should see "shortanswer-001"
     # Checking that the next new question form displays user preferences settings.
-    When I press "Create a new question ..."
+    And I press "Create a new question ..."
     And I set the field "Short answer" to "1"
     And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
-    Then the following fields match these values:
+    And the following fields match these values:
       | Case sensitivity | Yes, case must match |

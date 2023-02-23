@@ -104,6 +104,7 @@ class filter implements Countable, Iterator, JsonSerializable {
     /**
      * Return the current filter value.
      */
+    #[\ReturnTypeWillChange]
     public function current() {
         if ($this->iteratorposition === null) {
             $this->rewind();
@@ -121,6 +122,7 @@ class filter implements Countable, Iterator, JsonSerializable {
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function key() {
         if ($this->iteratorposition === null) {
             $this->rewind();
@@ -258,6 +260,7 @@ class filter implements Countable, Iterator, JsonSerializable {
      *
      * @return mixed|object
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize() {
         return (object) [
             'name' => $this->get_name(),

@@ -287,6 +287,47 @@
       width: 49%;
       margin-left: 1%;
     }
+
+    .field-name-title label {
+      justify-content: space-between;
+
+      .a11y-title-toggle {
+        background: none;
+        border: none;
+        cursor: pointer;
+
+        &:before {
+          font-family: 'h5p-metadata-icons';
+          content: "\e905";
+          margin-right: 0.5em;
+          font-size: 1.5em;
+          vertical-align: middle;
+        }
+
+        &:focus,
+        &:active,
+        &:hover {
+          border: none;
+        }
+        &:hover .h5p-a11y-title-text {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .field-name-a11yTitle {
+      transition: max-height 0.2s, margin 0.2s;
+      overflow: hidden;
+
+      &.hide {
+        max-height: 0;
+        margin: 0;
+      }
+
+      &.hidden {
+        display: none;
+      }
+    }
   }
 
   .field.group {

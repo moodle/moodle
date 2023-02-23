@@ -153,7 +153,7 @@ a {
     padding: 10px 30px 10px 8px;
     font-family: $font-family;
     font-size: 16px;
-    border: 1px solid $form-border-color;;
+    border: 1px solid $form-border-color;
     background: $form-input-color inline-image('down.png') no-repeat;
     background-position: calc(100% - 10px);
     @include box-shadow($form-input-box-shadow);
@@ -358,13 +358,21 @@ a {
 
         &:before {
           font-family: 'H5P';
-          content: "\e904";
           position: absolute;
-          color: #dd0505;
           left: 0;
           top: 0.083em;
           font-size: 3.8em;
           line-height: 1;
+        }
+
+        &.video:before {
+          content: "\e904";
+          color: #dd0505;
+        }
+
+        &.audio:before {
+          content: "\e913";
+          color: #747275;
         }
 
         input {
@@ -386,7 +394,7 @@ a {
         border: 1px solid #bbb;
 
         .h5p-file-drop-upload-inner {
-          border: 2px dashed #bbb;;
+          border: 2px dashed #bbb;
           background-color: white;
           position: absolute;
           top: 3px;
@@ -396,10 +404,17 @@ a {
 
           &:after {
             font-family: "H5P";
-            content: "\e903";
             line-height: 1.4em;
             font-size: 3.5em;
             color: #bbb;
+          }
+
+          &.video:after {
+            content: "\e903";
+          }
+
+          &.audio:after {
+            content: "\e914";
           }
         }
 
@@ -1056,42 +1071,7 @@ a {
   overflow: hidden;
 }
 
-.h5p-tutorial-url,
-.h5p-example-url {
-  font-size: 1em;
-  color: #2270B9;
-  display: inline-block;
-  line-height: 1;
-  height: 2em;
-  margin-right: 10px;
-  padding-right: 10px;
-  padding-bottom: 2px;
-  margin-bottom: 8px;
-  border: 1px solid transparent;
-
-  &:focus {
-    border-color: #bbdae8;
-  }
-  &:active {
-    border-color: #1C70BA;
-  }
-}
-
-.h5p-tutorial-url:before,
-.h5p-example-url:before {
-  font-family: $icon-font-family;
-  font-size: 1.5em;
-  position: relative;
-  top: 0.15em;
-  left: 0.2em;
-  margin-right: 10px;
-}
-.h5p-tutorial-url:before {
-  content: "\e907";
-}
-.h5p-example-url:before {
-  content: "\e906";
-}
+@import "tutorial-and-example-links";
 
 .h5peditor-widget-select {
   overflow: hidden;

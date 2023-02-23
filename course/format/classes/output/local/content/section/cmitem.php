@@ -24,13 +24,13 @@
 
 namespace core_courseformat\output\local\content\section;
 
+use cm_info;
+use core\output\named_templatable;
 use core_courseformat\base as course_format;
-use core_course\output\section_format;
+use core_courseformat\output\local\courseformat_named_templatable;
+use renderable;
 use renderer_base;
 use section_info;
-use renderable;
-use templatable;
-use cm_info;
 use stdClass;
 
 /**
@@ -40,12 +40,14 @@ use stdClass;
  * @copyright 2020 Ferran Recio <ferran@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cmitem implements renderable, templatable {
+class cmitem implements named_templatable, renderable {
+
+    use courseformat_named_templatable;
 
     /** @var course_format the course format class */
     protected $format;
 
-    /** @var section_format the course section class */
+    /** @var section_info the course section class */
     protected $section;
 
     /** @var cm_info the course module to display */
@@ -99,6 +101,7 @@ class cmitem implements renderable, templatable {
         $item = new $this->cmclass($format, $this->section, $mod, $this->displayoptions);
         return (object)[
             'id' => $mod->id,
+            'anchor' => "module-{$mod->id}",
             'module' => $mod->modname,
             'extraclasses' => $mod->extraclasses,
             'cmformat' => $item->export_for_template($output),

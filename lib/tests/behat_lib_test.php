@@ -52,6 +52,7 @@ class behat_lib_test extends advanced_testcase {
      * Tests for behat_is_requested_url() function.
      *
      * @dataProvider url_provider
+     * @covers ::behat_is_requested_url
      *
      * @param string $url           URL used with behat_is_requested_url() function.
      * @param bool   $expectedvalue Expected value returned by behat_is_requested_url() function.

@@ -104,16 +104,16 @@ if (file_exists($actionpath) && is_readable($actionpath)) {
             }
         } else {
             // TODO: need more detailed error info
-            print_error('xmldberror');
+            throw new \moodle_exception('xmldberror');
         }
     } else {
         $a = new stdClass();
         $a->action = $action;
         $a->actionclass = $actionclass;
-        print_error('cannotinstantiateclass', 'tool_xmldb', '', $a);
+        throw new \moodle_exception('cannotinstantiateclass', 'tool_xmldb', '', $a);
     }
 } else {
-    print_error('invalidaction');
+    throw new \moodle_exception('invalidaction');
 }
 
 if ($xmldb_action->getDoesGenerate() != ACTION_GENERATE_XML) {

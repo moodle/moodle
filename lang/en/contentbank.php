@@ -24,7 +24,6 @@
 
 $string['author'] = 'Author';
 $string['contentbank'] = 'Content bank';
-$string['close'] = 'Close';
 $string['choosecontext'] = 'Choose course or category...';
 $string['contentbankpreferences'] = 'Content bank preferences';
 $string['contentdeleted'] = 'The content has been deleted.';
@@ -47,6 +46,7 @@ $string['eventcontentuploaded'] = 'Content uploaded';
 $string['eventcontentviewed'] = 'Content viewed';
 $string['errordeletingcontentfromcategory'] = 'Error deleting content from category {$a}.';
 $string['errornofile'] = 'A compatible file is needed to create content.';
+$string['exit'] = 'Exit';
 $string['deletecontent'] = 'Delete content';
 $string['deletecontentconfirm'] = 'Are you sure you want to delete the content <em>\'{$a->name}\'</em> and all associated files? This action cannot be undone.';
 $string['deletecontentconfirmlinked'] = 'The content will only be deleted from the content bank. Any places which currently link to it will be automatically updated to use a copy of the content instead.';
@@ -56,6 +56,7 @@ $string['file'] = 'Upload content';
 $string['file_help'] = 'Files may be stored in the content bank for use in courses. Only files used by content types enabled on the site may be uploaded.';
 $string['itemsfound'] = '{$a} items found';
 $string['lastmodified'] = 'Last modified';
+$string['more'] = 'More';
 $string['name'] = 'Content';
 $string['nocontentavailable'] = 'No content available';
 $string['nocontenttypes'] = 'No content types available';
@@ -91,3 +92,6 @@ $string['visibilitypref_help'] = 'Content you create in the content bank will us
 $string['visibilitysetpublic'] = 'Make public';
 $string['visibilitysetunlisted'] = 'Make unlisted';
 $string['visibilitytitleunlisted'] = '{$a} (Unlisted)';
+
+// Deprecated since 4.0.
+$string['close'] = 'Close';

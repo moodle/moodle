@@ -31,6 +31,11 @@
         <div>
             <h4>{{$title}}{{/title}}</h4>
         </div>
+        <div class="mt-3">
+            {{#recordingwarnings}}
+                {{>core/notification}}
+            {{/recordingwarnings}}
+        </div>
         <div>
             {{#search}}
                 {{>mod_bigbluebuttonbn/search_input_recordings}}
@@ -46,6 +51,11 @@
     {{/has_recordings}}
     {{^has_recordings}}
         <div id="bigbluebuttonbn_recordings_table">{{#str}}view_message_norecordings, mod_bigbluebuttonbn{{/str}}</div>
+        <div class="mt-3">
+            {{#recordingwarnings}}
+                {{>core/notification}}
+            {{/recordingwarnings}}
+        </div>
     {{/has_recordings}}
 </div>
 

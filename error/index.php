@@ -27,9 +27,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// @codingStandardsIgnoreStart
-require('../config.php');
-// @codingStandardsIgnoreEnd
+require('../config.php'); // phpcs:ignore
 
 $context = context_system::instance();
 $title = get_string('pagenotexisttitle', 'error');
@@ -86,17 +84,7 @@ if ($data = $mform->get_data()) {
 
 echo $OUTPUT->header();
 echo $OUTPUT->notification(get_string('pagenotexist', 'error', s($ME)), 'error');
-
-if (!empty($CFG->supportpage)) {
-    echo \html_writer::tag('h4', get_string('supportpage', 'admin'));
-    $link = \html_writer::link($CFG->supportpage, $CFG->supportpage);
-    echo \html_writer::tag('p', $link);
-}
-if (!empty($CFG->supportemail)) {
-    echo \html_writer::tag('h4', get_string('supportemail', 'admin'));
-    $link = \html_writer::link('mailto:' . $CFG->supportemail, $CFG->supportemail);
-    echo \html_writer::tag('p', $link);
-}
+echo $OUTPUT->supportemail(['class' => 'text-center d-block mb-3 font-weight-bold']);
 
 if ($canmessage) {
     echo \html_writer::tag('h4', get_string('sendmessage', 'error'));
@@ -106,4 +94,3 @@ if ($canmessage) {
 }
 
 echo $OUTPUT->footer();
-

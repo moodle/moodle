@@ -56,7 +56,9 @@ if ($id) {
 }
 
 if (!$instance) {
-    throw new moodle_exception('view_error_url_missing_parameters', plugin::COMPONENT);
+    $courseid = optional_param('courseid', 1, PARAM_INT);
+    \core\notification::error(get_string('general_error_not_found', 'mod_bigbluebuttonbn', $id));
+    redirect(new moodle_url('/course/view.php', ['id' => $courseid]));
 }
 
 $cm = $instance->get_cm();

@@ -328,6 +328,17 @@ class core_badges_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render an issued badge.
+     *
+     * @param \core_badges\output\badgeclass $badge
+     * @return string
+     */
+    protected function render_badgeclass(\core_badges\output\badgeclass $badge) {
+        $data = $badge->export_for_template($this);
+        return parent::render_from_template('core_badges/issued_badge', $data);
+    }
+
+    /**
      * Render an external badge.
      *
      * @param \core_badges\output\external_badge $ibadge
@@ -380,7 +391,7 @@ class core_badges_renderer extends plugin_renderer_base {
             $localhtml .= $backpackconnect . $countmessage . $searchform;
             $localhtml .= $htmlpagingbar . $htmllist . $htmlpagingbar . $downloadall;
         } else {
-            $localhtml .= $searchform . $this->output->notification(get_string('nobadges', 'badges'));
+            $localhtml .= $searchform . $this->output->notification(get_string('nobadges', 'badges'), 'info');
         }
         $localhtml .= html_writer::end_tag('div');
 
@@ -476,13 +487,6 @@ class core_badges_renderer extends plugin_renderer_base {
 
         // New badge button.
         $htmlnew = '';
-        if (has_capability('moodle/badges:createbadge', $this->page->context)) {
-            $n['type'] = $this->page->url->get_param('type');
-            $n['id'] = $this->page->url->get_param('id');
-            $btn = $this->output->single_button(new moodle_url('newbadge.php', $n), get_string('newbadge', 'badges'));
-            $htmlnew = $this->output->box($btn);
-        }
-
         $htmlpagingbar = $this->render($paging);
         $table = new html_table();
         $table->attributes['class'] = 'table table-bordered table-striped';
@@ -527,6 +531,8 @@ class core_badges_renderer extends plugin_renderer_base {
     /**
      * Prints tabs for badge editing.
      *
+     * @deprecated since Moodle 4.0
+     * @todo MDL-73426 Final deprecation.
      * @param integer $badgeid The badgeid to edit.
      * @param context $context The current context.
      * @param string $current The currently selected tab.
@@ -534,6 +540,8 @@ class core_badges_renderer extends plugin_renderer_base {
      */
     public function print_badge_tabs($badgeid, $context, $current = 'overview') {
         global $DB;
+        debugging("print_badge_tabs() is deprecated. " .
+            "This is replaced with the manage_badge_action_bar tertiary navigation.", DEBUG_DEVELOPER);
 
         $badge = new badge($badgeid);
         $row = array();
@@ -1065,13 +1073,14 @@ class core_badges_renderer extends plugin_renderer_base {
             );
             if (!$currentbadge->is_active() && !$currentbadge->is_locked()) {
                 $delete = $this->output->action_icon(
-                    new moodle_url('alignment_action.php',
-                        array(
-                            'id' => $currentbadge->id,
-                            'alignmentid' => $item->id,
-                            'action' => 'remove'
-                        )
-                    ), new pix_icon('t/delete', get_string('delete')));
+                    new moodle_url('/badges/alignment_action.php', [
+                        'id' => $currentbadge->id,
+                        'alignmentid' => $item->id,
+                        'sesskey' => sesskey(),
+                        'action' => 'remove'
+                    ]),
+                    new pix_icon('t/delete', get_string('delete'))
+                );
                 $edit = $this->output->action_icon(
                     new moodle_url('alignment.php',
                         array(
@@ -1130,5 +1139,15 @@ class core_badges_renderer extends plugin_renderer_base {
         }
 
         return $result;
+    }
+
+    /**
+     * Render the tertiary navigation for the page.
+     *
+     * @param \core_badges\output\base_action_bar $actionbar
+     * @return bool|string
+     */
+    public function render_tertiary_navigation(\core_badges\output\base_action_bar $actionbar) {
+        return $this->render_from_template($actionbar->get_template(), $actionbar->export_for_template($this));
     }
 }

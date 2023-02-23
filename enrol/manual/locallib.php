@@ -36,6 +36,7 @@ class enrol_manual_potential_participant extends user_selector_base {
 
     public function __construct($name, $options) {
         $this->enrolid  = $options['enrolid'];
+        $options['includecustomfields'] = true;
         parent::__construct($name, $options);
     }
 
@@ -46,19 +47,23 @@ class enrol_manual_potential_participant extends user_selector_base {
      */
     public function find_users($search) {
         global $DB;
+
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
+        $params = array_merge($params, $this->userfieldsparams);
+
         $params['enrolid'] = $this->enrolid;
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $fields      = 'SELECT u.id, ' . $this->userfieldsselects;
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM {user} u
             LEFT JOIN {user_enrolments} ue ON (ue.userid = u.id AND ue.enrolid = :enrolid)
+                      $this->userfieldsjoin
                 WHERE $wherecondition
                       AND ue.id IS NULL";
 
-        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
+        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext, $this->userfieldsmappings);
         $order = ' ORDER BY ' . $sort;
 
         if (!$this->is_validating()) {
@@ -101,6 +106,7 @@ class enrol_manual_current_participant extends user_selector_base {
 
     public function __construct($name, $options) {
         $this->enrolid  = $options['enrolid'];
+        $options['includecustomfields'] = true;
         parent::__construct($name, $options);
     }
 
@@ -111,18 +117,22 @@ class enrol_manual_current_participant extends user_selector_base {
      */
     public function find_users($search) {
         global $DB;
+
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
+        $params = array_merge($params, $this->userfieldsparams);
+
         $params['enrolid'] = $this->enrolid;
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $fields      = 'SELECT u.id, ' . $this->userfieldsselects;
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM {user} u
                  JOIN {user_enrolments} ue ON (ue.userid = u.id AND ue.enrolid = :enrolid)
+                      $this->userfieldsjoin
                 WHERE $wherecondition";
 
-        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
+        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext, $this->userfieldsmappings);
         $order = ' ORDER BY ' . $sort;
 
         if (!$this->is_validating()) {

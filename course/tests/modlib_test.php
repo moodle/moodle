@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Module lib related unit tests
- *
- * @package    core
- * @category   phpunit
- * @copyright  2016 Juan Leyva
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_course;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -29,7 +22,15 @@ global $CFG;
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/course/modlib.php');
 
-class core_course_modlib_testcase extends advanced_testcase {
+/**
+ * Module lib related unit tests
+ *
+ * @package    core_course
+ * @category   test
+ * @copyright  2016 Juan Leyva
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class modlib_test extends \advanced_testcase {
 
     /**
      * Test prepare_new_moduleinfo_data
@@ -40,7 +41,7 @@ class core_course_modlib_testcase extends advanced_testcase {
 
         $this->setAdminUser();
         $course = self::getDataGenerator()->create_course();
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         // Test with a complex module, like assign.
         $assignmodule = $DB->get_record('modules', array('name' => 'assign'), '*', MUST_EXIST);
         $sectionnumber = 1;
@@ -50,7 +51,7 @@ class core_course_modlib_testcase extends advanced_testcase {
         $this->assertEquals($coursecontext, $context);
         $this->assertNull($cm); // Not cm yet.
 
-        $expecteddata = new stdClass();
+        $expecteddata = new \stdClass();
         $expecteddata->section          = $sectionnumber;
         $expecteddata->visible          = 1;
         $expecteddata->course           = $course->id;
@@ -90,7 +91,7 @@ class core_course_modlib_testcase extends advanced_testcase {
         $assignmodule = $DB->get_record('modules', array('name' => 'assign'), '*', MUST_EXIST);
         $assign = self::getDataGenerator()->create_module('assign', array('course' => $course->id));
         $assigncm = get_coursemodule_from_id('assign', $assign->cmid);
-        $assigncontext = context_module::instance($assign->cmid);
+        $assigncontext = \context_module::instance($assign->cmid);
 
         list($cm, $context, $module, $data, $cw) = get_moduleinfo_data($assigncm, $course);
         $this->assertEquals($assigncm, $cm);
@@ -118,10 +119,11 @@ class core_course_modlib_testcase extends advanced_testcase {
         $expecteddata->completiongradeitemnumber = null;
         $expecteddata->showdescription    = $assigncm->showdescription;
         $expecteddata->downloadcontent    = $assigncm->downloadcontent;
-        $expecteddata->tags               = core_tag_tag::get_item_tags_array('core', 'course_modules', $assigncm->id);
+        $expecteddata->tags               = \core_tag_tag::get_item_tags_array('core', 'course_modules', $assigncm->id);
+        $expecteddata->lang               = null;
         $expecteddata->availabilityconditionsjson = null;
         $expecteddata->advancedgradingmethod_submissions = null;
-        if ($items = grade_item::fetch_all(array('itemtype' => 'mod', 'itemmodule' => 'assign',
+        if ($items = \grade_item::fetch_all(array('itemtype' => 'mod', 'itemmodule' => 'assign',
                                                     'iteminstance' => $assign->id, 'courseid' => $course->id))) {
             // set category if present
             $gradecat = false;
@@ -158,4 +160,76 @@ class core_course_modlib_testcase extends advanced_testcase {
         $this->expectException('required_capability_exception');
         get_moduleinfo_data($assigncm, $course);
     }
+
+    /**
+     * Test add_moduleinfo (only beforemod parameter for now).
+     *
+     * @covers \add_moduleinfo
+     */
+    public function test_add_moduleinfo() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+        $course = self::getDataGenerator()->create_course();
+        $labelmodule = $DB->get_record('modules', ['name' => 'label'], '*', MUST_EXIST);
+        $sectionnumber = 1;
+        $modules = [];
+        $moduleinfo = [];
+
+        for ($i = 0; $i < 4; $i++) {
+            $modules[$i] = self::getDataGenerator()->create_module('label', ['course' => $course->id, 'section' => $sectionnumber]);
+            $modulescm[$i] = get_coursemodule_from_id('label', $modules[$i]->cmid);
+        }
+
+        $modules[4] = self::getDataGenerator()->create_module('label', ['course' => $course->id, 'section' => $sectionnumber + 1]);
+        $modulescm[4] = get_coursemodule_from_id('label', $modules[4]->cmid);
+
+        // The beforemod attribute is not set, should be null afterwards.
+        list($module, $context, $cw, $cm, $data) = prepare_new_moduleinfo_data($course, $labelmodule->name, $sectionnumber);
+        $moduleinfo[0] = add_moduleinfo($data, $course);
+        $this->assertEquals(null, $moduleinfo[0]->beforemod);
+
+        // Insert before the first module.
+        list($module, $context, $cw, $cm, $data) = prepare_new_moduleinfo_data($course, $labelmodule->name, $sectionnumber);
+        $data->beforemod = $modulescm[0]->id;
+        $moduleinfo[1] = add_moduleinfo($data, $course);
+        $this->assertEquals($modulescm[0]->id, $moduleinfo[1]->beforemod);
+
+        // Insert between the two last modules.
+        list($module, $context, $cw, $cm, $data) = prepare_new_moduleinfo_data($course, $labelmodule->name, $sectionnumber);
+        $data->beforemod = $modulescm[3]->id;
+        $moduleinfo[2] = add_moduleinfo($data, $course);
+        $this->assertEquals($modulescm[3]->id, $moduleinfo[2]->beforemod);
+
+        // Insert before a not existing module.
+        course_delete_module($modulescm[2]->id);
+
+        list($module, $context, $cw, $cm, $data) = prepare_new_moduleinfo_data($course, $labelmodule->name, $sectionnumber);
+        $data->beforemod = $modulescm[2]->id;
+        $moduleinfo[3] = add_moduleinfo($data, $course);
+        $this->assertEquals($modulescm[2]->id, $moduleinfo[3]->beforemod);
+
+        // Insert before a module that is in another section.
+        list($module, $context, $cw, $cm, $data) = prepare_new_moduleinfo_data($course, $labelmodule->name, $sectionnumber);
+        $data->beforemod = $modulescm[4]->id;
+        $moduleinfo[4] = add_moduleinfo($data, $course);
+        $this->assertEquals($modulescm[4]->id, $moduleinfo[4]->beforemod);
+
+        $modinfo = get_fast_modinfo($course);
+
+        $expectedorder = [
+            $moduleinfo[1]->coursemodule,
+            $modulescm[0]->id,
+            $modulescm[1]->id,
+            $moduleinfo[2]->coursemodule,
+            $modulescm[3]->id,
+            $moduleinfo[0]->coursemodule,
+            $moduleinfo[3]->coursemodule,
+            $moduleinfo[4]->coursemodule,
+        ];
+
+        $this->assertEquals($expectedorder, $modinfo->get_sections()[$sectionnumber]);
+    }
+
 }

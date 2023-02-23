@@ -1,4 +1,16 @@
 .path-admin-tool-componentlibrary {
+    #page.drawers {
+        padding-left: 0;
+        padding-right: 0;
+        .main-inner {
+            margin: 0;
+            padding: 0;
+            border-radius: 0;
+        }
+        div[role="main"] {
+            padding: 0;
+        }
+    }
     #page-header,
     #maincontent,
     .secondarynavigation {

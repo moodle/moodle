@@ -107,8 +107,10 @@ class actionbar implements renderable, templatable {
 
         $url = new moodle_url('/mod/scorm/report.php', $PAGE->url->remove_params('attemptsmode'));
         $urlselect = new url_select($reportmenu, $url->out(false), null, 'selectscormreports');
+        $heading = $reportmenu[$url->out(false)] ?? null;
 
         $data = [
+            'heading' => $heading,
             'scormreports' => $urlselect->export_for_template($output),
             'candownload' => $this->download,
             'downloadods' => ($this->download) ? $downloadodslink->out(false) : '',

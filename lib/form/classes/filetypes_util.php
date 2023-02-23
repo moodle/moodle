@@ -62,13 +62,13 @@ class filetypes_util {
      */
     public function normalize_file_types($types) {
 
-        if ($types === '') {
+        if ($types === '' || $types === null) {
             return [];
         }
 
         // Turn string into a list.
         if (!is_array($types)) {
-            $types = preg_split('/[\s,;:"\']+/', $types, null, PREG_SPLIT_NO_EMPTY);
+            $types = preg_split('/[\s,;:"\']+/', $types, -1, PREG_SPLIT_NO_EMPTY);
         }
 
         // Fix whitespace and normalize the syntax a bit.

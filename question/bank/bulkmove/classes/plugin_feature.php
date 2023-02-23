@@ -28,7 +28,9 @@ use core_question\local\bank\plugin_features_base;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class plugin_feature extends plugin_features_base {
-    public function get_bulk_actions(): ?bulk_action_base {
-        return new bulk_move_action();
+    public function get_bulk_actions(): array {
+        return [
+            new bulk_move_action(),
+        ];
     }
 }

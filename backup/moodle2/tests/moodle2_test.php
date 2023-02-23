@@ -14,13 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for Moodle 2 format backup operation.
- *
- * @package core_backup
- * @copyright 2014 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use backup;
+use backup_controller;
+use restore_controller;
+use restore_dbops;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,7 +35,7 @@ require_once($CFG->libdir . '/completionlib.php');
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_backup_moodle2_testcase extends advanced_testcase {
+class moodle2_test extends \advanced_testcase {
 
     /**
      * Tests the availability field on modules and sections is correctly
@@ -64,7 +63,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         // We need a grade, easiest is to add an assignment.
         $assignrow = $generator->create_module('assign', array(
                 'course' => $course->id));
-        $assign = new assign(context_module::instance($assignrow->cmid), false, false);
+        $assign = new \assign(\context_module::instance($assignrow->cmid), false, false);
         $item = $assign->get_grade_item();
 
         // Make a test grouping as well.
@@ -88,7 +87,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         $modinfo = get_fast_modinfo($newcourseid);
         $forums = array_values($modinfo->get_instances_of('forum'));
         $assigns = array_values($modinfo->get_instances_of('assign'));
-        $newassign = new assign(context_module::instance($assigns[0]->id), false, false);
+        $newassign = new \assign(\context_module::instance($assigns[0]->id), false, false);
         $newitem = $newassign->get_grade_item();
         $newgroupingid = $DB->get_field('groupings', 'id', array('courseid' => $newcourseid));
 
@@ -181,7 +180,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         // Grade >= 75%.
         $grades = array_values(grade_get_grade_items_for_activity($quizzes[0], true));
         $gradeid = $grades[0]->id;
-        $coursegrade = grade_item::fetch_course_item($newcourseid);
+        $coursegrade = \grade_item::fetch_course_item($newcourseid);
         $this->assertEquals(
                 '{"op":"&","showc":[true],"c":[{"type":"grade","id":' . $gradeid . ',"min":75}]}',
                 $pages[4]->availability);
@@ -282,7 +281,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         // We need a grade, easiest is to add an assignment.
         $assignrow = $generator->create_module('assign', array(
                 'course' => $course->id));
-        $assign = new assign(context_module::instance($assignrow->cmid), false, false);
+        $assign = new \assign(\context_module::instance($assignrow->cmid), false, false);
         $item = $assign->get_grade_item();
 
         // Make a test group and grouping as well.
@@ -461,7 +460,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
     /**
      * Backs a course up and restores it.
      *
-     * @param stdClass $course Course object to backup
+     * @param \stdClass $course Course object to backup
      * @param int $newdate If non-zero, specifies custom date for new course
      * @param callable|null $inbetween If specified, function that is called before restore
      * @return int ID of newly restored course
@@ -507,7 +506,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
      * This is based on the code from course/modduplicate.php, but reduced for
      * simplicity.
      *
-     * @param stdClass $course Course object
+     * @param \stdClass $course Course object
      * @param int $cmid Activity to duplicate
      * @return int ID of new activity
      */
@@ -529,7 +528,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
 
         // Find cmid.
         $tasks = $rc->get_plan()->get_tasks();
-        $cmcontext = context_module::instance($cmid);
+        $cmcontext = \context_module::instance($cmid);
         $newcmid = 0;
         foreach ($tasks as $task) {
             if (is_subclass_of($task, 'restore_activity_task')) {
@@ -541,7 +540,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         }
         $rc->destroy();
         if (!$newcmid) {
-            throw new coding_exception('Unexpected: failure to find restored cmid');
+            throw new \coding_exception('Unexpected: failure to find restored cmid');
         }
         return $newcmid;
     }
@@ -578,7 +577,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         $selfplugin->enrol_user($selfinstance, $user->id, $studentrole->id);
 
         // Give current user capabilities to do backup and restore and assign student role.
-        $categorycontext = context_course::instance($course->id)->get_parent_context();
+        $categorycontext = \context_course::instance($course->id)->get_parent_context();
 
         $caps = array_merge([
             'moodle/course:view',
@@ -819,8 +818,8 @@ class core_backup_moodle2_testcase extends advanced_testcase {
 
         // Create course and add HTML block.
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
-        $page = new moodle_page();
+        $context = \context_course::instance($course->id);
+        $page = new \moodle_page();
         $page->set_context($context);
         $page->set_course($course);
         $page->set_pagelayout('standard');
@@ -840,7 +839,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         $newcourseid = $this->backup_and_restore($course);
 
         // Confirm that values were transferred correctly into HTML block on new course.
-        $newcontext = context_course::instance($newcourseid);
+        $newcontext = \context_course::instance($newcourseid);
         $blockdata = $DB->get_record('block_instances',
                 ['blockname' => 'html', 'parentcontextid' => $newcontext->id]);
         $this->assertEquals(12345, $blockdata->timecreated);
@@ -860,7 +859,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         $after = time();
 
         // The fields not specified should default to current time.
-        $newcontext = context_course::instance($newcourseid);
+        $newcontext = \context_course::instance($newcourseid);
         $blockdata = $DB->get_record('block_instances',
                 ['blockname' => 'html', 'parentcontextid' => $newcontext->id]);
         $this->assertTrue($before <= $blockdata->timecreated && $after >= $blockdata->timecreated);
@@ -886,8 +885,8 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         $forum = $generator->create_module('forum', ['course' => $course->id]);
 
         // Add a block.
-        $context = context_course::instance($course->id);
-        $page = new moodle_page();
+        $context = \context_course::instance($course->id);
+        $page = new \moodle_page();
         $page->set_context($context);
         $page->set_course($course);
         $page->set_pagelayout('standard');
@@ -902,7 +901,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         $newcourseid = $this->backup_and_restore($course);
 
         // Now the course should be requested for index (all search areas).
-        $newcontext = context_course::instance($newcourseid);
+        $newcontext = \context_course::instance($newcourseid);
         $requests = array_values($DB->get_records('search_index_requests'));
         $this->assertCount(1, $requests);
         $this->assertEquals($newcontext->id, $requests[0]->contextid);
@@ -1077,7 +1076,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
 
         // Create course and add content bank content.
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $filepath = $CFG->dirroot . '/h5p/tests/fixtures/filltheblanks.h5p';
         $contents = $cbgenerator->generate_contentbank_data('contenttype_h5p', 2, $USER->id, $context, true, $filepath);
         $this->assertEquals(2, $DB->count_records('contentbank_content'));
@@ -1086,7 +1085,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         $newcourseid = $this->backup_and_restore($course);
 
         // Confirm that values were transferred correctly into content bank on new course.
-        $newcontext = context_course::instance($newcourseid);
+        $newcontext = \context_course::instance($newcourseid);
 
         $this->assertEquals(4, $DB->count_records('contentbank_content'));
         $this->assertEquals(2, $DB->count_records('contentbank_content', ['contextid' => $newcontext->id]));

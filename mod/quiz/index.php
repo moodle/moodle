@@ -27,17 +27,17 @@ require_once("../../config.php");
 require_once("locallib.php");
 
 $id = required_param('id', PARAM_INT);
-$PAGE->set_url('/mod/quiz/index.php', array('id'=>$id));
-if (!$course = $DB->get_record('course', array('id' => $id))) {
-    print_error('invalidcourseid');
+$PAGE->set_url('/mod/quiz/index.php', ['id' => $id]);
+if (!$course = $DB->get_record('course', ['id' => $id])) {
+    throw new \moodle_exception('invalidcourseid');
 }
 $coursecontext = context_course::instance($id);
 require_login($course);
 $PAGE->set_pagelayout('incourse');
 
-$params = array(
+$params = [
     'context' => $coursecontext
-);
+];
 $event = \mod_quiz\event\course_module_instance_list_viewed::create($params);
 $event->trigger();
 
@@ -47,10 +47,7 @@ $PAGE->navbar->add($strquizzes);
 $PAGE->set_title($strquizzes);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
-
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading($strquizzes, 2);
-}
+echo $OUTPUT->heading($strquizzes, 2);
 
 // Get all the appropriate data.
 if (!$quizzes = get_all_instances_in_course("quiz", $course)) {
@@ -70,8 +67,8 @@ foreach ($quizzes as $quiz) {
 }
 
 // Configure table for displaying the list of instances.
-$headings = array(get_string('name'));
-$align = array('left');
+$headings = [get_string('name')];
+$align = ['left'];
 
 array_push($headings, get_string('quizcloses', 'quiz'));
 array_push($align, 'left');
@@ -90,7 +87,7 @@ if (has_capability('mod/quiz:viewreports', $coursecontext)) {
     array_push($align, 'left');
     $showing = 'stats';
 
-} else if (has_any_capability(array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),
+} else if (has_any_capability(['mod/quiz:reviewmyattempts', 'mod/quiz:attempt'],
         $coursecontext)) {
     array_push($headings, get_string('grade', 'quiz'));
     array_push($align, 'left');
@@ -105,7 +102,7 @@ if (has_capability('mod/quiz:viewreports', $coursecontext)) {
             FROM {quiz_grades} qg
             JOIN {quiz} q ON q.id = qg.quiz
             WHERE q.course = ? AND qg.userid = ?',
-            array($course->id, $USER->id));
+            [$course->id, $USER->id]);
 }
 
 $table = new html_table();
@@ -119,7 +116,7 @@ $timeclosedates = quiz_get_user_timeclose($course->id);
 foreach ($quizzes as $quiz) {
     $cm = get_coursemodule_from_instance('quiz', $quiz->id);
     $context = context_module::instance($cm->id);
-    $data = array();
+    $data = [];
 
     // Section number if necessary.
     $strsection = '';

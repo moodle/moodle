@@ -69,10 +69,10 @@ class bankcontent implements renderable, templatable {
      *
      * @param \core_contentbank\content[] $contents   Array of content bank contents.
      * @param array $toolbar List of content bank toolbar options.
-     * @param \context $context Optional context to check (default null)
+     * @param \context|null $context Optional context to check (default null)
      * @param contentbank $cb Contenbank object.
      */
-    public function __construct(array $contents, array $toolbar, \context $context = null, contentbank $cb) {
+    public function __construct(array $contents, array $toolbar, ?\context $context, contentbank $cb) {
         $this->contents = $contents;
         $this->toolbar = $toolbar;
         $this->context = $context;

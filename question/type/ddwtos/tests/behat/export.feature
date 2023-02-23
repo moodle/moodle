@@ -6,28 +6,24 @@ Feature: Test exporting drag and drop into text questions
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email                |
-      | teacher1 | T1        | Teacher1 | teacher1@example.com |
+      | username |
+      | teacher  |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
     And the following "course enrolments" exist:
-      | user     | course | role           |
-      | teacher1 | C1     | editingteacher |
+      | user    | course | role           |
+      | teacher | C1     | editingteacher |
     And the following "question categories" exist:
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype  | name         | template |
       | Test questions   | ddwtos | Drag to text | fox      |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
 
   @javascript
   Scenario: Export a drag and drop into text question
-    # Import sample file.
-    When I navigate to "Question bank" in current page administration
-    And I select "Export" from the "questionbankactionselect" singleselect
+    When I am on the "Course 1" "core_question > course question export" page logged in as teacher
     And I set the field "id_format_xml" to "1"
     And I press "Export questions to file"
     And following "click here" should download between "1550" and "1700" bytes

@@ -27,14 +27,13 @@
         "visible": 1,
         "isactive": 1,
         "uniqid": "0",
-        "isactive": 1,
         "accessvisible": 1,
-        "hascmrectrictions": 0
+        "hascmrestrictions": 0
     }
 }}
 <li class="courseindex-item
         {{#isactive}}active{{/isactive}}
-        {{#hascmrectrictions}}rectrictions{{/hascmrectrictions}}
+        {{#hascmrestrictions}}restrictions{{/hascmrestrictions}}
         {{^accessvisible}}dimmed{{/accessvisible}}
         {{#url}} d-flex {{/url}} {{^url}} d-flex-noedit {{/url}}"
     id="{{uniqid}}-course-index-cm-{{id}}"
@@ -50,9 +49,9 @@
             </a>
         {{/uservisible}}
         {{^uservisible}}
-            <span class="courseindex-name text-truncate" data-for="cm_name">
+            <a class="courseindex-link text-truncate" href="#{{{anchor}}}" data-for="cm_name" tabindex="-1" data-anchor="true">
                 {{{name}}}
-            </span>
+            </a>
         {{/uservisible}}
     {{/url}}
     {{^url}}

@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for grade/report/lib.php.
- *
- * @package  core_grades
- * @category phpunit
- * @copyright   Andrew Nicols <andrew@nicols.co.uk>
- * @license  http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
+namespace core_grades;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,8 +24,13 @@ require_once($CFG->dirroot.'/grade/export/lib.php');
 
 /**
  * A test class used to test grade_report, the abstract grade report parent class
+ *
+ * @package  core_grades
+ * @category test
+ * @copyright   Andrew Nicols <andrew@nicols.co.uk>
+ * @license  http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class core_grade_export_test extends advanced_testcase {
+class export_test extends \advanced_testcase {
 
     /**
      * Ensure that feedback is correct formatted. Test the default implementation of format_feedback
@@ -67,7 +65,7 @@ class core_grade_export_test extends advanced_testcase {
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
         $u1 = $dg->create_user();
-        $gi1a = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi1a = new \grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
         $gi1a->update_final_grade($u1->id, 1, 'test');
         $contextid = $gi1a->get_context()->id;
         $gradeid = $gi1a->id;

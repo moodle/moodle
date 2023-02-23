@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * PHPUnit label generator tests
- *
- * @package    mod_label
- * @category   phpunit
- * @copyright  2013 Jerome Mouneyrac
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
+namespace mod_label;
 
 /**
  * PHPUnit label generator testcase
@@ -34,7 +24,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_label_generator_testcase extends advanced_testcase {
+class generator_test extends \advanced_testcase {
     public function test_generator() {
         global $DB;
 
@@ -59,7 +49,7 @@ class mod_label_generator_testcase extends advanced_testcase {
         $this->assertEquals('label', $cm->modname);
         $this->assertEquals($course->id, $cm->course);
 
-        $context = context_module::instance($cm->id);
+        $context = \context_module::instance($cm->id);
         $this->assertEquals($label->cmid, $context->instanceid);
     }
 }

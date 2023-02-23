@@ -38,17 +38,85 @@ require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
  */
 class qtype_multianswer extends question_type {
 
+    /**
+     * Generate a subquestion replacement question class.
+     *
+     * Due to a bug, subquestions can be lost (see MDL-54724). This class exists to take
+     * the place of those lost questions so that the system can keep working and inform
+     * the user of the corrupted data.
+     *
+     * @return question_automatically_gradable The replacement question class.
+     */
+    public static function deleted_subquestion_replacement(): question_automatically_gradable {
+        return new class implements question_automatically_gradable {
+            public $qtype;
+
+            public function __construct() {
+                $this->qtype = new class() {
+                    public function name() {
+                        return 'subquestion_replacement';
+                    }
+                };
+            }
+
+            public function is_gradable_response(array $response) {
+                return false;
+            }
+
+            public function is_complete_response(array $response) {
+                return false;
+            }
+
+            public function is_same_response(array $prevresponse, array $newresponse) {
+                return false;
+            }
+
+            public function summarise_response(array $response) {
+                return '';
+            }
+
+            public function un_summarise_response(string $summary) {
+                return [];
+            }
+
+            public function classify_response(array $response) {
+                return [];
+            }
+
+            public function get_validation_error(array $response) {
+                return '';
+            }
+
+            public function grade_response(array $response) {
+                return [];
+            }
+
+            public function get_hint($hintnumber, question_attempt $qa) {
+                return;
+            }
+
+            public function get_right_answer_summary() {
+                return null;
+            }
+        };
+    }
+
     public function can_analyse_responses() {
         return false;
     }
 
     public function get_question_options($question) {
-        global $DB, $OUTPUT;
+        global $DB;
 
         parent::get_question_options($question);
         // Get relevant data indexed by positionkey from the multianswers table.
         $sequence = $DB->get_field('question_multianswer', 'sequence',
                 array('question' => $question->id), MUST_EXIST);
+
+        if (empty($sequence)) {
+            $question->options->questions = [];
+            return true;
+        }
 
         $wrappedquestions = $DB->get_records_list('question', 'id',
                 explode(',', $sequence), 'id ASC');
@@ -59,13 +127,19 @@ class qtype_multianswer extends question_type {
             $val++;
         });
 
-        // If a question is lost, the corresponding index is null
-        // so this null convention is used to test $question->options->questions
-        // before using the values.
-        // First all possible questions from sequence are nulled
-        // then filled with the data if available in  $wrappedquestions.
+        // Due to a bug, questions can be lost (see MDL-54724). So we first fill the question
+        // options with this dummy "replacement" type. These are overridden in the loop below
+        // leaving behind only those questions which no longer exist. The renderer then looks
+        // for this deleted type to display information to the user about the corrupted question
+        // data.
         foreach ($sequence as $seq) {
-            $question->options->questions[$seq] = '';
+            $question->options->questions[$seq] = (object)[
+                'qtype' => 'subquestion_replacement',
+                'defaultmark' => 1,
+                'options' => (object)[
+                    'answers' => []
+                ]
+            ];
         }
 
         foreach ($wrappedquestions as $wrapped) {
@@ -73,6 +147,7 @@ class qtype_multianswer extends question_type {
             // For wrapped questions the maxgrade is always equal to the defaultmark,
             // there is no entry in the question_instances table for them.
             $wrapped->maxmark = $wrapped->defaultmark;
+            $wrapped->category = $question->categoryobject->id;
             $question->options->questions[$sequence[$wrapped->id]] = $wrapped;
         }
         $question->hints = $DB->get_records('question_hints',
@@ -94,15 +169,17 @@ class qtype_multianswer extends question_type {
 
         // First we get all the existing wrapped questions.
         $oldwrappedquestions = [];
-        if ($oldwrappedids = $DB->get_field('question_multianswer', 'sequence',
-                array('question' => $question->id))) {
-            $oldwrappedidsarray = explode(',', $oldwrappedids);
-            $unorderedquestions = $DB->get_records_list('question', 'id', $oldwrappedidsarray);
+        if (isset($question->oldparent)) {
+            if ($oldwrappedids = $DB->get_field('question_multianswer', 'sequence',
+                ['question' => $question->oldparent])) {
+                $oldwrappedidsarray = explode(',', $oldwrappedids);
+                $unorderedquestions = $DB->get_records_list('question', 'id', $oldwrappedidsarray);
 
-            // Keep the order as given in the sequence field.
-            foreach ($oldwrappedidsarray as $questionid) {
-                if (isset($unorderedquestions[$questionid])) {
-                    $oldwrappedquestions[] = $unorderedquestions[$questionid];
+                // Keep the order as given in the sequence field.
+                foreach ($oldwrappedidsarray as $questionid) {
+                    if (isset($unorderedquestions[$questionid])) {
+                        $oldwrappedquestions[] = $unorderedquestions[$questionid];
+                    }
                 }
             }
         }
@@ -111,10 +188,10 @@ class qtype_multianswer extends question_type {
         foreach ($question->options->questions as $wrapped) {
             if (!empty($wrapped)) {
                 // If we still have some old wrapped question ids, reuse the next of them.
-
+                $wrapped->id = 0;
                 if (is_array($oldwrappedquestions) &&
                         $oldwrappedquestion = array_shift($oldwrappedquestions)) {
-                    $wrapped->id = $oldwrappedquestion->id;
+                    $wrapped->oldid = $oldwrappedquestion->id;
                     if ($oldwrappedquestion->qtype != $wrapped->qtype) {
                         switch ($oldwrappedquestion->qtype) {
                             case 'multichoice':
@@ -132,11 +209,8 @@ class qtype_multianswer extends question_type {
                             default:
                                 throw new moodle_exception('qtypenotrecognized',
                                         'qtype_multianswer', '', $oldwrappedquestion->qtype);
-                                $wrapped->id = 0;
                         }
                     }
-                } else {
-                    $wrapped->id = 0;
                 }
             }
             $wrapped->name = $question->name;
@@ -183,7 +257,7 @@ class qtype_multianswer extends question_type {
             $question->id = $authorizedquestion->id;
         }
 
-        $question->category = $authorizedquestion->category;
+        $question->category = $form->category;
         $form->defaultmark = $question->defaultmark;
         $form->questiontext = $question->questiontext;
         $form->questiontextformat = 0;
@@ -207,7 +281,7 @@ class qtype_multianswer extends question_type {
         parent::initialise_question_instance($question, $questiondata);
 
         $bits = preg_split('/\{#(\d+)\}/', $question->questiontext,
-                null, PREG_SPLIT_DELIM_CAPTURE);
+                -1, PREG_SPLIT_DELIM_CAPTURE);
         $question->textfragments[0] = array_shift($bits);
         $i = 1;
         while (!empty($bits)) {
@@ -216,6 +290,10 @@ class qtype_multianswer extends question_type {
             $i += 1;
         }
         foreach ($questiondata->options->questions as $key => $subqdata) {
+            if ($subqdata->qtype == 'subquestion_replacement') {
+                continue;
+            }
+
             $subqdata->contextid = $questiondata->contextid;
             if ($subqdata->qtype == 'multichoice') {
                 $answerregs = array();
@@ -423,7 +501,7 @@ function qtype_multianswer_extract_question($text) {
             $wrapped->shuffleanswers = 1;
             $wrapped->layout = qtype_multichoice_base::LAYOUT_HORIZONTAL;
         } else {
-            print_error('unknownquestiontype', 'question', '', $answerregs[2]);
+            throw new \moodle_exception('unknownquestiontype', 'question', '', $answerregs[2]);
             return false;
         }
 

@@ -42,7 +42,7 @@ define([
     FormChangeChecker
 ) {
 
-    var registerEventListeners = function(root) {
+    var registerEventListeners = function(root, throttlingwarningmsg) {
         root.on('click', Selectors.post.inpageReplyLink, function(e) {
             e.preventDefault();
             // After adding a reply a url hash is being generated that scrolls (points) to the newly added reply.
@@ -65,7 +65,8 @@ define([
                 sesskey: M.cfg.sesskey,
                 parentsubject: currentSubject.data('replySubject'),
                 canreplyprivately: $(e.currentTarget).data('can-reply-privately'),
-                postformat: InPageReply.CONTENT_FORMATS.MOODLE
+                postformat: InPageReply.CONTENT_FORMATS.MOODLE,
+                throttlingwarningmsg: throttlingwarningmsg
             };
 
             if (!currentRoot.find(Selectors.post.inpageReplyContent).length) {
@@ -93,8 +94,8 @@ define([
     };
 
     return {
-        init: function(root) {
-            registerEventListeners(root);
+        init: function(root, throttlingwarningmsg) {
+            registerEventListeners(root, throttlingwarningmsg);
             InPageReply.init(root);
         }
     };

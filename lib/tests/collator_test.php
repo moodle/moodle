@@ -15,13 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Collator unit tests.
+ * Unit tests for our utf-8 aware collator which is used for sorting.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2011 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace core;
+
+use core_collator;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -29,11 +33,11 @@ defined('MOODLE_INTERNAL') || die();
  * Unit tests for our utf-8 aware collator which is used for sorting.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2011 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_collator_testcase extends advanced_testcase {
+class collator_test extends \advanced_testcase {
 
     /**
      * @var string The initial lang, stored because we change it during testing
@@ -268,7 +272,7 @@ class core_collator_testcase extends advanced_testcase {
         $this->assertSame(array('cc', 'aa', 'ab'), array_values($arr));
         $this->assertTrue($result);
 
-        $obj = new stdClass();
+        $obj = new \stdClass();
         $arr = array('1.1.1'=>array(), '1.2'=>$obj, '1.20.2'=>null);
         $result = core_collator::ksort($arr, core_collator::SORT_NATURAL);
         $this->assertSame(array('1.1.1', '1.2', '1.20.2'), array_keys($arr));
@@ -294,7 +298,7 @@ class core_collator_testcase extends advanced_testcase {
  * @copyright  2011 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class string_test_class extends stdClass {
+class string_test_class extends \stdClass {
     /**
      * @var string A public property
      */

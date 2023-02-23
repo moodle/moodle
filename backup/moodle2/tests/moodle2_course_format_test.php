@@ -14,13 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for Moodle 2 format backup operation.
- *
- * @package core_backup
- * @copyright 2014 Russell Smith
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use backup;
+use backup_controller;
+use restore_dbops;
+use restore_controller;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -29,6 +28,7 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 require_once($CFG->dirroot . '/course/format/topics/lib.php');
 require_once($CFG->libdir . '/completionlib.php');
+require_once($CFG->dirroot . '/backup/moodle2/tests/fixtures/format_test_cs_options.php');
 
 /**
  * Tests for Moodle 2 course format section_options backup operation.
@@ -37,7 +37,7 @@ require_once($CFG->libdir . '/completionlib.php');
  * @copyright 2014 Russell Smith
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_backup_moodle2_course_format_testcase extends advanced_testcase {
+class moodle2_course_format_test extends \advanced_testcase {
 
     /**
      * Tests a backup and restore adds the required section option data
@@ -58,7 +58,7 @@ class core_backup_moodle2_course_format_testcase extends advanced_testcase {
                 'enablecompletion' => COMPLETION_ENABLED),
             array('createsections' => true));
 
-        $courseobject = core_courseformat\base::instance($course->id);
+        $courseobject = \core_courseformat\base::instance($course->id);
         $section = $DB->get_record('course_sections',
             array('course' => $course->id, 'section' => 1), '*', MUST_EXIST);
         $data = array('id' => $section->id,
@@ -91,7 +91,7 @@ class core_backup_moodle2_course_format_testcase extends advanced_testcase {
                     'enablecompletion' => COMPLETION_ENABLED),
                 array('createsections' => true));
 
-        $courseobject = core_courseformat\base::instance($course->id);
+        $courseobject = \core_courseformat\base::instance($course->id);
         $section = $DB->get_record('course_sections',
             array('course' => $course->id, 'section' => 1), '*', MUST_EXIST);
         $data = array('id' => $section->id,
@@ -134,7 +134,7 @@ class core_backup_moodle2_course_format_testcase extends advanced_testcase {
             array('createsections' => true));
 
         // Set section 2 to have both options, and a name.
-        $courseobject = core_courseformat\base::instance($course->id);
+        $courseobject = \core_courseformat\base::instance($course->id);
         $section = $DB->get_record('course_sections',
             array('course' => $course->id, 'section' => 2), '*', MUST_EXIST);
         $data = array('id' => $section->id,
@@ -151,7 +151,7 @@ class core_backup_moodle2_course_format_testcase extends advanced_testcase {
         // Check that the section contains the options suitable for the new
         // format and that even the one with the same name as from the old format
         // has NOT been set.
-        $newcourseobject = core_courseformat\base::instance($newcourse->id);
+        $newcourseobject = \core_courseformat\base::instance($newcourse->id);
         $sectionoptions = $newcourseobject->get_format_options(2);
         $this->assertArrayHasKey('numdaystocomplete', $sectionoptions);
         $this->assertArrayNotHasKey('secondparameter', $sectionoptions);
@@ -167,8 +167,8 @@ class core_backup_moodle2_course_format_testcase extends advanced_testcase {
     /**
      * Backs a course up and restores it.
      *
-     * @param stdClass $srccourse Course object to backup
-     * @param stdClass $dstcourse Course object to restore into
+     * @param \stdClass $srccourse Course object to backup
+     * @param \stdClass $dstcourse Course object to restore into
      * @param int $target Target course mode (backup::TARGET_xx)
      * @return int ID of newly restored course
      */
@@ -204,62 +204,5 @@ class core_backup_moodle2_course_format_testcase extends advanced_testcase {
         $rc->destroy();
 
         return $newcourseid;
-    }
-}
-
-/**
- * Class format_test_cs_options
- *
- * Test course format that has 1 option.
- */
-class format_test_cs_options extends format_topics {
-    /**
-     * Override method format_topics::get_default_section_name to prevent PHPUnit errors related to the nonexistent
-     * format_test_cs_options lang file.
-     *
-     * @param stdClass $section The section in question.
-     * @return string The section's name for display.
-     */
-    public function get_default_section_name($section) {
-        if ($section->section == 0) {
-            return parent::get_default_section_name($section);
-        } else {
-            return get_string('sectionname', 'format_topics') . ' ' . $section->section;
-        }
-    }
-
-    public function section_format_options($foreditform = false) {
-        return array(
-            'numdaystocomplete' => array(
-                 'type' => PARAM_INT,
-                 'label' => 'Test days',
-                 'element_type' => 'text',
-                 'default' => 0,
-             ),
-         );
-    }
-}
-
-/**
- * Class format_test_cs2_options
- *
- * Test course format that has 2 options, 1 inherited.
- */
-class format_test_cs2_options extends format_test_cs_options {
-    public function section_format_options($foreditform = false) {
-        return array(
-            'numdaystocomplete' => array(
-                 'type' => PARAM_INT,
-                 'label' => 'Test days',
-                 'element_type' => 'text',
-                 'default' => 0,
-             ),
-            'secondparameter' => array(
-                'type' => PARAM_INT,
-                'label' => 'Test Parmater',
-                'element_type' => 'text',
-                'default' => 0,
-            ),
-        ) + parent::section_format_options($foreditform);
     }
 }

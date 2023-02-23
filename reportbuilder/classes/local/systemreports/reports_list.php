@@ -18,9 +18,6 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\systemreports;
 
-use context_system;
-use core_reportbuilder\local\helpers\audience;
-use core_reportbuilder\local\helpers\database;
 use html_writer;
 use lang_string;
 use moodle_url;
@@ -33,6 +30,7 @@ use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\text;
 use core_reportbuilder\local\filters\select;
+use core_reportbuilder\local\helpers\audience;
 use core_reportbuilder\local\helpers\format;
 use core_reportbuilder\local\report\action;
 use core_reportbuilder\local\report\column;
@@ -64,15 +62,14 @@ class reports_list extends system_report {
      */
     protected function initialise(): void {
         $this->set_main_table('reportbuilder_report', 'rb');
-
         $this->add_base_condition_simple('rb.type', self::TYPE_CUSTOM_REPORT);
-        $this->add_base_fields('rb.id, rb.name, rb.source, rb.type, rb.usercreated'); // Necessary for actions/row class.
 
-        // If user can't view all reports, limit the returned list to those reports they can see.
-        [$where, $params] = $this->filter_by_allowed_reports_sql();
-        if (!empty($where)) {
-            $this->add_base_condition_sql($where, $params);
-        }
+        // Select fields required for actions, permission checks, and row class callbacks.
+        $this->add_base_fields('rb.id, rb.name, rb.source, rb.type, rb.usercreated, rb.contextid');
+
+        // Limit the returned list to those reports the current user can access.
+        [$where, $params] = audience::user_reports_list_access_sql('rb');
+        $this->add_base_condition_sql($where, $params);
 
         // Join user entity for "User modified" column.
         $entityuser = new user();
@@ -109,7 +106,7 @@ class reports_list extends system_report {
      * @return string
      */
     public function get_row_class(stdClass $row): string {
-        return $this->report_source_valid($row->source) ? '' : 'dimmed_text';
+        return $this->report_source_valid($row->source) ? '' : 'text-muted';
     }
 
     /**
@@ -125,14 +122,19 @@ class reports_list extends system_report {
             $this->get_report_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$tablealias}.name, {$tablealias}.id")
-            ->set_is_sortable(true)
-            ->add_callback(function(string $value, stdClass $row) {
+            // We need enough fields to re-create the persistent and pass to the editable component.
+            ->add_fields(implode(', ', [
+                "{$tablealias}.id",
+                "{$tablealias}.name",
+                "{$tablealias}.contextid",
+                "{$tablealias}.type",
+                "{$tablealias}.usercreated",
+            ]))
+            ->set_is_sortable(true, ["{$tablealias}.name"])
+            ->add_callback(static function(string $value, stdClass $report): string {
                 global $PAGE;
 
-                $reportid = (int) $row->id;
-
-                $editable = new report_name_editable($reportid);
+                $editable = new report_name_editable(0, new report(0, $report));
                 return $editable->render($PAGE->get_renderer('core'));
             })
         );
@@ -238,45 +240,59 @@ class reports_list extends system_report {
         // Edit content action.
         $this->add_action((new action(
             new moodle_url('/reportbuilder/edit.php', ['id' => ':id']),
-            new pix_icon('t/right', get_string('editreportcontent', 'core_reportbuilder'))
+            new pix_icon('t/right', ''),
+            [],
+            false,
+            new lang_string('editreportcontent', 'core_reportbuilder')
         ))
             ->add_callback(function(stdClass $row): bool {
-                return $this->report_source_valid($row->source) && permission::can_edit_report($this->get_report_from_row($row));
+                return $this->report_source_valid($row->source) && permission::can_edit_report(new report(0, $row));
             })
         );
 
         // Edit details action.
         $this->add_action((new action(
             new moodle_url('#'),
-            new pix_icon('t/edit', get_string('editreportdetails', 'core_reportbuilder')),
-            ['data-action' => 'report-edit', 'data-report-id' => ':id']
+            new pix_icon('t/edit', ''),
+            ['data-action' => 'report-edit', 'data-report-id' => ':id'],
+            false,
+            new lang_string('editreportdetails', 'core_reportbuilder')
         ))
             ->add_callback(function(stdClass $row): bool {
-                return $this->report_source_valid($row->source) && permission::can_edit_report($this->get_report_from_row($row));
+                return $this->report_source_valid($row->source) && permission::can_edit_report(new report(0, $row));
             })
         );
 
         // Preview action.
         $this->add_action((new action(
             new moodle_url('/reportbuilder/view.php', ['id' => ':id']),
-            new pix_icon('i/search', get_string('viewreport', 'core_reportbuilder')),
-            []
+            new pix_icon('i/search', ''),
+            [],
+            false,
+            new lang_string('viewreport', 'core_reportbuilder')
         ))
             ->add_callback(function(stdClass $row): bool {
                 // We check this only to give the action to editors, because normal users can just click on the report name.
-                return $this->report_source_valid($row->source) && permission::can_edit_report($this->get_report_from_row($row));
+                return $this->report_source_valid($row->source) && permission::can_edit_report(new report(0, $row));
             })
         );
 
         // Delete action.
         $this->add_action((new action(
             new moodle_url('#'),
-            new pix_icon('t/delete', get_string('deletereport', 'core_reportbuilder')),
-            ['data-action' => 'report-delete', 'data-report-id' => ':id', 'data-report-name' => ':name']
+            new pix_icon('t/delete', ''),
+            ['data-action' => 'report-delete', 'data-report-id' => ':id', 'data-report-name' => ':name'],
+            false,
+            new lang_string('deletereport', 'core_reportbuilder')
         ))
             ->add_callback(function(stdClass $row): bool {
+
+                // Ensure data name attribute is properly formatted.
+                $report = new report(0, $row);
+                $row->name = $report->get_formatted_name();
+
                 // We don't check whether report is valid to ensure editor can always delete them.
-                return permission::can_edit_report($this->get_report_from_row($row));
+                return permission::can_edit_report($report);
             })
         );
     }
@@ -289,71 +305,5 @@ class reports_list extends system_report {
      */
     private function report_source_valid(string $source): bool {
         return manager::report_source_exists($source, datasource::class) && manager::report_source_available($source);
-    }
-
-    /**
-     * Helper to return the report persistent from the row object.
-     *
-     * Note that this persistent, for performance reasons, is not complete and only contains id/type/usercreated fields, which
-     * are needed for the permission methods.
-     *
-     * @param stdClass $row
-     * @return report
-     */
-    private function get_report_from_row(stdClass $row): report {
-        return new report(0, (object)[
-            'id' => $row->id,
-            'type' => $row->type,
-            'usercreated' => $row->usercreated,
-        ]);
-    }
-
-    /**
-     * Filters the list of reports to return only the ones the user has access to
-     *
-     * - A user with 'editall' capability will have access to all reports.
-     * - A user with 'edit' capability will have access to:
-     *      - Those reports this user has created.
-     *      - Those reports this user is in audience of.
-     * - A user with 'view' capability will have access to:
-     *      - Those reports this user is in audience of.
-     *
-     * @return array
-     */
-    private function filter_by_allowed_reports_sql(): array {
-        global $DB, $USER;
-
-        // If user can't view all reports, limit the returned list to those reports they can see.
-        if (!has_capability('moodle/reportbuilder:editall', context_system::instance())) {
-            $reports = audience::user_reports_list();
-
-            if (has_capability('moodle/reportbuilder:edit', context_system::instance())) {
-                // User can always see own reports and also those reports user is in audience of.
-                $paramuserid = database::generate_param_name();
-
-                if (empty($reports)) {
-                    return ["rb.usercreated = :{$paramuserid}", [$paramuserid => $USER->id]];
-                }
-
-                $prefix = database::generate_param_name() . '_';
-                [$where, $params] = $DB->get_in_or_equal($reports, SQL_PARAMS_NAMED, $prefix);
-
-                $params = array_merge($params, [$paramuserid => $USER->id]);
-
-                return ["(rb.usercreated = :{$paramuserid} OR rb.id {$where})", $params];
-
-            }
-
-            // User has view capability. User can only see those reports user is in audience of.
-            if (empty($reports)) {
-                return ['1=2', []];
-            }
-
-            $prefix = database::generate_param_name() . '_';
-            [$where, $params] = $DB->get_in_or_equal($reports, SQL_PARAMS_NAMED, $prefix);
-            return ["rb.id {$where}", $params];
-        }
-
-        return ['', []];
     }
 }

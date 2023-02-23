@@ -25,7 +25,7 @@
 require_once(__DIR__ . '/../config.php');
 require_once("{$CFG->libdir}/adminlib.php");
 
-use core_admin\local\systemreports\task_logs;
+use core_admin\reportbuilder\local\systemreports\task_logs;
 use core_reportbuilder\system_report_factory;
 
 $PAGE->set_url(new \moodle_url('/admin/tasklogs.php'));
@@ -60,8 +60,7 @@ $report = system_report_factory::create(task_logs::class, context_system::instan
 
 if (!empty($filter)) {
     $report->set_filter_values([
-        'task_log:name_operator' => \core_reportbuilder\local\filters\text::IS_EQUAL_TO,
-        'task_log:name_value' => $filter,
+        'task_log:name_values' => $filter,
     ]);
 }
 

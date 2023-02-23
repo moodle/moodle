@@ -14,21 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for the events_related_objects_cache.
- *
- * @package    core_calendar
- * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_calendar;
+
+use core_calendar\external\events_related_objects_cache;
+use core_calendar\local\event\container;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/helpers.php');
 
-use \core_calendar\external\events_related_objects_cache;
-use \core_calendar\local\event\container;
-
 /**
  * Tests for the events_related_objects_cache.
  *
@@ -36,7 +30,7 @@ use \core_calendar\local\event\container;
  * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_calendar_events_related_objects_cache_testcase extends advanced_testcase {
+class events_related_objects_cache_test extends \advanced_testcase {
 
     /**
      * Tests set up

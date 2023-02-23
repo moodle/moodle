@@ -22,6 +22,7 @@
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_scorm;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +38,7 @@ require_once($CFG->dirroot . '/mod/scorm/lib.php');
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_scorm_locallib_testcase extends advanced_testcase {
+class locallib_test extends \advanced_testcase {
 
     public function setUp(): void {
         $this->resetAfterTest();

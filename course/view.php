@@ -6,6 +6,8 @@
     require_once('lib.php');
     require_once($CFG->libdir.'/completionlib.php');
 
+    redirect_if_major_upgrade_required();
+
     $id          = optional_param('id', 0, PARAM_INT);
     $name        = optional_param('name', '', PARAM_TEXT);
     $edit        = optional_param('edit', -1, PARAM_BOOL);
@@ -27,7 +29,7 @@
     } else if (!empty($id)) {
         $params = array('id' => $id);
     }else {
-        print_error('unspecifycourseid', 'error');
+        throw new \moodle_exception('unspecifycourseid', 'error');
     }
 
     // Iomad - check if a user can even see the course.
@@ -141,7 +143,7 @@
     // Preload course format renderer before output starts.
     // This is a little hacky but necessary since
     // format.php is not included until after output starts
-    $format->get_renderer($PAGE);
+    $renderer = $format->get_renderer($PAGE);
 
     if ($reset_user_allowed_editing) {
         // ugly hack
@@ -198,7 +200,11 @@
                 if ($course->id == SITEID) {
                     redirect($CFG->wwwroot . '/?redirect=0');
                 } else {
-                    redirect(course_get_url($course));
+                    if ($format->get_course_display() == COURSE_DISPLAY_MULTIPAGE) {
+                        redirect(course_get_url($course));
+                    } else {
+                        redirect(course_get_url($course, $destsection));
+                    }
                 }
             } else {
                 echo $OUTPUT->notification('An error occurred while moving a section');
@@ -213,7 +219,7 @@
 
     if ($course->id == SITEID) {
         // This course is not a real course.
-        redirect($CFG->wwwroot .'/');
+        redirect($CFG->wwwroot .'/?redirect=0');
     }
 
     // Determine whether the user has permission to download course content.
@@ -225,12 +231,6 @@
     if ($PAGE->user_allowed_editing()) {
         $buttons = $OUTPUT->edit_button($PAGE->url);
         $PAGE->set_button($buttons);
-    } else if ($candownloadcourse) {
-        // Show the download course content button if user has permission to access it.
-        // Only showing this if user doesn't have edit rights, since those who do will access it via the actions menu.
-        $buttonattr = \core_course\output\content_export_link::get_attributes($context);
-        $button = new single_button($buttonattr->url, $buttonattr->displaystring, 'post', false, $buttonattr->elementattributes);
-        $PAGE->set_button($OUTPUT->render($button));
     }
 
     // If viewing a section, make the title more specific
@@ -240,6 +240,12 @@
         $PAGE->set_title(get_string('coursesectiontitle', 'moodle', array('course' => $course->fullname, 'sectiontitle' => $sectiontitle, 'sectionname' => $sectionname)));
     } else {
         $PAGE->set_title(get_string('coursetitle', 'moodle', array('course' => $course->fullname)));
+    }
+
+    // Add bulk editing control.
+    $bulkbutton = $renderer->bulk_editing_button($format);
+    if (!empty($bulkbutton)) {
+        $PAGE->add_header_action($bulkbutton);
     }
 
     $PAGE->set_heading($course->fullname);

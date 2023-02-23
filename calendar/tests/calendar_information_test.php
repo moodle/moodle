@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for calendar_information.
- *
- * @package    core_calendar
- * @copyright  2017 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_calendar;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,7 +27,7 @@ require_once(__DIR__ . '/helpers.php');
  * @copyright  2017 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class calendar_information_testcase extends advanced_testcase {
+class calendar_information_test extends \advanced_testcase {
 
     /**
      * Helper to mock a course and category structure.

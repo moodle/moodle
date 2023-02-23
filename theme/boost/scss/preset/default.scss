@@ -44,7 +44,7 @@ $body-color:    $gray-900 !default;
 // Fonts
 $font-size-base: 0.9375rem !default;
 $rfs-base-font-size: 0.9rem !default;
-$headings-font-weight:   300 !default;
+$headings-font-weight:   700 !default;
 
 // Navbar
 $navbar-dark-hover-color:           rgba($white, 1) !default;
@@ -52,7 +52,7 @@ $navbar-light-color:                rgba($black, 0.6) !default;
 $navbar-light-hover-color:          rgba($black, .9) !default;
 
 // Breadcrumbs
-$breadcrumb-padding-y:              .25rem !default;
+$breadcrumb-padding-y:              .5rem !default;
 $breadcrumb-padding-x:              0 !default;
 $breadcrumb-item-padding:           .5rem !default;
 $breadcrumb-margin-bottom:          0 !default;
@@ -82,6 +82,9 @@ $dropdown-link-hover-color: $white;
 $dropdown-link-hover-bg: $primary;
 
 $popover-max-width: 300px !default;
+
+$border-radius: .5rem !default;
+$border-radius-lg: .6rem !default;
 
 // stylelint-disable
 $theme-colors: () !default;

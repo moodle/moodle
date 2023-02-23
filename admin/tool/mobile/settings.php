@@ -117,6 +117,16 @@ if ($hassiteconfig) {
                 new lang_string('qrcodetype', 'tool_mobile'),
                 new lang_string('qrcodetype_desc', 'tool_mobile'), $qrcodetypedefault, $options));
 
+    $temp->add(new admin_setting_configduration('tool_mobile/qrkeyttl',
+        new lang_string('qrkeyttl', 'tool_mobile'),
+        new lang_string('qrkeyttl_desc', 'tool_mobile'), tool_mobile\api::LOGIN_QR_KEY_TTL, MINSECS));
+    $temp->hide_if('tool_mobile/qrkeyttl', 'tool_mobile/qrcodetype', 'neq', tool_mobile\api::QR_CODE_LOGIN);
+
+    $temp->add(new admin_setting_configcheckbox('tool_mobile/qrsameipcheck',
+                new lang_string('qrsameipcheck', 'tool_mobile'),
+                new lang_string('qrsameipcheck_desc', 'tool_mobile'), 1));
+    $temp->hide_if('tool_mobile/qrsameipcheck', 'tool_mobile/qrcodetype', 'neq', tool_mobile\api::QR_CODE_LOGIN);
+
     $temp->add(new admin_setting_configtext('tool_mobile/forcedurlscheme',
                 new lang_string('forcedurlscheme_key', 'tool_mobile'),
                 new lang_string('forcedurlscheme', 'tool_mobile'), 'moodlemobile', PARAM_NOTAGS));
@@ -124,6 +134,18 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_configtext('tool_mobile/minimumversion',
                 new lang_string('minimumversion_key', 'tool_mobile'),
                 new lang_string('minimumversion', 'tool_mobile'), '', PARAM_NOTAGS));
+
+    $options = [
+        60 => new lang_string('numminutes', '', 1),
+        180 => new lang_string('numminutes', '', 3),
+        360 => new lang_string('numminutes', '', 6),
+        900 => new lang_string('numminutes', '', 15),
+        1800 => new lang_string('numminutes', '', 30),
+        3600 => new lang_string('numminutes', '', 60)
+    ];
+    $temp->add(new admin_setting_configselect('tool_mobile/autologinmintimebetweenreq',
+        new lang_string('autologinmintimebetweenreq', 'tool_mobile'),
+        new lang_string('autologinmintimebetweenreq_desc', 'tool_mobile'), 360, $options));
 
     $ADMIN->add('mobileapp', $temp);
 

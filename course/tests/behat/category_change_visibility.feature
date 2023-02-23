@@ -153,16 +153,6 @@ Feature: We can change the visibility of categories in the management interface.
     And I toggle visibility of category "CAT3" in management listing
     # Redirect.
     And I should see the "Course categories and courses" management page
-    And I click on "Cat 1" "link"
-    # Redirect.
-    And I should see the "Course categories and courses" management page
-    And category in management listing should be visible "CAT1"
-    And category in management listing should be visible "CAT2"
-    And category in management listing should be dimmed "CAT3"
-    And category in management listing should be visible "CAT4"
-    And course in management listing should be visible "C1"
-    And course in management listing should be dimmed "C2"
-    And course in management listing should be visible "C3"
     And I toggle visibility of category "CAT1" in management listing
     # Redirect.
     And I should see the "Course categories and courses" management page

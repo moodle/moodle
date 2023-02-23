@@ -48,6 +48,10 @@ class qtype_truefalse_edit_form extends question_edit_form {
                 0 => get_string('false', 'qtype_truefalse'),
                 1 => get_string('true', 'qtype_truefalse')));
 
+        $mform->addElement('selectyesno', 'showstandardinstruction', get_string('showstandardinstruction', 'qtype_truefalse'));
+        $mform->addHelpButton('showstandardinstruction', 'showstandardinstruction', 'qtype_truefalse');
+        $mform->setDefault('showstandardinstruction', $this->get_default_value('showstandardinstruction', 0));
+
         $mform->addElement('editor', 'feedbacktrue',
                 get_string('feedbacktrue', 'qtype_truefalse'), array('rows' => 10), $this->editoroptions);
         $mform->setType('feedbacktrue', PARAM_RAW);
@@ -109,6 +113,10 @@ class qtype_truefalse_edit_form extends question_edit_form {
                 $falseanswer->feedback // text.
             );
             $question->feedbackfalse['itemid'] = $draftid;
+        }
+
+        if (!empty($question->options)) {
+            $question->showstandardinstruction = !empty($question->options->showstandardinstruction);
         }
 
         return $question;

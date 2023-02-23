@@ -25,7 +25,28 @@ import ModalForm from 'core_form/modalform';
 import {get_string as getString} from 'core/str';
 
 /**
- * Open the New Report modal form
+ * Return modal instance
+ *
+ * @param {EventTarget} triggerElement
+ * @param {Promise} modalTitle
+ * @param {String} formClass
+ * @param {Object} formArgs
+ * @return {ModalForm}
+ */
+const createModalForm = (triggerElement, modalTitle, formClass, formArgs) => {
+    return new ModalForm({
+        modalConfig: {
+            title: modalTitle,
+        },
+        formClass: formClass,
+        args: formArgs,
+        saveButtonText: getString('save', 'moodle'),
+        returnFocus: triggerElement,
+    });
+};
+
+/**
+ * Return report modal instance
  *
  * @param {EventTarget} triggerElement
  * @param {Promise} modalTitle
@@ -33,15 +54,23 @@ import {get_string as getString} from 'core/str';
  * @return {ModalForm}
  */
 export const createReportModal = (triggerElement, modalTitle, reportId = 0) => {
-    return new ModalForm({
-        modalConfig: {
-            title: modalTitle,
-        },
-        formClass: 'core_reportbuilder\\form\\report',
-        args: {
-            id: reportId,
-        },
-        saveButtonText: getString('save', 'moodle'),
-        returnFocus: triggerElement,
+    return createModalForm(triggerElement, modalTitle, 'core_reportbuilder\\form\\report', {
+        id: reportId,
+    });
+};
+
+/**
+ * Return schedule modal instance
+ *
+ * @param {EventTarget} triggerElement
+ * @param {Promise} modalTitle
+ * @param {Number} reportId
+ * @param {Number} scheduleId
+ * @return {ModalForm}
+ */
+export const createScheduleModal = (triggerElement, modalTitle, reportId, scheduleId = 0) => {
+    return createModalForm(triggerElement, modalTitle, 'core_reportbuilder\\form\\schedule', {
+        reportid: reportId,
+        id: scheduleId,
     });
 };

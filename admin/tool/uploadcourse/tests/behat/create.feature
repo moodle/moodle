@@ -105,3 +105,28 @@ Feature: An admin can create courses using a CSV file
     And I should see "Field 3: b"
     And I should see "Field 4: Hello"
     And I should see "Field 5: Some text"
+
+  @javascript
+  Scenario: Validation of role for uploaded courses
+    Given I navigate to "Users > Permissions > Define roles" in site administration
+    And I click on "Add a new role" "button"
+    And I click on "Continue" "button"
+    And I set the following fields to these values:
+      | Short name | notallowed |
+      | Custom full name | notallowed |
+      | contextlevel80 | 1 |
+    And I click on "Create this role" "button"
+    And I navigate to "Courses > Upload courses" in site administration
+    And I upload "admin/tool/uploadcourse/tests/fixtures/enrolment_role.csv" file to "File" filemanager
+    And I click on "Preview" "button"
+    And I should see "Invalid role names: notexist"
+    And I should see "Role notallowed not allowed in this context."
+    When I click on "Upload courses" "button"
+    And I should see "Course created"
+    And I should see "Courses total: 3"
+    And I should see "Courses created: 1"
+    And I should see "Courses errors: 2"
+    And I should see "Invalid role names: notexist"
+    And I should see "Role notallowed not allowed in this context."
+    And I am on site homepage
+    And I should see "coursez"

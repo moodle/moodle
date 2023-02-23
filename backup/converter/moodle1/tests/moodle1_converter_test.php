@@ -14,23 +14,33 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the moodle1 converter
- *
- * @package    core_backup
- * @subpackage backup-convert
- * @category   phpunit
- * @copyright  2011 Mark Nielsen <mark@moodlerooms.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use backup;
+use convert_path;
+use convert_path_exception;
+use convert_factory;
+use convert_helper;
+use moodle1_converter;
+use moodle1_convert_empty_storage_exception;
+use moodle1_convert_exception;
+use moodle1_convert_storage_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/backup/converter/moodle1/lib.php');
 
-
-class core_backup_moodle1_converter_testcase extends advanced_testcase {
+/**
+ * Unit tests for the moodle1 converter
+ *
+ * @package    core_backup
+ * @subpackage backup-convert
+ * @category   test
+ * @copyright  2011 Mark Nielsen <mark@moodlerooms.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class moodle1_converter_test extends \advanced_testcase {
 
     /** @var string the name of the directory containing the unpacked Moodle 1.9 backup */
     protected $tempdir;
@@ -68,7 +78,7 @@ class core_backup_moodle1_converter_testcase extends advanced_testcase {
             "$CFG->dirroot/backup/converter/moodle1/tests/fixtures/icon.gif",
             "$this->tempdirpath/moddata/unittest/4/icon.gif"
         );
-        $this->iconhash = file_storage::hash_from_path($this->tempdirpath.'/moddata/unittest/4/icon.gif');
+        $this->iconhash = \file_storage::hash_from_path($this->tempdirpath.'/moddata/unittest/4/icon.gif');
         copy(
             "$CFG->dirroot/backup/converter/moodle1/tests/fixtures/icon.gif",
             "$this->tempdirpath/moddata/unittest/4/7/icon.gif"
@@ -351,8 +361,8 @@ class core_backup_moodle1_converter_testcase extends advanced_testcase {
         $this->assertEquals('array', gettype($files['/file1.gif']));
         $this->assertEquals('array', gettype($files['/sub1/.']));
         $this->assertEquals('array', gettype($files['/sub1/file2.gif']));
-        $this->assertEquals(file_storage::hash_from_string(''), $files['/.']['contenthash']);
-        $this->assertEquals(file_storage::hash_from_string(''), $files['/sub1/.']['contenthash']);
+        $this->assertEquals(\file_storage::hash_from_string(''), $files['/.']['contenthash']);
+        $this->assertEquals(\file_storage::hash_from_string(''), $files['/sub1/.']['contenthash']);
         $this->assertEquals($this->iconhash, $files['/file1.gif']['contenthash']);
         $this->assertEquals($this->iconhash, $files['/sub1/file2.gif']['contenthash']);
 

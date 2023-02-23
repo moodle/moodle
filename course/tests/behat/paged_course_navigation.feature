@@ -43,15 +43,15 @@ Feature: Course paged mode
     Given the following "courses" exist:
       | fullname | shortname | category | format | coursedisplay | numsections | startdate |
       | Course 1 | C1        | 0        | <courseformat> | 1     | 3           | 0         |
-    And I log in as "admin"
+    And the following "activities" exist:
+      | activity | course | name      |
+      | chat     | C1     | Chat room |
+    When I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
     And I click on <section1> "link" in the <section1> "section"
     And I should see <section1> in the "div.single-section" "css_element"
     And I should see <section2> in the ".single-section div.nextsection" "css_element"
     And I should not see <prevunexistingsection> in the ".single-section" "css_element"
-    When I add a "Chat" to section "1" and I fill the form with:
-      | Name of this chat room | Chat room |
-      | Description | Chat description |
     Then I should see <section1> in the "div.single-section" "css_element"
     And I should see <section2> in the ".single-section div.nextsection" "css_element"
     And I should not see <prevunexistingsection> in the ".single-section" "css_element"

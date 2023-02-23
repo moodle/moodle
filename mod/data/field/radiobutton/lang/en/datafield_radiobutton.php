@@ -24,7 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Radio button';
-$string['fieldtypelabel'] = 'Radio button field';
-$string['privacy:metadata'] = 'The Radio button field component does not store any personal data, it uses tables defined in mod_data.';
+$string['pluginname'] = 'Radio buttons';
+$string['fieldtypelabel'] = 'Radio buttons';
+$string['privacy:metadata'] = 'The Radio buttons field component doesn\'t store any personal data; it uses tables defined in mod_data.';
 

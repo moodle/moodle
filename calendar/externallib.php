@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * External calendar API
  *
@@ -27,18 +26,25 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once("$CFG->libdir/externallib.php");
 require_once($CFG->dirroot . '/calendar/lib.php');
 
-use \core_calendar\local\api as local_api;
-use \core_calendar\local\event\container as event_container;
-use \core_calendar\local\event\forms\create as create_event_form;
-use \core_calendar\local\event\forms\update as update_event_form;
-use \core_calendar\local\event\mappers\create_update_form_mapper;
-use \core_calendar\external\event_exporter;
-use \core_calendar\external\events_exporter;
-use \core_calendar\external\events_grouped_by_course_exporter;
-use \core_calendar\external\events_related_objects_cache;
+use core_calendar\local\api as local_api;
+use core_calendar\local\event\container as event_container;
+use core_calendar\local\event\forms\create as create_event_form;
+use core_calendar\local\event\forms\update as update_event_form;
+use core_calendar\local\event\mappers\create_update_form_mapper;
+use core_calendar\external\event_exporter;
+use core_calendar\external\events_exporter;
+use core_calendar\external\events_grouped_by_course_exporter;
+use core_calendar\external\events_related_objects_cache;
+use core_external\external_api;
+use core_external\external_format_value;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
+use core_external\util as external_util;
 
 /**
  * Calendar external functions
@@ -50,8 +56,6 @@ use \core_calendar\external\events_related_objects_cache;
  * @since Moodle 2.5
  */
 class core_calendar_external extends external_api {
-
-
     /**
      * Returns description of method parameters
      *
@@ -107,7 +111,7 @@ class core_calendar_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 2.5
      */
     public static function  delete_calendar_events_returns() {
@@ -358,7 +362,7 @@ class core_calendar_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 2.5
      */
     public static function  get_calendar_events_returns() {
@@ -408,7 +412,7 @@ class core_calendar_external extends external_api {
                 'limittononsuspendedevents' => new external_value(PARAM_BOOL,
                         'Limit the events to courses the user is not suspended in', VALUE_DEFAULT, false),
                 'userid' => new external_value(PARAM_INT, 'The user id', VALUE_DEFAULT, null),
-                'searchvalue' => new external_value(PARAM_TEXT, 'The value a user wishes to search against', VALUE_DEFAULT, null)
+                'searchvalue' => new external_value(PARAM_RAW, 'The value a user wishes to search against', VALUE_DEFAULT, null)
             )
         );
     }
@@ -467,7 +471,7 @@ class core_calendar_external extends external_api {
             $params['limitnum'],
             $params['limittononsuspendedevents'],
             $user,
-            $params['searchvalue']
+            clean_param($params['searchvalue'], PARAM_TEXT)
         );
 
         $exportercache = new events_related_objects_cache($events);
@@ -480,7 +484,7 @@ class core_calendar_external extends external_api {
      * Returns description of method result value.
      *
      * @since Moodle 3.3
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function get_calendar_action_events_by_timesort_returns() {
         return events_exporter::get_read_structure();
@@ -499,7 +503,7 @@ class core_calendar_external extends external_api {
                 'timesortto' => new external_value(PARAM_INT, 'Time sort to', VALUE_DEFAULT, null),
                 'aftereventid' => new external_value(PARAM_INT, 'The last seen event id', VALUE_DEFAULT, 0),
                 'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 20),
-                'searchvalue' => new external_value(PARAM_TEXT, 'The value a user wishes to search against', VALUE_DEFAULT, null)
+                'searchvalue' => new external_value(PARAM_RAW, 'The value a user wishes to search against', VALUE_DEFAULT, null)
             )
         );
     }
@@ -555,7 +559,7 @@ class core_calendar_external extends external_api {
             $params['timesortto'],
             $params['aftereventid'],
             $params['limitnum'],
-            $params['searchvalue']
+            clean_param($params['searchvalue'], PARAM_TEXT)
         );
 
         $exportercache = new events_related_objects_cache($events, $courses);
@@ -567,7 +571,7 @@ class core_calendar_external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function get_calendar_action_events_by_course_returns() {
         return events_exporter::get_read_structure();
@@ -587,7 +591,7 @@ class core_calendar_external extends external_api {
                 'timesortfrom' => new external_value(PARAM_INT, 'Time sort from', VALUE_DEFAULT, null),
                 'timesortto' => new external_value(PARAM_INT, 'Time sort to', VALUE_DEFAULT, null),
                 'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 10),
-                'searchvalue' => new external_value(PARAM_TEXT, 'The value a user wishes to search against', VALUE_DEFAULT, null)
+                'searchvalue' => new external_value(PARAM_RAW, 'The value a user wishes to search against', VALUE_DEFAULT, null)
             )
         );
     }
@@ -639,7 +643,7 @@ class core_calendar_external extends external_api {
             $params['timesortfrom'],
             $params['timesortto'],
             $params['limitnum'],
-            $params['searchvalue']
+            clean_param($params['searchvalue'], PARAM_TEXT)
         );
 
         if (empty($events)) {
@@ -655,7 +659,7 @@ class core_calendar_external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function get_calendar_action_events_by_courses_returns() {
         return events_grouped_by_course_exporter::get_read_structure();
@@ -718,7 +722,7 @@ class core_calendar_external extends external_api {
             $event['instance'] = 0;
             $event['subscriptionid'] = null;
             $event['uuid']= '';
-            $event['format'] = external_validate_format($event['format']);
+            $event['format'] = external_util::validate_format($event['format']);
             if ($event['repeats'] > 0) {
                 $event['repeat'] = 1;
             } else {
@@ -753,7 +757,7 @@ class core_calendar_external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_description.
+     * @return \core_external\external_description.
      * @since Moodle 2.5
      */
     public static function  create_calendar_events_returns() {
@@ -815,10 +819,10 @@ class core_calendar_external extends external_api {
         $warnings = array();
 
         $eventvault = event_container::get_event_vault();
-        if ($event = $eventvault->get_event_by_id($eventid)) {
+        if ($event = $eventvault->get_event_by_id($params['eventid'])) {
             $mapper = event_container::get_event_mapper();
             if (!calendar_view_event_allowed($mapper->from_event_to_legacy_event($event))) {
-                $event = null;
+                throw new moodle_exception('nopermissiontoviewcalendar', 'error');
             }
         }
 
@@ -826,7 +830,7 @@ class core_calendar_external extends external_api {
             // We can't return a warning in this case because the event is not optional.
             // We don't know the context for the event and it's not worth loading it.
             $syscontext = context_system::instance();
-            throw new \required_capability_exception($syscontext, 'moodle/course:view', 'nopermission', '');
+            throw new \required_capability_exception($syscontext, 'moodle/course:view', 'nopermissions', 'error');
         }
 
         $cache = new events_related_objects_cache([$event]);
@@ -844,7 +848,7 @@ class core_calendar_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function get_calendar_event_by_id_returns() {
         $eventstructure = event_exporter::get_read_structure();
@@ -934,7 +938,7 @@ class core_calendar_external extends external_api {
             }
 
             if (!calendar_edit_event_allowed($legacyevent, true)) {
-                print_error('nopermissiontoupdatecalendar');
+                throw new \moodle_exception('nopermissiontoupdatecalendar');
             }
 
             $legacyevent->update($properties);
@@ -983,7 +987,7 @@ class core_calendar_external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_description.
+     * @return \core_external\external_description.
      */
     public static function  submit_create_update_form_returns() {
         $eventstructure = event_exporter::get_read_structure();
@@ -1077,7 +1081,7 @@ class core_calendar_external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function get_calendar_monthly_view_returns() {
         return \core_calendar\external\month_exporter::get_read_structure();
@@ -1138,7 +1142,7 @@ class core_calendar_external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function get_calendar_day_view_returns() {
         return \core_calendar\external\calendar_day_exporter::get_read_structure();
@@ -1192,7 +1196,7 @@ class core_calendar_external extends external_api {
         $legacyevent = $mapper->from_event_to_legacy_event($event);
 
         if (!calendar_edit_event_allowed($legacyevent, true)) {
-            print_error('nopermissiontoupdatecalendar');
+            throw new \moodle_exception('nopermissiontoupdatecalendar');
         }
 
         self::validate_context($legacyevent->context);
@@ -1215,7 +1219,7 @@ class core_calendar_external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function update_event_start_day_returns() {
         return new external_single_structure(
@@ -1270,7 +1274,7 @@ class core_calendar_external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function get_calendar_upcoming_view_returns() {
         return \core_calendar\external\calendar_upcoming_exporter::get_read_structure();
@@ -1322,7 +1326,7 @@ class core_calendar_external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_description.
+     * @return \core_external\external_description.
      * @since  Moodle 3.7
      */
     public static function  get_calendar_access_information_returns() {
@@ -1382,7 +1386,7 @@ class core_calendar_external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_description.
+     * @return \core_external\external_description.
      * @since  Moodle 3.7
      */
     public static function  get_allowed_event_types_returns() {

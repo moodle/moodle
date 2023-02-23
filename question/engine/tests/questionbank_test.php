@@ -14,32 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests for the question_bank class.
- *
- * @package    moodlecore
- * @subpackage questionbank
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_question;
 
+use qubaid_list;
+use question_bank;
+use question_engine;
+use question_finder;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once(__DIR__ . '/../lib.php');
 
-
 /**
- *Unit tests for the {@link question_bank} class.
+ * Unit tests for the {@see question_bank} class.
  *
+ * @package    core_question
+ * @category   test
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_bank_test extends advanced_testcase {
+class questionbank_test extends \advanced_testcase {
 
     public function test_sort_qtype_array() {
-        $config = new stdClass();
+        $config = new \stdClass();
         $config->multichoice_sortorder = '1';
         $config->calculated_sortorder = '2';
         $qtypes = array(
@@ -93,7 +91,7 @@ class question_bank_test extends advanced_testcase {
         $questiondata2 = $generator->create_question('shortanswer', null, array('category' => $cat->id));
         $questiondata3 = $generator->create_question('shortanswer', null, array('category' => $cat->id));
 
-        $quba = question_engine::make_questions_usage_by_activity('test', context_system::instance());
+        $quba = question_engine::make_questions_usage_by_activity('test', \context_system::instance());
         $quba->set_preferred_behaviour('deferredfeedback');
         $question1 = question_bank::load_question($questiondata1->id);
         $question3 = question_bank::load_question($questiondata3->id);
@@ -123,7 +121,7 @@ class question_bank_test extends advanced_testcase {
 
     public function test_load_many_for_cache_missing_id() {
         // Try to load a non-existent question.
-        $this->expectException('dml_missing_record_exception');
+        $this->expectException(\dml_missing_record_exception::class);
         question_finder::get_instance()->load_many_for_cache([-1]);
     }
 }

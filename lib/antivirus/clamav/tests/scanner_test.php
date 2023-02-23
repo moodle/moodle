@@ -14,18 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace antivirus_clamav;
+
 /**
  * Tests for ClamAV antivirus scanner class.
  *
  * @package    antivirus_clamav
- * @category   phpunit
+ * @category   test
  * @copyright  2016 Ruslan Kabalin, Lancaster University.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-class antivirus_clamav_scanner_testcase extends advanced_testcase {
+class scanner_test extends \advanced_testcase {
     /** @var string temporary file used in testing */
     protected $tempfile;
 

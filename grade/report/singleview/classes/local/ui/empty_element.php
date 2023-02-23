@@ -38,9 +38,9 @@ class empty_element extends element {
     /**
      * Constructor
      *
-     * @param string $msg The text
+     * @param string|null $msg The text
      */
-    public function __construct($msg = null) {
+    public function __construct(?string $msg = null) {
         if (is_null($msg)) {
             $this->text = '&nbsp;';
         } else {
@@ -53,7 +53,7 @@ class empty_element extends element {
      *
      * @return string HTML
      */
-    public function html() {
+    public function html(): string {
         return $this->text;
     }
 }

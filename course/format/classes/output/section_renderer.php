@@ -36,7 +36,6 @@ use coding_exception;
 use context_course;
 use core_course_renderer;
 use core_courseformat\base as course_format;
-use completion_info;
 use html_writer;
 use moodle_page;
 use moodle_url;
@@ -104,20 +103,7 @@ abstract class section_renderer extends core_course_renderer {
         if (method_exists($this, $rendermethod)) {
             return $this->$rendermethod($widget);
         }
-        // Check for special course format templatables.
-        if ($widget instanceof templatable) {
-            // Templatables from both core_courseformat\output\xxx_format\* and format_xxx\output\xxx_format\*
-            // use core_crouseformat/local/xxx_format templates by default.
-            $corepath = 'core_courseformat\/output\/local';
-            $pluginpath = 'format_.+\/output\/courseformat';
-            $specialrenderers = '/^(?<componentpath>' . $corepath . '|' . $pluginpath . ')\/(?<template>.+)$/';
-            $matches = null;
 
-            if (preg_match($specialrenderers, $fullpath, $matches)) {
-                $data = $widget->export_for_template($this);
-                return $this->render_from_template('core_courseformat/local/' . $matches['template'], $data);
-            }
-        }
         // If nothing works, let the parent class decide.
         return parent::render($widget);
     }
@@ -222,12 +208,26 @@ abstract class section_renderer extends core_course_renderer {
     }
 
     /**
+     * Render the enable bulk editing button.
+     * @param course_format $format the course format
+     * @return string|null the enable bulk button HTML (or null if no bulk available).
+     */
+    public function bulk_editing_button(course_format $format): ?string {
+        if (!$format->show_editor() || !$format->supports_components()) {
+            return null;
+        }
+        $widgetclass = $format->get_output_classname('content\\bulkedittoggler');
+        $widget = new $widgetclass($format);
+        return $this->render($widget);
+    }
+
+    /**
      * Generate the edit control action menu
      *
      * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
-     * The section edit controls are now part of the main section_format output and does
-     * not use renderer methods anymore.
+     * The section edit controls are now part of the main core_courseformat\output\local\content\section output
+     * and does not use renderer methods anymore.
      *
      * @param array $controls The edit control items from section_edit_control_items
      * @param stdClass $course The course entry from DB (not used)
@@ -236,8 +236,8 @@ abstract class section_renderer extends core_course_renderer {
      */
     protected function section_edit_control_menu($controls, $course, $section) {
         debugging('section_edit_control_menu() can not be used anymore. Please use ' .
-            'core_course\output\section_format to render a section. In case you need to modify those controls ' .
-            'override core_course\output\section_format\controlmenu in your format plugin.', DEBUG_DEVELOPER);
+            'core_courseformat\\output\\local\\content\\section to render a section. In case you need to modify those controls ' .
+            'override core_courseformat\\output\\local\\content\\section\\controlmenu in your format plugin.', DEBUG_DEVELOPER);
 
         $o = "";
         if (!empty($controls)) {
@@ -276,8 +276,8 @@ abstract class section_renderer extends core_course_renderer {
      * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * Spatial references like "left" or "right" are limiting the way formats and themes can
-     * extend courses. The elements from this method are now included in the section_format
-     * output components.
+     * extend courses. The elements from this method are now included in the
+     * core_courseformat\output\local\content\section output components.
      *
      * @param stdClass $section The course_section entry from DB
      * @param stdClass $course The course entry from DB
@@ -287,7 +287,7 @@ abstract class section_renderer extends core_course_renderer {
     protected function section_right_content($section, $course, $onsectionpage) {
 
         debugging('section_right_content() can not be used anymore. Please use ' .
-            'core_course\output\section_format to render a section.', DEBUG_DEVELOPER);
+            'core_courseformat\\output\\local\\content\\section to render a section.', DEBUG_DEVELOPER);
 
         $o = $this->output->spacer();
 
@@ -304,8 +304,8 @@ abstract class section_renderer extends core_course_renderer {
      * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * Spatial references like "left" or "right" are limiting the way formats and themes can
-     * extend courses. The elements from this method are now included in the section_format
-     * output components.
+     * extend courses. The elements from this method are now included in the
+     * core_courseformat\output\local\content\section output components.
      *
      * @param stdClass $section The course_section entry from DB
      * @param stdClass $course The course entry from DB
@@ -315,7 +315,7 @@ abstract class section_renderer extends core_course_renderer {
     protected function section_left_content($section, $course, $onsectionpage) {
 
         debugging('section_left_content() can not be used anymore. Please use ' .
-            'core_course\output\section_format to render a section.', DEBUG_DEVELOPER);
+            'core_courseformat\\output\\local\\content\\section to render a section.', DEBUG_DEVELOPER);
 
         $o = '';
 
@@ -335,7 +335,7 @@ abstract class section_renderer extends core_course_renderer {
      *
      * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
-     * This element is now a section_format output component and it is displayed using
+     * This element is now a core_courseformat\output\content\section output component and it is displayed using
      * mustache templates instead of a renderer method.
      *
      * @param stdClass $section The course_section entry from DB
@@ -346,8 +346,9 @@ abstract class section_renderer extends core_course_renderer {
      */
     protected function section_header($section, $course, $onsectionpage, $sectionreturn = null) {
         debugging('section_header() is deprecated. Please use ' .
-            'core_course\output\section_format to render a section or core_course\output\section_format\header ' .
-            'to print ony the header.', DEBUG_DEVELOPER);
+            'core_courseformat\\output\\local\\content\\section to render a section ' .
+            'or core_courseformat\output\\local\\content\\section\\header ' .
+            'to print only the header.', DEBUG_DEVELOPER);
 
         $o = '';
         $sectionstyle = '';
@@ -410,20 +411,48 @@ abstract class section_renderer extends core_course_renderer {
      *
      * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
-     * This element is integrated into section_format output component and it is displayed using
-     * mustache templates instead of a renderer method.
+     * This element is integrated into core_courseformat\output\local\content\section output component and it is
+     * displayed using mustache templates instead of a renderer method.
      *
      * @return string HTML to output.
      */
     protected function section_footer() {
 
         debugging('section_footer() is deprecated. Please use ' .
-            'core_courseformat\output\local\content\section to render individual sections or .' .
-            'core_courseformat\output\local\content to render the full course', DEBUG_DEVELOPER);
+            'core_courseformat\\output\\local\\content\\section to render individual sections or .' .
+            'core_courseformat\\output\\local\\content to render the full course', DEBUG_DEVELOPER);
 
         $o = html_writer::end_tag('div');
         $o .= html_writer::end_tag('li');
         return $o;
+    }
+
+    /**
+     * Generate the starting container html for a list of sections.
+     *
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
+     *
+     * @return string HTML to output.
+     */
+    protected function start_section_list() {
+        debugging('start_section_list() is deprecated. Please use ' .
+            'core_courseformat\\output\\local\\content\\section to render individual sections or .' .
+            'core_courseformat\\output\\local\\content to render the full course', DEBUG_DEVELOPER);
+        return html_writer::start_tag('ul', ['class' => 'sections']);
+    }
+
+    /**
+     * Generate the closing container html for a list of sections.
+     *
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.y
+     *
+     * @return string HTML to output.
+     */
+    protected function end_section_list() {
+        debugging('end_section_list() is deprecated. Please use ' .
+            'core_courseformat\\output\\local\\content\\section to render individual sections or .' .
+            'core_courseformat\\output\\local\\content to render the full course', DEBUG_DEVELOPER);
+        return html_writer::end_tag('ul');
     }
 
     /**
@@ -441,7 +470,7 @@ abstract class section_renderer extends core_course_renderer {
      *
      * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
-     * This element is now a section_format output component and it is displayed using
+     * This element is now a core_courseformat\output\content\section output component and it is displayed using
      * mustache templates instead of a renderer method.
      *
      * @param stdClass $course The course entry from DB
@@ -451,7 +480,7 @@ abstract class section_renderer extends core_course_renderer {
      */
     protected function section_edit_control_items($course, $section, $onsectionpage = false) {
         debugging('section_edit_control_items() is deprecated, please use or extend' .
-            'core_course\output\section_format\controlmenu instead (like topics format does).', DEBUG_DEVELOPER);
+            'core_courseformat\output\\local\\content\\section\\controlmenu instead (like topics format does).', DEBUG_DEVELOPER);
 
         $format = course_get_format($course);
         $modinfo = $format->get_modinfo();
@@ -473,7 +502,7 @@ abstract class section_renderer extends core_course_renderer {
      *
      * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
-     * This element is now a section_format output component and it is displayed using
+     * This element is now a core_courseformat\output\content\section output component and it is displayed using
      * mustache templates instead of a renderer method.
      *
      * @param stdClass $section The course_section entry from DB
@@ -483,8 +512,8 @@ abstract class section_renderer extends core_course_renderer {
      */
     protected function section_summary($section, $course, $mods) {
         debugging('section_summary() is deprecated. Please use ' .
-            'core_course\output\section_format to render sections. If you need to modify those summary, extend ' .
-            'core_course\output\section_format\summary in your format plugin.', DEBUG_DEVELOPER);
+            'core_courseformat\output\\local\\content\\section to render sections. If you need to modify those summary, extend ' .
+            'core_courseformat\output\\local\\content\\section\\summary in your format plugin.', DEBUG_DEVELOPER);
 
         $classattr = 'section main section-summary clearfix';
         $linkclasses = '';
@@ -543,7 +572,7 @@ abstract class section_renderer extends core_course_renderer {
      *
      * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
-     * This element is now a section_format output component and it is displayed using
+     * This element is now a core_courseformat\output\content\section output component and it is displayed using
      * mustache templates instead of a renderer method.
      *
      * @param stdClass $section The course_section entry from DB
@@ -554,8 +583,9 @@ abstract class section_renderer extends core_course_renderer {
     protected function section_activity_summary($section, $course, $mods) {
 
         debugging('section_activity_summary() is deprecated. Please use ' .
-            'core_course\output\section_format to render sections. If you need to modify those information, extend ' .
-            'core_course\output\section_format\cmsummary in your format plugin.', DEBUG_DEVELOPER);
+            'core_courseformat\output\\local\\content\\section to render sections. ' .
+            'If you need to modify those information, extend ' .
+            'core_courseformat\output\\local\\content\\section\\cmsummary in your format plugin.', DEBUG_DEVELOPER);
 
         $format = course_get_format($course);
         $widgetclass = $format->get_output_classname('content\\section\\cmsummary');
@@ -575,7 +605,7 @@ abstract class section_renderer extends core_course_renderer {
      *
      * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
-     * This element is now a section_format output component and it is displayed using
+     * This element is now a core_courseformat\output\content\section output component and it is displayed using
      * mustache templates instead of a renderer method.
      *
      * @param section_info $section The course_section entry from DB
@@ -586,8 +616,8 @@ abstract class section_renderer extends core_course_renderer {
         global $CFG;
 
         debugging('section_availability_message() is deprecated. Please use ' .
-            'core_course\output\section_format to render sections. If you need to modify this element, extend ' .
-            'core_course\output\section_format\availability in your format plugin.', DEBUG_DEVELOPER);
+            'core_courseformat\output\\local\\content\\section to render sections. If you need to modify this element, extend ' .
+            'core_courseformat\output\\local\\content\\section\\availability in your format plugin.', DEBUG_DEVELOPER);
 
         $course = $section->course;
         $format = course_get_format($course);
@@ -601,7 +631,7 @@ abstract class section_renderer extends core_course_renderer {
      *
      * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
-     * This element is now a section_format output component and it is displayed using
+     * This element is now a core_courseformat\output\content\section output component and it is displayed using
      * mustache templates instead of a renderer method.
      *
      * @param section_info $section
@@ -609,8 +639,8 @@ abstract class section_renderer extends core_course_renderer {
      */
     public function section_availability($section) {
         debugging('section_availability() is deprecated. Please use ' .
-            'core_course\output\section_format to render sections. If you need to modify this element, extend ' .
-            'core_course\output\section_format\availability in your format plugin.', DEBUG_DEVELOPER);
+            'core_courseformat\output\\local\\content\\section to render sections. If you need to modify this element, extend ' .
+            'core_courseformat\output\\local\\content\\section\\availability in your format plugin.', DEBUG_DEVELOPER);
 
         $context = context_course::instance($section->course);
         $canviewhidden = has_capability('moodle/course:viewhiddensections', $context);
@@ -659,7 +689,7 @@ abstract class section_renderer extends core_course_renderer {
      *
      * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
-     * This element is now a section_format output component and it is displayed using
+     * This element is now a core_courseformat\output\content\section output component and it is displayed using
      * mustache templates instead of a renderer method.
      *
      * @param stdClass $course The course entry from DB
@@ -670,8 +700,8 @@ abstract class section_renderer extends core_course_renderer {
     protected function get_nav_links($course, $sections, $sectionno) {
 
         debugging('get_nav_links() is deprecated. Please use ' .
-            'core_courseformat\output\local\content to render a course. If you need to modify this element, extend ' .
-            'core_courseformat\output\local\content\sectionnavigation in your format plugin.', DEBUG_DEVELOPER);
+            'core_courseformat\\output\\local\\content to render a course. If you need to modify this element, extend ' .
+            'core_courseformat\\output\\local\\content\\sectionnavigation in your format plugin.', DEBUG_DEVELOPER);
 
         // FIXME: This is really evil and should by using the navigation API.
         $course = course_get_format($course)->get_course();
@@ -716,7 +746,7 @@ abstract class section_renderer extends core_course_renderer {
      *
      * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
-     * This element is now a section_format output component and it is displayed using
+     * This element is now a core_courseformat\output\content\section output component and it is displayed using
      * mustache templates instead of a renderer method.
      *
      * @param int $sectionno The section number in the course which is being displayed
@@ -724,7 +754,7 @@ abstract class section_renderer extends core_course_renderer {
      */
     protected function stealth_section_header($sectionno) {
         debugging('stealth_section_header() is deprecated. Please use ' .
-            'core_course\output\section_format to render sections.', DEBUG_DEVELOPER);
+            'core_courseformat\output\\local\\content\\section to render sections.', DEBUG_DEVELOPER);
 
         $o = '';
         $o .= html_writer::start_tag('li', [
@@ -751,14 +781,14 @@ abstract class section_renderer extends core_course_renderer {
      *
      * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
-     * This element is now a section_format output component and it is displayed using
+     * This element is now a core_courseformat\output\content\section output component and it is displayed using
      * mustache templates instead of a renderer method.
      *
      * @return string HTML to output.
      */
     protected function stealth_section_footer() {
         debugging('stealth_section_footer() is deprecated. Please use ' .
-            'core_course\output\section_format to render sections.', DEBUG_DEVELOPER);
+            'core_courseformat\output\\local\\content\\section to render sections.', DEBUG_DEVELOPER);
 
         $o = html_writer::end_tag('div');
         $o .= html_writer::end_tag('li');
@@ -800,7 +830,7 @@ abstract class section_renderer extends core_course_renderer {
      *
      * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
-     * This element is now a section_format output component and it is displayed using
+     * This element is now a core_courseformat\output\content\section output component and it is displayed using
      * mustache templates instead of a renderer method.
      *
      * @param stdClass $course The course entry from DB
@@ -812,9 +842,9 @@ abstract class section_renderer extends core_course_renderer {
     protected function section_nav_selection($course, $sections, $displaysection) {
 
         debugging('section_nav_selection() can not be used anymore. Please use ' .
-            'core_courseformat\output\local\content to render a course. If you need to modify this element, extend ' .
-            'core_courseformat\output\local\content\sectionnavigation or ' .
-            'core_courseformat\output\local\content\sectionselector in your format plugin.', DEBUG_DEVELOPER);
+            'core_courseformat\\output\\local\\content to render a course. If you need to modify this element, extend ' .
+            'core_courseformat\\output\\local\\content\\sectionnavigation or ' .
+            'core_courseformat\\output\\local\\content\\sectionselector in your format plugin.', DEBUG_DEVELOPER);
 
         $o = '';
         $sectionmenu = array();
@@ -863,7 +893,8 @@ abstract class section_renderer extends core_course_renderer {
     public function print_single_section_page($course, $sections, $mods, $modnames, $modnamesused, $displaysection) {
 
         debugging('Method print_single_section_page is deprecated, please use' .
-            'core_courseformat\output\local\content and override render_course_format method instead', DEBUG_DEVELOPER);
+            'core_courseformat\\output\\local\\content instead ' .
+            'or override render_content method to use a different template', DEBUG_DEVELOPER);
 
         // Some abstract methods are not needed anymore. We simulate them in case they are not present.
         if (method_exists($this, 'start_section_list')) {
@@ -889,7 +920,7 @@ abstract class section_renderer extends core_course_renderer {
         if (!($sectioninfo = $modinfo->get_section_info($displaysection)) || !$sectioninfo->uservisible) {
             // This section doesn't exist or is not available for the user.
             // We actually already check this in course/view.php but just in case exit from this function as well.
-            print_error(
+            throw new \moodle_exception(
                 'unknowncoursesection',
                 'error',
                 course_get_url($course),
@@ -981,7 +1012,8 @@ abstract class section_renderer extends core_course_renderer {
     public function print_multiple_section_page($course, $sections, $mods, $modnames, $modnamesused) {
 
         debugging('Method print_multiple_section_page is deprecated, please use' .
-            'render_course_format insteadand override render_course_format method instead', DEBUG_DEVELOPER);
+            'core_courseformat\\output\\local\\content instead ' .
+            'or override render_content method to use a diferent template', DEBUG_DEVELOPER);
 
         // Some abstract methods are not needed anymore. We simulate them in case they are not present.
         if (method_exists($this, 'start_section_list')) {
@@ -1030,17 +1062,12 @@ abstract class section_renderer extends core_course_renderer {
                 // Activities inside this section are 'orphaned', this section will be printed as 'stealth' below.
                 continue;
             }
-            // Show the section if the user is permitted to access it, OR if it's not available
-            // but there is some available info text which explains the reason & should display,
-            // OR it is hidden but the course has a setting to display hidden sections as unavilable.
-            $showsection = $thissection->uservisible ||
-                ($thissection->visible && !$thissection->available && !empty($thissection->availableinfo)) ||
-                (!$thissection->visible && !$course->hiddensections);
-            if (!$showsection) {
+
+            if (!$format->is_section_visible($thissection)) {
                 continue;
             }
 
-            if (!$format->show_editor() && $course->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
+            if (!$format->show_editor() && $format->get_course_display() == COURSE_DISPLAY_MULTIPAGE) {
                 // Display section summary only.
                 echo $this->section_summary($thissection, $course, null);
             } else {
@@ -1083,7 +1110,7 @@ abstract class section_renderer extends core_course_renderer {
      */
     protected function change_number_sections($course, $sectionreturn = null) {
         debugging('Method change_number_sections is deprecated, please use' .
-            'core_courseformat\output\local\content\addsection instead', DEBUG_DEVELOPER);
+            'core_courseformat\\output\\local\\content\\addsection instead', DEBUG_DEVELOPER);
 
         $format = course_get_format($course);
         if ($sectionreturn) {
@@ -1104,7 +1131,7 @@ abstract class section_renderer extends core_course_renderer {
      */
     protected function format_summary_text($section) {
         debugging('Method format_summary_text is deprecated, please use' .
-            'core_course\output\section_format\summary::format_summary_text instead', DEBUG_DEVELOPER);
+            'core_courseformat\output\\local\\content\\section\\summary::format_summary_text instead', DEBUG_DEVELOPER);
 
         $format = course_get_format($section->course);
         if (!($section instanceof section_info)) {

@@ -50,9 +50,6 @@ class sync_members extends scheduled_task {
     /** @var array Array of user photos. */
     protected $userphotos = [];
 
-    /** @var array Array of current LTI users. */
-    protected $currentusers = [];
-
     /** @var data_connector $dataconnector A data_connector instance. */
     protected $dataconnector;
 
@@ -84,7 +81,8 @@ class sync_members extends scheduled_task {
         $this->dataconnector = new data_connector();
 
         // Get all the enabled tools.
-        $tools = helper::get_lti_tools(array('status' => ENROL_INSTANCE_ENABLED, 'membersync' => 1));
+        $tools = helper::get_lti_tools(array('status' => ENROL_INSTANCE_ENABLED, 'membersync' => 1,
+            'ltiversion' => 'LTI-1p0/LTI-2p0'));
         foreach ($tools as $tool) {
             mtrace("Starting - Member sync for published tool '$tool->id' for course '$tool->courseid'.");
 
@@ -111,15 +109,15 @@ class sync_members extends scheduled_task {
 
                 // Fetched members count.
                 $membercount = count($members);
+                $usercount += $membercount;
                 mtrace("$membercount members received.\n");
 
                 // Process member information.
-                list($usercount, $enrolcount) = $this->sync_member_information($tool, $consumer, $members);
-            }
+                list($users, $enrolledcount) = $this->sync_member_information($tool, $consumer, $members);
+                $enrolcount += $enrolledcount;
 
-            // Now we check if we have to unenrol users who were not listed.
-            if ($this->should_sync_unenrol($tool->membersyncmode)) {
-                $unenrolcount = $this->sync_unenrol($tool);
+                // Now sync unenrolments for the consumer.
+                $unenrolcount += $this->sync_unenrol($tool, $consumer->getKey(), $users);
             }
 
             mtrace("Completed - Synced members for tool '$tool->id' in the course '$tool->courseid'. " .
@@ -216,17 +214,15 @@ class sync_members extends scheduled_task {
      * @param stdClass $tool
      * @param ToolConsumer $consumer
      * @param User[] $members
-     * @return array An array containing the number of members that were processed and the number of members that were enrolled.
+     * @return array An array of users from processed members and the number that were enrolled.
      */
     protected function sync_member_information(stdClass $tool, ToolConsumer $consumer, $members) {
         global $DB;
-        $usercount = 0;
+        $users = [];
         $enrolcount = 0;
 
         // Process member information.
         foreach ($members as $member) {
-            $usercount++;
-
             // Set the user data.
             $user = new stdClass();
             $user->username = helper::create_username($consumer->getKey(), $member->ltiUserId);
@@ -248,9 +244,7 @@ class sync_members extends scheduled_task {
                 user_update_user($user);
 
                 // Add the information to the necessary arrays.
-                if (!in_array($user->id, $this->currentusers)) {
-                    $this->currentusers[] = $user->id;
-                }
+                $users[$user->id] = $user;
                 $this->userphotos[$user->id] = $member->image;
             } else {
                 if ($this->should_sync_enrol($tool->membersyncmode)) {
@@ -264,7 +258,7 @@ class sync_members extends scheduled_task {
                     $user->id = user_create_user($user);
 
                     // Add the information to the necessary arrays.
-                    $this->currentusers[] = $user->id;
+                    $users[$user->id] = $user;
                     $this->userphotos[$user->id] = $member->image;
                 }
             }
@@ -290,16 +284,18 @@ class sync_members extends scheduled_task {
             }
         }
 
-        return [$usercount, $enrolcount];
+        return [$users, $enrolcount];
     }
 
     /**
      * Performs unenrolment of users that are no longer enrolled in the consumer side.
      *
      * @param stdClass $tool The tool record object.
+     * @param string $consumerkey ensure we only unenrol users from this tool consumer.
+     * @param array $currentusers The list of current users.
      * @return int The number of users that have been unenrolled.
      */
-    protected function sync_unenrol(stdClass $tool) {
+    protected function sync_unenrol(stdClass $tool, string $consumerkey, array $currentusers) {
         global $DB;
 
         $ltiplugin = enrol_get_plugin('lti');
@@ -308,16 +304,18 @@ class sync_members extends scheduled_task {
             return 0;
         }
 
-        if (empty($this->currentusers)) {
+        if (empty($currentusers)) {
             return 0;
         }
 
         $unenrolcount = 0;
 
-        $ltiusersrs = $DB->get_recordset('enrol_lti_users', array('toolid' => $tool->id), 'lastaccess DESC', 'userid');
+        $select = "toolid = :toolid AND " . $DB->sql_compare_text('consumerkey', 255) . " = :consumerkey";
+        $ltiusersrs = $DB->get_recordset_select('enrol_lti_users', $select, ['toolid' => $tool->id, 'consumerkey' => $consumerkey],
+            'lastaccess DESC', 'userid');
         // Go through the users and check if any were never listed, if so, remove them.
         foreach ($ltiusersrs as $ltiuser) {
-            if (!in_array($ltiuser->userid, $this->currentusers)) {
+            if (!array_key_exists($ltiuser->userid, $currentusers)) {
                 $instance = new stdClass();
                 $instance->id = $tool->enrolid;
                 $instance->courseid = $tool->courseid;

@@ -116,6 +116,16 @@
     }
 }
 
+.path-grade-report-grader .gradeparent {
+    tr.heading {
+        top: $navbar-height;
+    }
+
+    th.header {
+        left: 0;
+    }
+}
+
 // The block column needs some padding on small devices.
 @include media-breakpoint-down(sm) {
     .blockcolumn,
@@ -252,4 +262,13 @@
     #settingsnav {
         padding-top: 0 !important; /* stylelint-disable-line declaration-no-important */
     }
+}
+
+#page-footer {
+    padding-top: $spacer * .5;
+    padding-bottom: $spacer * .5;
+}
+
+body.hasstickyfooter #page-footer {
+    padding-bottom: calc(#{$spacer} * .5 + #{$stickyfooter-height});
 }

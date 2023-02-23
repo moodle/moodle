@@ -54,7 +54,6 @@ class core_message_renderer extends plugin_renderer_base {
         $output .= $this->manage_messageoutputs($allprocessors);
 
         // Add active message output processors settings.
-        $output .= $this->heading(get_string('managemessageoutputs', 'message'));
         $output .= $this->manage_defaultmessageoutputs($processors, $providers, $preferences);
 
         $output .= html_writer::start_tag('div', array('class' => 'form-buttons'));
@@ -84,7 +83,7 @@ class core_message_renderer extends plugin_renderer_base {
             get_string('settings'),
         );
         $table->colclasses = array(
-            'displayname', 'availability', 'settings',
+            'displayname', 'availability text-center', 'settings',
         );
 
         foreach ($processors as $processor) {
@@ -124,97 +123,99 @@ class core_message_renderer extends plugin_renderer_base {
      * @return string The text to render
      */
     public function manage_defaultmessageoutputs($processors, $providers, $preferences) {
-        // Prepare list of options for dropdown menu
-        $options = array();
-        foreach (array('disallowed', 'permitted', 'forced') as $setting) {
-            $options[$setting] = get_string($setting, 'message');
-        }
+        $context = [];
 
-        // Display users outputs table
-        $table = new html_table();
-        $table->attributes['class'] = 'generaltable';
-        $table->data        = array();
-        $table->head        = array('');
-
-        // Populate the header row
         foreach ($processors as $processor) {
-            $table->head[]  = get_string('pluginname', 'message_'.$processor->name);
+            $processor->displayname = get_string('pluginname', 'message_'.$processor->name);
         }
-        // Add enable/disable to head
-        $table->head[] = get_string('enabled', 'core_message');
 
-        // Generate the matrix of settings for each provider and processor
+        $activitycomponents = [];
+        $othercomponents = [];
+
         foreach ($providers as $provider) {
-            $row = new html_table_row();
-            $row->attributes['class'] = 'defaultmessageoutputs';
-            $row->cells = array();
-
-            // Provider Name
-            $providername = get_string('messageprovider:'.$provider->name, $provider->component);
-            $row->cells[] = new html_table_cell($providername);
+            $provider->displayname = get_string('messageprovider:'.$provider->name, $provider->component);
             $providersettingprefix = $provider->component.'_'.$provider->name.'_';
-            $disableprovidersetting = $providersettingprefix.'disable';
-            $providerdisabled = !empty($preferences->$disableprovidersetting);
+            $provider->enabledsetting = $providersettingprefix.'disable';
+            $provider->enabled = empty($preferences->{$provider->enabledsetting});
+            $provider->enabledlabel = get_string('providerenabled', 'message', $provider->displayname);
+            $provider->settings = [];
+
             // Settings for each processor
             foreach ($processors as $processor) {
-                $cellcontent = '';
-                foreach (array('permitted', 'loggedin', 'loggedoff') as $setting) {
-                    // pepare element and preference names
-                    $elementname = $providersettingprefix.$setting.'['.$processor->name.']';
-                    $preferencebase = $providersettingprefix.$setting;
-                    // prepare language bits
-                    $processorname = get_string('pluginname', 'message_'.$processor->name);
-                    $statename = get_string($setting, 'message');
-                    $labelparams = array(
-                        'provider'  => $providername,
-                        'processor' => $processorname,
-                        'state'     => $statename
-                    );
-                    if ($setting == 'permitted') {
-                        $label = get_string('sendingvia', 'message', $labelparams);
-                        // determine the current setting or use default
-                        $select = MESSAGE_DEFAULT_PERMITTED;
-                        $preference = $processor->name.'_provider_'.$preferencebase;
-                        if ($providerdisabled) {
-                            $select = MESSAGE_DISALLOWED;
-                        } else if (property_exists($preferences, $preference)) {
-                            $select = $preferences->{$preference};
-                        }
-                        // dropdown menu
-                        $cellcontent = html_writer::label($label, $elementname, true, array('class' => 'accesshide'));
-                        $cellcontent .= html_writer::select($options, $elementname, $select, false, array('id' => $elementname));
-                        $cellcontent .= html_writer::tag('div', get_string('defaults', 'message'));
-                    } else {
-                        $label = get_string('sendingviawhen', 'message', $labelparams);
-                        // determine the current setting based on the 'permitted' setting above
-                        $checked = false;
-                        if ($select == 'forced') {
-                            $checked = true;
-                        } else if ($select == 'permitted') {
-                            $preference = 'message_provider_'.$preferencebase;
-                            if (property_exists($preferences, $preference)) {
-                                $checked = (int)in_array($processor->name, explode(',', $preferences->{$preference}));
-                            }
-                        }
-                        // generate content
-                        $cellcontent .= html_writer::start_tag('div');
-                        $cellcontent .= html_writer::label($label, $elementname, true, array('class' => 'accesshide'));
-                        $cellcontent .= html_writer::checkbox($elementname, 1, $checked, '', array('id' => $elementname));
-                        $cellcontent .= $statename;
-                        $cellcontent .= html_writer::end_tag('div');
-                    }
+                $setting = new StdClass();
+
+                $setting->lockedsetting = $providersettingprefix.'locked['.$processor->name.']';
+                $preference = $processor->name.'_provider_'.$providersettingprefix.'locked';
+
+                $setting->locked = false;
+                if (property_exists($preferences, $preference)) {
+                    $setting->locked = $preferences->{$preference} == 1;
                 }
-                $row->cells[] = new html_table_cell($cellcontent);
+
+                $setting->enabledsetting = $providersettingprefix.'enabled['.$processor->name.']';
+                $preference = 'message_provider_'.$providersettingprefix.'enabled';
+
+                $setting->enabled = false;
+                if (property_exists($preferences, $preference)) {
+                    $setting->enabled = (int)in_array($processor->name, explode(',', $preferences->{$preference}));
+                }
+                $labelparams = [
+                    'provider'  => $provider->displayname,
+                    'processor' => $processor->displayname,
+                ];
+                $setting->enabledlabel = get_string('sendingviaenabled', 'message', $labelparams);
+                $setting->lockedlabel = get_string('sendingvialocked', 'message', $labelparams);
+
+                $provider->settings[] = $setting;
             }
-            $disableprovider = html_writer::checkbox($disableprovidersetting, 1, !$providerdisabled, '',
-                    array('id' => $disableprovidersetting, 'class' => 'messagedisable'));
-            $disableprovider = html_writer::tag('div', $disableprovider);
-            $row->cells[] = new html_table_cell($disableprovider);
-            $table->data[] = $row;
+
+            // Order the components so that the activities appear first, followed
+            // by the system and then anything else.
+            if ($provider->component != 'moodle') {
+                if (substr($provider->component, 0, 4) == 'mod_') {
+                    // Activities.
+                    $activitycomponents[] = $provider->component;
+                } else {
+                    // Other stuff.
+                    $othercomponents[] = $provider->component;
+                }
+            }
         }
 
-        $output = html_writer::table($table);
-        return $output;
+        $activitycomponents = array_unique($activitycomponents);
+        asort($activitycomponents);
+        $othercomponents = array_unique($othercomponents);
+        asort($othercomponents);
+        $components = array_merge($activitycomponents, ['moodle'], $othercomponents);
+        asort($providers);
+
+        $colspan = count($processors) + 2;
+        $componentsexport = [];
+
+        foreach ($components as $component) {
+            $componentexport = new StdClass();
+            $componentexport->name = $component;
+
+            if ($component != 'moodle') {
+                $componentexport->displayname = get_string('pluginname', $component);
+            } else {
+                $componentexport->displayname = get_string('coresystem');
+            }
+
+            $componentexport->providers = [];
+            foreach ($providers as $provider) {
+                if ($provider->component == $component) {
+                    $componentexport->providers[] = $provider;
+                }
+            }
+            $componentexport->colspan = $colspan;
+            $componentsexport[] = $componentexport;
+        }
+
+        $context['processors'] = array_values($processors);
+        $context['components'] = $componentsexport;
+
+        return $this->render_from_template('message/default_notification_preferences', $context);
     }
 
     /**

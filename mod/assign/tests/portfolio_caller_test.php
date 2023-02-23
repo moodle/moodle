@@ -14,19 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests behaviour of the assign_portfolio_caller class.
- *
- * @package mod_assign
- * @category test
- * @copyright Brendan Cox <brendan.cox@totaralearning.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_assign;
+
+use mod_assign_testable_assign;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
+require_once($CFG->dirroot . '/mod/assign/tests/fixtures/testable_assign.php');
 require_once($CFG->dirroot . '/group/lib.php');
 
 /**
@@ -34,10 +30,12 @@ require_once($CFG->dirroot . '/group/lib.php');
  *
  * Tests behaviour of the assign_portfolio_caller class.
  *
+ * @package mod_assign
+ * @category test
  * @copyright Brendan Cox <brendan.cox@totaralearning.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_assign_portfolio_caller_testcase extends advanced_testcase {
+class portfolio_caller_test extends \advanced_testcase {
 
     /**
      * Test an assignment file is loaded for a user who submitted it.
@@ -53,7 +51,7 @@ class mod_assign_portfolio_caller_testcase extends advanced_testcase {
 
         $activityrecord = $assigngenerator->create_instance(array('course' => $course->id));
         $cm = get_coursemodule_from_instance('assign', $activityrecord->id);
-        $context = context_module::instance($cm->id);
+        $context = \context_module::instance($cm->id);
         $assign = new mod_assign_testable_assign($context, $cm, $course);
 
         $submission = $assign->get_user_submission($user->id, true);
@@ -69,14 +67,14 @@ class mod_assign_portfolio_caller_testcase extends advanced_testcase {
         );
         $file = $fs->create_file_from_string($dummy, 'Content of ' . $dummy->filename);
 
-        $caller = new assign_portfolio_caller(array('cmid' => $cm->id, 'fileid' => $file->get_id()));
+        $caller = new \assign_portfolio_caller(array('cmid' => $cm->id, 'fileid' => $file->get_id()));
         $caller->set('user', $user);
         $caller->load_data();
         $this->assertEquals($file->get_contenthash(), $caller->get_sha1_file());
 
         // This processes the file either by fileid or by other fields in the file table.
         // We should get the same outcome with either approach.
-        $caller = new assign_portfolio_caller(
+        $caller = new \assign_portfolio_caller(
             array(
                 'cmid' => $cm->id,
                 'sid' => $submission->id,
@@ -103,7 +101,7 @@ class mod_assign_portfolio_caller_testcase extends advanced_testcase {
 
         $activityrecord = $assigngenerator->create_instance(array('course' => $course->id));
         $cm = get_coursemodule_from_instance('assign', $activityrecord->id);
-        $context = context_module::instance($cm->id);
+        $context = \context_module::instance($cm->id);
         $assign = new mod_assign_testable_assign($context, $cm, $course);
 
         $submission = $assign->get_user_submission($user->id, true);
@@ -122,10 +120,10 @@ class mod_assign_portfolio_caller_testcase extends advanced_testcase {
         // Now add second user.
         $wronguser = $this->getDataGenerator()->create_user();
 
-        $caller = new assign_portfolio_caller(array('cmid' => $cm->id, 'fileid' => $file->get_id()));
+        $caller = new \assign_portfolio_caller(array('cmid' => $cm->id, 'fileid' => $file->get_id()));
         $caller->set('user', $wronguser);
 
-        $this->expectException(portfolio_caller_exception::class);
+        $this->expectException(\portfolio_caller_exception::class);
         $this->expectExceptionMessage('Sorry, the requested file could not be found');
 
         $caller->load_data();
@@ -140,7 +138,7 @@ class mod_assign_portfolio_caller_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
 
-        $groupdata = new stdClass();
+        $groupdata = new \stdClass();
         $groupdata->courseid = $course->id;
         $groupdata->name = 'group1';
         $groupid = groups_create_group($groupdata);
@@ -152,7 +150,7 @@ class mod_assign_portfolio_caller_testcase extends advanced_testcase {
 
         $activityrecord = $assigngenerator->create_instance(array('course' => $course->id));
         $cm = get_coursemodule_from_instance('assign', $activityrecord->id);
-        $context = context_module::instance($cm->id);
+        $context = \context_module::instance($cm->id);
         $assign = new mod_assign_testable_assign($context, $cm, $course);
 
         $submission = $assign->get_group_submission($user->id, $groupid, true);
@@ -168,14 +166,14 @@ class mod_assign_portfolio_caller_testcase extends advanced_testcase {
         );
         $file = $fs->create_file_from_string($dummy, 'Content of ' . $dummy->filename);
 
-        $caller = new assign_portfolio_caller(array('cmid' => $cm->id, 'fileid' => $file->get_id()));
+        $caller = new \assign_portfolio_caller(array('cmid' => $cm->id, 'fileid' => $file->get_id()));
         $caller->set('user', $user);
         $caller->load_data();
         $this->assertEquals($file->get_contenthash(), $caller->get_sha1_file());
 
         // This processes the file either by fileid or by other fields in the file table.
         // We should get the same outcome with either approach.
-        $caller = new assign_portfolio_caller(
+        $caller = new \assign_portfolio_caller(
             array(
                 'cmid' => $cm->id,
                 'sid' => $submission->id,
@@ -197,7 +195,7 @@ class mod_assign_portfolio_caller_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
 
-        $groupdata = new stdClass();
+        $groupdata = new \stdClass();
         $groupdata->courseid = $course->id;
         $groupdata->name = 'group1';
         $groupid = groups_create_group($groupdata);
@@ -209,7 +207,7 @@ class mod_assign_portfolio_caller_testcase extends advanced_testcase {
 
         $activityrecord = $assigngenerator->create_instance(array('course' => $course->id));
         $cm = get_coursemodule_from_instance('assign', $activityrecord->id);
-        $context = context_module::instance($cm->id);
+        $context = \context_module::instance($cm->id);
         $assign = new mod_assign_testable_assign($context, $cm, $course);
 
         $submission = $assign->get_group_submission($user->id, $groupid,true);
@@ -229,7 +227,7 @@ class mod_assign_portfolio_caller_testcase extends advanced_testcase {
         $wronguser = $this->getDataGenerator()->create_user();
 
         // Create a new group for the wrong user.
-        $groupdata = new stdClass();
+        $groupdata = new \stdClass();
         $groupdata->courseid = $course->id;
         $groupdata->name = 'group2';
         $groupid = groups_create_group($groupdata);
@@ -237,7 +235,7 @@ class mod_assign_portfolio_caller_testcase extends advanced_testcase {
         groups_add_member($groupid, $wronguser);
 
         // In the negative test for the user, we loaded the caller via fileid. Switching to the other approach this time.
-        $caller = new assign_portfolio_caller(
+        $caller = new \assign_portfolio_caller(
             array(
                 'cmid' => $cm->id,
                 'sid' => $submission->id,
@@ -247,7 +245,7 @@ class mod_assign_portfolio_caller_testcase extends advanced_testcase {
         );
         $caller->set('user', $wronguser);
 
-        $this->expectException(portfolio_caller_exception::class);
+        $this->expectException(\portfolio_caller_exception::class);
         $this->expectExceptionMessage('Sorry, the requested file could not be found');
 
         $caller->load_data();

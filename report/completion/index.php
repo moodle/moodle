@@ -67,9 +67,8 @@ $start   = optional_param('start', 0, PARAM_INT);
 $sifirst = optional_param('sifirst', 'all', PARAM_NOTAGS);
 $silast  = optional_param('silast', 'all', PARAM_NOTAGS);
 
-// Whether to show extra user identity information
-// TODO Does not support custom user profile fields (MDL-70456).
-$extrafields = \core_user\fields::get_identity_fields($context, false);
+// Whether to show extra user identity information.
+$extrafields = \core_user\fields::get_identity_fields($context, true);
 $leftcols = 1 + count($extrafields);
 
 // Check permissions
@@ -94,7 +93,7 @@ $modinfo = get_fast_modinfo($course);
 $completion = new completion_info($course);
 
 if (!$completion->has_criteria()) {
-    print_error('nocriteriaset', 'completion', $CFG->wwwroot.'/course/report.php?id='.$course->id);
+    throw new \moodle_exception('nocriteriaset', 'completion', $CFG->wwwroot.'/course/report.php?id='.$course->id);
 }
 
 // Get criteria and put in correct order

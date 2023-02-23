@@ -188,7 +188,7 @@ class LogisticRegression extends Adaline
                  * The gradient of the cost function to be used with gradient descent:
                  *		∇J(x) = -(y - h(x)) = (h(x) - y)
                  */
-                return function ($weights, $sample, $y) use ($penalty) {
+                return function ($weights, $sample, $y) use ($penalty): array {
                     $this->weights = $weights;
                     $hX = $this->output($sample);
 
@@ -220,13 +220,13 @@ class LogisticRegression extends Adaline
                  * The gradient of the cost function:
                  *		∇J(x) = -(h(x) - y) . h(x) . (1 - h(x))
                  */
-                return function ($weights, $sample, $y) use ($penalty) {
+                return function ($weights, $sample, $y) use ($penalty): array {
                     $this->weights = $weights;
                     $hX = $this->output($sample);
 
                     $y = $y < 0 ? 0 : 1;
 
-                    $error = ($y - $hX) ** 2;
+                    $error = (($y - $hX) ** 2);
                     $gradient = -($y - $hX) * $hX * (1 - $hX);
 
                     return [$error, $gradient, $penalty];

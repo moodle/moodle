@@ -1,0 +1,6 @@
+This file describes API changes in /admin/tool/dataprivacy/*
+Information provided here is intended especially for developers.
+
+=== 4.1 ===
+* New `api::can_create_data_download_request_for_self` method for determining whether user has permission to create their
+  own data download requests

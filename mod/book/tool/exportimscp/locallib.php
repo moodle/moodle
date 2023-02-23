@@ -47,7 +47,7 @@ function booktool_exportimscp_build_package($book, $context) {
 
     // fix structure and test if chapters present
     if (!book_preload_chapters($book)) {
-        print_error('nochapters', 'booktool_exportimscp');
+        throw new \moodle_exception('nochapters', 'booktool_exportimscp');
     }
 
     // prepare temp area with package contents
@@ -135,7 +135,7 @@ function booktool_exportimscp_prepare_files($book, $context) {
 <manifest xmlns="http://www.imsglobal.org/xsd/imscp_v1p1" xmlns:imsmd="http://www.imsglobal.org/xsd/imsmd_v1p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" identifier="MANIFEST-' . md5($CFG->wwwroot . '-' . $book->course . '-' . $book->id) . '" xsi:schemaLocation="http://www.imsglobal.org/xsd/imscp_v1p1 imscp_v1p1.xsd http://www.imsglobal.org/xsd/imsmd_v1p2 imsmd_v1p2p2.xsd">
   <organizations default="MOODLE-' . $book->course . '-' . $book->id . '">
     <organization identifier="MOODLE-' . $book->course . '-' . $book->id . '" structure="hierarchical">
-      <title>' . htmlspecialchars($bookname) . '</title>';
+      <title>' . htmlspecialchars($bookname, ENT_COMPAT) . '</title>';
 
     // To store the prev level (book only have 0 and 1)
     $prevlevel = null;
@@ -170,7 +170,7 @@ function booktool_exportimscp_prepare_files($book, $context) {
         // Add the imsitems
         $imsitems .= $currspaces .'        <item identifier="ITEM-' . $book->course . '-' . $book->id . '-' . $chapter->pagenum .'" isvisible="true" identifierref="RES-' .
                 $book->course . '-' . $book->id . '-' . $chapter->pagenum . "\">\n" .
-                $currspaces . '         <title>' . htmlspecialchars($chaptertitle) . '</title>' . "\n";
+                $currspaces . '         <title>' . htmlspecialchars($chaptertitle, ENT_COMPAT) . '</title>' . "\n";
 
         // Add the imsresources
         // First, check if we have localfiles

@@ -31,6 +31,8 @@ Feature: Enable the course_list block on a category page and view it's contents
     And I turn editing mode on
     And I am on course index
     And I follow "Category 1"
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Courses" block
     And I log out
     When I log in as "teacher1"
@@ -49,6 +51,8 @@ Feature: Enable the course_list block on a category page and view it's contents
     And I turn editing mode on
     And I am on course index
     And I follow "Category 1"
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Courses" block
     And I log out
     When I log in as "teacher1"
@@ -67,6 +71,8 @@ Feature: Enable the course_list block on a category page and view it's contents
     And I turn editing mode on
     And I am on course index
     And I follow "Category 1"
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     When I add the "Courses" block
     Then I should see "Category 1" in the "Course categories" "block"
     And I should see "Category A" in the "Course categories" "block"

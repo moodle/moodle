@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the analysis class.
- *
- * @package   core_analytics
- * @copyright 2019 David Monllaó {@link http://www.davidmonllao.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/fixtures/test_timesplitting_upcoming_seconds.php');
+namespace core_analytics;
 
 /**
  * Unit tests for the analysis class.
@@ -33,18 +23,19 @@ require_once(__DIR__ . '/fixtures/test_timesplitting_upcoming_seconds.php');
  * @copyright 2019 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class analytics_analysis_testcase extends advanced_testcase {
+class analysis_test extends \advanced_testcase {
 
     /**
      * Test fill_firstanalyses_cache.
      * @return null
      */
     public function test_fill_firstanalyses_cache() {
+        require_once(__DIR__ . '/fixtures/test_timesplitting_upcoming_seconds.php');
         $this->resetAfterTest();
 
         $modelid = 1;
 
-        $params = ['startdate' => (new DateTimeImmutable('-5 seconds'))->getTimestamp()];
+        $params = ['startdate' => (new \DateTimeImmutable('-5 seconds'))->getTimestamp()];
         $course1 = $this->getDataGenerator()->create_course($params);
         $course2 = $this->getDataGenerator()->create_course($params);
         $analysable1 = new \core_analytics\course($course1);
@@ -72,7 +63,7 @@ class analytics_analysis_testcase extends advanced_testcase {
         $this->assertEquals($earliest, $firstanalyses[$modelid . '_' . $course1->id]);
 
         // Upcoming periodic time-splitting methods can read and process the cached data.
-        $seconds = new test_timesplitting_upcoming_seconds();
+        $seconds = new \test_timesplitting_upcoming_seconds();
         $seconds->set_modelid($modelid);
         $seconds->set_analysable($analysable1);
 

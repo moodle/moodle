@@ -20,13 +20,13 @@ require_once '../../../config.php';
 
 $id = required_param('id', PARAM_INT); // course id
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 require_user_key_login('grade/import', $id); // we want different keys for each course
 
 if (empty($CFG->gradepublishing)) {
-    print_error('gradepubdisable');
+    throw new \moodle_exception('gradepubdisable');
 }
 
 $context = context_course::instance($id);

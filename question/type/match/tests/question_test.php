@@ -14,14 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the matching question definition classes.
- *
- * @package   qtype_match
- * @copyright 2009 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_match;
 
+use question_attempt_step;
+use question_classified_response;
+use question_display_options;
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,13 +30,15 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 /**
  * Unit tests for the matching question definition class.
  *
+ * @package   qtype_match
  * @copyright 2009 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \qtype_match_question
  */
-class qtype_match_question_test extends advanced_testcase {
+class question_test extends \advanced_testcase {
 
     public function test_get_expected_data() {
-        $question = test_question_maker::make_question('match');
+        $question = \test_question_maker::make_question('match');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEquals(array('sub0' => PARAM_INT, 'sub1' => PARAM_INT,
@@ -46,7 +46,7 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_is_complete_response() {
-        $question = test_question_maker::make_question('match');
+        $question = \test_question_maker::make_question('match');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertFalse($question->is_complete_response(array()));
@@ -58,7 +58,7 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_is_gradable_response() {
-        $question = test_question_maker::make_question('match');
+        $question = \test_question_maker::make_question('match');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertFalse($question->is_gradable_response(array()));
@@ -72,7 +72,7 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_is_same_response() {
-        $question = test_question_maker::make_question('match');
+        $question = \test_question_maker::make_question('match');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertTrue($question->is_same_response(
@@ -97,7 +97,7 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_grading() {
-        $question = test_question_maker::make_question('match');
+        $question = \test_question_maker::make_question('match');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $correctresponse = $question->prepare_simulated_post_data(
@@ -126,7 +126,7 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_get_correct_response() {
-        $question = test_question_maker::make_question('match');
+        $question = \test_question_maker::make_question('match');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $correct = $question->prepare_simulated_post_data(array('Dog' => 'Mammal',
@@ -137,7 +137,7 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_get_question_summary() {
-        $match = test_question_maker::make_question('match');
+        $match = \test_question_maker::make_question('match');
         $match->start_attempt(new question_attempt_step(), 1);
         $qsummary = $match->get_question_summary();
         $this->assertMatchesRegularExpression('/' . preg_quote($match->questiontext, '/') . '/', $qsummary);
@@ -150,7 +150,7 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_summarise_response() {
-        $match = test_question_maker::make_question('match');
+        $match = \test_question_maker::make_question('match');
         $match->start_attempt(new question_attempt_step(), 1);
 
         $summary = $match->summarise_response($match->prepare_simulated_post_data(array('Dog' => 'Amphibian', 'Frog' => 'Mammal')));
@@ -160,7 +160,7 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_classify_response() {
-        $match = test_question_maker::make_question('match');
+        $match = \test_question_maker::make_question('match');
         $match->start_attempt(new question_attempt_step(), 1);
 
         $response = $match->prepare_simulated_post_data(array('Dog' => 'Amphibian', 'Frog' => 'Insect', 'Toad' => '', 'Cat' => ''));
@@ -182,14 +182,14 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_classify_response_choice_deleted_after_attempt() {
-        $match = test_question_maker::make_question('match');
+        $match = \test_question_maker::make_question('match');
         $firststep = new question_attempt_step();
 
         $match->start_attempt($firststep, 1);
         $response = $match->prepare_simulated_post_data(array(
                 'Dog' => 'Amphibian', 'Frog' => 'Insect', 'Toad' => '', 'Cat' => 'Mammal'));
 
-        $match = test_question_maker::make_question('match');
+        $match = \test_question_maker::make_question('match');
         unset($match->stems[4]);
         unset($match->stemsformat[4]);
         unset($match->right[4]);
@@ -203,14 +203,14 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_classify_response_choice_added_after_attempt() {
-        $match = test_question_maker::make_question('match');
+        $match = \test_question_maker::make_question('match');
         $firststep = new question_attempt_step();
 
         $match->start_attempt($firststep, 1);
         $response = $match->prepare_simulated_post_data(array(
                 'Dog' => 'Amphibian', 'Frog' => 'Insect', 'Toad' => '', 'Cat' => 'Mammal'));
 
-        $match = test_question_maker::make_question('match');
+        $match = \test_question_maker::make_question('match');
         $match->stems[5] = "Snake";
         $match->stemsformat[5] = FORMAT_HTML;
         $match->choices[5] = "Reptile";
@@ -226,7 +226,7 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_prepare_simulated_post_data() {
-        $m = test_question_maker::make_question('match');
+        $m = \test_question_maker::make_question('match');
         $m->start_attempt(new question_attempt_step(), 1);
         $postdata = $m->prepare_simulated_post_data(array('Dog' => 'Mammal', 'Frog' => 'Amphibian',
                                                           'Toad' => 'Amphibian', 'Cat' => 'Mammal'));
@@ -237,12 +237,72 @@ class qtype_match_question_test extends advanced_testcase {
      * test_get_question_definition_for_external_rendering
      */
     public function test_get_question_definition_for_external_rendering() {
-        $question = test_question_maker::make_question('match');
+        $question = \test_question_maker::make_question('match');
         $question->start_attempt(new question_attempt_step(), 1);
-        $qa = test_question_maker::get_a_qa($question);
+        $qa = \test_question_maker::get_a_qa($question);
         $displayoptions = new question_display_options();
 
         $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);
         $this->assertEquals(1, $options['shufflestems']);
+    }
+
+    public function test_validate_can_regrade_with_other_version_ok() {
+        $m = \test_question_maker::make_question('match');
+
+        $newm = clone($m);
+
+        $this->assertNull($newm->validate_can_regrade_with_other_version($m));
+    }
+
+    public function test_validate_can_regrade_with_other_version_bad_stems() {
+        $m = \test_question_maker::make_question('match');
+
+        $newm = clone($m);
+        unset($newm->stems[4]);
+
+        $this->assertEquals(get_string('regradeissuenumstemschanged', 'qtype_match'),
+                $newm->validate_can_regrade_with_other_version($m));
+    }
+
+    public function test_validate_can_regrade_with_other_version_bad_choices() {
+        $m = \test_question_maker::make_question('match');
+
+        $newm = clone($m);
+        unset($newm->choices[3]);
+
+        $this->assertEquals(get_string('regradeissuenumchoiceschanged', 'qtype_match'),
+                $newm->validate_can_regrade_with_other_version($m));
+    }
+
+    public function test_update_attempt_state_date_from_old_version_bad() {
+        $m = \test_question_maker::make_question('match');
+
+        $newm = clone($m);
+        $newm->stems = [11 => 'Dog', 12 => 'Frog', 13 => 'Toad', 14 => 'Cat', 15 => 'Hippopotamus'];
+        $newm->stemformat = [11 => FORMAT_HTML, 12 => FORMAT_HTML, 13 => FORMAT_HTML, 14 => FORMAT_HTML, 15 => FORMAT_HTML];
+        $newm->choices = [11 => 'Mammal', 12 => 'Amphibian', 13 => 'Insect'];
+        $newm->right = [11 => 11, 12 => 12, 13 => 12, 14 => 11, 15 => 11];
+
+        $oldstep = new question_attempt_step();
+        $oldstep->set_qt_var('_stemorder', '4,1,3,2');
+        $oldstep->set_qt_var('_choiceorder', '2,3,1');
+        $this->expectExceptionMessage(get_string('regradeissuenumstemschanged', 'qtype_match'));
+        $newm->update_attempt_state_data_for_new_version($oldstep, $m);
+    }
+
+    public function test_update_attempt_state_date_from_old_version_ok() {
+        $m = \test_question_maker::make_question('match');
+
+        $newm = clone($m);
+        $newm->stems = [11 => 'Dog', 12 => 'Frog', 13 => 'Toad', 14 => 'Cat'];
+        $newm->stemformat = [11 => FORMAT_HTML, 12 => FORMAT_HTML, 13 => FORMAT_HTML, 14 => FORMAT_HTML];
+        $newm->choices = [11 => 'Mammal', 12 => 'Amphibian', 13 => 'Insect'];
+        $newm->right = [11 => 11, 12 => 12, 13 => 12, 14 => 11];
+
+        $oldstep = new question_attempt_step();
+        $oldstep->set_qt_var('_stemorder', '4,1,3,2');
+        $oldstep->set_qt_var('_choiceorder', '2,3,1');
+        $this->assertEquals(['_stemorder' => '14,11,13,12', '_choiceorder' => '12,13,11'],
+                $newm->update_attempt_state_data_for_new_version($oldstep, $m));
     }
 }

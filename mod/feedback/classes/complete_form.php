@@ -450,7 +450,6 @@ class mod_feedback_complete_form extends moodleform {
         $menu = new action_menu();
         $menu->set_owner_selector('#' . $this->guess_element_id($item, $element));
         $menu->set_constraint('.feedback_form');
-        $menu->set_alignment(action_menu::TR, action_menu::BR);
         $menu->set_menu_trigger(get_string('edit'));
         $menu->prioritise = true;
 

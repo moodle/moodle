@@ -16,22 +16,9 @@ Feature: Scorm multi-sco review mode.
 
   @javascript
   Scenario: Test review mode with a single sco completion.
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Settings" in current page administration
-    And I set the following fields to these values:
-      | Enable completion tracking | Yes |
-    And I press "Save and display"
-    And I add a "SCORM package" to section "1"
-    And I set the following fields to these values:
-      | Name | Basic Multi-sco SCORM package |
-      | Description | Description |
-      | Force new attempt | No |
-    And I set the field "Completed" to "1"
-    And I upload "mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip" file to "Package file" filemanager
-    And I click on "Save and display" "button"
-    And I should see "Basic Multi-sco SCORM package"
-    And I log out
+    When the following "activities" exist:
+      | activity | course | name                           | packagefilepath                                               | forcenewattempt |
+      | scorm    | C1     | Basic Multi-sco SCORM package  | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip      | 0               |
     And I am on the "Basic Multi-sco SCORM package" "scorm activity" page logged in as student1
     And I should see "Enter"
     And I press "Enter"
@@ -48,24 +35,9 @@ Feature: Scorm multi-sco review mode.
 
   @javascript
   Scenario: Test review mode with all scos completed.
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Settings" in current page administration
-    And I set the following fields to these values:
-      | Enable completion tracking | Yes |
-    And I press "Save and display"
-    And I add a "SCORM package" to section "1"
-    And I set the following fields to these values:
-      | Name | ADV Multi-sco SCORM package |
-      | Description | Description |
-      | Completion tracking | Show activity as complete when conditions are met |
-      | Require all scos to return completion status | 1 |
-      | Force new attempt | No |
-    And I set the field "Completed" to "1"
-    And I upload "mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip" file to "Package file" filemanager
-    And I click on "Save and display" "button"
-    And I should see "ADV Multi-sco SCORM package"
-    And I log out
+    When the following "activities" exist:
+      | activity | course | name                           | packagefilepath                                               | forcenewattempt |
+      | scorm    | C1     | ADV Multi-sco SCORM package    | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip      | 0               |
     And I am on the "ADV Multi-sco SCORM package" "scorm activity" page logged in as student1
     And I should see "Enter"
     And I press "Enter"
@@ -167,17 +139,9 @@ Feature: Scorm multi-sco review mode.
 
   @javascript
   Scenario: Test force completed set to Always.
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "SCORM package" to section "1"
-    And I set the following fields to these values:
-      | Name | Basic Multi-sco SCORM package |
-      | Description | Description |
-      | Force new attempt | Always |
-    And I upload "mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12-mini.zip" file to "Package file" filemanager
-    And I click on "Save and display" "button"
-    And I should see "Basic Multi-sco SCORM package"
-    And I log out
+    When the following "activities" exist:
+      | activity | course | name                          | packagefilepath                                               | forcenewattempt |
+      | scorm    | C1     | Basic Multi-sco SCORM package | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12-mini.zip | 2               |
     And I am on the "Basic Multi-sco SCORM package" "scorm activity" page logged in as student1
     And I should see "Enter"
     And I press "Enter"
@@ -197,17 +161,9 @@ Feature: Scorm multi-sco review mode.
 
   @javascript
   Scenario: Test force completed set to when previous complete/passed/failed.
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "SCORM package" to section "1"
-    And I set the following fields to these values:
-      | Name | Basic Multi-sco SCORM package |
-      | Description | Description |
-      | Force new attempt | When previous attempt completed, passed or failed |
-    And I upload "mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12-mini.zip" file to "Package file" filemanager
-    And I click on "Save and display" "button"
-    And I should see "Basic Multi-sco SCORM package"
-    And I log out
+    When the following "activities" exist:
+      | activity | course | name                          | packagefilepath                                               | forcenewattempt |
+      | scorm    | C1     | Basic Multi-sco SCORM package | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12-mini.zip | 1               |
     And I am on the "Basic Multi-sco SCORM package" "scorm activity" page logged in as student1
     And I should see "Enter"
     And I press "Enter"
@@ -272,18 +228,9 @@ Feature: Scorm multi-sco review mode.
 
   @javascript
   Scenario: Test force completed set to Always and student skipview
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "SCORM package" to section "1"
-    And I set the following fields to these values:
-      | Name | Basic Multi-sco SCORM package |
-      | Description | Description |
-      | Force new attempt | Always |
-      | Student skip content structure page | Always |
-    And I upload "mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12-mini.zip" file to "Package file" filemanager
-    And I click on "Save and display" "button"
-    And I should see "Basic Multi-sco SCORM package"
-    And I log out
+    When the following "activities" exist:
+      | activity | course | name                          | packagefilepath                                               | forcenewattempt | skipview |
+      | scorm    | C1     | Basic Multi-sco SCORM package | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12-mini.zip | 2               | 2        |
     And I am on the "Basic Multi-sco SCORM package" "scorm activity" page logged in as student1
     And I switch to "scorm_object" iframe
     And I should see "Play of the game"
@@ -298,18 +245,9 @@ Feature: Scorm multi-sco review mode.
 
   @javascript
   Scenario: Test force completed set to when previous complete/passed/failed.
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "SCORM package" to section "1"
-    And I set the following fields to these values:
-      | Name | Basic Multi-sco SCORM package |
-      | Description | Description |
-      | Force new attempt | When previous attempt completed, passed or failed |
-      | Student skip content structure page | Always |
-    And I upload "mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12-mini.zip" file to "Package file" filemanager
-    And I click on "Save and display" "button"
-    And I should see "Basic Multi-sco SCORM package"
-    And I log out
+    When the following "activities" exist:
+      | activity | course | name                          | packagefilepath                                               | forcenewattempt | skipview |
+      | scorm    | C1     | Basic Multi-sco SCORM package | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12-mini.zip | 1               | 2        |
     And I am on the "Basic Multi-sco SCORM package" "scorm activity" page logged in as student1
     And I switch to "scorm_object" iframe
     And I should see "Play of the game"

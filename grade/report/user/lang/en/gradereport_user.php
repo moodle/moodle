@@ -22,11 +22,15 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+$string['allusersnum'] = 'All users ({$a})';
 $string['eventgradereportviewed'] = 'Grade user report viewed';
+$string['gotonextreport'] = 'Go to next user report';
+$string['gotopreviousreport'] = 'Go to previous user report';
 $string['pluginname'] = 'User report';
-$string['user:view'] = 'View your own grade report';
-$string['myself'] = 'Myself';
-$string['otheruser'] = 'User';
+$string['user:view'] = 'View user report';
+$string['userreportdesc'] = 'User reports include a user’s grades, feedback and the course total.';
+$string['userreports'] = 'Select a user above to view their report';
 $string['privacy:metadata:preference:gradereport_user_view_user'] = 'Whether to view report as current user or another user in the gradebook reports';
 $string['tablesummary'] = 'The table is arranged as a list of graded items including categories of graded items. When items are in a category they will be indicated as such.';
-$string['viewas'] = 'View report as';

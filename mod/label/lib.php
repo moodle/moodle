@@ -71,6 +71,15 @@ function label_add_instance($label) {
 }
 
 /**
+ * Sets the special label display on course page.
+ *
+ * @param cm_info $cm Course-module object
+ */
+function label_cm_info_view(cm_info $cm) {
+    $cm->set_custom_cmlist_item(true);
+}
+
+/**
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
@@ -172,7 +181,7 @@ function label_reset_userdata($data) {
  * @uses FEATURE_GRADE_HAS_GRADE
  * @uses FEATURE_GRADE_OUTCOMES
  * @param string $feature FEATURE_xx constant for requested feature
- * @return bool|null True if module supports feature, false if not, null if doesn't know
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function label_supports($feature) {
     switch($feature) {
@@ -186,6 +195,7 @@ function label_supports($feature) {
         case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
         case FEATURE_BACKUP_MOODLE2:          return true;
         case FEATURE_NO_VIEW_LINK:            return true;
+        case FEATURE_MOD_PURPOSE:             return MOD_PURPOSE_CONTENT;
 
         default: return null;
     }

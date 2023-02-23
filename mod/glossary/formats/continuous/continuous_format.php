@@ -22,7 +22,7 @@ function glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode='
     echo '</td></tr>';
 
     echo '<tr valign="top"><td class="entrylowersection">';
-    glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $aliases);
+    glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $aliases, false);
     echo '</td>';
     echo '</tr>';
     echo "</table>\n";

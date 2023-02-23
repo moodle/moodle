@@ -35,7 +35,7 @@ class delete extends base {
         global $DB, $OUTPUT;
 
         // Getting the preset name.
-        $presetdata = $DB->get_record('tool_admin_presets', ['id' => $this->id], 'name');
+        $presetdata = $DB->get_record('adminpresets', ['id' => $this->id], 'name');
 
         if ($presetdata) {
             $deletetext = get_string('deletepreset', 'tool_admin_presets', $presetdata->name);
@@ -46,7 +46,7 @@ class delete extends base {
             $cancelurl = new \moodle_url('/admin/tool/admin_presets/index.php');
 
             // If the preset was applied add a warning text.
-            if ($DB->get_records('tool_admin_presets_app', ['adminpresetid' => $this->id])) {
+            if ($DB->get_records('adminpresets_app', ['adminpresetid' => $this->id])) {
                 $deletetext .= '<p><strong>' .
                     get_string("deletepreviouslyapplied", "tool_admin_presets") . '</strong></p>';
             }
@@ -56,7 +56,7 @@ class delete extends base {
             ];
             $this->outputs = $OUTPUT->confirm($deletetext, $confirmurl, $cancelurl, $displayoptions);
         } else {
-            throw new moodle_exception('errordeleting', 'tool_admin_presets');
+            throw new moodle_exception('errordeleting', 'core_adminpresets');
         }
     }
 

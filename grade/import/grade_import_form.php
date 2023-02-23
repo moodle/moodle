@@ -119,11 +119,10 @@ class grade_import_mapping_form extends moodleform {
         $mform->addHelpButton('general_map', 'mappings', 'grades');
 
         // Add a feedback option.
-        $feedbacks = array();
-        if ($gradeitems = $this->_customdata['gradeitems']) {
-            foreach ($gradeitems as $itemid => $itemname) {
-                $feedbacks['feedback_'.$itemid] = get_string('feedbackforgradeitems', 'grades', $itemname);
-            }
+        $feedbacks = [];
+        $gradeitems = (array) $this->_customdata['gradeitems'];
+        foreach ($gradeitems as $itemid => $itemname) {
+            $feedbacks['feedback_'.$itemid] = get_string('feedbackforgradeitems', 'grades', $itemname);
         }
 
         if ($header) {

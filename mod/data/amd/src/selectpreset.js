@@ -21,10 +21,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import Notification from 'core/notification';
-import {get_string as getString} from 'core/str';
-
 const selectors = {
+    presetRadioButton: 'input[name="fullname"]',
     selectPresetButton: 'input[name="selectpreset"]',
     selectedPresetRadioButton: 'input[name="fullname"]:checked',
 };
@@ -33,22 +31,45 @@ const selectors = {
  * Initialize module.
  */
 export const init = () => {
-    const selectPresetButton = document.querySelector(selectors.selectPresetButton);
+    const radioButton = document.querySelectorAll(selectors.presetRadioButton);
 
-    selectPresetButton.addEventListener('click', event => {
-        event.preventDefault();
-        // Validate whether there is a selected preset before submitting the form.
-        if (document.querySelectorAll(selectors.selectedPresetRadioButton).length > 0) {
-            const presetsForm = event.target.closest('form');
-            presetsForm.submit();
-        } else {
-            // No selected presets. Display an error message to user.
-            getString('presetnotselected', 'mod_data').then((str) => {
-                return Notification.addNotification({
-                    type: 'error',
-                    message: str
-                });
-            }).catch(Notification.exception);
-        }
+    // Initialize the "Use a preset" button properly.
+    disableUsePresetButton();
+
+    radioButton.forEach((elem) => {
+        elem.addEventListener('change', function(event) {
+            event.preventDefault();
+            // Enable the "Use a preset" button when any of the radio buttons in the presets list is checked.
+            disableUsePresetButton();
+        });
     });
+
+};
+
+/**
+ * Decide whether to disable or not the "Use a preset" button.
+ * When there is no preset selected, the button should be displayed disabled; otherwise, it will appear enabled as a primary button.
+ *
+ * @method
+ * @private
+ */
+const disableUsePresetButton = () => {
+    let selectPresetButton = document.querySelector(selectors.selectPresetButton);
+    const selectedRadioButton = document.querySelector(selectors.selectedPresetRadioButton);
+
+    if (selectedRadioButton) {
+        // There is one preset selected, so the button should be enabled.
+        selectPresetButton.removeAttribute('disabled');
+        selectPresetButton.classList.remove('btn-secondary');
+        selectPresetButton.classList.add('btn-primary');
+        selectPresetButton.setAttribute('data-presetname', selectedRadioButton.getAttribute('value'));
+        selectPresetButton.setAttribute('data-cmid', selectedRadioButton.getAttribute('data-cmid'));
+    } else {
+        // There is no any preset selected, so the button should be disabled.
+        selectPresetButton.setAttribute('disabled', true);
+        selectPresetButton.classList.remove('btn-primary');
+        selectPresetButton.classList.add('btn-secondary');
+        selectPresetButton.removeAttribute('data-presetname');
+        selectPresetButton.removeAttribute('data-cmid');
+    }
 };

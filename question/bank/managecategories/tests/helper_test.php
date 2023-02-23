@@ -16,6 +16,9 @@
 
 namespace qbank_managecategories;
 
+use moodle_url;
+use core_question\local\bank\question_edit_contexts;
+
 /**
  * Unit tests for helper class.
  *
@@ -48,6 +51,11 @@ class helper_test extends \advanced_testcase {
     protected $quiz;
 
     /**
+     * @var question_category_object used in the tests.
+     */
+    protected $qcobject;
+
+    /**
      * Tests initial setup.
      */
     protected function setUp(): void {
@@ -57,9 +65,16 @@ class helper_test extends \advanced_testcase {
 
         $datagenerator = $this->getDataGenerator();
         $this->course = $datagenerator->create_course();
-        $this->quiz = $datagenerator->create_module('quiz', ['course' => $this->course->id]);
+        $this->quiz = $datagenerator->create_module('quiz',
+                ['course' => $this->course->id, 'name' => 'Quiz 1']);
         $this->qgenerator = $datagenerator->get_plugin_generator('core_question');
         $this->context = \context_module::instance($this->quiz->cmid);
+
+        $contexts = new question_edit_contexts($this->context);
+        $this->qcobject = new question_category_object(null,
+            new moodle_url('/question/bank/managecategories/category.php', ['courseid' => SITEID]),
+            $contexts->having_one_edit_tab_cap('categories'), 0, null, 0,
+            $contexts->having_cap('moodle/question:add'));
     }
 
     /**
@@ -72,52 +87,56 @@ class helper_test extends \advanced_testcase {
 
         $qcat1 = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
         $q1a = $this->qgenerator->create_question('shortanswer', null, ['category' => $qcat1->id]);     // Will be hidden.
-        $DB->set_field('question', 'hidden', 1, ['id' => $q1a->id]);
+        $DB->set_field('question_versions', 'status', 'hidden', ['questionid' => $q1a->id]);
 
         $qcat2 = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
         $q2a = $this->qgenerator->create_question('shortanswer', null, ['category' => $qcat2->id]);     // Will be hidden.
         $q2b = $this->qgenerator->create_question('shortanswer', null, ['category' => $qcat2->id]);     // Will be hidden but used.
-        $DB->set_field('question', 'hidden', 1, ['id' => $q2a->id]);
-        $DB->set_field('question', 'hidden', 1, ['id' => $q2b->id]);
+        $DB->set_field('question_versions', 'status', 'hidden', ['questionid' => $q2a->id]);
+        $DB->set_field('question_versions', 'status', 'hidden', ['questionid' => $q2b->id]);
         quiz_add_quiz_question($q2b->id, $this->quiz);
+
+        // Adding a new random question does not add a new question, adds a question_set_references record.
         quiz_add_random_questions($this->quiz, 0, $qcat2->id, 1, false);
 
         // We added one random question to the quiz and we expect the quiz to have only one random question.
-        $q2d = $DB->get_record_sql("SELECT q.*
-                                      FROM {question} q
-                                      JOIN {quiz_slots} s ON s.questionid = q.id
-                                     WHERE q.qtype = :qtype
-                                           AND s.quizid = :quizid",
-            ['qtype' => 'random', 'quizid' => $this->quiz->id], MUST_EXIST);
+        $q2d = $DB->get_record_sql("SELECT qsr.*
+                                      FROM {quiz_slots} qs
+                                      JOIN {question_set_references} qsr ON qsr.itemid = qs.id
+                                     WHERE qs.quizid = ?
+                                       AND qsr.component = ?
+                                       AND qsr.questionarea = ?",
+            [$this->quiz->id, 'mod_quiz', 'slot'], MUST_EXIST);
 
         // The following 2 lines have to be after the quiz_add_random_questions() call above.
         // Otherwise, quiz_add_random_questions() will to be "smart" and use them instead of creating a new "random" question.
         $q1b = $this->qgenerator->create_question('random', null, ['category' => $qcat1->id]);          // Will not be used.
         $q2c = $this->qgenerator->create_question('random', null, ['category' => $qcat2->id]);          // Will not be used.
 
-        $this->assertEquals(2, $DB->count_records('question', ['category' => $qcat1->id]));
-        $this->assertEquals(4, $DB->count_records('question', ['category' => $qcat2->id]));
+        $this->assertEquals(2, count($this->qcobject->get_real_question_ids_in_category($qcat1->id)));
+        $this->assertEquals(3, count($this->qcobject->get_real_question_ids_in_category($qcat2->id)));
 
         // Non-existing category, nothing will happen.
         helper::question_remove_stale_questions_from_category(0);
-        $this->assertEquals(2, $DB->count_records('question', ['category' => $qcat1->id]));
-        $this->assertEquals(4, $DB->count_records('question', ['category' => $qcat2->id]));
+        $this->assertEquals(2, count($this->qcobject->get_real_question_ids_in_category($qcat1->id)));
+        $this->assertEquals(3, count($this->qcobject->get_real_question_ids_in_category($qcat2->id)));
 
         // First category, should be empty afterwards.
         helper::question_remove_stale_questions_from_category($qcat1->id);
-        $this->assertEquals(0, $DB->count_records('question', ['category' => $qcat1->id]));
-        $this->assertEquals(4, $DB->count_records('question', ['category' => $qcat2->id]));
+        $this->assertEquals(0, count($this->qcobject->get_real_question_ids_in_category($qcat1->id)));
+        $this->assertEquals(3, count($this->qcobject->get_real_question_ids_in_category($qcat2->id)));
         $this->assertFalse($DB->record_exists('question', ['id' => $q1a->id]));
         $this->assertFalse($DB->record_exists('question', ['id' => $q1b->id]));
 
         // Second category, used questions should be left untouched.
         helper::question_remove_stale_questions_from_category($qcat2->id);
-        $this->assertEquals(0, $DB->count_records('question', ['category' => $qcat1->id]));
-        $this->assertEquals(2, $DB->count_records('question', ['category' => $qcat2->id]));
+        $this->assertEquals(0, count($this->qcobject->get_real_question_ids_in_category($qcat1->id)));
+        $this->assertEquals(1, count($this->qcobject->get_real_question_ids_in_category($qcat2->id)));
         $this->assertFalse($DB->record_exists('question', ['id' => $q2a->id]));
         $this->assertTrue($DB->record_exists('question', ['id' => $q2b->id]));
         $this->assertFalse($DB->record_exists('question', ['id' => $q2c->id]));
-        $this->assertTrue($DB->record_exists('question', ['id' => $q2d->id]));
+        $this->assertTrue($DB->record_exists('question_set_references',
+            ['id' => $q2d->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']));
     }
 
     /**
@@ -184,7 +203,7 @@ class helper_test extends \advanced_testcase {
     public function test_question_category_select_menu() {
 
         $this->qgenerator->create_question_category(['contextid' => $this->context->id, 'name' => 'Test this question category']);
-        $contexts = new \question_edit_contexts($this->context);
+        $contexts = new \core_question\local\bank\question_edit_contexts($this->context);
 
         ob_start();
         helper::question_category_select_menu($contexts->having_cap('moodle/question:add'));
@@ -210,18 +229,20 @@ class helper_test extends \advanced_testcase {
         $qcategory2 = $this->qgenerator->create_question_category(['contextid' => $this->context->id, 'parent' => $qcategory1->id]);
         $qcategory3 = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
 
-        $contexts = new \question_edit_contexts($this->context);
+        $contexts = new \core_question\local\bank\question_edit_contexts($this->context);
 
         // Validate that we have the array with the categories tree.
         $categorycontexts = helper::question_category_options($contexts->having_cap('moodle/question:add'));
-        foreach ($categorycontexts as $categorycontext) {
-            $this->assertCount(3, $categorycontext);
-        }
+        // The quiz name 'Quiz 1' is set in setUp function.
+        $categorycontext = $categorycontexts['Quiz: Quiz 1'];
+        $this->assertCount(3, $categorycontext);
 
         // Validate that we have the array with the categories tree and that top category is there.
-        $categorycontexts = helper::question_category_options($contexts->having_cap('moodle/question:add'), true);
-        foreach ($categorycontexts as $categorycontext) {
-            $this->assertCount(4, $categorycontext);
+        $newcategorycontexts = helper::question_category_options($contexts->having_cap('moodle/question:add'), true);
+        foreach ($newcategorycontexts as $key => $categorycontext) {
+            $oldcategorycontext = $categorycontexts[$key];
+            $count = count($oldcategorycontext);
+            $this->assertCount($count + 1, $categorycontext);
         }
     }
 }

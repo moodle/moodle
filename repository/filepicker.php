@@ -73,7 +73,7 @@ $user_context = context_user::instance($USER->id);
 
 $PAGE->set_context($user_context);
 if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 $PAGE->set_course($course);
 
@@ -281,7 +281,7 @@ case 'sign':
 case 'download':
     // Check that user has permission to access this file
     if (!$repo->file_is_accessible($fileurl)) {
-        print_error('storedfilecannotread');
+        throw new \moodle_exception('storedfilecannotread');
     }
     $record = new stdClass();
     $reference = $repo->get_file_reference($fileurl);
@@ -327,17 +327,17 @@ case 'download':
             $filesize = filesize($thefile['path']);
             if ($maxbytes != -1 && $filesize>$maxbytes) {
                 unlink($thefile['path']);
-                print_error('maxbytes');
+                throw new \moodle_exception('maxbytes');
             }
             // Ensure the file will not make the area exceed its size limit.
             if (file_is_draft_area_limit_reached($record->itemid, $areamaxbytes, $filesize)) {
                 unlink($thefile['path']);
-                print_error('maxareabytes');
+                throw new \moodle_exception('maxareabytes');
             }
             // Ensure the user does not upload too many draft files in a short period.
             if (file_is_draft_areas_limit_reached($USER->id)) {
                 unlink($thefile['path']);
-                print_error('maxdraftitemids');
+                throw new \moodle_exception('maxdraftitemids');
             }
             try {
                 $info = repository::move_to_filepool($thefile['path'], $record);
@@ -349,7 +349,7 @@ case 'download':
                 throw $e;
             }
         } else {
-            print_error('cannotdownload', 'repository');
+            throw new \moodle_exception('cannotdownload', 'repository');
         }
     }
 

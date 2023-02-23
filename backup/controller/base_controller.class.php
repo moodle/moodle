@@ -111,8 +111,13 @@ abstract class base_controller extends backup implements loggable {
      *
      * @param \stdClass $data The course copy data.
      * @throws backup_controller_exception
+     * @deprecated since Moodle 4.1 MDL-74548 - please do not use this method anymore.
+     * @todo MDL-75025 This method will be deleted in Moodle 4.5
+     * @see restore_controller::__construct()
      */
     public function set_copy(\stdClass $data): void {
+        debugging('The method base_controller::set_copy() is deprecated.
+            Please use the restore_controller class instead.', DEBUG_DEVELOPER);
         // Only allow setting of copy data when controller is in copy mode.
         if ($this->mode != backup::MODE_COPY) {
             throw new backup_controller_exception('cannot_set_copy_vars_wrong_mode');
@@ -124,8 +129,13 @@ abstract class base_controller extends backup implements loggable {
      * Get the course copy data.
      *
      * @return \stdClass
+     * @deprecated since Moodle 4.1 MDL-74548 - please do not use this method anymore.
+     * @todo MDL-75026 This method will be deleted in Moodle 4.5
+     * @see restore_controller::get_copy()
      */
     public function get_copy(): \stdClass {
+        debugging('The method base_controller::get_copy() is deprecated.
+           Please use restore_controller::get_copy() instead.', DEBUG_DEVELOPER);
         return $this->copy;
     }
 }

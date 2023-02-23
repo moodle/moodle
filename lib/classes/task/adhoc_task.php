@@ -47,6 +47,20 @@ abstract class adhoc_task extends task_base {
     private $concurrencylock = null;
 
     /**
+     * Provide default implementation of the task name for backward compatibility. Extending classes are expected to implement
+     * this method to provide a descriptive name for the task (shown to admins)
+     *
+     * @return string
+     */
+    public function get_name() {
+        $classparts = explode('\\', get_called_class());
+        $classname = end($classparts);
+
+        // Try to make human readable, capitalized and with spaces.
+        return ucfirst(str_replace('_', ' ', $classname));
+    }
+
+    /**
      * Setter for $id.
      * @param int|null $id
      */

@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/../../mysqli_native_moodle_database.php');
@@ -36,7 +38,7 @@ require_once(__DIR__.'/test_moodle_read_slave_trait.php');
  * @copyright  2018 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class read_slave_moodle_database_mock_mysqli extends mysqli_native_moodle_database {
+class read_slave_moodle_database_mock_mysqli extends \mysqli_native_moodle_database {
     use test_moodle_read_slave_trait;
 
     /**

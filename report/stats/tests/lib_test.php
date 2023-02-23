@@ -21,6 +21,7 @@
  * @copyright  2014 onwards Ankit agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
+namespace report_stats;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2014 onwards Ankit agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class report_stats_lib_testcase extends advanced_testcase {
+class lib_test extends \advanced_testcase {
 
     /**
      * @var stdClass The user.
@@ -87,7 +88,7 @@ class report_stats_lib_testcase extends advanced_testcase {
         set_config('enablestats', true);
 
         report_stats_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
-        $reflector = new ReflectionObject($this->tree);
+        $reflector = new \ReflectionObject($this->tree);
         $nodes = $reflector->getProperty('nodes');
         $nodes->setAccessible(true);
         $this->assertArrayHasKey('stats', $nodes->getValue($this->tree));
@@ -104,7 +105,7 @@ class report_stats_lib_testcase extends advanced_testcase {
         set_config('enablestats', false);
 
         report_stats_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
-        $reflector = new ReflectionObject($this->tree);
+        $reflector = new \ReflectionObject($this->tree);
         $nodes = $reflector->getProperty('nodes');
         $nodes->setAccessible(true);
         $this->assertArrayNotHasKey('stats', $nodes->getValue($this->tree));
@@ -122,7 +123,7 @@ class report_stats_lib_testcase extends advanced_testcase {
         set_config('enablestats', true);
 
         report_stats_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
-        $reflector = new ReflectionObject($this->tree);
+        $reflector = new \ReflectionObject($this->tree);
         $nodes = $reflector->getProperty('nodes');
         $nodes->setAccessible(true);
         $this->assertArrayNotHasKey('stats', $nodes->getValue($this->tree));

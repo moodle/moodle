@@ -107,6 +107,7 @@ class mnet_peer {
             return false;
         }
         $this->bootstrapped = true;
+        return true;
     }
 
     /*

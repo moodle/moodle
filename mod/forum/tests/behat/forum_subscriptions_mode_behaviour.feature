@@ -29,12 +29,11 @@ Feature: Changes to the subscription mode of a forum can change subcribers of a 
   Scenario: A change from Forced subscription to Auto subcription causes all participants to be subscribed
     Given I follow "Test forum name"
     And I navigate to "Subscriptions" in current page administration
-    When I select "Auto subscription" from the "Subscriptions" singleselect
+    When I select "Auto subscription" from the "Subscription mode" singleselect
     Then I should not see "There are no subscribers yet for this forum"
     And I navigate to "Subscriptions" in current page administration
-    And I should see "Student 1"
-    And I should see "student.1@example.com"
-    And I should see "Student 2"
-    And I should see "student.2@example.com"
-    And I should see "Teacher Tom"
-    And I should see "teacher@example.com"
+    And the following should exist in the "subscribers-table" table:
+      | Full name | Email address |
+      | Student 1 | student.1@example.com |
+      | Student 2 | student.2@example.com |
+      | Teacher Tom | teacher@example.com |

@@ -139,3 +139,82 @@ M.availability_date.form.fillValue = function(value, node) {
     value.d = node.one('select[name=direction]').get('value');
     value.t = parseInt(node.getData('time'), 10);
 };
+
+/**
+ * List out Date node value in an array node.
+ *
+ * This will go through all array node and list from earlier date node to current date node.
+ *
+ * @method convertTreeDateValue
+ * @param {array} tree Tree node to convert
+ * @param {array} arrayDateNode
+ * @param {array} currentNode current node.
+ *
+ * @return {array} arrayDateNode
+ */
+M.availability_date.form.convertTreeDateValue = function(tree, arrayDateNode, currentNode) {
+    var shouldSkip = false;
+    tree.forEach(function(node) {
+        if (shouldSkip) {
+            return;
+        }
+        if (node.type === 'date') {
+            // We go through all tree node, if we meet the current node then return.
+            if (node.t === parseInt(currentNode.getData('time'), 10)
+                && currentNode.one('select[name=direction]').get('value') == node.d) {
+                shouldSkip = true;
+                return;
+            }
+            arrayDateNode.push(node);
+        } else if (node.type === undefined) {
+            M.availability_date.form.convertTreeDateValue(node.c, arrayDateNode, currentNode);
+        }
+    });
+    return arrayDateNode;
+};
+
+/**
+ * Check current node.
+ *
+ * This will check current date node with all date node in tree node.
+ *
+ * @method checkConditionDate
+ * @param {array} currentNode The curent node.
+ *
+ * @return {boolean} error Return true if the date is conflict.
+ */
+M.availability_date.form.checkConditionDate = function(currentNode) {
+    var error = false;
+    if (M.core_availability.form.rootList.getValue().op === '&') {
+        var jsValue = M.core_availability.form.rootList.getValue().c;
+        var arrayDateNode = M.availability_date.form.convertTreeDateValue(jsValue, [], currentNode);
+        var currentNodeDirection = currentNode.one('select[name=direction]').get('value');
+        var currentNodeTime = parseInt(currentNode.getData('time'), 10);
+        arrayDateNode.forEach(function(checkNode) {
+            // Validate if the date is conflict.
+            if (checkNode.d === '<') {
+                if (currentNodeDirection === '>=' && currentNodeTime >= checkNode.t) {
+                    error = true;
+                }
+            } else {
+                if (currentNodeDirection === '<' && currentNodeTime <= checkNode.t) {
+                    error = true;
+                }
+            }
+            return error;
+        });
+        return error;
+    } else {
+        if (currentNode.one('div > .badge-warning')) {
+            currentNode.one('div > .badge-warning').remove();
+        }
+        return error;
+    }
+};
+
+M.availability_date.form.fillErrors = function(errors, node) {
+    var error = M.availability_date.form.checkConditionDate(node);
+    if (error) {
+        errors.push('availability_date:error_dateconflict');
+    }
+};

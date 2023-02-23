@@ -110,37 +110,32 @@ class edit_item_form extends moodleform {
         $mform->addHelpButton('rescalegrades', 'modgraderescalegrades', 'grades');
         $mform->disabledIf('rescalegrades', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
 
-        $mform->addElement('text', 'grademax', get_string('grademax', 'grades'));
+        $mform->addElement('float', 'grademax', get_string('grademax', 'grades'));
         $mform->addHelpButton('grademax', 'grademax', 'grades');
         $mform->disabledIf('grademax', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
-        $mform->setType('grademax', PARAM_RAW);
 
         if ((bool) get_config('moodle', 'grade_report_showmin')) {
-            $mform->addElement('text', 'grademin', get_string('grademin', 'grades'));
+            $mform->addElement('float', 'grademin', get_string('grademin', 'grades'));
             $mform->addHelpButton('grademin', 'grademin', 'grades');
             $mform->disabledIf('grademin', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
-            $mform->setType('grademin', PARAM_RAW);
         }
 
-        $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
+        $mform->addElement('float', 'gradepass', get_string('gradepass', 'grades'));
         $mform->addHelpButton('gradepass', 'gradepass', 'grades');
         $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_TEXT);
-        $mform->setType('gradepass', PARAM_RAW);
 
-        $mform->addElement('text', 'multfactor', get_string('multfactor', 'grades'));
+        $mform->addElement('float', 'multfactor', get_string('multfactor', 'grades'));
         $mform->addHelpButton('multfactor', 'multfactor', 'grades');
         $mform->setAdvanced('multfactor');
         $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
-        $mform->setType('multfactor', PARAM_RAW);
 
-        $mform->addElement('text', 'plusfactor', get_string('plusfactor', 'grades'));
+        $mform->addElement('float', 'plusfactor', get_string('plusfactor', 'grades'));
         $mform->addHelpButton('plusfactor', 'plusfactor', 'grades');
         $mform->setAdvanced('plusfactor');
         $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
-        $mform->setType('plusfactor', PARAM_RAW);
 
         /// grade display prefs
         $default_gradedisplaytype = grade_get_setting($COURSE->id, 'displaytype', $CFG->grade_displaytype);
@@ -207,9 +202,8 @@ class edit_item_form extends moodleform {
         $mform->disabledIf('weightoverride', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('weightoverride', 'gradetype', 'eq', GRADE_TYPE_TEXT);
 
-        $mform->addElement('text', 'aggregationcoef2', get_string('weight', 'grades'));
+        $mform->addElement('float', 'aggregationcoef2', get_string('weight', 'grades'));
         $mform->addHelpButton('aggregationcoef2', 'weight', 'grades');
-        $mform->setType('aggregationcoef2', PARAM_RAW);
         $mform->disabledIf('aggregationcoef2', 'weightoverride');
         $mform->disabledIf('aggregationcoef2', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('aggregationcoef2', 'gradetype', 'eq', GRADE_TYPE_TEXT);
@@ -442,8 +436,17 @@ class edit_item_form extends moodleform {
             }
         }
 
-        if (array_key_exists('grademin', $data) and array_key_exists('grademax', $data)) {
-            if ($data['grademax'] == $data['grademin'] or $data['grademax'] < $data['grademin']) {
+        // We need to make all the validations related with grademax and grademin
+        // with them being correct floats, keeping the originals unmodified for
+        // later validations / showing the form back...
+        // TODO: Note that once MDL-73994 is fixed we'll have to re-visit this and
+        // adapt the code below to the new values arriving here, without forgetting
+        // the special case of empties and nulls.
+        $grademax = isset($data['grademax']) ? unformat_float($data['grademax']) : null;
+        $grademin = isset($data['grademin']) ? unformat_float($data['grademin']) : null;
+
+        if (!is_null($grademin) and !is_null($grademax)) {
+            if ($grademax == $grademin or $grademax < $grademin) {
                 $errors['grademin'] = get_string('incorrectminmax', 'grades');
                 $errors['grademax'] = get_string('incorrectminmax', 'grades');
             }
@@ -466,8 +469,8 @@ class edit_item_form extends moodleform {
         if ($grade_item) {
             if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
                 if ((((bool) get_config('moodle', 'grade_report_showmin')) &&
-                    grade_floats_different($data['grademin'], $grade_item->grademin)) ||
-                    grade_floats_different($data['grademax'], $grade_item->grademax)) {
+                    grade_floats_different($grademin, $grade_item->grademin)) ||
+                    grade_floats_different($grademax, $grade_item->grademax)) {
                     if ($grade_item->has_grades() && empty($data['rescalegrades'])) {
                         $errors['rescalegrades'] = get_string('mustchooserescaleyesorno', 'grades');
                     }

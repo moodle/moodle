@@ -162,6 +162,9 @@ class data_controller extends \core_customfield\data_controller {
      * @return mixed|null value or null if empty
      */
     public function export_value() {
+        global $CFG;
+        require_once($CFG->libdir . '/filelib.php');
+
         $value = $this->get_value();
         if ($this->is_empty($value)) {
             return null;

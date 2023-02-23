@@ -14,14 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the Embedded answer (Cloze) question importer.
- *
- * @package   qformat_multianswer
- * @copyright 2012 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qformat_multianswer;
 
+use qformat_multianswer;
+use question_check_specified_fields_expectation;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,14 +27,14 @@ require_once($CFG->dirroot . '/question/format.php');
 require_once($CFG->dirroot . '/question/format/multianswer/format.php');
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 
-
 /**
  * Unit tests for the Embedded answer (Cloze) question importer.
  *
+ * @package   qformat_multianswer
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qformat_multianswer_test extends question_testcase {
+class multianswerformat_test extends \question_testcase {
 
     public function test_import() {
         $lines = file(__DIR__ . '/fixtures/questions.multianswer.txt');

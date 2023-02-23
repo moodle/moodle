@@ -30,7 +30,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatedboninstall'] = '<p>Non è possibile creare il database </p> <p>Il database non esiste e l\'utente fornito non è autorizzato a crearlo.</p>
-<p>E\' necessario che l\'amministratore del sito  verifichi  la configurazione del database.</p>';
+<p>È necessario che l\'amministratore del sito  verifichi  la configurazione del database.</p>';
 $string['cannotcreatelangdir'] = 'Non è possibile creare la cartella lang';
 $string['cannotcreatetempdir'] = 'Non è possibile creare la cartella temp';
 $string['cannotdownloadcomponents'] = 'Non è possibile scaricare componenti.';

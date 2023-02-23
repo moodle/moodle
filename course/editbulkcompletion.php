@@ -67,9 +67,8 @@ if ($form->is_cancelled()) {
 $renderer = $PAGE->get_renderer('core_course', 'bulk_activity_completion');
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('bulkactivitycompletion', 'completion'));
 
-echo $renderer->navigation($course, 'bulkcompletion');
+echo $OUTPUT->heading(get_string('bulkactivitycompletion', 'completion'));
 
 echo $renderer->edit_bulk_completion($form, $manager->get_activities(array_keys($cms)));
 

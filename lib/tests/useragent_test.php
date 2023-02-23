@@ -15,21 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tests the user agent class.
- *
- * @package    core
- * @copyright  2013 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-/**
  * User agent test suite.
  *
  * @package    core
  * @copyright  2013 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \core_useragent
  */
-class core_useragent_testcase extends advanced_testcase {
+class useragent_test extends advanced_testcase {
 
     /**
      * Restores the user agent to the default one.
@@ -38,6 +31,11 @@ class core_useragent_testcase extends advanced_testcase {
         core_useragent::instance(true);
     }
 
+    /**
+     * Data provider for known user agents.
+     *
+     * @return array
+     */
     public function user_agents_providers() {
         // Note: When adding new entries to this list, please ensure that any new browser versions are added to the corresponding list.
         // This ensures that regression tests are applied to all known user agents.
@@ -1637,7 +1635,6 @@ class core_useragent_testcase extends advanced_testcase {
             $this->assertFalse(core_useragent::is_msword());
         }
     }
-
 
     /**
      * @dataProvider user_agents_providers

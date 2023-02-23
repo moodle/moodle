@@ -22,10 +22,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use enrol_lti\data_connector;
-use enrol_lti\helper;
+namespace enrol_lti;
+
 use enrol_lti\task\sync_members;
-use enrol_lti\tool_provider;
 use IMSGlobal\LTI\ToolProvider\Context;
 use IMSGlobal\LTI\ToolProvider\ResourceLink;
 use IMSGlobal\LTI\ToolProvider\ToolConsumer;
@@ -40,11 +39,11 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sync_members_testcase extends advanced_testcase {
+class sync_members_test extends \advanced_testcase {
     /** @var dummy_sync_members_task $task */
     protected $task;
 
-    /** @var  stdClass $tool The published tool. */
+    /** @var  \stdClass $tool The published tool. */
     protected $tool;
 
     /** @var User[] $members */
@@ -214,10 +213,10 @@ class sync_members_testcase extends advanced_testcase {
      * Test for sync_members::sync_member_information().
      */
     public function test_sync_member_information() {
-        list($totalcount, $enrolledcount) = $this->task->sync_member_information($this->tool, $this->consumer, $this->members);
+        list($users, $enrolledcount) = $this->task->sync_member_information($this->tool, $this->consumer, $this->members);
         $membercount = count($this->members);
         $this->assertCount(10, $this->members);
-        $this->assertEquals($membercount, $totalcount);
+        $this->assertCount($membercount, $users);
         $this->assertEquals($membercount, $enrolledcount);
     }
 
@@ -226,10 +225,10 @@ class sync_members_testcase extends advanced_testcase {
      */
     public function test_sync_profile_images() {
         $task = $this->task;
-        list($totalcount, $enrolledcount) = $task->sync_member_information($this->tool, $this->consumer, $this->members);
+        list($users, $enrolledcount) = $task->sync_member_information($this->tool, $this->consumer, $this->members);
         $membercount = count($this->members);
         $this->assertCount(10, $this->members);
-        $this->assertEquals($membercount, $totalcount);
+        $this->assertCount($membercount, $users);
         $this->assertEquals($membercount, $enrolledcount);
 
         // Suppress output.
@@ -245,14 +244,14 @@ class sync_members_testcase extends advanced_testcase {
         $tool = $this->tool;
         $task = $this->task;
 
-        $task->sync_member_information($tool, $this->consumer, $this->members);
+        list($users) = $task->sync_member_information($tool, $this->consumer, $this->members);
 
         // Simulate that the fetched list of current users has been reduced by 3.
         $unenrolcount = 3;
         for ($i = 0; $i < $unenrolcount; $i++) {
-            $task->pop_current_users();
+            array_pop($users);
         }
-        $this->assertEquals($unenrolcount, $task->sync_unenrol($tool));
+        $this->assertEquals($unenrolcount, $task->sync_unenrol($tool, 'Consumer1Key', $users));
     }
 
     /**
@@ -296,13 +295,6 @@ class dummy_sync_members_task extends sync_members {
             $this->dataconnector = new data_connector();
         }
         return $this->dataconnector;
-    }
-
-    /**
-     * Helper method that removes an element in the array of current users.
-     */
-    public function pop_current_users() {
-        array_pop($this->currentusers);
     }
 
     /**
@@ -367,12 +359,12 @@ class dummy_sync_members_task extends sync_members {
     /**
      * Exposes sync_members::sync_member_information()
      *
-     * @param stdClass $tool
+     * @param \stdClass $tool
      * @param ToolConsumer $consumer
      * @param User[] $members
      * @return array
      */
-    public function sync_member_information(stdClass $tool, ToolConsumer $consumer, $members) {
+    public function sync_member_information(\stdClass $tool, ToolConsumer $consumer, $members) {
         $result = parent::sync_member_information($tool, $consumer, $members);
         return $result;
     }
@@ -390,11 +382,13 @@ class dummy_sync_members_task extends sync_members {
     /**
      * Exposes sync_members::sync_unenrol()
      *
-     * @param stdClass $tool
+     * @param \stdClass $tool
+     * @param string $consumerkey
+     * @param array $currentusers
      * @return int
      */
-    public function sync_unenrol(stdClass $tool) {
-        $count = parent::sync_unenrol($tool);
+    public function sync_unenrol(\stdClass $tool, string $consumerkey, array $currentusers) {
+        $count = parent::sync_unenrol($tool, $consumerkey, $currentusers);
         return $count;
     }
 }

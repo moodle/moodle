@@ -8,7 +8,7 @@ Feature: An administrator can configure the available user list filters
     When I log in as "admin"
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     Then I should see "User full name"
-    And I should not see "Surname" in the "New filter" "fieldset"
+    And I should not see "Last name" in the "New filter" "fieldset"
     And I should not see "Firstname" in the "New filter" "fieldset"
     And I should not see "Username" in the "New filter" "fieldset"
     And I should not see "Email address" in the "New filter" "fieldset"
@@ -30,7 +30,7 @@ Feature: An administrator can configure the available user list filters
     And I should not see "MNet ID provider" in the "New filter" "fieldset"
     And I navigate to "Users > Accounts > Bulk user actions" in site administration
     Then I should see "User full name"
-    And I should not see "Surname" in the "New filter" "fieldset"
+    And I should not see "Last name" in the "New filter" "fieldset"
     And I should not see "Firstname" in the "New filter" "fieldset"
     And I should not see "Username" in the "New filter" "fieldset"
     And I should not see "Email address" in the "New filter" "fieldset"
@@ -57,7 +57,7 @@ Feature: An administrator can configure the available user list filters
     And I log in as "admin"
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     Then I should see "User full name"
-    And I should not see "Surname" in the "New filter" "fieldset"
+    And I should not see "Last name" in the "New filter" "fieldset"
     And I should not see "Firstname" in the "New filter" "fieldset"
     And I should see "Username" in the "New filter" "fieldset"
     And I should see "Email address" in the "New filter" "fieldset"
@@ -79,7 +79,7 @@ Feature: An administrator can configure the available user list filters
     And I should not see "MNet ID provider" in the "New filter" "fieldset"
     And I navigate to "Users > Accounts > Bulk user actions" in site administration
     Then I should see "User full name"
-    And I should not see "Surname" in the "New filter" "fieldset"
+    And I should not see "Last name" in the "New filter" "fieldset"
     And I should not see "Firstname" in the "New filter" "fieldset"
     And I should see "Username" in the "New filter" "fieldset"
     And I should see "Email address" in the "New filter" "fieldset"
@@ -106,7 +106,7 @@ Feature: An administrator can configure the available user list filters
     And I log in as "admin"
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     Then I should see "User full name"
-    And I should not see "Surname" in the "New filter" "fieldset"
+    And I should not see "Last name" in the "New filter" "fieldset"
     And I should not see "Firstname" in the "New filter" "fieldset"
     And I should not see "Username" in the "New filter" "fieldset"
     And I should not see "Email address" in the "New filter" "fieldset"
@@ -128,7 +128,7 @@ Feature: An administrator can configure the available user list filters
     And I should not see "MNet ID provider" in the "New filter" "fieldset"
     And I navigate to "Users > Accounts > Bulk user actions" in site administration
     Then I should see "User full name"
-    And I should not see "Surname" in the "New filter" "fieldset"
+    And I should not see "Last name" in the "New filter" "fieldset"
     And I should not see "Firstname" in the "New filter" "fieldset"
     And I should not see "Username" in the "New filter" "fieldset"
     And I should not see "Email address" in the "New filter" "fieldset"

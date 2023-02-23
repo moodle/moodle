@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
 /**
  * Unit tests for format_text defined in weblib.php.
  *
@@ -22,17 +24,7 @@
  * @copyright 2015 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-
-/**
- * Unit tests for format_text defined in weblib.php.
- *
- * @copyright 2015 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
-class core_weblib_format_text_testcase extends advanced_testcase {
+class weblib_format_text_test extends \advanced_testcase {
 
     public function test_format_text_format_html() {
         $this->resetAfterTest();

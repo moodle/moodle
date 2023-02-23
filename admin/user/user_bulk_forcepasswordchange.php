@@ -18,6 +18,9 @@ if (empty($SESSION->bulk_users)) {
     redirect($return);
 }
 
+$PAGE->set_primary_active_tab('siteadminnode');
+$PAGE->set_secondary_active_tab('users');
+
 echo $OUTPUT->header();
 
 if ($confirm and confirm_sesskey()) {

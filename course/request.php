@@ -43,10 +43,10 @@ $PAGE->set_url($url);
 // Check permissions.
 require_login(null, false);
 if (isguestuser()) {
-    print_error('guestsarenotallowed', '', $returnurl);
+    throw new \moodle_exception('guestsarenotallowed', '', $returnurl);
 }
 if (empty($CFG->enablecourserequests)) {
-    print_error('courserequestdisabled', '', $returnurl);
+    throw new \moodle_exception('courserequestdisabled', '', $returnurl);
 }
 
 if ($CFG->lockrequestcategory) {
@@ -71,7 +71,9 @@ $requestform->set_data($data);
 
 $strtitle = get_string('courserequest');
 $PAGE->set_title($strtitle);
-$PAGE->set_heading($strtitle);
+$coursecategory = core_course_category::get($categoryid, MUST_EXIST, true);
+$PAGE->set_heading($coursecategory->get_formatted_name());
+$PAGE->set_primary_active_tab('home');
 
 // Standard form processing if statement.
 if ($requestform->is_cancelled()){
@@ -83,6 +85,12 @@ if ($requestform->is_cancelled()){
     // And redirect back to the course listing.
     notice(get_string('courserequestsuccess'), $returnurl);
 }
+
+$categoryurl = new moodle_url('/course/index.php');
+if ($categoryid) {
+    $categoryurl->param('categoryid', $categoryid);
+}
+navigation_node::override_active_url($categoryurl);
 
 $PAGE->navbar->add($strtitle);
 echo $OUTPUT->header();

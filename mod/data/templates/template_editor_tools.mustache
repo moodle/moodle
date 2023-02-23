@@ -1,0 +1,138 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_data/template_editor_tools
+
+    Tag tool box for the template editor in the mod_data.
+
+    Example context (json):
+    {
+        "toolshelp": "Available tags",
+        "hastools": true,
+        "tools": [
+            {
+                "name": "Fields",
+                "tags": [
+                    {
+                    "tag": "[[Checkme]]",
+                    "tagname": "Checkme - [[Checkme]]"
+                    },
+                    {
+                    "tag": "[[Description]]",
+                    "tagname": "Description - [[Description]]"
+                    },
+                    {
+                    "tag": "[[Name]]",
+                    "tagname": "Name - [[Name]]"
+                    }
+                ]
+            },
+            {
+                "name": "Actions",
+                "tags": [
+                    {
+                    "tag": "##actionsmenu##",
+                    "tagname": "Actions menu - ##actionsmenu##"
+                    },
+                    {
+                    "tag": "##edit##",
+                    "tagname": "Edit - ##edit##"
+                    },
+                    {
+                    "tag": "##delete##",
+                    "tagname": "Delete - ##delete##"
+                    },
+                    {
+                    "tag": "##approve##",
+                    "tagname": "Approve - ##approve##"
+                    },
+                    {
+                    "tag": "##disapprove##",
+                    "tagname": "Undo approval - ##disapprove##"
+                    },
+                    {
+                    "tag": "##export##",
+                    "tagname": "Export - ##export##"
+                    },
+                    {
+                    "tag": "##more##",
+                    "tagname": "More - ##more##"
+                    },
+                    {
+                    "tag": "##moreurl##",
+                    "tagname": "More URL - ##moreurl##"
+                    },
+                    {
+                    "tag": "##delcheck##",
+                    "tagname": "Bulk delete checkbox - ##delcheck##"
+                    }
+                ]
+            },
+            {
+                "name": "Other",
+                "tags": [
+                    {
+                    "tag": "##tags##",
+                    "tagname": "Tags - ##tags##"
+                    },
+                    {
+                    "tag": "##timeadded##",
+                    "tagname": "Time added - ##timeadded##"
+                    },
+                    {
+                    "tag": "##timemodified##",
+                    "tagname": "Time modified - ##timemodified##"
+                    },
+                    {
+                    "tag": "##user##",
+                    "tagname": "User - ##user##"
+                    },
+                    {
+                    "tag": "##userpicture##",
+                    "tagname": "User picture - ##userpicture##"
+                    },
+                    {
+                    "tag": "##approvalstatus##",
+                    "tagname": "Approval status - ##approvalstatus##"
+                    },
+                    {
+                    "tag": "##id##",
+                    "tagname": "Entry ID - ##id##"
+                    },
+                    {
+                    "tag": "##comments##",
+                    "tagname": "Comments - ##comments##"
+                    }
+                ]
+            }
+        ]
+    }
+}}
+{{#hastools}}
+<div class="p-2">
+    <label for="availabletags">{{#str}} availabletags, data {{/str}}</label>
+    {{{toolshelp}}}
+    <div class="no-overflow" id="availabletags_wrapper">
+        <select name="fields1[]" id="availabletags" size="20" onclick="insert_field_tags(this)" class="form-control">
+            {{#tools}}
+                <optgroup label="{{name}}">
+                    {{#tags}}
+                    <option value="{{tag}}">{{tagname}}</option>
+                    {{/tags}}
+                </optgroup>
+            {{/tools}}
+        </select>
+    </div>
+</div>
+{{/hastools}}

@@ -29,7 +29,7 @@ Feature: Gathering user feedback
       | userfeedback_nextreminder | 2   |
       | userfeedback_remindafter  | 90  |
     When I log in as "admin"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I click on "Remind me later" "link"
     And I reload the page
     Then I should not see "Give feedback" in the "region-main" "region"
@@ -42,7 +42,7 @@ Feature: Gathering user feedback
       | userfeedback_nextreminder | 2   |
       | userfeedback_remindafter  | 90  |
     When I log in as "admin"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I click on "Give feedback" "link"
     And I close all opened windows
     And I reload the page

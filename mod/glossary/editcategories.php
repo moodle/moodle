@@ -39,25 +39,25 @@ if ($mode !== 'mode') {
 $PAGE->set_url($url);
 
 if (! $cm = get_coursemodule_from_id('glossary', $id)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 
 if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-    print_error('coursemisconf');
+    throw new \moodle_exception('coursemisconf');
 }
 
 if (! $glossary = $DB->get_record("glossary", array("id"=>$cm->instance))) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 
 if ($hook > 0) {
     if ($category = $DB->get_record("glossary_categories", array("id"=>$hook))) {
         //Check it belongs to the same glossary
         if ($category->glossaryid != $glossary->id) {
-            print_error('invalidid', 'glossary');
+            throw new \moodle_exception('invalidid', 'glossary');
         }
     } else {
-        print_error('invalidcategoryid');
+        throw new \moodle_exception('invalidcategoryid');
     }
 }
 

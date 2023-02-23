@@ -1,12 +1,12 @@
 <?php
 /*
- * Copyright 2016-2017 MongoDB, Inc.
+ * Copyright 2016-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,12 +17,13 @@
 
 namespace MongoDB\GridFS;
 
+use HashContext;
 use MongoDB\BSON\Binary;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
 use MongoDB\Exception\InvalidArgumentException;
-use stdClass;
+
 use function array_intersect_key;
 use function hash_final;
 use function hash_init;
@@ -65,7 +66,7 @@ class WritableStream
     /** @var array */
     private $file;
 
-    /** @var resource */
+    /** @var HashContext|null */
     private $hashCtx;
 
     /** @var boolean */
@@ -102,7 +103,7 @@ class WritableStream
      * @param array             $options           Upload options
      * @throws InvalidArgumentException
      */
-    public function __construct(CollectionWrapper $collectionWrapper, $filename, array $options = [])
+    public function __construct(CollectionWrapper $collectionWrapper, string $filename, array $options = [])
     {
         $options += [
             '_id' => new ObjectId(),
@@ -145,17 +146,16 @@ class WritableStream
         $this->file = [
             '_id' => $options['_id'],
             'chunkSize' => $this->chunkSize,
-            'filename' => (string) $filename,
+            'filename' => $filename,
         ] + array_intersect_key($options, ['aliases' => 1, 'contentType' => 1, 'metadata' => 1]);
     }
 
     /**
      * Return internal properties for debugging purposes.
      *
-     * @see http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.debuginfo
-     * @return array
+     * @see https://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.debuginfo
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
             'bucketName' => $this->collectionWrapper->getBucketName(),
@@ -167,7 +167,7 @@ class WritableStream
     /**
      * Closes an active stream and flushes all buffered data to GridFS.
      */
-    public function close()
+    public function close(): void
     {
         if ($this->isClosed) {
             // TODO: Should this be an error condition? e.g. BadMethodCallException
@@ -184,10 +184,8 @@ class WritableStream
 
     /**
      * Return the stream's file document.
-     *
-     * @return stdClass
      */
-    public function getFile()
+    public function getFile(): object
     {
         return (object) $this->file;
     }
@@ -196,10 +194,8 @@ class WritableStream
      * Return the stream's size in bytes.
      *
      * Note: this value will increase as more data is written to the stream.
-     *
-     * @return integer
      */
-    public function getSize()
+    public function getSize(): int
     {
         return $this->length + strlen($this->buffer);
     }
@@ -212,9 +208,8 @@ class WritableStream
      * always the end of the stream.
      *
      * @see WritableStream::getSize()
-     * @return integer
      */
-    public function tell()
+    public function tell(): int
     {
         return $this->getSize();
     }
@@ -226,13 +221,12 @@ class WritableStream
      * which point a chunk document will be inserted and the buffer reset.
      *
      * @param string $data Binary data to write
-     * @return integer
      */
-    public function writeBytes($data)
+    public function writeBytes(string $data): int
     {
         if ($this->isClosed) {
             // TODO: Should this be an error condition? e.g. BadMethodCallException
-            return;
+            return 0;
         }
 
         $bytesRead = 0;
@@ -250,7 +244,7 @@ class WritableStream
         return $bytesRead;
     }
 
-    private function abort()
+    private function abort(): void
     {
         try {
             $this->collectionWrapper->deleteChunksByFilesId($this->file['_id']);
@@ -261,12 +255,15 @@ class WritableStream
         $this->isClosed = true;
     }
 
+    /**
+     * @return mixed
+     */
     private function fileCollectionInsert()
     {
         $this->file['length'] = $this->length;
         $this->file['uploadDate'] = new UTCDateTime();
 
-        if (! $this->disableMD5) {
+        if (! $this->disableMD5 && $this->hashCtx) {
             $this->file['md5'] = hash_final($this->hashCtx);
         }
 
@@ -281,7 +278,7 @@ class WritableStream
         return $this->file['_id'];
     }
 
-    private function insertChunkFromBuffer()
+    private function insertChunkFromBuffer(): void
     {
         if (strlen($this->buffer) == 0) {
             return;
@@ -296,7 +293,7 @@ class WritableStream
             'data' => new Binary($data, Binary::TYPE_GENERIC),
         ];
 
-        if (! $this->disableMD5) {
+        if (! $this->disableMD5 && $this->hashCtx) {
             hash_update($this->hashCtx, $data);
         }
 

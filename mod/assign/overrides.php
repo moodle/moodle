@@ -80,6 +80,7 @@ if ($action == 'movegroupoverride') {
 
 // Display a list of overrides.
 $PAGE->set_pagelayout('admin');
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_title(get_string('overrides', 'assign'));
 $PAGE->set_heading($course->fullname);
 $activityheader = $PAGE->activityheader;
@@ -89,6 +90,7 @@ $activityheader->set_attrs([
     'title' => $activityheader->is_title_allowed() ? format_string($assign->name, true, ['context' => $context]) : ""
 ]);
 echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('overrides', 'mod_assign'), 2);
 $overridemenu = new \mod_assign\output\override_actionmenu($url, $cm);
 $renderer = $PAGE->get_renderer('mod_assign');
 echo $renderer->render($overridemenu);
@@ -233,8 +235,8 @@ foreach ($overrides as $override) {
                 $OUTPUT->pix_icon('t/delete', get_string('delete')) . '</a> ';
 
     if ($groupmode) {
-        $usergroupstr = '<a href="' . $groupurl->out(true,
-                array('group' => $override->groupid)) . '" >' . $override->name . '</a>';
+        $usergroupstr = '<a href="' . $groupurl->out(true, ['group' => $override->groupid]) . '" >' .
+            format_string($override->name, true, ['context' => $context]) . '</a>';
 
         // Move up.
         if ($override->sortorder > 1) {
@@ -298,7 +300,14 @@ foreach ($overrides as $override) {
 echo html_writer::start_tag('div', array('id' => 'assignoverrides'));
 if (count($table->data)) {
     echo html_writer::table($table);
+} else {
+    if ($groupmode) {
+        echo $OUTPUT->notification(get_string('nogroupoverrides', 'mod_assign'), 'info');
+    } else {
+        echo $OUTPUT->notification(get_string('nouseroverrides', 'mod_assign'), 'info');
+    }
 }
+
 if ($hasinactive) {
     echo $OUTPUT->notification(get_string('inactiveoverridehelp', 'assign'), 'dimmed_text');
 }

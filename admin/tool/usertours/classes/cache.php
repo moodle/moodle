@@ -84,13 +84,33 @@ EOF;
         // Attempt to determine whether this is the front page.
         // This is a special case because the frontpage uses a shortened page path making it difficult to detect exactly.
         $isfrontpage = $targetmatch->compare(new \moodle_url('/'), URL_MATCH_BASE);
+        $isdashboard = $targetmatch->compare(new \moodle_url('/my/'), URL_MATCH_BASE);
+        $ismycourses = $targetmatch->compare(new \moodle_url('/my/courses.php'), URL_MATCH_BASE);
+
+        $possiblematches = [];
+        if ($isfrontpage) {
+            $possiblematches = ['FRONTPAGE', 'FRONTPAGE_MY', 'FRONTPAGE_MYCOURSES', 'FRONTPAGE_MY_MYCOURSES'];
+        } else if ($isdashboard) {
+            $possiblematches = ['MY', 'FRONTPAGE_MY', 'MY_MYCOURSES', 'FRONTPAGE_MY_MYCOURSES'];
+        } else if ($ismycourses) {
+            $possiblematches = ['MYCOURSES', 'FRONTPAGE_MYCOURSES', 'MY_MYCOURSES', 'FRONTPAGE_MY_MYCOURSES'];
+        }
+
         $target = $targetmatch->out_as_local_url();
-        return array_filter($tours, function($tour) use ($isfrontpage, $target) {
-            if ($isfrontpage && $tour->pathmatch === 'FRONTPAGE') {
+        return array_filter($tours, function($tour) use ($possiblematches, $target) {
+            if (in_array($tour->pathmatch, $possiblematches)) {
                 return true;
             }
             $pattern = preg_quote($tour->pathmatch, '@');
-            $pattern = str_replace('%', '.*', $pattern);
+            if (strpos($pattern, '%') !== false) {
+                // The URL match format is something like: /my/%.
+                // We need to find all the URLs which match the first part of the pattern.
+                $pattern = str_replace('%', '.*', $pattern);
+            } else {
+                // The URL match format is something like: /my/courses.php.
+                // We need to find all the URLs which match with whole pattern.
+                $pattern .= '$';
+            }
             return !!preg_match("@{$pattern}@", $target);
         });
     }

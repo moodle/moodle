@@ -143,7 +143,7 @@ class core_scss extends \ScssPhp\ScssPhp\Compiler {
             }
         }
 
-        return parent::compile($code, $path);
+        return $this->compileString($code, $path)->getCss();
     }
 
     /**
@@ -161,7 +161,12 @@ class core_scss extends \ScssPhp\ScssPhp\Compiler {
                 list(, $rawpath) = $child;
                 $rawpath = $this->reduce($rawpath);
                 $path = $this->compileStringContent($rawpath);
-                if ($path = $this->findImport($path)) {
+
+                // We need to find the import path relative to the directory of the currently processed file.
+                $currentdirectory = new ReflectionProperty(\ScssPhp\ScssPhp\Compiler::class, 'currentDirectory');
+                $currentdirectory->setAccessible(true);
+
+                if ($path = $this->findImport($path, $currentdirectory->getValue($this))) {
                     if ($this->is_valid_file($path)) {
                         return parent::compileChild($child, $out);
                     } else {

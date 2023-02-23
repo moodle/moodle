@@ -64,4 +64,11 @@ class format_test extends advanced_testcase {
     public function test_boolean_as_text(bool $value, string $expected): void {
         $this->assertEquals($expected, format::boolean_as_text($value));
     }
+
+    /**
+     * Test percentage formatting of a float
+     */
+    public function test_percent(): void {
+        $this->assertEquals('33.3%', format::percent(1 / 3 * 100));
+    }
 }

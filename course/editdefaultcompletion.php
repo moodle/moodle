@@ -65,9 +65,8 @@ if ($form->is_cancelled()) {
 $renderer = $PAGE->get_renderer('core_course', 'bulk_activity_completion');
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('defaultcompletion', 'completion'));
 
-echo $renderer->navigation($course, 'defaultcompletion');
+echo $OUTPUT->heading(get_string('defaultcompletion', 'completion'));
 
 echo $renderer->edit_default_completion($form, $modules);
 

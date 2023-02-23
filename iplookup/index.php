@@ -49,11 +49,11 @@ $info = array($ip);
 $note = array();
 
 if (cleanremoteaddr($ip) === false) {
-    print_error('invalidipformat', 'error');
+    throw new \moodle_exception('invalidipformat', 'error');
 }
 
 if (!ip_is_public($ip)) {
-    print_error('iplookupprivate', 'error');
+    throw new \moodle_exception('iplookupprivate', 'error');
 }
 
 $info = iplookup_find_location($ip);

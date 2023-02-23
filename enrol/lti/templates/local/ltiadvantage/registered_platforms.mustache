@@ -1,0 +1,110 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template enrol_lti/registered_platforms
+
+    Template which displays a table view of all registered apps with options to add, delete and manage deployments.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * hasregs
+    * addurl
+
+    Optional context variables for this template:
+    * registrations
+
+    Example context (json):
+    {
+        "hasregs": true,
+        "registrations": [
+            {
+                "name": "Platform Y registration",
+                "hasdeployments": true,
+                "countdeployments": 2,
+                "editurl": "https://example.org/enrol/lti/register_platform.php?action=edit&regid=4",
+                "deploymentsurl": "https://example.org/enrol/lti/manage_deployments.php?registrationid=1",
+                "deleteurl": "https://example.org/enrol/lti/register_platform.php?action=delete&regid=4"
+            }
+        ],
+        "addurl": "https://example.org/enrol/lti/manage_deployments.php?action=add"
+    }
+}}
+<div id="lti_registered_platforms" class="mb-3">
+{{#hasregs}}
+<table class="admintable generaltable">
+    <thead>
+    <tr>
+        <th>{{#str}}name, core{{/str}}</th>
+        <th>{{#str}}details, enrol_lti{{/str}}</th>
+        <th>{{#str}}deployments, enrol_lti{{/str}}</th>
+        <th>{{#str}}registrationstatus, enrol_lti{{/str}}</th>
+        <th>{{#str}}actions, core{{/str}}</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {{#registrations}}
+        <tr>
+            <th>
+                {{name}}
+            </th>
+            <td>
+                <span class="font-weight-bold">{{#str}}registerplatform:platformid, enrol_lti{{/str}}: </span> {{issuer}}<br>
+                <span class="font-weight-bold">{{#str}}registerplatform:clientid, enrol_lti{{/str}}: </span> {{clientid}}
+            </td>
+            <td>
+                {{#hasdeployments}}
+                    <a href="{{deploymentsurl}}" title="{{#str}} managedeployments, enrol_lti {{/str}}">{{countdeployments}}</a>
+                {{/hasdeployments}}
+                {{^hasdeployments}}
+                    {{countdeployments}}
+                {{/hasdeployments}}
+            </td>
+            <td>
+                {{#isactive}}
+                <span class="badge badge-success">{{{statusstring}}}</span>
+                {{/isactive}}
+                {{^isactive}}
+                <span class="badge badge-info">{{{statusstring}}}</span>
+                {{/isactive}}
+            </td>
+            <td>
+                <a href="{{tooldetailsurl}}" title="{{#str}} viewtoolendpoints, enrol_lti {{/str}}">{{#pix}} t/viewdetails, core, {{#str}} viewtoolendpoints, enrol_lti {{/str}}{{/pix}}</a>
+                <a href="{{platformdetailsurl}}" title="{{#str}} viewplatformdetails, enrol_lti {{/str}}">{{#pix}} platformdetails, enrol_lti, {{#str}} viewplatformdetails, enrol_lti {{/str}}{{/pix}}</a>
+                <a href="{{deploymentsurl}}" title="{{#str}} managedeployments, enrol_lti {{/str}}">{{#pix}} managedeployments, enrol_lti, {{#str}} managedeployments, enrol_lti {{/str}}{{/pix}}</a>
+                <a href="{{deleteurl}}" title="{{#str}} delete {{/str}}">{{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}</a>
+            </td>
+        </tr>
+    {{/registrations}}
+    </tbody>
+</table>
+{{/hasregs}}
+{{^hasregs}}
+    <div>
+        {{#str}}noregisteredplatforms, enrol_lti{{/str}}
+    </div>
+    <br>
+{{/hasregs}}
+<div>
+    <a class="btn btn-secondary" href="{{addurl}}">{{#str}}registerplatformadd, enrol_lti{{/str}}</a>
+</div>
+</div>

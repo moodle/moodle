@@ -1,15 +1,17 @@
 Description of MatthiasMullie\Minify import into Moodle
 
-1) Download https://github.com/matthiasmullie/minify/archive/1.3.51.zip and unzip
+1) Go to from https://github.com/matthiasmullie/minify/releases
 
-mv minify-1.3.51/src /path/to/moodle/lib/minify/matthiasmullie-minify/
-mv minify-1.3.51/data /path/to/moodle/lib/minify/matthiasmullie-minify/
+Download lastest minify Source code (zip) and unzip
+mv minify-X.Y.ZZ/src /path/to/moodle/lib/minify/matthiasmullie-minify/
+mv minify-X.Y.ZZ/data /path/to/moodle/lib/minify/matthiasmullie-minify/
 
-2) Download https://github.com/matthiasmullie/path-converter/archive/1.1.0.zip and unzip
+2) Go to https://github.com/matthiasmullie/path-converter/releases/A.B.C.zip and unzip
 
-mv path-converter-1.1.0/src/ /path/to/moodle/lib/minify/matthiasmullie-pathconverter/
+Download lastest path-converter Source code (zip) and unzip
+mv path-converter-A.B.C/src/ /path/to/moodle/lib/minify/matthiasmullie-pathconverter/
 
-Local changes applied:
+3) Apply the following patches:
 
 MDL-68191: https://github.com/matthiasmullie/minify/issues/317 is a bug that stops
   large sections of the CSS from being minimised, and also is a huge performance drain.
@@ -19,8 +21,8 @@ MDL-68191: https://github.com/matthiasmullie/minify/issues/317 is a bug that sto
   Whenever this library is updated check if the fix is included and remove this note.
   NOTE: As of 2020/12/08, only the first commit was brought into Moodle
 
-
-2020-12-07 - Peter Dias
------------------------
-* Removed php74 compliance step as it is now part of the library
-* Updated minify to 1.3.63 and pathconverter to 1.1.3
+Note:
+ * 2023-02-10 Apply commit https://github.com/matthiasmullie/minify/commit/aa8010c2fa3c26f018874141d36025085754abff
+   to avoid PHP 8.2 deprecations. See MDL-76413 for more details.
+   Since new version already have this fix if someone executing the upgrading version and
+   it has already the patch please ignore this note.

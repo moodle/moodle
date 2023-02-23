@@ -20,7 +20,6 @@ Feature: Restrict which blocks can be added to Dashboard
     And I log in as "student1"
     And I turn editing mode on
     Then the add block selector should contain "Comments" block
-    And the add block selector should contain "Courses" block
     And the add block selector should contain "Text" block
     And the add block selector should contain "Tags" block
 

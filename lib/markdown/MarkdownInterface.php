@@ -4,7 +4,7 @@
  *
  * @package   php-markdown
  * @author    Michel Fortin <michel.fortin@michelf.com>
- * @copyright 2004-2019 Michel Fortin <https://michelf.com/projects/php-markdown/>
+ * @copyright 2004-2022 Michel Fortin <https://michelf.com/projects/php-markdown/>
  * @copyright (Original Markdown) 2004-2006 John Gruber <https://daringfireball.net/projects/markdown/>
  */
 
@@ -23,7 +23,7 @@ interface MarkdownInterface {
 	 * @param  string $text
 	 * @return string
 	 */
-	public static function defaultTransform($text);
+	public static function defaultTransform(string $text): string;
 
 	/**
 	 * Main function. Performs some preprocessing on the input text
@@ -34,5 +34,5 @@ interface MarkdownInterface {
 	 * @param  string $text
 	 * @return string
 	 */
-	public function transform($text);
+	public function transform(string $text): string;
 }

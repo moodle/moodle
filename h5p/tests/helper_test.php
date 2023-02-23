@@ -154,8 +154,8 @@ class helper_test extends \advanced_testcase {
         $errors = $factory->get_framework()->getMessages('error');
         $this->assertCount(1, $errors);
         $error = reset($errors);
-        $this->assertEquals('missing-required-library', $error->code);
-        $this->assertEquals('Missing required library H5P.GreetingCard 1.0', $error->message);
+        $this->assertEquals('missing-main-library', $error->code);
+        $this->assertEquals('Missing main library H5P.GreetingCard 1.0', $error->message);
     }
 
     /**
@@ -305,7 +305,9 @@ class helper_test extends \advanced_testcase {
         $this->assertTrue(empty($messages->info));
 
         // Add an some messages manually and check they are still there.
+        $messages->error = [];
         $messages->error['error1'] = 'Testing ERROR message';
+        $messages->info = [];
         $messages->info['info1'] = 'Testing INFO message';
         $messages->info['info2'] = 'Testing INFO message';
         helper::get_messages($messages, $factory);

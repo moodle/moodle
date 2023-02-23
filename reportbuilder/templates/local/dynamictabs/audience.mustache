@@ -26,8 +26,8 @@
         "hasinstances": 1,
         "instances": [{
             "instanceid": 1,
-            "classname": "some\\class\\name",
-            "title": "Title",
+            "heading": "Title",
+            "headingeditable": "Title (edit me)",
             "showormessage": 1,
             "canedit": 1,
             "candelete": 1,
@@ -54,7 +54,7 @@
     <div id="audiences-container" class="reportbuilder-audiences-container d-flex flex-column flex-fill" data-region="audiences">
         {{! No audience container }}
         <div class="justify-content-center {{#hasinstances}}hidden{{/hasinstances}}" data-region="no-instances-message">
-            <div class="alert alert-info mb-0">{{#str}} addaudiences, core_reportbuilder {{/str}}</div>
+            <div class="alert alert-info mb-0">{{#str}} noaudiences, core_reportbuilder {{/str}}</div>
         </div>
         {{#instances}}
             {{> core_reportbuilder/local/audience/form}}

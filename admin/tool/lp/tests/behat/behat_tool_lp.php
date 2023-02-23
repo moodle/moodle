@@ -63,4 +63,67 @@ class behat_tool_lp extends behat_base {
         $this->execute('behat_general::i_click_on', [$xpathtarget, 'xpath_element']);
     }
 
+    /**
+     * Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
+     *
+     * Recognised page names are:
+     * | pagetype            | name meaning | description                  |
+     * | Course competencies | Course name  | The course competencies page |
+     *
+     * @param string $page identifies which type of page this is, e.g. 'Course competencies'.
+     * @param string $identifier identifies the particular page, e.g. 'C1'.
+     * @return moodle_url the corresponding URL.
+     * @throws Exception with a meaningful error message if the specified page cannot be found.
+     */
+    protected function resolve_page_instance_url(string $page, string $identifier): moodle_url {
+        switch (strtolower($page)) {
+            case 'course competencies':
+                $courseid = $this->get_course_id($identifier);
+                return new moodle_url('/admin/tool/lp/coursecompetencies.php', [
+                    'courseid' => $courseid,
+                ]);
+            default:
+                throw new Exception("Unrecognised page type '{$page}'");
+        }
+    }
+
+    /**
+     * Return a list of the exact named selectors for the component.
+     *
+     * @return behat_component_named_selector[]
+     */
+    public static function get_exact_named_selectors(): array {
+        return [
+            new behat_component_named_selector('competency', [
+                "//*[@data-region='coursecompetencies']//table[contains(@class,'managecompetencies')]".
+                    "//tr[contains(., //a[@title='View details'][contains(., %locator%)])]",
+            ]),
+            new behat_component_named_selector('learning plan', [
+                "//*[@data-region='plan-competencies']//table[contains(@class,'managecompetencies')]".
+                    "//tr[@data-node='user-competency'][contains(., //a[@data-usercompetency='true'][contains(., %locator%)])]",
+            ]),
+            new behat_component_named_selector('competency description', [
+                "//td/p[contains(., %locator%)]",
+            ]),
+            new behat_component_named_selector('competency grade', [
+                "//span[contains(concat(' ', normalize-space(@class), ' '), ' badge ')][contains(., %locator%)]",
+            ]),
+            new behat_component_named_selector('learning plan rating', [
+                "//td[position()=2][contains(., %locator%)]",
+            ]),
+            new behat_component_named_selector('learning plan proficiency', [
+                "//td[position()=3][contains(., %locator%)]",
+            ]),
+            new behat_component_named_selector('competency page proficiency', [
+                "//dt[contains(., 'Proficient')]/following-sibling::dd[1][contains(., %locator%)]",
+            ]),
+            new behat_component_named_selector('competency page rating', [
+                "//dt[contains(., 'Rating')]/following-sibling::dd[1][contains(., %locator%)]",
+            ]),
+            new behat_component_named_selector('competency page related competency', [
+                "//*[@data-region='relatedcompetencies']//a[contains(., %locator%)]",
+            ]),
+        ];
+    }
+
 }

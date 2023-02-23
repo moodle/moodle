@@ -45,9 +45,9 @@ To use images use this syntax:
 Syntax for markdown (.md) files:
 
 ```
-{{</* image "wildebeest-1200.jpg" "Image of a Wildebeest" */>}}
+{{</* image "wildebeest-1200.jpg" "Image of a Wildebeest" "img-fluid" */>}}
 ```
 
 Rendered result on this page:
 
-{{< image "wildebeest-1200.jpg" "Image of a Wildebeest">}}
+{{< image "wildebeest-1200.jpg" "Image of a Wildebeest" "img-fluid">}}

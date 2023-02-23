@@ -309,6 +309,7 @@ class core_string_manager_standard implements core_string_manager {
             'strftimedaydatetime' => 1,
             'strftimedayshort' => 1,
             'strftimedaytime' => 1,
+            'strftimemonth' => 1,
             'strftimemonthyear' => 1,
             'strftimerecent' => 1,
             'strftimerecentfull' => 1,
@@ -525,7 +526,7 @@ class core_string_manager_standard implements core_string_manager {
         $cachekey = 'list_'.$this->get_key_suffix();
         $cachedlist = $this->menucache->get($cachekey);
         if ($cachedlist !== false) {
-            // The cache content is invalid.
+            // The cache content is valid.
             if ($returnall or empty($this->translist)) {
                 return $cachedlist;
             }

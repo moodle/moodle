@@ -26,7 +26,6 @@
 $string['actual'] = 'Actual';
 $string['actualclass'] = 'Class actual';
 $string['actualstudent'] = '{$a} actual';
-$string['allquestions'] = 'All questions in order, all students';
 $string['allscales'] = 'All scales, all students';
 $string['alreadysubmitted'] = 'You have already submitted this survey';
 $string['analysisof'] = 'Analysis of {$a}';
@@ -83,7 +82,7 @@ $string['cannotfindanswer'] = 'There are no answers for this survey yet.';
 $string['cannotfindquestion'] = 'Question doesn\'t exist';
 $string['cannotfindsurveytmpt'] = 'No survey templates found!';
 $string['completiondetail:submit'] = 'Submit answers';
-$string['completionsubmit'] = 'Student must submit to this activity to complete it';
+$string['completionsubmit'] = 'Student must make a submission';
 $string['ciqintro'] = 'While thinking about recent events in this class, answer the questions below.';
 $string['ciqname'] = 'Critical incidents';
 $string['ciq1'] = 'At what moment in class were you most engaged as a learner?';
@@ -286,3 +285,4 @@ $string['allquestionrequireanswer'] = 'All questions are required and must be an
 // Deprecated since Moodle 4.0.
 $string['clicktocontinue'] = 'Click here to continue';
 $string['viewsurveyresponses'] = 'View {$a} survey responses';
+$string['allquestions'] = 'All questions in order, all students';

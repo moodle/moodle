@@ -32,13 +32,15 @@
     }
 
 }}
-<div class="container-fluid mb-2">
-    <div class="row justify-content-between">
-        <div class="float-left">
+<div class="container-fluid tertiary-navigation">
+    <div class="row">
+        <div class="navitem">
             <a class="btn btn-secondary" href="{{back}}">{{#str}}back, mod_assign{{/str}}</a>
         </div>
-        <div class="float-right">
+        {{#downloadall}}
+        <div class="navitem ml-sm-auto">
             <a class="btn btn-secondary" href="{{downloadall}}">{{#str}}downloadall, mod_assign{{/str}}</a>
         </div>
+        {{/downloadall}}
     </div>
 </div>

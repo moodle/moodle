@@ -24,7 +24,7 @@
 "use strict";
 
 import $ from 'jquery';
-import {dispatchEvent} from 'core/event_dispatcher';
+import CustomEvents from 'core/custom_interaction_events';
 import 'core/inplace_editable';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
@@ -33,7 +33,6 @@ import SortableList from 'core/sortable_list';
 import {get_string as getString} from 'core/str';
 import Templates from 'core/templates';
 import {add as addToast} from 'core/toast';
-import * as reportEvents from 'core_reportbuilder/local/events';
 import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import {addFilter, deleteFilter, reorderFilter} from 'core_reportbuilder/local/repository/filters';
 
@@ -51,11 +50,22 @@ const reloadSettingsFiltersRegion = (reportElement, templateContext) => {
     return Templates.renderForPromise('core_reportbuilder/local/settings/filters', {filters: templateContext})
         .then(({html, js}) => {
             Templates.replaceNode(settingsFiltersRegion, html, js);
+
+            initFiltersForm();
+
             // Re-focus the add filter element after reloading the region.
             const reportAddFilter = reportElement.querySelector(reportSelectors.actions.reportAddFilter);
             reportAddFilter?.focus();
+
             return pendingPromise.resolve();
         });
+};
+
+/**
+ * Initialise filters form, must be called on each init because the form container is re-created when switching editor modes
+ */
+const initFiltersForm = () => {
+    CustomEvents.define(reportSelectors.actions.reportAddFilter, [CustomEvents.events.accessibleChange]);
 };
 
 /**
@@ -76,24 +86,23 @@ export const init = initialized => {
         'delete',
     ]);
 
+    initFiltersForm();
     if (initialized) {
         return;
     }
 
-    document.addEventListener('click', event => {
-
-        // Add filter to report.
+    // Add filter to report. Use custom events helper to ensure consistency across platforms.
+    $(document).on(CustomEvents.events.accessibleChange, reportSelectors.actions.reportAddFilter, event => {
         const reportAddFilter = event.target.closest(reportSelectors.actions.reportAddFilter);
         if (reportAddFilter) {
             event.preventDefault();
 
-            const reportElement = reportAddFilter.closest(reportSelectors.regions.report);
-
             // Check if dropdown is closed with no filter selected.
-            if (reportAddFilter.value === '0') {
+            if (reportAddFilter.selectedIndex === 0) {
                 return;
             }
 
+            const reportElement = reportAddFilter.closest(reportSelectors.regions.report);
             const pendingPromise = new Pending('core_reportbuilder/filters:add');
 
             addFilter(reportElement.dataset.reportId, reportAddFilter.value)
@@ -104,6 +113,9 @@ export const init = initialized => {
                 .then(() => pendingPromise.resolve())
                 .catch(Notification.exception);
         }
+    });
+
+    document.addEventListener('click', event => {
 
         // Remove filter from report.
         const reportRemoveFilter = event.target.closest(reportSelectors.actions.reportRemoveFilter);
@@ -117,17 +129,15 @@ export const init = initialized => {
             Notification.saveCancelPromise(
                 getString('deletefilter', 'core_reportbuilder', filterName),
                 getString('deletefilterconfirm', 'core_reportbuilder', filterName),
-                getString('delete', 'core')
+                getString('delete', 'core'),
+                {triggerElement: reportRemoveFilter}
             ).then(() => {
                 const pendingPromise = new Pending('core_reportbuilder/filters:remove');
 
                 return deleteFilter(reportElement.dataset.reportId, filterContainer.dataset.filterId)
                     .then(data => reloadSettingsFiltersRegion(reportElement, data))
                     .then(() => addToast(getString('filterdeleted', 'core_reportbuilder', filterName)))
-                    .then(() => {
-                        dispatchEvent(reportEvents.tableReload, {}, reportElement);
-                        return pendingPromise.resolve();
-                    })
+                    .then(() => pendingPromise.resolve())
                     .catch(Notification.exception);
             }).catch(() => {
                 return;

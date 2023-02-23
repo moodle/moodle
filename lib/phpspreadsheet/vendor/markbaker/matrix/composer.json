@@ -12,7 +12,7 @@
         }
     ],
     "require": {
-        "php": "^7.2 || ^8.0"
+        "php": "^7.1 || ^8.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.0 || ^8.0 || ^9.3",
@@ -27,48 +27,12 @@
     "autoload": {
         "psr-4": {
             "Matrix\\": "classes/src/"
-        },
-        "files": [
-            "classes/src/functions/adjoint.php",
-            "classes/src/functions/antidiagonal.php",
-            "classes/src/functions/cofactors.php",
-            "classes/src/functions/determinant.php",
-            "classes/src/functions/diagonal.php",
-            "classes/src/functions/identity.php",
-            "classes/src/functions/inverse.php",
-            "classes/src/functions/minors.php",
-            "classes/src/functions/trace.php",
-            "classes/src/functions/transpose.php",
-            "classes/src/operations/add.php",
-            "classes/src/operations/directsum.php",
-            "classes/src/operations/subtract.php",
-            "classes/src/operations/multiply.php",
-            "classes/src/operations/divideby.php",
-            "classes/src/operations/divideinto.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {
-            "Matrix\\Test\\": "unitTests/classes/src/"
-        },
-        "files": [
-            "unitTests/classes/src/functions/adjointTest.php",
-            "unitTests/classes/src/functions/antidiagonalTest.php",
-            "unitTests/classes/src/functions/cofactorsTest.php",
-            "unitTests/classes/src/functions/determinantTest.php",
-            "unitTests/classes/src/functions/diagonalTest.php",
-            "unitTests/classes/src/functions/identityTest.php",
-            "unitTests/classes/src/functions/inverseTest.php",
-            "unitTests/classes/src/functions/minorsTest.php",
-            "unitTests/classes/src/functions/traceTest.php",
-            "unitTests/classes/src/functions/transposeTest.php",
-            "unitTests/classes/src/operations/addTest.php",
-            "unitTests/classes/src/operations/directsumTest.php",
-            "unitTests/classes/src/operations/subtractTest.php",
-            "unitTests/classes/src/operations/multiplyTest.php",
-            "unitTests/classes/src/operations/dividebyTest.php",
-            "unitTests/classes/src/operations/divideintoTest.php"
-        ]
+            "MatrixTest\\": "unitTests/classes/src/"
+        }
     },
     "scripts": {
         "style": "phpcs --report-width=200 --standard=PSR2 --report=summary,full classes/src/ unitTests/classes/src -n",

@@ -76,6 +76,7 @@ $PAGE->set_title($title);
 $PAGE->requires->css($cssfile);
 $jsonfile = new moodle_url('/admin/tool/componentlibrary/hugo/site/data/my-index.json');
 $PAGE->requires->js_call_amd('tool_componentlibrary/loader', 'init', ['jsonfile' => $jsonfile->out()]);
+$PAGE->set_secondary_navigation(false);
 
 if (get_config('core', 'allowthemechangeonurl')) {
     $themes = core_component::get_plugin_list('theme');
@@ -88,7 +89,6 @@ if (get_config('core', 'allowthemechangeonurl')) {
     $thememenu = new action_menu($menuthemes);
     $thememenu->set_menu_trigger($PAGE->theme->name, 'nav-link');
     $thememenu->set_owner_selector('change-moodle-theme');
-    $thememenu->set_alignment(\action_menu::TL, \action_menu::BL);
     $PAGE->set_headingmenu($OUTPUT->render($thememenu));
 }
 
@@ -104,6 +104,8 @@ if (!file_exists($CFG->dirroot . $docsdir)) {
 }
 // Load the content after the footer that contains the JS for this page.
 $page = file_get_contents($docspage);
+$jsdocurl = new moodle_url('/admin/tool/componentlibrary/jsdocspage.php');
+$page = str_replace('http://JSDOC', $jsdocurl, $page);
 $page = str_replace('http://MOODLEROOT', $thispageurl, $page);
 $page = str_replace('MOODLEIMAGEDIR', new moodle_url('/admin/tool/componentlibrary/content/static'), $page);
 $filtered = str_replace('MOODLEROOT', $thispageurl, $page);

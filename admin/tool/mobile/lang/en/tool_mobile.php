@@ -28,7 +28,9 @@ $string['androidappid_desc'] = 'This setting may be left as default unless you h
 $string['apppolicy'] = 'App policy URL';
 $string['apppolicy_help'] = 'The URL of a policy for app users which is listed on the About page in the app. If the field is left empty, the site policy URL will be used instead.';
 $string['apprequired'] = 'This functionality is only available when accessed via the Moodle mobile or desktop app.';
-$string['autologinkeygenerationlockout'] = 'Auto-login key generation is blocked. You need to wait 6 minutes between requests.';
+$string['autologinkeygenerationlockout'] = 'Auto-login key generation is blocked. You need to wait {$a} minutes between requests.';
+$string['autologinmintimebetweenreq'] = 'Minimum time between auto-login requests';
+$string['autologinmintimebetweenreq_desc'] = 'The minimum time between auto-login requests from the mobile app. If app users are frequently asked to enter their credentials when viewing content embedded from the site, then set a lower value.';
 $string['autologinnotallowedtoadmins'] = 'Auto-login is not allowed for site admins.';
 $string['cachedef_plugininfo'] = 'This stores the list of plugins with mobile addons';
 $string['cachedef_subscriptiondata'] = 'This stores the Moodle app subscription information.';
@@ -69,7 +71,7 @@ $string['filetypeexclusionlistplaceholder'] = 'Mobile file type exclusion list';
 $string['forcedurlscheme'] = 'If you want to allow only your custom branded app to be opened via a browser window, then specify its URL scheme here. If you want to allow only the official app, then set the default value. Leave the field empty if you want to allow any app.';
 $string['forcedurlscheme_key'] = 'URL scheme';
 $string['forcelogout'] = 'Force log out';
-$string['forcelogout_desc'] = 'If enabled, the app option \'Change site\' is replaced by \'Log out\'. This results in the user being completely logged out. They must then re-enter their password the next time they wish to access the site.';
+$string['forcelogout_desc'] = 'If enabled, users will be always completely logged out even when switching accounts. They must then re-enter their password the next time they wish to access the site.';
 $string['h5poffline'] = 'View H5P content offline';
 $string['httpsrequired'] = 'HTTPS required';
 $string['insecurealgorithmwarning'] = 'It seems that the HTTPS certificate uses an insecure algorithm for signing (SHA-1). Please try updating the certificate.';
@@ -114,14 +116,18 @@ $string['pluginname'] = 'Moodle app tools';
 $string['pluginnotenabledorconfigured'] = 'Plugin not enabled or configured.';
 $string['qrcodedisabled'] = 'Access via QR code disabled';
 $string['qrcodeformobileappaccess'] = 'QR code for mobile app access';
-$string['qrcodeformobileapploginabout'] = 'Scan the QR code with your mobile app and you will be automatically logged in. The QR code will expire in {$a} minutes.';
+$string['qrcodeformobileapploginabout'] = 'Scan the QR code with your mobile app and you will be automatically logged in. The QR code will expire in {$a}.';
 $string['qrcodeformobileappurlabout'] = 'Scan the QR code with your mobile app to fill in the site URL in your app.';
 $string['qrsiteadminsnotallowed'] = 'For security reasons login via QR code is not allowed for site administrators or if you are logged in as another user.';
 $string['qrcodetype'] = 'QR code access';
 $string['qrcodetype_desc'] = 'A QR code can be provided for mobile app users to scan. This can be used to fill in the site URL, or where the site is secured using HTTPS, to automatically log the user in without having to enter their username and password.';
 $string['qrcodetypeurl'] = 'QR code with site URL';
 $string['qrcodetypelogin'] = 'QR code with automatic login';
-$string['readingthisemailgettheapp'] = 'Reading this in an email? <a href="{$a}">Download the mobile app and receive notifications on your mobile device</a>.';
+$string['qrkeyttl'] = 'QR authentication key duration';
+$string['qrkeyttl_desc'] = 'The length of time for which a QR code for automatic login is valid.';
+$string['qrsameipcheck'] = 'QR authentication same IP check';
+$string['qrsameipcheck_desc'] = 'Whether users must use the same network for both generating and scanning a QR code for login. Only disable it if users report issues with the QR login.';
+$string['readingthisemailgettheapp'] = 'Are you reading this in an email? <a href="{$a}">Download the mobile app and receive notifications on your mobile device</a>.';
 $string['remoteaddons'] = 'Remote add-ons';
 $string['scanqrcode'] = 'Scan QR code';
 $string['selfsignedoruntrustedcertificatewarning'] = 'It seems that the HTTPS certificate is self-signed or not trusted. The mobile app will only work with trusted sites. Please use any online SSL checker to diagnose the problem. If it indicates that your certificate is OK, you can ignore this warning.';
@@ -143,10 +149,8 @@ $string['getmoodleonyourmobile'] = 'Get the mobile app';
 $string['privacy:metadata:preference:tool_mobile_autologin_request_last'] = 'The date of the last auto-login key request. Between each request 6 minutes are required.';
 $string['privacy:metadata:core_userkey'] = 'User\'s keys used to create auto-login key for the current user.';
 $string['responsivemainmenuitems'] = 'Responsive menu items';
+$string['switchaccount'] = 'Switch account';
 $string['viewqrcode'] = 'View QR code';
-
-// Deprecated since Moodle 3.10.
-$string['mobileappconnected'] = 'Mobile app connected';
 
 // Deprecated since Moodle 3.11.
 $string['openusingembeddedbrowser'] = 'Open using embedded browser';

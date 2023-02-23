@@ -44,6 +44,9 @@ Feature: View activity completion in the SCORM activity
   @javascript
   Scenario: View automatic completion items as a student
     Given I am on the "Music history" "scorm activity" page logged in as student1
+    # We need a little taller window because Firefox is, apparently, unable to auto-scroll within
+    # an iframe, so we need to ensure that the "Save changes" button is visible in the viewport.
+    And I change window size to "1366x968"
     And the "View" completion condition of "Music history" is displayed as "todo"
     And the "Receive a score of 3 or more" completion condition of "Music history" is displayed as "todo"
     And the "Do all parts of this activity" completion condition of "Music history" is displayed as "todo"
@@ -52,26 +55,50 @@ Feature: View activity completion in the SCORM activity
     And I press "Enter"
     And I switch to the main frame
     And I click on "Par?" "list_item"
+    And I switch to "scorm_object" iframe
     And I wait until the page is ready
+    And I switch to the main frame
     And I click on "Keeping Score" "list_item"
+    And I switch to "scorm_object" iframe
     And I wait until the page is ready
+    And I switch to the main frame
     And I click on "Other Scoring Systems" "list_item"
+    And I switch to "scorm_object" iframe
     And I wait until the page is ready
+    And I switch to the main frame
     And I click on "The Rules of Golf" "list_item"
+    And I switch to "scorm_object" iframe
     And I wait until the page is ready
+    And I switch to the main frame
     And I click on "Playing Golf Quiz" "list_item"
     And I switch to "scorm_object" iframe
+    And I wait until the page is ready
     And I click on "[id='question_com.scorm.golfsamples.interactions.playing_1_1']" "css_element"
     And I press "Submit Answers"
+    And I wait until "Score: 20" "text" exists
     And I switch to the main frame
     And I click on "How to Have Fun Playing Golf" "list_item"
+    And I switch to "scorm_object" iframe
     And I wait until the page is ready
+    And I switch to the main frame
     And I click on "How to Make Friends Playing Golf" "list_item"
+    And I switch to "scorm_object" iframe
     And I wait until the page is ready
+    And I switch to the main frame
     And I click on "Having Fun Quiz" "list_item"
     And I switch to "scorm_object" iframe
+    And I wait until the page is ready
     And I click on "[id='question_com.scorm.golfsamples.interactions.fun_1_False']" "css_element"
     And I press "Submit Answers"
+    And I wait until "Score: 33" "text" exists
+    And I switch to the main frame
+    # We need to get some time till the last item is marked as done (or it won't be ready in slow databases).
+    # This could be a pause of a few seconds (working ok in super-slow oracle docker database), but re-visiting
+    # any of the pages seems to  be doing the work too under that very same slow environment.
+    And I click on "Par?" "list_item"
+    And I switch to "scorm_object" iframe
+    And I wait until the page is ready
+    And I switch to the main frame
     When I am on the "Music history" "scorm activity" page
     Then the "View" completion condition of "Music history" is displayed as "done"
     # Conditions that are not possible to achieve (eg score below requirement but all attempts used) are marked as failed.

@@ -14,15 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the short answer question definition class.
- *
- * @package    qtype
- * @subpackage shortanswer
- * @copyright  2008 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_shortanswer;
 
+use qtype_shortanswer_question;
+use question_attempt_step;
+use question_classified_response;
+use question_display_options;
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,10 +32,11 @@ require_once($CFG->dirroot . '/question/type/shortanswer/question.php');
 /**
  * Unit tests for the short answer question definition class.
  *
+ * @package    qtype_shortanswer
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_shortanswer_question_test extends advanced_testcase {
+class question_test extends \advanced_testcase {
     public function test_compare_string_with_wildcard() {
         // Test case sensitive literal matches.
         $this->assertTrue((bool)qtype_shortanswer_question::compare_string_with_wildcard(
@@ -139,7 +138,7 @@ class qtype_shortanswer_question_test extends advanced_testcase {
     }
 
     public function test_is_complete_response() {
-        $question = test_question_maker::make_question('shortanswer');
+        $question = \test_question_maker::make_question('shortanswer');
 
         $this->assertFalse($question->is_complete_response(array()));
         $this->assertFalse($question->is_complete_response(array('answer' => '')));
@@ -149,7 +148,7 @@ class qtype_shortanswer_question_test extends advanced_testcase {
     }
 
     public function test_is_gradable_response() {
-        $question = test_question_maker::make_question('shortanswer');
+        $question = \test_question_maker::make_question('shortanswer');
 
         $this->assertFalse($question->is_gradable_response(array()));
         $this->assertFalse($question->is_gradable_response(array('answer' => '')));
@@ -159,7 +158,7 @@ class qtype_shortanswer_question_test extends advanced_testcase {
     }
 
     public function test_grading() {
-        $question = test_question_maker::make_question('shortanswer');
+        $question = \test_question_maker::make_question('shortanswer');
 
         $this->assertEquals(array(0, question_state::$gradedwrong),
                 $question->grade_response(array('answer' => 'x')));
@@ -170,32 +169,32 @@ class qtype_shortanswer_question_test extends advanced_testcase {
     }
 
     public function test_get_correct_response() {
-        $question = test_question_maker::make_question('shortanswer');
+        $question = \test_question_maker::make_question('shortanswer');
 
         $this->assertEquals(array('answer' => 'frog'),
                 $question->get_correct_response());
     }
 
     public function test_get_correct_response_escapedwildcards() {
-        $question = test_question_maker::make_question('shortanswer', 'escapedwildcards');
+        $question = \test_question_maker::make_question('shortanswer', 'escapedwildcards');
 
         $this->assertEquals(array('answer' => 'x*y'), $question->get_correct_response());
     }
 
     public function test_get_question_summary() {
-        $sa = test_question_maker::make_question('shortanswer');
+        $sa = \test_question_maker::make_question('shortanswer');
         $qsummary = $sa->get_question_summary();
         $this->assertEquals('Name an amphibian: __________', $qsummary);
     }
 
     public function test_summarise_response() {
-        $sa = test_question_maker::make_question('shortanswer');
+        $sa = \test_question_maker::make_question('shortanswer');
         $summary = $sa->summarise_response(array('answer' => 'dog'));
         $this->assertEquals('dog', $summary);
     }
 
     public function test_classify_response() {
-        $sa = test_question_maker::make_question('shortanswer');
+        $sa = \test_question_maker::make_question('shortanswer');
         $sa->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEquals(array(
@@ -213,7 +212,7 @@ class qtype_shortanswer_question_test extends advanced_testcase {
     }
 
     public function test_classify_response_no_star() {
-        $sa = test_question_maker::make_question('shortanswer', 'frogonly');
+        $sa = \test_question_maker::make_question('shortanswer', 'frogonly');
         $sa->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEquals(array(
@@ -233,9 +232,9 @@ class qtype_shortanswer_question_test extends advanced_testcase {
     public function test_get_question_definition_for_external_rendering() {
         $this->resetAfterTest();
 
-        $question = test_question_maker::make_question('shortanswer');
+        $question = \test_question_maker::make_question('shortanswer');
         $question->start_attempt(new question_attempt_step(), 1);
-        $qa = test_question_maker::get_a_qa($question);
+        $qa = \test_question_maker::get_a_qa($question);
         $displayoptions = new question_display_options();
 
         $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);

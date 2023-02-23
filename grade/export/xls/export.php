@@ -23,7 +23,7 @@ $id                = required_param('id', PARAM_INT); // course id
 $PAGE->set_url('/grade/export/xls/export.php', array('id'=>$id));
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 require_login($course);
@@ -45,7 +45,7 @@ if (!empty($CFG->gradepublishing) && !empty($key)) {
 
 if (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
     if (!groups_is_member($groupid, $USER->id)) {
-        print_error('cannotaccessgroup', 'grades');
+        throw new \moodle_exception('cannotaccessgroup', 'grades');
     }
 }
 $mform = new grade_export_form(null, array('publishing' => true, 'simpleui' => true, 'multipledisplaytypes' => true));

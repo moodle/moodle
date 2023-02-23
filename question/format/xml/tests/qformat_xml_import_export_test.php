@@ -132,7 +132,13 @@ class qformat_xml_import_export_test extends advanced_testcase {
      */
     public function assert_question_in_category($qname, $catname) {
         global $DB;
-        $question = $DB->get_record('question', ['name' => $qname], '*', MUST_EXIST);
+
+        $sql = "SELECT q.*, qbe.questioncategoryid AS category
+                  FROM {question} q
+                  JOIN {question_versions} qv ON qv.questionid = q.id
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                 WHERE q.name = :name";
+        $question = $DB->get_record_sql($sql, ['name' => $qname], MUST_EXIST);
         $category = $DB->get_record('question_categories', ['name' => $catname], '*', MUST_EXIST);
         $this->assertEquals($category->id, $question->category);
     }

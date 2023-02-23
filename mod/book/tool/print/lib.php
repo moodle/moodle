@@ -31,14 +31,12 @@ defined('MOODLE_INTERNAL') || die;
  * @param navigation_node $node The node to add module settings to
  */
 function booktool_print_extend_settings_navigation(settings_navigation $settings, navigation_node $node) {
-    global $USER, $PAGE, $CFG, $DB, $OUTPUT;
-
-    $params = $PAGE->url->params();
+    $params = $settings->get_page()->url->params();
     if (empty($params['id']) or empty($params['chapterid'])) {
         return;
     }
 
-    if (has_capability('booktool/print:print', $PAGE->cm->context)) {
+    if (has_capability('booktool/print:print', $settings->get_page()->cm->context)) {
         $url1 = new moodle_url('/mod/book/tool/print/index.php', array('id'=>$params['id']));
         $url2 = new moodle_url('/mod/book/tool/print/index.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid']));
         $action = new action_link($url1, get_string('printbook', 'booktool_print'), new popup_action('click', $url1));

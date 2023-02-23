@@ -481,29 +481,13 @@ function is_early_init($backtrace) {
 }
 
 /**
- * Abort execution by throwing of a general exception,
- * default exception handler displays the error message in most cases.
- *
- * @param string $errorcode The name of the language string containing the error message.
- *      Normally this should be in the error.php lang file.
- * @param string $module The language file to get the error message from.
- * @param string $link The url where the user will be prompted to continue.
- *      If no url is provided the user will be directed to the site index page.
- * @param object $a Extra words and phrases that might be required in the error string
- * @param string $debuginfo optional debugging information
- * @return void, always throws exception!
- */
-function print_error($errorcode, $module = 'error', $link = '', $a = null, $debuginfo = null) {
-    throw new moodle_exception($errorcode, $module, $link, $a, $debuginfo);
-}
-
-/**
  * Returns detailed information about specified exception.
- * @param exception $ex
- * @return object
+ *
+ * @param Throwable $ex any sort of exception or throwable.
+ * @return stdClass standardised info to display. Fields are clear if you look at the end of this function.
  */
-function get_exception_info($ex) {
-    global $CFG, $DB, $SESSION;
+function get_exception_info($ex): stdClass {
+    global $CFG;
 
     if ($ex instanceof moodle_exception) {
         $errorcode = $ex->errorcode;
@@ -566,7 +550,7 @@ function get_exception_info($ex) {
     if (function_exists('clean_text')) {
         $message = clean_text($message);
     } else {
-        $message = htmlspecialchars($message);
+        $message = htmlspecialchars($message, ENT_COMPAT);
     }
 
     if (!empty($CFG->errordocroot)) {
@@ -588,12 +572,7 @@ function get_exception_info($ex) {
     $moreinfourl = $errordoclink . 'error/' . $modulelink . '/' . $errorcode;
 
     if (empty($link)) {
-        if (!empty($SESSION->fromurl)) {
-            $link = $SESSION->fromurl;
-            unset($SESSION->fromurl);
-        } else {
-            $link = $CFG->wwwroot .'/';
-        }
+        $link = get_local_referer(false) ?: ($CFG->wwwroot . '/');
     }
 
     // When printing an error the continue button should never link offsite.
@@ -651,7 +630,11 @@ function generate_uuid() {
  */
 function get_docs_url($path = null) {
     global $CFG;
+    if ($path === null) {
+        $path = '';
+    }
 
+    $path = $path ?? '';
     // Absolute URLs are used unmodified.
     if (substr($path, 0, 7) === 'http://' || substr($path, 0, 8) === 'https://') {
         return $path;
@@ -719,18 +702,23 @@ function format_backtrace($callers, $plaintext = false) {
         if (!isset($caller['file'])) {
             $caller['file'] = 'unknownfile'; // probably call_user_func()
         }
-        $from .= $plaintext ? '* ' : '<li>';
-        $from .= 'line ' . $caller['line'] . ' of ' . str_replace($dirroot, '', $caller['file']);
+        $line = $plaintext ? '* ' : '<li>';
+        $line .= 'line ' . $caller['line'] . ' of ' . str_replace($dirroot, '', $caller['file']);
         if (isset($caller['function'])) {
-            $from .= ': call to ';
+            $line .= ': call to ';
             if (isset($caller['class'])) {
-                $from .= $caller['class'] . $caller['type'];
+                $line .= $caller['class'] . $caller['type'];
             }
-            $from .= $caller['function'] . '()';
+            $line .= $caller['function'] . '()';
         } else if (isset($caller['exception'])) {
-            $from .= ': '.$caller['exception'].' thrown';
+            $line .= ': '.$caller['exception'].' thrown';
         }
-        $from .= $plaintext ? "\n" : '</li>';
+
+        // Remove any non printable chars.
+        $line = preg_replace('/[[:^print:]]/', '', $line);
+
+        $line .= $plaintext ? "\n" : '</li>';
+        $from .= $line;
     }
     $from .= $plaintext ? '' : '</ul>';
 
@@ -765,7 +753,7 @@ function setup_validate_php_configuration() {
    // this must be very fast - no slow checks here!!!
 
    if (ini_get_bool('session.auto_start')) {
-       print_error('sessionautostartwarning', 'admin');
+        throw new \moodle_exception('sessionautostartwarning', 'admin');
    }
 }
 
@@ -851,7 +839,7 @@ function initialise_fullme() {
 
     // Detect common config error.
     if (substr($CFG->wwwroot, -1) == '/') {
-        print_error('wwwrootslash', 'error');
+        throw new \moodle_exception('wwwrootslash', 'error');
     }
 
     if (CLI_SCRIPT) {
@@ -936,7 +924,7 @@ function initialise_fullme() {
     if (empty($CFG->sslproxy)) {
         if ($rurl['scheme'] === 'http' and $wwwroot['scheme'] === 'https') {
             if (defined('REQUIRE_CORRECT_ACCESS') && REQUIRE_CORRECT_ACCESS) {
-                print_error('sslonlyaccess', 'error');
+                throw new \moodle_exception('sslonlyaccess', 'error');
             } else {
                 redirect($CFG->wwwroot, get_string('wwwrootmismatch', 'error', $CFG->wwwroot), 3);
             }
@@ -954,7 +942,7 @@ function initialise_fullme() {
     // with two different addresses in intranet and Internet.
     // Port forwarding is still allowed!
     if (!empty($CFG->reverseproxy) && $rurl['host'] === $wwwroot['host'] && (empty($wwwroot['port']) || $rurl['port'] === $wwwroot['port'])) {
-        print_error('reverseproxyabused', 'error');
+        throw new \moodle_exception('reverseproxyabused', 'error');
     }
 
     $hostandport = $rurl['scheme'] . '://' . $wwwroot['host'];
@@ -1446,7 +1434,7 @@ function disable_output_buffering() {
  */
 function is_major_upgrade_required() {
     global $CFG;
-    $lastmajordbchanges = 2021101900.01;
+    $lastmajordbchanges = 2022101400.03; // This should be the version where the breaking changes happen.
 
     $required = empty($CFG->version);
     $required = $required || (float)$CFG->version < $lastmajordbchanges;
@@ -1471,7 +1459,7 @@ function redirect_if_major_upgrade_required() {
         $url = $CFG->wwwroot . '/' . $CFG->admin . '/index.php';
         @header($_SERVER['SERVER_PROTOCOL'] . ' 303 See Other');
         @header('Location: ' . $url);
-        echo bootstrap_renderer::plain_redirect_message(htmlspecialchars($url));
+        echo bootstrap_renderer::plain_redirect_message(htmlspecialchars($url, ENT_COMPAT));
         exit;
     }
 }
@@ -1911,7 +1899,7 @@ function set_access_log_user() {
                 apache_note('MOODLEUSER', $logname);
             }
 
-            if ($logmethod == 'header') {
+            if ($logmethod == 'header' && !headers_sent()) {
                 header("X-MOODLEUSER: $logname");
             }
         }
@@ -2193,5 +2181,23 @@ class bootstrap_renderer {
         ob_end_clean();
 
         return $html;
+    }
+}
+
+/**
+ * Add http stream instrumentation
+ *
+ * This detects which any reads or writes to a php stream which uses
+ * the 'http' handler. Ideally 100% of traffic uses the Moodle curl
+ * libraries which do not use php streams.
+ *
+ * @param array $code stream callback code
+ */
+function proxy_log_callback($code) {
+    if ($code == STREAM_NOTIFY_CONNECT) {
+        $trace = debug_backtrace();
+        $function = $trace[count($trace) - 1];
+        $error = "Unsafe internet IO detected: {$function['function']} with arguments " . join(', ', $function['args']) . "\n";
+        error_log($error . format_backtrace($trace, true)); // phpcs:ignore
     }
 }

@@ -61,7 +61,7 @@ if ($courseid AND $courseid != SITEID) {
 }
 
 if (!$feedbackcompletion->can_complete()) {
-    print_error('error');
+    throw new \moodle_exception('error');
 }
 
 $PAGE->navbar->add(get_string('feedback:complete', 'feedback'));
@@ -74,9 +74,6 @@ $PAGE->add_body_class('limitedwidth');
 // Check if the feedback is open (timeopen, timeclose).
 if (!$feedbackcompletion->is_open()) {
     echo $OUTPUT->header();
-    if (!$PAGE->has_secondary_navigation()) {
-        echo $OUTPUT->heading(format_string($feedback->name));
-    }
     echo $OUTPUT->box_start('generalbox boxaligncenter');
     echo $OUTPUT->notification(get_string('feedback_is_not_open', 'feedback'));
     echo $OUTPUT->continue_button(course_get_url($courseid ?: $feedback->course));
@@ -108,9 +105,6 @@ $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
 echo $OUTPUT->header();
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($feedback->name));
-}
 
 if ($feedbackcompletion->is_empty()) {
     \core\notification::error(get_string('no_items_available_yet', 'feedback'));
@@ -122,7 +116,7 @@ if ($feedbackcompletion->is_empty()) {
                     'generalbox boxaligncenter');
         }
         if (!$PAGE->has_secondary_navigation() && $feedbackcompletion->can_view_analysis()) {
-            echo '<p align="center">';
+            echo '<p class="text-center">';
             $analysisurl = new moodle_url('/mod/feedback/analysis.php', array('id' => $cm->id, 'courseid' => $courseid));
             echo html_writer::link($analysisurl, get_string('completed_feedbacks', 'feedback'));
             echo '</p>';

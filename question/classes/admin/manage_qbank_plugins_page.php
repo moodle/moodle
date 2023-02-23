@@ -134,6 +134,18 @@ class manage_qbank_plugins_page extends \admin_setting {
             $table->data[] = $row;
             $count++;
         }
+
+        // Sort table data.
+        usort($table->data, function($a, $b) {
+            $aid = $a->cells[0]->text;
+            $bid = $b->cells[0]->text;
+
+            if ($aid == $bid) {
+                return 0;
+            }
+            return $aid < $bid ? -1 : 1;
+        });
+
         $return .= \html_writer::table($table);
         return highlight($query, $return);
     }

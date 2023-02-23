@@ -158,7 +158,30 @@ export default class {
     }
 
     /**
-     * Generate a compoetion export data from the cm element.
+     * Generate a file draggable structure.
+     *
+     * This method is used when files are dragged on the browser.
+     *
+     * @param {*} state the state object
+     * @param {*} dataTransfer the current data tranfer data
+     * @returns {Object|null}
+     */
+    fileDraggableData(state, dataTransfer) {
+        const files = [];
+        // Browsers do not provide the file list until the drop event.
+        if (dataTransfer.files?.length > 0) {
+            dataTransfer.files.forEach(file => {
+                files.push(file);
+            });
+        }
+        return {
+            type: 'files',
+            files,
+        };
+    }
+
+    /**
+     * Generate a completion export data from the cm element.
      *
      * @param {Object} state the current state.
      * @param {Object} cminfo the course module state data.
@@ -176,5 +199,28 @@ export default class {
             data[`is${statename}`] = true;
         }
         return data;
+    }
+
+    /**
+     * Return a sorted list of all sections and cms items in the state.
+     *
+     * @param {Object} state the current state.
+     * @returns {Array} all sections and cms items in the state.
+     */
+    allItemsArray(state) {
+        const items = [];
+        const sectionlist = state.course.sectionlist ?? [];
+        // Add sections.
+        sectionlist.forEach(sectionid => {
+            const sectioninfo = state.section.get(sectionid);
+            items.push({type: 'section', id: sectioninfo.id, url: sectioninfo.sectionurl});
+            // Add cms.
+            const cmlist = sectioninfo.cmlist ?? [];
+            cmlist.forEach(cmid => {
+                const cminfo = state.cm.get(cmid);
+                items.push({type: 'cm', id: cminfo.id, url: cminfo.url});
+            });
+        });
+        return items;
     }
 }

@@ -165,7 +165,7 @@ abstract class grade_report {
         global $CFG, $COURSE, $DB;
 
         if (empty($CFG->gradebookroles)) {
-            print_error('norolesdefined', 'grades');
+            throw new \moodle_exception('norolesdefined', 'grades');
         }
 
         $this->courseid  = $courseid;
@@ -576,6 +576,184 @@ abstract class grade_report {
                    Call grade_report::blank_hidden_total_and_adjust_bounds instead.', DEBUG_DEVELOPER);
         $result = $this->blank_hidden_total_and_adjust_bounds($courseid, $course_item, $finalgrade);
         return $result['grade'];
+    }
+
+    /**
+     * Calculate average grade for a given grade item.
+     * Based on calculate_averages function from grade/report/user/lib.php
+     *
+     * @param grade_item $gradeitem Grade item
+     * @param array $info Ungraded grade items counts and report preferences.
+     * @return array Average grade and meancount.
+     */
+    public static function calculate_average(grade_item $gradeitem, array $info): array {
+
+        $meanselection = $info['report']['meanselection'];
+        $totalcount = $info['report']['totalcount'];
+        $ungradedcounts = $info['ungradedcounts'];
+        $sumarray = $info['sumarray'];
+
+        if (empty($sumarray[$gradeitem->id])) {
+            $sumarray[$gradeitem->id] = 0;
+        }
+
+        if (empty($ungradedcounts[$gradeitem->id])) {
+            $ungradedcounts = 0;
+        } else {
+            $ungradedcounts = $ungradedcounts[$gradeitem->id]->count;
+        }
+
+        // If they want the averages to include all grade items.
+        if ($meanselection == GRADE_REPORT_MEAN_GRADED) {
+            $meancount = $totalcount - $ungradedcounts;
+        } else {
+            // Bump up the sum by the number of ungraded items * grademin.
+            $sumarray[$gradeitem->id] += ($ungradedcounts * $gradeitem->grademin);
+            $meancount = $totalcount;
+        }
+
+        $aggr['meancount'] = $meancount;
+
+        if (empty($sumarray[$gradeitem->id]) || $meancount == 0) {
+            $aggr['average'] = null;
+        } else {
+            $sum = $sumarray[$gradeitem->id];
+            $aggr['average'] = $sum / $meancount;
+        }
+        return $aggr;
+    }
+
+    /**
+     * Get ungraded grade items info and sum of all grade items in a course.
+     * Based on calculate_averages function from grade/report/user/lib.php
+     *
+     * @return array Ungraded grade items counts with report preferences.
+     */
+    public function ungraded_counts(): array {
+        global $DB;
+
+        $groupid = null;
+        if (isset($this->gpr->groupid)) {
+            $groupid = $this->gpr->groupid;
+        }
+
+        $info = [];
+        $info['report'] = [
+            'averagesdisplaytype' => $this->get_pref('averagesdisplaytype'),
+            'averagesdecimalpoints' => $this->get_pref('averagesdecimalpoints'),
+            'meanselection' => $this->get_pref('meanselection'),
+            'shownumberofgrades' => $this->get_pref('shownumberofgrades'),
+            'totalcount' => $this->get_numusers(!is_null($groupid)),
+        ];
+
+        // We want to query both the current context and parent contexts.
+        list($relatedctxsql, $relatedctxparams) =
+            $DB->get_in_or_equal($this->context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
+
+        // Limit to users with a gradeable role ie students.
+        list($gradebookrolessql, $gradebookrolesparams) =
+            $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
+
+        // Limit to users with an active enrolment.
+        $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+        $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+        $showonlyactiveenrol = $showonlyactiveenrol ||
+            !has_capability('moodle/course:viewsuspendedusers', $this->context);
+        list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context, '', 0, $showonlyactiveenrol);
+
+        $params = array_merge($this->groupwheresql_params, $gradebookrolesparams, $enrolledparams, $relatedctxparams);
+        $params['courseid'] = $this->courseid;
+
+        // Aggregate on whole course only.
+        if (empty($groupid)) {
+            $this->groupsql = null;
+            $this->groupwheresql = null;
+        }
+
+        // Empty grades must be evaluated as grademin, NOT always 0.
+        // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table).
+        // No join condition when joining grade_items and user to get a grade item row for every user.
+        // Then left join with grade_grades and look for rows with null final grade
+        // (which includes grade items with no grade_grade).
+        $sql = "SELECT gi.id, COUNT(u.id) AS count
+                      FROM {grade_items} gi
+                      JOIN {user} u ON u.deleted = 0
+                      JOIN ($enrolledsql) je ON je.id = u.id
+                      JOIN (
+                               SELECT DISTINCT ra.userid
+                                 FROM {role_assignments} ra
+                                WHERE ra.roleid $gradebookrolessql
+                                  AND ra.contextid $relatedctxsql
+                           ) rainner ON rainner.userid = u.id
+                      LEFT JOIN {grade_grades} gg
+                             ON (gg.itemid = gi.id AND gg.userid = u.id AND gg.finalgrade IS NOT NULL AND gg.hidden = 0)
+                      $this->groupsql
+                     WHERE gi.courseid = :courseid
+                           AND gg.finalgrade IS NULL
+                           $this->groupwheresql
+                  GROUP BY gi.id";
+        $info['ungradedcounts'] = $DB->get_records_sql($sql, $params);
+
+        // Find sums of all grade items in course.
+        $sql = "SELECT gg.itemid, SUM(gg.finalgrade) AS sum
+                      FROM {grade_items} gi
+                      JOIN {grade_grades} gg ON gg.itemid = gi.id
+                      JOIN {user} u ON u.id = gg.userid
+                      JOIN ($enrolledsql) je ON je.id = gg.userid
+                      JOIN (
+                                   SELECT DISTINCT ra.userid
+                                     FROM {role_assignments} ra
+                                    WHERE ra.roleid $gradebookrolessql
+                                      AND ra.contextid $relatedctxsql
+                           ) rainner ON rainner.userid = u.id
+                      $this->groupsql
+                     WHERE gi.courseid = :courseid
+                       AND u.deleted = 0
+                       AND gg.finalgrade IS NOT NULL
+                       AND gg.hidden = 0
+                       $this->groupwheresql
+                  GROUP BY gg.itemid";
+
+        $sumarray = [];
+        $sums = $DB->get_recordset_sql($sql, $params);
+        foreach ($sums as $itemid => $csum) {
+            $sumarray[$itemid] = grade_floatval($csum->sum);
+        }
+        $sums->close();
+        $info['sumarray'] = $sumarray;
+
+        return $info;
+    }
+
+    /**
+     * Get grade item type names in a course to use in filter dropdown.
+     *
+     * @return array Item types.
+     */
+    public function item_types(): array {
+        global $DB, $CFG;
+
+        $modnames = [];
+        $sql = "(SELECT gi.itemmodule
+                   FROM {grade_items} gi
+                  WHERE gi.courseid = :courseid1
+                    AND gi.itemmodule IS NOT NULL)
+                 UNION
+                (SELECT gi1.itemtype
+                   FROM {grade_items} gi1
+                  WHERE gi1.courseid = :courseid2
+                    AND gi1.itemtype = 'manual')";
+
+        $itemtypes = $DB->get_records_sql($sql, ['courseid1' => $this->courseid, 'courseid2' => $this->courseid]);
+        foreach ($itemtypes as $itemtype => $value) {
+            if (file_exists("$CFG->dirroot/mod/$itemtype/lib.php")) {
+                $modnames[$itemtype] = get_string("modulename", $itemtype, null, true);
+            } else if ($itemtype == 'manual') {
+                $modnames[$itemtype] = get_string('manualitem', 'grades', null, true);
+            }
+        }
+
+        return $modnames;
     }
 }
 

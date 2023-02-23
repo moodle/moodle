@@ -1,4 +1,7 @@
 .path-grade-report-singleview div.reporttable {
+    margin: 20px 0 30px 0;
+    padding: 10px 10px;
+    background-color: #f8f9fa;
     text-align: center;
 }
 
@@ -24,7 +27,7 @@
 }
 
 .path-grade-report-singleview div.reporttable form div {
-    text-align: center;
+    text-align: left;
 }
 
 .path-grade-report-singleview .singleview_buttons {
@@ -32,16 +35,43 @@
 }
 
 .path-grade-report-singleview div.reporttable h2 {
-    text-align: center;
+    text-align: left;
 }
 
-.path-grade-report-singleview input[name^="finalgrade"] {
-    width: 50px;
+.path-grade-report-singleview .overrideexcludecheck {
+    width: 14.75px;
+    height: 12px;
+    color: #2ca14f;
+}
+
+.path-grade-report-singleview .report-navigation .container {
+    max-width: 1060px;
+    margin-left: 0;
+}
+
+.path-grade-report-singleview .zero-state img {
+    width: 185px;
+}
+
+.path-grade-report-singleview .reporttable thead th,
+.path-grade-report-singleview .reporttable thead td {
+    white-space: nowrap;
+    border: none;
+}
+
+.path-grade-report-singleview .reporttable tbody tr,
+.path-grade-report-singleview .reporttable tbody tr:nth-of-type(odd),
+.path-grade-report-singleview .reporttable tbody tr:hover {
+    color: inherit;
+    background-color: white;
+    border-top: none;
+    border-bottom: 1px solid #dee2e6;
 }
 
 .path-grade-report-singleview .reporttable tbody th,
 .path-grade-report-singleview .reporttable tbody td.range {
     white-space: nowrap;
+    font-weight: normal;
 }
 
 .path-grade-report-singleview .reporttable tbody th > * {
@@ -68,8 +98,11 @@
     width: 100%;
 }
 
-.path-grade-report-singleview .reporttable th {
+.path-grade-report-singleview .reporttable .generaltable th,
+.path-grade-report-singleview .reporttable .generaltable td {
     text-align: left;
+    vertical-align: middle;
+    border: none;
 }
 
 .path-grade-report-singleview div.reporttable form div.singleview_bulk {
@@ -92,6 +125,13 @@
     margin-right: 10px;
 }
 
+#bulkinsertmodal {
+    width: 181px;
+    height: 39px;
+    top: 309px;
+    border-radius: 4px;
+}
+
 .path-grade-report-singleview .singleview_bulk > fieldset {
     display: block;
 }
@@ -99,4 +139,24 @@
 .path-grade-report-singleview div.reporttable form .singleview_bulk > div.enable {
     margin-bottom: 0.5em;
     text-align: left;
+}
+
+.searchresultitemscontainer {
+    max-height: 150px;
+    height: 150px;
+    overflow: auto;
+}
+
+.path-grade-report-singleview .search-widget[data-searchtype="user"] .userinitials {
+    width: 40px;
+    height: 40px;
+}
+
+.path-grade-report-singleview .reporttable .gradeitem span.small {
+    font-size: 70%;
+}
+
+.path-grade-report-singleview .reporttable div.categoryitem .gradeitemheader,
+.path-grade-report-singleview .reporttable div.courseitem .gradeitemheader {
+    font-weight: bold;
 }

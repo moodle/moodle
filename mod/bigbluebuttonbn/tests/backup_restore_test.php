@@ -40,6 +40,8 @@ require_once($CFG->libdir . "/phpunit/classes/restore_date_testcase.php");
  * @copyright 2018 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David (laurent@call-learning.fr)
+ * @covers \backup_bigbluebuttonbn_activity_task
+ * @covers \restore_bigbluebuttonbn_activity_task
  */
 class backup_restore_test extends restore_date_testcase {
     use testcase_helper_trait;
@@ -186,7 +188,7 @@ class backup_restore_test extends restore_date_testcase {
     protected function assert_bbb_activities_same(stdClass $bbboriginal, stdClass $bbbdest) {
         $this->assertNotFalse($bbbdest);
         $filterfunction = function($key) {
-            return !in_array($key, ['course', 'cmid', 'id', 'course']);
+            return !in_array($key, ['course', 'cmid', 'id', 'guestlinkuid', 'guestpassword']);
         };
         $this->assertEquals(
             array_filter((array) $bbboriginal, $filterfunction, ARRAY_FILTER_USE_KEY),

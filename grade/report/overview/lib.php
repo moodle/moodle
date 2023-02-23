@@ -132,6 +132,25 @@ class grade_report_overview extends grade_report {
     }
 
     /**
+     * Regrades all courses if needed.
+     *
+     * If $frontend is true, this may show a progress bar and redirect back to the page (possibly
+     * several times if multiple courses need it). Otherwise, it will not return until all the
+     * courses have been updated.
+     *
+     * @param bool $frontend True if we are running front-end code and can safely redirect back
+     */
+    public function regrade_all_courses_if_needed(bool $frontend = false): void {
+        foreach ($this->courses as $course) {
+            if ($frontend) {
+                grade_regrade_final_grades_if_required($course);
+            } else {
+                grade_regrade_final_grades($course->id);
+            }
+        }
+    }
+
+    /**
      * Prepares the headers and attributes of the flexitable.
      */
     public function setup_table() {
@@ -272,6 +291,12 @@ class grade_report_overview extends grade_report {
         if ($this->courses) {
             $coursesdata = $this->setup_courses_data($studentcoursesonly);
 
+            // Check whether current user can view all grades of this user - parent most probably.
+            $viewasuser = $this->course->showgrades && has_any_capability([
+                'moodle/grade:viewall',
+                'moodle/user:viewuseractivitiesreport',
+            ], context_user::instance($this->user->id));
+
             foreach ($coursesdata as $coursedata) {
 
                 $course = $coursedata['course'];
@@ -279,17 +304,26 @@ class grade_report_overview extends grade_report {
                 $finalgrade = $coursedata['finalgrade'];
                 $courseitem = $coursedata['courseitem'];
 
-                $coursename = format_string(get_course_display_name_for_list($course), true, array('context' => $coursecontext));
-                // Link to the activity report version of the user grade report.
-                if ($activitylink) {
-                    $courselink = html_writer::link(new moodle_url('/course/user.php', array('mode' => 'grade', 'id' => $course->id,
-                        'user' => $this->user->id)), $coursename);
-                } else {
-                    $courselink = html_writer::link(new moodle_url('/grade/report/user/index.php', array('id' => $course->id,
-                        'userid' => $this->user->id, 'group' => $this->gpr->groupid)), $coursename);
+                $coursenamelink = format_string(get_course_display_name_for_list($course), true, ['context' => $coursecontext]);
+
+                // Link to the course grade report pages (performing same capability checks as the pages themselves).
+                if ($activitylink &&
+                        (has_capability('gradereport/' . $CFG->grade_profilereport .':view', $coursecontext) || $viewasuser)) {
+
+                    $coursenamelink = html_writer::link(new moodle_url('/course/user.php', [
+                        'mode' => 'grade',
+                        'id' => $course->id,
+                        'user' => $this->user->id,
+                    ]), $coursenamelink);
+                } else if (!$activitylink && (has_capability('gradereport/user:view', $coursecontext) || $viewasuser)) {
+                    $coursenamelink = html_writer::link(new moodle_url('/grade/report/user/index.php', [
+                        'id' => $course->id,
+                        'userid' => $this->user->id,
+                        'group' => $this->gpr->groupid,
+                    ]), $coursenamelink);
                 }
 
-                $data = array($courselink, grade_format_gradevalue($finalgrade, $courseitem, true));
+                $data = [$coursenamelink, grade_format_gradevalue($finalgrade, $courseitem, true)];
 
                 if ($this->showrank['any']) {
                     if ($this->showrank[$course->id] && !is_null($finalgrade)) {
@@ -337,8 +371,10 @@ class grade_report_overview extends grade_report {
         $table->head = array(get_string('coursename', 'grades'));
         $table->data = null;
         foreach ($this->teachercourses as $courseid => $course) {
+            $coursecontext = context_course::instance($course->id);
+            $coursenamelink = format_string($course->fullname, true, ['context' => $coursecontext]);
             $url = new moodle_url('/grade/report/index.php', array('id' => $courseid));
-            $table->data[] = array(html_writer::link($url, $course->fullname));
+            $table->data[] = array(html_writer::link($url, $coursenamelink));
         }
         echo html_writer::table($table);
     }

@@ -1,4 +1,4 @@
-@core @core_grades
+@core @core_grades @javascript
 Feature: Average grades are displayed in the gradebook
   In order to check the expected results are displayed
   As an admin

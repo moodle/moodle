@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_contenttype.p
 require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_content.php');
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
-use external_api;
+use core_external\external_api;
 
 /**
  * Core content bank external functions tests.
@@ -41,7 +41,7 @@ use external_api;
  * @package    core_contentbank
  * @copyright  2020 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_contentbank\external
+ * @coversDefaultClass \core_contentbank\external\rename_content
  */
 class rename_content_test extends \externallib_advanced_testcase {
 

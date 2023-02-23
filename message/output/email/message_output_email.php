@@ -204,7 +204,7 @@ class message_output_email extends message_output {
      * @return int The default settings
      */
     public function get_default_messaging_settings() {
-        return MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF;
+        return MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED;
     }
 
     /**

@@ -1,8 +1,9 @@
 ADOdb Library for PHP
 ======================
 
-[![Join chat on Gitter](https://img.shields.io/gitter/room/form-data/form-data.svg)](https://gitter.im/adodb/adodb?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Download ADOdb](https://img.shields.io/sourceforge/dm/adodb.svg)](https://sourceforge.net/projects/adodb/files/latest/download)
+[![Join chat on Gitter](https://img.shields.io/gitter/room/adodb/adodb?logo=gitter)](https://gitter.im/adodb/adodb?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![SourceForge Downloads Shield](https://img.shields.io/sourceforge/dm/adodb?label=SourceForge&logo=sourceforge&color=informational)](https://sourceforge.net/projects/adodb/files/latest/download)
+[![Packagist Downloads Shield](https://img.shields.io/packagist/dm/ADOdb/ADOdb-php?label=Packagist&logo=packagist&logoColor=white&color=informational)](https://packagist.org/packages/adodb/adodb-php)
 
 (c) 2000-2013 John Lim (jlim@natsoft.com)  
 (c) 2014      Damien Regad, Mark Newnham and the

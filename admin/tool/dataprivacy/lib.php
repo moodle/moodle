@@ -68,8 +68,9 @@ function tool_dataprivacy_myprofile_navigation(tree $tree, $user, $iscurrentuser
 
         // Check if the user has an ongoing data export request.
         $hasexportrequest = \tool_dataprivacy\api::has_ongoing_request($user->id, \tool_dataprivacy\api::DATAREQUEST_TYPE_EXPORT);
-        // Show data export link only if the user doesn't have an ongoing data export request.
-        if (!$hasexportrequest) {
+        // Show data export link only if the user doesn't have an ongoing data export request and has permission
+        // to download own data.
+        if (!$hasexportrequest && \tool_dataprivacy\api::can_create_data_download_request_for_self()) {
             $exportparams = ['type' => \tool_dataprivacy\api::DATAREQUEST_TYPE_EXPORT];
             $exporturl = new moodle_url('/admin/tool/dataprivacy/createdatarequest.php', $exportparams);
             $exportnode = new core_user\output\myprofile\node('privacyandpolicies', 'requestdataexport',

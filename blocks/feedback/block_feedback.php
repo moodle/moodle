@@ -53,7 +53,7 @@ class block_feedback extends block_list {
             $courseid = SITEID;
         }
 
-        $icon = $OUTPUT->image_icon('icon', get_string('pluginname', 'mod_feedback'), 'mod_feedback');
+        $icon = $OUTPUT->image_icon('monologo', get_string('pluginname', 'mod_feedback'), 'mod_feedback');
 
         if (empty($this->instance->pageid)) {
             $this->instance->pageid = SITEID;

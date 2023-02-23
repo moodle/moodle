@@ -14,15 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace qtype_calculated;
 
-/**
- * Unit tests for the calculated question definition class.
- *
- * @package    qtype
- * @subpackage calculated
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+use question_attempt_step;
+use question_classified_response;
+use question_display_options;
+use question_state;
+use qtype_numerical;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,12 +31,13 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 /**
  * Unit tests for qtype_calculated_definition.
  *
+ * @package    qtype_calculated
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculated_question_test extends advanced_testcase {
+class question_test extends \advanced_testcase {
     public function test_is_complete_response() {
-        $question = test_question_maker::make_question('calculated');
+        $question = \test_question_maker::make_question('calculated');
 
         $this->assertFalse($question->is_complete_response(array()));
         $this->assertTrue($question->is_complete_response(array('answer' => '0')));
@@ -47,7 +46,7 @@ class qtype_calculated_question_test extends advanced_testcase {
     }
 
     public function test_is_gradable_response() {
-        $question = test_question_maker::make_question('calculated');
+        $question = \test_question_maker::make_question('calculated');
 
         $this->assertFalse($question->is_gradable_response(array()));
         $this->assertTrue($question->is_gradable_response(array('answer' => '0')));
@@ -56,7 +55,7 @@ class qtype_calculated_question_test extends advanced_testcase {
     }
 
     public function test_grading() {
-        $question = test_question_maker::make_question('calculated');
+        $question = \test_question_maker::make_question('calculated');
         $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
 
@@ -68,7 +67,7 @@ class qtype_calculated_question_test extends advanced_testcase {
 
     public function test_get_correct_response() {
         // Testing with 3.0 + 0.1416.
-        $question = test_question_maker::make_question('calculated');
+        $question = \test_question_maker::make_question('calculated');
         $question->start_attempt(new question_attempt_step(), 3);
         $values = $question->vs->get_values();
         $this->assertSame(array('answer' => '3.01' ), $question->get_correct_response());
@@ -79,7 +78,7 @@ class qtype_calculated_question_test extends advanced_testcase {
         $this->assertSame(array('answer' => '3.0' ), $question->get_correct_response());
 
         // Testing with 1.0 + 5.0.
-        $question = test_question_maker::make_question('calculated');
+        $question = \test_question_maker::make_question('calculated');
         $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
         $this->assertSame(array('answer' => '6.00' ), $question->get_correct_response());
@@ -91,7 +90,7 @@ class qtype_calculated_question_test extends advanced_testcase {
         $this->assertSame(array('answer' => '6.0' ),
                 $question->get_correct_response());
         // Testing with 31.0 + 0.01416 .
-        $question = test_question_maker::make_question('calculated');
+        $question = \test_question_maker::make_question('calculated');
         $question->start_attempt(new question_attempt_step(), 4);
         $values = $question->vs->get_values();
         $this->assertSame(array('answer' => '31.01' ), $question->get_correct_response());
@@ -105,7 +104,7 @@ class qtype_calculated_question_test extends advanced_testcase {
     }
 
     public function test_get_question_summary() {
-        $question = test_question_maker::make_question('calculated');
+        $question = \test_question_maker::make_question('calculated');
         $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
 
@@ -114,7 +113,7 @@ class qtype_calculated_question_test extends advanced_testcase {
     }
 
     public function test_summarise_response() {
-        $question = test_question_maker::make_question('calculated');
+        $question = \test_question_maker::make_question('calculated');
         $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
 
@@ -122,7 +121,7 @@ class qtype_calculated_question_test extends advanced_testcase {
     }
 
     public function test_classify_response() {
-        $question = test_question_maker::make_question('calculated');
+        $question = \test_question_maker::make_question('calculated');
         $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
 
@@ -141,7 +140,7 @@ class qtype_calculated_question_test extends advanced_testcase {
     }
 
     public function test_classify_response_no_star() {
-        $question = test_question_maker::make_question('calculated');
+        $question = \test_question_maker::make_question('calculated');
         unset($question->answers[17]);
         $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
@@ -161,18 +160,18 @@ class qtype_calculated_question_test extends advanced_testcase {
     }
 
     public function test_get_variants_selection_seed_q_not_synchronised() {
-        $question = test_question_maker::make_question('calculated');
+        $question = \test_question_maker::make_question('calculated');
         $this->assertEquals($question->stamp, $question->get_variants_selection_seed());
     }
 
     public function test_get_variants_selection_seed_q_synchronised_datasets_not() {
-        $question = test_question_maker::make_question('calculated');
+        $question = \test_question_maker::make_question('calculated');
         $question->synchronised = true;
         $this->assertEquals($question->stamp, $question->get_variants_selection_seed());
     }
 
     public function test_get_variants_selection_seed_q_synchronised() {
-        $question = test_question_maker::make_question('calculated');
+        $question = \test_question_maker::make_question('calculated');
         $question->synchronised = true;
         $question->datasetloader->set_are_synchronised($question->category, true);
         $this->assertEquals('category' . $question->category,
@@ -185,9 +184,9 @@ class qtype_calculated_question_test extends advanced_testcase {
     public function test_get_question_definition_for_external_rendering() {
         $this->resetAfterTest();
 
-        $question = test_question_maker::make_question('calculated');
+        $question = \test_question_maker::make_question('calculated');
         $question->start_attempt(new question_attempt_step(), 1);
-        $qa = test_question_maker::get_a_qa($question);
+        $qa = \test_question_maker::get_a_qa($question);
         $displayoptions = new question_display_options();
 
         $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);

@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace logstore_standard;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once(__DIR__ . '/fixtures/event.php');
+require_once(__DIR__ . '/fixtures/restore_hack.php');
+
 /**
  * Standard log store tests.
  *
@@ -21,13 +28,7 @@
  * @copyright  2014 Petr Skoda {@link http://skodak.org/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/fixtures/event.php');
-require_once(__DIR__ . '/fixtures/restore_hack.php');
-
-class logstore_standard_store_testcase extends advanced_testcase {
+class store_test extends \advanced_testcase {
     /**
      * @var bool Determine if we disabled the GC, so it can be re-enabled in tearDown.
      */
@@ -37,8 +38,7 @@ class logstore_standard_store_testcase extends advanced_testcase {
      * Tests log writing.
      *
      * @param bool $jsonformat True to test with JSON format
-     * @dataProvider test_log_writing_provider
-     * @throws moodle_exception
+     * @dataProvider log_writing_provider
      */
     public function test_log_writing(bool $jsonformat) {
         global $DB;
@@ -79,12 +79,14 @@ class logstore_standard_store_testcase extends advanced_testcase {
 
         $logs = $DB->get_records('logstore_standard_log', array(), 'id ASC');
         $this->assertCount(0, $logs);
+        $exists = $store->get_events_select_exists('', array(), 'timecreated ASC', 0, 0);
+        $this->assertFalse($exists);
 
         $this->setCurrentTimeStart();
 
         $this->setUser(0);
         $event1 = \logstore_standard\event\unittest_executed::create(
-            array('context' => context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)));
+            array('context' => \context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)));
         $event1->trigger();
 
         $logs = $DB->get_records('logstore_standard_log', array(), 'id ASC');
@@ -105,14 +107,14 @@ class logstore_standard_store_testcase extends advanced_testcase {
         $this->assertEquals($data, $log1);
 
         $this->setAdminUser();
-        \core\session\manager::loginas($user1->id, context_system::instance());
+        \core\session\manager::loginas($user1->id, \context_system::instance());
         $this->assertEquals(2, $DB->count_records('logstore_standard_log'));
 
-        logstore_standard_restore::hack_executing(1);
+        \logstore_standard_restore::hack_executing(1);
         $event2 = \logstore_standard\event\unittest_executed::create(
-            array('context' => context_module::instance($module2->cmid), 'other' => array('sample' => 6, 'xx' => 9)));
+            array('context' => \context_module::instance($module2->cmid), 'other' => array('sample' => 6, 'xx' => 9)));
         $event2->trigger();
-        logstore_standard_restore::hack_executing(0);
+        \logstore_standard_restore::hack_executing(0);
 
         \core\session\manager::init_empty_session();
         $this->assertFalse(\core\session\manager::is_loggedinas());
@@ -146,6 +148,8 @@ class logstore_standard_store_testcase extends advanced_testcase {
         $this->assertSame(3, $store->get_events_select_count('', array()));
         $events = $store->get_events_select('', array(), 'timecreated ASC', 0, 0); // Is actually sorted by "timecreated ASC, id ASC".
         $this->assertCount(3, $events);
+        $exists = $store->get_events_select_exists('', array(), 'timecreated ASC', 0, 0);
+        $this->assertTrue($exists);
         $resev1 = array_shift($events);
         array_shift($events);
         $resev2 = array_shift($events);
@@ -161,30 +165,30 @@ class logstore_standard_store_testcase extends advanced_testcase {
         $DB->delete_records('logstore_standard_log');
 
         \logstore_standard\event\unittest_executed::create(
-            array('context' => context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
+            array('context' => \context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
         $this->assertEquals(0, $DB->count_records('logstore_standard_log'));
         \logstore_standard\event\unittest_executed::create(
-            array('context' => context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
+            array('context' => \context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
         $this->assertEquals(0, $DB->count_records('logstore_standard_log'));
         $store->flush();
         $this->assertEquals(2, $DB->count_records('logstore_standard_log'));
         \logstore_standard\event\unittest_executed::create(
-            array('context' => context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
+            array('context' => \context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
         $this->assertEquals(2, $DB->count_records('logstore_standard_log'));
         \logstore_standard\event\unittest_executed::create(
-            array('context' => context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
+            array('context' => \context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
         $this->assertEquals(2, $DB->count_records('logstore_standard_log'));
         \logstore_standard\event\unittest_executed::create(
-            array('context' => context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
+            array('context' => \context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
         $this->assertEquals(5, $DB->count_records('logstore_standard_log'));
         \logstore_standard\event\unittest_executed::create(
-            array('context' => context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
+            array('context' => \context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
         $this->assertEquals(5, $DB->count_records('logstore_standard_log'));
         \logstore_standard\event\unittest_executed::create(
-            array('context' => context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
+            array('context' => \context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
         $this->assertEquals(5, $DB->count_records('logstore_standard_log'));
         \logstore_standard\event\unittest_executed::create(
-            array('context' => context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
+            array('context' => \context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
         $this->assertEquals(8, $DB->count_records('logstore_standard_log'));
 
         // Test guest logging setting.
@@ -196,22 +200,22 @@ class logstore_standard_store_testcase extends advanced_testcase {
 
         $this->setUser(null);
         \logstore_standard\event\unittest_executed::create(
-            array('context' => context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
+            array('context' => \context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
         $this->assertEquals(0, $DB->count_records('logstore_standard_log'));
 
         $this->setGuestUser();
         \logstore_standard\event\unittest_executed::create(
-            array('context' => context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
+            array('context' => \context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
         $this->assertEquals(0, $DB->count_records('logstore_standard_log'));
 
         $this->setUser($user1);
         \logstore_standard\event\unittest_executed::create(
-            array('context' => context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
+            array('context' => \context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
         $this->assertEquals(1, $DB->count_records('logstore_standard_log'));
 
         $this->setUser($user2);
         \logstore_standard\event\unittest_executed::create(
-            array('context' => context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
+            array('context' => \context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
         $this->assertEquals(2, $DB->count_records('logstore_standard_log'));
 
         set_config('enabled_stores', '', 'tool_log');
@@ -222,9 +226,9 @@ class logstore_standard_store_testcase extends advanced_testcase {
      * Returns different JSON format settings so the test can be run with JSON format either on or
      * off.
      *
-     * @return [bool] Array of true/false
+     * @return bool[] Array of true/false
      */
-    public static function test_log_writing_provider(): array {
+    public static function log_writing_provider(): array {
         return [
             [false],
             [true]
@@ -238,20 +242,19 @@ class logstore_standard_store_testcase extends advanced_testcase {
         $logmanager = get_log_manager();
         $allreports = \core_component::get_plugin_list('report');
 
-        $supportedreports = array(
-            'report_log' => '/report/log',
-            'report_loglive' => '/report/loglive',
-            'report_outline' => '/report/outline',
-            'report_participation' => '/report/participation',
-            'report_stats' => '/report/stats'
-        );
-
         // Make sure all supported reports are installed.
-        $expectedreports = array_keys(array_intersect_key($allreports, $supportedreports));
-        $reports = $logmanager->get_supported_reports('logstore_standard');
-        $reports = array_keys($reports);
+        $expectedreports = array_intersect_key([
+            'log' => 'report_log',
+            'loglive' => 'report_loglive',
+            'outline' => 'report_outline',
+            'participation' => 'report_participation',
+            'stats' => 'report_stats'
+        ], $allreports);
+
+        $supportedreports = $logmanager->get_supported_reports('logstore_standard');
+
         foreach ($expectedreports as $expectedreport) {
-            $this->assertContains($expectedreport, $reports);
+            $this->assertArrayHasKey($expectedreport, $supportedreports);
         }
     }
 
@@ -335,7 +338,7 @@ class logstore_standard_store_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         // Create some records spread over various days; test multiple iterations in cleanup.
-        $ctx = context_course::instance(1);
+        $ctx = \context_course::instance(1);
         $record = (object) array(
             'edulevel' => 0,
             'contextid' => $ctx->id,
@@ -367,7 +370,7 @@ class logstore_standard_store_testcase extends advanced_testcase {
      * Tests the decode_other function can cope with both JSON and PHP serialized format.
      *
      * @param mixed $value Value to encode and decode
-     * @dataProvider test_decode_other_provider
+     * @dataProvider decode_other_provider
      */
     public function test_decode_other($value) {
         $this->assertEquals($value, \logstore_standard\log\store::decode_other(serialize($value)));
@@ -386,7 +389,7 @@ class logstore_standard_store_testcase extends advanced_testcase {
      *
      * @return array Array of parameters
      */
-    public function test_decode_other_provider(): array {
+    public function decode_other_provider(): array {
         return [
             [['info' => 'd2819896', 'logurl' => 'discuss.php?d=2819896']],
             [null],
@@ -399,8 +402,7 @@ class logstore_standard_store_testcase extends advanced_testcase {
      * Checks that backup and restore of log data works correctly.
      *
      * @param bool $jsonformat True to test with JSON format
-     * @dataProvider test_log_writing_provider
-     * @throws moodle_exception
+     * @dataProvider log_writing_provider
      */
     public function test_backup_restore(bool $jsonformat) {
         global $DB;
@@ -424,11 +426,11 @@ class logstore_standard_store_testcase extends advanced_testcase {
 
         // Create some log data in a course - one with other data, one without.
         \logstore_standard\event\unittest_executed::create([
-                'context' => context_course::instance($course->id),
+                'context' => \context_course::instance($course->id),
                 'other' => ['sample' => 5, 'xx' => 10]])->trigger();
         $this->waitForSecond();
         \logstore_standard\event\unittest_executed::create([
-                'context' => context_course::instance($course->id)])->trigger();
+                'context' => \context_course::instance($course->id)])->trigger();
 
         $records = array_values($DB->get_records('logstore_standard_log',
                 ['courseid' => $course->id, 'target' => 'unittest'], 'timecreated'));
@@ -473,7 +475,7 @@ class logstore_standard_store_testcase extends advanced_testcase {
     /**
      * Backs a course up to temp directory.
      *
-     * @param stdClass $course Course object to backup
+     * @param \stdClass $course Course object to backup
      * @return string ID of backup
      */
     protected function backup($course): string {
@@ -481,14 +483,14 @@ class logstore_standard_store_testcase extends advanced_testcase {
         require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 
         // Turn off file logging, otherwise it can't delete the file (Windows).
-        $CFG->backup_file_logger_level = backup::LOG_NONE;
+        $CFG->backup_file_logger_level = \backup::LOG_NONE;
 
         // Do backup with default settings. MODE_IMPORT means it will just
         // create the directory and not zip it.
-        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id,
-                backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_IMPORT,
+        $bc = new \backup_controller(\backup::TYPE_1COURSE, $course->id,
+                \backup::FORMAT_MOODLE, \backup::INTERACTIVE_NO, \backup::MODE_IMPORT,
                 $USER->id);
-        $bc->get_plan()->get_setting('users')->set_status(backup_setting::NOT_LOCKED);
+        $bc->get_plan()->get_setting('users')->set_status(\backup_setting::NOT_LOCKED);
         $bc->get_plan()->get_setting('users')->set_value(true);
         $bc->get_plan()->get_setting('logs')->set_value(true);
         $backupid = $bc->get_backupid();
@@ -505,18 +507,18 @@ class logstore_standard_store_testcase extends advanced_testcase {
      * @param \stdClass $course Original course object
      * @param string $suffix Suffix to add after original course shortname and fullname
      * @return int New course id
-     * @throws restore_controller_exception
+     * @throws \restore_controller_exception
      */
     protected function restore(string $backupid, $course, string $suffix): int {
         global $USER, $CFG;
         require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
         // Do restore to new course with default settings.
-        $newcourseid = restore_dbops::create_new_course(
+        $newcourseid = \restore_dbops::create_new_course(
                 $course->fullname . $suffix, $course->shortname . $suffix, $course->category);
-        $rc = new restore_controller($backupid, $newcourseid,
-                backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id,
-                backup::TARGET_NEW_COURSE);
+        $rc = new \restore_controller($backupid, $newcourseid,
+                \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, $USER->id,
+                \backup::TARGET_NEW_COURSE);
         $rc->get_plan()->get_setting('logs')->set_value(true);
         $rc->get_plan()->get_setting('users')->set_value(true);
 

@@ -5,8 +5,9 @@ Feature: View the httpsreplace report
   I need to be able to automatically replace http links
 
   Background: Create some http links
-    # This is a slow running feature and on slow databases can take over 30 seconds to complete.
-    Given I mark this test as slow setting a timeout factor of 2
+    # This is a slow running feature (more than the default 30 seconds on slow environments)
+    # so we are allowing up to 120 (factor = 4) seconds to the replacement to complete.
+    Given I mark this test as slow setting a timeout factor of 4
 
     And I am on site homepage
     And the following "courses" exist:

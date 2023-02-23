@@ -104,3 +104,18 @@ Feature: Manager is able to delete tags
     And I should see "Cat"
     And I should not see "Dog"
     And I log out
+
+  @javascript
+  Scenario: Delete all tags
+    When I log in as "manager1"
+    And I navigate to "Appearance > Manage tags" in site administration
+    And I follow "Default collection"
+    And I set the field "Select all" to "1"
+    And I press "Delete selected"
+    And I click on "Yes" "button" in the "Delete" "dialogue"
+    Then I should see "Tag(s) deleted"
+    And I should see "Nothing to display"
+    And I should not see "Cat"
+    And I should not see "Dog"
+    And I should not see "Turtle"
+    And I should not see "Neverusedtag"

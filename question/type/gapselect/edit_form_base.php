@@ -89,7 +89,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
      */
     private function allowed_tags_message($badtag) {
         $a = new stdClass();
-        $a->tag = htmlspecialchars($badtag);
+        $a->tag = htmlspecialchars($badtag, ENT_COMPAT);
         $a->allowed = $this->get_list_of_printable_allowed_tags($this->allowedhtmltags);
         if ($a->allowed) {
             return get_string('tagsnotallowed', 'qtype_gapselect', $a);
@@ -107,7 +107,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
     private function get_list_of_printable_allowed_tags($allowedhtmltags) {
         $allowedtaglist = array();
         foreach ($allowedhtmltags as $htmltag) {
-            $allowedtaglist[] = htmlspecialchars('<' . $htmltag . '>');
+            $allowedtaglist[] = htmlspecialchars('<' . $htmltag . '>', ENT_COMPAT);
         }
         return implode(', ', $allowedtaglist);
     }
@@ -142,18 +142,10 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
         $textboxgroup[] = $mform->createElement('group', 'choices',
                 get_string('choicex', 'qtype_gapselect'), $this->choice_group($mform));
 
-        if (isset($this->question->options)) {
-            $countanswers = count($this->question->options->answers);
+        if (!empty($this->question->options->answers)) {
+            $repeatsatstart = count($this->question->options->answers);
         } else {
-            $countanswers = 0;
-        }
-
-        if ($this->question->formoptions->repeatelements) {
-            $defaultstartnumbers = QUESTION_NUMANS_START * 2;
-            $repeatsatstart = max($defaultstartnumbers, QUESTION_NUMANS_START,
-                    $countanswers + QUESTION_NUMANS_ADD);
-        } else {
-            $repeatsatstart = $countanswers;
+            $repeatsatstart = QUESTION_NUMANS_ADD * 2;
         }
 
         $repeatedoptions = $this->repeated_options();
@@ -281,7 +273,6 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
         }
         $slots = $cleanedslots;
 
-        $found = false;
         foreach ($slots as $slot) {
             $found = false;
             foreach ($choices as $key => $choice) {
@@ -299,10 +290,21 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
                         html_writer::tag('b', $slot));
             }
         }
-        return false;
+        return $this->extra_slot_validation($slots, $choices) ?? false;
     }
 
     public function qtype() {
         return '';
+    }
+
+    /**
+     * Finds more errors in question slots.
+     *
+     * @param array $slots The question text
+     * @param array $choices Question choices
+     * @return string|null Error message or false if no errors
+     */
+    protected function extra_slot_validation(array $slots, array $choices): ?string {
+        return null;
     }
 }

@@ -58,13 +58,17 @@
         <div class="w-100 text-truncate ml-2">
             <div class="d-flex">
                 <strong class="m-0 text-truncate">{{name}}</strong>
-                <span class="{{^isfavourite}}hidden{{/isfavourite}} ml-1 text-primary" data-region="favourite-icon-container"
-                aria-label="{{#str}} favourites, core {{/str}}">
-                    {{#pix}} i/star-rating, core {{/pix}}
+                <span
+                    class="{{^isfavourite}}hidden{{/isfavourite}} ml-1 text-primary"
+                    data-region="favourite-icon-container"
+                >
+                    {{#pix}} i/star-rating, core, {{#str}} favourites, core {{/str}} {{/pix}}
                 </span>
-                <span class="{{^ismuted}}hidden{{/ismuted}} ml-1 text-primary" data-region="muted-icon-container"
-                aria-label="{{#str}} mutedconversation, core_message {{/str}}">
-                    {{#pix}} i/muted, core {{/pix}}
+                <span
+                    class="{{^ismuted}}hidden{{/ismuted}} ml-1 text-primary"
+                    data-region="muted-icon-container"
+                >
+                    {{#pix}} i/muted, core, {{#str}} mutedconversation, core_message {{/str}} {{/pix}}
                 </span>
             </div>
             {{#showonlinestatus}}

@@ -36,13 +36,13 @@ class renderer extends \plugin_renderer_base {
     }
 
     /**
-     * Render question modifier.
+     * Render question edit form callback.
      *
      * @param array $displaydata
      * @return string
      */
-    public function render_modifier_name($displaydata) {
-        return $this->render_from_template('qbank_viewcreator/modifier_display', $displaydata);
+    public function render_version_info($displaydata) {
+        return $this->render_from_template('qbank_viewcreator/version_info', $displaydata);
     }
 
 }

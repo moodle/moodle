@@ -126,7 +126,8 @@ function report_log_can_access_user_report($user, $course) {
 function report_log_extend_navigation_module($navigation, $cm) {
     if (has_capability('report/log:view', context_course::instance($cm->course))) {
         $url = new moodle_url('/report/log/index.php', array('chooselog'=>'1','id'=>$cm->course,'modid'=>$cm->id));
-        $navigation->add(get_string('logs'), $url, navigation_node::TYPE_SETTING, null, 'logreport');
+        $navigation->add(get_string('logs'), $url, navigation_node::TYPE_SETTING, null, 'logreport', new pix_icon('i/report', ''))
+            ->set_show_in_secondary_navigation(false);
     }
 }
 

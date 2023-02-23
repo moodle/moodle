@@ -32,8 +32,12 @@ class question_usage_column extends column_base {
         return 'questionusage';
     }
 
-    protected function get_title(): string {
+    public function get_title(): string {
         return get_string('questionusage', 'qbank_usage');
+    }
+
+    public function help_icon(): ?\help_icon {
+        return new \help_icon('questionusage', 'qbank_usage');
     }
 
     protected function display_content($question, $rowclasses): void {
@@ -45,13 +49,17 @@ class question_usage_column extends column_base {
             $datatarget = '[data-target="' . $target . '"]';
             $PAGE->requires->js_call_amd('qbank_usage/usage', 'init', [$datatarget, $question->contextid]);
             $attributes = [
+                'href' => '#',
                 'data-target' => $target,
                 'data-questionid' => $question->id,
                 'data-courseid' => $this->qbank->course->id,
-                'class' => 'link-primary comment-pointer'
             ];
         }
         echo \html_writer::tag('a', $usagecount, $attributes);
+    }
+
+    public function get_extra_classes(): array {
+        return ['pr-3'];
     }
 
 }

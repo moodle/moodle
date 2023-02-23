@@ -125,9 +125,18 @@ class behat_util extends testing_util {
         // Set noreplyaddress to an example domain, as it should be valid email address and test site can be a localhost.
         set_config('noreplyaddress', 'noreply@example.com');
 
+        // Set the support email address.
+        set_config('supportemail', 'email@example.com');
+
         // Remove any default blocked hosts and port restrictions, to avoid blocking tests (eg those using local files).
         set_config('curlsecurityblockedhosts', '');
         set_config('curlsecurityallowedport', '');
+
+        // Execute all the adhoc tasks.
+        while ($task = \core\task\manager::get_next_adhoc_task(time())) {
+            $task->execute();
+            \core\task\manager::adhoc_task_complete($task);
+        }
 
         // Keeps the current version of database and dataroot.
         self::store_versions_hash();

@@ -23,8 +23,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace filter_multilang;
 
+use filter_multilang;
 
 /**
  * Tests for filter_multilang.
@@ -32,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2019 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filter_multilang_filter_testcase extends advanced_testcase {
+class filter_test extends \advanced_testcase {
 
     public function setUp(): void {
         parent::setUp();
@@ -142,7 +143,7 @@ class filter_multilang_filter_testcase extends advanced_testcase {
             $this->setup_parent_language($child, $parent);
         }
 
-        $filtered = format_text($input, FORMAT_HTML, array('context' => context_system::instance()));
+        $filtered = format_text($input, FORMAT_HTML, array('context' => \context_system::instance()));
         $this->assertEquals($expectedoutput, $filtered);
     }
 }

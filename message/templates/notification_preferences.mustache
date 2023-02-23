@@ -34,15 +34,20 @@
     {
         "userid": 1,
         "disableall": 0,
+        "processors": [
+            {
+                "displayname": "Popup notification",
+                "name": "popup",
+                "hassettings": 1,
+                "userid": 3,
+                "contextid": 3
+            }
+        ],
         "components": [
             {
                 "displayname": "System",
-                "processors": [
-                    {
-                        "onlinehelphtml": "<p>help button HTML</p>",
-                        "offlinehelphtml": "<p>help button HTML</p>"
-                    }
-                ],
+                "colspan": 2,
+                "hasnotifications": 1,
                 "notifications": [
                     {
                         "displayname": "Notices about minor problems",
@@ -53,18 +58,8 @@
                                 "name": "popup",
                                 "locked": 0,
                                 "userconfigured": 1,
-                                "loggedin": {
-                                    "name": "loggedin",
-                                    "displayname": "When I'm logged in",
-                                    "checked": 0,
-                                    "disableall": 0
-                                },
-                                "loggedoff": {
-                                    "name": "loggedoff",
-                                    "displayname": "When I'm offline",
-                                    "checked": 0,
-                                    "disableall": 0
-                                }
+                                "enabled": 1,
+                                "enabledlabel": "Sending Assignment enabled status"
                             }
                         ]
                     }
@@ -87,7 +82,7 @@
         <table class="table preference-table">
             <thead>
                 <tr>
-                    <th>{{displayname}}</th>
+                    <th>{{{displayname}}}</th>
                     {{#processors}}
                         {{> message/notification_preferences_processor }}
                     {{/processors}}
@@ -103,8 +98,8 @@
 </div>
 {{#js}}
 require(['jquery', 'core_message/preferences_notifications_list_controller'],
-    function($, controller) {
+    function($, Controller) {
 
-    new controller($('.preferences-container'));
+    new Controller($('.preferences-container'));
 });
 {{/js}}

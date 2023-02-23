@@ -19,6 +19,7 @@ import Exporter from 'core_courseformat/local/courseeditor/exporter';
 import log from 'core/log';
 import ajax from 'core/ajax';
 import * as Storage from 'core/sessionstorage';
+import {uploadFilesToCourse} from 'core_courseformat/local/courseeditor/fileuploader';
 
 /**
  * Main course editor module.
@@ -59,29 +60,57 @@ export default class extends Reactive {
      *
      * The course can only be loaded once per instance. Otherwise an error is thrown.
      *
+     * The backend can inform the module of the current state key. This key changes every time some
+     * update in the course affect the current user state. Some examples are:
+     *  - The course content has been edited
+     *  - The user marks some activity as completed
+     *  - The user collapses or uncollapses a section (it is stored as a user preference)
+     *
      * @param {number} courseId course id
+     * @param {string} serverStateKey the current backend course cache reference
      */
-    async loadCourse(courseId) {
+    async loadCourse(courseId, serverStateKey) {
 
         if (this.courseId) {
             throw new Error(`Cannot load ${courseId}, course already loaded with id ${this.courseId}`);
         }
 
+        if (!serverStateKey) {
+            // The server state key is not provided, we use a invalid statekey to force reloading.
+            serverStateKey = `invalidStateKey_${Date.now()}`;
+        }
+
         // Default view format setup.
         this._editing = false;
         this._supportscomponents = false;
+        this._fileHandlers = null;
 
         this.courseId = courseId;
 
         let stateData;
 
+        const storeStateKey = Storage.get(`course/${courseId}/stateKey`);
         try {
-            stateData = await this.getServerCourseState();
+            // Check if the backend state key is the same we have in our session storage.
+            if (!this.isEditing && serverStateKey == storeStateKey) {
+                stateData = JSON.parse(Storage.get(`course/${courseId}/staticState`));
+            }
+            if (!stateData) {
+                stateData = await this.getServerCourseState();
+            }
+
         } catch (error) {
             log.error("EXCEPTION RAISED WHILE INIT COURSE EDITOR");
             log.error(error);
             return;
         }
+
+        // The bulk editing only applies to the frontend and the state data is not created in the backend.
+        stateData.bulk = {
+            enabled: false,
+            selectedType: '',
+            selection: [],
+        };
 
         this.setInitialState(stateData);
 
@@ -92,12 +121,55 @@ export default class extends Reactive {
             // Check if the last state is the same as the cached one.
             const newState = JSON.stringify(stateData);
             const previousState = Storage.get(`course/${courseId}/staticState`);
-            if (previousState !== newState) {
+            if (previousState !== newState || storeStateKey !== serverStateKey) {
                 Storage.set(`course/${courseId}/staticState`, newState);
-                Storage.set(`course/${courseId}/stateKey`, Date.now());
+                Storage.set(`course/${courseId}/stateKey`, stateData?.course?.statekey ?? serverStateKey);
             }
             this.stateKey = Storage.get(`course/${courseId}/stateKey`);
         }
+
+        this._loadFileHandlers();
+    }
+
+    /**
+     * Load the file hanlders promise.
+     */
+    _loadFileHandlers() {
+        // Load the course file extensions.
+        this._fileHandlersPromise = new Promise((resolve) => {
+            if (!this.isEditing) {
+                resolve([]);
+                return;
+            }
+            // Check the cache.
+            const handlersCacheKey = `course/${this.courseId}/fileHandlers`;
+
+            const cacheValue = Storage.get(handlersCacheKey);
+            if (cacheValue) {
+                try {
+                    const cachedHandlers = JSON.parse(cacheValue);
+                    resolve(cachedHandlers);
+                    return;
+                } catch (error) {
+                    log.error("ERROR PARSING CACHED FILE HANDLERS");
+                }
+            }
+            // Call file handlers webservice.
+            ajax.call([{
+                methodname: 'core_courseformat_file_handlers',
+                args: {
+                    courseid: this.courseId,
+                }
+            }])[0].then((handlers) => {
+                Storage.set(handlersCacheKey, JSON.stringify(handlers));
+                resolve(handlers);
+                return;
+            }).catch(error => {
+                log.error(error);
+                resolve([]);
+                return;
+            });
+        });
     }
 
     /**
@@ -106,6 +178,7 @@ export default class extends Reactive {
      * @param {Object} setup format, page and course settings
      * @param {boolean} setup.editing if the page is in edit mode
      * @param {boolean} setup.supportscomponents if the format supports components for content
+     * @param {string} setup.cacherev the backend cached state revision
      */
     setViewFormat(setup) {
         this._editing = setup.editing ?? false;
@@ -165,6 +238,28 @@ export default class extends Reactive {
     }
 
     /**
+     * Return the course file handlers promise.
+     * @returns {Promise} the promise for file handlers.
+     */
+    async getFileHandlersPromise() {
+        return this._fileHandlersPromise ?? [];
+    }
+
+    /**
+     * Upload a file list to the course.
+     *
+     * This method is a wrapper to the course file uploader.
+     *
+     * @param {number} sectionId the section id
+     * @param {number} sectionNum the section number
+     * @param {Array} files and array of files
+     * @return {Promise} the file queue promise
+     */
+    uploadFiles(sectionId, sectionNum, files) {
+        return uploadFilesToCourse(this.courseId, sectionId, sectionNum, files);
+    }
+
+    /**
      * Get a value from the course editor static storage if any.
      *
      * The course editor static storage uses the sessionStorage to store values from the
@@ -212,6 +307,16 @@ export default class extends Reactive {
             value,
         };
         return Storage.set(`course/${this.courseId}/${key}`, JSON.stringify(data));
+    }
+
+    /**
+     * Convert a file dragging event into a proper dragging file list.
+     * @param {DataTransfer} dataTransfer the event to convert
+     * @return {Array} of file list info.
+     */
+    getFilesDraggableData(dataTransfer) {
+        const exporter = this.getExporter();
+        return exporter.fileDraggableData(this.state, dataTransfer);
     }
 
     /**

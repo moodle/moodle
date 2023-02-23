@@ -1,0 +1,61 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_data/defaulttemplate_asearchtemplate
+
+    Default template for the advanced search view in the database activity.
+
+    Context variables required for this template:
+    * fields - The database fields to display
+
+    Example context (json):
+    {
+        "fields": [
+            {
+                "fieldname": "Field1",
+                "fieldcontent": "[[Field1]]"
+            },
+            {
+                "fieldname": "Field2",
+                "fieldcontent": "[[Field2]]"
+            }
+        ]
+    }
+}}
+<div class="defaulttemplate-asearch container">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
+        <div class="form-group col">
+            <div class="font-weight-bold mb-2">{{#str}}authorfirstname, mod_data{{/str}}</div>
+            ##firstname##
+        </div>
+        <div class="form-group col">
+            <div class="font-weight-bold mb-2">{{#str}}authorlastname, mod_data{{/str}}</div>
+            ##lastname##
+        </div>
+
+        {{#fields}}
+            <div class="form-group col">
+                <div class="font-weight-bold mb-2">{{fieldname}}</div>
+                {{fieldcontent}}
+            </div>
+        {{/fields}}
+
+        {{#tags}}
+            <div class="form-group col">
+                <div class="font-weight-bold mb-2">{{#str}}tags{{/str}}</div>
+                {{.}}
+            </div>
+        {{/tags}}
+    </div>
+</div>

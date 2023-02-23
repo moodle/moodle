@@ -45,13 +45,13 @@ function(
     var courseview = false;
 
     var SELECTORS = {
-        EMPTY_MESSAGE: '[data-region="empty-message"]',
+        EMPTY_MESSAGE: '[data-region="no-events-empty-message"]',
         ROOT: '[data-region="event-list-container"]',
         EVENT_LIST_CONTENT: '[data-region="event-list-content"]',
         EVENT_LIST_WRAPPER: '[data-region="event-list-wrapper"]',
         EVENT_LIST_LOADING_PLACEHOLDER: '[data-region="event-list-loading-placeholder"]',
         TIMELINE_BLOCK: '[data-region="timeline"]',
-        TIMELINE_SEARCH: '[data-region="search-input"]',
+        TIMELINE_SEARCH: '[data-action="search"]',
         MORE_ACTIVITIES_BUTTON: '[data-action="more-events"]',
         MORE_ACTIVITIES_BUTTON_CONTAINER: '[data-region="more-events-button-container"]'
     };
@@ -62,9 +62,9 @@ function(
         LOADING_ICON: 'core/loading'
     };
 
-    /** @type {number} The total items will be shown on the first load. */
+    /** @property {number} The total items will be shown on the first load. */
     const DEFAULT_LAZY_LOADING_ITEMS_FIRST_LOAD = 5;
-    /** @type {number} The total items will be shown when click on the Show more activities button. */
+    /** @property {number} The total items will be shown when click on the Show more activities button. */
     const DEFAULT_LAZY_LOADING_ITEMS_OTHER_LOAD = 10;
 
     /**

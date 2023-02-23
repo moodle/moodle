@@ -87,6 +87,10 @@ if ($action === 'add') {
     $title = get_string('editingrolex', 'core_role', $rolenames[$roleid]->localname);
 }
 
+$PAGE->set_secondary_active_tab('users');
+$PAGE->set_primary_active_tab('siteadminnode');
+$PAGE->navbar->add($title, $baseurl);
+
 // Decide how to create new role.
 if ($action === 'add' and $resettype !== 'none') {
     $mform = new core_role_preset_form(null, array('action'=>'add', 'roleid'=>0, 'resettype'=>'0', 'return'=>'manage'));

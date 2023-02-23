@@ -35,8 +35,10 @@
                     "title": "Upgrade now"
                 }
             ]
-        }
+        },
+        "pollinterval": 5
     }
+
 }}
 {{{groupselector}}}
 
@@ -49,25 +51,25 @@
 {{/sitenotification}}
 
 <h3>{{meetingname}}</h3>
+
 <h5>{{{meetingdescription}}}</h5>
 
 {{#room}}
     {{>mod_bigbluebuttonbn/room_view}}
 {{/room}}
 
+
+
 {{#recordings}}
     {{>mod_bigbluebuttonbn/recordings_session}}
 {{/recordings}}
 
-{{#recordingwarning}}
-  {{>core/notification}}
-{{/recordingwarning}}
-
 {{#js}}
 require(['mod_bigbluebuttonbn/rooms'], function(rooms) {
     // Register action on all buttons.
-    rooms.init({
-        bigbluebuttonbnid: {{{instanceid}}},
+    rooms.init(
+        {{instanceid}},
+        {{pollinterval}}
+        );
     });
-});
 {{/js}}

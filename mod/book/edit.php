@@ -132,6 +132,7 @@ if ($mform->is_cancelled()) {
 // Otherwise fill and print the form.
 $PAGE->set_title($book->name);
 $PAGE->set_heading($course->fullname);
+$PAGE->set_secondary_active_tab('modulepage');
 
 if ($chapters = book_preload_chapters($book)) {
     book_add_fake_block($chapters, $chapter, $book, $cm);

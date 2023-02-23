@@ -241,20 +241,6 @@ function message_send(\core\message\message $eventdata) {
         return false;
     }
 
-    //after how long inactive should the user be considered logged off?
-    if (isset($CFG->block_online_users_timetosee)) {
-        $timetoshowusers = $CFG->block_online_users_timetosee * 60;
-    } else {
-        $timetoshowusers = 300;//5 minutes
-    }
-
-    // Work out if the user is logged in or not
-    if (!empty($eventdata->userto->lastaccess) && (time()-$timetoshowusers) < $eventdata->userto->lastaccess) {
-        $userstate = 'loggedin';
-    } else {
-        $userstate = 'loggedoff';
-    }
-
     // Check if we are creating a notification or message.
     $table = 'notifications';
 
@@ -299,15 +285,23 @@ function message_send(\core\message\message $eventdata) {
         }
 
         // First find out permissions
-        $defaultpreference = $processor->name.'_provider_'.$preferencebase.'_permitted';
-        if (isset($defaultpreferences->{$defaultpreference})) {
-            $permitted = $defaultpreferences->{$defaultpreference};
+        $defaultlockedpreference = $processor->name . '_provider_' . $preferencebase . '_locked';
+        $locked = false;
+        if (isset($defaultpreferences->{$defaultlockedpreference})) {
+            $locked = $defaultpreferences->{$defaultlockedpreference};
         } else {
             // MDL-25114 They supplied an $eventdata->component $eventdata->name combination which doesn't
             // exist in the message_provider table (thus there is no default settings for them).
-            $preferrormsg = "Could not load preference $defaultpreference. Make sure the component and name you supplied
+            $preferrormsg = "Could not load preference $defaultlockedpreference. Make sure the component and name you supplied
                     to message_send() are valid.";
             throw new coding_exception($preferrormsg);
+        }
+
+        $preferencename = 'message_provider_'.$preferencebase.'_enabled';
+        $forced = false;
+        if ($locked && isset($defaultpreferences->{$preferencename})) {
+            $userpreference = $defaultpreferences->{$preferencename};
+            $forced = in_array($processor->name, explode(',', $userpreference));
         }
 
         // Find out if user has configured this output
@@ -315,24 +309,23 @@ function message_send(\core\message\message $eventdata) {
         $userisconfigured = $processor->object->is_user_configured($eventdata->userto);
 
         // DEBUG: notify if we are forcing unconfigured output
-        if ($permitted == 'forced' && !$userisconfigured) {
+        if ($forced && !$userisconfigured) {
             debugging('Attempt to force message delivery to user who has "'.$processor->name.'" output unconfigured', DEBUG_NORMAL);
         }
 
         // Populate the list of processors we will be using
-        if ($permitted == 'forced' && $userisconfigured) {
+        if ($forced && $userisconfigured) {
             // An admin is forcing users to use this message processor. Use this processor unconditionally.
             $processorlist[] = $processor->name;
-        } else if ($permitted == 'permitted' && $userisconfigured && !$eventdata->userto->emailstop) {
+        } else if (!$forced && !$locked && $userisconfigured && !$eventdata->userto->emailstop) {
             // User has not disabled notifications
             // See if user set any notification preferences, otherwise use site default ones
-            $userpreferencename = 'message_provider_'.$preferencebase.'_'.$userstate;
-            if ($userpreference = get_user_preferences($userpreferencename, null, $eventdata->userto)) {
+            if ($userpreference = get_user_preferences($preferencename, null, $eventdata->userto)) {
                 if (in_array($processor->name, explode(',', $userpreference))) {
                     $processorlist[] = $processor->name;
                 }
-            } else if (isset($defaultpreferences->{$userpreferencename})) {
-                if (in_array($processor->name, explode(',', $defaultpreferences->{$userpreferencename}))) {
+            } else if (isset($defaultpreferences->{$preferencename})) {
+                if (in_array($processor->name, explode(',', $defaultpreferences->{$preferencename}))) {
                     $processorlist[] = $processor->name;
                 }
             }
@@ -523,51 +516,37 @@ function message_set_default_message_preference($component, $messagename, $filep
 
     // Setting default preference
     $componentproviderbase = $component.'_'.$messagename;
-    $loggedinpref = array();
-    $loggedoffpref = array();
-    // set 'permitted' preference first for each messaging processor
+    $enabledpref = [];
+    // Set 'locked' preference first for each messaging processor.
     foreach ($processors as $processor) {
-        $preferencename = $processor->name.'_provider_'.$componentproviderbase.'_permitted';
-        // if we do not have this setting yet, set it
+        $preferencename = $processor->name.'_provider_'.$componentproviderbase.'_locked';
+        // If we do not have this setting yet, set it.
         if (!isset($defaultpreferences->{$preferencename})) {
-            // determine plugin default settings
+            // Determine plugin default settings.
             $plugindefault = 0;
             if (isset($fileprovider['defaults'][$processor->name])) {
                 $plugindefault = $fileprovider['defaults'][$processor->name];
             }
-            // get string values of the settings
-            list($permitted, $loggedin, $loggedoff) = translate_message_default_setting($plugindefault, $processor->name);
-            // store default preferences for current processor
-            set_config($preferencename, $permitted, 'message');
-            // save loggedin/loggedoff settings
-            if ($loggedin) {
-                $loggedinpref[] = $processor->name;
-            }
-            if ($loggedoff) {
-                $loggedoffpref[] = $processor->name;
+            // Get string values of the settings.
+            list($locked, $enabled) = translate_message_default_setting($plugindefault, $processor->name);
+            // Store default preferences for current processor.
+            set_config($preferencename, $locked, 'message');
+            // Save enabled settings.
+            if ($enabled) {
+                $enabledpref[] = $processor->name;
             }
         }
     }
-    // now set loggedin/loggedoff preferences
-    if (!empty($loggedinpref)) {
-        $preferencename = 'message_provider_'.$componentproviderbase.'_loggedin';
+    // Now set enabled preferences.
+    if (!empty($enabledpref)) {
+        $preferencename = 'message_provider_'.$componentproviderbase.'_enabled';
         if (isset($defaultpreferences->{$preferencename})) {
             // We have the default preferences for this message provider, which
             // likely means that we have been adding a new processor. Add defaults
             // to exisitng preferences.
-            $loggedinpref = array_merge($loggedinpref, explode(',', $defaultpreferences->{$preferencename}));
+            $enabledpref = array_merge($enabledpref, explode(',', $defaultpreferences->{$preferencename}));
         }
-        set_config($preferencename, join(',', $loggedinpref), 'message');
-    }
-    if (!empty($loggedoffpref)) {
-        $preferencename = 'message_provider_'.$componentproviderbase.'_loggedoff';
-        if (isset($defaultpreferences->{$preferencename})) {
-            // We have the default preferences for this message provider, which
-            // likely means that we have been adding a new processor. Add defaults
-            // to exisitng preferences.
-            $loggedoffpref = array_merge($loggedoffpref, explode(',', $defaultpreferences->{$preferencename}));
-        }
-        set_config($preferencename, join(',', $loggedoffpref), 'message');
+        set_config($preferencename, join(',', $enabledpref), 'message');
     }
 }
 
@@ -754,8 +733,8 @@ function message_processor_uninstall($name) {
     $transaction = $DB->start_delegated_transaction();
     $DB->delete_records('message_processors', array('name' => $name));
     $DB->delete_records_select('config_plugins', "plugin = ?", array("message_{$name}"));
-    // delete permission preferences only, we do not care about loggedin/loggedoff
-    // defaults, they will be removed on the next attempt to update the preferences
+    // Delete permission preferences only, we do not care about enabled defaults,
+    // they will be removed on the next attempt to update the preferences.
     $DB->delete_records_select('config_plugins', "plugin = 'message' AND ".$DB->sql_like('name', '?', false), array("{$name}_provider_%"));
     $transaction->allow_commit();
     // Purge all messaging settings from the caches. They are stored by plugin so we have to clear all message settings.

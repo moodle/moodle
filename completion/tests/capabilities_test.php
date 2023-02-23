@@ -14,16 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests that completion works without requiring unnecessary capabilities.
- *
- * @package    core_completion
- * @copyright  2018 University of Nottingham
- * @author     Neill Magill <neill.magill@nottingham.ac.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace core_completion;
 
 /**
  * Tests that completion works without requiring unnecessary capabilities.
@@ -33,14 +24,14 @@ defined('MOODLE_INTERNAL') || die();
  * @author     Neill Magill <neill.magill@nottingham.ac.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_completion_capabilities_testcase extends advanced_testcase {
+class capabilities_test extends \advanced_testcase {
     /**
      * A user who does not have capabilities to add events to the calendar should be able to create activities.
      */
     public function test_creation_with_no_calendar_capabilities() {
         $this->resetAfterTest();
         $course = self::getDataGenerator()->create_course(['enablecompletion' => 1]);
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $user = self::getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $roleid = self::getDataGenerator()->create_role();
         self::getDataGenerator()->role_assign($roleid, $user->id, $context->id);

@@ -44,7 +44,7 @@ class question_text_row extends row_base {
         return 'questiontext';
     }
 
-    protected function get_title(): string {
+    public function get_title(): string {
         return get_string('questiontext', 'question');
     }
 
@@ -60,12 +60,8 @@ class question_text_row extends row_base {
         echo $text;
     }
 
-    public function get_extra_joins(): array {
-        return ['qc' => 'JOIN {question_categories} qc ON qc.id = q.category'];
-    }
-
     public function get_required_fields(): array {
-        return ['q.id', 'q.questiontext', 'q.questiontextformat', 'qc.contextid'];
+        return ['q.questiontext', 'q.questiontextformat'];
     }
 
     public function has_preference(): bool {

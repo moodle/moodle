@@ -14,22 +14,35 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package    core_backup
- * @category   phpunit
- * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use backup;
+use backup_controller;
+use backup_nested_element;
+use backup_optigroup;
+use backup_plan;
+use backup_plugin_element;
+use backup_step;
+use backup_step_exception;
+use backup_subplugin_element;
+use base_step;
+use base_step_exception;
+use restore_path_element;
+use restore_plugin;
+use restore_step_exception;
+use restore_subplugin;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/fixtures/plan_fixtures.php');
 
-
-/*
- * step tests (all)
+/**
+ * @package    core_backup
+ * @category   test
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_step_testcase extends advanced_testcase {
+class step_test extends \advanced_testcase {
 
     protected $moduleid;  // course_modules id used for testing
     protected $sectionid; // course_sections id used for testing
@@ -63,10 +76,10 @@ class backup_step_testcase extends advanced_testcase {
      */
     function test_base_step() {
 
-        $bp = new mock_base_plan('planname'); // We need one plan
-        $bt = new mock_base_task('taskname', $bp); // We need one task
+        $bp = new \mock_base_plan('planname'); // We need one plan
+        $bt = new \mock_base_task('taskname', $bp); // We need one task
         // Instantiate
-        $bs = new mock_base_step('stepname', $bt);
+        $bs = new \mock_base_step('stepname', $bt);
         $this->assertTrue($bs instanceof base_step);
         $this->assertEquals($bs->get_name(), 'stepname');
     }
@@ -82,9 +95,9 @@ class backup_step_testcase extends advanced_testcase {
         // We need one plan
         $bp = new backup_plan($bc);
         // We need one task
-        $bt = new mock_backup_task('taskname', $bp);
+        $bt = new \mock_backup_task('taskname', $bp);
         // Instantiate step
-        $bs = new mock_backup_step('stepname', $bt);
+        $bs = new \mock_backup_step('stepname', $bt);
         $this->assertTrue($bs instanceof backup_step);
         $this->assertEquals($bs->get_name(), 'stepname');
 
@@ -108,8 +121,8 @@ class backup_step_testcase extends advanced_testcase {
             $this->markTestSkipped('Expected cipher not available: ' . backup::CIPHER);
         }
 
-        $bt = new mock_restore_task_basepath('taskname');
-        $bs = new mock_restore_structure_step('steptest', null, $bt);
+        $bt = new \mock_restore_task_basepath('taskname');
+        $bs = new \mock_restore_structure_step('steptest', null, $bt);
         $this->assertTrue(method_exists($bs, 'decrypt'));
 
         // Let's prepare a string for being decrypted.
@@ -148,7 +161,7 @@ class backup_step_testcase extends advanced_testcase {
         @remove_dir(dirname($file));
         // Recreate test dir
         if (!check_dir_exists(dirname($file), true, true)) {
-            throw new moodle_exception('error_creating_temp_dir', 'error', dirname($file));
+            throw new \moodle_exception('error_creating_temp_dir', 'error', dirname($file));
         }
 
         // We need one (non interactive) controller for instatiating plan
@@ -157,10 +170,10 @@ class backup_step_testcase extends advanced_testcase {
         // We need one plan
         $bp = new backup_plan($bc);
         // We need one task with mocked basepath
-        $bt = new mock_backup_task_basepath('taskname');
+        $bt = new \mock_backup_task_basepath('taskname');
         $bp->add_task($bt);
         // Instantiate backup_structure_step (and add it to task)
-        $bs = new mock_backup_structure_step('steptest', basename($file), $bt);
+        $bs = new \mock_backup_structure_step('steptest', basename($file), $bt);
         // Execute backup_structure_step
         $bs->execute();
 
@@ -189,14 +202,14 @@ class backup_step_testcase extends advanced_testcase {
      */
     public function test_backup_structure_step_add_plugin_structure() {
         // Create mocked task, step and element.
-        $bt = new mock_backup_task_basepath('taskname');
-        $bs = new mock_backup_structure_step('steptest', null, $bt);
+        $bt = new \mock_backup_task_basepath('taskname');
+        $bs = new \mock_backup_structure_step('steptest', null, $bt);
         $el = new backup_nested_element('question', array('id'), array('one', 'two', 'qtype'));
         // Wrong plugintype.
         try {
             $bs->add_plugin_structure('fakeplugin', $el, true);
             $this->assertTrue(false, 'base_step_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_step_exception);
             $this->assertEquals('incorrect_plugin_type', $e->errorcode);
         }
@@ -216,14 +229,14 @@ class backup_step_testcase extends advanced_testcase {
      */
     public function test_backup_structure_step_add_subplugin_structure() {
         // Create mocked task, step and element.
-        $bt = new mock_backup_task_basepath('taskname');
-        $bs = new mock_backup_structure_step('steptest', null, $bt);
+        $bt = new \mock_backup_task_basepath('taskname');
+        $bs = new \mock_backup_structure_step('steptest', null, $bt);
         $el = new backup_nested_element('workshop', array('id'), array('one', 'two', 'qtype'));
         // Wrong plugin type.
         try {
             $bs->add_subplugin_structure('fakesubplugin', $el, true, 'fakeplugintype', 'fakepluginname');
             $this->assertTrue(false, 'base_step_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_step_exception);
             $this->assertEquals('incorrect_plugin_type', $e->errorcode);
         }
@@ -231,7 +244,7 @@ class backup_step_testcase extends advanced_testcase {
         try {
             $bs->add_subplugin_structure('fakesubplugin', $el, true, 'mod', 'fakepluginname');
             $this->assertTrue(false, 'base_step_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_step_exception);
             $this->assertEquals('incorrect_plugin_name', $e->errorcode);
         }
@@ -239,7 +252,7 @@ class backup_step_testcase extends advanced_testcase {
         try {
             $bs->add_subplugin_structure('fakesubplugin', $el, true, 'mod', 'page');
             $this->assertTrue(false, 'base_step_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_step_exception);
             $this->assertEquals('plugin_missing_subplugins_configuration', $e->errorcode);
         }
@@ -248,7 +261,7 @@ class backup_step_testcase extends advanced_testcase {
             $bt->set_modulename('page');
             $bs->add_subplugin_structure('fakesubplugin', $el, true);
             $this->assertTrue(false, 'base_step_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_step_exception);
             $this->assertEquals('plugin_missing_subplugins_configuration', $e->errorcode);
         }
@@ -256,7 +269,7 @@ class backup_step_testcase extends advanced_testcase {
         try {
             $bs->add_subplugin_structure('fakesubplugin', $el, true, 'mod', 'workshop');
             $this->assertTrue(false, 'base_step_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_step_exception);
             $this->assertEquals('incorrect_subplugin_type', $e->errorcode);
         }
@@ -265,7 +278,7 @@ class backup_step_testcase extends advanced_testcase {
             $bt->set_modulename('workshop');
             $bs->add_subplugin_structure('fakesubplugin', $el, true);
             $this->assertTrue(false, 'base_step_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_step_exception);
             $this->assertEquals('incorrect_subplugin_type', $e->errorcode);
         }
@@ -299,14 +312,14 @@ class backup_step_testcase extends advanced_testcase {
      */
     public function test_restore_structure_step_add_plugin_structure() {
         // Create mocked task, step and element.
-        $bt = new mock_restore_task_basepath('taskname');
-        $bs = new mock_restore_structure_step('steptest', null, $bt);
+        $bt = new \mock_restore_task_basepath('taskname');
+        $bs = new \mock_restore_structure_step('steptest', null, $bt);
         $el = new restore_path_element('question', '/some/path/to/question');
         // Wrong plugintype.
         try {
             $bs->add_plugin_structure('fakeplugin', $el);
             $this->assertTrue(false, 'base_step_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof restore_step_exception);
             $this->assertEquals('incorrect_plugin_type', $e->errorcode);
         }
@@ -337,14 +350,14 @@ class backup_step_testcase extends advanced_testcase {
      */
     public function test_restore_structure_step_add_subplugin_structure() {
         // Create mocked task, step and element.
-        $bt = new mock_restore_task_basepath('taskname');
-        $bs = new mock_restore_structure_step('steptest', null, $bt);
+        $bt = new \mock_restore_task_basepath('taskname');
+        $bs = new \mock_restore_structure_step('steptest', null, $bt);
         $el = new restore_path_element('workshop', '/path/to/workshop');
         // Wrong plugin type.
         try {
             $bs->add_subplugin_structure('fakesubplugin', $el, 'fakeplugintype', 'fakepluginname');
             $this->assertTrue(false, 'base_step_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof restore_step_exception);
             $this->assertEquals('incorrect_plugin_type', $e->errorcode);
         }
@@ -352,7 +365,7 @@ class backup_step_testcase extends advanced_testcase {
         try {
             $bs->add_subplugin_structure('fakesubplugin', $el, 'mod', 'fakepluginname');
             $this->assertTrue(false, 'base_step_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof restore_step_exception);
             $this->assertEquals('incorrect_plugin_name', $e->errorcode);
         }
@@ -360,7 +373,7 @@ class backup_step_testcase extends advanced_testcase {
         try {
             $bs->add_subplugin_structure('fakesubplugin', $el, 'mod', 'page');
             $this->assertTrue(false, 'base_step_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof restore_step_exception);
             $this->assertEquals('plugin_missing_subplugins_configuration', $e->errorcode);
         }
@@ -369,7 +382,7 @@ class backup_step_testcase extends advanced_testcase {
             $bt->set_modulename('page');
             $bs->add_subplugin_structure('fakesubplugin', $el);
             $this->assertTrue(false, 'base_step_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof restore_step_exception);
             $this->assertEquals('plugin_missing_subplugins_configuration', $e->errorcode);
         }
@@ -377,7 +390,7 @@ class backup_step_testcase extends advanced_testcase {
         try {
             $bs->add_subplugin_structure('fakesubplugin', $el, 'mod', 'workshop');
             $this->assertTrue(false, 'base_step_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof restore_step_exception);
             $this->assertEquals('incorrect_subplugin_type', $e->errorcode);
         }
@@ -386,13 +399,13 @@ class backup_step_testcase extends advanced_testcase {
             $bt->set_modulename('workshop');
             $bs->add_subplugin_structure('fakesubplugin', $el);
             $this->assertTrue(false, 'base_step_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof restore_step_exception);
             $this->assertEquals('incorrect_subplugin_type', $e->errorcode);
         }
         // Correct call to workshopform subplugin (@ 'workshop' level).
-        $bt = new mock_restore_task_basepath('taskname');
-        $bs = new mock_restore_structure_step('steptest', null, $bt);
+        $bt = new \mock_restore_task_basepath('taskname');
+        $bs = new \mock_restore_structure_step('steptest', null, $bt);
         $el = new restore_path_element('workshop', '/path/to/workshop');
         $bs->add_subplugin_structure('workshopform', $el, 'mod', 'workshop');
         $patheles = $bs->get_pathelements();
@@ -413,8 +426,8 @@ class backup_step_testcase extends advanced_testcase {
         }
 
         // Correct BC call to workshopform subplugin (@ 'assessment' level).
-        $bt = new mock_restore_task_basepath('taskname');
-        $bs = new mock_restore_structure_step('steptest', null, $bt);
+        $bt = new \mock_restore_task_basepath('taskname');
+        $bs = new \mock_restore_structure_step('steptest', null, $bt);
         $el = new restore_path_element('assessment', '/a/assessment');
         $bt->set_modulename('workshop');
         $bs->add_subplugin_structure('workshopform', $el);
@@ -445,9 +458,9 @@ class backup_step_testcase extends advanced_testcase {
 
         // Try to pass one wrong task
         try {
-            $bt = new mock_base_step('teststep', new stdclass());
+            $bt = new \mock_base_step('teststep', new \stdClass());
             $this->assertTrue(false, 'base_step_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_step_exception);
             $this->assertEquals($e->errorcode, 'wrong_base_task_specified');
         }
@@ -460,9 +473,9 @@ class backup_step_testcase extends advanced_testcase {
 
         // Try to pass one wrong task
         try {
-            $bt = new mock_backup_step('teststep', new stdclass());
+            $bt = new \mock_backup_step('teststep', new \stdClass());
             $this->assertTrue(false, 'backup_step_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_step_exception);
             $this->assertEquals($e->errorcode, 'wrong_backup_task_specified');
         }

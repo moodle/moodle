@@ -48,21 +48,29 @@ if ($hassiteconfig) {
     $temp = new admin_settingpage('supportcontact', new lang_string('supportcontact', 'admin'));
     $primaryadmin = get_admin();
     if ($primaryadmin) {
-        $primaryadminemail = $primaryadmin->email;
         $primaryadminname = fullname($primaryadmin, true);
     } else {
         // No defaults during installation - admin user must be created first.
-        $primaryadminemail = null;
         $primaryadminname = null;
     }
     $temp->add(new admin_setting_configtext('supportname', new lang_string('supportname', 'admin'),
         new lang_string('configsupportname', 'admin'), $primaryadminname, PARAM_NOTAGS));
-    $setting = new admin_setting_configtext('supportemail', new lang_string('supportemail', 'admin'),
-        new lang_string('configsupportemail', 'admin'), $primaryadminemail, PARAM_EMAIL);
+    $setting = new admin_setting_requiredtext('supportemail', new lang_string('supportemail', 'admin'),
+        new lang_string('configsupportemail', 'admin'), null, PARAM_EMAIL);
     $setting->set_force_ltr(true);
     $temp->add($setting);
     $temp->add(new admin_setting_configtext('supportpage', new lang_string('supportpage', 'admin'),
         new lang_string('configsupportpage', 'admin'), '', PARAM_URL));
+    $temp->add(new admin_setting_configselect('supportavailability', new lang_string('supportavailability', 'admin'),
+        new lang_string('configsupportavailability', 'admin'), CONTACT_SUPPORT_AUTHENTICATED,
+        [
+            CONTACT_SUPPORT_ANYONE => new lang_string('availabletoanyone', 'admin'),
+            CONTACT_SUPPORT_AUTHENTICATED => new lang_string('availabletoauthenticated', 'admin'),
+            CONTACT_SUPPORT_DISABLED => new lang_string('disabled', 'admin'),
+        ]
+    ));
+
+
     $ADMIN->add('server', $temp);
 
     // Session handling.
@@ -174,6 +182,11 @@ if ($hassiteconfig) {
         new lang_string('configproxypassword', 'admin'), ''));
     $temp->add(new admin_setting_configtext('proxybypass', new lang_string('proxybypass', 'admin'),
         new lang_string('configproxybypass', 'admin'), 'localhost, 127.0.0.1'));
+    $temp->add(new admin_setting_configcheckbox('proxylogunsafe', new lang_string('proxylogunsafe', 'admin'),
+        new lang_string('configproxylogunsafe_help', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('proxyfixunsafe', new lang_string('proxyfixunsafe', 'admin'),
+        new lang_string('configproxyfixunsafe_help', 'admin'), 0));
+
     $ADMIN->add('server', $temp);
 
     $temp = new admin_settingpage('maintenancemode', new lang_string('sitemaintenancemode', 'admin'));
@@ -439,8 +452,34 @@ if ($hassiteconfig) {
         'CRAM-MD5' => 'CRAM-MD5',
     ];
 
+    // Get all the issuers.
+    $issuers = \core\oauth2\api::get_all_issuers();
+    $enabledissuers = [];
+    foreach ($issuers as $issuer) {
+        // Get the enabled issuer only.
+        if ($issuer->get('enabled')) {
+            $enabledissuers[] = $issuer;
+        }
+    }
+
+    if (count($enabledissuers) > 0) {
+        $authtypeoptions['XOAUTH2'] = 'XOAUTH2';
+    }
+
     $temp->add(new admin_setting_configselect('smtpauthtype', new lang_string('smtpauthtype', 'admin'),
         new lang_string('configsmtpauthtype', 'admin'), 'LOGIN', $authtypeoptions));
+
+    if (count($enabledissuers) > 0) {
+        $oauth2services = [
+            '' => new lang_string('none', 'admin'),
+        ];
+        foreach ($enabledissuers as $issuer) {
+            $oauth2services[$issuer->get('id')] = s($issuer->get('name'));
+        }
+
+        $temp->add(new admin_setting_configselect('smtpoauthservice', new lang_string('issuer', 'auth_oauth2'),
+            new lang_string('configsmtpoauthservice', 'admin'), '', $oauth2services));
+    }
 
     $temp->add(new admin_setting_configtext('smtpuser', new lang_string('smtpuser', 'admin'),
         new lang_string('configsmtpuser', 'admin'), '', PARAM_NOTAGS));

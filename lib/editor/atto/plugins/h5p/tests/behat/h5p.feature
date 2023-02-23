@@ -18,6 +18,9 @@ Feature: Add h5ps to Atto
     And the "displayh5p" filter is "on"
     And the following config values are set as admin:
       | allowedsources | https://moodle.h5p.com/content/[id] | filter_displayh5p |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
 
   @javascript @external
   Scenario: Insert an embedded h5p
@@ -127,7 +130,7 @@ Feature: Add h5ps to Atto
     And I should not see "Cloudberries"
 
   @javascript
-  Scenario: Enable/disable H5P options
+  Scenario: Enable/disable H5P options atto
     Given I log in as "admin"
     And I follow "Manage private files..."
     And I upload "h5p/tests/fixtures/guess-the-answer.h5p" file to "Files" filemanager
@@ -140,14 +143,11 @@ Feature: Add h5ps to Atto
     And I click on "Select this file" "button"
 #   No display option button displayed
     And I click on "Insert H5P" "button" in the "Insert H5P" "dialogue"
-    And I wait until the page is ready
     When I click on "Save and display" "button"
     And I wait until the page is ready
     And I switch to "h5pcontent" iframe
     And I switch to "h5p-iframe" class iframe
-    Then I should not see "Reuse"
-    And I should not see "Embed"
-    And I should not see "Rights of use"
+    Then ".h5p-actions" "css_element" should not exist
     And I switch to the main frame
     And I navigate to "Settings" in current page administration
     And I click on ".h5p-placeholder" "css_element"
@@ -156,12 +156,10 @@ Feature: Add h5ps to Atto
 #   Only Allow Download button displayed
     And I click on "Allow download" "checkbox"
     And I click on "Insert H5P" "button" in the "Insert H5P" "dialogue"
-    And I wait until the page is ready
     And I click on "Save and display" "button"
-    And I wait until the page is ready
     And I switch to "h5pcontent" iframe
     And I switch to "h5p-iframe" class iframe
-    And I should see "Reuse"
+    And "Reuse" "text" should exist in the ".h5p-actions" "css_element"
     And I should not see "Embed"
     And I should not see "Rights of use"
     And I switch to the main frame
@@ -173,12 +171,10 @@ Feature: Add h5ps to Atto
     And I click on "Embed button" "checkbox"
     And I click on "Copyright button" "checkbox"
     And I click on "Insert H5P" "button" in the "Insert H5P" "dialogue"
-    And I wait until the page is ready
     And I click on "Save and display" "button"
-    And I wait until the page is ready
     And I switch to "h5pcontent" iframe
     And I switch to "h5p-iframe" class iframe
-    And I should not see "Reuse"
+    And "Reuse" "text" should not exist in the ".h5p-actions" "css_element"
     And I should see "Embed"
     And I should see "Rights of use"
 

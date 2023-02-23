@@ -70,12 +70,12 @@ switch ($context->contextlevel) {
     break;
 
     default:
-        print_error('invalidcontext', 'tool_recyclebin');
+        throw new \moodle_exception('invalidcontext', 'tool_recyclebin');
     break;
 }
 
 if (!$recyclebin::is_enabled()) {
-    print_error('notenabled', 'tool_recyclebin');
+    throw new \moodle_exception('notenabled', 'tool_recyclebin');
 }
 
 $PAGE->set_url('/admin/tool/recyclebin/index.php', array(
@@ -101,7 +101,7 @@ if (!empty($action)) {
                 $recyclebin->restore_item($item);
                 redirect($PAGE->url, get_string('alertrestored', 'tool_recyclebin', $item), 2);
             } else {
-                print_error('nopermissions', 'error');
+                throw new \moodle_exception('nopermissions', 'error');
             }
         break;
 
@@ -111,7 +111,7 @@ if (!empty($action)) {
                 $recyclebin->delete_item($item);
                 redirect($PAGE->url, get_string('alertdeleted', 'tool_recyclebin', $item), 2);
             } else {
-                print_error('nopermissions', 'error');
+                throw new \moodle_exception('nopermissions', 'error');
             }
         break;
 
@@ -187,7 +187,7 @@ foreach ($items as $item) {
         if (isset($modules[$item->module])) {
             $mod = $modules[$item->module];
             $modname = get_string('modulename', $mod->name);
-            $name = $OUTPUT->image_icon('icon', $modname, $mod->name) . $name;
+            $name = $OUTPUT->image_icon('monologo', $modname, $mod->name) . $name;
         }
     }
 

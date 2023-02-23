@@ -23,7 +23,7 @@ namespace tool_admin_presets\event;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \tool_admin_presets\event\preset_previewed
+ * @covers     \tool_admin_presets\event\preset_previewed
  */
 class preset_previewed_test extends \advanced_testcase {
 
@@ -35,7 +35,7 @@ class preset_previewed_test extends \advanced_testcase {
         $this->setAdminUser();
 
         // Create a preset.
-        $generator = $this->getDataGenerator()->get_plugin_generator('tool_admin_presets');
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_adminpresets');
         $presetid = $generator->create_preset();
 
         $params = [

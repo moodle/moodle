@@ -200,7 +200,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      *
      * @return ArrayIterator
      */
-    public function getIterator() {
+    public function getIterator(): Traversable {
         $ret = array();
         foreach (self::$coursecatfields as $property => $unused) {
             if ($this->$property !== false) {
@@ -2699,10 +2699,11 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             $thislist = array();
             foreach ($rs as $record) {
                 context_helper::preload_from_record($record);
-                $context = context_coursecat::instance($record->id);
                 $canview = self::can_view_category($record);
+                $context = context_coursecat::instance($record->id);
+                $filtercontext = \context_helper::get_navigation_filter_context($context);
                 $baselist[$record->id] = array(
-                    'name' => $canview ? format_string($record->name, true, array('context' => $context)) : false,
+                    'name' => $canview ? format_string($record->name, true, array('context' => $filtercontext)) : false,
                     'path' => $record->path
                 );
                 if (!$canview || (!empty($requiredcapability) && !has_all_capabilities($requiredcapability, $context))) {
@@ -2840,6 +2841,17 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             return false;
         }
         return has_capability('moodle/category:manage', $this->get_context());
+    }
+
+    /**
+     * Checks whether the category has access to content bank
+     *
+     * @return bool
+     */
+    public function has_contentbank() {
+        $cb = new \core_contentbank\contentbank();
+        return ($cb->is_context_allowed($this->get_context()) &&
+            has_capability('moodle/contentbank:access', $this->get_context()));
     }
 
     /**
@@ -3155,6 +3167,36 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
     }
 
     /**
+     * Returns true if the user has all the given permissions.
+     *
+     * @param array $permissionstocheck The value can be create, manage or any specific capability.
+     * @return bool
+     */
+    private function has_capabilities(array $permissionstocheck): bool {
+        if (empty($permissionstocheck)) {
+            throw new coding_exception('Invalid permissionstocheck parameter');
+        }
+        foreach ($permissionstocheck as $permission) {
+            if ($permission == 'create') {
+                if (!$this->can_create_course()) {
+                    return false;
+                }
+            } else if ($permission == 'manage') {
+                if (!$this->has_manage_capability()) {
+                    return false;
+                }
+            } else {
+                // Specific capability.
+                if (!$this->is_uservisible() || !has_capability($permission, $this->get_context())) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Returns true if the user can approve course requests.
      * @return bool
      */
@@ -3171,5 +3213,61 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             return false;
         }
         return true;
+    }
+
+    /**
+     * General page setup for the course category pages.
+     *
+     * This method sets up things which are common for the course category pages such as page heading,
+     * the active nodes in the page navigation block, the active item in the primary navigation (when applicable).
+     *
+     * @return void
+     */
+    public static function page_setup() {
+        global $PAGE;
+
+        if ($PAGE->context->contextlevel != CONTEXT_COURSECAT) {
+            return;
+        }
+        $categoryid = $PAGE->context->instanceid;
+        // Highlight the 'Home' primary navigation item (when applicable).
+        $PAGE->set_primary_active_tab('home');
+        // Set the page heading to display the category name.
+        $coursecategory = self::get($categoryid, MUST_EXIST, true);
+        $PAGE->set_heading($coursecategory->get_formatted_name());
+        // Set the category node active in the navigation block.
+        if ($coursesnode = $PAGE->navigation->find('courses', navigation_node::COURSE_OTHER)) {
+            if ($categorynode = $coursesnode->find($categoryid, navigation_node::TYPE_CATEGORY)) {
+                $categorynode->make_active();
+            }
+        }
+    }
+
+    /**
+     * Returns the core_course_category object for the first category that the current user have the permission for the course.
+     *
+     * Only returns if it exists and is creatable/manageable to the current user
+     *
+     * @param core_course_category $parentcat Parent category to check.
+     * @param array $permissionstocheck The value can be create, manage or any specific capability.
+     * @return core_course_category|null
+     */
+    public static function get_nearest_editable_subcategory(core_course_category $parentcat,
+        array $permissionstocheck): ?core_course_category {
+        // First, check the parent category.
+        if ($parentcat->has_capabilities($permissionstocheck)) {
+            return $parentcat;
+        }
+
+        // Check the child categories.
+        $subcategoryids = $parentcat->get_all_children_ids();
+        foreach ($subcategoryids as $subcategoryid) {
+            $subcategory = static::get($subcategoryid, MUST_EXIST, true);
+            if ($subcategory->has_capabilities($permissionstocheck)) {
+                return $subcategory;
+            }
+        }
+
+        return null;
     }
 }

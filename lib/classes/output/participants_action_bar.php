@@ -16,6 +16,7 @@
 
 namespace core\output;
 
+use context_course;
 use moodle_page;
 use navigation_node;
 use moodle_url;
@@ -46,7 +47,14 @@ class participants_action_bar implements \renderable {
     public function __construct(object $course, moodle_page $page, ?string $renderedcontent) {
         $this->course = $course;
         $this->page = $page;
-        $this->node = $this->page->settingsnav->find('users', navigation_node::TYPE_CONTAINER);
+        $node = 'users';
+        if ($this->page->context->contextlevel == CONTEXT_MODULE) {
+            $node = 'modulesettings';
+        } else if ($this->page->context->contextlevel == CONTEXT_COURSECAT) {
+            $node = 'categorysettings';
+        }
+
+        $this->node = $this->page->settingsnav->find($node, null);
         $this->renderedcontent = $renderedcontent;
     }
 
@@ -69,7 +77,10 @@ class participants_action_bar implements \renderable {
                 'override',
                 'roles',
                 'otherusers',
-                'permissions'
+                'permissions',
+                'roleoverride',
+                'rolecheck',
+                'roleassign',
             ]
         ];
     }
@@ -84,16 +95,33 @@ class participants_action_bar implements \renderable {
             return [];
         }
 
-        $nodes = $this->get_ordered_nodes();
         $formattedcontent = [];
+        $enrolmentsheading = get_string('enrolments', 'enrol');
+        if ($this->page->context->contextlevel != CONTEXT_MODULE &&
+                $this->page->context->contextlevel != CONTEXT_COURSECAT) {
+            // Pre-populate the formatted tertiary nav items with the "Enrolled users" node if user can view the participants page.
+            $coursecontext = context_course::instance($this->course->id);
+            $canviewparticipants = course_can_view_participants($coursecontext);
+            if ($canviewparticipants) {
+                $participantsurl = (new moodle_url('/user/index.php', ['id' => $this->course->id]))->out();
+                $formattedcontent[] = [
+                    $enrolmentsheading => [
+                        $participantsurl => get_string('enrolledusers', 'enrol'),
+                    ]
+                ];
+            }
+        }
+
+        $nodes = $this->get_ordered_nodes();
         foreach ($nodes as $description => $content) {
             list($stringid, $location) = explode(':', $description);
             $heading = get_string($stringid, $location);
             $items = [];
             foreach ($content as $key) {
                 if ($node = $this->node->find($key, null)) {
-                    $urldescription = $node->text;
-                    $items[$node->action()->out()] = $urldescription;
+                    if ($node->has_action()) {
+                        $items[$node->action()->out()] = $node->text;
+                    }
 
                     // Additional items to be added.
                     if ($key === 'groups') {
@@ -106,12 +134,42 @@ class participants_action_bar implements \renderable {
                 }
             }
             if ($items) {
-                $formattedcontent[][$heading] = $items;
+                if ($heading === $enrolmentsheading) {
+                    // Merge the contents of the "Enrolments" group with the ones from the course settings nav.
+                    $formattedcontent[0][$heading] = array_merge($formattedcontent[0][$heading], $items);
+                } else {
+                    $formattedcontent[][$heading] = $items;
+                }
             }
         }
 
-        // TODO: Implement MDL-72930.
+        // If we are accessing a page from a module/category context additional nodes will not be visible.
+        if ($this->page->context->contextlevel != CONTEXT_MODULE &&
+                $this->page->context->contextlevel != CONTEXT_COURSECAT) {
+            // Need to do some funky code here to find out if we have added third party navigation nodes.
+            $thirdpartynodearray = $this->get_thirdparty_node_array() ?: [];
+            $formattedcontent = array_merge($formattedcontent, $thirdpartynodearray);
+        }
         return $formattedcontent;
+    }
+
+    /**
+     * Gets an array of third party navigation nodes in an array formatted for a url_select element.
+     *
+     * @return array|null The thirdparty node array.
+     */
+    protected function get_thirdparty_node_array(): ?array {
+        $results = [];
+
+        $flatnodes = array_merge(...(array_values($this->get_ordered_nodes())));
+
+        foreach ($this->node->children as $child) {
+            if (array_search($child->key, $flatnodes) === false) {
+                $results[] = $child;
+            }
+        }
+
+        return \core\navigation\views\secondary::create_menu_element($results, true);
     }
 
     /**

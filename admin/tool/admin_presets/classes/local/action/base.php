@@ -18,7 +18,7 @@ namespace tool_admin_presets\local\action;
 
 use context_system;
 use moodle_url;
-use tool_admin_presets\manager;
+use core_adminpresets\manager;
 use tool_admin_presets\output\presets_list;
 use tool_admin_presets\output\export_import;
 
@@ -84,7 +84,7 @@ class base {
         $options = new export_import();
         $this->outputs = $OUTPUT->render($options);
 
-        $presets = $DB->get_records('tool_admin_presets');
+        $presets = $DB->get_records('adminpresets');
         $list = new presets_list($presets, true);
         $this->outputs .= $OUTPUT->render($list);
     }
@@ -129,14 +129,17 @@ class base {
         $PAGE->set_title($titlestr);
         $PAGE->set_heading($SITE->fullname);
 
-        $PAGE->navbar->add(get_string('pluginname', 'tool_admin_presets'),
-            new moodle_url('/admin/tool/admin_presets/index.php')
-        );
-
         $title = $this->get_title();
         $text = $this->get_explanatory_description();
 
-        $PAGE->navbar->add($title);
+        // Only add it to the navbar if it's different to the plugin name (to avoid duplicates in the navbar).
+        if ($title != get_string('pluginname', 'tool_admin_presets')) {
+            $PAGE->navbar->add($title);
+        }
+
+        if ($node = $PAGE->settingsnav->find('tool_admin_presets', \navigation_node::TYPE_SETTING)) {
+            $node->make_active();
+        }
 
         echo $OUTPUT->header();
         echo $OUTPUT->heading($title);

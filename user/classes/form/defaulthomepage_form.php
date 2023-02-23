@@ -42,20 +42,22 @@ class defaulthomepage_form extends \moodleform {
      * Define the form.
      */
     public function definition () {
+        global $CFG;
+
         $mform = $this->_form;
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        $options = [
-            HOMEPAGE_SITE => new lang_string('site'),
-            HOMEPAGE_MY => new lang_string('mymoodle', 'admin'),
-            HOMEPAGE_MYCOURSES => new lang_string('mycourses', 'admin'),
-        ];
+        $options = [HOMEPAGE_SITE => new lang_string('home')];
+        if (!empty($CFG->enabledashboard)) {
+            $options[HOMEPAGE_MY] = new lang_string('mymoodle', 'admin');
+        }
+        $options[HOMEPAGE_MYCOURSES] = new lang_string('mycourses', 'admin');
 
         $mform->addElement('select', 'defaulthomepage', get_string('defaulthomepageuser'), $options);
         $mform->addHelpButton('defaulthomepage', 'defaulthomepageuser');
-        $mform->setDefault('defaulthomepage', HOMEPAGE_MY);
+        $mform->setDefault('defaulthomepage', get_default_home_page());
 
         $this->add_action_buttons(true, get_string('savechanges'));
     }

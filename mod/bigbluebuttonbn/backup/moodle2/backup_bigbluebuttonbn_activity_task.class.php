@@ -35,8 +35,7 @@ require_once($CFG->dirroot.'/mod/bigbluebuttonbn/backup/moodle2/backup_bigbluebu
  * @copyright 2010 onwards, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_bigbluebuttonbn_activity_task extends backup_activity_task
-{
+class backup_bigbluebuttonbn_activity_task extends backup_activity_task {
     /**
      * Define (add) particular settings this activity can have.
      *

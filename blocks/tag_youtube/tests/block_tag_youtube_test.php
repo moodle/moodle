@@ -14,16 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Block Tag Youtube tests
- *
- * @package    block_tag_youtube
- * @category   test
- * @copyright  2015 Jun Pataleta
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace block_tag_youtube;
 
 /**
  * Block Tag Youtube test class.
@@ -33,7 +24,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2015 Jun Pataleta
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_block_tag_youtube_testcase extends advanced_testcase {
+class block_tag_youtube_test extends \advanced_testcase {
 
     /**
      * Testing the tag youtube block's initial state after a new installation.

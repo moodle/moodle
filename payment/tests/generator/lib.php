@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Quiz module test data generator class
+ * Payment module test data generator class
  *
  * @package    core_payment
  * @category   test

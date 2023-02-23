@@ -39,6 +39,9 @@ class checkbox_attribute extends element {
     /** @var bool $ischecked Is it checked? */
     private $ischecked;
 
+    /** @var bool If this is a read-only input. */
+    private bool $isreadonly;
+
     /**
      * Constructor
      *
@@ -46,10 +49,12 @@ class checkbox_attribute extends element {
      * @param string $label The label for the form element
      * @param bool $ischecked Is this thing on?
      * @param int $locked Is this element locked either 0 or a time.
+     * @param bool $isreadonly If this is a read-only input.
      */
-    public function __construct($name, $label, $ischecked = false, $locked=0) {
+    public function __construct(string $name, string $label, bool $ischecked = false, int $locked=0, bool $isreadonly = false) {
         $this->ischecked = $ischecked;
         $this->locked = $locked;
+        $this->isreadonly = $isreadonly;
         parent::__construct($name, 1, $label);
     }
 
@@ -57,7 +62,7 @@ class checkbox_attribute extends element {
      * Nasty function allowing checkbox logic to escape the class.
      * @return bool
      */
-    public function is_checkbox() {
+    public function is_checkbox(): bool {
         return true;
     }
 
@@ -66,24 +71,25 @@ class checkbox_attribute extends element {
      *
      * @return string
      */
-    public function html() {
+    public function html(): string {
+        global $OUTPUT;
 
-        $attributes = array(
+        $attributes = [
             'type' => 'checkbox',
             'name' => $this->name,
             'value' => 1,
             'id' => $this->name
-        );
+        ];
 
         // UCSB fixed user should not be able to override locked grade.
         if ( $this->locked) {
             $attributes['disabled'] = 'DISABLED';
         }
 
-        $hidden = array(
+        $hidden = [
             'type' => 'hidden',
             'name' => 'old' . $this->name
-        );
+        ];
 
         if ($this->ischecked) {
             $attributes['checked'] = 'CHECKED';
@@ -95,12 +101,19 @@ class checkbox_attribute extends element {
             $type = "exclude";
         }
 
-        return (
-            html_writer::tag('label',
-                             get_string($type . 'for', 'gradereport_singleview', $this->label),
-                             array('for' => $this->name, 'class' => 'accesshide')) .
-            html_writer::empty_tag('input', $attributes) .
-            html_writer::empty_tag('input', $hidden)
-        );
+        if (!$this->isreadonly) {
+            return (
+                html_writer::tag('label',
+                                 get_string($type . 'for', 'gradereport_singleview', $this->label),
+                                 ['for' => $this->name, 'class' => 'accesshide']) .
+                html_writer::empty_tag('input', $attributes) .
+                html_writer::empty_tag('input', $hidden)
+            );
+        } else if ($this->ischecked) {
+            return $OUTPUT->pix_icon('i/checked', get_string('selected', 'core_form'),
+                'moodle', ['class' => 'overrideexcludecheck']);
+        } else {
+            return '';
+        }
     }
 }

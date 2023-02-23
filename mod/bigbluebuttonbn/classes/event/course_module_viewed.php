@@ -23,12 +23,10 @@ namespace mod_bigbluebuttonbn\event;
  * @copyright 2010 onwards, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_module_viewed extends \core\event\course_module_viewed
-{
+class course_module_viewed extends \core\event\course_module_viewed {
     /**
      * Init method.
-     * @param string $crud
-     * @param int $edulevel
+     *
      */
     protected function init() {
         $this->data['crud'] = 'r';

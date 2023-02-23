@@ -23,6 +23,7 @@
 
 "use strict";
 
+import 'core/inplace_editable';
 import Templates from 'core/templates';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
@@ -83,15 +84,9 @@ const addAudienceCard = (className, title) => {
 const editAudienceCard = audienceCard => {
     const pendingPromise = new Pending('core_reportbuilder/audience:edit');
 
-    const audienceForm = initAudienceCardForm(audienceCard);
-    const audienceFormData = {
-        reportid: reportId,
-        id: audienceCard.dataset.instanceid,
-        classname: audienceCard.dataset.classname
-    };
-
     // Load audience form with data for editing, then toggle visible controls in the card.
-    audienceForm.load(audienceFormData)
+    const audienceForm = initAudienceCardForm(audienceCard);
+    audienceForm.load({id: audienceCard.dataset.instanceid})
         .then(() => {
             const audienceFormContainer = audienceCard.querySelector(reportSelectors.regions.audienceFormContainer);
             const audienceDescription = audienceCard.querySelector(reportSelectors.regions.audienceDescription);
@@ -118,9 +113,12 @@ const initAudienceCardForm = audienceCard => {
 
     // After submitting the form, update the card instance and description properties.
     audienceForm.addEventListener(audienceForm.events.FORM_SUBMITTED, data => {
+        const audienceHeading = audienceCard.querySelector(reportSelectors.regions.audienceHeading);
         const audienceDescription = audienceCard.querySelector(reportSelectors.regions.audienceDescription);
 
         audienceCard.dataset.instanceid = data.detail.instanceid;
+
+        audienceHeading.innerHTML = data.detail.heading;
         audienceDescription.innerHTML = data.detail.description;
 
         closeAudienceCardForm(audienceCard);
@@ -144,15 +142,17 @@ const initAudienceCardForm = audienceCard => {
 /**
  * Delete audience card
  *
- * @param {Element} audienceCard
+ * @param {Element} audienceDelete
  */
-const deleteAudienceCard = audienceCard => {
+const deleteAudienceCard = audienceDelete => {
+    const audienceCard = audienceDelete.closest(reportSelectors.regions.audienceCard);
     const audienceTitle = audienceCard.dataset.title;
 
     Notification.saveCancelPromise(
         getString('deleteaudience', 'core_reportbuilder', audienceTitle),
         getString('deleteaudienceconfirm', 'core_reportbuilder', audienceTitle),
-        getString('delete', 'core')
+        getString('delete', 'core'),
+        {triggerElement: audienceDelete}
     ).then(() => {
         const pendingPromise = new Pending('core_reportbuilder/audience:delete');
 
@@ -255,10 +255,8 @@ export const init = (id, contextid) => {
         // Delete instance.
         const audienceDelete = event.target.closest(reportSelectors.actions.audienceDelete);
         if (audienceDelete) {
-            const audienceDeleteCard = audienceDelete.closest(reportSelectors.regions.audienceCard);
-
             event.preventDefault();
-            deleteAudienceCard(audienceDeleteCard);
+            deleteAudienceCard(audienceDelete);
         }
     });
 

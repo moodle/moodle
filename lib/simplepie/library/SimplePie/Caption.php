@@ -196,3 +196,5 @@ class SimplePie_Caption
 		return null;
 	}
 }
+
+class_alias('SimplePie_Caption', 'SimplePie\Caption', false);

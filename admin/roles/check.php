@@ -48,7 +48,7 @@ if ($course) {
 // Security first.
 require_login($course, false, $cm);
 if (!has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride', 'moodle/role:override', 'moodle/role:manage'), $context)) {
-    print_error('nopermissions', 'error', '', get_string('checkpermissions', 'core_role'));
+    throw new \moodle_exception('nopermissions', 'error', '', get_string('checkpermissions', 'core_role'));
 }
 
 navigation_node::override_active_url($url);
@@ -100,7 +100,7 @@ switch ($context->contextlevel) {
         $showroles = 1;
         break;
     case CONTEXT_COURSECAT:
-        $PAGE->set_heading($SITE->fullname);
+        core_course_category::page_setup();
         break;
     case CONTEXT_COURSE:
         if ($isfrontpage) {
@@ -126,9 +126,10 @@ if (!is_null($reportuser)) {
     $rolenames = role_get_names($context);
 }
 
+$PAGE->set_navigation_overflow_state(false);
+
 echo $OUTPUT->header();
-// Display the participants tertiary action bar if within a course context.
-if ($course && $context->contextlevel == CONTEXT_COURSE) {
+if (in_array($context->contextlevel, [CONTEXT_COURSE, CONTEXT_MODULE, CONTEXT_COURSECAT])) {
     echo $OUTPUT->render_participants_tertiary_nav($course);
 }
 

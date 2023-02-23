@@ -14,14 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Overview grade report functions unit tests
- *
- * @package    gradereport_overview
- * @category   external
- * @copyright  2015 Juan Leyva <juan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace gradereport_overview;
+
+use core_external\external_api;
+use externallib_advanced_testcase;
+use gradereport_overview_external;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +34,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class gradereport_overview_externallib_testcase extends externallib_advanced_testcase {
+class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Set up for every test
@@ -203,7 +200,7 @@ class gradereport_overview_externallib_testcase extends externallib_advanced_tes
 
         // Check the event details are correct.
         $this->assertInstanceOf('\gradereport_overview\event\grade_report_viewed', $event);
-        $this->assertEquals(context_course::instance($this->course1->id), $event->get_context());
+        $this->assertEquals(\context_course::instance($this->course1->id), $event->get_context());
         $this->assertEquals($USER->id, $event->get_data()['relateduserid']);
 
         $this->setUser($this->teacher);
@@ -215,7 +212,7 @@ class gradereport_overview_externallib_testcase extends externallib_advanced_tes
 
         // Check the event details are correct.
         $this->assertInstanceOf('\gradereport_overview\event\grade_report_viewed', $event);
-        $this->assertEquals(context_course::instance($this->course1->id), $event->get_context());
+        $this->assertEquals(\context_course::instance($this->course1->id), $event->get_context());
         $this->assertEquals($this->student1->id, $event->get_data()['relateduserid']);
     }
 

@@ -14,18 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for class customfield_text
- *
- * @package    customfield_text
- * @copyright  2019 Marina Glancy
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace customfield_text;
 
-defined('MOODLE_INTERNAL') || die();
-
-use customfield_text\field_controller;
-use customfield_text\data_controller;
+use core_customfield_generator;
+use core_customfield_test_instance_form;
 
 /**
  * Functional test for customfield_text
@@ -34,7 +26,7 @@ use customfield_text\data_controller;
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class customfield_text_plugin_testcase extends advanced_testcase {
+class plugin_test extends \advanced_testcase {
 
     /** @var stdClass[]  */
     private $courses = [];
@@ -158,7 +150,7 @@ class customfield_text_plugin_testcase extends advanced_testcase {
         $this->assertEquals('Value1', $this->cfdata[1]->export_value());
 
         // Field without data but with a default value.
-        $d = core_customfield\data_controller::create(0, null, $this->cfields[3]);
+        $d = \core_customfield\data_controller::create(0, null, $this->cfields[3]);
         $this->assertEquals('Defvalue', $d->get_value());
         $this->assertEquals('Defvalue', $d->export_value());
 

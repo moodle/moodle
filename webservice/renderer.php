@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use core_external\external_api;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
 
 /**
  * Web service documentation renderer.
@@ -263,15 +266,10 @@ class core_webservice_renderer extends plugin_renderer_base {
      * @return string html
      */
     public function user_reset_token_confirmation($token) {
-        global $CFG;
-        $managetokenurl = $CFG->wwwroot . "/user/managetoken.php?sesskey=" . sesskey();
-        $optionsyes = array('tokenid' => $token->id, 'action' => 'resetwstoken', 'confirm' => 1,
-            'sesskey' => sesskey());
-        $optionsno = array('section' => 'webservicetokens', 'sesskey' => sesskey());
-        $formcontinue = new single_button(new moodle_url($managetokenurl, $optionsyes),
-                        get_string('reset'));
-        $formcancel = new single_button(new moodle_url($managetokenurl, $optionsno),
-                        get_string('cancel'), 'get');
+        $managetokenurl = '/user/managetoken.php';
+        $optionsyes = ['tokenid' => $token->id, 'action' => 'resetwstoken', 'confirm' => 1];
+        $formcontinue = new single_button(new moodle_url($managetokenurl, $optionsyes), get_string('reset'));
+        $formcancel = new single_button(new moodle_url($managetokenurl), get_string('cancel'), 'get');
         $html = $this->output->confirm(get_string('resettokenconfirm', 'webservice',
                                 (object) array('user' => $token->firstname . " " .
                                     $token->lastname, 'service' => $token->name)),
@@ -318,9 +316,10 @@ class core_webservice_renderer extends plugin_renderer_base {
             foreach ($tokens as $token) {
 
                 if ($token->creatorid == $userid) {
-                    $reset = "<a href=\"" . $CFG->wwwroot . "/user/managetoken.php?sesskey="
-                            . sesskey() . "&amp;action=resetwstoken&amp;tokenid=" . $token->id . "\">";
-                    $reset .= get_string('reset') . "</a>";
+                    $reset = html_writer::link(new moodle_url('/user/managetoken.php', [
+                        'action' => 'resetwstoken',
+                        'tokenid' => $token->id,
+                    ]), get_string('reset'));
                     $creator = $token->firstname . " " . $token->lastname;
                 } else {
                     //retrieve administrator name
@@ -347,7 +346,7 @@ class core_webservice_renderer extends plugin_renderer_base {
 
                 if ($documentation) {
                     $doclink = new moodle_url('/webservice/wsdoc.php',
-                            array('id' => $token->id, 'sesskey' => sesskey()));
+                            array('id' => $token->id));
                     $row[] = html_writer::tag('a', get_string('doc', 'webservice'),
                             array('href' => $doclink));
                 }
@@ -501,6 +500,8 @@ EOF;
     /**
      * Create indented XML-RPC  param description
      *
+     * @todo MDL-76078 - Incorrect inter-communication, core cannot have plugin dependencies like this.
+     *
      * @param external_description $paramdescription the description structure of the web service function parameters
      * @param string $indentation Indentation in the generated HTML code; should contain only spaces.
      * @return string the html to diplay
@@ -579,6 +580,8 @@ EOF;
     /**
      * Return indented REST param description
      *
+     * @todo MDL-76078 - Incorrect inter-communication, core cannot have plugin dependencies like this.
+     *
      * @param external_description $paramdescription the description structure of the web service function parameters
      * @param string $paramstring parameter
      * @return string the html to diplay
@@ -624,6 +627,8 @@ EOF;
     /**
      * Displays all the documentation
      *
+     * @todo MDL-76078 - Incorrect inter-communication, core cannot have plugin dependencies like this.
+     *
      * @param array $functions external_description of all the web service functions
      * @param boolean $printableformat true if we want to display the documentation in a printable format
      * @param array $activatedprotocol the currently enabled protocol
@@ -662,16 +667,21 @@ EOF;
         //(opened if printableformat = true)
         foreach ($functions as $functionname => $description) {
 
+            $tags = '';
+            if (!empty($description->deprecated)) {
+                $tags .= ' ' . html_writer::span(get_string('deprecated', 'core_webservice'), 'badge badge-warning');
+            }
+
             if (empty($printableformat)) {
                 $documentationhtml .= print_collapsible_region_start('',
                                 'aera_' . $functionname,
                                 html_writer::start_tag('strong', array())
-                                . $functionname . html_writer::end_tag('strong'),
+                                . $functionname . html_writer::end_tag('strong') . $tags,
                                 false,
                                 !$printableformat,
                                 true);
             } else {
-                $documentationhtml .= html_writer::tag('strong', $functionname);
+                $documentationhtml .= html_writer::tag('strong', $functionname) . $tags;
                 $documentationhtml .= $br;
             }
 
@@ -726,7 +736,7 @@ EOF;
                     $documentationhtml .= $this->colored_box_with_pre_tag(
                                     get_string('phpparam', 'webservice'),
                                     htmlentities('[' . $paramname . '] =>'
-                                            . $this->xmlrpc_param_description_html($paramdesc)),
+                                            . $this->xmlrpc_param_description_html($paramdesc), ENT_COMPAT),
                                     'DFEEE7');
                 }
                 // POST format for the REST protocol for the argument
@@ -734,7 +744,7 @@ EOF;
                     $documentationhtml .= $this->colored_box_with_pre_tag(
                                     get_string('restparam', 'webservice'),
                                     htmlentities($this->rest_param_description_html(
-                                                    $paramdesc, $paramname)),
+                                                    $paramdesc, $paramname), ENT_COMPAT),
                                     'FEEBE5');
                 }
                 $documentationhtml .= html_writer::end_tag('span');
@@ -764,7 +774,7 @@ EOF;
                     $documentationhtml .= $this->colored_box_with_pre_tag(
                                     get_string('phpresponse', 'webservice'),
                                     htmlentities($this->xmlrpc_param_description_html(
-                                                    $description->returns_desc)),
+                                                    $description->returns_desc), ENT_COMPAT),
                                     'DFEEE7');
                 }
                 // XML response for the REST protocol
@@ -776,7 +786,7 @@ EOF;
                     $restresponse .="</RESPONSE>" . $brakeline;
                     $documentationhtml .= $this->colored_box_with_pre_tag(
                                     get_string('restcode', 'webservice'),
-                                    htmlentities($restresponse),
+                                    htmlentities($restresponse, ENT_COMPAT),
                                     'FEEBE5');
                 }
             }
@@ -800,7 +810,7 @@ EOF;
 EOF;
                 $documentationhtml .= $this->colored_box_with_pre_tag(
                                 get_string('restexception', 'webservice'),
-                                htmlentities($restexceptiontext),
+                                htmlentities($restexceptiontext, ENT_COMPAT),
                                 'FEEBE5');
 
                 $documentationhtml .= html_writer::end_tag('span');

@@ -13,9 +13,9 @@ Feature: Manage custom report conditions
       | My report | user:fullname    |
       | My report | user:email       |
     And the following "users" exist:
-      | username  | firstname | lastname | email              |
-      | user01    | User      | One      | user01@example.com |
-      | user02    | User      | Two      | user02@example.com |
+      | username  | firstname | lastname | email              | interests       |
+      | user01    | User      | One      | user01@example.com | lionel, dancing |
+      | user02    | User      | Two      | user02@example.com |                 |
 
   Scenario: Add condition to report
     Given I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
@@ -30,6 +30,20 @@ Feature: Manage custom report conditions
       | Email address value    | user02           |
     And I click on "Apply" "button" in the "[data-region='settings-conditions']" "css_element"
     And I should see "Conditions applied"
+    And I should see "User One" in the "reportbuilder-table" "table"
+    And I should not see "User Two" in the "reportbuilder-table" "table"
+
+  Scenario: Add tags condition to report
+    Given the following "core_reportbuilder > Condition" exists:
+      | report           | My report |
+      | uniqueidentifier | tag:name  |
+    And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
+    When I click on "Show/hide 'Conditions'" "button"
+    And I set the following fields in the "Tag name" "core_reportbuilder > Condition" to these values:
+      | Tag name operator | Is equal to |
+      | Tag name value    | dancing     |
+    And I click on "Apply" "button" in the "[data-region='settings-conditions']" "css_element"
+    Then I should see "Conditions applied"
     And I should see "User One" in the "reportbuilder-table" "table"
     And I should not see "User Two" in the "reportbuilder-table" "table"
 

@@ -2,50 +2,70 @@
 
 namespace Sabberworm\CSS\Comment;
 
+use Sabberworm\CSS\OutputFormat;
 use Sabberworm\CSS\Renderable;
 
-class Comment implements Renderable {
-	protected $iLineNo;
-	protected $sComment;
+class Comment implements Renderable
+{
+    /**
+     * @var int
+     */
+    protected $iLineNo;
 
-	public function __construct($sComment = '', $iLineNo = 0) {
-		$this->sComment = $sComment;
-		$this->iLineNo = $iLineNo;
-	}
+    /**
+     * @var string
+     */
+    protected $sComment;
 
-	/**
-	 * @return string
-	 */
-	public function getComment() {
-		return $this->sComment;
-	}
+    /**
+     * @param string $sComment
+     * @param int $iLineNo
+     */
+    public function __construct($sComment = '', $iLineNo = 0)
+    {
+        $this->sComment = $sComment;
+        $this->iLineNo = $iLineNo;
+    }
 
-	/**
-	 * @return int
-	 */
-	public function getLineNo() {
-		return $this->iLineNo;
-	}
+    /**
+     * @return string
+     */
+    public function getComment()
+    {
+        return $this->sComment;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function setComment($sComment) {
-		$this->sComment = $sComment;
-	}
+    /**
+     * @return int
+     */
+    public function getLineNo()
+    {
+        return $this->iLineNo;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function __toString() {
-		return $this->render(new \Sabberworm\CSS\OutputFormat());
-	}
+    /**
+     * @param string $sComment
+     *
+     * @return void
+     */
+    public function setComment($sComment)
+    {
+        $this->sComment = $sComment;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function render(\Sabberworm\CSS\OutputFormat $oOutputFormat) {
-		return '/*' . $this->sComment . '*/';
-	}
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->render(new OutputFormat());
+    }
 
+    /**
+     * @return string
+     */
+    public function render(OutputFormat $oOutputFormat)
+    {
+        return '/*' . $this->sComment . '*/';
+    }
 }

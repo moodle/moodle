@@ -50,11 +50,13 @@ $param->confirm = optional_param('confirm', 0, PARAM_INT);
 $param->cancel = optional_param('cancel', '', PARAM_ALPHA);
 $param->move = optional_param('move', 0, PARAM_INT);
 $param->moveto = optional_param('moveto', 0, PARAM_INT);
-$param->edit = optional_param('edit', 0, PARAM_INT);
+$param->edit = optional_param('edit', null, PARAM_INT);
 
 $url = new moodle_url($thispageurl);
 foreach ((array)$param as $key => $value) {
-    if (($key !== 'cancel' && $value !== 0) || ($key === 'cancel' && $value !== '')) {
+    if (($key !== 'cancel' && $key !== 'edit' && $value !== 0) ||
+            ($key === 'cancel' && $value !== '') ||
+            ($key === 'edit' && $value !== null)) {
         $url->param($key, $value);
     }
 }
@@ -92,6 +94,8 @@ if ($param->moveupcontext || $param->movedowncontext) {
     $category->contextid = $param->tocontext;
     $event = \core\event\question_category_moved::create_from_question_category_instance($category);
     $event->trigger();
+    // Update the set_reference records when moving a category to a different context.
+    move_question_set_references($catid, $catid, $oldcat->contextid, $category->contextid);
     $qcobject->update_category($catid, "{$newtopcat->id},{$param->tocontext}", $oldcat->name, $oldcat->info);
     // The previous line does a redirect().
 }
@@ -102,7 +106,8 @@ if ($param->delete) {
     }
 
     helper::question_remove_stale_questions_from_category($param->delete);
-    $questionstomove = $DB->count_records("question", ["category" => $param->delete]);
+
+    $questionstomove = count($qcobject->get_real_question_ids_in_category($param->delete));
 
     // Second pass, if we still have questions to move, setup the form.
     if ($questionstomove) {
@@ -141,7 +146,9 @@ if ($qcobject->catform->is_cancelled()) {
     redirect($thispageurl);
 }
 
-if ($param->edit) {
+if ($param->edit !== null || $qcobject->catform->is_submitted()) {
+    // In the is_submitted case, we only get here if it was submitted,
+    // but not valid, so we need to show the validation error.
     $PAGE->navbar->add(get_string('editingcategory', 'question'));
 }
 
@@ -149,17 +156,20 @@ $PAGE->set_title(get_string('editcategories', 'question'));
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->activityheader->disable();
 
+echo $OUTPUT->header();
+
 // Print horizontal nav if needed.
 $renderer = $PAGE->get_renderer('core_question', 'bank');
 
-echo $OUTPUT->header();
-
-$qbankaction = new \core_question\output\qbank_actionbar($url);
-echo $renderer->qbank_action_menu($qbankaction);
+$qbankaction = new \core_question\output\qbank_action_menu($url);
+echo $renderer->render($qbankaction);
 
 // Display the UI.
-if (!empty($param->edit)) {
-    $qcobject->edit_single_category($param->edit);
+if ($param->edit !== null || $qcobject->catform->is_submitted()) {
+    // In the is_submitted case, we only get here if it was submitted,
+    // but not valid, so we need to show the validation error.
+    // In this case, category id is in the 'id' hidden filed.
+    $qcobject->edit_single_category($param->edit ?? required_param('id', PARAM_INT));
 } else if ($questionstomove) {
     $qcobject->display_move_form($questionstomove, $category);
 } else {

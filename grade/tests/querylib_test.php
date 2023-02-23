@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for grade quering
- *
- * @package   core_grades
- * @category  phpunit
- * @copyright 2011 Petr Skoda {@link http://skodak.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
+namespace core_grades;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -29,8 +22,15 @@ global $CFG;
 require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->dirroot.'/grade/querylib.php');
 
-
-class core_grade_querylib_testcase extends advanced_testcase {
+/**
+ * Unit tests for grade quering
+ *
+ * @package   core_grades
+ * @category  test
+ * @copyright 2011 Petr Skoda {@link http://skodak.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
+ */
+class querylib_test extends \advanced_testcase {
 
     public function test_grade_get_gradable_activities() {
         $this->resetAfterTest(true);

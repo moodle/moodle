@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the upgradelib of the Display H5P filter.
- *
- * @package    filter_displayh5p
- * @category   test
- * @copyright  2019 Carlos Escobedo <carlos@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace filter_displayh5p;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,10 +25,12 @@ require_once("$CFG->libdir/filterlib.php");
 /**
  * Unit tests for the upgradelib of the Display H5P filter.
  *
+ * @package    filter_displayh5p
+ * @category   test
  * @copyright 2019 Carlos Escobedo <carlos@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filter_displayh5p_upgradelib_testcase extends advanced_testcase {
+class upgradelib_test extends \advanced_testcase {
 
     /**
      * test_filter_displayh5p_reorder

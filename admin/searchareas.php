@@ -26,7 +26,7 @@ require_once($CFG->libdir . '/adminlib.php');
 
 admin_externalpage_setup('searchareas');
 
-$areaid = optional_param('areaid', null, PARAM_ALPHAEXT);
+$areaid = optional_param('areaid', null, PARAM_ALPHANUMEXT);
 $action = optional_param('action', null, PARAM_ALPHA);
 $indexingenabled = \core_search\manager::is_indexing_enabled(); // This restricts many of the actions on this page.
 
@@ -36,6 +36,8 @@ try {
 } catch (core_search\engine_exception $searchmanagererror) {
     // In action cases, we'll throw this exception below. In non-action cases, we produce a lang string error.
 }
+
+$PAGE->set_primary_active_tab('siteadminnode');
 
 // Handle all the actions.
 if ($action) {
@@ -75,7 +77,7 @@ if ($action) {
                 $cancelurl = new moodle_url('/admin/searchareas.php');
                 echo $OUTPUT->header();
                 echo $OUTPUT->confirm(get_string('confirm_' . $action, 'search', $a),
-                    new single_button($actionurl, get_string('continue'), 'post', true),
+                    new single_button($actionurl, get_string('continue'), 'post', single_button::BUTTON_PRIMARY),
                     new single_button($cancelurl, get_string('cancel'), 'get'));
                 echo $OUTPUT->footer();
                 exit;
@@ -161,6 +163,7 @@ $table->head = [
 ];
 
 $searchareas = \core_search\manager::get_search_areas_list();
+core_collator::asort_objects_by_method($searchareas, 'get_visible_name');
 $areasconfig = isset($searchmanager) ? $searchmanager->get_areas_config($searchareas) : false;
 foreach ($searchareas as $area) {
     $areaid = $area->get_area_id();

@@ -16,6 +16,8 @@
 
 namespace qbank_usage;
 
+use mod_quiz\quiz_attempt;
+
 /**
  * Helper test.
  *
@@ -51,7 +53,7 @@ class helper_test extends \advanced_testcase {
         $this->quiz = $quizgenerator->create_instance(['course' => $course->id,
             'grade' => 100.0, 'sumgrades' => 2, 'layout' => $layout]);
 
-        $quizobj = \quiz::create($this->quiz->id, $user->id);
+        $quizobj = \mod_quiz\quiz_settings::create($this->quiz->id, $user->id);
 
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
@@ -75,7 +77,7 @@ class helper_test extends \advanced_testcase {
         $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $user->id);
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
         quiz_attempt_save_started($quizobj, $quba, $attempt);
-        \quiz_attempt::create($attempt->id);
+        quiz_attempt::create($attempt->id);
     }
 
     /**
@@ -98,7 +100,7 @@ class helper_test extends \advanced_testcase {
      */
     public function test_get_question_entry_usage_count() {
         foreach ($this->questions as $question) {
-            $count = helper::get_question_entry_usage_count($question);
+            $count = helper::get_question_entry_usage_count(\question_bank::load_question($question->id));
             // Test that the attempt data matches the usage data for the count.
             $this->assertEquals(1, $count);
         }

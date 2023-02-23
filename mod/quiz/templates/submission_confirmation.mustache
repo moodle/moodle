@@ -1,0 +1,37 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_quiz/submission_confirmation
+
+    Submission confirmation dialogue template
+
+    Example context (json):
+    {
+        "hasunanswered": false,
+        "totalunanswered": 0
+    }
+}}
+<div class="quiz-submission-confirmation-content">
+    <div class="mb-3">
+        {{#str}} confirmclose, mod_quiz {{/str}}
+    </div>
+    {{#hasunanswered}}
+        <div class="alert alert-warning">
+            {{#str}} submission_confirmation_unanswered, mod_quiz, {{totalunanswered}} {{/str}}
+        </div>
+    {{/hasunanswered}}
+</div>

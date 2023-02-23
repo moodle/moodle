@@ -16,19 +16,15 @@
 
 namespace mod_bigbluebuttonbn\external;
 
-use external_api;
-use external_function_parameters;
-use external_single_structure;
-use external_value;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\restricted_context_exception;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
 use mod_bigbluebuttonbn\meeting;
-use restricted_context_exception;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/externallib.php');
 
 /**
  * External service to fetch meeting information.
@@ -60,6 +56,8 @@ class meeting_info extends external_api {
      * @param int $groupid
      * @param bool $updatecache
      * @return array
+     * @throws \moodle_exception
+     * @throws restricted_context_exception
      */
     public static function execute(
         int $bigbluebuttonbnid,
@@ -91,10 +89,17 @@ class meeting_info extends external_api {
         // Check if the BBB server is working.
         $serverversion = bigbluebutton_proxy::get_server_version();
         if ($serverversion === null) {
-            throw new \moodle_exception('general_error_no_answer',
+            throw new \moodle_exception('general_error_no_answer', 'mod_bigbluebuttonbn',
+                bigbluebutton_proxy::get_server_not_available_url($instance),
                 bigbluebutton_proxy::get_server_not_available_message($instance));
         }
-        return (array) meeting::get_meeting_info_for_instance($instance, $updatecache);
+        $meetinginfo = (array) meeting::get_meeting_info_for_instance($instance, $updatecache);
+
+        // Make the structure WS friendly.
+        array_walk($meetinginfo['features'], function(&$value, $key){
+            $value = ['name' => $key, 'isenabled' => (bool) $value];
+        });
+        return $meetinginfo;
     }
 
     /**
@@ -108,6 +113,7 @@ class meeting_info extends external_api {
                 'cmid' => new external_value(PARAM_INT, 'CM id'),
                 'userlimit' => new external_value(PARAM_INT, 'User limit'),
                 'bigbluebuttonbnid' => new external_value(PARAM_RAW, 'bigbluebuttonbn instance id'),
+                'groupid' => new external_value(PARAM_INT, 'bigbluebuttonbn group id', VALUE_DEFAULT, 0),
                 'meetingid' => new external_value(PARAM_RAW, 'Meeting id'),
                 'openingtime' => new external_value(PARAM_INT, 'Opening time', VALUE_OPTIONAL),
                 'closingtime' => new external_value(PARAM_INT, 'Closing time', VALUE_OPTIONAL),
@@ -122,7 +128,7 @@ class meeting_info extends external_api {
                 'participantplural' => new external_value(PARAM_BOOL, 'Several participants ?', VALUE_OPTIONAL),
                 'canjoin' => new external_value(PARAM_BOOL, 'Can join'),
                 'ismoderator' => new external_value(PARAM_BOOL, 'Is moderator'),
-                'presentations' => new \external_multiple_structure(
+                'presentations' => new external_multiple_structure(
                     new external_single_structure([
                         'url' => new external_value(PARAM_URL, 'presentation URL'),
                         'iconname' => new external_value(PARAM_RAW, 'icon name'),
@@ -131,6 +137,15 @@ class meeting_info extends external_api {
                     ])
                 ),
                 'joinurl' => new external_value(PARAM_URL, 'Join URL'),
+                'guestaccessenabled' => new external_value(PARAM_BOOL, 'Guest access enabled', VALUE_OPTIONAL),
+                'guestjoinurl' => new external_value(PARAM_URL, 'Guest URL', VALUE_OPTIONAL),
+                'guestpassword' => new external_value(PARAM_RAW, 'Guest join password', VALUE_OPTIONAL),
+                'features' => new external_multiple_structure(
+                    new external_single_structure([
+                        'name' => new external_value(PARAM_ALPHA, 'Feature name.'),
+                        'isenabled' => new external_value(PARAM_BOOL, 'Whether the feature is enabled.'),
+                    ]), 'List of features for the instance', VALUE_OPTIONAL
+                ),
             ]
         );
     }

@@ -100,7 +100,7 @@ $PAGE->set_title($title);
 $PAGE->activityheader->disable();
 switch ($context->contextlevel) {
     case CONTEXT_SYSTEM:
-        print_error('cannotoverridebaserole', 'error');
+        throw new \moodle_exception('cannotoverridebaserole', 'error');
         break;
     case CONTEXT_USER:
         $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
@@ -108,7 +108,7 @@ switch ($context->contextlevel) {
         $showroles = 1;
         break;
     case CONTEXT_COURSECAT:
-        $PAGE->set_heading($SITE->fullname);
+        core_course_category::page_setup();
         break;
     case CONTEXT_COURSE:
         if ($isfrontpage) {
@@ -204,10 +204,13 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
     }
 }
 
+$PAGE->set_navigation_overflow_state(false);
+
 echo $OUTPUT->header();
-if ($context->contextlevel == CONTEXT_COURSE && $course) {
+if (in_array($context->contextlevel, [CONTEXT_COURSE, CONTEXT_MODULE, CONTEXT_COURSECAT])) {
     echo $OUTPUT->render_participants_tertiary_nav($course);
 }
+
 echo $OUTPUT->heading($title);
 
 $adminurl = new moodle_url('/admin/');

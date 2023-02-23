@@ -19,12 +19,12 @@ namespace qbank_viewcreator;
 use core_question\local\bank\column_base;
 
 /**
- * A column type for the name of the question last modifier.
+ * A column for info of the question modifier.
  *
- * @package   qbank_viewcreator
- * @copyright 2009 Tim Hunt
- * @author    2021 Ghaly Marc-Alexandre <marc-alexandreghaly@catalyst-ca.net>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qbank_viewcreator
+ * @copyright  2022 Catalyst IT Australia Pty Ltd
+ * @author     Safat Shahin <safatshahin@catalyst-au.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class modifier_name_column extends column_base {
 
@@ -32,20 +32,19 @@ class modifier_name_column extends column_base {
         return 'modifiername';
     }
 
-    protected function get_title(): string {
-        return get_string('lastmodifiedby', 'question');
+    public function get_title(): string {
+        return get_string('modifiedby', 'qbank_viewcreator');
     }
 
     protected function display_content($question, $rowclasses): void {
         global $PAGE;
         $displaydata = [];
-
         if (!empty($question->modifierfirstname) && !empty($question->modifierlastname)) {
             $u = new \stdClass();
             $u = username_load_fields_from_object($u, $question, 'modifier');
             $displaydata['date'] = userdate($question->timemodified, get_string('strftimedatetime', 'langconfig'));
-            $displaydata['modifier'] = fullname($u);
-            echo $PAGE->get_renderer('qbank_viewcreator')->render_modifier_name($displaydata);
+            $displaydata['creator'] = fullname($u);
+            echo $PAGE->get_renderer('qbank_viewcreator')->render_creator_name($displaydata);
         }
     }
 
@@ -69,6 +68,10 @@ class modifier_name_column extends column_base {
             'lastname' => ['field' => 'um.lastname', 'title' => get_string('lastname')],
             'timemodified' => ['field' => 'q.timemodified', 'title' => get_string('date')]
         ];
+    }
+
+    public function get_extra_classes(): array {
+        return ['pr-3'];
     }
 
 }

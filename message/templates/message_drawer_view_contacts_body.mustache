@@ -65,9 +65,10 @@
                     >
                         {{#str}} requests {{/str}}
                         <span class="badge badge-primary bg-primary ml-2 {{^contactrequestcount}}hidden{{/contactrequestcount}}"
-                        data-region="contact-request-count"
-                        aria-label="{{#str}} pendingcontactrequests, core_message, {{contactrequestcount}} {{/str}}">
-                            {{contactrequestcount}}
+                            data-region="contact-request-count"
+                        >
+                            <span aria-hidden="true">{{contactrequestcount}}</span>
+                            <span class="sr-only">{{#str}} pendingcontactrequests, core_message, {{contactrequestcount}} {{/str}}</span>
                         </span>
                     </a>
                 </li>

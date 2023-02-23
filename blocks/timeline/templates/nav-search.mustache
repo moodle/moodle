@@ -22,26 +22,13 @@
     Example context (json):
     {}
 }}
-<div class="searchbar input-group mb-3" role='search'>
-    <label for='timelinesearchinput'>
-        <span class='sr-only'>{{#str}} searchevents, block_timeline {{/str}}</span>
-    </label>
-    <input type="text"
-           data-region="search-input"
-           id="timelinesearchinput"
-           class="form-control"
-           placeholder="{{#str}} searchevents, block_timeline {{/str}}"
-           name="search"
-           autocomplete="off">
-    <div class="input-group-append">
-        <div data-region="search-icon" class="input-group-text">
-            {{#pix}} a/search, core {{/pix}}
-        </div>
-        <div class="clear input-group d-none">
-            <button class="btn btn-outline-secondary" type="button" data-region="clear-icon">
-                <span class="d-flex" aria-hidden="true">{{#pix}} e/cancel, core {{/pix}}</span>
-                <span class="sr-only">{{#str}} clearsearch, block_timeline {{/str}}</span>
-            </button>
-        </div>
-    </div>
+<div class="w-100">
+    {{< core/search_input_auto }}
+        {{$label}}{{#str}}
+            searchevents, block_timeline
+        {{/str}}{{/label}}
+        {{$placeholder}}{{#str}}
+            searchevents, block_timeline
+        {{/str}}{{/placeholder}}
+    {{/ core/search_input_auto }}
 </div>

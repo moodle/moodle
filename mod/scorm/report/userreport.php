@@ -77,11 +77,12 @@ $PAGE->set_title("$course->shortname: ".format_string($scorm->name));
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($strreport, new moodle_url('/mod/scorm/report.php', array('id' => $cm->id)));
 $PAGE->navbar->add(fullname($user). " - $strattempt $attempt");
-
+$PAGE->activityheader->set_attrs([
+    'hidecompletion' => true,
+    'description' => ''
+]);
 echo $OUTPUT->header();
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($scorm->name));
-}
+
 // End of Print the page header.
 $currenttab = 'scoes';
 

@@ -33,10 +33,10 @@
     Example context (json):
     {
         "formattedtime": "Wednesday, 17 April, 9:27 AM",
+        "formattedlocation": "Moodle HQ",
         "normalisedeventtype": "Group",
         "normalisedeventtypetext": "Group event",
         "description": "An random event description",
-        "location": "Moodle HQ",
         "isactionevent": "true",
         "course": {
             "viewurl": "http://mymoodlesite/course/view.php?id=1",
@@ -72,12 +72,12 @@
         <div class="description-content col-11">{{{.}}}</div>
     </div>
 {{/description}}
-{{#location}}
+{{#formattedlocation}}
     <div class="row mt-1">
         <div class="col-1">{{#pix}} i/location, core, {{#str}} location {{/str}} {{/pix}}</div>
         <div class="location-content col-11">{{{.}}}</div>
     </div>
-{{/location}}
+{{/formattedlocation}}
 {{#iscategoryevent}}
     <div class="row mt-1">
         <div class="col-1">{{#pix}} i/categoryevent, core, {{#str}} category {{/str}} {{/pix}}</div>

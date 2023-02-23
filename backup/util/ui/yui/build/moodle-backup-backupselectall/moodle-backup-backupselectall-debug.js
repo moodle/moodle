@@ -60,7 +60,7 @@ M.core_backup.backupselectall = function(modnames) {
                 '</div>';
     };
 
-    var firstsection = Y.one('fieldset#id_coursesettings .fcontainer.clearfix .grouped_settings.section_level');
+    var firstsection = Y.one('fieldset#id_coursesettings .fcontainer .grouped_settings.section_level');
     if (!firstsection) {
         // This is not a relevant page.
         return;

@@ -64,7 +64,7 @@ class edit_menu_column extends column_base {
         return $remainingcolumns;
     }
 
-    protected function get_title() {
+    public function get_title() {
         return get_string('actions');
     }
 
@@ -77,7 +77,6 @@ class edit_menu_column extends column_base {
 
         $menu = new \action_menu();
         $menu->set_menu_trigger(get_string('edit'));
-        $menu->set_alignment(\action_menu::TL, \action_menu::BL);
         foreach ($this->actions as $actioncolumn) {
             $action = $actioncolumn->get_action_menu_link($question);
             if ($action) {
@@ -96,6 +95,19 @@ class edit_menu_column extends column_base {
 
     public function get_required_fields():array {
         return ['q.qtype'];
+    }
+
+    /**
+     * Get menuable actions.
+     *
+     * @return menuable_action Menuable actions.
+     */
+    public function get_actions(): array {
+        return $this->actions;
+    }
+
+    public function get_extra_classes(): array {
+        return ['pr-3'];
     }
 
 }

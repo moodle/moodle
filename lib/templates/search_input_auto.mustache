@@ -37,12 +37,13 @@
     }
 }}
 <div id="searchform-auto-{{uniqid}}" class="form-inline simplesearchform">
-    <div class="input-group searchbar" role="search">
+    <div class="input-group searchbar w-100" role="search">
         <label for="searchinput">
             <span class="sr-only">{{$label}}{{#str}} search, core {{/str}}{{/label}}</span>
         </label>
         <input
            type="text"
+           role="searchbox"
            data-region="input"
            data-action="search"
            id="searchinput"

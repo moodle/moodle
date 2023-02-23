@@ -14,29 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Type unit tests for the Database Table.
- *
- * @package     core_privacy
- * @category    test
- * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_privacy;
+
+use core_privacy\local\metadata\types\database_table;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-use \core_privacy\local\metadata\types\database_table;
-
 /**
  * Tests for the \core_privacy API's types\database_table functionality.
  *
+ * @package     core_privacy
+ * @category    test
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\metadata\types\database_table
  */
-class core_privacy_metadata_types_database_table extends advanced_testcase {
+class types_database_table_test extends \advanced_testcase {
 
     /**
      * Ensure that warnings are thrown if string identifiers contain invalid characters.

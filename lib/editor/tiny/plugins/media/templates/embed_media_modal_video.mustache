@@ -1,0 +1,806 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tiny_media/embed_media_modal_video
+
+    Embed media video modal template.
+
+    Example context (json):
+    {
+
+    }
+}}
+{{#video.sources}}
+    <div class="tiny_media_source tiny_media_media_source">
+        <div class="mb-1">
+            <label for="url-input">
+                {{#str}} videosourcelabel, tiny_media {{/str}}
+            </label>
+            <div class="input-group input-append w-100">
+                <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{.}}"/>
+                <span class="input-group-append">
+                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                </span>
+            </div>
+        </div>
+        <div class="addcomponent-wrapper">
+            <a href="#" class="addcomponent">
+                {{#str}} addsource, tiny_media {{/str}}
+            </a>
+            {{#addsourcehelpicon}}
+                {{> core/help_icon }}
+            {{/addsourcehelpicon}}
+        </div>
+        <div class="removecomponent-wrapper hidden">
+            <a href="#" class="removecomponent">
+                {{#str}} remove, tiny_media {{/str}}
+            </a>
+        </div>
+    </div>
+{{/video.sources}}
+{{^video}}
+    <div class="tiny_media_source tiny_media_media_source">
+        <div class="mb-1">
+            <label for="url-input">
+                {{#str}} videosourcelabel, tiny_media {{/str}}
+            </label>
+            <div class="input-group input-append w-100">
+                <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                <span class="input-group-append">
+                <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+            </span>
+            </div>
+        </div>
+        <div class="addcomponent-wrapper">
+            <a href="#" class="addcomponent">
+                {{#str}} addsource, tiny_media {{/str}}
+            </a>
+            {{#addsourcehelpicon}}
+                {{> core/help_icon }}
+            {{/addsourcehelpicon}}
+        </div>
+        <div class="removecomponent-wrapper hidden">
+            <a href="#" class="removecomponent">
+                {{#str}} remove, tiny_media {{/str}}
+            </a>
+        </div>
+    </div>
+{{/video}}
+<fieldset class="collapsible collapsed" id="{{elementid}}_video-display-options">
+    <input name="mform_isexpanded_{{elementid}}_video-display-options" type="hidden">
+    <legend class="d-flex align-items-center px-1">
+        <div class="position-relative d-flex ftoggler align-items-center position-relative mr-1">
+            <a role="button" data-toggle="collapse" href="#vdisplayoptions" aria-expanded="false"
+               aria-controls="vdisplayoptions"
+               class="btn btn-icon mr-1 icons-collapse-expand stretched-link fheader collapsed">
+                <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, moodle {{/str}}">
+                            <i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>
+                </span>
+                <span class="collapsed-icon icon-no-margin p-2" title="{{#str}} expand, moodle {{/str}}">
+                    <span class="dir-rtl-hide">
+                        <i class="icon fa fa-chevron-right fa-fw " aria-hidden="true"></i>
+                    </span>
+                    <span class="dir-ltr-hide">
+                        <i class="icon fa fa-chevron-left fa-fw " aria-hidden="true"></i>
+                    </span>
+                </span>
+                <span class="sr-only">{{#str}} displayoptions, tiny_media {{/str}}</span>
+            </a>
+            <h3 class="d-flex align-self-stretch align-items-center mb-0" aria-hidden="true">
+                {{#str}} displayoptions, tiny_media {{/str}}
+            </h3>
+        </div>
+    </legend>
+    <div id="vdisplayoptions" class="fcontainer collapseable collapse px-1">
+        <div class="tiny_media_display_options">
+            <div class="mb-1">
+                <label for="vdisplayoptions_media-title-entry">{{#str}} entertitle, tiny_media {{/str}}</label>
+                <input class="form-control fullwidth tiny_media_title_entry" type="text" id="vdisplayoptions_media-title-entry"
+                       size="32" value="{{video.title}}"/>
+            </div>
+            <div class="clearfix"></div>
+            <div class="mb-1">
+                <label>{{#str}} size, tiny_media {{/str}}</label>
+                <div class="form-inline tiny_media_poster_size">
+                    <label for="vdisplayoptions_media-width-entry" class="accesshide">{{#str}} videowidth, tiny_media {{/str}}</label>
+                    <input id="vdisplayoptions_media-width-entry" type="text" class="form-control mr-1 tiny_media_width_entry input-mini"
+                           size="4" value="{{video.width}}"/>
+                    x
+                    <label for="vdisplayoptions_media-height-entry" class="accesshide">{{#str}} videoheight, tiny_media {{/str}}</label>
+                    <input id="vdisplayoptions_media-height-entry" type="text" class="form-control ml-1 tiny_media_height_entry input-mini"
+                           size="4" value="{{video.height}}"/>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="tiny_media_source tiny_media_poster_source">
+                <div class="mb-1">
+                    <label for="url-input">
+                        {{#str}} entersource, tiny_media {{/str}}
+                    </label>
+                    <div class="input-group input-append w-100">
+                        <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{video.poster}}"/>
+                        <span class="input-group-append">
+                <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+            </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</fieldset>
+<fieldset class="collapsible collapsed" id="{{elementid}}_video-advanced-settings">
+    <input name="mform_isexpanded_{{elementid}}_video-advanced-settings" type="hidden">
+    {{renderPartial "form_components.section" context=this id="vadvancedsettings" name="advancedsettings"}}
+    <legend class="d-flex align-items-center px-1">
+        <div class="position-relative d-flex ftoggler align-items-center position-relative mr-1">
+            <a role="button" data-toggle="collapse" href="#vadvancedsettings" aria-expanded="false"
+               aria-controls="vadvancedsettings"
+               class="btn btn-icon mr-1 icons-collapse-expand stretched-link fheader collapsed">
+            <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, moodle {{/str}}">
+                                <i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>
+                            </span>
+                <span class="collapsed-icon icon-no-margin p-2" title="{{#str}} expand, moodle {{/str}}">
+                                <span class="dir-rtl-hide">
+                                    <i class="icon fa fa-chevron-right fa-fw " aria-hidden="true"></i>
+                                </span>
+                                <span class="dir-ltr-hide">
+                                    <i class="icon fa fa-chevron-left fa-fw " aria-hidden="true"></i>
+                                </span>
+                            </span>
+                <span class="sr-only">{{#str}} advancedsettings, tiny_media {{/str}}</span>
+            </a>
+            <h3 class="d-flex align-self-stretch align-items-center mb-0" aria-hidden="true">
+                {{#str}} advancedsettings, tiny_media {{/str}}
+            </h3>
+        </div>
+    </legend>
+    <div id="vadvancedsettings" class="fcontainer collapseable collapse px-1">
+        <div class="tiny_media_advancedsettings">
+            <div class="form-check">
+                <input type="checkbox" checked="true" class="form-check-input tiny_media_controls"
+                       id="vadvancedsettings_media-controls-toggle" {{# video.controls }}checked{{/ video.controls }}/>
+                <label class="form-check-label" for="vadvancedsettings_media-controls-toggle">
+                    {{#str}} controls, tiny_media {{/str}}
+                </label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input tiny_media_autoplay"
+                       id="vadvancedsettings_media-autoplay-toggle" {{# video.autoplay }}checked{{/ video.autoplay }}/>
+                <label class="form-check-label" for="vadvancedsettings_media-autoplay-toggle">
+                    {{#str}} autoplay, tiny_media {{/str}}
+                </label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input tiny_media_mute"
+                       id="vadvancedsettings_media-mute-toggle" {{# video.muted }}checked{{/ video.muted }}/>
+                <label class="form-check-label" for="vadvancedsettings_media-mute-toggle">
+                    {{#str}} mute, tiny_media {{/str}}
+                </label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input tiny_media_loop"
+                       id="vadvancedsettings_media-loop-toggle" {{# video.loop }}checked{{/ video.loop }}/>
+                <label class="form-check-label" for="vadvancedsettings_media-loop-toggle">
+                    {{#str}} loop, tiny_media {{/str}}
+                </label>
+            </div>
+        </div>
+    </div>
+</fieldset>
+<fieldset class="collapsible collapsed" id="{{elementid}}_video-tracks">
+    <input name="mform_isexpanded_{{elementid}}_video-tracks" type="hidden">
+    <legend class="d-flex align-items-center px-1">
+        <div class="position-relative d-flex ftoggler align-items-center position-relative mr-1">
+            <a role="button" data-toggle="collapse" href="#vtracks" aria-expanded="false"
+               aria-controls="vtracks"
+               class="btn btn-icon mr-1 icons-collapse-expand stretched-link fheader collapsed">
+            <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, moodle {{/str}}">
+                                <i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>
+                            </span>
+                <span class="collapsed-icon icon-no-margin p-2" title="{{#str}} expand, moodle {{/str}}">
+                                <span class="dir-rtl-hide">
+                                    <i class="icon fa fa-chevron-right fa-fw " aria-hidden="true"></i>
+                                </span>
+                                <span class="dir-ltr-hide">
+                                    <i class="icon fa fa-chevron-left fa-fw " aria-hidden="true"></i>
+                                </span>
+                            </span>
+                <span class="sr-only">{{#str}} tracks, tiny_media {{/str}}</span>
+            </a>
+            <h3 class="d-flex align-self-stretch align-items-center mb-0" aria-hidden="true">
+                {{#str}} tracks, tiny_media {{/str}}
+            </h3>
+        </div>
+        {{#trackshelpicon}}
+            {{> core/help_icon }}
+        {{/trackshelpicon}}
+    </legend>
+    <div id="vtracks" class="fcontainer collapseable collapse px-1">
+        <ul class="nav nav-tabs mb-3">
+            <li data-track-kind="subtitles" class="nav-item">
+                <a class="nav-link active" href="#{{elementid}}_vtracks_subtitles"
+                   role="tab" data-toggle="tab">
+                    {{#str}} subtitles, tiny_media {{/str}}
+                </a>
+            </li>
+            <li data-track-kind="captions" class="nav-item">
+                <a class="nav-link" href="#{{elementid}}_vtracks_captions" role="tab" data-toggle="tab">
+                    {{#str}} captions, tiny_media {{/str}}
+                </a>
+            </li>
+            <li data-track-kind="descriptions" class="nav-item">
+                <a class="nav-link" href="#{{elementid}}_vtracks_descriptions"
+                   role="tab" data-toggle="tab">
+                    {{#str}} descriptions, tiny_media {{/str}}
+                </a>
+            </li>
+            <li data-track-kind="chapters" class="nav-item">
+                <a class="nav-link" href="#{{elementid}}_vtracks_chapters" role="tab" data-toggle="tab">
+                    {{#str}} chapters, tiny_media {{/str}}
+                </a>
+            </li>
+            <li data-track-kind="metadata" class="nav-item">
+                <a class="nav-link" href="#{{elementid}}_vtracks_metadata" role="tab" data-toggle="tab">
+                    {{#str}} metadata, tiny_media {{/str}}
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div data-track-kind="subtitles" class="tab-pane active"
+                 id="{{elementid}}_vtracks_subtitles">
+                <div class="trackhelp">
+                    {{#subtitleshelpicon}}
+                        {{> core/help_icon }}
+                    {{/subtitleshelpicon}}
+                </div>
+                {{#video.tracks.subtitles}}
+                    <div class="mb-1 tiny_media_track">
+                        <div class="tiny_media_source tiny_media_track_source">
+                            <div class="mb-1">
+                                <label for="url-input">
+                                    {{#str}} subtitlessourcelabel, tiny_media {{/str}}
+                                </label>
+                                <div class="input-group input-append w-100">
+                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    <span class="input-group-append">
+                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
+                                <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
+                                    {{#langsinstalled}}
+                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                    {{/langsinstalled}}
+                                </optgroup>
+                                <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
+                                    {{#langsavailable}}
+                                        <option value="{{code}}">{{lang}}</option>
+                                    {{/langsavailable}}
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input tiny_media_track_default" {{# defaultTrack }}checked{{/ defaultTrack }}/>
+                            <label class="form-check-label">{{#str}} default, tiny_media {{/str}}</label>
+                        </div>
+                        <div class="addcomponent-wrapper">
+                            <a href="#" class="addcomponent">
+                                {{#str}} addsubtitlestrack, tiny_media {{/str}}
+                            </a>
+                        </div>
+                        <div class="removecomponent-wrapper hidden">
+                            <a href="#" class="removecomponent">
+                                {{#str}} remove, tiny_media {{/str}}
+                            </a>
+                        </div>
+                    </div>
+                {{/video.tracks.subtitles}}
+                {{^video.tracks.subtitles}}
+                    <div class="mb-1 tiny_media_track">
+                        <div class="tiny_media_source tiny_media_track_source">
+                            <div class="mb-1">
+                                <label for="url-input">
+                                    {{#str}} subtitlessourcelabel, tiny_media {{/str}}
+                                </label>
+                                <div class="input-group input-append w-100">
+                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    <span class="input-group-append">
+                <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+            </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry">
+                                <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
+                                    {{#langsinstalled}}
+                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                    {{/langsinstalled}}
+                                </optgroup>
+                                <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
+                                    {{#langsavailable}}
+                                        <option value="{{code}}">{{lang}}</option>
+                                    {{/langsavailable}}
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text"/>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input tiny_media_track_default"/>
+                            <label class="form-check-label">{{#str}} default, tiny_media {{/str}}</label>
+                        </div>
+                        <div class="addcomponent-wrapper">
+                            <a href="#" class="addcomponent">
+                                {{#str}} addsubtitlestrack, tiny_media {{/str}}
+                            </a>
+                        </div>
+                        <div class="removecomponent-wrapper hidden">
+                            <a href="#" class="removecomponent">
+                                {{#str}} remove, tiny_media {{/str}}
+                            </a>
+                        </div>
+                    </div>
+                {{/video.tracks.subtitles}}
+            </div>
+            <div data-track-kind="captions" class="tab-pane"
+                 id="{{elementid}}_vtracks_captions">
+                <div class="trackhelp">
+                    {{#captionshelpicon}}
+                        {{> core/help_icon }}
+                    {{/captionshelpicon}}
+                </div>
+                {{#video.tracks.captions}}
+                    <div class="mb-1 tiny_media_track">
+                        <div class="tiny_media_source tiny_media_track_source">
+                            <div class="mb-1">
+                                <label for="url-input">
+                                    {{#str}} captionssourcelabel, tiny_media {{/str}}
+                                </label>
+                                <div class="input-group input-append w-100">
+                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    <span class="input-group-append">
+                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
+                                <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
+                                    {{#langsinstalled}}
+                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                    {{/langsinstalled}}
+                                </optgroup>
+                                <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
+                                    {{#langsavailable}}
+                                        <option value="{{code}}">{{lang}}</option>
+                                    {{/langsavailable}}
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input tiny_media_track_default" {{# defaultTrack }}checked{{/ defaultTrack }}/>
+                            <label class="form-check-label">{{#str}} default, tiny_media {{/str}}</label>
+                        </div>
+                        <div class="addcomponent-wrapper">
+                            <a href="#" class="addcomponent">
+                                {{#str}} addcaptionstrack, tiny_media {{/str}}
+                            </a>
+                        </div>
+                        <div class="removecomponent-wrapper hidden">
+                            <a href="#" class="removecomponent">
+                                {{#str}} remove, tiny_media {{/str}}
+                            </a>
+                        </div>
+                    </div>
+                {{/video.tracks.captions}}
+                {{^video.tracks.captions}}
+                    <div class="mb-1 tiny_media_track">
+                        <div class="tiny_media_source tiny_media_track_source">
+                            <div class="mb-1">
+                                <label for="url-input">
+                                    {{#str}} captionssourcelabel, tiny_media {{/str}}
+                                </label>
+                                <div class="input-group input-append w-100">
+                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    <span class="input-group-append">
+                <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+            </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry">
+                                <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
+                                    {{#langsinstalled}}
+                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                    {{/langsinstalled}}
+                                </optgroup>
+                                <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
+                                    {{#langsavailable}}
+                                        <option value="{{code}}">{{lang}}</option>
+                                    {{/langsavailable}}
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text"/>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input tiny_media_track_default"/>
+                            <label class="form-check-label">{{#str}} default, tiny_media {{/str}}</label>
+                        </div>
+                        <div class="addcomponent-wrapper">
+                            <a href="#" class="addcomponent">
+                                {{#str}} addcaptionstrack, tiny_media {{/str}}
+                            </a>
+                        </div>
+                        <div class="removecomponent-wrapper hidden">
+                            <a href="#" class="removecomponent">
+                                {{#str}} remove, tiny_media {{/str}}
+                            </a>
+                        </div>
+                    </div>
+                {{/video.tracks.captions}}
+            </div>
+            <div data-track-kind="descriptions" class="tab-pane"
+                 id="{{elementid}}_vtracks_descriptions">
+                <div class="trackhelp">
+                    {{#descriptionshelpicon}}
+                        {{> core/help_icon }}
+                    {{/descriptionshelpicon}}
+                </div>
+                {{#video.tracks.descriptions}}
+                    <div class="mb-1 tiny_media_track">
+                        <div class="tiny_media_source tiny_media_track_source">
+                            <div class="mb-1">
+                                <label for="url-input">
+                                    {{#str}} descriptionssourcelabel, tiny_media {{/str}}
+                                </label>
+                                <div class="input-group input-append w-100">
+                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    <span class="input-group-append">
+                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
+                                <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
+                                    {{#langsinstalled}}
+                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                    {{/langsinstalled}}
+                                </optgroup>
+                                <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
+                                    {{#langsavailable}}
+                                        <option value="{{code}}">{{lang}}</option>
+                                    {{/langsavailable}}
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input tiny_media_track_default" {{# defaultTrack }}checked{{/ defaultTrack }}/>
+                            <label class="form-check-label">{{#str}} default, tiny_media {{/str}}</label>
+                        </div>
+                        <div class="addcomponent-wrapper">
+                            <a href="#" class="addcomponent">
+                                {{#str}} adddescriptionstrack, tiny_media {{/str}}
+                            </a>
+                        </div>
+                        <div class="removecomponent-wrapper hidden">
+                            <a href="#" class="removecomponent">
+                                {{#str}} remove, tiny_media {{/str}}
+                            </a>
+                        </div>
+                    </div>
+                {{/video.tracks.descriptions}}
+                {{^video.tracks.descriptions}}
+                    <div class="mb-1 tiny_media_track">
+                        <div class="tiny_media_source tiny_media_track_source">
+                            <div class="mb-1">
+                                <label for="url-input">
+                                    {{#str}} descriptionssourcelabel, tiny_media {{/str}}
+                                </label>
+                                <div class="input-group input-append w-100">
+                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    <span class="input-group-append">
+                <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+            </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry">
+                                <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
+                                    {{#langsinstalled}}
+                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                    {{/langsinstalled}}
+                                </optgroup>
+                                <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
+                                    {{#langsavailable}}
+                                        <option value="{{code}}">{{lang}}</option>
+                                    {{/langsavailable}}
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text"/>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input tiny_media_track_default"/>
+                            <label class="form-check-label">{{#str}} default, tiny_media {{/str}}</label>
+                        </div>
+                        <div class="addcomponent-wrapper">
+                            <a href="#" class="addcomponent">
+                                {{#str}} adddescriptionstrack, tiny_media {{/str}}
+                            </a>
+                        </div>
+                        <div class="removecomponent-wrapper hidden">
+                            <a href="#" class="removecomponent">
+                                {{#str}} remove, tiny_media {{/str}}
+                            </a>
+                        </div>
+                    </div>
+                {{/video.tracks.descriptions}}
+            </div>
+            <div data-track-kind="chapters" class="tab-pane"
+                 id="{{elementid}}_vtracks_chapters">
+                <div class="trackhelp">
+                    {{#chaptershelpicon}}
+                        {{> core/help_icon }}
+                    {{/chaptershelpicon}}
+                </div>
+                {{#video.tracks.chapters}}
+                    <div class="mb-1 tiny_media_track">
+                        <div class="tiny_media_source tiny_media_track_source">
+                            <div class="mb-1">
+                                <label for="url-input">
+                                    {{#str}} chapterssourcelabel, tiny_media {{/str}}
+                                </label>
+                                <div class="input-group input-append w-100">
+                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    <span class="input-group-append">
+                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
+                                <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
+                                    {{#langsinstalled}}
+                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                    {{/langsinstalled}}
+                                </optgroup>
+                                <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
+                                    {{#langsavailable}}
+                                        <option value="{{code}}">{{lang}}</option>
+                                    {{/langsavailable}}
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input tiny_media_track_default" {{# defaultTrack }}checked{{/ defaultTrack }}/>
+                            <label class="form-check-label">{{#str}} default, tiny_media {{/str}}</label>
+                        </div>
+                        <div class="addcomponent-wrapper">
+                            <a href="#" class="addcomponent">
+                                {{#str}} addchapterstrack, tiny_media {{/str}}
+                            </a>
+                        </div>
+                        <div class="removecomponent-wrapper hidden">
+                            <a href="#" class="removecomponent">
+                                {{#str}} remove, tiny_media {{/str}}
+                            </a>
+                        </div>
+                    </div>
+                {{/video.tracks.chapters}}
+                {{^video.tracks.chapters}}
+                    <div class="mb-1 tiny_media_track">
+                        <div class="tiny_media_source tiny_media_track_source">
+                            <div class="mb-1">
+                                <label for="url-input">
+                                    {{#str}} chapterssourcelabel, tiny_media {{/str}}
+                                </label>
+                                <div class="input-group input-append w-100">
+                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    <span class="input-group-append">
+                <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+            </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry">
+                                <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
+                                    {{#langsinstalled}}
+                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                    {{/langsinstalled}}
+                                </optgroup>
+                                <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
+                                    {{#langsavailable}}
+                                        <option value="{{code}}">{{lang}}</option>
+                                    {{/langsavailable}}
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text"/>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input tiny_media_track_default"/>
+                            <label class="form-check-label">{{#str}} default, tiny_media {{/str}}</label>
+                        </div>
+                        <div class="addcomponent-wrapper">
+                            <a href="#" class="addcomponent">
+                                {{#str}} addchapterstrack, tiny_media {{/str}}
+                            </a>
+                        </div>
+                        <div class="removecomponent-wrapper hidden">
+                            <a href="#" class="removecomponent">
+                                {{#str}} remove, tiny_media {{/str}}
+                            </a>
+                        </div>
+                    </div>
+                {{/video.tracks.chapters}}
+            </div>
+            <div data-track-kind="metadata" class="tab-pane"
+                 id="{{elementid}}_vtracks_metadata">
+                <div class="trackhelp">{{{helpStrings.metadata}}}</div>
+                <div class="trackhelp">
+                    {{#metadatahelpicon}}
+                        {{> core/help_icon }}
+                    {{/metadatahelpicon}}
+                </div>
+                {{#video.tracks.metadata}}
+                    <div class="mb-1 tiny_media_track">
+                        <div class="tiny_media_source tiny_media_track_source">
+                            <div class="mb-1">
+                                <label for="url-input">
+                                    {{#str}} metadatasourcelabel, tiny_media {{/str}}
+                                </label>
+                                <div class="input-group input-append w-100">
+                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    <span class="input-group-append">
+                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
+                                <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
+                                    {{#langsinstalled}}
+                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                    {{/langsinstalled}}
+                                </optgroup>
+                                <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
+                                    {{#langsavailable}}
+                                        <option value="{{code}}">{{lang}}</option>
+                                    {{/langsavailable}}
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input tiny_media_track_default" {{# defaultTrack }}checked{{/ defaultTrack }}/>
+                            <label class="form-check-label">{{#str}} default, tiny_media {{/str}}</label>
+                        </div>
+                        <div class="addcomponent-wrapper">
+                            <a href="#" class="addcomponent">
+                                {{#str}} addmetadatatrack, tiny_media {{/str}}
+                            </a>
+                        </div>
+                        <div class="removecomponent-wrapper hidden">
+                            <a href="#" class="removecomponent">
+                                {{#str}} remove, tiny_media {{/str}}
+                            </a>
+                        </div>
+                    </div>
+                {{/video.tracks.metadata}}
+                {{^video.tracks.metadata}}
+                    <div class="mb-1 tiny_media_track">
+                        <div class="tiny_media_source tiny_media_track_source">
+                            <div class="mb-1">
+                                <label for="url-input">
+                                    {{#str}} metadatasourcelabel, tiny_media {{/str}}
+                                </label>
+                                <div class="input-group input-append w-100">
+                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    <span class="input-group-append">
+                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry">
+                                <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
+                                    {{#langsinstalled}}
+                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                    {{/langsinstalled}}
+                                </optgroup>
+                                <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
+                                    {{#langsavailable}}
+                                        <option value="{{code}}">{{lang}}</option>
+                                    {{/langsavailable}}
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text"/>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input tiny_media_track_default"/>
+                            <label class="form-check-label">{{#str}} default, tiny_media {{/str}}</label>
+                        </div>
+                        <div class="addcomponent-wrapper">
+                            <a href="#" class="addcomponent">
+                                {{#str}} addmetadatatrack, tiny_media {{/str}}
+                            </a>
+                        </div>
+                        <div class="removecomponent-wrapper hidden">
+                            <a href="#" class="removecomponent">
+                                {{#str}} remove, tiny_media {{/str}}
+                            </a>
+                        </div>
+                    </div>
+                {{/video.tracks.metadata}}
+            </div>
+        </div>
+    </div>
+</fieldset>

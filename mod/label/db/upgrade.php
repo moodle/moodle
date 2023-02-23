@@ -45,18 +45,28 @@
 defined('MOODLE_INTERNAL') || die;
 
 function xmldb_label_upgrade($oldversion) {
-    global $CFG;
-
-    // Automatically generated Moodle v3.6.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.7.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.8.0 release upgrade line.
-    // Put any upgrade step following this.
+    global $CFG, $DB;
 
     // Automatically generated Moodle v3.9.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2022101300) {
+        $module = $DB->get_field('modules', 'id', ['name' => 'label']);
+        $DB->execute('
+            UPDATE {course_modules}
+               SET visible = 0, visibleoncoursepage = 1
+             WHERE module = :module
+                   AND visible = 1
+                   AND visibleoncoursepage = 0',
+            ['module' => $module]
+        );
+        upgrade_mod_savepoint(true, 2022101300, 'label');
+    }
+
+    // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

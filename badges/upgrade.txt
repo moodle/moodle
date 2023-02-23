@@ -1,5 +1,7 @@
 This files describes API changes in /badges/*,
 information provided here is intended especially for developers.
+=== 4.0 ===
+* Function print_badge_tabs has been deprecated in favour of manage_badge_action_bar instead
 
 === 3.11 ===
 * $CFG->badges_site_backpack setting has been completely removed because it's not required anymore. From now, the primary

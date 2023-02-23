@@ -1,0 +1,74 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_data/view_no_fields_nomanagers
+
+    Form containing all database presets displayed within a table.
+
+    Context variables required for this template:
+    * noitemsimgurl - The image url.
+    * importentriesbutton stdClass - Import entries single button to be rendered
+    * addentrybutton stdClass - Add entry single button to be rendered
+
+    Example context (json):
+    {
+        "noitemsimgurl": "https://moodlesite/theme/image.php/boost/mod_data/1535727318/nofields",
+        "importentriesbutton": {
+            "id" : "id1",
+            "method" : "get",
+            "url" : "#",
+            "primary" : false,
+            "tooltip" : "This is a tooltip",
+            "label" : "Button1",
+            "attributes": [
+                {
+                  "name": "data-attribute",
+                  "value": "no"
+                }
+            ]
+        },
+        "addentrybutton": {
+            "id" : "id2",
+            "method" : "get",
+            "url" : "#",
+            "primary" : true,
+            "tooltip" : "This is a tooltip",
+            "label" : "Button2",
+            "attributes": [
+                {
+                  "name": "data-attribute",
+                  "value": "yeah"
+                }
+            ]
+        }
+    }
+}}
+<div class="text-xs-center text-center mt-4" data-region="empty-message">
+    <img
+            src="{{noitemsimgurl}}"
+            alt="{{#str}} norecords, mod_data {{/str}}"
+            role="presentation"
+            style="height: 70px; width: 70px;"
+    >
+    <h5 class="h5 mt-3 mb-0">{{#str}} norecords, mod_data {{/str}}</h5>
+
+    <div class="mt-5 mb-0" id="action_bar">
+        {{#importentriesbutton}}
+            {{> core/single_button }}
+        {{/importentriesbutton}}
+        {{#addentrybutton}}
+            {{> core/single_button }}
+        {{/addentrybutton}}
+    </div>
+</div>

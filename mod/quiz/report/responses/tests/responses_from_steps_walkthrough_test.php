@@ -14,40 +14,37 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Quiz attempt walk through using data from csv file.
- *
- * @package    quiz_statistics
- * @category   phpunit
- * @copyright  2013 The Open University
- * @author     Jamie Pratt <me@jamiep.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace quiz_responses;
+
+use mod_quiz\quiz_attempt;
+use question_bank;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/quiz/tests/attempt_walkthrough_from_csv_test.php');
-require_once($CFG->dirroot . '/mod/quiz/report/default.php');
 require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 
 /**
  * Quiz attempt walk through using data from csv file.
  *
- * @package    quiz_statistics
- * @category   phpunit
+ * @package    quiz_responses
+ * @category   test
  * @copyright  2013 The Open University
  * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_report_responses_from_steps_testcase extends mod_quiz_attempt_walkthrough_from_csv_testcase {
-    protected function get_full_path_of_csv_file($setname, $test) {
+class responses_from_steps_walkthrough_test extends \mod_quiz\attempt_walkthrough_from_csv_test {
+    protected function get_full_path_of_csv_file(string $setname, string $test): string {
         // Overridden here so that __DIR__ points to the path of this file.
         return  __DIR__."/fixtures/{$setname}{$test}.csv";
     }
 
-    protected $files = array('questions', 'steps', 'responses');
+    /**
+     * @var string[] names of the files which contain the test data.
+     */
+    protected $files = ['questions', 'steps', 'responses'];
 
     /**
      * Create a quiz add questions to it, walk through quiz attempts and then check results.
@@ -69,7 +66,7 @@ class quiz_report_responses_from_steps_testcase extends mod_quiz_attempt_walkthr
             $responses = $this->explode_dot_separated_keys_to_make_subindexs($responsesfromcsv);
 
             if (!isset($quizattemptids[$responses['quizattempt']])) {
-                throw new coding_exception("There is no quizattempt {$responses['quizattempt']}!");
+                throw new \coding_exception("There is no quizattempt {$responses['quizattempt']}!");
             }
             $this->assert_response_test($quizattemptids[$responses['quizattempt']], $responses);
         }
@@ -92,10 +89,10 @@ class quiz_report_responses_from_steps_testcase extends mod_quiz_attempt_walkthr
             $stepswithsubmit = $qa->get_steps_with_submitted_response_iterator();
             $step = $stepswithsubmit[$responses['submittedstepno']];
             if (null === $step) {
-                throw new coding_exception("There is no step no {$responses['submittedstepno']} ".
+                throw new \coding_exception("There is no step no {$responses['submittedstepno']} ".
                                            "for slot $slot in quizattempt {$responses['quizattempt']}!");
             }
-            foreach (array('responsesummary', 'fraction', 'state') as $column) {
+            foreach (['responsesummary', 'fraction', 'state'] as $column) {
                 if (isset($tests[$column]) && $tests[$column] != '') {
                     switch($column) {
                         case 'responsesummary' :

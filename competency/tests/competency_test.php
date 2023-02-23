@@ -14,18 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Competency tests.
- *
- * @package    core_competency
- * @copyright  2016 Frédéric Massart - FMCorz.net
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
-
-use core_competency\competency;
+namespace core_competency;
 
 /**
  * Competency testcase.
@@ -34,7 +23,7 @@ use core_competency\competency;
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_competency_competency_testcase extends advanced_testcase {
+class competency_test extends \advanced_testcase {
 
     public function test_get_framework_depth() {
         $this->resetAfterTest();

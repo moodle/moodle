@@ -62,8 +62,13 @@
     }
 
 }}
-<div class="container-fluid mb-2">
-    <div class="row">
-        {{>core/url_select}}
-    </div>
+<div class="container-fluid tertiary-navigation">
+    {{#reportselect}}
+        <div class="row">
+            <div class="navitem">
+                {{>core/url_select}}
+            </div>
+        </div>
+    {{/reportselect}}
 </div>
+<h3>{{heading}}</h3>

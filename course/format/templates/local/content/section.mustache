@@ -19,6 +19,9 @@
 
     Displays a course section.
 
+    Note: This template is a wrapper around the section/content template to allow course formats and theme designers to
+    modify parts of the wrapper without having to copy/paste the entire template.
+
     Example context (json):
     {
         "num": 3,
@@ -26,6 +29,7 @@
         "controlmenu": "[tools menu]",
         "header": {
             "name": "Section title",
+            "title": "<a href=\"http://moodle/course/view.php?id=5#section-0\">Section title</a>",
             "url": "#",
             "ishidden": true
         },
@@ -39,6 +43,7 @@
                         },
                         "id": 3,
                         "module": "forum",
+                        "anchor": "activity-3",
                         "extraclasses": "newmessages"
                     }
                 },
@@ -49,6 +54,7 @@
                             "hasname": "true"
                         },
                         "id": 4,
+                        "anchor": "activity-4",
                         "module": "assign",
                         "extraclasses": ""
                     }
@@ -73,10 +79,11 @@
         "cmcontrols": "[Add an activity or resource]",
         "iscoursedisplaymultipage": true,
         "sectionreturnid": 0,
-        "contentexpanded": true,
+        "contentcollapsed": false,
         "insertafter": true,
         "numsections": 42,
-        "sitehome": false
+        "sitehome": false,
+        "highlightedlabel" : "Highlighted"
     }
 }}
 <li id="section-{{num}}"
@@ -94,54 +101,8 @@
         data-id="{{id}}"
         data-number="{{num}}"
     >
-        {{#singleheader}} {{> core_courseformat/local/content/section/header }} {{/singleheader}}
-        {{#header}} {{> core_courseformat/local/content/section/header }} {{/header}}
-        {{#restrictionlock}}
-            <div class="align-self-center ml-2">
-                {{#pix}}t/unlock, core{{/pix}}
-            </div>
-        {{/restrictionlock}}
-        <div data-region="sectionbadges" class="sectionbadges d-flex align-items-center">
-            {{> core_courseformat/local/content/section/badges }}
-        </div>
-        {{#collapsemenu}}
-        <div class="flex-fill d-flex justify-content-end mr-2 align-self-center">
-            <a
-                id="collapsesections"
-                class="section-collapsemenu"
-                href="#"
-                aria-expanded="true"
-                role="button"
-                data-toggle="toggleall"
-            >
-                <span class="collapseall">{{#str}}collapseall{{/str}}</span>
-                <span class="expandall">{{#str}}expandall{{/str}}</span>
-            </a>
-            </div>
-        {{/collapsemenu}}
-        {{#controlmenu}}
-            {{> core_courseformat/local/content/section/controlmenu }}
-        {{/controlmenu}}
-    </div>
-    <div id="coursecontentcollapse{{num}}"
-         class="content {{^iscoursedisplaymultipage}}
-             {{^sitehome}}course-content-item-content collapse {{#contentexpanded}}show{{/contentexpanded}}{{/sitehome}}
-         {{/iscoursedisplaymultipage}}">
-         <div class="{{#hasavailability}}description small{{/hasavailability}} my-3">
-            {{#summary}}
-                {{> core_courseformat/local/content/section/summary }}
-            {{/summary}}
-            {{#availability}}
-                {{> core_courseformat/local/content/section/availability }}
-            {{/availability}}
-        </div>
-        {{#cmsummary}} {{> core_courseformat/local/content/section/cmsummary }} {{/cmsummary}}
-        {{#cmlist}} {{> core_courseformat/local/content/section/cmlist }} {{/cmlist}}
-        {{{cmcontrols}}}
-        {{#insertafter}}
-            {{#numsections}}
-                {{> core_courseformat/local/content/addsection}}
-            {{/numsections}}
-        {{/insertafter}}
+        {{$ core_courseformat/local/content/section/content }}
+            {{> core_courseformat/local/content/section/content }}
+        {{/ core_courseformat/local/content/section/content }}
     </div>
 </li>

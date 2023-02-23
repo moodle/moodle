@@ -43,7 +43,7 @@ if (!isloggedin() or isguestuser()) {
 }
 
 if (!is_enabled_auth('mnet')) {
-    print_error('mnetdisable');
+    throw new \moodle_exception('mnetdisable');
 }
 
 // If hostid hasn't been specified, try getting it using wwwroot
@@ -63,7 +63,7 @@ $mnetauth = get_auth_plugin('mnet');
 $url      = $mnetauth->start_jump_session($hostid, $wantsurl);
 
 if (empty($url)) {
-    print_error('DEBUG: Jump session was not started correctly or blank URL returned.'); // TODO: errors
+    throw new \moodle_exception('DEBUG: Jump session was not started correctly or blank URL returned.'); // TODO: errors.
 }
 redirect($url);
 

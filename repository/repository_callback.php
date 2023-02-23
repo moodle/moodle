@@ -55,7 +55,7 @@ if (file_exists($CFG->dirroot.'/repository/'.$type.'/lib.php')) {
     $classname = 'repository_' . $type;
     $repo = new $classname($repo_id, $repository->contextid, array('type'=>$type));
 } else {
-    print_error('invalidplugin', 'repository', $type);
+    throw new \moodle_exception('invalidplugin', 'repository', $type);
 }
 
 // post callback

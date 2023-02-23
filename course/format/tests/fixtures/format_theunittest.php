@@ -37,6 +37,10 @@ class format_theunittest extends core_courseformat\base {
                     'default' => 0,
                     'type' => PARAM_INT,
                 ),
+                'summary_editor' => array(
+                    'default' => '',
+                    'type' => PARAM_RAW,
+                ),
             );
         }
         if ($foreditform && !isset($courseformatoptions['hideoddsections']['label'])) {
@@ -50,6 +54,10 @@ class format_theunittest extends core_courseformat\base {
                     'label' => 'Hide odd sections',
                     'element_type' => 'select',
                     'element_attributes' => array($sectionmenu),
+                ),
+                'summary_editor' => array(
+                    'label' => 'Summary Text',
+                    'element_type' => 'editor',
                 ),
             );
             $courseformatoptions = array_merge_recursive($courseformatoptions, $courseformatoptionsedit);

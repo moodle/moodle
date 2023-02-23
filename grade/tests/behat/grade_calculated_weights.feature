@@ -62,7 +62,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "Course 1":
       | Aggregation | Mean of grades |
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:
@@ -87,7 +87,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "EN Sub category":
       | Item weight | 1.0 |
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:
@@ -108,7 +108,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "EN Test assignment three":
       | Extra credit | 1 |
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:
@@ -127,7 +127,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "EN Test assignment three":
       | Extra credit weight | 1.0 |
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:
@@ -144,7 +144,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "Course 1":
       | Aggregation | Median of grades |
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:
@@ -161,7 +161,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "Course 1":
       | Aggregation | Lowest grade |
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:
@@ -178,7 +178,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "Course 1":
       | Aggregation | Highest grade |
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:
@@ -195,7 +195,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "Course 1":
       | Aggregation | Mode of grades |
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:
@@ -216,7 +216,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "EN Test assignment three":
       | Extra credit | 1 |
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:
@@ -235,7 +235,7 @@ Feature: We can understand the gradebook user report
     And I set the following settings for grade item "EN Test assignment three":
       | Extra credit | 1 |
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
 
     # Check the values in the weights column.
     Then the following should exist in the "user-grade" table:

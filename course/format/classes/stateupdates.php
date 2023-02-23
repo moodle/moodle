@@ -30,8 +30,8 @@ use JsonSerializable;
  *
  * Each format plugin could extend this class to provide new updates to the frontend
  * mutation module.
- * Extended classes should be locate in "format_XXX\course" namespace and
- * extends core_course\stateupdates.
+ * Extended classes should be located in "format_XXX\course" namespace and
+ * extends {@see \core_courseformat\stateupdates}.
  *
  * @package    core_course
  * @copyright  2021 Ferran Recio <ferran@moodle.com>
@@ -111,14 +111,15 @@ class stateupdates implements JsonSerializable {
         }
         $course = $this->format->get_course();
         $modinfo = course_modinfo::instance($course);
+        $format = $this->format;
 
         $section = $modinfo->get_section_info_by_id($sectionid, MUST_EXIST);
 
-        if (!$section->uservisible) {
+        if (!$format->is_section_visible($section)) {
             return;
         }
 
-        $sectionclass = $this->format->get_output_classname('state\\section');
+        $sectionclass = $format->get_output_classname('state\\section');
         $currentstate = new $sectionclass($this->format, $section);
 
         $this->add_update('section', $action, $currentstate->export_for_template($this->output));
@@ -127,9 +128,21 @@ class stateupdates implements JsonSerializable {
     /**
      * Add track about a section deleted.
      *
+     * @deprecated since Moodle 4.1 MDL-74925 - please call add_section_remove() instead.
      * @param int $sectionid The affected section id.
      */
     public function add_section_delete(int $sectionid): void {
+        debugging('add_section_delete() is deprecated. Please use add_section_remove() instead.', DEBUG_DEVELOPER);
+
+        $this->add_update('section', 'remove', (object)['id' => $sectionid]);
+    }
+
+    /**
+     * Add track about a section removed.
+     *
+     * @param int $sectionid The affected section id.
+     */
+    public function add_section_remove(int $sectionid): void {
         $this->add_update('section', 'remove', (object)['id' => $sectionid]);
     }
 
@@ -162,12 +175,13 @@ class stateupdates implements JsonSerializable {
 
         $cm = $modinfo->get_cm($cmid);
         $section = $modinfo->get_section_info_by_id($cm->section);
+        $format = $this->format;
 
         if (!$section->uservisible || !$cm->is_visible_on_course_page()) {
             return;
         }
 
-        $cmclass = $this->format->get_output_classname('state\\cm');
+        $cmclass = $format->get_output_classname('state\\cm');
         $currentstate = new $cmclass($this->format, $section, $cm);
 
         $this->add_update('cm', $action, $currentstate->export_for_template($this->output));
@@ -176,9 +190,21 @@ class stateupdates implements JsonSerializable {
     /**
      * Add track about a course module deleted.
      *
+     * @deprecated since Moodle 4.1 MDL-74925 - please call add_cm_remove() instead.
      * @param int $cmid the affected course module id
      */
     public function add_cm_delete(int $cmid): void {
+        debugging('add_cm_delete() is deprecated. Please use add_cm_remove() instead.', DEBUG_DEVELOPER);
+
+        $this->add_update('cm', 'remove', (object)['id' => $cmid]);
+    }
+
+    /**
+     * Add track about a course module removed.
+     *
+     * @param int $cmid the affected course module id
+     */
+    public function add_cm_remove(int $cmid): void {
         $this->add_update('cm', 'remove', (object)['id' => $cmid]);
     }
 
@@ -186,7 +212,7 @@ class stateupdates implements JsonSerializable {
      * Add a valid update message to the update list.
      *
      * @param string $name the update name
-     * @param string $action the update action (usually update, create, delete)
+     * @param string $action the update action (usually update, create, remove)
      * @param stdClass $fields the object fields
      */
     protected function add_update(string $name, string $action, stdClass $fields): void {

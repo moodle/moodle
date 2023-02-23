@@ -27,26 +27,33 @@
 
     Example context (json):
     {
+        "html": {
+            "hasanyactions": true,
+            "posts": "<article id='p33' class='forum-post-container mb-2' data-post-id='33'></article>",
+            "modeselectorform": "<div class='singleselect d-inline-block'> <form method='get' action='http://localhost/m/pg_stable_master/mod/forum/discuss.php' class='form-inline' id='mode'></div>",
+            "subscribe": null,
+            "movediscussion": null,
+            "pindiscussion": null,
+            "neighbourlinks": "<div class='discussion-nav clearfix'></div>",
+            "exportdiscussion": null
+        },
+        "throttlingwarningmsg": "You are approaching the posting threshold. You have posted 3 times in the last 1 week and the limit is 4 posts."
     }
 }}
 
 <div id="discussion-container-{{uniqid}}" data-content="forum-discussion">
 {{#html}}
-    {{#hasanyactions}}
-    <div class="d-flex flex-wrap flex-row-reverse mb-3 text-right" data-container="discussion-tools">
-        <div class="pl-1">
-            <div class="discussion-settings-menu">
-                {{> mod_forum/forum_action_menu}}
-            </div>
-        </div>
-    </div>
-    {{/hasanyactions}}
     {{{neighbourlinks}}}
 
-    <div class="d-flex flex-wrap mb-1">
+    <div class="d-flex flex-column flex-sm-row mb-1">
         <div>{{{exportdiscussion}}}</div>
         <div class="{{#exportdiscussion}}ml-2{{/exportdiscussion}}">{{{modeselectorform}}}</div>
         <div class="ml-2">{{{movediscussion}}}</div>
+        {{#hasanyactions}}
+            <div class="drop-down ml-auto" data-container="discussion-tools">
+                {{> mod_forum/forum_action_menu}}
+            </div>
+        {{/hasanyactions}}
     </div>
 {{/html}}
 
@@ -82,7 +89,7 @@ function(
 ) {
     var root = $("[data-content='forum-discussion']");
     Discussion.init(root);
-    PostsList.init(root);
+    PostsList.init(root, {{#quote}}{{throttlingwarningmsg}}{{/quote}});
     root = $('[data-container="discussion-tools"]');
     LockToggle.init(root, true);
     FavouriteToggle.init(root, true, function(toggleElement, context) {

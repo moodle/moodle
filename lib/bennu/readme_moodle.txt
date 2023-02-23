@@ -10,7 +10,7 @@ Mozilla Sunbird.
 Information
 -----------
 
-* Bennu version: based on upstream 0.1 from 2005, heavily customized since then
+* Bennu version: based on upstream 0.2, heavily customized since then
 * Licence: GNU LGPL 2.1
 * WWW: http://bennu.sourceforge.net/
 
@@ -28,3 +28,5 @@ Changelog
 9/ MDL-60391: replace create_function() with lambda function for PHP 7.2 compatibility (13 Oct 2017)
 10/ MDL-62914: added handling for TZURL property (13 July 2018)
 11/ MDL-67029: replace curly by square brackets for string offsets. PHP 7.4 compatibility (25 Oct 2019)
+12/ MDL-74866: fixed parameter parsing if the value is wrapped by DQUOTE character (28 Jul 2022)
+13/ MDL-76333: replaced strftime() with date() for PHP 8.1 compatibility (16 Nov 2022)

@@ -214,7 +214,6 @@ define([
         if (contextId) {
             // Bind click events to calendar days.
             root.on('click', SELECTORS.DAY, function(e) {
-
                 var target = $(e.target);
                 const displayingSmallBlockCalendar = root.parents('aside').data('blockregion') === 'side-pre';
 
@@ -223,8 +222,9 @@ define([
                     const url = '?view=day&time=' + dateContainer.data('day-timestamp');
                     window.location.assign(Config.wwwroot + '/calendar/view.php' + url);
                 } else {
-                    if (!target.is(SELECTORS.VIEW_DAY_LINK) &&
-                        !target.is(SELECTORS.DAY_NUMBER_CIRCLE) && !target.is(SELECTORS.DAY_NUMBER)) {
+                    const hasViewDayLink = target.closest(SELECTORS.VIEW_DAY_LINK).length;
+                    const shouldShowNewEventModal = !hasViewDayLink;
+                    if (shouldShowNewEventModal) {
                         var startTime = $(this).attr('data-new-event-timestamp');
                         eventFormPromise.then(function(modal) {
                             var wrapper = target.closest(CalendarSelectors.wrapper);
@@ -240,9 +240,9 @@ define([
                             modal.show();
                             return;
                         }).fail(Notification.exception);
-                        e.preventDefault();
                     }
                 }
+                e.preventDefault();
             });
         }
     };

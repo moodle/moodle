@@ -36,6 +36,35 @@ class base_test extends advanced_testcase {
         require_once($CFG->dirroot . '/course/format/tests/fixtures/format_theunittest_output_course_format_invalidoutput.php');
     }
 
+    /**
+     * Tests the save and load functionality.
+     *
+     * @author Jason den Dulk
+     * @covers \core_courseformat
+     */
+    public function test_courseformat_saveandload() {
+        $this->resetAfterTest();
+
+        $courseformatoptiondata = (object) [
+            "hideoddsections" => 1,
+            'summary_editor' => [
+                'text' => '<p>Somewhere over the rainbow</p><p>The <b>quick</b> brown fox jumpos over the lazy dog.</p>',
+                'format' => 1
+            ]
+        ];
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course(array('format' => 'theunittest'));
+        $this->assertEquals('theunittest', $course1->format);
+        course_create_sections_if_missing($course1, array(0, 1));
+
+        $courseformat = course_get_format($course1);
+        $courseformat->update_course_format_options($courseformatoptiondata);
+
+        $savedcourseformatoptiondata = $courseformat->get_format_options();
+
+        $this->assertEqualsCanonicalizing($courseformatoptiondata, (object) $savedcourseformatoptiondata);
+    }
+
     public function test_available_hook() {
         global $DB;
         $this->resetAfterTest();
@@ -261,9 +290,7 @@ class base_test extends advanced_testcase {
      * @covers ::get_sections_preferences
      */
     public function test_get_sections_preferences() {
-
         $this->resetAfterTest();
-
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
         $user = $generator->create_and_enrol($course, 'student');
@@ -289,7 +316,36 @@ class base_test extends advanced_testcase {
             (object)['pref1' => true],
             $preferences[2]
         );
+    }
 
+    /**
+     * Test for the default delete format data behaviour.
+     *
+     * @covers ::set_sections_preference
+     */
+    public function test_set_sections_preference() {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $user = $generator->create_and_enrol($course, 'student');
+
+        $format = course_get_format($course);
+        $this->setUser($user);
+
+        // Load data from user 1.
+        $format->set_sections_preference('pref1', [1, 2]);
+        $format->set_sections_preference('pref2', [1]);
+        $format->set_sections_preference('pref3', []);
+
+        $preferences = $format->get_sections_preferences();
+        $this->assertEquals(
+            (object)['pref1' => true, 'pref2' => true],
+            $preferences[1]
+        );
+        $this->assertEquals(
+            (object)['pref1' => true],
+            $preferences[2]
+        );
     }
 
     /**

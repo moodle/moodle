@@ -32,6 +32,8 @@ Feature: Users can edit tags to add description or rename
     And I log out
     When I log in as "editor1"
     And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     # TODO MDL-57120 site "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
@@ -57,6 +59,8 @@ Feature: Users can edit tags to add description or rename
   Scenario: Manager can change tag description, related tags and rename the tag from tag view page
     When I log in as "manager1"
     And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     # TODO MDL-57120 site "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
@@ -90,6 +94,8 @@ Feature: Users can edit tags to add description or rename
   Scenario: Renaming the tag from tag view page
     When I log in as "manager1"
     And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
       # TODO MDL-57120 site "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Tags" "link" in the "Navigation" "block"
@@ -218,6 +224,21 @@ Feature: Users can edit tags to add description or rename
     And I should see "Turtle"
     # Even though Turtle was not standard but at least one of combined tags was (Neverusedtag). Now Turtle is also standard.
     And "Remove from standard tags" "link" should exist in the "Turtle" "table_row"
+
+  @javascript
+  Scenario: Combining all tags
+    When I log in as "manager1"
+    And I navigate to "Appearance > Manage tags" in site administration
+    And I follow "Default collection"
+    And I set the field "Select all" to "1"
+    And I press "Combine selected"
+    And I set the field "Turtle" in the "Combine selected" "dialogue" to "1"
+    And I click on "Continue" "button" in the "Combine selected" "dialogue"
+    Then I should see "Tags are combined"
+    And I should not see "Cat"
+    And I should not see "Dog"
+    And I should see "Turtle"
+    And I should not see "Neverusedtag"
 
   Scenario: Filtering tags
     When I log in as "manager1"

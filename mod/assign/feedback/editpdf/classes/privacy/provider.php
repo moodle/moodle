@@ -106,7 +106,7 @@ class provider implements
         $currentpath[] = get_string('privacy:path', 'assignfeedback_editpdf');
         $assign = $exportdata->get_assign();
         $plugin = $assign->get_plugin_by_type('assignfeedback', 'editpdf');
-        $fileareas = $plugin->get_file_areas();
+        $fileareas = $plugin->get_user_data_file_areas();
         $grade = $exportdata->get_pluginobject();
         foreach ($fileareas as $filearea => $notused) {
             writer::with_context($exportdata->get_context())
@@ -175,6 +175,5 @@ class provider implements
         $DB->delete_records_select('assignfeedback_editpdf_annot', "gradeid $sql", $params);
         $DB->delete_records_select('assignfeedback_editpdf_cmnt', "gradeid $sql", $params);
         $DB->delete_records_select('assignfeedback_editpdf_rot', "gradeid $sql", $params);
-        // Submission records in assignfeedback_editpdf_queue will be cleaned up in a scheduled task
     }
 }

@@ -26,8 +26,7 @@ Feature: A teacher can put questions with idnumbers in categories in the questio
       | questioncategory | qtype | name            | questiontext                  | idnumber |
       | Used category    | essay | Test question 1 | Write about whatever you want | q1       |
       | Used category    | essay | Test question 2 | Write about whatever you want | q2       |
-    And I navigate to "Question bank" in current page administration
-    And I choose "Edit question" action for "Test question 2" in the question bank
+    And I am on the "Test question 2" "core_question > edit" page
     And I set the field "ID number" to "q1"
     And I press "submitbutton"
     # This is the standard form warning reminding the user that the idnumber needs to be unique for a category.
@@ -41,12 +40,11 @@ Feature: A teacher can put questions with idnumbers in categories in the questio
     And the following "questions" exist:
       | questioncategory | qtype | name            | questiontext                  | idnumber |
       | Used category    | essay | Test question 1 | Write about whatever you want | q1       |
-    And I navigate to "Question bank" in current page administration
-    And I choose "Edit question" action for "Test question 1" in the question bank
+    And I am on the "Test question 1" "core_question > edit" page
     And I press "Save changes"
     Then I should not see "This ID number is already in use"
 
-  Scenario: Question idnumber conflicts found when saving to a different category.
+  Scenario: Question idnumber conflicts found when saving to the same category.
     When the following "question categories" exist:
       | contextlevel | reference | questioncategory | name       |
       | Course       | C1        | Top              | top        |
@@ -55,13 +53,9 @@ Feature: A teacher can put questions with idnumbers in categories in the questio
     And the following "questions" exist:
       | questioncategory | qtype | name             | questiontext                  | idnumber |
       | Category 1       | essay | Question to edit | Write about whatever you want | q1       |
-      | Category 2       | essay | Other question   | Write about whatever you want | q2       |
-    And I navigate to "Question bank" in current page administration
-    And I choose "Edit question" action for "Question to edit" in the question bank
-    And I set the following fields to these values:
-      | Use this category | 0          |
-      | ID number         | q2         |
-      | Save in category  | Category 2 |
+      | Category 1       | essay | Other question   | Write about whatever you want | q2       |
+    And I am on the "Question to edit" "core_question > edit" page
+    And I set the field "ID number" to "q2"
     And I press "Save changes"
     Then I should see "This ID number is already in use"
 
@@ -77,8 +71,7 @@ Feature: A teacher can put questions with idnumbers in categories in the questio
       | Used category    | essay | Test question 1 | Write about whatever you want | q1       |
       | Used category    | essay | Test question 2 | Write about whatever you want | q2       |
       | Subcategory      | essay | Test question 3 | Write about whatever you want | q3       |
-    When I navigate to "Question bank" in current page administration
-    And I choose "Edit question" action for "Test question 3" in the question bank
+    When I am on the "Test question 3" "core_question > edit" page
     # The q1 idnumber is allowed for this question while it is in the Subcategory.
     And I set the field "ID number" to "q1"
     And I press "submitbutton"

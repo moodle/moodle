@@ -55,7 +55,8 @@ Feature: Staff can assign user roles
   @javascript
   Scenario: Enrol at activity level using custom field search
     When I am on the "page1" "Activity" page logged in as "admin"
-    And I navigate to "Locally assigned roles" in current page administration
+    And I navigate to "Permissions" in current page administration
+    And I select "Locally assigned roles" from the "jump" singleselect
     And I follow "Teacher"
     And I set the field "addselect_searchtext" to "Kermit"
     # The Behat 'I should see' step doesn't work for optgroup labels.
@@ -70,7 +71,8 @@ Feature: Staff can assign user roles
       | user  | role           | contextlevel    | reference |
       | user1 | editingteacher | Activity module | page1     |
     When I am on the "page1" "Activity" page logged in as "admin"
-    And I navigate to "Locally assigned roles" in current page administration
+    And I navigate to "Permissions" in current page administration
+    And I select "Locally assigned roles" from the "jump" singleselect
     And I follow "Teacher"
     And I set the field "removeselect_searchtext" to "Kermit"
     # The Behat 'I should see' step doesn't work for optgroup labels.

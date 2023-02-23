@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the dataset manager.
- *
- * @package   core_analytics
- * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace core_analytics;
 
 /**
  * Unit tests for the dataset manager.
@@ -31,7 +23,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class dataset_manager_testcase extends advanced_testcase {
+class dataset_manager_test extends \advanced_testcase {
 
     /**
      * setUp

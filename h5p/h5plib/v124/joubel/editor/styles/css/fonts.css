@@ -11,11 +11,11 @@
 
 @font-face {
   font-family: 'h5p-metadata-icons';
-  src:  url('fonts/h5p-metadata-icons.eot?cr978i');
-  src:  url('fonts/h5p-metadata-icons.eot?cr978i#iefix') format('embedded-opentype'),
-    url('fonts/h5p-metadata-icons.ttf?cr978i') format('truetype'),
-    url('fonts/h5p-metadata-icons.woff?cr978i') format('woff'),
-    url('fonts/h5p-metadata-icons.svg?cr978i#h5p-metadata-icons') format('svg');
+  src:  url('fonts/h5p-metadata-icons.eot?qj7uq5');
+  src:  url('fonts/h5p-metadata-icons.eot?qj7uq5#iefix') format('embedded-opentype'),
+  url('fonts/h5p-metadata-icons.ttf?qj7uq5') format('truetype'),
+  url('fonts/h5p-metadata-icons.woff?qj7uq5') format('woff'),
+  url('fonts/h5p-metadata-icons.svg?qj7uq5#h5p-metadata-icons') format('svg');
   font-weight: normal;
   font-style: normal;
 }

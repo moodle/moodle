@@ -101,3 +101,34 @@ function assignfeedback_editpdf_pluginfile(
     }
 
 }
+
+/**
+ * Files API hook to remove stale conversion records.
+ *
+ * When a file is update, its contenthash will change, but its ID
+ * remains the same. The document converter API records source file
+ * IDs and destination file IDs. When a file is updated, the document
+ * converter API has no way of knowing that the content of the file
+ * has changed, so it just serves the previously stored destination
+ * file.
+ *
+ * In this hook we check if the contenthash has changed, and if it has
+ * we delete the existing conversion so that a new one will be created.
+ *
+ * @param stdClass $file The updated file record.
+ * @param stdClass $filepreupdate The file record pre-update.
+ */
+function assignfeedback_editpdf_after_file_updated(stdClass $file, stdClass $filepreupdate) {
+    $contenthashchanged = $file->contenthash !== $filepreupdate->contenthash;
+    if ($contenthashchanged && $file->component == 'assignsubmission_file' && $file->filearea == 'submission_files') {
+        $fs = get_file_storage();
+        $file = $fs->get_file_by_id($file->id);
+        $conversions = \core_files\conversion::get_conversions_for_file($file, 'pdf');
+
+        foreach ($conversions as $conversion) {
+            if ($conversion->get('id')) {
+                $conversion->delete();
+            }
+        }
+    }
+}

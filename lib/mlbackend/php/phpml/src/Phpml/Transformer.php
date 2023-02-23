@@ -11,5 +11,5 @@ interface Transformer
      */
     public function fit(array $samples, ?array $targets = null): void;
 
-    public function transform(array &$samples): void;
+    public function transform(array &$samples, ?array &$targets = null): void;
 }

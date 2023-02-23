@@ -16,14 +16,9 @@
 
 namespace core_courseformat\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/externallib.php');
-
-use external_api;
-use external_function_parameters;
-use external_value;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_value;
 
 /**
  * Class for exporting a course state.
@@ -41,11 +36,9 @@ class get_state extends external_api {
      * @return external_function_parameters
      */
     public static function execute_parameters(): external_function_parameters {
-        return new external_function_parameters(
-            [
-                'courseid' => new external_value(PARAM_INT, 'course id', VALUE_REQUIRED),
-            ]
-        );
+        return new external_function_parameters([
+            'courseid' => new external_value(PARAM_INT, 'course id', VALUE_REQUIRED),
+        ]);
     }
 
     /**
@@ -60,8 +53,8 @@ class get_state extends external_api {
      *
      * As the other main course outputs, format plugins can override those output components
      * to send more information to the frontend course editor. These extended classes should
-     * be located in format_XXX\output\courseformat\state\course, format_XXX\output\section_format\state\section
-     * or format_XXX\output\cm_format\state\cm.
+     * be located in format_XXX\output\courseformat\state\course, format_XXX\output\courseformat\state\section
+     * or format_XXX\output\courseformat\state\cm.
      *
      * @param int $courseid the course id
      * @return string Course state in JSON
@@ -102,7 +95,7 @@ class get_state extends external_api {
         // Sections and course modules state.
         $sections = $modinfo->get_section_info_all();
         foreach ($sections as $section) {
-            if (!empty($section->uservisible)) {
+            if ($courseformat->is_section_visible($section)) {
                 // Only return this section data if it's visible by current user on the course page.
                 $sectionstate = new $sectionclass($courseformat, $section);
                 $result->section[] = $sectionstate->export_for_template($renderer);

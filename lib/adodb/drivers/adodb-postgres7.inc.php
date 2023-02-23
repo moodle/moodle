@@ -1,17 +1,23 @@
 <?php
-/*
- @version   v5.21.0  2021-02-27
- @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
- @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-  Released under both BSD license and Lesser GPL library license.
-  Whenever there is any discrepancy between the two licenses,
-  the BSD license will take precedence.
-  Set tabs to 4.
-
-  Postgres7 support.
-  28 Feb 2001: Currently indicate that we support LIMIT
-  01 Dec 2001: dannym added support for default values
-*/
+/**
+ * ADOdb PostgreSQL 7 driver
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
 
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
@@ -148,10 +154,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		}
 	}
 
-	/**
-	 * @returns assoc array where keys are tables, and values are foreign keys
-	 */
-	function MetaForeignKeys($table, $owner=false, $upper=false)
+	public function metaForeignKeys($table, $owner = '', $upper = false, $associative = false)
 	{
 		# Regex isolates the 2 terms between parenthesis using subexpressions
 		$regex = '^.*\((.*)\).*\((.*)\).*$';
@@ -187,49 +190,17 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 
 		$a = array();
 		while (!$rs->EOF) {
+			$lookup_table = $rs->fields('lookup_table');
+			$fields = $rs->fields('dep_field') . '=' . $rs->fields('lookup_field');
 			if ($upper) {
-				$a[strtoupper($rs->Fields('lookup_table'))][] = strtoupper(str_replace('"','',$rs->Fields('dep_field').'='.$rs->Fields('lookup_field')));
-			} else {
-				$a[$rs->Fields('lookup_table')][] = str_replace('"','',$rs->Fields('dep_field').'='.$rs->Fields('lookup_field'));
+				$lookup_table = strtoupper($lookup_table);
+				$fields = strtoupper($fields);
 			}
+			$a[$lookup_table][] = str_replace('"','', $fields);
+
 			$rs->MoveNext();
 		}
 
-		return $a;
-
-	}
-
-	// from  Edward Jaramilla, improved version - works on pg 7.4
-	function _old_MetaForeignKeys($table, $owner=false, $upper=false)
-	{
-		$sql = 'SELECT t.tgargs as args
-		FROM
-		pg_trigger t,pg_class c,pg_proc p
-		WHERE
-		t.tgenabled AND
-		t.tgrelid = c.oid AND
-		t.tgfoid = p.oid AND
-		p.proname = \'RI_FKey_check_ins\' AND
-		c.relname = \''.strtolower($table).'\'
-		ORDER BY
-			t.tgrelid';
-
-		$rs = $this->Execute($sql);
-
-		if (!$rs || $rs->EOF) return false;
-
-		$arr = $rs->GetArray();
-		$a = array();
-		foreach($arr as $v) {
-			$data = explode(chr(0), $v['args']);
-			$size = count($data)-1; //-1 because the last node is empty
-			for($i = 4; $i < $size; $i++) {
-				if ($upper)
-					$a[strtoupper($data[2])][] = strtoupper($data[$i].'='.$data[++$i]);
-				else
-					$a[$data[2]][] = $data[$i].'='.$data[++$i];
-			}
-		}
 		return $a;
 	}
 
@@ -260,7 +231,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		}
 		// check if no data returned, then no need to create real recordset
 		if ($rez && pg_num_fields($rez) <= 0) {
-			if (is_resource($this->_resultid) && get_resource_type($this->_resultid) === 'pgsql result') {
+			if ($this->_resultid !== false) {
 				pg_free_result($this->_resultid);
 			}
 			$this->_resultid = $rez;
@@ -269,34 +240,47 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		return $rez;
 	}
 
-	// this is a set of functions for managing client encoding - very important if the encodings
-	// of your database and your output target (i.e. HTML) don't match
-	//for instance, you may have UNICODE database and server it on-site as WIN1251 etc.
-	// GetCharSet - get the name of the character set the client is using now
-	// the functions should work with Postgres 7.0 and above, the set of charsets supported
-	// depends on compile flags of postgres distribution - if no charsets were compiled into the server
-	// it will return 'SQL_ANSI' always
-	function GetCharSet()
+	/**
+	 * Retrieve the client connection's current character set.
+
+	 * If no charsets were compiled into the server, the function will always
+	 * return 'SQL_ASCII'.
+	 * @see https://www.php.net/manual/en/function.pg-client-encoding.php
+	 *
+	 * @return string|false The character set, or false if it can't be determined.
+	 */
+	function getCharSet()
 	{
-		//we will use ADO's builtin property charSet
-		$this->charSet = @pg_client_encoding($this->_connectionID);
-		if (!$this->charSet) {
+		if (!$this->_connectionID) {
 			return false;
-		} else {
-			return $this->charSet;
 		}
+		$this->charSet = pg_client_encoding($this->_connectionID);
+		return $this->charSet ?: false;
 	}
 
-	// SetCharSet - switch the client encoding
-	function SetCharSet($charset_name)
+	/**
+	 * Sets the client-side character set (encoding).
+	 *
+	 * Allows managing client encoding - very important if the database and
+	 * the output target (i.e. HTML) don't match; for instance, you may have a
+	 * UNICODE database and server your pages as WIN1251, etc.
+	 *
+	 * Supported on PostgreSQL 7.0 and above. Available charsets depend on
+	 * PostgreSQL version and the distribution's compile flags.
+	 *
+	 * @param string $charset The character set to switch to.
+	 *
+	 * @return bool True if the character set was changed successfully, false otherwise.
+	 */
+	function setCharSet($charset)
 	{
-		$this->GetCharSet();
-		if ($this->charSet !== $charset_name) {
-			$if = pg_set_client_encoding($this->_connectionID, $charset_name);
-			if ($if == "0" & $this->GetCharSet() == $charset_name) {
-				return true;
-			} else return false;
-		} else return true;
+		if ($this->charSet !== $charset) {
+			if (!$this->_connectionID || pg_set_client_encoding($this->_connectionID, $charset) != 0) {
+				return false;
+			}
+			$this->getCharSet();
+		}
+		return true;
 	}
 
 }
@@ -315,10 +299,8 @@ class ADORecordSet_postgres7 extends ADORecordSet_postgres64{
 		if (!$this->EOF) {
 			$this->_currentRow++;
 			if ($this->_numOfRows < 0 || $this->_numOfRows > $this->_currentRow) {
-				$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
-
-				if (is_array($this->fields)) {
-					if ($this->fields && isset($this->_blobArr)) $this->_fixblobs();
+				$this->_prepfields();
+				if ($this->fields !== false) {
 					return true;
 				}
 			}
@@ -341,14 +323,13 @@ class ADORecordSet_assoc_postgres7 extends ADORecordSet_postgres64{
 			return false;
 		}
 
-		$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
-
-		if ($this->fields) {
-			if (isset($this->_blobArr)) $this->_fixblobs();
+		$this->_prepfields();
+		if ($this->fields !== false) {
 			$this->_updatefields();
+			return true;
 		}
 
-		return (is_array($this->fields));
+		return false;
 	}
 
 	function MoveNext()
@@ -356,18 +337,12 @@ class ADORecordSet_assoc_postgres7 extends ADORecordSet_postgres64{
 		if (!$this->EOF) {
 			$this->_currentRow++;
 			if ($this->_numOfRows < 0 || $this->_numOfRows > $this->_currentRow) {
-				$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
-
-				if (is_array($this->fields)) {
-					if ($this->fields) {
-						if (isset($this->_blobArr)) $this->_fixblobs();
-
-						$this->_updatefields();
-					}
+				$this->_prepfields();
+				if ($this->fields !== false) {
+					$this->_updatefields();
 					return true;
 				}
 			}
-
 
 			$this->fields = false;
 			$this->EOF = true;

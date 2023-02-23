@@ -35,11 +35,22 @@ import {getList} from 'core/normalise';
 import * as CourseEvents from 'core_course/events';
 import Pending from 'core/pending';
 import ContentTree from 'core_courseformat/local/courseeditor/contenttree';
-// The jQuery module is only used for interacting with Boostrap 4. It can we removed when MDL-79179 is integrated.
+// The jQuery module is only used for interacting with Boostrap 4. It can we removed when MDL-71979 is integrated.
 import jQuery from 'jquery';
 
 // Load global strings.
 prefetchStrings('core', ['movecoursesection', 'movecoursemodule', 'confirm', 'delete']);
+
+// Mutations are dispatched by the course content actions.
+// Formats can use this module addActions static method to add custom actions.
+// Direct mutations can be simple strings (mutation) name or functions.
+const directMutations = {
+    sectionHide: 'sectionHide',
+    sectionShow: 'sectionShow',
+    cmHide: 'cmHide',
+    cmShow: 'cmShow',
+    cmStealth: 'cmStealth',
+};
 
 export default class extends BaseComponent {
 
@@ -66,6 +77,20 @@ export default class extends BaseComponent {
         this.classes = {
             DISABLED: `disabled`,
         };
+    }
+
+    /**
+     * Add extra actions to the module.
+     *
+     * @param {array} actions array of methods to execute
+     */
+    static addActions(actions) {
+        for (const [action, mutationReference] of Object.entries(actions)) {
+            if (typeof mutationReference !== 'function' && typeof mutationReference !== 'string') {
+                throw new Error(`${action} action must be a mutation name or a function`);
+            }
+            directMutations[action] = mutationReference;
+        }
     }
 
     /**
@@ -114,10 +139,22 @@ export default class extends BaseComponent {
         }
 
         // Invoke proper method.
-        const methodName = this._actionMethodName(target.dataset.action);
+        const actionName = target.dataset.action;
+        const methodName = this._actionMethodName(actionName);
 
         if (this[methodName] !== undefined) {
             this[methodName](target, event);
+            return;
+        }
+
+        // Check direct mutations or mutations handlers.
+        if (directMutations[actionName] !== undefined) {
+            if (typeof directMutations[actionName] === 'function') {
+                directMutations[actionName](target, event);
+                return;
+            }
+            this._requestMutationAction(target, event, directMutations[actionName]);
+            return;
         }
     }
 
@@ -261,7 +298,7 @@ export default class extends BaseComponent {
         );
 
         // Open the cm section node if possible (Bootstrap 4 uses jQuery to interact with collapsibles).
-        // All jQuery int this code can be replaced when MDL-79179 is integrated.
+        // All jQuery int this code can be replaced when MDL-71979 is integrated.
         const sectionnode = currentElement.closest(this.selectors.SECTIONNODE);
         const toggler = jQuery(sectionnode).find(this.selectors.MODALTOGGLER);
         let collapsibleId = toggler.data('target') ?? toggler.attr('href');
@@ -354,6 +391,111 @@ export default class extends BaseComponent {
             // We don't need confirmation to delete empty sections.
             this.reactive.dispatch('sectionDelete', [sectionId]);
         }
+    }
+
+    /**
+     * Handle a toggle cm selection.
+     *
+     * @param {Element} target the dispatch action element
+     */
+    async _requestToggleSelectionCm(target) {
+        const cmId = target.dataset.id;
+        if (!cmId) {
+            return;
+        }
+        const value = target.checked ?? false;
+        const mutation = (value) ? 'cmSelect' : 'cmUnselect';
+        this.reactive.dispatch(mutation, [cmId]);
+    }
+
+    /**
+     * Handle a toggle section selection.
+     *
+     * @param {Element} target the dispatch action element
+     */
+    async _requestToggleSelectionSection(target) {
+        const sectionId = target.dataset.id;
+        if (!sectionId) {
+            return;
+        }
+        const value = target.checked ?? false;
+        const mutation = (value) ? 'sectionSelect' : 'sectionUnselect';
+        this.reactive.dispatch(mutation, [sectionId]);
+    }
+
+    /**
+     * Basic mutation action helper.
+     *
+     * @param {Element} target the dispatch action element
+     * @param {Event} event the triggered event
+     * @param {string} mutationName the mutation name
+     */
+    async _requestMutationAction(target, event, mutationName) {
+        if (!target.dataset.id) {
+            return;
+        }
+        event.preventDefault();
+        this.reactive.dispatch(mutationName, [target.dataset.id]);
+    }
+
+    /**
+     * Handle a course module duplicate request.
+     *
+     * @param {Element} target the dispatch action element
+     * @param {Event} event the triggered event
+     */
+    async _requestCmDuplicate(target, event) {
+        const cmId = target.dataset.id;
+        if (!cmId) {
+            return;
+        }
+        const sectionId = target.dataset.sectionid ?? null;
+        event.preventDefault();
+        this.reactive.dispatch('cmDuplicate', [cmId], sectionId);
+    }
+
+    /**
+     * Handle a delete cm request.
+     *
+     * @param {Element} target the dispatch action element
+     * @param {Event} event the triggered event
+     */
+    async _requestCmDelete(target, event) {
+        // Check we have an id.
+        const cmId = target.dataset.id;
+
+        if (!cmId) {
+            return;
+        }
+        const cmInfo = this.reactive.get('cm', cmId);
+
+        event.preventDefault();
+
+        const modalParams = {
+            title: getString('confirm', 'core'),
+            body: getString(
+                'deletechecktypename',
+                'moodle',
+                {
+                    type: cmInfo.modname,
+                    name: cmInfo.name,
+                }
+            ),
+            saveButtonText: getString('delete', 'core'),
+            type: ModalFactory.types.SAVE_CANCEL,
+        };
+
+        const modal = await this._modalBodyRenderedPromise(modalParams);
+
+        modal.getRoot().on(
+            ModalEvents.save,
+            e => {
+                // Stop the default save button behaviour which is to close the modal.
+                e.preventDefault();
+                modal.destroy();
+                this.reactive.dispatch('cmDelete', [cmId]);
+            }
+        );
     }
 
     /**

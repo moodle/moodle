@@ -72,6 +72,8 @@ class core_component {
     protected static $parents = null;
     /** @var array subplugins */
     protected static $subplugins = null;
+    /** @var array cache of core APIs */
+    protected static $apis = null;
     /** @var array list of all known classes that can be autoloaded */
     protected static $classmap = null;
     /** @var array list of all classes that have been renamed to be autoloaded */
@@ -95,10 +97,11 @@ class core_component {
         'Sabberworm\\CSS' => 'lib/php-css-parser',
         'MoodleHQ\\RTLCSS' => 'lib/rtlcss',
         'ScssPhp\\ScssPhp' => 'lib/scssphp',
-        'Box\\Spout' => 'lib/spout/src/Spout',
+        'OpenSpout' => 'lib/openspout/src',
         'MatthiasMullie\\Minify' => 'lib/minify/matthiasmullie-minify/src/',
         'MatthiasMullie\\PathConverter' => 'lib/minify/matthiasmullie-pathconverter/src/',
         'IMSGlobal\LTI' => 'lib/ltiprovider/src',
+        'Packback\\Lti1p3' => 'lib/lti1p3/src',
         'Phpml' => 'lib/mlbackend/php/phpml/src/Phpml',
         'PHPMailer\\PHPMailer' => 'lib/phpmailer/src',
         'RedeyeVentures\\GeoPattern' => 'lib/geopattern-php/GeoPattern',
@@ -106,7 +109,14 @@ class core_component {
         'Firebase\\JWT' => 'lib/php-jwt/src',
         'ZipStream' => 'lib/zipstream/src/',
         'MyCLabs\\Enum' => 'lib/php-enum/src',
-        'Psr\\Http\\Message' => 'lib/http-message/src',
+        'PhpXmlRpc' => 'lib/phpxmlrpc',
+        'Psr\\Http\\Client' => 'lib/psr/http-client/src',
+        'Psr\\Http\\Factory' => 'lib/psr/http-factory/src',
+        'Psr\\Http\\Message' => 'lib/psr/http-message/src',
+        'GuzzleHttp\\Psr7' => 'lib/guzzlehttp/psr7/src',
+        'GuzzleHttp\\Promise' => 'lib/guzzlehttp/promises/src',
+        'GuzzleHttp' => 'lib/guzzlehttp/guzzle/src',
+        'Kevinrob\\GuzzleCache' => 'lib/guzzlehttp/kevinrob/guzzlecache/src',
     );
 
     /**
@@ -254,6 +264,7 @@ class core_component {
                 self::$subsystems       = $cache['subsystems'];
                 self::$parents          = $cache['parents'];
                 self::$subplugins       = $cache['subplugins'];
+                self::$apis             = $cache['apis'];
                 self::$classmap         = $cache['classmap'];
                 self::$classmaprenames  = $cache['classmaprenames'];
                 self::$filemap          = $cache['filemap'];
@@ -294,6 +305,7 @@ class core_component {
                     self::$subsystems       = $cache['subsystems'];
                     self::$parents          = $cache['parents'];
                     self::$subplugins       = $cache['subplugins'];
+                    self::$apis             = $cache['apis'];
                     self::$classmap         = $cache['classmap'];
                     self::$classmaprenames  = $cache['classmaprenames'];
                     self::$filemap          = $cache['filemap'];
@@ -380,6 +392,7 @@ class core_component {
             'plugins'           => self::$plugins,
             'parents'           => self::$parents,
             'subplugins'        => self::$subplugins,
+            'apis'              => self::$apis,
             'classmap'          => self::$classmap,
             'classmaprenames'   => self::$classmaprenames,
             'filemap'           => self::$filemap,
@@ -403,6 +416,8 @@ $cache = '.var_export($cache, true).';
         foreach (self::$plugintypes as $type => $fulldir) {
             self::$plugins[$type] = self::fetch_plugins($type, $fulldir);
         }
+
+        self::$apis = self::fetch_apis();
 
         self::fill_classmap_cache();
         self::fill_classmap_renames_cache();
@@ -443,7 +458,7 @@ $cache = '.var_export($cache, true).';
                     $path = $CFG->admin;
                 }
                 if (strpos($path, 'admin/') === 0) {
-                    $path = $CFG->admin . substr($path, 0, 5);
+                    $path = $CFG->admin . substr($path, 5);
                 }
             }
 
@@ -451,6 +466,14 @@ $cache = '.var_export($cache, true).';
         }
 
         return $info;
+    }
+
+    /**
+     * Returns list of core APIs.
+     * @return stdClass[]
+     */
+    protected static function fetch_apis() {
+        return (array) json_decode(file_get_contents(__DIR__ . '/../apis.json'));
     }
 
     /**
@@ -464,7 +487,7 @@ $cache = '.var_export($cache, true).';
         foreach (self::fetch_component_source('plugintypes') as $plugintype => $path) {
             // Replace admin/ with the config setting.
             if ($CFG->admin !== 'admin' && strpos($path, 'admin/') === 0) {
-                $path = $CFG->admin . substr($path, 0, 5);
+                $path = $CFG->admin . substr($path, 5);
             }
             $types[$plugintype] = "{$CFG->dirroot}/{$path}";
         }
@@ -750,6 +773,22 @@ $cache = '.var_export($cache, true).';
     }
 
     /**
+     * List all core APIs and their attributes.
+     *
+     * This is a list of all the existing / allowed APIs in moodle, each one with the
+     * following attributes:
+     *   - component: the component, usually a subsystem or core, the API belongs to.
+     *   - allowedlevel2: if the API is allowed as level2 namespace or no.
+     *   - allowedspread: if the API can spread out from its component or no.
+     *
+     * @return stdClass[] array of APIs (as keys) with their attributes as object instances.
+     */
+    public static function get_core_apis() {
+        self::init();
+        return self::$apis;
+    }
+
+    /**
      * Get list of available plugin types together with their location.
      *
      * @return array as (string)plugintype => (string)fulldir
@@ -968,10 +1007,9 @@ $cache = '.var_export($cache, true).';
             }
             // Modules MUST NOT have any underscores,
             // component normalisation would break very badly otherwise!
-            return (bool)preg_match('/^[a-z][a-z0-9]*$/', $pluginname);
-
+            return !is_null($pluginname) && (bool) preg_match('/^[a-z][a-z0-9]*$/', $pluginname);
         } else {
-            return (bool)preg_match('/^[a-z](?:[a-z0-9_](?!__))*[a-z0-9]+$/', $pluginname);
+            return !is_null($pluginname) && (bool) preg_match('/^[a-z](?:[a-z0-9_](?!__))*[a-z0-9]+$/', $pluginname);
         }
     }
 
@@ -1175,6 +1213,16 @@ $cache = '.var_export($cache, true).';
     }
 
     /**
+     * Return true if apiname is a core API.
+     *
+     * @param string $apiname name of the API.
+     * @return bool true if core API.
+     */
+    public static function is_core_api($apiname) {
+        return isset(self::$apis[$apiname]);
+    }
+
+    /**
      * Records all class renames that have been made to facilitate autoloading.
      */
     protected static function fill_classmap_renames_cache() {
@@ -1202,9 +1250,13 @@ $cache = '.var_export($cache, true).';
      * and the value is the new class name.
      * It is only included when we are populating the component cache. After that is not needed.
      *
-     * @param string $fulldir
+     * @param string|null $fulldir The directory to the renamed classes.
      */
-    protected static function load_renamed_classes($fulldir) {
+    protected static function load_renamed_classes(?string $fulldir) {
+        if (is_null($fulldir)) {
+            return;
+        }
+
         $file = $fulldir . '/db/renamedclasses.php';
         if (is_readable($file)) {
             $renamedclasses = null;
@@ -1276,5 +1328,14 @@ $cache = '.var_export($cache, true).';
             $componentnames[] = 'core_' . $subsystemname;
         }
         return $componentnames;
+    }
+
+    /**
+     * Returns the list of available API names.
+     *
+     * @return string[] the list of available API names.
+     */
+    public static function get_core_api_names(): array {
+        return array_keys(self::get_core_apis());
     }
 }

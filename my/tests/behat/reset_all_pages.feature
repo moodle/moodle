@@ -17,7 +17,7 @@ Feature: Reset all personalised pages to default
     And I log out
 
     And I log in as "student1"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I turn editing mode on
     And I add the "Comments" block
     And I turn editing mode off
@@ -34,7 +34,7 @@ Feature: Reset all personalised pages to default
     And I log out
 
     And I log in as "student3"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I should not see "Comments"
     And I follow "Profile" in the user menu
     And I should not see "Logged in user"
@@ -45,22 +45,22 @@ Feature: Reset all personalised pages to default
     And I navigate to "Appearance > Default Dashboard page" in site administration
     And I turn editing mode on
     And I add the "Latest announcements" block
-    And I open the "Latest badges" blocks action menu
-    And I follow "Delete Latest badges block"
+    And I open the "Timeline" blocks action menu
+    And I follow "Delete Timeline block"
     And I press "Yes"
     And I turn editing mode off
     And I log out
 
     And I log in as "student1"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I should not see "Latest announcements"
-    And I should see "Latest badges"
+    And I should see "Timeline"
     And I log out
 
     And I log in as "student3"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I should not see "Latest announcements"
-    And I should see "Latest badges"
+    And I should see "Timeline"
     And I log out
 
     And I log in as "admin"
@@ -70,16 +70,16 @@ Feature: Reset all personalised pages to default
     And I log out
 
     And I log in as "student1"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     Then I should see "Latest announcements"
     And I should not see "Comments"
-    And I should not see "Latest badges"
+    And I should not see "Timeline"
     And I log out
 
     And I log in as "student3"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I should see "Latest announcements"
-    And I should not see "Latest badges"
+    And I should not see "Timeline"
     And I log out
 
     # Check that this did not affect the customised profiles.
@@ -124,6 +124,6 @@ Feature: Reset all personalised pages to default
 
     # Check that this did not affect the customised dashboards.
     And I log in as "student1"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I should see "Comments"
     And I should not see "Latest announcements"

@@ -127,7 +127,7 @@ class publicpaths extends check {
             [
                 'pattern'   => 'readme.txt',
                 '404'       => [
-                    'lib/scssphp/moodle_readme.txt',
+                    'lib/scssphp/readme_moodle.txt',
                     'mod/resource/readme.txt',
                 ],
             ],

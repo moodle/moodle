@@ -23,14 +23,14 @@
     * coursefullname - Course name (only available if it's a course badge).
     * sitefullname - Site name (only available if it's a site badge).
     * badgeimage - Badge image.
-    * expireddate - Date (in the past) when the badge expired (if defined). If expiredate is defined, this field will be empty.
-    * expireddateformatted - Formatted expired date.
-    * expiredate - Date (in the future) when the badge will expire (if defined). If expireddate is defined, this field will be empty.
+    * expireddate - Date (in the past) when the badge expired. If expiredate is defined, this field will be empty [optional].
+    * expireddateformatted - Formatted expired date [optional].
+    * expiredate - Date (in the future) when the badge will expire. If expireddate is defined, this field will be empty [optional].
     * badgename - Badge name.
     * badgedescription - Badge description.
-    * badgeissuedon - Date where the badge was issued on by the user.
-    * recipientname - User awarded with the badge.
-    * recipientnotification.message - Message to be displayed if there is some issue with the recipient.
+    * badgeissuedon - Date where the badge was issued on by the user [optional].
+    * recipientname - User awarded with the badge [optional].
+    * recipientnotification.message - Message to be displayed if there is some issue with the recipient [optional].
     * criteria - HTML code with the criteria to display.
     * issuedby - Badge issuer.
     * issuedbyemailobfuscated - Badge issuer email link obfuscated.
@@ -139,22 +139,27 @@
 
     <div id="badge-details-col" class="col">
         <h2>{{badgename}}</h2>
+
+        {{#recipientname}}
         <div id="badge-awardedto" class="pt-1 pb-2">
             {{#recipientnotification}}
                 {{> core/notification_warning}}
             {{/recipientnotification}}
             {{#str}}awardedto, core_badges, {{recipientname}}{{/str}}
         </div>
+        {{/recipientname}}
 
         <div id="badge-issued-expire" class="pt-1 pb-2">
             <div class="pb-3">
             <small>
-            {{#str}}
-                issuedon,
-                core_badges,
-                {{#userdate}}{{badgeissuedon}}, {{#str}} strftimedatetime, langconfig {{/str}}{{/userdate}}
-            {{/str}}
-            <br/>
+            {{#badgeissuedon}}
+                {{#str}}
+                    issuedon,
+                    core_badges,
+                    {{#userdate}}{{badgeissuedon}}, {{#str}} strftimedatetime, langconfig {{/str}}{{/userdate}}
+                {{/str}}
+                <br/>
+            {{/badgeissuedon}}
             {{#expiredate}}
                 {{#str}}
                     expiresin,

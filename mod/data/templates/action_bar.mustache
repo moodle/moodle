@@ -1,0 +1,118 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_data/action_bar
+
+    General actions bar at the top of the pages in the database activity.
+
+    Context variables required for this template:
+    * d - The database instance id.
+    * urlselect - The data object containing the required properties to render core/url_select.
+    * fieldselect - The data object containing the required properties to render core/single_select.
+    * saveaspreset - Whether to display the save as preset button (mod_data/save_as_preset).
+    * exportpreset - The data object containing the required properties to render core/single_button.
+
+    Example context (json):
+    {
+        "d": 1,
+        "hasback": true,
+        "backurl": "https://example.com",
+        "backtitle": "Back",
+        "title": "Some title",
+        "urlselect": {
+            "id": "url_select_test",
+            "action": "https://example.com/post",
+            "formid": "url_select_form",
+            "sesskey": "sesskey",
+            "classes": "urlselect",
+            "label": "",
+            "helpicon": false,
+            "showbutton": null,
+            "options": [
+                {
+                    "name": "Some name",
+                    "value": "/mod/data/someurl.php",
+                    "selected": false
+                }
+            ],
+            "disabled": false,
+            "title": null
+        },
+        "extraurlselect": {
+            "id": "extra_url_select_test",
+            "action": "https://example.com/post",
+            "formid": "extra_url_select_form",
+            "sesskey": "sesskey",
+            "classes": "urlselect",
+            "label": "",
+            "helpicon": false,
+            "showbutton": null,
+            "options": [
+                {
+                    "name": "Some name",
+                    "value": "/mod/data/someurl.php",
+                    "selected": false
+                }
+            ],
+            "disabled": false,
+            "title": null
+        },
+        "buttons": {
+            "id": "single_button_test",
+            "method" : "post",
+            "formid": "single_button_form",
+            "url" : "https://example.com/post",
+            "primary" : false,
+            "tooltip" : null,
+            "label" : "Label",
+            "attributes": []
+        }
+    }
+}}
+<div class="container-fluid tertiary-navigation">
+    <div class="row">
+        <div class="d-flex">
+            {{#hasback}}
+                <div class="navitem mb-0 backbutton border-right">
+                    <a href="{{backurl}}" role="button" title="{{backtitle}}" class="d-flex align-items-center">{{!
+                    }}{{#pix}} i/previous, moodle {{/pix}}{{!
+                    }}</a>
+                </div>
+            {{/hasback}}
+            {{#urlselect}}
+                <div class="navitem mb-0">
+                    {{>core/url_select}}
+                </div>
+            {{/urlselect}}
+            {{#title}}
+                <div class="navitem mb-0 title d-flex align-items-center">
+                    <h2>{{title}}</h2>
+                </div>
+            {{/title}}
+        </div>
+        <div class="ml-sm-auto d-flex">
+            {{#extraurlselect}}
+                <div class="navitem mb-0">
+                    {{>core/url_select}}
+                </div>
+            {{/extraurlselect}}
+            {{#buttons}}
+                <div class="navitem mb-0">
+                    {{>core/single_button}}
+                </div>
+            {{/buttons}}
+        </div>
+    </div>
+</div>
+<hr/>

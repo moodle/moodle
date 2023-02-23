@@ -22,23 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addcondition'] = 'Add condition';
-$string['adverbfor_and'] = 'and';
-$string['adverbfor_andnot'] = 'and';
-$string['adverbfor_or'] = 'or';
-$string['applyfilters'] = 'Apply filters';
-$string['clearfilterrow'] = 'Remove filter row';
-$string['clearfilters'] = 'Clear filters';
-$string['clearfilterselection'] = 'Remove "{$a}" from filter';
 $string['countparticipantsfound'] = '{$a} participants found';
-$string['filterrowlegend'] = 'Filter {$a}';
-$string['filtersetmatchdescription'] = 'How multiple filters should be combined';
-$string['filtertype'] = 'Filter type';
-$string['match'] = 'Match';
-$string['matchofthefollowing'] = 'of the following:';
-$string['moodlenetprofile'] = 'MoodleNet profile';
-$string['moodlenetprofile_help'] = 'This field is to link your MoodleNet profile to Moodle. It expects a WebFinger-compliant URI.';
-$string['placeholdertypeorselect'] = 'Type or select...';
+$string['moodlenetprofile'] = 'MoodleNet profile ID';
+$string['moodlenetprofile_help'] = 'Your MoodleNet profile ID links your MoodleNet profile with this site.';
 $string['placeholdertype'] = 'Type...';
 $string['privacy:courserequestpath'] = 'Requested courses';
 $string['privacy:descriptionpath'] = 'Profile description';
@@ -85,8 +71,8 @@ $string['privacy:metadata:lastaccess'] = 'The time that the user last accessed t
 $string['privacy:metadata:lastaccesstablesummary'] = 'Information about the last time a user accessed a course.';
 $string['privacy:metadata:lastip'] = 'The last IP address for the user.';
 $string['privacy:metadata:lastlogin'] = 'The last login of this user.';
-$string['privacy:metadata:lastname'] = 'The surname of the user.';
-$string['privacy:metadata:lastnamephonetic'] = 'The phonetic details about the user\'s surname.';
+$string['privacy:metadata:lastname'] = 'The last name of the user.';
+$string['privacy:metadata:lastnamephonetic'] = 'The phonetic details of the user\'s last name.';
 $string['privacy:metadata:maildigest'] = 'A setting for the mail digest for this user.';
 $string['privacy:metadata:maildisplay'] = 'A preference for the user about displaying their email address to other users.';
 $string['privacy:metadata:middlename'] = 'The middle name of the user';
@@ -146,7 +132,27 @@ $string['privacy:profileimagespath'] = 'Profile images';
 $string['privacy:privatefilespath'] = 'Private files';
 $string['privacy:sessionpath'] = 'Session data';
 $string['filterbykeyword'] = 'Keyword';
-$string['selectfiltertype'] = 'Select';
+$string['supportmessagesent'] = 'Your message has been sent.';
+$string['supportmessagesentforloggedoutuser'] = 'Be careful with this message. The sender was not logged in, so their identity has not been confirmed.';
+$string['supportmessagenotsent'] = "Unfortunately your message could not be sent.";
+$string['supportmessagealternative'] = 'Instead you can email {$a}.';
 $string['target:upcomingactivitiesdue'] = 'Upcoming activities due';
 $string['target:upcomingactivitiesdue_help'] = 'This target generates reminders for upcoming activities due.';
 $string['target:upcomingactivitiesdueinfo'] = 'All upcoming activities due insights are listed here. These students have received these insights directly.';
+
+// Deprecated since Moodle 4.1.
+$string['addcondition'] = 'Add condition';
+$string['adverbfor_and'] = 'and';
+$string['adverbfor_andnot'] = 'and';
+$string['adverbfor_or'] = 'or';
+$string['applyfilters'] = 'Apply filters';
+$string['clearfilterrow'] = 'Remove filter row';
+$string['clearfilters'] = 'Clear filters';
+$string['filtersetmatchdescription'] = 'How multiple filters should be combined';
+$string['filterrowlegend'] = 'Filter {$a}';
+$string['filtertype'] = 'Filter type';
+$string['match'] = 'Match';
+$string['matchofthefollowing'] = 'of the following:';
+$string['selectfiltertype'] = 'Select';
+$string['placeholdertypeorselect'] = 'Type or select...';
+$string['clearfilterselection'] = 'Remove "{$a}" from filter';

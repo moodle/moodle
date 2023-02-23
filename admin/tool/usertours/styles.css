@@ -14,6 +14,12 @@ span[data-flexitour="container"] .modal-dialog .modal-content .modal-header {
     border-bottom: 0;
 }
 
+span[data-flexitour="container"] .modal-dialog .modal-content .modal-header.minimal,
+span[data-flexitour="container"] .modal-dialog .modal-content .modal-footer.minimal {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
 span[data-flexitour="container"] .modal-dialog .modal-content .modal-footer {
     justify-content: flex-start;
     border-top: 0;
@@ -31,6 +37,7 @@ body div[data-flexitour="step-background-fader"],
 body div[data-flexitour="step-background"] {
     position: absolute;
     background: inherit;
+    background-image: none;
 }
 
 div[data-flexitour="step-background-fader"],

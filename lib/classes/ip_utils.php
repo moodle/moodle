@@ -187,8 +187,8 @@ final class ip_utils {
     }
 
     /**
-     * Checks the domain name against a list of allowed domains. The list of allowed domains is may use
-     * wildcards that match {@link is_domain_matching_pattern()}.
+     * Checks the domain name against a list of allowed domains. The list of allowed domains may use wildcards
+     * that match {@see is_domain_matching_pattern()}. Domains are compared in a case-insensitive manner
      *
      * @param  string $domain Domain address
      * @param  array $alloweddomains An array of allowed domains.
@@ -208,7 +208,7 @@ final class ip_utils {
                 // Use of wildcard for possible subdomains.
                 $escapeperiods = str_replace('.', '\.', $alloweddomain);
                 $replacewildcard = str_replace('*', '.*', $escapeperiods);
-                $ultimatepattern = '/' . $replacewildcard . '$/';
+                $ultimatepattern = '/' . $replacewildcard . '$/i';
                 if (preg_match($ultimatepattern, $domain)) {
                     return true;
                 }
@@ -217,7 +217,7 @@ final class ip_utils {
                     continue;
                 }
                 // Strict domain setting.
-                if ($domain === $alloweddomain) {
+                if (strcasecmp($domain, $alloweddomain) === 0) {
                     return true;
                 }
             }

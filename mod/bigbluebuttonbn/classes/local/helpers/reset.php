@@ -84,7 +84,7 @@ class reset {
      * Used by the reset_course_userdata for deleting events linked to bigbluebuttonbn instances in the course.
      *
      * @param string $courseid
-     * @return bool status array
+     * @return bool status
      */
     public static function reset_events($courseid) {
         global $DB;
@@ -116,5 +116,16 @@ class reset {
             $items["recordings"] = 0;
         }
         return $items;
+    }
+
+    /**
+     * Reset logs for each BBB instance of this course
+     *
+     * @param int $courseid
+     * @return bool status
+     */
+    public static function reset_logs(int $courseid) {
+        global $DB;
+        return $DB->delete_records('bigbluebuttonbn_logs', ['courseid' => $courseid]);
     }
 }

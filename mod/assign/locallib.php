@@ -98,6 +98,7 @@ use \mod_assign\output\grading_app;
 use \mod_assign\output\assign_header;
 use \mod_assign\output\assign_submission_status;
 use mod_assign\output\timelimit_panel;
+use mod_assign\downloader;
 
 /**
  * Standard base class for mod_assign (assignment types).
@@ -189,6 +190,9 @@ class assign {
     /** @var array Array of error messages encountered during the execution of assignment related operations. */
     private $errors = array();
 
+    /** @var mixed This var can vary between false for no overrides to a stdClass of the overrides for a group */
+    private $overridedata;
+
     /**
      * Constructor for the base assign class.
      *
@@ -204,8 +208,6 @@ class assign {
      *                      otherwise this class will load one from the context as required.
      */
     public function __construct($coursemodulecontext, $coursemodule, $course) {
-        global $SESSION;
-
         $this->context = $coursemodulecontext;
         $this->course = $course;
 
@@ -220,10 +222,6 @@ class assign {
 
         // Extra entropy is required for uniqid() to work on cygwin.
         $this->useridlistid = clean_param(uniqid('', true), PARAM_ALPHANUM);
-
-        if (!isset($SESSION->mod_assign_useridlist)) {
-            $SESSION->mod_assign_useridlist = [];
-        }
     }
 
     /**
@@ -684,6 +682,7 @@ class assign {
         } else if ($action == 'fixrescalednullgrades') {
             $o .= $this->view_fix_rescaled_null_grades();
         } else {
+            $PAGE->add_body_class('limitedwidth');
             $o .= $this->view_submission_page();
         }
 
@@ -775,13 +774,13 @@ class assign {
             // Call save_settings hook for submission plugins.
             foreach ($this->submissionplugins as $plugin) {
                 if (!$this->update_plugin_instance($plugin, $formdata)) {
-                    print_error($plugin->get_error());
+                    throw new \moodle_exception($plugin->get_error());
                     return false;
                 }
             }
             foreach ($this->feedbackplugins as $plugin) {
                 if (!$this->update_plugin_instance($plugin, $formdata)) {
-                    print_error($plugin->get_error());
+                    throw new \moodle_exception($plugin->get_error());
                     return false;
                 }
             }
@@ -835,13 +834,13 @@ class assign {
 
         foreach ($this->submissionplugins as $plugin) {
             if (!$plugin->delete_instance()) {
-                print_error($plugin->get_error());
+                throw new \moodle_exception($plugin->get_error());
                 $result = false;
             }
         }
         foreach ($this->feedbackplugins as $plugin) {
             if (!$plugin->delete_instance()) {
-                print_error($plugin->get_error());
+                throw new \moodle_exception($plugin->get_error());
                 $result = false;
             }
         }
@@ -1299,7 +1298,7 @@ class assign {
             if (!empty($formdata->$enabledname)) {
                 $plugin->enable();
                 if (!$plugin->save_settings($formdata)) {
-                    print_error($plugin->get_error());
+                    throw new \moodle_exception($plugin->get_error());
                     return false;
                 }
             } else {
@@ -1541,13 +1540,13 @@ class assign {
         // Call save_settings hook for submission plugins.
         foreach ($this->submissionplugins as $plugin) {
             if (!$this->update_plugin_instance($plugin, $formdata)) {
-                print_error($plugin->get_error());
+                throw new \moodle_exception($plugin->get_error());
                 return false;
             }
         }
         foreach ($this->feedbackplugins as $plugin) {
             if (!$this->update_plugin_instance($plugin, $formdata)) {
-                print_error($plugin->get_error());
+                throw new \moodle_exception($plugin->get_error());
                 return false;
             }
         }
@@ -1909,6 +1908,33 @@ class assign {
     }
 
     /**
+     * Check if the intro attachments should be provided to the user.
+     *
+     * @param int $userid User id.
+     * @return bool
+     */
+    public function should_provide_intro_attachments(int $userid): bool {
+        $instance = $this->get_instance($userid);
+
+        // Check if user has permission to view attachments regardless of assignment settings.
+        if (has_capability('moodle/course:manageactivities', $this->get_context())) {
+            return true;
+        }
+
+        // If assignment does not show intro, we never provide intro attachments.
+        if (!$this->show_intro()) {
+            return false;
+        }
+
+        // If intro attachments should only be shown when submission is started, check if there is an open submission.
+        if (!empty($instance->submissionattachments) && !$this->submissions_open($userid, true)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Return a grade in user-friendly form, whether it's a scale or not.
      *
      * @param mixed $grade int|null
@@ -2063,6 +2089,7 @@ class assign {
             $participants[$userid]->submitted = false;
             $participants[$userid]->requiregrading = false;
             $participants[$userid]->grantedextension = false;
+            $participants[$userid]->submissionstatus = '';
         }
 
         foreach ($records as $userid => $submissioninfo) {
@@ -2070,6 +2097,7 @@ class assign {
             $submitted = false;
             $requiregrading = false;
             $grantedextension = false;
+            $submissionstatus = !empty($submissioninfo->status) ? $submissioninfo->status : '';
 
             if (!empty($submissioninfo->stime) && $submissioninfo->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
                 $submitted = true;
@@ -2088,6 +2116,7 @@ class assign {
             $participants[$userid]->submitted = $submitted;
             $participants[$userid]->requiregrading = $requiregrading;
             $participants[$userid]->grantedextension = $grantedextension;
+            $participants[$userid]->submissionstatus = $submissionstatus;
             if ($this->get_instance()->teamsubmission) {
                 $group = $this->get_submission_group($userid);
                 if ($group) {
@@ -2607,6 +2636,17 @@ class assign {
     }
 
     /**
+     * Is user id filtered by user filters and table preferences.
+     *
+     * @param int $userid User id that needs to be checked.
+     * @return bool
+     */
+    public function is_userid_filtered($userid) {
+        $users = $this->get_grading_userid_list();
+        return in_array($userid, $users);
+    }
+
+    /**
      * Finds all assignment notifications that have yet to be mailed out, and mails them.
      *
      * Cron function to be run periodically according to the moodle cron.
@@ -2909,9 +2949,16 @@ class assign {
 
         // If the conditions are met, allow another attempt.
         if ($submission) {
-            $this->reopen_submission_if_required($grade->userid,
+            $isreopened = $this->reopen_submission_if_required($grade->userid,
                     $submission,
                     $reopenattempt);
+            if ($isreopened) {
+                $completion = new completion_info($this->get_course());
+                if ($completion->is_enabled($this->get_course_module()) &&
+                    $this->get_instance()->completionsubmit) {
+                    $completion->update_state($this->get_course_module(), COMPLETION_INCOMPLETE, $grade->userid);
+                }
+            }
         }
 
         return true;
@@ -3061,7 +3108,7 @@ class assign {
      * @param bool $create If set to true a new submission object will be created in the database
      *                     with the status set to "new".
      * @param int $attemptnumber - -1 means the latest attempt
-     * @return stdClass The submission
+     * @return stdClass|false The submission
      */
     public function get_group_submission($userid, $groupid, $create, $attemptnumber=-1) {
         global $DB;
@@ -3126,12 +3173,14 @@ class assign {
                     $submission->latest = 1;
                 }
             }
+            $transaction = $DB->start_delegated_transaction();
             if ($submission->latest) {
                 // This is the case when we need to set latest to 0 for all the other attempts.
                 $DB->set_field('assign_submission', 'latest', 0, $params);
             }
             $submission->status = ASSIGN_SUBMISSION_STATUS_NEW;
             $sid = $DB->insert_record('assign_submission', $submission);
+            $transaction->allow_commit();
             return $DB->get_record('assign_submission', array('id' => $sid));
         }
         return false;
@@ -3246,7 +3295,7 @@ class assign {
 
         $plugin = $this->get_plugin_by_type($pluginsubtype, $plugintype);
         if (!$plugin) {
-            print_error('invalidformdata', '');
+            throw new \moodle_exception('invalidformdata', '');
             return;
         }
 
@@ -3617,170 +3666,30 @@ class assign {
     /**
      * Download a zip file of all assignment submissions.
      *
-     * @param array $userids Array of user ids to download assignment submissions in a zip file
+     * @param array|null $userids Array of user ids to download assignment submissions in a zip file
      * @return string - If an error occurs, this will contain the error page.
      */
-    protected function download_submissions($userids = false) {
-        global $CFG, $DB;
-
-        // More efficient to load this here.
-        require_once($CFG->libdir.'/filelib.php');
-
-        // Increase the server timeout to handle the creation and sending of large zip files.
-        core_php_time_limit::raise();
-
-        $this->require_view_grades();
-
-        // Load all users with submit.
-        $students = get_enrolled_users($this->context, "mod/assign:submit", null, 'u.*', null, null, null,
-                        $this->show_only_active_users());
-
-        // Build a list of files to zip.
-        $filesforzipping = array();
-        $fs = get_file_storage();
-
-        $groupmode = groups_get_activity_groupmode($this->get_course_module());
-        // All users.
-        $groupid = 0;
-        $groupname = '';
-        if ($groupmode) {
-            $groupid = groups_get_activity_group($this->get_course_module(), true);
-            if (!empty($groupid)) {
-                $groupname = groups_get_group_name($groupid) . '-';
-            }
+    protected function download_submissions($userids = null) {
+        $downloader = new downloader($this, $userids ?: null);
+        if ($downloader->load_filelist()) {
+            $downloader->download_zip();
         }
-
-        // Construct the zip file name.
-        $filename = clean_filename($this->get_course()->shortname . '-' .
-                                   $this->get_instance()->name . '-' .
-                                   $groupname.$this->get_course_module()->id . '.zip');
-
-        // Get all the files for each student.
-        foreach ($students as $student) {
-            $userid = $student->id;
-            // Download all assigments submission or only selected users.
-            if ($userids and !in_array($userid, $userids)) {
-                continue;
-            }
-
-            if ((groups_is_member($groupid, $userid) or !$groupmode or !$groupid)) {
-                // Get the plugins to add their own files to the zip.
-
-                $submissiongroup = false;
-                $groupname = '';
-                if ($this->get_instance()->teamsubmission) {
-                    $submission = $this->get_group_submission($userid, 0, false);
-                    $submissiongroup = $this->get_submission_group($userid);
-                    if ($submissiongroup) {
-                        $groupname = $submissiongroup->name . '-';
-                    } else {
-                        $groupname = get_string('defaultteam', 'assign') . '-';
-                    }
-                } else {
-                    $submission = $this->get_user_submission($userid, false);
-                }
-
-                if ($this->is_blind_marking()) {
-                    $prefix = str_replace('_', ' ', $groupname . get_string('participant', 'assign'));
-                    $prefix = clean_filename($prefix . '_' . $this->get_uniqueid_for_user($userid));
-                } else {
-                    $fullname = fullname($student, has_capability('moodle/site:viewfullnames', $this->get_context()));
-                    $prefix = str_replace('_', ' ', $groupname . $fullname);
-                    $prefix = clean_filename($prefix . '_' . $this->get_uniqueid_for_user($userid));
-                }
-
-                if ($submission) {
-                    $downloadasfolders = get_user_preferences('assign_downloadasfolders', 1);
-                    foreach ($this->submissionplugins as $plugin) {
-                        if ($plugin->is_enabled() && $plugin->is_visible()) {
-                            if ($downloadasfolders) {
-                                // Create a folder for each user for each assignment plugin.
-                                // This is the default behavior for version of Moodle >= 3.1.
-                                $submission->exportfullpath = true;
-                                $pluginfiles = $plugin->get_files($submission, $student);
-                                foreach ($pluginfiles as $zipfilepath => $file) {
-                                    $subtype = $plugin->get_subtype();
-                                    $type = $plugin->get_type();
-                                    $zipfilename = basename($zipfilepath);
-                                    $prefixedfilename = clean_filename($prefix .
-                                                                       '_' .
-                                                                       $subtype .
-                                                                       '_' .
-                                                                       $type .
-                                                                       '_');
-                                    if ($type == 'file') {
-                                        $pathfilename = $prefixedfilename . $file->get_filepath() . $zipfilename;
-                                    } else if ($type == 'onlinetext') {
-                                        $pathfilename = $prefixedfilename . '/' . $zipfilename;
-                                    } else {
-                                        $pathfilename = $prefixedfilename . '/' . $zipfilename;
-                                    }
-                                    $pathfilename = clean_param($pathfilename, PARAM_PATH);
-                                    $filesforzipping[$pathfilename] = $file;
-                                }
-                            } else {
-                                // Create a single folder for all users of all assignment plugins.
-                                // This was the default behavior for version of Moodle < 3.1.
-                                $submission->exportfullpath = false;
-                                $pluginfiles = $plugin->get_files($submission, $student);
-                                foreach ($pluginfiles as $zipfilename => $file) {
-                                    $subtype = $plugin->get_subtype();
-                                    $type = $plugin->get_type();
-                                    $prefixedfilename = clean_filename($prefix .
-                                                                       '_' .
-                                                                       $subtype .
-                                                                       '_' .
-                                                                       $type .
-                                                                       '_' .
-                                                                       $zipfilename);
-                                    $filesforzipping[$prefixedfilename] = $file;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        $result = '';
-        if (count($filesforzipping) == 0) {
-            $header = new assign_header($this->get_instance(),
-                                        $this->get_context(),
-                                        '',
-                                        $this->get_course_module()->id,
-                                        get_string('downloadall', 'assign'));
-            $result .= $this->get_renderer()->render($header);
-            $result .= $this->get_renderer()->notification(get_string('nosubmission', 'assign'));
-            $url = new moodle_url('/mod/assign/view.php', array('id'=>$this->get_course_module()->id,
-                                                                    'action'=>'grading'));
-            $result .= $this->get_renderer()->continue_button($url);
-            $result .= $this->view_footer();
-
-            return $result;
-        }
-
-        // Log zip as downloaded.
-        \mod_assign\event\all_submissions_downloaded::create_from_assign($this)->trigger();
-
-        // Close the session.
-        \core\session\manager::write_close();
-
-        $zipwriter = \core_files\archive_writer::get_stream_writer($filename, \core_files\archive_writer::ZIP_WRITER);
-
-        // Stream the files into the zip.
-        foreach ($filesforzipping as $pathinzip => $file) {
-            if ($file instanceof \stored_file) {
-                // Most of cases are \stored_file.
-                $zipwriter->add_file_from_stored_file($pathinzip, $file);
-            } else if (is_array($file)) {
-                // Save $file as contents, from onlinetext subplugin.
-                $content = reset($file);
-                $zipwriter->add_file_from_string($pathinzip, $content);
-            }
-        }
-
-        // Finish the archive.
-        $zipwriter->finish();
-        exit();
+        // Show some notification if we have nothing to download.
+        $cm = $this->get_course_module();
+        $renderer = $this->get_renderer();
+        $header = new assign_header(
+            $this->get_instance(),
+            $this->get_context(),
+            '',
+            $cm->id,
+            get_string('downloadall', 'mod_assign')
+        );
+        $result = $renderer->render($header);
+        $result .= $renderer->notification(get_string('nosubmission', 'mod_assign'));
+        $url = new moodle_url('/mod/assign/view.php', ['id' => $cm->id, 'action' => 'grading']);
+        $result .= $renderer->continue_button($url);
+        $result .= $this->view_footer();
+        return $result;
     }
 
     /**
@@ -3846,7 +3755,7 @@ class assign {
      * @param int $userid The id of the user whose submission we want or 0 in which case USER->id is used
      * @param bool $create If set to true a new submission object will be created in the database with the status set to "new".
      * @param int $attemptnumber - -1 means the latest attempt
-     * @return stdClass The submission
+     * @return stdClass|false The submission
      */
     public function get_user_submission($userid, $create, $attemptnumber=-1) {
         global $DB, $USER;
@@ -3908,11 +3817,13 @@ class assign {
                     $submission->latest = 1;
                 }
             }
+            $transaction = $DB->start_delegated_transaction();
             if ($submission->latest) {
                 // This is the case when we need to set latest to 0 for all the other attempts.
                 $DB->set_field('assign_submission', 'latest', 0, $params);
             }
             $sid = $DB->insert_record('assign_submission', $submission);
+            $transaction->allow_commit();
             return $DB->get_record('assign_submission', array('id' => $sid));
         }
         return false;
@@ -4416,14 +4327,14 @@ class assign {
      * @return string
      */
     protected function view_remove_submission_confirm() {
-        global $USER, $DB;
+        global $USER;
 
         $userid = optional_param('userid', $USER->id, PARAM_INT);
 
         if (!$this->can_edit_submission($userid, $USER->id)) {
-            print_error('nopermission');
+            throw new \moodle_exception('nopermission');
         }
-        $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+        $user = core_user::get_user($userid, '*', MUST_EXIST);
 
         $o = '';
         $header = new assign_header($this->get_instance(),
@@ -4443,10 +4354,17 @@ class assign {
         $cancelurl = new moodle_url('/mod/assign/view.php', $urlparams);
 
         if ($userid == $USER->id) {
-            $confirmstr = get_string('removesubmissionconfirm', 'assign');
+            if ($this->is_time_limit_enabled($userid)) {
+                $confirmstr = get_string('removesubmissionconfirmwithtimelimit', 'assign');
+            } else {
+                $confirmstr = get_string('removesubmissionconfirm', 'assign');
+            }
         } else {
-            $name = $this->fullname($user);
-            $confirmstr = get_string('removesubmissionconfirmforstudent', 'assign', $name);
+            if ($this->is_time_limit_enabled($userid)) {
+                $confirmstr = get_string('removesubmissionconfirmforstudentwithtimelimit', 'assign', $this->fullname($user));
+            } else {
+                $confirmstr = get_string('removesubmissionconfirmforstudent', 'assign', $this->fullname($user));
+            }
         }
         $o .= $this->get_renderer()->confirm($confirmstr,
                                              $confirmurl,
@@ -4518,7 +4436,7 @@ class assign {
      * @return string
      */
     protected function view_grading_table() {
-        global $USER, $CFG, $SESSION;
+        global $USER, $CFG, $SESSION, $PAGE;
 
         // Include grading options form.
         require_once($CFG->dirroot . '/mod/assign/gradingoptionsform.php');
@@ -4532,10 +4450,6 @@ class assign {
                 has_capability('moodle/grade:viewall', $this->get_course_context())) {
             $gradebookurl = '/grade/report/grader/index.php?id=' . $this->get_course()->id;
             $links[$gradebookurl] = get_string('viewgradebook', 'assign');
-        }
-        if ($this->is_any_submission_plugin_enabled() && $this->count_submissions()) {
-            $downloadurl = '/mod/assign/view.php?id=' . $cmid . '&action=downloadall';
-            $links[$downloadurl] = get_string('downloadall', 'assign');
         }
         if ($this->is_blind_marking() &&
                 has_capability('mod/assign:revealidentities', $this->get_context())) {
@@ -4560,6 +4474,7 @@ class assign {
 
         $gradingactions = new url_select($links);
         $gradingactions->set_label(get_string('choosegradingaction', 'assign'));
+        $gradingactions->class .= ' mb-1';
 
         $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
 
@@ -4637,9 +4552,10 @@ class assign {
         $gradingoptionsdata->workflowfilter = $workflowfilter;
         $gradingoptionsform->set_data($gradingoptionsdata);
 
-        $buttons = new \mod_assign\output\grading_actionmenu($this->get_course_module()->id);
+        $buttons = new \mod_assign\output\grading_actionmenu($this->get_course_module()->id,
+             $this->is_any_submission_plugin_enabled(), $this->count_submissions());
         $actionformtext = $this->get_renderer()->render($buttons);
-        $actionformtext .= $this->get_renderer()->render($gradingactions);
+        $PAGE->activityheader->set_attrs(['hidecompletion' => true]);
 
         $currenturl = new moodle_url('/mod/assign/view.php', ['id' => $this->get_course_module()->id, 'action' => 'grading']);
 
@@ -4648,11 +4564,15 @@ class assign {
                                     false,
                                     $this->get_course_module()->id,
                                     get_string('grading', 'assign'),
-                                    $actionformtext,
+                                    '',
                                     '',
                                     $currenturl);
         $o .= $this->get_renderer()->render($header);
 
+        $o .= $actionformtext;
+
+        $o .= $this->get_renderer()->heading(get_string('gradeitem:submissions', 'mod_assign'), 2);
+        $o .= $this->get_renderer()->render($gradingactions);
 
         $o .= groups_print_activity_menu($this->get_course_module(), $currenturl, true);
 
@@ -4718,6 +4638,8 @@ class assign {
 
         $PAGE->set_pagelayout('embedded');
 
+        $PAGE->activityheader->disable();
+
         $courseshortname = $this->get_context()->get_course_context()->get_context_name(false, true);
         $args = [
             'contextname' => $this->get_context()->get_context_name(false, true),
@@ -4735,6 +4657,10 @@ class assign {
         if (!$userid && $blindid) {
             $userid = $this->get_user_id_for_uniqueid($blindid);
         }
+
+        // Instantiate table object to apply table preferences.
+        $gradingtable = new assign_grading_table($this, 10, '', 0, false);
+        $gradingtable->setup();
 
         $currentgroup = groups_get_activity_group($this->get_course_module(), true);
         $framegrader = new grading_app($userid, $currentgroup, $this);
@@ -4873,7 +4799,7 @@ class assign {
 
         if ($userid == $USER->id) {
             if (!$this->can_edit_submission($userid, $USER->id)) {
-                print_error('nopermission');
+                throw new \moodle_exception('nopermission');
             }
             // User is editing their own submission.
             require_capability('mod/assign:submit', $this->context);
@@ -4881,7 +4807,7 @@ class assign {
         } else {
             // User is editing another user's submission.
             if (!$this->can_edit_submission($userid, $USER->id)) {
-                print_error('nopermission');
+                throw new \moodle_exception('nopermission');
             }
 
             $name = $this->fullname($user);
@@ -4921,6 +4847,7 @@ class assign {
             $bc->content = $navbc;
             $PAGE->blocks->add_fake_block($bc, reset($regions));
         }
+
         $o .= $this->get_renderer()->render(
             new assign_header($this->get_instance(),
                               $this->get_context(),
@@ -5062,7 +4989,7 @@ class assign {
                 return;
             }
         }
-        print_error('invalidformdata', '');
+        throw new \moodle_exception('invalidformdata', '');
     }
 
     /**
@@ -5822,9 +5749,9 @@ class assign {
                 $this->count_submissions_with_status($draft, $activitygroup),
                 $this->is_any_submission_plugin_enabled(),
                 $this->count_submissions_with_status($submitted, $activitygroup),
-                $instance->cutoffdate,
+                $this->get_cutoffdate($activitygroup),
                 $this->get_duedate($activitygroup),
-                $instance->timelimit,
+                $this->get_timelimit($activitygroup),
                 $this->get_course_module()->id,
                 $this->count_submissions_need_grading($activitygroup),
                 $instance->teamsubmission,
@@ -5832,7 +5759,8 @@ class assign {
                 $course->relativedatesmode,
                 $course->startdate,
                 $this->can_grade(),
-                $isvisible
+                $isvisible,
+                $this->get_course_module()
             );
         } else {
             // The active group has already been updated in groups_print_activity_menu().
@@ -5843,9 +5771,9 @@ class assign {
                 $this->count_submissions_with_status($draft, $activitygroup),
                 $this->is_any_submission_plugin_enabled(),
                 $this->count_submissions_with_status($submitted, $activitygroup),
-                $instance->cutoffdate,
+                $this->get_cutoffdate($activitygroup),
                 $this->get_duedate($activitygroup),
-                $instance->timelimit,
+                $this->get_timelimit($activitygroup),
                 $this->get_course_module()->id,
                 $this->count_submissions_need_grading($activitygroup),
                 $instance->teamsubmission,
@@ -5853,11 +5781,32 @@ class assign {
                 $course->relativedatesmode,
                 $course->startdate,
                 $this->can_grade(),
-                $isvisible
+                $isvisible,
+                $this->get_course_module()
             );
         }
 
         return $summary;
+    }
+
+    /**
+     * Helper function to allow up to fetch the group overrides via one query as opposed to many calls.
+     *
+     * @param int $activitygroup The group we want to check the overrides of
+     * @return mixed Can return either a fetched DB object, local object or false
+     */
+    private function get_override_data(int $activitygroup) {
+        global $DB;
+
+        $instanceid = $this->get_instance()->id;
+        $cachekey = "$instanceid-$activitygroup";
+        if (isset($this->overridedata[$cachekey])) {
+            return $this->overridedata[$cachekey];
+        }
+
+        $params = ['groupid' => $activitygroup, 'assignid' => $instanceid];
+        $this->overridedata[$cachekey] = $DB->get_record('assign_overrides', $params);
+        return $this->overridedata[$cachekey];
     }
 
     /**
@@ -5866,20 +5815,55 @@ class assign {
      * @param int $activitygroup Activity active group
      * @return int $duedate
      */
-    private function  get_duedate($activitygroup = null) {
-        global $DB;
-
+    private function get_duedate($activitygroup = null) {
         if ($activitygroup === null) {
             $activitygroup = groups_get_activity_group($this->get_course_module());
         }
-        if ($this->can_view_grades()) {
-            $params = array('groupid' => $activitygroup, 'assignid' => $this->get_instance()->id);
-            $groupoverride = $DB->get_record('assign_overrides', $params);
+        if ($this->can_view_grades() && !empty($activitygroup)) {
+            $groupoverride = $this->get_override_data($activitygroup);
             if (!empty($groupoverride->duedate)) {
                 return $groupoverride->duedate;
             }
         }
         return $this->get_instance()->duedate;
+    }
+
+    /**
+     * Return group override timelimit.
+     *
+     * @param null|int $activitygroup Activity active group
+     * @return int $timelimit
+     */
+    private function get_timelimit(?int $activitygroup = null): int {
+        if ($activitygroup === null) {
+            $activitygroup = groups_get_activity_group($this->get_course_module());
+        }
+        if ($this->can_view_grades() && !empty($activitygroup)) {
+            $groupoverride = $this->get_override_data($activitygroup);
+            if (!empty($groupoverride->timelimit)) {
+                return $groupoverride->timelimit;
+            }
+        }
+        return $this->get_instance()->timelimit;
+    }
+
+    /**
+     * Return group override cutoffdate.
+     *
+     * @param null|int $activitygroup Activity active group
+     * @return int $cutoffdate
+     */
+    private function get_cutoffdate(?int $activitygroup = null): int {
+        if ($activitygroup === null) {
+            $activitygroup = groups_get_activity_group($this->get_course_module());
+        }
+        if ($this->can_view_grades() && !empty($activitygroup)) {
+            $groupoverride = $this->get_override_data($activitygroup);
+            if (!empty($groupoverride->cutoffdate)) {
+                return $groupoverride->cutoffdate;
+            }
+        }
+        return $this->get_instance()->cutoffdate;
     }
 
     /**
@@ -5918,10 +5902,6 @@ class assign {
         if ($this->can_view_grades()) {
             $actionbuttons = new \mod_assign\output\actionmenu($this->get_course_module()->id);
             $o .= $this->get_renderer()->submission_actionmenu($actionbuttons);
-
-            // Group selector will only be displayed if necessary.
-            $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id));
-            $o .= groups_print_activity_menu($this->get_course_module(), $currenturl->out(), true);
 
             $summary = $this->get_assign_grading_summary_renderable();
             $o .= $this->get_renderer()->render($summary);
@@ -5971,7 +5951,8 @@ class assign {
             $showsubmit,
             $showedit,
             $submission,
-            $teamsubmission
+            $teamsubmission,
+            $instance->timelimit
         );
 
         return $this->get_renderer()->render($actionbuttons);
@@ -6761,7 +6742,7 @@ class assign {
             require_capability('mod/assign:submit', $this->context);
         } else {
             if (!$this->can_edit_submission($userid, $USER->id)) {
-                print_error('nopermission');
+                throw new \moodle_exception('nopermission');
             }
         }
 
@@ -7607,7 +7588,7 @@ class assign {
         } else {
             $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
             if (!$this->can_edit_submission($userid, $USER->id)) {
-                print_error('nopermission');
+                throw new \moodle_exception('nopermission');
             }
         }
         $instance = $this->get_instance();
@@ -7643,7 +7624,7 @@ class assign {
 
         // Get the flags to check if it is locked.
         if ($flags && $flags->locked) {
-            print_error('submissionslocked', 'assign');
+            throw new \moodle_exception('submissionslocked', 'assign');
             return true;
         }
 
@@ -8204,6 +8185,8 @@ class assign {
             $requiresubmissionstatement = false;
         }
 
+        $mform->addElement('header', 'submission header', get_string('addsubmission', 'mod_assign'));
+
         // Only show submission statement if we are editing our own submission.
         if ($requiresubmissionstatement && !$draftsenabled && $userid == $USER->id) {
             $mform->addElement('checkbox', 'submissionstatement', '', $submissionstatement);
@@ -8626,7 +8609,7 @@ class assign {
                 if ($gradingmodified) {
                     if (!$plugin->save($grade, $formdata)) {
                         $result = false;
-                        print_error($plugin->get_error());
+                        throw new \moodle_exception($plugin->get_error());
                     }
                     // If $feedbackmodified is true, keep it true.
                     $feedbackmodified = $feedbackmodified || $gradingmodified;
@@ -9356,6 +9339,13 @@ class assign {
      * @return string The key for the id, or new entry if no $id is passed.
      */
     public function get_useridlist_key($id = null) {
+        global $SESSION;
+
+        // Ensure the user id list cache is initialised.
+        if (!isset($SESSION->mod_assign_useridlist)) {
+            $SESSION->mod_assign_useridlist = [];
+        }
+
         if ($id === null) {
             $id = $this->get_useridlist_key_id();
         }
@@ -9678,6 +9668,41 @@ class assign {
         }
 
         return $submissionstatement;
+    }
+
+    /**
+     * Check if time limit for assignment enabled and set up.
+     *
+     * @param int|null $userid User ID. If null, use global user.
+     * @return bool
+     */
+    public function is_time_limit_enabled(?int $userid = null): bool {
+        $instance = $this->get_instance($userid);
+        return get_config('assign', 'enabletimelimit') && !empty($instance->timelimit);
+    }
+
+    /**
+     * Check if an assignment submission is already started and not yet submitted.
+     *
+     * @param int|null $userid User ID. If null, use global user.
+     * @param int $groupid Group ID. If 0, use user id to determine group.
+     * @param int $attemptnumber Attempt number. If -1, check latest submission.
+     * @return bool
+     */
+    public function is_attempt_in_progress(?int $userid = null, int $groupid = 0, int $attemptnumber = -1): bool {
+        if ($this->get_instance($userid)->teamsubmission) {
+            $submission = $this->get_group_submission($userid, $groupid, false, $attemptnumber);
+        } else {
+            $submission = $this->get_user_submission($userid, false, $attemptnumber);
+        }
+
+        // If time limit is enabled, we only assume it is in progress if there is a start time for submission.
+        $timedattemptstarted = true;
+        if ($this->is_time_limit_enabled($userid)) {
+            $timedattemptstarted = !empty($submission) && !empty($submission->timestarted);
+        }
+
+        return !empty($submission) && $submission->status !== ASSIGN_SUBMISSION_STATUS_SUBMITTED && $timedattemptstarted;
     }
 }
 
@@ -10024,7 +10049,7 @@ function move_group_override($id, $move, $assignid) {
     global $DB;
 
     // Get the override object.
-    if (!$override = $DB->get_record('assign_overrides', ['id' => $id], 'id, sortorder, groupid')) {
+    if (!$override = $DB->get_record('assign_overrides', ['id' => $id, 'assignid' => $assignid], 'id, sortorder, groupid')) {
         return false;
     }
     // Count the number of group overrides.
@@ -10053,8 +10078,8 @@ function move_group_override($id, $move, $assignid) {
 
         // Delete cache for the 2 records we updated above.
         $cache = cache::make('mod_assign', 'overrides');
-        $cache->delete("{$override->assignid}_g_{$override->groupid}");
-        $cache->delete("{$swapoverride->assignid}_g_{$swapoverride->groupid}");
+        $cache->delete("{$assignid}_g_{$override->groupid}");
+        $cache->delete("{$assignid}_g_{$swapoverride->groupid}");
     }
 
     reorder_group_overrides($assignid);

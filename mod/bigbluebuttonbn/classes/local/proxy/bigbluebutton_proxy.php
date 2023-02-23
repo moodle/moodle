@@ -41,14 +41,25 @@ use stdClass;
 class bigbluebutton_proxy extends proxy_base {
 
     /**
+     * Minimum poll interval for remote bigbluebutton server in seconds.
+     */
+    const MIN_POLL_INTERVAL = 2;
+
+    /**
+     * Default poll interval for remote bigbluebutton server in seconds.
+     */
+    const DEFAULT_POLL_INTERVAL = 5;
+
+    /**
      * Builds and returns a url for joining a bigbluebutton meeting.
      *
      * @param string $meetingid
      * @param string $username
      * @param string $pw
      * @param string $logouturl
+     * @param string $role
      * @param string|null $configtoken
-     * @param string|null $userid
+     * @param int $userid
      * @param string|null $createtime
      *
      * @return string
@@ -58,29 +69,37 @@ class bigbluebutton_proxy extends proxy_base {
         string $username,
         string $pw,
         string $logouturl,
+        string $role,
         string $configtoken = null,
-        string $userid = null,
+        int $userid = 0,
         string $createtime = null
-    ): ?string {
+    ): string {
         $data = [
             'meetingID' => $meetingid,
             'fullName' => $username,
             'password' => $pw,
             'logoutURL' => $logouturl,
+            'role' => $role
         ];
 
         if (!is_null($configtoken)) {
             $data['configToken'] = $configtoken;
         }
 
-        if (!is_null($userid)) {
+        if (!empty($userid)) {
             $data['userID'] = $userid;
+            $data['guest'] = "false";
+        } else {
+            $data['guest'] = "true";
         }
 
         if (!is_null($createtime)) {
             $data['createTime'] = $createtime;
         }
-
+        $currentlang = current_language();
+        if (!empty(trim($currentlang))) {
+            $data['userdata-bbb_override_default_locale'] = $currentlang;
+        }
         return self::action_url('join', $data);
     }
 
@@ -239,10 +258,12 @@ class bigbluebutton_proxy extends proxy_base {
 
         $bbbcompletion = new custom_completion($cm, $userid);
         if ($bbbcompletion->get_overall_completion_state()) {
-            mtrace("Completion succeeded for user $userid");
+            mtrace("Completion for userid $userid and bigbluebuttonid {$bigbluebuttonbn->id} updated.");
             $completion->update_state($cm, COMPLETION_COMPLETE, $userid, true);
         } else {
-            mtrace("Completion did not succeed for user $userid");
+            // Still update state to current value (prevent unwanted caching).
+            $completion->update_state($cm, COMPLETION_UNKNOWN, $userid);
+            mtrace("Activity not completed for userid $userid and bigbluebuttonid {$bigbluebuttonbn->id}.");
         }
     }
 
@@ -263,7 +284,7 @@ class bigbluebutton_proxy extends proxy_base {
                 'id' => instance::TYPE_ROOM_ONLY,
                 'name' => get_string('instance_type_room_only', 'bigbluebuttonbn'),
                 'features' => ['showroom', 'welcomemessage', 'voicebridge', 'waitformoderator', 'userlimit',
-                    'recording', 'sendnotifications', 'preuploadpresentation', 'permissions', 'schedule', 'groups',
+                    'recording', 'sendnotifications', 'lock', 'preuploadpresentation', 'permissions', 'schedule', 'groups',
                     'modstandardelshdr', 'availabilityconditionsheader', 'tagshdr', 'competenciessection',
                     'completionattendance', 'completionengagement', 'availabilityconditionsheader']
             ],
@@ -340,9 +361,14 @@ class bigbluebutton_proxy extends proxy_base {
      * @param instance $instance
      */
     public static function require_working_server(instance $instance): void {
+        $version = null;
         try {
-            self::get_server_version();
+            $version = self::get_server_version();
         } catch (server_not_available_exception $e) {
+            self::handle_server_not_available($instance);
+        }
+
+        if (empty($version)) {
             self::handle_server_not_available($instance);
         }
     }
@@ -401,7 +427,6 @@ class bigbluebutton_proxy extends proxy_base {
      * @param string|null $presentationurl
      * @return array
      * @throws bigbluebutton_exception
-     * @throws server_not_available_exception
      */
     public static function create_meeting(
         array $data,
@@ -479,5 +504,21 @@ class bigbluebutton_proxy extends proxy_base {
         $hends = explode('.', $h);
         $hendslength = count($hends);
         return ($hends[$hendslength - 1] == 'com' && $hends[$hendslength - 2] == 'blindsidenetworks');
+    }
+
+    /**
+     * Get the poll interval as it is set in the configuration
+     *
+     * If configuration value is under the threshold of {@see self::MIN_POLL_INTERVAL},
+     * then return the {@see self::MIN_POLL_INTERVAL} value.
+     *
+     * @return int the poll interval in seconds
+     */
+    public static function get_poll_interval(): int {
+        $pollinterval = intval(config::get('poll_interval'));
+        if ($pollinterval < self::MIN_POLL_INTERVAL) {
+            $pollinterval = self::MIN_POLL_INTERVAL;
+        }
+        return $pollinterval;
     }
 }

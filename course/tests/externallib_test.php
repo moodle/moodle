@@ -745,13 +745,18 @@ class externallib_test extends externallib_advanced_testcase {
             $coursecontext = context_course::instance($course['id']);
             $dbcourse = $generatedcourses[$course['id']];
             $this->assertEquals($course['idnumber'], $dbcourse->idnumber);
-            $this->assertEquals($course['fullname'], external_format_string($dbcourse->fullname, $coursecontext->id));
-            $this->assertEquals($course['displayname'], external_format_string(get_course_display_name_for_list($dbcourse),
-                $coursecontext->id));
+            $this->assertEquals(
+                $course['fullname'],
+                \core_external\util::format_string($dbcourse->fullname, $coursecontext->id)
+            );
+            $this->assertEquals(
+                $course['displayname'],
+                \core_external\util::format_string(get_course_display_name_for_list($dbcourse), $coursecontext->id)
+            );
             // Summary was converted to the HTML format.
             $this->assertEquals($course['summary'], format_text($dbcourse->summary, FORMAT_MOODLE, array('para' => false)));
             $this->assertEquals($course['summaryformat'], FORMAT_HTML);
-            $this->assertEquals($course['shortname'], external_format_string($dbcourse->shortname, $coursecontext->id));
+            $this->assertEquals($course['shortname'], \core_external\util::format_string($dbcourse->shortname, $coursecontext->id));
             $this->assertEquals($course['categoryid'], $dbcourse->category);
             $this->assertEquals($course['format'], $dbcourse->format);
             $this->assertEquals($course['showgrades'], $dbcourse->showgrades);
@@ -1085,8 +1090,10 @@ class externallib_test extends externallib_advanced_testcase {
             array('course' => $course->id, 'intro' => 'forum completion tracking auto', 'trackingtype' => 2),
             array('showdescription' => true, 'completionview' => 1, 'completion' => COMPLETION_TRACKING_AUTOMATIC));
         $forumcompleteautocm = get_coursemodule_from_id('forum', $forumcompleteauto->cmid);
-
-        rebuild_course_cache($course->id, true);
+        $sectionrecord = $DB->get_record('course_sections', $conditions);
+        // Invalidate the section cache by given section number.
+        course_modinfo::purge_course_section_cache_by_number($sectionrecord->course, $sectionrecord->section);
+        rebuild_course_cache($course->id, true, true);
 
         return array($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm, $forumcompleteautocm);
     }
@@ -1651,6 +1658,59 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertCount(0, $sections[4]['modules']); // No modules for the section hidden.
         $this->assertCount(1, $sections[5]['modules']); // One stealth module.
         $this->assertEquals(-1, $sections[5]['id']);
+    }
+
+    /**
+     * Test get course contents dates.
+     */
+    public function test_get_course_contents_dates() {
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+        set_config('enablecourserelativedates', 1);
+
+        // Course with just main section.
+        $timenow = time();
+        $course = self::getDataGenerator()->create_course(
+            ['numsections' => 0, 'relativedatesmode' => true, 'startdate' => $timenow - DAYSECS]);
+
+        $teacher = self::getDataGenerator()->create_user();
+        self::getDataGenerator()->enrol_user($teacher->id, $course->id, 'editingteacher');
+
+        $this->setUser($teacher);
+
+        // Create resource (empty dates).
+        $resource = self::getDataGenerator()->create_module('resource', ['course' => $course->id]);
+        // Create activities with dates.
+        $resource = self::getDataGenerator()->create_module('forum', ['course' => $course->id, 'duedate' => $timenow]);
+        $resource = self::getDataGenerator()->create_module('choice',
+            ['course' => $course->id, 'timeopen' => $timenow, 'timeclose' => $timenow + DAYSECS]);
+        $resource = self::getDataGenerator()->create_module('assign',
+            ['course' => $course->id, 'allowsubmissionsfromdate' => $timenow]);
+
+        $result = core_course_external::get_course_contents($course->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $result);
+
+        foreach ($result[0]['modules'] as $module) {
+            if ($module['modname'] == 'resource') {
+                $this->assertEmpty($module['dates']);
+            } else if ($module['modname'] == 'forum') {
+                $this->assertCount(1, $module['dates']);
+                $this->assertEquals('duedate', $module['dates'][0]['dataid']);
+                $this->assertEquals($timenow, $module['dates'][0]['timestamp']);
+            } else if ($module['modname'] == 'choice') {
+                $this->assertCount(2, $module['dates']);
+                $this->assertEquals('timeopen', $module['dates'][0]['dataid']);
+                $this->assertEquals($timenow, $module['dates'][0]['timestamp']);
+                $this->assertEquals('timeclose', $module['dates'][1]['dataid']);
+                $this->assertEquals($timenow + DAYSECS, $module['dates'][1]['timestamp']);
+            } else if ($module['modname'] == 'assign') {
+                $this->assertCount(1, $module['dates']);
+                $this->assertEquals('allowsubmissionsfromdate', $module['dates'][0]['dataid']);
+                $this->assertEquals($timenow, $module['dates'][0]['timestamp']);
+                $this->assertEquals($course->startdate, $module['dates'][0]['relativeto']);
+            }
+        }
     }
 
     /**
@@ -2552,7 +2612,7 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertTrue($navoptions->blogs);
                 $this->assertFalse($navoptions->notes);
                 $this->assertTrue($navoptions->participants);
-                $this->assertTrue($navoptions->badges);
+                $this->assertFalse($navoptions->badges);
                 $this->assertFalse($navoptions->tags);
                 $this->assertTrue($navoptions->grades);
                 $this->assertFalse($navoptions->search);
@@ -3575,6 +3635,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
 
         $user1picture = new user_picture($user1);
         $user1picture->size = 1;
@@ -3583,6 +3644,10 @@ class externallib_test extends externallib_advanced_testcase {
         $user2picture = new user_picture($user2);
         $user2picture->size = 1;
         $user2->profileimage = $user2picture->get_url($PAGE)->out(false);
+
+        $user3picture = new user_picture($user3);
+        $user3picture->size = 1;
+        $user3->profileimage = $user3picture->get_url($PAGE)->out(false);
 
         // Set the first created user to the test user.
         self::setUser($user1);
@@ -3598,6 +3663,8 @@ class externallib_test extends externallib_advanced_testcase {
         // Following lines enrol and assign default role id to the users.
         $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
         $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        // Enrol a suspended user in the course.
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id, null, 'manual', 0, 0, ENROL_USER_SUSPENDED);
 
         // Create what we expect to be returned when querying the course module.
         $expectedusers = array(
@@ -3619,10 +3686,41 @@ class externallib_test extends externallib_advanced_testcase {
             'lastname' => $user2->lastname,
             'profileimage' => $user2->profileimage,
         ];
+        $expectedusers['users'][2] = [
+            'id' => $user3->id,
+            'fullname' => fullname($user3),
+            'firstname' => $user3->firstname,
+            'lastname' => $user3->lastname,
+            'profileimage' => $user3->profileimage,
+        ];
 
         // Test getting the users in a given context.
         $users = core_course_external::get_enrolled_users_by_cmid($forum1->cmid);
         $users = external_api::clean_returnvalue(core_course_external::get_enrolled_users_by_cmid_returns(), $users);
+
+        $this->assertEquals(3, count($users['users']));
+        $this->assertEquals($expectedusers, $users);
+
+        // Test getting only the active users in a given context.
+        $users = core_course_external::get_enrolled_users_by_cmid($forum1->cmid, 0, true);
+        $users = external_api::clean_returnvalue(core_course_external::get_enrolled_users_by_cmid_returns(), $users);
+
+        $expectedusers['users'] = [
+            [
+                'id' => $user1->id,
+                'fullname' => fullname($user1),
+                'firstname' => $user1->firstname,
+                'lastname' => $user1->lastname,
+                'profileimage' => $user1->profileimage,
+            ],
+            [
+                'id' => $user2->id,
+                'fullname' => fullname($user2),
+                'firstname' => $user2->firstname,
+                'lastname' => $user2->lastname,
+                'profileimage' => $user2->profileimage,
+            ]
+        ];
 
         $this->assertEquals(2, count($users['users']));
         $this->assertEquals($expectedusers, $users);

@@ -41,7 +41,7 @@ $customfieldplugins = core_plugin_manager::instance()->get_plugins_of_type('cust
 $sortorder = array_flip(array_keys($customfieldplugins));
 
 if (!isset($customfieldplugins[$customfieldname])) {
-    print_error('customfieldnotfound', 'error', $return, $customfieldname);
+    throw new \moodle_exception('customfieldnotfound', 'error', $return, $customfieldname);
 }
 
 switch ($action) {

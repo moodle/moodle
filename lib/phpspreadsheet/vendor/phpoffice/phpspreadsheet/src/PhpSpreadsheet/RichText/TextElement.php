@@ -14,12 +14,12 @@ class TextElement implements ITextElement
     /**
      * Create a new TextElement instance.
      *
-     * @param string $pText Text
+     * @param string $text Text
      */
-    public function __construct($pText = '')
+    public function __construct($text = '')
     {
         // Initialise variables
-        $this->text = $pText;
+        $this->text = $text;
     }
 
     /**
@@ -35,7 +35,7 @@ class TextElement implements ITextElement
     /**
      * Set text.
      *
-     * @param $text string Text
+     * @param string $text Text
      *
      * @return $this
      */
@@ -67,20 +67,5 @@ class TextElement implements ITextElement
             $this->text .
             __CLASS__
         );
-    }
-
-    /**
-     * Implement PHP __clone to create a deep clone, not just a shallow copy.
-     */
-    public function __clone()
-    {
-        $vars = get_object_vars($this);
-        foreach ($vars as $key => $value) {
-            if (is_object($value)) {
-                $this->$key = clone $value;
-            } else {
-                $this->$key = $value;
-            }
-        }
     }
 }

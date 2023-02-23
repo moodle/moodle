@@ -37,7 +37,7 @@ function filter_tex_get_executable($debug=false) {
         if (is_executable($pathmimetex)) {
             return $pathmimetex;
         } else {
-            print_error('mimetexnotexecutable', 'error');
+            throw new \moodle_exception('mimetexnotexecutable', 'error');
         }
     }
 
@@ -46,7 +46,7 @@ function filter_tex_get_executable($debug=false) {
         if (is_executable($custom_commandpath)) {
             return $custom_commandpath;
         } else {
-            print_error('mimetexnotexecutable', 'error');
+            throw new \moodle_exception('mimetexnotexecutable', 'error');
         }
     }
 
@@ -61,7 +61,7 @@ function filter_tex_get_executable($debug=false) {
             return "$CFG->dirroot/filter/tex/mimetex.linux";
     }
 
-    print_error('mimetexisnotexist', 'error');
+    throw new \moodle_exception('mimetexisnotexist', 'error');
 }
 
 /**

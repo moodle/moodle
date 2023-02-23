@@ -1,5 +1,23 @@
 This files describes API changes in /admin/*.
 
+=== 4.2 ===
+
+* A new admin setting coursecreationguide allows admins to configure the URL of the Quickstart guide for admins and managers.
+
+=== 4.1 ===
+
+* A new admin setting supportavailability allows admins to configure who the "contact site support" feature is available to
+  (everyone, authenticated users, or nobody).
+  -For new sites and those upgrading from 3.11.x or older, the default will be "Limited to authenticated users".
+  -For sites upgrading from 4.0.x, the default will be "available to anyone visiting the site", to main consistent behaviour through the upgrade.
+
+=== 4.0.1 ===
+
+* A new callback xxx_pre_enable_plugin_actions has been added in admin/modules.php. Plugins can use this callback to
+  force additional actions (e.g. displaying notifications, modals, etc.) before enabling the plugin. The expected
+  return value (bool) from the plugin callback method specifies whether the process of enabling the plugin should
+  continue after the added actions or not.
+
 === 3.11 ===
 
 * New admin setting admin_setting_encryptedpassword allows passwords in admin settings to be

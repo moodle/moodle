@@ -28,8 +28,10 @@ require_once("$CFG->dirroot/user/profile/definelib.php");
 
 /**
  * Create the default category for custom profile fields if it does not exist yet.
+ *
+ * @return int Category ID for social user profile category.
  */
-function user_profile_social_create_info_category() {
+function user_profile_social_create_info_category(): int {
     global $DB;
 
     $categories = $DB->get_records('user_info_category', null, 'sortorder ASC');
@@ -39,7 +41,9 @@ function user_profile_social_create_info_category() {
             'name' => get_string('profiledefaultcategory', 'admin'),
             'sortorder' => 1
         ];
-        $DB->insert_record('user_info_category', $defaultcategory);
+        return $DB->insert_record('user_info_category', $defaultcategory);
+    } else {
+        return (int)$DB->get_field_sql('SELECT min(id) from {user_info_category}');
     }
 }
 
@@ -89,13 +93,15 @@ function user_profile_social_create_profilefield($social) {
     ];
     $visible = (in_array($confignames[$social], $hiddenfields)) ? 3 : 2;
 
+    $categoryid = user_profile_social_create_info_category();
+
     $newfield = (object)[
         'shortname' => $social,
         'name' => $social,
         'datatype' => 'social',
         'description' => '',
         'descriptionformat' => 1,
-        'categoryid' => 1,
+        'categoryid' => $categoryid,
         'required' => 0,
         'locked' => 0,
         'visible' => $visible,
@@ -105,8 +111,6 @@ function user_profile_social_create_profilefield($social) {
         'defaultdataformat' => 0,
         'param1' => $social
     ];
-
-    user_profile_social_create_info_category();
 
     $profilefield = $DB->get_record_sql(
         'SELECT * FROM {user_info_field} WHERE datatype = :datatype AND ' .

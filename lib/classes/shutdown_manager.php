@@ -102,9 +102,8 @@ class core_shutdown_manager {
                 array_unshift($params, $signo);
                 $shouldexit = call_user_func_array($callback, $params) && $shouldexit;
             } catch (Throwable $e) {
-                // @codingStandardsIgnoreStart
+                // phpcs:ignore
                 error_log('Exception ignored in signal function ' . get_callable_name($callback) . ': ' . $e->getMessage());
-                // @codingStandardsIgnoreEnd
             }
         }
 
@@ -124,9 +123,7 @@ class core_shutdown_manager {
      */
     public static function register_signal_handler($callback, array $params = null): void {
         if (!is_callable($callback)) {
-            // @codingStandardsIgnoreStart
-            error_log('Invalid custom signal function detected ' . var_export($callback, true));
-            // @codingStandardsIgnoreEnd
+            error_log('Invalid custom signal function detected ' . var_export($callback, true)); // phpcs:ignore
         }
         self::$signalcallbacks[] = [$callback, $params ?? []];
     }
@@ -140,9 +137,7 @@ class core_shutdown_manager {
      */
     public static function register_function($callback, array $params = null): void {
         if (!is_callable($callback)) {
-            // @codingStandardsIgnoreStart
-            error_log('Invalid custom shutdown function detected '.var_export($callback, true));
-            // @codingStandardsIgnoreEnd
+            error_log('Invalid custom shutdown function detected '.var_export($callback, true)); // phpcs:ignore
         }
         self::$callbacks[] = [$callback, $params ? array_values($params) : []];
     }
@@ -153,15 +148,18 @@ class core_shutdown_manager {
     public static function shutdown_handler() {
         global $DB;
 
+        // Always ensure we know who the user is in access logs even if they
+        // were logged in a weird way midway through the request.
+        set_access_log_user();
+
         // Custom stuff first.
         foreach (self::$callbacks as $data) {
             list($callback, $params) = $data;
             try {
                 call_user_func_array($callback, $params);
             } catch (Throwable $e) {
-                // @codingStandardsIgnoreStart
+                // phpcs:ignore
                 error_log('Exception ignored in shutdown function '.get_callable_name($callback).': '.$e->getMessage());
-                // @codingStandardsIgnoreEnd
             }
         }
 
@@ -210,15 +208,15 @@ class core_shutdown_manager {
         }
 
         // Deal with perf logging.
-        if (defined('MDL_PERF') || (!empty($CFG->perfdebug) and $CFG->perfdebug > 7)) {
+        if ((defined('MDL_PERF') && MDL_PERF) || (!empty($CFG->perfdebug) && $CFG->perfdebug > 7)) {
             if ($apachereleasemem) {
                 error_log('Mem usage over '.$apachereleasemem.': marking Apache child for reaping.');
             }
-            if (defined('MDL_PERFTOLOG')) {
+            if (defined('MDL_PERFTOLOG') && MDL_PERFTOLOG) {
                 $perf = get_performance_info();
                 error_log("PERF: " . $perf['txt']);
             }
-            if (defined('MDL_PERFINC')) {
+            if (defined('MDL_PERFINC') && MDL_PERFINC) {
                 $inc = get_included_files();
                 $ts  = 0;
                 foreach ($inc as $f) {

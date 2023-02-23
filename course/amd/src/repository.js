@@ -59,6 +59,40 @@ const getEnrolledCoursesByTimelineClassification = (classification, limit, offse
 };
 
 /**
+ * Get a list of courses that the logged in user is enrolled in, where they have at least one action event,
+ * for a given timeline classification.
+ *
+ * @param {string} classification past, inprogress, or future
+ * @param {int} limit The maximum number of courses to return
+ * @param {int} offset Skip this many results from the start of the result set
+ * @param {string} sort Column to sort by and direction, e.g. 'shortname asc'
+ * @param {string} searchValue Optional text search value
+ * @param {int} eventsFrom Optional start timestamp (inclusive) that the course should have event(s) in
+ * @param {int} eventsTo Optional end timestamp (inclusive) that the course should have event(s) in
+ * @return {object} jQuery promise resolved with courses.
+ */
+ const getEnrolledCoursesWithEventsByTimelineClassification = (classification, limit = 0, offset = 0, sort = null,
+        searchValue = null, eventsFrom = null, eventsTo = null) => {
+
+    const args = {
+        classification: classification,
+        limit: limit,
+        offset: offset,
+        sort: sort,
+        eventsfrom: eventsFrom,
+        eventsto: eventsTo,
+        searchvalue: searchValue,
+    };
+
+    const request = {
+        methodname: 'core_course_get_enrolled_courses_with_action_events_by_timeline_classification',
+        args: args
+    };
+
+    return Ajax.call([request])[0];
+};
+
+/**
  * Get the list of courses that the user has most recently accessed.
  *
  * @method getLastAccessedCourses
@@ -100,14 +134,16 @@ const getLastAccessedCourses = (userid, limit, offset, sort) => {
  *
  * @param {Number} cmid Course Module from which the users will be obtained
  * @param {Number} groupID Group ID from which the users will be obtained
+ * @param {Boolean} onlyActive Whether to fetch only the active enrolled users or all enrolled users in the course.
  * @returns {Promise} Promise containing a list of users
  */
-const getEnrolledUsersFromCourseModuleID = (cmid, groupID) => {
+const getEnrolledUsersFromCourseModuleID = (cmid, groupID, onlyActive = false) => {
     var request = {
         methodname: 'core_course_get_enrolled_users_by_cmid',
         args: {
             cmid: cmid,
             groupid: groupID,
+            onlyactive: onlyActive,
         },
     };
 
@@ -137,4 +173,5 @@ export default {
     getLastAccessedCourses,
     getUsersFromCourseModuleID: getEnrolledUsersFromCourseModuleID,
     toggleManualCompletion,
+    getEnrolledCoursesWithEventsByTimelineClassification,
 };

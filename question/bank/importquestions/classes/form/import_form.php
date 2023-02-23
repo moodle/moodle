@@ -158,6 +158,12 @@ class question_import_form extends moodleform {
             $a->actualtype = $file->get_mimetype();
             $a->expectedtype = $qformat->mime_type();
             $errors['newfile'] = get_string('importwrongfiletype', 'question', $a);
+            return $errors;
+        }
+
+        $fileerrors = $qformat->validate_file($file);
+        if ($fileerrors) {
+            $errors['newfile'] = $fileerrors;
         }
 
         return $errors;

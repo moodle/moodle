@@ -14,15 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests for the question_attempt_step class.
- *
- * @package    moodlecore
- * @subpackage questionengine
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_question;
 
+use question_attempt_step;
+use question_state;
+use question_test_recordset;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,14 +26,15 @@ global $CFG;
 require_once(__DIR__ . '/../lib.php');
 require_once(__DIR__ . '/helpers.php');
 
-
 /**
  * Unit tests for the loading data into the {@link question_attempt_step} class.
  *
+ * @package    core_question
+ * @category   test
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_attempt_step_db_test extends data_loading_method_test_base {
+class questionattemptstep_db_test extends \data_loading_method_test_base {
     public function test_load_with_data() {
         $records = new question_test_recordset(array(
             array('attemptstepid', 'questionattemptid', 'sequencenumber', 'state', 'fraction', 'timecreated', 'userid', 'name', 'value', 'qtype', 'contextid'),

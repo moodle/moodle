@@ -5,7 +5,11 @@ Feature: Manage custom reports
   I need to create new and edit existing reports
 
   Scenario: Create custom report with default setup
-    Given I log in as "admin"
+    Given the following "users" exist:
+      | username  | firstname | lastname | suspended |
+      | user1     | User      | 1        | 1         |
+      | user2     | User      | 2        | 0         |
+    And I log in as "admin"
     And I change window size to "large"
     When I navigate to "Reports > Report builder > Custom reports" in site administration
     And I click on "New report" "button"
@@ -19,11 +23,23 @@ Feature: Manage custom reports
     And I should see "Full name" in the "reportbuilder-table" "table"
     And I should see "Username" in the "reportbuilder-table" "table"
     And I should see "Email address" in the "reportbuilder-table" "table"
+    # Confirm we see the default sorting in the report
+    And "Admin User" "table_row" should appear before "User 2" "table_row"
+    And I click on "Show/hide 'Sorting'" "button"
+    And "Disable initial sorting for column Full name" "checkbox" should exist in the "#settingssorting" "css_element"
+    And I click on "Show/hide 'Sorting'" "button"
+    # Confirm we only see not suspended users in the report.
+    And I should see "Admin User" in the "reportbuilder-table" "table"
+    And I should see "User 2" in the "reportbuilder-table" "table"
+    And I should not see "User 1" in the "reportbuilder-table" "table"
     # Confirm we see the default conditions in the report.
     And I click on "Show/hide 'Conditions'" "button"
     Then I should see "Full name" in the "[data-region='settings-conditions']" "css_element"
     Then I should see "Username" in the "[data-region='settings-conditions']" "css_element"
     Then I should see "Email address" in the "[data-region='settings-conditions']" "css_element"
+    Then I should see "Suspended" in the "[data-region='settings-conditions']" "css_element"
+    And the following fields in the "Suspended" "core_reportbuilder > Condition" match these values:
+      | Suspended operator | No |
     # Confirm we see the default filters in the report.
     And I click on "Switch to preview mode" "button"
     And I click on "Filters" "button" in the "[data-region='core_reportbuilder/report-header']" "css_element"
@@ -55,6 +71,35 @@ Feature: Manage custom reports
       | Name      | Report source |
       | My report | Users         |
 
+  Scenario: Create custom report as a manager
+    # Create a report that our manager can access, but not edit.
+    Given the following "core_reportbuilder > Report" exists:
+      | name    | My report                                |
+      | source  | core_user\reportbuilder\datasource\users |
+    And the following "core_reportbuilder > Audience" exists:
+      | report     | My report                                          |
+      | classname  | core_reportbuilder\reportbuilder\audience\allusers |
+      | configdata |                                                    |
+    And the following "users" exist:
+      | username  | firstname | lastname |
+      | manager1  | Manager   | One        |
+    And the following "role assigns" exist:
+      | user     | role    | contextlevel   | reference |
+      | manager1 | manager | System         |           |
+    And I log in as "manager1"
+    When I navigate to "Reports > Report builder > Custom reports" in site administration
+    And I click on "New report" "button"
+    And I set the following fields in the "New report" "dialogue" to these values:
+      | Name          | Manager report |
+      | Report source | Users          |
+    And I click on "Save" "button" in the "New report" "dialogue"
+    And I click on "Close 'Manager report' editor" "button"
+    # Manager can edit their own report, but not those of other users.
+    And I set the field "Edit report name" in the "Manager report" "table_row" to "Manager report (renamed)"
+    Then the "Edit report content" item should exist in the "Actions" action menu of the "Manager report (renamed)" "table_row"
+    And "Edit report name" "link" should not exist in the "My report" "table_row"
+    And "Actions" "actionmenu" should not exist in the "My report" "table_row"
+
   Scenario: Rename custom report
     Given the following "core_reportbuilder > Reports" exist:
       | name      | source                                   |
@@ -69,13 +114,30 @@ Feature: Manage custom reports
       | Name              | Report source |
       | My renamed report | Users         |
 
+  Scenario: Rename custom report using filters
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And the following "core_reportbuilder > Reports" exist:
+      | name      | source                                   |
+      | My report | core_user\reportbuilder\datasource\users |
+    And I log in as "admin"
+    When I navigate to "Reports > Report builder > Custom reports" in site administration
+    And I set the field "Edit report name" in the "My report" "table_row" to "<span class=\"multilang\" lang=\"en\">English</span><span class=\"multilang\" lang=\"es\">Spanish</span>"
+    And I reload the page
+    Then I should see "English" in the "reportbuilder-table" "table"
+    And I should not see "Spanish" in the "reportbuilder-table" "table"
+    # Confirm report name is correctly shown in action.
+    And I press "Delete report" action in the "English" report row
+    And I should see "Are you sure you want to delete the report 'English' and all associated data?" in the "Delete report" "dialogue"
+    And I click on "Cancel" "button" in the "Delete report" "dialogue"
+
   Scenario: Edit custom report from the custom reports page
     Given the following "core_reportbuilder > Reports" exist:
       | name      | source                                   |
       | My report | core_user\reportbuilder\datasource\users |
     And I log in as "admin"
     When I navigate to "Reports > Report builder > Custom reports" in site administration
-    And I click on "Edit report details" "link" in the "My report" "table_row"
+    When I press "Edit report details" action in the "My report" report row
     And I set the following fields in the "Edit report details" "dialogue" to these values:
       | Name | My renamed report |
     And I click on "Save" "button" in the "Edit report details" "dialogue"
@@ -108,7 +170,7 @@ Feature: Manage custom reports
       | My report | core_user\reportbuilder\datasource\users |
     And I log in as "admin"
     When I navigate to "Reports > Report builder > Custom reports" in site administration
-    And I click on "Delete report" "link" in the "My report" "table_row"
+    And I press "Delete report" action in the "My report" report row
     And I click on "Delete" "button" in the "Delete report" "dialogue"
     Then I should see "Report deleted"
     And I should see "Nothing to display"
@@ -130,17 +192,83 @@ Feature: Manage custom reports
     Then I should see "Preview" in the "[data-region='core_reportbuilder/report-header']" "css_element"
     And I should not see "Edit" in the "[data-region='core_reportbuilder/report-header']" "css_element"
 
-  Scenario Outline: Access report clicking on the report name or view icon
+  Scenario: Access report clicking on the report name
     Given the following "core_reportbuilder > Reports" exist:
       | name      | source                                   |
       | My report | core_user\reportbuilder\datasource\users |
     When I log in as "admin"
     And I navigate to "Reports > Report builder > Custom reports" in site administration
-    And I click on "<link>" "link" in the "My report" "table_row"
-    Then <previewvisible> "Preview" in the "[data-region='core_reportbuilder/report']" "css_element"
-    And <editvisible> "Edit" in the "[data-region='core_reportbuilder/report']" "css_element"
-    And "button[title='Filters']" "css_element" <filtersvisible> in the "[data-region='core_reportbuilder/report']" "css_element"
+    And I click on "My report" "link" in the "My report" "table_row"
+    Then I should see "Preview" in the "[data-region='core_reportbuilder/report']" "css_element"
+    And I should not see "Edit" in the "[data-region='core_reportbuilder/report']" "css_element"
+    And "button[title='Filters']" "css_element" should not exist in the "[data-region='core_reportbuilder/report']" "css_element"
+
+  Scenario: Access report clicking on the view icon
+    Given the following "core_reportbuilder > Reports" exist:
+      | name      | source                                   |
+      | My report | core_user\reportbuilder\datasource\users |
+    When I log in as "admin"
+    And I navigate to "Reports > Report builder > Custom reports" in site administration
+    And I press "View" action in the "My report" report row
+    Then I should not see "Preview" in the "[data-region='core_reportbuilder/report']" "css_element"
+    And I should not see "Edit" in the "[data-region='core_reportbuilder/report']" "css_element"
+    And "button[title='Filters']" "css_element" should exist in the "[data-region='core_reportbuilder/report']" "css_element"
+
+  Scenario: Special characters in report name are shown correctly
+    Given the following "core_reportbuilder > Reports" exist:
+      | name                    | source                                   |
+      | My fish & chips report  | core_user\reportbuilder\datasource\users |
+    When I log in as "admin"
+    And I navigate to "Reports > Report builder > Custom reports" in site administration
+    And I press "Edit report content" action in the "My fish & chips report" report row
+    Then I should see "My fish & chips report" in the "#region-main .navbar" "css_element"
+
+  Scenario: Site report limit is observed when creating new reports
+    Given the following config values are set as admin:
+      | customreportslimit     | 0 |
+    And the following "core_reportbuilder > Reports" exist:
+      | name           | source                                       |
+      | Report users   | core_user\reportbuilder\datasource\users     |
+      | Report courses | core_course\reportbuilder\datasource\courses |
+    When I log in as "admin"
+    And I navigate to "Reports > Report builder > Custom reports" in site administration
+    Then "New report" "button" should exist
+    And the following config values are set as admin:
+      | customreportslimit     | 2 |
+    And I reload the page
+    And "New report" "button" should not exist
+
+  Scenario: Disable live editing of custom reports
+    Given the following config values are set as admin:
+      | customreportsliveediting     | 0 |
+    And the following "core_reportbuilder > Reports" exist:
+      | name           | source                                       |
+      | Report users   | core_user\reportbuilder\datasource\users     |
+    When I am on the "Report users" "reportbuilder > Editor" page logged in as "admin"
+    Then I should see "Viewing of report data while editing is disabled by the site administrator. Switch to preview mode to view the report." in the "[data-region='core_table/dynamic']" "css_element"
+    And I click on "Switch to preview mode" "button"
+    And I should see "admin" in the "reportbuilder-table" "table"
+    And I click on "Close 'Report users' editor" "button"
+    And I press "View" action in the "Report users" report row
+    And I should see "admin" in the "reportbuilder-table" "table"
+
+  Scenario Outline: Download custom report in different formats
+    Given the following "users" exist:
+      | username  | firstname | lastname |
+      | user1     | User      | 1        |
+      | user2     | User      | 2        |
+    And the following "core_reportbuilder > Reports" exist:
+      | name           | source                                       |
+      | Report users   | core_user\reportbuilder\datasource\users     |
+    When I am on the "Report users" "reportbuilder > Editor" page logged in as "admin"
+    And I click on "Switch to preview mode" "button"
+    Then I set the field "Download table data as" to "<format>"
+    And I press "Download"
     Examples:
-      | link       | previewvisible    | editvisible       | filtersvisible    |
-      | My report  | I should see      | I should not see  | should not exist  |
-      | View       | I should not see  | I should not see  | should exist      |
+      | format                             |
+      | Comma separated values (.csv)      |
+      | Microsoft Excel (.xlsx)            |
+      | HTML table                         |
+      | Javascript Object Notation (.json) |
+      | OpenDocument (.ods)                |
+      | Portable Document Format (.pdf)    |

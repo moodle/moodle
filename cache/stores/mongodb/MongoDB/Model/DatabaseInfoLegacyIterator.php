@@ -1,12 +1,12 @@
 <?php
 /*
- * Copyright 2015-2017 MongoDB, Inc.
+ * Copyright 2015-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,16 +30,13 @@ use function reset;
  *
  * @internal
  * @see \MongoDB\Client::listDatabases()
- * @see http://docs.mongodb.org/manual/reference/command/listDatabases/
+ * @see https://mongodb.com/docs/manual/reference/command/listDatabases/
  */
 class DatabaseInfoLegacyIterator implements DatabaseInfoIterator
 {
     /** @var array */
     private $databases;
 
-    /**
-     * @param array $databases
-     */
     public function __construct(array $databases)
     {
         $this->databases = $databases;
@@ -49,10 +46,9 @@ class DatabaseInfoLegacyIterator implements DatabaseInfoIterator
      * Return the current element as a DatabaseInfo instance.
      *
      * @see DatabaseInfoIterator::current()
-     * @see http://php.net/iterator.current
-     * @return DatabaseInfo
+     * @see https://php.net/iterator.current
      */
-    public function current()
+    public function current(): DatabaseInfo
     {
         return new DatabaseInfo(current($this->databases));
     }
@@ -60,10 +56,9 @@ class DatabaseInfoLegacyIterator implements DatabaseInfoIterator
     /**
      * Return the key of the current element.
      *
-     * @see http://php.net/iterator.key
-     * @return integer
+     * @see https://php.net/iterator.key
      */
-    public function key()
+    public function key(): int
     {
         return key($this->databases);
     }
@@ -71,9 +66,9 @@ class DatabaseInfoLegacyIterator implements DatabaseInfoIterator
     /**
      * Move forward to next element.
      *
-     * @see http://php.net/iterator.next
+     * @see https://php.net/iterator.next
      */
-    public function next()
+    public function next(): void
     {
         next($this->databases);
     }
@@ -81,9 +76,9 @@ class DatabaseInfoLegacyIterator implements DatabaseInfoIterator
     /**
      * Rewind the Iterator to the first element.
      *
-     * @see http://php.net/iterator.rewind
+     * @see https://php.net/iterator.rewind
      */
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->databases);
     }
@@ -91,10 +86,9 @@ class DatabaseInfoLegacyIterator implements DatabaseInfoIterator
     /**
      * Checks if current position is valid.
      *
-     * @see http://php.net/iterator.valid
-     * @return boolean
+     * @see https://php.net/iterator.valid
      */
-    public function valid()
+    public function valid(): bool
     {
         return key($this->databases) !== null;
     }

@@ -23,17 +23,31 @@
 
     Example context (json):
     {
-        "highlighted" : "1",
+        "iscurrent" : true,
         "hiddenfromstudents" : "1",
-        "notavailable" : "0"
+        "notavailable" : "0",
+        "highlightedlabel" : "Highlighted"
     }
 }}
-{{#highlighted}}
-    <span class="badge badge-pill badge-primary order-1" data-type="highlighted">{{#str}}highlighted{{/str}}</span>
-{{/highlighted}}
-{{#hiddenfromstudents}}
-    <span class="badge badge-pill badge-warning order-2" data-type="hiddenfromstudents">{{#str}}hiddenfromstudents{{/str}}</span>
-{{/hiddenfromstudents}}
-{{#notavailable}}
-    <span class="badge badge-pill badge-secondary order-3">{{#str}}notavailable{{/str}}</span>
-{{/notavailable}}
+{{#editing}}
+    <span class="badge badge-pill badge-primary order-1 {{^iscurrent}}d-none{{/iscurrent}}" data-type="iscurrent">
+        {{ highlightedlabel }}
+    </span>
+    <span class="badge badge-pill badge-warning order-2 {{^hiddenfromstudents}}d-none{{/hiddenfromstudents}}" data-type="hiddenfromstudents">
+        {{#str}}hiddenfromstudents{{/str}}
+    </span>
+    <span class="badge badge-pill badge-secondary order-3 {{^notavailable}}d-none{{/notavailable}}">
+        {{#str}}notavailable{{/str}}
+    </span>
+{{/editing}}
+{{^editing}}
+    {{#iscurrent}}
+        <span class="badge badge-pill badge-primary order-1">{{ highlightedlabel }}</span>
+    {{/iscurrent}}
+    {{#hiddenfromstudents}}
+        <span class="badge badge-pill badge-warning order-2">{{#str}}hiddenfromstudents{{/str}}</span>
+    {{/hiddenfromstudents}}
+    {{#notavailable}}
+        <span class="badge badge-pill badge-secondary order-3">{{#str}}notavailable{{/str}}</span>
+    {{/notavailable}}
+{{/editing}}

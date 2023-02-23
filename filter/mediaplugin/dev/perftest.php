@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/filter/mediaplugin/filter.php');
 // Only available to site admins.
 require_login();
 if (!is_siteadmin()) {
-    print_error('nopermissions', 'error', '', 'perftest');
+    throw new \moodle_exception('nopermissions', 'error', '', 'perftest');
 }
 
 // Set up page.

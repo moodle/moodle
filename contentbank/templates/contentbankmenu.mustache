@@ -1,0 +1,57 @@
+{{!
+This file is part of Moodle - http://moodle.org/
+
+Moodle is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Moodle is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more comments.
+
+You should have received a copy of the GNU General Public License
+along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_contentbank/contentbankmenu
+
+    Contentbank view toolbar.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * options - JSON object - the options available in the dropdown
+
+    Example context (json):
+    {
+        "options": [
+            {
+                "url": "www.google.com",
+                "label": "Google",
+                "attributes": [
+                    {
+                        "name": "data-attrib",
+                        "value": "1"
+                    }
+                ]
+            }
+        ]
+    }
+}}
+<div class="dropdown d-flex">
+    <button aria-label="{{#str}}actionsmenu{{/str}}" class="btn btn-secondary dropdown-toggle" id="dropdown-actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{#str}}more, core_contentbank{{/str}}
+    </button>
+    {{! dropdown-menu-right style to fix RTL placement }}
+    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown-actions">
+        {{#options}}
+            <a class="dropdown-item" {{#attributes}}{{name}}="{{value}}"{{/attributes}} href="{{url}}">{{label}}</a>
+        {{/options}}
+    </div>
+</div>

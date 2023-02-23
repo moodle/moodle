@@ -18,10 +18,15 @@
  * Unit tests for Random allocation
  *
  * @package    workshopallocation_random
- * @category   phpunit
+ * @category   test
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace workshopallocation_random;
+
+use workshop;
+use workshop_random_allocator;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,8 +35,15 @@ global $CFG;
 require_once($CFG->dirroot . '/mod/workshop/locallib.php');
 require_once($CFG->dirroot . '/mod/workshop/allocation/random/lib.php');
 
-
-class workshopallocation_random_testcase extends advanced_testcase {
+/**
+ * Unit tests for Random allocation
+ *
+ * @package    workshopallocation_random
+ * @category   test
+ * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class allocator_test extends \advanced_testcase {
 
     /** workshop instance emulation */
     protected $workshop;
@@ -63,8 +75,8 @@ class workshopallocation_random_testcase extends advanced_testcase {
 
     public function test_self_allocation_equal_user_groups() {
         // fixture setup
-        $authors    = array(0 => array_fill_keys(array(4, 6, 10), new stdclass()));
-        $reviewers  = array(0 => array_fill_keys(array(4, 6, 10), new stdclass()));
+        $authors    = array(0 => array_fill_keys(array(4, 6, 10), new \stdClass()));
+        $reviewers  = array(0 => array_fill_keys(array(4, 6, 10), new \stdClass()));
         // exercise SUT
         $newallocations = $this->allocator->self_allocation($authors, $reviewers);
         // verify
@@ -73,8 +85,8 @@ class workshopallocation_random_testcase extends advanced_testcase {
 
     public function test_self_allocation_different_user_groups() {
         // fixture setup
-        $authors    = array(0 => array_fill_keys(array(1, 4, 5, 10, 13), new stdclass()));
-        $reviewers  = array(0 => array_fill_keys(array(4, 7, 10), new stdclass()));
+        $authors    = array(0 => array_fill_keys(array(1, 4, 5, 10, 13), new \stdClass()));
+        $reviewers  = array(0 => array_fill_keys(array(4, 7, 10), new \stdClass()));
         // exercise SUT
         $newallocations = $this->allocator->self_allocation($authors, $reviewers);
         // verify
@@ -83,8 +95,8 @@ class workshopallocation_random_testcase extends advanced_testcase {
 
     public function test_self_allocation_skip_existing() {
         // fixture setup
-        $authors        = array(0 => array_fill_keys(array(3, 4, 10), new stdclass()));
-        $reviewers      = array(0 => array_fill_keys(array(3, 4, 10), new stdclass()));
+        $authors        = array(0 => array_fill_keys(array(3, 4, 10), new \stdClass()));
+        $reviewers      = array(0 => array_fill_keys(array(3, 4, 10), new \stdClass()));
         $assessments    = array(23 => (object)array('authorid' => 3, 'reviewerid' => 3));
         // exercise SUT
         $newallocations = $this->allocator->self_allocation($authors, $reviewers, $assessments);
@@ -121,7 +133,7 @@ class workshopallocation_random_testcase extends advanced_testcase {
             87 => (object)array('id' => 121, 'authorid' => 3),
         );
         // exercise SUT
-        $this->expectException(moodle_exception::class);
+        $this->expectException(\moodle_exception::class);
         $submissions = $this->allocator->index_submissions_by_authors($submissions);
     }
 

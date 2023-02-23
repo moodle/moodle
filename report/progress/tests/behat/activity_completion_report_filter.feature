@@ -1,5 +1,5 @@
 @report @report_progress
-Feature: Teacher can view and filter activity completion data by group and activity type.
+Feature: Teacher can view and filter activity completion data by group, activity type and section.
 
   Background:
     Given the following "courses" exist:
@@ -8,9 +8,9 @@ Feature: Teacher can view and filter activity completion data by group and activ
     And the following "activities" exist:
       | activity | name          | intro   | course | idnumber | section | completion | completionview |
       | quiz     | My quiz B     | A3 desc | C1     | quizb    | 0       | 2          | 1              |
-      | quiz     | My quiz A     | A3 desc | C1     | quiza    | 0       | 2          | 1              |
-      | page     | My page       | A4 desc | C1     | page1    | 0       | 2          | 1              |
-      | assign   | My assignment | A1 desc | C1     | assign1  | 0       | 2          | 1              |
+      | quiz     | My quiz A     | A3 desc | C1     | quiza    | 1       | 2          | 1              |
+      | page     | My page       | A4 desc | C1     | page1    | 2       | 2          | 1              |
+      | assign   | My assignment | A1 desc | C1     | assign1  | 2       | 2          | 1              |
     And the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | One      | teacher1@example.com |
@@ -37,17 +37,34 @@ Feature: Teacher can view and filter activity completion data by group and activ
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
-    And I select "Activity completion" from the "Report type" singleselect
-    Then "My quiz B" "link" should appear before "My quiz A" "link"
-    And I should see "My assignment"
-    And I should see "My page"
-    And I should see "Student One"
-    And I should see "Student Two"
+    And I click on "Activity completion" "link"
+    Then "My quiz B" "link" should appear before "My quiz A" "link" in the "completion-progress" "table"
+    And I should see "My assignment" in the "completion-progress" "table"
+    And I should see "My page" in the "completion-progress" "table"
+    And I should see "Student One" in the "completion-progress" "table"
+    And I should see "Student Two" in the "completion-progress" "table"
     And I set the field "Separate groups" to "Group 1"
     And I set the field "Include" to "Quizzes"
     And I set the field "Activity order" to "Alphabetical"
-    And "My quiz A" "link" should appear before "My quiz B" "link"
-    And I should not see "My assignment"
-    And I should not see "My page"
-    And I should see "Student One"
-    And I should not see "Student Two"
+    And "My quiz A" "link" should appear before "My quiz B" "link" in the "completion-progress" "table"
+    And I should not see "My assignment" in the "completion-progress" "table"
+    And I should not see "My page" in the "completion-progress" "table"
+    And I should see "Student One" in the "completion-progress" "table"
+    And I should not see "Student Two" in the "completion-progress" "table"
+    And I set the field "Separate groups" to "All participants"
+    And I set the field "Include" to "All activities and resources"
+    And I set the field "Section" to "Topic 1"
+    And I should not see "My assignment" in the "completion-progress" "table"
+    And I should not see "My page" in the "completion-progress" "table"
+    And I should not see "My assignment" in the "completion-progress" "table"
+    And I should not see "My quiz B" in the "completion-progress" "table"
+    And I should see "My quiz A" in the "completion-progress" "table"
+    And I should see "Quiz" in the "activityinclude" "select"
+    And I should not see "Page" in the "activityinclude" "select"
+    And I set the field "Section" to "Topic 2"
+    And I should not see "Quiz" in the "activityinclude" "select"
+    And I should see "Page" in the "activityinclude" "select"
+    And I should see "Assignment" in the "activityinclude" "select"
+    And I set the field "Include" to "Page"
+    And I set the field "Section" to "Topic 1"
+    And I should see "Page" in the "activityinclude" "select"

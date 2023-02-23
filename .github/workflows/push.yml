@@ -13,14 +13,14 @@ env:
 
 jobs:
   Grunt:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checking out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Configuring node & npm
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
 
@@ -54,38 +54,39 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-18.04
-            php: 7.3
+          - os: ubuntu-22.04
+            php: 8.0
             extensions:
             db: mysqli
-          - os: ubuntu-18.04
+          - os: ubuntu-22.04
             php: 8.0
             db: pgsql
-            extensions: xmlrpc-beta
 
     steps:
       - name: Setting up DB mysql
         if: ${{ matrix.db == 'mysqli' }}
-        uses: johanmeiring/mysql-action@tmpfs-patch
+        uses: moodlehq/mysql-action@v1
         with:
           collation server: utf8mb4_bin
-          mysql version: 5.7
+          mysql version: 8.0
           mysql database: test
           mysql user: test
           mysql password: test
           use tmpfs: true
+          tmpfs size: '1024M'
+          extra conf: --skip-log-bin
 
       - name: Setting up DB pgsql
         if: ${{ matrix.db == 'pgsql' }}
         uses: m4nu56/postgresql-action@v1
         with:
-          postgresql version: 10
+          postgresql version: 13
           postgresql db: test
           postgresql user: test
           postgresql password: test
 
       - name: Configuring git vars
-        uses: rlespinasse/github-slug-action@v3.x
+        uses: rlespinasse/github-slug-action@v4
 
       - name: Setting up PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
@@ -96,7 +97,7 @@ jobs:
           coverage: none
 
       - name: Checking out code from ${{ env.GITHUB_REF_SLUG }}
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setting up PHPUnit
         env:
@@ -111,4 +112,5 @@ jobs:
       - name: Running PHPUnit tests
         env:
           dbtype: ${{ matrix.db }}
-        run: vendor/bin/phpunit -v
+          phpunit_options: ${{ secrets.phpunit_options }}
+        run: vendor/bin/phpunit $phpunit_options

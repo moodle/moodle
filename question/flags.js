@@ -28,13 +28,11 @@
 M.core_question_flags = {
     flagattributes: null,
     actionurl: null,
-    flagtext: null,
     listeners: [],
 
-    init: function(Y, actionurl, flagattributes, flagtext) {
+    init: function(Y, actionurl, flagattributes) {
         M.core_question_flags.flagattributes = flagattributes;
         M.core_question_flags.actionurl = actionurl;
-        M.core_question_flags.flagtext = flagtext;
 
         Y.all('div.questionflag').each(function(flagdiv, i) {
             var checkbox = flagdiv.one('input[type=checkbox]');
@@ -47,38 +45,67 @@ M.core_question_flags = {
             input.set('name', checkbox.get('name'));
             input.set('value', checkbox.get('checked') ? 1 : 0);
 
-            // Create an image input to replace the img tag.
-            var image = Y.Node.create('<input type="image" class="questionflagimage" />');
-            var flagtext = Y.Node.create('<span class="questionflagtext">.</span>');
-            M.core_question_flags.update_flag(input, image, flagtext);
+            var ariaPressed = checkbox.get('checked') ? 'true' : 'false';
+            var toggle = Y.Node.create('<a ' +
+                'tabindex="0" ' +
+                'class="aabtn" ' +
+                'role="button" ' +
+                'aria-pressed="' + ariaPressed + '">' +
+                    '.' +
+                '</a>');
+            M.core_question_flags.update_flag(input, toggle);
 
             checkbox.remove();
             flagdiv.one('label').remove();
             flagdiv.append(input);
-            flagdiv.append(image);
-            flagdiv.append(flagtext);
+            flagdiv.append(toggle);
         });
 
         Y.delegate('click', function(e) {
-            var input = this.one('input.questionflagvalue');
-            input.set('value', 1 - input.get('value'));
-            M.core_question_flags.update_flag(input, this.one('input.questionflagimage'),
-                    this.one('span.questionflagtext'));
-            var postdata = this.one('input.questionflagpostdata').get('value') +
-                    input.get('value');
-
             e.halt();
-            Y.io(M.core_question_flags.actionurl , {method: 'POST', 'data': postdata});
-            M.core_question_flags.fire_listeners(postdata);
+            M.core_question_flags.process(this);
         }, document.body, 'div.questionflag');
+        Y.delegate('key', function(e) {
+            e.halt();
+            if (e.keyCode == 13) {
+                M.core_question_flags.process(this);
+            }
+        }, document.body, 'down:enter, space', 'div.questionflag');
+        Y.delegate('key', function(e) {
+            e.halt();
+            M.core_question_flags.process(this);
+        }, document.body, 'up:space', 'div.questionflag');
     },
 
-    update_flag: function(input, image, flagtext) {
+    update_flag: function(input, toggle) {
         var value = input.get('value');
-        image.setAttrs(M.core_question_flags.flagattributes[value]);
-        flagtext.replaceChild(flagtext.create(M.core_question_flags.flagtext[value]),
-                flagtext.get('firstChild'));
-        flagtext.set('title', M.core_question_flags.flagattributes[value].title);
+        toggle.setContent(
+            '<img class="questionflagimage" src="' + M.core_question_flags.flagattributes[value].src + '" alt="" />' +
+            M.core_question_flags.flagattributes[value].text
+        );
+        toggle.set('aria-pressed', parseInt(value) ? 'true' : 'false');
+        toggle.set('aria-label', M.core_question_flags.flagattributes[value].alt);
+        if (M.core_question_flags.flagattributes[value].title != M.core_question_flags.flagattributes[value].text) {
+            toggle.set('title', M.core_question_flags.flagattributes[value].title);
+        } else {
+            toggle.removeAttribute('title');
+        }
+    },
+
+    /**
+     * Process the change of flag status.
+     *
+     * @param {Y.Node} target The root element
+     */
+    process: function(target) {
+        var input = target.one('input.questionflagvalue');
+        input.set('value', 1 - input.get('value'));
+        M.core_question_flags.update_flag(input, target.one('[aria-pressed]'));
+        var postdata = target.one('input.questionflagpostdata').get('value') +
+            input.get('value');
+
+        Y.io(M.core_question_flags.actionurl, {method: 'POST', 'data': postdata});
+        M.core_question_flags.fire_listeners(postdata);
     },
 
     add_listener: function(listener) {

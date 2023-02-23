@@ -34,7 +34,7 @@ Feature: Star and unstar conversations
     And "Group 1" "core_message > Message" should exist
     And I select "Group 1" conversation in messaging
     And I open contact menu
-    And I click on "Star" "link" in the "//div[@data-region='header-container']" "xpath_element"
+    And I click on "Star conversation" "link" in the "conversation-actions-menu" "region"
     And I go back in "view-conversation" message drawer
     And I open the "Starred" conversations list
     And I should see "Group 1" in the "favourites" "core_message > Message list area"
@@ -48,13 +48,13 @@ Feature: Star and unstar conversations
     And "Group 1" "core_message > Message" should exist
     And I select "Group 1" conversation in messaging
     And I open contact menu
-    And I click on "Star" "link" in the "//div[@data-region='header-container']" "xpath_element"
+    And I click on "Star conversation" "link" in the "conversation-actions-menu" "region"
     And I go back in "view-conversation" message drawer
     And I open the "Starred" conversations list
     And I should see "Group 1" in the "favourites" "core_message > Message list area"
     And I select "Group 1" conversation in messaging
     And I open contact menu
-    And I click on "Unstar" "link" in the "//div[@data-region='header-container']" "xpath_element"
+    And I click on "Unstar" "link" in the "conversation-actions-menu" "region"
     And I go back in "view-conversation" message drawer
     And I open the "Starred" conversations list
     And I should not see "Group 1" in the "favourites" "core_message > Message list area"
@@ -71,7 +71,7 @@ Feature: Star and unstar conversations
     And "Student 2" "core_message > Message" should exist
     And I select "Student 2" conversation in messaging
     And I open contact menu
-    And I click on "Star" "link" in the "//div[@data-region='header-container']" "xpath_element"
+    And I click on "Star conversation" "link" in the "conversation-actions-menu" "region"
     And I go back in "view-conversation" message drawer
     And I open the "Starred" conversations list
     And I should see "Student 2" in the "favourites" "core_message > Message list area"
@@ -90,7 +90,7 @@ Feature: Star and unstar conversations
     And I should see "Student 2" in the "favourites" "core_message > Message list area"
     And I select "Student 2" conversation in messaging
     And I open contact menu
-    And I click on "Unstar" "link" in the "//div[@data-region='header-container']" "xpath_element"
+    And I click on "Unstar" "link" in the "conversation-actions-menu" "region"
     And I go back in "view-conversation" message drawer
     And I open the "Starred" conversations list
     And I should not see "Group 1" in the "favourites" "core_message > Message list area"

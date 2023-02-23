@@ -62,19 +62,11 @@ Feature: availability_profile
 
   @javascript
   Scenario: Test with custom user profile field
-    # Add custom field.
-    Given I log in as "admin"
-    And I navigate to "Users > Accounts > User profile fields" in site administration
-    And I click on "Create a new profile field" "link"
-    And I click on "Text input" "link"
-    And I set the following fields to these values:
-      | Short name | superfield  |
-      | Name       | Super field |
-    And I click on "Save changes" "button"
-
+    Given the following "custom profile fields" exist:
+      | datatype | shortname  | name        |
+      | text     | superfield | Super field |
     # Set field value for user.
-    And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I click on ".icon[title=Edit]" "css_element" in the "s@example.com" "table_row"
+    And I am on the "s@example.com" "user > editing" page logged in as "admin"
     And I expand all fieldsets
     And I set the field "Super field" to "Bananaman"
     And I click on "Update profile" "button"

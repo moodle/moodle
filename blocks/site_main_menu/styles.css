@@ -6,6 +6,7 @@
     /* Made specific to win over .block.list_block .unlist > li > .column. */
     width: 100%;
     display: table;
+    margin-bottom: 0.5rem;
 }
 
 .block_site_main_menu li .buttons a img {

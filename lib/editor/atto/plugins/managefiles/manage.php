@@ -54,7 +54,7 @@ if ($context->contextlevel == CONTEXT_MODULE) {
 
 // Guests can never manage files.
 if (isguestuser()) {
-    print_error('noguest');
+    throw new \moodle_exception('noguest');
 }
 
 $title = get_string('managefiles', 'atto_managefiles');

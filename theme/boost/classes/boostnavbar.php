@@ -16,6 +16,12 @@
 
 namespace theme_boost;
 
+use core\navigation\views\view;
+use navigation_node;
+use moodle_url;
+use action_link;
+use lang_string;
+
 /**
  * Creates a navbar for boost that allows easy control of the navbar items.
  *
@@ -49,30 +55,73 @@ class boostnavbar implements \renderable {
     protected function prepare_nodes_for_boost(): void {
         global $PAGE;
 
-        // Don't show the navigation if we are in the course context.
-        if ($this->page->context->contextlevel == CONTEXT_COURSE) {
-            $this->clear_items();
-            return;
-        }
+        // Remove the navbar nodes that already exist in the primary navigation menu.
+        $this->remove_items_that_exist_in_navigation($PAGE->primarynav);
 
-        $this->remove('myhome'); // Dashboard.
-        $this->remove('home');
+        // Defines whether section items with an action should be removed by default.
+        $removesections = true;
+
+        if ($this->page->context->contextlevel == CONTEXT_COURSECAT) {
+            // Remove the 'Permissions' navbar node in the Check permissions page.
+            if ($this->page->pagetype === 'admin-roles-check') {
+                $this->remove('permissions');
+            }
+        }
+        if ($this->page->context->contextlevel == CONTEXT_COURSE) {
+            // Remove any duplicate navbar nodes.
+            $this->remove_duplicate_items();
+            // Remove 'My courses' and 'Courses' if we are in the course context.
+            $this->remove('mycourses');
+            $this->remove('courses');
+            // Remove the course category breadcrumb node.
+            $this->remove($this->page->course->category, \breadcrumb_navigation_node::TYPE_CATEGORY);
+            // Remove the course breadcrumb node.
+            $this->remove($this->page->course->id, \breadcrumb_navigation_node::TYPE_COURSE);
+            // Remove the navbar nodes that already exist in the secondary navigation menu.
+            $this->remove_items_that_exist_in_navigation($PAGE->secondarynav);
+
+            switch ($this->page->pagetype) {
+                case 'group-groupings':
+                case 'group-grouping':
+                case 'group-overview':
+                case 'group-assign':
+                    // Remove the 'Groups' navbar node in the Groupings, Grouping, group Overview and Assign pages.
+                    $this->remove('groups');
+                case 'backup-backup':
+                case 'backup-restorefile':
+                case 'backup-copy':
+                case 'course-reset':
+                    // Remove the 'Import' navbar node in the Backup, Restore, Copy course and Reset pages.
+                    $this->remove('import');
+                case 'course-user':
+                    $this->remove('mygrades');
+                    $this->remove('grades');
+            }
+        }
 
         // Remove 'My courses' if we are in the module context.
         if ($this->page->context->contextlevel == CONTEXT_MODULE) {
             $this->remove('mycourses');
-        }
-
-        if (!is_null($this->get_item('root'))) { // We are in site administration.
-            // Remove the 'Site administration' navbar node as it already exists in the primary navigation menu.
-            $this->remove('root');
-            // Loop through the remaining navbar nodes and remove the ones that already exist in the secondary
-            // navigation menu.
-            foreach ($this->items as $item) {
-                if ($PAGE->secondarynav->get($item->key)) {
-                    $this->remove($item->key);
+            $this->remove('courses');
+            // Remove the course category breadcrumb node.
+            $this->remove($this->page->course->category, \breadcrumb_navigation_node::TYPE_CATEGORY);
+            $courseformat = course_get_format($this->page->course)->get_course();
+            // Section items can be only removed if a course layout (coursedisplay) is not explicitly set in the
+            // given course format or the set course layout is not 'One section per page'.
+            $removesections = !isset($courseformat->coursedisplay) ||
+                $courseformat->coursedisplay != COURSE_DISPLAY_MULTIPAGE;
+            if ($removesections) {
+                // If the course sections are removed, we need to add the anchor of current section to the Course.
+                $coursenode = $this->get_item($this->page->course->id);
+                if (!is_null($coursenode) && $this->page->cm->sectionnum !== null) {
+                    $coursenode->action = course_get_format($this->page->course)->get_view_url($this->page->cm->sectionnum);
                 }
             }
+        }
+
+        if ($this->page->context->contextlevel == CONTEXT_SYSTEM) {
+            // Remove the navbar nodes that already exist in the secondary navigation menu.
+            $this->remove_items_that_exist_in_navigation($PAGE->secondarynav);
         }
 
         // Set the designated one path for courses.
@@ -83,7 +132,7 @@ class boostnavbar implements \renderable {
             $mycoursesnode->text = get_string('mycourses');
         }
 
-        $this->remove_no_link_items();
+        $this->remove_no_link_items($removesections);
 
         // Don't display the navbar if there is only one item. Apparently this is bad UX design.
         if ($this->item_count() <= 1) {
@@ -139,12 +188,18 @@ class boostnavbar implements \renderable {
      * Remove a boostnavbaritem from the boost navbar.
      *
      * @param  string|int $itemkey An identifier for the boostnavbaritem
+     * @param  int|null $itemtype An additional type identifier for the boostnavbaritem (optional)
      */
-    protected function remove($itemkey): void {
+    protected function remove($itemkey, ?int $itemtype = null): void {
 
         $itemfound = false;
         foreach ($this->items as $key => $item) {
             if ($item->key === $itemkey) {
+                // If a type identifier is also specified, check whether the type of the breadcrumb item matches the
+                // specified type. Skip if types to not match.
+                if (!is_null($itemtype) && $item->type !== $itemtype) {
+                    continue;
+                }
                 unset($this->items[$key]);
                 $itemfound = true;
                 break;
@@ -188,14 +243,94 @@ class boostnavbar implements \renderable {
     }
 
     /**
-     * Remove items that are categories or have no actions associated with them.
+     * Remove items that have no actions associated with them and optionally remove items that are sections.
+     *
+     * The only exception is the last item in the list which may not have a link but needs to be displayed.
+     *
+     * @param bool $removesections Whether section items should be also removed (only applies when they have an action)
      */
-    protected function remove_no_link_items(): void {
+    protected function remove_no_link_items(bool $removesections = true): void {
         foreach ($this->items as $key => $value) {
-            if (!$value->has_action() || $value->type == \navigation_node::TYPE_SECTION) {
+            if (!$value->is_last() &&
+                    (!$value->has_action() || ($value->type == \navigation_node::TYPE_SECTION && $removesections))) {
                 unset($this->items[$key]);
             }
         }
         $this->items = array_values($this->items);
+    }
+
+    /**
+     * Remove breadcrumb items that already exist in a given navigation view.
+     *
+     * This method removes the breadcrumb items that have a text => action match in a given navigation view
+     * (primary or secondary).
+     *
+     * @param view $navigationview The navigation view object.
+     */
+    protected function remove_items_that_exist_in_navigation(view $navigationview): void {
+        // Loop through the navigation view items and create a 'text' => 'action' array which will be later used
+        // to compare whether any of the breadcrumb items matches these pairs.
+        $navigationviewitems = [];
+        foreach ($navigationview->children as $child) {
+            list($childtext, $childaction) = $this->get_node_text_and_action($child);
+            if ($childaction) {
+                $navigationviewitems[$childtext] = $childaction;
+            }
+        }
+        // Loop through the breadcrumb items and if the item's 'text' and 'action' values matches with any of the
+        // existing navigation view items, remove it from the breadcrumbs.
+        foreach ($this->items as $item) {
+            list($itemtext, $itemaction) = $this->get_node_text_and_action($item);
+            if ($itemaction) {
+                if (array_key_exists($itemtext, $navigationviewitems) &&
+                        $navigationviewitems[$itemtext] === $itemaction) {
+                    $this->remove($item->key);
+                }
+            }
+        }
+    }
+
+    /**
+     * Remove duplicate breadcrumb items.
+     *
+     * This method looks for breadcrumb items that have identical text and action values and removes the first item.
+     */
+    protected function remove_duplicate_items(): void {
+        $taken = [];
+        // Reverse the order of the items before filtering so that the first occurrence is removed instead of the last.
+        $filtereditems = array_values(array_filter(array_reverse($this->items), function($item) use (&$taken) {
+            list($itemtext, $itemaction) = $this->get_node_text_and_action($item);
+            if ($itemaction) {
+                if (array_key_exists($itemtext, $taken) && $taken[$itemtext] === $itemaction) {
+                    return false;
+                }
+                $taken[$itemtext] = $itemaction;
+            }
+            return true;
+        }));
+        // Reverse back the order.
+        $this->items = array_reverse($filtereditems);
+    }
+
+    /**
+     * Helper function that returns an array of the text and the outputted action url (if exists) for a given
+     * navigation node.
+     *
+     * @param navigation_node $node The navigation node object.
+     * @return array
+     */
+    protected function get_node_text_and_action(navigation_node $node): array {
+        $text = $node->text instanceof lang_string ? $node->text->out() : $node->text;
+        $action = null;
+        if ($node->has_action()) {
+            if ($node->action instanceof moodle_url) {
+                $action = $node->action->out();
+            } else if ($node->action instanceof action_link) {
+                $action = $node->action->url->out();
+            } else {
+                $action = $node->action;
+            }
+        }
+        return [$text, $action];
     }
 }

@@ -33,24 +33,25 @@ class question_name_idnumber_tags_column extends viewquestionname_column_helper 
     protected function display_content($question, $rowclasses): void {
         global $OUTPUT;
 
-        $layoutclasses = 'd-inline-flex flex-nowrap overflow-hidden w-100';
+        echo \html_writer::start_tag('div', ['class' => 'd-inline-flex flex-nowrap overflow-hidden w-100']);
+        $questiondisplay = $OUTPUT->render(new \qbank_viewquestionname\output\questionname($question));
         $labelfor = $this->label_for($question);
         if ($labelfor) {
-            echo \html_writer::start_tag('label', ['for' => $labelfor, 'class' => $layoutclasses]);
-            $closetag = \html_writer::end_tag('label');
+            echo \html_writer::tag('label', $questiondisplay, [
+                'for' => $labelfor,
+            ]);
         } else {
-            echo \html_writer::start_tag('span', ['class' => $layoutclasses]);
-            echo \html_writer::end_tag('span');
+            echo \html_writer::start_span('questionname flex-grow-1 flex-shrink-1 text-truncate');
+            echo $questiondisplay;
+            echo \html_writer::end_span();
         }
 
-        // Question name.
-        echo \html_writer::span(format_string($question->name), 'questionname flex-grow-1 flex-shrink-1 text-truncate');
-
         // Question idnumber.
+        // The non-breaking space '&nbsp;' is used in html to fix MDL-75051 (browser issues caused by chrome and Edge).
         if ($question->idnumber !== null && $question->idnumber !== '') {
             echo ' ' . \html_writer::span(
                             \html_writer::span(get_string('idnumber', 'question'), 'accesshide')
-                            . ' ' . \html_writer::span(s($question->idnumber), 'badge badge-primary'), 'ml-1');
+                            . '&nbsp;' . \html_writer::span(s($question->idnumber), 'badge badge-primary'), 'ml-1');
         }
 
         // Question tags.
@@ -59,25 +60,29 @@ class question_name_idnumber_tags_column extends viewquestionname_column_helper 
             echo $OUTPUT->tag_list($tags, null, 'd-inline flex-shrink-1 text-truncate ml-1', 0, null, true);
         }
 
-        echo $closetag; // Computed above to ensure it matches.
+        echo \html_writer::end_tag('div');
     }
 
     public function get_required_fields(): array {
         $fields = parent::get_required_fields();
-        $fields[] = 'q.idnumber';
+        $fields[] = 'qbe.idnumber';
         return $fields;
     }
 
     public function is_sortable(): array {
         return [
                 'name' => ['field' => 'q.name', 'title' => get_string('questionname', 'question')],
-                'idnumber' => ['field' => 'q.idnumber', 'title' => get_string('idnumber', 'question')],
+                'idnumber' => ['field' => 'qbe.idnumber', 'title' => get_string('idnumber', 'question')],
         ];
     }
 
     public function load_additional_data(array $questions): void {
         parent::load_additional_data($questions);
         parent::load_question_tags($questions);
+    }
+
+    public function get_extra_classes(): array {
+        return ['pr-3'];
     }
 
 }

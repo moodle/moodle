@@ -18,6 +18,10 @@ Feature: An administrator can filter user accounts by role, cohort and other pro
     And the following "cohorts" exist:
       | name | idnumber |
       | Cohort 1 | CH1 |
+    And the following "cohort members" exist:
+      | user  | cohort |
+      | user2 | CH1    |
+      | user3 | CH1    |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -27,8 +31,6 @@ Feature: An administrator can filter user accounts by role, cohort and other pro
       | user2 | C1 | student |
       | user3 | C1 | student |
     And I log in as "admin"
-    And I add "User Two (two@example.com)" user to "CH1" cohort members
-    And I add "User Three (three@example.com)" user to "CH1" cohort members
     And I navigate to "Users > Accounts > Browse list of users" in site administration
 
   Scenario: Filter user accounts by role and cohort

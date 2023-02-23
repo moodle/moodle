@@ -32,13 +32,13 @@ $overrideid = required_param('id', PARAM_INT);
 $confirm = optional_param('confirm', false, PARAM_BOOL);
 
 if (! $override = $DB->get_record('lesson_overrides', array('id' => $overrideid))) {
-    print_error('invalidoverrideid', 'lesson');
+    throw new \moodle_exception('invalidoverrideid', 'lesson');
 }
 
 $lesson = new lesson($DB->get_record('lesson', array('id' => $override->lessonid), '*', MUST_EXIST));
 
 if (! $cm = get_coursemodule_from_instance("lesson", $lesson->id, $lesson->course)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
@@ -51,11 +51,11 @@ require_capability('mod/lesson:manageoverrides', $context);
 
 if ($override->groupid) {
     if (!groups_group_visible($override->groupid, $course, $cm)) {
-        print_error('invalidoverrideid', 'lesson');
+        throw new \moodle_exception('invalidoverrideid', 'lesson');
     }
 } else {
     if (!groups_user_groups_visible($course, $override->userid, $cm)) {
-        print_error('invalidoverrideid', 'lesson');
+        throw new \moodle_exception('invalidoverrideid', 'lesson');
     }
 }
 
@@ -92,7 +92,7 @@ echo $OUTPUT->heading(format_string($lesson->name, true, array('context' => $con
 
 if ($override->groupid) {
     $group = $DB->get_record('groups', array('id' => $override->groupid), 'id, name');
-    $confirmstr = get_string("overridedeletegroupsure", "lesson", $group->name);
+    $confirmstr = get_string("overridedeletegroupsure", "lesson", format_string($group->name, true, ['context' => $context]));
 } else {
     $userfieldsapi = \core_user\fields::for_name();
     $namefields = $userfieldsapi->get_sql('', false, '', '', false)->selects;

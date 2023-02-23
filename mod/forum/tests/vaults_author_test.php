@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * The author vault tests.
- *
- * @package    mod_forum
- * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace mod_forum;
 
 /**
  * The author vault tests.
@@ -31,7 +23,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_forum_vaults_author_testcase extends advanced_testcase {
+class vaults_author_test extends \advanced_testcase {
     /**
      * Test get_from_id.
      */
@@ -62,9 +54,9 @@ class mod_forum_vaults_author_testcase extends advanced_testcase {
         $fakeuserid = $user3->id + 1000;
         $vaultfactory = \mod_forum\local\container::get_vault_factory();
         $authorvault = $vaultfactory->get_author_vault();
-        $user1context = context_user::instance($user1->id);
-        $user2context = context_user::instance($user2->id);
-        $user3context = context_user::instance($user3->id);
+        $user1context = \context_user::instance($user1->id);
+        $user2context = \context_user::instance($user2->id);
+        $user3context = \context_user::instance($user3->id);
         $user1contextid = $user1context->id;
         $user2contextid = $user2context->id;
         $user3contextid = $user3context->id;

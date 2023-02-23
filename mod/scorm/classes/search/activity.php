@@ -43,4 +43,13 @@ class activity extends \core_search\base_activity {
     public function uses_file_indexing() {
         return true;
     }
+
+    /**
+     * Return the fileareas that should be indexed.
+     *
+     * @return array
+     */
+    public function get_search_fileareas() {
+        return ['intro', 'content'];
+    }
 }

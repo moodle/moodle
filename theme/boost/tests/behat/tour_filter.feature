@@ -14,8 +14,8 @@ Feature: Apply tour filters to a tour for Classic
       | Tour is enabled     | 1 |
       | Theme               | Classic |
     And I add steps to the "First tour" tour:
-      | targettype                  | Title             | Content |
-      | Display in middle of page   | Welcome           | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful |
+      | targettype                | Title   | id_content                                                                                                                     | Content type   |
+      | Display in middle of page | Welcome | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful | Manual         |
     When I am on homepage
     Then I should not see "Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful"
 
@@ -29,7 +29,7 @@ Feature: Apply tour filters to a tour for Classic
       | Tour is enabled     | 1 |
       | Theme               | Boost |
     And I add steps to the "First tour" tour:
-      | targettype                  | Title             | Content |
-      | Display in middle of page   | Welcome           | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful |
+      | targettype                | Title   | id_content                                                                                                                     | Content type   |
+      | Display in middle of page | Welcome | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful | Manual         |
     When I am on homepage
     Then I should see "Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful"

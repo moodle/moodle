@@ -61,7 +61,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      * @return bool Authentication success or failure.
      */
     function user_login($username, $password) {
-        return false; // print_error("mnetlocal");
+        return false; // Throw moodle_exception("mnetlocal").
     }
 
     /**
@@ -152,7 +152,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
         if (\core\session\manager::is_loggedinas()) {
-            print_error('notpermittedtojumpas', 'mnet');
+            throw new \moodle_exception('notpermittedtojumpas', 'mnet');
         }
 
         // check remote login permissions
@@ -160,12 +160,12 @@ class auth_plugin_mnet extends auth_plugin_base {
                 or is_mnet_remote_user($USER)
                 or isguestuser()
                 or !isloggedin()) {
-            print_error('notpermittedtojump', 'mnet');
+            throw new \moodle_exception('notpermittedtojump', 'mnet');
         }
 
         // check for SSO publish permission first
         if ($this->has_service($mnethostid, 'sso_sp') == false) {
-            print_error('hostnotconfiguredforsso', 'mnet');
+            throw new \moodle_exception('hostnotconfiguredforsso', 'mnet');
         }
 
         // set RPC timeout to 30 seconds if not configured
@@ -230,7 +230,7 @@ class auth_plugin_mnet extends auth_plugin_base {
 
         // verify the remote host is configured locally before attempting RPC call
         if (! $remotehost = $DB->get_record('mnet_host', array('wwwroot' => $remotepeer->wwwroot, 'deleted' => 0))) {
-            print_error('notpermittedtoland', 'mnet');
+            throw new \moodle_exception('notpermittedtoland', 'mnet');
         }
 
         // set up the RPC request
@@ -249,22 +249,23 @@ class auth_plugin_mnet extends auth_plugin_base {
                 list($code, $message) = array_map('trim',explode(':', $errormessage, 2));
                 if($code == 702) {
                     $site = get_site();
-                    print_error('mnet_session_prohibited', 'mnet', $remotepeer->wwwroot, format_string($site->fullname));
+                    throw new \moodle_exception('mnet_session_prohibited', 'mnet', $remotepeer->wwwroot,
+                        format_string($site->fullname));
                     exit;
                 }
                 $message .= "ERROR $code:<br/>$errormessage<br/>";
             }
-            print_error("rpcerror", '', '', $message);
+            throw new \moodle_exception("rpcerror", '', '', $message);
         }
         unset($mnetrequest);
 
         if (empty($remoteuser) or empty($remoteuser->username)) {
-            print_error('unknownerror', 'mnet');
+            throw new \moodle_exception('unknownerror', 'mnet');
             exit;
         }
 
         if (user_not_fully_set_up($remoteuser, false)) {
-            print_error('notenoughidpinfo', 'mnet');
+            throw new \moodle_exception('notenoughidpinfo', 'mnet');
             exit;
         }
 
@@ -289,7 +290,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         if (empty($localuser) || ! $localuser->id) {
             /*
             if (empty($this->config->auto_add_remote_users)) {
-                print_error('nolocaluser', 'mnet');
+                throw new \moodle_exception('nolocaluser', 'mnet');
             } See MDL-21327   for why this is commented out
             */
             $remoteuser->mnethostid = $remotehost->id;
@@ -303,7 +304,8 @@ class auth_plugin_mnet extends auth_plugin_base {
 
         // check sso access control list for permission first
         if (!$this->can_login_remotely($localuser->username, $remotehost->id)) {
-            print_error('sso_mnet_login_refused', 'mnet', '', array('user'=>$localuser->username, 'host'=>$remotehost->name));
+            throw new \moodle_exception('sso_mnet_login_refused', 'mnet', '',
+                array('user' => $localuser->username, 'host' => $remotehost->name));
         }
 
         $fs = get_file_storage();
@@ -416,7 +418,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                 // we may be clearing out stale entries
                 $courses = array();
             }
-            $mnetrequest->add_param($courses);
+            $mnetrequest->add_param($courses, 'array');
 
             // Call 0800-RPC Now! -- we don't care too much if it fails
             // as it's just informational.
@@ -508,12 +510,12 @@ class auth_plugin_mnet extends auth_plugin_base {
                        c.fullname, c.shortname, c.idnumber, c.summary, c.summaryformat, c.startdate,
                        e.id AS enrolmentid
                   FROM {mnetservice_enrol_courses} c
-             LEFT JOIN {mnetservice_enrol_enrolments} e ON (e.hostid = c.hostid AND e.remotecourseid = c.remoteid)
-                 WHERE e.userid = ? AND c.hostid = ?";
+             LEFT JOIN {mnetservice_enrol_enrolments} e ON (e.hostid = c.hostid AND e.remotecourseid = c.remoteid AND e.userid = ?)
+                 WHERE c.hostid = ?";
 
         $currentcourses = $DB->get_records_sql($sql, array($userid, $remoteclient->id));
 
-        $local_courseid_array = array();
+        $keepenrolments = array();
         foreach($courses as $ix => $course) {
 
             $course['remoteid'] = $course['id'];
@@ -523,14 +525,25 @@ class auth_plugin_mnet extends auth_plugin_base {
             // if we do not have the the information about the remote course, it is not available
             // to us for remote enrolment - skip
             if (array_key_exists($course['remoteid'], $currentcourses)) {
+                // We are going to keep this enrolment, it will be updated or inserted, but will keep it.
+                $keepenrolments[] = $course['id'];
+
                 // Pointer to current course:
                 $currentcourse =& $currentcourses[$course['remoteid']];
-                // We have a record - is it up-to-date?
-                $course['id'] = $currentcourse->id;
 
                 $saveflag = false;
 
                 foreach($course as $key => $value) {
+                    // Only compare what is available locally, data coming from enrolment tables have
+                    // way more information that tables used to keep the track of mnet enrolments.
+                    if (!property_exists($currentcourse, $key)) {
+                        continue;
+                    }
+                    // Don't compare ids either, they come from different databases.
+                    if ($key === 'id') {
+                        continue;
+                    }
+
                     if ($currentcourse->$key != $value) {
                         $saveflag = true;
                         $currentcourse->$key = $value;
@@ -538,7 +551,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                 }
 
                 if ($saveflag) {
-                    $DB->update_record('mnetervice_enrol_courses', $currentcourse);
+                    $DB->update_record('mnetservice_enrol_courses', $currentcourse);
                 }
 
                 if (isset($currentcourse->enrolmentid) && is_numeric($currentcourse->enrolmentid)) {
@@ -549,9 +562,6 @@ class auth_plugin_mnet extends auth_plugin_base {
                 continue;
             }
 
-            // By this point, we should always have a $dataObj->id
-            $local_courseid_array[] = $course['id'];
-
             // Do we have a record for this assignment?
             if ($userisregd) {
                 // Yes - we know about this one already
@@ -559,21 +569,21 @@ class auth_plugin_mnet extends auth_plugin_base {
                 // 'less complete' than the data we have.
             } else {
                 // No - create a record
-                $assignObj = new stdClass();
-                $assignObj->userid    = $userid;
-                $assignObj->hostid    = (int)$remoteclient->id;
-                $assignObj->remotecourseid = $course['remoteid'];
-                $assignObj->rolename  = $course['defaultrolename'];
-                $assignObj->id = $DB->insert_record('mnetservice_enrol_enrolments', $assignObj);
+                $newenrol = new stdClass();
+                $newenrol->userid    = $userid;
+                $newenrol->hostid    = (int)$remoteclient->id;
+                $newenrol->remotecourseid = $course['remoteid'];
+                $newenrol->rolename  = $course['defaultrolename'];
+                $newenrol->enroltype = 'mnet';
+                $newenrol->id = $DB->insert_record('mnetservice_enrol_enrolments', $newenrol);
             }
         }
 
         // Clean up courses that the user is no longer enrolled in.
-        if (!empty($local_courseid_array)) {
-            $local_courseid_string = implode(', ', $local_courseid_array);
-            $whereclause = " userid = ? AND hostid = ? AND remotecourseid NOT IN ($local_courseid_string)";
-            $DB->delete_records_select('mnetservice_enrol_enrolments', $whereclause, array($userid, $remoteclient->id));
-        }
+        list($insql, $inparams) = $DB->get_in_or_equal($keepenrolments, SQL_PARAMS_NAMED, 'param', false, null);
+        $whereclause = ' userid = :userid AND hostid = :hostid AND remotecourseid ' . $insql;
+        $params = array_merge(['userid' => $userid, 'hostid' => $remoteclient->id], $inparams);
+        $DB->delete_records_select('mnetservice_enrol_enrolments', $whereclause, $params);
     }
 
     function prevent_local_passwords() {

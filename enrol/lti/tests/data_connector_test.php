@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Test the helper functionality.
- *
- * @package enrol_lti
- * @copyright 2016 Jun Pataleta <jun@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace enrol_lti;
 
 use enrol_lti\data_connector;
 use IMSGlobal\LTI\ToolProvider\ConsumerNonce;
@@ -33,8 +27,6 @@ use IMSGlobal\LTI\ToolProvider\ToolProvider;
 use IMSGlobal\LTI\ToolProvider\ToolProxy;
 use IMSGlobal\LTI\ToolProvider\User;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Test the data_connector class.
  *
@@ -42,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class enrol_lti_data_connector_testcase extends advanced_testcase {
+class data_connector_test extends \advanced_testcase {
 
     /**
      * Test set up.
@@ -1145,7 +1137,7 @@ class enrol_lti_data_connector_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
         // Create two tools belonging to the same course.
         $course1 = $generator->create_course();
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->courseid = $course1->id;
         $tool = $generator->create_lti_tool($data);
         $tool2 = $generator->create_lti_tool($data);

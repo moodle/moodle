@@ -38,8 +38,9 @@ What comes in the package?
 Since SimplePie 1.3, we've split the classes into separate files to make it easier
 to maintain and use.
 
-If you'd like a single monolithic file, you can run `php build/compile.php` to
-generate `SimplePie.compiled.php`.
+If you'd like a single monolithic file, see the assets in the
+[releases](https://github.com/simplepie/simplepie/releases), or you can
+run `php build/compile.php` to generate `SimplePie.compiled.php` yourself.
 
 To start the demo
 -----------------

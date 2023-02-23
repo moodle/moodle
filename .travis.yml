@@ -10,14 +10,18 @@ language: php
 
 os: linux
 
-dist: bionic
+dist: focal
 
 services:
     - mysql
     - docker
 
 addons:
-  postgresql: "10"
+  postgresql: "13"
+  apt:
+    packages:
+      - postgresql-13
+      - postgresql-client-13
 
 branches:
   except:
@@ -32,18 +36,18 @@ jobs:
     fast_finish: true
 
     include:
-        # First all the lowest php ones (7.3)
-        - php: 7.3
+        # First all the lowest php ones (8.0)
+        - php: 8.0
           env: DB=none     TASK=CITEST
-        - php: 7.3
-          env: DB=none     TASK=GRUNT    NVM_VERSION='lts/carbon'
+        - php: 8.0
+          env: DB=none     TASK=GRUNT
 
         - if: env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present
-          php: 7.3
+          php: 8.0
           env: DB=pgsql    TASK=PHPUNIT
 
         - if: env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all"
-          php: 7.3
+          php: 8.0
           env: DB=mysqli   TASK=PHPUNIT
 
         # Then, conditionally, all the highest php ones (8.0)
@@ -52,7 +56,7 @@ jobs:
           env: DB=none     TASK=CITEST
         - if: env(MOODLE_PHP) = "all"
           php: 8.0
-          env: DB=none     TASK=GRUNT    NVM_VERSION='lts/carbon'
+          env: DB=none     TASK=GRUNT
 
         - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present)
           php: 8.0
@@ -72,6 +76,11 @@ before_install:
     # Avoid IPv6 default binding as service (causes redis not to start).
     - sudo service redis-server start --bind 127.0.0.1
 
+env:
+  global:
+    - PGVER=13
+    - PGPORT=5432
+
 install:
     - >
         if [ "$DB" = 'mysqli' ];
@@ -81,7 +90,8 @@ install:
             sudo service mysql stop
             sudo mv /var/lib/mysql /mnt/ramdisk
             sudo ln -s /mnt/ramdisk/mysql /var/lib/mysql
-            sudo service mysql restart
+            echo -e "[mysqld]\nskip-log-bin" | sudo tee -a /etc/mysql/my.cnf
+            sudo service mysql start
         fi
     - >
         if [ "$DB" = 'pgsql' ];
@@ -91,7 +101,8 @@ install:
             sudo service postgresql stop
             sudo mv /var/lib/postgresql /mnt/ramdisk
             sudo ln -s /mnt/ramdisk/postgresql /var/lib/postgresql
-            sudo service postgresql start 9.6
+            sudo service postgresql start
+            sh -c 'until pg_isready -p $PGPORT; do echo "Waiting for the DB to be up..."; sleep 2; done'
         fi
     - >
         if [ "$TASK" = 'PHPUNIT' ];
@@ -113,12 +124,11 @@ install:
     - >
         if [ "$TASK" = 'GRUNT' ];
         then
-            nvm install $NVM_VERSION ;
-            nvm use $NVM_VERSION ;
+            nvm install
+            nvm use
         fi
 
 before_script:
-    - if [[ ${TRAVIS_PHP_VERSION:0:1} -gt 7 ]]; then pecl install xmlrpc-beta; fi
     - echo 'max_input_vars=5000' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
     - phpenv config-rm xdebug.ini
     - >
@@ -146,10 +156,11 @@ before_script:
         then
           # Postgres-specific setup.
           sed -i \
-            -e "s%= 'username'%= 'postgres'%" \
+            -e "s%= 'username'%= 'travis'%" \
+            -e "s%'dbsocket'  => false%'dbsocket'  => true%" \
             config.php ;
 
-          psql -c 'CREATE DATABASE travis_ci_test;' -U postgres;
+          psql -c 'CREATE DATABASE travis_ci_test;' -U travis;
         fi
 
         if [ "$DB" = 'mysqli' ];

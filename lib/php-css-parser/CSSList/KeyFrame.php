@@ -2,55 +2,103 @@
 
 namespace Sabberworm\CSS\CSSList;
 
+use Sabberworm\CSS\OutputFormat;
 use Sabberworm\CSS\Property\AtRule;
 
-class KeyFrame extends CSSList implements AtRule {
+class KeyFrame extends CSSList implements AtRule
+{
+    /**
+     * @var string|null
+     */
+    private $vendorKeyFrame;
 
-	private $vendorKeyFrame;
-	private $animationName;
+    /**
+     * @var string|null
+     */
+    private $animationName;
 
-	public function __construct($iLineNo = 0) {
-		parent::__construct($iLineNo);
-		$this->vendorKeyFrame = null;
-		$this->animationName  = null;
-	}
+    /**
+     * @param int $iLineNo
+     */
+    public function __construct($iLineNo = 0)
+    {
+        parent::__construct($iLineNo);
+        $this->vendorKeyFrame = null;
+        $this->animationName = null;
+    }
 
-	public function setVendorKeyFrame($vendorKeyFrame) {
-		$this->vendorKeyFrame = $vendorKeyFrame;
-	}
+    /**
+     * @param string $vendorKeyFrame
+     */
+    public function setVendorKeyFrame($vendorKeyFrame)
+    {
+        $this->vendorKeyFrame = $vendorKeyFrame;
+    }
 
-	public function getVendorKeyFrame() {
-		return $this->vendorKeyFrame;
-	}
+    /**
+     * @return string|null
+     */
+    public function getVendorKeyFrame()
+    {
+        return $this->vendorKeyFrame;
+    }
 
-	public function setAnimationName($animationName) {
-		$this->animationName = $animationName;
-	}
+    /**
+     * @param string $animationName
+     */
+    public function setAnimationName($animationName)
+    {
+        $this->animationName = $animationName;
+    }
 
-	public function getAnimationName() {
-		return $this->animationName;
-	}
+    /**
+     * @return string|null
+     */
+    public function getAnimationName()
+    {
+        return $this->animationName;
+    }
 
-	public function __toString() {
-		return $this->render(new \Sabberworm\CSS\OutputFormat());
-	}
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->render(new OutputFormat());
+    }
 
-	public function render(\Sabberworm\CSS\OutputFormat $oOutputFormat) {
-		$sResult = "@{$this->vendorKeyFrame} {$this->animationName}{$oOutputFormat->spaceBeforeOpeningBrace()}{";
-		$sResult .= parent::render($oOutputFormat);
-		$sResult .= '}';
-		return $sResult;
-	}
+    /**
+     * @return string
+     */
+    public function render(OutputFormat $oOutputFormat)
+    {
+        $sResult = "@{$this->vendorKeyFrame} {$this->animationName}{$oOutputFormat->spaceBeforeOpeningBrace()}{";
+        $sResult .= parent::render($oOutputFormat);
+        $sResult .= '}';
+        return $sResult;
+    }
 
-	public function isRootList() {
-		return false;
-	}
+    /**
+     * @return bool
+     */
+    public function isRootList()
+    {
+        return false;
+    }
 
-	public function atRuleName() {
-		return $this->vendorKeyFrame;
-	}
+    /**
+     * @return string|null
+     */
+    public function atRuleName()
+    {
+        return $this->vendorKeyFrame;
+    }
 
-	public function atRuleArgs() {
-		return $this->animationName;
-	}
+    /**
+     * @return string|null
+     */
+    public function atRuleArgs()
+    {
+        return $this->animationName;
+    }
 }

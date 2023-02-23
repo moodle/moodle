@@ -24,17 +24,66 @@
 import $ from 'jquery';
 import Popover from './popover';
 
-export const init = () => {
-    const content = document.querySelector('[data-region="footer-content-popover"]');
-    const container = document.querySelector('[data-region="footer-container-popover"]');
+const SELECTORS = {
+    FOOTERCONTAINER: '[data-region="footer-container-popover"]',
+    FOOTERCONTENT: '[data-region="footer-content-popover"]',
+    FOOTERBUTTON: '[data-action="footer-popover"]'
+};
 
-    $('[data-action="footer-popover"]').popover({
-        content: content.innerHTML,
+let footerIsShown = false;
+
+export const init = () => {
+    const container = document.querySelector(SELECTORS.FOOTERCONTAINER);
+    const footerButton = document.querySelector(SELECTORS.FOOTERBUTTON);
+
+    // All jQuery in this code can be replaced when MDL-71979 is integrated.
+    $(footerButton).popover({
+        content: getFooterContent,
         container: container,
         html: true,
         placement: 'top',
-        customClass: 'footer'
+        customClass: 'footer',
+        trigger: 'click'
     });
+
+    document.addEventListener('click', e => {
+        if (footerIsShown && !e.target.closest(SELECTORS.FOOTERCONTAINER)) {
+            $(footerButton).popover('hide');
+        }
+    },
+    true);
+
+    document.addEventListener('keydown', e => {
+        if (footerIsShown && e.key === 'Escape') {
+            $(footerButton).popover('hide');
+            footerButton.focus();
+        }
+    });
+
+    document.addEventListener('focus', e => {
+        if (footerIsShown && !e.target.closest(SELECTORS.FOOTERCONTAINER)) {
+            $(footerButton).popover('hide');
+        }
+    },
+    true);
+
+    $(footerButton).on('show.bs.popover', () => {
+        footerIsShown = true;
+    });
+
+    $(footerButton).on('hide.bs.popover', () => {
+        footerIsShown = false;
+    });
+};
+
+/**
+ * Get the footer content for popover.
+ *
+ * @returns {String} HTML string
+ * @private
+ */
+const getFooterContent = () => {
+    return document.querySelector(SELECTORS.FOOTERCONTENT).innerHTML;
 };
 
 export {

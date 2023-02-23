@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for core\content\export\exporters\course_exporter.
- *
- * @package     core
- * @category    test
- * @copyright   2020 Simey Lameze <simey@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
-
 declare(strict_types=1);
 
 namespace core\content\export\exporters;
@@ -36,7 +27,11 @@ use core\content\export\zipwriter;
 /**
  * Unit tests for activity exporter.
  *
- * @coversDefaultClass \core\content\export\exporters\course_exporter
+ * @package     core
+ * @category    test
+ * @copyright   2020 Simey Lameze <simey@moodle.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @covers      \core\content\export\exporters\course_exporter
  */
 class course_exporter_test extends advanced_testcase {
 

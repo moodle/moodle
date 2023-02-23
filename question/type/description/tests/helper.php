@@ -70,7 +70,6 @@ class qtype_description_test_helper extends question_test_helper {
         $qdata->category = 0;
         $qdata->parent = 0;
         $qdata->stamp = make_unique_id_code();
-        $qdata->version = make_unique_id_code();
         $qdata->timecreated = time();
         $qdata->timemodified = time();
         $qdata->createdby = $USER->id;
@@ -84,7 +83,7 @@ class qtype_description_test_helper extends question_test_helper {
         $qdata->defaultmark = 0;
         $qdata->length = 0;
         $qdata->penalty = 0;
-        $qdata->hidden = 0;
+        $qdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $qdata->hints = array();
         $qdata->options = new stdClass();
         $qdata->options->answers = array();
@@ -105,6 +104,7 @@ class qtype_description_test_helper extends question_test_helper {
                                     'format' => FORMAT_HTML);
         $form->generalfeedback = array('text' => 'And here is some more text shown only on the review page.',
                                        'format' => FORMAT_HTML);
+        $form->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         return $form;
     }

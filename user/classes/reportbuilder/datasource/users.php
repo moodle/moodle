@@ -18,14 +18,19 @@ declare(strict_types=1);
 
 namespace core_user\reportbuilder\datasource;
 
+use lang_string;
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\user;
+use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\helpers\database;
+use core_tag\reportbuilder\local\entities\tag;
+use core_reportbuilder\manager;
+use core_reportbuilder\local\helpers\report;
 
 /**
  * Users datasource
  *
- * @package   core_reportbuilder
+ * @package   core_user
  * @copyright 2021 David Matamoros <davidmc@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -56,13 +61,22 @@ class users extends datasource {
             $userparamguest => $CFG->siteguest,
         ]);
 
-        // Add all columns from entities to be available in custom reports.
         $this->add_entity($userentity);
 
-        $userentityname = $userentity->get_entity_name();
-        $this->add_columns_from_entity($userentityname);
-        $this->add_filters_from_entity($userentityname);
-        $this->add_conditions_from_entity($userentityname);
+        // Join the tag entity.
+        $tagentity = (new tag())
+            ->set_table_alias('tag', $userentity->get_table_alias('tag'))
+            ->set_entity_title(new lang_string('interests'));
+        $this->add_entity($tagentity
+            ->add_joins($userentity->get_tag_joins()));
+
+        // Add all columns/filters/conditions from entities to be available in custom reports.
+        $this->add_all_from_entity($userentity->get_entity_name());
+
+        // Add specific tag entity elements.
+        $this->add_columns_from_entity($tagentity->get_entity_name(), ['name', 'namewithlink']);
+        $this->add_filter($tagentity->get_filter('name'));
+        $this->add_condition($tagentity->get_condition('name'));
     }
 
     /**
@@ -89,6 +103,33 @@ class users extends datasource {
      * @return string[]
      */
     public function get_default_conditions(): array {
-        return ['user:fullname', 'user:username', 'user:email'];
+        return [
+            'user:fullname',
+            'user:username',
+            'user:email',
+            'user:suspended',
+        ];
+    }
+
+    /**
+     * Return the conditions values that will be added to the report once is created
+     *
+     * @return array
+     */
+    public function get_default_condition_values(): array {
+        return [
+            'user:suspended_operator' => boolean_select::NOT_CHECKED,
+        ];
+    }
+
+    /**
+     * Return the default sorting that will be added to the report once it is created
+     *
+     * @return array|int[]
+     */
+    public function get_default_column_sorting(): array {
+        return [
+            'user:fullname' => SORT_ASC,
+        ];
     }
 }

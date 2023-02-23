@@ -2,321 +2,333 @@
 
 namespace Sabberworm\CSS;
 
-use Sabberworm\CSS\Parsing\OutputException;
-
 /**
  * Class OutputFormat
  *
- * @method OutputFormat setSemicolonAfterLastRule( bool $bSemicolonAfterLastRule ) Set whether semicolons are added after last rule.
+ * @method OutputFormat setSemicolonAfterLastRule(bool $bSemicolonAfterLastRule) Set whether semicolons are added after
+ *     last rule.
  */
-class OutputFormat {
-	/**
-	* Value format
-	*/
-	// " means double-quote, ' means single-quote
-	public $sStringQuotingType = '"';
-	// Output RGB colors in hash notation if possible
-	public $bRGBHashNotation = true;
-	
-	/**
-	* Declaration format
-	*/
-	// Semicolon after the last rule of a declaration block can be omitted. To do that, set this false.
-	public $bSemicolonAfterLastRule = true;
-	
-	/**
-	* Spacing
-	* Note that these strings are not sanity-checked: the value should only consist of whitespace
-	* Any newline character will be indented according to the current level.
-	* The triples (After, Before, Between) can be set using a wildcard (e.g. `$oFormat->set('Space*Rules', "\n");`)
-	*/
-	public $sSpaceAfterRuleName = ' ';
+class OutputFormat
+{
+    /**
+     * Value format: `"` means double-quote, `'` means single-quote
+     *
+     * @var string
+     */
+    public $sStringQuotingType = '"';
 
-	public $sSpaceBeforeRules = '';
-	public $sSpaceAfterRules = '';
-	public $sSpaceBetweenRules = '';
+    /**
+     * Output RGB colors in hash notation if possible
+     *
+     * @var string
+     */
+    public $bRGBHashNotation = true;
 
-	public $sSpaceBeforeBlocks = '';
-	public $sSpaceAfterBlocks = '';
-	public $sSpaceBetweenBlocks = "\n";
+    /**
+     * Declaration format
+     *
+     * Semicolon after the last rule of a declaration block can be omitted. To do that, set this false.
+     *
+     * @var bool
+     */
+    public $bSemicolonAfterLastRule = true;
 
-	// Content injected in and around @-rule blocks.
-	public $sBeforeAtRuleBlock = '';
-	public $sAfterAtRuleBlock = '';
+    /**
+     * Spacing
+     * Note that these strings are not sanity-checked: the value should only consist of whitespace
+     * Any newline character will be indented according to the current level.
+     * The triples (After, Before, Between) can be set using a wildcard (e.g. `$oFormat->set('Space*Rules', "\n");`)
+     */
+    public $sSpaceAfterRuleName = ' ';
 
-	// This is what’s printed before and after the comma if a declaration block contains multiple selectors.
-	public $sSpaceBeforeSelectorSeparator = '';
-	public $sSpaceAfterSelectorSeparator = ' ';
-	// This is what’s printed after the comma of value lists
-	public $sSpaceBeforeListArgumentSeparator = '';
-	public $sSpaceAfterListArgumentSeparator = '';
-	
-	public $sSpaceBeforeOpeningBrace = ' ';
+    /**
+     * @var string
+     */
+    public $sSpaceBeforeRules = '';
 
-	// Content injected in and around declaration blocks.
-	public $sBeforeDeclarationBlock = '';
-	public $sAfterDeclarationBlockSelectors = '';
-	public $sAfterDeclarationBlock = '';
+    /**
+     * @var string
+     */
+    public $sSpaceAfterRules = '';
 
-	/**
-	* Indentation
-	*/
-	// Indentation character(s) per level. Only applicable if newlines are used in any of the spacing settings.
-	public $sIndentation = "\t";
-	
-	/**
-	* Output exceptions.
-	*/
-	public $bIgnoreExceptions = false;
-	
-	
-	private $oFormatter = null;
-	private $oNextLevelFormat = null;
-	private $iIndentationLevel = 0;
-	
-	public function __construct() {
-	}
-	
-	public function get($sName) {
-		$aVarPrefixes = array('a', 's', 'm', 'b', 'f', 'o', 'c', 'i');
-		foreach($aVarPrefixes as $sPrefix) {
-			$sFieldName = $sPrefix.ucfirst($sName);
-			if(isset($this->$sFieldName)) {
-				return $this->$sFieldName;
-			}
-		}
-		return null;
-	}
-	
-	public function set($aNames, $mValue) {
-		$aVarPrefixes = array('a', 's', 'm', 'b', 'f', 'o', 'c', 'i');
-		if(is_string($aNames) && strpos($aNames, '*') !== false) {
-			$aNames = array(str_replace('*', 'Before', $aNames), str_replace('*', 'Between', $aNames), str_replace('*', 'After', $aNames));
-		} else if(!is_array($aNames)) {
-			$aNames = array($aNames);
-		}
-		foreach($aVarPrefixes as $sPrefix) {
-			$bDidReplace = false;
-			foreach($aNames as $sName) {
-				$sFieldName = $sPrefix.ucfirst($sName);
-				if(isset($this->$sFieldName)) {
-					$this->$sFieldName = $mValue;
-					$bDidReplace = true;
-				}
-			}
-			if($bDidReplace) {
-				return $this;
-			}
-		}
-		// Break the chain so the user knows this option is invalid
-		return false;
-	}
-	
-	public function __call($sMethodName, $aArguments) {
-		if(strpos($sMethodName, 'set') === 0) {
-			return $this->set(substr($sMethodName, 3), $aArguments[0]);
-		} else if(strpos($sMethodName, 'get') === 0) {
-			return $this->get(substr($sMethodName, 3));
-		} else if(method_exists('\\Sabberworm\\CSS\\OutputFormatter', $sMethodName)) {
-			return call_user_func_array(array($this->getFormatter(), $sMethodName), $aArguments);
-		} else {
-			throw new \Exception('Unknown OutputFormat method called: '.$sMethodName);
-		}
-	}
-	
-	public function indentWithTabs($iNumber = 1) {
-		return $this->setIndentation(str_repeat("\t", $iNumber));
-	}
-	
-	public function indentWithSpaces($iNumber = 2) {
-		return $this->setIndentation(str_repeat(" ", $iNumber));
-	}
-	
-	public function nextLevel() {
-		if($this->oNextLevelFormat === null) {
-			$this->oNextLevelFormat = clone $this;
-			$this->oNextLevelFormat->iIndentationLevel++;
-			$this->oNextLevelFormat->oFormatter = null;
-		}
-		return $this->oNextLevelFormat;
-	}
-	
-	public function beLenient() {
-		$this->bIgnoreExceptions = true;
-	}
-	
-	public function getFormatter() {
-		if($this->oFormatter === null) {
-			$this->oFormatter = new OutputFormatter($this);
-		}
-		return $this->oFormatter;
-	}
-	
-	public function level() {
-		return $this->iIndentationLevel;
-	}
+    /**
+     * @var string
+     */
+    public $sSpaceBetweenRules = '';
 
-	/**
-	 * Create format.
-	 *
-	 * @return OutputFormat Format.
-	 */
-	public static function create() {
-		return new OutputFormat();
-	}
+    /**
+     * @var string
+     */
+    public $sSpaceBeforeBlocks = '';
 
-	/**
-	 * Create compact format.
-	 *
-	 * @return OutputFormat Format.
-	 */
-	public static function createCompact() {
-		$format = self::create();
-		$format->set('Space*Rules', "")->set('Space*Blocks', "")->setSpaceAfterRuleName('')->setSpaceBeforeOpeningBrace('')->setSpaceAfterSelectorSeparator('');
-		return $format;
-	}
+    /**
+     * @var string
+     */
+    public $sSpaceAfterBlocks = '';
 
-	/**
-	 * Create pretty format.
-	 *
-	 * @return OutputFormat Format.
-	 */
-	public static function createPretty() {
-		$format = self::create();
-		$format->set('Space*Rules', "\n")->set('Space*Blocks', "\n")->setSpaceBetweenBlocks("\n\n")->set('SpaceAfterListArgumentSeparator', array('default' => '', ',' => ' '));
-		return $format;
-	}
-}
+    /**
+     * @var string
+     */
+    public $sSpaceBetweenBlocks = "\n";
 
-class OutputFormatter {
-	private $oFormat;
-	
-	public function __construct(OutputFormat $oFormat) {
-		$this->oFormat = $oFormat;
-	}
-	
-	public function space($sName, $sType = null) {
-		$sSpaceString = $this->oFormat->get("Space$sName");
-		// If $sSpaceString is an array, we have multple values configured depending on the type of object the space applies to
-		if(is_array($sSpaceString)) {
-			if($sType !== null && isset($sSpaceString[$sType])) {
-				$sSpaceString = $sSpaceString[$sType];
-			} else {
-				$sSpaceString = reset($sSpaceString);
-			}
-		}
-		return $this->prepareSpace($sSpaceString);
-	}
-	
-	public function spaceAfterRuleName() {
-		return $this->space('AfterRuleName');
-	}
-	
-	public function spaceBeforeRules() {
-		return $this->space('BeforeRules');
-	}
-	
-	public function spaceAfterRules() {
-		return $this->space('AfterRules');
-	}
-	
-	public function spaceBetweenRules() {
-		return $this->space('BetweenRules');
-	}
-	
-	public function spaceBeforeBlocks() {
-		return $this->space('BeforeBlocks');
-	}
-	
-	public function spaceAfterBlocks() {
-		return $this->space('AfterBlocks');
-	}
-	
-	public function spaceBetweenBlocks() {
-		return $this->space('BetweenBlocks');
-	}
-	
-	public function spaceBeforeSelectorSeparator() {
-		return $this->space('BeforeSelectorSeparator');
-	}
+    /**
+     * Content injected in and around at-rule blocks.
+     *
+     * @var string
+     */
+    public $sBeforeAtRuleBlock = '';
 
-	public function spaceAfterSelectorSeparator() {
-		return $this->space('AfterSelectorSeparator');
-	}
+    /**
+     * @var string
+     */
+    public $sAfterAtRuleBlock = '';
 
-	public function spaceBeforeListArgumentSeparator($sSeparator) {
-		return $this->space('BeforeListArgumentSeparator', $sSeparator);
-	}
+    /**
+     * This is what’s printed before and after the comma if a declaration block contains multiple selectors.
+     *
+     * @var string
+     */
+    public $sSpaceBeforeSelectorSeparator = '';
 
-	public function spaceAfterListArgumentSeparator($sSeparator) {
-		return $this->space('AfterListArgumentSeparator', $sSeparator);
-	}
+    /**
+     * @var string
+     */
+    public $sSpaceAfterSelectorSeparator = ' ';
 
-	public function spaceBeforeOpeningBrace() {
-		return $this->space('BeforeOpeningBrace');
-	}
+    /**
+     * This is what’s printed after the comma of value lists
+     *
+     * @var string
+     */
+    public $sSpaceBeforeListArgumentSeparator = '';
 
-	/**
-	* Runs the given code, either swallowing or passing exceptions, depending on the bIgnoreExceptions setting.
-	*/
-	public function safely($cCode) {
-		if($this->oFormat->get('IgnoreExceptions')) {
-			// If output exceptions are ignored, run the code with exception guards
-			try {
-				return $cCode();
-			} catch (OutputException $e) {
-				return null;
-			} //Do nothing
-		} else {
-			// Run the code as-is
-			return $cCode();
-		}
-	}
+    /**
+     * @var string
+     */
+    public $sSpaceAfterListArgumentSeparator = '';
 
-	/**
-	* Clone of the implode function but calls ->render with the current output format instead of __toString()
-	*/
-	public function implode($sSeparator, $aValues, $bIncreaseLevel = false) {
-		$sResult = '';
-		$oFormat = $this->oFormat;
-		if($bIncreaseLevel) {
-			$oFormat = $oFormat->nextLevel();
-		}
-		$bIsFirst = true;
-		foreach($aValues as $mValue) {
-			if($bIsFirst) {
-				$bIsFirst = false;
-			} else {
-				$sResult .= $sSeparator;
-			}
-			if($mValue instanceof \Sabberworm\CSS\Renderable) {
-				$sResult .= $mValue->render($oFormat);
-			} else {
-				$sResult .= $mValue;
-			}
-		}
-		return $sResult;
-	}
-	
-	public function removeLastSemicolon($sString) {
-		if($this->oFormat->get('SemicolonAfterLastRule')) {
-			return $sString;
-		}
-		$sString = explode(';', $sString);
-		if(count($sString) < 2) {
-			return $sString[0];
-		}
-		$sLast = array_pop($sString);
-		$sNextToLast = array_pop($sString);
-		array_push($sString, $sNextToLast.$sLast);
-		return implode(';', $sString);
-	}
+    /**
+     * @var string
+     */
+    public $sSpaceBeforeOpeningBrace = ' ';
 
-	private function prepareSpace($sSpaceString) {
-		return str_replace("\n", "\n".$this->indent(), $sSpaceString);
-	}
+    /**
+     * Content injected in and around declaration blocks.
+     *
+     * @var string
+     */
+    public $sBeforeDeclarationBlock = '';
 
-	private function indent() {
-		return str_repeat($this->oFormat->sIndentation, $this->oFormat->level());
-	}
+    /**
+     * @var string
+     */
+    public $sAfterDeclarationBlockSelectors = '';
+
+    /**
+     * @var string
+     */
+    public $sAfterDeclarationBlock = '';
+
+    /**
+     * Indentation character(s) per level. Only applicable if newlines are used in any of the spacing settings.
+     *
+     * @var string
+     */
+    public $sIndentation = "\t";
+
+    /**
+     * Output exceptions.
+     *
+     * @var bool
+     */
+    public $bIgnoreExceptions = false;
+
+    /**
+     * @var OutputFormatter|null
+     */
+    private $oFormatter = null;
+
+    /**
+     * @var OutputFormat|null
+     */
+    private $oNextLevelFormat = null;
+
+    /**
+     * @var int
+     */
+    private $iIndentationLevel = 0;
+
+    public function __construct()
+    {
+    }
+
+    /**
+     * @param string $sName
+     *
+     * @return string|null
+     */
+    public function get($sName)
+    {
+        $aVarPrefixes = ['a', 's', 'm', 'b', 'f', 'o', 'c', 'i'];
+        foreach ($aVarPrefixes as $sPrefix) {
+            $sFieldName = $sPrefix . ucfirst($sName);
+            if (isset($this->$sFieldName)) {
+                return $this->$sFieldName;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param array<array-key, string>|string $aNames
+     * @param mixed $mValue
+     *
+     * @return self|false
+     */
+    public function set($aNames, $mValue)
+    {
+        $aVarPrefixes = ['a', 's', 'm', 'b', 'f', 'o', 'c', 'i'];
+        if (is_string($aNames) && strpos($aNames, '*') !== false) {
+            $aNames =
+                [
+                    str_replace('*', 'Before', $aNames),
+                    str_replace('*', 'Between', $aNames),
+                    str_replace('*', 'After', $aNames),
+                ];
+        } elseif (!is_array($aNames)) {
+            $aNames = [$aNames];
+        }
+        foreach ($aVarPrefixes as $sPrefix) {
+            $bDidReplace = false;
+            foreach ($aNames as $sName) {
+                $sFieldName = $sPrefix . ucfirst($sName);
+                if (isset($this->$sFieldName)) {
+                    $this->$sFieldName = $mValue;
+                    $bDidReplace = true;
+                }
+            }
+            if ($bDidReplace) {
+                return $this;
+            }
+        }
+        // Break the chain so the user knows this option is invalid
+        return false;
+    }
+
+    /**
+     * @param string $sMethodName
+     * @param array<array-key, mixed> $aArguments
+     *
+     * @return mixed
+     *
+     * @throws \Exception
+     */
+    public function __call($sMethodName, array $aArguments)
+    {
+        if (strpos($sMethodName, 'set') === 0) {
+            return $this->set(substr($sMethodName, 3), $aArguments[0]);
+        } elseif (strpos($sMethodName, 'get') === 0) {
+            return $this->get(substr($sMethodName, 3));
+        } elseif (method_exists(OutputFormatter::class, $sMethodName)) {
+            return call_user_func_array([$this->getFormatter(), $sMethodName], $aArguments);
+        } else {
+            throw new \Exception('Unknown OutputFormat method called: ' . $sMethodName);
+        }
+    }
+
+    /**
+     * @param int $iNumber
+     *
+     * @return self
+     */
+    public function indentWithTabs($iNumber = 1)
+    {
+        return $this->setIndentation(str_repeat("\t", $iNumber));
+    }
+
+    /**
+     * @param int $iNumber
+     *
+     * @return self
+     */
+    public function indentWithSpaces($iNumber = 2)
+    {
+        return $this->setIndentation(str_repeat(" ", $iNumber));
+    }
+
+    /**
+     * @return OutputFormat
+     */
+    public function nextLevel()
+    {
+        if ($this->oNextLevelFormat === null) {
+            $this->oNextLevelFormat = clone $this;
+            $this->oNextLevelFormat->iIndentationLevel++;
+            $this->oNextLevelFormat->oFormatter = null;
+        }
+        return $this->oNextLevelFormat;
+    }
+
+    /**
+     * @return void
+     */
+    public function beLenient()
+    {
+        $this->bIgnoreExceptions = true;
+    }
+
+    /**
+     * @return OutputFormatter
+     */
+    public function getFormatter()
+    {
+        if ($this->oFormatter === null) {
+            $this->oFormatter = new OutputFormatter($this);
+        }
+        return $this->oFormatter;
+    }
+
+    /**
+     * @return int
+     */
+    public function level()
+    {
+        return $this->iIndentationLevel;
+    }
+
+    /**
+     * Creates an instance of this class without any particular formatting settings.
+     *
+     * @return self
+     */
+    public static function create()
+    {
+        return new OutputFormat();
+    }
+
+    /**
+     * Creates an instance of this class with a preset for compact formatting.
+     *
+     * @return self
+     */
+    public static function createCompact()
+    {
+        $format = self::create();
+        $format->set('Space*Rules', "")->set('Space*Blocks', "")->setSpaceAfterRuleName('')
+            ->setSpaceBeforeOpeningBrace('')->setSpaceAfterSelectorSeparator('');
+        return $format;
+    }
+
+    /**
+     * Creates an instance of this class with a preset for pretty formatting.
+     *
+     * @return self
+     */
+    public static function createPretty()
+    {
+        $format = self::create();
+        $format->set('Space*Rules', "\n")->set('Space*Blocks', "\n")
+            ->setSpaceBetweenBlocks("\n\n")->set('SpaceAfterListArgumentSeparator', ['default' => '', ',' => ' ']);
+        return $format;
+    }
 }

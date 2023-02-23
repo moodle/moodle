@@ -30,6 +30,7 @@ $string['actionsforpost'] = 'Actions for post';
 $string['addanewdiscussion'] = 'Add discussion topic';
 $string['addanewquestion'] = 'Add a new question';
 $string['addanewtopic'] = 'Add a new topic';
+$string['addreply'] = 'Add reply';
 $string['addtofavourites'] = 'Star this discussion';
 $string['advancedsearch'] = 'Advanced search';
 $string['alldiscussions'] = 'All discussions';
@@ -94,7 +95,9 @@ $string['cannotfavourite'] = 'Sorry, but you do not have the permission to star 
 $string['cannottrack'] = 'Could not stop tracking that forum';
 $string['cannotunsubscribe'] = 'Could not unsubscribe you from that forum';
 $string['cannotupdatepost'] = 'You can not update this post';
-$string['cannotviewpostyet'] = 'You cannot read other students questions in this discussion yet because you haven\'t posted';
+$string['cannotuseseperategroupsandsingletopic'] = 'Separate groups cannot be used with single discussion topic';
+$string['cannotusesingletopicandseperategroups'] = 'Single discussion topic cannot be used with separate groups';
+$string['cannotviewpostyet'] = 'You can\'t read other students\' posts in this discussion yet because you haven\'t posted.';
 $string['cannotviewusersposts'] = 'There are no posts made by this user that you are able to view.';
 $string['cleanreadtime'] = 'Mark old posts as read hour';
 $string['clicktolockdiscussion'] = 'Click to lock this discussion';
@@ -189,7 +192,7 @@ $string['discussionmoved'] = 'This discussion has been moved to \'{$a}\'.';
 $string['discussionmovedpost'] = 'This discussion has been moved to <a href="{$a->discusshref}">here</a> in the forum <a href="{$a->forumhref}">{$a->forumname}</a>';
 $string['discussionname'] = 'Discussion name';
 $string['discussionnownotsubscribed'] = '{$a->name} will NOT be notified of new posts in \'{$a->discussion}\' of \'{$a->forum}\'';
-$string['discussionnowsubscribed'] = '{$a->name} will be notified of new posts in \'{$a->discussion}\' of \'{$a->forum}\'';
+$string['discussionnowsubscribed'] = 'You will be notified of new posts in \'{$a->discussion}\' in the forum \'{$a->forum}\'.';
 $string['discussionpin'] = 'Pin';
 $string['discussionpinned'] = 'Pinned';
 $string['discussionpinned_help'] = 'Pinned discussions will appear at the top of a forum.';
@@ -224,6 +227,8 @@ $string['duedate_help'] = 'This is when posting in the forum is due. Although th
 $string['duedatetodisplayincalendar'] = 'Due date to display in calendar';
 $string['eachuserforum'] = 'Each person posts one discussion';
 $string['edit'] = 'Edit';
+$string['editdiscussion'] = 'Edit discussion';
+$string['editdiscussiontopic'] = 'Edit discussion topic';
 $string['editedby'] = 'Edited by {$a->name} - original submission {$a->date}';
 $string['editedpostupdated'] = '{$a}\'s post was updated';
 $string['editing'] = 'Editing';
@@ -259,11 +264,13 @@ $string['emaildigesttype_help'] = 'The type of notification that you will receiv
 * Digest - subjects only - you will receive one digest e-mail per day containing just the subject of each forum post.
 ';
 $string['emptymessage'] = 'Something was wrong with your post. Perhaps you left it blank, or the attachment was too big. Your changes have NOT been saved.';
+$string['errorcannotlock'] = 'You do not have the permission to lock discussions.';
+$string['errordiscussionnotfound'] = 'The discussion was not found';
 $string['erroremptymessage'] = 'Post message cannot be empty';
 $string['erroremptysubject'] = 'Post subject cannot be empty.';
 $string['errorenrolmentrequired'] = 'You must be enrolled in this course to access this content';
+$string['errorforumnotfound'] = 'The forum that this discussion belongs to was not found';
 $string['errorwhiledelete'] = 'An error occurred while deleting record.';
-$string['errorcannotlock'] = 'You do not have the permission to lock discussions.';
 $string['eventassessableuploaded'] = 'Some content has been posted.';
 $string['everyonecanchoose'] = 'Everyone can choose to be subscribed';
 $string['everyonecannowchoose'] = 'Everyone can now choose to be subscribed';
@@ -318,6 +325,7 @@ $string['forumposts'] = 'Forum posts';
 $string['forum:rate'] = 'Rate posts';
 $string['forum:replynews'] = 'Reply to announcements';
 $string['forum:replypost'] = 'Reply to posts';
+$string['replypostdiscussion'] = 'Reply to discussion';
 $string['forum:postprivatereply'] = 'Reply privately to posts';
 $string['forum:readprivatereplies'] = 'View private replies';
 $string['forums'] = 'Forums';
@@ -331,7 +339,7 @@ $string['forumtype_help'] = 'There are 5 forum types:
 
 * A single simple discussion - A single discussion topic which everyone can reply to (cannot be used with separate groups)
 * Each person posts one discussion - Each student can post exactly one new discussion topic, which everyone can then reply to
-* Q and A forum - Students must first post their perspectives before viewing other students\' posts
+* Q and A forum - A student must first post their reply to a question posted by the teacher, before viewing other students\' posts
 * Standard forum displayed in a blog-like format - An open forum where anyone can start a new discussion at any time, and in which discussion topics are displayed on one page with "Discuss this topic" links
 * Standard forum for general use - An open forum where anyone can start a new discussion at any time';
 $string['forum:viewallratings'] = 'View all raw ratings given by individuals';
@@ -485,7 +493,7 @@ $string['nowallsubscribed'] = 'You are now subscribed to all forums in {$a}.';
 $string['nowallunsubscribed'] = 'You are now unsubscribed from all forums in {$a}.';
 $string['nownotsubscribed'] = '{$a->name} will NOT be notified of new posts in \'{$a->forum}\'';
 $string['nownottracking'] = '{$a->name} is no longer tracking \'{$a->forum}\'.';
-$string['nowsubscribed'] = '{$a->name} will be notified of new posts in \'{$a->forum}\'';
+$string['nowsubscribed'] = 'You will be notified of new posts in the forum \'{$a->forum}\'.';
 $string['nowtracking'] = '{$a->name} is now tracking \'{$a->forum}\'.';
 $string['numposts'] = '{$a} posts';
 $string['numberofreplies'] = 'Number of replies: {$a}';
@@ -598,10 +606,11 @@ $string['privatereply_help'] = 'A private reply can only be viewed by the author
 $string['processingdigest'] = 'Processing email digest for user {$a}';
 $string['processingpost'] = 'Processing post {$a}';
 $string['prune'] = 'Split';
+$string['prunediscussion'] = 'Split discussion';
 $string['prunedpost'] = 'A new discussion has been created from that post';
 $string['pruneheading'] = 'Split the discussion and move this post to a new discussion';
 $string['qandaforum'] = 'Q and A forum';
-$string['qandanotify'] = 'This is a question and answer forum. In order to see other responses to these questions, you must first post your answer';
+$string['qandanotify'] = 'This is a question and answer forum. To see other replies, you must first post your reply.';
 $string['re'] = 'Re:';
 $string['readtherest'] = 'Read the rest of this topic';
 $string['removeallforumtags'] = 'Remove all forum tags';
@@ -713,11 +722,11 @@ $string['trackingoff'] = 'Off';
 $string['trackingon'] = 'Forced';
 $string['trackingoptional'] = 'Optional';
 $string['trackingtype'] = 'Read tracking';
-$string['trackingtype_help'] = 'Read tracking enables participants to easily check which posts they have not yet seen by highlighting any new posts.
+$string['trackingtype_help'] = 'Read tracking enables participants to check which posts they have not yet seen by highlighting any new posts.
 
-If set to optional, participants can choose whether to turn tracking on or off via a link in the actions menu or administration block, depending on the theme. (Users must also enable forum tracking in their forum preferences.)
+If set to optional, participants can choose whether to turn tracking on or off for the forum. (Users must also enable forum tracking in their forum preferences.)
 
-If \'Allow forced read tracking\' is enabled in the site administration, then a further option is available - forced. This means that tracking is always on, regardless of users\' forum preferences.';
+If \'Allow forced read tracking\' is enabled by a site administrator, then a further option is available - forced. This means that tracking is always on, regardless of users\' forum preferences.';
 $string['unlockdiscussion'] = 'Unlock this discussion';
 $string['unread'] = 'Unread';
 $string['unreadpost'] = 'Unread post';
@@ -782,9 +791,3 @@ $string['viewgrades'] = 'View grades';
 $string['postmailinfolink'] = 'This is a copy of a message posted in {$a->coursename}.
 
 To reply click on this link: {$a->replylink}';
-
-// Deprecated since Moodle 3.8.
-$string['cannotdeletediscussioninsinglediscussion'] = 'You cannot delete the first post in a single discussion';
-$string['inpagereplysubject'] = 'Re: {$a}';
-$string['overviewnumpostssince'] = '{$a} posts since last login';
-$string['overviewnumunread'] = '{$a} total unread';

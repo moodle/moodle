@@ -42,7 +42,7 @@ class all_calculated_for_qubaid_condition {
     /**
      * @var object[]
      */
-    public $subquestions;
+    public $subquestions = [];
 
     /**
      * Holds slot (position) stats and stats for variants of questions in slots.

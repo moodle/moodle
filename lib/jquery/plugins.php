@@ -36,7 +36,7 @@
  */
 
 $plugins = array(
-    'jquery'  => array('files' => array('jquery-3.5.1.min.js')),
-    'ui'      => array('files' => array('ui-1.12.1/jquery-ui.min.js')),
-    'ui-css'  => array('files' => array('ui-1.12.1/theme/smoothness/jquery-ui.min.css')),
+    'jquery'  => array('files' => array('jquery-3.6.1.min.js')),
+    'ui'      => array('files' => array('ui-1.13.2/jquery-ui.min.js')),
+    'ui-css'  => array('files' => array('ui-1.13.2/theme/smoothness/jquery-ui.min.css')),
 );

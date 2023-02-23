@@ -19,6 +19,8 @@ Feature: General section does not show in navigation when empty
       | forum    | Test forum name | Test forum name description  | C1     | forum1   | 1       |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Navigation" block if not present
 
   Scenario: General section is visible in navigation when it is not empty

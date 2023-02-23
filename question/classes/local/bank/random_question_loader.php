@@ -290,7 +290,25 @@ class random_question_loader {
             $fieldsstring = implode(',', $fields);
         }
 
-        return $DB->get_records_list('question', 'id', $questionids, 'id', $fieldsstring, $offset, $limit);
+        // Create the query to get the questions (validate that at least we have a question id. If not, do not execute the sql).
+        $hasquestions = false;
+        if (!empty($questionids)) {
+            $hasquestions = true;
+        }
+        if ($hasquestions) {
+            list($condition, $param) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'questionid');
+            $condition = 'WHERE q.id ' . $condition;
+            $sql = "SELECT {$fieldsstring}
+                      FROM (SELECT q.*, qbe.questioncategoryid as category
+                      FROM {question} q
+                      JOIN {question_versions} qv ON qv.questionid = q.id
+                      JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                      {$condition}) q ORDER BY q.id";
+
+            return $DB->get_records_sql($sql, $param, $offset, $limit);
+        } else {
+            return [];
+        }
     }
 
     /**

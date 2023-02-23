@@ -53,7 +53,7 @@ class page_helper {
 
         require_login();
         if (isguestuser()) {
-            print_error('noguest');
+            throw new \moodle_exception('noguest');
         }
 
         // TODO Check that data privacy is enabled.
@@ -66,6 +66,8 @@ class page_helper {
         $PAGE->set_pagelayout('admin');
         $PAGE->set_title($title);
         $PAGE->set_heading($SITE->fullname);
+        $PAGE->set_secondary_active_tab('users');
+        $PAGE->set_primary_active_tab('siteadminnode');
 
         // If necessary, override the settings navigation to add this page into the breadcrumb navigation.
         if ($attachtoparentnode) {

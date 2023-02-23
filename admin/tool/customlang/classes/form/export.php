@@ -44,7 +44,7 @@ class export extends \moodleform {
 
         // The export button only appears if a local lang is present.
         if (!check_dir_exists($langdir) || !count(glob("$langdir/*"))) {
-            print_error('nolocallang', 'tool_customlang');
+            throw new \moodle_exception('nolocallang', 'tool_customlang');
         }
 
         $langfiles = scandir($langdir);

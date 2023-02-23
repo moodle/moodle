@@ -5,7 +5,8 @@ Feature: Select users when searching for user-created content
   I need to be able to add users to the select list in the search form
 
   Background:
-    Given the following config values are set as admin:
+    Given solr is installed
+    And the following config values are set as admin:
       | enableglobalsearch | 1    |
       | searchengine       | solr |
     And the following "courses" exist:
@@ -35,7 +36,7 @@ Feature: Select users when searching for user-created content
     And I search for "frogs" using the header global search box
     And I expand all fieldsets
     When I expand the "Users" autocomplete
-    # Alphabetical surname order.
+    # Alphabetical last name order.
     Then "Anne Additional" "text" should appear before "Anne Ditin" "text" in the "Users" "autocomplete"
     And "Anne Ditin" "text" should appear before "Anne Other" "text" in the "Users" "autocomplete"
 

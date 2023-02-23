@@ -57,8 +57,11 @@ class recording_test extends \advanced_testcase {
      */
     public function test_get_allrecordings_status_refresh(int $status) {
         $this->resetAfterTest();
-        ['recordings' => $recordings] = $this->create_activity_with_recordings($this->get_course(),
-            instance::TYPE_ALL, [['status' => $status]]);
+        ['recordings' => $recordings] = $this->create_activity_with_recordings(
+            $this->get_course(),
+            instance::TYPE_ALL,
+            [['status' => $status]]
+        );
 
         $this->assertEquals($status, (new recording($recordings[0]->id))->get('status'));
     }
@@ -70,8 +73,11 @@ class recording_test extends \advanced_testcase {
      */
     public function test_get_name(): void {
         $this->resetAfterTest();
-        ['recordings' => $recordings] = $this->create_activity_with_recordings($this->get_course(),
-            instance::TYPE_ALL, [['name' => 'Example name']]);
+        ['recordings' => $recordings] = $this->create_activity_with_recordings(
+            $this->get_course(),
+            instance::TYPE_ALL,
+            [['name' => 'Example name']]
+        );
 
         $this->assertEquals('Example name', (new recording($recordings[0]->id))->get('name'));
     }
@@ -83,10 +89,11 @@ class recording_test extends \advanced_testcase {
      */
     public function test_get_description(): void {
         $this->resetAfterTest();
-        ['recordings' => $recordings] = $this->create_activity_with_recordings($this->get_course(),
-            instance::TYPE_ALL, [[
-            'description' => 'Example description',
-        ]]);
+        ['recordings' => $recordings] = $this->create_activity_with_recordings(
+            $this->get_course(),
+            instance::TYPE_ALL,
+            [['description' => 'Example description']]
+        );
 
         $this->assertEquals('Example description', (new recording($recordings[0]->id))->get('description'));
     }
@@ -113,9 +120,11 @@ class recording_test extends \advanced_testcase {
     public function test_get_allrecordings(int $type): void {
         $this->resetAfterTest();
         $recordingcount = 2; // Two recordings only.
-        list('activity' => $activity) =
-            $this->create_activity_with_recordings($this->get_course(),
-                $type, array_pad([], $recordingcount, []));
+        ['activity' => $activity] = $this->create_activity_with_recordings(
+            $this->get_course(),
+            $type,
+            array_pad([], $recordingcount, [])
+        );
 
         // Fetch the recordings for the instance.
         // The count shoudl match the input count.
@@ -174,11 +183,11 @@ class recording_test extends \advanced_testcase {
         ]);
         $instance = instance::get_from_instanceid($activity->id);
         $instance->set_group_id(0);
-        $this->create_recordings_for_instance($instance,  [['name' => "Pre-Recording 1"], ['name' => "Pre-Recording 2"]]);
+        $this->create_recordings_for_instance($instance, [['name' => "Pre-Recording 1"], ['name' => "Pre-Recording 2"]]);
         $instance->set_group_id($group1->id);
-        $this->create_recordings_for_instance($instance,  [['name' => "Group 1 Recording 1"]]);
+        $this->create_recordings_for_instance($instance, [['name' => "Group 1 Recording 1"]]);
         $instance->set_group_id($group2->id);
-        $this->create_recordings_for_instance($instance,  [['name' => "Group 2 Recording 1"]]);
+        $this->create_recordings_for_instance($instance, [['name' => "Group 2 Recording 1"]]);
 
         $this->setUser($student1);
         $instance1 = instance::get_from_instanceid($activity->id);
@@ -201,7 +210,6 @@ class recording_test extends \advanced_testcase {
         $this->assertCount(4, $recordings);
         $this->assert_has_recording_by_name('Pre-Recording 1', $recordings);
         $this->assert_has_recording_by_name('Pre-Recording 2', $recordings);
-
     }
 
     /**
@@ -223,14 +231,14 @@ class recording_test extends \advanced_testcase {
             'name' => 'Example'
         ]);
         $instance = instance::get_from_instanceid($activity->id);
-        $this->create_recordings_for_instance($instance,  [['name' => "Deleted Recording 1"]]);
+        $this->create_recordings_for_instance($instance, [['name' => "Deleted Recording 1"]]);
         $activity2 = $plugingenerator->create_instance([
             'course' => $testcourse->id,
             'type' => $type,
             'name' => 'Example'
         ]);
         $instance2 = instance::get_from_instanceid($activity2->id);
-        $this->create_recordings_for_instance($instance2,  [['name' => "Recording 1"]]);
+        $this->create_recordings_for_instance($instance2, [['name' => "Recording 1"]]);
 
         bigbluebuttonbn_delete_instance($activity->id);
         $recordings = recording::get_recordings_for_course($testcourse->id, [], false, false, true);
@@ -248,9 +256,53 @@ class recording_test extends \advanced_testcase {
      * @param array $recordings
      */
     public function assert_has_recording_by_name($recordingname, $recordings) {
-        $recordingnames = array_map(function($r) {
+        $recordingnames = array_map(function ($r) {
             return $r->get('name');
         }, $recordings);
         $this->assertContains($recordingname, $recordingnames);
+    }
+
+    /**
+     * Simple recording with breakoutroom fetcher test
+     *
+     * @return void
+     */
+    public function test_recordings_breakoutroom() {
+        $this->resetAfterTest();
+        $this->initialise_mock_server();
+        [$context, $cm, $bbbactivity] = $this->create_instance();
+        $instance = instance::get_from_instanceid($bbbactivity->id);
+        $bbbgenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
+        $mainmeeting = $bbbgenerator->create_meeting([
+            'instanceid' => $instance->get_instance_id(),
+            'groupid' => $instance->get_group_id(),
+        ]);
+        // This creates a meeting to receive the recordings (specific to the mock server implementation). See recording_proxy_test.
+        $bbbgenerator->create_meeting([
+            'instanceid' => $instance->get_instance_id(),
+            'groupid' => $instance->get_group_id(),
+            'isBreakout' => true,
+            'sequence' => 1
+        ]);
+        $bbbgenerator->create_meeting([
+            'instanceid' => $instance->get_instance_id(),
+            'groupid' => $instance->get_group_id(),
+            'isBreakout' => true,
+            'sequence' => 2
+        ]);
+        // For now only recording from the main room have been created.
+        $this->create_recordings_for_instance($instance, [
+            ['name' => 'Recording 1'],
+        ]);
+        $recordings = recording::get_recordings_for_instance($instance);
+        $this->assertCount(1, $recordings);
+
+        // Now the breakoutroom recordings appears.
+        $this->create_recordings_for_instance($instance, [
+            ['name' => 'Recording 2', 'isBreakout' => true, 'sequence' => 1],
+            ['name' => 'Recording 3', 'isBreakout' => true, 'sequence' => 2]
+        ]);
+        $recordings = recording::get_recordings_for_instance($instance);
+        $this->assertCount(3, $recordings);
     }
 }

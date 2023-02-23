@@ -30,6 +30,8 @@ $showarchived = optional_param('showarchived', false, PARAM_BOOL);
 admin_externalpage_setup('paymentaccounts');
 $PAGE->set_heading(get_string('paymentaccounts', 'payment'));
 
+$PAGE->set_primary_active_tab('siteadminnode');
+
 $enabledplugins = \core\plugininfo\paygw::get_enabled_plugins();
 
 echo $OUTPUT->header();
@@ -57,7 +59,6 @@ foreach ($accounts as $account) {
     }
 
     $menu = new action_menu();
-    $menu->set_alignment(action_menu::TL, action_menu::BL);
     $menu->set_menu_trigger(get_string('edit'));
     if ($canmanage) {
         $menu->add(new action_menu_link_secondary($account->get_edit_url(), null, get_string('edit')));

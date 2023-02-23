@@ -243,7 +243,7 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      * @return bool true if menu is active, else false.
      */
     this.is_menu_active = function() {
-        return this.menu.get('visible');
+        return this.menu !== null && this.menu.get('visible');
     };
 
     /**

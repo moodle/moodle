@@ -99,6 +99,7 @@ class override_action_menu implements templatable, renderable {
                 ]))->out(false)
             ];
         }
+        $data['heading'] = get_string($type == 'user' ? 'useroverrides' : 'groupoverrides', 'mod_lesson');
         return $data;
     }
 }

@@ -18,16 +18,15 @@ namespace qbank_tagquestion\external;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/question/engine/lib.php');
 require_once($CFG->dirroot . '/question/engine/datalib.php');
 require_once($CFG->libdir . '/questionlib.php');
 
 use core_tag_tag;
-use external_api;
-use external_function_parameters;
-use external_single_structure;
-use external_value;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
 use qbank_tagquestion\form\tags_form;
 
 /**
@@ -79,15 +78,17 @@ class submit_tags extends external_api {
 
         if (!$question = $DB->get_record_sql('
                 SELECT q.*, qc.contextid
-                FROM {question} q
-                JOIN {question_categories} qc ON qc.id = q.category
-                WHERE q.id = ?', [$params['questionid']])) {
+                  FROM {question} q
+                  JOIN {question_versions} qv ON qv.questionid = q.id
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                  JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                 WHERE q.id = ?', [$questionid])) {
             throw new \moodle_exception('questiondoesnotexist', 'question');
         }
 
         $cantag = question_has_capability_on($question, 'tag');
         $questioncontext = \context::instance_by_id($question->contextid);
-        $contexts = new \question_edit_contexts($editingcontext);
+        $contexts = new \core_question\local\bank\question_edit_contexts($editingcontext);
 
         $formoptions = [
                 'editingcontext' => $editingcontext,

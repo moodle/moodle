@@ -6,6 +6,10 @@
   ],
   'env': {
     'browser': true,
+    // Enable ES6+ features by default.
+    // See http://eslint.org/docs/user-guide/configuring#specifying-environments
+    // Note: The YUI override must exactly match this when disabling the ES6+ version because those features are not supported by Shifter.
+    'es2020': true,
     'amd': true
   },
   'globals': {
@@ -83,6 +87,7 @@
     'no-octal-escape': 'error',
     'no-proto': 'error',
     'no-redeclare': 'warn',
+    'no-restricted-globals': ['error', { 'name': 'Notification' }],
     'no-return-assign': 'error',
     'no-script-url': 'error',
     'no-self-assign': 'error',
@@ -196,6 +201,10 @@
   overrides: [
     {
       files: ["**/yui/src/**/*.js"],
+      'env': {
+        // Disable ES6+ for YUI files.
+        'es2020': false,
+      },
       // Disable some rules which we can't safely define for YUI rollups.
       rules: {
         'no-undef': 'off',
@@ -221,13 +230,9 @@
     },
     {
       files: ["**/amd/src/*.js", "**/amd/src/**/*.js", "Gruntfile.js", ".grunt/*.js", ".grunt/tasks/*.js", "jsdoc.conf.js"],
-      // We support es6 now. Woot!
-      env: {
-        es6: true
-      },
       // We're using babel transpiling so use their parser
       // for linting.
-      parser: 'babel-eslint',
+      parser: '@babel/eslint-parser',
       // Check AMD with some slightly stricter rules.
       rules: {
         'no-unused-vars': 'error',
@@ -299,8 +304,8 @@
         ],
       },
       parserOptions: {
-        'ecmaVersion': 9,
-        'sourceType': 'module'
+        'sourceType': 'module',
+        'requireConfigFile': false,
       }
     }
   ]

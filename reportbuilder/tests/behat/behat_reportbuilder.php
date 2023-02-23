@@ -38,6 +38,7 @@ class behat_reportbuilder extends behat_base {
      * Recognised page names are:
      * | type   | identifier  | description          |
      * | Editor | Report name | Custom report editor |
+     * | View   | Report name | Custom report view   |
      *
      * @param string $type
      * @param string $identifier
@@ -52,6 +53,9 @@ class behat_reportbuilder extends behat_base {
         switch ($type) {
             case 'Editor':
                 return new moodle_url('/reportbuilder/edit.php', ['id' => $report->get('id')]);
+
+            case 'View':
+                return new moodle_url('/reportbuilder/view.php', ['id' => $report->get('id')]);
 
             default:
                 throw new Exception("Unrecognised reportbuilder page type '{$type}'");
@@ -94,5 +98,22 @@ class behat_reportbuilder extends behat_base {
 
         $editlabel = get_string('aggregatecolumn', 'core_reportbuilder', $column);
         $this->execute('behat_forms::i_set_the_field_to', [$this->escape($editlabel), $this->escape($aggregation)]);
+    }
+
+    /**
+     * Press a given action from the action menu in a given report row
+     *
+     * @When I press :action action in the :row report row
+     *
+     * @param string $action
+     * @param string $row
+     */
+    public function i_press_action_in_the_report_row(string $action, string $row): void {
+        $this->execute('behat_action_menu::i_choose_in_the_named_menu_in_container', [
+            $this->escape($action),
+            get_string('actions', 'core_reportbuilder'),
+            $this->escape($row),
+            'table_row',
+        ]);
     }
 }

@@ -1,0 +1,54 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_message/send_bulk_message
+    Template for the bulk insert grades modal.
+
+    Example context (json):
+    {
+       "name": "bulksinsertmodal",
+       "id": "bulksinsertmodal"
+    }
+}}
+<form>
+    <div class="alert alert-warning">
+        {{#str}}unsavedataalert, gradereport_singleview{{/str}}
+        <span class="sr-only">{{#str}}unsaveddatawarning, gradereport_singleview{{/str}}</span>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" value="1" id="override">
+            <label class="form-check-label" for="override">
+                {{#str}}unsavedataconfirm, gradereport_singleview{{/str}}
+            </label>
+        </div>
+    </div>
+    <div class="formdata dimmed_text">
+        {{#str}}bulkchoice, gradereport_singleview{{/str}}
+        <div class="pt-3 px-3" role="radiogroup">
+            <label class="form-check">
+                <input class="form-check-input" type="radio" name="bulkinsert" value="all" disabled/>
+                {{#str}}all_grades, gradereport_singleview{{/str}}
+            </label>
+            <label class="form-check">
+                <input class="form-check-input" type="radio" name="bulkinsert" value="blanks" disabled/>
+                {{#str}}blanks, gradereport_singleview{{/str}}
+            </label>
+        </div>
+        <p class ="font-weight-bold">
+            {{#str}}bulkinsertvalue, gradereport_singleview{{/str}}
+        </p>
+        <label for="{{name}}" class="sr-only">{{#str}}bulkinsertvalue, gradereport_singleview{{/str}}</label>
+        <input type="text" name="{{name}}" id="{{id}}" value="0" class="form-control text-ltr" disabled {{#readonly}}readonly{{/readonly}}>
+    </div>
+
+</form>

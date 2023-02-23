@@ -627,7 +627,7 @@ class behat_navigation extends behat_base {
             }
             return [$component, $name];
         } else {
-            throw new coding_exception('The page name most be in the form ' .
+            throw new coding_exception('The page name must be in the form ' .
                     '"{page-name}" for core pages, or "{component} > {page-name}" ' .
                     'for pages belonging to other components. ' .
                     'For example "Admin notifications" or "mod_quiz > View".');
@@ -736,7 +736,8 @@ class behat_navigation extends behat_base {
      * Recognised page names are:
      * | Page type                  | Identifier meaning        | description                          |
      * | Category                   | category idnumber         | List of courses in that category.    |
-     * | Course                     | course shortname          | Main course home page                |
+     * | Course                     | course shortname          | Main course home pag                 |
+     * | Course editing             | course shortname          | Edit settings page for the course    |
      * | Activity                   | activity idnumber         | Start page for that activity         |
      * | Activity editing           | activity idnumber         | Edit settings page for that activity |
      * | [modname] Activity         | activity name or idnumber | Start page for that activity         |
@@ -750,6 +751,7 @@ class behat_navigation extends behat_base {
      * | Permissions                | course shortname          | Permissions page for the course      |
      * | Enrolment methods          | course shortname          | Enrolment methods for the course     |
      * | Enrolled users             | course shortname          | The main participants page           |
+     * | Other users                | course shortname          | The course other users page          |
      *
      * Examples:
      *
@@ -773,11 +775,19 @@ class behat_navigation extends behat_base {
                 }
                 return new moodle_url('/course/index.php', ['categoryid' => $categoryid]);
 
+            case 'course editing':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
+                        $identifier . '" does not exist');
+                }
+                return new moodle_url('/course/edit.php', ['id' => $courseid]);
+
             case 'course':
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
                     throw new Exception('The specified course with shortname, fullname, or idnumber "' .
-                            $identifier . '" does not exist');
+                        $identifier . '" does not exist');
                 }
                 return new moodle_url('/course/view.php', ['id' => $courseid]);
 
@@ -861,6 +871,13 @@ class behat_navigation extends behat_base {
                             $identifier . '" does not exist');
                 }
                 return new moodle_url('/user/index.php', ['id' => $courseid]);
+            case 'other users':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
+                        $identifier . '" does not exist');
+                }
+                return new moodle_url('/enrol/otherusers.php', ['id' => $courseid]);
         }
 
         $parts = explode(' ', $type);
@@ -1002,6 +1019,7 @@ class behat_navigation extends behat_base {
     /**
      * Clicks link with specified id|title|alt|text in the secondary navigation
      *
+     * @When I select :link from secondary navigation
      * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $link
      */
@@ -1040,7 +1058,7 @@ class behat_navigation extends behat_base {
             $tabxpath = '//ul[@role=\'tablist\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
             $menubarxpath = '//ul[@role=\'menubar\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
             $linkname = behat_context_helper::escape(get_string('moremenu'));
-            $menubarmorexpath = '//ul[@role=\'menubar\']/li/a[contains(normalize-space(.), ' . $linkname . ')]';
+            $menubarmorexpath = '//ul[contains(@class,\'more-nav\')]/li/a[contains(normalize-space(.), ' . $linkname . ')]';
             $tabnode = $this->getSession()->getPage()->find('xpath', $tabxpath);
             $menunode = $this->getSession()->getPage()->find('xpath', $menubarxpath);
             $menubuttons = $this->getSession()->getPage()->findAll('xpath', $menubarmorexpath);

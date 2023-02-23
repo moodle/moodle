@@ -6,21 +6,19 @@ Feature: Test creating a Matching question
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email               |
-      | teacher1 | T1        | Teacher1 | teacher1@moodle.com |
+      | username |
+      | teacher  |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
     And the following "course enrolments" exist:
-      | user     | course | role           |
-      | teacher1 | C1     | editingteacher |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
+      | user    | course | role           |
+      | teacher | C1     | editingteacher |
 
   @javascript
   Scenario: Create a Matching question with 3 subquestions
-    When I add a "Matching" question filling the form with:
+    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
+    And I add a "Matching" question filling the form with:
       | Question name                      | match-001                                      |
       | Question text                      | Match the country with the capital city.       |
       | General feedback                   | England=London, France=Paris and Spain=Madrid. |
@@ -38,8 +36,8 @@ Feature: Test creating a Matching question
       | Hint 2                             | This is your second hint                       |
     Then I should see "match-001"
     # Checking that the next new question form displays user preferences settings.
-    When I press "Create a new question ..."
+    And I press "Create a new question ..."
     And I set the field "item_qtype_match" to "1"
     And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
-    Then the following fields match these values:
+    And the following fields match these values:
       | id_shuffleanswers | 0 |

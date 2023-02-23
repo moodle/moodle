@@ -36,7 +36,7 @@ Useful for uploading custom langstrings to AMOS or importing or syncing them to 
 Options:
 -l, --lang              Comma seperated language ids to export, default: all
 -c, --components        Comma seperated components to export, default: all
--t, --target            Target to copy the zip files to, default: $CFG->tempdir/customlang
+-t, --target            Target directory to copy the zip files to, default: $CFG->tempdir/customlang
 -o, --overwrite         Overwrite existing files in the target folder.
                             Note: If the target is not set, the files are always overwritten!
 -h, --help              Print out this help
@@ -73,9 +73,10 @@ if ($options['help']) {
     echo $usage;
     die;
 }
-if (!file_exists($options['target'])) {
-    mkdir($options['target'], 0777, true);
-}
+
+// Ensure target directory exists.
+$options['target'] = rtrim($options['target'], '/') . '/';
+check_dir_exists($options['target']);
 
 cli_writeln(get_string('cliexportheading', 'tool_customlang'));
 $langs = [];
@@ -87,10 +88,10 @@ if ($options['lang']) {
 }
 
 foreach ($langs as $lang) {
-    $filename = $options['target'] . get_string('exportzipfilename', 'tool_customlang', ['lang' => $lang]);
+    $filename = $options['target'] . "customlang_{$lang}.zip";
     // If the file exists and we are not using the temp folder it requires an ovewrite.
     if ($options['target'] != $dafaulttarget && file_exists($filename) && !$options['overwrite']) {
-        cli_problem(get_string('cliexportfileexists', 'tool_customlang', $lang));
+        cli_problem(get_string('cliexportfileexists', 'tool_customlang', ['lang' => $lang]));
         continue;
     }
     cli_heading(get_string('cliexportstartexport', 'tool_customlang', $lang));

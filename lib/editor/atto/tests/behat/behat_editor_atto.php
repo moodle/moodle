@@ -23,9 +23,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
 require_once(__DIR__ . '/../../../../behat/behat_base.php');
+require_once(__DIR__ . '/../../../../behat/classes/settable_editor.php');
 
 /**
  * Steps definitions to deal with the atto text editor
@@ -35,7 +38,30 @@ require_once(__DIR__ . '/../../../../behat/behat_base.php');
  * @copyright  2014 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_editor_atto extends behat_base {
+class behat_editor_atto extends behat_base implements \core_behat\settable_editor {
+
+    /**
+     * Set the value for the editor.
+     *
+     * @param string $editorid
+     * @param string $value
+     */
+    public function set_editor_value(string $editorid, string $value): void {
+        $js = <<<EOF
+            (function() {
+                const editableEditor = document.getElementById("{$editorid}editable");
+                if (editableEditor && editableEditor.classList.contains('editor_atto_content')) {
+                    editableEditor.innerHTML = "{$value}";
+                }
+                const editor = document.getElementById("{$editorid}");
+                if (editor) {
+                    editor.value = "{$value}";
+                }
+            })();
+        EOF;
+
+        $this->execute_script($js);
+    }
 
     /**
      * Select the text in an Atto field.
@@ -59,6 +85,24 @@ class behat_editor_atto extends behat_base {
         $field->select_text();
     }
 
+    /**
+     * Ensure that the Atto editor is used for all tests using the editor_atto, or atto_* tags.
+     *
+     * This ensures, whatever the default editor, that the Atto editor is used for these tests.
+     *
+     * @BeforeScenario
+     * @param BeforeScenarioScope $scope The Behat Scope
+     */
+    public function set_default_editor_flag(BeforeScenarioScope $scope): void {
+        // This only applies to a scenario which matches the editor_atto, or an atto subplugin.
+        $callback = function (string $tag): bool {
+            return $tag === 'editor_atto' || substr($tag, 0, 5) === 'atto_';
+        };
 
+        if (!self::scope_tags_match($scope, $callback)) {
+            return;
+        }
+
+        $this->execute('behat_general::the_default_editor_is_set_to', ['atto']);
+    }
 }
-

@@ -158,7 +158,9 @@ class manager {
      * @param   string  $action     The action to perform.
      */
     public function execute($action) {
+        global $PAGE;
         $this->setup_admin_externalpage($action);
+        $PAGE->set_primary_active_tab('siteadminnode');
 
         // Add the main content.
         switch($action) {
@@ -353,7 +355,7 @@ class manager {
         global $PAGE;
         if ($id) {
             $tour = tour::instance($id);
-            $PAGE->navbar->add($tour->get_name(), $tour->get_edit_link());
+            $PAGE->navbar->add(helper::get_string_from_input($tour->get_name()), $tour->get_edit_link());
 
         } else {
             $tour = new tour();
@@ -393,7 +395,8 @@ class manager {
                     notification::add(get_string('modifyshippedtourwarning', 'tool_usertours'), notification::WARNING);
                 }
 
-                $this->header($tour->get_name());
+                $tourname = !empty($tour->get_name()) ? helper::get_string_from_input($tour->get_name()) : '';
+                $this->header($tourname);
                 $data = $tour->prepare_data_for_form();
 
                 // Prepare filter values for the form.
@@ -428,7 +431,7 @@ class manager {
         // Step export.
         $export->steps = [];
         foreach ($tour->get_steps() as $step) {
-            $record = $step->to_record();
+            $record = $step->to_record(true);
             unset($record->id);
             unset($record->tourid);
 
@@ -475,12 +478,13 @@ class manager {
     protected function view_tour($tourid) {
         global $PAGE;
         $tour = helper::get_tour($tourid);
+        $tourname = helper::get_string_from_input($tour->get_name());
 
-        $PAGE->navbar->add($tour->get_name(), $tour->get_view_link());
+        $PAGE->navbar->add($tourname, $tour->get_view_link());
 
-        $this->header($tour->get_name());
+        $this->header($tourname);
         echo \html_writer::span(get_string('viewtour_info', 'tool_usertours', [
-                'tourname'  => $tour->get_name(),
+                'tourname'  => $tourname,
                 'path'      => $tour->get_pathmatch(),
             ]));
         echo \html_writer::div(get_string('viewtour_edit', 'tool_usertours', [
@@ -522,7 +526,7 @@ class manager {
         // Step export.
         $export->steps = [];
         foreach ($tour->get_steps() as $step) {
-            $record = $step->to_record();
+            $record = $step->to_record(true);
             unset($record->id);
             unset($record->tourid);
 
@@ -674,7 +678,7 @@ class manager {
         foreach ($steps as $stepconfig) {
             $stepconfig->id = null;
             $stepconfig->tourid = $tour->get_id();
-            $step = step::load_from_record($stepconfig, true);
+            $step = step::load_from_record($stepconfig, true, true);
             $step->persist(true);
         }
 
@@ -728,9 +732,9 @@ class manager {
             notification::add(get_string('modifyshippedtourwarning', 'tool_usertours'), notification::WARNING);
         }
 
-        $PAGE->navbar->add($tour->get_name(), $tour->get_view_link());
+        $PAGE->navbar->add(helper::get_string_from_input($tour->get_name()), $tour->get_view_link());
         if (isset($id)) {
-            $PAGE->navbar->add($step->get_title(), $step->get_edit_link());
+            $PAGE->navbar->add(helper::get_string_from_input($step->get_title()), $step->get_edit_link());
         } else {
             $PAGE->navbar->add(get_string('newstep', 'tool_usertours'), $step->get_edit_link());
         }
@@ -746,7 +750,7 @@ class manager {
             if (empty($id)) {
                 $this->header(get_string('newstep', 'tool_usertours'));
             } else {
-                $this->header(get_string('editstep', 'tool_usertours', $step->get_title()));
+                $this->header(get_string('editstep', 'tool_usertours', helper::get_string_from_input($step->get_title())));
             }
             $form->set_data($step->prepare_data_for_form());
 
@@ -862,6 +866,10 @@ class manager {
         // the format filename => version. The version value needs to
         // be increased if the tour has been updated.
         $shippedtours = [
+            '40_tour_navigation_dashboard.json' => 4,
+            '40_tour_navigation_mycourse.json' => 5,
+            '40_tour_navigation_course_teacher.json' => 3,
+            '40_tour_navigation_course_student.json' => 3,
         ];
 
         // These are tours that we used to ship but don't ship any longer.

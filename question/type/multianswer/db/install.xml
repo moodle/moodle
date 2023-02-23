@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/multianswer/db" VERSION="20120122" COMMENT="XMLDB file for Moodle question/type/multianswer">
+<XMLDB PATH="question/type/multianswer/db" VERSION="20120122" COMMENT="XMLDB file for Moodle question/type/multianswer"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
   <TABLES>
     <TABLE NAME="question_multianswer" COMMENT="Options for multianswer questions">
       <FIELDS>

@@ -40,7 +40,7 @@ abstract class proxy_base {
      * Sometimes the server sends back some error and errorKeys that
      * can be converted to Moodle error messages
      */
-    const MEETING_ERROR = [
+    const BBB_TO_MOODLE_ERROR_CODE = [
         'checksumError' => 'index_error_checksum',
         'notFound' => 'general_error_not_found',
         'maxConcurrent' => 'view_error_max_concurrent',
@@ -101,29 +101,59 @@ abstract class proxy_base {
      * @throws server_not_available_exception
      */
     protected static function assert_returned_xml($xml, ?array $additionaldetails = null): void {
-        if (empty($xml)) {
+        $messagekey = '';
+        if (!empty($xml)) {
+            $messagekey = (string) ($xml->messageKey ?? '');
+        }
+        if (empty($xml) || static::is_known_server_unavailable_errorcode($messagekey)) {
+            $errorcode = self::get_errorcode_from_xml_messagekey($messagekey);
             throw new server_not_available_exception(
-                'general_error_no_answer',
+                $errorcode,
                 plugin::COMPONENT,
-                (new moodle_url('/admin/settings.php?section=modsettingbigbluebuttonbn'))->out()
+                (new moodle_url('/admin/settings.php?section=modsettingbigbluebuttonbn'))->out(),
             );
         }
+        // If it is a checksum error, this is equivalent to the server not being available.
+        // So we treat it the same way as if there is not answer.
         if (is_bool($xml) && $xml) {
             // Nothing to do here, this might be a post returning that everything went well.
             return;
         }
         if ((string) $xml->returncode == 'FAILED') {
-            $messagekey = (string) $xml->messageKey ?? '';
+            $errorcode = self::get_errorcode_from_xml_messagekey($messagekey);
             if (!$additionaldetails) {
                 $additionaldetails = [];
             }
             $additionaldetails['xmlmessage'] = (string) $xml->message ?? '';
-            if (empty($messagekey) || empty(self::MEETING_ERROR[$messagekey])) {
-                $messagekey = 'general_error_unable_connect';
-            }
 
-            throw new bigbluebutton_exception($messagekey, json_encode($additionaldetails));
+            throw new bigbluebutton_exception($errorcode, json_encode($additionaldetails));
         }
+    }
+
+    /**
+     * Get Moodle error code from returned Message Key
+     *
+     * @param string $messagekey
+     * @return string
+     */
+    private static function get_errorcode_from_xml_messagekey(string $messagekey): string {
+        $errorcode = 'general_error_no_answer';
+        if ($messagekey) {
+            $errorcode = self::BBB_TO_MOODLE_ERROR_CODE[$messagekey] ?? $errorcode;
+        }
+        return $errorcode;
+    }
+
+    /**
+     * Get Moodle error code from returned Message Key
+     *
+     * @param string $messagekey
+     * @return string
+     */
+    private static function is_known_server_unavailable_errorcode(string $messagekey): string {
+        // For now, only checksumError is supposed to mean that the server is unavailable.
+        // Other errors are recoverable.
+        return in_array($messagekey, ['checksumError']);
     }
 
     /**

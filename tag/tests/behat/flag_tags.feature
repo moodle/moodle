@@ -25,6 +25,8 @@ Feature: Users can flag tags and manager can reset flags
     And I log out
     And I log in as "user2"
     And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     # TODO MDL-57120 site "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
@@ -35,6 +37,8 @@ Feature: Users can flag tags and manager can reset flags
     And I follow "Flag as inappropriate"
     And I should see "The person responsible will be notified"
     And I am on homepage
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     # TODO MDL-57120 site "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
@@ -47,6 +51,8 @@ Feature: Users can flag tags and manager can reset flags
     And I log out
     And I log in as "user3"
     And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     # TODO MDL-57120 site "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"

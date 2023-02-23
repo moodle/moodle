@@ -33,7 +33,7 @@ namespace core_question\local\bank;
  */
 abstract class action_column_base extends column_base {
 
-    protected function get_title(): string {
+    public function get_title(): string {
         return '&#160;';
     }
 
@@ -47,7 +47,9 @@ abstract class action_column_base extends column_base {
     }
 
     public function get_extra_joins(): array {
-        return ['qc' => 'JOIN {question_categories} qc ON qc.id = q.category'];
+        return ['qv' => 'JOIN {question_versions} qv ON qv.questionid = q.id',
+                'qbe' => 'JOIN {question_bank_entries} qbe on qbe.id = qv.questionbankentryid',
+                'qc' => 'JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid'];
     }
 
     public function get_required_fields(): array {

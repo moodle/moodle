@@ -1,23 +1,25 @@
 <?php
-/*
+/**
+ * Active Record implementation. Superset of Zend Framework's.
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
 
-@version   v5.21.0  2021-02-27
-@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
-@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-  Latest version is available at https://adodb.org/
-
-  Released under both BSD license and Lesser GPL library license.
-  Whenever there is any discrepancy between the two licenses,
-  the BSD license will take precedence.
-
-  Active Record implementation. Superset of Zend Framework's.
-
-  Version 0.92
-
-  See http://www-128.ibm.com/developerworks/java/library/j-cb03076/?ca=dgr-lnxw01ActiveRecord
-  	for info on Ruby on Rails Active Record implementation
-*/
-
+include_once(ADODB_DIR.'/adodb-lib.inc.php');
 
 global $_ADODB_ACTIVE_DBS;
 global $ADODB_ACTIVE_CACHESECS; // set to true to enable caching of metadata such as field info
@@ -74,10 +76,9 @@ function ADODB_SetDatabaseAdapter(&$db, $index=false)
 
 class ADODB_Active_Record {
 	static $_changeNames = true; // dynamically pluralize table names
-	/*
-	* Optional parameter that duplicates the ADODB_QUOTE_FIELDNAMES
-	*/
-	static $_quoteNames = false;
+
+	/** @var bool|string Allows override of global $ADODB_QUOTE_FIELDNAMES */
+	public $_quoteNames;
 
 	static $_foreignSuffix = '_id'; //
 	var $_dbat; // associative index pointing to ADODB_Active_DB eg. $ADODB_Active_DBS[_dbat]
@@ -117,7 +118,12 @@ class ADODB_Active_Record {
 	// php5 constructor
 	function __construct($table = false, $pkeyarr=false, $db=false)
 	{
-	global $_ADODB_ACTIVE_DBS;
+		global $_ADODB_ACTIVE_DBS, $ADODB_QUOTE_FIELDNAMES;
+
+		// Set the local override for field quoting, only if not defined yet
+		if (!isset($this->_quoteNames)) {
+			$this->_quoteNames = $ADODB_QUOTE_FIELDNAMES;
+		}
 
 		if ($db == false && is_object($pkeyarr)) {
 			$db = $pkeyarr;
@@ -275,7 +281,7 @@ class ADODB_Active_Record {
 
 	static function TableBelongsTo($table, $foreignRef, $foreignKey=false, $parentKey='', $parentClass = 'ADODB_Active_Record')
 	{
-		$ar = new ADOdb_Active_Record($table);
+		$ar = new ADODB_Active_Record($table);
 		$ar->belongsTo($foreignRef, $foreignKey, $parentKey, $parentClass);
 	}
 
@@ -284,7 +290,7 @@ class ADODB_Active_Record {
 		if (!is_array($tablePKey)) {
 			$tablePKey = array($tablePKey);
 		}
-		$ar = new ADOdb_Active_Record($table, $tablePKey);
+		$ar = new ADODB_Active_Record($table, $tablePKey);
 		$ar->belongsTo($foreignRef, $foreignKey, $parentKey, $parentClass);
 	}
 
@@ -880,7 +886,7 @@ class ADODB_Active_Record {
 				$cnt += 1;
 			}
 		}
-		
+
 		$tableName = $this->nameQuoter($db,$this->_table);
 		$sql = sprintf('INSERT INTO %s (%s) VALUES (%s)',
 					   $tableName,
@@ -919,7 +925,7 @@ class ADODB_Active_Record {
 		$where = $this->GenWhere($db,$table);
 
 		$tableName = $this->nameQuoter($db,$this->_table);
-		
+
 		$sql = sprintf('DELETE FROM %s WHERE %s',
 					   $tableName,
 					   $where
@@ -995,19 +1001,19 @@ class ADODB_Active_Record {
 				}
 				break;
 		}
-		
+
 		$newArr = array();
 		foreach($arr as $k=>$v)
 			$newArr[$this->nameQuoter($db,$k)] = $v;
 		$arr = $newArr;
-		
+
 		$newPkey = array();
 		foreach($pkey as $k=>$v)
 			$newPkey[$k] = $this->nameQuoter($db,$v);
 		$pkey = $newPkey;
-		
+
 		$tableName = $this->nameQuoter($db,$this->_table);
-		
+
 		$ok = $db->Replace($tableName,$arr,$pkey);
 		if ($ok) {
 			$this->_saved = true; // 1= update 2=insert
@@ -1095,7 +1101,7 @@ class ADODB_Active_Record {
 					   $tableName,
 					   implode(',',$pairs),
 					   $where);
-		
+
 		$ok = $db->Execute($sql,$valarr);
 		if ($ok) {
 			$this->_original = $neworig;
@@ -1114,62 +1120,27 @@ class ADODB_Active_Record {
 	}
 
 	/**
-	* Quotes the table and column and field names
-	*
-	* this honours the ADODB_QUOTE_FIELDNAMES directive. The routines that
-	* use it should really just call _adodb_getinsertsql and _adodb_getupdatesql
-	* which is a nice easy project if you are interested
-	*
-	* @param	obj		$db		The database connection
-	* @param	string	$name	The table or column name to quote
-	*
-	* @return	string	The quoted name
-	*/
-	private function nameQuoter($db,$string)
+	 * Quotes the table, column and field names.
+	 *
+	 * This honours the internal {@see $_quoteNames} property, which overrides
+	 * the global $ADODB_QUOTE_FIELDNAMES directive.
+	 *
+	 * @param ADOConnection $db   The database connection
+	 * @param string        $name The table or column name to quote
+	 *
+	 * @return string The quoted name
+	 */
+	private function nameQuoter($db, $name)
 	{
 		global $ADODB_QUOTE_FIELDNAMES;
-		
-		if (!$ADODB_QUOTE_FIELDNAMES && !$this->_quoteNames)
-			/*
-			* Nothing to be done
-			*/
-			return $string;
-		
-		if ($this->_quoteNames == 'NONE')
-			/*
-			* Force no quoting when ADODB_QUOTE_FIELDNAMES is set
-			*/
-			return $string;
-		
-		if ($this->_quoteNames)
-			/*
-			* Internal setting takes precedence
-			*/
-			$quoteMethod = $this->_quoteNames;
-			
-		else
-			$quoteMethod = $ADODB_QUOTE_FIELDNAMES;
-		
-		switch ($quoteMethod)
-		{
-		case 'LOWER':
-			$string = strtolower($string);
-			break;
-		case 'NATIVE':
-			/*
-			* Nothing to be done
-			*/
-			break;
-		case 'UPPER':
-		default:
-			$string = strtoupper($string);
-		}
-			
-		$string = sprintf(	'%s%s%s',
-							$db->nameQuote,
-							$string,
-							$db->nameQuote
-					  );
+
+		$save = $ADODB_QUOTE_FIELDNAMES;
+		$ADODB_QUOTE_FIELDNAMES = $this->_quoteNames;
+
+		$string = _adodb_quote_fieldname($db, $name);
+
+		$ADODB_QUOTE_FIELDNAMES = $save;
+
 		return $string;
 	}
 
@@ -1182,7 +1153,7 @@ global $_ADODB_ACTIVE_DBS;
 
 
 	$save = $db->SetFetchMode(ADODB_FETCH_NUM);
-	
+
 	$qry = "select * from ".$table;
 
 	if (!empty($whereOrderBy)) {

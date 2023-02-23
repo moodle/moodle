@@ -32,6 +32,23 @@ class data_field_text extends data_field_base {
      */
     protected static $priority = self::MAX_PRIORITY;
 
+    public function supports_preview(): bool {
+        return true;
+    }
+
+    public function get_data_content_preview(int $recordid): stdClass {
+        return (object)[
+            'id' => 0,
+            'fieldid' => $this->field->id,
+            'recordid' => $recordid,
+            'content' => get_string('sample', 'datafield_text'),
+            'content1' => null,
+            'content2' => null,
+            'content3' => null,
+            'content4' => null,
+        ];
+    }
+
     function display_search_field($value = '') {
         return '<label class="accesshide" for="f_' . $this->field->id . '">' . $this->field->name.'</label>' .
                '<input type="text" class="form-control" size="16" id="f_' . $this->field->id . '" ' .
@@ -81,5 +98,3 @@ class data_field_text extends data_field_base {
         return $configs;
     }
 }
-
-

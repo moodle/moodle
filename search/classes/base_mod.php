@@ -109,7 +109,7 @@ abstract class base_mod extends base {
      * @return array Array with SQL and parameters; both null if no need to query
      * @throws \coding_exception If called with invalid params
      */
-    protected function get_context_restriction_sql(\context $context = null, $modname, $modtable,
+    protected function get_context_restriction_sql(?\context $context, $modname, $modtable,
             $paramtype = SQL_PARAMS_QM) {
         global $DB;
 
@@ -294,7 +294,7 @@ abstract class base_mod extends base {
      * @return \core_search\document_icon
      */
     public function get_doc_icon(document $doc) : document_icon {
-        return new document_icon('icon', $this->get_module_name());
+        return new document_icon('monologo', $this->get_module_name());
     }
 
     /**

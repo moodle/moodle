@@ -23,6 +23,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core;
+
+use moodle_database;
+use xmldb_table;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/fixtures/read_slave_moodle_database_mock_pgsql.php');
@@ -34,14 +39,15 @@ require_once(__DIR__.'/fixtures/read_slave_moodle_database_mock_pgsql.php');
  * @category   dml
  * @copyright  2018 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \pgsql_native_moodle_database
  */
-class core_dml_pgsql_read_slave_testcase extends base_testcase {
+class dml_pgsql_read_slave_test extends \advanced_testcase {
     /**
      * Test correct database handles are used for cursors
      *
      * @return void
      */
-    public function test_cursors() : void {
+    public function test_cursors(): void {
         $DB = new read_slave_moodle_database_mock_pgsql();
 
         // Declare a cursor on a table that has not been written to.
@@ -70,6 +76,18 @@ class core_dml_pgsql_read_slave_testcase extends base_testcase {
         $DB->query_start($sql, null, SQL_QUERY_AUX);
         $this->assertTrue($DB->db_handle_is_rw());
         $DB->query_end(null);
+
+        // Close the non-written to table cursor.
+        $sql = 'CLOSE crs1';
+        $DB->query_start($sql, [], SQL_QUERY_AUX);
+        $this->assertTrue($DB->db_handle_is_ro());
+        $DB->query_end(null);
+
+        // Close the written to table cursor.
+        $sql = 'CLOSE crs2';
+        $DB->query_start($sql, [], SQL_QUERY_AUX);
+        $this->assertTrue($DB->db_handle_is_rw());
+        $DB->query_end(null);
     }
 
     /**
@@ -77,7 +95,7 @@ class core_dml_pgsql_read_slave_testcase extends base_testcase {
      *
      * @return void
      */
-    public function test_read_pg_table() : void {
+    public function test_read_pg_table(): void {
         $DB = new read_slave_moodle_database_mock_pgsql();
 
         $this->assertEquals(0, $DB->perf_get_reads_slave());
@@ -94,7 +112,7 @@ class core_dml_pgsql_read_slave_testcase extends base_testcase {
      *
      * @return void
      */
-    public function test_read_pg_lock_table() : void {
+    public function test_read_pg_lock_table(): void {
         $DB = new read_slave_moodle_database_mock_pgsql();
 
         $this->assertEquals(0, $DB->perf_get_reads_slave());
@@ -108,6 +126,72 @@ class core_dml_pgsql_read_slave_testcase extends base_testcase {
     }
 
     /**
+     * Test readonly handle is used for SQL_QUERY_AUX_READONLY queries.
+     *
+     * @return void
+     */
+    public function test_aux_readonly(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        if ($DB->get_dbfamily() != 'postgres') {
+            $this->markTestSkipped('Not postgres');
+        }
+
+        // Open second connection.
+        $cfg = $DB->export_dbconfig();
+        if (!isset($cfg->dboptions)) {
+            $cfg->dboptions = [];
+        }
+        if (!isset($cfg->dboptions['readonly'])) {
+            $cfg->dboptions['readonly'] = [
+                'instance' => [$cfg->dbhost]
+            ];
+        }
+
+        // Get a separate disposable db connection handle with guaranteed 'readonly' config.
+        $db2 = moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
+        $db2->connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
+
+        $reads = $db2->perf_get_reads();
+        $readsprimary = $reads - $db2->perf_get_reads_slave();
+
+        // Readonly handle queries.
+
+        $db2->get_server_info();
+        $this->assertGreaterThan($reads, $reads = $db2->perf_get_reads());
+        $this->assertGreaterThan($readsprimary, $readsprimary = $reads - $db2->perf_get_reads_slave());
+
+        $db2->setup_is_unicodedb();
+        $this->assertGreaterThan($reads, $reads = $db2->perf_get_reads());
+        $this->assertEquals($readsprimary, $reads - $db2->perf_get_reads_slave());
+
+        $db2->get_tables();
+        $this->assertGreaterThan($reads, $reads = $db2->perf_get_reads());
+        $this->assertEquals($readsprimary, $reads - $db2->perf_get_reads_slave());
+
+        $db2->get_indexes('course');
+        $this->assertGreaterThan($reads, $reads = $db2->perf_get_reads());
+        $this->assertEquals($readsprimary, $reads - $db2->perf_get_reads_slave());
+
+        $db2->get_columns('course');
+        $this->assertGreaterThan($reads, $reads = $db2->perf_get_reads());
+        $this->assertEquals($readsprimary, $reads - $db2->perf_get_reads_slave());
+
+        // Readwrite handle queries.
+
+        $tablename = 'test_table';
+        $table = new xmldb_table($tablename);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman = $db2->get_manager();
+        $dbman->create_table($table);
+        $db2->get_columns($tablename);
+        $this->assertGreaterThan($reads, $reads = $db2->perf_get_reads());
+        $this->assertGreaterThan($readsprimary, $reads - $db2->perf_get_reads_slave());
+    }
+
+    /**
      * Test readonly handle is not used for reading from temptables
      * and getting temptables metadata.
      * This test is only possible because of no pg_query error reporting.
@@ -116,11 +200,11 @@ class core_dml_pgsql_read_slave_testcase extends base_testcase {
      *
      * @return void
      */
-    public function test_temp_table() : void {
+    public function test_temp_table(): void {
         global $DB;
 
         if ($DB->get_dbfamily() != 'postgres') {
-            $this->markTestSkipped("Not postgres");
+            $this->markTestSkipped('Not postgres');
         }
 
         // Open second connection.
@@ -176,11 +260,11 @@ class core_dml_pgsql_read_slave_testcase extends base_testcase {
      *
      * @return void
      */
-    public function test_real_readslave_connect_fail() : void {
+    public function test_real_readslave_connect_fail(): void {
         global $DB;
 
         if ($DB->get_dbfamily() != 'postgres') {
-            $this->markTestSkipped("Not postgres");
+            $this->markTestSkipped('Not postgres');
         }
 
         // Open second connection.

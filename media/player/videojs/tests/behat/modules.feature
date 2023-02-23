@@ -11,11 +11,14 @@ Feature: Embed videos without the media filter
 
   @javascript
   Scenario: Add a video in a URL resource. Make sure media filters work
-    When I add a "URL" to section "1" and I fill the form with:
-      | Name | Video URL |
-      | Description | Example of a video url |
-      | External URL | http://download.moodle.org/mediatest/quicktime_320_180.mov |
-    And I follow "Video URL"
+    Given the following "activity" exists:
+      | activity    | url                                                        |
+      | course      | Acceptance test site                                       |
+      | name        | Video URL                                                  |
+      | intro       | Example of a video url                                     |
+      | externalurl | http://download.moodle.org/mediatest/quicktime_320_180.mov |
+      | section     | 1                                                          |
+    When I am on the "Video URL" "url activity" page
     Then ".video-js" "css_element" should exist
     And I am on site homepage
 
@@ -31,10 +34,10 @@ Feature: Embed videos without the media filter
 
   @javascript
   Scenario: Add a video as content to a lesson. Make sure media filters work
-    When I add a "Lesson" to section "1"
-    And I set the following fields to these values:
-      | Name | Lesson with video |
-      | Description | Example of a video in a lesson |
+    Given the following "activities" exist:
+      | activity | course               | section | name              |
+      | lesson   | Acceptance test site | 1       | Lesson with video |
+    When I am on the "Lesson with video" "lesson activity editing" page
     And I expand all fieldsets
     And I upload "media/player/videojs/tests/fixtures/test.mov" file to "Linked media" filemanager
     And I press "Save and display"

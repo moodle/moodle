@@ -14,23 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Moodle Mobile admin tool api tests.
- *
- * @package    tool_mobile
- * @category   external
- * @copyright  2016 Juan Leyva
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.1
- */
+namespace tool_mobile;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
-use tool_mobile\api;
 
 /**
  * Moodle Mobile admin tool api tests.
@@ -40,7 +30,7 @@ use tool_mobile\api;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since       Moodle 3.1
  */
-class tool_mobile_api_testcase extends externallib_advanced_testcase {
+class api_test extends \externallib_advanced_testcase {
 
     /**
      * Test get_autologin_key.
@@ -69,22 +59,26 @@ class tool_mobile_api_testcase extends externallib_advanced_testcase {
      */
     public function test_get_potential_config_issues() {
         global $CFG;
-        require_once($CFG->dirroot . '/message/lib.php');
 
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        $CFG->userquota = '73289234723498234723423489273423497234234';
+        // Set non-SSL wwwroot, to avoid spurious certificate checking.
+        $CFG->wwwroot = 'http://www.example.com';
         $CFG->debugdisplay = 1;
+
         set_config('debugauthdb', 1, 'auth_db');
         set_config('debugdb', 1, 'enrol_database');
-        $expectedissues = array('adodbdebugwarning', 'displayerrorswarning');
 
+        // Get potential issues, obtain their keys for comparison.
         $issues = api::get_potential_config_issues();
-        $this->assertCount(count($expectedissues), $issues);
-        foreach ($issues as $issue) {
-            $this->assertTrue(in_array($issue[0], $expectedissues));
-        }
+        $issuekeys = array_column($issues, 0);
+
+        $this->assertEqualsCanonicalizing([
+            'nohttpsformobilewarning',
+            'adodbdebugwarning',
+            'displayerrorswarning',
+        ], $issuekeys);
     }
 
     /**
@@ -92,7 +86,7 @@ class tool_mobile_api_testcase extends externallib_advanced_testcase {
      */
     public function test_pre_processor_message_send_callback() {
         global $DB, $CFG;
-        require_once($CFG->libdir . '/externallib.php');
+
         $this->preventResetByRollback();
         $this->resetAfterTest();
 
@@ -107,7 +101,7 @@ class tool_mobile_api_testcase extends externallib_advanced_testcase {
         set_config('allowedemaildomains', 'example.com');
 
         $DB->set_field_select('message_processors', 'enabled', 0, "name <> 'email'");
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'email', $user2);
 
         // Extra content for all types of messages.
         $message = new \core\message\message();
@@ -150,7 +144,7 @@ class tool_mobile_api_testcase extends externallib_advanced_testcase {
         $user3 = $this->getDataGenerator()->create_user();
         $this->setUser($user3);
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
-        $token = external_generate_token_for_current_user($service);
+        $token = \core_external\util::generate_token_for_current_user($service);
 
         $message->userto = $user3;
         $messageid = message_send($message);

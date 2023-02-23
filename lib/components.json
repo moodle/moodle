@@ -45,6 +45,7 @@
     "subsystems": {
         "access": null,
         "admin": "admin",
+        "adminpresets": "admin/presets",
         "analytics": "analytics",
         "antivirus": "lib\/antivirus",
         "auth": "auth",
@@ -72,6 +73,7 @@
         "edufields": null,
         "enrol": "enrol",
         "error": null,
+        "external": "lib/external",
         "favourites": "favourites",
         "filepicker": null,
         "fileconverter": "files\/converter",

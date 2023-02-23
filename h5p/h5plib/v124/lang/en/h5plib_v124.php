@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['editor:a11ytitleshowlabel'] = 'Show label for AT';
+$string['editor:a11ytitlehidelabel'] = 'Hide label for AT';
 $string['editor:atoz'] = 'A to Z';
 $string['editor:add'] = 'Add';
 $string['editor:addauthor'] = 'Save author';
@@ -31,7 +33,7 @@ $string['editor:addentity'] = 'Add :entity';
 $string['editor:addfile'] = 'Add file';
 $string['editor:addnewchange'] = 'Add new change';
 $string['editor:addtitle'] = 'Add title';
-$string['editor:addvideodescription'] = 'H5P supports all external video sources formatted as mp4, webm or ogv, like Vimeo Pro, and has support for YouTube links.';
+$string['editor:addvideodescription'] = 'H5P supports all external video sources formatted as mp4, webm or ogv, like Vimeo Pro, and has support for YouTube and Panopto links.';
 $string['editor:avtablistlabel'] = 'Insert using';
 $string['editor:belowmin'] = 'The :property value is below the minimum of :min.';
 $string['editor:cancel'] = 'Cancel';
@@ -90,7 +92,7 @@ $string['editor:enteraudiotitle'] = 'Paste link or other audio source URL';
 $string['editor:enteraudiourl'] = 'Enter audio source URL';
 $string['editor:enterfullscreenbuttonlabel'] = 'Enter fullscreen';
 $string['editor:entervideotitle'] = 'Paste YouTube link or other video source URL';
-$string['editor:entervideourl'] = 'Enter video source URL or YouTube link';
+$string['editor:entervideourl'] = 'Enter video URL';
 $string['editor:errorcalculatingmaxscore'] = 'Could not calculate the max score for this content. The max score is assumed to be 0. Contact your administrator if this isn’t correct.';
 $string['editor:errorcommunicatinghubcontent'] = 'An error occured. Please try again.';
 $string['editor:errorcommunicatinghubtitle'] = 'Not able to communicate with hub.';

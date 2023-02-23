@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Test for top results
- *
- * @package core_search
- * @author  Nathan Nguyen <nathannguyen@catalyst-au.net>
- * @copyright  Catalyst IT
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_search;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +30,7 @@ require_once(__DIR__ . '/fixtures/mock_search_area.php');
  * @copyright  Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class search_top_result_testcase extends advanced_testcase {
+class top_result_test extends \advanced_testcase {
 
     /** @var stdClass course 1 */
     protected $course1;
@@ -61,7 +54,7 @@ class search_top_result_testcase extends advanced_testcase {
         $this->setAdminUser();
 
         // Search engine.
-        $this->search = testable_core_search::instance(new \search_simpledb\engine());
+        $this->search = \testable_core_search::instance(new \search_simpledb\engine());
 
         // Set default configurations.
         set_config('searchallavailablecourses', 1);

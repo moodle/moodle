@@ -31,21 +31,11 @@ class mnet_xmlrpc_client {
     }
 
     /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function mnet_xmlrpc_client() {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct();
-    }
-
-    /**
      * Allow users to override the default timeout
      * @param   int $timeout    Request timeout in seconds
      * $return  bool            True if param is an integer or integer string
      */
-    function set_timeout($timeout) {
+    public function set_timeout($timeout) {
         if (!is_integer($timeout)) {
             if (is_numeric($timeout)) {
                 $this->timeout = (integer)$timeout;
@@ -65,7 +55,7 @@ class mnet_xmlrpc_client {
      * In the case of auth and enrolment plugins, an object will be created and
      * the method on that object will be called
      */
-    function set_method($xmlrpcpath) {
+    public function set_method($xmlrpcpath) {
         if (is_string($xmlrpcpath)) {
             $this->method = $xmlrpcpath;
             $this->params = array();
@@ -81,47 +71,51 @@ class mnet_xmlrpc_client {
      *
      * @param  string  $argument    A transport ID, as defined in lib.php
      * @param  string  $type        The argument type, can be one of:
-     *                              none
-     *                              empty
-     *                              base64
-     *                              boolean
-     *                              datetime
-     *                              double
+     *                              i4
+     *                              i8
      *                              int
+     *                              double
      *                              string
+     *                              boolean
+     *                              datetime | dateTime.iso8601
+     *                              base64
+     *                              null
      *                              array
      *                              struct
-     *                              In its weakly-typed wisdom, PHP will (currently)
-     *                              ignore everything except datetime and base64
      * @return bool                 True on success
      */
-    function add_param($argument, $type = 'string') {
+    public function add_param($argument, $type = 'string') {
 
-        $allowed_types = array('none',
-                               'empty',
-                               'base64',
-                               'boolean',
-                               'datetime',
-                               'double',
-                               'int',
-                               'i4',
-                               'string',
-                               'array',
-                               'struct');
-        if (!in_array($type, $allowed_types)) {
+        // Convert any use of the old 'datetime' to the correct 'dateTime.iso8601' one.
+        $type = ($type === 'datetime' ? 'dateTime.iso8601' : $type);
+
+        // BC fix, if some argument is array and comes as string, change type to array (sequentials)
+        // or struct (associative).
+        // This is the behavior of the encode_request() method from the xmlrpc extension.
+        // Note that uses in core have been fixed, but there may be others using that.
+        if (is_array($argument) && $type === 'string') {
+            if (array_keys($argument) === range(0, count($argument) - 1)) {
+                $type = 'array';
+            } else {
+                $type = 'struct';
+            }
+            mnet_debug('Incorrect ' . $type . ' param passed as string in mnet_xmlrpc_client->add_param(): ' .
+                json_encode($argument));
+        }
+
+        if (!isset(\PhpXmlRpc\Value::$xmlrpcTypes[$type])) { // Arrived here, still erong type? Let's stop.
             return false;
         }
 
-        if ($type != 'datetime' && $type != 'base64') {
-            $this->params[] = $argument;
-            return true;
+        // If we are array or struct, we need to ensure that, recursively, all the elements are proper values.
+        // or serialize, used later on send()  won't work with them. Encoder::encode() provides us with that.
+        if ($type === 'array' || $type === 'struct') {
+            $encoder = new \PhpXmlRpc\Encoder();
+            $this->params[] = $encoder->encode($argument);
+        } else {
+            // Normal scalar case.
+            $this->params[] = new \PhpXmlRpc\Value($argument, $type);
         }
-
-        // Note weirdness - The type of $argument gets changed to an object with
-        // value and type properties.
-        // bool xmlrpc_set_type ( string &value, string type )
-        xmlrpc_set_type($argument, $type);
-        $this->params[] = $argument;
         return true;
     }
 
@@ -131,36 +125,35 @@ class mnet_xmlrpc_client {
      * @param  object   $mnet_peer      A mnet_peer object with details of the
      *                                  remote host we're connecting to
      * @return mixed                    A PHP variable, as returned by the
-     *                                  remote function
      */
-    function send($mnet_peer) {
+    public function send($mnet_peer) {
         global $CFG, $DB;
-
 
         if (!$this->permission_to_call($mnet_peer)) {
             mnet_debug("tried and wasn't allowed to call a method on $mnet_peer->wwwroot");
             return false;
         }
 
-        $this->requesttext = xmlrpc_encode_request($this->method, $this->params, array("encoding" => "utf-8", "escaping" => "markup"));
+        $request = new \PhpXmlRpc\Request($this->method, $this->params);
+        $this->requesttext = $request->serialize('utf-8');
+
         $this->signedrequest = mnet_sign_message($this->requesttext);
         $this->encryptedrequest = mnet_encrypt_message($this->signedrequest, $mnet_peer->public_key);
 
-        $httprequest = $this->prepare_http_request($mnet_peer);
-        curl_setopt($httprequest, CURLOPT_POSTFIELDS, $this->encryptedrequest);
+        $client = $this->prepare_http_request($mnet_peer);
 
         $timestamp_send    = time();
-        mnet_debug("about to send the curl request");
-        $this->rawresponse = curl_exec($httprequest);
-        mnet_debug("managed to complete a curl request");
+        mnet_debug("about to send the xmlrpc request");
+        $response = $client->send($this->encryptedrequest, $this->timeout);
+        mnet_debug("managed to complete a xmlrpc request");
         $timestamp_receive = time();
 
-        if ($this->rawresponse === false) {
-            $this->error[] = curl_errno($httprequest) .':'. curl_error($httprequest);
+        if ($response->faultCode()) {
+            $this->error[] = $response->faultCode() .':'. $response->faultString();
             return false;
         }
-        curl_close($httprequest);
 
+        $this->rawresponse = $response->value(); // Because MNet responses ARE NOT valid xmlrpc, don't try any PhpXmlRpc facility.
         $this->rawresponse = trim($this->rawresponse);
 
         $mnet_peer->touch();
@@ -201,7 +194,8 @@ class mnet_xmlrpc_client {
         $decryptedenvelope = '';
 
         //                                          &$decryptedenvelope
-        $isOpen = openssl_open(base64_decode($data), $decryptedenvelope, base64_decode($key), $this->mnet->get_private_key());
+        $isOpen = openssl_open(base64_decode($data), $decryptedenvelope, base64_decode($key),
+            $this->mnet->get_private_key(), 'RC4');
 
         if (!$isOpen) {
             // Decryption failed... let's try our archived keys
@@ -214,7 +208,7 @@ class mnet_xmlrpc_client {
             }
             foreach($openssl_history as $keyset) {
                 $keyresource = openssl_pkey_get_private($keyset['keypair_PEM']);
-                $isOpen      = openssl_open(base64_decode($data), $decryptedenvelope, base64_decode($key), $keyresource);
+                $isOpen      = openssl_open(base64_decode($data), $decryptedenvelope, base64_decode($key), $keyresource, 'RC4');
                 if ($isOpen) {
                     // It's an older code, sir, but it checks out
                     break;
@@ -261,7 +255,22 @@ class mnet_xmlrpc_client {
         }
 
         $this->xmlrpcresponse = base64_decode($sig_parser->data_object);
-        $this->response       = xmlrpc_decode($this->xmlrpcresponse);
+        // Let's convert the xmlrpc back to PHP structure.
+        $response = null;
+        $encoder = new \PhpXmlRpc\Encoder();
+        $oresponse = $encoder->decodeXML($this->xmlrpcresponse); // First, to internal PhpXmlRpc\Response structure.
+        if ($oresponse instanceof \PhpXmlRpc\Response) {
+            // Special handling of fault responses (because value() doesn't handle them properly).
+            if ($oresponse->faultCode()) {
+                $response = ['faultCode' => $oresponse->faultCode(), 'faultString' => $oresponse->faultString()];
+            } else {
+                $response = $encoder->decode($oresponse->value()); // Normal Response conversion to PHP.
+            }
+        } else {
+            // Maybe this is just a param, let's convert it too.
+            $response = $encoder->decode($oresponse);
+        }
+        $this->response = $response;
 
         // xmlrpc errors are pushed onto the $this->error stack
         if (is_array($this->response) && array_key_exists('faultCode', $this->response)) {
@@ -318,8 +327,7 @@ class mnet_xmlrpc_client {
      * @param object $mnet_peer A mnet_peer object with details of the remote host we're connecting to
      * @return bool True if we permit calls to method on specified peer, False otherwise.
      */
-
-    function permission_to_call($mnet_peer) {
+    public function permission_to_call($mnet_peer) {
         global $DB, $CFG, $USER;
 
         // Executing any system method is permitted.
@@ -362,21 +370,23 @@ class mnet_xmlrpc_client {
     }
 
     /**
-     * Generate a curl handle and prepare it for sending to an mnet host
+     * Generate a \PhpXmlRpc\Client handle and prepare it for sending to an mnet host
      *
      * @param object $mnet_peer A mnet_peer object with details of the remote host the request will be sent to
-     * @return cURL handle - the almost-ready-to-send http request
+     * @return \PhpXmlRpc\Client handle - the almost-ready-to-send http request
      */
-    function prepare_http_request ($mnet_peer) {
+    public function prepare_http_request ($mnet_peer) {
         $this->uri = $mnet_peer->wwwroot . $mnet_peer->application->xmlrpc_server_url;
 
-        // Initialize request the target URL
-        $httprequest = curl_init($this->uri);
-        curl_setopt($httprequest, CURLOPT_TIMEOUT, $this->timeout);
-        curl_setopt($httprequest, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($httprequest, CURLOPT_POST, true);
-        curl_setopt($httprequest, CURLOPT_USERAGENT, 'Moodle');
-        curl_setopt($httprequest, CURLOPT_HTTPHEADER, array("Content-Type: text/xml charset=UTF-8"));
+        // Instantiate the xmlrpc client to be used for the client request
+        // and configure it the way we want.
+        $client = new \PhpXmlRpc\Client($this->uri);
+        $client->setUseCurl(\PhpXmlRpc\Client::USE_CURL_ALWAYS);
+        $client->setUserAgent('Moodle');
+        $client->return_type = 'xml'; // Because MNet responses ARE NOT valid xmlrpc, don't try any validation.
+
+        // TODO: Link this to DEBUG DEVELOPER or with MNET debugging...
+        // $client->setdebug(1); // See a good number of complete requests and responses.
 
         $verifyhost = 0;
         $verifypeer = false;
@@ -386,8 +396,9 @@ class mnet_xmlrpc_client {
         } else if ($mnet_peer->sslverification == mnet_peer::SSL_HOST) {
             $verifyhost = 2;
         }
-        curl_setopt($httprequest, CURLOPT_SSL_VERIFYHOST, $verifyhost);
-        curl_setopt($httprequest, CURLOPT_SSL_VERIFYPEER, $verifypeer);
-        return $httprequest;
+        $client->setSSLVerifyHost($verifyhost);
+        $client->setSSLVerifyPeer($verifypeer);
+
+        return $client;
     }
 }

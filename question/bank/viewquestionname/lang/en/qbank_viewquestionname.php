@@ -25,3 +25,6 @@
 
 $string['pluginname'] = 'View question name';
 $string['privacy:metadata'] = 'The View question name question bank plugin does not store any personal data.';
+// In place editing.
+$string['edit_question_name_hint'] = 'Edit question name';
+$string['edit_question_name_label'] = 'New value for {$a->name}';

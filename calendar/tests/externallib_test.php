@@ -14,14 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External calendar functions unit tests
- *
- * @package    core_calendar
- * @category   external
- * @copyright  2012 Ankit Agarwal
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_calendar;
+
+use core_calendar_external;
+use externallib_advanced_testcase;
+use core_external\external_api;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -38,7 +35,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.5
  */
-class core_calendar_externallib_testcase extends externallib_advanced_testcase {
+class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Tests set up
@@ -70,7 +67,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
                 $prop = (object)$prop;
             }
         } else {
-            $prop = new stdClass();
+            $prop = new \stdClass();
         }
         $prop->name = $name;
         if (empty($prop->eventtype)) {
@@ -104,7 +101,14 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
             }
         }
         if (!isset($prop->courseid)) {
-            $prop->courseid = $SITE->id;
+            // Set a default value of the event's course ID field.
+            if ($type === 'user') {
+                // If it's a user event, course ID should be zero.
+                $prop->courseid = 0;
+            } else {
+                // Otherwise, default to the site ID.
+                $prop->courseid = $SITE->id;
+            }
         }
 
         // Determine event priority.
@@ -126,7 +130,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
             $prop->priority = $priority;
         }
 
-        $event = new calendar_event($prop);
+        $event = new \calendar_event($prop);
         return $event->create($prop);
     }
 
@@ -167,7 +171,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         // Create a few stuff to test with.
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = $course->id;
         $group = $this->getDataGenerator()->create_group($record);
 
@@ -175,11 +179,11 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
 
         // Let's create a few events.
         $siteevent = $this->create_calendar_event('site', $USER->id, 'site');
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = $course->id;
         $courseevent = $this->create_calendar_event('course', $USER->id, 'course', 2, time(), $record);
         $userevent = $this->create_calendar_event('user', $USER->id);
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = $course->id;
         $record->groupid = $group->id;
         $groupevent = $this->create_calendar_event('group', $USER->id, 'group', 0, time(), $record);
@@ -199,19 +203,19 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
 
         // Let's create a few events.
         $siteevent = $this->create_calendar_event('site', $USER->id, 'site');
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = $course->id;
         $courseevent = $this->create_calendar_event('course', $USER->id, 'course', 3, time(), $record);
-        $userevent = $this->create_calendar_event('user', $USER->id);
-        $record = new stdClass();
+        $userevent = $this->create_calendar_event('user', $user->id);
+        $record = new \stdClass();
         $record->courseid = $course->id;
         $record->groupid = $group->id;
         $groupevent = $this->create_calendar_event('group', $USER->id, 'group', 0, time(), $record);
 
         $this->setuser($user);
-        $sitecontext = context_system::instance();
-        $coursecontext = context_course::instance($course->id);
-        $usercontext = context_user::instance($user->id);
+        $sitecontext = \context_system::instance();
+        $coursecontext = \context_course::instance($course->id);
+        $usercontext = \context_user::instance($user->id);
         $role = $DB->get_record('role', array('shortname' => 'student'));
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $role->id);
 
@@ -263,11 +267,11 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         // Let us try deleting without caps.
 
         $siteevent = $this->create_calendar_event('site', $USER->id, 'site');
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = $course->id;
         $courseevent = $this->create_calendar_event('course', $USER->id, 'course', 3, time(), $record);
         $userevent = $this->create_calendar_event('user', $USER->id);
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = $course->id;
         $record->groupid = $group->id;
         $groupevent = $this->create_calendar_event('group', $USER->id, 'group', 0, time(), $record);
@@ -280,7 +284,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
             array('eventid' => $userevent->id, 'repeat' => 0),
             array('eventid' => $groupevent->id, 'repeat' => 0)
         );
-        $this->expectException(moodle_exception::class);
+        $this->expectException(\moodle_exception::class);
         core_calendar_external::delete_calendar_events($events);
     }
 
@@ -308,7 +312,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $role = $DB->get_record('role', array('shortname' => 'student'));
         $this->getDataGenerator()->enrol_user($user2->id, $course3->id, $role->id);
 
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = $course->id;
         $group = $this->getDataGenerator()->create_group($record);
 
@@ -319,7 +323,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
 
         // This event will have description with an inline fake image.
         $draftidfile = file_get_unused_draft_itemid();
-        $usercontext = context_course::instance($course->id);
+        $usercontext = \context_course::instance($course->id);
         $filerecord = array(
             'contextid' => $usercontext->id,
             'component' => 'user',
@@ -331,7 +335,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $fs = get_file_storage();
         $fs->create_file_from_string($filerecord, 'img contents');
 
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = $course->id;
         $record->groupid = 0;
         $record->description = array(
@@ -341,12 +345,12 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         );
         $courseevent = $this->create_calendar_event('course', $USER->id, 'course', 2, time(), $record);
 
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = 0;
         $record->groupid = 0;
         $userevent = $this->create_calendar_event('user', $USER->id, 'user', 0, time(), $record);
 
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = $course->id;
         $record->groupid = $group->id;
         $groupevent = $this->create_calendar_event('group', $USER->id, 'group', 0, time(), $record);
@@ -368,7 +372,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(0, count($events['warnings']));
 
         // Expect the same URL in the description of two different events (because they are repeated).
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $expectedurl = "webservice/pluginfile.php/$coursecontext->id/calendar/event_description/$courseevent->id/fakeimage.png";
         $withdescription = 0;
         foreach ($events['events'] as $event) {
@@ -382,7 +386,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         // Let's play around with caps.
 
         // Create user event for the user $user.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = 0;
         $record->groupid = 0;
         $this->create_calendar_event('user', $user->id, 'user', 0, time(), $record);
@@ -474,7 +478,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         set_coursemodule_visible($assign->cmid, 0);
         // Empty all the caches that may be affected  by this change.
         accesslib_clear_all_caches_for_unit_testing();
-        course_modinfo::clear_instance_cache();
+        \course_modinfo::clear_instance_cache();
 
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
         $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
@@ -483,13 +487,13 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
 
         // Create some category events.
         $this->setAdminUser();
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = 0;
         $record->categoryid = $category->id;
         $record->timestart = time() - DAYSECS;
         $catevent1 = $this->create_calendar_event('category a', $USER->id, 'category', 0, time(), $record);
 
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = 0;
         $record->categoryid = $category2->id;
         $record->timestart = time() + DAYSECS;
@@ -565,7 +569,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
 
         // Format the original data.
-        $sitecontext = context_system::instance();
+        $sitecontext = \context_system::instance();
         $siteevent->name = $siteevent->format_external_name();
         list($siteevent->description, $siteevent->descriptionformat) = $siteevent->format_external_text();
 
@@ -589,7 +593,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         // Create a few stuff to test with.
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = $course->id;
         $group = $this->getDataGenerator()->create_group($record);
 
@@ -611,8 +615,8 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(5, count($eventsret['events']));
         $this->assertEquals(0, count($eventsret['warnings']));
 
-        $sitecontext = context_system::instance();
-        $coursecontext = context_course::instance($course->id);
+        $sitecontext = \context_system::instance();
+        $coursecontext = \context_course::instance($course->id);
 
         $this->setUser($user);
         $prevcount = $aftercount;
@@ -1078,7 +1082,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
 
         // Student1 will see an exception if he/she trying to view student2's data.
         $this->setUser($user1);
-        $this->expectException(required_capability_exception::class);
+        $this->expectException(\required_capability_exception::class);
         $this->expectExceptionMessage('error/nopermission');
         $result = core_calendar_external::get_calendar_action_events_by_timesort(0, null, 0, 20, true, $user2->id);
     }
@@ -1676,7 +1680,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
             ];
         }
 
-        $this->expectException('moodle_exception');
+        $this->expectException(\moodle_exception::class);
         core_calendar_external::delete_calendar_events($params);
     }
 
@@ -1689,9 +1693,9 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $user = $generator->create_user();
         $roleid = $generator->create_role();
         $context = \context_system::instance();
-        $originalstarttime = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
-        $newstartdate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
-        $expected = new DateTimeImmutable('2018-02-2T15:00:00+08:00');
+        $originalstarttime = new \DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $newstartdate = new \DateTimeImmutable('2018-02-2T10:00:00+08:00');
+        $expected = new \DateTimeImmutable('2018-02-2T15:00:00+08:00');
 
         $generator->role_assign($roleid, $user->id, $context->id);
         assign_capability('moodle/calendar:manageownentries', CAP_ALLOW, $roleid, $context, true);
@@ -1729,9 +1733,9 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $user = $generator->create_user();
         $roleid = $generator->create_role();
         $context = \context_system::instance();
-        $originalstarttime = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
-        $newstartdate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
-        $expected = new DateTimeImmutable('2018-02-2T15:00:00+08:00');
+        $originalstarttime = new \DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $newstartdate = new \DateTimeImmutable('2018-02-2T10:00:00+08:00');
+        $expected = new \DateTimeImmutable('2018-02-2T15:00:00+08:00');
 
         $generator->role_assign($roleid, $user->id, $context->id);
         assign_capability('moodle/calendar:manageownentries', CAP_ALLOW, $roleid, $context, true);
@@ -1752,7 +1756,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         );
 
         assign_capability('moodle/calendar:manageownentries', CAP_PROHIBIT, $roleid, $context, true);
-        $this->expectException('moodle_exception');
+        $this->expectException(\moodle_exception::class);
         $result = core_calendar_external::update_event_start_day($event->id, $newstartdate->getTimestamp());
         $result = external_api::clean_returnvalue(
             core_calendar_external::update_event_start_day_returns(),
@@ -1771,9 +1775,9 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $moduleinstance = $plugingenerator->create_instance(['course' => $course->id]);
         $roleid = $generator->create_role();
         $context = \context_course::instance($course->id);
-        $originalstarttime = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
-        $newstartdate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
-        $expected = new DateTimeImmutable('2018-02-2T15:00:00+08:00');
+        $originalstarttime = new \DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $newstartdate = new \DateTimeImmutable('2018-02-2T10:00:00+08:00');
+        $expected = new \DateTimeImmutable('2018-02-2T15:00:00+08:00');
 
         $generator->role_assign($roleid, $user->id, $context->id);
         $generator->enrol_user($user->id, $course->id);
@@ -1796,7 +1800,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         );
 
         assign_capability('moodle/calendar:manageentries', CAP_ALLOW, $roleid, $context, true);
-        $this->expectException('moodle_exception');
+        $this->expectException(\moodle_exception::class);
         $result = core_calendar_external::update_event_start_day($event->id, $newstartdate->getTimestamp());
         $result = external_api::clean_returnvalue(
             core_calendar_external::update_event_start_day_returns(),
@@ -1810,9 +1814,9 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
      */
     public function test_submit_create_update_form_validation_error() {
         $user = $this->getDataGenerator()->create_user();
-        $timestart = new DateTime();
-        $interval = new DateInterval("P1D"); // One day.
-        $timedurationuntil = new DateTime();
+        $timestart = new \DateTime();
+        $interval = new \DateInterval("P1D"); // One day.
+        $timedurationuntil = new \DateTime();
         $timedurationuntil->sub($interval);
         $formdata = [
             'id' => 0,
@@ -1868,9 +1872,9 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $user = $generator->create_user();
         $roleid = $generator->create_role();
         $context = \context_system::instance();
-        $timestart = new DateTime();
-        $interval = new DateInterval("P1D"); // One day.
-        $timedurationuntil = new DateTime();
+        $timestart = new \DateTime();
+        $interval = new \DateInterval("P1D"); // One day.
+        $timedurationuntil = new \DateTime();
         $timedurationuntil->add($interval);
         $formdata = [
             'id' => 0,
@@ -1933,9 +1937,9 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $user = $generator->create_user();
         $roleid = $generator->create_role();
         $context = \context_system::instance();
-        $timestart = new DateTime();
-        $interval = new DateInterval("P1D"); // One day.
-        $timedurationuntil = new DateTime();
+        $timestart = new \DateTime();
+        $interval = new \DateInterval("P1D"); // One day.
+        $timedurationuntil = new \DateTime();
         $timedurationuntil->add($interval);
         $formdata = [
             'id' => 0,
@@ -1977,7 +1981,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setUser($user);
 
-        $this->expectException('moodle_exception');
+        $this->expectException(\moodle_exception::class);
 
         external_api::clean_returnvalue(
             core_calendar_external::submit_create_update_form_returns(),
@@ -1992,11 +1996,11 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
     public function test_submit_create_update_form_create_site_event() {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
-        $context = context_system::instance();
+        $context = \context_system::instance();
         $roleid = $generator->create_role();
-        $timestart = new DateTime();
-        $interval = new DateInterval("P1D"); // One day.
-        $timedurationuntil = new DateTime();
+        $timestart = new \DateTime();
+        $interval = new \DateInterval("P1D"); // One day.
+        $timedurationuntil = new \DateTime();
         $timedurationuntil->add($interval);
         $formdata = [
             'id' => 0,
@@ -2058,11 +2062,11 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
     public function test_submit_create_update_form_create_site_event_no_permission() {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
-        $context = context_course::instance(SITEID);
+        $context = \context_course::instance(SITEID);
         $roleid = $generator->create_role();
-        $timestart = new DateTime();
-        $interval = new DateInterval("P1D"); // One day.
-        $timedurationuntil = new DateTime();
+        $timestart = new \DateTime();
+        $interval = new \DateInterval("P1D"); // One day.
+        $timedurationuntil = new \DateTime();
         $timedurationuntil->add($interval);
         $formdata = [
             'id' => 0,
@@ -2121,11 +2125,11 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $roleid = $generator->create_role();
-        $timestart = new DateTime();
-        $interval = new DateInterval("P1D"); // One day.
-        $timedurationuntil = new DateTime();
+        $timestart = new \DateTime();
+        $interval = new \DateInterval("P1D"); // One day.
+        $timedurationuntil = new \DateTime();
         $timedurationuntil->add($interval);
         $formdata = [
             'id' => 0,
@@ -2191,11 +2195,11 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $roleid = $generator->create_role();
-        $timestart = new DateTime();
-        $interval = new DateInterval("P1D"); // One day.
-        $timedurationuntil = new DateTime();
+        $timestart = new \DateTime();
+        $interval = new \DateInterval("P1D"); // One day.
+        $timedurationuntil = new \DateTime();
         $timedurationuntil->add($interval);
         $formdata = [
             'id' => 0,
@@ -2257,11 +2261,11 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $user = $generator->create_user();
         $course = $generator->create_course();
         $course2 = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $roleid = $generator->create_role();
-        $timestart = new DateTime();
-        $interval = new DateInterval("P1D"); // One day.
-        $timedurationuntil = new DateTime();
+        $timestart = new \DateTime();
+        $interval = new \DateInterval("P1D"); // One day.
+        $timedurationuntil = new \DateTime();
         $timedurationuntil->add($interval);
         $formdata = [
             'id' => 0,
@@ -2323,11 +2327,11 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $user = $generator->create_user();
         $course = $generator->create_course();
         $group = $generator->create_group(array('courseid' => $course->id));
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $roleid = $generator->create_role();
-        $timestart = new DateTime();
-        $interval = new DateInterval("P1D"); // One day.
-        $timedurationuntil = new DateTime();
+        $timestart = new \DateTime();
+        $interval = new \DateInterval("P1D"); // One day.
+        $timedurationuntil = new \DateTime();
         $timedurationuntil->add($interval);
         $formdata = [
             'id' => 0,
@@ -2396,11 +2400,11 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $user = $generator->create_user();
         $course = $generator->create_course();
         $group = $generator->create_group(array('courseid' => $course->id));
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $roleid = $generator->create_role();
-        $timestart = new DateTime();
-        $interval = new DateInterval("P1D"); // One day.
-        $timedurationuntil = new DateTime();
+        $timestart = new \DateTime();
+        $interval = new \DateInterval("P1D"); // One day.
+        $timedurationuntil = new \DateTime();
         $timedurationuntil->add($interval);
         $formdata = [
             'id' => 0,
@@ -2470,11 +2474,11 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $user = $generator->create_user();
         $course = $generator->create_course();
         $group = $generator->create_group(array('courseid' => $course->id));
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $roleid = $generator->create_role();
-        $timestart = new DateTime();
-        $interval = new DateInterval("P1D"); // One day.
-        $timedurationuntil = new DateTime();
+        $timestart = new \DateTime();
+        $interval = new \DateInterval("P1D"); // One day.
+        $timedurationuntil = new \DateTime();
         $timedurationuntil->add($interval);
         $formdata = [
             'id' => 0,
@@ -2544,11 +2548,11 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $user = $generator->create_user();
         $course = $generator->create_course();
         $group = $generator->create_group(array('courseid' => $course->id));
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $roleid = $generator->create_role();
-        $timestart = new DateTime();
-        $interval = new DateInterval("P1D"); // One day.
-        $timedurationuntil = new DateTime();
+        $timestart = new \DateTime();
+        $interval = new \DateInterval("P1D"); // One day.
+        $timedurationuntil = new \DateTime();
         $timedurationuntil->add($interval);
         $formdata = [
             'id' => 0,
@@ -2617,11 +2621,11 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $course = $generator->create_course();
         $generator->enrol_user($user1->id, $course->id, 'student');
         $name = 'Course Event (course' . $course->id . ')';
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = $course->id;
         $courseevent = $this->create_calendar_event($name, $USER->id, 'course', 0, time(), $record);
 
-        $timestart = new DateTime();
+        $timestart = new \DateTime();
         // Admin can load the course.
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_monthly_view_returns(),
@@ -2639,7 +2643,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($data['courseid'], $course->id);
         // User not enrolled in the course cannot load the course calendar.
         $this->setUser($user2);
-        $this->expectException('require_login_exception');
+        $this->expectException(\require_login_exception::class);
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_monthly_view_returns(),
             core_calendar_external::get_calendar_monthly_view($timestart->format('Y'), $timestart->format('n'),
@@ -2654,7 +2658,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        $timestart = new DateTime();
+        $timestart = new \DateTime();
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_monthly_view_returns(),
             core_calendar_external::get_calendar_monthly_view($timestart->format('Y'), $timestart->format('n'),
@@ -2677,11 +2681,11 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $course = $generator->create_course();
         $generator->enrol_user($user1->id, $course->id, 'student');
         $name = 'Course Event (course' . $course->id . ')';
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = $course->id;
         $courseevent = $this->create_calendar_event($name, $USER->id, 'course', 0, time(), $record);
 
-        $timestart = new DateTime();
+        $timestart = new \DateTime();
         // Admin can load the course.
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_day_view_returns(),
@@ -2699,7 +2703,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($data['courseid'], $course->id);
         // User not enrolled in the course cannot load the course calendar.
         $this->setUser($user2);
-        $this->expectException('require_login_exception');
+        $this->expectException(\require_login_exception::class);
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_day_view_returns(),
             core_calendar_external::get_calendar_day_view($timestart->format('Y'), $timestart->format('n'),
@@ -2721,7 +2725,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $course = $generator->create_course();
         $generator->enrol_user($user1->id, $course->id, 'student');
         $name = 'Course Event (course' . $course->id . ')';
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = $course->id;
         $courseevent = $this->create_calendar_event($name, $USER->id, 'course', 0, time(), $record);
 
@@ -2740,7 +2744,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($data['courseid'], $course->id);
         // User not enrolled in the course cannot load the course calendar.
         $this->setUser($user2);
-        $this->expectException('require_login_exception');
+        $this->expectException(\require_login_exception::class);
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_upcoming_view_returns(),
             core_calendar_external::get_calendar_upcoming_view($course->id, null)
@@ -2761,7 +2765,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $course = $generator->create_course();
         $generator->enrol_user($user1->id, $course->id, 'student');
         $name = 'Course Event (course' . $course->id . ')';
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = $course->id;
         $courseevent = $this->create_calendar_event($name, $USER->id, 'course', 0, time(), $record);
 
@@ -2780,11 +2784,215 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($data['event']['id'], $courseevent->id);
         // User not enrolled in the course cannot load the course event.
         $this->setUser($user2);
-        $this->expectException('required_capability_exception');
+        $this->expectException(\moodle_exception::class);
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_event_by_id_returns(),
             core_calendar_external::get_calendar_event_by_id($courseevent->id)
         );
+    }
+
+    /**
+     * User data for testing reading calendar events.
+     *
+     * @return array
+     */
+    public function get_calendar_event_by_id_prevent_read_other_users_events_data_provider(): array {
+        $syscontext = \context_system::instance();
+        $managerrole = 'manager';
+        return [
+            [true, false, $syscontext, $managerrole, true],
+            [false, false, $syscontext, $managerrole, false],
+            [false, false, null, null, true],
+            [false, true, null, null, false],
+        ];
+    }
+
+    /**
+     * Prevent user from reading other user's event.
+     *
+     * @covers \core_calendar_external::get_calendar_event_by_id
+     * @dataProvider get_calendar_event_by_id_prevent_read_other_users_events_data_provider
+     *
+     * @param bool          $isadminevent      Is admin's event
+     * @param bool          $isadmin           Is current user admin user
+     * @param null|stdClass $readerrolecontext Reader role context
+     * @param null|string   $readerrolename    Role name
+     * @param bool          $expectexception   Should the test throw exception
+     */
+    public function test_get_calendar_event_by_id_prevent_read_other_users_events(
+            bool $isadminevent, bool $isadmin, ?\stdClass $readerrolecontext,
+            ?string $readerrolename, bool $expectexception) {
+        global $USER, $DB;
+
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        if ($isadminevent) {
+            $this->setAdminUser();
+        } else {
+            $user = $generator->create_user();
+            $this->setUser($user);
+        }
+        $userevent = $this->create_calendar_event('user event', $USER->id, 'user', 0, time());
+        $results = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_event_by_id_returns(),
+            core_calendar_external::get_calendar_event_by_id($userevent->id)
+        );
+        $event = reset($results);
+        $this->assertEquals($userevent->id, $event['id']);
+
+        if ($isadmin) {
+            $this->setAdminUser();
+        } else {
+            $reader = $generator->create_user();
+            if ($readerrolename && $readerrolecontext) {
+                $managerroleid = $DB->get_field('role', 'id', ['shortname' => $readerrolename]);
+                role_assign($managerroleid, $reader->id, $readerrolecontext->id);
+            }
+            $this->setUser($reader);
+        }
+
+        if ($expectexception) {
+            // Setup if exception is expected for the test.
+            $this->expectException(\moodle_exception::class);
+        }
+        external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_event_by_id_returns(),
+            core_calendar_external::get_calendar_event_by_id($userevent->id)
+        );
+    }
+
+    /**
+     * User data for testing editing or deleting calendar events.
+     *
+     * @return array
+     */
+    public function edit_or_delete_other_users_events_data_provider(): array {
+        $syscontext = \context_system::instance();
+        $managerrole = 'manager';
+        return [
+            [false, false, $syscontext, $managerrole, false],
+            [false, true, $syscontext, $managerrole, true],
+            [false, false, null, null, true],
+            [true, false, null, null, false],
+        ];
+    }
+
+    /**
+     * Test the behavior of deleting other users' user events.
+     *
+     * @dataProvider edit_or_delete_other_users_events_data_provider
+     * @covers \core_calendar_external::delete_calendar_events
+     * @param bool          $isadmin Whether the current user is admin.
+     * @param bool          $isadminevent Whether it's an admin event or not.
+     * @param stdClass|null $writerrolecontext The reader role context.
+     * @param string|null   $writerrolename The role name.
+     * @param bool          $expectexception Whether the test should throw an exception or not.
+     */
+    public function test_delete_other_users_events(bool $isadmin, bool $isadminevent,
+            ?\stdClass $writerrolecontext, ?string $writerrolename, bool $expectexception) {
+        global $DB, $USER;
+
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        if ($isadminevent) {
+            $this->setAdminUser();
+            $user = $USER;
+        } else {
+            $user = $generator->create_user();
+            $this->setUser($user);
+        }
+        $userevent = $this->create_calendar_event('user event', $user->id, 'user', 0, time());
+
+        if ($isadmin) {
+            $this->setAdminUser();
+        } else {
+            $writer = $generator->create_user();
+            if ($writerrolename && $writerrolecontext) {
+                $managerroleid = $DB->get_field('role', 'id', ['shortname' => $writerrolename]);
+                role_assign($managerroleid, $writer->id, $writerrolecontext->id);
+            }
+            $this->setUser($writer);
+        }
+
+        if ($expectexception) {
+            $this->expectException(\moodle_exception::class);
+        }
+        $events = [
+            ['eventid' => $userevent->id, 'repeat' => 0]
+        ];
+        core_calendar_external::delete_calendar_events($events);
+    }
+
+    /**
+     * Test the behavior of editing other users' user events
+     *
+     * @dataProvider edit_or_delete_other_users_events_data_provider
+     * @covers \core_calendar_external::submit_create_update_form
+     * @param bool          $isadmin Whether the current user is admin.
+     * @param bool          $isadminevent Whether it's an admin event or not.
+     * @param stdClass|null $writerrolecontext The reader role context.
+     * @param string|null   $writerrolename The role name.
+     * @param bool          $expectexception Whether the test should throw an exception or not.
+     */
+    public function test_edit_other_users_events(bool $isadmin, bool $isadminevent,
+            ?\stdClass $writerrolecontext, ?string $writerrolename, bool $expectexception) {
+        global $DB, $USER;
+
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        if ($isadminevent) {
+            $this->setAdminUser();
+            $user = $USER;
+        } else {
+            $user = $generator->create_user();
+        }
+
+        $formdata = [
+            'id' => 0,
+            'userid' => $user->id,
+            'modulename' => '',
+            'instance' => 0,
+            'visible' => 1,
+            'eventtype' => 'user',
+            'name' => 'Test',
+            'timestart' => [
+                'day' => 1,
+                'month' => 1,
+                'year' => 2021,
+                'hour' => 1,
+                'minute' => 0,
+            ],
+            'description' => [
+                'text' => 'xxxxx',
+                'format' => 1,
+                'itemid' => 0
+            ],
+            'location' => 'Test',
+            'duration' => 0,
+        ];
+        $formdata = \core_calendar\local\event\forms\create::mock_generate_submit_keys($formdata);
+
+        $querystring = http_build_query($formdata, '', '&');
+
+        if ($isadmin) {
+            $this->setAdminUser();
+        } else {
+            $writer = $generator->create_user();
+            if ($writerrolename && $writerrolecontext) {
+                $managerroleid = $DB->get_field('role', 'id', ['shortname' => $writerrolename]);
+                role_assign($managerroleid, $writer->id, $writerrolecontext->id);
+            }
+            $this->setUser($writer);
+        }
+        $USER->ignoresesskey = true;
+
+        if ($expectexception) {
+            $this->expectException(\moodle_exception::class);
+        }
+        core_calendar_external::submit_create_update_form($querystring);
     }
 
     /**
@@ -2799,7 +3007,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $user1 = $generator->create_user();
         $category = $generator->create_category(['visible' => 0]);
         $name = 'Category Event (category: ' . $category->id . ')';
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->categoryid = $category->id;
         $categoryevent = $this->create_calendar_event($name, $USER->id, 'category', 0, time(), $record);
 
@@ -2974,8 +3182,8 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        $time1 = new DateTime('2018-12-30 00:00:00');
-        $time2 = new DateTime('2019-03-27 23:59:00');
+        $time1 = new \DateTime('2018-12-30 00:00:00');
+        $time2 = new \DateTime('2019-03-27 23:59:00');
 
         $dates = [
             [
@@ -3017,8 +3225,8 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        $time1 = new DateTime('2018-12-30 00:00:00');
-        $time2 = new DateTime('2019-03-27 23:59:00');
+        $time1 = new \DateTime('2018-12-30 00:00:00');
+        $time2 = new \DateTime('2019-03-27 23:59:00');
 
         $dates = [
             [

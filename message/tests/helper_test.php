@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains a test class for the message helper.
- *
- * @package core_message
- * @category test
- * @copyright 2018 Jake Dallimore <jrhdallimore@gmail.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_message;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,8 +29,9 @@ require_once($CFG->dirroot . '/message/tests/messagelib_test.php');
  * @category test
  * @copyright 2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \core_message\helper
  */
-class core_message_helper_testcase extends advanced_testcase {
+class helper_test extends \advanced_testcase {
 
     public function setUp(): void {
         $this->resetAfterTest(true);
@@ -121,6 +115,42 @@ class core_message_helper_testcase extends advanced_testcase {
         $this->assertEmpty(\core_message\helper::search_get_user_details($user1)); // Student in another course.
         $this->assertNotEmpty(\core_message\helper::search_get_user_details($user6)); // Teacher in same course.
         $this->assertEmpty(\core_message\helper::search_get_user_details($user7)); // Teacher (course contact) in another course.
+    }
+
+    /**
+     * Test search_get_user_details returns the correct profile data we limit the data we wish to be returned.
+     */
+    public function test_search_get_user_details_limited_data() {
+        set_config('messagingallusers', false);
+
+        // Two students sharing course 1, visible profile within course (no groups).
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course((object) ['groupmode' => 0]);
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+
+        // Calculate the minimum fields that can be returned.
+        $namefields = \core_user\fields::for_name()->get_required_fields();
+        $fields = array_intersect($namefields, user_get_default_fields());
+
+        $minimaluser = (object) [
+            'id' => $user2->id,
+            'deleted' => $user2->deleted,
+        ];
+
+        foreach ($namefields as $field) {
+            $minimaluser->$field = $user2->$field;
+        }
+
+        // Test that less data is returned using the filter.
+        $this->setUser($user1);
+        $fulldetails = helper::search_get_user_details($user2);
+        $limiteddetails = helper::search_get_user_details($minimaluser, $fields);
+        $fullcount = count($fulldetails);
+        $limitedcount = count($limiteddetails);
+        $this->assertLessThan($fullcount, $limitedcount);
+        $this->assertNotEquals($fulldetails, $limiteddetails);
     }
 
     /**

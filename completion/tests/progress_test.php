@@ -14,16 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Test completion progress API.
- *
- * @package core_completion
- * @category test
- * @copyright 2017 Mark Nelson <markn@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_completion;
 
-defined('MOODLE_INTERNAL') || die();
+use completion_completion;
 
 /**
  * Test completion progress API.
@@ -33,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_completion_progress_testcase extends advanced_testcase {
+class progress_test extends \advanced_testcase {
 
     /**
      * Test setup.
@@ -75,7 +68,7 @@ class core_completion_progress_testcase extends advanced_testcase {
         // Mark two of them as completed for a user.
         $cmassign = get_coursemodule_from_id('assign', $assign->cmid);
         $cmdata = get_coursemodule_from_id('data', $data->cmid);
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completion->update_state($cmassign, COMPLETION_COMPLETE, $user->id);
         $completion->update_state($cmdata, COMPLETION_COMPLETE, $user->id);
 
@@ -114,7 +107,7 @@ class core_completion_progress_testcase extends advanced_testcase {
         // Mark two of them as completed for a user.
         $cmassign = get_coursemodule_from_id('assign', $assign->cmid);
         $cmdata = get_coursemodule_from_id('data', $data->cmid);
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completion->update_state($cmassign, COMPLETION_COMPLETE, $user->id);
         $completion->update_state($cmdata, COMPLETION_COMPLETE, $user->id);
 
@@ -125,6 +118,114 @@ class core_completion_progress_testcase extends advanced_testcase {
         // Check we have received valid data.
         // The course completion takes priority, so should return 100.
         $this->assertEquals('100', \core_completion\progress::get_course_progress_percentage($course, $user->id));
+    }
+
+    /**
+     * Tests that the course progress percentage is returned correctly for various grade to pass settings
+     *
+     * @covers \core_completion\progress::get_course_progress_percentage.
+     */
+    public function test_course_progress_percentage_completion_state() {
+        global $DB;
+
+        // Add a course that supports completion.
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
+
+        // Enrol a user in the course.
+        $teacher = $this->getDataGenerator()->create_user();
+        $user = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
+
+        // Add three activities that use completion.
+        /** @var \mod_assign_generator $assigngenerator */
+        $assigngenerator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $assign['passgragepassed'] = $assigngenerator->create_instance([
+            'course' => $course->id,
+            'completion' => COMPLETION_ENABLED,
+            'completionusegrade' => 1,
+            'gradepass' => 50,
+            'completionpassgrade' => 1
+        ]);
+
+        $assign['passgragefailed'] = $assigngenerator->create_instance([
+            'course' => $course->id,
+            'completion' => COMPLETION_ENABLED,
+            'completionusegrade' => 1,
+            'gradepass' => 50,
+            'completionpassgrade' => 1
+        ]);
+
+        $assign['passgragenotused'] = $assigngenerator->create_instance([
+            'course' => $course->id,
+            'completion' => COMPLETION_ENABLED,
+            'completionusegrade' => 1,
+            'gradepass' => 50,
+        ]);
+
+        $assign['nograde'] = $assigngenerator->create_instance([
+            'course' => $course->id,
+            'completion' => COMPLETION_ENABLED,
+        ]);
+
+        $c = new \completion_info($course);
+
+        foreach ($assign as $item) {
+            $cmassing = get_coursemodule_from_id('assign', $item->cmid);
+
+            // Add activity completion criteria.
+            $criteriadata = new \stdClass();
+            $criteriadata->id = $course->id;
+            $criteriadata->criteria_activity = [];
+            // Some activities.
+            $criteriadata->criteria_activity[$cmassing->id] = 1;
+            $criterion = new \completion_criteria_activity();
+            $criterion->update_config($criteriadata);
+        }
+
+        $this->setUser($teacher);
+
+        foreach ($assign as $key => $item) {
+            $cm = get_coursemodule_from_instance('assign', $item->id);
+
+            // Mark user completions.
+            $completion = new \stdClass();
+            $completion->coursemoduleid = $cm->id;
+            $completion->timemodified = time();
+            $completion->viewed = COMPLETION_NOT_VIEWED;
+            $completion->overrideby = null;
+
+            if ($key == 'passgragepassed') {
+                $completion->id = 0;
+                $completion->completionstate = COMPLETION_COMPLETE_PASS;
+                $completion->userid = $user->id;
+                $c->internal_set_data($cm, $completion, true);
+            } else if ($key == 'passgragefailed') {
+                $completion->id = 0;
+                $completion->completionstate = COMPLETION_COMPLETE_FAIL;
+                $completion->userid = $user->id;
+                $c->internal_set_data($cm, $completion, true);
+            } else if ($key == 'passgragenotused') {
+                $completion->id = 0;
+                $completion->completionstate = COMPLETION_COMPLETE;
+                $completion->userid = $user->id;
+                $c->internal_set_data($cm, $completion, true);
+            } else if ($key == 'nograde') {
+                $completion->id = 0;
+                $completion->completionstate = COMPLETION_COMPLETE;
+                $completion->userid = $user->id;
+                $c->internal_set_data($cm, $completion, true);
+            }
+        }
+
+        // Run course completions cron.
+        \core_completion\api::mark_course_completions_activity_criteria();
+
+        // Check we have received valid data.
+        // Only assign2 is not completed.
+        $this->assertEquals('75', \core_completion\progress::get_course_progress_percentage($course, $user->id));
     }
 
     /**

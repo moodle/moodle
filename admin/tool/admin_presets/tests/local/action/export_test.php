@@ -16,7 +16,7 @@
 
 namespace tool_admin_presets\local\action;
 
-use tool_admin_presets\helper;
+use core_adminpresets\manager;
 
 /**
  * Tests for the export class.
@@ -44,8 +44,8 @@ class export_test extends \advanced_testcase {
         $this->setAdminUser();
 
         // Get current presets and items.
-        $currentpresets = $DB->count_records('tool_admin_presets');
-        $currentadvitems = $DB->count_records('tool_admin_presets_it_a');
+        $currentpresets = $DB->count_records('adminpresets');
+        $currentadvitems = $DB->count_records('adminpresets_it_a');
 
         // Initialise some settings (to compare their values have been exported as expected).
         set_config('recaptchapublickey', 'abcde');
@@ -81,41 +81,41 @@ class export_test extends \advanced_testcase {
             $this->assertInstanceOf(\moodle_exception::class, $e);
         } finally {
             // Check the preset record has been created.
-            $presets = $DB->get_records('tool_admin_presets');
+            $presets = $DB->get_records('adminpresets');
             $this->assertCount($currentpresets + 1, $presets);
-            $generator = $this->getDataGenerator()->get_plugin_generator('tool_admin_presets');
+            $generator = $this->getDataGenerator()->get_plugin_generator('core_adminpresets');
             $presetid = $generator->access_protected($action, 'id');
             $this->assertArrayHasKey($presetid, $presets);
             $preset = $presets[$presetid];
             $this->assertEquals($presetname, $preset->name);
-            $this->assertEquals(0, $preset->iscore);
+            $this->assertEquals(manager::NONCORE_PRESET, $preset->iscore);
 
             // Check the items, advanced attributes and plugins have been created.
-            $this->assertGreaterThan(0, $DB->count_records('tool_admin_presets_it', ['adminpresetid' => $presetid]));
-            $this->assertGreaterThan($currentadvitems, $DB->count_records('tool_admin_presets_it_a'));
-            $this->assertGreaterThan(0, $DB->count_records('tool_admin_presets_plug', ['adminpresetid' => $presetid]));
+            $this->assertGreaterThan(0, $DB->count_records('adminpresets_it', ['adminpresetid' => $presetid]));
+            $this->assertGreaterThan($currentadvitems, $DB->count_records('adminpresets_it_a'));
+            $this->assertGreaterThan(0, $DB->count_records('adminpresets_plug', ['adminpresetid' => $presetid]));
 
             // Check settings have been created with the expected values.
             $params = ['adminpresetid' => $presetid, 'plugin' => 'none', 'name' => 'enablebadges'];
-            $setting = $DB->get_record('tool_admin_presets_it', $params);
+            $setting = $DB->get_record('adminpresets_it', $params);
             $this->assertEquals('0', $setting->value);
 
             $params = ['adminpresetid' => $presetid, 'plugin' => 'mod_lesson', 'name' => 'mediawidth'];
-            $setting = $DB->get_record('tool_admin_presets_it', $params);
+            $setting = $DB->get_record('adminpresets_it', $params);
             $this->assertEquals('900', $setting->value);
 
             $params = ['adminpresetid' => $presetid, 'plugin' => 'mod_lesson', 'name' => 'maxanswers'];
-            $setting = $DB->get_record('tool_admin_presets_it', $params);
+            $setting = $DB->get_record('adminpresets_it', $params);
             $this->assertEquals('2', $setting->value);
             $params = ['itemid' => $setting->id, 'name' => 'maxanswers_adv'];
-            $setting = $DB->get_record('tool_admin_presets_it_a', $params);
+            $setting = $DB->get_record('adminpresets_it_a', $params);
             $this->assertEquals('0', $setting->value);
 
             $params = ['adminpresetid' => $presetid, 'plugin' => 'mod_lesson', 'name' => 'defaultfeedback'];
-            $setting = $DB->get_record('tool_admin_presets_it', $params);
+            $setting = $DB->get_record('adminpresets_it', $params);
             $this->assertEquals('0', $setting->value);
             $params = ['itemid' => $setting->id, 'name' => 'defaultfeedback_adv'];
-            $setting = $DB->get_record('tool_admin_presets_it_a', $params);
+            $setting = $DB->get_record('adminpresets_it_a', $params);
             $this->assertEquals('1', $setting->value);
 
             // Check plugins have been created with the expected values.
@@ -125,16 +125,16 @@ class export_test extends \advanced_testcase {
             $enabledplugins = $manager->get_enabled_plugins($plugintype);
             foreach ($plugins as $pluginname => $unused) {
                 $params = ['adminpresetid' => $presetid, 'plugin' => $plugintype, 'name' => $pluginname];
-                $plugin = $DB->get_record('tool_admin_presets_plug', $params);
+                $plugin = $DB->get_record('adminpresets_plug', $params);
                 $enabled = (!empty($enabledplugins) && array_key_exists($pluginname, $enabledplugins));
                 $this->assertEquals($enabled, (bool) $plugin->enabled);
             }
 
             // Check whether sensible settings have been exported or not.
             $params = ['adminpresetid' => $presetid, 'plugin' => 'none', 'name' => 'recaptchapublickey'];
-            $recaptchasetting = $DB->get_record('tool_admin_presets_it', $params);
+            $recaptchasetting = $DB->get_record('adminpresets_it', $params);
             $params = ['adminpresetid' => $presetid, 'plugin' => 'none', 'name' => 'cronremotepassword'];
-            $cronsetting = $DB->get_record('tool_admin_presets_it', $params);
+            $cronsetting = $DB->get_record('adminpresets_it', $params);
             if ($includesensible) {
                 $this->assertEquals('abcde', $recaptchasetting->value);
                 $this->assertNotFalse($cronsetting);

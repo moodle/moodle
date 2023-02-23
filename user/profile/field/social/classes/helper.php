@@ -66,9 +66,9 @@ class helper  {
      */
     public static function get_network_urls(): array {
         return [
-            'skype' => '<a href="skype:%%DATA%%?call">%%DATA%%</a>',
-            'icq' => '<a href="http://www.icq.com/whitepages/cmd.php?uin=%%DATA%%&action=message">%%DATA%%</a>',
-            'url' => '<a href="%%DATA%%">%%DATA%%</a>'
+            'skype' => '<a href="skype:%%ENCODED%%?call">%%PLAIN%%</a>',
+            'icq' => '<a href="http://www.icq.com/whitepages/cmd.php?uin=%%ENCODED%%&action=message">%%PLAIN%%</a>',
+            'url' => '<a href="%%PLAIN%%">%%PLAIN%%</a>'
         ];
     }
 }

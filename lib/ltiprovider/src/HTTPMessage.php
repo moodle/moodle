@@ -2,6 +2,9 @@
 
 namespace IMSGlobal\LTI;
 
+global $CFG;
+require_once($CFG->libdir . '/filelib.php');
+
 /**
  * Class to represent an HTTP message
  *
@@ -110,31 +113,33 @@ class HTTPMessage
     {
 
         $this->ok = false;
-// Try using curl if available
+        // Try using curl if available
         if (function_exists('curl_init')) {
             $resp = '';
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $this->url);
+            $chResp = '';
+
+            $curl = new \curl();
+            $options = [
+                'CURLOPT_HEADER' => true,
+                'CURLINFO_HEADER_OUT' => true,
+            ];
             if (!empty($this->requestHeaders)) {
-                curl_setopt($ch, CURLOPT_HTTPHEADER, $this->requestHeaders);
+                $options['CURLOPT_HTTPHEADER'] = $this->requestHeaders;
             } else {
-                curl_setopt($ch, CURLOPT_HEADER, 0);
+                $options['CURLOPT_HEADER'] = 0;
             }
             if ($this->method === 'POST') {
-                curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $this->request);
+                $chResp = $curl->post($this->url, $this->request, $options);
             } else if ($this->method !== 'GET') {
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $this->method);
                 if (!is_null($this->request)) {
-                    curl_setopt($ch, CURLOPT_POSTFIELDS, $this->request);
+                    $chResp = $curl->post($this->url, $this->request, $options);
                 }
+            } else {
+                $chResp = $curl->get($this->url, null, $options);
             }
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-            curl_setopt($ch, CURLOPT_HEADER, true);
-            $chResp = curl_exec($ch);
-            $this->ok = $chResp !== false;
-            if ($this->ok) {
+            $info = $curl->get_info();
+
+            if (!$curl->get_errno() && !$curl->error) {
                 $chResp = str_replace("\r\n", "\n", $chResp);
                 $chRespSplit = explode("\n\n", $chResp, 2);
                 if ((count($chRespSplit) > 1) && (substr($chRespSplit[1], 0, 5) === 'HTTP/')) {
@@ -142,17 +147,20 @@ class HTTPMessage
                 }
                 $this->responseHeaders = $chRespSplit[0];
                 $resp = $chRespSplit[1];
-                $this->status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                $this->status = $info['http_code'];
                 $this->ok = $this->status < 400;
                 if (!$this->ok) {
-                    $this->error = curl_error($ch);
+                    $this->error = $curl->error;
                 }
+            } else {
+                $this->error = $curl->error;
+                $resp = $chResp;
             }
-            $this->requestHeaders = str_replace("\r\n", "\n", curl_getinfo($ch, CURLINFO_HEADER_OUT));
-            curl_close($ch);
+
             $this->response = $resp;
+            $this->requestHeaders = !empty($info['request_header']) ? str_replace("\r\n", "\n", $info['request_header']) : '';
         } else {
-// Try using fopen if curl was not available
+            // Try using fopen if curl was not available
             $opts = array('method' => $this->method,
                           'content' => $this->request
                          );

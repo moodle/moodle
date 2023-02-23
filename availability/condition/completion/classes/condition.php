@@ -145,7 +145,7 @@ class condition extends \core_availability\condition {
         } else {
             // The completion system caches its own data so no caching needed here.
             $completiondata = $completion->get_data((object)['id' => $cmid],
-                    $grabthelot, $userid, $modinfo);
+                    $grabthelot, $userid);
 
             $allow = true;
             if ($this->expectedcompletion == COMPLETION_COMPLETE) {
@@ -277,12 +277,12 @@ class condition extends \core_availability\condition {
                 if (!isset($sectionprevious[$othercm->section])) {
                     $sectionprevious[$othercm->section] = $lastcmid;
                 }
+                if ($lastcmid) {
+                    $this->modfastprevious[$othercm->id] = $lastcmid;
+                }
                 // Load previous to all cms with completion.
                 if ($othercm->completion == COMPLETION_TRACKING_NONE) {
                     continue;
-                }
-                if ($lastcmid) {
-                    $this->modfastprevious[$othercm->id] = $lastcmid;
                 }
                 $lastcmid = $othercm->id;
             }

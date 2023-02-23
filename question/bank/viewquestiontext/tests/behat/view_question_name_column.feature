@@ -22,14 +22,12 @@ Feature: Use the qbank plugin manager page for viewquestiontext
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I should see "View question text"
     When I click on "Disable" "link" in the "View question text" "table_row"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Test quiz" "mod_quiz > question bank" page
     And I should not see "Show question text in the question list"
     Then "#categoryquestions .questiontext" "css_element" should not be visible
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "View question text" "table_row"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Test quiz" "mod_quiz > question bank" page
     And I should see "Show question text in the question list"
     And I click on "qbshowtext" "checkbox"
     And I should see "Answer the first question"

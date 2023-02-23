@@ -14,6 +14,9 @@ Feature: Enable Block Badges on the dashboard and view awarded badges
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "blocks" exist:
+      | blockname  | contextlevel | reference | pagetypepattern | defaultregion |
+      | badges     | System       | 1         | my-index        | side-post     |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     # Issue badge 1 of 2
@@ -28,7 +31,7 @@ Feature: Enable Block Badges on the dashboard and view awarded badges
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Teacher 1 (teacher1@example.com)"
     And I press "Award badge"

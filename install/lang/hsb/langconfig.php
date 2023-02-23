@@ -29,4 +29,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thislanguage'] = 'Hornjoserbsski';
+$string['parentlanguage'] = '';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Hornjoserbsce';

@@ -37,11 +37,14 @@ if (!empty($device)) {
     $devices = core_useragent::get_device_type_list();
     if (!in_array($device, $devices)) {
         // The provided device isn't a valid device throw an error.
-        print_error('invaliddevicetype');
+        throw new \moodle_exception('invaliddevicetype');
     }
 }
 
 unset($SESSION->theme);
+
+$PAGE->set_primary_active_tab('siteadminnode');
+$PAGE->navbar->add(get_string('themeselector', 'admin'), $PAGE->url);
 
 if ($reset and confirm_sesskey()) {
     theme_reset_all_caches();

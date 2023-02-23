@@ -1,0 +1,160 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_courseformat/local/content/section/content
+
+    The internal content of a section.
+
+    Example context (json):
+    {
+        "num": 3,
+        "id": 35,
+        "controlmenu": "[tools menu]",
+        "header": {
+            "name": "Section title",
+            "title": "<a href=\"http://moodle/course/view.php?id=5#section-0\">Section title</a>",
+            "url": "#",
+            "ishidden": true
+        },
+        "cmlist": {
+            "cms": [
+                {
+                    "cmitem": {
+                        "cmformat": {
+                            "cmname": "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Forum example</span></a>",
+                            "hasname": "true"
+                        },
+                        "id": 3,
+                        "module": "forum",
+                        "anchor": "activity-3",
+                        "extraclasses": "newmessages"
+                    }
+                },
+                {
+                    "cmitem": {
+                        "cmformat": {
+                            "cmname": "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Assign example</span></a>",
+                            "hasname": "true"
+                        },
+                        "id": 4,
+                        "anchor": "activity-4",
+                        "module": "assign",
+                        "extraclasses": ""
+                    }
+                }
+            ],
+            "hascms": true
+        },
+        "ishidden": false,
+        "iscurrent": true,
+        "currentlink": "<span class=\"accesshide\">This topic</span>",
+        "availability": {
+            "info": "<span class=\"badge badge-info\">Hidden from students</span>",
+            "hasavailability": true
+        },
+        "summary": {
+            "summarytext": "Summary text!"
+        },
+        "controlmenu": {
+            "menu": "<a href=\"#\" class=\"d-inline-block dropdown-toggle icon-no-margin\">Edit<b class=\"caret\"></b></a>",
+            "hasmenu": true
+        },
+        "cmcontrols": "[Add an activity or resource]",
+        "iscoursedisplaymultipage": true,
+        "sectionreturnid": 0,
+        "contentcollapsed": false,
+        "insertafter": true,
+        "numsections": 42,
+        "sitehome": false,
+        "highlightedlabel" : "Highlighted"
+    }
+}}
+{{#singleheader}}
+{{$ core_courseformat/local/content/section/header }}
+    {{> core_courseformat/local/content/section/header }}
+{{/ core_courseformat/local/content/section/header }}
+{{/singleheader}}
+{{#header}}
+{{$ core_courseformat/local/content/section/header }}
+    {{> core_courseformat/local/content/section/header }}
+{{/ core_courseformat/local/content/section/header }}
+{{/header}}
+{{#restrictionlock}}
+    <div class="align-self-center ml-2">
+        {{#pix}}t/unlock, core{{/pix}}
+    </div>
+{{/restrictionlock}}
+<div data-region="sectionbadges" class="sectionbadges d-flex align-items-center">
+    {{$ core_courseformat/local/content/section/badges }}
+        {{> core_courseformat/local/content/section/badges }}
+    {{/ core_courseformat/local/content/section/badges }}
+</div>
+{{#collapsemenu}}
+<div class="flex-fill d-flex justify-content-end mr-2 align-self-start mt-2">
+    <a
+        id="collapsesections"
+        class="section-collapsemenu"
+        href="#"
+        aria-expanded="true"
+        role="button"
+        data-toggle="toggleall"
+    >
+        <span class="collapseall text-nowrap">{{#str}}collapseall{{/str}}</span>
+        <span class="expandall text-nowrap">{{#str}}expandall{{/str}}</span>
+    </a>
+    </div>
+{{/collapsemenu}}
+{{#controlmenu}}
+    {{$ core_courseformat/local/content/section/controlmenu }}
+        {{> core_courseformat/local/content/section/controlmenu }}
+    {{/ core_courseformat/local/content/section/controlmenu }}
+{{/controlmenu}}
+</div>
+<div id="coursecontentcollapse{{num}}"
+    class="content {{^iscoursedisplaymultipage}}
+        {{^sitehome}}course-content-item-content collapse {{^contentcollapsed}}show{{/contentcollapsed}}{{/sitehome}}
+    {{/iscoursedisplaymultipage}}">
+    <div class="{{#hasavailability}}description{{/hasavailability}} my-3" data-for="sectioninfo">
+    {{#summary}}
+        {{$ core_courseformat/local/content/section/summary }}
+            {{> core_courseformat/local/content/section/summary }}
+        {{/ core_courseformat/local/content/section/summary }}
+    {{/summary}}
+    {{#availability}}
+        {{$ core_courseformat/local/content/section/availability }}
+            {{> core_courseformat/local/content/section/availability }}
+        {{/ core_courseformat/local/content/section/availability }}
+    {{/availability}}
+</div>
+{{#cmsummary}}
+    {{$ core_courseformat/local/content/section/cmsummary }}
+        {{> core_courseformat/local/content/section/cmsummary }}
+    {{/ core_courseformat/local/content/section/cmsummary }}
+{{/cmsummary}}
+{{#cmlist}}
+    {{$ core_courseformat/local/content/section/cmlist }}
+        {{> core_courseformat/local/content/section/cmlist }}
+    {{/ core_courseformat/local/content/section/cmlist }}
+{{/cmlist}}
+{{{cmcontrols}}}
+{{#insertafter}}
+    {{#numsections}}
+        {{$ core_courseformat/local/content/addsection}}
+            {{> core_courseformat/local/content/addsection}}
+        {{/ core_courseformat/local/content/addsection}}
+    {{/numsections}}
+{{/insertafter}}

@@ -31,5 +31,14 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'j';
+$string['cliincorrectvalueerror'] = 'Kļūda, nepareiza vērtība "{$a->value}" opcijai "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'Nepareiza vērtība, lūdzu, mēģiniet vēlreiz';
+$string['clitypevalue'] = 'veida vērtība';
+$string['clitypevaluedefault'] = 'ierakstiet vērtību, nospiediet taustiņu Enter, lai izmantotu noklusējuma vērtību ({$a})';
+$string['cliunknowoption'] = 'Neatpazītas opcijas:
+   {$a}
+Lūdzu, izmantojiet opciju --help.';
+$string['cliyesnoprompt'] = 'ierakstiet y (nozīmē jā) vai n (nozīmē nē)';
 $string['environmentrequireinstall'] = 'nepieciešams instalēt/iespējot';
 $string['environmentrequireversion'] = 'nepieciešama versija {$a->needed}, bet jūs izmantojat versiju {$a->current}';
+$string['upgradekeyset'] = 'Jaunināšanas atslēga (lai to neiestatītu, atstājiet tukšu)';

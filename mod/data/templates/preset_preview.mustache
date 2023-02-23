@@ -1,0 +1,51 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_data/preset_preview
+
+    The preset preview.
+
+    Example context (json):
+    {
+        "formactionurl": "#",
+        "cmid": "42",
+        "description": "Preset description",
+        "preview": "<p>The preset preview HTML</p>",
+        "userid": "0",
+        "shortname": "imagegallery"
+    }
+}}
+<div id="template-preview" class="mt-4">
+    <div class="template-preview-content">
+    {{{preview}}}
+    </div>
+</div>
+{{< core/sticky_footer }}
+    {{$ stickycontent }}
+    <form method="post" action="{{formactionurl}}">
+        <input type="hidden" name="cmid" value="{{cmid}}">
+        <input type="hidden" name="mode" value="usepreset">
+        <input type="hidden" name="action" value="select">
+        <input type="hidden" name="fullname" value="{{userid}}/{{shortname}}">
+        <input type="submit" name="selectpreset" data-action="selectpreset" value="{{#str}}usepreset, mod_data{{/str}}" class="btn btn-primary"
+               data-cmid="{{cmid}}" data-presetname="{{userid}}/{{shortname}}">
+    </form>
+    {{/ stickycontent }}
+{{/ core/sticky_footer }}
+
+{{#js}}
+    require(['mod_data/importmappingdialogue'], function(importPreset) {
+        importPreset.init();
+    });
+{{/js}}

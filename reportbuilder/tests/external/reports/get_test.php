@@ -20,7 +20,7 @@ namespace core_reportbuilder\external\reports;
 
 use context_system;
 use core_reportbuilder_generator;
-use external_api;
+use core_external\external_api;
 use externallib_advanced_testcase;
 use core_reportbuilder\report_access_exception;
 use core_user\reportbuilder\datasource\users;
@@ -70,12 +70,19 @@ class get_test extends externallib_advanced_testcase {
         $this->assertNotEmpty($result['javascript']);
         $this->assertFalse($result['filterspresent']);
         $this->assertEmpty($result['filtersform']);
-        $this->assertEquals(1, $result['editmode']);
+        $this->assertTrue($result['editmode']);
+
+        // Confirm editor-specific data is returned.
+        $this->assertNotEmpty($result['sidebarmenucards']);
+        $this->assertNotEmpty($result['conditions']);
+        $this->assertNotEmpty($result['filters']);
         $this->assertTrue($result['filters']['hasavailablefilters']);
         $this->assertNotEmpty($result['filters']['availablefilters']);
         $this->assertTrue($result['filters']['hasactivefilters']);
         $this->assertEquals($filterfullname->get('id'), $result['filters']['activefilters'][0]['id']);
         $this->assertEquals($filteremail->get('id'), $result['filters']['activefilters'][1]['id']);
+        $this->assertNotEmpty($result['sorting']);
+        $this->assertNotEmpty($result['cardview']);
     }
 
     /**
@@ -108,11 +115,14 @@ class get_test extends externallib_advanced_testcase {
         $this->assertNotEmpty($result['javascript']);
         $this->assertTrue($result['filterspresent']);
         $this->assertNotEmpty($result['filtersform']);
-        $this->assertEquals(0, $result['editmode']);
-        $this->assertEmpty($result['filters']);
-        $this->assertEmpty($result['conditions']);
-        $this->assertEmpty($result['sorting']);
-        $this->assertEmpty($result['cardview']);
+        $this->assertFalse($result['editmode']);
+
+        // Confirm editor-specific data is not returned.
+        $this->assertArrayNotHasKey('sidebarmenucards', $result);
+        $this->assertArrayNotHasKey('conditions', $result);
+        $this->assertArrayNotHasKey('filters', $result);
+        $this->assertArrayNotHasKey('sorting', $result);
+        $this->assertArrayNotHasKey('cardview', $result);
     }
 
     /**

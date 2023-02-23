@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for the \core\task\backup_cleanup_task scheduled task.
- *
- * @package    core_backup
- * @copyright  2021 Mikhail Golenkov <mikhailgolenkov@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,10 +24,11 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 /**
  * Tests for the \core\task\backup_cleanup_task scheduled task.
  *
+ * @package    core_backup
  * @copyright  2021 Mikhail Golenkov <mikhailgolenkov@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_backup_cleanup_task_testcase extends advanced_testcase {
+class backup_cleanup_task_test extends \advanced_testcase {
 
     /**
      * Set up tasks for all tests.

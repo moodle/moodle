@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for /lib/classes/curl/curl_security_helper.php.
- *
- * @package   core
- * @copyright 2016 Jake Dallimore <jrhdallimore@gmail.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace core;
 
 /**
  * cURL security test suite.
@@ -34,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2016 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_curl_security_helper_testcase extends advanced_testcase {
+class curl_security_helper_test extends \advanced_testcase {
     /**
      * Test for \core\files\curl_security_helper::url_is_blocked().
      *
@@ -206,7 +198,7 @@ class core_curl_security_helper_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $helper = new \core\files\curl_security_helper();
         set_config('curlsecurityblockedhosts', $blockedhosts);
-        $this->assertEquals($expected, phpunit_util::call_internal_method($helper, 'host_is_blocked', [$host],
+        $this->assertEquals($expected, \phpunit_util::call_internal_method($helper, 'host_is_blocked', [$host],
                                                                           '\core\files\curl_security_helper'));
     }
 
@@ -260,7 +252,7 @@ class core_curl_security_helper_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $helper = new \core\files\curl_security_helper();
         set_config('curlsecurityallowedport', $allowedports);
-        $this->assertEquals($expected, phpunit_util::call_internal_method($helper, 'port_is_blocked', [$port],
+        $this->assertEquals($expected, \phpunit_util::call_internal_method($helper, 'port_is_blocked', [$port],
                                                                           '\core\files\curl_security_helper'));
     }
 

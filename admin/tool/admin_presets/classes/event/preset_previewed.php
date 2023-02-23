@@ -44,6 +44,6 @@ class preset_previewed extends base {
     protected function init(): void {
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;
-        $this->data['objecttable'] = 'tool_admin_presets';
+        $this->data['objecttable'] = 'adminpresets';
     }
 }

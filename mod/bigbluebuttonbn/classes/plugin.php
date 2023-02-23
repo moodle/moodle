@@ -65,4 +65,15 @@ abstract class plugin {
         } while ($unique == $password);
         return $password;
     }
+
+    /**
+     * Generate random credentials for guest access
+     *
+     * @return array
+     */
+    public static function generate_guest_meeting_credentials(): array {
+        $password = self::random_password();
+        $guestlinkuid = sha1(self::random_password(1024));
+        return [$guestlinkuid, $password];
+    }
 }

@@ -105,6 +105,12 @@ class user_filter_text extends user_filter_type {
             $fieldvalue = null;
             if (isset($formdata->$field)) {
                 $fieldvalue = $formdata->$field;
+
+                // If we aren't doing a whitespace comparison, an exact match, trim will give us a better result set.
+                $trimmed = trim($fieldvalue);
+                if ($trimmed !== '' && $formdata->$operator != 2) {
+                    $fieldvalue = $trimmed;
+                }
             }
             return array('operator' => (int)$formdata->$operator, 'value' => $fieldvalue);
         }

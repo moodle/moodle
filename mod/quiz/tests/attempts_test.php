@@ -14,14 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Quiz attempt overdue handling tests
- *
- * @package    mod_quiz
- * @category   phpunit
- * @copyright  2012 Matt Petro
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_quiz;
+
+use core_question_generator;
+use mod_quiz\task\update_overdue_attempts;
+use mod_quiz_generator;
+use question_engine;
+use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,23 +31,19 @@ require_once($CFG->dirroot.'/group/lib.php');
  * Unit tests for quiz attempt overdue handling
  *
  * @package    mod_quiz
- * @category   phpunit
+ * @category   test
  * @copyright  2012 Matt Petro
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_quiz_attempt_overdue_testcase extends advanced_testcase {
+class attempts_test extends \advanced_testcase {
 
     /**
      * Test the functions quiz_update_open_attempts(), get_list_of_overdue_attempts() and
      * update_overdue_attempts().
      */
     public function test_bulk_update_functions() {
-        global $DB,$CFG;
-
-        require_once($CFG->dirroot.'/mod/quiz/cronlib.php');
-
+        global $DB;
         $this->resetAfterTest();
-
         $this->setAdminUser();
 
         // Setup course, user and groups
@@ -393,7 +388,7 @@ class mod_quiz_attempt_overdue_testcase extends advanced_testcase {
         // Test get_list_of_overdue_attempts().
         //
 
-        $overduehander = new mod_quiz_overdue_attempt_updater();
+        $overduehander = new update_overdue_attempts();
 
         $attempts = $overduehander->get_list_of_overdue_attempts(100000); // way in the future
         $count = 0;
@@ -420,7 +415,7 @@ class mod_quiz_attempt_overdue_testcase extends advanced_testcase {
         // Test update_overdue_attempts().
         //
 
-        [$count, $quizcount] = $overduehander->update_overdue_attempts(1000, 940);
+        [$count, $quizcount] = $overduehander->update_all_overdue_attempts(1000, 940);
 
         $attempts = $DB->get_records('quiz_attempts', null, 'quiz, userid, attempt',
                 'id, quiz, userid, attempt, state, timestart, timefinish, timecheckstate');
@@ -458,12 +453,12 @@ class mod_quiz_attempt_overdue_testcase extends advanced_testcase {
      * question usage to store in uniqueid, but they don't have to be
      * very realistic.
      *
-     * @param stdClass $quiz
+     * @param \stdClass $quiz
      * @return int question usage id.
      */
-    protected function usage_id(stdClass $quiz): int {
+    protected function usage_id(\stdClass $quiz): int {
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz',
-                context_module::instance($quiz->cmid));
+                \context_module::instance($quiz->cmid));
         $quba->set_preferred_behaviour('deferredfeedback');
         question_engine::save_questions_usage_by_activity($quba);
         return $quba->get_id();
@@ -565,7 +560,7 @@ class mod_quiz_attempt_overdue_testcase extends advanced_testcase {
         // Add them to the quiz.
         quiz_add_quiz_question($saq->id, $quiz);
         quiz_add_quiz_question($numq->id, $quiz);
-        $quizobj = quiz::create($quiz->id, $user1->id);
+        $quizobj = quiz_settings::create($quiz->id, $user1->id);
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
         $timenow = time();
@@ -578,19 +573,19 @@ class mod_quiz_attempt_overdue_testcase extends advanced_testcase {
         try {
             $result = quiz_create_attempt_handling_errors($attempt->id, 9999);
             $this->fail('Exception expected due to invalid course module id.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('invalidcoursemodule', $e->errorcode);
         }
         try {
             quiz_create_attempt_handling_errors(9999, $result->get_cmid());
             $this->fail('Exception expected due to quiz content change.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('attempterrorcontentchange', $e->errorcode);
         }
         try {
             quiz_create_attempt_handling_errors(9999);
             $this->fail('Exception expected due to invalid quiz attempt id.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('attempterrorinvalid', $e->errorcode);
         }
         // Set up as normal user without permission to view preview.
@@ -598,13 +593,13 @@ class mod_quiz_attempt_overdue_testcase extends advanced_testcase {
         try {
             quiz_create_attempt_handling_errors(9999, $result->get_cmid());
             $this->fail('Exception expected due to quiz content change for user without permission.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('attempterrorcontentchangeforuser', $e->errorcode);
         }
         try {
             quiz_create_attempt_handling_errors($attempt->id, 9999);
             $this->fail('Exception expected due to invalid course module id for user without permission.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('invalidcoursemodule', $e->errorcode);
         }
     }

@@ -23,6 +23,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core_notes;
+
+use core_external\external_api;
+use core_notes_external;
+use externallib_advanced_testcase;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -30,7 +36,7 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/notes/externallib.php');
 
-class core_notes_externallib_testcase extends externallib_advanced_testcase {
+class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Test create_notes
@@ -44,7 +50,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $course = self::getDataGenerator()->create_course();
 
         // Set the required capabilities by the external function.
-        $contextid = context_course::instance($course->id)->id;
+        $contextid = \context_course::instance($course->id)->id;
         $roleid = $this->assignUserCapability('moodle/notes:manage', $contextid);
         $this->assignUserCapability('moodle/course:view', $contextid, $roleid);
 
@@ -72,7 +78,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/notes:manage', $contextid, $roleid);
-        $this->expectException('required_capability_exception');
+        $this->expectException('\required_capability_exception');
         $creatednotes = core_notes_external::create_notes($notes);
     }
 
@@ -85,7 +91,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $course = self::getDataGenerator()->create_course();
 
         // Set the required capabilities by the external function.
-        $contextid = context_course::instance($course->id)->id;
+        $contextid = \context_course::instance($course->id)->id;
         $roleid = $this->assignUserCapability('moodle/notes:manage', $contextid);
         $this->assignUserCapability('moodle/course:view', $contextid, $roleid);
 
@@ -123,7 +129,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $dnotes3 = array($creatednotes[0]['noteid']);
 
         $this->unassignUserCapability('moodle/notes:manage', $contextid, $roleid);
-        $this->expectException('required_capability_exception');
+        $this->expectException('\required_capability_exception');
         $deletednotes = core_notes_external::delete_notes($dnotes3);
         $deletednotes = external_api::clean_returnvalue(core_notes_external::delete_notes_returns(), $deletednotes);
     }
@@ -137,7 +143,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $course = self::getDataGenerator()->create_course();
 
         // Set the required capabilities by the external function.
-        $contextid = context_course::instance($course->id)->id;
+        $contextid = \context_course::instance($course->id)->id;
         $roleid = $this->assignUserCapability('moodle/notes:manage', $contextid);
         $this->assignUserCapability('moodle/notes:view', $contextid, $roleid);
         $this->assignUserCapability('moodle/course:view', $contextid, $roleid);
@@ -178,7 +184,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/notes:view', $contextid, $roleid);
-        $this->expectException('required_capability_exception');
+        $this->expectException('\required_capability_exception');
         $creatednotes = core_notes_external::get_notes($gnotes);
     }
 
@@ -191,7 +197,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $course = self::getDataGenerator()->create_course();
 
         // Set the required capabilities by the external function.
-        $contextid = context_course::instance($course->id)->id;
+        $contextid = \context_course::instance($course->id)->id;
         $roleid = $this->assignUserCapability('moodle/notes:manage', $contextid);
         $this->assignUserCapability('moodle/course:view', $contextid, $roleid);
 
@@ -234,7 +240,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $creatednotes = core_notes_external::create_notes($notes1);
         $creatednotes = external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes);
         $this->unassignUserCapability('moodle/notes:manage', $contextid, $roleid);
-        $this->expectException('required_capability_exception');
+        $this->expectException('\required_capability_exception');
         $note2 = array();
         $note2["id"] = $creatednotes[0]['noteid'];
         $note2['publishstate'] = 'personal';
@@ -324,7 +330,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         try {
             $result = core_notes_external::get_course_notes($course2->id, $student1->id);
             $this->fail('the user is not enrolled in the course');
-        } catch (require_login_exception $e) {
+        } catch (\require_login_exception $e) {
             $this->assertEquals('requireloginerror', $e->errorcode);
         }
 
@@ -420,7 +426,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $student = $this->getDataGenerator()->create_user();
         $teacher = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
 
         // Enroll students and teachers to course.
         $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
@@ -458,14 +464,14 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         try {
             core_notes_external::view_notes(0);
             $this->fail('Exception expected due to invalid permissions at system level.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
 
         try {
             core_notes_external::view_notes($course->id, $student->id + 100);
             $this->fail('Exception expected due to invalid user id.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('invaliduser', $e->errorcode);
         }
     }

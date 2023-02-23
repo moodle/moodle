@@ -30,8 +30,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/questionlib.php');
 
-define('DEFAULT_QUESTIONS_PER_PAGE', 20);
-define('MAXIMUM_QUESTIONS_PER_PAGE', 1000);
+define('DEFAULT_QUESTIONS_PER_PAGE', 100);
+define('MAXIMUM_QUESTIONS_PER_PAGE', 4000);
 
 function get_module_from_cmid($cmid) {
     global $CFG, $DB;
@@ -40,9 +40,9 @@ function get_module_from_cmid($cmid) {
                                     {modules} md
                                WHERE cm.id = ? AND
                                      md.id = cm.module", array($cmid))){
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     } elseif (!$modrec =$DB->get_record($cmrec->modname, array('id' => $cmrec->instance))) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
     $modrec->instance = $modrec->id;
     $modrec->cmid = $cmrec->id;
@@ -50,40 +50,60 @@ function get_module_from_cmid($cmid) {
 
     return array($modrec, $cmrec);
 }
+
 /**
-* Function to read all questions for category into big array
-*
-* @param int $category category number
-* @param bool $noparent if true only questions with NO parent will be selected
-* @param bool $recurse include subdirectories
-* @param bool $export set true if this is called by questionbank export
-*/
-function get_questions_category( $category, $noparent=false, $recurse=true, $export=true ) {
+ * Function to read all questions for category into big array
+ *
+ * @param object $category category number
+ * @param bool $noparent if true only questions with NO parent will be selected
+ * @param bool $recurse include subdirectories
+ * @param bool $export set true if this is called by questionbank export
+ * @param bool $latestversion if only the latest versions needed
+ * @return array
+ */
+function get_questions_category(object $category, bool $noparent, bool $recurse = true, bool $export = true,
+        bool $latestversion = false): array {
     global $DB;
 
-    // Build sql bit for $noparent
+    // Build sql bit for $noparent.
     $npsql = '';
     if ($noparent) {
-      $npsql = " and parent='0' ";
+        $npsql = " and q.parent='0' ";
     }
 
-    // Get list of categories
+    // Get list of categories.
     if ($recurse) {
         $categorylist = question_categorylist($category->id);
     } else {
-        $categorylist = array($category->id);
+        $categorylist = [$category->id];
     }
 
-    // Get the list of questions for the category
+    // Get the list of questions for the category.
     list($usql, $params) = $DB->get_in_or_equal($categorylist);
-    $questions = $DB->get_records_select('question', "category {$usql} {$npsql}", $params, 'category, qtype, name');
 
-    // Iterate through questions, getting stuff we need
-    $qresults = array();
+    // Get the latest version of a question.
+    $version = '';
+    if ($latestversion) {
+        $version = 'AND (qv.version = (SELECT MAX(v.version)
+                                         FROM {question_versions} v
+                                         JOIN {question_bank_entries} be
+                                           ON be.id = v.questionbankentryid
+                                        WHERE be.id = qbe.id) OR qv.version is null)';
+    }
+    $questions = $DB->get_records_sql("SELECT q.*, qv.status, qc.id AS category
+                                         FROM {question} q
+                                         JOIN {question_versions} qv ON qv.questionid = q.id
+                                         JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                                         JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                                        WHERE qc.id {$usql} {$npsql} {$version}
+                                     ORDER BY qc.id, q.qtype, q.name", $params);
+
+    // Iterate through questions, getting stuff we need.
+    $qresults = [];
     foreach($questions as $key => $question) {
         $question->export_process = $export;
         $qtype = question_bank::get_qtype($question->qtype, false);
-        if ($export && $qtype->name() == 'missingtype') {
+        if ($export && $qtype->name() === 'missingtype') {
             // Unrecognised question type. Skip this question when exporting.
             continue;
         }
@@ -232,10 +252,12 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
  * @param string $edittab Code for this edit tab
  * @param string $baseurl The name of the script calling this funciton. For examle 'qusetion/edit.php'.
  * @param array $params The provided parameters to construct the resources with.
+ * @param int $defaultquestionsperpage number of questions per page, if not given in the URL.
  * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
  */
-function question_build_edit_resources($edittab, $baseurl, $params) {
-    global $DB, $PAGE, $CFG;
+function question_build_edit_resources($edittab, $baseurl, $params,
+        $defaultquestionsperpage = DEFAULT_QUESTIONS_PER_PAGE) {
+    global $DB;
 
     $thispageurl = new moodle_url($baseurl);
     $thispageurl->remove_all_params(); // We are going to explicity add back everything important - this avoids unwanted params from being retained.
@@ -307,7 +329,7 @@ function question_build_edit_resources($edittab, $baseurl, $params) {
     }
 
     if ($thiscontext){
-        $contexts = new question_edit_contexts($thiscontext);
+        $contexts = new core_question\local\bank\question_edit_contexts($thiscontext);
         $contexts->require_one_edit_tab_cap($edittab);
     } else {
         $contexts = null;
@@ -352,8 +374,12 @@ function question_build_edit_resources($edittab, $baseurl, $params) {
         $pagevars['qpage'] = 0;
     }
 
-    $pagevars['qperpage'] = question_set_or_get_user_preference(
-            'qperpage', $qperpage, DEFAULT_QUESTIONS_PER_PAGE, $thispageurl);
+    if ($defaultquestionsperpage == DEFAULT_QUESTIONS_PER_PAGE) {
+        $pagevars['qperpage'] = question_set_or_get_user_preference(
+                'qperpage', $qperpage, DEFAULT_QUESTIONS_PER_PAGE, $thispageurl);
+    } else {
+        $pagevars['qperpage'] = $qperpage ?? $defaultquestionsperpage;
+    }
 
     $defaultcategory = question_make_default_categories($contexts->all());
 
@@ -366,7 +392,7 @@ function question_build_edit_resources($edittab, $baseurl, $params) {
         $catparts = explode(',', $pagevars['cat']);
         if (!$catparts[0] || (false !== array_search($catparts[1], $contextlistarr)) ||
                 !$DB->count_records_select("question_categories", "id = ? AND contextid = ?", array($catparts[0], $catparts[1]))) {
-            print_error('invalidcategory', 'question');
+            throw new \moodle_exception('invalidcategory', 'question');
         }
     } else {
         $category = $defaultcategory;
@@ -466,12 +492,12 @@ function require_login_in_context($contextorid = null){
     } else if ($context && ($context->contextlevel == CONTEXT_MODULE)) {
         if ($cm = $DB->get_record('course_modules',array('id' =>$context->instanceid))) {
             if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-                print_error('invalidcourseid');
+                throw new \moodle_exception('invalidcourseid');
             }
             require_course_login($course, true, $cm);
 
         } else {
-            print_error('invalidcoursemodule');
+            throw new \moodle_exception('invalidcoursemodule');
         }
     } else if ($context && ($context->contextlevel == CONTEXT_SYSTEM)) {
         if (!empty($CFG->forcelogin)) {

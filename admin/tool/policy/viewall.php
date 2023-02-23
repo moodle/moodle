@@ -31,8 +31,8 @@ use tool_policy\output\page_viewalldoc;
 // Do not check for the site policies in require_login() to avoid the redirect loop.
 define('NO_SITEPOLICY_CHECK', true);
 
-// @codingStandardsIgnoreLine See the {@link page_viewalldoc} for the access control checks.
-require(__DIR__.'/../../../config.php');
+// See the {@see page_viewalldoc} for the access control checks.
+require(__DIR__.'/../../../config.php'); // phpcs:ignore
 
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL); // A return URL.
 

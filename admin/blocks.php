@@ -69,13 +69,20 @@
     echo $OUTPUT->header();
     echo $OUTPUT->heading($strmanageblocks);
 
+    echo $OUTPUT->notification(get_string('noteunneededblocks', 'admin'), 'info');
 /// Main display starts here
 
-/// Get and sort the existing blocks
+// Get & sort the existing blocks, Select the id, name & visible fields along with count of number of total blocks & course blocks.
 
-    if (!$blocks = $DB->get_records('block', array(), 'name ASC')) {
-        print_error('noblocks', 'error');  // Should never happen
-    }
+$sql = "SELECT b.id, b.name, b.visible, COUNT(DISTINCT binst.id) as totalcount, COUNT(DISTINCT bcinst.id) as courseviewcount
+          FROM {block} b
+     LEFT JOIN {block_instances} binst ON binst.blockname = b.name
+     LEFT JOIN {block_instances} bcinst ON bcinst.blockname = b.name AND bcinst.pagetypepattern = 'course-view-*'
+      GROUP BY b.id, b.name, b.visible, binst.blockname, bcinst.blockname
+      ORDER BY b.name ASC";
+if (!$blocks = $DB->get_records_sql($sql)) {
+    throw new \moodle_exception('noblocks', 'error');  // Should never happen.
+}
 
     $incompatible = array();
 
@@ -153,9 +160,8 @@
         // MDL-11167, blocks can be placed on mymoodle, or the blogs page
         // and it should not show up on course search page
 
-        $totalcount = $DB->count_records('block_instances', array('blockname'=>$blockname));
-        $count = $DB->count_records('block_instances', array('blockname'=>$blockname, 'pagetypepattern'=>'course-view-*'));
-
+        $totalcount = $blocks[$blockid]->totalcount;
+        $count = $blocks[$blockid]->courseviewcount;
         if ($count>0) {
             $blocklist = "<a href=\"{$CFG->wwwroot}/course/search.php?blocklist=$blockid&amp;sesskey=".sesskey()."\" ";
             $blocklist .= "title=\"$strshowblockcourse\" >$totalcount</a>";

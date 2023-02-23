@@ -51,7 +51,7 @@ defined('MOODLE_INTERNAL') || die;
 /**
  * List of features supported in URL module
  * @param string $feature FEATURE_xx constant for requested feature
- * @return mixed True if module supports feature, false if not, null if doesn't know
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function lti_supports($feature) {
     switch ($feature) {
@@ -65,6 +65,8 @@ function lti_supports($feature) {
         case FEATURE_BACKUP_MOODLE2:
         case FEATURE_SHOW_DESCRIPTION:
             return true;
+        case FEATURE_MOD_PURPOSE:
+            return MOD_PURPOSE_CONTENT;
 
         default:
             return null;
@@ -224,39 +226,6 @@ function lti_delete_instance($id) {
 }
 
 /**
- * Return aliases of this activity. LTI should have an alias for each configured tool type
- * This is so you can add an external tool types directly to the activity chooser
- *
- * @deprecated since 3.9
- * @todo MDL-68011 This is to be moved from here to deprecatedlib.php in Moodle 4.1
- * @param stdClass $defaultitem default item that would be added to the activity chooser if this callback was not present.
- *     It has properties: archetype, name, title, help, icon, link
- * @return array An array of aliases for this activity. Each element is an object with same list of properties as $defaultitem,
- *     plus an additional property, helplink.
- *     Properties title and link are required
- **/
-function lti_get_shortcuts($defaultitem) {
-    global $CFG, $COURSE;
-    require_once($CFG->dirroot.'/mod/lti/locallib.php');
-
-    $types = lti_get_configured_types($COURSE->id, $defaultitem->link->param('sr'));
-    if (has_capability('mod/lti:addmanualinstance', context_course::instance($COURSE->id))) {
-        $types[] = $defaultitem;
-    }
-
-    // Add items defined in ltisource plugins.
-    foreach (core_component::get_plugin_list('ltisource') as $pluginname => $dir) {
-        // LTISOURCE plugins can also implement callback get_shortcuts() to add items to the activity chooser.
-        // The return values are the same as of the 'mod' callbacks except that $defaultitem is only passed for reference and
-        // should not be added to the return value.
-        if ($moretypes = component_callback("ltisource_$pluginname", 'get_shortcuts', array($defaultitem))) {
-            $types = array_merge($types, $moretypes);
-        }
-    }
-    return $types;
-}
-
-/**
  * Return the preconfigured tools which are configured for inclusion in the activity picker.
  *
  * @param \core_course\local\entity\content_item $defaultmodulecontentitem reference to the content item for the LTI module.
@@ -281,7 +250,8 @@ function lti_get_course_content_items(\core_course\local\entity\content_item $de
             $defaultmodulecontentitem->get_icon(),
             $defaultmodulecontentitem->get_help(),
             $defaultmodulecontentitem->get_archetype(),
-            $defaultmodulecontentitem->get_component_name()
+            $defaultmodulecontentitem->get_component_name(),
+            $defaultmodulecontentitem->get_purpose()
         )];
     }
 
@@ -308,7 +278,8 @@ function lti_get_course_content_items(\core_course\local\entity\content_item $de
             $preconfiguredtool->icon,
             $preconfiguredtool->help,
             $defaultmodulecontentitem->get_archetype(),
-            $defaultmodulecontentitem->get_component_name()
+            $defaultmodulecontentitem->get_component_name(),
+            $defaultmodulecontentitem->get_purpose()
         );
     }
     return $types;
@@ -333,7 +304,8 @@ function mod_lti_get_all_content_items(\core_course\local\entity\content_item $d
         $defaultmodulecontentitem->get_icon(),
         $defaultmodulecontentitem->get_help(),
         $defaultmodulecontentitem->get_archetype(),
-        $defaultmodulecontentitem->get_component_name()
+        $defaultmodulecontentitem->get_component_name(),
+        $defaultmodulecontentitem->get_purpose()
     )];
 
     foreach (lti_get_lti_types() as $ltitype) {
@@ -346,7 +318,7 @@ function mod_lti_get_all_content_items(\core_course\local\entity\content_item $d
         $type->name     = 'lti_type_' . $ltitype->id;
         // Clean the name. We don't want tags here.
         $type->title    = clean_param($ltitype->name, PARAM_NOTAGS);
-        $trimmeddescription = trim($ltitype->description);
+        $trimmeddescription = trim($ltitype->description ?? '');
         $type->help = '';
         if ($trimmeddescription != '') {
             // Clean the description. We don't want tags here.
@@ -354,7 +326,7 @@ function mod_lti_get_all_content_items(\core_course\local\entity\content_item $d
             $type->helplink = get_string('modulename_shortcut_link', 'lti');
         }
         if (empty($ltitype->icon)) {
-            $type->icon = $OUTPUT->pix_icon('icon', '', 'lti', array('class' => 'icon'));
+            $type->icon = $OUTPUT->pix_icon('monologo', '', 'lti', array('class' => 'icon'));
         } else {
             $type->icon = html_writer::empty_tag('img', array('src' => $ltitype->icon, 'alt' => $ltitype->name, 'class' => 'icon'));
         }
@@ -368,7 +340,8 @@ function mod_lti_get_all_content_items(\core_course\local\entity\content_item $d
             $type->icon,
             $type->help,
             $defaultmodulecontentitem->get_archetype(),
-            $defaultmodulecontentitem->get_component_name()
+            $defaultmodulecontentitem->get_component_name(),
+            $defaultmodulecontentitem->get_purpose()
         );
     }
 

@@ -14,16 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests that walks a question through the immediate cbm
- * behaviour.
- *
- * @package    qbehaviour
- * @subpackage immediatecbm
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qbehaviour_immediatecbm;
 
+use question_cbm;
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,14 +29,15 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
 /**
  * Unit tests for the immediate cbm behaviour.
  *
+ * @package    qbehaviour_immediatecbm
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class walkthrough_test extends \qbehaviour_walkthrough_test_base {
     public function test_immediatecbm_feedback_multichoice_right() {
 
         // Create a true-false question with correct answer true.
-        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc = \test_question_maker::make_a_multichoice_single_question();
         $this->start_attempt_at_question($mc, 'immediatecbm');
 
         $rightindex = $this->get_mc_right_answer_index($mc);
@@ -116,7 +111,7 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
         $this->check_current_mark(0.5);
         $this->check_current_output(
                 $this->get_contains_partcorrect_expectation(),
-                new question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
+                new \question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
 
         // Now change the correct answer to the question, and regrade.
         $mc->answers[13]->fraction = -0.33333333;
@@ -136,7 +131,7 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
     public function test_immediatecbm_feedback_multichoice_try_to_submit_blank() {
 
         // Create a true-false question with correct answer true.
-        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc = \test_question_maker::make_a_multichoice_single_question();
         $this->start_attempt_at_question($mc, 'immediatecbm');
 
         // Check the initial state.
@@ -183,13 +178,13 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
         $this->check_current_mark(0.5);
         $this->check_current_output(
                 $this->get_contains_partcorrect_expectation(),
-                new question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
+                new \question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
     }
 
     public function test_immediatecbm_feedback_shortanswer_try_to_submit_no_certainty() {
 
         // Create a short answer question with correct answer true.
-        $sa = test_question_maker::make_question('shortanswer');
+        $sa = \test_question_maker::make_question('shortanswer');
         $this->start_attempt_at_question($sa, 'immediatecbm');
 
         // Check the initial state.
@@ -223,7 +218,7 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
     public function test_immediatecbm_feedback_multichoice_wrong_on_finish() {
 
         // Create a true-false question with correct answer true.
-        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc = \test_question_maker::make_a_multichoice_single_question();
         $this->start_attempt_at_question($mc, 'immediatecbm');
 
         // Check the initial state.
@@ -269,7 +264,7 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
     public function test_immediatecbm_cbm_truefalse_no_certainty_feedback_when_not_answered() {
 
         // Create a true-false question with correct answer true.
-        $tf = test_question_maker::make_question('truefalse', 'true');
+        $tf = \test_question_maker::make_question('truefalse', 'true');
         $this->start_attempt_at_question($tf, 'immediatecbm', 2);
 
         // Verify.
@@ -287,6 +282,6 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
         $this->check_current_state(question_state::$gaveup);
         $this->check_current_mark(null);
         $this->check_current_output(
-                new question_no_pattern_expectation('/class=\"im-feedback/'));
+                new \question_no_pattern_expectation('/class=\"im-feedback/'));
     }
 }

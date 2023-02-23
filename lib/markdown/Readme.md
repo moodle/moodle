@@ -1,7 +1,7 @@
 PHP Markdown
 ============
 
-PHP Markdown Lib 1.9.0 - 1 Dec 2019
+![ci.yml](https://github.com/michelf/php-markdown/actions/workflows/ci.yml/badge.svg)
 
 by Michel Fortin  
 <https://michelf.ca/>
@@ -34,15 +34,14 @@ program by John Gruber.
 Requirement
 -----------
 
-This library package requires PHP 5.3 or later.
+This library package requires PHP 7.4 or later.
 
 Note: The older plugin/library hybrid package for PHP Markdown and
 PHP Markdown Extra is no longer maintained but will work with PHP 4.0.5 and
 later.
 
-Before PHP 5.3.7, pcre.backtrack_limit defaults to 100 000, which is too small
-in many situations. You might need to set it to higher values. Later PHP
-releases defaults to 1 000 000, which is usually fine.
+You might need to set pcre.backtrack_limit higher than 1 000 000 
+(the default), though the default is usually fine.
 
 
 Usage
@@ -182,6 +181,31 @@ PHP Markdown, please visit [michelf.ca/donate].
 
 Version History
 ---------------
+
+PHP Markdown Lib 2.0.0 (26 Sep 2022)
+
+*	Now requiring PHP version 7.4 or later.
+
+*	Added type annotations to configuration properties of the parser.
+	(Thanks to Tac Tacelosky.)
+
+*	Fixing a TypeError in PHP 8 caused by invalid counter variable.
+	(Thanks to Alexey Kopytko.)
+	
+*	Composer package now excludes development files.
+	(Thanks to Cédric Anne.)
+	
+
+PHP Markdown Lib 1.9.1 (23 Nov 2021)
+
+*	Now treating `<details>` and `<summary>` as block level so they don't
+	get wrapped in `<p>`.
+	(Thanks to Thomas Hochstein for the fix.)
+
+*	Fix for unintended blank title attribute when adding supplementary attributes
+	to a link in Markdown Extra.
+	(Thanks to Richie Black for the fix.)
+
 
 PHP Markdown Lib 1.9.0 (1 Dec 2019)
 
@@ -399,7 +423,7 @@ Copyright and License
 ---------------------
 
 PHP Markdown Lib
-Copyright (c) 2004-2019 Michel Fortin
+Copyright (c) 2004-2022 Michel Fortin
 <https://michelf.ca/>  
 All rights reserved.
 

@@ -182,7 +182,7 @@ abstract class qtype_gapselect_base extends question_type {
         // Break up the question text, and store the fragments, places and right answers.
 
         $bits = preg_split('/\[\[(\d+)]]/', $question->questiontext,
-                null, PREG_SPLIT_DELIM_CAPTURE);
+                -1, PREG_SPLIT_DELIM_CAPTURE);
         $question->textfragments[0] = array_shift($bits);
         $i = 1;
 

@@ -12,10 +12,12 @@ Feature: View activity completion information in the folder activity
     And the following "courses" exist:
       | fullname | shortname | enablecompletion | showcompletionconditions |
       | Course 1 | C1        | 1                | 1                        |
+      | Course 2 | C2        | 1                | 0                        |
     And the following "course enrolments" exist:
       | user | course | role           |
       | student1 | C1 | student        |
       | teacher1 | C1 | editingteacher |
+      | student1 | C2 | student        |
 
   Scenario: View automatic completion items
     Given the following "activity" exists:
@@ -50,5 +52,21 @@ Feature: View activity completion information in the folder activity
     # Student view.
     When I am on the "Music history" "folder activity" page logged in as student1
     Then the manual completion button of "Music history" is displayed as "Mark as done"
+    And I toggle the manual completion state of "Music history"
+    And the manual completion button of "Music history" is displayed as "Done"
+
+  @javascript
+  Scenario: The manual completion button will be shown on the course page for Inline on a course page display mode
+    Given the following "activity" exists:
+      | activity   | folder        |
+      | course     | C2            |
+      | idnumber   | mh2           |
+      | name       | Music history |
+      | section    | 1             |
+      | completion | 1             |
+      | display    | 1             |
+    When I am on the "Course 2" course page logged in as student1
+    Then the manual completion button for "Music history" should exist
+    And the manual completion button of "Music history" is displayed as "Mark as done"
     And I toggle the manual completion state of "Music history"
     And the manual completion button of "Music history" is displayed as "Done"

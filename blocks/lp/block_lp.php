@@ -81,4 +81,13 @@ class block_lp extends block_base {
         return $this->content;
     }
 
+    /**
+     * This block shouldn't be added to a page if the competencies advanced feature is disabled.
+     *
+     * @param moodle_page $page
+     * @return bool
+     */
+    public function can_block_be_added(moodle_page $page): bool {
+        return get_config('core_competency', 'enabled');
+    }
 }

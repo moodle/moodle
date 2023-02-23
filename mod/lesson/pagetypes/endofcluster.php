@@ -138,7 +138,7 @@ class lesson_add_page_form_endofcluster extends lesson_add_page_form_base {
 
         // the new page is not the first page (end of cluster always comes after an existing page)
         if (!$page = $DB->get_record("lesson_pages", array("id" => $pageid))) {
-            print_error('cannotfindpages', 'lesson');
+            throw new \moodle_exception('cannotfindpages', 'lesson');
         }
 
         // could put code in here to check if the user really can insert an end of cluster

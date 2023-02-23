@@ -1,6 +1,49 @@
 This files describes API changes in /mod/data - plugins,
 information provided here is intended especially for developers.
 
+== 4.2 ==
+* The field base class now has a method validate(). Overwrite it in the field type to provide validation of field type's
+  parameters in the field add/modify form.
+* New tags are added to the current mod_data\templates class: ##otherfields##, [[FIELD#name]],
+  and [[FIELD#description]].
+* The mod_data\template class can provide preprocessor methods to optimize some tags. From now on,
+  when load_template_tags detects a tag, it will call a "preprocess_tag_TAGNAME" method if it exists.
+  This preprocessing can be used, for example, to precalculate some content. Currently, this preprocessor
+  is used to detect which fields needs to be renderer when a ##otherfields## is used.
+
+=== 4.1 ===
+* The method data_view is now deprecated. Use $maganer->set_module_viewed instead.
+* The data_print_template function is now deprecated and replaced by mod_data\template class.
+* The data_print_ratings function now has an extra $print to get the ratings output instead of printing it directly.
+* The following functions have been deprecated because they have been moved to the manager class:
+  - data_get_available_presets
+  - data_get_available_site_presets
+  - data_preset_name
+  - data_presets_export
+  - data_presets_generate_xml
+  - data_presets_save
+  - is_directory_a_preset
+* mod_data_external::add_entry() function throws an error when trying to add an entry to a database with no field created.
+* data_user_can_add_entry() function returns false for any user if there is no field created on the database.
+* From now on, the data_generate_default_template method will always return a string with the template content or an empty
+  string when there is no content available.
+* The following classes have been deprecated from lib.php because they have been moved to use manager class:
+  - data_preset_importer
+  - data_preset_existing_importer
+  - data_preset_upload_importer
+* import_setting_mappings() function has been deprecated. Use importing_preset() instead.
+* $fieldselect single_select type parameter has been deprecated for fields_action_bar class constructor, and a new action_menu
+  type parameter has been added.
+* The $urlselect, $saveaspresetbutton and $exportpresetbutton parameters in the constructor of the fields_action_bar class
+have been deprecated too and are not used anymore.
+* The $saveaspresetbutton and $exportpresetbutton parameters in the constructor of the templates_action_bar class
+have been deprecated and are not used anymore. Besides, a new parameter, $actionsselect, has been added to the
+constructor of this class.
+* A new parameter, $actionsselect, has been added to the presets_action_bar constructor.
+* A new parameter, $mode, has been added to the view_action_bar constructor.
+* The $hassaveaspreset and $haveexportpreset parameters in the get_fields_action_bar() action_bar class have been deprecated and
+are not used anymore.
+
 === 3.7 ===
 * External functions get_entries, get_entry and search_entries now return an additional field "tags" containing the entry tags.
 

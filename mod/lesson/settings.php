@@ -125,7 +125,7 @@ if ($ADMIN->fulltree) {
         get_string('displayreview', 'lesson'), get_string('displayreview_help', 'lesson'),
         array('value' => 0, 'adv' => false), $yesno));
 
-    $attempts = array();
+    $attempts = ['0' => get_string('unlimited')];
     for ($i = 10; $i > 0; $i--) {
         $attempts[$i] = $i;
     }

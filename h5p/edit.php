@@ -86,6 +86,7 @@ $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($pagetitle);
+$PAGE->set_pagelayout('course');
 
 $values = [
     'id' => $contentid,

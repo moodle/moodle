@@ -24,13 +24,14 @@
 
 namespace core_courseformat\output\local\content\section;
 
-use core_courseformat\base as course_format;
-use section_info;
-use renderable;
-use templatable;
-use core_availability\info_section;
-use core_availability\info;
 use context_course;
+use core\output\named_templatable;
+use core_availability\info;
+use core_availability\info_section;
+use core_courseformat\base as course_format;
+use core_courseformat\output\local\courseformat_named_templatable;
+use renderable;
+use section_info;
 use stdClass;
 
 /**
@@ -40,13 +41,21 @@ use stdClass;
  * @copyright 2020 Ferran Recio <ferran@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class availability implements renderable, templatable {
+class availability implements named_templatable, renderable {
+
+    use courseformat_named_templatable;
 
     /** @var course_format the course format class */
     protected $format;
 
     /** @var section_info the section object */
     protected $section;
+
+    /** @var string the has availability attribute name */
+    protected $hasavailabilityname;
+
+    /** @var stdClass|null the instance export data */
+    protected $data = null;
 
     /**
      * Constructor.
@@ -57,6 +66,7 @@ class availability implements renderable, templatable {
     public function __construct(course_format $format, section_info $section) {
         $this->format = $format;
         $this->section = $section;
+        $this->hasavailabilityname = 'hasavailability';
     }
 
     /**
@@ -66,16 +76,40 @@ class availability implements renderable, templatable {
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): stdClass {
+        $this->build_export_data($output);
+        return $this->data;
+    }
+
+    /**
+     * Returns if the output has availability info to display.
+     *
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @return bool if the element has availability data to display
+     */
+    public function has_availability(\renderer_base $output): bool {
+        $this->build_export_data($output);
+        $attributename = $this->hasavailabilityname;
+        return $this->data->$attributename;
+    }
+
+    /**
+     * Protected method to build the export data.
+     *
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     */
+    protected function build_export_data(\renderer_base $output) {
+        if (!empty($this->data)) {
+            return;
+        }
 
         $data = (object)[
             'info' => $this->get_info($output),
         ];
 
-        if (!empty($data->info)) {
-            $data->hasavailability = true;
-        }
+        $attributename = $this->hasavailabilityname;
+        $data->$attributename = !empty($data->info);
 
-        return $data;
+        $this->data = $data;
     }
 
     /**

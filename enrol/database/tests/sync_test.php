@@ -14,25 +14,37 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace enrol_database;
+
 /**
- * External database enrolment sync tests, this also tests adodb drivers
- * that are matching our four supported Moodle database drivers.
+ * External database enrolment sync tests
+ *
+ * This also tests adodb drivers that are matching
+ * our four supported Moodle database drivers.
  *
  * @package    enrol_database
- * @category   phpunit
+ * @category   test
  * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-class enrol_database_testcase extends advanced_testcase {
+class sync_test extends \advanced_testcase {
     protected static $courses = array();
     protected static $users = array();
     protected static $roles = array();
 
     /** @var string Original error log */
     protected $oldlog;
+
+    public static function tearDownAfterClass(): void {
+        global $DB;
+        // Apply sqlsrv native driver error and logging default
+        // settings while finishing the AdoDB tests.
+        if ($DB->get_dbfamily() === 'mssql') {
+            sqlsrv_configure("WarningsReturnAsErrors", false);
+            sqlsrv_configure("LogSubsystems", SQLSRV_LOG_SYSTEM_OFF);
+            sqlsrv_configure("LogSeverity", SQLSRV_LOG_SEVERITY_ERROR);
+        }
+    }
 
     protected function init_enrol_database() {
         global $DB, $CFG;
@@ -115,7 +127,7 @@ class enrol_database_testcase extends advanced_testcase {
         //       but there is no other simple way to test ext database enrol sync, so let's
         //       disable transactions are try to cleanup after the tests.
 
-        $table = new xmldb_table('enrol_database_test_enrols');
+        $table = new \xmldb_table('enrol_database_test_enrols');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('courseid', XMLDB_TYPE_CHAR, '255', null, null, null);
         $table->add_field('userid', XMLDB_TYPE_CHAR, '255', null, null, null);
@@ -132,7 +144,7 @@ class enrol_database_testcase extends advanced_testcase {
         set_config('remoterolefield', 'roleid', 'enrol_database');
         set_config('remoteotheruserfield', 'otheruser', 'enrol_database');
 
-        $table = new xmldb_table('enrol_database_test_courses');
+        $table = new \xmldb_table('enrol_database_test_courses');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('fullname', XMLDB_TYPE_CHAR, '255', null, null, null);
         $table->add_field('shortname', XMLDB_TYPE_CHAR, '255', null, null, null);
@@ -167,9 +179,9 @@ class enrol_database_testcase extends advanced_testcase {
         global $DB;
 
         $dbman = $DB->get_manager();
-        $table = new xmldb_table('enrol_database_test_enrols');
+        $table = new \xmldb_table('enrol_database_test_enrols');
         $dbman->drop_table($table);
-        $table = new xmldb_table('enrol_database_test_courses');
+        $table = new \xmldb_table('enrol_database_test_courses');
         $dbman->drop_table($table);
 
         self::$courses = null;
@@ -209,7 +221,7 @@ class enrol_database_testcase extends advanced_testcase {
         global $DB;
         $dbinstance = $DB->get_record('enrol', array('courseid' => self::$courses[$courseindex]->id, 'enrol' => 'database'), '*', MUST_EXIST);
 
-        $coursecontext = context_course::instance(self::$courses[$courseindex]->id);
+        $coursecontext = \context_course::instance(self::$courses[$courseindex]->id);
         if ($rolename === false) {
             $this->assertFalse($DB->record_exists('role_assignments', array('component' => 'enrol_database', 'itemid' => $dbinstance->id, 'userid' => self::$users[$userindex]->id, 'contextid' => $coursecontext->id)));
         } else if ($rolename !== null) {
@@ -424,7 +436,7 @@ class enrol_database_testcase extends advanced_testcase {
 
         $plugin = enrol_get_plugin('database');
 
-        $trace = new null_progress_trace();
+        $trace = new \null_progress_trace();
 
         // Test basic enrol sync for one user after login.
 
@@ -696,7 +708,7 @@ class enrol_database_testcase extends advanced_testcase {
 
         $plugin = enrol_get_plugin('database');
 
-        $trace = new null_progress_trace();
+        $trace = new \null_progress_trace();
 
         $plugin->set_config('localcategoryfield', 'id');
         $coursecat = $this->getDataGenerator()->create_category(array('name' => 'Test category 1', 'idnumber' => 'tcid1'));

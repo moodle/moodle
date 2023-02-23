@@ -190,6 +190,11 @@ class workshop {
     protected $evaluationinstance = null;
 
     /**
+     * @var array It gets initialised in init_initial_bar, and may have keys 'i_first' and 'i_last' depending on what is selected.
+     */
+    protected $initialbarprefs = [];
+
+    /**
      * Initializes the workshop API instance using the data from DB
      *
      * Makes deep copy of all passed records properties.
@@ -448,7 +453,7 @@ class workshop {
         }
 
         if (!is_array($extensions)) {
-            $extensions = preg_split('/[\s,;:"\']+/', $extensions, null, PREG_SPLIT_NO_EMPTY);
+            $extensions = preg_split('/[\s,;:"\']+/', $extensions, -1, PREG_SPLIT_NO_EMPTY);
         }
 
         foreach ($extensions as $i => $extension) {
@@ -680,15 +685,24 @@ class workshop {
         global $DB;
 
         list($sql, $params) = $this->get_participants_sql($musthavesubmission, $groupid);
+        list($filteringsql, $filteringparams) = $this->get_users_with_initial_filtering_sql_where();
+        $wheresql = "";
 
+        if ($filteringsql) {
+            $wheresql .= $filteringsql;
+            $params = array_merge($params, $filteringparams);
+        }
         if (empty($sql)) {
             return array();
         }
 
         list($sort, $sortparams) = users_order_by_sql('tmp');
-        $sql = "SELECT *
-                  FROM ($sql) tmp
-              ORDER BY $sort";
+        $sql = "SELECT * FROM ($sql) tmp";
+
+        if ($wheresql) {
+            $sql .= " WHERE $wheresql";
+        }
+        $sql .= " ORDER BY $sort";
 
         return $DB->get_records_sql($sql, array_merge($params, $sortparams), $limitfrom, $limitnum);
     }
@@ -3039,12 +3053,13 @@ class workshop {
         $canviewallsubmissions = $canviewallsubmissions && $this->check_group_membership($submission->authorid);
 
         if (!$isreviewer and !$isauthor and !($canviewallassessments and $canviewallsubmissions)) {
-            print_error('nopermissions', 'error', $this->view_url(), 'view this assessment');
+            throw new \moodle_exception('nopermissions', 'error', $this->view_url(), 'view this assessment');
         }
 
         if ($isauthor and !$isreviewer and !$canviewallassessments and $this->phase != self::PHASE_CLOSED) {
             // Authors can see assessments of their work at the end of workshop only.
-            print_error('nopermissions', 'error', $this->view_url(), 'view assessment of own work before workshop is closed');
+            throw new \moodle_exception('nopermissions', 'error', $this->view_url(),
+                'view assessment of own work before workshop is closed');
         }
     }
 
@@ -3215,6 +3230,66 @@ class workshop {
             $record->published = !empty($data->published);
         }
         $DB->update_record('workshop_submissions', $record);
+    }
+
+    /**
+     * Get the initial first name.
+     *
+     * @return string|null initial of first name we are currently filtering by.
+     */
+    public function get_initial_first(): ?string {
+        if (empty($this->initialbarprefs['i_first'])) {
+            return null;
+        }
+
+        return $this->initialbarprefs['i_first'];
+    }
+
+    /**
+     * Get the initial last name.
+     *
+     * @return string|null initial of last name we are currently filtering by.
+     */
+    public function get_initial_last(): ?string {
+        if (empty($this->initialbarprefs['i_last'])) {
+            return null;
+        }
+
+        return $this->initialbarprefs['i_last'];
+    }
+
+    /**
+     * Init method for initial bars.
+     * @return void
+     */
+    public function init_initial_bar(): void {
+        global $SESSION;
+        if ($this->phase === self::PHASE_SETUP) {
+            return;
+        }
+
+        $ifirst = optional_param('ifirst', null, PARAM_NOTAGS);
+        $ilast = optional_param('ilast', null, PARAM_NOTAGS);
+
+        if (empty($SESSION->mod_workshop->initialbarprefs['id-'.$this->context->id])) {
+            $SESSION->mod_workshop = new stdClass();
+            $SESSION->mod_workshop->initialbarprefs['id-'.$this->context->id] = [];
+        }
+        if (!empty($SESSION->mod_workshop->initialbarprefs['id-'.$this->context->id]['i_first'])) {
+            $this->initialbarprefs['i_first'] = $SESSION->mod_workshop->initialbarprefs['id-'.$this->context->id]['i_first'];
+        }
+        if (!empty($SESSION->mod_workshop->initialbarprefs['id-'.$this->context->id]['i_last'])) {
+            $this->initialbarprefs['i_last'] = $SESSION->mod_workshop->initialbarprefs['id-'.$this->context->id]['i_last'];
+        }
+        if (!is_null($ifirst)) {
+            $this->initialbarprefs['i_first'] = $ifirst;
+            $SESSION->mod_workshop->initialbarprefs['id-'.$this->context->id]['i_first'] = $ifirst;
+        }
+
+        if (!is_null($ilast)) {
+            $this->initialbarprefs['i_last'] = $ilast;
+            $SESSION->mod_workshop->initialbarprefs['id-'.$this->context->id]['i_last'] = $ilast;
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -3427,6 +3502,28 @@ class workshop {
         }
 
         return array($sql, $params);
+    }
+
+    /**
+     * Returns SQL to fetch all enrolled users with the first name or last name.
+     *
+     * @return array
+     */
+    protected function get_users_with_initial_filtering_sql_where(): array {
+        global $DB;
+        $conditions = [];
+        $params = [];
+        $ifirst = $this->get_initial_first();
+        $ilast = $this->get_initial_last();
+        if ($ifirst) {
+            $conditions[] = $DB->sql_like('LOWER(tmp.firstname)', ':i_first' , false, false);
+            $params['i_first'] = $DB->sql_like_escape($ifirst) . '%';
+        }
+        if ($ilast) {
+            $conditions[] = $DB->sql_like('LOWER(tmp.lastname)', ':i_last' , false, false);
+            $params['i_last'] = $DB->sql_like_escape($ilast) . '%';
+        }
+        return [implode(" AND ", $conditions), $params];
     }
 
     /**

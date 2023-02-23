@@ -22,27 +22,13 @@
     Example context (json):
     {}
 }}
-<div class="searchbar input-group mb-1 mr-1 p-0 col-lg-3 col-md-6 col-sm-8 col-12" role="search">
-    <label for="searchinput">
-        <span class="sr-only">{{#str}} searchcourses, block_myoverview {{/str}}</span>
-    </label>
-    <input type="text"
-           data-region="search-input"
-           id="searchinput"
-           class="form-control searchinput border-right-0 h-100 px-3 py-2"
-           placeholder="{{#str}} search, core {{/str}}"
-           name="search"
-           autocomplete="off"
-    >
-    <div class="input-group-append">
-        <div data-region="search-icon" class="input-group-text">
-            {{#pix}} a/search, core {{/pix}}
-        </div>
-        <div class="clear input-group-text d-none">
-            <button class="btn p-0" data-region="clear-icon">
-                <span class="d-flex" aria-hidden="true">{{#pix}} e/cancel, core {{/pix}}</span>
-                <span class="sr-only">{{#str}} clearsearch, block_myoverview {{/str}}</span>
-            </button>
-        </div>
-    </div>
+<div class="mb-1 mr-1 flex-grow-1">
+    {{< core/search_input_auto }}
+        {{$label}}{{#str}}
+            searchcourses, block_myoverview
+        {{/str}}{{/label}}
+        {{$placeholder}}{{#str}}
+            search, core
+        {{/str}}{{/placeholder}}
+    {{/ core/search_input_auto }}
 </div>

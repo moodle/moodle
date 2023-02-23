@@ -1,16 +1,158 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.2 ===
+
+* \single_button constructor signature has been changed to manage more types than just primary buttons.
+  The boolean "primary" parameter has been deprecated and replaced by a more generic type allowing to use
+  Bootstrap styles of buttons (danger, warning...). The constructor will still manage the boolean primary
+  parameter but will display a debugging message.
+* In enrollib.php, the methods get_enrolled_with_capabilities_join, get_enrolled_sql, get_enrolled_users and
+  count_enrolled_users used to only be able to accept a single group id, even though internally, they used
+  groups_get_members_join which could also accept an array of groups, or the constant USERSWITHOUTGROUP.
+  This has now been made consistent. These enrol methods now accept all the group-related options that
+  groups_get_members_join can handle.
+* assign_capability() now has an optional $performancehints parameter which can be used in
+  situations where it is being called in a loop in response to a database query, to reduce the
+  amount of checks it has to do.
+* New DB parameter 'versionfromdb', only available for MySQL and MariaDB drivers. It allows to force the DB version to be
+  evaluated through an explicit call to VERSION() to skip the PHP client version which appears to be sometimes fooled by the
+  underlying infrastructure, e.g. PaaS on Azure.
+* The actionmenu component has now a set_kebab_trigger that will setup the action menu for use in kebab menus.
+* The useexternalyui configuration setting has been removed as a part of the migration away from YUI.
+  It only worked with http sites and did not officially support SSL, and is at risk of disappearing should Yahoo! decide
+  to remove it.
+* New `properties_filter` method of persistent class for filtering properties of a record against persistent definition
+* Added 'extrainfo' in the DB options config. Its extra information for the DB driver, e.g. SQL Server
+  has additional configuration according to its environment, which the administrator can specify to alter and
+  override any connection options.
+* In outputcomponents.php, initials_bar() can now be rendered in a smaller (mini) way. This provides purely the
+  initials bar without the bootstrapping and form handling on each initials bar. If you use this mini render,
+  you'll need to implement your own form handling. Example usage can be found within the grader report.
+* There is a new helper function mtrace_exception to help with reporting exceptions you have caught in scheduled tasks.
+* Box/Spout has been archived and is no longer maintained, so it has now been removed and replaced by OpenSpout.
+* The following parts of the external API have been moved to the core_external subsystem:
+  Classes:
+    - external_api                      => core_external\external_api
+    - external_description              => core_external\external_description
+    - external_files                    => core_external\files
+    - external_format_value             => core_external\external_format_value
+    - external_function_parameters      => core_external\external_function_parameters
+    - external_multiple_structure       => core_external\external_multiple_structure
+    - external_settings                 => core_external\external_settings
+    - external_single_structure         => core_external\external_single_structure
+    - external_util                     => core_external\util
+    - external_value                    => core_external\external_value
+    - external_warnings                 => core_external\external_warnings
+    - restricted_context_exception      => core_external\restricted_context_exception
+  Functions:
+    - external_format_string()          => core_external\util::format_string()
+    - external_format_text()            => core_external\util::format_text()
+    - external_create_service_token()   => core_external\util::generate_token()
+    - external_generate_token()         => core_external\util::generate_token()
+    - external_generate_token_for_current_user()
+                                        => core_external\util::generate_token_for_current_user()
+    - external_log_token_request        => core_external\util::log_token_request()
+
+  The old class locations have been aliased for backwards compatibility and will emit a deprecation notice in a future
+  release.
+* Convert a floating value to an integer in lib/graphlib.php to avoid PHP 8.1 deprecated function error.
+* The $required parameter for \core_external\external_description is now being validated in order to prevent
+  unintentionally passing incorrect parameters to the external_description's (and its subclasses') constructors (e.g. the parameter
+  description being incorrectly passed for the $required parameter). A debugging notice will be shown when such cases occur.
+* The moodle-core-popuphelp YUI modal has been removed. It has not been actively used in Moodle since 3.3. It should be replaced with appropriate ESM/AMD JavaScript.
+* The moodle-core-tooltip YUI modal has been removed. It should be replaced with appropriate ESM/AMD JavaScript.
+
+=== 4.1 ===
+
+* HTMLPurifier has been upgraded to the latest version - 4.16.0
+* A process to deprecate capabilities by flagging them in the access.php by adding a $deprecatedcapabilities variable (an array).
+  This array will list the deprecated capabilities and a possible replacement. Once we declare the capability as deprecated, a debugging
+  message will be displayed (in DEBUG_DEVELOPPER mode only) when using the deprecated capability.
+  Declaration is as follow:
+    $deprecatedcapabilities = [
+        'fake/access:fakecapability' => ['replacement' => '', 'message' => 'This capability should not be used anymore.']
+    ];
+* coursemodinfo cache uses the new `requirelockingbeforewrite` option, and rebuilding the cache now uses the cache lock API, rather
+  than using the core lock factory directly. This allows the locks to be stored locally if the cache is stored locally, and
+  avoids the risk of delays and timeouts when multiple nodes need to rebuild the cache locally, but are waiting for a central lock.
+* Final deprecation and removal of the class \admin_setting_managelicenses, please use \tool_licensemanager\manager instead.
+* Final deprecation and removal of the function license_manager::add(). Please use license_manager::save() instead.
+* Final deprecation of the following functions behat_field_manager::get_node_type() and behat_field_manager::get_field()
+  please call behat_field_manager::get_field_node_type() and behat_field_manager::get_form_field().
+* Final deprecation and removal of the following class, please use \core\task\manager.
+    - \tool_task\run_from_cli
+* Final deprecation and removal of the following CLI scripts:
+  - admin/tool/task/cli/schedule_task.php please use admin/cli/scheduled_task.php
+  - admin/tool/task/cli/adhoc_task.php please use admin/cli/adhoc_task.php
+* Final deprecation and removal of cron_run_single_task(), please use \core\task\manager::run_from_cli().
+* The $USER->groupmember hack that fills the user object with the groups that the user belongs to has been removed.
+  Please use the Groups API function groups_get_user_groups() to fetch the cached list of groups the user is a member of.
+* The following functions, previously used (exclusively) by upgrade steps are not available anymore
+  because of the upgrade cleanup performed for this version. See MDL-71747 for more info:
+    - upgrade_analytics_fix_contextids_defaults()
+    - upgrade_convert_hub_config_site_param_names()
+    - upgrade_rename_prediction_actions_useful_incorrectly_flagged()
+* The method ensure_adhoc_task_qos() in lib/classes/task/manager.php  has been deprecated, please use get_next_adhoc_task()
+  instead.
+* New setting $CFG->enrolments_sync_interval controls the minimum time in seconds between re-synchronization of enrollment via enrol_check_plugins.
+  This only applies to web requests without a session such as webservice calls, tokenpluginfile.php and rss links Function
+  enrol_check_plugins now has $ignoreintervalcheck flag to bypass checking for that setting.
+* For performance reasons, sql_reader interface has a new function get_events_select_exists() which determines whether
+  an event exists with the given criteria (see MDL-72723 for details).
+   - Breaking: 3rd party log readers implementing interface sql_reader will need to implement get_events_select_exists()
+* Added $strictness parameter to persistent `get_record` method, optionally allowing caller to ensure record exists
+* New DML driver method `$DB->sql_cast_to_char` for casting given field/expression to char
+* The core renderer `edit_button` method now accepts an optional `$method` argument (get/post) for the button
+* For plugins that override secondary navigation, the namespace for the custom secondary navigation class has
+  changed. It was (for example) mod_mymodule\local\views\secondary but is now
+  mod_mymodule\navigation\views\secondary. The old location will continue to work, but is deprecated.
+* The check for $plugin->incompatible was found to be incorrect. The $plugin->incompatible attribute is meant to define the minimum
+  Moodle version the plugin is incompatible with but the implemented logic for the check was the opposite. Plugins declaring this
+  attribute may encounter different behaviours between older Moodle versions (<v3.11.8, <v4.0.2) and the later ones. We recommend
+  plugin developers to not use this attribute for Moodle versions 4.0 and below in order to avoid this problem.
+* Added $CFG->proxylogunsafe and proxyfixunsafe to detect code which doesn't honor the proxy config
+* Function admin_externalpage_setup() now has additional option 'nosearch' allowing to remove Site administration search form.
+* The function print_error has been deprecated. Kindly use moodle_exception.
+* When exporting table content, HTML tags/entities will be removed when the selected dataformat does not support HTML
+* The abstract `get_name` method has been moved from `\core\task\scheduled_task` to the `\core\task\task_base` class and can now be
+  implemented by adhoc tasks. For backwards compatibility, a default implementation has been added to `\core\task\adhoc_task` to
+  return the class name.
+* The function get_module_metadata() has been finally deprecated and can not be used anymore.
+* New DML driver method `$DB->sql_order_by_null` for sorting nulls sort nulls first when ascending and last when descending.
+* Allow plugins to callback on all pages just prior to the session start.
+* New function set_additional_classes() has been implemented to add additional classes to action_menu.
+* Most Behat functionality for the Moodle App has been removed from core, refer to the documentation in order to upgrade your testing
+  setup: https://moodledev.io/general/app/development/testing/acceptance-testing#upgrading-tests-from-an-older-version
+* New DML driver methods `$DB->sql_regex_get_word_beginning_boundary_marker` and `$DB->sql_regex_get_word_end_boundary_marker`
+  for managing word boundary markers in a database driver supporting regex syntax when searching.
+* The plugin_functions cache in core has been made localisable by prefixing the
+  key it uses with the all versions hash, which only changes when there are code
+  changes.
+
 === 4.0 ===
+
+* To better detect wrong floats (like, for example, unformatted, using local-dependent separators ones) a number of
+  gradebook functions now have stricter float type checking. All them will require now the "float" being passed to be
+  a correct float value (numeric or string). Usually, that's achieved by using unformat_float() or
+  PARAM_LOCALISEDFLOAT for all the user-entered grades before any processing on them. Functions affected are:
+    - grade_format_gradevalue(), $value param (keeping it as optional/nullable).
+    - grade_format_gradevalue_real(), $value param (keeping it as optional/nullable).
+    - grade_format_gradevalue_percentage(), $value param (keeping it as optional/nullable).
+    - grade_format_gradevalue_letter(), $value param (keeping it as optional/nullable).
+    - grade_floats_different(), $f1 and $f2 params (keeping them as optional/nullable).
+    - grade_floats_equal(), $f1 and $f2 params (keeping them as optional/nullable).
+* The method action_menu->set_alignment() has been deprecated, please use action_menu->set_menu_left if you need a dropdown
+  to align to the left of the dropdown button.
 * The $OUTPUT->should_display_main_logo() function has been deprecated and should no longer be used.
 * New method flexible_table::set_columnsattributes() has been introduced to add column attributes applied in every cell.
 * New method flexible_table::get_row_cells_html() has been introduced, extracted from flexible_table::get_row_html
   so it can be overriden individually.
 * Since Boxnet has been remove from core then boxnet_client() class has been removed from core too.
 * New navigation classes to mimic the new navigation project. The existing navigation callbacks are still available and
-  will be called. The following behaviour will be the new standard for nodes added via callbacks:
-   - Module nodes added will be appended to the end and will appear within the hamburger option.
-   - Course nodes added will also be appended and appear within the 'More' option/page.
+  will be called. The following behaviour will be the new standard for nodes added via callbacks in Boost and Boost-based themes:
+  - Module nodes added will be appended to the end and will appear within the More menu.
+  - Course nodes added will also be appended and appear within the 'More' menu.
 * The core/event events have been renamed and now fire native events, in addition to the legacy YUI and jQuery events.
   The following events have been renamed:
   - The BLOCK_CONTENT_UPDATED event has been replaced with a new native event in the `core_block/events` AMD module
@@ -30,7 +172,9 @@ information provided here is intended especially for developers.
 * The completion_info function display_help_icon() which returned the 'Your progress' help icon has been deprecated and
   should no longer be used.
 * The completion_info function print_help_icon() which has been deprecated since Moodle 2.0 should no longer be used.
-* @babel/polyfill has been removed in favour of corejs@3
+* @babel/polyfill has been removed in favour of corejs@3.
+* A new parameter $partialrebuild has been added to the rebuild_course_cache to invalidate the cache
+  of the section or module only, not the whole course cache
 * A new parameter $isbulkupdate has been added to the following functions:
   - grade_category::update()
   - grade_category::insert()
@@ -76,27 +220,8 @@ information provided here is intended especially for developers.
   that wants to listen for the events. Backwards compatibility with existing code using jQuery is preserved.
 * The function message_send() in messagelib.php now returns false if there is an error sending the message to the
   message processor (MDL-70046).
-* Following methods are now deprecated in questionlib and moved to the new qbank_previewquestion plugin:
-  - question_preview_url() is moved to qbank_previewquestion\helper::question_preview_url()
-  - question_preview_popup_params() is moved to \qbank_previewquestion\helper::question_preview_popup_params()
-  Calling these functions in the question will point to the plugin.
-  The deprecated codes are removed from the questionlib for those two methods.
-* The following functions are deprecated in questionlib.php and moved to the new location.
-  These are marked for final deprecation on 4.4:
-  - question_remove_stale_questions_from_category() =>
-    qbank_managecategories\helper::question_remove_stale_questions_from_category()
-  - flatten_category_tree() => qbank_managecategories\helper::flatten_category_tree()
-  - add_indented_names() => qbank_managecategories\helper::add_indented_names()
-  - question_category_select_menu() => qbank_managecategories\helper::question_category_select_menu()
-  - get_categories_for_contexts() => qbank_managecategories\helper::get_categories_for_contexts()
-  - question_category_options() => qbank_managecategories\helper::question_category_options()
-  - question_add_context_in_key() => qbank_managecategories\helper::question_add_context_in_key()
-  - question_fix_top_names() => qbank_managecategories\helper::question_fix_top_names()
-* Following methods are now deprecated in questionlib and moved to the new qbank_previewquestion plugin:
-  - question_preview_url() is moved to qbank_previewquestion\helper::question_preview_url()
-  - question_preview_popup_params() is moved to \qbank_previewquestion\helper::question_preview_popup_params()
-  Calling these functions in the question will point to the plugin, but the deprecation message will be activated in MDL-72004.
-  The deprecated codes are removed from the questionlib for those two methods.
+* Moodle 4.0 has major changes to the question bank. Therefore, there are major changes in questionlib.php
+  and the core_question database tables. These are documented in detail in question/upgrade.txt.
 * The postgres driver now wraps calls to pg_field_type() and caches them in databasemeta to save an invisible internal
   DB call on every request.
 * The default type of 'core/toast' messages has been changed to 'information' (callers can still explicitely set the type)
@@ -114,8 +239,8 @@ completely removed from Moodle core too.
   Refer to upgrade.php to see transitioning from similar plugin criteria to core
   Refer to completion/upgrade.txt for additional information.
 * The method enable_plugin() has been added to the core_plugininfo\base class and it has been implemented by all the plugininfo
-  classes extending it. When possible, the enable_plugin() method will store these changes into the config_log table, to let admins
-  check when and who has enabled/disabled plugins.
+classes extending it. When possible, the enable_plugin() method will store these changes into the config_log table, to let admins
+check when and who has enabled/disabled plugins.
 * Final deprecation: The following functions along with associated tests have been removed:
   - core_grades_external::get_grades
   - core_grades_external::get_grade_item
@@ -153,6 +278,89 @@ such as the title and strings for continue and cancel buttons.
 * The method get_enabled_plugin($pluginname) has been added to the core_plugininfo\base class. It has a default implementation for
 all the plugininfo classes and it can be overwritten when required (like it has been done with filter). This method returns the
 current value for a pluginname depending on its status (enabled, disabled, other...).
+* Unit Test coverage defaults have been updated to include some sensible defaults.
+  The default values now include:
+  * /classes/
+  * /tests/generator/
+  * /externallib.php
+  * /lib.php
+  * /locallib.php
+  * /renderer.php
+  * /rsslib.php
+  This default applies both when there is no supplied coverage.php file, and is used to supplement any existing coverage configuration file if one is found.
+* New method get_unaddable_by_theme_block_types() has been added to block_manager class. It uses the 'unaddableblocks' theme setting
+value to get the list of blocks that won't be displayed for a theme.
+* Loggedin / Loggedoff component settings on notification preferences have been merged to a single enabled switch:
+  MESSAGE_DEFAULT_LOGGEDIN and MESSAGE_DEFAULT_LOGGEDOFF are now deprecated, so plugins should be updated if db/messages.php is present and replace
+    MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF to MESSAGE_DEFAULT_ENABLED. Backward compatibility will take any of both settings as enabled.
+  MESSAGE_DEFAULT_PERMITTED also deprecated.
+  core_message_get_user_notification_preferences and core_message_get_user_message_preferences Webservice are now returning enabled boolean on
+    components > notifications > processors. loggedin and loggedoff are deprecated but present for backward compatibility.
+* A new parameter $strength of type int is added to method search_for_active_node. This parameter would help us to search for the active nodes based on the
+  $strength passed to it.
+* A new method get_page() has been added to the settings_navigation class. This method can be used to obtain the
+  moodle_page object associated to the settings navigation.
+* A new interface, `core\output\named_templatable` has been created to allow renderable classes to define a
+  `get_template_name(\renderer_base): string` function which will inform the default render() function with a template
+  name.
+* The parameter $modinfo of the get_data method in completion_info class has been deprecated and is not used anymore.
+* A new method, get_default_home_page(), has been added to moodlelib to get the default home page to display if current one is not
+defined or can't be applied.
+* A new language_menu renderable is created to handle collecting available languages and generating the menu for use in different situations
+* New primary navigation classes to mimic the primary nav. Consists of the views/primary.php and output/primary.php. The
+  base nodes are added within the views/primary.php while output/primary.php is a renderable that combines the primary
+  view and the lang, user and any custom menu items.
+  - The language menu now resides within the user menu.
+* New primary and secondary magic getters/setters included in pagelib.php that also initialises the objects
+* All secondary navigation nodes have a predefined ordering within the relevant context and are defined as a
+  mapping construct within core\navigation\views\secondary. Secondary navigation ordering can be overridden by
+  generating a custom secondary class within a plugin's {plugin}\local\views namespace. This is only applicable to the
+  following plugin types and is automatically loaded:
+    * Module - refer to mod_assign\local\views\secondary for examples and magic_get_secondarynav for calling code
+    * Block - refer to core_block\local\views\secondary for examples and blocklib::get_secondarynav for calling code
+  - Additionally a custom secondary object may be set using the convenient setters in pagelib.php.
+  - Secondary nav nodes can be forced into the 'More' menu using the 'set_force_into_more_menu'. It is advisable to set
+    this in the existing nav callbacks when generating the nodes. Alternately, the corresponding
+    'get_default_{admin/course/module}_more_menu_nodes functions in secondary can be overridded to provide a custom set
+    of node keys to push into the more menu
+  - The secondary navigation can be omitted from a theme/page by setting $PAGE->set_secondary_navigation(false). e.g. admin/search.php and in classic.
+  - Within a single activity course format, the course and module level secondary navigation options are displayed within
+    dropdowns in the secondary navigation bar
+* New function 'get_overflow_menu_data' introduced in core\navigation\views\secondary to get additional/custom sub navigation
+  to be displayed as a url_select for tertiary navigation.
+* It is required that the action provided to navigation_node::create be of type moodle_url/action_link. Non conformance
+  results in a debugging message being thrown.
+* New page lib config '_navigationoverflow' and associated getters/setters to toggle whether the overflow menu is displayed
+* New functions to explicitly set what tabs should be highlighted on the primary and secondary navigation
+* Breadcrumbs modified to follow standards defined here https://www.nngroup.com/articles/breadcrumbs/
+  - New navbar class in boost to follow the standards defined above.
+* Settings cog have been removed and replaced with either secondary and tertiary navigation components
+* New activity_header class to handle display of common content for plugins.
+  * Handles display of the activity name, completion information and description.
+  * New pagelib.php magic getters to fetch activity_header
+  * New theme level config to govern display of the activity name $THEME->activityheaderconfig['notitle']
+        - Default for boost is to show no activity title.
+  * New page layout level option to handle display within activity header. Options should be defined
+    within 'activityheader' and accept the following array keys:
+        - notitle
+        - nocompletion
+        - nodescription
+  * Convenient functions to set the parameters in the header OR hide them altogether.
+* Category navigations has been updated with a preference of tertiary navigation components over buttons within the page
+  content and/or context header actions
+* A new 'My courses' page has been introduced which houses the course overview block
+* Default blocks for dashboard has been updated. The page will now have the following in the corresponding region:
+    * Calendar, Timeline - Center
+    * Recently accessed courses - Side bar/blocks drawer
+* Flat navigation classes have been marked for deprecation with the introduction of primary and secondary navigation concepts.
+* A new method, force_lock_all_blocks(), has been added to the moodle_page class to allow pages to force the value of
+  user_can_edit_blocks() to return false where necessary. This makes it possible to remove block editing on a page
+  from ALL users, including admins, where required on pages with multi region layouts exist, such as "My courses".
+* Add an early $CFG->session_redis_acquire_lock_warn option
+* Removed $CFG->conversionattemptlimit setting from config.php. assignfeedback_editpdf\task\convert_submissions task
+  is now replaced with adhoc tasks with standard fail delay approach.
+* With strftime() being deprecated in PHP 8.1, a new function \core_date::strftime() that can be used as a PHP 8.1-compatible
+  alternative has been introduced.
 
 === 3.11.4 ===
 * A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.
@@ -380,7 +588,7 @@ current value for a pluginname depending on its status (enabled, disabled, other
   `strip_disallowed_helpers()`.
 * A new admin externalpage type `\core_admin\local\externalpage\accesscallback` for use in plugin settings is available that allows
   a callback to be provided to determine whether page can be accessed.
-* New setting $CFG->localtempdir overrides which defaults to sys_get_temp_dir()
+* New setting $CFG->localrequestdir overrides which defaults to sys_get_temp_dir()
 * Function redirect() now emits a line of backtrace into the X-Redirect-By header when debugging is on
 * New DML function $DB->delete_records_subquery() to delete records based on a subquery in a way
   that will work across databases.
@@ -1122,7 +1330,7 @@ the groupid field.
     - test_get_user_timezone_offset()
 * The google api library has been updated to version 1.1.7. There was some important changes
   on the SSL handling. Now the SSL version will be determined by the underlying library.
-  For more information see https://github.com/google/google-api-php-client/pull/644
+  For more information see https://github.com/googleapis/google-api-php-client/pull/644
 * The get_role_users() function will now add the $sort fields that are not part
   of the requested fields to the query result and will throw a debugging message
   with the added fields when that happens.

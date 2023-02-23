@@ -77,6 +77,9 @@ class user_filter_profilefield extends user_filter_type {
         require_once($CFG->dirroot . '/user/profile/lib.php');
 
         $fieldrecords = profile_get_custom_fields();
+        foreach ($fieldrecords as $key => $fieldrecord) {
+            $fieldrecords[$key]->name = format_string($fieldrecords[$key]->name, false, ['context' => context_system::instance()]);
+        }
         $fields = array_combine(array_keys($fieldrecords), array_column($fieldrecords, 'name'));
         core_collator::asort($fields);
         $res = array(0 => get_string('anyfield', 'filters'));

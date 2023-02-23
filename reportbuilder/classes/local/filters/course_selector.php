@@ -67,4 +67,15 @@ class course_selector extends base {
 
         return ["{$fieldsql} $courseselect", array_merge($params, $courseparams)];
     }
+
+    /**
+     * Return sample filter values
+     *
+     * @return array
+     */
+    public function get_sample_values(): array {
+        return [
+            "{$this->name}_values" => [1],
+        ];
+    }
 }

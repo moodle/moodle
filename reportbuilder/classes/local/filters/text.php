@@ -155,13 +155,15 @@ class text extends base {
                 $value = $DB->sql_like_escape($value);
                 $params[$name] = "%$value";
                 break;
-            case self::IS_EMPTY: // Note we also account for field not existing here.
-                $res = "COALESCE({$fieldsql}, '') = :{$name}";
-                $params[$name] = '';
+            case self::IS_EMPTY:
+                $paramempty = database::generate_param_name();
+                $res = "COALESCE({$fieldsql}, :{$paramempty}) = :{$name}";
+                $params[$paramempty] = $params[$name] = '';
                 break;
             case self::IS_NOT_EMPTY:
-                $res = "COALESCE({$fieldsql}, '') != :{$name}";
-                $params[$name] = '';
+                $paramempty = database::generate_param_name();
+                $res = "COALESCE({$fieldsql}, :{$paramempty}) != :{$name}";
+                $params[$paramempty] = $params[$name] = '';
                 break;
             default:
                 // Filter configuration is invalid. Ignore the filter.
@@ -189,5 +191,17 @@ class text extends base {
         }
 
         return true;
+    }
+
+    /**
+     * Return sample filter values
+     *
+     * @return array
+     */
+    public function get_sample_values(): array {
+        return [
+            "{$this->name}_operator" => self::IS_EQUAL_TO,
+            "{$this->name}_value" => 'test',
+        ];
     }
 }

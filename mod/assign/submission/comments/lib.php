@@ -146,7 +146,7 @@ function assignsubmission_comments_comment_display($comments, $options) {
                 $a->participantnumber = $anonid;
                 $a->participantfullname = $comment->fullname;
                 $comment->fullname = get_string('blindmarkingviewfullname', 'assignsubmission_comments', $a);
-            } else if ($USER->id == $comment->userid || $submission->userid == $USER->id || $userinteam) { //@codingStandardsIgnoreLine
+            } else if ($USER->id == $comment->userid || $submission->userid == $USER->id || $userinteam) { // phpcs:ignore
                 // Do not anonymize the user details for this comment.
             } else {
                 // Anonymize the comments.

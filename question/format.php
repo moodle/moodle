@@ -95,6 +95,40 @@ class qformat_default {
         return ($file->get_mimetype() == $this->mime_type());
     }
 
+    /**
+     * Validate the given file.
+     *
+     * For more expensive or detailed integrity checks.
+     *
+     * @param stored_file $file the file to check
+     * @return string the error message that occurred while validating the given file
+     */
+    public function validate_file(stored_file $file): string {
+        return '';
+    }
+
+    /**
+     * Check if the given file has the required utf8 encoding.
+     *
+     * @param stored_file $file the file to check
+     * @return string the error message if the file encoding is not UTF-8
+     */
+    protected function validate_is_utf8_file(stored_file $file): string {
+        if (!mb_check_encoding($file->get_content(), "UTF-8")) {
+            return get_string('importwrongfileencoding', 'question',  $this->get_name());
+        }
+        return '';
+    }
+
+    /**
+     * Return the localized pluginname string for the question format.
+     *
+     * @return string the pluginname string for the question format
+     */
+    protected function get_name(): string {
+        return get_string('pluginname', get_class($this));
+    }
+
     // Accessor methods
 
     /**
@@ -136,7 +170,7 @@ class qformat_default {
      */
     public function setContexts($contexts) {
         $this->contexts = $contexts;
-        $this->translator = new context_to_string_translator($this->contexts);
+        $this->translator = new core_question\local\bank\context_to_string_translator($this->contexts);
     }
 
     /**
@@ -411,8 +445,8 @@ class qformat_default {
                     // Id number not really set. Get rid of it.
                     unset($question->idnumber);
                 } else {
-                    if ($DB->record_exists('question',
-                            ['idnumber' => $question->idnumber, 'category' => $question->category])) {
+                    if ($DB->record_exists('question_bank_entries',
+                            ['idnumber' => $question->idnumber, 'questioncategoryid' => $question->category])) {
                         // We cannot have duplicate idnumbers in a category. Just remove it.
                         unset($question->idnumber);
                     }
@@ -426,6 +460,20 @@ class qformat_default {
                 );
 
             $question->id = $DB->insert_record('question', $question);
+            // Create a bank entry for each question imported.
+            $questionbankentry = new \stdClass();
+            $questionbankentry->questioncategoryid = $question->category;
+            $questionbankentry->idnumber = $question->idnumber ?? null;
+            $questionbankentry->ownerid = $question->createdby;
+            $questionbankentry->id = $DB->insert_record('question_bank_entries', $questionbankentry);
+            // Create a version for each question imported.
+            $questionversion = new \stdClass();
+            $questionversion->questionbankentryid = $questionbankentry->id;
+            $questionversion->questionid = $question->id;
+            $questionversion->version = 1;
+            $questionversion->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+            $questionversion->id = $DB->insert_record('question_versions', $questionversion);
+
             $event = \core\event\question_created::create_from_question_instance($question, $this->importcontext);
             $event->trigger();
 
@@ -499,9 +547,6 @@ class qformat_default {
                 return true;
             }
 
-            // Give the question a unique version stamp determined by question_hash()
-            $DB->set_field('question', 'version', question_hash($question),
-                    array('id' => $question->id));
         }
         return true;
     }
@@ -886,7 +931,8 @@ class qformat_default {
         // get the questions (from database) in this category
         // only get q's with no parents (no cloze subquestions specifically)
         if ($this->category) {
-            $questions = get_questions_category($this->category, true);
+            // Export only the latest version of a question.
+            $questions = get_questions_category($this->category, true, true, true, true);
         } else {
             $questions = $this->questions;
         }
@@ -907,9 +953,16 @@ class qformat_default {
 
         foreach ($questions as $question) {
             // used by file api
-            $contextid = $DB->get_field('question_categories', 'contextid',
-                    array('id' => $question->category));
+            $questionbankentry = question_bank::load_question($question->id);
+            $qcategory = $questionbankentry->category;
+            $contextid = $DB->get_field('question_categories', 'contextid', ['id' => $qcategory]);
             $question->contextid = $contextid;
+            $question->idnumber = $questionbankentry->idnumber;
+            if ($question->status === \core_question\local\bank\question_version_status::QUESTION_STATUS_READY) {
+                $question->status = 0;
+            } else {
+                $question->status = 1;
+            }
 
             // do not export hidden questions
             if (!empty($question->hidden)) {
@@ -934,7 +987,7 @@ class qformat_default {
                     // If parent wasn't written.
                     if (!in_array($trackcategoryparent, $writtencategories)) {
                         // If parent is empty.
-                        if (!count($DB->get_records('question', array('category' => $trackcategoryparent)))) {
+                        if (!count($DB->get_records('question_bank_entries', ['questioncategoryid' => $trackcategoryparent]))) {
                             $categoryname = $this->get_category_path($trackcategoryparent, $this->contexttofile);
                             $categoryinfo = $DB->get_record('question_categories', array('id' => $trackcategoryparent),
                                 'name, info, infoformat, idnumber', MUST_EXIST);
@@ -976,7 +1029,7 @@ class qformat_default {
 
         // did we actually process anything
         if ($count==0) {
-            print_error('noquestions', 'question', $continuepath);
+            throw new \moodle_exception('noquestions', 'question', $continuepath);
         }
 
         // final pre-process on exported data
@@ -1013,7 +1066,7 @@ class qformat_default {
         global $DB;
 
         if (!$category = $DB->get_record('question_categories', array('id' => $id))) {
-            print_error('cannotfindcategory', 'error', '', $id);
+            throw new \moodle_exception('cannotfindcategory', 'error', '', $id);
         }
         $contextstring = $this->translator->context_to_string($category->contextid);
 

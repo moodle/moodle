@@ -14,22 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package    core_backup
- * @category   phpunit
- * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use backup;
+use base_task;
+use base_task_exception;
+use backup_controller;
+use backup_plan;
+use backup_task;
+use backup_task_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/fixtures/plan_fixtures.php');
 
-
 /**
- * task tests (all)
+ * @package    core_backup
+ * @category   test
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_task_testcase extends advanced_testcase {
+class task_test extends \advanced_testcase {
 
     protected $moduleid;  // course_modules id used for testing
     protected $sectionid; // course_sections id used for testing
@@ -63,9 +68,9 @@ class backup_task_testcase extends advanced_testcase {
      */
     function test_base_task() {
 
-        $bp = new mock_base_plan('planname'); // We need one plan
+        $bp = new \mock_base_plan('planname'); // We need one plan
         // Instantiate
-        $bt = new mock_base_task('taskname', $bp);
+        $bt = new \mock_base_task('taskname', $bp);
         $this->assertTrue($bt instanceof base_task);
         $this->assertEquals($bt->get_name(), 'taskname');
         $this->assertTrue(is_array($bt->get_settings()));
@@ -85,7 +90,7 @@ class backup_task_testcase extends advanced_testcase {
         // We need one plan
         $bp = new backup_plan($bc);
         // Instantiate task
-        $bt = new mock_backup_task('taskname', $bp);
+        $bt = new \mock_backup_task('taskname', $bp);
         $this->assertTrue($bt instanceof backup_task);
         $this->assertEquals($bt->get_name(), 'taskname');
 
@@ -103,21 +108,21 @@ class backup_task_testcase extends advanced_testcase {
 
         // Try to pass one wrong plan
         try {
-            $bt = new mock_base_task('tasktest', new stdclass());
+            $bt = new \mock_base_task('tasktest', new \stdClass());
             $this->assertTrue(false, 'base_task_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_task_exception);
             $this->assertEquals($e->errorcode, 'wrong_base_plan_specified');
         }
 
         // Add wrong step to task
-        $bp = new mock_base_plan('planname'); // We need one plan
+        $bp = new \mock_base_plan('planname'); // We need one plan
         // Instantiate
-        $bt = new mock_base_task('taskname', $bp);
+        $bt = new \mock_base_task('taskname', $bp);
         try {
-            $bt->add_step(new stdclass());
+            $bt->add_step(new \stdClass());
             $this->assertTrue(false, 'base_task_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_task_exception);
             $this->assertEquals($e->errorcode, 'wrong_base_step_specified');
         }
@@ -131,9 +136,9 @@ class backup_task_testcase extends advanced_testcase {
 
         // Try to pass one wrong plan
         try {
-            $bt = new mock_backup_task('tasktest', new stdclass());
+            $bt = new \mock_backup_task('tasktest', new \stdClass());
             $this->assertTrue(false, 'backup_task_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_task_exception);
             $this->assertEquals($e->errorcode, 'wrong_backup_plan_specified');
         }

@@ -16,13 +16,12 @@ Feature: Enable Block Badges in a course without badges
       | teacher1 | C1 | editingteacher |
 
   Scenario: Add the block to a the course when badges are disabled
-    Given I log in as "admin"
-    And the following config values are set as admin:
-      | enablebadges | 0 |
-    And I log out
-    And I log in as "teacher1"
+    Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     When I add the "Latest badges" block
+    And the following config values are set as admin:
+      | enablebadges | 0 |
+    And I reload the page
     Then I should see "Badges are not enabled on this site." in the "Latest badges" "block"
 
   Scenario: Add the block to a the course when badges are enabled

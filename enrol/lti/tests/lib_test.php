@@ -21,15 +21,18 @@
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace enrol_lti;
 
-use enrol_lti\data_connector;
-use enrol_lti\tool_provider;
+use course_enrolment_manager;
+use enrol_lti_plugin;
 use IMSGlobal\LTI\ToolProvider\ResourceLink;
 use IMSGlobal\LTI\ToolProvider\ToolConsumer;
 use IMSGlobal\LTI\ToolProvider\ToolProvider;
 use IMSGlobal\LTI\ToolProvider\User;
 
 defined('MOODLE_INTERNAL') || die();
+
+require_once(__DIR__ . '/local/ltiadvantage/lti_advantage_testcase.php');
 
 /**
  * Tests for the enrol_lti_plugin class.
@@ -38,7 +41,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class enrol_lti_testcase extends advanced_testcase {
+class lib_test extends \lti_advantage_testcase {
 
     /**
      * Test set up.
@@ -57,7 +60,7 @@ class enrol_lti_testcase extends advanced_testcase {
         global $DB;
 
         // Create tool enrolment instance.
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->enrolstartdate = time();
         $data->secret = 'secret';
         $tool = $this->getDataGenerator()->create_lti_tool($data);
@@ -119,6 +122,53 @@ class enrol_lti_testcase extends advanced_testcase {
     }
 
     /**
+     * Test confirming that relevant data is removed after enrol instance removal.
+     *
+     * @covers \enrol_lti_plugin::delete_instance
+     */
+    public function test_delete_instance_lti_advantage() {
+        global $DB;
+        // Setup.
+        [
+            $course,
+            $modresource,
+            $modresource2,
+            $courseresource,
+            $registration,
+            $deployment
+        ] = $this->create_test_environment();
+
+        // Launch the tool.
+        $mockuser = $this->get_mock_launch_users_with_ids(['1p3_1'])[0];
+        $mocklaunch = $this->get_mock_launch($modresource, $mockuser);
+        $instructoruser = $this->getDataGenerator()->create_user();
+        $launchservice = $this->get_tool_launch_service();
+        $launchservice->user_launches_tool($instructoruser, $mocklaunch);
+
+        // Verify data exists.
+        $this->assertEquals(1, $DB->count_records('enrol_lti_user_resource_link'));
+        $this->assertEquals(1, $DB->count_records('enrol_lti_resource_link'));
+        $this->assertEquals(1, $DB->count_records('enrol_lti_app_registration'));
+        $this->assertEquals(1, $DB->count_records('enrol_lti_deployment'));
+        $this->assertEquals(1, $DB->count_records('enrol_lti_context'));
+        $this->assertEquals(1, $DB->count_records('enrol_lti_users'));
+
+        // Now delete the enrol instance.
+        $enrollti = new enrol_lti_plugin();
+        $instance = $DB->get_record('enrol', ['id' => $modresource->enrolid]);
+        $enrollti->delete_instance($instance);
+
+        $this->assertEquals(0, $DB->count_records('enrol_lti_user_resource_link'));
+        $this->assertEquals(0, $DB->count_records('enrol_lti_resource_link'));
+        $this->assertEquals(0, $DB->count_records('enrol_lti_users'));
+
+        // App registration, Deployment and Context tables are not affected by instance removal.
+        $this->assertEquals(1, $DB->count_records('enrol_lti_app_registration'));
+        $this->assertEquals(1, $DB->count_records('enrol_lti_deployment'));
+        $this->assertEquals(1, $DB->count_records('enrol_lti_context'));
+    }
+
+    /**
      * Test for getting user enrolment actions.
      */
     public function test_get_user_enrolment_actions() {
@@ -140,7 +190,7 @@ class enrol_lti_testcase extends advanced_testcase {
 
         // Create a course.
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $teacherroleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher'], MUST_EXIST);
         $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student'], MUST_EXIST);
 
@@ -165,5 +215,37 @@ class enrol_lti_testcase extends advanced_testcase {
         $actions = $plugin->get_user_enrolment_actions($manager, $ue);
         // LTI enrolment has 1 enrol actions for active users -- unenrol.
         $this->assertCount(1, $actions);
+    }
+
+    /**
+     * Test the behaviour of an enrolment method when the activity to which it provides access is deleted.
+     *
+     * @covers \enrol_lti_pre_course_module_delete
+     */
+    public function test_course_module_deletion() {
+        // Create two modules and publish them.
+        $course = $this->getDataGenerator()->create_course();
+        $mod = $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
+        $mod2 = $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
+        $tooldata = [
+            'cmid' => $mod->cmid,
+            'courseid' => $course->id,
+        ];
+        $tool = $this->getDataGenerator()->create_lti_tool((object)$tooldata);
+        $tooldata['cmid'] = $mod2->cmid;
+        $tool2 = $this->getDataGenerator()->create_lti_tool((object)$tooldata);
+
+        // Verify the instances are both enabled.
+        $modinstance = helper::get_lti_tool($tool->id);
+        $mod2instance = helper::get_lti_tool($tool2->id);
+        $this->assertEquals(ENROL_INSTANCE_ENABLED, $modinstance->status);
+        $this->assertEquals(ENROL_INSTANCE_ENABLED, $mod2instance->status);
+
+        // Delete a module and verify the associated instance is disabled.
+        course_delete_module($mod->cmid);
+        $modinstance = helper::get_lti_tool($tool->id);
+        $mod2instance = helper::get_lti_tool($tool2->id);
+        $this->assertEquals(ENROL_INSTANCE_DISABLED, $modinstance->status);
+        $this->assertEquals(ENROL_INSTANCE_ENABLED, $mod2instance->status);
     }
 }

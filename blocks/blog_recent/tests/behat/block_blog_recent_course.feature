@@ -101,7 +101,7 @@ Feature: Students can use the recent blog entries block to view recent entries o
     And I am on "Course 1" course homepage with editing mode on
     And I configure the "Recent blog entries" block
     And I set the following fields to these values:
-      | id_config_numberofrecentblogentries | 2 |
+      | config_numberofrecentblogentries | 2 |
     And I press "Save changes"
     And I should see "S1 Fourth Blog"
     And I should see "S1 Fifth Blog"

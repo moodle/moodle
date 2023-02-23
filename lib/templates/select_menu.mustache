@@ -1,0 +1,133 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/select_menu
+
+    Template for select_menu output component.
+
+    Context variables required for this template:
+    * name - name of the form element
+    * value - value of the form element
+    * baseid - id of the dropdown element and to be used to generate id for other elements used internally
+    * label - Element label
+    * labelattributes - Label attributes.
+    * selectedoption - Text of the selected option
+    * options - Array of options for the select with value, name, selected, isgroup and id properites.
+
+    Example context (json):
+    {
+        "name": "menuname",
+        "value": "opt2",
+        "baseid": "select-menu56789",
+        "label": "Select one option",
+        "labelattributes": [
+            {
+                "name": "class",
+                "value": "font-weight-bold"
+            }
+        ],
+        "selectedoption": "Second option",
+        "options": [
+            {
+                "name": "First option",
+                "value": "opt1",
+                "id": "select-menu-option1",
+                "selected": false
+            },
+            {
+                "name": "Second option",
+                "value": "opt2",
+                "id": "select-menu-option2",
+                "selected": true
+            },
+            {
+                "selected": false,
+                "isgroup": {
+                    "name": "First group",
+                    "id": "select-menu-group1",
+                    "options": [
+                        {
+                            "name": "Third option",
+                            "value": "opt3",
+                            "id": "select-menu-option3",
+                            "selected": false
+                        },
+                        {
+                            "name": "Fourth option",
+                            "value": "opt4",
+                            "id": "select-menu-option4",
+                            "selected": false
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "Fifth option",
+                "value": "opt5",
+                "id": "select-menu-option5",
+                "selected": false
+            }
+        ]
+    }
+}}
+<div class="dropdown select-menu" id="{{baseid}}">
+    {{#label}}
+        <label id="{{baseid}}-label"{{#labelattributes}} {{name}}="{{value}}"{{/labelattributes}}>{{label}}</label>
+    {{/label}}
+    <div
+        class="btn dropdown-toggle"
+        role="combobox"
+        data-toggle="dropdown"
+        {{#label}}aria-labelledby="{{baseid}}-label"{{/label}}
+        aria-haspopup="listbox"
+        aria-expanded="false"
+        aria-controls="{{baseid}}-listbox"
+        tabindex="0"
+    >
+        {{selectedoption}}
+    </div>
+    <ul class="dropdown-menu" role="listbox" id="{{baseid}}-listbox" {{#label}}aria-labelledby="{{baseid}}-label"{{/label}}>
+        {{#options}}
+            {{#isgroup}}
+                <li role="none">
+                    <ul role="group" aria-labelledby="{{id}}">
+                        <li role="presentation" id="{{id}}">{{name}}</li>
+                        {{#options}}
+                            <li class="dropdown-item" role="option" id="{{id}}" data-value="{{value}}" {{#selected}}aria-selected="true"{{/selected}}>
+                                {{name}}
+                            </li>
+                        {{/options}}
+                    </ul>
+                </li>
+            {{/isgroup}}
+            {{^isgroup}}
+                <li class="dropdown-item" role="option" id="{{id}}" data-value="{{value}}" {{#selected}}aria-selected="true"{{/selected}}>
+                    {{name}}
+                </li>
+            {{/isgroup}}
+        {{/options}}
+    </ul>
+    <input type="hidden" name="{{name}}" value="{{value}}" />
+</div>
+{{#js}}
+    var label = document.getElementById('{{baseid}}-label');
+    if (label) {
+        label.addEventListener('click', function() {
+            this.parentElement.querySelector('.dropdown-toggle').focus();
+        });
+    }
+{{/js}}

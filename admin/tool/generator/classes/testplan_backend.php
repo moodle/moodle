@@ -186,7 +186,7 @@ class tool_generator_testplan_backend extends tool_generator_backend {
         $planusers = self::$users[$size] ?? 0;
         $users = get_enrolled_users($coursecontext, '', 0, 'u.id, u.username, u.auth', 'u.username ASC', 0, $planusers);
         if (!$users) {
-            print_error('coursewithoutusers', 'tool_generator');
+            throw new \moodle_exception('coursewithoutusers', 'tool_generator');
         }
 
         $lines = array();
@@ -196,7 +196,7 @@ class tool_generator_testplan_backend extends tool_generator_backend {
             if ($updateuserspassword) {
                 $userauth = get_auth_plugin($user->auth);
                 if (!$userauth->user_update_password($user, $CFG->tool_generator_users_password)) {
-                    print_error('errorpasswordupdate', 'auth');
+                    throw new \moodle_exception('errorpasswordupdate', 'auth');
                 }
             }
 
@@ -249,19 +249,19 @@ class tool_generator_testplan_backend extends tool_generator_backend {
 
         // Getting the first page module instance.
         if (!$pages = $courseinfo->get_instances_of('page')) {
-            print_error('error_nopageinstances', 'tool_generator');
+            throw new \moodle_exception('error_nopageinstances', 'tool_generator');
         }
         $data->pageid = reset($pages)->id;
 
         // Getting the first forum module instance and it's first discussion and reply as well.
         if (!$forums = $courseinfo->get_instances_of('forum')) {
-            print_error('error_noforuminstances', 'tool_generator');
+            throw new \moodle_exception('error_noforuminstances', 'tool_generator');
         }
         $forum = reset($forums);
 
         // Getting the first discussion (and reply).
         if (!$discussions = forum_get_discussions($forum, 'd.timemodified ASC', false, -1, 1)) {
-            print_error('error_noforumdiscussions', 'tool_generator');
+            throw new \moodle_exception('error_noforumdiscussions', 'tool_generator');
         }
         $discussion = reset($discussions);
 

@@ -1,0 +1,4 @@
+shortname,fullname,category,enrolment_1,enrolment_1_role
+CX,coursex,1,manual,notexist
+CY,coursey,1,manual,notallowed
+CZ,coursez,1,manual,student

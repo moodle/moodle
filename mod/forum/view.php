@@ -45,7 +45,7 @@ $pagesize = optional_param('s', 0, PARAM_INT);
 $sortorder = optional_param('o', null, PARAM_INT);
 
 if (!$cmid && !$forumid) {
-    print_error('missingparameter');
+    throw new \moodle_exception('missingparameter');
 }
 
 if ($cmid) {
@@ -106,11 +106,6 @@ $PAGE->set_title($forum->get_name());
 $PAGE->add_body_class('forumtype-' . $forum->get_type());
 $PAGE->set_heading($course->fullname);
 $PAGE->add_header_action(forum_search_form($course, $search));
-
-// MDL-71915 Will remove this place holder.
-if (defined('BEHAT_SITE_RUNNING')) {
-    $PAGE->has_secondary_navigation_setter(false);
-}
 
 if ($istypesingle && $displaymode == FORUM_MODE_NESTED_V2) {
     $PAGE->add_body_class('nested-v2-display-mode reset-style');
@@ -202,6 +197,7 @@ switch ($forum->get_type()) {
                     'gradingcomponent' => $forumgradeitem->get_grading_component_name(),
                     'gradingcomponentsubtype' => $forumgradeitem->get_grading_component_subtype(),
                     'sendstudentnotifications' => $forum->should_notify_students_default_when_grade_for_forum(),
+                    'gradeonlyactiveusers' => $forumgradeitem->should_grade_only_active_users(),
                 ];
                 echo $OUTPUT->render_from_template('mod_forum/grades/grade_button', $gradeobj);
             }

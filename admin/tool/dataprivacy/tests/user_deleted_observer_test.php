@@ -14,18 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for the event observer.
- *
- * @package    tool_dataprivacy
- * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace tool_dataprivacy;
 
-defined('MOODLE_INTERNAL') || die();
-
-use \tool_dataprivacy\event\user_deleted_observer;
-use \tool_dataprivacy\api;
+use tool_dataprivacy\event\user_deleted_observer;
 
 /**
  * Event observer test.
@@ -34,7 +25,7 @@ use \tool_dataprivacy\api;
  * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_dataprivacy_user_deleted_observer_testcase extends advanced_testcase {
+class user_deleted_observer_test extends \advanced_testcase {
 
     /**
      * Ensure that a delete data request is created upon user deletion.

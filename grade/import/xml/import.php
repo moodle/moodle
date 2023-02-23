@@ -30,7 +30,7 @@ if ($feedback !== 0) {
 $PAGE->set_url($url);
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 require_login($course);
@@ -48,7 +48,7 @@ raise_memory_limit(MEMORY_EXTRA);
 
 $text = download_file_content($gradesurl);
 if ($text === false) {
-    print_error('cannotreadfile', 'error',
+    throw new \moodle_exception('cannotreadfile', 'error',
             $CFG->wwwroot . '/grade/import/xml/index.php?id=' . $id, $gradesurl);
 }
 
@@ -63,7 +63,7 @@ if ($importcode !== false) {
             echo 'ok';
             die;
         } else {
-            print_error('cannotimportgrade'); //TODO: localize
+            throw new \moodle_exception('cannotimportgrade'); // TODO: localize.
         }
 
     } else {
@@ -76,6 +76,6 @@ if ($importcode !== false) {
     }
 
 } else {
-    print_error('errorduringimport', 'gradeimport_xml',
+    throw new \moodle_exception('errorduringimport', 'gradeimport_xml',
             $CFG->wwwroot . '/grade/import/xml/index.php?id=' . $id, $error);
 }

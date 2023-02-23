@@ -15,25 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Block for displayed logged in user's course completion status
+ * Block for displayed logged in user's course completion status.
+ * Displays overall, and individual criteria status for logged in user.
  *
  * @package    block_completionstatus
  * @copyright  2009-2012 Catalyst IT Ltd
  * @author     Aaron Barnes <aaronb@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once("{$CFG->libdir}/completionlib.php");
-
-/**
- * Course completion status.
- * Displays overall, and individual criteria status for logged in user.
- */
 class block_completionstatus extends block_base {
 
     public function init() {
+        global $CFG;
+
+        require_once("{$CFG->libdir}/completionlib.php");
+
         $this->title = get_string('pluginname', 'block_completionstatus');
     }
 
@@ -252,5 +248,17 @@ class block_completionstatus extends block_base {
         }
 
         return $this->content;
+    }
+
+    /**
+     * This block shouldn't be added to a page if the completion tracking advanced feature is disabled.
+     *
+     * @param moodle_page $page
+     * @return bool
+     */
+    public function can_block_be_added(moodle_page $page): bool {
+        global $CFG;
+
+        return $CFG->enablecompletion;
     }
 }

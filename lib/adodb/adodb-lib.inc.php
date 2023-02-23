@@ -1,21 +1,31 @@
 <?php
+/**
+ * Helper functions.
+ *
+ * Less commonly used functions are placed here to reduce size of adodb.inc.php.
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
+
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
 
 global $ADODB_INCLUDED_LIB;
 $ADODB_INCLUDED_LIB = 1;
-
-/*
-  @version   v5.21.0  2021-02-27
-  @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
-  @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-  Released under both BSD license and Lesser GPL library license.
-  Whenever there is any discrepancy between the two licenses,
-  the BSD license will take precedence. See License.txt.
-  Set tabs to 4 for best viewing.
-
-  Less commonly used functions are placed here to reduce size of adodb.inc.php.
-*/
 
 function adodb_strip_order_by($sql)
 {
@@ -394,10 +404,23 @@ function _adodb_getcount(&$zthis, $sql,$inputarr=false,$secs2cache=0)
 {
 	$qryRecs = 0;
 
-	 if (!empty($zthis->_nestedSQL) || preg_match("/^\s*SELECT\s+DISTINCT/is", $sql) ||
-	 	preg_match('/\s+GROUP\s+BY\s+/is',$sql) ||
-		preg_match('/\s+UNION\s+/is',$sql)) {
+	/*
+	* These databases require a "SELECT * FROM (SELECT" type
+	* statement to have an alias for the result
+	*/
+	$requiresAlias = '';
+	$requiresAliasArray = array('postgres9','postgres','mysql','mysqli','mssql','mssqlnative','sqlsrv');
+	if (in_array($zthis->databaseType,$requiresAliasArray)
+		|| in_array($zthis->dsnType,$requiresAliasArray)
+	) {
+		$requiresAlias = '_ADODB_ALIAS_';
+	}
 
+	if (!empty($zthis->_nestedSQL)
+		|| preg_match("/^\s*SELECT\s+DISTINCT/is", $sql)
+		|| preg_match('/\s+GROUP\s+BY\s+/is',$sql)
+		|| preg_match('/\s+UNION\s+/is',$sql)
+	) {
 		$rewritesql = adodb_strip_order_by($sql);
 
 		// ok, has SELECT DISTINCT or GROUP BY so see if we can use a table alias
@@ -408,24 +431,37 @@ function _adodb_getcount(&$zthis, $sql,$inputarr=false,$secs2cache=0)
 				$rewritesql = "SELECT ".$hint[0]." COUNT(*) FROM (".$rewritesql.")";
 			} else
 				$rewritesql = "SELECT COUNT(*) FROM (".$rewritesql.")";
+		} else {
+			$rewritesql = "SELECT COUNT(*) FROM ($rewritesql) $requiresAlias";
+		}
 
-		} else if (strncmp($zthis->databaseType,'postgres',8) == 0
-			|| strncmp($zthis->databaseType,'mysql',5) == 0
-		|| strncmp($zthis->databaseType,'mssql',5) == 0
-			|| strncmp($zthis->dsnType,'sqlsrv',5) == 0
-			|| strncmp($zthis->dsnType,'mssql',5) == 0
-		){
-			$rewritesql = "SELECT COUNT(*) FROM ($rewritesql) _ADODB_ALIAS_";
-		} else {
-			$rewritesql = "SELECT COUNT(*) FROM ($rewritesql)";
-		}
 	} else {
-		// now replace SELECT ... FROM with SELECT COUNT(*) FROM
-		if ( strpos($sql, '_ADODB_COUNT') !== FALSE ) {
-			$rewritesql = preg_replace('/^\s*?SELECT\s+_ADODB_COUNT(.*)_ADODB_COUNT\s/is','SELECT COUNT(*) ',$sql);
-		} else {
-			$rewritesql = preg_replace('/^\s*SELECT\s.*\s+FROM\s/Uis','SELECT COUNT(*) FROM ',$sql);
+		// Replace 'SELECT ... FROM' with 'SELECT COUNT(*) FROM'
+		// Parse the query one char at a time starting after the SELECT
+		// to find the FROM clause's position, ignoring any sub-queries.
+		$start = stripos($sql, 'SELECT') + 7;
+		if ($start === false) {
+			// Not a SELECT statement - probably should trigger an exception here
+			return 0;
 		}
+		$len = strlen($sql);
+		$numParentheses = 0;
+		for ($pos = $start; $pos < $len; $pos++) {
+			switch ($sql[$pos]) {
+				case '(': $numParentheses++; continue 2;
+				case ')': $numParentheses--; continue 2;
+			}
+			// Ignore whatever is between parentheses (sub-queries)
+			if ($numParentheses > 0) {
+				continue;
+			}
+			// Exit loop if 'FROM' keyword was found
+			if (strtoupper(substr($sql, $pos, 4)) == 'FROM')  {
+				break;
+			}
+		}
+		$rewritesql = 'SELECT COUNT(*) ' . substr($sql, $pos);
+
 		// fix by alexander zhukov, alex#unipack.ru, because count(*) and 'order by' fails
 		// with mssql, access and postgresql. Also a good speedup optimization - skips sorting!
 		// also see PHPLens Issue No: 12752
@@ -433,7 +469,9 @@ function _adodb_getcount(&$zthis, $sql,$inputarr=false,$secs2cache=0)
 	}
 
 	if (isset($rewritesql) && $rewritesql != $sql) {
-		if (preg_match('/\sLIMIT\s+[0-9]+/i',$sql,$limitarr)) $rewritesql .= $limitarr[0];
+		if (preg_match('/\sLIMIT\s+[0-9]+/i',$sql,$limitarr)) {
+			$rewritesql .= $limitarr[0];
+		}
 
 		if ($secs2cache) {
 			// we only use half the time of secs2cache because the count can quickly
@@ -442,18 +480,23 @@ function _adodb_getcount(&$zthis, $sql,$inputarr=false,$secs2cache=0)
 
 		} else {
 			$qryRecs = $zthis->GetOne($rewritesql,$inputarr);
-	  	}
+		}
 		if ($qryRecs !== false) return $qryRecs;
 	}
+
 	//--------------------------------------------
 	// query rewrite failed - so try slower way...
 
-
 	// strip off unneeded ORDER BY if no UNION
-	if (preg_match('/\s*UNION\s*/is', $sql)) $rewritesql = $sql;
-	else $rewritesql = $rewritesql = adodb_strip_order_by($sql);
+	if (preg_match('/\s*UNION\s*/is', $sql)) {
+		$rewritesql = $sql;
+	} else {
+		$rewritesql = $rewritesql = adodb_strip_order_by($sql);
+	}
 
-	if (preg_match('/\sLIMIT\s+[0-9]+/i',$sql,$limitarr)) $rewritesql .= $limitarr[0];
+	if (preg_match('/\sLIMIT\s+[0-9]+/i',$sql,$limitarr)) {
+		$rewritesql .= $limitarr[0];
+	}
 
 	if ($secs2cache) {
 		$rstest = $zthis->CacheExecute($secs2cache,$rewritesql,$inputarr);
@@ -630,10 +673,50 @@ function _adodb_pageexecute_no_last_page(&$zthis, $sql, $nrows, $page, $inputarr
 	return $rsreturn;
 }
 
-function _adodb_getupdatesql(&$zthis, &$rs, $arrFields, $forceUpdate=false, $force=2)
+/**
+ * Performs case conversion and quoting of the given field name.
+ *
+ * See Global variable $ADODB_QUOTE_FIELDNAMES.
+ *
+ * @param ADOConnection $zthis
+ * @param string $fieldName
+ *
+ * @return string Quoted field name
+ */
+function _adodb_quote_fieldname($zthis, $fieldName)
 {
 	global $ADODB_QUOTE_FIELDNAMES;
 
+	// Case conversion - defaults to UPPER
+	$case = is_bool($ADODB_QUOTE_FIELDNAMES) ? 'UPPER' : $ADODB_QUOTE_FIELDNAMES;
+	switch ($case) {
+		case 'LOWER':
+			$fieldName = strtolower($fieldName);
+			break;
+		case 'NATIVE':
+			// Do nothing
+			break;
+		case 'UPPER':
+		case 'BRACKETS':
+		default:
+			$fieldName = strtoupper($fieldName);
+			break;
+	}
+
+	// Quote field if requested, or necessary (field contains space)
+	if ($ADODB_QUOTE_FIELDNAMES || strpos($fieldName, ' ') !== false ) {
+		if ($ADODB_QUOTE_FIELDNAMES === 'BRACKETS') {
+			return $zthis->leftBracket . $fieldName . $zthis->rightBracket;
+		} else {
+			return $zthis->nameQuote . $fieldName . $zthis->nameQuote;
+		}
+	} else {
+		return $fieldName;
+	}
+}
+
+function _adodb_getupdatesql(&$zthis, &$rs, $arrFields, $forceUpdate=false, $force=2)
+{
 	if (!$rs) {
 		printf(ADODB_BAD_RS,'GetUpdateSQL');
 		return false;
@@ -679,21 +762,7 @@ function _adodb_getupdatesql(&$zthis, &$rs, $arrFields, $forceUpdate=false, $for
 					$type = 'C';
 				}
 
-				if ((strpos($upperfname,' ') !== false) || ($ADODB_QUOTE_FIELDNAMES)) {
-					switch ($ADODB_QUOTE_FIELDNAMES) {
-						case 'BRACKETS':
-							$fnameq = $zthis->leftBracket.$upperfname.$zthis->rightBracket;break;
-						case 'LOWER':
-							$fnameq = $zthis->nameQuote.strtolower($field->name).$zthis->nameQuote;break;
-						case 'NATIVE':
-							$fnameq = $zthis->nameQuote.$field->name.$zthis->nameQuote;break;
-						case 'UPPER':
-						default:
-							$fnameq = $zthis->nameQuote.$upperfname.$zthis->nameQuote;break;
-					}
-				} else {
-					$fnameq = $upperfname;
-				}
+				$fnameq = _adodb_quote_fieldname($zthis, $field->name);
 
 				//********************************************************//
 				if (is_null($arrFields[$upperfname])
@@ -819,7 +888,6 @@ function _adodb_getinsertsql(&$zthis, &$rs, $arrFields, $force=2)
 static $cacheRS = false;
 static $cacheSig = 0;
 static $cacheCols;
-	global $ADODB_QUOTE_FIELDNAMES;
 
 	$tableName = '';
 	$values = '';
@@ -870,21 +938,7 @@ static $cacheCols;
 		$upperfname = strtoupper($field->name);
 		if (adodb_key_exists($upperfname,$arrFields,$force)) {
 			$bad = false;
-			if ((strpos($upperfname,' ') !== false) || ($ADODB_QUOTE_FIELDNAMES)) {
-				switch ($ADODB_QUOTE_FIELDNAMES) {
-				case 'BRACKETS':
-					$fnameq = $zthis->leftBracket.$upperfname.$zthis->rightBracket;break;
-				case 'LOWER':
-					$fnameq = $zthis->nameQuote.strtolower($field->name).$zthis->nameQuote;break;
-				case 'NATIVE':
-					$fnameq = $zthis->nameQuote.$field->name.$zthis->nameQuote;break;
-				case 'UPPER':
-				default:
-					$fnameq = $zthis->nameQuote.$upperfname.$zthis->nameQuote;break;
-				}
-			} else
-				$fnameq = $upperfname;
-
+			$fnameq = _adodb_quote_fieldname($zthis, $field->name);
 			$type = $recordSet->MetaType($field->type);
 
             /********************************************************/
@@ -1119,8 +1173,16 @@ function _adodb_debug_execute(&$zthis, $sql, $inputarr)
 		foreach($inputarr as $kk=>$vv) {
 			if (is_string($vv) && strlen($vv)>64) $vv = substr($vv,0,64).'...';
 			if (is_null($vv)) $ss .= "($kk=>null) ";
-			else $ss .= "($kk=>'$vv') ";
+			else 
+			{
+				if (is_array($vv))
+				{
+					$vv = sprintf("Array Of Values: [%s]", implode(',',$vv));
+				}
+				$ss .= "($kk=>'$vv') ";
+			}
 		}
+		
 		$ss = "[ $ss ]";
 	}
 	$sqlTxt = is_array($sql) ? $sql[0] : $sql;

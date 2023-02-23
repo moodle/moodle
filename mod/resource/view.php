@@ -36,14 +36,14 @@ $forceview = optional_param('forceview', 0, PARAM_BOOL);
 if ($r) {
     if (!$resource = $DB->get_record('resource', array('id'=>$r))) {
         resource_redirect_if_migrated($r, 0);
-        print_error('invalidaccessparameter');
+        throw new \moodle_exception('invalidaccessparameter');
     }
     $cm = get_coursemodule_from_instance('resource', $resource->id, $resource->course, false, MUST_EXIST);
 
 } else {
     if (!$cm = get_coursemodule_from_id('resource', $id)) {
         resource_redirect_if_migrated(0, $id);
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
     $resource = $DB->get_record('resource', array('id'=>$cm->instance), '*', MUST_EXIST);
 }

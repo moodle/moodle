@@ -45,27 +45,42 @@ class report_helper {
         global $OUTPUT, $PAGE;
 
         if ($reportnode = $PAGE->settingsnav->find('coursereports', \navigation_node::TYPE_CONTAINER)) {
-            if ($children = $reportnode->children) {
-                // Menu to select report pages to navigate.
-                $activeurl = '';
-                foreach ($children as $key => $node) {
-                    $name = $node->text;
 
-                    $url = $node->action()->out(false);
-                    $menu[$url] = $name;
-                    if ($name === $pluginname) {
-                        $activeurl = $url;
+            $menuarray = \core\navigation\views\secondary::create_menu_element([$reportnode]);
+            if (empty($menuarray)) {
+                return;
+            }
+
+            $coursereports = get_string('reports');
+            $activeurl = '';
+            if (isset($menuarray[0])) {
+                // Remove the reports entry.
+                $result = array_search($coursereports, $menuarray[0][$coursereports]);
+                unset($menuarray[0][$coursereports][$result]);
+
+                // Find the active node.
+                foreach ($menuarray[0] as $key => $value) {
+                    $check = array_search($pluginname, $value);
+                    if ($check !== false) {
+                        $activeurl = $check;
                     }
                 }
+            } else {
+                $result = array_search($coursereports, $menuarray);
+                unset($menuarray[$result]);
+
+                $check = array_search($pluginname, $menuarray);
+                if ($check !== false) {
+                    $activeurl = $check;
+                }
+
             }
 
-            if (!empty($menu)) {
-                $select = new url_select($menu, $activeurl, null, 'choosecoursereport');
-                $select->set_label(get_string('reporttype'), ['class' => 'accesshide']);
-                $select->class .= " mb-3";
-                echo $OUTPUT->render($select);
-            }
+            $select = new url_select($menuarray, $activeurl, null, 'choosecoursereport');
+            $select->set_label(get_string('reporttype'), ['class' => 'accesshide']);
+            echo \html_writer::tag('div', $OUTPUT->render($select), ['class' => 'tertiary-navigation']);
         }
+        echo $OUTPUT->heading($pluginname, 2, 'mb-3');
     }
 
     /**

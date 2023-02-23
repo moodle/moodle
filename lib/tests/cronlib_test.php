@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->libdir.'/cronlib.php');
+
 /**
  * Unit tests for the cron.
  *
@@ -22,13 +29,7 @@
  * @copyright 2013 Tim Gusak <tim.gusak@remote-learner.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir.'/cronlib.php');
-
-class cronlib_testcase extends basic_testcase {
+class cronlib_test extends \basic_testcase {
 
     /**
      * Data provider for cron_delete_from_temp.
@@ -130,7 +131,7 @@ class cronlib_testcase extends basic_testcase {
      * @param bool $keep Should the node exist after the delete function has run
      */
     private function generate_test_path($path, $isdir = false, $time = 0, $keep = false) {
-        $node = new stdClass();
+        $node = new \stdClass();
         $node->path = $path;
         $node->isdir = $isdir;
         $node->time = $time;
@@ -163,8 +164,8 @@ class cronlib_testcase extends basic_testcase {
         $task = new \core\task\file_temp_cleanup_task();
         $task->execute();
 
-        $dir = new RecursiveDirectoryIterator($tmpdir);
-        $iter = new RecursiveIteratorIterator($dir, RecursiveIteratorIterator::CHILD_FIRST);
+        $dir = new \RecursiveDirectoryIterator($tmpdir);
+        $iter = new \RecursiveIteratorIterator($dir, \RecursiveIteratorIterator::CHILD_FIRST);
 
         $actual = array();
         for ($iter->rewind(); $iter->valid(); $iter->next()) {

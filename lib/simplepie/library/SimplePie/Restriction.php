@@ -146,3 +146,5 @@ class SimplePie_Restriction
 		return null;
 	}
 }
+
+class_alias('SimplePie_Restriction', 'SimplePie\Restriction', false);

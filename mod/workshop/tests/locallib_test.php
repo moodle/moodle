@@ -22,6 +22,12 @@
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_workshop;
+
+use testable_workshop;
+use workshop;
+use workshop_example_assessment;
+use workshop_example_reference_assessment;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,7 +39,7 @@ require_once(__DIR__ . '/fixtures/testable.php');
 /**
  * Test cases for the internal workshop api
  */
-class mod_workshop_internal_api_testcase extends advanced_testcase {
+class locallib_test extends \advanced_testcase {
 
     /** @var object */
     protected $course;
@@ -195,7 +201,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
         $batch[] = (object)array('reviewerid'=>3, 'gradinggrade'=>82.87670, 'gradinggradeover'=>null, 'aggregationid'=>null, 'aggregatedgrade'=>null);
         // expectation
         $now = time();
-        $expected = new stdclass();
+        $expected = new \stdClass();
         $expected->workshopid = $this->workshop->id;
         $expected->userid = 3;
         $expected->gradinggrade = 82.87670;
@@ -247,7 +253,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
         $batch[] = (object)array('reviewerid'=>5, 'gradinggrade'=>51.12000, 'gradinggradeover'=>null, 'aggregationid'=>null, 'aggregatedgrade'=>null);
         // expectation
         $now = time();
-        $expected = new stdclass();
+        $expected = new \stdClass();
         $expected->workshopid = $this->workshop->id;
         $expected->userid = 5;
         $expected->gradinggrade = 79.3066;
@@ -327,7 +333,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
         $percent = -7.098;
 
         // exercise SUT
-        $this->expectException(coding_exception::class);
+        $this->expectException(\coding_exception::class);
         $part = workshop::percent_to_value($percent, $total);
     }
 
@@ -338,7 +344,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
         $percent = 121.08;
 
         // exercise SUT
-        $this->expectException(coding_exception::class);
+        $this->expectException(\coding_exception::class);
         $part = workshop::percent_to_value($percent, $total);
     }
 
@@ -382,7 +388,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
         $a = $this->workshop->prepare_example_assessment($fakerawrecord);
         // verify
         $this->assertTrue($a instanceof workshop_example_assessment);
-        $this->assertTrue($a->url instanceof moodle_url);
+        $this->assertTrue($a->url instanceof \moodle_url);
 
         // modify setup
         $fakerawrecord->weight = 1;
@@ -462,7 +468,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
 
         // The existing workshop doesn't have any restrictions, so user lists
         // should include all three users.
-        $allusers = get_enrolled_users(context_course::instance($courseid));
+        $allusers = get_enrolled_users(\context_course::instance($courseid));
         $result = $this->workshop->get_grouped($allusers);
         $this->assertCount(4, $result);
         $users = array_keys($result[0]);
@@ -771,5 +777,98 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
         $this->assertFalse($workshop3->check_group_membership($student1->id));
         $this->assertTrue($workshop3->check_group_membership($student2->id));
         $this->assertFalse($workshop3->check_group_membership($student3->id));
+    }
+
+    /**
+     * Test init_initial_bar function.
+     *
+     * @covers \workshop::init_initial_bar
+     */
+    public function test_init_initial_bar(): void {
+        global $SESSION;
+        $this->resetAfterTest();
+
+        $_GET['ifirst'] = 'A';
+        $_GET['ilast'] = 'B';
+        $contextid = $this->workshop->context->id;
+
+        $this->workshop->init_initial_bar();
+        $initialbarprefs = $this->get_initial_bar_prefs_property();
+
+        $this->assertEquals('A', $initialbarprefs['i_first']);
+        $this->assertEquals('B', $initialbarprefs['i_last']);
+        $this->assertEquals('A', $SESSION->mod_workshop->initialbarprefs['id-' . $contextid]['i_first']);
+        $this->assertEquals('B', $SESSION->mod_workshop->initialbarprefs['id-' . $contextid]['i_last']);
+
+        $_GET['ifirst'] = null;
+        $_GET['ilast'] = null;
+        $SESSION->mod_workshop->initialbarprefs['id-' . $contextid]['i_first'] = 'D';
+        $SESSION->mod_workshop->initialbarprefs['id-' . $contextid]['i_last'] = 'E';
+
+        $this->workshop->init_initial_bar();
+        $initialbarprefs = $this->get_initial_bar_prefs_property();
+
+        $this->assertEquals('D', $initialbarprefs['i_first']);
+        $this->assertEquals('E', $initialbarprefs['i_last']);
+    }
+
+    /**
+     * Test empty init_initial_bar
+     *
+     * @covers \workshop::init_initial_bar
+     */
+    public function test_init_initial_bar_empty(): void {
+        $this->resetAfterTest();
+
+        $this->workshop->init_initial_bar();
+        $initialbarprefs = $this->get_initial_bar_prefs_property();
+
+        $this->assertEmpty($initialbarprefs);
+    }
+
+    /**
+     * Test get_initial_first function
+     *
+     * @covers \workshop::get_initial_first
+     */
+    public function test_get_initial_first(): void {
+        $this->resetAfterTest();
+        $this->workshop->init_initial_bar();
+        $this->assertEquals(null, $this->workshop->get_initial_first());
+
+        $_GET['ifirst'] = 'D';
+        $this->workshop->init_initial_bar();
+        $this->assertEquals('D', $this->workshop->get_initial_first());
+    }
+
+    /**
+     * Test get_initial_last function
+     *
+     * @covers \workshop::get_initial_last
+     */
+    public function test_get_initial_last(): void {
+        $this->resetAfterTest();
+        $this->workshop->init_initial_bar();
+        $this->assertEquals(null, $this->workshop->get_initial_last());
+
+        $_GET['ilast'] = 'D';
+        $this->workshop->init_initial_bar();
+        $this->assertEquals('D', $this->workshop->get_initial_last());
+    }
+
+    /**
+     * Get the protected propertyinitialbarprefs from workshop class.
+     *
+     * @coversNothing
+     * @return array initialbarspref property. eg ['i_first' => 'A', 'i_last' => 'B']
+     */
+    private function get_initial_bar_prefs_property(): array {
+
+        $reflector = new \ReflectionObject($this->workshop);
+        $initialbarprefsprop = $reflector->getProperty('initialbarprefs');
+        $initialbarprefsprop->setAccessible(true);
+        $initialbarprefs = $initialbarprefsprop->getValue($this->workshop);
+
+        return $initialbarprefs;
     }
 }

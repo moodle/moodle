@@ -21,10 +21,7 @@ Feature: Signing up for a course with a fee enrolment method
     And I navigate to "Plugins > Enrolments > Manage enrol plugins" in site administration
     And I click on "Enable" "link" in the "Enrolment on payment" "table_row"
     And I log out
-
-  @javascript
-  Scenario: Student can see the payment prompt on the course enrolment page
-    When I log in as "manager1"
+    And I log in as "manager1"
     And I am on the "Course 1" "enrolment methods" page
     And I select "Enrolment on payment" from the "Add method" singleselect
     And I set the following fields to these values:
@@ -33,7 +30,10 @@ Feature: Signing up for a course with a fee enrolment method
       | Currency        | Euro     |
     And I press "Add method"
     And I log out
-    And I log in as "student1"
+
+  @javascript
+  Scenario: Student can see the payment prompt on the course enrolment page
+    When I log in as "student1"
     And I am on course index
     And I follow "Course 1"
     Then I should see "This course requires a payment for entry."
@@ -41,3 +41,11 @@ Feature: Signing up for a course with a fee enrolment method
     And I press "Select payment type"
     And I should see "PayPal" in the "Select payment type" "dialogue"
     And I click on "Cancel" "button" in the "Select payment type" "dialogue"
+
+  Scenario: Guest can see the login prompt on the course enrolment page
+    When I log in as "guest"
+    And I am on course index
+    And I follow "Course 1"
+    Then I should see "This course requires a payment for entry."
+    And I should see "123.45"
+    And I should see "Log in to the site"

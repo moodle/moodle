@@ -14,18 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Rest server tests.
- *
- * @package    webservice_rest
- * @copyright  2016 Frédéric Massart - FMCorz.net
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace webservice_rest;
+
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/webservice/rest/locallib.php');
 
 /**
@@ -35,7 +32,7 @@ require_once($CFG->dirroot . '/webservice/rest/locallib.php');
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class webservice_rest_server_testcase extends advanced_testcase {
+class server_test extends \advanced_testcase {
 
     /**
      * Data provider for test_xmlize.
@@ -209,7 +206,7 @@ class webservice_rest_server_testcase extends advanced_testcase {
      * @param mixed $expected The expected output.
      */
     public function test_xmlize($description, $value, $expected) {
-        $method = new ReflectionMethod('webservice_rest_server', 'xmlize_result');
+        $method = new \ReflectionMethod('webservice_rest_server', 'xmlize_result');
         $method->setAccessible(true);
         $this->assertEquals($expected, $method->invoke(null, $value, $description));
     }

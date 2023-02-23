@@ -154,7 +154,7 @@ abstract class feedback_item_base {
      * Prepares the value for exporting to Excel
      *
      * @param object $item the db-object from feedback_item
-     * @param string $value a item-related value from feedback_values
+     * @param object $value object with item-related value from feedback_values in the 'value' property
      * @return string
      */
     abstract public function get_printval($item, $value);

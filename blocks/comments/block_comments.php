@@ -21,15 +21,13 @@
  * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-// Obviously required
-require_once($CFG->dirroot . '/comment/lib.php');
-
 class block_comments extends block_base {
 
     function init() {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/comment/lib.php');
+
         $this->title = get_string('pluginname', 'block_comments');
     }
 
@@ -47,6 +45,7 @@ class block_comments extends block_base {
 
     function get_content() {
         global $CFG;
+
         if ($this->content !== NULL) {
             return $this->content;
         }
@@ -84,5 +83,17 @@ class block_comments extends block_base {
         $this->content->text = $comment->output(true);
         $this->content->footer = '';
         return $this->content;
+    }
+
+    /**
+     * This block shouldn't be added to a page if the comments advanced feature is disabled.
+     *
+     * @param moodle_page $page
+     * @return bool
+     */
+    public function can_block_be_added(moodle_page $page): bool {
+        global $CFG;
+
+        return $CFG->usecomments;
     }
 }

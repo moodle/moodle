@@ -66,7 +66,8 @@ class activity_header implements \renderable, \templatable {
                 $this->title = format_string($page->activityrecord->name);
             }
 
-            if (empty($layoutoptions['nodescription']) && $page->activityrecord->intro && trim($page->activityrecord->intro)) {
+            if (empty($layoutoptions['nodescription']) && !empty($page->activityrecord->intro) &&
+                    trim($page->activityrecord->intro)) {
                 $this->description = format_module_intro($this->page->activityname, $page->activityrecord, $page->cm->id);
             }
         }
@@ -87,12 +88,19 @@ class activity_header implements \renderable, \templatable {
     /**
      * Bulk set class member variables. Only updates variables which have corresponding setters
      *
-     * @param array $config
+     * @param mixed[] $config Array of variables to set, with keys being their name. Valid names/types as follows:
+     *      'hidecompletion' => bool
+     *      'additionalnavitems' => url_select
+     *      'hideoverflow' => bool
+     *      'title' => string
+     *      'description' => string
      */
     public function set_attrs(array $config): void {
         foreach ($config as $key => $value) {
             if (method_exists($this, "set_$key")) {
                 $this->{"set_$key"}($value);
+            } else {
+                debugging("Invalid class member variable: {$key}", DEBUG_DEVELOPER);
             }
         }
     }
@@ -172,6 +180,14 @@ class activity_header implements \renderable, \templatable {
             $completiondetails = \core_completion\cm_completion_details::get_instance($this->page->cm, $this->user->id);
             $activitydates = \core\activity_dates::get_dates_for_module($this->page->cm, $this->user->id);
             $completion = $output->activity_information($this->page->cm, $completiondetails, $activitydates);
+        }
+
+        $format = course_get_format($this->page->course);
+        if ($format->supports_components()) {
+            $this->page->requires->js_call_amd(
+                'core_courseformat/local/content/activity_header',
+                'init'
+            );
         }
 
         return [

@@ -113,6 +113,7 @@ $string['eventkind'] = 'Type of event';
 $string['eventname'] = 'Event title';
 $string['eventnameandcategory'] = '{$a->category}: {$a->name}';
 $string['eventnameandcourse'] = '{$a->course}: {$a->name}';
+$string['eventnamelocation'] = '{$a->name} location: {$a->location}';
 $string['eventnone'] = 'No events';
 $string['eventrepeat'] = 'Repeats';
 $string['events'] = 'Events';
@@ -287,9 +288,3 @@ $string['yoursubscriptions'] = 'Imported calendars';
 $string['calendarurl'] = 'Calendar URL: {$a}';
 $string['importfrominstructions'] = 'Please provide either a URL to a remote calendar, or upload a file.';
 $string['monthlyview'] = 'Monthly view';
-
-// Deprecated since Moodle 3.8.
-$string['global'] = 'Global';
-$string['globalevent'] = 'Global event';
-$string['globalevents'] = 'Global events';
-$string['eventtypeglobal'] = 'global';

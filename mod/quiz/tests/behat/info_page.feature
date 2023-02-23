@@ -31,6 +31,19 @@ Feature: Display of information before starting a quiz
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
     Then I should see "Grade to pass: 60.00 out of 100.00"
 
+  Scenario: Check the pass grade is displayed with custom decimal separator
+    Given the following "language customisations" exist:
+      | component       | stringid | value |
+      | core_langconfig | decsep   | #     |
+    And the following "activities" exist:
+      | activity   | name   | intro              | course | idnumber | gradepass |
+      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    | 60#00     |
+    And quiz "Quiz 1" contains the following questions:
+      | question | page |
+      | TF1      | 1    |
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    Then I should see "Grade to pass: 60#00 out of 100#00"
+
   Scenario: Check the pass grade is not displayed if not set
     Given the following "activities" exist:
       | activity   | name   | intro              | course | idnumber | gradepass |

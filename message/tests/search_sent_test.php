@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Sent message global search unit tests.
- *
- * @package     core
- * @copyright   2016 Devang Gaur
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_message;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,11 +24,11 @@ require_once($CFG->dirroot . '/search/tests/fixtures/testable_core_search.php');
 /**
  * Provides the unit tests for sent message global search.
  *
- * @package     core
+ * @package     core_message
  * @copyright   2016 Devang Gaur
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class message_sent_search_testcase extends advanced_testcase {
+class search_sent_test extends \advanced_testcase {
 
     /**
      * @var string Area id
@@ -52,7 +46,7 @@ class message_sent_search_testcase extends advanced_testcase {
         $this->messagesentareaid = \core_search\manager::generate_areaid('core_message', 'message_sent');
 
         // Set \core_search::instance to the mock_search_engine as we don't require the search engine to be working to test this.
-        $search = testable_core_search::instance();
+        $search = \testable_core_search::instance();
     }
 
     /**
@@ -163,7 +157,7 @@ class message_sent_search_testcase extends advanced_testcase {
         // Test function with null context and system context (same).
         $rs = $searcharea->get_document_recordset(0, null);
         $this->assertEquals(['Test1', 'Test2'], self::recordset_to_subjects($rs));
-        $rs = $searcharea->get_document_recordset(0, context_system::instance());
+        $rs = $searcharea->get_document_recordset(0, \context_system::instance());
         $this->assertEquals(['Test1', 'Test2'], self::recordset_to_subjects($rs));
 
         // Test with user context for each user.
@@ -174,7 +168,7 @@ class message_sent_search_testcase extends advanced_testcase {
 
         // Test with a course context (should return null).
         $this->assertNull($searcharea->get_document_recordset(0,
-                context_course::instance($SITE->id)));
+                \context_course::instance($SITE->id)));
     }
 
     /**
@@ -183,7 +177,7 @@ class message_sent_search_testcase extends advanced_testcase {
      * @param moodle_recordset $rs Recordset to convert (and close)
      * @return array Array of IDs from records indexed by number (0, 1, 2, ...)
      */
-    public static function recordset_to_subjects(moodle_recordset $rs) {
+    public static function recordset_to_subjects(\moodle_recordset $rs) {
         $results = [];
         foreach ($rs as $rec) {
             $results[] = $rec->subject;

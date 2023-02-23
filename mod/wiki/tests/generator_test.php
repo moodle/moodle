@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * mod_wiki generator tests
- *
- * @package    mod_wiki
- * @category   test
- * @copyright  2013 Marina Glancy
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_wiki;
 
 /**
  * Genarator tests class for mod_wiki.
@@ -31,7 +24,7 @@
  * @copyright  2013 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_wiki_generator_testcase extends advanced_testcase {
+class generator_test extends \advanced_testcase {
 
     public function test_create_instance() {
         global $DB;
@@ -77,9 +70,9 @@ class mod_wiki_generator_testcase extends advanced_testcase {
         $this->assertEquals($page3->id, $records[$page3->id]->id);
         $this->assertEquals('Custom title', $records[$page3->id]->title);
         $this->assertEquals(array('Cats', 'mice'),
-                array_values(core_tag_tag::get_item_tags_array('mod_wiki', 'wiki_pages', $page3->id)));
+                array_values(\core_tag_tag::get_item_tags_array('mod_wiki', 'wiki_pages', $page3->id)));
         $this->assertEquals(array('Cats', 'dogs'),
-                array_values(core_tag_tag::get_item_tags_array('mod_wiki', 'wiki_pages', $page4->id)));
+                array_values(\core_tag_tag::get_item_tags_array('mod_wiki', 'wiki_pages', $page4->id)));
     }
 
     public function test_create_content_individual() {

@@ -30,7 +30,7 @@ if ($hassiteconfig) {
     $optionalsubsystems->add(new admin_setting_configcheckbox('tool_moodlenet/enablemoodlenet',
         new lang_string('enablemoodlenet', 'tool_moodlenet'),
         new lang_string('enablemoodlenet_desc', 'tool_moodlenet'),
-        0, 1, 0)
+        1, 1, 0)
     );
 
     // Create a MoodleNet category.

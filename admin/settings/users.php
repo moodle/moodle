@@ -240,7 +240,8 @@ if ($hassiteconfig
                         if ($field->param2 > 255 || $field->datatype != 'text') {
                             continue;
                         }
-                        $fields['profile_field_' . $field->shortname] = $field->name . ' *';
+                        $fields['profile_field_' . $field->shortname] = format_string($field->name, true,
+                            ['context' => context_system::instance()]) . ' *';
                     }
 
                     return $fields;

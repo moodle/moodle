@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains helper classes for testing the web service and external files.
- *
- * @package    core_webservice
- * @copyright  2012 Jerome Mouneyrac
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+use core_external\external_settings;
 
 /**
  * Helper base class for external tests. Helpfull to test capabilities.
@@ -135,4 +127,3 @@ abstract class externallib_advanced_testcase extends advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
     }
 }
-

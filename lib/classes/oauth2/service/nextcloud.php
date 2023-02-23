@@ -38,7 +38,7 @@ class nextcloud extends openidconnect implements issuer_interface {
     public static function init(): issuer {
         $record = (object) [
             'name' => 'Nextcloud',
-            'image' => 'https://nextcloud.com/wp-content/themes/next/assets/img/common/favicon.png?x16328',
+            'image' => 'https://nextcloud.com/wp-content/uploads/2022/03/favicon.png',
             'basicauth' => 1,
             'servicetype' => 'nextcloud',
         ];

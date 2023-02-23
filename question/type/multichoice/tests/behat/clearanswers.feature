@@ -6,15 +6,15 @@ Feature: Clear my answers
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email               |
-      | student1 | S1        | Student1 | student1@moodle.com |
+      | username |
+      | student  |
     And the following "course" exists:
       | fullname  | Course 1  |
       | shortname | C1        |
       | category  | 0         |
     And the following "course enrolments" exist:
-      | user     | course | role           |
-      | student1 | C1     | student        |
+      | user    | course | role    |
+      | student | C1     | student |
     And the following "question category" exists:
       | contextlevel  | Course          |
       | reference     | C1              |
@@ -39,8 +39,8 @@ Feature: Clear my answers
 
   @javascript
   Scenario: Attempt a quiz and reset my chosen answer.
-    Given I am on the "Quiz 1" "quiz activity" page logged in as student1
-    When I follow "Attempt quiz"
+    Given I am on the "Quiz 1" "quiz activity" page logged in as student
+    When I press "Attempt quiz"
     And I should see "Question One"
     And I click on "Four" "qtype_multichoice > Answer" in the "Question One" "question"
     And I should see "Clear my choice"
@@ -51,8 +51,8 @@ Feature: Clear my answers
 
   @javascript
   Scenario: Attempt a quiz and revisit a cleared answer.
-    Given I am on the "Quiz 1" "quiz activity" page logged in as student1
-    When I follow "Attempt quiz"
+    Given I am on the "Quiz 1" "quiz activity" page logged in as student
+    When I press "Attempt quiz"
     And I should see "Question One"
     And I click on "Four" "qtype_multichoice > Answer" in the "Question One" "question"
     And I follow "Finish attempt ..."

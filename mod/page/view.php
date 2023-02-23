@@ -34,13 +34,13 @@ $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
 
 if ($p) {
     if (!$page = $DB->get_record('page', array('id'=>$p))) {
-        print_error('invalidaccessparameter');
+        throw new \moodle_exception('invalidaccessparameter');
     }
     $cm = get_coursemodule_from_instance('page', $page->id, $page->course, false, MUST_EXIST);
 
 } else {
     if (!$cm = get_coursemodule_from_id('page', $id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
     $page = $DB->get_record('page', array('id'=>$cm->instance), '*', MUST_EXIST);
 }
@@ -59,10 +59,6 @@ $PAGE->set_url('/mod/page/view.php', array('id' => $cm->id));
 $options = empty($page->displayoptions) ? [] : (array) unserialize_array($page->displayoptions);
 
 $activityheader = ['hidecompletion' => false];
-if (empty($options['printheading'])) {
-    $activityheader['title'] = '';
-}
-
 if (empty($options['printintro']) || !trim(strip_tags($page->intro))) {
     $activityheader['description'] = '';
 }

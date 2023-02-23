@@ -16,10 +16,13 @@
 
 declare(strict_types=1);
 
+use core_reportbuilder\manager;
 use core_reportbuilder\local\helpers\report as helper;
+use core_reportbuilder\local\helpers\schedule as schedule_helper;
 use core_reportbuilder\local\models\column;
 use core_reportbuilder\local\models\filter;
 use core_reportbuilder\local\models\report;
+use core_reportbuilder\local\models\schedule;
 use core_reportbuilder\local\audiences\base as audience_base;
 
 /**
@@ -51,7 +54,13 @@ class core_reportbuilder_generator extends component_generator_base {
         // Include default setup unless specifically disabled in passed record.
         $default = (bool) ($record['default'] ?? true);
 
-        return helper::create_report((object) $record, $default);
+        // If setting up default report, purge caches to ensure any default attributes are always loaded in tests.
+        $report = helper::create_report((object) $record, $default);
+        if ($default) {
+            manager::reset_caches();
+        }
+
+        return $report;
     }
 
     /**
@@ -71,7 +80,15 @@ class core_reportbuilder_generator extends component_generator_base {
             throw new coding_exception('Record must contain \'uniqueidentifier\' property');
         }
 
-        return helper::add_report_column($record['reportid'], $record['uniqueidentifier']);
+        $column = helper::add_report_column($record['reportid'], $record['uniqueidentifier']);
+
+        // Update additional record properties.
+        unset($record['reportid'], $record['uniqueidentifier']);
+        if ($properties = column::properties_filter((object) $record)) {
+            $column->set_many($properties)->update();
+        }
+
+        return $column;
     }
 
     /**
@@ -91,7 +108,15 @@ class core_reportbuilder_generator extends component_generator_base {
             throw new coding_exception('Record must contain \'uniqueidentifier\' property');
         }
 
-        return helper::add_report_filter($record['reportid'], $record['uniqueidentifier']);
+        $filter = helper::add_report_filter($record['reportid'], $record['uniqueidentifier']);
+
+        // Update additional record properties.
+        unset($record['reportid'], $record['uniqueidentifier']);
+        if ($properties = filter::properties_filter((object) $record)) {
+            $filter->set_many($properties)->update();
+        }
+
+        return $filter;
     }
 
     /**
@@ -111,7 +136,15 @@ class core_reportbuilder_generator extends component_generator_base {
             throw new coding_exception('Record must contain \'uniqueidentifier\' property');
         }
 
-        return helper::add_report_condition($record['reportid'], $record['uniqueidentifier']);
+        $condition = helper::add_report_condition($record['reportid'], $record['uniqueidentifier']);
+
+        // Update additional record properties.
+        unset($record['reportid'], $record['uniqueidentifier']);
+        if ($properties = filter::properties_filter((object) $record)) {
+            $condition->set_many($properties)->update();
+        }
+
+        return $condition;
     }
 
     /**
@@ -138,5 +171,43 @@ class core_reportbuilder_generator extends component_generator_base {
             \core_reportbuilder\reportbuilder\audience\allusers::class;
 
         return ($classname)::create($record['reportid'], $record['configdata']);
+    }
+
+    /**
+     * Create report schedule
+     *
+     * @param array|stdClass $record
+     * @return schedule
+     * @throws coding_exception
+     */
+    public function create_schedule($record): schedule {
+        $record = (array) $record;
+
+        // Required properties.
+        if (!array_key_exists('reportid', $record)) {
+            throw new coding_exception('Record must contain \'reportid\' property');
+        }
+        if (!array_key_exists('name', $record)) {
+            throw new coding_exception('Record must contain \'name\' property');
+        }
+
+        // Optional properties.
+        if (!array_key_exists('format', $record)) {
+            $record['format'] = 'csv';
+        }
+        if (!array_key_exists('subject', $record)) {
+            $record['subject'] = $record['name'] . ' subject';
+        }
+        if (!array_key_exists('message', $record)) {
+            $record['message'] = $record['name'] . ' message';
+        }
+        if (!array_key_exists('timescheduled', $record)) {
+            $record['timescheduled'] = usergetmidnight(time() + DAYSECS);
+        }
+
+        // Time to use as comparison against current date (null means current time).
+        $timenow = $record['timenow'] ?? null;
+
+        return schedule_helper::create_schedule((object) $record, $timenow);
     }
 }

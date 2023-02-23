@@ -68,6 +68,8 @@ Feature: Course activity controls works as expected
     And I show section "1"
     And <belowpage> "section" <should_see_other_sections> exist
     And section "1" should be visible
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Section links" block
     And <belowpage> "section" <should_see_other_sections> exist
     And I should see "1 2 3 4 5" in the "Section links" "block"
@@ -83,7 +85,7 @@ Feature: Course activity controls works as expected
       | weeks        | 1             | "1 January - 7 January" | should not                | should not                                               | "8 January - 14 January" |
       | weeks        | 1             | "General"               | should                    | should not                                               | "8 January - 14 January" |
 
-  Scenario Outline: General activities course controls using topics and weeks formats, and paged mode and not paged mode works as expected
+  Scenario Outline: General activities course controls using topics and weeks formats, and paged mode and not paged mode works as expected without javascript
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
@@ -127,6 +129,8 @@ Feature: Course activity controls works as expected
     And I show section "1"
     And <belowpage> "section" <should_see_other_sections> exist
     And section "1" should be visible
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Section links" block
     And <belowpage> "section" <should_see_other_sections> exist
     And I should see "1 2 3 4 5" in the "Section links" "block"

@@ -1,5 +1,10 @@
 This file describes API changes in the timeline block code.
 
+=== 4.0 ===
+* The timeline block courses view has been updated to only list courses which contain at least one action event within the chosen
+  filter, so now uses \core_course\external\get_enrolled_courses_with_action_events_by_timeline_classification to fetch courses
+  instead of core_course_external::get_enrolled_courses_by_timeline_classification, which fetches all courses within the limit.
+
 === 3.7 ===
 
 * The 'block/timeline:addinstance' capability has been removed. It has never been used in code.

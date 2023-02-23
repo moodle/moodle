@@ -20,18 +20,15 @@ Feature: A teacher can delete questions in the question bank
     And the following "questions" exist:
       | questioncategory | qtype | name                        | questiontext                  |
       | Test questions   | essay | Test question to be deleted | Write about whatever you want |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
 
   @javascript
   Scenario: A question not used anywhere can really be deleted
     When I choose "Delete" action for "Test question to be deleted" in the question bank
     And I press "Delete"
-    And I click on "Also show old questions" "checkbox"
+    And I set the field "Also show old questions" to "1"
     Then I should not see "Test question to be deleted"
 
-  @javascript
   Scenario: Deleting a question can be cancelled
     When I choose "Delete" action for "Test question to be deleted" in the question bank
     And I press "Cancel"
@@ -52,15 +49,14 @@ Feature: A teacher can delete questions in the question bank
     And quiz "Test quiz" contains the following questions:
       | question                         | page | requireprevious |
       | Test used question to be deleted | 1    | 0               |
-    When I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
+    When I am on the "Course 1" "core_question > course question bank" page
     And I choose "Delete" action for "Test used question to be deleted" in the question bank
     And I press "Delete"
     Then I should not see "Test used question to be deleted"
-    And I click on "Also show old questions" "checkbox"
+    And I set the field "Also show old questions" to "1"
     And I should see "Test used question to be deleted"
     And I am on the "Test quiz" "quiz activity" page
-    And I follow "Preview quiz"
+    And I click on "Preview quiz" "button"
     And I should see "Write about whatever you want"
 
   @javascript
@@ -71,5 +67,5 @@ Feature: A teacher can delete questions in the question bank
     And I reload the page
     When I choose "Delete" action for "Broken question" in the question bank
     And I press "Delete"
-    And I click on "Also show old questions" "checkbox"
+    And I set the field "Also show old questions" to "1"
     Then I should not see "Broken question"

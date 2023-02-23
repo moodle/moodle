@@ -45,7 +45,7 @@ class helper {
         // Form field is PARAM_ALPHANUMEXT and we are sending fully qualified class names
         // as option names, but replacing the backslash for a string that is really unlikely
         // to ever be part of a class name.
-        return str_replace('\\', '__', $class);
+        return str_replace('\\', '__', $class ?? '');
     }
 
     /**
@@ -76,10 +76,14 @@ class helper {
 
         $PAGE->set_context($context);
         $PAGE->set_url($url);
+        $PAGE->set_secondary_active_tab('siteadminnode');
+        $PAGE->set_primary_active_tab('siteadminnode');
 
         if ($siteadmin = $PAGE->settingsnav->find('root', \navigation_node::TYPE_SITE_ADMIN)) {
-            $PAGE->navbar->add($siteadmin->get_content(), $siteadmin->action());
+            $PAGE->navbar->add($siteadmin->get_content(), $siteadmin->action(),
+                \breadcrumb_navigation_node::TYPE_SITE_ADMIN, null, 'root');
         }
+
         if ($analytics = $PAGE->settingsnav->find('analytics', \navigation_node::TYPE_SETTING)) {
             $PAGE->navbar->add($analytics->get_content(), $analytics->action());
         }

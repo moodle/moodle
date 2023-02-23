@@ -106,7 +106,7 @@ if ($courseid != SITEID && !empty($courseid)) {
             new moodle_url('/calendar/view.php', ['view' => 'month', 'category' => $categoryid])
         );
     } else {
-        navigation_node::override_active_url(new moodle_url('/calendar/view.php', ['view' => 'month']));
+        $PAGE->navbar->add(get_string('calendar', 'calendar'), new moodle_url('/calendar/view.php', ['view' => 'month']));
     }
 }
 require_login($course, false);
@@ -131,6 +131,7 @@ $headingstr = ($courseid != SITEID && !empty($courseid)) ? "{$headingstr}: {$COU
 $PAGE->set_title($course->shortname.': '.get_string('calendar', 'calendar').': '.$pagetitle);
 $PAGE->set_heading($headingstr);
 $PAGE->set_pagelayout('standard');
+$PAGE->set_secondary_navigation(false);
 
 $renderer = $PAGE->get_renderer('core_calendar');
 $calendar->add_sidecalendar_blocks($renderer);

@@ -18,5 +18,11 @@ Note: All this changes need to be reviewed on every upgrade and, if they have
 been already applied upstream for the release being used, can be removed
 from the list. If still not available upstream, they will need to be re-applied.
 
-- MDL-67114: PHP 7.4 compatibility. Array operations on scalar value.
-  This corresponds to upstream https://github.com/bobthecow/mustache.php/pull/352
+1) If the relevant pull request has not been accepted yet, apply the following commit, so we are able to disable unnecessary rendering:
+https://github.com/bobthecow/mustache.php/pull/402/commits/db771014c7e346438f68077813ebdda3fdae12df#
+This can be achieved by:
+    a) Download the patch from
+    https://github.com/bobthecow/mustache.php/pull/402/commits/db771014c7e346438f68077813ebdda3fdae12df.patch
+    b) In terminal, navigate to lib/mustache/src/Mustache
+    c) Run the following: patch --directory . < ~/path/to/patch.patch
+    d) We do not need the unit test, so run rm DisableLambdaRenderingTest.php

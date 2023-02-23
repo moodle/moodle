@@ -109,6 +109,9 @@ class create_update_form_mapper implements create_update_form_mapper_interface {
             } else {
                 $properties->courseid = $data->courseid;
             }
+            if (empty($properties->groupid)) {
+                $properties->groupid = 0;
+            }
         }
 
         // Decode the form fields back into valid event property.

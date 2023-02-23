@@ -52,6 +52,7 @@ $url->param('mode', $mode);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_context($context);
+$PAGE->set_primary_active_tab('siteadminnode');
 
 // Executes the required action.
 $instance = new $classname();

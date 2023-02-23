@@ -1,5 +1,15 @@
 This files describes API changes in /cache/stores/* - cache store plugins.
 Information provided here is intended especially for developers.
+=== 4.2 ===
+* The memcached cachestore has been removed.
+
+=== 4.1 ===
+* Added new `requirelockingbeforewrite` option for cache definitions. This will check that a lock for a given cache key already
+  exists before it will perform a `set()` on that key. A `coding_exception` is thrown if the lock has not been acquired.
+* Added native locking to cachestore_file. This will use an instance of file_lock_factory pointing at a subdirectory in the same
+  location as the cache instance, meaning a local file cache will have its locks stored locally. If file locks are disabled
+  globally, it will fall back to use the default lock factory, which may not be in the same location as the cache. cachestore_file
+  includes an additional setting to control how long it will wait for a lock before giving up, default is 60 seconds.
 
 === 4.0 ===
 * Cache stores may implement new optional function cache_store::get_last_io_bytes() to provide
@@ -7,6 +17,10 @@ Information provided here is intended especially for developers.
 * The cache_store class now has functions cache_size_details(), store_total_size(), and
   estimate_stored_size(), related to size used by the cache. These can be overridden by a cache
   store to provide better information for the new cache usage admin page.
+* New functions cache::set_versioned() and cache::get_versioned() can be used to ensure correct
+  behaviour when using a multi-level cache with early cache levels stored locally. (Used when
+  rebuilding modinfo.) There is also a new interface cache_data_source_versionable which can
+  be implemented if you want to make a data source that supports versioning.
 
 === 3.10 ===
 * The function supports_recursion() from the lock_factory interface has been deprecated including the related implementations.

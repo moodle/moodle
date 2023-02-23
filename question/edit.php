@@ -23,18 +23,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
 list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
         question_edit_setup('questions', '/question/edit.php');
 
-$url = new moodle_url($thispageurl);
 if (($lastchanged = optional_param('lastchanged', 0, PARAM_INT)) !== 0) {
-    $url->param('lastchanged', $lastchanged);
+    $thispageurl->param('lastchanged', $lastchanged);
 }
-$PAGE->set_url($url);
+$PAGE->set_url($thispageurl);
+
+if ($PAGE->course->id == $SITE->id) {
+    $PAGE->set_primary_active_tab('home');
+}
 
 $questionbank = new core_question\local\bank\view($contexts, $thispageurl, $COURSE, $cm);
 
@@ -44,13 +46,14 @@ $PAGE->set_title($streditingquestions);
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->activityheader->disable();
 
+echo $OUTPUT->header();
+
 // Print horizontal nav if needed.
 $renderer = $PAGE->get_renderer('core_question', 'bank');
 
-echo $OUTPUT->header();
 // Render the selection action.
-$qbankaction = new \core_question\output\qbank_actionbar($url);
-echo $renderer->qbank_action_menu($qbankaction);
+$qbankaction = new \core_question\output\qbank_action_menu($thispageurl);
+echo $renderer->render($qbankaction);
 
 // Print the question area.
 $questionbank->display($pagevars, 'questions');

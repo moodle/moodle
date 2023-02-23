@@ -116,26 +116,141 @@ class date_test extends advanced_testcase {
     }
 
     /**
+     * Data provider for {@see test_get_sql_filter_current_week}
+     *
+     * @return array
+     */
+    public function get_sql_filter_current_week_provider(): array {
+        return array_map(static function(int $day): array {
+            return [$day];
+        }, range(0, 6));
+    }
+
+    /**
+     * Test getting filter SQL for the current week. Note that relative dates are hard to test, here we are asserting that
+     * the current time is always within the current week regardless of calendar configuration/preferences
+     *
+     * @param int $startweekday
+     *
+     * @dataProvider get_sql_filter_current_week_provider
+     */
+    public function test_get_sql_filter_current_week(int $startweekday): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        set_config('calendar_startwday', $startweekday);
+
+        $user = $this->getDataGenerator()->create_user(['timecreated' => time()]);
+
+        $filter = new filter(
+            date::class,
+            'test',
+            new lang_string('yes'),
+            'testentity',
+            'timecreated'
+        );
+
+        [$select, $params] = date::create($filter)->get_sql_filter([
+            $filter->get_unique_identifier() . '_operator' => date::DATE_CURRENT,
+            $filter->get_unique_identifier() . '_unit' => date::DATE_UNIT_WEEK,
+        ]);
+
+        $matchingusers = $DB->get_fieldset_select('user', 'username', $select, $params);
+        $this->assertContains($user->username, $matchingusers);
+    }
+
+    /**
+     * Data provider for {@see test_get_sql_filter_current_week_no_match}
+     *
+     * @return array
+     */
+    public function get_sql_filter_current_week_no_match_provider(): array {
+        $data = [];
+
+        // For each day, create provider data for -/+ 8 days.
+        foreach (range(0, 6) as $day) {
+            $data = array_merge($data, [
+                [$day, '-8 day'],
+                [$day, '+8 day'],
+            ]);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Test getting filter SQL for the current week excludes dates that don't match (outside week time range)
+     *
+     * @param int $startweekday
+     * @param string $timecreated Relative time suitable for passing to {@see strtotime}
+     *
+     * @dataProvider get_sql_filter_current_week_no_match_provider
+     */
+    public function test_get_sql_filter_current_week_no_match(int $startweekday, string $timecreated): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        set_config('calendar_startwday', $startweekday);
+
+        $usertimecreated = strtotime($timecreated);
+        $user = $this->getDataGenerator()->create_user(['timecreated' => $usertimecreated]);
+
+        $filter = new filter(
+            date::class,
+            'test',
+            new lang_string('yes'),
+            'testentity',
+            'timecreated'
+        );
+
+        [$select, $params] = date::create($filter)->get_sql_filter([
+            $filter->get_unique_identifier() . '_operator' => date::DATE_CURRENT,
+            $filter->get_unique_identifier() . '_unit' => date::DATE_UNIT_WEEK,
+        ]);
+
+        $matchingusers = $DB->get_fieldset_select('user', 'username', $select, $params);
+        $this->assertNotContains($user->username, $matchingusers);
+    }
+
+    /**
      * Data provider for {@see test_get_sql_filter_relative}
      *
      * @return array
      */
     public function get_sql_filter_relative_provider(): array {
         return [
-            'Previous day' => [date::DATE_PREVIOUS, 1, date::DATE_UNIT_DAY, '-1 day'],
-            'Previous week' => [date::DATE_PREVIOUS, 1, date::DATE_UNIT_WEEK, '-1 week'],
-            'Previous month' => [date::DATE_PREVIOUS, 1, date::DATE_UNIT_MONTH, 'last day of last month'],
-            'Previous year' => [date::DATE_PREVIOUS, 1, date::DATE_UNIT_YEAR, 'last day of december last year'],
+            'Last hour' => [date::DATE_LAST, 1, date::DATE_UNIT_HOUR, '-30 minute'],
+            'Last day' => [date::DATE_LAST, 1, date::DATE_UNIT_DAY, '-6 hour'],
+            'Last week' => [date::DATE_LAST, 1, date::DATE_UNIT_WEEK, '-3 day'],
+            'Last month' => [date::DATE_LAST, 1, date::DATE_UNIT_MONTH, '-3 week'],
+            'Last year' => [date::DATE_LAST, 1, date::DATE_UNIT_YEAR, '-6 month'],
+            'Last two hours' => [date::DATE_LAST, 2, date::DATE_UNIT_HOUR, '-90 minute'],
+            'Last two days' => [date::DATE_LAST, 2, date::DATE_UNIT_DAY, '-25 hour'],
+            'Last two weeks' => [date::DATE_LAST, 2, date::DATE_UNIT_WEEK, '-10 day'],
+            'Last two months' => [date::DATE_LAST, 2, date::DATE_UNIT_MONTH, '-7 week'],
+            'Last two years' => [date::DATE_LAST, 2, date::DATE_UNIT_YEAR, '-15 month'],
 
+            // Current week is tested separately.
+            'Current hour' => [date::DATE_CURRENT, null, date::DATE_UNIT_HOUR],
             'Current day' => [date::DATE_CURRENT, null, date::DATE_UNIT_DAY],
-            'Current week' => [date::DATE_CURRENT, null, date::DATE_UNIT_WEEK],
             'Current month' => [date::DATE_CURRENT, null, date::DATE_UNIT_MONTH],
             'Current year' => [date::DATE_CURRENT, null, date::DATE_UNIT_YEAR],
 
-            'Next day' => [date::DATE_NEXT, 1, date::DATE_UNIT_DAY, '+1 day'],
-            'Next week' => [date::DATE_NEXT, 1, date::DATE_UNIT_WEEK, '+1 week'],
-            'Next month' => [date::DATE_NEXT, 1, date::DATE_UNIT_MONTH, 'first day of next month'],
-            'Next year' => [date::DATE_NEXT, 1, date::DATE_UNIT_YEAR, 'first day of january next year'],
+            'Next hour' => [date::DATE_NEXT, 1, date::DATE_UNIT_HOUR, '+30 minute'],
+            'Next day' => [date::DATE_NEXT, 1, date::DATE_UNIT_DAY, '+6 hour'],
+            'Next week' => [date::DATE_NEXT, 1, date::DATE_UNIT_WEEK, '+3 day'],
+            'Next month' => [date::DATE_NEXT, 1, date::DATE_UNIT_MONTH, '+3 week'],
+            'Next year' => [date::DATE_NEXT, 1, date::DATE_UNIT_YEAR, '+6 month'],
+            'Next two hours' => [date::DATE_NEXT, 2, date::DATE_UNIT_HOUR, '+90 minute'],
+            'Next two days' => [date::DATE_NEXT, 2, date::DATE_UNIT_DAY, '+25 hour'],
+            'Next two weeks' => [date::DATE_NEXT, 2, date::DATE_UNIT_WEEK, '+10 day'],
+            'Next two months' => [date::DATE_NEXT, 2, date::DATE_UNIT_MONTH, '+7 week'],
+            'Next two years' => [date::DATE_NEXT, 2, date::DATE_UNIT_YEAR, '+15 month'],
+
+            'In the past' => [date::DATE_PAST, null, null, '-3 hour'],
+            'In the future' => [date::DATE_FUTURE, null, null, '+3 hour'],
         ];
     }
 
@@ -144,12 +259,12 @@ class date_test extends advanced_testcase {
      *
      * @param int $operator
      * @param int|null $unitvalue
-     * @param int $unit
+     * @param int|null $unit
      * @param string|null $timecreated Relative time suitable for passing to {@see strtotime} (or null for current time)
      *
      * @dataProvider get_sql_filter_relative_provider
      */
-    public function test_get_sql_filter_relative(int $operator, ?int $unitvalue, int $unit, ?string $timecreated = null): void {
+    public function test_get_sql_filter_relative(int $operator, ?int $unitvalue, ?int $unit, ?string $timecreated = null): void {
         global $DB;
 
         $this->resetAfterTest();

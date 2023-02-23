@@ -14,27 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Test gd functionality.
- *
- * @package    core
- * @category   phpunit
- * @copyright  2015 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
+namespace core;
 
 /**
  * A set of tests for some of the gd functionality within Moodle.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2015 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_gdlib_testcase extends basic_testcase {
+class gdlib_test extends \basic_testcase {
 
     private $fixturepath = null;
 

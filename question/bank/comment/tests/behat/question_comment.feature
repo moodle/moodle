@@ -14,20 +14,18 @@ Feature: A Teacher can comment in a question
       | teacher1 | C1     | editingteacher |
       | teacher2 | C1     | editingteacher |
     And the following "activities" exist:
-      | activity   | name      | course | idnumber |
-      | quiz       | Test quiz | C1     | quiz1    |
+      | activity | name      | course | idnumber |
+      | quiz     | Test quiz | C1     | quiz1    |
     And the following "question categories" exist:
       | contextlevel | reference | name           |
-      | Course         | C1     | Test questions |
+      | Course       | C1        | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype     | name           | questiontext              |
       | Test questions   | truefalse | First question | Answer the first question |
 
   @javascript
   Scenario: Add a comment in question
-    Given I log in as "teacher1"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
+    Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
     And I set the field "Select a category" to "Test questions"
     And I should see "0" on the comments column
     When I click "0" on the row on the comments column
@@ -39,9 +37,7 @@ Feature: A Teacher can comment in a question
 
   @javascript
   Scenario: Delete a comment from question
-    Given I log in as "teacher1"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
+    Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
     And I set the field "Select a category" to "Test questions"
     And I should see "0" on the comments column
     When I click "0" on the row on the comments column
@@ -58,11 +54,10 @@ Feature: A Teacher can comment in a question
 
   @javascript
   Scenario: Preview question with comments
-    Given I log in as "teacher1"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
+    Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
     And I set the field "Select a category" to "Test questions"
     And I choose "Preview" action for "First question" in the question bank
+    And I click on "Comments" "link"
     Then I should see "Save comment"
     And I add "Super test comment 01" comment to question preview
     And I click on "Save comment" "link"
@@ -71,7 +66,8 @@ Feature: A Teacher can comment in a question
     And I click on "Close preview" "button"
     Then I should see "1" on the comments column
     And I choose "Preview" action for "First question" in the question bank
-    And I delete "Super test comment 01" comment from question
+    And I click on "Comments" "link"
+    And I delete "Super test comment 01" comment from question preview
     And I should not see "Super test comment 01"
     And I click on "Close preview" "button"
     Then I should see "0" on the comments column
@@ -84,9 +80,7 @@ Feature: A Teacher can comment in a question
       | moodle/question:commentmine | Allow      |
       | moodle/question:commentall  | Prevent    |
     And I log out
-    Then I log in as "teacher1"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
+    Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
     And I set the field "Select a category" to "Test questions"
     And I choose "Preview" action for "First question" in the question bank
     Then I should not see "Save comment"
@@ -100,15 +94,60 @@ Feature: A Teacher can comment in a question
     And I press "id_submitbutton"
     Then I should see "Essay 01 new"
     And I choose "Preview" action for "Essay 01 new" in the question bank
+    And I click on "Comments" "link"
     Then I should see "Save comment"
     And I log out
-    Then I log in as "teacher2"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
-    And I set the field "Select a category" to "Test questions"
+    And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher2"
     And I choose "Preview" action for "First question" in the question bank
     Then I should not see "Save comment"
     And I click on "Close preview" "button"
     And I choose "Preview" action for "Essay 01 new" in the question bank
     Then I should not see "Save comment"
     And I click on "Close preview" "button"
+
+  @javascript
+  Scenario: Comments added from the quiz page are visible
+    Given I am on the "Test quiz" "mod_quiz > edit" page logged in as "teacher1"
+    And I press "Add"
+    And I follow "from question bank"
+    And I click on "Select" "checkbox" in the "First question" "table_row"
+    And I click on "Add selected questions to the quiz" "button"
+    And I click on "Preview question" "link"
+    And I switch to "questionpreview" window
+    And I press "Comments"
+    And I set the field "content" to "Some new comment"
+    And I click on "Save comment" "link"
+    And I should see "Some new comment"
+    And I switch to the main window
+    And I am on the "Test quiz" "mod_quiz > question bank" page
+    And I choose "Preview" action for "First question" in the question bank
+    And I click on "Comments" "link"
+    And I should see "Some new comment"
+    And I should see "T1 Teacher1"
+    And I delete "Some new comment" comment from question preview
+    And I should not see "Some new comment"
+    And I am on the "Test quiz" "mod_quiz > edit" page
+    And I click on "Preview question" "link"
+    And I switch to "questionpreview" window
+    And I press "Comments"
+    Then I should not see "Some new comment"
+
+  @javascript
+  Scenario: Comments modal can change the version using dropdown
+    Given I log in as "teacher1"
+    And I am on the "Test quiz" "quiz activity" page
+    When I navigate to "Question bank" in current page administration
+    And I set the field "Select a category" to "Test questions"
+    And I should see "First question"
+    And I choose "Edit question" action for "First question" in the question bank
+    And I set the field "id_name" to "Renamed question v2"
+    And I set the field "id_questiontext" to "edited question"
+    And I press "id_submitbutton"
+    And I should not see "First question"
+    And I should see "Renamed question v2"
+    And I click "0" on the row on the comments column
+    And I should see "Version 2"
+    Then I should see "edited question"
+    And I should see "Version 1"
+    And I set the field "question_version_dropdown" to "Version 1"
+    And I should see "Answer the first question"

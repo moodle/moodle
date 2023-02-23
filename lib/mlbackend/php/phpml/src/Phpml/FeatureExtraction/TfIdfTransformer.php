@@ -30,7 +30,7 @@ class TfIdfTransformer implements Transformer
         }
     }
 
-    public function transform(array &$samples): void
+    public function transform(array &$samples, ?array &$targets = null): void
     {
         foreach ($samples as &$sample) {
             foreach ($sample as $index => &$feature) {

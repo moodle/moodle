@@ -38,7 +38,7 @@ class GD extends StochasticGD
 
             $this->updateWeightsWithUpdates($updates, $totalPenalty);
 
-            $this->costValues[] = array_sum($errors) / $this->sampleCount;
+            $this->costValues[] = array_sum($errors) / (int) $this->sampleCount;
 
             if ($this->earlyStop($theta)) {
                 break;

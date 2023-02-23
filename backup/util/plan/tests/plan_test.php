@@ -14,22 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package    core_backup
- * @category   phpunit
- * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use backup;
+use backup_controller;
+use backup_controller_exception;
+use backup_plan;
+use backup_plan_exception;
+use base_plan;
+use base_plan_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/fixtures/plan_fixtures.php');
 
-
 /**
- * plan tests (all)
+ * @package    core_backup
+ * @category   test
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_plan_testcase extends advanced_testcase {
+class plan_test extends \advanced_testcase {
 
     protected $moduleid;  // course_modules id used for testing
     protected $sectionid; // course_sections id used for testing
@@ -64,7 +69,7 @@ class backup_plan_testcase extends advanced_testcase {
     function test_base_plan() {
 
         // Instantiate
-        $bp = new mock_base_plan('name');
+        $bp = new \mock_base_plan('name');
         $this->assertTrue($bp instanceof base_plan);
         $this->assertEquals($bp->get_name(), 'name');
         $this->assertTrue(is_array($bp->get_settings()));
@@ -105,9 +110,9 @@ class backup_plan_testcase extends advanced_testcase {
         $bp = new backup_plan($bc);
         // Add wrong task
         try {
-            $bp->add_task(new stdclass());
+            $bp->add_task(new \stdClass());
             $this->assertTrue(false, 'base_plan_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_plan_exception);
             $this->assertEquals($e->errorcode, 'wrong_base_task_specified');
         }
@@ -120,16 +125,16 @@ class backup_plan_testcase extends advanced_testcase {
 
         // Try to pass one wrong controller
         try {
-            $bp = new backup_plan(new stdclass());
+            $bp = new backup_plan(new \stdClass());
             $this->assertTrue(false, 'backup_plan_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_plan_exception);
             $this->assertEquals($e->errorcode, 'wrong_backup_controller_specified');
         }
         try {
             $bp = new backup_plan(null);
             $this->assertTrue(false, 'backup_plan_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_plan_exception);
             $this->assertEquals($e->errorcode, 'wrong_backup_controller_specified');
         }
@@ -140,7 +145,7 @@ class backup_plan_testcase extends advanced_testcase {
             $bc = new backup_controller(backup::TYPE_1ACTIVITY, $this->moduleid, 'non_existing_format',
                 backup::INTERACTIVE_NO, backup::MODE_GENERAL, $this->userid);
             $this->assertTrue(false, 'backup_controller_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_controller_exception);
             $this->assertEquals($e->errorcode, 'backup_check_unsupported_format');
             $this->assertEquals($e->a, 'non_existing_format');

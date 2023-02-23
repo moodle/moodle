@@ -22,11 +22,15 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core_question;
+
+use question_answer;
+use question_first_matching_answer_grading_strategy;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/question/type/questiontypebase.php');
-
 
 /**
  * Helper used by the testcases in this file.
@@ -34,7 +38,7 @@ require_once($CFG->dirroot . '/question/type/questiontypebase.php');
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class test_response_answer_comparer implements question_response_answer_comparer {
+class test_response_answer_comparer implements \question_response_answer_comparer {
     protected $answers = array();
 
     public function __construct($answers) {
@@ -50,14 +54,14 @@ class test_response_answer_comparer implements question_response_answer_comparer
     }
 }
 
-
 /**
  * Tests for {@link question_first_matching_answer_grading_strategy}.
  *
+ * @package    core_question
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_first_matching_answer_grading_strategy_testcase extends advanced_testcase {
+class question_first_matching_answer_grading_strategy_test extends \advanced_testcase {
     protected function setUp(): void {
     }
 

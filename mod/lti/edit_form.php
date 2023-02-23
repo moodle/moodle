@@ -114,7 +114,7 @@ class mod_lti_edit_types_form extends moodleform {
             $mform->setForceLtr('lti_resourcekey');
 
             $mform->addElement('passwordunmask', 'lti_password', get_string('password_admin', 'lti'));
-            $mform->setType('lti_password', PARAM_TEXT);
+            $mform->setType('lti_password', PARAM_RAW);
             $mform->addHelpButton('lti_password', 'password_admin', 'lti');
             $mform->hideIf('lti_password', 'lti_ltiversion', 'eq', LTI_VERSION_1P3);
 

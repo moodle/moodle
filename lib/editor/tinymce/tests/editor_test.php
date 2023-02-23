@@ -18,23 +18,27 @@
  * TinyMCE tests.
  *
  * @package   editor_tinymce
- * @category  phpunit
+ * @category  test
  * @copyright 2012 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace editor_tinymce;
 
+use editor_tinymce_plugin;
+use tinymce_texteditor;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * TinyMCE tests.
  *
  * @package   editor_tinymce
- * @category  phpunit
+ * @category  test
  * @copyright 2012 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class editor_tinymce_testcase extends advanced_testcase {
+class editor_test extends \advanced_testcase {
 
     public function test_autoloading() {
         // Note: This test core_frankestyle calssloader.
@@ -163,7 +167,7 @@ class editor_tinymce_testcase extends advanced_testcase {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tinymce_testplugin extends editor_tinymce_plugin {
-    protected function update_init_params(array &$params, context $context, array $options = null) {
+    protected function update_init_params(array &$params, \context $context, array $options = null) {
         // Empty function just to make a class not abstract.
     }
 

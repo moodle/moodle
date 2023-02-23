@@ -14,25 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Action tests.
- *
- * @package    core_calendar
- * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace core_calendar;
 
 use core_calendar\local\event\value_objects\action;
 
 /**
  * Action testcase.
  *
+ * @package    core_calendar
  * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_calendar_action_testcase extends advanced_testcase {
+class action_test extends \advanced_testcase {
     /**
      * Test action class getters.
      *
@@ -64,7 +57,7 @@ class core_calendar_action_testcase extends advanced_testcase {
             'Dataset 1' => [
                 'constructorparams' => [
                     'name' => 'Hello',
-                    'url' => new moodle_url('http://example.com'),
+                    'url' => new \moodle_url('http://example.com'),
                     'item_count' => 1,
                     'actionable' => true
                 ]
@@ -72,7 +65,7 @@ class core_calendar_action_testcase extends advanced_testcase {
             'Dataset 2' => [
                 'constructorparams' => [
                     'name' => 'Goodbye',
-                    'url' => new moodle_url('http://example.com'),
+                    'url' => new \moodle_url('http://example.com'),
                     'item_count' => 2,
                     'actionable' => false
                 ]

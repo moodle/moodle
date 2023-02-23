@@ -29,14 +29,30 @@ use moodle_url;
  */
 class custom_report_table_view extends custom_report_table {
 
-    /** @var bool We do want to apply filters when viewing or previewing report */
-    protected const REPORT_APPLY_FILTERS = true;
+    /** @var bool We're pre/viewing the report, not editing it */
+    protected const REPORT_EDITING = false;
 
     /**
      * Override printed headers, to use those of grandparent class
      */
     public function print_headers() {
+        $columns = $this->get_active_columns();
+        if (empty($columns)) {
+            return;
+        }
+
         base_report_table::print_headers();
+    }
+
+    /**
+     * Override base implementation, return pagesize as defined in table filterset
+     *
+     * @return int
+     */
+    public function get_default_per_page(): int {
+        $filterset = $this->get_filterset();
+
+        return $filterset->get_filter('pagesize')->current();
     }
 
     /**

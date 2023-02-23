@@ -23,21 +23,9 @@
  */
 
 import Fragment from 'core/fragment';
-import * as Str from 'core/str';
 import ModalFactory from 'core/modal_factory';
 import Notification from 'core/notification';
-
-/**
- * Get the fragment.
- *
- * @method getFragment
- * @param {{questioned: int}} args
- * @param {int} contextId
- * @return {string}
- */
-const getFragment = (args, contextId) => {
-    return Fragment.loadFragment('qbank_usage', 'question_usage', contextId, args);
-};
+import * as Str from 'core/str';
 
 /**
  * Event listeners for the module.
@@ -53,7 +41,7 @@ const usageEvent = (questionId, contextId) => {
     ModalFactory.create({
         type: ModalFactory.types.CANCEL,
         title: Str.get_string('usageheader', 'qbank_usage'),
-        body: getFragment(args, contextId),
+        body: Fragment.loadFragment('qbank_usage', 'question_usage', contextId, args),
         large: true,
     }).then((modal) => {
         modal.show();
@@ -62,8 +50,13 @@ const usageEvent = (questionId, contextId) => {
             let attr = e.target.getAttribute("href");
             if (attr !== '#') {
                 args.querystring = attr;
-                modal.setBody(getFragment(args, contextId));
+                modal.setBody(Fragment.loadFragment('qbank_usage', 'question_usage', contextId, args));
             }
+        });
+        // Version selection event.
+        modal.getRoot().on('change', '#question_usage_version_dropdown', function(e) {
+            args.questionid = e.target.value;
+            modal.setBody(Fragment.loadFragment('qbank_usage', 'question_usage', contextId, args));
         });
         return modal;
     }).fail(Notification.exception);

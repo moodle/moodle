@@ -14,21 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the progress classes.
- *
- * @package core_progress
- * @category phpunit
- * @copyright 2013 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Progress tests.
+ * Unit tests for the progress classes.
+ *
+ * @package core
+ * @category test
+ * @copyright 2013 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_progress_testcase extends basic_testcase {
+class progress_test extends \basic_testcase {
 
     /**
      * Tests for basic use with simple numeric progress.
@@ -52,11 +50,11 @@ class core_progress_testcase extends basic_testcase {
 
         // Make some progress and check that the time limit gets added.
         $progress->step_time();
-        core_php_time_limit::get_and_clear_unit_test_data();
+        \core_php_time_limit::get_and_clear_unit_test_data();
         $progress->progress(2);
         $this->assertTrue($progress->was_update_called());
         $this->assertEquals(array(\core\progress\base::TIME_LIMIT_WITHOUT_PROGRESS),
-                core_php_time_limit::get_and_clear_unit_test_data());
+                \core_php_time_limit::get_and_clear_unit_test_data());
 
         // Check the new value.
         $this->assert_min_max(0.2, 0.2, $progress);
@@ -231,25 +229,25 @@ class core_progress_testcase extends basic_testcase {
         try {
             $progress->progress();
             $this->fail();
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertEquals(1, preg_match('~without start_progress~', $e->getMessage()));
         }
         try {
             $progress->end_progress();
             $this->fail();
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertEquals(1, preg_match('~without start_progress~', $e->getMessage()));
         }
         try {
             $progress->get_current_description();
             $this->fail();
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertEquals(1, preg_match('~Not inside progress~', $e->getMessage()));
         }
         try {
             $progress->start_progress('', 1, 7);
             $this->fail();
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertEquals(1, preg_match('~must be 1~', $e->getMessage()));
         }
 
@@ -257,7 +255,7 @@ class core_progress_testcase extends basic_testcase {
         try {
             $progress->start_progress('hello', -2);
             $this->fail();
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertEquals(1, preg_match('~cannot be negative~', $e->getMessage()));
         }
 
@@ -266,7 +264,7 @@ class core_progress_testcase extends basic_testcase {
         try {
             $progress->progress(\core\progress\base::INDETERMINATE);
             $this->fail();
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertEquals(1, preg_match('~expecting value~', $e->getMessage()));
         }
 
@@ -275,7 +273,7 @@ class core_progress_testcase extends basic_testcase {
         try {
             $progress->progress(4);
             $this->fail();
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertEquals(1, preg_match('~expecting INDETERMINATE~', $e->getMessage()));
         }
 
@@ -284,13 +282,13 @@ class core_progress_testcase extends basic_testcase {
         try {
             $progress->progress(-2);
             $this->fail();
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertEquals(1, preg_match('~out of range~', $e->getMessage()));
         }
         try {
             $progress->progress(11);
             $this->fail();
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertEquals(1, preg_match('~out of range~', $e->getMessage()));
         }
 
@@ -304,7 +302,7 @@ class core_progress_testcase extends basic_testcase {
         try {
             $progress->progress(3);
             $this->fail();
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertEquals(1, preg_match('~backwards~', $e->getMessage()));
         }
 
@@ -312,7 +310,7 @@ class core_progress_testcase extends basic_testcase {
         try {
             $progress->start_progress('', 1, 7);
             $this->fail();
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertEquals(1, preg_match('~would exceed max~', $e->getMessage()));
         }
     }

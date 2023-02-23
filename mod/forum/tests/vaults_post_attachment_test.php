@@ -14,13 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * The post_attachment vault tests.
- *
- * @package    mod_forum
- * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_forum;
+
+use mod_forum_tests_generator_trait;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,7 +29,7 @@ require_once(__DIR__ . '/generator_trait.php');
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_forum_vaults_post_attachment_testcase extends advanced_testcase {
+class vaults_post_attachment_test extends \advanced_testcase {
     // Make use of the test generator trait.
     use mod_forum_tests_generator_trait;
 
@@ -52,7 +48,7 @@ class mod_forum_vaults_post_attachment_testcase extends advanced_testcase {
         $course = $datagenerator->create_course();
         $forum = $datagenerator->create_module('forum', ['course' => $course->id]);
         $coursemodule = get_coursemodule_from_instance('forum', $forum->id);
-        $context = context_module::instance($coursemodule->id);
+        $context = \context_module::instance($coursemodule->id);
         [$discussion, $post1] = $this->helper_post_to_forum($forum, $user);
         $post2 = $this->helper_reply_to_post($post1, $user);
         $post3 = $this->helper_reply_to_post($post1, $user);
@@ -79,11 +75,11 @@ class mod_forum_vaults_post_attachment_testcase extends advanced_testcase {
             'image contents'
         );
 
-        $post1 = $entityfactory->get_post_from_stdclass($post1);
-        $post2 = $entityfactory->get_post_from_stdclass($post2);
-        $post3 = $entityfactory->get_post_from_stdclass($post3);
+        $post1 = $entityfactory->get_post_from_stdClass($post1);
+        $post2 = $entityfactory->get_post_from_stdClass($post2);
+        $post3 = $entityfactory->get_post_from_stdClass($post3);
 
-        $results = $vault->get_attachments_for_posts(context_system::instance(), [$post1, $post2, $post3]);
+        $results = $vault->get_attachments_for_posts(\context_system::instance(), [$post1, $post2, $post3]);
         $this->assertCount(3, $results);
         $this->assertEquals([], $results[$post1->get_id()]);
         $this->assertEquals([], $results[$post2->get_id()]);
@@ -120,7 +116,7 @@ class mod_forum_vaults_post_attachment_testcase extends advanced_testcase {
         $course = $datagenerator->create_course();
         $forum = $datagenerator->create_module('forum', ['course' => $course->id]);
         $coursemodule = get_coursemodule_from_instance('forum', $forum->id);
-        $context = context_module::instance($coursemodule->id);
+        $context = \context_module::instance($coursemodule->id);
         [$discussion, $post1] = $this->helper_post_to_forum($forum, $user);
         $post2 = $this->helper_reply_to_post($post1, $user);
         $post3 = $this->helper_reply_to_post($post1, $user);
@@ -147,11 +143,11 @@ class mod_forum_vaults_post_attachment_testcase extends advanced_testcase {
             'image contents'
         );
 
-        $post1 = $entityfactory->get_post_from_stdclass($post1);
-        $post2 = $entityfactory->get_post_from_stdclass($post2);
-        $post3 = $entityfactory->get_post_from_stdclass($post3);
+        $post1 = $entityfactory->get_post_from_stdClass($post1);
+        $post2 = $entityfactory->get_post_from_stdClass($post2);
+        $post3 = $entityfactory->get_post_from_stdClass($post3);
 
-        $results = $vault->get_inline_attachments_for_posts(context_system::instance(), [$post1, $post2, $post3]);
+        $results = $vault->get_inline_attachments_for_posts(\context_system::instance(), [$post1, $post2, $post3]);
         $this->assertCount(3, $results);
         $this->assertEquals([], $results[$post1->get_id()]);
         $this->assertEquals([], $results[$post2->get_id()]);

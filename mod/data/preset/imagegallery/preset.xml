@@ -21,10 +21,10 @@
 <field>
 <type>picture</type>
 <name>image</name>
-<param1>100%</param1>
-<param2>100%</param2>
+<param1></param1>
+<param2></param2>
 <param3>2097152</param3>
-<param4>120</param4>
+<param4></param4>
 </field>
 
 <field>
@@ -33,8 +33,13 @@
 </field>
 
 <field>
-<type>text</type>
-<name>caption</name>
+<type>textarea</type>
+<name>description</name>
+<required>0</required>
+<param2>60</param2>
+<param3>10</param3>
+<param4>1</param4>
+<param5>0</param5>
 </field>
 
 </preset>

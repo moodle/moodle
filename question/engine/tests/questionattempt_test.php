@@ -14,18 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests for the question_attempt class.
- *
- * Action methods like start, process_action and finish are assumed to be
- * tested by walkthrough tests in the various behaviours.
- *
- * @package    moodlecore
- * @subpackage questionengine
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_question;
 
+use question_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,16 +24,20 @@ global $CFG;
 require_once(__DIR__ . '/../lib.php');
 require_once(__DIR__ . '/helpers.php');
 
-
 /**
  * Unit tests for the {@link question_attempt} class.
  *
+ * Action methods like start, process_action and finish are assumed to be
+ * tested by walkthrough tests in the various behaviours.
+ *
  * These are the tests that don't require any steps.
  *
+ * @package    core_question
+ * @category   test
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_attempt_testcase extends advanced_testcase {
+class questionattempt_test extends \advanced_testcase {
     /** @var question_definition a question that can be used in the tests. */
     private $question;
     /** @var int fake question_usage id used in some tests. */
@@ -51,7 +46,7 @@ class question_attempt_testcase extends advanced_testcase {
     private $qa;
 
     protected function setUp(): void {
-        $this->question = test_question_maker::make_question('description');
+        $this->question = \test_question_maker::make_question('description');
         $this->question->defaultmark = 3;
         $this->usageid = 13;
         $this->qa = new question_attempt($this->question, $this->usageid);

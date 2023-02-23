@@ -34,7 +34,7 @@ $PAGE->set_url('/user/emailupdate.php', array('id' => $id, 'key' => $key));
 $PAGE->set_context(context_system::instance());
 
 if (!$user = $DB->get_record('user', array('id' => $id))) {
-    print_error('invaliduserid');
+    throw new \moodle_exception('invaliduserid');
 }
 
 $preferences = get_user_preferences(null, null, $user->id);

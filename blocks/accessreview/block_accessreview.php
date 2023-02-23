@@ -155,13 +155,23 @@ class block_accessreview extends block_base {
 
             $button = new single_button(
                 new moodle_url(accessibility::get_plugin_url(), ['action' => 'requestanalysis', 'courseid' => $COURSE->id]),
-                get_string('schedule:requestanalysis', manager::PLUGINNAME), 'post', true,
+                get_string('schedule:requestanalysis', manager::PLUGINNAME), 'post', single_button::BUTTON_PRIMARY,
                 ['class' => 'block_accessreview_analysisbutton']);
             $this->content->text .= html_writer::tag('div', $OUTPUT->render($button),
                 ['class' => 'block_accessreview_analysisbutton']);
         }
 
         return $this->content;
+    }
+
+    /**
+     * This block shouldn't be added to a page if the accessibility tools setting is disabled.
+     *
+     * @param moodle_page $page
+     * @return bool
+     */
+    public function can_block_be_added(moodle_page $page): bool {
+        return accessibility::is_accessibility_enabled();
     }
 
     /**

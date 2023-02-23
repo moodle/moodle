@@ -1800,7 +1800,7 @@ class file_storage {
                 // the latter of which can go to 100, we need to make sure that quality here is
                 // in a safe range or PHP WILL CRASH AND DIE. You have been warned.
                 $quality = $quality > 9 ? (int)(max(1.0, (float)$quality / 100.0) * 9.0) : $quality;
-                imagepng($img, NULL, $quality, NULL);
+                imagepng($img, null, $quality, PNG_NO_FILTER);
                 break;
 
             default:
@@ -2462,6 +2462,6 @@ class file_storage {
      * @return  string The file's content hash
      */
     public static function hash_from_string($content) {
-        return sha1($content);
+        return sha1($content ?? '');
     }
 }

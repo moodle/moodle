@@ -14,15 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for PDFlib
- *
- * @package    core
- * @copyright  2021 Brendan Heywood (brendan@catalyst-au.net)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
 
-defined('MOODLE_INTERNAL') || die();
+use TCPDF_STATIC;
 
 /**
  * Tests for PDFlib
@@ -31,7 +25,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2021 Brendan Heywood (brendan@catalyst-au.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_pdflib_testcase extends advanced_testcase {
+class pdflib_test extends \advanced_testcase {
 
     public function test_gettcpdf_producer() {
         global $CFG;
@@ -41,5 +35,35 @@ class core_pdflib_testcase extends advanced_testcase {
         // If we upgrade TCPDF keep it just the major version.
         $producer = TCPDF_STATIC::getTCPDFProducer();
         $this->assertEquals('TCPDF (http://www.tcpdf.org)', $producer);
+    }
+
+    public function test_qrcode() {
+        global $CFG;
+        require_once($CFG->libdir.'/pdflib.php');
+
+        $this->resetAfterTest();
+
+        $pdf = new \pdf();
+        $pdf->AddPage('P', [500, 500]);
+        $pdf->SetMargins(10, 0, 10);
+
+        $style = [
+            'border' => 0,
+            'vpadding' => 'auto',
+            'hpadding' => 'auto',
+            'fgcolor' => [0, 0, 0],
+            'bgcolor' => [255, 255, 255],
+            'module_width' => 1,
+            'module_height' => 1
+        ];
+
+        $pdf->setCellPaddings(0, 0, 0, 0);
+        $pdf->write2DBarcode('https://www.example.com/moodle/admin/search.php',
+            'QRCODE,M', null, null, 35, 35, $style, 'N');
+        $pdf->SetFillColor(255, 255, 255);
+        $res = $pdf->Output('output', 'S');
+
+        $this->assertGreaterThan(100000, strlen($res));
+        $this->assertLessThan(120000, strlen($res));
     }
 }

@@ -14,24 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_feedback;
+
 /**
- * Genarator tests.
+ * Generator tests class.
  *
  * @package    mod_feedback
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-global $CFG;
-
-/**
- * Genarator tests class.
- *
- * @package    mod_feedback
- * @copyright  2013 Ankit Agarwal
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class mod_feedback_generator_testcase extends advanced_testcase {
+class generator_test extends \advanced_testcase {
 
     public function test_create_instance() {
         global $DB;
@@ -227,4 +219,3 @@ class mod_feedback_generator_testcase extends advanced_testcase {
         $this->assertCount(2, $records);
     }
 }
-

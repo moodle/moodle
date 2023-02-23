@@ -24,4 +24,16 @@
  */
 
 $string['pluginname'] = 'Edit questions';
-$string['privacy:metadata'] = 'The Edit questions question bank plugin does not store any user data.';
+$string['privacy:metadata'] = 'The Edit questions question bank plugin does not store any personal data.';
+
+// Question status.
+$string['questionstatus'] = 'Status';
+$string['questionstatusready'] = 'Ready';
+$string['questionstatushidden'] = 'Hidden';
+$string['questionstatusdraft'] = 'Draft';
+$string['questionstatusheader'] = 'Change question status';
+$string['unrecognizedstatus'] = 'Unrecognised status';
+
+// Edit form.
+$string['versioninfo'] = 'Version';
+$string['status'] = 'Question status';

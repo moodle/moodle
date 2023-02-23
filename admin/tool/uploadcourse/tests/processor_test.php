@@ -14,13 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * File containing tests for the processor.
- *
- * @package    tool_uploadcourse
- * @copyright  2013 Frédéric Massart
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace tool_uploadcourse;
+
+use tool_uploadcourse_processor;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,7 +30,7 @@ require_once($CFG->libdir . '/csvlib.class.php');
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_uploadcourse_processor_testcase extends advanced_testcase {
+class processor_test extends \advanced_testcase {
 
     public function test_basic() {
         global $DB;
@@ -46,8 +42,8 @@ class tool_uploadcourse_processor_testcase extends advanced_testcase {
             "c2,Course 2,Course 2 summary",
         );
         $content = implode("\n", $content);
-        $iid = csv_import_reader::get_new_iid('uploadcourse');
-        $cir = new csv_import_reader($iid, 'uploadcourse');
+        $iid = \csv_import_reader::get_new_iid('uploadcourse');
+        $cir = new \csv_import_reader($iid, 'uploadcourse');
         $cir->load_csv_content($content, 'utf-8', 'comma');
         $cir->init();
 
@@ -75,8 +71,8 @@ class tool_uploadcourse_processor_testcase extends advanced_testcase {
             "c2,Course 2,Course 2 summary",
         );
         $content = implode("\n", $content);
-        $iid = csv_import_reader::get_new_iid('uploadcourse');
-        $cir = new csv_import_reader($iid, 'uploadcourse');
+        $iid = \csv_import_reader::get_new_iid('uploadcourse');
+        $cir = new \csv_import_reader($iid, 'uploadcourse');
         $cir->load_csv_content($content, 'utf-8', 'comma');
         $cir->init();
 
@@ -108,8 +104,8 @@ class tool_uploadcourse_processor_testcase extends advanced_testcase {
             "c1,Course 1,Course 1 summary",
         );
         $content = implode("\n", $content);
-        $iid = csv_import_reader::get_new_iid('uploadcourse');
-        $cir = new csv_import_reader($iid, 'uploadcourse');
+        $iid = \csv_import_reader::get_new_iid('uploadcourse');
+        $cir = new \csv_import_reader($iid, 'uploadcourse');
         $cir->load_csv_content($content, 'utf-8', 'comma');
         $cir->init();
 
@@ -144,8 +140,8 @@ class tool_uploadcourse_processor_testcase extends advanced_testcase {
             ",Course 1,C1 Summary,ID123",
         );
         $content = implode("\n", $content);
-        $iid = csv_import_reader::get_new_iid('uploadcourse');
-        $cir = new csv_import_reader($iid, 'uploadcourse');
+        $iid = \csv_import_reader::get_new_iid('uploadcourse');
+        $cir = new \csv_import_reader($iid, 'uploadcourse');
         $cir->load_csv_content($content, 'utf-8', 'comma');
         $cir->init();
 
@@ -165,13 +161,13 @@ class tool_uploadcourse_processor_testcase extends advanced_testcase {
 
         $content = array();
         $content = implode("\n", $content);
-        $iid = csv_import_reader::get_new_iid('uploadcourse');
-        $cir = new csv_import_reader($iid, 'uploadcourse');
+        $iid = \csv_import_reader::get_new_iid('uploadcourse');
+        $cir = new \csv_import_reader($iid, 'uploadcourse');
         $cir->load_csv_content($content, 'utf-8', 'comma');
         $cir->init();
 
         $options = array('mode' => tool_uploadcourse_processor::MODE_CREATE_NEW);
-        $this->expectException(moodle_exception::class);
+        $this->expectException(\moodle_exception::class);
         $p = new tool_uploadcourse_processor($cir, $options, array());
     }
 
@@ -183,13 +179,13 @@ class tool_uploadcourse_processor_testcase extends advanced_testcase {
             "c1",
         );
         $content = implode("\n", $content);
-        $iid = csv_import_reader::get_new_iid('uploadcourse');
-        $cir = new csv_import_reader($iid, 'uploadcourse');
+        $iid = \csv_import_reader::get_new_iid('uploadcourse');
+        $cir = new \csv_import_reader($iid, 'uploadcourse');
         $cir->load_csv_content($content, 'utf-8', 'comma');
         $cir->init();
 
         $options = array('mode' => tool_uploadcourse_processor::MODE_CREATE_NEW);
-        $this->expectException(moodle_exception::class);
+        $this->expectException(\moodle_exception::class);
         $p = new tool_uploadcourse_processor($cir, $options, array());
     }
 
@@ -203,8 +199,8 @@ class tool_uploadcourse_processor_testcase extends advanced_testcase {
             "c2,Course 2,Course 2 summary",
         );
         $content = implode("\n", $content);
-        $iid = csv_import_reader::get_new_iid('uploadcourse');
-        $cir = new csv_import_reader($iid, 'uploadcourse');
+        $iid = \csv_import_reader::get_new_iid('uploadcourse');
+        $cir = new \csv_import_reader($iid, 'uploadcourse');
         $cir->load_csv_content($content, 'utf-8', 'comma');
         $cir->init();
 

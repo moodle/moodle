@@ -13,6 +13,7 @@ Our changes:
 * added round, ceil and floor functions.
 * EvalMath::EvalMath() changed to EvalMath::__construct() and there is a new EvalMath::EvalMath
   function to maintain backwards compatibility
+* Ensure a string is passed to preg_match in EvalMath::nfx.
 
 To see all changes diff against version 1.1, available from:
 http://www.phpclasses.org/browse/package/2695.html
@@ -28,3 +29,7 @@ Changes by Stefan Erlachner, Thomas Niedermaier (MDL-64414):
 e.g. if (or(condition_1, condition_2, ... condition_n))
 * add function and:
 e.g. if (and(condition_1, condition_2, ... condition_n))
+
+Changes by Raquel Ortega (MDL-76413)
+* Avoid PHP 8.2: Partially-supported callable deprecations
+* eg: call_user_func_array(array('self', 'sum'), $args to call_user_func_array(array(self::class, 'sum'), $args)

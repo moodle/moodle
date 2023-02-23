@@ -1,0 +1,11 @@
+/* enrol_lti styles */
+
+#registration-tab-content .input-group-append button.btn {
+    border: solid 1px #8f959e;
+}
+form#auto_submit {
+    display: none;
+}
+#registration-tab-content .input-group-append button.btn span.pix {
+    padding-left: 0.5rem;
+}

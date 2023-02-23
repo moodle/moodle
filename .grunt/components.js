@@ -233,6 +233,7 @@ const getOwningComponentDirectory = checkPath => {
 };
 
 module.exports = {
+    fetchComponentData,
     getAmdSrcGlobList,
     getComponentFromPath,
     getComponentPaths,

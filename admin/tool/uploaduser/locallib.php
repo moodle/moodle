@@ -192,16 +192,31 @@ function uu_validate_user_upload_columns(csv_import_reader $cir, $stdfields, $pr
     if (empty($columns)) {
         $cir->close();
         $cir->cleanup();
-        print_error('cannotreadtmpfile', 'error', $returnurl);
+        throw new \moodle_exception('cannotreadtmpfile', 'error', $returnurl);
     }
     if (count($columns) < 2) {
         $cir->close();
         $cir->cleanup();
-        print_error('csvfewcolumns', 'error', $returnurl);
+        throw new \moodle_exception('csvfewcolumns', 'error', $returnurl);
     }
 
     // test columns
     $processed = array();
+    $acceptedfields = [
+        'category',
+        'categoryrole',
+        'cohort',
+        'course',
+        'enrolperiod',
+        'enrolstatus',
+        'enroltimestart',
+        'group',
+        'role',
+        'sysrole',
+        'type',
+    ];
+    $specialfieldsregex = "/^(" . implode('|', $acceptedfields) . ")\d+$/";
+
     foreach ($columns as $key=>$unused) {
         $field = $columns[$key];
         $field = trim($field);
@@ -218,19 +233,19 @@ function uu_validate_user_upload_columns(csv_import_reader $cir, $stdfields, $pr
             // hack: somebody wrote uppercase in csv file, but the system knows only lowercase profile field
             $newfield = $lcfield;
 
-        } else if (preg_match('/^(sysrole|cohort|course|group|type|role|enrolperiod|enrolstatus|enroltimestart)\d+$/', $lcfield)) {
+        } else if (preg_match($specialfieldsregex, $lcfield)) {
             // special fields for enrolments
             $newfield = $lcfield;
 
         } else {
             $cir->close();
             $cir->cleanup();
-            print_error('invalidfieldname', 'error', $returnurl, $field);
+            throw new \moodle_exception('invalidfieldname', 'error', $returnurl, $field);
         }
         if (in_array($newfield, $processed)) {
             $cir->close();
             $cir->cleanup();
-            print_error('duplicatefieldname', 'error', $returnurl, $newfield);
+            throw new \moodle_exception('duplicatefieldname', 'error', $returnurl, $newfield);
         }
         $processed[$key] = $newfield;
     }
@@ -369,11 +384,17 @@ function uu_allowed_roles() {
 }
 
 /**
- * Returns mapping of all roles using short role name as index.
+ * Returns mapping of roles using short role name as index.
+ *
+ * @param int|null $categoryid Id of the category to get roles for. Null means all roles.
  * @return array
  */
-function uu_allowed_roles_cache() {
-    $allowedroles = get_assignable_roles(context_course::instance(SITEID), ROLENAME_SHORT);
+function uu_allowed_roles_cache(?int $categoryid = null): array {
+    if (is_null($categoryid)) {
+        $allowedroles = get_assignable_roles(context_course::instance(SITEID), ROLENAME_SHORT);
+    } else {
+        $allowedroles = get_assignable_roles(context_coursecat::instance($categoryid), ROLENAME_SHORT);
+    }
     $rolecache = [];
     foreach ($allowedroles as $rid=>$rname) {
         $rolecache[$rid] = new stdClass();
@@ -440,9 +461,10 @@ function uu_pre_process_custom_profile_data($data) {
  * Currently checking for custom profile field or type menu
  *
  * @param array $data user profile data
+ * @param array $profilefieldvalues Used to track previous profile field values to ensure uniqueness is observed
  * @return bool true if no error else false
  */
-function uu_check_custom_profile_data(&$data) {
+function uu_check_custom_profile_data(&$data, array &$profilefieldvalues = []) {
     global $CFG;
     require_once($CFG->dirroot.'/user/profile/lib.php');
 
@@ -466,6 +488,16 @@ function uu_check_custom_profile_data(&$data) {
                         $data['status'][] = get_string('invaliduserfield', 'error', $shortname);
                         $noerror = false;
                     }
+
+                    // Ensure unique field value doesn't already exist in supplied data.
+                    $formfieldunique = $formfield->is_unique() && ($value !== '' || $formfield->is_required());
+                    if ($formfieldunique && array_key_exists($shortname, $profilefieldvalues) &&
+                            (array_search($value, $profilefieldvalues[$shortname]) !== false)) {
+
+                        $data['status'][] = get_string('valuealreadyused') . " ({$key})";
+                        $noerror = false;
+                    }
+
                     // Check for duplicate value.
                     if (method_exists($formfield, 'edit_validate_field') ) {
                         $testuser = new stdClass();
@@ -476,6 +508,11 @@ function uu_check_custom_profile_data(&$data) {
                             $data['status'][] = $err[$key].' ('.$key.')';
                             $noerror = false;
                         }
+                    }
+
+                    // Record value of unique field, so it can be compared for duplicates.
+                    if ($formfieldunique) {
+                        $profilefieldvalues[$shortname][] = $value;
                     }
                 }
             }

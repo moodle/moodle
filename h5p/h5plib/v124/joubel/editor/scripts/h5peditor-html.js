@@ -348,7 +348,44 @@ ns.Html.prototype.appendTo = function ($wrapper) {
     ns.Html.removeWysiwyg();
 
     CKEDITOR.document.getBody = function () {
-      return new CKEDITOR.dom.element(that.$item[0]);
+      // Have to attach to an element that does not get hidden or removed, since an internal "calculator" element
+      // inside CKeditor relies on this element to always exist and not be hidden.
+      return new CKEDITOR.dom.element(window.document.body);
+    };
+
+    // Override convertToPx to make sure the calculator is always visible so it can make the measurements and is
+    // removed after the measurements are done, adapted from:
+    // https://github.com/ckeditor/ckeditor4/blob/cae20318d46745cc46c811da4e7d68b38ca32449/core/tools.js#L899-L929
+    CKEDITOR.tools.convertToPx = function (cssLength) {
+        const calculator = CKEDITOR.dom.element.createFromHtml( '<div style="position:absolute;left:-9999px;' +
+          'top:-9999px;margin:0px;padding:0px;border:0px;"' +
+          '></div>', CKEDITOR.document );
+        CKEDITOR.document.getBody().append(calculator);
+
+        if ( !( /%$/ ).test( cssLength ) ) {
+          var isNegative = parseFloat( cssLength ) < 0,
+            ret;
+
+          if ( isNegative ) {
+            cssLength = cssLength.replace( '-', '' );
+          }
+
+          calculator.setStyle( 'width', cssLength );
+          ret = calculator.$.clientWidth;
+
+          if (calculator.$ && calculator.$.parentNode) {
+            calculator.$.parentNode.removeChild(calculator.$);
+          }
+          if ( isNegative ) {
+            return -ret;
+          }
+          return ret;
+        }
+
+        if (calculator.$ && calculator.$.parentNode) {
+          calculator.$.parentNode.removeChild(calculator.$);
+        }
+        return cssLength;
     };
 
     ns.Html.current = that;

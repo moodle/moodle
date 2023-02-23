@@ -142,8 +142,8 @@ $string['competency:usercompetencyview'] = 'View a user competency';
 $string['competency:userevidencemanage'] = 'Manage evidence of prior learning';
 $string['competency:userevidencemanageown'] = 'Manage own evidence of prior learning';
 $string['competency:userevidenceview'] = 'View evidence of prior learning of a user';
-$string['confirmaddadmin'] = 'Do you really want to add user <strong>{$a}</strong> as new site administrator?';
-$string['confirmdeladmin'] = 'Do you really want to remove user <strong>{$a}</strong> from the list of site administrators?';
+$string['confirmaddadmins'] = 'Are you sure you want to add the following users to the list of site administrators?';
+$string['confirmremoveadmins'] = 'Are you sure you want to remove the following users from the list of site administrators?';
 $string['confirmroleprevent'] = 'Do you really want to remove <strong>"{$a->role}"</strong> from the list of allowed roles for capability "{$a->cap}" in context "{$a->context}"?';
 $string['confirmroleunprohibit'] = 'Do you really want to remove <strong>"{$a->role}"</strong> from the list of prohibited roles for capability "{$a->cap}" in context "{$a->context}"?';
 $string['confirmunassign'] = 'Are you sure you wish to remove this role from this user?';
@@ -160,6 +160,7 @@ $string['contentbank:viewunlistedcontent'] = 'View unlisted content from the con
 $string['contentbank:upload'] = 'Upload new content to the content bank';
 $string['contentbank:useeditor'] = 'Create or edit content using a content type editor';
 $string['context'] = 'Context';
+$string['contextrolenotallowed'] = 'Role {$a} not allowed in this context.';
 $string['course:activityvisibility'] = 'Hide/show activities';
 $string['course:bulkmessaging'] = 'Send a message to many people';
 $string['course:create'] = 'Create courses';
@@ -177,7 +178,7 @@ $string['course:configuredownloadcontent'] = 'Configure download course content'
 $string['course:downloadcoursecontent'] = 'Download course content';
 $string['course:enrolconfig'] = 'Configure enrol instances in courses';
 $string['course:enrolreview'] = 'Review course enrolments';
-$string['course:setforcedlanguage'] = 'Force course language';
+$string['course:setforcedlanguage'] = 'Force course or activity language';
 $string['course:ignoreavailabilityrestrictions'] = 'Ignore availability restrictions';
 $string['course:ignorefilesizelimits'] = 'Use files larger than any file size restrictions';
 $string['course:isincompletionreports'] = 'Be shown on completion reports';
@@ -240,6 +241,7 @@ $string['eventroleallowoverrideupdated'] = 'Allow role override';
 $string['eventroleallowswitchupdated'] = 'Allow role switch';
 $string['eventroleallowviewupdated'] = 'Allow role view';
 $string['eventroleassigned'] = 'Role assigned';
+$string['eventrolecapabilitiesupdated'] = 'Role capabilities updated';
 $string['eventroledeleted'] = 'Role deleted';
 $string['eventroleunassigned'] = 'Role unassigned';
 $string['eventroleupdated'] = 'Role updated';
@@ -373,6 +375,7 @@ $string['rating:viewany'] = 'View total ratings that anyone received';
 $string['rating:viewall'] = 'View all raw ratings given by individuals';
 $string['reportbuilder:edit'] = 'Edit your own custom reports';
 $string['reportbuilder:editall'] = 'Edit all custom reports';
+$string['reportbuilder:scheduleviewas'] = 'Schedule reports to be viewed as other users';
 $string['reportbuilder:view'] = 'View custom reports';
 $string['resetrole'] = 'Reset';
 $string['resettingrole'] = 'Resetting role \'{$a}\'';
@@ -518,6 +521,10 @@ $string['privacy:metadata:role_cohortroles'] = 'Roles to cohort';
 $string['course:togglecompletion'] = 'Manually mark activities as complete';
 // Deprecated since Moodle 3.8.
 $string['eventrolecapabilitiesupdated'] = 'Role capabilities updated';
+
+// Deprecated since Moodle 4.2.
+$string['confirmaddadmin'] = 'Do you really want to add user <strong>{$a}</strong> as new site administrator?';
+$string['confirmdeladmin'] = 'Do you really want to remove user <strong>{$a}</strong> from the list of site administrators?';
 
 // Iomad additions.
 $string['archetypeclientadministrator'] = 'Iomad client administrator';

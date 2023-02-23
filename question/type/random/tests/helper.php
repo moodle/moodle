@@ -47,6 +47,7 @@ class qtype_random_test_helper extends question_test_helper {
         $form = new stdClass();
         $form->questiontext = array('text' => '');
         $form->includesubcategories = '0';
+        $form->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         return $form;
     }
 }

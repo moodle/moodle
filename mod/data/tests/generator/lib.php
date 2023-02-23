@@ -23,6 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_data\manager;
+use mod_data\preset;
+
 defined('MOODLE_INTERNAL') || die();
 
 
@@ -117,6 +120,11 @@ class mod_data_generator extends testing_module_generator {
             $record['description'] = " This is testField - " . $this->databasefieldcount;
         }
 
+        if (isset($record['param1']) && !empty($record['param1'])) {
+            // Some fields have multiline entries.
+            $record['param1'] = str_replace('\n', "\n", $record['param1']);
+        }
+
         if (!isset($record['param1'])) {
             if ($record['type'] == 'checkbox') {
                 $record['param1'] = implode("\n", array('opt1', 'opt2', 'opt3', 'opt4'));
@@ -175,8 +183,6 @@ class mod_data_generator extends testing_module_generator {
         $field = data_get_field($record, $data);
         $field->insert_field();
 
-        data_generate_default_template($data, 'addtemplate', 0, false, true);
-
         return $field;
     }
 
@@ -205,10 +211,18 @@ class mod_data_generator extends testing_module_generator {
      * @param int $groupid
      * @param array $tags
      * @param array $options
+     * @param int $userid if defined, it will be the author of the entry
      * @return int id of the generated record in table {data_records}
      */
-    public function create_entry($data, array $contents, $groupid = 0, $tags = [], array $options = null) {
+    public function create_entry($data, array $contents, $groupid = 0, $tags = [], array $options = null, int $userid = 0) {
         global $DB, $USER, $CFG;
+
+        // Set current user if defined.
+        if (!empty($userid)) {
+            $currentuser = $USER;
+            $user = \core_user::get_user($userid);
+            $this->set_user($user);
+        }
 
         $this->databaserecordcount++;
 
@@ -311,7 +325,7 @@ class mod_data_generator extends testing_module_generator {
                     get_file_storage()->create_file_from_string(['component' => 'user', 'filearea' => 'draft',
                         'contextid' => $usercontext->id, 'itemid' => $itemid, 'filepath' => '/',
                         'filename' => $filename],
-                        file_get_contents($CFG->dirroot.'/mod/data/pix/icon.png'));
+                        file_get_contents($CFG->dirroot.'/mod/data/pix/monologo.png'));
                 }
 
                 $fieldname = 'field_' . $fieldid . '_file';
@@ -359,6 +373,52 @@ class mod_data_generator extends testing_module_generator {
                 context_module::instance($cm->id), $tags);
         }
 
+        if (isset($currentuser)) {
+            $this->set_user($currentuser);
+        }
+
         return $recordid;
+    }
+
+    /**
+     * Creates a preset from a mod_data instance.
+     *
+     * @param stdClass $instance The mod_data instance.
+     * @param stdClass|null $record The preset information, like 'name'.
+     * @return preset The preset that has been created.
+     */
+    public function create_preset(stdClass $instance, stdClass $record = null): preset {
+        global $USER;
+
+        if (is_null($record)) {
+            $record = new stdClass();
+        }
+
+        // Set current user if defined.
+        if (isset($record->userid) && $record->userid != $USER->id) {
+            $currentuser = $USER;
+            $user = \core_user::get_user($record->userid);
+            $this->set_user($user);
+        }
+
+        // Fill in optional values if not specified.
+        $presetname = 'New preset ' . microtime();
+        if (isset($record->name)) {
+            $presetname = $record->name;
+        }
+        $presetdescription = null;
+        if (isset($record->description)) {
+            $presetdescription = $record->description;
+        }
+
+        $manager = manager::create_from_instance($instance);
+        $preset = preset::create_from_instance($manager, $presetname, $presetdescription);
+        $preset->save();
+
+        if (isset($currentuser)) {
+            $this->set_user($currentuser);
+        }
+
+        return $preset;
     }
 }

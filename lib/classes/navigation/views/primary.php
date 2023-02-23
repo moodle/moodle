@@ -33,32 +33,49 @@ class primary extends view {
      * Initialise the primary navigation node
      */
     public function initialise(): void {
+        global $CFG;
+
         if (during_initial_install() || $this->initialised) {
             return;
         }
         $this->id = 'primary_navigation';
 
+        $showhomenode = empty($this->page->theme->removedprimarynavitems) ||
+            !in_array('home', $this->page->theme->removedprimarynavitems);
         // We do not need to change the text for the home/dashboard depending on the set homepage.
-        $sitehome = $this->add(get_string('home'), new \moodle_url('/'), self::TYPE_SYSTEM,
-            null, 'home', new \pix_icon('i/home', ''));
-        if (isloggedin() ) {
-            if (!isguestuser()) {
-                $homepage = get_home_page();
-                if ($homepage == HOMEPAGE_MY || $homepage == HOMEPAGE_MYCOURSES) {
-                    // We need to stop automatic redirection.
+        if ($showhomenode) {
+            $sitehome = $this->add(get_string('home'), new \moodle_url('/'), self::TYPE_SYSTEM,
+                null, 'home', new \pix_icon('i/home', ''));
+        }
+        if (isloggedin() && !isguestuser()) {
+            $homepage = get_home_page();
+            if ($homepage == HOMEPAGE_MY || $homepage == HOMEPAGE_MYCOURSES) {
+                // We need to stop automatic redirection.
+                if ($showhomenode) {
                     $sitehome->action->param('redirect', '0');
                 }
+            }
 
-                // Add the dashboard link.
+            // Add the dashboard link.
+            $showmyhomenode = !empty($CFG->enabledashboard) && (empty($this->page->theme->removedprimarynavitems) ||
+                !in_array('myhome', $this->page->theme->removedprimarynavitems));
+            if ($showmyhomenode) {
                 $this->add(get_string('myhome'), new \moodle_url('/my/'),
                     self::TYPE_SETTING, null, 'myhome', new \pix_icon('i/dashboard', ''));
             }
 
             // Add the mycourses link.
-            $this->add(get_string('mycourses'), new \moodle_url('/my/courses.php'), self::TYPE_ROOTNODE, null, 'courses');
+            $showcoursesnode = empty($this->page->theme->removedprimarynavitems) ||
+                !in_array('courses', $this->page->theme->removedprimarynavitems);
+            if ($showcoursesnode) {
+                $this->add(get_string('mycourses'), new \moodle_url('/my/courses.php'), self::TYPE_ROOTNODE, null, 'mycourses');
+            }
         }
 
-        if ($node = $this->get_site_admin_node()) {
+        $showsiteadminnode = empty($this->page->theme->removedprimarynavitems) ||
+            !in_array('siteadminnode', $this->page->theme->removedprimarynavitems);
+
+        if ($showsiteadminnode && $node = $this->get_site_admin_node()) {
             // We don't need everything from the node just the initial link.
             $this->add($node->text, $node->action(), self::TYPE_SITE_ADMIN, null, 'siteadminnode', $node->icon);
         }
@@ -113,6 +130,7 @@ class primary extends view {
      *      - Fallback, set 'Home' as active
      */
     private function set_active_node(): void {
+        global $SITE;
         $activenode = $this->search_and_set_active_node($this);
         // If we haven't found an active node based on the standard search. Follow the criteria above.
         if (!$activenode) {
@@ -122,9 +140,11 @@ class primary extends view {
             if (isset($navactivenode->parent) && $navactivenode->parent->text == get_string('sitepages')) {
                 $activekey = 'home';
             } else if (in_array($this->context->contextlevel, [CONTEXT_COURSE, CONTEXT_MODULE])) {
-                $activekey = 'courses';
+                if ($this->page->course->id != $SITE->id) {
+                    $activekey = 'courses';
+                }
             } else if (in_array('siteadminnode', $children) && $node = $this->get_site_admin_node()) {
-                if ($this->context->contextlevel == CONTEXT_COURSECAT || $node->search_for_active_node()) {
+                if ($this->context->contextlevel == CONTEXT_COURSECAT || $node->search_for_active_node(URL_MATCH_EXACT)) {
                     $activekey = 'siteadminnode';
                 }
             }
@@ -159,7 +179,7 @@ class primary extends view {
             if ($node->key && ($activekey === $node->key)) {
                 return $node;
             }
-        } else if ($node->check_if_active(URL_MATCH_BASE)) {
+        } else if ($node->check_if_active()) {
             return $node;
         }
 

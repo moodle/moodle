@@ -13,8 +13,10 @@ Feature: Adding and configuring YouTube block
   Scenario: Category options are not available (except default) in the block settings if the YouTube API key is not set.
     Given the following config values are set as admin:
       | apikey |  | block_tag_youtube |
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     # TODO MDL-57120 site "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
@@ -33,8 +35,10 @@ Feature: Adding and configuring YouTube block
   Scenario: Category options are not available (except default) in the block settings when invalid YouTube API key is set.
     Given the following config values are set as admin:
       | apikey | invalidapikeyvalue | block_tag_youtube |
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Tags" "link" in the "Navigation" "block"

@@ -30,7 +30,7 @@ $filtertype   = optional_param('filtertype', '', PARAM_ALPHA);
 $filterselect = optional_param('filterselect', 0, PARAM_INT);
 
 if (empty($CFG->enablenotes)) {
-    print_error('notesdisabled', 'notes');
+    throw new \moodle_exception('notesdisabled', 'notes');
 }
 
 $url = new moodle_url('/notes/index.php');

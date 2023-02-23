@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Document icon unit tests.
- *
- * @package    core_search
- * @copyright  2018 Dmitrii Metelkin <dmitriim@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace core_search;
 
 /**
  * Document icon unit tests.
@@ -31,7 +23,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Dmitrii Metelkin <dmitriim@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class search_document_icon_testcase extends advanced_testcase {
+class document_icon_test extends \advanced_testcase {
     /**
      * Test that default component gets returned correctly.
      */

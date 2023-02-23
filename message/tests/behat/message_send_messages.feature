@@ -50,7 +50,7 @@ Feature: Message send messages
     Then "Group 1" "core_message > Message" should exist
     And I select "Group 1" conversation in the "group-messages" conversations list
     And I open contact menu
-    And I click on "Star" "link" in the "//div[@data-region='header-container']" "xpath_element"
+    And I click on "Star conversation" "link" in the "conversation-actions-menu" "region"
     And I go back in "view-conversation" message drawer
     And I open the "Starred" conversations list
     And I should see "Group 1"

@@ -166,6 +166,15 @@ abstract class behat_generator_base {
     protected abstract function get_creatable_entities(): array;
 
     /**
+     * Get the list of available generators for this class.
+     *
+     * @return array
+     */
+    final public function get_available_generators(): array {
+        return $this->get_creatable_entities();
+    }
+
+    /**
      * Do the work to generate an entity.
      *
      * This is called by {@link behat_data_generators::the_following_entities_exist()}.
@@ -311,6 +320,36 @@ abstract class behat_generator_base {
         global $DB;
 
         if (!$id = $DB->get_field('user', 'id', array('username' => $username))) {
+            throw new Exception('The specified user with username "' . $username . '" does not exist');
+        }
+        return $id;
+    }
+
+    /**
+     * Gets the user id from it's username.
+     * @throws Exception
+     * @param string $username
+     * @return int
+     */
+    protected function get_userfrom_id(string $username) {
+        global $DB;
+
+        if (!$id = $DB->get_field('user', 'id', ['username' => $username])) {
+            throw new Exception('The specified user with username "' . $username . '" does not exist');
+        }
+        return $id;
+    }
+
+    /**
+     * Gets the user id from it's username.
+     * @throws Exception
+     * @param string $username
+     * @return int
+     */
+    protected function get_userto_id(string $username) {
+        global $DB;
+
+        if (!$id = $DB->get_field('user', 'id', ['username' => $username])) {
             throw new Exception('The specified user with username "' . $username . '" does not exist');
         }
         return $id;

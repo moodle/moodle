@@ -17,13 +17,13 @@
     if (!extension_loaded('openssl')) {
         echo $OUTPUT->header();
         set_config('mnet_dispatcher_mode', 'off');
-        print_error('requiresopenssl', 'mnet');
+        throw new \moodle_exception('requiresopenssl', 'mnet');
     }
 
     if (!function_exists('curl_init') ) {
         echo $OUTPUT->header();
         set_config('mnet_dispatcher_mode', 'off');
-        print_error('nocurl', 'mnet');
+        throw new \moodle_exception('nocurl', 'mnet');
     }
 
     if (!isset($CFG->mnet_dispatcher_mode)) {
@@ -37,7 +37,7 @@
                 if (set_config('mnet_dispatcher_mode', $form->mode)) {
                     redirect('index.php', get_string('changessaved'));
                 } else {
-                    print_error('invalidaction', '', 'index.php');
+                    throw new \moodle_exception('invalidaction', '', 'index.php');
                 }
             }
         } elseif (!empty($form->submit) && $form->submit == get_string('delete')) {
@@ -46,11 +46,23 @@
 
             $formcontinue = new single_button(new moodle_url('index.php', array('confirm' => md5($mnet->public_key))), get_string('yes'));
             $formcancel = new single_button(new moodle_url('index.php', array()), get_string('no'));
+
+            echo $OUTPUT->header();
             echo $OUTPUT->confirm(get_string("deletekeycheck", "mnet"), $formcontinue, $formcancel);
+            echo $OUTPUT->footer();
             exit;
         } else {
             // We're deleting
 
+            // If no/cancel then redirect back to the network setting page.
+            if (!isset($form->confirm)) {
+                redirect(
+                    new moodle_url('/admin/mnet/index.php'),
+                    get_string('keydeletedcancelled', 'mnet'),
+                    null,
+                    \core\output\notification::NOTIFY_SUCCESS
+                );
+            }
 
             if (!isset($SESSION->mnet_confirm_delete_key)) {
                 // fail - you're being attacked?
@@ -63,19 +75,22 @@
 
             if($time < time() - 60) {
                 // fail - you're out of time.
-                print_error ('deleteoutoftime', 'mnet', 'index.php');
-                exit;
+                redirect(
+                    new moodle_url('/admin/mnet/index.php'),
+                    get_string('deleteoutoftime', 'mnet'),
+                    null,
+                    \core\output\notification::NOTIFY_WARNING
+                );
             }
 
             if ($key != md5(sha1($mnet->keypair['keypair_PEM']))) {
                 // fail - you're being attacked?
-                print_error ('deletewrongkeyvalue', 'mnet', 'index.php');
+                throw new \moodle_exception ('deletewrongkeyvalue', 'mnet', 'index.php');
                 exit;
             }
 
             $mnet->replace_keys();
             redirect('index.php', get_string('keydeleted','mnet'));
-            exit;
         }
     }
     $hosts = $DB->get_records_select('mnet_host', "id <> ? AND deleted = 0", array($CFG->mnet_localhost_id), 'wwwroot ASC');

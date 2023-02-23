@@ -14,15 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Moodle Mobile admin tool external functions tests.
- *
- * @package    tool_mobile
- * @category   external
- * @copyright  2016 Juan Leyva
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.1
- */
+namespace tool_mobile;
+
+use externallib_advanced_testcase;
+use core_external\external_api;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,9 +27,6 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/admin/tool/mobile/tests/fixtures/output/mobile.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
 
-use tool_mobile\external;
-use tool_mobile\api;
-
 /**
  * Moodle Mobile admin tool external functions tests.
  *
@@ -43,7 +35,7 @@ use tool_mobile\api;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since       Moodle 3.1
  */
-class tool_mobile_external_testcase extends externallib_advanced_testcase {
+class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Test get_plugins_supporting_mobile.
@@ -65,14 +57,22 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(external::get_public_config_returns(), $result);
 
         // Test default values.
-        $context = context_system::instance();
-        list($authinstructions, $notusedformat) = external_format_text($CFG->auth_instructions, FORMAT_MOODLE, $context->id);
-        list($maintenancemessage, $notusedformat) = external_format_text($CFG->maintenance_message, FORMAT_MOODLE, $context->id);
+        $context = \context_system::instance();
+        [$authinstructions] = \core_external\util::format_text(
+            $CFG->auth_instructions,
+            FORMAT_MOODLE,
+            $context->id
+        );
+        [$maintenancemessage] = \core_external\util::format_text(
+            $CFG->maintenance_message,
+            FORMAT_MOODLE,
+            $context->id
+        );
 
         $expected = array(
             'wwwroot' => $CFG->wwwroot,
             'httpswwwroot' => $CFG->wwwroot,
-            'sitename' => external_format_string($SITE->fullname, $context->id, true),
+            'sitename' => \core_external\util::format_string($SITE->fullname, $context->id, true),
             'guestlogin' => $CFG->guestloginbutton,
             'rememberusername' => $CFG->rememberusername,
             'authloginviaemail' => $CFG->authloginviaemail,
@@ -100,6 +100,8 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             'tool_mobile_androidappid' => get_config('tool_mobile', 'androidappid'),
             'tool_mobile_setuplink' => get_config('tool_mobile', 'setuplink'),
             'tool_mobile_qrcodetype' => get_config('tool_mobile', 'qrcodetype'),
+            'supportpage' => $CFG->supportpage,
+            'supportavailability' => $CFG->supportavailability,
             'warnings' => array()
         );
         $this->assertEquals($expected, $result);
@@ -118,20 +120,22 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         set_config('lang', 'a_b');  // Set invalid lang.
         set_config('disabledfeatures', 'myoverview', 'tool_mobile');
         set_config('minimumversion', '3.8.0', 'tool_mobile');
+        set_config('supportemail', 'test@test.com');
+        set_config('supportavailability', CONTACT_SUPPORT_ANYONE);
 
         // Enable couple of issuers.
         $issuer = \core\oauth2\api::create_standard_issuer('google');
         $irecord = $issuer->to_record();
         $irecord->clientid = 'mock';
         $irecord->clientsecret = 'mock';
-        core\oauth2\api::update_issuer($irecord);
+        \core\oauth2\api::update_issuer($irecord);
 
         set_config('hostname', 'localhost', 'auth_cas');
         set_config('auth_logo', 'http://invalidurl.com//invalid/', 'auth_cas');
         set_config('auth_name', 'CAS', 'auth_cas');
         set_config('auth', 'oauth2,cas');
 
-        list($authinstructions, $notusedformat) = external_format_text($authinstructions, FORMAT_MOODLE, $context->id);
+        list($authinstructions, $notusedformat) = \core_external\util::format_text($authinstructions, FORMAT_MOODLE, $context->id);
         $expected['registerauth'] = 'email';
         $expected['authinstructions'] = $authinstructions;
         $expected['typeoflogin'] = api::LOGIN_VIA_BROWSER;
@@ -139,6 +143,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $expected['agedigitalconsentverification'] = true;
         $expected['supportname'] = $CFG->supportname;
         $expected['supportemail'] = $CFG->supportemail;
+        $expected['supportavailability'] = $CFG->supportavailability;
         $expected['autolang'] = '1';
         $expected['lang'] = ''; // Expect empty because it was set to an invalid lang.
         $expected['tool_mobile_disabledfeatures'] = 'myoverview';
@@ -177,8 +182,10 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test get_config
+     *
+     * @covers \tool_mobile\external::get_config
      */
-    public function test_get_config() {
+    public function test_get_config(): void {
         global $CFG, $SITE;
         require_once($CFG->dirroot . '/course/format/lib.php');
 
@@ -186,20 +193,25 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
 
         $mysitepolicy = 'http://mysite.is/policy/';
         set_config('sitepolicy', $mysitepolicy);
+        set_config('supportemail', 'test@test.com');
 
         $result = external::get_config();
         $result = external_api::clean_returnvalue(external::get_config_returns(), $result);
 
         // SITE summary is null in phpunit which gets transformed to an empty string by format_text.
-        list($sitesummary, $unused) = external_format_text($SITE->summary, $SITE->summaryformat, context_system::instance()->id);
+        [$sitesummary, $summaryformat] = \core_external\util::format_text(
+            $SITE->summary,
+            $SITE->summaryformat,
+            \context_system::instance()->id
+        );
 
         // Test default values.
-        $context = context_system::instance();
+        $context = \context_system::instance();
         $expected = array(
             array('name' => 'fullname', 'value' => $SITE->fullname),
             array('name' => 'shortname', 'value' => $SITE->shortname),
             array('name' => 'summary', 'value' => $sitesummary),
-            array('name' => 'summaryformat', 'value' => FORMAT_HTML),
+            array('name' => 'summaryformat', 'value' => $summaryformat),
             array('name' => 'frontpage', 'value' => $CFG->frontpage),
             array('name' => 'frontpageloggedin', 'value' => $CFG->frontpageloggedin),
             array('name' => 'maxcategorydepth', 'value' => $CFG->maxcategorydepth),
@@ -217,6 +229,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             array('name' => 'tool_mobile_filetypeexclusionlist', 'value' => ''),
             array('name' => 'tool_mobile_custommenuitems', 'value' => ''),
             array('name' => 'tool_mobile_apppolicy', 'value' => ''),
+            array('name' => 'tool_mobile_autologinmintimebetweenreq', 'value' => 6 * MINSECS),
             array('name' => 'calendartype', 'value' => $CFG->calendartype),
             array('name' => 'calendar_site_timeformat', 'value' => $CFG->calendar_site_timeformat),
             array('name' => 'calendar_startwday', 'value' => $CFG->calendar_startwday),
@@ -231,12 +244,16 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
                 'value' => get_config('core_admin', 'coursecolor' . $number)
             ];
         }
+        $expected[] = ['name' => 'supportavailability', 'value' => $CFG->supportavailability];
         $expected[] = ['name' => 'supportname', 'value' => $CFG->supportname];
         $expected[] = ['name' => 'supportemail', 'value' => $CFG->supportemail];
         $expected[] = ['name' => 'supportpage', 'value' => $CFG->supportpage];
 
         $expected[] = ['name' => 'coursegraceperiodafter', 'value' => $CFG->coursegraceperiodafter];
         $expected[] = ['name' => 'coursegraceperiodbefore', 'value' => $CFG->coursegraceperiodbefore];
+
+        $expected[] = ['name' => 'enabledashboard', 'value' => $CFG->enabledashboard];
+        $expected[] = ['name' => 'customusermenuitems', 'value' => $CFG->customusermenuitems];
 
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals($expected, $result['settings']);
@@ -265,7 +282,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $this->setUser($user);
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
 
-        $token = external_generate_token_for_current_user($service);
+        $token = \core_external\util::generate_token_for_current_user($service);
 
         // Check we got the private token.
         $this->assertTrue(isset($token->privatetoken));
@@ -274,7 +291,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $_GET['wstoken'] = $token->token;   // Mock parameters.
 
         // Fake the app.
-        core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+        \core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
                 'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
 
         // Even if we force the password change for the current user we should be able to retrieve the key.
@@ -284,7 +301,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $result = external::get_autologin_key($token->privatetoken);
         $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
         // Validate the key.
-        $this->assertEquals(32, core_text::strlen($result['key']));
+        $this->assertEquals(32, \core_text::strlen($result['key']));
         $key = $DB->get_record('user_private_key', array('value' => $result['key']));
         $this->assertEquals($USER->id, $key->userid);
         $this->assertTimeCurrent($key->validuntil - api::LOGIN_KEY_TTL);
@@ -305,7 +322,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
 
         // Fake the app.
-        core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+        \core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
             'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
 
         // Need to disable webservices to verify that's checked.
@@ -325,7 +342,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         global $CFG;
 
         // Fake the app.
-        core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+        \core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
             'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
 
         // Need to simulate a non HTTPS site here.
@@ -349,7 +366,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $this->setAdminUser();
 
         // Fake the app.
-        core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+        \core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
             'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
 
         $this->expectException('moodle_exception');
@@ -369,11 +386,11 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
 
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
 
-        $token = external_generate_token_for_current_user($service);
+        $token = \core_external\util::generate_token_for_current_user($service);
         $_GET['wstoken'] = $token->token;   // Mock parameters.
 
         // Fake the app.
-        core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+        \core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
             'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
 
         $result = external::get_autologin_key($token->privatetoken);
@@ -383,6 +400,15 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $mocktime = time() - 7 * MINSECS;
         set_user_preference('tool_mobile_autologin_request_last', $mocktime, $USER);
         $result = external::get_autologin_key($token->privatetoken);
+        $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
+
+        // Change min time between requests to 30 seconds.
+        set_config('autologinmintimebetweenreq', 30, 'tool_mobile');
+
+        // Mock a previous request, 60 seconds ago.
+        $mocktime = time() - MINSECS;
+        set_user_preference('tool_mobile_autologin_request_last', $mocktime, $USER);
+        $result = external::get_autologin_key($token->privatetoken);    // All good, we were expecint 30 seconds or more.
         $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
 
         // We just requested one token, we must wait.
@@ -490,14 +516,13 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         // Setup WS token.
         $webservicemanager = new \webservice;
         $service = $webservicemanager->get_external_service_by_shortname(MOODLE_OFFICIAL_MOBILE_SERVICE);
-        $token = external_generate_token_for_current_user($service);
+        $token = \core_external\util::generate_token_for_current_user($service);
         $_POST['wstoken'] = $token->token;
 
         // Workaround for external_api::call_external_function requiring sesskey.
         $_POST['sesskey'] = sesskey();
 
         // Call some functions.
-
         $requests = [
             [
                 'function' => 'core_course_get_courses_by_field',
@@ -526,14 +551,14 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
 
         $this->assertFalse($result['responses'][0]['error']);
         $coursedata = external_api::clean_returnvalue(
-            core_course_external::get_courses_by_field_returns(),
-            core_course_external::get_courses_by_field('id', $course->id));
+            \core_course_external::get_courses_by_field_returns(),
+            \core_course_external::get_courses_by_field('id', $course->id));
          $this->assertEquals(json_encode($coursedata), $result['responses'][0]['data']);
 
         $this->assertFalse($result['responses'][1]['error']);
         $userdata = external_api::clean_returnvalue(
-            core_user_external::get_users_by_field_returns(),
-            core_user_external::get_users_by_field('id', [$user1->id]));
+            \core_user_external::get_users_by_field_returns(),
+            \core_user_external::get_users_by_field('id', [$user1->id]));
         $this->assertEquals(json_encode($userdata), $result['responses'][1]['data']);
 
         $this->assertTrue($result['responses'][2]['error']);
@@ -621,14 +646,16 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
-        $qrloginkey = api::get_qrlogin_key();
+        $mobilesettings = get_config('tool_mobile');
+        $mobilesettings->qrsameipcheck = 1;
+        $qrloginkey = api::get_qrlogin_key($mobilesettings);
 
         // Generate new tokens, the ones we expect to receive.
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
-        $token = external_generate_token_for_current_user($service);
+        $token = \core_external\util::generate_token_for_current_user($service);
 
         // Fake the app.
-        core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+        \core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
                 'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
 
         $result = external::get_tokens_for_qr_login($qrloginkey, $USER->id);
@@ -644,6 +671,76 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $result = external::get_tokens_for_qr_login(random_string('64'), $user->id);
     }
 
+    /*
+     * Test get_tokens_for_qr_login ignore ip check.
+     */
+    public function test_get_tokens_for_qr_login_ignore_ip_check() {
+        global $DB, $CFG, $USER;
+
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $mobilesettings = get_config('tool_mobile');
+        $mobilesettings->qrsameipcheck = 0;
+        $qrloginkey = api::get_qrlogin_key($mobilesettings);
+
+        $key = $DB->get_record('user_private_key', ['value' => $qrloginkey]);
+        $this->assertNull($key->iprestriction);
+
+        // Generate new tokens, the ones we expect to receive.
+        $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
+        $token = \core_external\util::generate_token_for_current_user($service);
+
+        // Fake the app.
+        \core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+                'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
+
+        $result = external::get_tokens_for_qr_login($qrloginkey, $USER->id);
+        $result = external_api::clean_returnvalue(external::get_tokens_for_qr_login_returns(), $result);
+
+        $this->assertEmpty($result['warnings']);
+        $this->assertEquals($token->token, $result['token']);
+        $this->assertEquals($token->privatetoken, $result['privatetoken']);
+
+        // Now, try with an invalid key.
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('invalidkey', 'error'));
+        $result = external::get_tokens_for_qr_login(random_string('64'), $user->id);
+    }
+
+    /*
+     * Test get_tokens_for_qr_login ip check fails.
+     */
+    public function test_get_tokens_for_qr_login_ip_check_mismatch() {
+        global $DB, $CFG, $USER;
+
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $mobilesettings = get_config('tool_mobile');
+        $mobilesettings->qrsameipcheck = 1;
+        $qrloginkey = api::get_qrlogin_key($mobilesettings);
+
+        // Alter expected ip.
+        $DB->set_field('user_private_key', 'iprestriction', '6.6.6.6', ['value' => $qrloginkey]);
+
+        // Generate new tokens, the ones we expect to receive.
+        $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
+        $token = \core_external\util::generate_token_for_current_user($service);
+
+        // Fake the app.
+        \core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+                'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
+
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('ipmismatch', 'error'));
+        $result = external::get_tokens_for_qr_login($qrloginkey, $USER->id);
+    }
+
     /**
      * Test get_tokens_for_qr_login missing QR code enabled.
      */
@@ -652,7 +749,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        set_config('qrcodetype', tool_mobile\api::QR_CODE_DISABLED, 'tool_mobile');
+        set_config('qrcodetype', api::QR_CODE_DISABLED, 'tool_mobile');
 
         $this->expectExceptionMessage(get_string('qrcodedisabled', 'tool_mobile'));
         $result = external::get_tokens_for_qr_login('', $USER->id);
@@ -669,7 +766,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $this->setUser($user);
 
         // Fake the app.
-        core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+        \core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
             'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
 
         // Need to disable webservices to verify that's checked.
@@ -689,7 +786,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         global $CFG, $USER;
 
         // Fake the app.
-        core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+        \core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
             'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
 
         // Need to simulate a non HTTPS site here.
@@ -713,7 +810,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $this->setAdminUser();
 
         // Fake the app.
-        core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+        \core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
             'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
 
         $this->expectException('moodle_exception');

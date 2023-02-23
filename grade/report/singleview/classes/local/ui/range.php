@@ -24,6 +24,8 @@
 
 namespace gradereport_singleview\local\ui;
 
+use grade_item;
+
 defined('MOODLE_INTERNAL') || die;
 
 /**
@@ -39,7 +41,7 @@ class range extends attribute_format {
      * Constructor
      * @param grade_item $item The grade item
      */
-    public function __construct($item) {
+    public function __construct(grade_item $item) {
         $this->item = $item;
     }
 
@@ -48,7 +50,7 @@ class range extends attribute_format {
      *
      * @return element
      */
-    public function determine_format() {
+    public function determine_format(): element {
         $decimals = $this->item->get_decimals();
 
         $min = format_float($this->item->grademin, $decimals);

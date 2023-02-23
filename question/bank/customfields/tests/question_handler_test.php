@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace qbank_customfields;
+
 /**
  * Class qbank_customfields_question_handler_testcase
  *
@@ -22,7 +24,7 @@
  * @author      Matt Porritt <mattp@catalyst-au.net>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbank_customfields_question_handler_testcase extends advanced_testcase {
+class question_handler_test extends \advanced_testcase {
 
     /**
      * Question setup helper method.
@@ -33,7 +35,7 @@ class qbank_customfields_question_handler_testcase extends advanced_testcase {
     protected function setup_question(): int {
         $category = $this->getDataGenerator()->create_category();
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $context = context_coursecat::instance($category->id);
+        $context = \context_coursecat::instance($category->id);
         $questioncategory = $questiongenerator->create_question_category(['contextid' => $context->id]);
         $questiondata = ['category' => $questioncategory->id, 'idnumber' => 'q1'];
         $question = $questiongenerator->create_question('shortanswer', null, $questiondata);
@@ -62,7 +64,7 @@ class qbank_customfields_question_handler_testcase extends advanced_testcase {
         $fieldgenerator->add_instance_data($field, $instanceid, $fieldvalue);
 
         // Get the field data.
-        $customfieldhandler = qbank_customfields\customfield\question_handler::create();
+        $customfieldhandler = customfield\question_handler::create();
         $fieldinstancedata = $customfieldhandler->get_field_data($field, $instanceid);
 
         $this->assertEquals($categorydata->name, $fieldinstancedata->get_field()->get_category()->get('name'));
@@ -89,7 +91,7 @@ class qbank_customfields_question_handler_testcase extends advanced_testcase {
         $fieldgenerator->add_instance_data($field, $instanceid, $fieldvalue);
 
         // Get the field data.
-        $customfieldhandler = qbank_customfields\customfield\question_handler::create();
+        $customfieldhandler = customfield\question_handler::create();
         $fieldinstancedata = $customfieldhandler->get_field_data($field, $instanceid);
         $output = $customfieldhandler->display_custom_field_table($fieldinstancedata);
 
@@ -126,7 +128,7 @@ class qbank_customfields_question_handler_testcase extends advanced_testcase {
         $fieldgenerator->add_instance_data($field3, $instanceid, $field3value);
 
         // Get the field data.
-        $customfieldhandler = qbank_customfields\customfield\question_handler::create();
+        $customfieldhandler = customfield\question_handler::create();
         $outputdata = $customfieldhandler->get_categories_fields_data($instanceid);
 
         $this->assertEquals($field1value, $outputdata['test category'][0]['value']);

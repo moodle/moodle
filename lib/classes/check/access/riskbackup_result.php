@@ -15,10 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Lists all users with XSS risk
- *
- * It would be great to combine this with risk trusts in user table,
- * unfortunately nobody implemented user trust UI yet :-(
+ * Lists all roles that have the ability to backup user data, as well as users
  *
  * @package    core
  * @category   check
@@ -29,21 +26,27 @@
 
 namespace core\check\access;
 
-defined('MOODLE_INTERNAL') || die();
-
+use context;
+use stdClass;
 use core\check\result;
 
 /**
- * Lists all users with XSS risk
- *
- * It would be great to combine this with risk trusts in user table,
- * unfortunately nobody implemented user trust UI yet :-(
+ * Lists all roles that have the ability to backup user data, as well as users
  *
  * @copyright  2020 Brendan Heywood <brendan@catalyst-au.net>
  * @copyright  2008 petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class riskbackup_result extends \core\check\result {
+
+    /** @var stdClass[] $systemroles */
+    private $systemroles;
+
+    /** @var stdClass[] $overriddenroles */
+    private $overriddenroles;
+
+    /** @var string $sqluserinfo */
+    private $sqluserinfo;
 
     /**
      * Constructor
@@ -62,8 +65,11 @@ class riskbackup_result extends \core\check\result {
                    AND rc.permission = :permission";
         $this->systemroles = $DB->get_records_sql($sql, $params);
 
+        // Ensure first field is unique (role.id + role_capabilities.contextid).
+        $roleidcontextfield = $DB->sql_concat_join("','", ['r.id', 'rc.contextid']);
         $params = array('capability' => 'moodle/backup:userinfo', 'permission' => CAP_ALLOW, 'contextid' => $syscontext->id);
-        $sql = "SELECT DISTINCT r.id, r.name, r.shortname, r.sortorder, r.archetype, rc.contextid
+        $sql = "SELECT DISTINCT {$roleidcontextfield} AS rolecontext, r.id, r.name, r.shortname, r.sortorder, r.archetype,
+                       rc.contextid
                   FROM {role} r
                   JOIN {role_capabilities} rc ON rc.roleid = r.id
                  WHERE rc.capability = :capability
@@ -139,11 +145,9 @@ class riskbackup_result extends \core\check\result {
         }
 
         // Make a list of overrides to roles.
-        $rolelinks2 = array();
         if ($this->overriddenroles) {
             $links = array();
             foreach ($this->overriddenroles as $role) {
-                $role->name = $role->localname;
                 $context = context::instance_by_id($role->contextid);
                 $role->name = role_get_name($role, $context, ROLENAME_BOTH);
                 $role->contextname = $context->get_context_name();

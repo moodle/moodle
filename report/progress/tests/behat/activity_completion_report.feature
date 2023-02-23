@@ -42,7 +42,7 @@ Feature: Teacher can view and override users' activity completion data via the p
     # Teacher overrides the activity completion statuses to incomplete.
     When I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Reports" in current page administration
-    And I select "Activity completion" from the "Report type" singleselect
+    And I click on "Activity completion" "link"
     And "Ann, Jill, Grainne, Beauchamp, my assignment: Completed" "icon" should exist in the "Ann, Jill, Grainne, Beauchamp" "table_row"
     And "Ann, Jill, Grainne, Beauchamp, my assignment 2: Completed" "icon" should exist in the "Ann, Jill, Grainne, Beauchamp" "table_row"
     And I click on "my assignment" "link" in the "Ann, Jill, Grainne, Beauchamp" "table_row"
@@ -68,7 +68,7 @@ Feature: Teacher can view and override users' activity completion data via the p
     # And the activity completion report should show the same.
     And I am on the "Course 1" Course page logged in as teacher1
     And I navigate to "Reports" in current page administration
-    And I select "Activity completion" from the "Report type" singleselect
+    And I click on "Activity completion" "link"
     And "Ann, Jill, Grainne, Beauchamp, my assignment: Completed" "icon" should exist in the "Ann, Jill, Grainne, Beauchamp" "table_row"
     And "Ann, Jill, Grainne, Beauchamp, my assignment 2: Completed" "icon" should exist in the "Ann, Jill, Grainne, Beauchamp" "table_row"
 
@@ -80,7 +80,7 @@ Feature: Teacher can view and override users' activity completion data via the p
     # When the teacher overrides the activity completion statuses to complete.
     When I am on the "Course 1" Course page logged in as teacher1
     And I navigate to "Reports" in current page administration
-    And I select "Activity completion" from the "Report type" singleselect
+    And I click on "Activity completion" "link"
     And "Ann, Jill, Grainne, Beauchamp, my assignment: Not completed" "icon" should exist in the "Ann, Jill, Grainne, Beauchamp" "table_row"
     And "Ann, Jill, Grainne, Beauchamp, my assignment 3: Not completed" "icon" should exist in the "Ann, Jill, Grainne, Beauchamp" "table_row"
     And I click on "my assignment" "link" in the "Ann, Jill, Grainne, Beauchamp" "table_row"

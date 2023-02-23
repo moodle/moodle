@@ -14,32 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This is the external method to return the information needed to list all enrolled user attempts.
- *
- * @package    mod_h5pactivity
- * @since      Moodle 3.11
- * @copyright  2020 Ilya Tregubov <ilya@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_h5pactivity\external;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/externallib.php');
 
 use mod_h5pactivity\local\manager;
 use mod_h5pactivity\local\attempt;
 use mod_h5pactivity\local\report;
 use mod_h5pactivity\local\report\attempts as report_attempts;
-use external_api;
-use external_function_parameters;
-use external_value;
-use external_multiple_structure;
-use external_single_structure;
-use external_warnings;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
 use moodle_exception;
 use context_module;
 use stdClass;
@@ -47,6 +33,8 @@ use stdClass;
 /**
  * This is the external method to return the information needed to list all enrolled user attempts.
  *
+ * @package    mod_h5pactivity
+ * @since      Moodle 3.11
  * @copyright  2020 Ilya Tregubov <ilya@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -62,7 +50,7 @@ class get_user_attempts extends external_api {
             [
                 'h5pactivityid' => new external_value(PARAM_INT, 'h5p activity instance id'),
                 'sortorder' => new external_value(PARAM_TEXT,
-                    'sort by this element: id, firstname', VALUE_DEFAULT, 'id ASC'),
+                    'sort by either user id, firstname or lastname (with optional asc/desc)', VALUE_DEFAULT, 'id ASC'),
                 'page' => new external_value(PARAM_INT, 'current page', VALUE_DEFAULT, -1),
                 'perpage' => new external_value(PARAM_INT, 'items per page', VALUE_DEFAULT, 0),
                 'firstinitial' => new external_value(PARAM_TEXT, 'Users whose first name ' .
@@ -85,7 +73,7 @@ class get_user_attempts extends external_api {
      * @param int $lastinitial Users whose last name starts with $lastinitial
      * @return stdClass report data
      */
-    public static function execute(int $h5pactivityid, $sortorder = '', ?int $page = 0,
+    public static function execute(int $h5pactivityid, $sortorder = 'id ASC', ?int $page = 0,
             ?int $perpage = 0, $firstinitial = '', $lastinitial = ''): stdClass {
         [
             'h5pactivityid' => $h5pactivityid,
@@ -117,7 +105,14 @@ class get_user_attempts extends external_api {
                 'h5pactivity:reviewattempts required view attempts of all enrolled users.');
         }
 
-        $coursecontext = \context_course::instance($course->id);
+        // Ensure sortorder parameter is safe to use. Fallback to default value of the parameter itself.
+        $sortorderparts = explode(' ', $sortorder, 2);
+        $sortorder = get_safe_orderby([
+            'id' => 'u.id',
+            'firstname' => 'u.firstname',
+            'lastname' => 'u.lastname',
+            'default' => 'u.id',
+        ], $sortorderparts[0], $sortorderparts[1] ?? '');
 
         $users = self::get_active_users($manager, 'u.id, u.firstname, u.lastname',
             $sortorder, $page * $perpage, $perpage);
@@ -172,7 +167,7 @@ class get_user_attempts extends external_api {
     private static function get_active_users(
         manager $manager,
         string $userfields = 'u.*',
-        string $sortorder = null,
+        string $sortorder = '',
         int $limitfrom = 0,
         int $limitnum = 0
     ): array {
@@ -184,11 +179,8 @@ class get_user_attempts extends external_api {
         // Final SQL.
         $sql = "SELECT DISTINCT {$userfields}
                   FROM {user} u {$capjoin->joins}
-                WHERE {$capjoin->wheres}";
-
-        if (!empty($sortorder)) {
-            $sql .= " ORDER BY {$sortorder}";
-        }
+                 WHERE {$capjoin->wheres}
+                       {$sortorder}";
 
         return $DB->get_records_sql($sql, $capjoin->params, $limitfrom, $limitnum);
     }

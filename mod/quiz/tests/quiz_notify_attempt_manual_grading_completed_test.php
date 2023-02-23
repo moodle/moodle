@@ -29,8 +29,7 @@ use context_course;
 use context_module;
 use mod_quiz\task\quiz_notify_attempt_manual_grading_completed;
 use question_engine;
-use quiz;
-use quiz_attempt;
+use mod_quiz\quiz_settings;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
@@ -62,7 +61,7 @@ class quiz_notify_attempt_manual_grading_completed_test extends advanced_testcas
     /** @var stdClass The teacher test. */
     protected $teacher;
 
-    /** @var quiz Object containing the quiz settings. */
+    /** @var quiz_settings Object containing the quiz settings. */
     protected $quizobj;
 
     /** @var question_usage_by_activity The question usage for this quiz attempt. */
@@ -118,7 +117,7 @@ class quiz_notify_attempt_manual_grading_completed_test extends advanced_testcas
         quiz_add_quiz_question($truefalse->id, $this->quiz);
         quiz_add_quiz_question($essay->id, $this->quiz);
 
-        $this->quizobj = quiz::create($this->quiz->id);
+        $this->quizobj = quiz_settings::create($this->quiz->id);
         $this->quba = question_engine::make_questions_usage_by_activity('mod_quiz', $this->quizobj->get_context());
         $this->quba->set_preferred_behaviour($this->quizobj->get_quiz()->preferredbehaviour);
     }

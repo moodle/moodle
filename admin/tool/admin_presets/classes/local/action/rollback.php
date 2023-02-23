@@ -36,11 +36,11 @@ class rollback extends base {
         global $DB, $OUTPUT;
 
         // Preset data.
-        $preset = $DB->get_record('tool_admin_presets', ['id' => $this->id]);
+        $preset = $DB->get_record('adminpresets', ['id' => $this->id]);
 
         // Applications data.
         $context = new stdClass();
-        $applications = $DB->get_records('tool_admin_presets_app', ['adminpresetid' => $this->id], 'time DESC');
+        $applications = $DB->get_records('adminpresets_app', ['adminpresetid' => $this->id], 'time DESC');
         $context->noapplications = !empty($applications);
         $context->applications = [];
         foreach ($applications as $application) {
@@ -52,7 +52,7 @@ class rollback extends base {
             );
 
             $context->applications[] = [
-                'timeapplied' => strftime($format, $application->time),
+                'timeapplied' => \core_date::strftime($format, (int)$application->time),
                 'user' => fullname($user),
                 'action' => $rollbacklink->out(false),
             ];
@@ -106,7 +106,7 @@ class rollback extends base {
         global $DB;
 
         $title = '';
-        if ($preset = $DB->get_record('tool_admin_presets', ['id' => $this->id])) {
+        if ($preset = $DB->get_record('adminpresets', ['id' => $this->id])) {
             $title = get_string($this->action . $this->mode, 'tool_admin_presets', $preset->name);
         }
 

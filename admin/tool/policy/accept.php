@@ -32,7 +32,7 @@ $action = optional_param('action', null, PARAM_ALPHA);
 
 require_login();
 if (isguestuser()) {
-    print_error('noguest');
+    throw new \moodle_exception('noguest');
 }
 $context = context_system::instance();
 

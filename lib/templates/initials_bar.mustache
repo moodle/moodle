@@ -76,31 +76,30 @@
 <div class="initialbar {{class}} d-flex flex-wrap justify-content-center justify-content-md-start">
     <span class="initialbarlabel mr-2">{{title}}</span>
 
-    <div class="initialbargroups d-flex flex-wrap justify-content-center justify-content-md-start">
+    <nav class="initialbargroups d-flex flex-wrap justify-content-center justify-content-md-start">
         <ul class="pagination pagination-sm">
-        {{#current}}
-            <li class="initialbarall page-item">
-                <a data-initial="" class="page-link" href="{{url}}">{{all}}</a>
+            <li id="{{class}}_page-item_{{all}}" class="initialbarall page-item {{^current}}active{{/current}}">
+                {{#url}}
+                    <a data-initial="" class="page-link" href="{{url}}"{{^current}} aria-current="true"{{/current}}>{{all}}</a>
+                {{/url}}
+                {{#input}}
+                    <input class="page-link mr-1 rounded" {{^current}} aria-current="true"{{/current}} value="{{all}}" type="button">
+                {{/input}}
             </li>
-        {{/current}}
-        {{^current}}
-            <li class="initialbarall page-item active">
-                <a data-initial="" class="page-link">{{all}}</a>
-            </li>
-        {{/current}}
         </ul>
         {{#group}}
             <ul class="pagination pagination-sm">
                 {{#letter}}
-                    {{#selected}}
-                        <li data-initial="{{name}}" class="page-item active {{name}}"><span class="page-link">{{name}}</span></li>
-                    {{/selected}}
-                    {{^selected}}
-                        <li data-initial="{{name}}" class="page-item {{name}}"><a class="page-link" href="{{url}}">{{name}}</a></li>
-                    {{/selected}}
+                    <li id="{{class}}_page-item_{{name}}" data-initial="{{name}}" class="page-item {{name}} {{#selected}}active{{/selected}}">
+                        {{#url}}
+                            <a class="page-link" href="{{url}}"{{#selected}} aria-current="true"{{/selected}}>{{name}}</a>
+                        {{/url}}
+                        {{#input}}
+                            <input class="page-link mr-1 rounded" {{#selected}} aria-current="true"{{/selected}} value="{{name}}" type="button">
+                        {{/input}}
+                    </li>
                 {{/letter}}
             </ul>
         {{/group}}
-    </div>
+    </nav>
 </div>
-

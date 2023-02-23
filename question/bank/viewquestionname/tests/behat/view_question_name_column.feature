@@ -21,11 +21,9 @@ Feature: Use the qbank plugin manager page for viewquestionname
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I should see "View question name"
     When I click on "Disable" "link" in the "View question name" "table_row"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Test quiz" "mod_quiz > question bank" page
     Then I should not see "First question"
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "View question name" "table_row"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Test quiz" "mod_quiz > question bank" page
     And I should see "First question"

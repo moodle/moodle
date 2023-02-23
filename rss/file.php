@@ -126,7 +126,7 @@ $PAGE->set_context($context);
 $user = get_complete_user_data('id', $userid);
 
 // Let enrol plugins deal with new enrolments if necessary.
-enrol_check_plugins($user);
+enrol_check_plugins($user, false);
 
 \core\session\manager::set_user($user); // For login and capability checks.
 

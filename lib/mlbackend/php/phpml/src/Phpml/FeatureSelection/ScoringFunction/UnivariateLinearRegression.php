@@ -46,7 +46,7 @@ final class UnivariateLinearRegression implements ScoringFunction
         foreach (array_keys($samples[0]) as $index) {
             $featureColumn = array_column($samples, $index);
             $correlations[$index] =
-                (Matrix::dot($targets, $featureColumn)[0] / (new Matrix($featureColumn, false))->transpose()->frobeniusNorm())
+                Matrix::dot($targets, $featureColumn)[0] / (new Matrix($featureColumn, false))->transpose()->frobeniusNorm()
                 / (new Matrix($targets, false))->frobeniusNorm();
         }
 

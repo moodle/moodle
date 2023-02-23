@@ -43,7 +43,7 @@ class cachestore_file_addinstance_form extends cachestore_addinstance_form {
         $form = $this->_form;
 
         $form->addElement('text', 'path', get_string('path', 'cachestore_file'));
-        $form->setType('path', PARAM_SAFEPATH);
+        $form->setType('path', PARAM_RAW);
         $form->addHelpButton('path', 'path', 'cachestore_file');
 
         $form->addElement('checkbox', 'autocreate', get_string('autocreate', 'cachestore_file'));
@@ -58,5 +58,14 @@ class cachestore_file_addinstance_form extends cachestore_addinstance_form {
         $form->addElement('checkbox', 'prescan', get_string('prescan', 'cachestore_file'));
         $form->setType('prescan', PARAM_BOOL);
         $form->addHelpButton('prescan', 'prescan', 'cachestore_file');
+
+        $form->addElement('checkbox', 'asyncpurge', get_string('asyncpurge', 'cachestore_file'));
+        $form->setType('asyncpurge', PARAM_BOOL);
+        $form->addHelpButton('asyncpurge', 'asyncpurge', 'cachestore_file');
+
+        $form->addElement('text', 'lockwait', get_string('lockwait', 'cachestore_file'));
+        $form->setDefault('lockwait', 60);
+        $form->setType('lockwait', PARAM_INT);
+        $form->addHelpButton('lockwait', 'lockwait', 'cachestore_file');
     }
 }

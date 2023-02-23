@@ -60,8 +60,10 @@ class private_files extends \core_form\dynamic_form {
         }
         $mform->setType('returnurl', PARAM_LOCALURL);
 
+        // The 'nosubmit' param (default false) determines whether we should show the standard form action buttons (save/cancel).
+        // This value is set when the form is displayed within a modal, which adds the action buttons itself.
         if (!$this->optional_param('nosubmit', false, PARAM_BOOL)) {
-            $this->add_action_buttons(false, get_string('savechanges'));
+            $this->add_action_buttons();
         }
     }
 

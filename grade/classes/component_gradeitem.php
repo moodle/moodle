@@ -405,6 +405,7 @@ abstract class component_gradeitem {
         if ($grade = $this->get_grade_for_user($gradeduser, $grader)) {
             $gradeitem = $this->get_grade_item();
             if (!$this->is_using_scale()) {
+                $grade->grade = !is_null($grade->grade) ? (float)$grade->grade : null; // Cast non-null values, keeping nulls.
                 $grade->usergrade = grade_format_gradevalue($grade->grade, $gradeitem);
                 $grade->maxgrade = format_float($gradeitem->grademax, $gradeitem->get_decimals());
                 // If displaying the raw grade, also display the total value.

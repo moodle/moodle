@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_monitor;
+
 /**
  * Unit tests for rule manager api.
  *
@@ -22,17 +24,7 @@
  * @copyright  2014 onwards Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-/**
- * Tests for rule manager.
- *
- * Class tool_monitor_rule_manager_testcase
- */
-class tool_monitor_rule_manager_testcase extends advanced_testcase {
+class rule_manager_test extends \advanced_testcase {
 
     /**
      * Set up method.
@@ -53,7 +45,7 @@ class tool_monitor_rule_manager_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $now = time();
 
-        $rule = new stdClass();
+        $rule = new \stdClass();
         $rule->userid = $user->id;
         $rule->courseid = $course->id;
         $rule->name = 'test rule 1';
@@ -98,7 +90,7 @@ class tool_monitor_rule_manager_testcase extends advanced_testcase {
         $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
         $rule = $monitorgenerator->create_rule();
 
-        $ruledata = new stdClass;
+        $ruledata = new \stdClass;
         $ruledata->id = $rule->id;
         $ruledata->frequency = 25;
 
@@ -119,10 +111,10 @@ class tool_monitor_rule_manager_testcase extends advanced_testcase {
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
 
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = $course1->id;
 
-        $record2 = new stdClass();
+        $record2 = new \stdClass();
         $record2->courseid = $course2->id;
 
         $ruleids = array();
@@ -147,10 +139,10 @@ class tool_monitor_rule_manager_testcase extends advanced_testcase {
 
         $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
 
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->plugin = 'core';
 
-        $record2 = new stdClass();
+        $record2 = new \stdClass();
         $record2->plugin = 'mod_assign';
 
         $ruleids = array();
@@ -175,10 +167,10 @@ class tool_monitor_rule_manager_testcase extends advanced_testcase {
         $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
         $rule = $monitorgenerator->create_rule();
 
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->eventname = '\core\event\calendar_event_created';
 
-        $record2 = new stdClass();
+        $record2 = new \stdClass();
         $record2->eventname = '\core\event\calendar_event_updated';
 
         $ruleids = array();

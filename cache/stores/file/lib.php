@@ -37,7 +37,8 @@
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cachestore_file extends cache_store implements cache_is_key_aware, cache_is_configurable, cache_is_searchable  {
+class cachestore_file extends cache_store implements cache_is_key_aware, cache_is_configurable, cache_is_searchable,
+        cache_is_lockable {
 
     /**
      * The name of the store.
@@ -76,6 +77,13 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      * @var bool
      */
     protected $autocreate = false;
+
+    /**
+     * Set to true if new cache revision directory needs to be created. Old directory will be purged asynchronously
+     * via Schedule task.
+     * @var bool
+     */
+    protected $asyncpurge = false;
 
     /**
      * Set to true if a custom path is being used.
@@ -120,6 +128,23 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      * @var stdClass
      */
     private $cfg = null;
+
+    /** @var int Maximum number of seconds to wait for a lock before giving up. */
+    protected $lockwait = 60;
+
+    /**
+     * Instance of file_lock_factory configured to create locks in the cache directory.
+     *
+     * @var \core\lock\file_lock_factory $lockfactory
+     */
+    protected $lockfactory = null;
+
+    /**
+     * List of current locks.
+     *
+     * @var array $locks
+     */
+    protected $locks = [];
 
     /**
      * Constructs the store instance.
@@ -179,6 +204,27 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
         } else {
             // Default: No, we will use multiple directories.
             $this->singledirectory = false;
+        }
+        // Check if directory needs to be purged asynchronously.
+        if (array_key_exists('asyncpurge', $configuration)) {
+            $this->asyncpurge = (bool)$configuration['asyncpurge'];
+        } else {
+            $this->asyncpurge = false;
+        }
+
+        // Leverage cachelock_file to provide native locking, to avoid duplicating logic.
+        // This will store locks alongside the cache, so local cache uses local locks.
+        $lockdir = $path . '/filelocks';
+        if (!file_exists($lockdir)) {
+            make_writable_directory($lockdir);
+        }
+        if (array_key_exists('lockwait', $configuration)) {
+            $this->lockwait = (int)$configuration['lockwait'];
+        }
+        $this->lockfactory = new \core\lock\file_lock_factory('cachestore_file', $lockdir);
+        if (!$this->lockfactory->is_available()) {
+            // File locking is disabled in config, fall back to default lock factory.
+            $this->lockfactory = \core\lock\lock_config::get_lock_factory('cachestore_file');
         }
     }
 
@@ -271,10 +317,25 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      * @param cache_definition $definition
      */
     public function initialise(cache_definition $definition) {
+        global $CFG;
+
         $this->definition = $definition;
         $hash = preg_replace('#[^a-zA-Z0-9]+#', '_', $this->definition->get_id());
         $this->path = $this->filestorepath.'/'.$hash;
         make_writable_directory($this->path, false);
+
+        if ($this->asyncpurge) {
+            $timestampfile = $this->path . '/.lastpurged';
+            if (!file_exists($timestampfile)) {
+                touch($timestampfile);
+                @chmod($timestampfile, $CFG->filepermissions);
+            }
+            $cacherev = gmdate("YmdHis", filemtime($timestampfile));
+            // Update file path with new cache revision.
+            $this->path .= '/' . $cacherev;
+            make_writable_directory($this->path, false);
+        }
+
         if ($this->prescan && $definition->get_mode() !== self::MODE_REQUEST) {
             $this->prescan = false;
         }
@@ -366,18 +427,20 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
         if (!$handle = fopen($file, 'rb')) {
             return false;
         }
-        // Lock it up!
-        // We don't care if this succeeds or not, on some systems it will, on some it won't, meah either way.
-        flock($handle, LOCK_SH);
+
+        // Note: There is no need to perform any file locking here.
+        // The cache file is only ever written to in the `write_file` function, where it does so by writing to a temp
+        // file and performing an atomic rename of that file. The target file is never locked, so there is no benefit to
+        // obtaining a lock (shared or exclusive) here.
+
         $data = '';
         // Read the data in 1Mb chunks. Small caches will not loop more than once.  We don't use filesize as it may
         // be cached with a different value than what we need to read from the file.
         do {
             $data .= fread($handle, 1048576);
         } while (!feof($handle));
-        // Unlock it.
-        flock($handle, LOCK_UN);
         $this->lastiobytes = strlen($data);
+
         // Return it unserialised.
         return $this->prep_data_after_read($data);
     }
@@ -490,7 +553,7 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      */
     protected function prep_data_after_read($data) {
         $result = @unserialize($data);
-        if ($result === false) {
+        if ($result === false && $data != serialize(false)) {
             throw new coding_exception('Failed to unserialise data from file. Either failed to read, or failed to write.');
         }
         return $result;
@@ -569,14 +632,38 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      * @return boolean True on success. False otherwise.
      */
     public function purge() {
+        global $CFG;
         if ($this->isready) {
-            $files = glob($this->glob_keys_pattern(), GLOB_MARK | GLOB_NOSORT);
-            if (is_array($files)) {
-                foreach ($files as $filename) {
-                    @unlink($filename);
+            // If asyncpurge = true, create a new cache revision directory and adhoc task to delete old directory.
+            if ($this->asyncpurge && isset($this->definition)) {
+                $hash = preg_replace('#[^a-zA-Z0-9]+#', '_', $this->definition->get_id());
+                $filepath = $this->filestorepath . '/' . $hash;
+                $timestampfile = $filepath . '/.lastpurged';
+                if (file_exists($timestampfile)) {
+                    $oldcacherev = gmdate("YmdHis", filemtime($timestampfile));
+                    $oldcacherevpath = $filepath . '/' . $oldcacherev;
+                    // Delete old cache revision file.
+                    @unlink($timestampfile);
+
+                    // Create adhoc task to delete old cache revision folder.
+                    $purgeoldcacherev = new \cachestore_file\task\asyncpurge();
+                    $purgeoldcacherev->set_custom_data(['path' => $oldcacherevpath]);
+                    \core\task\manager::queue_adhoc_task($purgeoldcacherev);
                 }
+                touch($timestampfile, time());
+                @chmod($timestampfile, $CFG->filepermissions);
+                $newcacherev = gmdate("YmdHis", filemtime($timestampfile));
+                $filepath .= '/' . $newcacherev;
+                make_writable_directory($filepath, false);
+            } else {
+                $files = glob($this->glob_keys_pattern(), GLOB_MARK | GLOB_NOSORT);
+                if (is_array($files)) {
+                    foreach ($files as $filename) {
+                        @unlink($filename);
+                    }
+                }
+                $this->keys = [];
             }
-            $this->keys = array();
         }
         return true;
     }
@@ -618,6 +705,12 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
         if (isset($data->prescan)) {
             $config['prescan'] = $data->prescan;
         }
+        if (isset($data->asyncpurge)) {
+            $config['asyncpurge'] = $data->asyncpurge;
+        }
+        if (isset($data->lockwait)) {
+            $config['lockwait'] = $data->lockwait;
+        }
 
         return $config;
     }
@@ -641,6 +734,12 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
         }
         if (isset($config['prescan'])) {
             $data['prescan'] = (bool)$config['prescan'];
+        }
+        if (isset($config['asyncpurge'])) {
+            $data['asyncpurge'] = (bool)$config['asyncpurge'];
+        }
+        if (isset($config['lockwait'])) {
+            $data['lockwait'] = (int)$config['lockwait'];
         }
         $editform->set_data($data);
     }
@@ -863,5 +962,71 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
         $squarediff /= $result->items;
         $result->sd = sqrt($squarediff);
         return $result;
+    }
+
+    /**
+     * Use lock factory to determine the lock state.
+     *
+     * @param string $key Lock identifier
+     * @param string $ownerid Cache identifier
+     * @return bool|null
+     */
+    public function check_lock_state($key, $ownerid) : ?bool {
+        if (!array_key_exists($key, $this->locks)) {
+            return null; // Lock does not exist.
+        }
+        if (!array_key_exists($ownerid, $this->locks[$key])) {
+            return false; // Lock exists, but belongs to someone else.
+        }
+        if ($this->locks[$key][$ownerid] instanceof \core\lock\lock) {
+            return true; // Lock exists, and we own it.
+        }
+        // Try to get the lock with an immediate timeout. If this succeeds, the lock does not currently exist.
+        $lock = $this->lockfactory->get_lock($key, 0);
+        if ($lock) {
+            // Lock was not already held.
+            $lock->release();
+            return null;
+        } else {
+            // Lock is held by someone else.
+            return false;
+        }
+    }
+
+    /**
+     * Use lock factory to acquire a lock.
+     *
+     * @param string $key Lock identifier
+     * @param string $ownerid Cache identifier
+     * @return bool
+     * @throws cache_exception
+     */
+    public function acquire_lock($key, $ownerid) : bool {
+        $lock = $this->lockfactory->get_lock($key, $this->lockwait);
+        if ($lock) {
+            $this->locks[$key][$ownerid] = $lock;
+        }
+        return (bool)$lock;
+    }
+
+    /**
+     * Use lock factory to release a lock.
+     *
+     * @param string $key Lock identifier
+     * @param string $ownerid Cache identifier
+     * @return bool
+     */
+    public function release_lock($key, $ownerid) : bool {
+        if (!array_key_exists($key, $this->locks)) {
+            return false; // No lock to release.
+        }
+        if (!array_key_exists($ownerid, $this->locks[$key])) {
+            return false; // Tried to release someone else's lock.
+        }
+        $unlocked = $this->locks[$key][$ownerid]->release();
+        if ($unlocked) {
+            unset($this->locks[$key]);
+        }
+        return $unlocked;
     }
 }

@@ -23,6 +23,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core_rating;
+
+use core_external\external_api;
+use core_rating_external;
+use externallib_advanced_testcase;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -38,7 +44,7 @@ require_once($CFG->dirroot . '/rating/lib.php');
  * @copyright  2015 Costantino Cito <ccito@cvaconsulting.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_rating_externallib_testcase extends externallib_advanced_testcase {
+class externallib_test extends externallib_advanced_testcase {
 
     /*
      * Set up for every test
@@ -64,7 +70,7 @@ class core_rating_externallib_testcase extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($this->teacher3->id, $this->course->id, $this->teacherrole->id);
 
         // Create the forum.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->introformat = FORMAT_HTML;
         $record->course = $this->course->id;
         // Set Aggregate type = Average of ratings.
@@ -72,10 +78,10 @@ class core_rating_externallib_testcase extends externallib_advanced_testcase {
         $record->scale = 100;
         $this->forum = self::getDataGenerator()->create_module('forum', $record);
 
-        $this->contextid = context_module::instance($this->forum->cmid)->id;
+        $this->contextid = \context_module::instance($this->forum->cmid)->id;
 
         // Add discussion to the forums.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->course = $this->course->id;
         $record->userid = $this->student1->id;
         $record->forum = $this->forum->id;
@@ -91,7 +97,7 @@ class core_rating_externallib_testcase extends externallib_advanced_testcase {
         global $DB;
 
         // Rete the discussion as teacher1.
-        $rating1 = new stdClass();
+        $rating1 = new \stdClass();
         $rating1->contextid = $this->contextid;
         $rating1->component = 'mod_forum';
         $rating1->ratingarea = 'post';
@@ -104,7 +110,7 @@ class core_rating_externallib_testcase extends externallib_advanced_testcase {
         $rating1->id = $DB->insert_record('rating', $rating1);
 
         // Rete the discussion as teacher2.
-        $rating2 = new stdClass();
+        $rating2 = new \stdClass();
         $rating2->contextid = $this->contextid;
         $rating2->component = 'mod_forum';
         $rating2->ratingarea = 'post';
@@ -149,7 +155,7 @@ class core_rating_externallib_testcase extends externallib_advanced_testcase {
         try {
             $ratings = core_rating_external::get_item_ratings('module', $this->forum->cmid, 'mod_forum', 'post', 0, 100, '');
             $this->fail('Exception expected due invalid itemid.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('invalidrecord', $e->errorcode);
         }
 
@@ -157,7 +163,7 @@ class core_rating_externallib_testcase extends externallib_advanced_testcase {
         try {
             $ratings = core_rating_external::get_item_ratings('module', $this->forum->cmid, 'mod_forum', 'xyz', $this->post->id, 100, '');
             $this->fail('Exception expected due invalid rating area.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('invalidratingarea', $e->errorcode);
         }
 
@@ -165,7 +171,7 @@ class core_rating_externallib_testcase extends externallib_advanced_testcase {
         try {
             $ratings = core_rating_external::get_item_ratings('module', 0, 'mod_forum', 'post', $this->post->id, 100, '');
             $this->fail('Exception expected due invalid context.');
-        } catch (invalid_parameter_exception $e) {
+        } catch (\invalid_parameter_exception $e) {
             $this->assertEquals('invalidparameter', $e->errorcode);
         }
 
@@ -188,7 +194,7 @@ class core_rating_externallib_testcase extends externallib_advanced_testcase {
         try {
             $ratings = core_rating_external::get_item_ratings('module', $this->forum->cmid, 'mod_forum', 'post', $this->post->id, 100, '');
             $this->fail('Exception expected due invalid group permissions.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('noviewrate', $e->errorcode);
         }
 

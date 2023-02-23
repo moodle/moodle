@@ -18,7 +18,7 @@ declare(strict_types=1);
 
 namespace core\external;
 
-use external_api;
+use core_external\external_api;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/lib/tests/fixtures/testeable_dynamic_tab.php');
  * Unit tests external dynamic tabs get content
  *
  * @package     core
- * @covers      core\external\dynamic_tabs_get_content
+ * @covers      \core\external\dynamic_tabs_get_content
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -936,7 +936,7 @@ function scorm_print_launch ($user, $scorm, $action, $cm) {
     $organization = optional_param('organization', '', PARAM_INT);
 
     if ($scorm->displaycoursestructure == 1) {
-        echo $OUTPUT->box_start('generalbox boxaligncenter toc container', 'toc');
+        echo $OUTPUT->box_start('generalbox boxaligncenter toc', 'toc');
         echo html_writer::div(get_string('contents', 'scorm'), 'structurehead');
     }
     if (empty($organization)) {
@@ -992,31 +992,29 @@ function scorm_print_launch ($user, $scorm, $action, $cm) {
             echo html_writer::start_div('scorm-center');
             echo html_writer::start_tag('form', array('id' => 'scormviewform',
                                                         'method' => 'post',
-                                                        'action' => $CFG->wwwroot.'/mod/scorm/player.php',
-                                                        'class' => 'container'));
+                                                        'action' => $CFG->wwwroot.'/mod/scorm/player.php'));
         if ($scorm->hidebrowse == 0) {
-            echo html_writer::empty_tag('button',
-                [
-                    'class' => 'btn btn-secondary mr-1', 'name' => 'mode',
-                    'type' => 'submit', 'id' => 'b', 'value' => 'browse']) .
-                    get_string('browse', 'scorm') . html_writer::end_tag('button');
-            echo html_writer::empty_tag('button',
-                [
-                    'class' => 'btn btn-primary mx-1', 'name' => 'mode',
-                    'type' => 'submit', 'id' => 'n', 'value' => 'normal']) .
-                    get_string('enter', 'scorm') . html_writer::end_tag('button');
+            echo html_writer::tag('button', get_string('browse', 'scorm'),
+                    ['class' => 'btn btn-secondary mr-1', 'name' => 'mode',
+                        'type' => 'submit', 'id' => 'b', 'value' => 'browse'])
+                . html_writer::end_tag('button');
         } else {
             echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'mode', 'value' => 'normal'));
         }
+        echo html_writer::tag('button', get_string('enter', 'scorm'),
+                ['class' => 'btn btn-primary mx-1', 'name' => 'mode',
+                    'type' => 'submit', 'id' => 'n', 'value' => 'normal'])
+             . html_writer::end_tag('button');
         if (!empty($scorm->forcenewattempt)) {
             if ($scorm->forcenewattempt == SCORM_FORCEATTEMPT_ALWAYS ||
                     ($scorm->forcenewattempt == SCORM_FORCEATTEMPT_ONCOMPLETE && $incomplete === false)) {
                 echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'newattempt', 'value' => 'on'));
             }
         } else if (!empty($attemptcount) && ($incomplete === false) && (($result->attemptleft > 0)||($scorm->maxattempt == 0))) {
-                echo html_writer::empty_tag('br');
-                echo html_writer::checkbox('newattempt', 'on', false, '', array('id' => 'a'));
-                echo html_writer::label(get_string('newattempt', 'scorm'), 'a');
+            echo html_writer::start_div('pt-1');
+            echo html_writer::checkbox('newattempt', 'on', false, '', array('id' => 'a'));
+            echo html_writer::label(get_string('newattempt', 'scorm'), 'a', true, ['class' => 'pl-1']);
+            echo html_writer::end_div();
         }
         if (!empty($scorm->popup)) {
             echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'display', 'value' => 'popup'));

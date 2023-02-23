@@ -27,9 +27,6 @@ use moodle_url;
  */
 class import_action_bar extends action_bar {
 
-    /** @var moodle_url $importactiveurl The URL that should be set as active in the imports URL selector element. */
-    protected $importactiveurl;
-
     /** @var string $activeplugin The plugin of the current import grades page (xml, csv, ...). */
     protected $activeplugin;
 
@@ -37,12 +34,14 @@ class import_action_bar extends action_bar {
      * The class constructor.
      *
      * @param \context $context The context object.
-     * @param moodle_url $importactiveurl The URL that should be set as active in the imports URL selector element.
+     * @param null $unused This parameter has been deprecated since 4.1 and should not be used anymore.
      * @param string $activeplugin The plugin of the current import grades page (xml, csv, ...).
      */
-    public function __construct(\context $context, moodle_url $importactiveurl, string $activeplugin) {
+    public function __construct(\context $context, $unused, string $activeplugin) {
+        if ($unused !== null) {
+            debugging('Deprecated argument passed to ' . __FUNCTION__, DEBUG_DEVELOPER);
+        }
         parent::__construct($context);
-        $this->importactiveurl = $importactiveurl;
         $this->activeplugin = $activeplugin;
     }
 
@@ -85,14 +84,18 @@ class import_action_bar extends action_bar {
         }
 
         $importsmenu = [];
+        $importactiveurl = null;
         // Generate the data for the imports navigation selector menu.
         foreach ($imports as $import) {
             $importsmenu[$import->link->out()] = $import->string;
+            if ($import->id == $this->activeplugin) {
+                $importactiveurl = $import->link->out();
+            }
         }
 
         // This navigation selector menu will contain the links to all available grade export plugin pages.
-        $importsurlselect = new \url_select($importsmenu, $this->importactiveurl->out(false), null,
-            'gradesimportactionselect');
+        $importsurlselect = new \core\output\select_menu('importas', $importsmenu, $importactiveurl);
+        $importsurlselect->set_label(get_string('importas', 'grades'));
         $data['importselector'] = $importsurlselect->export_for_template($output);
 
         return $data;

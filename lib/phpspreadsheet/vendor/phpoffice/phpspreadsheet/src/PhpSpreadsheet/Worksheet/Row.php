@@ -21,10 +21,9 @@ class Row
     /**
      * Create a new row.
      *
-     * @param Worksheet $worksheet
      * @param int $rowIndex
      */
-    public function __construct(?Worksheet $worksheet = null, $rowIndex = 1)
+    public function __construct(Worksheet $worksheet, $rowIndex = 1)
     {
         // Set parent and row index
         $this->worksheet = $worksheet;
@@ -36,15 +35,13 @@ class Row
      */
     public function __destruct()
     {
-        $this->worksheet = null;
+        $this->worksheet = null; // @phpstan-ignore-line
     }
 
     /**
      * Get row index.
-     *
-     * @return int
      */
-    public function getRowIndex()
+    public function getRowIndex(): int
     {
         return $this->rowIndex;
     }
@@ -63,11 +60,48 @@ class Row
     }
 
     /**
-     * Returns bound worksheet.
+     * Returns a boolean true if the row contains no cells. By default, this means that no cell records exist in the
+     *         collection for this row. false will be returned otherwise.
+     *     This rule can be modified by passing a $definitionOfEmptyFlags value:
+     *          1 - CellIterator::TREAT_NULL_VALUE_AS_EMPTY_CELL If the only cells in the collection are null value
+     *                  cells, then the row will be considered empty.
+     *          2 - CellIterator::TREAT_EMPTY_STRING_AS_EMPTY_CELL If the only cells in the collection are empty
+     *                  string value cells, then the row will be considered empty.
+     *          3 - CellIterator::TREAT_NULL_VALUE_AS_EMPTY_CELL | CellIterator::TREAT_EMPTY_STRING_AS_EMPTY_CELL
+     *                  If the only cells in the collection are null value or empty string value cells, then the row
+     *                  will be considered empty.
      *
-     * @return Worksheet
+     * @param int $definitionOfEmptyFlags
+     *              Possible Flag Values are:
+     *                  CellIterator::TREAT_NULL_VALUE_AS_EMPTY_CELL
+     *                  CellIterator::TREAT_EMPTY_STRING_AS_EMPTY_CELL
      */
-    public function getWorksheet()
+    public function isEmpty(int $definitionOfEmptyFlags = 0): bool
+    {
+        $nullValueCellIsEmpty = (bool) ($definitionOfEmptyFlags & CellIterator::TREAT_NULL_VALUE_AS_EMPTY_CELL);
+        $emptyStringCellIsEmpty = (bool) ($definitionOfEmptyFlags & CellIterator::TREAT_EMPTY_STRING_AS_EMPTY_CELL);
+
+        $cellIterator = $this->getCellIterator();
+        $cellIterator->setIterateOnlyExistingCells(true);
+        foreach ($cellIterator as $cell) {
+            $value = $cell->getValue();
+            if ($value === null && $nullValueCellIsEmpty === true) {
+                continue;
+            }
+            if ($value === '' && $emptyStringCellIsEmpty === true) {
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns bound worksheet.
+     */
+    public function getWorksheet(): Worksheet
     {
         return $this->worksheet;
     }

@@ -22,6 +22,7 @@
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace booktool_importhtml;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -36,7 +37,7 @@ require_once($CFG->dirroot.'/mod/book/tool/importhtml/locallib.php');
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class booktool_importhtml_locallib_testcase extends advanced_testcase {
+class locallib_test extends \advanced_testcase {
 
     public function setUp(): void {
         $this->resetAfterTest();
@@ -45,9 +46,9 @@ class booktool_importhtml_locallib_testcase extends advanced_testcase {
     public function test_import_chapters_events() {
         $course = $this->getDataGenerator()->create_course();
         $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id));
-        $context = context_module::instance($book->cmid);
+        $context = \context_module::instance($book->cmid);
 
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->contextid = $context->id;
         $record->component = 'phpunit';
         $record->filearea = 'test';

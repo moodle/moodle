@@ -1,18 +1,23 @@
 <?php
-/*
-@version   v5.21.0  2021-02-27
-@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
-@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-  Released under both BSD license and Lesser GPL library license.
-  Whenever there is any discrepancy between the two licenses,
-  the BSD license will take precedence. See License.txt.
-  Set tabs to 4 for best viewing.
-
-  Latest version is available at https://adodb.org/
-
-  Library for basic performance monitoring and tuning
-
-*/
+/**
+ * Library for basic performance monitoring and tuning
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
 
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
@@ -120,7 +125,7 @@ class perf_mysql extends adodb_perf{
 
 	/**
 	 * Returns a list of table statuses.
-	 * 
+	 *
 	 * @param  string  $orderby  Unused (compatibility with parent method)
 	 * @return string A formatted set of recordsets
 	 */
@@ -294,7 +299,7 @@ class perf_mysql extends adodb_perf{
     var $optimizeTableHigh = 'OPTIMIZE TABLE %s';
 
     /**
-     * @see adodb_perf#optimizeTable
+     * @see adodb_perf::optimizeTable()
      */
      function optimizeTable( $table, $mode = ADODB_OPT_LOW)
      {

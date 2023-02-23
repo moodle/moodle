@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for format_message.
- *
- * @package    mod_chat
- * @copyright  2016 Andrew NIcols
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_chat;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,7 +28,7 @@ require_once($CFG->dirroot . '/mod/chat/lib.php');
  * @copyright  2016 Andrew NIcols
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_chat_format_message_testcase extends advanced_testcase {
+class format_message_test extends \advanced_testcase {
 
     const USER_CURRENT = 1;
     const USER_OTHER = 2;

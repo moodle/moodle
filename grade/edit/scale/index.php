@@ -34,7 +34,7 @@ $PAGE->set_url('/grade/edit/scale/index.php', array('id' => $courseid));
 /// Make sure they can even access this course
 if ($courseid) {
     if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-        print_error('invalidcourseid');
+        throw new \moodle_exception('invalidcourseid');
     }
     require_login($course);
     $context = context_course::instance($course->id);
@@ -44,6 +44,7 @@ if ($courseid) {
     require_once $CFG->libdir.'/adminlib.php';
     admin_externalpage_setup('scales');
     $context = context_system::instance();
+    $PAGE->set_primary_active_tab('siteadminnode');
 }
 
 /// return tracking object
@@ -71,7 +72,7 @@ switch ($action) {
         if (empty($scale->courseid)) {
             require_capability('moodle/course:managescales', context_system::instance());
         } else if ($scale->courseid != $courseid) {
-            print_error('invalidcourseid');
+            throw new \moodle_exception('invalidcourseid');
         }
 
         if (!$scale->can_delete()) {
@@ -81,7 +82,11 @@ switch ($action) {
         $deleteconfirmed = optional_param('deleteconfirmed', 0, PARAM_BOOL);
 
         if (!$deleteconfirmed) {
-            $strdeletescale = get_string('delete'). ' '. get_string('scale');
+            if ($courseid) {
+                $PAGE->navbar->add(get_string('scales'), new moodle_url('/grade/edit/scale/index.php',
+                    ['id' => $courseid]));
+            }
+            $strdeletescale = get_string('deletescale', 'grades');
             $PAGE->navbar->add($strdeletescale);
             $PAGE->set_title($strdeletescale);
             $PAGE->set_heading($COURSE->fullname);

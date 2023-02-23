@@ -262,8 +262,11 @@ class OAuthSignatureMethod_RSA_SHA1 extends OAuthSignatureMethod {
         // Sign using the key
         $ok = openssl_sign($base_string, $signature, $privatekeyid);
 
-        // Release the key resource
-        openssl_free_key($privatekeyid);
+        // TODO: Remove this block once PHP 8.0 becomes required.
+        if (PHP_MAJOR_VERSION < 8) {
+            // Release the key resource
+            openssl_free_key($privatekeyid);
+        }
 
         return base64_encode($signature);
     }
@@ -282,8 +285,11 @@ class OAuthSignatureMethod_RSA_SHA1 extends OAuthSignatureMethod {
         // Check the computed signature against the one passed in the query
         $ok = openssl_verify($base_string, $decoded_sig, $publickeyid);
 
-        // Release the key resource
-        openssl_free_key($publickeyid);
+        // TODO: Remove this block once PHP 8.0 becomes required.
+        if (PHP_MAJOR_VERSION < 8) {
+            // Release the key resource
+            openssl_free_key($publickeyid);
+        }
 
         return $ok == 1;
     }

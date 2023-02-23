@@ -1,18 +1,23 @@
 <?php
-/*
-@version   v5.21.0  2021-02-27
-@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
-@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-  Released under both BSD license and Lesser GPL library license.
-  Whenever there is any discrepancy between the two licenses,
-  the BSD license will take precedence.
-Set tabs to 4 for best viewing.
-
-  Latest version is available at https://adodb.org/
-
-  MSSQL support via ODBC. Requires ODBC. Works on Windows and Unix.
-  For Unix configuration, see http://phpbuilder.com/columns/alberto20000919.php3
-*/
+/**
+ * MSSQL driver via ODBC
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
 
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
@@ -66,7 +71,7 @@ class  ADODB_odbc_mssql extends ADODB_odbc {
 		return " ISNULL($field, $ifNull) "; // if MS SQL Server
 	}
 
-	function _insertid()
+	protected function _insertID($table = '', $column = '')
 	{
 	// SCOPE_IDENTITY()
 	// Returns the last IDENTITY value inserted into an IDENTITY column in
@@ -76,8 +81,7 @@ class  ADODB_odbc_mssql extends ADODB_odbc {
 			return $this->GetOne($this->identitySQL);
 	}
 
-
-	function MetaForeignKeys($table, $owner=false, $upper=false)
+	public function metaForeignKeys($table, $owner = '', $upper = false, $associative = false)
 	{
 	global $ADODB_FETCH_MODE;
 
@@ -345,7 +349,7 @@ order by constraint_name, referenced_table_name, keyno";
 		}
 		return $s;
 	}
-	
+
 	/**
 	* Returns a substring of a varchar type field
 	*
@@ -363,17 +367,17 @@ order by constraint_name, referenced_table_name, keyno";
 		if ($length == 0)
 			/*
 		     * The length available to varchar is 2GB, but that makes no
-			 * sense in a substring, so I'm going to arbitrarily limit 
+			 * sense in a substring, so I'm going to arbitrarily limit
 			 * the length to 1K, but you could change it if you want
 			 */
 			$length = 1024;
-		
+
 		$text = "SUBSTRING($fld,$start,$length)";
 		return $text;
 	}
-	
+
 	/**
-	* Returns the maximum size of a MetaType C field. Because of the 
+	* Returns the maximum size of a MetaType C field. Because of the
 	* database design, SQL Server places no limits on the size of data inserted
 	* Although the actual limit is 2^31-1 bytes.
 	*
@@ -385,7 +389,7 @@ order by constraint_name, referenced_table_name, keyno";
 	}
 
 	/**
-	* Returns the maximum size of a MetaType X field. Because of the 
+	* Returns the maximum size of a MetaType X field. Because of the
 	* database design, SQL Server places no limits on the size of data inserted
 	* Although the actual limit is 2^31-1 bytes.
 	*
@@ -395,7 +399,7 @@ order by constraint_name, referenced_table_name, keyno";
 	{
 		return ADODB_STRINGMAX_NOLIMIT;
 	}
-	
+
 	// returns concatenated string
 	// MSSQL requires integers to be cast as strings
 	// automatically cast every datatype to VARCHAR(255)

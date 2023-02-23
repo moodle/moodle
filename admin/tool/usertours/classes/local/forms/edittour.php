@@ -67,10 +67,12 @@ class edittour extends \moodleform {
         $mform->addElement('text', 'name', get_string('name', 'tool_usertours'));
         $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->setType('name', PARAM_TEXT);
+        $mform->addHelpButton('name', 'name', 'tool_usertours');
 
         // Admin-only descriptions.
         $mform->addElement('textarea', 'description', get_string('description', 'tool_usertours'));
         $mform->setType('description', PARAM_RAW);
+        $mform->addHelpButton('description', 'description', 'tool_usertours');
 
         // Application.
         $mform->addElement('text', 'pathmatch', get_string('pathmatch', 'tool_usertours'));

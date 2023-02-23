@@ -32,7 +32,7 @@ class creator_name_column extends column_base {
         return 'creatorname';
     }
 
-    protected function get_title(): string {
+    public function get_title(): string {
         return get_string('createdby', 'question');
     }
 
@@ -69,6 +69,10 @@ class creator_name_column extends column_base {
             'lastname' => ['field' => 'uc.lastname', 'title' => get_string('lastname')],
             'timecreated' => ['field' => 'q.timecreated', 'title' => get_string('date')]
         ];
+    }
+
+    public function get_extra_classes(): array {
+        return ['pr-3'];
     }
 
 }

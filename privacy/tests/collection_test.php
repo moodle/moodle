@@ -14,30 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Collection unit tests.
- *
- * @package     core_privacy
- * @category    test
- * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\metadata\types;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\metadata\types;
 
 /**
  * Tests for the \core_privacy API's collection functionality.
  *
+ * @package     core_privacy
+ * @category    test
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\metadata\collection
  */
-class core_privacy_metadata_collection extends advanced_testcase {
+class collection_test extends \advanced_testcase {
 
     /**
      * Test that adding an unknown type causes the type to be added to the collection.

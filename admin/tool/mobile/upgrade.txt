@@ -1,6 +1,16 @@
 This files describes changes in tool_mobile code.
 Information provided here is intended especially for developers.
 
+=== 4.1 ===
+
+* External function tool_mobile::get_config now returns the customusermenuitems setting.
+
+=== 4.0 ===
+
+* The function tool_mobile\api::get_qrlogin_key() now requires as parameter an object with all the mobile plugin settings.
+* The tool_mobile_external::get_config external function now returns the tool_mobile_autologinmintimebetweenreq setting.
+* External function tool_mobile::get_config now returns the enabledashboard setting.
+
 === 3.7 ===
 
  * New external function tool_mobile::tool_mobile_call_external_function allows calling multiple external functions and returns all responses.
@@ -23,4 +33,3 @@ Information provided here is intended especially for developers.
 
  * External function tool_mobile::get_public_config now returns the mobilecssurl field (Mobile custom CSS theme).
  * External function tool_mobile::get_public_config now returns the identityproviders field (list of external identity providers).
-

@@ -40,9 +40,11 @@
         "icon": {
             "key": "icon",
             "component": "mod_assign",
-            "alttext": "Assignment icon"
+            "alttext": "Assignment icon",
+            "iconurl": "#"
         },
-        "overdue": false
+        "overdue": false,
+        "purpose": "assessment"
     }
 }}
 <div class="list-group-item timeline-event-list-item flex-column pt-2 pb-0 border-0 {{#courseview}}px-0{{/courseview}}{{^courseview}}px-2{{/courseview}}"
@@ -52,8 +54,15 @@
             <small class="text-right text-nowrap align-self-center ml-1">
                 {{#userdate}} {{timesort}}, {{#str}} strftimetime24, core_langconfig {{/str}} {{/userdate}}
             </small>
-            <div class="icon-size-4 align-self-top align-self-center mx-2 text-nowrap">
-                {{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}
+            <div class="activityiconcontainer small {{purpose}} courseicon align-self-top align-self-center mx-3  mb-1 mb-sm-0 text-nowrap">
+                {{#icon}}
+                {{#iconurl}}
+                    <img alt="{{alttext}}" title="{{alttext}}" src="{{{ iconurl }}}" class="icon ">
+                {{/iconurl}}
+                {{^iconurl}}
+                    {{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}
+                {{/iconurl}}
+                {{/icon}}
             </div>
             <div class="event-name-container flex-grow-1 line-height-3 nowrap text-truncate">
                 <div class="d-flex">
@@ -70,7 +79,7 @@
                         {{activitystr}}
                     {{/courseview}}
                     {{^courseview}}
-                        {{#course.fullnamedisplay}}{{{course.fullnamedisplay}}} &middot; {{/course.fullnamedisplay}}{{activitystr}}
+                        {{activitystr}}{{#course.fullnamedisplay}} &middot; {{{course.fullnamedisplay}}}{{/course.fullnamedisplay}}
                     {{/courseview}}
                 </small>
             </div>

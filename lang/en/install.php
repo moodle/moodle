@@ -48,6 +48,7 @@ $string['cliinstallfinished'] = 'Installation completed successfully.';
 $string['cliinstallheader'] = 'Moodle {$a} command line installation program';
 $string['climustagreelicense'] = 'In non-interactive mode you must agree to the licence by specifying --agree-license option';
 $string['cliskipdatabase'] = 'Skipping database installation.';
+$string['clisupportemail'] = 'Support email address';
 $string['clitablesexist'] = 'Database tables already present; CLI installation cannot continue.';
 $string['compatibilitysettings'] = 'Checking your PHP settings ...';
 $string['compatibilitysettingshead'] = 'Checking your PHP settings ...';

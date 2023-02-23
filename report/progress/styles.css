@@ -40,12 +40,14 @@
     width: 16px;
 }
 
-/*rtl:begin:ignore*/
 #page-report-progress-index .rotated-text {
     display: inline-block;
     white-space: nowrap;
-
+    /*rtl:remove*/
     transform: translate(0, 100%) rotate(-90deg);
+    /*rtl:raw:
+    transform: translate(0, 100%) rotate(90deg);
+    */
     transform-origin: 0 0;
     vertical-align: middle;
 }
@@ -59,4 +61,6 @@
 #page-report-progress-index .modicon {
     padding-top: 5px;
 }
-/*rtl:end:ignore*/
+#completion-progress .icon {
+    margin-left: 0.5rem;
+}

@@ -27,7 +27,7 @@ Feature: View activity completion in the lesson activity
       | completionusegrade         | 1             |
       | completionendreached       | 1             |
       | completiontimespentenabled | 1             |
-      | completiontimespent        | 1             |
+      | completiontimespent        | 3             |
     And I am on the "Music history" "lesson activity" page logged in as teacher1
     And I follow "Add a content page"
     And I set the following fields to these values:
@@ -44,33 +44,32 @@ Feature: View activity completion in the lesson activity
       | Jump          | End of lesson                          |
       | Score         | 1                                      |
     And I press "Save page"
-    And I log out
 
   Scenario: View automatic completion items as a teacher
     When I am on the "Music history" "lesson activity" page logged in as teacher1
     Then "Music history" should have the "View" completion condition
-    And "Music history" should have the "Spend at least 1 sec on this activity" completion condition
+    And "Music history" should have the "Spend at least 3 secs on this activity" completion condition
     And "Music history" should have the "Go through the activity to the end" completion condition
     And "Music history" should have the "Receive a grade" completion condition
 
   Scenario: View automatic completion items as a student
     Given I am on the "Music history" "lesson activity" page logged in as student1
     And the "View" completion condition of "Music history" is displayed as "done"
-    And the "Spend at least 1 sec on this activity" completion condition of "Music history" is displayed as "todo"
+    And the "Spend at least 3 secs on this activity" completion condition of "Music history" is displayed as "todo"
     And the "Go through the activity to the end" completion condition of "Music history" is displayed as "todo"
     And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
     When I am on the "Music history" "lesson activity" page
-    And I wait "2" seconds
+    And I wait "4" seconds
     And I reload the page
     And the "View" completion condition of "Music history" is displayed as "done"
-    And the "Spend at least 1 sec on this activity" completion condition of "Music history" is displayed as "done"
+    And the "Spend at least 3 secs on this activity" completion condition of "Music history" is displayed as "done"
     And the "Go through the activity to the end" completion condition of "Music history" is displayed as "todo"
     And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
     And I press "The history of music part 1"
     And I set the field "Your answer" to "Some drummers play with their sticks flipped around"
     And I press "Submit"
     Then the "View" completion condition of "Music history" is displayed as "done"
-    And the "Spend at least 1 sec on this activity" completion condition of "Music history" is displayed as "done"
+    And the "Spend at least 3 secs on this activity" completion condition of "Music history" is displayed as "done"
     And the "Go through the activity to the end" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "done"
 
@@ -82,7 +81,6 @@ Feature: View activity completion in the lesson activity
     And I press "Save and display"
     # Teacher view.
     And the manual completion button for "Music history" should be disabled
-    And I log out
     # Student view.
     When I am on the "Music history" "lesson activity" page logged in as student1
     Then the manual completion button of "Music history" is displayed as "Mark as done"

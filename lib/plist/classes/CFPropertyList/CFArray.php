@@ -177,7 +177,7 @@ class CFArray extends CFType implements Iterator, ArrayAccess
    * @return void
    * @uses $iteratorPosition set to 0
    */
-    public function rewind()
+    public function rewind(): void
     {
         $this->iteratorPosition = 0;
     }
@@ -185,9 +185,10 @@ class CFArray extends CFType implements Iterator, ArrayAccess
   /**
    * Get Iterator's current {@link CFType} identified by {@link $iteratorPosition}
    * @link http://php.net/manual/en/iterator.current.php
-   * @return CFType current Item
+   * @return mixed current Item
    * @uses $iteratorPosition identify current key
    */
+   #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->value[$this->iteratorPosition];
@@ -196,9 +197,10 @@ class CFArray extends CFType implements Iterator, ArrayAccess
   /**
    * Get Iterator's current key identified by {@link $iteratorPosition}
    * @link http://php.net/manual/en/iterator.key.php
-   * @return string key of the current Item
+   * @return mixed key of the current Item: mixed
    * @uses $iteratorPosition identify current key
    */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->iteratorPosition;
@@ -210,7 +212,7 @@ class CFArray extends CFType implements Iterator, ArrayAccess
    * @return void
    * @uses $iteratorPosition increment by 1
    */
-    public function next()
+    public function next(): void
     {
         $this->iteratorPosition++;
     }
@@ -218,11 +220,11 @@ class CFArray extends CFType implements Iterator, ArrayAccess
   /**
    * Test if {@link $iteratorPosition} addresses a valid element of {@link $value}
    * @link http://php.net/manual/en/iterator.valid.php
-   * @return boolean true if current position is valid, false else
+   * @return bool true if current position is valid, false else
    * @uses $iteratorPosition test if within {@link $iteratorKeys}
    * @uses $iteratorPosition test if within {@link $value}
    */
-    public function valid()
+    public function valid(): bool
     {
         return isset($this->value[$this->iteratorPosition]);
     }
@@ -233,53 +235,54 @@ class CFArray extends CFType implements Iterator, ArrayAccess
 
   /**
    * Determine if the array's key exists
-   * @param string $key the key to check
+   * @param string $offset the key to check
    * @return bool true if the offset exists, false if not
    * @link http://php.net/manual/en/arrayaccess.offsetexists.php
    * @uses $value to check if $key exists
    * @author Sean Coates <sean@php.net>
    */
-    public function offsetExists($key)
+    public function offsetExists($offset): bool
     {
-        return isset($this->value[$key]);
+        return isset($this->value[$offset]);
     }
 
   /**
    * Fetch a specific key from the CFArray
-   * @param string $key the key to check
+   * @param mixed $offset the key to check
    * @return mixed the value associated with the key; null if the key is not found
    * @link http://php.net/manual/en/arrayaccess.offsetget.php
    * @uses get() to get the key's value
    * @author Sean Coates <sean@php.net>
    */
-    public function offsetGet($key)
+    #[\ReturnTypeWillChange]
+    public function offsetGet($offset)
     {
-        return $this->get($key);
+        return $this->get($offset);
     }
 
   /**
    * Set a value in the array
-   * @param string $key the key to set
-   * @param string $value the value to set
+   * @param mixed $offset the key to set
+   * @param mixed $value the value to set
    * @return void
    * @link http://php.net/manual/en/arrayaccess.offsetset.php
    * @uses setValue() to set the key's new value
    * @author Sean Coates <sean@php.net>
    */
-    public function offsetSet($key, $value)
+    public function offsetSet($offset, $value): void
     {
-        return $this->setValue($value);
+        $this->setValue($value);
     }
 
   /**
    * Unsets a value in the array
    * <b>Note:</b> this dummy does nothing
-   * @param string $key the key to set
+   * @param mixed $offset the key to set
    * @return void
    * @link http://php.net/manual/en/arrayaccess.offsetunset.php
    * @author Sean Coates <sean@php.net>
    */
-    public function offsetUnset($key)
+    public function offsetUnset($offset): void
     {
     }
 }

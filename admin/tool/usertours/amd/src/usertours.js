@@ -69,7 +69,7 @@ export const init = async(tourDetails, filters) => {
 
     // Watch for the reset link.
     document.querySelector('body').addEventListener('click', e => {
-        const resetLink = e.target.closest('[data-action="tool_usertours/resetpagetour"]');
+        const resetLink = e.target.closest('#resetpagetour');
         if (resetLink) {
             e.preventDefault();
             resetTourState(tourId);
@@ -87,14 +87,12 @@ const fetchTour = async tourId => {
     const pendingPromise = new Pending(`admin_usertour_fetchTour:${tourId}`);
 
     try {
+        // If we don't have any tour config (because it doesn't need showing for the current user), return early.
         const response = await tourRepository.fetchTour(tourId);
-        if (!response.hasOwnProperty('tourconfig')) {
-            pendingPromise.resolve();
+        if (response.hasOwnProperty('tourconfig')) {
+            const {html} = await Templates.renderForPromise('tool_usertours/tourstep', response.tourconfig);
+            startBootstrapTour(tourId, html, response.tourconfig);
         }
-
-        const {html} = await Templates.renderForPromise('tool_usertours/tourstep', response.tourconfig);
-        startBootstrapTour(tourId, html, response.tourconfig);
-
         pendingPromise.resolve();
     } catch (error) {
         pendingPromise.resolve();

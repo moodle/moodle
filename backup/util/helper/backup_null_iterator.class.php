@@ -34,19 +34,21 @@
  */
 class backup_null_iterator implements iterator {
 
-    public function rewind() {
+    public function rewind(): void {
     }
 
+    #[\ReturnTypeWillChange]
     public function current() {
     }
 
+    #[\ReturnTypeWillChange]
     public function key() {
     }
 
-    public function next() {
+    public function next(): void {
     }
 
-    public function valid() {
+    public function valid(): bool {
         return false;
     }
 

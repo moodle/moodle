@@ -36,6 +36,7 @@ function(
 
     var SELECTORS = {
         EVENT_LIST_CONTAINER: '[data-region="event-list-container"]',
+        NO_COURSES_EMPTY_MESSAGE: '[data-region="no-courses-empty-message"]',
     };
 
     /**
@@ -57,15 +58,18 @@ function(
      * @param {object} root The root element for the timeline dates view.
      */
     var load = function(root) {
-        var eventListContainer = root.find(SELECTORS.EVENT_LIST_CONTAINER);
-        var namespace = $(eventListContainer).attr('id') + "user_block_timeline" + Math.random();
-        registerEventListeners(root, namespace);
 
-        var config = {
-            persistentLimitKey: "block_timeline_user_limit_preference",
-            eventNamespace: namespace
-        };
-        EventList.init(eventListContainer, config);
+        if (!root.find(SELECTORS.NO_COURSES_EMPTY_MESSAGE).length) {
+            var eventListContainer = root.find(SELECTORS.EVENT_LIST_CONTAINER);
+            var namespace = $(eventListContainer).attr('id') + "user_block_timeline" + Math.random();
+            registerEventListeners(root, namespace);
+
+            var config = {
+                persistentLimitKey: "block_timeline_user_limit_preference",
+                eventNamespace: namespace
+            };
+            EventList.init(eventListContainer, config);
+        }
     };
 
     /**
@@ -76,7 +80,9 @@ function(
      */
     var init = function(root) {
         root = $(root);
-        if (root.hasClass('active')) {
+
+        // Only need to handle events loading if the user is actively enrolled in a course and this view is active.
+        if (root.hasClass('active') && !root.find(SELECTORS.NO_COURSES_EMPTY_MESSAGE).length) {
             load(root);
             root.attr('data-seen', true);
         }

@@ -28,7 +28,7 @@
                 "id": 42,
                 "number": 1,
                 "sectionurl": "#",
-                "isactive": 1,
+                "indexcollapsed": 0,
                 "cms": [
                     {
                         "name": "Glossary of characters",
@@ -64,7 +64,7 @@
                 "id": "43",
                 "number": "2",
                 "sectionurl": "#",
-                "isactive": 0,
+                "indexcollapsed": 1,
                 "cms": [
                     {
                         "name": "Resources",
@@ -99,11 +99,11 @@
     }
 
 }}
-<nav id="{{uniqid}}-course-index" class="courseindex {{#editmode}} editing {{/editmode}}" role="tree">
+<div id="{{uniqid}}-course-index" class="courseindex {{#editmode}} editing {{/editmode}}" role="tree">
     {{#sections}}
     {{> core_courseformat/local/courseindex/section }}
     {{/sections}}
-</nav>
+</div>
 {{#js}}
 require(['core_courseformat/local/courseindex/courseindex'], function(component) {
     component.init('{{uniqid}}-course-index');

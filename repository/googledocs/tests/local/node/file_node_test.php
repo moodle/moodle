@@ -100,7 +100,7 @@ class file_node_test extends \repository_googledocs_testcase {
                     ],
                     $this->create_file_content_node_array('d85b21c0f86cb0', 'File', 'File.gdoc', '', '',
                         'https://googleusercontent.com/type/application/vnd.google-apps.document', '',
-                        'application/rtf'),
+                        'application/rtf', 'document'),
                 ],
             'Google Drive file without an extension (Google presentation file; presentationformat config not set).' =>
                 [

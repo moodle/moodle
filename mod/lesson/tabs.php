@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 /// This file to be included so we can assume config.php has already been included.
 global $DB;
 if (empty($lesson)) {
-    print_error('cannotcallscript');
+    throw new \moodle_exception('cannotcallscript');
 }
 if (!isset($currenttab)) {
     $currenttab = '';

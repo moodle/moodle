@@ -100,9 +100,9 @@
                 <span
                     class="badge badge-pill badge-primary {{^unreadcount}}hidden{{/unreadcount}}"
                     data-region="unread-count"
-                    aria-label="{{#str}} unreadmessages, core_message, {{unreadcount}} {{/str}}"
                 >
-                    {{unreadcount}}
+                    <span aria-hidden="true">{{unreadcount}}</span>
+                    <span class="sr-only">{{#str}} unreadmessages, core_message, {{unreadcount}} {{/str}}</span>
                 </span>
 
                 <div class="text-muted ml-auto">

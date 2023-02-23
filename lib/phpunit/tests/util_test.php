@@ -14,33 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * PHPUnit Util tests
- *
- * @package    core
- * @category   phpunit
- * @copyright  2015 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-defined('MOODLE_INTERNAL') || die();
+namespace core;
 
 /**
  * Test util extra features.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2015 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_phpunit_util_testcase extends advanced_testcase {
+class util_test extends \advanced_testcase {
     /**
      * @dataProvider set_table_modified_by_sql_provider
      */
     public function test_set_table_modified_by_sql($sql, $expectations) {
-        phpunit_util::reset_updated_table_list();
-        phpunit_util::set_table_modified_by_sql($sql);
+        \phpunit_util::reset_updated_table_list();
+        \phpunit_util::set_table_modified_by_sql($sql);
         foreach ($expectations as $table => $present) {
-            $this->assertEquals($present, !empty(phpunit_util::$tableupdated[$table]));
+            $this->assertEquals($present, !empty(\phpunit_util::$tableupdated[$table]));
         }
     }
 

@@ -14,16 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for MoodleQuickForm_course.
- *
- * This file contains unit tests related to course forms element.
- *
- * @package     core_form
- * @category    test
- * @copyright   2020 Ruslan Kabalin
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_form;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -40,7 +31,7 @@ require_once($CFG->libdir . '/form/course.php');
  * @copyright  2020 Ruslan Kabalin
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_form_course_testcase extends basic_testcase {
+class course_test extends \basic_testcase {
 
     /**
      * Test constructor supports all declared attributes.
@@ -51,7 +42,7 @@ class core_form_course_testcase extends basic_testcase {
             'requiredcapabilities' => ['moodle/course:update'],
         ];
 
-        $element = new MoodleQuickForm_course('testel', null, $attributes);
+        $element = new \MoodleQuickForm_course('testel', null, $attributes);
         $html = $element->toHtml();
         $this->assertStringContainsString('data-exclude="1,2"', $html);
         $this->assertStringContainsString('data-requiredcapabilities="moodle/course:update"', $html);
@@ -67,7 +58,7 @@ class core_form_course_testcase extends basic_testcase {
             'includefrontpage' => true,
             'onlywithcompletion' => true,
         ];
-        $element = new MoodleQuickForm_course('testel', null, $attributes);
+        $element = new \MoodleQuickForm_course('testel', null, $attributes);
         $html = $element->toHtml();
         $this->assertStringContainsString('multiple', $html);
         $this->assertStringContainsString('data-limittoenrolled="1"', $html);

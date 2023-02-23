@@ -12,6 +12,10 @@ $query = trim(optional_param('query', '', PARAM_NOTAGS));  // Search string
 $context = context_system::instance();
 $PAGE->set_context($context);
 
+// If we are performing a search we need to display the secondary navigation with links as opposed to just anchors.
+// NOTE: hassecondarynavigation will be overridden in classic.
+$PAGE->set_secondary_navigation(true, !$query);
+
 $hassiteconfig = has_capability('moodle/site:config', $context);
 
 if ($hassiteconfig && moodle_needs_upgrading()) {
@@ -23,18 +27,6 @@ if ($hassiteconfig && moodle_needs_upgrading()) {
 
 admin_externalpage_setup('search', '', array('query' => $query)); // now hidden page
 $PAGE->set_heading(get_string('administrationsite')); // Has to be after setup since it has its' own heading set_heading.
-
-if ($hassiteconfig) {
-    $data = [
-        'action' => new moodle_url('/admin/search.php'),
-        'btnclass' => 'btn-primary',
-        'inputname' => 'query',
-        'searchstring' => get_string('search'),
-        'query' => $query,
-        'extraclasses' => 'd-flex justify-content-end'
-    ];
-    $PAGE->add_header_action($OUTPUT->render_from_template('core/search_input', $data));
-}
 
 $adminroot = admin_get_root(); // need all settings here
 $adminroot->search = $query; // So we can reference it in search boxes later in this invocation
@@ -89,8 +81,11 @@ if ($query && $hassiteconfig) {
 if ($showsettingslinks) {
     $node = $PAGE->settingsnav->find('root', navigation_node::TYPE_SITE_ADMIN);
     if ($node) {
-        $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs');
-        $secondarynavigation = $moremenu->export_for_template($OUTPUT);
+        $secondarynavigation = false;
+        if ($PAGE->has_secondary_navigation()) {
+            $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs', true, true);
+            $secondarynavigation = $moremenu->export_for_template($OUTPUT);
+        }
         echo $OUTPUT->render_from_template('core/settings_link_page',
             ['node' => $node, 'secondarynavigation' => $secondarynavigation]);
     }

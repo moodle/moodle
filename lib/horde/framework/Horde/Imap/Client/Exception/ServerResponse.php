@@ -44,14 +44,14 @@ class Horde_Imap_Client_Exception_ServerResponse extends Horde_Imap_Client_Excep
     /**
      * Constructor.
      *
-     * @param string $msg                                       Error message.
+     * @param string|null $msg                                  Error message.
      * @param integer $code                                     Error code.
      * @param Horde_Imap_Client_Interaction_Server $server      Server ob.
      * @param Horde_Imap_Client_Interaction_Pipeline $pipeline  Pipeline ob.
      */
     public function __construct(
-        $msg = null,
-        $code = 0,
+        $msg,
+        $code,
         Horde_Imap_Client_Interaction_Server $server,
         Horde_Imap_Client_Interaction_Pipeline $pipeline
     )

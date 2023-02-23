@@ -14,15 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Test classes for handling embedded media.
- *
- * @package media_html5video
- * @copyright 2016 Marina Glancy
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace media_html5video;
 
-defined('MOODLE_INTERNAL') || die();
+use core_media_manager;
+use media_html5video_plugin;
 
 /**
  * Test script for media embedding.
@@ -31,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2016 Marina Glancy
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class media_html5video_testcase extends advanced_testcase {
+class player_test extends \advanced_testcase {
 
     /**
      * Pre-test setup. Preserves $CFG.
@@ -46,7 +41,7 @@ class media_html5video_testcase extends advanced_testcase {
         \core\plugininfo\media::set_enabled_plugins('html5video');
 
         // Pretend to be using Firefox browser (must support ogg for tests to work).
-        core_useragent::instance(true, 'Mozilla/5.0 (X11; Linux x86_64; rv:46.0) Gecko/20100101 Firefox/46.0 ');
+        \core_useragent::instance(true, 'Mozilla/5.0 (X11; Linux x86_64; rv:46.0) Gecko/20100101 Firefox/46.0 ');
     }
 
     /**
@@ -80,7 +75,7 @@ class media_html5video_testcase extends advanced_testcase {
 
         // Create list of URLs for each extension.
         $urls = array_map(function($ext){
-            return new moodle_url('http://example.org/video.' . $ext);
+            return new \moodle_url('http://example.org/video.' . $ext);
         }, $nativeextensions);
 
         // Make sure that the list of supported URLs is not filtering permitted extensions.
@@ -94,7 +89,7 @@ class media_html5video_testcase extends advanced_testcase {
     public function test_embed_url() {
         global $CFG;
 
-        $url = new moodle_url('http://example.org/1.webm');
+        $url = new \moodle_url('http://example.org/1.webm');
 
         $manager = core_media_manager::instance();
         $embedoptions = array(
@@ -123,8 +118,8 @@ class media_html5video_testcase extends advanced_testcase {
      */
     public function test_embed_link() {
         global $CFG;
-        $url = new moodle_url('http://example.org/some_filename.mp4');
-        $text = html_writer::link($url, 'Watch this one');
+        $url = new \moodle_url('http://example.org/some_filename.mp4');
+        $text = \html_writer::link($url, 'Watch this one');
         $content = format_text($text, FORMAT_HTML);
 
         $this->assertMatchesRegularExpression('~mediaplugin_html5video~', $content);
@@ -138,8 +133,8 @@ class media_html5video_testcase extends advanced_testcase {
      * Test that mediaplugin filter does not work on <video> tags.
      */
     public function test_embed_media() {
-        $url = new moodle_url('http://example.org/some_filename.mp4');
-        $trackurl = new moodle_url('http://example.org/some_filename.vtt');
+        $url = new \moodle_url('http://example.org/some_filename.mp4');
+        $trackurl = new \moodle_url('http://example.org/some_filename.vtt');
         $text = '<video controls="true"><source src="'.$url.'"/><source src="somethinginvalid"/>' .
             '<track src="'.$trackurl.'">Unsupported text</video>';
         $content = format_text($text, FORMAT_HTML);

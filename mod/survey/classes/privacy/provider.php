@@ -227,7 +227,7 @@ class provider implements
                 'options' => $record->qoptions
             ]);
             $qtype = $record->qtype;
-            $options = explode(',', $q->options);
+            $options = explode(',', $q->options ?? '');
 
             $carry[] = [
                 'question' => array_merge((array) $q, [

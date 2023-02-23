@@ -6,6 +6,7 @@ Feature: Course summary block used on the frontpage
 
   Background:
     Given I log in as "admin"
+    And I enable "course_summary" "block" plugin
     And I am on site homepage
     And I turn editing mode on
     And I add the "Course/site summary" block

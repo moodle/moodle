@@ -3,8 +3,14 @@
   <library>
     <location>tiny_mce</location>
     <name>TinyMCE</name>
-    <license>LGPL</license>
+    <description>The JavaScript Rich Text editor.</description>
     <version>3.5.11</version>
+    <license>LGPL</license>
     <licenseversion>2.1+</licenseversion>
+    <repository>https://github.com/tinymce/tinymce</repository>
+    <copyrights>
+      <copyright>2004-2012, Moxiecode Systems AB, All rights reserved.</copyright>
+    </copyrights>
+    <customised/>
   </library>
 </libraries>

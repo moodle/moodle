@@ -24,7 +24,12 @@
 
 namespace core_question\local\bank;
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/question/editlib.php');
+use core_plugin_manager;
 use core_question\bank\search\condition;
+use qbank_columnsortorder\column_manager;
 use qbank_editquestion\editquestion_helper;
 use qbank_managecategories\helper;
 
@@ -70,7 +75,7 @@ class view {
     protected $editquestionurl;
 
     /**
-     * @var \question_edit_contexts
+     * @var \core_question\local\bank\question_edit_contexts
      */
     protected $contexts;
 
@@ -107,6 +112,11 @@ class view {
      * @var array list of column class names for which columns to sort on.
      */
     protected $sort;
+
+    /**
+     * @var int page size to use (when we are not showing all questions).
+     */
+    protected $pagesize = DEFAULT_QUESTIONS_PER_PAGE;
 
     /**
      * @var int|null id of the a question to highlight in the list (if present).
@@ -157,7 +167,7 @@ class view {
     /**
      * Constructor for view.
      *
-     * @param \question_edit_contexts $contexts
+     * @param \core_question\local\bank\question_edit_contexts $contexts
      * @param \moodle_url $pageurl
      * @param object $course course settings
      * @param object $cm (optional) activity settings.
@@ -192,22 +202,28 @@ class view {
     protected function init_bulk_actions(): void {
         $plugins = \core_component::get_plugin_list_with_class('qbank', 'plugin_feature', 'plugin_feature.php');
         foreach ($plugins as $componentname => $plugin) {
-            $pluginentrypoint = new $plugin();
-            $pluginentrypointobject = $pluginentrypoint->get_bulk_actions();
-            // Don't need the plugins without bulk actions.
-            if ($pluginentrypointobject === null) {
-                unset($plugins[$componentname]);
-                continue;
-            }
             if (!\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
-                unset($plugins[$componentname]);
                 continue;
             }
-            $this->bulkactions[$pluginentrypointobject->get_bulk_action_key()] = [
-                'title' => $pluginentrypointobject->get_bulk_action_title(),
-                'url' => $pluginentrypointobject->get_bulk_action_url(),
-                'capabilities' => $pluginentrypointobject->get_bulk_action_capabilities()
-            ];
+
+            $pluginentrypoint = new $plugin();
+            $bulkactions = $pluginentrypoint->get_bulk_actions();
+            if (!is_array($bulkactions)) {
+                debugging("The method {$componentname}::get_bulk_actions() must return an " .
+                    "array of bulk actions instead of a single bulk action. " .
+                    "Please update your implementation of get_bulk_actions() to return an array. " .
+                    "Check out the qbank_bulkmove plugin for a working example.", DEBUG_DEVELOPER);
+                $bulkactions = [$bulkactions];
+            }
+
+            foreach ($bulkactions as $bulkactionobject) {
+                $this->bulkactions[$bulkactionobject->get_key()] = [
+                    'title' => $bulkactionobject->get_bulk_action_title(),
+                    'url' => $bulkactionobject->get_bulk_action_url(),
+                    'capabilities' => $bulkactionobject->get_bulk_action_capabilities()
+                ];
+            }
+
         }
     }
 
@@ -242,10 +258,13 @@ class view {
                 'copy_action_column',
                 'tags_action_column',
                 'preview_action_column',
+                'history_action_column',
                 'delete_action_column',
                 'export_xml_action_column',
+                'question_status_column',
+                'version_number_column',
                 'creator_name_column',
-                'modifier_name_column'
+                'comment_count_column'
         ];
         if (question_get_display_preference('qbshowtext', 0, PARAM_BOOL, new \moodle_url(''))) {
             $corequestionbankcolumns[] = 'question_text_row';
@@ -297,9 +316,15 @@ class view {
             $questionbankclasscolumns[$key] = $newpluginclasscolumn;
         }
 
+        // Check if qbank_columnsortorder is enabled.
+        if (array_key_exists('columnsortorder', core_plugin_manager::instance()->get_enabled_plugins('qbank'))) {
+            $columnorder = new column_manager();
+            $questionbankclasscolumns = $columnorder->get_sorted_columns($questionbankclasscolumns);
+        }
+
         // Mitigate the error in case of any regression.
         foreach ($questionbankclasscolumns as $shortname => $questionbankclasscolumn) {
-            if (empty($questionbankclasscolumn)){
+            if (empty($questionbankclasscolumn)) {
                 unset($questionbankclasscolumns[$shortname]);
             }
         }
@@ -560,7 +585,7 @@ class view {
     protected function build_query(): void {
         // Get the required tables and fields.
         $joins = [];
-        $fields = ['q.hidden', 'q.category'];
+        $fields = ['qv.status', 'qc.id as categoryid', 'qv.version', 'qv.id as versionid', 'qbe.id as questionbankentryid'];
         if (!empty($this->requiredcolumns)) {
             foreach ($this->requiredcolumns as $column) {
                 $extrajoins = $column->get_extra_joins();
@@ -583,7 +608,12 @@ class view {
         }
 
         // Build the where clause.
-        $tests = ['q.parent = 0'];
+        $latestversion = 'qv.version = (SELECT MAX(v.version)
+                                          FROM {question_versions} v
+                                          JOIN {question_bank_entries} be
+                                            ON be.id = v.questionbankentryid
+                                         WHERE be.id = qbe.id)';
+        $tests = ['q.parent = 0', $latestversion];
         $this->sqlparams = [];
         foreach ($this->searchconditions as $searchcondition) {
             if ($searchcondition->where()) {
@@ -915,11 +945,11 @@ class view {
      * @param string     $categoryandcontext 'categoryID,contextID'.
      * @param int        $recurse     Whether to include subcategories.
      * @param int        $page        The number of the page to be displayed
-     * @param int        $perpage     Number of questions to show per page
+     * @param int|null   $perpage     Number of questions to show per page
      * @param array      $addcontexts contexts where the user is allowed to add new questions.
      */
     protected function display_question_list($pageurl, $categoryandcontext, $recurse = 1, $page = 0,
-                                                $perpage = 100, $addcontexts = []): void {
+                $perpage = null, $addcontexts = []): void {
         global $OUTPUT;
         // This function can be moderately slow with large question counts and may time out.
         // We probably do not want to raise it to unlimited, so randomly picking 5 minutes.
@@ -927,6 +957,7 @@ class view {
         \core_php_time_limit::raise(300);
 
         $category = $this->get_current_category($categoryandcontext);
+        $perpage = $perpage ?? $this->pagesize;
 
         list($categoryid, $contextid) = explode(',', $categoryandcontext);
         $catcontext = \context::instance_by_id($contextid);
@@ -1002,9 +1033,9 @@ class view {
                 'pagination' => $pagination,
                 'biggertotal' => true,
         );
-        if ($totalnumber > DEFAULT_QUESTIONS_PER_PAGE) {
+        if ($totalnumber > $this->pagesize) {
             $displaydata['showall'] = true;
-            if ($perpage == DEFAULT_QUESTIONS_PER_PAGE) {
+            if ($perpage == $this->pagesize) {
                 $url = new \moodle_url($pageurl, array_merge($pageurl->params(),
                         ['qpage' => 0, 'qperpage' => MAXIMUM_QUESTIONS_PER_PAGE]));
                 if ($totalnumber > MAXIMUM_QUESTIONS_PER_PAGE) {
@@ -1015,8 +1046,8 @@ class view {
                 }
             } else {
                 $url = new \moodle_url($pageurl, array_merge($pageurl->params(),
-                        ['qperpage' => DEFAULT_QUESTIONS_PER_PAGE]));
-                $displaydata['totalnumber'] = DEFAULT_QUESTIONS_PER_PAGE;
+                        ['qperpage' => $this->pagesize]));
+                $displaydata['totalnumber'] = $this->pagesize;
             }
             $displaydata['showallurl'] = $url;
         }
@@ -1084,7 +1115,7 @@ class view {
      */
     protected function print_table($questions): void {
         // Start of the table.
-        echo \html_writer::start_tag('table', ['id' => 'categoryquestions']);
+        echo \html_writer::start_tag('table', ['id' => 'categoryquestions', 'class' => 'table-responsive']);
 
         // Prints the table header.
         echo \html_writer::start_tag('thead');
@@ -1153,7 +1184,7 @@ class view {
      */
     protected function get_row_classes($question, $rowcount): array {
         $classes = [];
-        if ($question->hidden) {
+        if ($question->status === question_version_status::QUESTION_STATUS_HIDDEN) {
             $classes[] = 'dimmed_text';
         }
         if ($question->id == $this->lastchangedid) {
@@ -1219,4 +1250,11 @@ class view {
         $this->searchconditions[] = $searchcondition;
     }
 
+    /**
+     * Gets visible columns.
+     * @return array Visible columns.
+     */
+    public function get_visiblecolumns(): array {
+        return $this->visiblecolumns;
+    }
 }

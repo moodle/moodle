@@ -1,19 +1,33 @@
 <?php
 
-include __DIR__ . '/../classes/Bootstrap.php';
+use Matrix\Matrix;
+use Matrix\Decomposition\QR;
 
-$grid1 = [
-    [1, 3, 2],
-    [2, 3, 1],
-];
+include __DIR__ . '/../vendor/autoload.php';
 
-$grid2 = [
-    [1, 6],
+$grid = [
     [0, 1],
+    [-1, 0],
 ];
 
-$matrix = new Matrix\Matrix($grid1);
+$targetGrid = [
+    [-1],
+    [2],
+];
 
-$new = $matrix->directsum(new Matrix\Matrix($grid2));
+$matrix = new Matrix($grid);
+$target = new Matrix($targetGrid);
 
-var_dump($new);
+$decomposition = new QR($matrix);
+
+$X = $decomposition->solve($target);
+
+echo 'X', PHP_EOL;
+var_export($X->toArray());
+echo PHP_EOL;
+
+$resolve = $matrix->multiply($X);
+
+echo 'Resolve', PHP_EOL;
+var_export($resolve->toArray());
+echo PHP_EOL;

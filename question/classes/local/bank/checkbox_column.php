@@ -39,7 +39,7 @@ class checkbox_column extends column_base {
         return 'checkbox';
     }
 
-    protected function get_title() {
+    public function get_title() {
         global $OUTPUT;
 
         $mastercheckbox = new checkbox_toggleall('qbank', true, [
@@ -53,7 +53,7 @@ class checkbox_column extends column_base {
         return $OUTPUT->render($mastercheckbox);
     }
 
-    protected function get_title_tip() {
+    public function get_title_tip() {
         return get_string('selectquestionsforbulk', 'question');
     }
 

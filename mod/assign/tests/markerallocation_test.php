@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for (some of) mod/assign/markerallocaion_test.php.
- *
- * @package    mod_assign
- * @category   test
- * @copyright  2017 Andrés Melo <andres.torres@blackboard.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_assign;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,13 +23,14 @@ require_once($CFG->dirroot . '/lib/accesslib.php');
 require_once($CFG->dirroot . '/course/lib.php');
 
 /**
- * This class tests some of marker allocation functionality.
+ * Unit tests for (some of) mod/assign/markerallocaion_test.php.
  *
  * @package    mod_assign
+ * @category   test
  * @copyright  2017 Andrés Melo <andres.torres@blackboard.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_assign_markerallocation_testcase extends advanced_testcase {
+class markerallocation_test extends \advanced_testcase {
 
     /**
      * Create all the needed elements to test the difference between both functions.
@@ -49,7 +43,7 @@ class mod_assign_markerallocation_testcase extends advanced_testcase {
         $this->course = $this->getDataGenerator()->create_course();
 
         // Setting assing module, markingworkflow and markingallocation set to 1 to enable marker allocation.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->course = $this->course;
 
         $modulesettings = array(
@@ -122,9 +116,9 @@ class mod_assign_markerallocation_testcase extends advanced_testcase {
         list($sort, $params) = users_order_by_sql('u');
 
         // Old code, it must return 3 users: teacher1, teacher2 and Manger.
-        $oldmarkers = get_users_by_capability(context_course::instance($this->course->id), 'mod/assign:grade', '', $sort);
+        $oldmarkers = get_users_by_capability(\context_course::instance($this->course->id), 'mod/assign:grade', '', $sort);
         // New code, it must return 2 users: teacher1 and teacher2.
-        $newmarkers = get_enrolled_users(context_course::instance($this->course->id), 'mod/assign:grade', 0, 'u.*', $sort);
+        $newmarkers = get_enrolled_users(\context_course::instance($this->course->id), 'mod/assign:grade', 0, 'u.*', $sort);
 
         // Test result quantity.
         $this->assertEquals(count($oldusers), count($oldmarkers));

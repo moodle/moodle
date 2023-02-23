@@ -171,7 +171,7 @@ abstract class moodle_list {
         }
 
         if (!$suppresserror) {
-            print_error('listnoitem');
+            throw new \moodle_exception('listnoitem');
         }
         return null;
     }
@@ -324,7 +324,7 @@ abstract class moodle_list {
                     $peers[$itemkey+1] = $id;
                     $peers[$itemkey] = $olditem;
                 } else {
-                    print_error('listcantmoveup');
+                    throw new \moodle_exception('listcantmoveup');
                 }
                 break;
 
@@ -334,7 +334,7 @@ abstract class moodle_list {
                     $peers[$itemkey-1] = $id;
                     $peers[$itemkey] = $olditem;
                 } else {
-                    print_error('listcantmovedown');
+                    throw new \moodle_exception('listcantmovedown');
                 }
                 break;
         }
@@ -359,7 +359,7 @@ abstract class moodle_list {
 
         $item = $this->find_item($id);
         if (!isset($item->parentlist->parentitem->parentlist)) {
-            print_error('listcantmoveleft');
+            throw new \moodle_exception('listcantmoveleft');
         } else {
             $newpeers = $this->get_items_peers($item->parentlist->parentitem->id);
             if (isset($item->parentlist->parentitem->parentlist->parentitem)) {
@@ -386,7 +386,7 @@ abstract class moodle_list {
         $peers = $this->get_items_peers($id);
         $itemkey = array_search($id, $peers);
         if (!isset($peers[$itemkey-1])) {
-            print_error('listcantmoveright');
+            throw new \moodle_exception('listcantmoveright');
         } else {
             $DB->set_field($this->table, "parent", $peers[$itemkey-1], array("id"=>$peers[$itemkey]));
             $newparent = $this->find_item($peers[$itemkey-1]);

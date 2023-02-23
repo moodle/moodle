@@ -14,15 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External mod_page functions unit tests
- *
- * @package    mod_page
- * @category   external
- * @copyright  2015 Juan Leyva <juan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.0
- */
+namespace mod_page;
+
+use core_external\external_api;
+use externallib_advanced_testcase;
+use mod_page_external;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -39,7 +35,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
-class mod_page_external_testcase extends externallib_advanced_testcase {
+class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Test view_page
@@ -52,14 +48,14 @@ class mod_page_external_testcase extends externallib_advanced_testcase {
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $page = $this->getDataGenerator()->create_module('page', array('course' => $course->id));
-        $context = context_module::instance($page->cmid);
+        $context = \context_module::instance($page->cmid);
         $cm = get_coursemodule_from_instance('page', $page->id);
 
         // Test invalid instance id.
         try {
             mod_page_external::view_page(0);
             $this->fail('Exception expected due to invalid mod_page instance id.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('invalidrecord', $e->errorcode);
         }
 
@@ -69,7 +65,7 @@ class mod_page_external_testcase extends externallib_advanced_testcase {
         try {
             mod_page_external::view_page($page->id);
             $this->fail('Exception expected due to not enrolled user.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('requireloginerror', $e->errorcode);
         }
 
@@ -100,12 +96,12 @@ class mod_page_external_testcase extends externallib_advanced_testcase {
         assign_capability('mod/page:view', CAP_PROHIBIT, $studentrole->id, $context->id);
         // Empty all the caches that may be affected by this change.
         accesslib_clear_all_caches_for_unit_testing();
-        course_modinfo::clear_instance_cache();
+        \course_modinfo::clear_instance_cache();
 
         try {
             mod_page_external::view_page($page->id);
             $this->fail('Exception expected due to missing capability.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('requireloginerror', $e->errorcode);
         }
 
@@ -127,12 +123,12 @@ class mod_page_external_testcase extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($student->id, $course1->id, $studentrole->id);
 
         // First page.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->course = $course1->id;
         $page1 = self::getDataGenerator()->create_module('page', $record);
 
         // Second page.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->course = $course2->id;
         $page2 = self::getDataGenerator()->create_module('page', $record);
 
@@ -152,7 +148,7 @@ class mod_page_external_testcase extends externallib_advanced_testcase {
         $returndescription = mod_page_external::get_pages_by_courses_returns();
 
         // Create what we expect to be returned when querying the two courses.
-        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles',
+        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'lang',
                                 'content', 'contentformat', 'contentfiles', 'legacyfiles', 'legacyfileslast', 'display',
                                 'displayoptions', 'revision', 'timemodified', 'section', 'visible', 'groupmode', 'groupingid');
 
@@ -166,6 +162,7 @@ class mod_page_external_testcase extends externallib_advanced_testcase {
         $page1->groupingid = 0;
         $page1->introfiles = [];
         $page1->contentfiles = [];
+        $page1->lang = '';
 
         $page2->coursemodule = $page2->cmid;
         $page2->introformat = 1;
@@ -176,6 +173,7 @@ class mod_page_external_testcase extends externallib_advanced_testcase {
         $page2->groupingid = 0;
         $page2->introfiles = [];
         $page2->contentfiles = [];
+        $page2->lang = '';
 
         foreach ($expectedfields as $field) {
             $expected1[$field] = $page1->{$field};
@@ -200,7 +198,7 @@ class mod_page_external_testcase extends externallib_advanced_testcase {
         // Add a file to the intro.
         $filename = "file.txt";
         $filerecordinline = array(
-            'contextid' => context_module::instance($page2->cmid)->id,
+            'contextid' => \context_module::instance($page2->cmid)->id,
             'component' => 'mod_page',
             'filearea'  => 'intro',
             'itemid'    => 0,

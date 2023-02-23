@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Test message popup API.
- *
- * @package message_popup
- * @category test
- * @copyright 2016 Ryan Wyllie <ryan@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace message_popup;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -38,8 +31,8 @@ require_once($CFG->dirroot . '/message/output/popup/tests/base.php');
  * @copyright 2016 Ryan Wyllie <ryan@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class message_popup_api_testcase extends advanced_testcase {
-    use message_popup_test_helper;
+class api_test extends \advanced_testcase {
+    use \message_popup_test_helper;
 
     /**
      * Test set up.

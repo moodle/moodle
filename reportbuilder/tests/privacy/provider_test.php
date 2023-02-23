@@ -22,14 +22,18 @@ use context_system;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\metadata\types\database_table;
 use core_privacy\local\metadata\types\user_preference;
+use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use core_privacy\tests\provider_testcase;
+use core_reportbuilder_generator;
 use core_reportbuilder\manager;
 use core_reportbuilder\local\helpers\user_filter_manager;
 use core_reportbuilder\local\models\audience;
 use core_reportbuilder\local\models\column;
 use core_reportbuilder\local\models\filter;
 use core_reportbuilder\local\models\report;
+use core_reportbuilder\local\models\schedule;
+use core_user\reportbuilder\datasource\users;
 
 /**
  * Unit tests for privacy provider
@@ -48,7 +52,7 @@ class provider_test extends provider_testcase {
         $collection = new collection('core_reportbuilder');
         $metadata = provider::get_metadata($collection)->get_collection();
 
-        $this->assertCount(5, $metadata);
+        $this->assertCount(6, $metadata);
 
         $this->assertInstanceOf(database_table::class, $metadata[0]);
         $this->assertEquals(report::TABLE, $metadata[0]->get_name());
@@ -62,7 +66,201 @@ class provider_test extends provider_testcase {
         $this->assertInstanceOf(database_table::class, $metadata[3]);
         $this->assertEquals(audience::TABLE, $metadata[3]->get_name());
 
-        $this->assertInstanceOf(user_preference::class, $metadata[4]);
+        $this->assertInstanceOf(database_table::class, $metadata[4]);
+        $this->assertEquals(schedule::TABLE, $metadata[4]->get_name());
+
+        $this->assertInstanceOf(user_preference::class, $metadata[5]);
+    }
+
+    /**
+     * Test getting contexts for user who created a report
+     */
+    public function test_get_contexts_for_userid_report(): void {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $generator->create_report(['name' => 'Users', 'source' => users::class]);
+
+        $contextlist = $this->get_contexts_for_userid((int) $user->id, 'core_reportbuilder');
+        $this->assertCount(1, $contextlist);
+        $this->assertInstanceOf(context_system::class, $contextlist->current());
+    }
+
+    /**
+     * Test getting contexts for user who created an audience for a report by another user
+     */
+    public function test_get_contexts_for_userid_audience(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'Users', 'source' => users::class]);
+
+        // Switch user, create a report audience.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $generator->create_audience(['reportid' => $report->get('id'), 'configdata' => []]);
+
+        $contextlist = $this->get_contexts_for_userid((int) $user->id, 'core_reportbuilder');
+        $this->assertCount(1, $contextlist);
+        $this->assertInstanceOf(context_system::class, $contextlist->current());
+    }
+
+    /**
+     * Test getting contexts for user who created a schedule for a report by another user
+     */
+    public function test_get_contexts_for_userid_schedule(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'Users', 'source' => users::class]);
+
+        // Switch user, create a report schedule.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $generator->create_schedule(['reportid' => $report->get('id'), 'name' => 'My schedule']);
+
+        $contextlist = $this->get_contexts_for_userid((int) $user->id, 'core_reportbuilder');
+        $this->assertCount(1, $contextlist);
+        $this->assertInstanceOf(context_system::class, $contextlist->current());
+    }
+
+    /**
+     * Test getting users in given context
+     */
+    public function test_get_users_in_context(): void {
+        $this->resetAfterTest();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+
+        // Switch user, create a report.
+        $reportuser = $this->getDataGenerator()->create_user();
+        $this->setUser($reportuser);
+
+        $report = $generator->create_report(['name' => 'Users', 'source' => users::class]);
+
+        // Switch user, create a report audience.
+        $audienceuser = $this->getDataGenerator()->create_user();
+        $this->setUser($audienceuser);
+
+        $generator->create_audience(['reportid' => $report->get('id'), 'configdata' => []]);
+
+        // Switch user, create a report schedule.
+        $scheduleuser = $this->getDataGenerator()->create_user();
+        $this->setUser($scheduleuser);
+
+        $generator->create_schedule(['reportid' => $report->get('id'), 'name' => 'My schedule']);
+
+        $userlist = new userlist(context_system::instance(), 'core_reportbuilder');
+        provider::get_users_in_context($userlist);
+
+        $this->assertEqualsCanonicalizing([
+            $reportuser->id,
+            $audienceuser->id,
+            $scheduleuser->id,
+        ], $userlist->get_userids());
+    }
+
+    /**
+     * Test export of user data
+     */
+    public function test_export_user_data(): void {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+
+        // Create some report elements for the user.
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
+        $audience = $generator->create_audience(['reportid' => $report->get('id'), 'configdata' => [], 'heading' => 'Beans']);
+        $schedule = $generator->create_schedule([
+            'reportid' => $report->get('id'),
+            'audiences' => json_encode([$audience->get_persistent()->get('id')]),
+            'name' => 'My schedule',
+        ]);
+
+        $context = context_system::instance();
+        $this->export_context_data_for_user((int) $user->id, $context, 'core_reportbuilder');
+
+        /** @var \core_privacy\tests\request\content_writer $writer */
+        $writer = writer::with_context($context);
+        $this->assertTrue($writer->has_any_data());
+
+        $subcontext = provider::get_export_subcontext($report);
+
+        // Exported report data.
+        $reportdata = $writer->get_data($subcontext);
+        $this->assertEquals($report->get_formatted_name(), $reportdata->name);
+        $this->assertEquals(users::get_name(), $reportdata->source);
+        $this->assertEquals($user->id, $reportdata->usercreated);
+        $this->assertEquals($user->id, $reportdata->usermodified);
+        $this->assertNotEmpty($reportdata->timecreated);
+        $this->assertNotEmpty($reportdata->timemodified);
+
+        // Exported audience data.
+        $audiencedata = $writer->get_related_data($subcontext, 'audiences')->data;
+
+        $this->assertCount(1, $audiencedata);
+        $audiencedata = reset($audiencedata);
+
+        $audiencepersistent = $audience->get_persistent();
+        $audienceclassname = $audiencepersistent->get('classname');
+
+        $this->assertEquals($audienceclassname::instance()->get_name(), $audiencedata->classname);
+        $this->assertEquals($audiencepersistent->get('configdata'), $audiencedata->configdata);
+        $this->assertEquals($audiencepersistent->get_formatted_heading(), $audiencedata->heading);
+        $this->assertEquals($user->id, $audiencedata->usercreated);
+        $this->assertEquals($user->id, $audiencedata->usermodified);
+        $this->assertNotEmpty($audiencedata->timecreated);
+        $this->assertNotEmpty($audiencedata->timemodified);
+
+        // Exported schedule data.
+        $scheduledata = $writer->get_related_data($subcontext, 'schedules')->data;
+
+        $this->assertCount(1, $scheduledata);
+        $scheduledata = reset($scheduledata);
+
+        $this->assertEquals($schedule->get_formatted_name(), $scheduledata->name);
+        $this->assertEquals('Yes', $scheduledata->enabled);
+        $this->assertEquals('Comma separated values (.csv)', $scheduledata->format);
+        $this->assertNotEmpty($scheduledata->timescheduled);
+        $this->assertEquals('None', $scheduledata->recurrence);
+        $this->assertEquals('Schedule creator', $scheduledata->userviewas);
+        $this->assertEquals(json_encode([$audiencepersistent->get('id')]), $scheduledata->audiences);
+        $this->assertEquals($schedule->get('subject'), $scheduledata->subject);
+        $this->assertEquals(format_text($schedule->get('message'), $schedule->get('messageformat')), $scheduledata->message);
+        $this->assertEquals('Send message with empty report', $scheduledata->reportempty);
+        $this->assertEquals($user->id, $scheduledata->usercreated);
+        $this->assertEquals($user->id, $scheduledata->usermodified);
+        $this->assertNotEmpty($scheduledata->timecreated);
+        $this->assertNotEmpty($scheduledata->timemodified);
+    }
+
+    /**
+     * Test export of user data where there is nothing to export
+     */
+    public function test_export_user_data_empty(): void {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $context = context_system::instance();
+        $this->export_context_data_for_user((int) $user->id, $context, 'core_reportbuilder');
+
+        $this->assertFalse(writer::with_context($context)->has_any_data());
     }
 
     /**

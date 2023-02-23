@@ -30,7 +30,7 @@ require_once($CFG->libdir . '/authlib.php');
 require_once('lib.php');
 
 if (!$authplugin = signup_is_enabled()) {
-    print_error('notlocalisederrormessage', 'error', '', 'Sorry, you may not use this page.');
+    throw new \moodle_exception('notlocalisederrormessage', 'error', '', 'Sorry, you may not use this page.');
 }
 
 // IOMAD - Deal with any passed company information from parameters or from SESSION.

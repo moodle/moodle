@@ -90,7 +90,7 @@ if ($CFG->bloglevel == BLOG_GLOBAL_LEVEL) {
     require_login();
     if (isguestuser()) {
         // They must have entered the url manually.
-        print_error('noguest');
+        throw new \moodle_exception('noguest');
     }
 
 } else if ($CFG->bloglevel == BLOG_USER_LEVEL) {
@@ -99,11 +99,11 @@ if ($CFG->bloglevel == BLOG_GLOBAL_LEVEL) {
 
 } else {
     // Weird!
-    print_error('blogdisable', 'blog');
+    throw new \moodle_exception('blogdisable', 'blog');
 }
 
 if (empty($CFG->enableblogs)) {
-    print_error('blogdisable', 'blog');
+    throw new \moodle_exception('blogdisable', 'blog');
 }
 
 list($courseid, $userid) = blog_validate_access($courseid, $modid, $groupid, $entryid, $userid);
@@ -116,7 +116,7 @@ if ($courseid != SITEID) {
 }
 
 if (!empty($userid)) {
-    $user = core_user::get_user($userid);
+    $user = core_user::get_user($userid, '*', MUST_EXIST);
     $PAGE->navigation->extend_for_user($user);
 }
 
@@ -153,10 +153,11 @@ if ($usernode && $courseid != SITEID) {
 if ($courseid != SITEID) {
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
-    $backurl = new moodle_url('/user/view.php', ['id' => $userid, 'course' => $courseid]);
-    echo $OUTPUT->single_button($backurl, get_string('back'), 'get', ['class' => 'mb-3']);
 
     if (!empty($user)) {
+        $backurl = new moodle_url('/user/view.php', ['id' => $user->id, 'course' => $courseid]);
+        echo $OUTPUT->single_button($backurl, get_string('back'), 'get', ['class' => 'mb-3']);
+
         $headerinfo = array('heading' => fullname($user), 'user' => $user);
         echo $OUTPUT->context_header($headerinfo, 2);
     }

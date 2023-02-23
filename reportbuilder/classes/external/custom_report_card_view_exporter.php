@@ -18,10 +18,10 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\external;
 
-use core_reportbuilder\form\card_view;
 use renderer_base;
 use core\external\exporter;
-use core_reportbuilder\local\report\base;
+use core_reportbuilder\datasource;
+use core_reportbuilder\form\card_view;
 
 /**
  * Custom report card view exporter class
@@ -39,7 +39,7 @@ class custom_report_card_view_exporter extends exporter {
      */
     protected static function define_related(): array {
         return [
-            'report' => base::class,
+            'report' => datasource::class,
         ];
     }
 
@@ -52,11 +52,9 @@ class custom_report_card_view_exporter extends exporter {
         return [
             'form' => [
                 'type' => PARAM_RAW,
-                'optional' => true,
             ],
             'helpicon' => [
                 'type' => PARAM_RAW,
-                'optional' => true,
             ],
         ];
     }
@@ -68,7 +66,7 @@ class custom_report_card_view_exporter extends exporter {
      * @return array
      */
     protected function get_other_values(renderer_base $output): array {
-        /** @var base $report */
+        /** @var datasource $report */
         $report = $this->related['report'];
 
         $reportid = $report->get_report_persistent()->get('id');

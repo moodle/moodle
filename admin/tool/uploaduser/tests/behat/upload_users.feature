@@ -14,7 +14,7 @@ Feature: Upload users
       | Section 1 | math102 | S1 |
       | Section 3 | math102 | S3 |
     And I log in as "admin"
-    And I navigate to "Users > Accounts >Upload users" in site administration
+    And I navigate to "Users > Accounts > Upload users" in site administration
     When I upload "lib/tests/fixtures/upload_users.csv" file to "File" filemanager
     And I press "Upload users"
     Then I should see "Upload users preview"
@@ -66,14 +66,10 @@ Feature: Upload users
   @javascript
   Scenario: Upload users with custom profile fields
     # Create user profile field.
-    Given I log in as "admin"
-    And I navigate to "Users > Accounts > User profile fields" in site administration
-    And I click on "Create a new profile field" "link"
-    And I click on "Text area" "link"
-    And I set the following fields to these values:
-      | Short name | superfield  |
-      | Name       | Super field |
-    And I click on "Save changes" "button"
+    Given the following "custom profile fields" exist:
+      | datatype | shortname  | name        |
+      | text     | superfield | Super field |
+    And I log in as "admin"
     # Upload users.
     When I navigate to "Users > Accounts > Upload users" in site administration
     And I upload "lib/tests/fixtures/upload_users_profile.csv" file to "File" filemanager
@@ -129,12 +125,10 @@ Feature: Upload users
     And I should see "Users created: 4"
     And I press "Continue"
     # Boost check.
-    And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I click on ".icon[title=Edit]" "css_element" in the "jonest@example.com" "table_row"
+    And I am on the "jonest@example.com" "user > editing" page
     And I should see "Boost"
     # Classic check.
-    And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I click on ".icon[title=Edit]" "css_element" in the "reznor@example.com" "table_row"
+    And I am on the "reznor@example.com" "user > editing" page
     And I should see "Classic"
 
   @javascript
@@ -186,3 +180,119 @@ Feature: Upload users
     And I should see "12 January 2020" in the "Enrolment ends" "table_row"
     And I click on "Close" "button" in the "Enrolment details" "dialogue"
     And I log out
+
+  @javascript
+  Scenario: Upload users enrolling them on courses and assign category roles
+    Given the following "courses" exist:
+      | fullname | shortname |
+      | management1 | management1 |
+      | film1 | film1 |
+    And the following "categories" exist:
+      | name | idnumber |
+      | MGMT | MGMT |
+      | Film | Film |
+    And I log in as "admin"
+    And I navigate to "Users > Accounts > Upload users" in site administration
+    When I upload "lib/tests/fixtures/upload_users_category.csv" file to "File" filemanager
+    And I press "Upload users"
+    Then I should see "Upload users preview"
+    And I should see "Tom"
+    And I should see "Jones"
+    And I should see "Trent"
+    And I should see "Reznor"
+    And I should see "Aurora"
+    And I should see "Jiang"
+    And I should see "Federico"
+    And I should see "Fellini"
+    And I should see "Ivan"
+    And I should see "Ivanov"
+    And I should see "John"
+    And I should see "Smith"
+    And I should see "Warm"
+    And I should see "Cool"
+    And I should see "James"
+    And I should see "Bond"
+    And I should see "MGMT"
+    And I should see "Film"
+    And I should see "manager"
+    And I should see "student"
+    And I should see "coursecreator"
+    And I should see "management1"
+    And I should see "film1"
+    And I press "Upload users"
+    And I should see "Unknown category with category ID number \"Movie\""
+    And I should see "Unknown course named \"movie1\""
+    And I should see "Unknown role \"notcoursecreator\""
+    And I should see "Could not assign role to user: missing role for category"
+    And I press "Continue"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I should see "Tom Jones"
+    And I should see "Trent Reznor"
+    And I should see "reznor@example.com"
+    And I am on the "management1" "enrolled users" page
+    And I should see "Tom Jones"
+    And I should see "Trent Reznor"
+    And I should see "Aurora Jiang"
+    And I should see "Student"
+    And I am on the "film1" "enrolled users" page
+    And I should see "Federico Fellini"
+    And I should see "Student"
+    And I am on site homepage
+    And I navigate to "Courses > Manage courses and categories" in site administration
+    And I click on "permissions" action for "MGMT" in management category listing
+    And I select "Assign roles" from the "jump" singleselect
+    And I should see "Manager"
+    And I should see "Tom Jones"
+    And I should see "Trent Reznor"
+    And I should see "Course creator"
+    And I should see "Aurora Jiang"
+    And I am on site homepage
+    And I navigate to "Courses > Manage courses and categories" in site administration
+    And I click on "permissions" action for "Film" in management category listing
+    And I select "Assign roles" from the "jump" singleselect
+    And I should see "Course creator"
+    And I should see "Federico Fellini"
+
+  @javascript
+  Scenario: Update existing users matching them on email
+    Given the following "users" exist:
+      | username | firstname | lastname | email              |
+      | bilbob   | Blasbo    | Blabbins | bilbo@example.com |
+      | frodob   | Frodeo    | Baspins  | frodo@example.com |
+    And I log in as "admin"
+    And I navigate to "Users > Accounts >Upload users" in site administration
+    When I upload "lib/tests/fixtures/upload_users_email_matching.csv" file to "File" filemanager
+    And I press "Upload users"
+    Then I should see "Upload users preview"
+    And I set the following fields to these values:
+      | Upload type  | Update existing users only |
+      | Existing user details | Override with file |
+      | Match on email address | Yes |
+    And I press "Upload users"
+    And I press "Continue"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I should see "Bilbo Baggins"
+    And I should see "Frodo Baggins"
+
+  @javascript
+  Scenario: Update existing users matching them on email where one email address is associated with multiple users
+    Given the following "users" exist:
+      | username | firstname | lastname | email              |
+      | bilbob   | Blasbo    | Blabbins | bilbo@example.com |
+      | frodob   | Frodeo    | Baspins  | frodo@example.com |
+      | fredob   | Fredoo    | Baspins  | frodo@example.com |
+    And I log in as "admin"
+    And I navigate to "Users > Accounts > Upload users" in site administration
+    When I upload "lib/tests/fixtures/upload_users_email_matching.csv" file to "File" filemanager
+    And I press "Upload users"
+    Then I should see "Upload users preview"
+    And I set the following fields to these values:
+      | Upload type  | Update existing users only |
+      | Existing user details | Override with file |
+      | Match on email address | Yes |
+    And I press "Upload users"
+    And I should see "Multiple users with email frodo@example.com detected"
+    And I press "Continue"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I should see "Bilbo Baggins"
+    And I should not see "Frodo Baggins"

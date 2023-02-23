@@ -35,6 +35,7 @@ class behat_core_reportbuilder_generator extends behat_generator_base {
     protected function get_creatable_entities(): array {
         return [
             'Reports' => [
+                'singular' => 'Report',
                 'datagenerator' => 'report',
                 'required' => [
                     'name',
@@ -42,6 +43,7 @@ class behat_core_reportbuilder_generator extends behat_generator_base {
                 ],
             ],
             'Columns' => [
+                'singular' => 'Column',
                 'datagenerator' => 'column',
                 'required' => [
                     'report',
@@ -52,6 +54,7 @@ class behat_core_reportbuilder_generator extends behat_generator_base {
                 ],
             ],
             'Conditions' => [
+                'singular' => 'Condition',
                 'datagenerator' => 'condition',
                 'required' => [
                     'report',
@@ -62,6 +65,7 @@ class behat_core_reportbuilder_generator extends behat_generator_base {
                 ],
             ],
             'Filters' => [
+                'singular' => 'Filter',
                 'datagenerator' => 'filter',
                 'required' => [
                     'report',
@@ -71,11 +75,23 @@ class behat_core_reportbuilder_generator extends behat_generator_base {
                     'report' => 'reportid',
                 ],
             ],
-            'Audience' => [
+            'Audiences' => [
+                'singular' => 'Audience',
                 'datagenerator' => 'audience',
                 'required' => [
                     'report',
                     'configdata',
+                ],
+                'switchids' => [
+                    'report' => 'reportid',
+                ],
+            ],
+            'Schedules' => [
+                'singular' => 'Schedule',
+                'datagenerator' => 'schedule',
+                'required' => [
+                    'report',
+                    'name',
                 ],
                 'switchids' => [
                     'report' => 'reportid',
@@ -94,5 +110,17 @@ class behat_core_reportbuilder_generator extends behat_generator_base {
         global $DB;
 
         return (int) $DB->get_field(report::TABLE, 'id', ['name' => $name], MUST_EXIST);
+    }
+
+    /**
+     * Pre-process audience entity, generate correct config structure
+     *
+     * @param array $audience
+     * @return array
+     */
+    protected function preprocess_audience(array $audience): array {
+        $audience['configdata'] = (array) json_decode($audience['configdata']);
+
+        return $audience;
     }
 }

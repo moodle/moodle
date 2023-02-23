@@ -64,7 +64,7 @@ class writer extends \core\dataformat\base {
      */
     public function start_sheet($columns) {
         $this->columns = array_map(function($column) {
-            return core_text::strtolower(clean_param($column, PARAM_ALPHA));
+            return core_text::strtolower(clean_param($column, PARAM_ALPHANUMEXT));
         }, $columns);
 
         if ($this->sheetstarted) {

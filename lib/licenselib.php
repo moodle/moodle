@@ -93,20 +93,10 @@ class license_manager {
     }
 
     /**
-     * Adding a new license type
-     *
      * @deprecated Since Moodle 3.9, MDL-45184.
-     * @todo MDL-67344 This will be deleted in Moodle 4.1.
-     * @see license_manager::save()
-     *
-     * @param object $license the license record to add.
-     *
-     * @return bool true on success.
      */
-    public function add($license) : bool {
-        debugging('add() is deprecated. Please use license_manager::save() instead.', DEBUG_DEVELOPER);
-
-        return self::save($license);
+    public function add() {
+        throw new coding_exception('license_manager::add() is deprecated. Please use license_manager::save() instead.');
     }
 
     /**
@@ -323,7 +313,7 @@ class license_manager {
         global $CFG;
         // Site default license cannot be disabled!
         if ($license == $CFG->sitedefaultlicense) {
-            print_error('error');
+            throw new \moodle_exception('error');
         }
         if ($license = self::get_license_by_shortname($license)) {
             $license->enabled = self::LICENSE_DISABLED;

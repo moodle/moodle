@@ -84,13 +84,13 @@ switch ($mode) {
         require_sesskey();
 
         if (empty($attempt)) {
-            print_error('cannotfindattempt', 'lesson');
+            throw new \moodle_exception('cannotfindattempt', 'lesson');
         }
         if (empty($user)) {
-            print_error('cannotfinduser', 'lesson');
+            throw new \moodle_exception('cannotfinduser', 'lesson');
         }
         if (empty($answer)) {
-            print_error('cannotfindanswer', 'lesson');
+            throw new \moodle_exception('cannotfindanswer', 'lesson');
         }
         break;
 
@@ -98,10 +98,10 @@ switch ($mode) {
         require_sesskey();
 
         if (empty($attempt)) {
-            print_error('cannotfindattempt', 'lesson');
+            throw new \moodle_exception('cannotfindattempt', 'lesson');
         }
         if (empty($user)) {
-            print_error('cannotfinduser', 'lesson');
+            throw new \moodle_exception('cannotfinduser', 'lesson');
         }
 
         $editoroptions = array('noclean' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES,
@@ -116,7 +116,7 @@ switch ($mode) {
         }
         if ($form = $mform->get_data()) {
             if (!$grades = $DB->get_records('lesson_grades', array("lessonid"=>$lesson->id, "userid"=>$attempt->userid), 'completed', '*', $attempt->retry, 1)) {
-                print_error('cannotfindgrade', 'lesson');
+                throw new \moodle_exception('cannotfindgrade', 'lesson');
             }
 
             $essayinfo->graded = 1;
@@ -167,7 +167,7 @@ switch ($mode) {
 
             redirect(new moodle_url('/mod/lesson/essay.php', array('id'=>$cm->id)));
         } else {
-            print_error('invalidformdata');
+            throw new \moodle_exception('invalidformdata');
         }
         break;
     case 'email':
@@ -178,7 +178,7 @@ switch ($mode) {
         if ($userid = optional_param('userid', 0, PARAM_INT)) {
             $queryadd = " AND userid = ?";
             if (! $users = $DB->get_records('user', array('id' => $userid))) {
-                print_error('cannotfinduser', 'lesson');
+                throw new \moodle_exception('cannotfinduser', 'lesson');
             }
         } else {
             $queryadd = '';
@@ -199,7 +199,7 @@ switch ($mode) {
                        ) ui ON u.id = ui.userid
                   JOIN ($esql) ue ON ue.id = u.id
                   ORDER BY $sort", $params)) {
-                print_error('cannotfinduser', 'lesson');
+                throw new \moodle_exception('cannotfinduser', 'lesson');
             }
         }
 
@@ -216,13 +216,13 @@ switch ($mode) {
             $params[] = $userid;
         }
         if (!$attempts = $DB->get_records_select('lesson_attempts', "pageid $usql".$queryadd, $params)) {
-            print_error('nooneansweredthisquestion', 'lesson');
+            throw new \moodle_exception('nooneansweredthisquestion', 'lesson');
         }
         // Get the answers
         list($answerUsql, $parameters) = $DB->get_in_or_equal(array_keys($pages));
         array_unshift($parameters, $lesson->id);
         if (!$answers = $DB->get_records_select('lesson_answers', "lessonid = ? AND pageid $answerUsql", $parameters, '', 'pageid, score')) {
-            print_error('cannotfindanswer', 'lesson');
+            throw new \moodle_exception('cannotfindanswer', 'lesson');
         }
 
         $userpicture = new user_picture($USER);

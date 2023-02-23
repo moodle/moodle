@@ -20,10 +20,7 @@ Feature: Edit a users password
     Given the following "users" exist:
       | username | firstname | lastname | email              |
       | user01   | User      | One      | user01@example.com |
-    And I log in as "admin"
-    When I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I click on "User One" "link" in the "users" "table"
-    And I click on "Edit profile" "link"
+    When I am on the "user01" "user > editing" page logged in as "admin"
     Then "Sign out everywhere" "field" should not exist
 
   Scenario Outline: Sign out everywhere field is present based on expiry of active token
@@ -36,10 +33,7 @@ Feature: Edit a users password
     And the following "core_webservice > Tokens" exist:
       | user   | service       | validuntil   |
       | user01 | mytestservice | <validuntil> |
-    And I log in as "admin"
-    When I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I click on "User One" "link" in the "users" "table"
-    And I click on "Edit profile" "link"
+    When I am on the "user01" "user > editing" page logged in as "admin"
     Then "Sign out everywhere" "field" <shouldornot> exist
     Examples:
       | validuntil     | shouldornot |

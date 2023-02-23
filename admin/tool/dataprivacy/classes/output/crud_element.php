@@ -71,7 +71,6 @@ abstract class crud_element {
         $actionmenu = new \action_menu();
         $actionmenu->set_menu_trigger(get_string('actions'));
         $actionmenu->set_owner_selector($elementname . '-' . $exported->id . '-actions');
-        $actionmenu->set_alignment(\action_menu::TL, \action_menu::BL);
 
         $url = new \moodle_url('/admin/tool/dataprivacy/edit' . $elementname . '.php',
             ['id' => $exported->id]);

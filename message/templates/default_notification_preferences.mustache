@@ -1,0 +1,150 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_message/default_notification_preferences
+
+    This template will render the default notification preferences for admin settings.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * All data attributes are required
+
+    Context variables required for this template:
+    * providers Message providers
+    * components Provider components
+    * processors Message processors
+    * preferences Saved preferences
+
+    Example context (json):
+    {
+        "processors": [
+            {
+                "displayname": "Web",
+                "name": "popup"
+            }
+        ],
+        "components": [
+            {
+                "displayname": "Assignment",
+                "name": "mod_assign",
+                "colspan": 3,
+                "providers": [
+                    {
+                        "name": "assign_notification",
+                        "component": "mod_assign",
+                        "displayname": "Assignment notifications",
+                        "enabledsetting": "mod_assign_assign_notification_disable",
+                        "enabledlabel": "Sending Assignment enabled status",
+                        "enabled": 1,
+                        "settings": [
+                            {
+                                "lockedsetting": "mod_assign_assign_notification_locked[popup]",
+                                "locked": 1,
+                                "lockedlabel": "Sending Assignment via Web locked status",
+                                "enabledsetting": "mod_assign_assign_notification_enabled[popup]",
+                                "enabled": 1,
+                                "enabledlabel": "Sending Assignment via Web enabled status"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}}
+<div class="preferences-page-container">
+    <h2>{{#str}} managemessageoutputs, message {{/str}}</h2>
+
+    <div class="preferences-container">
+        <table class="table table-hover preference-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>{{#str}} enabled, core_message {{/str}}</th>
+                    {{#processors}}
+                        <th data-processor-name="{{name}}">{{{displayname}}}</th>
+                    {{/processors}}
+                </tr>
+            </thead>
+            <tbody>
+                {{#components}}
+                    <tr class="preference-row"><th colspan="{{{colspan}}}">{{{displayname}}}</th></tr>
+                    {{#providers}}
+                        <tr class="defaultmessageoutputs">
+                            <td>{{{displayname}}}</td>
+                            <td>
+                                <div data-preference="{{{enabledsetting}}}">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox"
+                                            id="{{{enabledsetting}}}"
+                                            name="{{{enabledsetting}}}"
+                                            class="custom-control-input provider_enabled"
+                                            {{#enabled}}checked{{/enabled}}
+                                        >
+                                        <label for="{{{enabledsetting}}}" class="custom-control-label"
+                                            title="{{enabledlabel}}">
+                                            <span class="accesshide">{{enabledlabel}}</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </td>
+                            {{#settings}}
+                                <td class="text-left">
+                                    <div data-preference="{{{enabledsetting}}}">
+                                        <div class="custom-control custom-switch {{#locked}} dimmed_text{{/locked}} pb-1">
+                                            <input type="checkbox"
+                                                id="{{{enabledsetting}}}"
+                                                name="{{{enabledsetting}}}"
+                                                class="custom-control-input enabled_message_setting"
+                                                {{#enabled}}checked{{/enabled}}
+                                            >
+                                            <label for="{{{enabledsetting}}}" class="custom-control-label"
+                                                title="{{enabledlabel}}">
+                                                {{#str}} enabled, core_message {{/str}}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div data-preference="{{{lockedsetting}}}">
+                                        <div class="custom-control custom-switch pt-1">
+                                            <input type="checkbox"
+                                                id="{{{lockedsetting}}}"
+                                                name="{{{lockedsetting}}}"
+                                                class="custom-control-input locked_message_setting"
+                                                {{#locked}}checked{{/locked}}
+                                            >
+                                            <label for="{{{lockedsetting}}}" class="custom-control-label"
+                                                title="{{lockedlabel}}">
+                                                {{#str}} forced, core_message {{/str}}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </td>
+                            {{/settings}}
+                        </tr>
+                    {{/providers}}
+                {{/components}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{#js}}
+require(['core_message/default_notification_preferences'], function(NotificationPreferences) {
+        NotificationPreferences.init();
+    });
+{{/js}}

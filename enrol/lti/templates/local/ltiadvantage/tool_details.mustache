@@ -1,0 +1,132 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template enrol_lti/local/ltiadvantage/tool_details
+
+    Template which displays a list of tool endpoint URLs, allowing the values to be copied to the clipboard via js.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * dynamic_registration_info
+    * dynamic_registration_url
+    * manual_registration_info
+    * manual_registration_urls
+
+    Example context (json):
+    {
+        "dynamic_registration_info": "Help text describing dynamic registration...",
+        "dynamic_registration_url": {
+            "id": "ab34dgdfa",
+            "name": "Dynamic registration URL",
+            "url": "https://example.com/enrol/lti/register.php?tok=asdb123b12babsdb"
+        },
+        "manual_registration_info": "Help text describing manual registration...",
+        "manual_registration_urls": [
+            {
+                "id": "asdb1234m",
+                "name": "Authentication Request URL",
+                "url": "https://example.com/enrol/lti/login.php"
+            },
+            {
+                "id": "123GHn123",
+                "name": "JWKS URL",
+                "url": "https://example.com/enrol/lti/jwks.php"
+            }
+        ]
+    }
+}}
+<h5>{{#str}}registrationdynamic, enrol_lti{{/str}}</h5>
+<div class="alert alert-info alert-block">
+    {{{dynamic_registration_info}}}
+</div>
+{{#dynamic_registration_url}}
+    <table class="admintable generaltable">
+        <thead></thead>
+        <tbody>
+        <tr class="d-flex">
+            <th class="col-3" id="lti_tool_endpoint_name_{{id}}">
+                <label for="lti_tool_endpoint_url_{{id}}">{{name}}</label>
+            </th>
+            <td class="col-9">
+                <div class="input-group col-md-6 ml-0 pl-0">
+                    <input class="form-control" type="text" value="{{url}}" aria-label="{{url}}" id="lti_tool_endpoint_url_{{id}}" readonly>
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary"
+                           aria-label="{{#str}} copytoclipboard, enrol_lti {{/str}}"
+                           data-action="copytoclipboard"
+                           data-clipboard-success-message="{{#str}}copiedtoclipboard, enrol_lti, {{name}}{{/str}}"
+                           data-clipboard-target="#lti_tool_endpoint_url_{{id}}"
+                           id="{{id}}"
+                           title="{{#str}}copytoclipboard, enrol_lti{{/str}}">
+                            <span class="pix">{{#pix}} t/clipboard, core {{/pix}}</span>
+                        </button>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+{{/dynamic_registration_url}}
+<h5>{{#str}}registrationmanual, enrol_lti{{/str}}</h5>
+<div class="alert alert-info alert-block">
+    {{manual_registration_info}}
+</div>
+<div id="lti_tool_endpoints">
+    <table class="admintable generaltable">
+        <thead>
+        <tr class="d-flex">
+            <th>{{#str}}name, core{{/str}}</th>
+            <th>{{#str}}url, core{{/str}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#manual_registration_urls}}
+            <tr class="d-flex">
+                <th class="col-3" id="lti_tool_endpoint_name_{{id}}">
+                    <label for="lti_tool_endpoint_url_{{id}}">{{name}}</label>
+                </th>
+                <td class="col-9">
+                    <div class="input-group col-md-6 ml-0 pl-0">
+                        <input class="form-control" type="text" value="{{url}}" aria-label="{{url}}" id="lti_tool_endpoint_url_{{id}}" readonly>
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary"
+                               aria-label="{{#str}} copytoclipboard, enrol_lti {{/str}}"
+                               data-action="copytoclipboard"
+                               data-clipboard-success-message="{{#str}}copiedtoclipboard, enrol_lti, {{name}}{{/str}}"
+                               data-clipboard-target="#lti_tool_endpoint_url_{{id}}"
+                               id="{{id}}"
+                               title="{{#str}}copytoclipboard, enrol_lti{{/str}}">
+                                <span class="pix">{{#pix}} t/clipboard, core {{/pix}}</span>
+                            </button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        {{/manual_registration_urls}}
+        </tbody>
+    </table>
+</div>
+{{#js}}
+    require(['enrol_lti/tool_endpoints'], function(ToolEndpoints) {
+        ToolEndpoints.init();
+    });
+{{/js}}

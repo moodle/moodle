@@ -15,46 +15,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Upgrade library code for the calculated multiple-choice question type.
- *
- * @package    qtype
- * @subpackage calculatedmulti
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-
-defined('MOODLE_INTERNAL') || die();
-
-
-/**
  * Class for converting attempt data for calculated multiple-choice questions
  * when upgrading attempts to the new question engine.
  *
  * This class is used by the code in question/engine/upgrade/upgradelib.php.
  *
+ * @package    qtype_calculatedmulti
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_calculatedmulti_qe2_attempt_updater extends question_qtype_attempt_updater {
     protected $selecteditem = null;
     /** @var array variable name => value */
-    protected $values;
+    protected $values = [];
 
     /** @var array variable names wrapped in {...}. Used by {@link substitute_values()}. */
-    protected $search;
+    protected $search = [];
 
     /**
      * @var array variable values, with negative numbers wrapped in (...).
      * Used by {@link substitute_values()}.
      */
-    protected $safevalue;
+    protected $safevalue = [];
 
     /**
      * @var array variable values, with negative numbers wrapped in (...).
      * Used by {@link substitute_values()}.
      */
-    protected $prettyvalue;
+    protected $prettyvalue = [];
 
     protected $order;
 
@@ -69,9 +57,8 @@ class qtype_calculatedmulti_qe2_attempt_updater extends question_qtype_attempt_u
                     return $this->to_text($this->replace_expressions_in_text($ans->answer));
                 }
             }
-
         } else {
-            $rightbits = array();
+            $rightbits = [];
             foreach ($this->question->options->answers as $ans) {
                 if ($ans->fraction >= 0.000001) {
                     $rightbits[] = $this->to_text($this->replace_expressions_in_text($ans->answer));
@@ -87,7 +74,7 @@ class qtype_calculatedmulti_qe2_attempt_updater extends question_qtype_attempt_u
             throw new coding_exception("Brokes state {$state->id} for calcluatedmulti
                     question {$state->question}. (It did not specify a dataset.");
         }
-        list($datasetbit, $answer) = explode('-', $state->answer, 2);
+        [$datasetbit, $answer] = explode('-', $state->answer, 2);
         $selecteditem = substr($datasetbit, 7);
 
         if (is_null($this->selecteditem)) {
@@ -99,7 +86,7 @@ class qtype_calculatedmulti_qe2_attempt_updater extends question_qtype_attempt_u
         }
 
         if (strpos($answer, ':') !== false) {
-            list($order, $responses) = explode(':', $answer);
+            [$order, $responses] = explode(':', $answer);
             return $responses;
         } else {
             // Sometimes, a bug means that a state is missing the <order>: bit,
@@ -116,7 +103,8 @@ class qtype_calculatedmulti_qe2_attempt_updater extends question_qtype_attempt_u
             if (is_numeric($responses)) {
                 if (array_key_exists($responses, $this->question->options->answers)) {
                     return $this->to_text($this->replace_expressions_in_text(
-                            $this->question->options->answers[$responses]->answer));
+                        $this->question->options->answers[$responses]->answer
+                    ));
                 } else {
                     $this->logger->log_assumption("Dealing with a place where the
                             student selected a choice that was later deleted for
@@ -126,15 +114,15 @@ class qtype_calculatedmulti_qe2_attempt_updater extends question_qtype_attempt_u
             } else {
                 return null;
             }
-
         } else {
             if (!empty($responses)) {
                 $responses = explode(',', $responses);
-                $bits = array();
+                $bits = [];
                 foreach ($responses as $response) {
                     if (array_key_exists($response, $this->question->options->answers)) {
                         $bits[] = $this->to_text($this->replace_expressions_in_text(
-                                $this->question->options->answers[$response]->answer));
+                            $this->question->options->answers[$response]->answer
+                        ));
                     } else {
                         $this->logger->log_assumption("Dealing with a place where the
                                 student selected a choice that was later deleted for
@@ -161,15 +149,16 @@ class qtype_calculatedmulti_qe2_attempt_updater extends question_qtype_attempt_u
     public function set_first_step_data_elements($state, &$data) {
         $this->explode_answer($state);
         $this->updater->qa->questionsummary = $this->to_text(
-                $this->replace_expressions_in_text($this->question->questiontext));
+            $this->replace_expressions_in_text($this->question->questiontext)
+        );
         $this->updater->qa->rightanswer = $this->right_answer($this->question);
 
         foreach ($this->values as $name => $value) {
             $data['_var_' . $name] = $value;
         }
 
-        list($datasetbit, $answer) = explode('-', $state->answer, 2);
-        list($order, $responses) = explode(':', $answer);
+        [$datasetbit, $answer] = explode('-', $state->answer, 2);
+        [$order, $responses] = explode(':', $answer);
         $data['_order'] = $order;
         $this->order = explode(',', $order);
     }
@@ -189,7 +178,6 @@ class qtype_calculatedmulti_qe2_attempt_updater extends question_qtype_attempt_u
                     $data['answer'] = '-1';
                 }
             }
-
         } else {
             $responses = explode(',', $responses);
             foreach ($this->order as $key => $ansid) {
@@ -206,12 +194,14 @@ class qtype_calculatedmulti_qe2_attempt_updater extends question_qtype_attempt_u
         $this->selecteditem = $selecteditem;
         $this->updater->qa->variant = $selecteditem;
         $this->values = $this->qeupdater->load_dataset(
-                $this->question->id, $selecteditem);
+            $this->question->id,
+            $selecteditem
+        );
 
         // Prepare an array for {@link substitute_values()}.
-        $this->search = array();
-        $this->safevalue = array();
-        $this->prettyvalue = array();
+        $this->search = [];
+        $this->safevalue = [];
+        $this->prettyvalue = [];
         foreach ($this->values as $name => $value) {
             if (!is_numeric($value)) {
                 $a = new stdClass();
@@ -294,7 +284,7 @@ class qtype_calculatedmulti_qe2_attempt_updater extends question_qtype_attempt_u
      *      corresponding value.
      */
     protected function substitute_values_for_eval($expression) {
-        return str_replace($this->search, $this->safevalue, $expression);
+        return str_replace($this->search, $this->safevalue, $expression ?? '');
     }
 
     /**
@@ -306,7 +296,7 @@ class qtype_calculatedmulti_qe2_attempt_updater extends question_qtype_attempt_u
      *      corresponding value.
      */
     protected function substitute_values_pretty($text) {
-        return str_replace($this->search, $this->prettyvalue, $text);
+        return str_replace($this->search, $this->prettyvalue, $text ?? '');
     }
 
     /**
@@ -316,11 +306,18 @@ class qtype_calculatedmulti_qe2_attempt_updater extends question_qtype_attempt_u
      * @return string the text with values substituted.
      */
     public function replace_expressions_in_text($text, $length = null, $format = null) {
+        if ($text === null || $text === '') {
+            return $text;
+        }
+
         $vs = $this; // Can't see to use $this in a PHP closure.
-        $text = preg_replace_callback(qtype_calculated::FORMULAS_IN_TEXT_REGEX,
-                function ($matches) use ($vs, $format, $length) {
-                    return $vs->format_float($vs->calculate($matches[1]), $length, $format);
-                }, $text);
+        $text = preg_replace_callback(
+            qtype_calculated::FORMULAS_IN_TEXT_REGEX,
+            function ($matches) use ($vs, $format, $length) {
+                return $vs->format_float($vs->calculate($matches[1]), $length, $format);
+            },
+            $text
+        );
         return $this->substitute_values_pretty($text);
     }
 }

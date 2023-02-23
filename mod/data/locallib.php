@@ -270,7 +270,11 @@ class data_portfolio_caller extends portfolio_module_caller_base {
             return true; // too early yet
         }
         foreach ($this->fieldtypes as $key => $field) {
-            require_once($CFG->dirroot . '/mod/data/field/' . $field .'/field.class.php');
+            $filepath = $CFG->dirroot . '/mod/data/field/' . $field .'/field.class.php';
+            if (!file_exists($filepath)) {
+                continue;
+            }
+            require_once($filepath);
             $this->fields[$key] = unserialize(serialize($this->fields[$key]));
         }
     }
@@ -328,6 +332,11 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         $replacement[] = '';
         $replacement[] = userdate($record->timecreated);
         $replacement[] = userdate($record->timemodified);
+
+        if (empty($this->data->singletemplate)) {
+            // Use default template if the template is not created.
+            $this->data->singletemplate = data_generate_default_template($this->data, 'singletemplate', 0, false, false);
+        }
 
         // actual replacement of the tags
         return array(str_ireplace($patterns, $replacement, $this->data->singletemplate), $files);
@@ -959,6 +968,10 @@ function data_get_tag_title_field($dataid) {
     $validfieldtypes = array('text', 'textarea', 'menu', 'radiobutton', 'checkbox', 'multimenu', 'url');
     $fields = $DB->get_records('data_fields', ['dataid' => $dataid]);
     $template = $DB->get_field('data', 'addtemplate', ['id' => $dataid]);
+    if (empty($template)) {
+        $data = $DB->get_record('data', ['id' => $dataid]);
+        $template = data_generate_default_template($data, 'addtemplate', 0, false, false);
+    }
 
     $filteredfields = [];
 
@@ -970,7 +983,11 @@ function data_get_tag_title_field($dataid) {
         if ($field->addtemplateposition === false) {
             continue;
         }
-        require_once($CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php');
+        $filepath = $CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php';
+        if (!file_exists($filepath)) {
+            continue;
+        }
+        require_once($filepath);
         $classname = 'data_field_' . $field->type;
         $field->priority = $classname::get_priority();
         $filteredfields[] = $field;
@@ -1001,11 +1018,19 @@ function data_get_tag_title_field($dataid) {
  *
  * @param stdClass $field The field from the 'data_fields' table
  * @param stdClass $entry The entry from the 'data_records' table
- * @return string The title of the entry
+ * @return string|null It will return the title of the entry or null if the field type is not available.
  */
 function data_get_tag_title_for_entry($field, $entry) {
     global $CFG, $DB;
-    require_once($CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php');
+
+    if (!isset($field->type)) {
+        return null;
+    }
+    $filepath = $CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php';
+    if (!file_exists($filepath)) {
+        return null;
+    }
+    require_once($filepath);
 
     $classname = 'data_field_' . $field->type;
     $sql = "SELECT dc.*
@@ -1116,7 +1141,7 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
     $namefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
 
     // Find the field we are sorting on.
-    if ($sort <= 0 or !$sortfield = data_get_field_from_id($sort, $data)) {
+    if ($sort <= 0 || !($sortfield = data_get_field_from_id($sort, $data))) {
 
         switch ($sort) {
             case DATA_LASTNAME:
@@ -1168,7 +1193,7 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
 
     } else {
 
-        $sortcontent = $DB->sql_compare_text('c.' . $sortfield->get_sort_field());
+        $sortcontent = $DB->sql_compare_text('s.' . $sortfield->get_sort_field());
         $sortcontentfull = $sortfield->get_sort_sql($sortcontent);
 
         $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, r.groupid, r.dataid, ' . $namefields . ',
@@ -1179,7 +1204,8 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
                      AND r.dataid = :dataid
                      AND r.userid = u.id ';
         if (!$advanced) {
-            $where .= 'AND c.fieldid = :sort';
+            $where .= 'AND s.fieldid = :sort AND s.recordid = r.id';
+            $tables .= ',{data_content} s ';
         }
         $params['dataid'] = $data->id;
         $params['sort'] = $sort;
@@ -1334,7 +1360,7 @@ function data_build_search_array($data, $paging, $searcharray, $defaults = null,
             $searchfield = data_get_field_from_id($field->id, $data);
             // Get field data to build search sql with.  If paging is false, get from user.
             // If paging is true, get data from $searcharray which is obtained from the $SESSION (see line 116).
-            if (!$paging) {
+            if (!$paging && $searchfield->type != 'unknown') {
                 $val = $searchfield->parse_search_field($defaults);
             } else {
                 // Set value from session if there is a value @ the required index.

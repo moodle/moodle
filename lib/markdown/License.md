@@ -1,5 +1,5 @@
 PHP Markdown Lib  
-Copyright (c) 2004-2018 Michel Fortin
+Copyright (c) 2004-2022 Michel Fortin
 <https://michelf.ca/>  
 All rights reserved.
 

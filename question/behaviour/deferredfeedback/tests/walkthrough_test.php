@@ -14,16 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests that walks a question through the deferred feedback
- * behaviour.
- *
- * @package    qbehaviour
- * @subpackage deferredfeedback
- * @copyright  2009 The Open University
- * @license  http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qbehaviour_deferredfeedback;
 
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,14 +28,15 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
 /**
  * Unit tests for the deferred feedback behaviour.
  *
+ * @package    qbehaviour_deferredfeedback
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_deferredfeedback_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class walkthrough_test extends \qbehaviour_walkthrough_test_base {
     public function test_deferredfeedback_feedback_truefalse() {
 
         // Create a true-false question with correct answer true.
-        $tf = test_question_maker::make_question('truefalse', 'true');
+        $tf = \test_question_maker::make_question('truefalse', 'true');
         $this->start_attempt_at_question($tf, 'deferredfeedback', 2);
 
         // Check the initial state.
@@ -89,7 +83,7 @@ class qbehaviour_deferredfeedback_walkthrough_test extends qbehaviour_walkthroug
         $this->check_current_mark(2);
         $this->check_current_output($this->get_contains_correct_expectation(),
                 $this->get_contains_tf_true_radio_expectation(false, true),
-                new question_pattern_expectation('/class="r0 correct"/'));
+                new \question_pattern_expectation('/class="r0 correct"/'));
         $this->assertEquals(get_string('true', 'qtype_truefalse'),
                 $this->quba->get_response_summary($this->slot));
 
@@ -99,7 +93,7 @@ class qbehaviour_deferredfeedback_walkthrough_test extends qbehaviour_walkthroug
         $this->check_current_state(question_state::$mangrpartial);
         $this->check_current_mark(1);
         $this->check_current_output(
-                new question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
+                new \question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
 
         // Now change the correct answer to the question, and regrade.
         $tf->rightanswer = false;
@@ -116,7 +110,7 @@ class qbehaviour_deferredfeedback_walkthrough_test extends qbehaviour_walkthroug
     public function test_deferredfeedback_feedback_multichoice_single() {
 
         // Create a true-false question with correct answer true.
-        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc = \test_question_maker::make_a_multichoice_single_question();
         $this->start_attempt_at_question($mc, 'deferredfeedback', 3);
 
         // Start a deferred feedback attempt and add the question to it.
@@ -171,7 +165,7 @@ class qbehaviour_deferredfeedback_walkthrough_test extends qbehaviour_walkthroug
     public function test_deferredfeedback_resume_multichoice_single() {
 
         // Create a multiple-choice question.
-        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc = \test_question_maker::make_a_multichoice_single_question();
 
         // Attempt it getting it wrong.
         $this->start_attempt_at_question($mc, 'deferredfeedback', 3);
@@ -224,7 +218,7 @@ class qbehaviour_deferredfeedback_walkthrough_test extends qbehaviour_walkthroug
     public function test_deferredfeedback_resume_multichoice_single_emptyanswer_first() {
 
         // Create a multiple-choice question.
-        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc = \test_question_maker::make_a_multichoice_single_question();
 
         // Attempt it and submit empty.
         $this->start_attempt_at_question($mc, 'deferredfeedback', 3);

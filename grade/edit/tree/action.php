@@ -33,7 +33,7 @@ $PAGE->set_url('/grade/edit/tree/action.php', array('id'=>$courseid, 'action'=>$
 
 /// Make sure they can even access this course
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 require_login($course);
 $context = context_course::instance($course->id);
@@ -47,7 +47,7 @@ $gtree = new grade_tree($courseid, false, false);
 
 // what are we working with?
 if (!$element = $gtree->locate_element($eid)) {
-    print_error('invalidelementid', '', $returnurl);
+    throw new \moodle_exception('invalidelementid', '', $returnurl);
 }
 $object = $element['object'];
 $type   = $element['type'];
@@ -57,13 +57,13 @@ switch ($action) {
     case 'hide':
         if ($eid and confirm_sesskey()) {
             if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:hide', $context)) {
-                print_error('nopermissiontohide', '', $returnurl);
+                throw new \moodle_exception('nopermissiontohide', '', $returnurl);
             }
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
             }
             if (!$object->can_control_visibility()) {
-                print_error('componentcontrolsvisibility', 'grades', $returnurl);
+                throw new \moodle_exception('componentcontrolsvisibility', 'grades', $returnurl);
             }
             $object->set_hidden(1, true);
         }
@@ -72,13 +72,13 @@ switch ($action) {
     case 'show':
         if ($eid and confirm_sesskey()) {
             if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:hide', $context)) {
-                print_error('nopermissiontoshow', '', $returnurl);
+                throw new \moodle_exception('nopermissiontoshow', '', $returnurl);
             }
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
             }
             if (!$object->can_control_visibility()) {
-                print_error('componentcontrolsvisibility', 'grades', $returnurl);
+                throw new \moodle_exception('componentcontrolsvisibility', 'grades', $returnurl);
             }
             $object->set_hidden(0, true);
         }
@@ -87,7 +87,7 @@ switch ($action) {
     case 'lock':
         if ($eid and confirm_sesskey()) {
             if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:lock', $context)) {
-                print_error('nopermissiontolock', '', $returnurl);
+                throw new \moodle_exception('nopermissiontolock', '', $returnurl);
             }
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
@@ -99,7 +99,7 @@ switch ($action) {
     case 'unlock':
         if ($eid and confirm_sesskey()) {
             if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:unlock', $context)) {
-                print_error('nopermissiontounlock', '', $returnurl);
+                throw new \moodle_exception('nopermissiontounlock', '', $returnurl);
             }
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
@@ -115,7 +115,7 @@ switch ($action) {
             // only be done by someone who can manage the grades.
             if ($type != 'category' || $object->aggregation != GRADE_AGGREGATE_SUM ||
                     !has_capability('moodle/grade:manage', $context)) {
-                print_error('nopermissiontoresetweights', 'grades', $returnurl);
+                throw new \moodle_exception('nopermissiontoresetweights', 'grades', $returnurl);
             }
 
             // Remove the weightoverride flag from the children.

@@ -131,7 +131,7 @@ class feedback_item_textfield extends feedback_item_base {
         $values = feedback_get_group_values($item, $groupid, $courseid);
         if ($values) {
             echo "<table class=\"analysis itemtype_{$item->typ}\">";
-            echo '<tr><th colspan="2" align="left">';
+            echo '<tr><th class="text-left">';
             echo $itemnr . ' ';
             if (strval($item->label) !== '') {
                 echo '('. format_string($item->label).') ';
@@ -140,7 +140,7 @@ class feedback_item_textfield extends feedback_item_base {
             echo '</th></tr>';
             foreach ($values as $value) {
                 $class = strlen(trim($value->value)) ? '' : ' class="isempty"';
-                echo '<tr'.$class.'><td colspan="2" class="singlevalue">';
+                echo '<tr'.$class.'><td class="singlevalue">';
                 echo str_replace("\n", '<br />', $value->value);
                 echo '</td></tr>';
             }

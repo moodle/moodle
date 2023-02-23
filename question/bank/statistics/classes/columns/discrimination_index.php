@@ -19,7 +19,9 @@ namespace qbank_statistics\columns;
 use core_question\local\bank\column_base;
 use qbank_statistics\helper;
 /**
- * Discrimination index column
+ * This columns shows a message about whether this question is OK or needs revision.
+ *
+ * This is based on the average discrimination index.
  *
  * @package    qbank_statistics
  * @copyright  2021 Catalyst IT Australia Pty Ltd
@@ -33,8 +35,12 @@ class discrimination_index extends column_base {
      *
      * @return string column title
      */
-    protected function get_title(): string {
+    public function get_title(): string {
         return get_string('discrimination_index', 'qbank_statistics');
+    }
+
+    public function help_icon(): ?\help_icon {
+        return new \help_icon('discrimination_index', 'qbank_statistics');
     }
 
     /**
@@ -57,4 +63,9 @@ class discrimination_index extends column_base {
         $discriminationindex = helper::calculate_average_question_discrimination_index($question->id);
         echo $PAGE->get_renderer('qbank_statistics')->render_discrimination_index($discriminationindex);
     }
+
+    public function get_extra_classes(): array {
+        return ['pr-3'];
+    }
+
 }

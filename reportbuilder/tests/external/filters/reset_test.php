@@ -18,9 +18,12 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\external\filters;
 
-use external_api;
+use core_reportbuilder_generator;
+use core_reportbuilder\manager;
+use core_reportbuilder\report_access_exception;
+use core_external\external_api;
 use externallib_advanced_testcase;
-use core_reportbuilder\local\helpers\user_filter_manager;
+use core_user\reportbuilder\datasource\users;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -44,18 +47,40 @@ class reset_test extends externallib_advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        user_filter_manager::set(5, [
-            'entity:filter_name' => 'something',
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
+
+        $instance = manager::get_report_from_persistent($report);
+        $instance->set_filter_values([
+            'entity:filter_operator' => 'something',
+            'entity:filter_value' => 42,
         ]);
 
-        $this->assertCount(1, user_filter_manager::get(5));
-
-        $result = reset::execute(5);
+        $result = reset::execute($report->get('id'));
         $result = external_api::clean_returnvalue(reset::execute_returns(), $result);
 
         $this->assertTrue($result);
 
         // We should get an empty array back.
-        $this->assertEquals([], user_filter_manager::get(5));
+        $this->assertEquals([], $instance->get_filter_values());
+    }
+
+    /**
+     * Test execute method for a user without permission to view the report
+     */
+    public function test_execute_access_exception(): void {
+        $this->resetAfterTest();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $this->expectException(report_access_exception::class);
+        $this->expectExceptionMessage('You cannot view this report');
+        reset::execute($report->get('id'));
     }
 }

@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Auth oauth2 api functions tests.
- *
- * @package     auth_oauth2
- * @copyright   2017 Damyon Wiese
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
+namespace auth_oauth2;
 
 /**
  * External auth oauth2 API tests.
@@ -33,7 +23,7 @@ global $CFG;
  * @copyright   2017 Damyon Wiese
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class auth_oauth2_external_testcase extends advanced_testcase {
+class api_test extends \advanced_testcase {
 
     /**
      * Test the cleaning of orphaned linked logins for all issuers.

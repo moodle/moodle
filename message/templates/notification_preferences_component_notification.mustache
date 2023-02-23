@@ -40,70 +40,33 @@
                 "name": "popup",
                 "locked": 0,
                 "userconfigured": 1,
-                "loggedin": {
-                    "name": "loggedin",
-                    "displayname": "When I'm logged in",
-                    "checked": 0
-                },
-                "loggedoff": {
-                    "name": "loggedoff",
-                    "displayname": "When I'm offline",
-                    "checked": 0
-                }
+                "enabled": 1,
+                "enabledlabel": "Sending Assignment enabled status"
             }
         ]
     }
 }}
-<tr class="preference-row" data-region="preference-row" data-preference-key="{{preferencekey}}">
-    <td class="preference-name">{{displayname}}</td>
+<tr class="preference-row" data-region="preference-row" data-preference-key="{{{preferencekey}}}">
+    <td class="preference-name">{{{displayname}}}</td>
     {{#processors}}
-    <td {{^userconfigured}}class="disabled"{{/userconfigured}} data-processor-name="{{name}}">
+        <td {{^userconfigured}}class="disabled"{{/userconfigured}} data-processor-name="{{name}}">
             {{#locked}}
-                <div class="dimmed_text">{{lockedmessage}}</div>
+                <div class="dimmed_text" title="{{lockedlabel}}">{{{lockedmessage}}}</div>
             {{/locked}}
             {{^locked}}
-                <div class="disabled-message">{{#str}} disabled, admin {{/str}}</div>
                 <form>
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-6">
-                                {{#loggedin}}
-                                    {{< core/hover_tooltip }}
-                                        {{$anchor}}
-                                            <label class="custom-control custom-switch"
-                                                title="{{displayname}}"
-                                                data-state="{{name}}">
-                                                <span class="accesshide">{{displayname}}</span>
-                                                <input type="checkbox"
-                                                    class="custom-control-input"
-                                                    {{#checked}}checked{{/checked}}
-                                                    {{#disableall}}disabled{{/disableall}} />
-                                                <span class="custom-control-label d-block"></span>
-                                            </label>
-                                        {{/anchor}}
-                                        {{$tooltip}}{{displayname}}{{/tooltip}}
-                                    {{/ core/hover_tooltip }}
-                                {{/loggedin}}
-                            </div>
-                            <div class="col-6">
-                                {{#loggedoff}}
-                                    {{< core/hover_tooltip }}
-                                        {{$anchor}}
-                                            <label class="custom-control custom-switch"
-                                                title="{{displayname}}"
-                                                data-state="{{name}}">
-                                                <span class="accesshide">{{displayname}}</span>
-                                                <input type="checkbox"
-                                                    class="custom-control-input"
-                                                    {{#checked}}checked{{/checked}}
-                                                    {{#disableall}}disabled{{/disableall}} />
-                                                <span class="custom-control-label d-block"></span>
-                                            </label>
-                                        {{/anchor}}
-                                        {{$tooltip}}{{displayname}}{{/tooltip}}
-                                    {{/ core/hover_tooltip }}
-                                {{/loggedoff}}
-                            </div>
+                    <div class="preference-state" data-preference="{{{preferencekey}}}_{{{name}}}">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox"
+                                id="{{{preferencekey}}}_{{{name}}}"
+                                name="{{{preferencekey}}}_{{{name}}}"
+                                class="custom-control-input notification_enabled{{#disableall}} disabled{{/disableall}}"
+                                {{#disableall}} disabled="true" {{/disableall}}
+                                {{#enabled}}checked{{/enabled}}
+                            >
+                            <label for="{{{preferencekey}}}_{{{name}}}" class="custom-control-label"
+                                title="{{enabledlabel}}" >
+                            </label>
                         </div>
                     </div>
                 </form>

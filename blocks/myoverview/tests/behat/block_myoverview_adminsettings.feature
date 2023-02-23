@@ -26,26 +26,26 @@ Feature: The my overview block allows admins to easily configure the students' c
       | student1 | C4 | student |
       | student1 | C5 | student |
 
-  Scenario: Enable 'All (including archived)' course filter option
+  Scenario: Enable 'All (including removed from view)' course filter option
     Given I log in as "admin"
     And I navigate to "Plugins > Blocks > Course overview" in site administration
-    And I set the field "All (including archived)" to "1"
+    And I set the field "All (including removed from view)" to "1"
     And I press "Save"
     And I log out
     Then I am on the "My courses" page logged in as "student1"
     And I click on "All" "button" in the "Course overview" "block"
     # We have to check for the data attribute instead of the list element text as we would get false positives from the "All" element otherwise
-    Then "All (including archived)" "list_item" should exist in the ".block_myoverview .dropdown-menu" "css_element"
+    Then "All (including removed from view)" "list_item" should exist in the ".block_myoverview .dropdown-menu" "css_element"
 
-  Scenario: Disable 'All (including archived)' course filter option
+  Scenario: Disable 'All (including removed from view)' course filter option
     Given I log in as "admin"
     And I navigate to "Plugins > Blocks > Course overview" in site administration
-    And I set the field "All (including archived)" to "0"
+    And I set the field "All (including removed from view)" to "0"
     And I press "Save"
     And I log out
     Then I am on the "My courses" page logged in as "student1"
     And I click on "All" "button" in the "Course overview" "block"
-    Then "All (including archived)" "list_item" should not exist in the ".block_myoverview .dropdown-menu" "css_element"
+    Then "All (including removed from view)" "list_item" should not exist in the ".block_myoverview .dropdown-menu" "css_element"
 
   Scenario: Enable 'All' course filter option
     Given I log in as "admin"
@@ -76,7 +76,7 @@ Feature: The my overview block allows admins to easily configure the students' c
     And I log out
     Then I am on the "My courses" page logged in as "student1"
     And I click on "All" "button" in the "Course overview" "block"
-    # We have to check for the data attribute instead of the list element text as we would get false negatives "All (including archived)" element otherwise
+    # We have to check for the data attribute instead of the list element text as we would get false negatives "All (including removed from view)" element otherwise
     Then "In progress" "list_item" should exist in the ".block_myoverview .dropdown-menu" "css_element"
 
   Scenario: Disable 'In progress' course filter option
@@ -152,33 +152,33 @@ Feature: The my overview block allows admins to easily configure the students' c
   Scenario: Enable 'Removed courses' course filter option
     Given I log in as "admin"
     And I navigate to "Plugins > Blocks > Course overview" in site administration
-    And I set the field "Archived" to "1"
+    And I set the field "Removed from view" to "1"
     And I press "Save"
     And I log out
     Then I am on the "My courses" page logged in as "student1"
     And I click on "All" "button" in the "Course overview" "block"
-    Then "Archived" "list_item" should exist in the ".block_myoverview .dropdown-menu" "css_element"
+    Then "Removed from view" "list_item" should exist in the ".block_myoverview .dropdown-menu" "css_element"
 
   Scenario: Disable 'Removed courses' course filter option
     Given I log in as "admin"
     And I navigate to "Plugins > Blocks > Course overview" in site administration
-    And I set the field "Archived" to "0"
+    And I set the field "Removed from view" to "0"
     And I press "Save"
     And I log out
     Then I am on the "My courses" page logged in as "student1"
     And I click on "All" "button" in the "Course overview" "block"
-    Then "Archived" "list_item" should not exist in the ".block_myoverview .dropdown-menu" "css_element"
+    Then "Removed from view" "list_item" should not exist in the ".block_myoverview .dropdown-menu" "css_element"
 
   Scenario: Disable all course filter options
     Given I log in as "admin"
     And I navigate to "Plugins > Blocks > Course overview" in site administration
-    And I set the field "All (including archived)" to "0"
+    And I set the field "All (including removed from view)" to "0"
     And I set the field "All" in the "//*[@id=\"admin-displaygroupingall\"]" "xpath_element" to "0"
     And I set the field "In progress" to "0"
     And I set the field "Future" to "0"
     And I set the field "Past" to "0"
     And I set the field "Starred" to "0"
-    And I set the field "Archived" to "0"
+    And I set the field "Removed from view" to "0"
     And I press "Save"
     And I log out
     And I am on the "My courses" page logged in as "student1"
@@ -192,13 +192,13 @@ Feature: The my overview block allows admins to easily configure the students' c
   Scenario: Disable all but one course filter option
     Given I log in as "admin"
     And I navigate to "Plugins > Blocks > Course overview" in site administration
-    And I set the field "All (including archived)" to "0"
+    And I set the field "All (including removed from view)" to "0"
     And I set the field "All" in the "//*[@id=\"admin-displaygroupingall\"]" "xpath_element" to "0"
     And I set the field "In progress" to "1"
     And I set the field "Future" to "0"
     And I set the field "Past" to "0"
     And I set the field "Starred" to "0"
-    And I set the field "Archived" to "0"
+    And I set the field "Removed from view" to "0"
     And I press "Save"
     And I log out
     And I am on the "My courses" page logged in as "student1"

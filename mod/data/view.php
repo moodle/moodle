@@ -1,26 +1,28 @@
 <?php
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 2005 Martin Dougiamas  http://dougiamas.com             //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This file is part of the Database module for Moodle
+ *
+ * @copyright 2005 Martin Dougiamas  http://dougiamas.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package mod_data
+ */
+
+use mod_data\manager;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/data/locallib.php');
@@ -43,59 +45,32 @@ $delete = optional_param('delete', 0, PARAM_INT);    //delete recordid
 $multidelete = optional_param_array('delcheck', null, PARAM_INT);
 $serialdelete = optional_param('serialdelete', null, PARAM_RAW);
 
-if ($id) {
-    if (! $cm = get_coursemodule_from_id('data', $id)) {
-        print_error('invalidcoursemodule');
-    }
-    if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
-        print_error('coursemisconf');
-    }
-    if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
-        print_error('invalidcoursemodule');
-    }
-    $record = NULL;
+$record = null;
 
+if ($id) {
+    list($course, $cm) = get_course_and_cm_from_cmid($id, manager::MODULE);
+    $manager = manager::create_from_coursemodule($cm);
 } else if ($rid) {
-    if (! $record = $DB->get_record('data_records', array('id'=>$rid))) {
-        print_error('invalidrecord', 'data');
-    }
-    if (! $data = $DB->get_record('data', array('id'=>$record->dataid))) {
-        print_error('invalidid', 'data');
-    }
-    if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-        print_error('coursemisconf');
-    }
-    if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        print_error('invalidcoursemodule');
-    }
-} else {   // We must have $d
-    if (! $data = $DB->get_record('data', array('id'=>$d))) {
-        print_error('invalidid', 'data');
-    }
-    if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-        print_error('coursemisconf');
-    }
-    if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        print_error('invalidcoursemodule');
-    }
-    $record = NULL;
+    $record = $DB->get_record('data_records', ['id' => $rid], '*', MUST_EXIST);
+    $manager = manager::create_from_data_record($record);
+    $cm = $manager->get_coursemodule();
+    $course = get_course($cm->course);
+} else {   // We must have $d.
+    $data = $DB->get_record('data', ['id' => $d], '*', MUST_EXIST);
+    $manager = manager::create_from_instance($data);
+    $cm = $manager->get_coursemodule();
+    $course = get_course($cm->course);
 }
-$cm = cm_info::create($cm);
-require_course_login($course, true, $cm);
+
+$data = $manager->get_instance();
+$context = $manager->get_context();
+
+require_login($course, true, $cm);
 
 require_once($CFG->dirroot . '/comment/lib.php');
 comment::init();
 
-$context = context_module::instance($cm->id);
 require_capability('mod/data:viewentry', $context);
-
-/// If we have an empty Database then redirect because this page is useless without data
-if (has_capability('mod/data:managetemplates', $context)) {
-    if (!$DB->record_exists('data_fields', array('dataid'=>$data->id))) {      // Brand new database!
-        redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
-    }
-}
-
 
 /// Check further parameters that set browsing preferences
 if (!isset($SESSION->dataprefs)) {
@@ -188,8 +163,8 @@ if ($perpage != $oldperpage) {
     set_user_preference('data_perpage_'.$data->id, $perpage);
 }
 
-// Completion and trigger events.
-data_view($data, $course, $cm, $context);
+// Trigger module viewed event and completion.
+$manager->set_module_viewed($course);
 
 $urlparams = array('d' => $data->id);
 if ($record) {
@@ -242,17 +217,21 @@ if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
         $urlediting = 'on';
         $strediting = get_string('blocksediton');
     }
-    $url = new moodle_url($CFG->wwwroot.'/mod/data/view.php', array('id' => $cm->id, 'edit' => $urlediting));
-    $PAGE->set_button($OUTPUT->single_button($url, $strediting));
+    $editurl = new moodle_url($CFG->wwwroot.'/mod/data/view.php', ['id' => $cm->id, 'edit' => $urlediting]);
+    $PAGE->set_button($OUTPUT->single_button($editurl, $strediting));
 }
 
 if ($mode == 'asearch') {
     $PAGE->navbar->add(get_string('search'));
 }
 
+$PAGE->add_body_class('mediumwidth');
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
 $PAGE->force_settings_menu(true);
+if ($delete && confirm_sesskey() && (data_user_can_manage_entry($delete, $data, $context))) {
+    $PAGE->activityheader->disable();
+}
 
 // Check to see if groups are being used here.
 // We need the most up to date current group value. Make sure it is updated at this point.
@@ -261,9 +240,18 @@ $groupmode = groups_get_activity_groupmode($cm);
 $canmanageentries = has_capability('mod/data:manageentries', $context);
 echo $OUTPUT->header();
 
+if (!$manager->has_fields()) {
+    // It's a brand-new database. There are no fields.
+    $renderer = $manager->get_renderer();
+    echo $renderer->render_database_zero_state($manager);
+    echo $OUTPUT->footer();
+    // Don't check the rest of the options. There is no field, there is nothing else to work with.
+    exit;
+}
+
 // Detect entries not approved yet and show hint instead of not found error.
 if ($record and !data_can_view_record($data, $record, $currentgroup, $canmanageentries)) {
-    print_error('notapproved', 'data');
+    throw new \moodle_exception('notapprovederror', 'data');
 }
 
 // Do we need to show a link to the RSS feed for the records?
@@ -279,9 +267,6 @@ if ($data->intro and empty($page) and empty($record) and $mode != 'single') {
     $options = new stdClass();
     $options->noclean = true;
 }
-
-$returnurl = $CFG->wwwroot . '/mod/data/view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;';
-groups_print_activity_menu($cm, $returnurl);
 
 /// Delete any requested records
 
@@ -299,12 +284,18 @@ if ($delete && confirm_sesskey() && (data_user_can_manage_entry($delete, $data, 
                                                         JOIN {user} u ON dr.userid = u.id
                                                   WHERE dr.id = ?", $dbparams, MUST_EXIST)) { // Need to check this is valid.
             if ($deleterecord->dataid == $data->id) {                       // Must be from this database
-                $deletebutton = new single_button(new moodle_url('/mod/data/view.php?d='.$data->id.'&delete='.$delete.'&confirm=1'), get_string('delete'), 'post');
+                echo $OUTPUT->heading(get_string('deleteentry', 'mod_data'), 2, 'mb-4');
+                $deletebutton = new single_button(
+                    new moodle_url('/mod/data/view.php?d=' . $data->id . '&delete=' . $delete . '&confirm=1'),
+                    get_string('delete'), 'post',
+                    single_button::BUTTON_DANGER
+                );
                 echo $OUTPUT->confirm(get_string('confirmdeleterecord','data'),
                         $deletebutton, 'view.php?d='.$data->id);
 
                 $records[] = $deleterecord;
-                echo data_print_template('singletemplate', $records, $data, '', 0, true);
+                $parser = $manager->get_template('singletemplate');
+                echo $parser->parse_entries($records);
 
                 echo $OUTPUT->footer();
                 exit;
@@ -345,9 +336,10 @@ if ($multidelete && confirm_sesskey() && $canmanageentries) {
         $submitactions = array('d' => $data->id, 'sesskey' => sesskey(), 'confirm' => '1', 'serialdelete' => $serialiseddata);
         $action = new moodle_url('/mod/data/view.php', $submitactions);
         $cancelurl = new moodle_url('/mod/data/view.php', array('d' => $data->id));
-        $deletebutton = new single_button($action, get_string('delete'));
+        $deletebutton = new single_button($action, get_string('delete'), 'post', single_button::BUTTON_DANGER);
         echo $OUTPUT->confirm(get_string('confirmdeleterecords', 'data'), $deletebutton, $cancelurl);
-        echo data_print_template('listtemplate', $validrecords, $data, '', 0, false);
+        $parser = $manager->get_template('listtemplate');
+        echo $parser->parse_entries($validrecords);
         echo $OUTPUT->footer();
         exit;
     }
@@ -399,8 +391,22 @@ if ($showactivity) {
             data_search_entries($data, $cm, $context, $mode, $currentgroup, $search, $sort, $order, $page, $perpage, $advanced, $search_array, $record);
         $hasrecords = !empty($records);
 
+        if ($maxcount == 0) {
+            $renderer = $manager->get_renderer();
+            echo $renderer->render_empty_database($manager);
+            echo $OUTPUT->footer();
+            // There is no entry, so makes no sense to check different views, pagination, etc.
+            exit;
+        }
+
         $actionbar = new \mod_data\output\action_bar($data->id, $pageurl);
-        echo $actionbar->get_view_action_bar($hasrecords);
+        echo $actionbar->get_view_action_bar($hasrecords, $mode);
+
+        if ($groupmode) {
+            $returnurl = new moodle_url('/mod/data/view.php', ['d' => $data->id, 'mode' => $mode, 'search' => s($search),
+                'sort' => s($sort), 'order' => s($order)]);
+            echo html_writer::div(groups_print_activity_menu($cm, $returnurl, true), 'mb-3');
+        }
 
         // Advanced search form doesn't make sense for single (redirects list view).
         if ($maxcount && $mode != 'single') {
@@ -412,41 +418,42 @@ if ($showactivity) {
                 $a = new stdClass();
                 $a->max = $maxcount;
                 $a->reseturl = "view.php?id=$cm->id&amp;mode=$mode&amp;search=&amp;advanced=0";
-                echo $OUTPUT->notification(get_string('foundnorecords','data', $a));
+                echo $OUTPUT->box_start();
+                echo get_string('foundnorecords', 'data', $a);
+                echo $OUTPUT->box_end();
             } else {
-                echo $OUTPUT->notification(get_string('norecords','data'));
+                echo $OUTPUT->box_start();
+                echo get_string('norecords', 'data');
+                echo $OUTPUT->box_end();
             }
 
         } else {
             //  We have some records to print.
-            $url = new moodle_url('/mod/data/view.php', array('d' => $data->id, 'sesskey' => sesskey()));
-            echo html_writer::start_tag('form', array('action' => $url, 'method' => 'post'));
+            $formurl = new moodle_url('/mod/data/view.php', ['d' => $data->id, 'sesskey' => sesskey()]);
+            echo html_writer::start_tag('form', ['action' => $formurl, 'method' => 'post']);
 
             if ($maxcount != $totalcount) {
                 $a = new stdClass();
                 $a->num = $totalcount;
                 $a->max = $maxcount;
                 $a->reseturl = "view.php?id=$cm->id&amp;mode=$mode&amp;search=&amp;advanced=0";
-                echo $OUTPUT->notification(get_string('foundrecords', 'data', $a), 'notifysuccess');
+                echo $OUTPUT->box_start();
+                echo get_string('foundrecords', 'data', $a);
+                echo $OUTPUT->box_end();
             }
 
             if ($mode == 'single') { // Single template
-                $baseurl = 'view.php?d=' . $data->id . '&mode=single&';
+                $baseurl = '/mod/data/view.php';
+                $baseurlparams = ['d' => $data->id, 'mode' => 'single'];
                 if (!empty($search)) {
-                    $baseurl .= 'filter=1&';
+                    $baseurlparams['filter'] = 1;
                 }
                 if (!empty($page)) {
-                    $baseurl .= 'page=' . $page;
+                    $baseurlparams['page'] = $page;
                 }
-                echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
+                $baseurl = new moodle_url($baseurl, $baseurlparams);
 
-                if (empty($data->singletemplate)){
-                    echo $OUTPUT->notification(get_string('nosingletemplate','data'));
-                    data_generate_default_template($data, 'singletemplate', 0, false, false);
-                }
-
-                //data_print_template() only adds ratings for singletemplate which is why we're attaching them here
-                //attach ratings to data records
+                echo $OUTPUT->box_start('', 'data-singleview-content');
                 require_once($CFG->dirroot.'/rating/lib.php');
                 if ($data->assessed != RATING_AGGREGATE_NONE) {
                     $ratingoptions = new stdClass;
@@ -457,7 +464,7 @@ if ($showactivity) {
                     $ratingoptions->aggregate = $data->assessed;//the aggregation method
                     $ratingoptions->scaleid = $data->scale;
                     $ratingoptions->userid = $USER->id;
-                    $ratingoptions->returnurl = $CFG->wwwroot.'/mod/data/'.$baseurl;
+                    $ratingoptions->returnurl = $baseurl->out();
                     $ratingoptions->assesstimestart = $data->assesstimestart;
                     $ratingoptions->assesstimefinish = $data->assesstimefinish;
 
@@ -465,57 +472,46 @@ if ($showactivity) {
                     $records = $rm->get_ratings($ratingoptions);
                 }
 
-                data_print_template('singletemplate', $records, $data, $search, $page, false, new moodle_url($baseurl));
-
-                echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
-
-            } else {                                  // List template
-                $baseurl = 'view.php?d='.$data->id.'&amp;';
-                //send the advanced flag through the URL so it is remembered while paging.
-                $baseurl .= 'advanced='.$advanced.'&amp;';
+                $options = [
+                    'search' => $search,
+                    'page' => $page,
+                    'baseurl' => $baseurl,
+                ];
+                $parser = $manager->get_template('singletemplate', $options);
+                echo $parser->parse_entries($records);
+                echo $OUTPUT->box_end();
+            } else {
+                // List template.
+                $baseurl = '/mod/data/view.php';
+                $baseurlparams = ['d' => $data->id, 'advanced' => $advanced, 'paging' => $paging];
                 if (!empty($search)) {
-                    $baseurl .= 'filter=1&amp;';
+                    $baseurlparams['filter'] = 1;
                 }
-                //pass variable to allow determining whether or not we are paging through results.
-                $baseurl .= 'paging='.$paging.'&amp;';
+                $baseurl = new moodle_url($baseurl, $baseurlparams);
 
-                echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
-
-                if (empty($data->listtemplate)){
-                    echo $OUTPUT->notification(get_string('nolisttemplate','data'));
-                    data_generate_default_template($data, 'listtemplate', 0, false, false);
-                }
+                echo $OUTPUT->box_start('', 'data-listview-content');
                 echo $data->listtemplateheader;
-                data_print_template('listtemplate', $records, $data, $search, $page, false, new moodle_url($baseurl));
+                $options = [
+                    'search' => $search,
+                    'page' => $page,
+                    'baseurl' => $baseurl,
+                ];
+                $parser = $manager->get_template('listtemplate', $options);
+                echo $parser->parse_entries($records);
+
                 echo $data->listtemplatefooter;
-
-                echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
+                echo $OUTPUT->box_end();
             }
 
-            if ($mode != 'single' && $canmanageentries) {
-                // Build the select/deselect all control.
-                $selectallid = 'selectall-listview-entries';
-                $togglegroup = 'listview-entries';
-                $mastercheckbox = new \core\output\checkbox_toggleall($togglegroup, true, [
-                    'id' => $selectallid,
-                    'name' => $selectallid,
-                    'value' => 1,
-                    'label' => get_string('selectall'),
-                    'classes' => 'btn-secondary mr-1',
-                ], true);
-                echo $OUTPUT->render($mastercheckbox);
-
-                $deleteselected = html_writer::empty_tag('input', array(
-                    'class' => 'btn btn-secondary',
-                    'type' => 'submit',
-                    'value' => get_string('deleteselected'),
-                    'disabled' => true,
-                    'data-action' => 'toggle',
-                    'data-togglegroup' => $togglegroup,
-                    'data-toggle' => 'action',
-                ));
-                echo $deleteselected;
-            }
+            $stickyfooter = new mod_data\output\view_footer(
+                $manager,
+                $totalcount,
+                $page,
+                $nowperpage,
+                $baseurl,
+                $parser
+            );
+            echo $OUTPUT->render($stickyfooter);
 
             echo html_writer::end_tag('form');
         }
@@ -524,27 +520,6 @@ if ($showactivity) {
     $search = trim($search);
     if (empty($records)) {
         $records = array();
-    }
-
-    // Check to see if we can export records to a portfolio. This is for exporting all records, not just the ones in the search.
-    if ($mode == '' && !empty($CFG->enableportfolios) && !empty($records)) {
-        $canexport = false;
-        // Exportallentries and exportentry are basically the same capability.
-        if (has_capability('mod/data:exportallentries', $context) || has_capability('mod/data:exportentry', $context)) {
-            $canexport = true;
-        } else if (has_capability('mod/data:exportownentry', $context) &&
-                $DB->record_exists('data_records', array('userid' => $USER->id))) {
-            $canexport = true;
-        }
-        if ($canexport) {
-            require_once($CFG->libdir . '/portfoliolib.php');
-            $button = new portfolio_add_button();
-            $button->set_callback_options('data_portfolio_caller', array('id' => $cm->id), 'mod_data');
-            if (data_portfolio_caller::has_files($data)) {
-                $button->set_formats(array(PORTFOLIO_FORMAT_RICHHTML, PORTFOLIO_FORMAT_LEAP2A)); // No plain html for us.
-            }
-            echo $button->to_html(PORTFOLIO_ADD_FULL_FORM);
-        }
     }
 }
 

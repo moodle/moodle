@@ -14,14 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Provides the unit tests class and some helper classes
- *
- * @package     core_plugin
- * @category    test
- * @copyright   2013, 2015 David Mudrak <david@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
+
+use testable_core_update_validator;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,10 +25,12 @@ require_once(__DIR__.'/fixtures/testable_update_validator.php');
 /**
  * Unit tests for the {@link \core\update\validator} class
  *
+ * @package   core
+ * @category  test
  * @copyright 2013, 2015 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_update_validator_testcase extends advanced_testcase {
+class update_validator_test extends \advanced_testcase {
 
     public function test_validate_files_layout() {
         $fixtures = __DIR__.'/fixtures/update_validator';

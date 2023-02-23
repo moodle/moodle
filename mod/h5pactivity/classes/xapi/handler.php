@@ -83,7 +83,7 @@ class handler extends handler_base {
         // H5P add some extra params to ID to define subcontents.
         $parts = explode('?', $xapiobject, 2);
         $contextid = array_shift($parts);
-        $subcontent = str_replace('subContentId=', '', array_shift($parts));
+        $subcontent = str_replace('subContentId=', '', array_shift($parts) ?? '');
         if (empty($contextid) || !is_numeric($contextid)) {
             return null;
         }

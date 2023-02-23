@@ -28,4 +28,4 @@ $string['close'] = 'Close';
 $string['movequestions'] = 'Move questions';
 $string['movetobulkaction'] = 'Move to...';
 $string['pluginname'] = 'Bulk move questions';
-$string['privacy:metadata'] = 'The bulk move questions plugin does not store any personal data.';
+$string['privacy:metadata'] = 'The Bulk move questions question bank plugin does not store any personal data.';

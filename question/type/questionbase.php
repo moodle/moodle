@@ -100,12 +100,6 @@ abstract class question_definition {
     /** @var string unique identifier of this question. */
     public $stamp;
 
-    /** @var string unique identifier of this version of this question. */
-    public $version;
-
-    /** @var boolean whethre this question has been deleted/hidden in the question bank. */
-    public $hidden = 0;
-
     /** @var string question idnumber. */
     public $idnumber;
 
@@ -124,6 +118,18 @@ abstract class question_definition {
     /** @var array of question_hints. */
     public $hints = array();
 
+    /** @var boolean question status hidden/ready/draft in the question bank. */
+    public $status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+
+    /** @var int Version id of the question in a question bank */
+    public $versionid;
+
+    /** @var int Version number of the question in a question bank */
+    public $version;
+
+    /** @var int Bank entry id for the question */
+    public $questionbankentryid;
+
     /**
      * @var array of array of \core_customfield\data_controller objects indexed by fieldid for the questions custom fields.
      */
@@ -133,13 +139,12 @@ abstract class question_definition {
      * Constructor. Normally to get a question, you call
      * {@link question_bank::load_question()}, but questions can be created
      * directly, for example in unit test code.
-     * @return unknown_type
      */
     public function __construct() {
     }
 
     /**
-     * @return the name of the question type (for example multichoice) that this
+     * @return string the name of the question type (for example multichoice) that this
      * question is.
      */
     public function get_type_name() {
@@ -203,6 +208,56 @@ abstract class question_definition {
      *      being loaded.
      */
     public function apply_attempt_state(question_attempt_step $step) {
+    }
+
+    /**
+     * Verify if an attempt at this question can be re-graded using the other question version.
+     *
+     * To put it another way, will {@see update_attempt_state_date_from_old_version()} be able to work?
+     *
+     * It is expected that this relationship is symmetrical, so if you can regrade from V1 to V3, then
+     * you can change back from V3 to V1.
+     *
+     * @param question_definition $otherversion a different version of the question to use in the regrade.
+     * @return string|null null if the regrade can proceed, else a reason why not.
+     */
+    public function validate_can_regrade_with_other_version(question_definition $otherversion): ?string {
+        if (get_class($otherversion) !== get_class($this)) {
+            return get_string('cannotregradedifferentqtype', 'question');
+        }
+
+        return null;
+    }
+
+    /**
+     * Update the data representing the initial state of an attempt another version of this question, to allow for the changes.
+     *
+     * What is required is probably most easily understood using an example. Think about multiple choice questions.
+     * The first step has a variable '_order' which is a comma-separated list of question_answer ids.
+     * A different version of the question will have different question_answers with different ids. However, the list of
+     * choices should be similar, and so we need to shuffle the new list of ids in the same way that the old one was.
+     *
+     * Note: be sure to return all the data that was originally in $oldstep, while updating the fields that
+     * require it. Otherwise you might break features like 'Each attempt builds on last' in the quiz.
+     *
+     * This method should only be called if {@see validate_can_regrade_with_other_version()} did not
+     * flag up a potential problem. So, this method will throw a {@see coding_exception} if it is not
+     * possible to work out a return value.
+     *
+     * @param question_attempt_step $oldstep the first step of a {@see question_attempt} at $oldquestion.
+     * @param question_definition $oldquestion the previous version of the question, which $oldstate comes from.
+     * @return array the submit data which can be passed to {@see apply_attempt_state} to start
+     *     an attempt at this version of this question, corresponding to the attempt at the old question.
+     * @throws coding_exception if this can't be done.
+     */
+    public function update_attempt_state_data_for_new_version(
+            question_attempt_step $oldstep, question_definition $oldquestion) {
+        $message = $this->validate_can_regrade_with_other_version($oldquestion);
+        if ($message) {
+            throw new coding_exception($message);
+        }
+
+        return $oldstep->get_qt_data();
     }
 
     /**

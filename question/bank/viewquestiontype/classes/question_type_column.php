@@ -32,11 +32,11 @@ class question_type_column extends column_base {
         return 'qtype';
     }
 
-    protected function get_title(): string {
+    public function get_title(): string {
         return get_string('qtypeveryshort', 'question');
     }
 
-    protected function get_title_tip(): string {
+    public function get_title_tip(): string {
         return get_string('questiontype', 'question');
     }
 

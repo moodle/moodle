@@ -16,11 +16,11 @@
 
 namespace qbank_usage\tables;
 
-defined('MOODLE_INTERNAL') || die();
-
 global $CFG;
 require_once($CFG->libdir.'/tablelib.php');
 
+use context_course;
+use html_writer;
 use moodle_url;
 use qbank_usage\helper;
 use table_sql;
@@ -84,7 +84,7 @@ class question_usage_table extends table_sql {
         }
 
         $sql = helper::question_usage_sql();
-        $params = [$this->question->id, $this->question->id];
+        $params = [$this->question->id, $this->question->questionbankentryid, 'mod_quiz', 'slot'];
 
         if (!$this->is_downloading()) {
             $this->rawdata = $DB->get_records_sql($sql, $params, $this->get_page_start(), $this->get_page_size());
@@ -94,18 +94,16 @@ class question_usage_table extends table_sql {
     }
 
     public function col_modulename(\stdClass $values): string {
-        $params = [
-            'href' => new moodle_url('/mod/quiz/view.php', ['q' => $values->quizid])
-        ];
-        return \html_writer::tag('a', $values->modulename, $params);
+        $cm = get_fast_modinfo($values->courseid)->instances['quiz'][$values->quizid];
+
+        return html_writer::link(new moodle_url('/mod/quiz/view.php', ['q' => $values->quizid]), $cm->get_formatted_name());
     }
 
     public function col_coursename(\stdClass $values): string {
         $course = get_course($values->courseid);
-        $params = [
-            'href' => new moodle_url('/course/view.php', ['id' => $values->courseid])
-        ];
-        return \html_writer::tag('a', $course->fullname, $params);
+        $context = context_course::instance($course->id);
+
+        return html_writer::link(course_get_url($course), format_string($course->fullname, true, $context));
     }
 
     public function col_attempts(\stdClass $values): string {

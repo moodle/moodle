@@ -70,15 +70,17 @@
 {{#title}}
     <h2>{{{title}}}</h2>
 {{/title}}
-{{#completion}}
-    <span class="sr-only">{{#str}} overallaggregation, completion {{/str}}</span>
-    {{{completion}}}
-{{/completion}}
-{{#description}}
-    <div class="box py-3 generalbox" id="intro">
-    {{{description}}}
-    </div>
-{{/description}}
+<div class="activity-header" data-for="page-activity-header">{{!
+    }}{{#completion}}
+        <span class="sr-only">{{#str}} overallaggregation, completion {{/str}}</span>
+        {{{completion}}}
+    {{/completion}}
+    {{#description}}
+        <div class="activity-description" id="intro">
+            {{{description}}}
+        </div>
+    {{/description}}{{!
+}}</div>
 {{#additional_items}}
     <nav aria-label="{{#str}} additionalcustomnav, core {{/str}}">
         {{> core/url_select}}

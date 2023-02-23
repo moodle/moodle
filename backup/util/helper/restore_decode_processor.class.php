@@ -170,7 +170,7 @@ class restore_decode_processor {
      */
     protected function precheck_content($content) {
         // Look for $@ in content (all interlinks contain that)
-        return (strpos($content, '$@') === false) ? false : $content;
+        return (strpos($content ?? '', '$@') === false) ? false : $content;
     }
 }
 

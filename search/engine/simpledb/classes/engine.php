@@ -181,7 +181,7 @@ class engine extends \core_search\engine {
         }
 
         // It is limited to $limit, no need to use recordsets.
-        $documents = $DB->get_records_select('search_simpledb_index', implode(' AND ', $ands), $params, '', '*', 0, $limit);
+        $documents = $DB->get_records_select('search_simpledb_index', implode(' AND ', $ands), $params, 'docid', '*', 0, $limit);
 
         // Hopefully database cached results as this applies the same filters than above.
         $this->totalresults = $DB->count_records_select('search_simpledb_index', implode(' AND ', $ands), $params);
@@ -346,12 +346,16 @@ class engine extends \core_search\engine {
             $DB->sql_like('description1', '?', false, false) . ' OR ' .
             $DB->sql_like('description2', '?', false, false) .
             ')';
-        $params = array(
+
+        // Remove quotes from the query.
+        $q = str_replace('"', '', $q);
+        $params = [
             '%' . $q . '%',
             '%' . $q . '%',
             '%' . $q . '%',
             '%' . $q . '%'
-        );
+        ];
+
         return array($sql, $params);
     }
 

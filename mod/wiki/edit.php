@@ -51,25 +51,25 @@ if (!empty($newcontent) && is_array($newcontent)) {
 }
 
 if (!$page = wiki_get_page($pageid)) {
-    print_error('incorrectpageid', 'wiki');
+    throw new \moodle_exception('incorrectpageid', 'wiki');
 }
 
 if (!$subwiki = wiki_get_subwiki($page->subwikiid)) {
-    print_error('incorrectsubwikiid', 'wiki');
+    throw new \moodle_exception('incorrectsubwikiid', 'wiki');
 }
 
 if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
-    print_error('incorrectwikiid', 'wiki');
+    throw new \moodle_exception('incorrectwikiid', 'wiki');
 }
 
 if (!$cm = get_coursemodule_from_instance('wiki', $wiki->id)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 if (!empty($section) && !$sectioncontent = wiki_get_section_page($page, $section)) {
-    print_error('invalidsection', 'wiki');
+    throw new \moodle_exception('invalidsection', 'wiki');
 }
 
 require_login($course, true, $cm);
@@ -77,12 +77,12 @@ require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 
 if (!wiki_user_can_edit($subwiki)) {
-    print_error('cannoteditpage', 'wiki');
+    throw new \moodle_exception('cannoteditpage', 'wiki');
 }
 
 if ($option == get_string('save', 'wiki')) {
     if (!confirm_sesskey()) {
-        print_error(get_string('invalidsesskey', 'wiki'));
+        throw new \moodle_exception(get_string('invalidsesskey', 'wiki'));
     }
     $wikipage = new page_wiki_save($wiki, $subwiki, $cm);
     $wikipage->set_page($page);
@@ -91,7 +91,7 @@ if ($option == get_string('save', 'wiki')) {
 } else {
     if ($option == get_string('preview')) {
         if (!confirm_sesskey()) {
-            print_error(get_string('invalidsesskey', 'wiki'));
+            throw new \moodle_exception(get_string('invalidsesskey', 'wiki'));
         }
         $wikipage = new page_wiki_preview($wiki, $subwiki, $cm, 'modulepage');
         $wikipage->set_page($page);

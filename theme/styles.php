@@ -67,7 +67,7 @@ if (!is_null($themesubrev)) {
 }
 
 // Check that type fits into the expected values.
-if (!in_array($type, ['all', 'all-rtl', 'editor'])) {
+if (!in_array($type, ['all', 'all-rtl', 'editor', 'editor-rtl'])) {
     css_send_css_not_found();
 }
 
@@ -103,7 +103,7 @@ require("$CFG->dirroot/lib/setup.php");
 
 $theme = theme_config::load($themename);
 $theme->force_svg_use($usesvg);
-$theme->set_rtl_mode($type === 'all-rtl' ? true : false);
+$theme->set_rtl_mode(substr($type, -4) === '-rtl');
 
 $themerev = theme_get_revision();
 $currentthemesubrev = theme_get_sub_revision_for_theme($themename);
@@ -125,7 +125,7 @@ if ($themerev <= 0 or $themerev != $rev or $themesubrev != $currentthemesubrev) 
 
 make_localcache_directory('theme', false);
 
-if ($type === 'editor') {
+if ($type === 'editor' || $type === 'editor-rtl') {
     $csscontent = $theme->get_css_content_editor();
 
     if ($cache) {

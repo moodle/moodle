@@ -84,7 +84,7 @@ class editor_framework implements H5peditorStorage {
 
             // If current language has a dependency, then request it.
             if (count($dependencies) > 1) {
-                $parentlanguage = str_replace('_', '-', $dependencies[count($dependencies) - 2]);
+                $parentlanguage = get_html_lang_attribute_value($dependencies[count($dependencies) - 2]);
                 $result = $this->get_language_record($name, $major, $minor, $parentlanguage);
             }
         }
@@ -274,7 +274,7 @@ class editor_framework implements H5peditorStorage {
                 if ($details) {
                     $library->title = $details->title;
                     $library->runnable = $details->runnable;
-                    $library->metadataSettings = json_decode($details->metadatasettings);
+                    $library->metadataSettings = json_decode($details->metadatasettings ?? '');
                     $library->example = $details->example;
                     $library->tutorial = $details->tutorial;
                     $librariesin[] = $library;

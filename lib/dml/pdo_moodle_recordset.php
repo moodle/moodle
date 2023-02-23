@@ -55,10 +55,11 @@ class pdo_moodle_recordset extends moodle_recordset {
         return $row;
     }
 
-    public function current() {
+    public function current(): stdClass {
         return (object)$this->current;
     }
 
+    #[\ReturnTypeWillChange]
     public function key() {
         // return first column value as key
         if (!$this->current) {
@@ -68,11 +69,11 @@ class pdo_moodle_recordset extends moodle_recordset {
         return $key;
     }
 
-    public function next() {
+    public function next(): void {
         $this->current = $this->fetch_next();
     }
 
-    public function valid() {
+    public function valid(): bool {
         return !empty($this->current);
     }
 

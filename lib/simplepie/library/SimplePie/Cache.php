@@ -132,3 +132,5 @@ class SimplePie_Cache
 		return $params;
 	}
 }
+
+class_alias('SimplePie_Cache', 'SimplePie\Cache', false);

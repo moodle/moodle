@@ -1,12 +1,17 @@
 This files describes API changes in /calendar/* ,
 information provided here is intended especially for developers.
 
+=== 4.1 ===
+* New method `calendar_format_event_location` which will format the location property of an event, converting any
+  links into suitable markup
+
 === 4.0 ===
 * The following external functions now accepts an optional parameter 'searchvalue' to search the events:
   - core_calendar_external::get_calendar_action_events_by_timesort
   - core_calendar_external::get_calendar_action_events_by_courses
   - core_calendar_external::get_calendar_action_events_by_course
 * Added core_calendar_delete_subscription, which allows to delete the calendar subscription.
+* Updated calendar_can_manage_user_event() function to check permissions to user events.
 * The following functions have been deprecated because they were no longer used:
   - calendar_process_subscription_row()
   - calendar_import_icalendar_events()

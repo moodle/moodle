@@ -520,10 +520,10 @@ function get_scorm_default (&$userdata, $scorm, $scoid, $attempt, $mode) {
             $userdata->$key = $value;
         }
     } else {
-        print_error('cannotfindsco', 'scorm');
+        throw new \moodle_exception('cannotfindsco', 'scorm');
     }
     if (!$sco = scorm_get_sco($scoid)) {
-        print_error('cannotfindsco', 'scorm');
+        throw new \moodle_exception('cannotfindsco', 'scorm');
     }
 
     $userdata->mode = 'normal';

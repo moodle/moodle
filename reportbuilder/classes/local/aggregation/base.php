@@ -77,6 +77,39 @@ abstract class base {
     }
 
     /**
+     * Helper method for concatenating given fields for a column, so they are suitable for aggregation
+     *
+     * @param string[] $sqlfields
+     * @param string $delimeter
+     * @param string $coalescechar
+     * @return string
+     */
+    final protected static function get_column_fields_concat(
+        array $sqlfields,
+        string $delimeter = ',',
+        string $coalescechar = ' '
+    ): string {
+        global $DB;
+
+        // We need to ensure all values are char.
+        $sqlfieldrequirescast = in_array($DB->get_dbfamily(), ['mssql', 'oracle', 'postgres']);
+
+        $concatfields = [];
+        foreach ($sqlfields as $sqlfield) {
+            if ($sqlfieldrequirescast) {
+                $sqlfield = $DB->sql_cast_to_char($sqlfield);
+            }
+
+            // Coalesce all the SQL fields. Ensure cross-DB compatibility, and that we always get string data back.
+            $concatfields[] = "COALESCE({$sqlfield}, '{$coalescechar}')";
+            $concatfields[] = "'{$delimeter}'";
+        }
+
+        // Slice off the last delimeter.
+        return $DB->sql_concat(...array_slice($concatfields, 0, -1));
+    }
+
+    /**
      * Return the aggregated field SQL
      *
      * @param string $field
@@ -94,12 +127,13 @@ abstract class base {
      * @param mixed $value
      * @param array $values
      * @param array $callbacks Array of column callbacks, {@see column::add_callback} for definition
+     * @param int $columntype The original type of the column, to ensure it is preserved for callbacks
      * @return mixed
      */
-    public static function format_value($value, array $values, array $callbacks) {
+    public static function format_value($value, array $values, array $callbacks, int $columntype) {
         foreach ($callbacks as $callback) {
             [$callable, $arguments] = $callback;
-            $value = ($callable)($value, (object) $values, $arguments);
+            $value = ($callable)($value, (object) $values, $arguments, static::get_class_name());
         }
 
         return $value;

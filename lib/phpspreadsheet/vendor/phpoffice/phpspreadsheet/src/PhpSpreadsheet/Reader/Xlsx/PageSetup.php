@@ -8,8 +8,10 @@ use SimpleXMLElement;
 
 class PageSetup extends BaseParserClass
 {
+    /** @var Worksheet */
     private $worksheet;
 
+    /** @var ?SimpleXMLElement */
     private $worksheetXml;
 
     public function __construct(Worksheet $workSheet, ?SimpleXMLElement $worksheetXml = null)
@@ -18,16 +20,17 @@ class PageSetup extends BaseParserClass
         $this->worksheetXml = $worksheetXml;
     }
 
-    public function load(array $unparsedLoadedData)
+    public function load(array $unparsedLoadedData): array
     {
-        if (!$this->worksheetXml) {
+        $worksheetXml = $this->worksheetXml;
+        if ($worksheetXml === null) {
             return $unparsedLoadedData;
         }
 
-        $this->margins($this->worksheetXml, $this->worksheet);
-        $unparsedLoadedData = $this->pageSetup($this->worksheetXml, $this->worksheet, $unparsedLoadedData);
-        $this->headerFooter($this->worksheetXml, $this->worksheet);
-        $this->pageBreaks($this->worksheetXml, $this->worksheet);
+        $this->margins($worksheetXml, $this->worksheet);
+        $unparsedLoadedData = $this->pageSetup($worksheetXml, $this->worksheet, $unparsedLoadedData);
+        $this->headerFooter($worksheetXml, $this->worksheet);
+        $this->pageBreaks($worksheetXml, $this->worksheet);
 
         return $unparsedLoadedData;
     }
@@ -45,7 +48,7 @@ class PageSetup extends BaseParserClass
         }
     }
 
-    private function pageSetup(SimpleXMLElement $xmlSheet, Worksheet $worksheet, array $unparsedLoadedData)
+    private function pageSetup(SimpleXMLElement $xmlSheet, Worksheet $worksheet, array $unparsedLoadedData): array
     {
         if ($xmlSheet->pageSetup) {
             $docPageSetup = $worksheet->getPageSetup();
@@ -75,7 +78,7 @@ class PageSetup extends BaseParserClass
                 $docPageSetup->setPageOrder((string) $xmlSheet->pageSetup['pageOrder']);
             }
 
-            $relAttributes = $xmlSheet->pageSetup->attributes('http://schemas.openxmlformats.org/officeDocument/2006/relationships');
+            $relAttributes = $xmlSheet->pageSetup->attributes(Namespaces::SCHEMA_OFFICE_DOCUMENT);
             if (isset($relAttributes['id'])) {
                 $unparsedLoadedData['sheets'][$worksheet->getCodeName()]['pageSetupRelId'] = (string) $relAttributes['id'];
             }

@@ -14,14 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Provides {@link core_user_selector_testcase} class.
- *
- * @package     core_user
- * @category    test
- * @copyright   2018 David Mudrák <david@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_user;
+
+use testable_user_selector;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,10 +27,12 @@ require_once($CFG->dirroot.'/user/tests/fixtures/testable_user_selector.php');
 /**
  * Tests for the implementation of {@link user_selector_base} class.
  *
+ * @package   core_user
+ * @category  test
  * @copyright 2018 David Mudrák <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_user_selector_testcase extends advanced_testcase {
+class userselector_test extends \advanced_testcase {
 
     /**
      * Setup the environment for the tests.
@@ -46,14 +43,14 @@ class core_user_selector_testcase extends advanced_testcase {
         $CFG->showuseridentity = 'idnumber,country,city';
         $CFG->hiddenuserfields = 'country,city';
 
-        $env = new stdClass();
+        $env = new \stdClass();
 
         $env->student = $this->getDataGenerator()->create_user();
         $env->teacher = $this->getDataGenerator()->create_user();
         $env->manager = $this->getDataGenerator()->create_user();
 
         $env->course = $this->getDataGenerator()->create_course();
-        $env->coursecontext = context_course::instance($env->course->id);
+        $env->coursecontext = \context_course::instance($env->course->id);
 
         $env->teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
         $env->studentrole = $DB->get_record('role', array('shortname' => 'student'));

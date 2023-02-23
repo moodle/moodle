@@ -1320,7 +1320,7 @@ class core_plugin_manager {
             return false;
         }
 
-        $ok = get_string('ok', 'core');
+        $ok = get_string('statusok', 'core');
 
         // Let admins know they can expect more verbose output.
         $silent or $this->mtrace(get_string('packagesdebug', 'core_plugin'), PHP_EOL, DEBUG_NORMAL);
@@ -1729,7 +1729,7 @@ class core_plugin_manager {
             'qformat' => array('blackboard', 'learnwise', 'examview'),
             'auth' => array('radius', 'fc', 'nntp', 'pam', 'pop3', 'imap'),
             'block' => array('course_overview', 'messages', 'community', 'participants', 'quiz_results'),
-            'cachestore' => array('memcache'),
+            'cachestore' => array('memcache', 'memcached'),
             'enrol' => array('authorize'),
             'filter' => array('censor'),
             'media' => array('swf'),
@@ -1745,7 +1745,7 @@ class core_plugin_manager {
                 'binarius', 'boxxie', 'brick', 'canvas', 'formal_white', 'formfactor', 'fusion', 'leatherbound',
                 'magazine', 'mymobile', 'nimble', 'nonzero', 'overlay', 'serenity', 'sky_high', 'splash',
                 'standard', 'standardold'),
-            'webservice' => array('amf'),
+            'webservice' => array('amf', 'xmlrpc'),
         );
 
         if (!isset($plugins[$type])) {
@@ -1821,7 +1821,7 @@ class core_plugin_manager {
             ),
 
             'cachestore' => array(
-                'file', 'memcached', 'mongodb', 'session', 'static', 'apcu', 'redis'
+                'file', 'mongodb', 'session', 'static', 'apcu', 'redis'
             ),
 
             'calendartype' => array(
@@ -1850,7 +1850,10 @@ class core_plugin_manager {
             ),
 
             'datapreset' => array(
-                'imagegallery'
+                'imagegallery',
+                'journal',
+                'proposals',
+                'resources',
             ),
 
             'fileconverter' => array(
@@ -1858,7 +1861,7 @@ class core_plugin_manager {
             ),
 
             'editor' => array(
-                'atto', 'textarea', 'tinymce'
+                'atto', 'textarea', 'tiny', 'tinymce'
             ),
 
             'enrol' => array(
@@ -1890,7 +1893,7 @@ class core_plugin_manager {
             ),
 
             'gradereport' => array(
-                'grader', 'history', 'outcomes', 'overview', 'user', 'singleview'
+                'grader', 'history', 'outcomes', 'overview', 'user', 'singleview', 'summary'
             ),
 
             'gradingform' => array(
@@ -1951,12 +1954,14 @@ class core_plugin_manager {
 
             'qbank' => [
                 'bulkmove',
+                'columnsortorder',
                 'comment',
                 'customfields',
                 'deletequestion',
                 'editquestion',
                 'exporttoxml',
                 'exportquestions',
+                'history',
                 'importquestions',
                 'managecategories',
                 'previewquestion',
@@ -2023,6 +2028,15 @@ class core_plugin_manager {
                 'objectives'
             ),
 
+            'tiny' => [
+                'accessibilitychecker',
+                'autosave',
+                'equation',
+                'h5p',
+                'media',
+                'recordrtc',
+            ],
+
             'tinymce' => array(
                 'ctrlhelp', 'managefiles', 'moodleemoticon', 'moodleimage',
                 'moodlemedia', 'moodlenolink', 'pdw', 'spellchecker', 'wrap'
@@ -2042,7 +2056,7 @@ class core_plugin_manager {
             ),
 
             'webservice' => array(
-                'rest', 'soap', 'xmlrpc'
+                'rest', 'soap'
             ),
 
             'workshopallocation' => array(

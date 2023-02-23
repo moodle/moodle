@@ -499,7 +499,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                             $report .= html_writer::start_tag('li').html_writer::start_tag('ul', array('class' => $liststyle));
                             foreach ($usertrack as $element => $value) {
                                 if (substr($element, 0, 3) == 'cmi') {
-                                    $report .= html_writer::tag('li', $element.' => '.s($value));
+                                    $report .= html_writer::tag('li', s($element) . ' => ' . s($value));
                                 }
                             }
                             $report .= html_writer::end_tag('ul').html_writer::end_tag('li');
@@ -1027,7 +1027,7 @@ function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
  * @uses FEATURE_GRADE_HAS_GRADE
  * @uses FEATURE_GRADE_OUTCOMES
  * @param string $feature FEATURE_xx constant for requested feature
- * @return mixed True if module supports feature, false if not, null if doesn't know
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function scorm_supports($feature) {
     switch($feature) {
@@ -1040,6 +1040,7 @@ function scorm_supports($feature) {
         case FEATURE_GRADE_OUTCOMES:          return true;
         case FEATURE_BACKUP_MOODLE2:          return true;
         case FEATURE_SHOW_DESCRIPTION:        return true;
+        case FEATURE_MOD_PURPOSE:             return MOD_PURPOSE_CONTENT;
 
         default: return null;
     }
@@ -1835,15 +1836,13 @@ function mod_scorm_core_calendar_get_event_action_string(string $eventtype): str
  * It is safe to rely on PAGE here as we will only ever be within the module
  * context when this is called
  *
- * @param navigation_node $settings navigation_node object.
+ * @param settings_navigation $settings navigation_node object.
  * @param navigation_node $scormnode navigation_node object.
  * @return void
  */
-function scorm_extend_settings_navigation(navigation_node $settings, navigation_node $scormnode): void {
-    global $PAGE;
-
-    if (has_capability('mod/scorm:viewreport', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/scorm/report.php', ['id' => $PAGE->cm->id]);
+function scorm_extend_settings_navigation(settings_navigation $settings, navigation_node $scormnode): void {
+    if (has_capability('mod/scorm:viewreport', $settings->get_page()->cm->context)) {
+        $url = new moodle_url('/mod/scorm/report.php', ['id' => $settings->get_page()->cm->id]);
         $scormnode->add(get_string("reports", "scorm"), $url, navigation_node::TYPE_CUSTOM, null, 'scormreport');
     }
 }

@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/notification_base
+
+    Base Moodle notification template.
+
+    The purpose of this template is to render an base template for alert notifications.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * message A cleaned string (use clean_text()) to display.
+    * extraclasses Additional classes to apply to the notification.
+    * closebutton Whether a close button should be displayed to dismiss the message.
+    * announce Whether the notification should be announced to screen readers.
+
+    Example context (json):
+    {
+        "message": "<p>Hello <a href=\"#\">World!</a></p><p>Your pants are on fire!</p>",
+        "closebutton": 1,
+        "announce": 1,
+        "extraclasses": "foo bar"
+    }
+}}
+<div class="alert {{$alertclass}}alert-secondary{{/alertclass}} alert-block fade in {{ extraclasses }} {{#closebutton}}alert-dismissible{{/closebutton}}" {{!
+        }}{{# announce }} role="alert" data-aria-autofocus="true"{{/ announce }}>
+    {{{ message }}}
+    {{# closebutton }}{{!
+    }}<button type="button" class="close" data-dismiss="alert">
+        <span aria-hidden="true">&times;</span>
+        <span class="sr-only">{{#str}}dismissnotification, core{{/str}}</span>
+    </button>{{!
+    }}{{/ closebutton }}
+</div>

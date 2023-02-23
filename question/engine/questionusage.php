@@ -876,21 +876,40 @@ class question_usage_by_activity {
     }
 
     /**
+     * Verify if the question_attempt in the given slot can be regraded with that other question version.
+     *
+     * @param int $slot the number used to identify this question within this usage.
+     * @param question_definition $otherversion a different version of the question to use in the regrade.
+     * @return string|null null if the regrade can proceed, else a reason why not.
+     */
+    public function validate_can_regrade_with_other_version(int $slot, question_definition $otherversion): ?string {
+        return $this->get_question_attempt($slot)->validate_can_regrade_with_other_version($otherversion);
+    }
+
+    /**
      * Regrade a question in this usage. This replays the sequence of submitted
      * actions to recompute the outcomes.
+     *
      * @param int $slot the number used to identify this question within this usage.
      * @param bool $finished whether the question attempt should be forced to be finished
      *      after the regrade, or whether it may still be in progress (default false).
      * @param number $newmaxmark (optional) if given, will change the max mark while regrading.
+     * @param question_definition|null $otherversion a different version of the question to use
+     *      in the regrade. (By default, the regrode will use exactly the same question version.)
      */
-    public function regrade_question($slot, $finished = false, $newmaxmark = null) {
+    public function regrade_question($slot, $finished = false, $newmaxmark = null,
+            question_definition $otherversion = null) {
         $oldqa = $this->get_question_attempt($slot);
+        if ($otherversion &&
+                $otherversion->questionbankentryid !== $oldqa->get_question(false)->questionbankentryid) {
+            throw new coding_exception('You can only regrade using a different version of the same question, ' .
+                    'not a completely different question.');
+        }
         if (is_null($newmaxmark)) {
             $newmaxmark = $oldqa->get_max_mark();
         }
-
-        $newqa = new question_attempt($oldqa->get_question(false), $oldqa->get_usage_id(),
-                $this->observer, $newmaxmark);
+        $newqa = new question_attempt($otherversion ?? $oldqa->get_question(false),
+                $oldqa->get_usage_id(), $this->observer, $newmaxmark);
         $newqa->set_database_id($oldqa->get_database_id());
         $newqa->set_slot($oldqa->get_slot());
         $newqa->regrade($oldqa, $finished);
@@ -1037,6 +1056,7 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
      *
      * @return question_attempt
      */
+    #[\ReturnTypeWillChange]
     public function current() {
         return $this->offsetGet(current($this->slots));
     }
@@ -1046,6 +1066,7 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function key() {
         return current($this->slots);
     }
@@ -1053,14 +1074,14 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
     /**
      * Standard part of the Iterator interface.
      */
-    public function next() {
+    public function next(): void {
         next($this->slots);
     }
 
     /**
      * Standard part of the Iterator interface.
      */
-    public function rewind() {
+    public function rewind(): void {
         reset($this->slots);
     }
 
@@ -1069,7 +1090,7 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
      *
      * @return bool
      */
-    public function valid() {
+    public function valid(): bool {
         return current($this->slots) !== false;
     }
 
@@ -1079,7 +1100,7 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
      * @param int $slot
      * @return bool
      */
-    public function offsetExists($slot) {
+    public function offsetExists($slot): bool {
         return in_array($slot, $this->slots);
     }
 
@@ -1089,6 +1110,7 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
      * @param int $slot
      * @return question_attempt
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($slot) {
         return $this->quba->get_question_attempt($slot);
     }
@@ -1099,7 +1121,7 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
      * @param int $slot
      * @param question_attempt $value
      */
-    public function offsetSet($slot, $value) {
+    public function offsetSet($slot, $value): void {
         throw new coding_exception('You are only allowed read-only access to ' .
                 'question_attempt::states through a question_attempt_step_iterator. Cannot set.');
     }
@@ -1109,7 +1131,7 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
      *
      * @param int $slot
      */
-    public function offsetUnset($slot) {
+    public function offsetUnset($slot): void {
         throw new coding_exception('You are only allowed read-only access to ' .
                 'question_attempt::states through a question_attempt_step_iterator. Cannot unset.');
     }

@@ -14,14 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Self enrol external PHPunit tests
- *
- * @package   enrol_self
- * @copyright 2013 Rajesh Taneja <rajesh@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.6
- */
+namespace enrol_self;
+
+use core_external\external_api;
+use enrol_self_external;
+use externallib_advanced_testcase;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,7 +27,15 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/enrol/self/externallib.php');
 
-class enrol_self_external_testcase extends externallib_advanced_testcase {
+/**
+ * Self enrol external PHPunit tests
+ *
+ * @package   enrol_self
+ * @copyright 2013 Rajesh Taneja <rajesh@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.6
+ */
+class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Test get_instance_info
@@ -47,7 +52,7 @@ class enrol_self_external_testcase extends externallib_advanced_testcase {
         $studentrole = $DB->get_record('role', array('shortname'=>'student'));
         $this->assertNotEmpty($studentrole);
 
-        $coursedata = new stdClass();
+        $coursedata = new \stdClass();
         $coursedata->visible = 0;
         $course = self::getDataGenerator()->create_course($coursedata);
 
@@ -104,7 +109,7 @@ class enrol_self_external_testcase extends externallib_advanced_testcase {
         $this->setUser($user);
         try {
             enrol_self_external::get_instance_info($instanceid3);
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('coursehidden', $e->errorcode);
         }
     }
@@ -127,8 +132,8 @@ class enrol_self_external_testcase extends externallib_advanced_testcase {
         $user3 = self::getDataGenerator()->create_user();
         $user4 = self::getDataGenerator()->create_user();
 
-        $context1 = context_course::instance($course1->id);
-        $context2 = context_course::instance($course2->id);
+        $context1 = \context_course::instance($course1->id);
+        $context2 = \context_course::instance($course2->id);
 
         $selfplugin = enrol_get_plugin('self');
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
@@ -160,7 +165,7 @@ class enrol_self_external_testcase extends externallib_advanced_testcase {
         // Try instance not enabled.
         try {
             enrol_self_external::enrol_user($course2->id);
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             self::assertEquals('canntenrol', $e->errorcode);
         }
 

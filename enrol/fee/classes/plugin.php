@@ -164,7 +164,32 @@ class enrol_fee_plugin extends enrol_plugin {
      * @return string html text, usually a form in a text box
      */
     public function enrol_page_hook(stdClass $instance) {
-        global $CFG, $USER, $OUTPUT, $PAGE, $DB;
+        return $this->show_payment_info($instance);
+    }
+
+    /**
+     * Returns optional enrolment instance description text.
+     *
+     * This is used in detailed course information.
+     *
+     *
+     * @param object $instance
+     * @return string short html text
+     */
+    public function get_description_text($instance) {
+        return $this->show_payment_info($instance);
+    }
+
+    /**
+     * Generates payment information to display on enrol/info page.
+     *
+     * @param stdClass $instance
+     * @return false|string
+     * @throws coding_exception
+     * @throws dml_exception
+     */
+    private function show_payment_info(stdClass $instance) {
+        global $USER, $OUTPUT, $DB;
 
         ob_start();
 
@@ -183,19 +208,6 @@ class enrol_fee_plugin extends enrol_plugin {
         $course = $DB->get_record('course', array('id' => $instance->courseid));
         $context = context_course::instance($course->id);
 
-        $shortname = format_string($course->shortname, true, array('context' => $context));
-        $strloginto = get_string("loginto", "", $shortname);
-        $strcourses = get_string("courses");
-
-        // Pass $view=true to filter hidden caps if the user cannot see them.
-        if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*', 'u.id ASC',
-                                             '', '', '', '', false, true)) {
-            $users = sort_by_roleassignment_authority($users, $context);
-            $teacher = array_shift($users);
-        } else {
-            $teacher = false;
-        }
-
         if ( (float) $instance->cost <= 0 ) {
             $cost = (float) $this->get_config('cost');
         } else {
@@ -207,7 +219,7 @@ class enrol_fee_plugin extends enrol_plugin {
         } else {
 
             $data = [
-                'isguestuser' => isguestuser(),
+                'isguestuser' => isguestuser() || !isloggedin(),
                 'cost' => \core_payment\helper::get_cost_as_string($cost, $instance->currency),
                 'instanceid' => $instance->id,
                 'description' => get_string('purchasedescription', 'enrol_fee',

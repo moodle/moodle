@@ -49,15 +49,15 @@
     }
 }}
 
-<div class="container-fluid mb-4">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
-        <div class="d-flex">
+        <div class="navitem">
             {{> mod_forum/quick_search_form }}
         </div>
-        <div class="ml-2">
+        <div class="navitem">
             {{{newdiscussionbtn}}}
         </div>
-        <div class="ml-auto d-flex">
+        <div class="ml-sm-auto navitem">
             {{#subscribetoforum}}
                 <a class="btn btn-secondary" href="{{ subscribetoforum }}">{{#str}}subscribe, mod_forum {{/str}}</a>
             {{/subscribetoforum}}

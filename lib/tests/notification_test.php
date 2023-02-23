@@ -14,39 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for core\notification.
- *
- * @package   core
- * @category  phpunit
- * @copyright 2016 Andrew Nicols <andrew@nicols.co.uk>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace core;
 
 /**
  * Unit tests for core\notification.
  *
  * @package   core
- * @category  phpunit
- * @category  phpunit
+ * @category  test
  * @copyright 2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_notification_testcase extends advanced_testcase {
+class notification_test extends \advanced_testcase {
 
     /**
      * Setup required for all notification tests.
      *
      * This includes emptying the list of notifications on the session, resetting any session which exists, and setting
-     * up a new moodle_page object.
+     * up a new \moodle_page object.
      */
     public function setUp(): void {
         global $PAGE, $SESSION;
 
         parent::setUp();
-        $PAGE = new moodle_page();
+        $PAGE = new \moodle_page();
         \core\session\manager::init_empty_session();
         $SESSION->notifications = [];
     }
@@ -55,7 +45,7 @@ class core_notification_testcase extends advanced_testcase {
      * Tear down required for all notification tests.
      *
      * This includes emptying the list of notifications on the session, resetting any session which exists, and setting
-     * up a new moodle_page object.
+     * up a new \moodle_page object.
      */
     public function tearDown(): void {
         global $PAGE, $SESSION;

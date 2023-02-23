@@ -153,7 +153,6 @@ class my_data_requests_page implements renderable, templatable {
                 $actionsmenu = new action_menu($actions);
                 $actionsmenu->set_menu_trigger(get_string('actions'));
                 $actionsmenu->set_owner_selector('request-actions-' . $requestid);
-                $actionsmenu->set_alignment(\action_menu::TL, \action_menu::BL);
                 $item->actions = $actionsmenu->export_for_template($output);
             }
 

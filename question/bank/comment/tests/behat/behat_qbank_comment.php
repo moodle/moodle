@@ -104,7 +104,7 @@ class behat_qbank_comment extends behat_question_base {
 
         if ($this->running_javascript()) {
             $commentstextarea = $this->find('css',
-                    '.question-comment-view .comment-area textarea', $exception);
+                    '.comment-area textarea', $exception);
             $commentstextarea->setValue($comment);
 
             // We delay 1 second which is all we need.
@@ -113,6 +113,31 @@ class behat_qbank_comment extends behat_question_base {
         } else {
             throw new ExpectationException('JavaScript not running', $this->getSession());
         }
+    }
+
+    /**
+     * Deletes the specified comment from the current question comment preview.
+     *
+     * @Then I delete :arg comment from question preview
+     * @param string $comment
+     */
+    public function i_delete_comment_from_question_preview($comment) {
+
+        $exception = new ElementNotFoundException($this->getSession(), '"' . $comment . '" comment ');
+
+        // Using xpath liternal to avoid possible problems with comments containing quotes.
+        $commentliteral = behat_context_helper::escape($comment);
+
+        $commentxpath = "//*[contains(concat(' ', normalize-space(@class), ' '), ' comment-ctrl ')]" .
+            "/descendant::div[@class='comment-message'][contains(., $commentliteral)]";
+
+        // Click on delete icon.
+        $this->execute('behat_general::i_click_on_in_the',
+            ["Delete comment posted by", "icon", $this->escape($commentxpath), "xpath_element"]
+        );
+
+        // Wait for the animation to finish, in theory is just 1 sec, adding 4 just in case.
+        $this->getSession()->wait(4 * 1000);
     }
 
     /**

@@ -15,12 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package    core_backup
- * @category   phpunit
- * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use backup;
+use backup_check;
+use backup_controller;
+use backup_controller_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -28,11 +28,15 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 
-
-/*
- * check tests (all)
+/**
+ * Check tests (all).
+ *
+ * @package    core_backup
+ * @category   test
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_check_testcase extends advanced_testcase {
+class checks_test extends \advanced_testcase {
 
     protected $moduleid;  // course_modules id used for testing
     protected $sectionid; // course_sections id used for testing
@@ -77,21 +81,21 @@ class backup_check_testcase extends advanced_testcase {
         try {
             backup_check::check_id(backup::TYPE_1ACTIVITY, 0);
             $this->assertTrue(false, 'backup_controller_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_controller_exception);
             $this->assertEquals($e->errorcode, 'backup_check_module_not_exists');
         }
         try {
             backup_check::check_id(backup::TYPE_1SECTION, 0);
             $this->assertTrue(false, 'backup_controller_exception expected');
-        } catch (exception $e) {
+        } catch (\exception $e) {
             $this->assertTrue($e instanceof backup_controller_exception);
             $this->assertEquals($e->errorcode, 'backup_check_section_not_exists');
         }
         try {
             backup_check::check_id(backup::TYPE_1COURSE, 0);
             $this->assertTrue(false, 'backup_controller_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_controller_exception);
             $this->assertEquals($e->errorcode, 'backup_check_course_not_exists');
         }
@@ -100,7 +104,7 @@ class backup_check_testcase extends advanced_testcase {
         try {
             backup_check::check_id(12345678,0);
             $this->assertTrue(false, 'backup_controller_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_controller_exception);
             $this->assertEquals($e->errorcode, 'backup_check_incorrect_type');
         }
@@ -110,7 +114,7 @@ class backup_check_testcase extends advanced_testcase {
         try {
             backup_check::check_user($userid);
             $this->assertTrue(false, 'backup_controller_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_controller_exception);
             $this->assertEquals($e->errorcode, 'backup_check_user_not_exists');
         }
@@ -118,9 +122,9 @@ class backup_check_testcase extends advanced_testcase {
         // Security check tests
         // Try to pass wrong controller
         try {
-            backup_check::check_security(new stdclass(), true);
+            backup_check::check_security(new \stdClass(), true);
             $this->assertTrue(false, 'backup_controller_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_controller_exception);
             $this->assertEquals($e->errorcode, 'backup_check_security_requires_backup_controller');
         }

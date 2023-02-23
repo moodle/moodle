@@ -22,11 +22,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use enrol_lti\local\ltiadvantage\table\published_resources_table;
+
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot.'/enrol/lti/lib.php');
 
 $courseid = required_param('courseid', PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
+$legacy = optional_param('legacy', false, PARAM_BOOL);
 if ($action) {
     require_sesskey();
     $instanceid = required_param('instanceid', PARAM_INT);
@@ -43,7 +46,7 @@ require_capability('moodle/course:enrolreview', $context);
 
 $ltiplugin = enrol_get_plugin('lti');
 $canconfig = has_capability('moodle/course:enrolconfig', $context);
-$pageurl = new moodle_url('/enrol/lti/index.php', array('courseid' => $courseid));
+$pageurl = new moodle_url('/enrol/lti/index.php', array('courseid' => $courseid, 'legacy' => $legacy));
 
 $PAGE->set_url($pageurl);
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
@@ -98,27 +101,62 @@ if ($action) {
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('toolsprovided', 'enrol_lti'));
-echo "<p>" .get_string('toolsprovided_help', 'enrol_lti') . "</p>";
-echo "<p class=helplink>" . $OUTPUT->doc_link('enrol/lti/index',
-    get_string('morehelp')) ."</p>";
-
-if (\enrol_lti\helper::count_lti_tools(array('courseid' => $courseid)) > 0) {
-    $table = new \enrol_lti\manage_table($courseid);
-    $table->define_baseurl($pageurl);
-    $table->out(50, false);
+if ($legacy) {
+    echo $OUTPUT->heading(get_string('toolsprovided', 'enrol_lti'));
+    echo html_writer::tag('p', get_string('toolsprovided_help', 'enrol_lti'));
 } else {
-    $notify = new \core\output\notification(get_string('notoolsprovided', 'enrol_lti'),
+    echo $OUTPUT->heading(get_string('publishedcontent', 'enrol_lti'));
+    echo html_writer::tag('p', get_string('publishedcontent_help', 'enrol_lti'));
+}
+echo html_writer::tag('p', $OUTPUT->doc_link('enrol/lti/index', get_string('morehelp')), ['class' => 'helplink']);
+
+
+// Distinguish between legacy published tools and LTI-Advantage published resources.
+$tabs = [
+    0 => [
+        new tabobject('0', new moodle_url('/enrol/lti/index.php', ['courseid' => $courseid]),
+            get_string('lti13', 'enrol_lti')),
+        new tabobject('1', new moodle_url('/enrol/lti/index.php', ['legacy' => 1, 'courseid' => $courseid]),
+             get_string('ltilegacy', 'enrol_lti')),
+    ]
+];
+$selected = $legacy ? '1' : '0';
+echo html_writer::div(print_tabs($tabs, $selected, null, null, true), 'lti-resource-publication');
+
+if ($legacy) {
+    $notify = new \core\output\notification(get_string('ltilegacydeprecatednotice', 'enrol_lti'),
         \core\output\notification::NOTIFY_WARNING);
     echo $OUTPUT->render($notify);
+
+    if (\enrol_lti\helper::count_lti_tools(array('courseid' => $courseid, 'ltiversion' => 'LTI-1p0/LTI-2p0')) > 0) {
+
+        $table = new \enrol_lti\manage_table($courseid);
+        $table->define_baseurl($pageurl);
+        $table->out(50, false);
+    } else {
+        $notify = new \core\output\notification(get_string('notoolsprovided', 'enrol_lti'),
+            \core\output\notification::NOTIFY_INFO);
+        echo $OUTPUT->render($notify);
+    }
+} else {
+    if (\enrol_lti\helper::count_lti_tools(array('courseid' => $courseid, 'ltiversion' => 'LTI-1p3')) > 0) {
+        $table = new published_resources_table($courseid);
+        $table->define_baseurl($pageurl);
+        $table->out(50, false);
+    } else {
+        $notify = new \core\output\notification(get_string('nopublishedcontent', 'enrol_lti'),
+            \core\output\notification::NOTIFY_INFO);
+        echo $OUTPUT->render($notify);
+    }
 }
 
 if ($ltiplugin->can_add_instance($course->id)) {
     echo $OUTPUT->single_button(new moodle_url('/enrol/editinstance.php',
         array(
+            'legacy' => $legacy,
             'type' => 'lti',
             'courseid' => $course->id,
-            'returnurl' => new moodle_url('/enrol/lti/index.php', array('courseid' => $course->id)))
+            'returnurl' => new moodle_url('/enrol/lti/index.php', ['courseid' => $course->id, 'legacy' => $legacy]))
         ),
         get_string('add'));
 }

@@ -14,8 +14,10 @@ Feature: Admin preset deletion
     And I should see "Custom preset"
     When I open the action menu in "Custom preset" "table_row"
     And I should see "Delete"
+    And I press the escape key
     And I open the action menu in "Full" "table_row"
     Then I should not see "Delete"
+    And I press the escape key
     And I open the action menu in "Starter" "table_row"
     And I should not see "Delete"
 
@@ -23,7 +25,7 @@ Feature: Admin preset deletion
     Given I should see "Custom preset"
     And I open the action menu in "Custom preset" "table_row"
     When I choose "Delete" in the open action menu
-    And I should see "Are you sure you want to delete \"Custom preset\" site admin preset?"
+    And I should see "Are you sure you want to delete the site admin preset Custom preset?"
     And I should not see "This preset has been previously applied"
     And I click on "Cancel" "button"
     And I should see "Presets allow you to easily switch between different site admin configurations."
@@ -42,7 +44,7 @@ Feature: Admin preset deletion
     And I navigate to "Site admin presets" in site administration
     When I open the action menu in "Custom preset" "table_row"
     And I choose "Delete" in the open action menu
-    And I should see "Are you sure you want to delete \"Custom preset\" site admin preset?"
+    And I should see "Are you sure you want to delete the site admin preset Custom preset?"
     Then I should see "This preset has been previously applied"
     And I click on "Delete" "button"
     And I should see "Presets allow you to easily switch between different site admin configurations"

@@ -23,25 +23,25 @@ $chatmessage = required_param('chat_message', PARAM_RAW);
 $PAGE->set_url('/mod/chat/gui_header_js/insert.php', array('chat_sid' => $chatsid, 'chat_message' => $chatmessage));
 
 if (!$chatuser = $DB->get_record('chat_users', array('sid' => $chatsid))) {
-    print_error('notlogged', 'chat');
+    throw new \moodle_exception('notlogged', 'chat');
 }
 
 if (!$chat = $DB->get_record('chat', array('id' => $chatuser->chatid))) {
-    print_error('nochat', 'chat');
+    throw new \moodle_exception('nochat', 'chat');
 }
 
 if (!$course = $DB->get_record('course', array('id' => $chat->course))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 
 require_login($course, false, $cm);
 
 if (isguestuser()) {
-    print_error('noguests');
+    throw new \moodle_exception('noguests');
 }
 
 \core\session\manager::write_close();

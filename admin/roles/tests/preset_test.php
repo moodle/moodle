@@ -14,19 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_role;
+
+use core_role_preset;
+
 /**
  * Role XML presets test case.
  *
  * @package   core_role
- * @category  phpunit
+ * @category  test
  * @copyright 2013 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-
-class core_role_preset_testcase extends advanced_testcase {
+class preset_test extends \advanced_testcase {
     public function test_xml() {
         global $DB;
 
@@ -61,7 +61,7 @@ class core_role_preset_testcase extends advanced_testcase {
                    FROM {role_capabilities}
                   WHERE contextid = :syscontext AND roleid = :roleid
                ORDER BY capability ASC",
-                array('syscontext'=>context_system::instance()->id, 'roleid'=>$role->id));
+                array('syscontext' => \context_system::instance()->id, 'roleid' => $role->id));
 
             foreach ($capabilities as $cap) {
                 $this->assertEquals($cap->permission, $info['permissions'][$cap->capability]);

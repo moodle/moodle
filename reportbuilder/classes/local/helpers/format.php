@@ -23,9 +23,6 @@ use stdClass;
 /**
  * Class containing helper methods for formatting column data via callbacks
  *
- * Note that type hints for each $value argument are avoided to allow for these callbacks to be executed when columns are
- * aggregated using one of the "Group concatenation" methods, where the value is typically stringified
- *
  * @package     core_reportbuilder
  * @copyright   2021 Sara Arjona <sara@moodle.com> based on Alberto Lara Hernández <albertolara@moodle.com> code.
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -35,32 +32,38 @@ class format {
     /**
      * Returns formatted date.
      *
-     * @param int $value Unix timestamp
+     * @param int|null $value Unix timestamp
      * @param stdClass $row
      * @param string|null $format Format string for strftime
      * @return string
      */
-    public static function userdate($value, stdClass $row, ?string $format = null): string {
-        return $value ? userdate((int) $value, $format) : '';
+    public static function userdate(?int $value, stdClass $row, ?string $format = null): string {
+        return $value ? userdate($value, $format) : '';
     }
 
     /**
      * Returns yes/no string depending on the given value
      *
-     * @param bool $value
+     * @param bool|null $value
      * @return string
      */
-    public static function boolean_as_text($value): string {
-        return (bool) $value ? get_string('yes') : get_string('no');
+    public static function boolean_as_text(?bool $value): string {
+        if ($value === null) {
+            return '';
+        }
+        return $value ? get_string('yes') : get_string('no');
     }
 
     /**
      * Returns float value as a percentage
      *
-     * @param float $value
+     * @param float|null $value
      * @return string
      */
-    public static function percent($value): string {
-        return sprintf('%.1f%%', (float) $value);
+    public static function percent(?float $value): string {
+        if ($value === null) {
+            return '';
+        }
+        return get_string('percents', 'moodle', format_float($value));
     }
 }

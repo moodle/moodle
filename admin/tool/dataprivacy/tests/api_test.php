@@ -14,37 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * API tests.
- *
- * @package    tool_dataprivacy
- * @copyright  2018 Jun Pataleta
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace tool_dataprivacy;
 
 use core\invalid_persistent_exception;
 use core\task\manager;
-use tool_dataprivacy\context_instance;
-use tool_dataprivacy\api;
-use tool_dataprivacy\data_registry;
-use tool_dataprivacy\expired_context;
-use tool_dataprivacy\data_request;
-use tool_dataprivacy\purpose;
-use tool_dataprivacy\category;
+use testing_data_generator;
 use tool_dataprivacy\local\helper;
 use tool_dataprivacy\task\process_data_request_task;
-
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
 
 /**
  * API tests.
  *
  * @package    tool_dataprivacy
+ * @covers     \tool_dataprivacy\api
  * @copyright  2018 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_dataprivacy_api_testcase extends advanced_testcase {
+class api_test extends \advanced_testcase {
 
     /**
      * Ensure that the check_can_manage_data_registry function fails cap testing when a user without capabilities is
@@ -68,7 +54,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
-        $this->expectException(required_capability_exception::class);
+        $this->expectException(\required_capability_exception::class);
         api::check_can_manage_data_registry();
     }
 
@@ -82,7 +68,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
-        $this->expectException(required_capability_exception::class);
+        $this->expectException(\required_capability_exception::class);
         api::check_can_manage_data_registry(\context_system::instance()->id);
     }
 
@@ -96,7 +82,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
-        $this->expectException(required_capability_exception::class);
+        $this->expectException(\required_capability_exception::class);
         api::check_can_manage_data_registry(\context_user::instance($user->id)->id);
     }
 
@@ -174,7 +160,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $u1 = $generator->create_user();
         $u2 = $generator->create_user();
 
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         // Give the manager role with the capability to manage data requests.
         $managerroleid = $DB->get_field('role', 'id', array('shortname' => 'manager'));
@@ -215,7 +201,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         // Confirm that the returned list is empty.
         $this->assertEmpty($roleids);
 
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         // Give the manager role with the capability to manage data requests.
         assign_capability('tool/dataprivacy:managedatarequests', CAP_ALLOW, $managerroleid, $context->id, true);
@@ -254,7 +240,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $s1 = $generator->create_user();
         $u1 = $generator->create_user();
 
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         // Manager role.
         $managerroleid = $DB->get_field('role', 'id', array('shortname' => 'manager'));
@@ -304,7 +290,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
 
         // Login as a user without DPO role.
         $this->setUser($teacher);
-        $this->expectException(required_capability_exception::class);
+        $this->expectException(\required_capability_exception::class);
         api::approve_data_request($requestid);
     }
 
@@ -327,8 +313,8 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $this->assertEquals(api::DATAREQUEST_STATUS_REJECTED, $request->get('status'));
 
         // Confirm they weren't deleted.
-        $user = core_user::get_user($request->get('userid'));
-        core_user::require_active_user($user);
+        $user = \core_user::get_user($request->get('userid'));
+        \core_user::require_active_user($user);
     }
 
     /**
@@ -366,7 +352,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $nondpocapable = $generator->create_user();
         $nondpoincapable = $generator->create_user();
 
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         // Manager role.
         $managerroleid = $DB->get_field('role', 'id', array('shortname' => 'manager'));
@@ -666,8 +652,8 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $comment = 'sample comment';
 
         // Get the teacher role pretend it's the parent roles ;).
-        $systemcontext = context_system::instance();
-        $usercontext = context_user::instance($user->id);
+        $systemcontext = \context_system::instance();
+        $usercontext = \context_user::instance($user->id);
         $parentroleid = $DB->get_field('role', 'id', array('shortname' => 'teacher'));
         // Give the manager role with the capability to manage data requests.
         assign_capability('tool/dataprivacy:makedatarequestsforchildren', CAP_ALLOW, $parentroleid, $systemcontext->id, true);
@@ -923,7 +909,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $dpo = $generator->create_user();
         $nondpo = $generator->create_user();
 
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         // Manager role.
         $managerroleid = $DB->get_field('role', 'id', array('shortname' => 'manager'));
@@ -1222,7 +1208,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
      */
     public function test_set_contextlevel_invalid_contextlevels($contextlevel) {
 
-        $this->expectException(coding_exception::class);
+        $this->expectException(\coding_exception::class);
         api::set_contextlevel((object) [
                 'contextlevel' => $contextlevel,
             ]);
@@ -1291,7 +1277,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
             'categoryid' => $category1->get('id'),
         ]);
 
-        $this->expectException(coding_exception::class);
+        $this->expectException(\coding_exception::class);
         api::get_effective_contextlevel_purpose($contextlevel);
     }
 
@@ -1908,14 +1894,14 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $assign = $generator->create_module('assign', ['course' => $course->id]);
         $forum = $generator->create_module('forum', ['course' => $course->id]);
 
-        $coursecatcontext = context_coursecat::instance($coursecat->id);
-        $coursecontext = context_course::instance($course->id);
-        $blockcontext = context_block::instance($block->id);
+        $coursecatcontext = \context_coursecat::instance($coursecat->id);
+        $coursecontext = \context_course::instance($course->id);
+        $blockcontext = \context_block::instance($block->id);
 
         list($course, $assigncm) = get_course_and_cm_from_instance($assign->id, 'assign');
         list($course, $forumcm) = get_course_and_cm_from_instance($forum->id, 'forum');
-        $assigncontext = context_module::instance($assigncm->id);
-        $forumcontext = context_module::instance($forumcm->id);
+        $assigncontext = \context_module::instance($assigncm->id);
+        $forumcontext = \context_module::instance($forumcm->id);
 
         // Generate purposes and categories.
         $category1 = api::create_category((object)['name' => 'Test category 1']);
@@ -2190,6 +2176,27 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
     }
 
     /**
+     * Test whether user can create data download request for themselves
+     */
+    public function test_can_create_data_download_request_for_self(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // The default user role allows for the creation of download data requests.
+        $this->assertTrue(api::can_create_data_download_request_for_self());
+
+        // Prohibit that capability.
+        $userrole = $DB->get_field('role', 'id', ['shortname' => 'user'], MUST_EXIST);
+        assign_capability('tool/dataprivacy:downloadownrequest', CAP_PROHIBIT, $userrole, \context_user::instance($user->id));
+
+        $this->assertFalse(api::can_create_data_download_request_for_self());
+    }
+
+    /**
      * Test user cannot create data deletion request for themselves if they don't have
      * "tool/dataprivacy:requestdelete" capability.
      *
@@ -2199,8 +2206,8 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $this->resetAfterTest();
         $userid = $this->getDataGenerator()->create_user()->id;
         $roleid = $this->getDataGenerator()->create_role();
-        assign_capability('tool/dataprivacy:requestdelete', CAP_PROHIBIT, $roleid, context_user::instance($userid));
-        role_assign($roleid, $userid, context_user::instance($userid));
+        assign_capability('tool/dataprivacy:requestdelete', CAP_PROHIBIT, $roleid, \context_user::instance($userid));
+        role_assign($roleid, $userid, \context_user::instance($userid));
         $this->setUser($userid);
         $this->assertFalse(api::can_create_data_deletion_request_for_self());
     }
@@ -2269,7 +2276,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $this->resetAfterTest();
         $userid = $this->getDataGenerator()->create_user()->id;
         $roleid = $this->getDataGenerator()->create_role();
-        $contextsystem = context_system::instance();
+        $contextsystem = \context_system::instance();
         assign_capability('tool/dataprivacy:requestdeleteforotheruser', CAP_ALLOW, $roleid, $contextsystem);
         role_assign($roleid, $userid, $contextsystem);
         $this->setUser($userid);

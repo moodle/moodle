@@ -9,15 +9,15 @@ Feature: Apply accessibility to a tour
       | Tour is enabled     | 1 |
       | Show with backdrop  | 1 |
     And I add steps to the "First tour" tour:
-      | targettype                  | Title             | Content |
-      | Display in middle of page   | Welcome           | Welcome tour. |
+      | targettype                | Title   | id_content    | Content type   |
+      | Display in middle of page | Welcome | Welcome tour. | Manual |
     And I add steps to the tour:
-      | targettype | targetvalue_selector | Title       | Content   |
-      | Selector   | .usermenu            | User menu   | Next page |
-      | Selector   | .navbar-brand         | Page 2      | Next page |
+      | targettype | targetvalue_selector | Title     | id_content | Content type   |
+      | Selector   | .usermenu            | User menu | Next page  | Manual |
+      | Selector   | .navbar-brand        | Page 2    | Next page  | Manual |
     And I add steps to the tour:
-      | targettype                  | Title   | Content     |
-      | Display in middle of page   | Page 3  | Final page. |
+      | targettype                | Title  | id_content  | Content type   |
+      | Display in middle of page | Page 3 | Final page. | Manual |
 
   @javascript
   Scenario: Check tabbing working correctly.

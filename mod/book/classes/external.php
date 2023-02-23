@@ -24,9 +24,14 @@
  * @since      Moodle 3.0
  */
 
-defined('MOODLE_INTERNAL') || die;
-
-require_once("$CFG->libdir/externallib.php");
+use core_course\external\helper_for_get_mods_by_courses;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
+use core_external\util;
 
 /**
  * Book external functions
@@ -137,7 +142,7 @@ class mod_book_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.0
      */
     public static function view_book_returns() {
@@ -174,7 +179,6 @@ class mod_book_external extends external_api {
      * @since Moodle 3.0
      */
     public static function get_books_by_courses($courseids = array()) {
-        global $CFG;
 
         $returnedbooks = array();
         $warnings = array();
@@ -190,37 +194,22 @@ class mod_book_external extends external_api {
         // Ensure there are courseids to loop through.
         if (!empty($params['courseids'])) {
 
-            list($courses, $warnings) = external_util::validate_courses($params['courseids'], $courses);
+            list($courses, $warnings) = util::validate_courses($params['courseids'], $courses);
 
             // Get the books in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
             $books = get_all_instances_in_courses("book", $courses);
             foreach ($books as $book) {
-                $context = context_module::instance($book->coursemodule);
                 // Entry to return.
-                $bookdetails = array();
-                // First, we return information that any user can see in the web interface.
-                $bookdetails['id'] = $book->id;
-                $bookdetails['coursemodule']      = $book->coursemodule;
-                $bookdetails['course']            = $book->course;
-                $bookdetails['name']              = external_format_string($book->name, $context->id);
-                // Format intro.
-                $options = array('noclean' => true);
-                list($bookdetails['intro'], $bookdetails['introformat']) =
-                    external_format_text($book->intro, $book->introformat, $context->id, 'mod_book', 'intro', null, $options);
-                $bookdetails['introfiles'] = external_util::get_area_files($context->id, 'mod_book', 'intro', false, false);
+                $bookdetails = helper_for_get_mods_by_courses::standard_coursemodule_element_values($book, 'mod_book');
                 $bookdetails['numbering']         = $book->numbering;
                 $bookdetails['navstyle']          = $book->navstyle;
                 $bookdetails['customtitles']      = $book->customtitles;
 
-                if (has_capability('moodle/course:manageactivities', $context)) {
+                if (has_capability('moodle/course:manageactivities', context_module::instance($book->coursemodule))) {
                     $bookdetails['revision']      = $book->revision;
                     $bookdetails['timecreated']   = $book->timecreated;
                     $bookdetails['timemodified']  = $book->timemodified;
-                    $bookdetails['section']       = $book->section;
-                    $bookdetails['visible']       = $book->visible;
-                    $bookdetails['groupmode']     = $book->groupmode;
-                    $bookdetails['groupingid']    = $book->groupingid;
                 }
                 $returnedbooks[] = $bookdetails;
             }
@@ -241,31 +230,20 @@ class mod_book_external extends external_api {
         return new external_single_structure(
             array(
                 'books' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'Book id'),
-                            'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
-                            'course' => new external_value(PARAM_INT, 'Course id'),
-                            'name' => new external_value(PARAM_RAW, 'Book name'),
-                            'intro' => new external_value(PARAM_RAW, 'The Book intro'),
-                            'introformat' => new external_format_value('intro'),
-                            'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
+                    new external_single_structure(array_merge(
+                        helper_for_get_mods_by_courses::standard_coursemodule_elements_returns(),
+                        [
                             'numbering' => new external_value(PARAM_INT, 'Book numbering configuration'),
                             'navstyle' => new external_value(PARAM_INT, 'Book navigation style configuration'),
                             'customtitles' => new external_value(PARAM_INT, 'Book custom titles type'),
                             'revision' => new external_value(PARAM_INT, 'Book revision', VALUE_OPTIONAL),
                             'timecreated' => new external_value(PARAM_INT, 'Time of creation', VALUE_OPTIONAL),
                             'timemodified' => new external_value(PARAM_INT, 'Time of last modification', VALUE_OPTIONAL),
-                            'section' => new external_value(PARAM_INT, 'Course section id', VALUE_OPTIONAL),
-                            'visible' => new external_value(PARAM_BOOL, 'Visible', VALUE_OPTIONAL),
-                            'groupmode' => new external_value(PARAM_INT, 'Group mode', VALUE_OPTIONAL),
-                            'groupingid' => new external_value(PARAM_INT, 'Group id', VALUE_OPTIONAL),
-                        ), 'Books'
-                    )
+                        ]
+                    ), 'Books')
                 ),
                 'warnings' => new external_warnings(),
             )
         );
     }
-
 }

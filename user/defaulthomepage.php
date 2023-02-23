@@ -34,7 +34,12 @@ list($user, $course) = useredit_setup_preference_page($userid, SITEID);
 
 $form = new core_user\form\defaulthomepage_form();
 
-$user->defaulthomepage = get_user_preferences('user_home_page_preference', HOMEPAGE_MY, $user);
+$defaulthomepage = get_default_home_page();
+$user->defaulthomepage = get_user_preferences('user_home_page_preference', $defaulthomepage, $user);
+if (empty($CFG->enabledashboard) && $user->defaulthomepage == HOMEPAGE_MY) {
+    // If the user was using the dashboard but it's disabled, return the default home page.
+    $user->defaulthomepage = $defaulthomepage;
+}
 $form->set_data($user);
 
 $redirect = new moodle_url('/user/preferences.php', ['userid' => $user->id]);

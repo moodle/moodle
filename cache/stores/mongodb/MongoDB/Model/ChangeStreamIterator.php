@@ -1,12 +1,12 @@
 <?php
 /*
- * Copyright 2019 MongoDB, Inc.
+ * Copyright 2019-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,9 +28,11 @@ use MongoDB\Driver\Server;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\ResumeTokenException;
 use MongoDB\Exception\UnexpectedValueException;
+use ReturnTypeWillChange;
+
+use function assert;
 use function count;
 use function is_array;
-use function is_integer;
 use function is_object;
 use function MongoDB\Driver\Monitoring\addSubscriber;
 use function MongoDB\Driver\Monitoring\removeSubscriber;
@@ -69,23 +71,12 @@ class ChangeStreamIterator extends IteratorIterator implements CommandSubscriber
 
     /**
      * @internal
-     * @param Cursor            $cursor
-     * @param integer           $firstBatchSize
      * @param array|object|null $initialResumeToken
-     * @param object|null       $postBatchResumeToken
      */
-    public function __construct(Cursor $cursor, $firstBatchSize, $initialResumeToken, $postBatchResumeToken)
+    public function __construct(Cursor $cursor, int $firstBatchSize, $initialResumeToken, ?object $postBatchResumeToken)
     {
-        if (! is_integer($firstBatchSize)) {
-            throw InvalidArgumentException::invalidType('$firstBatchSize', $firstBatchSize, 'integer');
-        }
-
         if (isset($initialResumeToken) && ! is_array($initialResumeToken) && ! is_object($initialResumeToken)) {
             throw InvalidArgumentException::invalidType('$initialResumeToken', $initialResumeToken, 'array or object');
-        }
-
-        if (isset($postBatchResumeToken) && ! is_object($postBatchResumeToken)) {
-            throw InvalidArgumentException::invalidType('$postBatchResumeToken', $postBatchResumeToken, 'object');
         }
 
         parent::__construct($cursor);
@@ -98,24 +89,24 @@ class ChangeStreamIterator extends IteratorIterator implements CommandSubscriber
     }
 
     /** @internal */
-    final public function commandFailed(CommandFailedEvent $event)
+    final public function commandFailed(CommandFailedEvent $event): void
     {
     }
 
     /** @internal */
-    final public function commandStarted(CommandStartedEvent $event)
+    final public function commandStarted(CommandStartedEvent $event): void
     {
         if ($event->getCommandName() !== 'getMore') {
             return;
         }
 
         $this->batchPosition = 0;
-        $this->batchSize = null;
+        $this->batchSize = 0;
         $this->postBatchResumeToken = null;
     }
 
     /** @internal */
-    final public function commandSucceeded(CommandSucceededEvent $event)
+    final public function commandSucceeded(CommandSucceededEvent $event): void
     {
         if ($event->getCommandName() !== 'getMore') {
             return;
@@ -138,9 +129,24 @@ class ChangeStreamIterator extends IteratorIterator implements CommandSubscriber
      * @see https://php.net/iteratoriterator.current
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function current()
     {
         return $this->isValid ? parent::current() : null;
+    }
+
+    /**
+     * Necessary to let psalm know that we're always expecting a cursor as inner
+     * iterator. This could be side-stepped due to the class not being final,
+     * but it's very much an invalid use-case. This method can be dropped in 2.0
+     * once the class is final.
+     */
+    final public function getInnerIterator(): Cursor
+    {
+        $cursor = parent::getInnerIterator();
+        assert($cursor instanceof Cursor);
+
+        return $cursor;
     }
 
     /**
@@ -160,7 +166,7 @@ class ChangeStreamIterator extends IteratorIterator implements CommandSubscriber
     /**
      * Returns the server the cursor is running on.
      */
-    public function getServer() : Server
+    public function getServer(): Server
     {
         return $this->server;
     }
@@ -169,6 +175,7 @@ class ChangeStreamIterator extends IteratorIterator implements CommandSubscriber
      * @see https://php.net/iteratoriterator.key
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function key()
     {
         return $this->isValid ? parent::key() : null;
@@ -176,9 +183,8 @@ class ChangeStreamIterator extends IteratorIterator implements CommandSubscriber
 
     /**
      * @see https://php.net/iteratoriterator.rewind
-     * @return void
      */
-    public function next()
+    public function next(): void
     {
         /* Determine if advancing the iterator will execute a getMore command
          * (i.e. we are already positioned at the end of the current batch). If
@@ -203,9 +209,8 @@ class ChangeStreamIterator extends IteratorIterator implements CommandSubscriber
 
     /**
      * @see https://php.net/iteratoriterator.rewind
-     * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         if ($this->isRewindNop) {
             return;
@@ -217,9 +222,8 @@ class ChangeStreamIterator extends IteratorIterator implements CommandSubscriber
 
     /**
      * @see https://php.net/iteratoriterator.valid
-     * @return boolean
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->isValid;
     }
@@ -248,11 +252,13 @@ class ChangeStreamIterator extends IteratorIterator implements CommandSubscriber
 
         if (! isset($resumeToken)) {
             $this->isValid = false;
+
             throw ResumeTokenException::notFound();
         }
 
         if (! is_array($resumeToken) && ! is_object($resumeToken)) {
             $this->isValid = false;
+
             throw ResumeTokenException::invalidType($resumeToken);
         }
 
@@ -261,10 +267,8 @@ class ChangeStreamIterator extends IteratorIterator implements CommandSubscriber
 
     /**
      * Return whether the iterator is positioned at the end of the batch.
-     *
-     * @return boolean
      */
-    private function isAtEndOfBatch()
+    private function isAtEndOfBatch(): bool
     {
         return $this->batchPosition + 1 >= $this->batchSize;
     }
@@ -273,9 +277,8 @@ class ChangeStreamIterator extends IteratorIterator implements CommandSubscriber
      * Perform housekeeping after an iteration event.
      *
      * @see https://github.com/mongodb/specifications/blob/master/source/change-streams/change-streams.rst#updating-the-cached-resume-token
-     * @param boolean $incrementBatchPosition
      */
-    private function onIteration($incrementBatchPosition)
+    private function onIteration(bool $incrementBatchPosition): void
     {
         $this->isValid = parent::valid();
 

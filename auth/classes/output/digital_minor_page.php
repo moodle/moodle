@@ -49,7 +49,7 @@ class digital_minor_page implements renderable, templatable {
 
         $sitename = format_string($SITE->fullname);
         $supportname = $CFG->supportname;
-        $supportemail = $CFG->supportemail;
+        $supportemail = $CFG->supportemail ?? null;
 
         $context = [
             'sitename' => $sitename,

@@ -19,7 +19,12 @@ Feature: Import and edit calendar events
     Given I log in as "teacher1"
     And I view the calendar for "1" "2016"
     And I click on "Import or export calendars" "link"
+    And "Calendar" "link" should exist in the ".breadcrumb" "css_element"
+    And "Import or export calendars" "text" should exist in the ".breadcrumb" "css_element"
     And I press "Import calendar"
+    And "Calendar" "link" should exist in the ".breadcrumb" "css_element"
+    And "Import or export calendars" "link" should exist in the ".breadcrumb" "css_element"
+    And "Import calendar" "text" should exist in the ".breadcrumb" "css_element"
     And I set the following fields to these values:
       | Calendar name  | Test Import |
       | Import from    | Calendar file (.ics) |
@@ -80,3 +85,20 @@ Feature: Import and edit calendar events
     And I upload "calendar/tests/fixtures/import.ics" file to "Calendar file (.ics)" filemanager
     And I press "Import calendar"
     And I should see "Site events"
+
+  Scenario: Import iCalendar file with parameter.
+    Given I log in as "admin"
+    And I view the calendar for "7" "2022"
+    And I click on "Import or export calendars" "link"
+    And I press "Import calendar"
+    And I set the following fields to these values:
+      | Calendar name | Test Import          |
+      | Import from   | Calendar file (.ics) |
+      | Type of event | User                 |
+    And I upload "calendar/tests/fixtures/import_with_parameters.ics" file to "Calendar file (.ics)" filemanager
+    And I press "Import calendar"
+    When I view the calendar for "1" "7" "2022"
+    Then I should see "First event"
+    And I should see "Description of the first event"
+    And I should see "Second event"
+    And I should see "Description of the second event"

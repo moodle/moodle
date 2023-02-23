@@ -37,10 +37,12 @@
         * userphone2
         * userinstitution
         * useraddress
+        * useridnumber
         * userfirstaccess
         * userlastaccess
         * usercurrentlogin
         * userlastip
+        * userlastlogin
 
     Example context (json):
     {
@@ -53,10 +55,12 @@
         "userphone2": "123456789",
         "userinstitution": "Institution",
         "useraddress": "Address",
+        "useridnumber": "12345",
         "userfirstaccess": "Friday, 6 July 2018, 9:03 AM",
         "userlastaccess": "Wednesday, 26 September 2018, 8:05 AM",
         "usercurrentlogin": "Wednesday, 26 September 2018, 7:17 AM",
-        "userlastip": "0:0:0:0:0:0:0:1"
+        "userlastip": "0:0:0:0:0:0:0:1",
+        "userlastlogin": "Wednesday, 25 September 2018, 9:01 AM"
     }
 }}
 <div>
@@ -112,6 +116,12 @@
         {{ useraddress }}
     </div>
     {{/useraddress}}
+    {{#useridnumber}}
+    <div class="myprofileitem idnumber">
+        <span>{{#str}} idnumber {{/str}}:</span>
+        {{{ useridnumber }}}
+    </div>
+    {{/useridnumber}}
     {{#userfirstaccess}}
     <div class="myprofileitem firstaccess">
          <span>{{#str}} firstaccess {{/str}}: </span>
@@ -130,6 +140,12 @@
          {{ usercurrentlogin }}
     </div>
     {{/usercurrentlogin}}
+    {{#userlastlogin}}
+    <div class="myprofileitem lastlogin">
+         <span>{{#str}} lastlogin {{/str}}:</span>
+         {{ userlastlogin }}
+    </div>
+    {{/userlastlogin}}
     {{#userlastip}}
     <div class="myprofileitem lastip">
          <span>IP:</span>

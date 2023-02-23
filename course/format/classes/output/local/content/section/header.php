@@ -24,10 +24,11 @@
 
 namespace core_courseformat\output\local\content\section;
 
+use core\output\named_templatable;
 use core_courseformat\base as course_format;
-use section_info;
+use core_courseformat\output\local\courseformat_named_templatable;
 use renderable;
-use templatable;
+use section_info;
 use stdClass;
 
 /**
@@ -37,7 +38,9 @@ use stdClass;
  * @copyright 2020 Ferran Recio <ferran@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class header implements renderable, templatable {
+class header implements named_templatable, renderable {
+
+    use courseformat_named_templatable;
 
     /** @var course_format the course format class */
     protected $format;
@@ -75,7 +78,7 @@ class header implements renderable, templatable {
 
         $data->title = $output->section_title_without_link($section, $course);
 
-        $coursedisplay = $course->coursedisplay ?? COURSE_DISPLAY_SINGLEPAGE;
+        $coursedisplay = $format->get_course_display();
         $data->headerdisplaymultipage = false;
         if ($coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
             $data->headerdisplaymultipage = true;

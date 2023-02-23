@@ -14,13 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Restore date tests.
- *
- * @package    core_backup
- * @copyright  2017 Adrian Greeve <adrian@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use mod_quiz\quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,7 +32,7 @@ require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
  * @copyright  2017 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_stepslib_date_testcase extends restore_date_testcase {
+class restore_stepslib_date_test extends \restore_date_testcase {
 
     /**
      * Restoring a manual grade item does not result in the timecreated or
@@ -46,17 +42,17 @@ class restore_stepslib_date_testcase extends restore_date_testcase {
 
         $course = $this->getDataGenerator()->create_course(['startdate' => time()]);
 
-        $params = new stdClass();
+        $params = new \stdClass();
         $params->courseid = $course->id;
         $params->fullname = 'unittestgradecalccategory';
         $params->aggregation = GRADE_AGGREGATE_MEAN;
         $params->aggregateonlygraded = 0;
-        $gradecategory = new grade_category($params, false);
+        $gradecategory = new \grade_category($params, false);
         $gradecategory->insert();
 
         $gradecategory->load_grade_item();
 
-        $gradeitems = new grade_item();
+        $gradeitems = new \grade_item();
         $gradeitems->courseid = $course->id;
         $gradeitems->categoryid = $gradecategory->id;
         $gradeitems->itemname = 'manual grade_item';
@@ -80,7 +76,7 @@ class restore_stepslib_date_testcase extends restore_date_testcase {
             'courseid' => $course->id,
         ];
 
-        $gradeitem = grade_item::fetch($gradeitemparams);
+        $gradeitem = \grade_item::fetch($gradeitemparams);
 
         // Do backup and restore.
 
@@ -92,7 +88,7 @@ class restore_stepslib_date_testcase extends restore_date_testcase {
             'courseid' => $course->id,
         ];
 
-        $newgradeitem = grade_item::fetch($newgradeitemparams);
+        $newgradeitem = \grade_item::fetch($newgradeitemparams);
         $this->assertEquals($gradeitem->timecreated, $newgradeitem->timecreated);
         $this->assertEquals($gradeitem->timemodified, $newgradeitem->timemodified);
     }
@@ -125,7 +121,7 @@ class restore_stepslib_date_testcase extends restore_date_testcase {
         // Create a course.
         $course = $this->getDataGenerator()->create_course(['startdate' => time()]);
         // Create a badge.
-        $fordb = new stdClass();
+        $fordb = new \stdClass();
         $fordb->id = null;
         $fordb->name = "Test badge";
         $fordb->description = "Testing badges";
@@ -187,7 +183,7 @@ class restore_stepslib_date_testcase extends restore_date_testcase {
                 'timeduration' => 86400,
                 'visible' => 1
         ];
-        $calendarevent = calendar_event::create($event, false);
+        $calendarevent = \calendar_event::create($event, false);
 
         // Backup and restore.
         $newcourseid = $this->backup_and_restore($course);
@@ -214,7 +210,7 @@ class restore_stepslib_date_testcase extends restore_date_testcase {
         $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id);
         // Complete the course with a user.
-        $ccompletion = new completion_completion(['course' => $course->id,
+        $ccompletion = new \completion_completion(['course' => $course->id,
                                                   'userid' => $user->id,
                                                   'timeenrolled' => time(),
                                                   'timestarted' => time()
@@ -227,7 +223,7 @@ class restore_stepslib_date_testcase extends restore_date_testcase {
         $newcourseid = $this->backup_and_restore($course);
         $newcourse = get_course($newcourseid);
 
-        $newcompletion = completion_completion::fetch(['course' => $newcourseid, 'userid' => $user->id]);
+        $newcompletion = \completion_completion::fetch(['course' => $newcourseid, 'userid' => $user->id]);
 
         // Compare dates.
         $this->assertEquals($ccompletion->timeenrolled, $newcompletion->timeenrolled);
@@ -244,7 +240,7 @@ class restore_stepslib_date_testcase extends restore_date_testcase {
         // Testing the restore of an overridden grade.
         list($course, $assign) = $this->create_course_and_module('assign', []);
         $cm = $DB->get_record('course_modules', ['course' => $course->id, 'instance' => $assign->id]);
-        $assignobj = new mod_assign_testable_assign(context_module::instance($cm->id), $cm, $course);
+        $assignobj = new \mod_assign_testable_assign(\context_module::instance($cm->id), $cm, $course);
         $submission = $assignobj->get_user_submission($USER->id, true);
         $grade = $assignobj->get_user_grade($USER->id, true);
         $grade->grade = 75;
@@ -257,10 +253,10 @@ class restore_stepslib_date_testcase extends restore_date_testcase {
             'itemmodule' => 'assign',
             'courseid' => $course->id,
         ];
-        $gradeitem = grade_item::fetch($gradeitemparams);
+        $gradeitem = \grade_item::fetch($gradeitemparams);
 
         // Next the grade grade.
-        $gradegrade = grade_grade::fetch(['itemid' => $gradeitem->id, 'userid' => $USER->id]);
+        $gradegrade = \grade_grade::fetch(['itemid' => $gradeitem->id, 'userid' => $USER->id]);
         $gradegrade->set_overridden(true);
 
         // Back up and restore.
@@ -277,9 +273,9 @@ class restore_stepslib_date_testcase extends restore_date_testcase {
             'courseid' => $newcourse->id,
         ];
 
-        $newgradeitem = grade_item::fetch($newgradeitemparams);
+        $newgradeitem = \grade_item::fetch($newgradeitemparams);
         // Find grade grade.
-        $newgradegrade = grade_grade::fetch(['itemid' => $newgradeitem->id, 'userid' => $USER->id]);
+        $newgradegrade = \grade_grade::fetch(['itemid' => $newgradeitem->id, 'userid' => $USER->id]);
         // Compare dates.
         $this->assertEquals($gradegrade->timecreated, $newgradegrade->timecreated);
         $this->assertEquals($gradegrade->timemodified, $newgradegrade->timemodified);
@@ -300,7 +296,7 @@ class restore_stepslib_date_testcase extends restore_date_testcase {
                 'completionusegrade' => 1 // Student must receive a grade to complete this activity.
             ]);
         $cm = $DB->get_record('course_modules', ['course' => $course->id, 'instance' => $assign->id]);
-        $assignobj = new mod_assign_testable_assign(context_module::instance($cm->id), $cm, $course);
+        $assignobj = new \mod_assign_testable_assign(\context_module::instance($cm->id), $cm, $course);
         $submission = $assignobj->get_user_submission($USER->id, true);
         $grade = $assignobj->get_user_grade($USER->id, true);
         $grade->grade = 75;
@@ -318,6 +314,41 @@ class restore_stepslib_date_testcase extends restore_date_testcase {
         $newcoursemodulecompletion = $DB->get_record('course_modules_completion', ['coursemoduleid' => $cm->id]);
 
         $this->assertEquals($coursemodulecompletion->timemodified, $newcoursemodulecompletion->timemodified);
+    }
+
+    /**
+     * Checking that the user completion of an activity relating to the view field does not change
+     * when doing a course restore.
+     * @covers ::backup_and_restore
+     */
+    public function test_usercompletion_view_restore() {
+        global $DB;
+        // More completion...
+        $course = $this->getDataGenerator()->create_course(['startdate' => time(), 'enablecompletion' => 1]);
+        $student = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, 'student');
+        $assign = $this->getDataGenerator()->create_module('assign', [
+            'course' => $course->id,
+            'completion' => COMPLETION_TRACKING_AUTOMATIC, // Show activity as complete when conditions are met.
+            'completionview' => 1
+        ]);
+        $cm = $DB->get_record('course_modules', ['course' => $course->id, 'instance' => $assign->id]);
+
+        // Mark the activity as completed.
+        $completion = new \completion_info($course);
+        $completion->set_module_viewed($cm, $student->id);
+
+        $coursemodulecompletion = $DB->get_record('course_modules_viewed', ['coursemoduleid' => $cm->id]);
+
+        // Back up and restore.
+        $newcourseid = $this->backup_and_restore($course);
+        $newcourse = get_course($newcourseid);
+
+        $assignid = $DB->get_field('assign', 'id', ['course' => $newcourseid]);
+        $cm = $DB->get_record('course_modules', ['course' => $newcourse->id, 'instance' => $assignid]);
+        $newcoursemodulecompletion = $DB->get_record('course_modules_viewed', ['coursemoduleid' => $cm->id]);
+
+        $this->assertEquals($coursemodulecompletion->timecreated, $newcoursemodulecompletion->timecreated);
     }
 
     /**
@@ -350,10 +381,10 @@ class restore_stepslib_date_testcase extends restore_date_testcase {
         // Make a user to do the quiz.
         $user1 = $this->getDataGenerator()->create_user();
 
-        $quizobj = quiz::create($quiz->id, $user1->id);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->id, $user1->id);
 
         // Start the attempt.
-        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 
         $timenow = time();
@@ -390,14 +421,14 @@ class restore_stepslib_date_testcase extends restore_date_testcase {
 
         // Get the quiz for this new restored course.
         $quizdata = $DB->get_record('quiz', ['course' => $newcourseid]);
-        $quizobj = quiz::create($quizdata->id, $user1->id);
+        $quizobj = \mod_quiz\quiz_settings::create($quizdata->id, $user1->id);
 
         $questionusage = $DB->get_record('question_usages', [
                 'component' => 'mod_quiz',
                 'contextid' => $quizobj->get_context()->id
             ]);
 
-        $newquba = question_engine::load_questions_usage_by_activity($questionusage->id);
+        $newquba = \question_engine::load_questions_usage_by_activity($questionusage->id);
 
         $restorediterator = $newquba->get_attempt_iterator();
         $i = 0;

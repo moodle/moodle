@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,22 +21,49 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package mod_data
  */
+use mod_data\manager;
+use mod_data\preset;
 
-define('NO_MOODLE_COOKIES', true); // session not used here
+define('NO_MOODLE_COOKIES', true); // Session not used here.
 
 require_once('../../config.php');
 
-$d = optional_param('d', 0, PARAM_INT);   // database id
-$lifetime  = 600;                                   // Seconds to cache this stylesheet
+$id = optional_param('id', 0, PARAM_INT); // Course module id.
+$d = optional_param('d', 0, PARAM_INT); // Database id.
+$presetfullname = optional_param('preset', '', PARAM_PATH); // The directory the preset is in.
 
-$PAGE->set_url('/mod/data/css.php', array('d'=>$d));
+$lifetime  = 600; // Seconds to cache this stylesheet.
+$url = new moodle_url('/mod/data/css.php');
 
-if ($data = $DB->get_record('data', array('id'=>$d))) {
-    header('Last-Modified: ' . gmdate('D, d M Y H:i:s', time()) . ' GMT');
-    header('Expires: ' . gmdate("D, d M Y H:i:s", time() + $lifetime) . ' GMT');
-    header('Cache-control: max_age = '. $lifetime);
-    header('Pragma: ');
-    header('Content-type: text/css; charset=utf-8');  // Correct MIME type
-
-    echo $data->csstemplate;
+$manager = null;
+if ($id) {
+    list($course, $cm) = get_course_and_cm_from_cmid($id, manager::MODULE);
+    $manager = manager::create_from_coursemodule($cm);
+    $instance = $manager->get_instance();
+} else {
+    // We must have the database activity id.
+    $d = required_param('d', PARAM_INT);
+    $instance = $DB->get_record('data', ['id' => $d], '*', MUST_EXIST);
+    $manager = manager::create_from_instance($instance);
 }
+$url->param('d', $instance->id);
+
+// Get the content.
+if ($presetfullname) {
+    $url->param('preset', $presetfullname);
+    $preset = preset::create_from_fullname($manager, $presetfullname);
+    $content = $preset->get_template_content('csstemplate');
+    $lifetime  = 60; // Preset preview does not need a long cache.
+} else {
+    $content = $instance->csstemplate;
+}
+
+$PAGE->set_url($url);
+
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s', time()) . ' GMT');
+header('Expires: ' . gmdate("D, d M Y H:i:s", time() + $lifetime) . ' GMT');
+header('Cache-control: max_age = '. $lifetime);
+header('Pragma: ');
+header('Content-type: text/css; charset=utf-8');  // Correct MIME type.
+
+echo $content;

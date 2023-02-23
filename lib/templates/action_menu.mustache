@@ -22,11 +22,19 @@
     Example context (json):
     {
         "classes": "",
+        "instance": "1",
         "primary": {
             "items": [{"rawhtml": "<p>Item in primary menu</p>"}]
         },
         "secondary": {
-            "items": [{"rawhtml": "<p>Item in secondary menu</p>"}]
+            "attributes": [
+                {"name": "id", "value": "action-menu-1-menu"}
+            ],
+            "items": [
+                {
+                    "rawhtml": "<p>Item in secondary menu</p>"
+                }
+            ]
         }
     }
 }}

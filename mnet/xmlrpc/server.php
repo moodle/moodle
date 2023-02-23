@@ -27,7 +27,7 @@ require_once $CFG->dirroot.'/mnet/xmlrpc/serverlib.php';
 
 
 if ($CFG->mnet_dispatcher_mode === 'off') {
-    print_error('mnetdisabled', 'mnet');
+    throw new \moodle_exception('mnetdisabled', 'mnet');
 }
 
 // Content type for output is not html:
@@ -66,7 +66,9 @@ if($remoteclient->pushkey == true) {
     exit(mnet_server_fault_xml(7025, $mnet->public_key, $remoteclient->useprivatekey));
 }
 // Have a peek at what the request would be if we were to process it
-$params = xmlrpc_decode_request($xmlrpcrequest, $method);
+$encoder = new \PhpXmlRpc\Encoder();
+$orequest = $encoder->decodeXML($xmlrpcrequest); // First, to internal.
+$method = $orequest->method(); // We just need the method.
 mnet_debug("incoming mnet request $method");
 
 // One of three conditions need to be met before we continue processing this request:

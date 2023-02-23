@@ -68,7 +68,7 @@ class custom_field_column extends column_base {
      *
      * @return string
      */
-    protected function get_title(): string {
+    public function get_title(): string {
         return $this->field->get_formatted_name();
     }
 
@@ -86,6 +86,10 @@ class custom_field_column extends column_base {
         } else {
             echo '';
         }
+    }
+
+    public function get_extra_classes(): array {
+        return ['pr-3'];
     }
 
 }

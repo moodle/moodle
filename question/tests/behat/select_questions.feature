@@ -22,9 +22,7 @@ Feature: The questions in the question bank can be selected in various ways
       | Test questions   | essay     | A question 1 name | admin    | Question 1 text |
       | Test questions   | essay     | B question 2 name | teacher1 | Question 2 text |
       | Test questions   | numerical | C question 3 name | teacher1 | Question 3 text |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
 
   @javascript
   Scenario: The question text can be chosen all in the list of questions

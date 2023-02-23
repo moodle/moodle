@@ -713,24 +713,29 @@ ORDER BY
      * @param int $limitfrom implements paging of the results.
      *      Ignored if $orderby = random or $limitnum is null.
      * @param int $limitnum implements paging of the results. null = all.
+     * @param string $extraselect anything passed here will be added to the SELECT list, use this to return extra data.
      * @return array with two elements, an array of usage ids, and a count of the total number.
      */
     public function load_questions_usages_where_question_in_state(
             qubaid_condition $qubaids, $summarystate, $slot, $questionid = null,
-            $orderby = 'random', $params = array(), $limitfrom = 0, $limitnum = null) {
+            $orderby = 'random', $params = array(), $limitfrom = 0, $limitnum = null, $extraselect = '') {
 
         $extrawhere = '';
         if ($questionid) {
             $extrawhere .= ' AND qa.questionid = :questionid';
             $params['questionid'] = $questionid;
         }
-        if ($summarystate != 'all') {
+        if ($summarystate !== 'all') {
             list($test, $sparams) = $this->in_summary_state_test($summarystate);
             $extrawhere .= ' AND qas.state ' . $test;
             $params += $sparams;
         }
 
-        if ($orderby == 'random') {
+        if (!empty($extraselect)) {
+            $extraselect = ', ' . $extraselect;
+        }
+
+        if ($orderby === 'random') {
             $sqlorderby = '';
         } else if ($orderby) {
             $sqlorderby = 'ORDER BY ' . $orderby;
@@ -747,29 +752,24 @@ ORDER BY
         $qubaidswhere = $qubaids->where(); // Must call this before params.
         $params += $qubaids->from_where_params();
         $params['slot'] = $slot;
+        $sql = "SELECT qa.questionusageid,
+                       1
+                       $extraselect
+                  FROM {$qubaids->from_question_attempts('qa')}
+                  JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
+                   AND qas.sequencenumber = {$this->latest_step_for_qa_subquery()}
+                  JOIN {question} q ON q.id = qa.questionid
+                 WHERE {$qubaidswhere}
+                   AND qa.slot = :slot
+                       $extrawhere
+                       $sqlorderby";
 
-        $qubaids = $this->db->get_records_sql_menu("
-SELECT
-    qa.questionusageid,
-    1
-
-FROM {$qubaids->from_question_attempts('qa')}
-JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
-        AND qas.sequencenumber = {$this->latest_step_for_qa_subquery()}
-JOIN {question} q ON q.id = qa.questionid
-
-WHERE
-    {$qubaidswhere} AND
-    qa.slot = :slot
-    $extrawhere
-
-$sqlorderby
-        ", $params);
+        $qubaids = $this->db->get_records_sql_menu($sql, $params);
 
         $qubaids = array_keys($qubaids);
         $count = count($qubaids);
 
-        if ($orderby == 'random') {
+        if ($orderby === 'random') {
             shuffle($qubaids);
             $limitfrom = 0;
         }
@@ -938,6 +938,7 @@ ORDER BY
         $record = new stdClass();
         $record->id = $qa->get_database_id();
         $record->slot = $qa->get_slot();
+        $record->questionid = $qa->get_question(false)->id;
         $record->variant = $qa->get_variant();
         $record->maxmark = $qa->get_max_mark();
         $record->minfraction = $qa->get_min_fraction();
@@ -1209,7 +1210,7 @@ ORDER BY
     /**
      * Get a subquery that returns the latest step of every qa in some qubas.
      * Currently, this is only used by the quiz reports. See
-     * {@link quiz_attempts_report_table::add_latest_state_join()}.
+     * {@see \mod_quiz\local\reports\attempts_report_table::add_latest_state_join()}.
      *
      * This method may be called publicly.
      *
@@ -1673,13 +1674,13 @@ class question_file_saver implements question_response_files {
      *
      * @param int $draftitemid the draft area to save the files from.
      * @param string $component the component for the file area to save into.
-     * @param string $filearea the name of the file area to save into.
+     * @param string $uncleanedfilearea the name of the file area to save into - but before it has been cleaned up.
      * @param string $text optional content containing file links.
      */
-    public function __construct($draftitemid, $component, $filearea, $text = null) {
+    public function __construct($draftitemid, $component, $uncleanedfilearea, $text = null) {
         $this->draftitemid = $draftitemid;
         $this->component = $component;
-        $this->filearea = $filearea;
+        $this->filearea = self::clean_file_area_name($uncleanedfilearea);
         $this->value = $this->compute_value($draftitemid, $text);
     }
 
@@ -1741,6 +1742,29 @@ class question_file_saver implements question_response_files {
     public function save_files($itemid, $context) {
         file_save_draft_area_files($this->draftitemid, $context->id,
                 $this->component, $this->filearea, $itemid);
+    }
+
+    /**
+     * Clean up a possible file area name to ensure that it matches the required rules.
+     *
+     * @param string $uncleanedfilearea the proposed file area name (e.g. 'response_-attachments').
+     * @return string a similar valid file area name. E.g: response_attachments.
+     */
+    public static function clean_file_area_name(string $uncleanedfilearea): string {
+        $filearea = $uncleanedfilearea;
+        if ($filearea !== clean_param($filearea, PARAM_AREA)) {
+            // Only lowercase ascii letters, numbers and underscores are allowed.
+            // Remove the invalid character in the filearea string.
+            $filearea = preg_replace('~[^a-z0-9_]~', '', core_text::strtolower($filearea));
+            // Replace multiple underscore to a single underscore.
+            $filearea = preg_replace('~_+~', '_', $filearea);
+            // If, after attempted cleaning, the filearea is not valid, throw a clear error to avoid subtle bugs.
+            if ($filearea !== clean_param($filearea, PARAM_AREA)) {
+                throw new coding_exception('Name ' . $filearea .
+                    ' cannot be used with question_file_saver because it does not match the rules for file area names');
+            }
+        }
+        return $filearea;
     }
 
     /**

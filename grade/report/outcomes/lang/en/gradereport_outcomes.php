@@ -29,5 +29,5 @@ $string['coursespecoutcome'] = 'Course outcomes';
 $string['eventgradereportviewed'] = 'Grade outcomes report viewed';
 $string['pluginname'] = 'Outcomes report';
 $string['privacy:metadata'] = 'The Grade outcomes report only shows data stored in other locations.';
-$string['outcomes:view'] = 'View the outcomes report';
+$string['outcomes:view'] = 'View outcomes report';
 $string['usedgradeitem'] = 'Number of grade items';

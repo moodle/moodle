@@ -733,7 +733,7 @@ class HTML_QuickForm extends HTML_Common {
     {
         static $anonGroups = 1;
 
-        if (0 == strlen($name)) {
+        if (0 == strlen($name ?? '')) {
             $name       = 'qf_group_' . $anonGroups++;
             $appendName = false;
         }
@@ -813,6 +813,7 @@ class HTML_QuickForm extends HTML_Common {
     function getSubmitValue($elementName)
     {
         $value = null;
+        $elementName = $elementName ?? '';
         if (isset($this->_submitValues[$elementName]) || isset($this->_submitFiles[$elementName])) {
             $value = isset($this->_submitValues[$elementName])? $this->_submitValues[$elementName]: array();
             if (is_array($value) && isset($this->_submitFiles[$elementName])) {

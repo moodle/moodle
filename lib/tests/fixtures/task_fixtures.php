@@ -26,14 +26,85 @@
 namespace core\task;
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Test class.
+ *
+ * @copyright 2022 Catalyst IT Australia Pty Ltd
+ * @author Cameron Ball <cameron@cameron1729.xyz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class adhoc_test_task extends \core\task\adhoc_task {
+
+    /**
+     * Constructor.
+     *
+     * @param int|null $nextruntime Next run time
+     * @param int|null $timestarted Time started
+     */
+    public function __construct(?int $nextruntime = null, ?int $timestarted = null) {
+        if ($nextruntime) {
+            $this->set_next_run_time($nextruntime);
+        }
+
+        if ($timestarted) {
+            $this->set_timestarted($timestarted);
+        }
+    }
+
+    /**
+     * Get task name
+     *
+     * @return string
+     */
+    public function get_name() {
+        return 'Test adhoc class';
+    }
+
+    /**
+     * Execute.
+     */
     public function execute() {
     }
 }
 
-class adhoc_test2_task extends \core\task\adhoc_task {
-    public function execute() {
-    }
+/**
+ * Test class.
+ *
+ * @copyright 2022 Catalyst IT Australia Pty Ltd
+ * @author Cameron Ball <cameron@cameron1729.xyz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class adhoc_test2_task extends adhoc_test_task {
+}
+
+/**
+ * Test class.
+ *
+ * @copyright 2022 Catalyst IT Australia Pty Ltd
+ * @author Cameron Ball <cameron@cameron1729.xyz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class adhoc_test3_task extends adhoc_test_task {
+}
+
+/**
+ * Test class.
+ *
+ * @copyright 2022 Catalyst IT Australia Pty Ltd
+ * @author Cameron Ball <cameron@cameron1729.xyz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class adhoc_test4_task extends adhoc_test_task {
+}
+
+/**
+ * Test class.
+ *
+ * @copyright 2022 Catalyst IT Australia Pty Ltd
+ * @author Cameron Ball <cameron@cameron1729.xyz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class adhoc_test5_task extends adhoc_test_task {
 }
 
 class scheduled_test_task extends \core\task\scheduled_task {

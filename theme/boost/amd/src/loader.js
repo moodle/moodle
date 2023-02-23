@@ -26,6 +26,7 @@ import $ from 'jquery';
 import * as Aria from './aria';
 import Bootstrap from './index';
 import Pending from 'core/pending';
+import {DefaultWhitelist} from './bootstrap/tools/sanitizer';
 import setupBootstrapPendingChecks from './pending';
 
 /**
@@ -42,7 +43,7 @@ const rememberTabs = () => {
     });
     const hash = window.location.hash;
     if (hash) {
-        const tab = document.querySelector('.nav-link[href="' + hash + '"]');
+        const tab = document.querySelector('[role="tablist"] [href="' + hash + '"]');
         if (tab) {
             tab.click();
         }
@@ -58,6 +59,14 @@ const enablePopovers = () => {
         container: 'body',
         selector: '[data-toggle="popover"]',
         trigger: 'focus',
+        whitelist: Object.assign(DefaultWhitelist, {
+            table: [],
+            thead: [],
+            tbody: [],
+            tr: [],
+            th: [],
+            td: [],
+        }),
     });
 
     document.addEventListener('keydown', e => {
@@ -95,8 +104,33 @@ enablePopovers();
 // Enable all tooltips.
 enableTooltips();
 
-// Disables flipping the dropdowns up and getting hidden behind the navbar.
-$.fn.dropdown.Constructor.Default.flip = false;
+// Disables flipping the dropdowns up or dynamically repositioning them along the Y-axis (based on the viewport)
+// to prevent the dropdowns getting hidden behind the navbar or them covering the trigger element.
+$.fn.dropdown.Constructor.Default.popperConfig = {
+    modifiers: {
+        flip: {
+            enabled: false,
+        },
+        storeTopPosition: {
+            enabled: true,
+            // eslint-disable-next-line no-unused-vars
+            fn(data, options) {
+                data.storedTop = data.offsets.popper.top;
+                return data;
+            },
+            order: 299
+        },
+        restoreTopPosition: {
+            enabled: true,
+            // eslint-disable-next-line no-unused-vars
+            fn(data, options) {
+                data.offsets.popper.top = data.storedTop;
+                return data;
+            },
+            order: 301
+        }
+    },
+};
 
 pendingPromise.resolve();
 

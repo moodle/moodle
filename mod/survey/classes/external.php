@@ -24,9 +24,17 @@
  * @since      Moodle 3.0
  */
 
+use core_course\external\helper_for_get_mods_by_courses;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
+use core_external\util;
+
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/mod/survey/lib.php');
 
 /**
@@ -80,51 +88,32 @@ class mod_survey_external extends external_api {
 
         // Ensure there are courseids to loop through.
         if (!empty($params['courseids'])) {
-
-            list($courses, $warnings) = external_util::validate_courses($params['courseids'], $mycourses);
+            list($courses, $warnings) = util::validate_courses($params['courseids'], $mycourses);
 
             // Get the surveys in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
             $surveys = get_all_instances_in_courses("survey", $courses);
             foreach ($surveys as $survey) {
                 $context = context_module::instance($survey->coursemodule);
+                if (empty(trim($survey->intro))) {
+                    $tempo = $DB->get_field("survey", "intro", array("id" => $survey->template));
+                    $survey->intro = get_string($tempo, "survey");
+                }
+
                 // Entry to return.
-                $surveydetails = array();
-                // First, we return information that any user can see in the web interface.
-                $surveydetails['id'] = $survey->id;
-                $surveydetails['coursemodule']      = $survey->coursemodule;
-                $surveydetails['course']            = $survey->course;
-                $surveydetails['name']              = external_format_string($survey->name, $context->id);
+                $surveydetails = helper_for_get_mods_by_courses::standard_coursemodule_element_values(
+                        $survey, 'mod_survey', 'moodle/course:manageactivities', 'mod/survey:participate');
 
                 if (has_capability('mod/survey:participate', $context)) {
-                    $trimmedintro = trim($survey->intro);
-                    if (empty($trimmedintro)) {
-                        $tempo = $DB->get_field("survey", "intro", array("id" => $survey->template));
-                        $survey->intro = get_string($tempo, "survey");
-                    }
-
-                    // Format intro.
-                    $options = array('noclean' => true);
-                    list($surveydetails['intro'], $surveydetails['introformat']) =
-                        external_format_text($survey->intro, $survey->introformat, $context->id, 'mod_survey', 'intro', null,
-                            $options);
-                    $surveydetails['introfiles'] = external_util::get_area_files($context->id, 'mod_survey', 'intro', false,
-                                                                                    false);
-
                     $surveydetails['template']  = $survey->template;
                     $surveydetails['days']      = $survey->days;
                     $surveydetails['questions'] = $survey->questions;
                     $surveydetails['surveydone'] = survey_already_done($survey->id, $USER->id) ? 1 : 0;
-
                 }
 
                 if (has_capability('moodle/course:manageactivities', $context)) {
                     $surveydetails['timecreated']   = $survey->timecreated;
                     $surveydetails['timemodified']  = $survey->timemodified;
-                    $surveydetails['section']       = $survey->section;
-                    $surveydetails['visible']       = $survey->visible;
-                    $surveydetails['groupmode']     = $survey->groupmode;
-                    $surveydetails['groupingid']    = $survey->groupingid;
                 }
                 $returnedsurveys[] = $surveydetails;
             }
@@ -145,27 +134,17 @@ class mod_survey_external extends external_api {
         return new external_single_structure(
             array(
                 'surveys' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'Survey id'),
-                            'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
-                            'course' => new external_value(PARAM_INT, 'Course id'),
-                            'name' => new external_value(PARAM_RAW, 'Survey name'),
-                            'intro' => new external_value(PARAM_RAW, 'The Survey intro', VALUE_OPTIONAL),
-                            'introformat' => new external_format_value('intro', VALUE_OPTIONAL),
-                            'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
+                    new external_single_structure(array_merge(
+                       helper_for_get_mods_by_courses::standard_coursemodule_elements_returns(true),
+                       [
                             'template' => new external_value(PARAM_INT, 'Survey type', VALUE_OPTIONAL),
                             'days' => new external_value(PARAM_INT, 'Days', VALUE_OPTIONAL),
                             'questions' => new external_value(PARAM_RAW, 'Question ids', VALUE_OPTIONAL),
                             'surveydone' => new external_value(PARAM_INT, 'Did I finish the survey?', VALUE_OPTIONAL),
                             'timecreated' => new external_value(PARAM_INT, 'Time of creation', VALUE_OPTIONAL),
                             'timemodified' => new external_value(PARAM_INT, 'Time of last modification', VALUE_OPTIONAL),
-                            'section' => new external_value(PARAM_INT, 'Course section id', VALUE_OPTIONAL),
-                            'visible' => new external_value(PARAM_INT, 'Visible', VALUE_OPTIONAL),
-                            'groupmode' => new external_value(PARAM_INT, 'Group mode', VALUE_OPTIONAL),
-                            'groupingid' => new external_value(PARAM_INT, 'Group id', VALUE_OPTIONAL),
-                        ), 'Surveys'
-                    )
+                        ]
+                    ), 'Surveys')
                 ),
                 'warnings' => new external_warnings(),
             )
@@ -225,7 +204,7 @@ class mod_survey_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.0
      */
     public static function view_survey_returns() {
@@ -304,7 +283,7 @@ class mod_survey_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.0
      */
     public static function get_questions_returns() {
@@ -400,7 +379,7 @@ class mod_survey_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.0
      */
     public static function submit_answers_returns() {

@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the base_block class.
- *
- * @package core_search
- * @copyright 2017 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_search;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,7 +28,7 @@ require_once(__DIR__ . '/fixtures/mock_block_area.php');
  * @copyright 2017 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class base_block_testcase extends advanced_testcase {
+class base_block_test extends \advanced_testcase {
     /**
      * Tests getting the name out of the class name.
      */
@@ -136,7 +130,7 @@ class base_block_testcase extends advanced_testcase {
         \context_block::instance($block9id);
 
         // Get all the blocks.
-        $area = new block_mockblock\search\area();
+        $area = new \block_mockblock\search\area();
         $results = self::recordset_to_indexed_array($area->get_document_recordset());
 
         // Only blocks 1, 3, 6, 7, 8, 9 should be returned. Check all the fields for the first two.
@@ -171,7 +165,7 @@ class base_block_testcase extends advanced_testcase {
 
         // Now use context restrictions. First, the whole site (no change).
         $results = self::recordset_to_indexed_array($area->get_document_recordset(
-                0, context_system::instance()));
+                0, \context_system::instance()));
         $this->assertEquals([$block1id, $block3id, $block6id, $block7id, $block8id, $block9id],
                 self::records_to_ids($results));
 
@@ -197,7 +191,7 @@ class base_block_testcase extends advanced_testcase {
         $this->assertEquals([$block3id], self::records_to_ids($results));
 
         // User context (no results).
-        $usercontext = context_user::instance($USER->id);
+        $usercontext = \context_user::instance($USER->id);
         $results = self::recordset_to_indexed_array($area->get_document_recordset(
                 0, $usercontext));
         $this->assertCount(0, $results);
@@ -225,7 +219,7 @@ class base_block_testcase extends advanced_testcase {
      * @param moodle_recordset $rs Recordset to convert
      * @return array Array indexed by number (0, 1, 2, ...)
      */
-    protected static function recordset_to_indexed_array(moodle_recordset $rs) {
+    protected static function recordset_to_indexed_array(\moodle_recordset $rs) {
         $results = [];
         foreach ($rs as $rec) {
             $results[] = $rec;
@@ -271,9 +265,9 @@ class base_block_testcase extends advanced_testcase {
         $blockid = $DB->insert_record('block_instances', $instance);
 
         // Get document URL.
-        $area = new block_mockblock\search\area();
+        $area = new \block_mockblock\search\area();
         $doc = $this->get_doc($course->id, $blockid);
-        $expected = new moodle_url('/course/view.php', ['id' => $course->id], 'inst' . $blockid);
+        $expected = new \moodle_url('/course/view.php', ['id' => $course->id], 'inst' . $blockid);
         $this->assertEquals($expected, $area->get_doc_url($doc));
         $this->assertEquals($expected, $area->get_context_url($doc));
 
@@ -286,7 +280,7 @@ class base_block_testcase extends advanced_testcase {
 
         // Get document URL.
         $doc2 = $this->get_doc($course->id, $block2id);
-        $expected = new moodle_url('/', ['redirect' => 0], 'inst' . $block2id);
+        $expected = new \moodle_url('/', ['redirect' => 0], 'inst' . $block2id);
         $this->assertEquals($expected, $area->get_doc_url($doc2));
         $this->assertEquals($expected, $area->get_context_url($doc2));
 
@@ -302,7 +296,7 @@ class base_block_testcase extends advanced_testcase {
         $doc3 = $this->get_doc($course->id, $block3id);
         $this->assertDebuggingCalledCount(2, [$debugmessage, $debugmessage]);
 
-        $expected = new moodle_url('/mod/page/view.php', ['id' => $page->cmid], 'inst' . $block3id);
+        $expected = new \moodle_url('/mod/page/view.php', ['id' => $page->cmid], 'inst' . $block3id);
         $this->assertEquals($expected, $area->get_doc_url($doc3));
         $this->assertDebuggingCalled($debugmessage);
         $this->assertEquals($expected, $area->get_context_url($doc3));
@@ -315,7 +309,7 @@ class base_block_testcase extends advanced_testcase {
 
         // Get document URL.
         $doc = $this->get_doc($course->id, $block4id);
-        $expected = new moodle_url('/course/view.php', ['id' => $course->id], 'inst' . $block4id);
+        $expected = new \moodle_url('/course/view.php', ['id' => $course->id], 'inst' . $block4id);
         $this->assertEquals($expected, $area->get_doc_url($doc));
         $this->assertEquals($expected, $area->get_context_url($doc));
 
@@ -325,7 +319,7 @@ class base_block_testcase extends advanced_testcase {
 
         // Get document URL.
         $doc = $this->get_doc($course->id, $block5id);
-        $expected = new moodle_url('/course/view.php', ['id' => $course->id], 'inst' . $block5id);
+        $expected = new \moodle_url('/course/view.php', ['id' => $course->id], 'inst' . $block5id);
         $this->assertEquals($expected, $area->get_doc_url($doc));
         $this->assertEquals($expected, $area->get_context_url($doc));
     }
@@ -353,7 +347,7 @@ class base_block_testcase extends advanced_testcase {
         $blockid = $DB->insert_record('block_instances', $instance);
 
         // Check access for block that exists.
-        $area = new block_mockblock\search\area();
+        $area = new \block_mockblock\search\area();
         $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $area->check_access($blockid));
 
         // Check access for nonexistent block.
@@ -420,7 +414,7 @@ class base_block_testcase extends advanced_testcase {
         \context_block::instance($blockid4);
 
         // Check list of contexts.
-        $area = new block_mockblock\search\area();
+        $area = new \block_mockblock\search\area();
         $contexts = iterator_to_array($area->get_contexts_to_reindex(), false);
         $expected = [
             $context2,
@@ -438,8 +432,8 @@ class base_block_testcase extends advanced_testcase {
      * @return \core_search\document Document object
      */
     protected function get_doc($courseid, $blockinstanceid) {
-        $engine = testable_core_search::instance()->get_engine();
-        $area = new block_mockblock\search\area();
+        $engine = \testable_core_search::instance()->get_engine();
+        $area = new \block_mockblock\search\area();
         $docdata = ['id' => $blockinstanceid, 'courseid' => $courseid,
                 'areaid' => $area->get_area_id(), 'itemid' => 0];
         return $engine->to_document($area, $docdata);

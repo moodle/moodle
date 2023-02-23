@@ -93,7 +93,7 @@ class behat_course extends behat_base {
         // Go to course management page.
         $this->i_go_to_the_courses_management_page();
         // Ensure you are on course management page.
-        $this->execute("behat_course::i_should_see_the_courses_management_page", get_string('categories'));
+        $this->execute("behat_course::i_should_see_the_courses_management_page", get_string('categoriesandcourses'));
 
         // Select default course category.
         $this->i_click_on_category_in_the_management_interface(get_string('defaultcategoryname'));
@@ -215,8 +215,8 @@ class behat_course extends behat_base {
         // Clicks add activity or resource section link.
         $sectionnode = $this->find('xpath', $sectionxpath);
         $this->execute('behat_general::i_click_on_in_the', [
-            get_string('addresourceoractivity', 'moodle'),
-            'button',
+            "//button[@data-action='open-chooser' and not(@data-beforemod)]",
+            'xpath',
             $sectionnode,
             'NodeElement',
         ]);
@@ -444,6 +444,7 @@ class behat_course extends behat_base {
         // Ensures the section exists.
         $xpath = $this->section_exists($sectionnumber);
 
+        $this->execute('behat_general::should_exist_in_the', ['Highlighted', 'text', $xpath, 'xpath_element']);
         // The important checking, we can not check the img.
         $this->execute('behat_general::should_exist_in_the', ['Remove highlight', 'link', $xpath, 'xpath_element']);
     }
@@ -1038,7 +1039,7 @@ class behat_course extends behat_base {
         // JS modal windows and avoiding interacting them at the same time.
         if ($this->running_javascript()) {
             $this->execute('behat_general::i_click_on_in_the',
-                array(get_string('yes'), "button", "Confirm", "dialogue")
+                array(get_string('delete'), "button", "Confirm", "dialogue")
             );
         } else {
             $this->execute("behat_forms::press_button", get_string('yes'));
@@ -1091,8 +1092,14 @@ class behat_course extends behat_base {
                     "/ancestor::li[contains(concat(' ', normalize-space(@class), ' '), ' section ')]" .
                     "/descendant::div[contains(concat(' ', @class, ' '), ' lightbox ')][contains(@style, 'display: none')]";
 
-            $this->execute("behat_general::wait_until_exists",
-                    array($this->escape($hiddenlightboxxpath), "xpath_element")
+            // Component based courses do not use lightboxes anymore but js depending.
+            $sectionreadyxpath = "//*[contains(@id,'page-content')]" .
+                    "/descendant::*[contains(concat(' ', normalize-space(@class), ' '), ' stateready ')]";
+
+            $duplicationreadyxpath = "$hiddenlightboxxpath | $sectionreadyxpath";
+            $this->execute(
+                "behat_general::wait_until_exists",
+                [$this->escape($duplicationreadyxpath), "xpath_element"]
             );
 
             // Close the original activity actions menu.
@@ -1166,7 +1173,7 @@ class behat_course extends behat_base {
     protected function get_activity_element($element, $selectortype, $activityname) {
         $activitynode = $this->get_activity_node($activityname);
 
-        $exception = new ElementNotFoundException($this->getSession(), "'{$element}' '{$selectortype}' in '${activityname}'");
+        $exception = new ElementNotFoundException($this->getSession(), "'{$element}' '{$selectortype}' in '{$activityname}'");
         return $this->find($selectortype, $element, $exception, $activitynode);
     }
 
@@ -1729,27 +1736,30 @@ class behat_course extends behat_base {
      * @param string $mode The mode to expected. One of 'Courses', 'Course categories' or 'Course categories and courses'
      */
     public function i_should_see_the_courses_management_page($mode) {
-        $this->execute("behat_general::assert_element_contains_text",
-            array("Course and category management", "h2", "css_element")
-        );
-
         switch ($mode) {
             case "Courses":
+                $heading = "Manage courses";
                 $this->execute("behat_general::should_not_exist", array("#category-listing", "css_element"));
                 $this->execute("behat_general::should_exist", array("#course-listing", "css_element"));
                 break;
 
             case "Course categories":
+                $heading = "Manage course categories";
                 $this->execute("behat_general::should_exist", array("#category-listing", "css_element"));
-                $this->execute("behat_general::should_exist", array("#course-listing", "css_element"));
+                $this->execute("behat_general::should_not_exist", array("#course-listing", "css_element"));
                 break;
 
             case "Courses categories and courses":
             default:
+                $heading = "Manage course categories and courses";
                 $this->execute("behat_general::should_exist", array("#category-listing", "css_element"));
                 $this->execute("behat_general::should_exist", array("#course-listing", "css_element"));
                 break;
         }
+
+        $this->execute("behat_general::assert_element_contains_text",
+            array($heading, "h2", "css_element")
+        );
 
         $this->execute("behat_general::should_not_exist", array("#course-detail", "css_element"));
     }
@@ -1761,26 +1771,29 @@ class behat_course extends behat_base {
      * @param string $mode The mode to expected. One of 'Courses', 'Course categories' or 'Course categories and courses'
      */
     public function i_should_see_the_courses_management_page_with_a_course_selected($mode) {
-        $this->execute("behat_general::assert_element_contains_text",
-            array("Course and category management", "h2", "css_element"));
-
         switch ($mode) {
             case "Courses":
+                $heading = "Manage courses";
                 $this->execute("behat_general::should_not_exist", array("#category-listing", "css_element"));
                 $this->execute("behat_general::should_exist", array("#course-listing", "css_element"));
                 break;
 
             case "Course categories":
+                $heading = "Manage course categories";
                 $this->execute("behat_general::should_exist", array("#category-listing", "css_element"));
                 $this->execute("behat_general::should_exist", array("#course-listing", "css_element"));
                 break;
 
             case "Courses categories and courses":
             default:
+                $heading = "Manage course categories and courses";
                 $this->execute("behat_general::should_exist", array("#category-listing", "css_element"));
                 $this->execute("behat_general::should_exist", array("#course-listing", "css_element"));
                 break;
         }
+
+        $this->execute("behat_general::assert_element_contains_text",
+            array($heading, "h2", "css_element"));
 
         $this->execute("behat_general::should_exist", array("#course-detail", "css_element"));
     }

@@ -16,37 +16,28 @@ Feature: Use the qbank plugin manager page for previewquestion
       | questioncategory | qtype     | name           | questiontext              |
       | Test questions   | truefalse | First question | Answer the first question |
 
-  @javascript
   Scenario: Enable/disable previewquestion column from the base view
     Given I log in as "admin"
     When I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I should see "Preview question"
     And I click on "Disable" "link" in the "Preview question" "table_row"
-    And I am on the "C1" "Course" page
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
-    And I click on ".action-menu" "css_element" in the "First question" "table_row"
-    Then I should not see "Preview" in the "region-main" "region"
+    And I am on the "Test quiz" "mod_quiz > question bank" page
+    Then the "Preview" item should not exist in the "Edit" action menu of the "First question" "table_row"
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Preview question" "table_row"
-    And I am on the "C1" "Course" page
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
-    And I click on ".action-menu" "css_element" in the "First question" "table_row"
-    And I should see "Preview" in the "region-main" "region"
+    And I am on the "Test quiz" "mod_quiz > question bank" page
+    And the "Preview" item should exist in the "Edit" action menu of the "First question" "table_row"
 
   Scenario: Enable/disable preview button from question edit form
     Given I log in as "admin"
     When I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I should see "Preview question"
     And I click on "Disable" "link" in the "Preview question" "table_row"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Test quiz" "mod_quiz > question bank" page
     And I choose "Edit question" action for "First question" in the question bank
     Then I should not see "Preview" in the "region-main" "region"
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Preview question" "table_row"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Test quiz" "mod_quiz > question bank" page
     And I choose "Edit question" action for "First question" in the question bank
     And I should see "Preview" in the "region-main" "region"

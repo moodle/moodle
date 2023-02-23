@@ -73,10 +73,7 @@ class mnet_environment {
             list($this->keypair['certificate'], $this->keypair['keypair_PEM']) = explode('@@@@@@@@', $keypair);
         }
 
-        if ($this->public_key_expires > time()) {
-            $this->keypair['privatekey'] = openssl_pkey_get_private($this->keypair['keypair_PEM']);
-            $this->keypair['publickey']  = openssl_pkey_get_public($this->keypair['certificate']);
-        } else {
+        if ($this->public_key_expires <= time()) {
             // Key generation/rotation
 
             // 1. Archive the current key (if there is one).
@@ -150,15 +147,11 @@ class mnet_environment {
 
     function get_private_key() {
         if (empty($this->keypair)) $this->get_keypair();
-        if (isset($this->keypair['privatekey'])) return $this->keypair['privatekey'];
-        $this->keypair['privatekey'] = openssl_pkey_get_private($this->keypair['keypair_PEM']);
-        return $this->keypair['privatekey'];
+        return openssl_pkey_get_private($this->keypair['keypair_PEM']);
     }
 
     function get_public_key() {
         if (!isset($this->keypair)) $this->get_keypair();
-        if (isset($this->keypair['publickey'])) return $this->keypair['publickey'];
-        $this->keypair['publickey'] = openssl_pkey_get_public($this->keypair['certificate']);
-        return $this->keypair['publickey'];
+        return openssl_pkey_get_public($this->keypair['certificate']);
     }
 }

@@ -14,7 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use mod_lti\external\get_tool_types_and_proxies;
+namespace mod_lti\external;
+
+use core_external\external_api;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,7 +32,7 @@ require_once($CFG->dirroot . '/mod/lti/tests/mod_lti_testcase.php');
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_lti_get_tool_types_and_proxies_testcase extends mod_lti_testcase {
+class get_tool_types_and_proxies_test extends \mod_lti_testcase {
 
     /**
      * This method runs before every test.

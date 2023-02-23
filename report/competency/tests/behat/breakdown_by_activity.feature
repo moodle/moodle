@@ -49,7 +49,7 @@ Feature: See the competencies for an activity
   @javascript
   Scenario: Go to the competency breakdown report
     When I navigate to "Reports" in current page administration
-    And I select "Competency breakdown" from the "Report type" singleselect
+    And I click on "Competency breakdown" "link"
     And I set the field "Filter competencies by resource or activity" to "PageName1"
     Then I should see "Test-Comp1"
     And I should not see "Test-Comp2"

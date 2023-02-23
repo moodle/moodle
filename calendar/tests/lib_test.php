@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains the class containing unit tests for the calendar lib.
- *
- * @package    core_calendar
- * @copyright  2017 Mark Nelson <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/helpers.php');
+namespace core_calendar;
 
 /**
  * Class contaning unit tests for the calendar lib.
@@ -33,7 +23,16 @@ require_once(__DIR__ . '/helpers.php');
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_calendar_lib_testcase extends advanced_testcase {
+class lib_test extends \advanced_testcase {
+
+    /**
+     * Load required test libraries
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+
+        require_once("{$CFG->dirroot}/calendar/tests/helpers.php");
+    }
 
     /**
      * Tests set up
@@ -89,7 +88,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
             ]
         ];
         foreach ($events as $event) {
-            calendar_event::create($event, false);
+            \calendar_event::create($event, false);
         }
         $timestart = time() - 60;
         $timeend = time() + 60;
@@ -145,7 +144,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
     public function test_update_subscription() {
         $this->resetAfterTest(true);
 
-        $subscription = new stdClass();
+        $subscription = new \stdClass();
         $subscription->eventtype = 'site';
         $subscription->name = 'test';
         $id = calendar_add_subscription($subscription);
@@ -164,7 +163,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($subscription->name, $sub->name);
         $this->assertEquals($subscription->pollinterval, $sub->pollinterval);
 
-        $subscription = new stdClass();
+        $subscription = new \stdClass();
         $subscription->name = 'awesome4';
         $this->expectException('coding_exception');
         calendar_update_subscription($subscription);
@@ -178,14 +177,14 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
 
         // Test for Microsoft Outlook 2010.
-        $subscription = new stdClass();
+        $subscription = new \stdClass();
         $subscription->name = 'Microsoft Outlook 2010';
         $subscription->importfrom = CALENDAR_IMPORT_FROM_FILE;
         $subscription->eventtype = 'site';
         $id = calendar_add_subscription($subscription);
 
         $calendar = file_get_contents($CFG->dirroot . '/lib/tests/fixtures/ms_outlook_2010.ics');
-        $ical = new iCalendar();
+        $ical = new \iCalendar();
         $ical->unserialize($calendar);
         $this->assertEquals($ical->parser_errors, array());
 
@@ -195,14 +194,14 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($count, 1);
 
         // Test for OSX Yosemite.
-        $subscription = new stdClass();
+        $subscription = new \stdClass();
         $subscription->name = 'OSX Yosemite';
         $subscription->importfrom = CALENDAR_IMPORT_FROM_FILE;
         $subscription->eventtype = 'site';
         $id = calendar_add_subscription($subscription);
 
         $calendar = file_get_contents($CFG->dirroot . '/lib/tests/fixtures/osx_yosemite.ics');
-        $ical = new iCalendar();
+        $ical = new \iCalendar();
         $ical->unserialize($calendar);
         $this->assertEquals($ical->parser_errors, array());
 
@@ -212,14 +211,14 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($count, 1);
 
         // Test for Google Gmail.
-        $subscription = new stdClass();
+        $subscription = new \stdClass();
         $subscription->name = 'Google Gmail';
         $subscription->importfrom = CALENDAR_IMPORT_FROM_FILE;
         $subscription->eventtype = 'site';
         $id = calendar_add_subscription($subscription);
 
         $calendar = file_get_contents($CFG->dirroot . '/lib/tests/fixtures/google_gmail.ics');
-        $ical = new iCalendar();
+        $ical = new \iCalendar();
         $ical->unserialize($calendar);
         $this->assertEquals($ical->parser_errors, array());
 
@@ -229,13 +228,13 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($count, 1);
 
         // Test for ICS file with repeated events.
-        $subscription = new stdClass();
+        $subscription = new \stdClass();
         $subscription->name = 'Repeated events';
         $subscription->importfrom = CALENDAR_IMPORT_FROM_FILE;
         $subscription->eventtype = 'site';
         $id = calendar_add_subscription($subscription);
         $calendar = file_get_contents($CFG->dirroot . '/lib/tests/fixtures/repeated_events.ics');
-        $ical = new iCalendar();
+        $ical = new \iCalendar();
         $ical->unserialize($calendar);
         $this->assertEquals($ical->parser_errors, []);
 
@@ -356,7 +355,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         ];
 
         foreach ($events as $event) {
-            calendar_event::create($event, false);
+            \calendar_event::create($event, false);
         }
 
         $timestart = $now - 100;
@@ -432,7 +431,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         ];
 
         foreach ($repeatingevents as $event) {
-            calendar_event::create($event, false);
+            \calendar_event::create($event, false);
         }
 
         // Make sure repeating events are not filtered out.
@@ -450,7 +449,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $course1 = $generator->create_course();
         $course2 = $generator->create_course();
         $course3 = $generator->create_course();
-        $context = context_course::instance($course1->id);
+        $context = \context_course::instance($course1->id);
 
         $this->setAdminUser();
         $admin = clone $USER;
@@ -551,9 +550,9 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $course1 = $generator->create_course(); // Has capability.
         $course2 = $generator->create_course(); // Doesn't have capability.
         $course3 = $generator->create_course(); // Not enrolled.
-        $context1 = context_course::instance($course1->id);
-        $context2 = context_course::instance($course2->id);
-        $context3 = context_course::instance($course3->id);
+        $context1 = \context_course::instance($course1->id);
+        $context2 = \context_course::instance($course2->id);
+        $context3 = \context_course::instance($course3->id);
         $roleid = $generator->create_role();
         $contexts = [$context1, $context2, $context3];
         $enrolledcourses = [$course1, $course2];
@@ -600,7 +599,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $roleid = $generator->create_role();
 
         $generator->enrol_user($user->id, $course->id, 'student');
@@ -627,7 +626,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $roleid = $generator->create_role();
         $generator->enrol_user($user->id, $course->id, 'student');
         $generator->role_assign($roleid, $user->id, $context->id);
@@ -652,8 +651,8 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $course2 = $generator->create_course();
         $generator->create_group(array('courseid' => $course1->id));
         $generator->create_group(array('courseid' => $course2->id));
-        $context1 = context_course::instance($course1->id);
-        $context2 = context_course::instance($course2->id);
+        $context1 = \context_course::instance($course1->id);
+        $context2 = \context_course::instance($course2->id);
         $roleid = $generator->create_role();
         $generator->enrol_user($user->id, $course1->id, 'student');
         $generator->enrol_user($user->id, $course2->id, 'student');
@@ -678,7 +677,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $group1 = $generator->create_group(array('courseid' => $course->id));
         $group2 = $generator->create_group(array('courseid' => $course->id));
         $roleid = $generator->create_role();
@@ -711,7 +710,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $roleid = $generator->create_role();
         $group = $generator->create_group(['courseid' => $course->id]);
         $generator->enrol_user($user->id, $course->id, 'student');
@@ -733,7 +732,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $roleid = $generator->create_role();
         $group = $generator->create_group(['courseid' => $course->id]);
         $generator->enrol_user($user->id, $course->id, 'student');
@@ -756,7 +755,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $roleid = $generator->create_role();
         $group = $generator->create_group(['courseid' => $course->id]);
         $generator->enrol_user($user->id, $course->id, 'student');
@@ -941,13 +940,13 @@ class core_calendar_lib_testcase extends advanced_testcase {
             'timeduration' => 86400,
             'visible' => 1
         ];
-        $caleventmanual = calendar_event::create($manualevent, false);
+        $caleventmanual = \calendar_event::create($manualevent, false);
 
         // Create a course event for the course with guest access.
         $guestevent = clone $manualevent;
         $guestevent->name = 'Guest course event';
         $guestevent->courseid = $guestcourse->id;
-        $caleventguest = calendar_event::create($guestevent, false);
+        $caleventguest = \calendar_event::create($guestevent, false);
 
         // Viewing as admin.
         $this->assertTrue(calendar_view_event_allowed($caleventmanual));
@@ -995,5 +994,85 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $expected = sha1($user->id . $user->password . $CFG->calendar_exportsalt);
 
         $this->assertEquals($expected, $authtoken);
+    }
+
+    /**
+     *  Test calendar_can_manage_user_event for different users.
+     *
+     * @covers ::calendar_can_manage_user_event
+     */
+    public function test_calendar_can_manage_user_event() {
+        global $DB, $USER;
+        $generator = $this->getDataGenerator();
+        $sitecontext = \context_system::instance();
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $adminevent = create_event([
+            'eventtype' => 'user',
+            'userid' => $USER->id,
+        ]);
+
+        $this->setUser($user1);
+        $user1event = create_event([
+            'name' => 'user1 event',
+            'eventtype' => 'user',
+            'userid' => $user1->id,
+        ]);
+        $this->setUser($user2);
+        $user2event = create_event([
+            'name' => 'user2 event',
+            'eventtype' => 'user',
+            'userid' => $user2->id,
+        ]);
+        $this->setUser($user1);
+        $result = calendar_can_manage_user_event($user1event);
+        $this->assertEquals(true, $result);
+        $result = calendar_can_manage_user_event($user2event);
+        $this->assertEquals(false, $result);
+
+        $sitemanager = $generator->create_user();
+
+        $managerroleid = $DB->get_field('role', 'id', ['shortname' => 'manager']);
+        role_assign($managerroleid, $sitemanager->id, $sitecontext->id);
+
+        $this->setUser($sitemanager);
+
+        $result = calendar_can_manage_user_event($user1event);
+        $this->assertEquals(true, $result);
+        $result = calendar_can_manage_user_event($adminevent);
+        $this->assertEquals(false, $result);
+    }
+
+    /**
+     * Data provider for {@see test_calendar_format_event_location}
+     *
+     * @return array[]
+     */
+    public function calendar_format_event_location_provider(): array {
+        return [
+            'Empty' => ['', ''],
+            'Text' => ['Barcelona', 'Barcelona'],
+            'Link (http)' => ['http://example.com', '<a title=".*" href="http://example.com">http://example.com</a>'],
+            'Link (https)' => ['https://example.com', '<a title=".*" href="https://example.com">https://example.com</a>'],
+        ];
+    }
+
+    /**
+     * Test formatting event location
+     *
+     * @param string $location
+     * @param string $expectedpattern
+     *
+     * @covers ::calendar_format_event_location
+     * @dataProvider calendar_format_event_location_provider
+     */
+    public function test_calendar_format_event_location(string $location, string $expectedpattern): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $event = create_event(['location' => $location]);
+        $this->assertMatchesRegularExpression("|^({$expectedpattern})$|", calendar_format_event_location($event));
     }
 }

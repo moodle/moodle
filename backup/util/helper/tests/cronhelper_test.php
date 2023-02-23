@@ -18,10 +18,15 @@
  * Unit tests for backups cron helper.
  *
  * @package   core_backup
- * @category  phpunit
+ * @category  test
  * @copyright 2012 Frédéric Massart <fred@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace core_backup;
+
+use backup;
+use backup_cron_automated_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,9 +36,14 @@ require_once($CFG->dirroot . '/backup/util/interfaces/checksumable.class.php');
 require_once("$CFG->dirroot/backup/backup.class.php");
 
 /**
- * Unit tests for backup cron helper
+ * Unit tests for backups cron helper.
+ *
+ * @package   core_backup
+ * @category  test
+ * @copyright 2012 Frédéric Massart <fred@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_cron_helper_testcase extends advanced_testcase {
+class cronhelper_test extends \advanced_testcase {
     /**
      * Test {@link backup_cron_automated_helper::calculate_next_automated_backup}.
      */
@@ -349,7 +359,7 @@ class backup_cron_helper_testcase extends advanced_testcase {
         ];
         $event = \core\event\course_backup_created::create([
             'objectid' => $course->id,
-            'context'  => context_course::instance($course->id),
+            'context'  => \context_course::instance($course->id),
             'other'    => $otherarray
         ]);
         $event->trigger();
@@ -380,13 +390,13 @@ class backup_cron_helper_testcase extends advanced_testcase {
         $course4 = $this->getDataGenerator()->create_course(array('timecreated' => 1552179600));
 
         // Create backup course records for the courses that need them.
-        $backupcourse3 = new stdClass;
+        $backupcourse3 = new \stdClass;
         $backupcourse3->courseid = $course3->id;
         $backupcourse3->laststatus = testable_backup_cron_automated_helper::BACKUP_STATUS_OK;
-        $backupcourse3->nextstarttime = 1554858160;
+        $backupcourse3->nextstarttime = 1554822160;
         $DB->insert_record('backup_courses', $backupcourse3);
 
-        $backupcourse4 = new stdClass;
+        $backupcourse4 = new \stdClass;
         $backupcourse4->courseid = $course4->id;
         $backupcourse4->laststatus = testable_backup_cron_automated_helper::BACKUP_STATUS_OK;
         $backupcourse4->nextstarttime = 1554858160;

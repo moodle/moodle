@@ -120,7 +120,7 @@ if ($search) {
 }
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 require_course_login($course);
@@ -223,9 +223,8 @@ echo html_writer::link($url, get_string('advancedsearch', 'forum').'...');
 
 echo '</div>';
 
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading($strforums, 2);
-}
+echo $OUTPUT->heading($strforums, 2);
+
 echo $OUTPUT->heading("$strsearchresults: $totalcount", 3);
 
 $url = new moodle_url('search.php', array('search' => $search, 'id' => $course->id, 'perpage' => $perpage));
@@ -285,12 +284,12 @@ foreach ($posts as $post) {
     // Replace the simple subject with the three items forum name -> thread name -> subject
     // (if all three are appropriate) each as a link.
     if (!isset($discussionsbyid[$post->discussion])) {
-        print_error('invaliddiscussionid', 'forum');
+        throw new \moodle_exception('invaliddiscussionid', 'forum');
     }
 
     $discussion = $discussionsbyid[$post->discussion];
     if (!isset($forumsbyid[$discussion->get_forum_id()])) {
-        print_error('invalidforumid', 'forum');
+        throw new \moodle_exception('invalidforumid', 'forum');
     }
 
     $forum = $forumsbyid[$discussion->get_forum_id()];

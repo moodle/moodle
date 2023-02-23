@@ -1,0 +1,22 @@
+{
+  "name": "tour_navigation_dashboard_tour_name,tool_usertours",
+  "description": "tour_navigation_dashboard_tour_des,tool_usertours",
+  "pathmatch": "FRONTPAGE_MY",
+  "enabled": "1",
+  "sortorder": "0",
+  "endtourlabel": "",
+  "configdata": "{\"placement\":\"left\",\"orphan\":\"0\",\"backdrop\":\"1\",\"reflex\":\"0\",\"filtervalues\":{\"accessdate\":{\"filter_accessdate\":\"tool_usertours_accountcreation\",\"filter_accessdate_range\":0,\"filter_accessdate_enabled\":\"0\"},\"category\":[],\"course\":[],\"courseformat\":[],\"role\":[],\"theme\":[\"boost\"],\"cssselector\":[]},\"majorupdatetime\":1641972465,\"shipped_tour\":true,\"shipped_filename\":\"40_tour_navigation_dashboard.json\",\"shipped_version\":1}",
+  "displaystepnumbers": true,
+  "version": "2021101301",
+  "steps": [
+    {
+      "title": "tour_navigation_dashboard_title,tool_usertours",
+      "content": "tour_navigation_dashboard_content,tool_usertours",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": ".drawer-toggles .drawer-toggler.drawer-right-toggle",
+      "sortorder": "0",
+      "configdata": "{\"placement\":\"left\"}"
+    }
+  ]
+}

@@ -16,12 +16,12 @@ Feature: Purge caches
   Scenario: Purge selected caches
     Given I should not see "Selected caches were purged"
     When I set the field "Themes" to "1"
-    And I press "Purge selected caches"
+    And I click on "Purge selected caches" "button" in the "#fitem_id_purgeselectedcaches" "css_element"
     Then I should see "The selected caches were purged"
 
   Scenario: Purge selected caches without selecting any caches
     Given I should not see "Select one or more caches to purge"
-    When I press "Purge selected caches"
+    And I click on "Purge selected caches" "button" in the "#fitem_id_purgeselectedcaches" "css_element"
     Then I should not see "The selected caches were purged"
     And I should see "Select one or more caches to purge"
 

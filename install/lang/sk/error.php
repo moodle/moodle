@@ -45,7 +45,8 @@ $string['dmlexceptiononinstall'] = '<p>Došlo k chybe databázy [{$a->errorcode}
 $string['downloadedfilecheckfailed'] = 'Kontrola stiahnutého súboru bola neúspešná';
 $string['invalidmd5'] = 'Kontrolovaná premenná bola nesprávna - skúste znova';
 $string['missingrequiredfield'] = 'Chýba niektoré z povinných polí';
-$string['remotedownloaderror'] = 'Stiahnutie komponentu na server zlyhalo, skontrolujte nastavenia proxy, doporučené je PHP rozšírenie cURL. <br /><br />Musíte stiahnuť súbor <a href="{$a->url}">{$a->url}</a> manuálne, skopírovať ho do "{$a->dest}" na serveri a rozzipovať ho tam.';
+$string['remotedownloaderror'] = '<p>Sťahovanie komponentu na váš server zlyhalo. Preverte nastavenia proxy. Vrelo odporúčame PHP rozšírenie cURL.</p>
+<p>Teraz musíte stiahnuť súbor <a href="{$a->url}">{$a->url}</a> ručne, prekopírovať ho do "{$a->dest}" na vašom serveri a tam ho rozbaliť.</p>';
 $string['wrongdestpath'] = 'Chybné umiestnenie cieľa';
 $string['wrongsourcebase'] = 'Chybné základné URL serveru';
 $string['wrongzipfilename'] = 'Chybné meno súboru ZIP';

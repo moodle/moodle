@@ -14,26 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * PHPUnit for property_list class.
- *
- * @package    quizaccess_seb
- * @author     Andrew Madden <andrewmadden@catalyst-au.net>
- * @copyright  2019 Catalyst IT
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-use quizaccess_seb\property_list;
-
-defined('MOODLE_INTERNAL') || die();
+namespace quizaccess_seb;
 
 /**
  * PHPUnit for property_list class.
  *
- * @copyright  2020 Catalyst IT
+ * @package   quizaccess_seb
+ * @author    Andrew Madden <andrewmadden@catalyst-au.net>
+ * @copyright 2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_seb_property_list_testcase extends advanced_testcase {
+class property_list_test extends \advanced_testcase {
 
     /**
      * Test that an empty PList with a root dictionary is created.
@@ -144,7 +135,7 @@ class quizaccess_seb_property_list_testcase extends advanced_testcase {
             . $this->get_plist_xml_footer();
         $plist = new property_list($xml);
 
-        $this->expectException(invalid_parameter_exception::class);
+        $this->expectException(\invalid_parameter_exception::class);
         $this->expectExceptionMessage($exceptionmessage);
 
         $plist->update_element_value($key, $value);
@@ -181,7 +172,7 @@ class quizaccess_seb_property_list_testcase extends advanced_testcase {
             . $this->get_plist_xml_footer();
         $plist = new property_list($xml);
 
-        $this->expectException(invalid_parameter_exception::class);
+        $this->expectException(\invalid_parameter_exception::class);
         $this->expectExceptionMessage('New array must only contain CFType objects.');
 
         $plist->update_element_array('testDict', [false]);
@@ -281,7 +272,7 @@ class quizaccess_seb_property_list_testcase extends advanced_testcase {
         $this->assertEquals(42, $plist->get_element_value('number'));
 
         // Type exception.
-        $this->expectException(TypeError::class);
+        $this->expectException(\TypeError::class);
         $plist->set_or_update_value('someKey', 'We really need to pass in CFTypes here');
     }
 

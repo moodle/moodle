@@ -148,8 +148,11 @@ class OAuthSignatureMethod_RSA_SHA1 extends OAuthSignatureMethod {
     // Sign using the key
     $ok = openssl_sign($base_string, $signature, $privatekeyid);
 
-    // Release the key resource
-    openssl_free_key($privatekeyid);
+    // TODO: Remove this block once PHP 8.0 becomes required.
+    if (PHP_MAJOR_VERSION < 8) {
+      // Release the key resource
+      openssl_free_key($privatekeyid);
+    }
 
     return base64_encode($signature);
   }
@@ -168,8 +171,11 @@ class OAuthSignatureMethod_RSA_SHA1 extends OAuthSignatureMethod {
     // Check the computed signature against the one passed in the query
     $ok = openssl_verify($base_string, $decoded_sig, $publickeyid);
 
-    // Release the key resource
-    openssl_free_key($publickeyid);
+    // TODO: Remove this block once PHP 8.0 becomes required.
+    if (PHP_MAJOR_VERSION < 8) {
+      // Release the key resource
+      openssl_free_key($publickeyid);
+    }
 
     return $ok == 1;
   }
@@ -222,15 +228,6 @@ class OAuthRequest {
       $parameters = OAuthUtil::parse_parameters($_SERVER['QUERY_STRING']);
 
       $ourpost = $_POST;
-      // Deal with magic_quotes
-      // http://www.php.net/manual/en/security.magicquotes.disabling.php
-      if ( get_magic_quotes_gpc() ) {
-         $outpost = array();
-         foreach ($_POST as $k => $v) {
-            $v = stripslashes($v);
-            $ourpost[$k] = $v;
-         }
-      }
      // Add POST Parameters if they exist
       $parameters = array_merge($parameters, $ourpost);
 

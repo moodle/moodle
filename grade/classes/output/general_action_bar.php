@@ -17,6 +17,7 @@
 namespace core_grades\output;
 
 use moodle_url;
+use core\output\select_menu;
 
 /**
  * Renderable class for the general action bar in the gradebook pages.
@@ -65,14 +66,14 @@ class general_action_bar extends action_bar {
      * @return array
      */
     public function export_for_template(\renderer_base $output): array {
-        $urlselect = $this->get_action_selector();
+        $selectmenu = $this->get_action_selector();
 
-        if (is_null($urlselect)) {
+        if (is_null($selectmenu)) {
             return [];
         }
 
         return [
-            'generalnavselector' => $urlselect->export_for_template($output),
+            'generalnavselector' => $selectmenu->export_for_template($output),
         ];
     }
 
@@ -88,9 +89,9 @@ class general_action_bar extends action_bar {
     /**
      * Returns the URL selector object.
      *
-     * @return \url_select|null The URL select object.
+     * @return \select_menu|null The URL select object.
      */
-    private function get_action_selector(): ?\url_select {
+    private function get_action_selector(): ?select_menu {
         if ($this->context->contextlevel !== CONTEXT_COURSE) {
             return null;
         }
@@ -186,6 +187,9 @@ class general_action_bar extends action_bar {
             $menu[][get_string('moremenu')] = $moregroup;
         }
 
-        return new \url_select($menu, $this->activeurl->out(false), null, 'gradesactionselect');
+        $selectmenu = new select_menu('gradesactionselect', $menu, $this->activeurl->out(false));
+        $selectmenu->set_label(get_string('gradebooknavigationmenu', 'grades'), ['class' => 'sr-only']);
+
+        return $selectmenu;
     }
 }

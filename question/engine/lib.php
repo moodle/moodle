@@ -747,26 +747,22 @@ abstract class question_flags {
             'requires' => array('base', 'dom', 'event-delegate', 'io-base'),
         );
         $actionurl = $CFG->wwwroot . '/question/toggleflag.php';
-        $flagtext = array(
-            0 => get_string('clickflag', 'question'),
-            1 => get_string('clickunflag', 'question')
-        );
         $flagattributes = array(
             0 => array(
                 'src' => $OUTPUT->image_url('i/unflagged') . '',
                 'title' => get_string('clicktoflag', 'question'),
-                'alt' => get_string('notflagged', 'question'),
-              //  'text' => get_string('clickflag', 'question'),
+                'alt' => get_string('flagged', 'question'), // Label on toggle should not change.
+                'text' => get_string('clickflag', 'question'),
             ),
             1 => array(
                 'src' => $OUTPUT->image_url('i/flagged') . '',
                 'title' => get_string('clicktounflag', 'question'),
                 'alt' => get_string('flagged', 'question'),
-               // 'text' => get_string('clickunflag', 'question'),
+                'text' => get_string('clickunflag', 'question'),
             ),
         );
         $PAGE->requires->js_init_call('M.core_question_flags.init',
-                array($actionurl, $flagattributes, $flagtext), false, $module);
+                array($actionurl, $flagattributes), false, $module);
         $done = true;
     }
 }
@@ -921,8 +917,8 @@ abstract class question_utils {
                     'converted to roman numerals.', $number);
         }
 
-        return self::$thousands[$number / 1000 % 10] . self::$hundreds[$number / 100 % 10] .
-                self::$tens[$number / 10 % 10] . self::$units[$number % 10];
+        return self::$thousands[floor($number / 1000) % 10] . self::$hundreds[floor($number / 100) % 10] .
+                self::$tens[floor($number / 10) % 10] . self::$units[$number % 10];
     }
 
     /**

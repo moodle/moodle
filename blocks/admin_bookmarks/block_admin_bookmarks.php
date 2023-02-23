@@ -32,8 +32,6 @@ class block_admin_bookmarks extends block_base {
     /** @var string */
     public $blockname = null;
 
-    /** @var bool */
-    protected $contentgenerated = false;
 
     /** @var bool|null */
     protected $docked = null;
@@ -74,9 +72,10 @@ class block_admin_bookmarks extends block_base {
         global $CFG;
 
         // First check if we have already generated, don't waste cycles
-        if ($this->contentgenerated === true) {
+        if ($this->content !== null) {
             return $this->content;
         }
+
         $this->content = new stdClass();
 
         if (get_user_preferences('admin_bookmarks')) {

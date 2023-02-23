@@ -139,7 +139,7 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
         // version of this code in the new template version (see export_for_template).
         if ($this->valuehtmlcallback) {
             $html = preg_replace_callback('~value="([^"]+)"~', function($matches) {
-                $value = html_entity_decode($matches[1]);
+                $value = html_entity_decode($matches[1], ENT_COMPAT);
                 $htmlvalue = call_user_func($this->valuehtmlcallback, $value);
                 if ($htmlvalue !== false) {
                     return $matches[0] . ' data-html="' . s($htmlvalue) . '"';
@@ -245,6 +245,9 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
                 $html = call_user_func($this->valuehtmlcallback, $value);
                 if ($html !== false) {
                     $option['html'] = $html;
+                    if ($this->isFrozen()) {
+                        $option['text'] = $html;
+                    }
                 }
             }
         }

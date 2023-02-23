@@ -23,13 +23,17 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace filter_urltolink;
+
+use filter_urltolink;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/filter/urltolink/filter.php'); // Include the code to test
 
 
-class filter_urltolink_filter_testcase extends basic_testcase {
+class filter_test extends \basic_testcase {
 
     function get_convert_urls_into_links_test_cases() {
         // Create a 4095 and 4096 long URLs.

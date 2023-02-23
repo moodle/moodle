@@ -614,8 +614,10 @@ class dndupload_ajax_processor {
         $visible = get_fast_modinfo($this->course)->get_section_info($this->section)->visible;
 
         $DB->set_field('course_modules', 'instance', $instanceid, array('id' => $this->cm->id));
+
+        \course_modinfo::purge_course_module_cache($this->course->id, $this->cm->id);
         // Rebuild the course cache after update action
-        rebuild_course_cache($this->course->id, true);
+        rebuild_course_cache($this->course->id, true, true);
 
         $sectionid = course_add_cm_to_section($this->course, $this->cm->id, $this->section);
 

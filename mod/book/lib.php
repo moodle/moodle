@@ -301,7 +301,7 @@ function book_get_post_actions() {
  * Supported features
  *
  * @param string $feature FEATURE_xx constant for requested feature
- * @return mixed True if module supports feature, false if not, null if doesn't know
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function book_supports($feature) {
     switch($feature) {
@@ -314,6 +314,7 @@ function book_supports($feature) {
         case FEATURE_GRADE_OUTCOMES:          return false;
         case FEATURE_BACKUP_MOODLE2:          return true;
         case FEATURE_SHOW_DESCRIPTION:        return true;
+        case FEATURE_MOD_PURPOSE:             return MOD_PURPOSE_CONTENT;
 
         default: return null;
     }
@@ -327,7 +328,7 @@ function book_supports($feature) {
  * @return void
  */
 function book_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $booknode) {
-    global $USER, $PAGE, $OUTPUT;
+    global $USER, $OUTPUT;
 
     if ($booknode->children->count() > 0) {
         $firstkey = $booknode->children->get_key_list()[0];
@@ -335,10 +336,10 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
         $firstkey = null;
     }
 
-    $params = $PAGE->url->params();
+    $params = $settingsnav->get_page()->url->params();
 
-    if ($PAGE->cm->modname === 'book' and !empty($params['id']) and !empty($params['chapterid'])
-            and has_capability('mod/book:edit', $PAGE->cm->context)) {
+    if ($settingsnav->get_page()->cm->modname === 'book' and !empty($params['id']) and !empty($params['chapterid'])
+            and has_capability('mod/book:edit', $settingsnav->get_page()->cm->context)) {
         if (!empty($USER->editing)) {
             $string = get_string("turneditingoff");
             $edit = '0';
@@ -350,8 +351,8 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
         $editnode = navigation_node::create($string, $url, navigation_node::TYPE_SETTING);
         $editnode->set_show_in_secondary_navigation(false);
         $booknode->add_node($editnode, $firstkey);
-        if (!$PAGE->theme->haseditswitch) {
-            $PAGE->set_button($OUTPUT->single_button($url, $string));
+        if (!$settingsnav->get_page()->theme->haseditswitch) {
+            $settingsnav->get_page()->set_button($OUTPUT->single_button($url, $string));
         }
     }
 

@@ -351,9 +351,9 @@ ns.Form.prototype.setSubContentDefaultLanguage = function (params, lang) {
   const self = this;
 
   if (Array.isArray(params)) {
-    params = params.map(function (listItem) {
-      return self.setSubContentDefaultLanguage(listItem, lang);
-    });
+    for (let i; i < params.length; i++) { 
+      params[i] = self.setSubContentDefaultLanguage(params[i], lang);
+    }
   }
   else if (typeof params === 'object') {
     if (params.metadata) {

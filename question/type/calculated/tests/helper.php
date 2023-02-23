@@ -97,6 +97,7 @@ class qtype_calculated_test_helper extends question_test_helper {
         $qdata->name = 'Simple sum';
         $qdata->questiontext = 'What is {a} + {b}?';
         $qdata->generalfeedback = 'Generalfeedback: {={a} + {b}} is the right answer.';
+        $qdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         $qdata->options = new stdClass();
         $qdata->options->unitgradingtype = 0;
@@ -185,6 +186,8 @@ class qtype_calculated_test_helper extends question_test_helper {
         $fromform->feedback[2] = array();
         $fromform->feedback[2]['format'] = FORMAT_HTML;
         $fromform->feedback[2]['text'] = 'Completely wrong.';
+
+        $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         return $fromform;
     }

@@ -22,11 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-require_once($CFG->dirroot . '/calendar/lib.php');
+namespace core_calendar;
 
 use core_calendar\local\event\entities\event;
 use core_calendar\local\event\entities\repeat_event_collection;
@@ -36,13 +32,20 @@ use core_calendar\local\event\value_objects\event_description;
 use core_calendar\local\event\value_objects\event_times;
 use core_calendar\local\event\factories\event_factory_interface;
 
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+
+require_once($CFG->dirroot . '/calendar/lib.php');
+
 /**
  * Repeat event collection tests.
  *
+ * @package core_calendar
  * @copyright 2017 Ryan Wyllie <ryan@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_calendar_repeat_event_collection_testcase extends advanced_testcase {
+class repeat_event_collection_test extends \advanced_testcase {
     /**
      * Test that the collection id is set to the parent id if the repeat id
      * is falsey.
@@ -169,7 +172,7 @@ class core_calendar_repeat_event_collection_testcase extends advanced_testcase {
             $record->$name = $value;
         }
 
-        $event = new calendar_event($record);
+        $event = new \calendar_event($record);
         return $event->create($record, false);
     }
 }

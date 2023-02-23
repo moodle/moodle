@@ -154,6 +154,16 @@ if (defined('BEHAT_SITE_RUNNING')) {
     }
 }
 
+// Set default warn runtime.
+if (!isset($CFG->taskruntimewarn)) {
+    $CFG->taskruntimewarn = 12 * 60 * 60;
+}
+
+// Set default error runtime.
+if (!isset($CFG->taskruntimeerror)) {
+    $CFG->taskruntimeerror = 24 * 60 * 60;
+}
+
 // Normalise dataroot - we do not want any symbolic links, trailing / or any other weirdness there
 if (!isset($CFG->dataroot)) {
     if (isset($_SERVER['REMOTE_ADDR'])) {
@@ -201,7 +211,7 @@ $CFG->libdir = $CFG->dirroot .'/lib';
 
 // Allow overriding of tempdir but be backwards compatible
 if (!isset($CFG->tempdir)) {
-    $CFG->tempdir = "$CFG->dataroot/temp";
+    $CFG->tempdir = $CFG->dataroot . DIRECTORY_SEPARATOR . "temp";
 }
 
 // Allow overriding of backuptempdir but be backwards compatible
@@ -569,7 +579,7 @@ init_performance_info();
 // Put $OUTPUT in place, so errors can be displayed.
 $OUTPUT = new bootstrap_renderer();
 
-// set handler for uncaught exceptions - equivalent to print_error() call
+// Set handler for uncaught exceptions - equivalent to throw new \moodle_exception() call.
 if (!PHPUNIT_TEST or PHPUNIT_UTIL) {
     set_exception_handler('default_exception_handler');
     set_error_handler('default_error_handler', E_ALL | E_STRICT);
@@ -722,7 +732,7 @@ if (!defined('NO_UPGRADE_CHECK') and isset($CFG->upgraderunning)) {
     if ($CFG->upgraderunning < time()) {
         unset_config('upgraderunning');
     } else {
-        print_error('upgraderunning');
+        throw new \moodle_exception('upgraderunning');
     }
 }
 
@@ -734,7 +744,7 @@ if (function_exists('gc_enable')) {
 
 // detect unsupported upgrade jump as soon as possible - do not change anything, do not use system functions
 if (!empty($CFG->version) and $CFG->version < 2007101509) {
-    print_error('upgraderequires19', 'error');
+    throw new \moodle_exception('upgraderequires19', 'error');
     die;
 }
 
@@ -826,7 +836,49 @@ if (empty($CFG->sessiontimeout)) {
 if (empty($CFG->sessiontimeoutwarning)) {
     $CFG->sessiontimeoutwarning = 20 * 60;
 }
+
+// Allow plugins to callback just before the session is started.
+$pluginswithfunction = get_plugins_with_function('before_session_start', 'lib.php');
+foreach ($pluginswithfunction as $plugins) {
+    foreach ($plugins as $function) {
+        try {
+            $function();
+        } catch (Throwable $e) {
+            debugging("Exception calling '$function'", DEBUG_DEVELOPER, $e->getTrace());
+        }
+    }
+}
+
 \core\session\manager::start();
+
+if (!empty($CFG->proxylogunsafe) || !empty($CFG->proxyfixunsafe)) {
+    if (!empty($CFG->proxyfixunsafe)) {
+        require_once($CFG->libdir.'/filelib.php');
+
+        $proxyurl = get_moodle_proxy_url();
+        // This fixes stream handlers inside php.
+        $defaults = stream_context_set_default([
+            'http' => [
+                'user_agent' => \core_useragent::get_moodlebot_useragent(),
+                'proxy' => $proxyurl
+            ],
+        ]);
+
+        // Attempt to tell other web clients to use the proxy too. This only
+        // works for clients written in php in the same process, it will not
+        // work for with requests done in another process from an exec call.
+        putenv('http_proxy=' . $proxyurl);
+        putenv('https_proxy=' . $proxyurl);
+        putenv('HTTPS_PROXY=' . $proxyurl);
+    } else {
+        $defaults = stream_context_get_default();
+    }
+
+    if (!empty($CFG->proxylogunsafe)) {
+        stream_context_set_params($defaults, ['notification' => 'proxy_log_callback']);
+    }
+
+}
 
 // Set default content type and encoding, developers are still required to use
 // echo $OUTPUT->header() everywhere, anything that gets set later should override these headers.

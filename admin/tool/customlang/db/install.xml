@@ -10,9 +10,9 @@
         <FIELD NAME="lang" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The code of the language this string belongs to. Like en, cs or es"/>
         <FIELD NAME="componentid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the component"/>
         <FIELD NAME="stringid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The identifier of the string"/>
-        <FIELD NAME="original" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" COMMENT="English original of the string"/>
-        <FIELD NAME="master" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Master translation of the string as is distributed in the official lang pack, null if not translated"/>
-        <FIELD NAME="local" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Local customization of the string, null if not customized"/>
+        <FIELD NAME="original" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="English original of the string"/>
+        <FIELD NAME="master" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Master translation of the string as is distributed in the official lang pack, null if not translated"/>
+        <FIELD NAME="local" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Local customization of the string, null if not customized"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp of when the original or master was recently modified"/>
         <FIELD NAME="timecustomized" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The timestamp of when the value of the local translation was recently modified, null if not customized yet"/>
         <FIELD NAME="outdated" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Either the English original or the master translation changed and the customization may be outdated"/>

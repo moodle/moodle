@@ -32,17 +32,20 @@
             "completion": "<span class=\"badge badge-success\">Completed!</span>"
         },
         "id": 3,
+        "anchor": "module-3",
         "module": "forum",
         "extraclasses": "newmessages"
     }
 }}
 <li
     class="activity activity-wrapper {{module}} modtype_{{module}} {{extraclasses}} {{#hasinfo}}hasinfo{{/hasinfo}}"
-    id="module-{{id}}"
+    id="{{anchor}}"
     data-for="cmitem"
     data-id="{{id}}"
 >
 {{#cmformat}}
-    {{> core_courseformat/local/content/cm}}
+    {{$ core_courseformat/local/content/cm}}
+        {{> core_courseformat/local/content/cm}}
+    {{/ core_courseformat/local/content/cm}}
 {{/cmformat}}
 </li>

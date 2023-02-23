@@ -13,7 +13,6 @@ $PAGE->set_context(context_system::instance());
 $PAGE->set_url('/admin/settings.php', array('section' => $section));
 $PAGE->set_pagetype('admin-setting-' . $section);
 $PAGE->set_pagelayout('admin');
-$PAGE->has_secondary_navigation_setter(false);
 $PAGE->navigation->clear_cache();
 navigation_node::require_admin_tree();
 
@@ -24,14 +23,29 @@ if (empty($settingspage) or !($settingspage instanceof admin_settingpage)) {
     if (moodle_needs_upgrading()) {
         redirect(new moodle_url('/admin/index.php'));
     } else {
-        print_error('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
+        throw new \moodle_exception('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
     }
     die;
 }
 
 if (!($settingspage->check_access())) {
-    print_error('accessdenied', 'admin');
+    throw new \moodle_exception('accessdenied', 'admin');
     die;
+}
+
+// If the context in the admin_settingpage object is explicitly defined and it is not system, reset the current
+// page context and use that one instead. This ensures that the proper navigation is displayed and highlighted.
+if ($settingspage->context && !$settingspage->context instanceof \context_system) {
+    $PAGE->set_context($settingspage->context);
+}
+
+$hassiteconfig = has_capability('moodle/site:config', context_system::instance());
+// Display the admin search input element in the page header if the user has the capability to change the site
+// configuration and the current page context is system.
+if ($hassiteconfig && $PAGE->context instanceof \context_system) {
+    $PAGE->add_header_action($OUTPUT->render_from_template('core_admin/header_search_input', [
+        'action' => new moodle_url('/admin/search.php'),
+    ]));
 }
 
 /// WRITING SUBMITTED DATA (IF ANY) -------------------------------------------------------------------------------

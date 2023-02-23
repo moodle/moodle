@@ -346,7 +346,7 @@ class helper {
             'siteUrl' => $CFG->wwwroot,
             'l10n' => array('H5P' => $core->getLocalization()),
             'user' => $usersettings,
-            'hubIsEnabled' => true,
+            'hubIsEnabled' => false,
             'reportingIsEnabled' => false,
             'crossorigin' => !empty($CFG->h5pcrossorigin) ? $CFG->h5pcrossorigin : null,
             'libraryConfig' => $core->h5pF->getLibraryConfig(),

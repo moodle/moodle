@@ -60,17 +60,29 @@ class flickr_client extends oauth_helper {
      * @param moodle_url|string $callbackurl
      */
     public function __construct($consumerkey, $consumersecret, $callbackurl = '') {
-        global $CFG;
-        $version = moodle_major_version();
-        $useragent = "MoodleSite/$version (+{$CFG->wwwroot})";
-
         parent::__construct([
             'api_root' => self::OAUTH_ROOT,
             'oauth_consumer_key' => $consumerkey,
             'oauth_consumer_secret' => $consumersecret,
             'oauth_callback' => $callbackurl,
-            'http_options' => ['CURLOPT_USERAGENT' => $useragent]
+            'http_options' => [
+                'CURLOPT_USERAGENT' => static::user_agent(),
+            ],
         ]);
+    }
+
+    /**
+     * Return User-Agent string suitable for calls to Flickr endpoint, avoiding problems caused by the string returned by
+     * the {@see core_useragent::get_moodlebot_useragent} helper, which is often rejected due to presence of "Bot" within
+     *
+     * @return string
+     */
+    public static function user_agent(): string {
+        global $CFG;
+
+        $version = moodle_major_version();
+
+        return "MoodleSite/{$version} (+{$CFG->wwwroot})";
     }
 
     /**

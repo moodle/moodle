@@ -26,10 +26,10 @@
         "uniqid": "0",
         "number": 1,
         "sectionurl": "#",
-        "isactive": 1,
+        "indexcollapsed": 0,
         "current": 1,
         "visible": 1,
-        "hasrectrictions": 0,
+        "hasrestrictions": 0,
         "cms": [
             {
                 "id": 10,
@@ -66,21 +66,22 @@
 >
     <div class="courseindex-item d-flex
             {{^visible}}dimmed{{/visible}}
-            {{#hasrestrictions}}rectrictions{{/hasrestrictions}}
+            {{#hasrestrictions}}restrictions{{/hasrestrictions}}
             courseindex-section-title"
         id="courseindexsection{{number}}"
         data-for="section_item"
     >
         <a data-toggle="collapse"
             href="#courseindexcollapse{{number}}"
-            class="courseindex-link icons-collapse-expand {{^isactive}}collapsed{{/isactive}}"
-            aria-expanded="{{#isactive}}true{{/isactive}}{{^isactive}}false{{/isactive}}"
+            class="courseindex-chevron icons-collapse-expand {{#indexcollapsed}}collapsed{{/indexcollapsed}}"
+            aria-expanded="{{^indexcollapsed}}true{{/indexcollapsed}}{{#indexcollapsed}}false{{/indexcollapsed}}"
             aria-controls="courseindexcollapse{{number}}"
             tabindex="-1"
         >
             <span class="collapsed-icon icon-no-margin mr-1"
                 title="{{#str}} expand, core {{/str}}">
-                {{#pix}} t/collapsedchevron, core {{/pix}}
+                <span class="dir-rtl-hide">{{#pix}} t/collapsedchevron, core {{/pix}}</span>
+                <span class="dir-ltr-hide">{{#pix}} t/collapsedchevron_rtl, core {{/pix}}</span>
                 <span class="sr-only">{{#str}} expand, core {{/str}}</span>
             </span>
             <span class="expanded-icon icon-no-margin mr-1"
@@ -106,8 +107,8 @@
         <span class="dragicon ml-auto">{{#pix}}i/dragdrop{{/pix}}</span>
     </div>
     <div id="courseindexcollapse{{number}}"
-        class="courseindex-item-content collapse {{#isactive}}show{{/isactive}}"
-        aria-labelledby="courseindexsection{{number}}"
+        class="courseindex-item-content collapse {{^indexcollapsed}}show{{/indexcollapsed}}"
+        aria-labelledby="courseindexsection{{number}}" role="group"
     >
         <ul class="courseindex-sectioncontent unlist" data-for="cmlist" data-id="{{id}}" role="group">
             {{#cms}}

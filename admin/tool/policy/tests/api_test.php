@@ -14,30 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Provides the {@link tool_policy_api_testcase} class.
- *
- * @package     tool_policy
- * @category    test
- * @copyright   2018 David Mudrák <david@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace tool_policy;
 
-use tool_policy\api;
-use tool_policy\policy_version;
 use tool_policy\test\helper;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
 
 /**
  * Unit tests for the {@link \tool_policy\api} class.
  *
+ * @package   tool_policy
+ * @category  test
  * @copyright 2018 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_policy_api_testcase extends advanced_testcase {
+class api_test extends \advanced_testcase {
 
     /**
      * Test the common operations with a policy document and its versions.
@@ -257,8 +246,8 @@ class tool_policy_api_testcase extends advanced_testcase {
         $officer = $this->getDataGenerator()->create_user();
         $manager = $this->getDataGenerator()->create_user();
 
-        $syscontext = context_system::instance();
-        $childcontext = context_user::instance($child->id);
+        $syscontext = \context_system::instance();
+        $childcontext = \context_user::instance($child->id);
 
         $roleminorid = create_role('Digital minor', 'digiminor', 'Not old enough to accept site policies themselves');
         $roleparentid = create_role('Parent', 'parent', 'Can accept policies on behalf of their child');
@@ -336,8 +325,8 @@ class tool_policy_api_testcase extends advanced_testcase {
         $officer = $this->getDataGenerator()->create_user();
         $manager = $this->getDataGenerator()->create_user();
 
-        $syscontext = context_system::instance();
-        $childcontext = context_user::instance($child->id);
+        $syscontext = \context_system::instance();
+        $childcontext = \context_user::instance($child->id);
 
         $roleminorid = create_role('Digital minor', 'digiminor', 'Not old enough to accept site policies themselves');
         $roleparentid = create_role('Parent', 'parent', 'Can accept policies on behalf of their child');
@@ -412,8 +401,8 @@ class tool_policy_api_testcase extends advanced_testcase {
         $officer = $this->getDataGenerator()->create_user();
         $manager = $this->getDataGenerator()->create_user();
 
-        $syscontext = context_system::instance();
-        $childcontext = context_user::instance($child->id);
+        $syscontext = \context_system::instance();
+        $childcontext = \context_user::instance($child->id);
 
         $roleminorid = create_role('Digital minor', 'digiminor', 'Not old enough to accept site policies themselves');
         $roleparentid = create_role('Parent', 'parent', 'Can accept policies on behalf of their child');
@@ -494,8 +483,8 @@ class tool_policy_api_testcase extends advanced_testcase {
         $officer = $this->getDataGenerator()->create_user();
         $manager = $this->getDataGenerator()->create_user();
 
-        $syscontext = context_system::instance();
-        $childcontext = context_user::instance($child->id);
+        $syscontext = \context_system::instance();
+        $childcontext = \context_user::instance($child->id);
 
         $roleminorid = create_role('Digital minor', 'digiminor', 'Not old enough to accept site policies themselves');
         $roleparentid = create_role('Parent', 'parent', 'Can accept policies on behalf of their child');
@@ -693,9 +682,9 @@ class tool_policy_api_testcase extends advanced_testcase {
         $child1 = $this->getDataGenerator()->create_user();
         $child2 = $this->getDataGenerator()->create_user();
 
-        $syscontext = context_system::instance();
-        $child1context = context_user::instance($child1->id);
-        $child2context = context_user::instance($child2->id);
+        $syscontext = \context_system::instance();
+        $child1context = \context_user::instance($child1->id);
+        $child2context = \context_user::instance($child2->id);
 
         $roleparentid = create_role('Parent', 'parent', 'Can accept policies on behalf of their child');
 

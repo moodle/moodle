@@ -26,6 +26,10 @@ namespace tool_uploaduser;
 
 defined('MOODLE_INTERNAL') || die();
 
+use context_system;
+use context_coursecat;
+use core_course_category;
+
 use tool_uploaduser\local\field_value_validators;
 
 require_once($CFG->dirroot.'/user/profile/lib.php');
@@ -225,6 +229,15 @@ class process {
     }
 
     /**
+     * Setting to allow matching user accounts on email
+     * @return bool
+     */
+    protected function get_match_on_email(): bool {
+        $optype = $this->get_operation_type();
+        return (!empty($this->formdata->uumatchemail) && $optype != UU_USER_ADDNEW && $optype != UU_USER_ADDINC);
+    }
+
+    /**
      * Setting to allow deletes
      * @return bool
      */
@@ -410,7 +423,7 @@ class process {
         }
 
         // Make sure we really have username.
-        if (empty($user->username)) {
+        if (empty($user->username) && !$this->get_match_on_email()) {
             $this->upt->track('status', get_string('missingfield', 'error', 'username'), 'error');
             $this->upt->track('username', get_string('error'), 'error');
             $this->userserrors++;
@@ -449,7 +462,16 @@ class process {
             return;
         }
 
-        if ($existinguser = $DB->get_record('user', ['username' => $user->username, 'mnethostid' => $user->mnethostid])) {
+        $matchparam = $this->get_match_on_email() ? ['email' => $user->email] : ['username' => $user->username];
+        if ($existinguser = $DB->get_records('user', $matchparam + ['mnethostid' => $user->mnethostid])) {
+            if (is_array($existinguser) && count($existinguser) !== 1) {
+                $this->upt->track('status', get_string('duplicateemail', 'tool_uploaduser', $user->email), 'warning');
+                $this->userserrors++;
+                return;
+
+            }
+
+            $existinguser = is_array($existinguser) ? array_values($existinguser)[0] : $existinguser;
             $this->upt->track('id', $existinguser->id, 'normal', false);
         }
 
@@ -550,7 +572,8 @@ class process {
 
         // Delete user.
         if (!empty($user->deleted)) {
-            if (!$this->get_allow_deletes() or $remoteuser) {
+            if (!$this->get_allow_deletes() or $remoteuser or
+                    !has_capability('moodle/user:delete', context_system::instance())) {
                 $this->usersskipped++;
                 $this->upt->track('status', get_string('usernotdeletedoff', 'error'), 'warning');
                 return;
@@ -576,6 +599,12 @@ class process {
         }
         // We do not need the deleted flag anymore.
         unset($user->deleted);
+
+        $matchonemailallowrename = $this->get_match_on_email() && $this->get_allow_renames();
+        if ($matchonemailallowrename && $user->username && ($user->username !== $existinguser->username)) {
+            $user->oldusername = $existinguser->username;
+            $existinguser = false;
+        }
 
         // Renaming requested?
         if (!empty($user->oldusername) ) {
@@ -690,7 +719,11 @@ class process {
             $dologout = false;
 
             if ($this->get_update_type() != UU_UPDATE_NOCHANGES and !$remoteuser) {
-                if (!empty($user->auth) and $user->auth !== $existinguser->auth) {
+
+                // Handle 'auth' column separately, the field can never be missing from a user.
+                if (!empty($user->auth) && ($user->auth !== $existinguser->auth) &&
+                        ($this->get_update_type() != UU_UPDATE_MISSING)) {
+
                     $this->upt->track('auth', s($existinguser->auth).'-->'.s($user->auth), 'info', false);
                     $existinguser->auth = $user->auth;
                     if (!isset($this->supportedauths[$user->auth])) {
@@ -1101,6 +1134,48 @@ class process {
 
                 continue;
             }
+
+            if (preg_match('/^categoryrole(?<roleid>\d+)$/', $column, $rolematches)) {
+                $categoryrolecache = [];
+                $categorycache  = []; // Category cache - do not fetch all categories here, we will not probably use them all.
+
+                $categoryfield = "category{$rolematches['roleid']}";
+                $categoryrolefield = "categoryrole{$rolematches['roleid']}";
+
+                if (empty($user->{$categoryfield})) {
+                    continue;
+                }
+
+                $categoryidnumber = $user->{$categoryfield};
+
+                if (!array_key_exists($categoryidnumber, $categorycache)) {
+                    $category = $DB->get_record('course_categories', ['idnumber' => $categoryidnumber], 'id, idnumber');
+                    if (empty($category)) {
+                        $this->upt->track('enrolments', get_string('unknowncategory', 'error', s($categoryidnumber)), 'error');
+                        continue;
+                    }
+                    $categoryrolecache[$categoryidnumber] = uu_allowed_roles_cache($category->id);
+                    $categoryobj = core_course_category::get($category->id);
+                    $context = context_coursecat::instance($categoryobj->id);
+                    $categorycache[$categoryidnumber] = $context;
+                }
+                // Check the user's category role.
+                if (!empty($user->{$categoryrolefield})) {
+                    $rolename = $user->{$categoryrolefield};
+                    if (array_key_exists($rolename, $categoryrolecache[$categoryidnumber])) {
+                        $roleid = $categoryrolecache[$categoryidnumber][$rolename]->id;
+                        // Assign a role to user with category context.
+                        role_assign($roleid, $user->id, $categorycache[$categoryidnumber]->id);
+                    } else {
+                        $this->upt->track('enrolments', get_string('unknownrole', 'error', s($rolename)), 'error');
+                        continue;
+                    }
+                } else {
+                    $this->upt->track('enrolments', get_string('missingcategoryrole', 'error', s($categoryidnumber)), 'error');
+                    continue;
+                }
+            }
+
             if (!preg_match('/^course\d+$/', $column)) {
                 continue;
             }

@@ -56,6 +56,49 @@ export default class {
         return JSON.parse(ajaxresult);
     }
 
+    /**
+     * Execute a basic section state action.
+     * @param {StateManager} stateManager the current state manager
+     * @param {string} action the action name
+     * @param {array} sectionIds the section ids
+     * @param {number} targetSectionId optional target section id (for moving actions)
+     * @param {number} targetCmId optional target cm id (for moving actions)
+     */
+    async _sectionBasicAction(stateManager, action, sectionIds, targetSectionId, targetCmId) {
+        const course = stateManager.get('course');
+        this.sectionLock(stateManager, sectionIds, true);
+        const updates = await this._callEditWebservice(
+            action,
+            course.id,
+            sectionIds,
+            targetSectionId,
+            targetCmId
+        );
+        stateManager.processUpdates(updates);
+        this.sectionLock(stateManager, sectionIds, false);
+    }
+
+    /**
+     * Execute a basic course module state action.
+     * @param {StateManager} stateManager the current state manager
+     * @param {string} action the action name
+     * @param {array} cmIds the cm ids
+     * @param {number} targetSectionId optional target section id (for moving actions)
+     * @param {number} targetCmId optional target cm id (for moving actions)
+     */
+    async _cmBasicAction(stateManager, action, cmIds, targetSectionId, targetCmId) {
+        const course = stateManager.get('course');
+        this.cmLock(stateManager, cmIds, true);
+        const updates = await this._callEditWebservice(
+            action,
+            course.id,
+            cmIds,
+            targetSectionId,
+            targetCmId
+        );
+        stateManager.processUpdates(updates);
+        this.cmLock(stateManager, cmIds, false);
+    }
 
     /**
      * Mutation module initialize.
@@ -85,6 +128,78 @@ export default class {
         // Any update should unlock the element.
         fields.locked = false;
         return fields;
+    }
+
+    /**
+     * Hides sections.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the list of section ids
+     */
+    async sectionHide(stateManager, sectionIds) {
+        await this._sectionBasicAction(stateManager, 'section_hide', sectionIds);
+    }
+
+    /**
+     * Show sections.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the list of section ids
+     */
+    async sectionShow(stateManager, sectionIds) {
+        await this._sectionBasicAction(stateManager, 'section_show', sectionIds);
+    }
+
+    /**
+     * Show cms.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    async cmShow(stateManager, cmIds) {
+        await this._cmBasicAction(stateManager, 'cm_show', cmIds);
+    }
+
+    /**
+     * Hide cms.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    async cmHide(stateManager, cmIds) {
+        await this._cmBasicAction(stateManager, 'cm_hide', cmIds);
+    }
+
+    /**
+     * Stealth cms.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    async cmStealth(stateManager, cmIds) {
+        await this._cmBasicAction(stateManager, 'cm_stealth', cmIds);
+    }
+
+    /**
+     * Duplicate course modules
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of course modules ids
+     * @param {number|undefined} targetSectionId the optional target sectionId
+     * @param {number|undefined} targetCmId the target course module id
+     */
+    async cmDuplicate(stateManager, cmIds, targetSectionId, targetCmId) {
+        const course = stateManager.get('course');
+        // Lock all target sections.
+        const sectionIds = new Set();
+        if (targetSectionId) {
+            sectionIds.add(targetSectionId);
+        } else {
+            cmIds.forEach((cmId) => {
+                const cm = stateManager.get('cm', cmId);
+                sectionIds.add(cm.sectionid);
+            });
+        }
+        this.sectionLock(stateManager, Array.from(sectionIds), true);
+
+        const updates = await this._callEditWebservice('cm_duplicate', course.id, cmIds, targetSectionId, targetCmId);
+        stateManager.processUpdates(updates);
+
+        this.sectionLock(stateManager, Array.from(sectionIds), false);
     }
 
     /**
@@ -159,6 +274,19 @@ export default class {
     }
 
     /**
+     * Delete cms.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of section ids
+     */
+    async cmDelete(stateManager, cmIds) {
+        const course = stateManager.get('course');
+        this.cmLock(stateManager, cmIds, true);
+        const updates = await this._callEditWebservice('cm_delete', course.id, cmIds);
+        this.cmLock(stateManager, cmIds, false);
+        stateManager.processUpdates(updates);
+    }
+
+    /**
      * Mark or unmark course modules as dragging.
      *
      * @param {StateManager} stateManager the current state manager
@@ -166,6 +294,7 @@ export default class {
      * @param {bool} dragValue the new dragging value
      */
     cmDrag(stateManager, cmIds, dragValue) {
+        this.setPageItem(stateManager);
         this._setElementsValue(stateManager, 'cm', cmIds, 'dragging', dragValue);
     }
 
@@ -177,6 +306,7 @@ export default class {
      * @param {bool} dragValue the new dragging value
      */
     sectionDrag(stateManager, sectionIds, dragValue) {
+        this.setPageItem(stateManager);
         this._setElementsValue(stateManager, 'section', sectionIds, 'dragging', dragValue);
     }
 
@@ -226,6 +356,48 @@ export default class {
     }
 
     /**
+     * Set the page current item.
+     *
+     * Only one element of the course state can be the page item at a time.
+     *
+     * There are several actions that can alter the page current item. For example, when the user is in an activity
+     * page, the page item is always the activity one. However, in a course page, when the user scrolls to an element,
+     * this element get the page item.
+     *
+     * If the page item is static means that it is not meant to change. This is important because
+     * static page items has some special logic. For example, if a cm is the static page item
+     * and it is inside a collapsed section, the course index will expand the section to make it visible.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {String|undefined} type the element type (section or cm). Undefined will remove the current page item.
+     * @param {Number|undefined} id the element id
+     * @param {boolean|undefined} isStatic if the page item is static
+     */
+    setPageItem(stateManager, type, id, isStatic) {
+        let newPageItem;
+        if (type !== undefined) {
+            newPageItem = stateManager.get(type, id);
+            if (!newPageItem) {
+                return;
+            }
+        }
+        stateManager.setReadOnly(false);
+        // Remove the current page item.
+        const course = stateManager.get('course');
+        course.pageItem = null;
+        // Save the new page item.
+        if (newPageItem) {
+            course.pageItem = {
+                id,
+                type,
+                sectionId: (type == 'section') ? newPageItem.id : newPageItem.sectionid,
+                isStatic,
+            };
+        }
+        stateManager.setReadOnly(true);
+    }
+
+    /**
      * Unlock all course elements.
      *
      * @param {StateManager} stateManager the current state manager
@@ -242,55 +414,189 @@ export default class {
         stateManager.setReadOnly(true);
     }
 
-    /*
-     * Get updated user preferences and state data related to some section ids.
+    /**
+     * Update the course index collapsed attribute of some sections.
      *
-     * @param {StateManager} stateManager the current state
-     * @param {array} sectionIds the list of section ids to update
-     * @param {Object} preferences the new preferences values
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the affected section ids
+     * @param {boolean} collapsed the new collapsed value
      */
-    async sectionPreferences(stateManager, sectionIds, preferences) {
+    async sectionIndexCollapsed(stateManager, sectionIds, collapsed) {
+        const collapsedIds = this._updateStateSectionPreference(stateManager, 'indexcollapsed', sectionIds, collapsed);
+        const course = stateManager.get('course');
+        await this._callEditWebservice('section_index_collapsed', course.id, collapsedIds);
+    }
+
+    /**
+     * Update the course content collapsed attribute of some sections.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the affected section ids
+     * @param {boolean} collapsed the new collapsed value
+     */
+    async sectionContentCollapsed(stateManager, sectionIds, collapsed) {
+        const collapsedIds = this._updateStateSectionPreference(stateManager, 'contentcollapsed', sectionIds, collapsed);
+        const course = stateManager.get('course');
+        await this._callEditWebservice('section_content_collapsed', course.id, collapsedIds);
+    }
+
+    /**
+     * Private batch update for a section preference attribute.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {string} preferenceName the preference name
+     * @param {array} sectionIds the affected section ids
+     * @param {boolean} preferenceValue the new preferenceValue value
+     * @return {array} the list of all sections with that preference set to true
+     */
+    _updateStateSectionPreference(stateManager, preferenceName, sectionIds, preferenceValue) {
         stateManager.setReadOnly(false);
+        const affectedSections = new Set();
         // Check if we need to update preferences.
-        let updatePreferences = false;
         sectionIds.forEach(sectionId => {
             const section = stateManager.get('section', sectionId);
             if (section === undefined) {
                 return;
             }
-            let newValue = preferences.contentexpanded ?? section.contentexpanded;
-            if (section.contentexpanded != newValue) {
-                section.contentexpanded = newValue;
-                updatePreferences = true;
-            }
-            newValue = preferences.isactive ?? section.isactive;
-            if (section.isactive != newValue) {
-                section.isactive = newValue;
-                updatePreferences = true;
+            const newValue = preferenceValue ?? section[preferenceName];
+            if (section[preferenceName] != newValue) {
+                section[preferenceName] = newValue;
+                affectedSections.add(section.id);
             }
         });
         stateManager.setReadOnly(true);
-
-        if (updatePreferences) {
-            // Build the preference structures.
-            const course = stateManager.get('course');
-            const state = stateManager.state;
-            const prefKey = `coursesectionspreferences_${course.id}`;
-            const preferences = {
-                contentcollapsed: [],
-                indexcollapsed: [],
-            };
-            state.section.forEach(section => {
-                if (!section.contentexpanded) {
-                    preferences.contentcollapsed.push(section.id);
-                }
-                if (!section.isactive) {
-                    preferences.indexcollapsed.push(section.id);
-                }
-            });
-            const jsonString = JSON.stringify(preferences);
-            M.util.set_user_preference(prefKey, jsonString);
+        if (affectedSections.size == 0) {
+            return [];
         }
+        // Get all collapsed section ids.
+        const collapsedSectionIds = [];
+        const state = stateManager.state;
+        state.section.forEach(section => {
+            if (section[preferenceName]) {
+                collapsedSectionIds.push(section.id);
+            }
+        });
+        return collapsedSectionIds;
+    }
+
+    /**
+     * Enable/disable bulk editing.
+     *
+     * Note: reenabling the bulk will clean the current selection.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {Boolean} enabled the new bulk state.
+     */
+    bulkEnable(stateManager, enabled) {
+        const state = stateManager.state;
+        stateManager.setReadOnly(false);
+        state.bulk.enabled = enabled;
+        state.bulk.selectedType = '';
+        state.bulk.selection = [];
+        stateManager.setReadOnly(true);
+    }
+
+    /**
+     * Reset the current selection.
+     * @param {StateManager} stateManager the current state manager
+     */
+    bulkReset(stateManager) {
+        const state = stateManager.state;
+        stateManager.setReadOnly(false);
+        state.bulk.selectedType = '';
+        state.bulk.selection = [];
+        stateManager.setReadOnly(true);
+    }
+
+    /**
+     * Select a list of cms.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    cmSelect(stateManager, cmIds) {
+        this._addIdsToSelection(stateManager, 'cm', cmIds);
+    }
+
+    /**
+     * Unselect a list of cms.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    cmUnselect(stateManager, cmIds) {
+        this._removeIdsFromSelection(stateManager, 'cm', cmIds);
+    }
+
+    /**
+     * Select a list of sections.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the list of cm ids
+     */
+    sectionSelect(stateManager, sectionIds) {
+        this._addIdsToSelection(stateManager, 'section', sectionIds);
+    }
+
+    /**
+     * Unselect a list of sections.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the list of cm ids
+     */
+    sectionUnselect(stateManager, sectionIds) {
+        this._removeIdsFromSelection(stateManager, 'section', sectionIds);
+    }
+
+    /**
+     * Add some ids to the current bulk selection.
+     * @param {StateManager} stateManager the current state manager
+     * @param {String} typeName the type name (section/cm)
+     * @param {array} ids the list of ids
+     */
+    _addIdsToSelection(stateManager, typeName, ids) {
+        const bulk = stateManager.state.bulk;
+        if (!bulk?.enabled) {
+            throw new Error(`Bulk is not enabled`);
+        }
+        if (bulk?.selectedType !== "" && bulk?.selectedType !== typeName) {
+            throw new Error(`Cannot add ${typeName} to the current selection`);
+        }
+
+        // Stored ids are strings for compatability with HTML data attributes.
+        ids = ids.map(value => value.toString());
+
+        stateManager.setReadOnly(false);
+        bulk.selectedType = typeName;
+        const newSelection = new Set([...bulk.selection, ...ids]);
+        bulk.selection = [...newSelection];
+        stateManager.setReadOnly(true);
+    }
+
+    /**
+     * Remove some ids to the current bulk selection.
+     *
+     * The method resets the selection type if the current selection is empty.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {String} typeName the type name (section/cm)
+     * @param {array} ids the list of ids
+     */
+    _removeIdsFromSelection(stateManager, typeName, ids) {
+        const bulk = stateManager.state.bulk;
+        if (!bulk?.enabled) {
+            throw new Error(`Bulk is not enabled`);
+        }
+        if (bulk?.selectedType !== "" && bulk?.selectedType !== typeName) {
+            throw new Error(`Cannot remove ${typeName} from the current selection`);
+        }
+
+        // Stored ids are strings for compatability with HTML data attributes.
+        ids = ids.map(value => value.toString());
+
+        stateManager.setReadOnly(false);
+        const IdsToFilter = new Set(ids);
+        bulk.selection = bulk.selection.filter(current => !IdsToFilter.has(current));
+        if (bulk.selection.length === 0) {
+            bulk.selectedType = '';
+        }
+        stateManager.setReadOnly(true);
     }
 
     /**

@@ -43,6 +43,7 @@
         "id": 1,
         "forumid": 1,
         "istimelocked": false,
+        "settingsselector": true,
         "settings": {
             "excludetext": false,
             "togglemoreicon": false
@@ -50,24 +51,38 @@
     }
 }}
 <div class="ml-auto dropdown">
-    <a href="#" class="{{^settings.excludetext}}dropdown-toggle{{/settings.excludetext}} btn btn-link {{#settings.togglemoreicon}}btn-icon colour-inherit text-decoration-none d-flex align-items-center justify-content-center{{/settings.togglemoreicon}}"
-        role="button"
-        data-toggle="dropdown"
-        aria-haspopup="true"
-        tabindex="0"
-        aria-controls="forum-action-menu-{{id}}-menu"
-        aria-label="{{#str}}togglediscussionmenu, mod_forum{{/str}}"
-        aria-expanded="false">
-        {{#settings.togglemoreicon}}
-            {{#pix}} i/menu, core{{/pix}}
-        {{/settings.togglemoreicon}}
-        {{^settings.togglemoreicon}}
-            {{#pix}} i/settings, core{{/pix}}
-        {{/settings.togglemoreicon}}
-        {{^settings.excludetext}}
+    {{#settingsselector}}
+        <button class="dropdown-toggle btn btn-outline-secondary"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                tabindex="0"
+                aria-controls="forum-action-menu-{{id}}-menu"
+                aria-label="{{#str}}togglediscussionmenu, mod_forum{{/str}}"
+                aria-expanded="false">
             {{#str}} settings, mod_forum {{/str}}
-        {{/settings.excludetext}}
-    </a>
+        </button>
+    {{/settingsselector}}
+    {{^settingsselector}}
+        <a href="#" class="{{^settings.excludetext}}dropdown-toggle{{/settings.excludetext}} btn btn-link {{#settings.togglemoreicon}}btn-icon colour-inherit text-decoration-none d-flex align-items-center justify-content-center{{/settings.togglemoreicon}}"
+           role="button"
+           data-toggle="dropdown"
+           aria-haspopup="true"
+           tabindex="0"
+           aria-controls="forum-action-menu-{{id}}-menu"
+           aria-label="{{#str}}togglediscussionmenu, mod_forum{{/str}}"
+           aria-expanded="false">
+            {{#settings.togglemoreicon}}
+                {{#pix}} i/menu, core{{/pix}}
+            {{/settings.togglemoreicon}}
+            {{^settings.togglemoreicon}}
+                {{#pix}} i/settings, core{{/pix}}
+            {{/settings.togglemoreicon}}
+            {{^settings.excludetext}}
+                {{#str}} settings, mod_forum {{/str}}
+            {{/settings.excludetext}}
+        </a>
+    {{/settingsselector}}
     <div class="dropdown-menu dropdown-menu-right"
          aria-labelledby="forum-action-menu-{{id}}-menu"
          data-rel="menu-content"

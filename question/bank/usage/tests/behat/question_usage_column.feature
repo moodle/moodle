@@ -21,24 +21,20 @@ Feature: Use the qbank plugin manager page for question usage
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I should see "Question usage"
     When I click on "Disable" "link" in the "Question usage" "table_row"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I am on the "Test quiz" "mod_quiz > question bank" page
     Then I should not see "Usage"
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Question usage" "table_row"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I am on the "Test quiz" "mod_quiz > question bank" page
     And I should see "Usage"
 
   @javascript
   Scenario: Question usage modal should work without any usage data
-    Given I log in as "admin"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
     And I set the field "Select a category" to "Test questions"
     And I should see "Test questions"
     And I should see "0" on the usage column
     When I click "0" on the usage column
-    Then I should see "Question usage"
+    Then I should see "Version 1"
     And I click on "Close" "button" in the ".modal-dialog" "css_element"
     And I should see "0" on the usage column

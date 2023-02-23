@@ -16,21 +16,16 @@
 
 namespace mod_bigbluebuttonbn\external;
 
-use external_api;
-use external_function_parameters;
-use external_multiple_structure;
-use external_single_structure;
-use external_value;
-use external_warnings;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
+use core_external\restricted_context_exception;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\bigbluebutton\recordings\recording_data;
 use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
-use restricted_context_exception;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/externallib.php');
 
 /**
  * External service to fetch a list of recordings from the BBB service.
@@ -62,7 +57,8 @@ class get_recordings extends external_api {
      * @param string|null $tools
      * @param int|null $groupid
      * @return array of warnings and status result
-     * @throws \webservice_access_exception
+     * @throws \invalid_parameter_exception
+     * @throws restricted_context_exception
      */
     public static function execute(
         int $bigbluebuttonbnid = 0,
@@ -112,7 +108,7 @@ class get_recordings extends external_api {
                 if ($groupid) {
                     $instance->set_group_id($groupid);
                 }
-                $recordings = $instance->get_recordings([], $instance->get_instance_var('recordings_deleted'));
+                $recordings = $instance->get_recordings([], $instance->get_instance_var('recordings_deleted') ?? false);
                 $tabledata = recording_data::get_recording_table($recordings, $tools, $instance);
 
                 $returnval['tabledata'] = $tabledata;
@@ -150,6 +146,7 @@ class get_recordings extends external_api {
                     'type' => new external_value(PARAM_ALPHANUMEXT, 'Column type', VALUE_OPTIONAL),
                     'sortable' => new external_value(PARAM_BOOL, 'Whether this column is sortable', VALUE_OPTIONAL, false),
                     'allowHTML' => new external_value(PARAM_BOOL, 'Whether this column contains HTML', VALUE_OPTIONAL, false),
+                    'formatter' => new external_value(PARAM_ALPHANUMEXT, 'Formatter name', VALUE_OPTIONAL),
                 ])),
                 'data' => new external_value(PARAM_RAW), // For now it will be json encoded.
             ], '', VALUE_OPTIONAL),

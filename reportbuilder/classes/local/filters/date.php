@@ -46,14 +46,26 @@ class date extends base {
     /** @var int Date within defined range */
     public const DATE_RANGE = 3;
 
-    /** @var int Date in the previous [X relative date unit(s)] */
-    public const DATE_PREVIOUS = 4;
+    /** @var int Date in the last [X relative date unit(s)] */
+    public const DATE_LAST = 4;
+
+    /** @var int Date in the previous [X relative date unit(s)] Kept for backwards compatibility */
+    public const DATE_PREVIOUS = self::DATE_LAST;
 
     /** @var int Date in current [relative date unit] */
     public const DATE_CURRENT = 5;
 
     /** @var int Date in the next [X relative date unit(s)] */
     public const DATE_NEXT = 6;
+
+    /** @var int Date in the past */
+    public const DATE_PAST = 7;
+
+    /** @var int Date in the future */
+    public const DATE_FUTURE = 8;
+
+    /** @var int Relative date unit for an hour */
+    public const DATE_UNIT_HOUR = 0;
 
     /** @var int Relative date unit for a day */
     public const DATE_UNIT_DAY = 1;
@@ -78,9 +90,11 @@ class date extends base {
             self::DATE_NOT_EMPTY => new lang_string('filterisnotempty', 'core_reportbuilder'),
             self::DATE_EMPTY => new lang_string('filterisempty', 'core_reportbuilder'),
             self::DATE_RANGE => new lang_string('filterrange', 'core_reportbuilder'),
-            self::DATE_PREVIOUS => new lang_string('filterdateprevious', 'core_reportbuilder'),
+            self::DATE_LAST => new lang_string('filterdatelast', 'core_reportbuilder'),
             self::DATE_CURRENT => new lang_string('filterdatecurrent', 'core_reportbuilder'),
             self::DATE_NEXT => new lang_string('filterdatenext', 'core_reportbuilder'),
+            self::DATE_PAST => new lang_string('filterdatepast', 'core_reportbuilder'),
+            self::DATE_FUTURE => new lang_string('filterdatefuture', 'core_reportbuilder'),
         ];
 
         return $this->filter->restrict_limited_operators($operators);
@@ -94,26 +108,25 @@ class date extends base {
     public function setup_form(MoodleQuickForm $mform): void {
         // Operator selector.
         $operatorlabel = get_string('filterfieldoperator', 'core_reportbuilder', $this->get_header());
+        $typesnounit = [self::DATE_ANY, self::DATE_NOT_EMPTY, self::DATE_EMPTY, self::DATE_RANGE,
+            self::DATE_PAST, self::DATE_FUTURE];
 
         $elements[] = $mform->createElement('select', "{$this->name}_operator", $operatorlabel, $this->get_operators());
         $mform->setType("{$this->name}_operator", PARAM_INT);
         $mform->setDefault("{$this->name}_operator", self::DATE_ANY);
 
-        // Value selector for previous and next operators.
+        // Value selector for last and next operators.
         $valuelabel = get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header());
 
         $elements[] = $mform->createElement('text', "{$this->name}_value", $valuelabel, ['size' => 3]);
         $mform->setType("{$this->name}_value", PARAM_INT);
         $mform->setDefault("{$this->name}_value", 1);
-        $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'eq', self::DATE_ANY);
-        $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'eq', self::DATE_NOT_EMPTY);
-        $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'eq', self::DATE_EMPTY);
-        $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'eq', self::DATE_RANGE);
-        $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'eq', self::DATE_CURRENT);
+        $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'in', array_merge($typesnounit, [self::DATE_CURRENT]));
 
-        // Unit selector for previous and next operators.
+        // Unit selector for last and next operators.
         $unitlabel = get_string('filterdurationunit', 'core_reportbuilder', $this->get_header());
         $units = [
+            self::DATE_UNIT_HOUR => get_string('filterdatehours', 'core_reportbuilder'),
             self::DATE_UNIT_DAY => get_string('filterdatedays', 'core_reportbuilder'),
             self::DATE_UNIT_WEEK => get_string('filterdateweeks', 'core_reportbuilder'),
             self::DATE_UNIT_MONTH => get_string('filterdatemonths', 'core_reportbuilder'),
@@ -123,10 +136,7 @@ class date extends base {
         $elements[] = $mform->createElement('select', "{$this->name}_unit", $unitlabel, $units);
         $mform->setType("{$this->name}_unit", PARAM_INT);
         $mform->setDefault("{$this->name}_unit", self::DATE_UNIT_DAY);
-        $mform->hideIf("{$this->name}_unit", "{$this->name}_operator", 'eq', self::DATE_ANY);
-        $mform->hideIf("{$this->name}_unit", "{$this->name}_operator", 'eq', self::DATE_NOT_EMPTY);
-        $mform->hideIf("{$this->name}_unit", "{$this->name}_operator", 'eq', self::DATE_EMPTY);
-        $mform->hideIf("{$this->name}_unit", "{$this->name}_operator", 'eq', self::DATE_RANGE);
+        $mform->hideIf("{$this->name}_unit", "{$this->name}_operator", 'in', $typesnounit);
 
         // Add operator/value/unit group.
         $mform->addGroup($elements, "{$this->name}_group", '', '', false);
@@ -187,24 +197,34 @@ class date extends base {
 
                 break;
             // Relative helper method can handle these three cases.
-            case self::DATE_PREVIOUS:
+            case self::DATE_LAST:
             case self::DATE_CURRENT:
             case self::DATE_NEXT:
 
-                // Previous and next operators require a unit value greater than zero.
+                // Last and next operators require a unit value greater than zero.
                 if ($operator !== self::DATE_CURRENT && $dateunitvalue === 0) {
                     return ['', []];
                 }
 
-                $paramdatefrom = database::generate_param_name();
-                $paramdateto = database::generate_param_name();
-
+                // Generate parameters and SQL clause for the relative date comparison.
+                [$paramdatefrom, $paramdateto] = database::generate_param_names(2);
                 $sql = "{$fieldsql} >= :{$paramdatefrom} AND {$fieldsql} <= :{$paramdateto}";
+
                 [
                     $params[$paramdatefrom],
                     $params[$paramdateto],
                 ] = self::get_relative_timeframe($operator, $dateunitvalue, $dateunit);
 
+                break;
+            case self::DATE_PAST:
+                $param = database::generate_param_name();
+                $sql = "{$fieldsql} < :{$param}";
+                $params[$param] = time();
+                break;
+            case self::DATE_FUTURE:
+                $param = database::generate_param_name();
+                $sql = "{$fieldsql} > :{$param}";
+                $params[$param] = time();
                 break;
             default:
                 // Invalid or inactive filter.
@@ -217,80 +237,98 @@ class date extends base {
     /**
      * Return start and end time of given relative date period
      *
-     * @param int $operator
-     * @param int $dateunitvalue
-     * @param int $dateunit
-     * @return int[]
+     * @param int $operator One of the ::DATE_LAST/CURRENT/NEXT constants
+     * @param int $dateunitvalue Unit multiplier of the date unit
+     * @param int $dateunit One of the ::DATE_UNIT_* constants
+     * @return int[] Timestamps representing the start/end of timeframe
      */
     private static function get_relative_timeframe(int $operator, int $dateunitvalue, int $dateunit): array {
-        $datenow = new DateTimeImmutable();
+        // Initialise start/end time to now.
+        $datestart = $dateend = new DateTimeImmutable();
 
         switch ($dateunit) {
-            case self::DATE_UNIT_DAY:
-                // Current day.
-                $datestart = $dateend = $datenow;
-
-                if ($operator === self::DATE_PREVIOUS) {
-                    $datestart = $datestart->modify("-{$dateunitvalue} day");
-                    $dateend = $dateend->modify('-1 day');
+            case self::DATE_UNIT_HOUR:
+                if ($operator === self::DATE_CURRENT) {
+                    $hour = (int) $datestart->format('G');
+                    $datestart = $datestart->setTime($hour, 0);
+                    $dateend = $dateend->setTime($hour, 59, 59);
+                } else if ($operator === self::DATE_LAST) {
+                    $datestart = $datestart->modify("-{$dateunitvalue} hour");
                 } else if ($operator === self::DATE_NEXT) {
-                    $datestart = $datestart->modify('+1 day');
+                    $dateend = $dateend->modify("+{$dateunitvalue} hour");
+                }
+                break;
+            case self::DATE_UNIT_DAY:
+                if ($operator === self::DATE_CURRENT) {
+                    $datestart = $datestart->setTime(0, 0);
+                    $dateend = $dateend->setTime(23, 59, 59);
+                } else if ($operator === self::DATE_LAST) {
+                    $datestart = $datestart->modify("-{$dateunitvalue} day");
+                } else if ($operator === self::DATE_NEXT) {
                     $dateend = $dateend->modify("+{$dateunitvalue} day");
                 }
 
                 break;
             case self::DATE_UNIT_WEEK:
-                // Current week.
-                $datestart = $datenow->modify('monday this week');
-                $dateend = $datenow->modify('sunday this week');
+                if ($operator === self::DATE_CURRENT) {
+                    // The first day of the week is determined by site calendar configuration/preferences.
+                    $startweekday = \core_calendar\type_factory::get_calendar_instance()->get_starting_weekday();
+                    $weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
-                if ($operator === self::DATE_PREVIOUS) {
+                    // If calculated start of week is after today (today is Tues/start of week is Weds), move back a week.
+                    $datestartnow = $datestart->getTimestamp();
+                    $datestart = $datestart->modify($weekdays[$startweekday] . ' this week')->setTime(0, 0);
+                    if ($datestart->getTimestamp() > $datestartnow) {
+                        $datestart = $datestart->modify('-1 week');
+                    }
+
+                    $dateend = $datestart->modify('+6 day')->setTime(23, 59, 59);
+                } else if ($operator === self::DATE_LAST) {
                     $datestart = $datestart->modify("-{$dateunitvalue} week");
-                    $dateend = $dateend->modify('-1 week');
                 } else if ($operator === self::DATE_NEXT) {
-                    $datestart = $datestart->modify('+1 week');
                     $dateend = $dateend->modify("+{$dateunitvalue} week");
                 }
 
                 break;
             case self::DATE_UNIT_MONTH:
-                // Current month.
-                $datestart = $datenow->modify('first day of this month');
-                $dateend = $datenow->modify('last day of this month');
-
-                [$dateyear, $datemonth] = explode('/', $datenow->format('Y/m'));
-                if ($operator === self::DATE_PREVIOUS) {
-                    $datestart = $datestart->setDate((int) $dateyear, $datemonth - $dateunitvalue, 1);
-                    $dateend = $dateend->modify('last day of last month');
+                if ($operator === self::DATE_CURRENT) {
+                    $datestart = $datestart->modify('first day of this month')->setTime(0, 0);
+                    $dateend = $dateend->modify('last day of this month')->setTime(23, 59, 59);
+                } else if ($operator === self::DATE_LAST) {
+                    $datestart = $datestart->modify("-{$dateunitvalue} month");
                 } else if ($operator === self::DATE_NEXT) {
-                    $datestart = $datestart->modify('first day of next month');
-                    $dateend = $dateend->setDate((int) $dateyear, $datemonth + $dateunitvalue, 1)
-                        ->modify('last day of this month');
+                    $dateend = $dateend->modify("+{$dateunitvalue} month");
                 }
 
                 break;
             case self::DATE_UNIT_YEAR:
-                // Current year.
-                $datestart = $datenow->modify('first day of january this year');
-                $dateend = $datenow->modify('last day of december this year');
-
-                $dateyear = (int) $datenow->format('Y');
-                if ($operator === self::DATE_PREVIOUS) {
-                    $datestart = $datestart->setDate($dateyear - $dateunitvalue, 1, 1);
-                    $dateend = $dateend->modify('last day of december last year');
+                if ($operator === self::DATE_CURRENT) {
+                    $datestart = $datestart->modify('first day of january this year')->setTime(0, 0);
+                    $dateend = $dateend->modify('last day of december this year')->setTime(23, 59, 59);
+                } else if ($operator === self::DATE_LAST) {
+                    $datestart = $datestart->modify("-{$dateunitvalue} year");
                 } else if ($operator === self::DATE_NEXT) {
-                    $datestart = $datestart->modify('first day of january next year');
-                    $dateend = $dateend->setDate($dateyear + $dateunitvalue, 12, 31);
+                    $dateend = $dateend->modify("+{$dateunitvalue} year");
                 }
 
                 break;
-            default:
-                return [0, 0];
         }
 
         return [
-            $datestart->setTime(0, 0)->getTimestamp(),
-            $dateend->setTime(23, 59, 59)->getTimestamp(),
+            $datestart->getTimestamp(),
+            $dateend->getTimestamp(),
+        ];
+    }
+
+    /**
+     * Return sample filter values
+     *
+     * @return array
+     */
+    public function get_sample_values(): array {
+        return [
+            "{$this->name}_operator" => self::DATE_CURRENT,
+            "{$this->name}_unit" => self::DATE_UNIT_WEEK,
         ];
     }
 }

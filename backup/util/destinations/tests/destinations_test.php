@@ -14,23 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_backup;
+
 /**
  * @package    core_backup
- * @category   phpunit
+ * @category   test
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-// Include all the needed stuff
-global $CFG;
-//require_once($CFG->dirroot . '/backup/util/helper/backup_helper.class.php');
-
-/**
- * dbops tests (all)
- */
-class backup_destinations_testcase extends basic_testcase {
+class destinations_test extends \basic_testcase {
 
     /**
      * test backup_destination class

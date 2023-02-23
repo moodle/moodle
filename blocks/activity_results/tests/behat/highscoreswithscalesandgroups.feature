@@ -1,4 +1,4 @@
-@block @block_activity_results
+@block @block_activity_results @javascript
 Feature: The activity results block displays student in group high scores as scales
   In order to be display student scores as scales
   As a user
@@ -53,7 +53,7 @@ Feature: The activity results block displays student in group high scores as sca
       | Scale | Disappointing, Not good enough, Average, Good, Very good, Excellent! |
     And I press "Save changes"
     And I am on "Course 1" course homepage
-    And I follow "Test assignment"
+    And I am on the "Test assignment" "assign activity" page
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | assignsubmission_file_enabled | 0 |
@@ -76,10 +76,10 @@ Feature: The activity results block displays student in group high scores as sca
     Given I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
-      | id_config_showbest | 1 |
-      | id_config_showworst | 0 |
-      | id_config_nameformat | Display full names |
-      | id_config_usegroups | Yes |
+      | config_showbest | 1 |
+      | config_showworst | 0 |
+      | config_nameformat | Display full names |
+      | config_usegroups | Yes |
     And I press "Save changes"
     Then I should see "Group 1" in the "Activity results" "block"
     And I should see "Excellent!" in the "Activity results" "block"
@@ -93,10 +93,10 @@ Feature: The activity results block displays student in group high scores as sca
     Given I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
-      | id_config_showbest | 3 |
-      | id_config_showworst | 0 |
-      | id_config_nameformat | Display full names |
-      | id_config_usegroups | Yes |
+      | config_showbest | 3 |
+      | config_showworst | 0 |
+      | config_nameformat | Display full names |
+      | config_usegroups | Yes |
     And I press "Save changes"
     Then I should see "Group 1" in the "Activity results" "block"
     And I should see "Excellent!" in the "Activity results" "block"
@@ -118,10 +118,10 @@ Feature: The activity results block displays student in group high scores as sca
     And I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
-      | id_config_showbest | 3 |
-      | id_config_showworst | 0 |
-      | id_config_nameformat | Display only ID numbers |
-      | id_config_usegroups | Yes |
+      | config_showbest | 3 |
+      | config_showworst | 0 |
+      | config_nameformat | Display only ID numbers |
+      | config_usegroups | Yes |
     And I press "Save changes"
     Then I should see "Group" in the "Activity results" "block"
     And I should see "Excellent!" in the "Activity results" "block"
@@ -141,10 +141,10 @@ Feature: The activity results block displays student in group high scores as sca
     Given I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
-      | id_config_showbest | 3 |
-      | id_config_showworst | 0 |
-      | id_config_nameformat | Anonymous results |
-      | id_config_usegroups | Yes |
+      | config_showbest | 3 |
+      | config_showworst | 0 |
+      | config_nameformat | Anonymous results |
+      | config_usegroups | Yes |
     And I press "Save changes"
     Then I should see "Group" in the "Activity results" "block"
     And I should see "Excellent!" in the "Activity results" "block"

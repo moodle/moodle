@@ -357,3 +357,5 @@ class SimplePie_XML_Declaration_Parser
 		}
 	}
 }
+
+class_alias('SimplePie_XML_Declaration_Parser', 'SimplePie\XML\Declaration\Parser', false);

@@ -79,4 +79,33 @@ class user_test extends advanced_testcase {
         $usernames = $DB->get_fieldset_select('user', 'username', $select, $params);
         $this->assertEqualsCanonicalizing($expectedusernames, $usernames);
     }
+
+    /**
+     * Test getting filter SQL using specific user selection operator/value
+     */
+    public function test_get_sql_filter_select_user(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user01 = $this->getDataGenerator()->create_user(['username' => 'user01']);
+        $user02 = $this->getDataGenerator()->create_user(['username' => 'user02']);
+
+        $filter = new filter(
+            user::class,
+            'test',
+            new lang_string('yes'),
+            'testentity',
+            'id'
+        );
+
+        // Create instance of our filter, passing given operator/value matching second user.
+        [$select, $params] = user::create($filter)->get_sql_filter([
+            $filter->get_unique_identifier() . '_operator' => user::USER_SELECT,
+            $filter->get_unique_identifier() . '_value' => [$user02->id],
+        ]);
+
+        $usernames = $DB->get_fieldset_select('user', 'username', $select, $params);
+        $this->assertEquals([$user02->username], $usernames);
+    }
 }

@@ -23,7 +23,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($CFG->libdir.'/externallib.php');
+use core_external\external_api;
+use core_external\external_multiple_structure;
+use core_external\external_settings;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 /**
  * WEBSERVICE_AUTHMETHOD_USERNAME - username/password authentication (also called simple authentication)
@@ -115,7 +119,7 @@ class webservice {
         $user = $DB->get_record('user', array('id' => $token->userid, 'deleted' => 0), '*', MUST_EXIST);
 
         // let enrol plugins deal with new enrolments if necessary
-        enrol_check_plugins($user);
+        enrol_check_plugins($user, false);
 
         // setup user session to check capability
         \core\session\manager::set_user($user);
@@ -684,7 +688,8 @@ class webservice {
             }
         }
 
-        if (empty($servicecaps)) {
+        // Bail out early if there's nothing to process.
+        if (empty($users) || empty($servicecaps)) {
             return [];
         }
 
@@ -898,13 +903,13 @@ class webservice_access_exception extends moodle_exception {
 /**
  * Check if a protocol is enabled
  *
- * @param string $protocol name of WS protocol ('rest', 'soap', 'xmlrpc'...)
+ * @param string $protocol name of WS protocol ('rest', 'soap', ...)
  * @return bool true if the protocol is enabled
  */
 function webservice_protocol_is_enabled($protocol) {
     global $CFG;
 
-    if (empty($CFG->enablewebservices)) {
+    if (empty($CFG->enablewebservices) || empty($CFG->webserviceprotocols)) {
         return false;
     }
 
@@ -1131,13 +1136,14 @@ abstract class webservice_server implements webservice_server_interface {
         }
 
         // now fake user login, the session is completely empty too
-        enrol_check_plugins($user);
+        enrol_check_plugins($user, false);
         \core\session\manager::set_user($user);
         set_login_session_preferences();
         $this->userid = $user->id;
 
         if ($this->authmethod != WEBSERVICE_AUTHMETHOD_SESSION_TOKEN && !has_capability("webservice/$this->wsname:use", $this->restricted_context)) {
-            throw new webservice_access_exception('You are not allowed to use the {$a} protocol (missing capability: webservice/' . $this->wsname . ':use)');
+            throw new webservice_access_exception("You are not allowed to use the {$this->wsname} protocol " .
+                "(missing capability: webservice/{$this->wsname}:use)");
         }
 
         external_api::set_context_restriction($this->restricted_context);
@@ -1819,7 +1825,7 @@ $castingcode
         $function->classname::$function->methodname($paramsstr);
         return null;
     }
-    return external_api::clean_returnvalue($callforreturnvaluedesc, $function->classname::$function->methodname($paramsstr));
+    return \\core_external\\external_api::clean_returnvalue($callforreturnvaluedesc, $function->classname::$function->methodname($paramsstr));
 EOD;
         return $methodbody;
     }

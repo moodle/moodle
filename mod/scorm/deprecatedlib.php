@@ -45,7 +45,7 @@ function scorm_get_completion_state($course, $cm, $userid, $type) {
 
     // Get scorm.
     if (!$scorm = $DB->get_record('scorm', array('id' => $cm->instance))) {
-        print_error('cannotfindscorm');
+        throw new \moodle_exception('cannotfindscorm');
     }
     // Only check for existence of tracks and return false if completionstatusrequired or completionscorerequired
     // this means that if only view is required we don't end up with a false state.

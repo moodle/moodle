@@ -37,7 +37,7 @@ $newvalue = optional_param('newvalue', false, PARAM_TEXT);
 
 /// basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 $context = context_course::instance($course->id);
 require_login($course);
@@ -52,7 +52,7 @@ switch ($action) {
         if (!empty($userid) && !empty($itemid) && $newvalue !== false && !empty($type)) {
             // Save the grade or feedback
             if (!$grade_item = grade_item::fetch(array('id'=>$itemid, 'courseid'=>$courseid))) { // we must verify course id here!
-                print_error('invalidgradeitemid');
+                throw new \moodle_exception('invalidgradeitemid');
             }
 
             /**

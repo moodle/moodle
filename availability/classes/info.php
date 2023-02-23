@@ -233,7 +233,7 @@ abstract class info {
      */
     public function is_available_for_all() {
         global $CFG;
-        if (is_null($this->availability) || !empty($CFG->enableavailability)) {
+        if (is_null($this->availability) || empty($CFG->enableavailability)) {
             return true;
         } else {
             try {

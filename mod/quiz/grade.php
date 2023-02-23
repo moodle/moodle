@@ -24,6 +24,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\quiz_attempt;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
@@ -34,8 +35,8 @@ $id = required_param('id', PARAM_INT);
 $userid = optional_param('userid', 0, PARAM_INT);
 
 $cm = get_coursemodule_from_id('quiz', $id, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$quiz = $DB->get_record('quiz', array('id' => $cm->instance), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$quiz = $DB->get_record('quiz', ['id' => $cm->instance], '*', MUST_EXIST);
 require_login($course, false, $cm);
 
 $reportlist = quiz_report_list(context_module::instance($cm->id));
@@ -45,7 +46,7 @@ if (empty($reportlist) || $userid == $USER->id) {
     // (The looking at their own grades case is unlikely, since users who
     // appear in the gradebook are unlikely to be able to see quiz reports,
     // but it is possible.)
-    redirect(new moodle_url('/mod/quiz/view.php', array('id' => $cm->id)));
+    redirect(new moodle_url('/mod/quiz/view.php', ['id' => $cm->id]));
 }
 
 // Now we know the user is interested in reports. If they are interested in a
@@ -90,5 +91,5 @@ if ($userid) {
 }
 
 // Send the user to the first report they can see.
-redirect(new moodle_url('/mod/quiz/report.php', array(
-        'id' => $cm->id, 'mode' => reset($reportlist))));
+redirect(new moodle_url('/mod/quiz/report.php', [
+        'id' => $cm->id, 'mode' => reset($reportlist)]));

@@ -16,6 +16,8 @@
 
 namespace tool_admin_presets\local\action;
 
+use core_adminpresets\manager;
+
 /**
  * Tests for the import class.
  *
@@ -49,9 +51,9 @@ class import_test extends \advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        $currentpresets = $DB->count_records('tool_admin_presets');
-        $currentitems = $DB->count_records('tool_admin_presets_it');
-        $currentadvitems = $DB->count_records('tool_admin_presets_it_a');
+        $currentpresets = $DB->count_records('adminpresets');
+        $currentitems = $DB->count_records('adminpresets_it');
+        $currentadvitems = $DB->count_records('adminpresets_it_a');
 
         // Create draft file to import.
         $draftid = file_get_unused_draft_itemid();
@@ -95,20 +97,20 @@ class import_test extends \advanced_testcase {
 
             if ($expectedpreset) {
                 // Check the preset record has been created.
-                $presets = $DB->get_records('tool_admin_presets');
+                $presets = $DB->get_records('adminpresets');
                 $this->assertCount($currentpresets + 1, $presets);
-                $generator = $this->getDataGenerator()->get_plugin_generator('tool_admin_presets');
+                $generator = $this->getDataGenerator()->get_plugin_generator('core_adminpresets');
                 $presetid = $generator->access_protected($action, 'id');
                 $this->assertArrayHasKey($presetid, $presets);
                 $preset = $presets[$presetid];
                 $this->assertEquals($expectedpresetname, $preset->name);
                 $this->assertEquals('http://demo.moodle', $preset->site);
                 $this->assertEquals('Ada Lovelace', $preset->author);
-                $this->assertEquals(0, $preset->iscore);
+                $this->assertEquals(manager::NONCORE_PRESET, $preset->iscore);
 
                 if ($expectedsettings) {
                     // Check the items have been created.
-                    $items = $DB->get_records('tool_admin_presets_it', ['adminpresetid' => $presetid]);
+                    $items = $DB->get_records('adminpresets_it', ['adminpresetid' => $presetid]);
                     $this->assertCount(4, $items);
                     $presetitems = [
                         'none' => [
@@ -127,7 +129,7 @@ class import_test extends \advanced_testcase {
                     }
 
                     // Check the advanced attributes have been created.
-                    $advitems = $DB->get_records('tool_admin_presets_it_a');
+                    $advitems = $DB->get_records('adminpresets_it_a');
                     $this->assertCount($currentadvitems + 1, $advitems);
                     $advitemfound = false;
                     foreach ($advitems as $advitem) {
@@ -141,7 +143,7 @@ class import_test extends \advanced_testcase {
 
                 if ($expectedplugins) {
                     // Check the plugins have been created.
-                    $plugins = $DB->get_records('tool_admin_presets_plug', ['adminpresetid' => $presetid]);
+                    $plugins = $DB->get_records('adminpresets_plug', ['adminpresetid' => $presetid]);
                     $this->assertCount(6, $plugins);
                     $presetplugins = [
                         'atto' => [
@@ -165,9 +167,9 @@ class import_test extends \advanced_testcase {
                 }
             } else {
                 // Check the preset nor the items are not created.
-                $this->assertCount($currentpresets, $DB->get_records('tool_admin_presets'));
-                $this->assertCount($currentitems, $DB->get_records('tool_admin_presets_it'));
-                $this->assertCount($currentadvitems, $DB->get_records('tool_admin_presets_it_a'));
+                $this->assertCount($currentpresets, $DB->get_records('adminpresets'));
+                $this->assertCount($currentitems, $DB->get_records('adminpresets_it'));
+                $this->assertCount($currentadvitems, $DB->get_records('adminpresets_it_a'));
             }
 
             // Check the export event has been raised.
@@ -189,25 +191,27 @@ class import_test extends \advanced_testcase {
      * @return array
      */
     public function import_execute_provider(): array {
+        $fixturesfolder = __DIR__ . '/../../../../../presets/tests/fixtures/';
+
         return [
             'Import settings from an empty file' => [
                 'filecontents' => '',
                 'expectedpreset' => false,
             ],
             'Import settings and plugins from a valid XML file' => [
-                'filecontents' => file_get_contents(__DIR__ . '/../../fixtures/import_settings_plugins.xml'),
+                'filecontents' => file_get_contents($fixturesfolder . 'import_settings_plugins.xml'),
                 'expectedpreset' => true,
                 'expectedsettings' => true,
                 'expectedplugins' => true,
             ],
             'Import only settings from a valid XML file' => [
-                'filecontents' => file_get_contents(__DIR__ . '/../../fixtures/import_settings.xml'),
+                'filecontents' => file_get_contents($fixturesfolder . 'import_settings.xml'),
                 'expectedpreset' => true,
                 'expectedsettings' => true,
                 'expectedplugins' => false,
             ],
             'Import settings and plugins from a valid XML file with Starter name, which will be marked as non-core' => [
-                'filecontents' => file_get_contents(__DIR__ . '/../../fixtures/import_starter_name.xml'),
+                'filecontents' => file_get_contents($fixturesfolder . 'import_starter_name.xml'),
                 'expectedpreset' => true,
                 'expectedsettings' => true,
                 'expectedplugins' => true,
@@ -216,7 +220,7 @@ class import_test extends \advanced_testcase {
                 'expectedpresetname' => 'Starter',
             ],
             'Import settings from an invalid XML file' => [
-                'filecontents' => file_get_contents(__DIR__ . '/../../fixtures/invalid_xml_file.xml'),
+                'filecontents' => file_get_contents($fixturesfolder . 'invalid_xml_file.xml'),
                 'expectedpreset' => false,
                 'expectedsettings' => false,
                 'expectedplugins' => false,
@@ -224,20 +228,20 @@ class import_test extends \advanced_testcase {
                 'expectedexception' => \Exception::class,
             ],
             'Import unexisting settings category' => [
-                'filecontents' => file_get_contents(__DIR__ . '/../../fixtures/unexisting_category.xml'),
+                'filecontents' => file_get_contents($fixturesfolder . 'unexisting_category.xml'),
                 'expectedpreset' => false,
                 'expectedsettings' => false,
                 'expectedplugins' => false,
             ],
             'Import unexisting setting' => [
-                'filecontents' => file_get_contents(__DIR__ . '/../../fixtures/unexisting_setting.xml'),
+                'filecontents' => file_get_contents($fixturesfolder . 'unexisting_setting.xml'),
                 'expectedpreset' => false,
                 'expectedsettings' => false,
                 'expectedplugins' => false,
                 'expecteddebugging' => true,
             ],
             'Import valid settings with one unexisting setting too' => [
-                'filecontents' => file_get_contents(__DIR__ . '/../../fixtures/import_settings_with_unexisting_setting.xml'),
+                'filecontents' => file_get_contents($fixturesfolder . 'import_settings_with_unexisting_setting.xml'),
                 'expectedpreset' => true,
                 'expectedsettings' => false,
                 'expectedplugins' => false,

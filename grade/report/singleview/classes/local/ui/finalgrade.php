@@ -34,17 +34,20 @@ use stdClass;
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class finalgrade extends grade_attribute_format implements unique_value, be_disabled {
+class finalgrade extends grade_attribute_format implements unique_value, be_disabled, be_readonly {
 
-    /** @var string $name Name of this input */
+    /**
+     * Name of this input
+     * @var string $name
+     */
     public $name = 'finalgrade';
 
     /**
      * Get the value for this input.
      *
-     * @return string The value based on the grade_grade.
+     * @return null|string The value based on the grade_grade.
      */
-    public function get_value() {
+    public function get_value(): ?string {
         $this->label = $this->grade->grade_item->itemname;
 
         $val = $this->grade->finalgrade;
@@ -60,7 +63,7 @@ class finalgrade extends grade_attribute_format implements unique_value, be_disa
      *
      * @return string The label for this form input.
      */
-    public function get_label() {
+    public function get_label(): string {
         if (!isset($this->grade->label)) {
             $this->grade->label = '';
         }
@@ -72,7 +75,7 @@ class finalgrade extends grade_attribute_format implements unique_value, be_disa
      *
      * @return bool Set disabled on this input or not.
      */
-    public function is_disabled() {
+    public function is_disabled(): bool {
         $locked = 0;
         $gradeitemlocked = 0;
         $overridden = 0;
@@ -95,15 +98,25 @@ class finalgrade extends grade_attribute_format implements unique_value, be_disa
     }
 
     /**
+     * Return true if this is read-only.
+     *
+     * @return bool
+     */
+    public function is_readonly(): bool {
+        global $USER;
+        return empty($USER->editing);
+    }
+
+    /**
      * Create the element for this column.
      *
      * @return element
      */
-    public function determine_format() {
+    public function determine_format(): element {
         if ($this->grade->grade_item->load_scale()) {
             $scale = $this->grade->grade_item->load_scale();
 
-            $options = array(-1 => get_string('nograde'));
+            $options = [-1 => get_string('nograde')];
 
             foreach ($scale->scale_items as $i => $name) {
                 $options[$i + 1] = $name;
@@ -114,14 +127,16 @@ class finalgrade extends grade_attribute_format implements unique_value, be_disa
                 $options,
                 $this->get_label(),
                 $this->get_value(),
-                $this->is_disabled()
+                $this->is_disabled(),
+                $this->is_readonly()
             );
         } else {
             return new text_attribute(
                 $this->get_name(),
                 $this->get_value(),
                 $this->get_label(),
-                $this->is_disabled()
+                $this->is_disabled(),
+                $this->is_readonly()
             );
         }
     }
@@ -133,14 +148,13 @@ class finalgrade extends grade_attribute_format implements unique_value, be_disa
      * @return string Any error string
      */
     public function set($value) {
-        global $DB;
-
         $userid = $this->grade->userid;
         $gradeitem = $this->grade->grade_item;
 
         $feedback = false;
         $feedbackformat = false;
         if ($gradeitem->gradetype == GRADE_TYPE_SCALE) {
+            $value = (int)unformat_float($value);
             if ($value == -1) {
                 $finalgrade = null;
             } else {

@@ -86,7 +86,7 @@ class user_badge_exporter extends exporter {
                 'optional' => true,
             ],
             'issuername' => [
-                'type' => PARAM_NOTAGS,
+                'type' => PARAM_TEXT,
                 'description' => 'Issuer name',
             ],
             'issuerurl' => [

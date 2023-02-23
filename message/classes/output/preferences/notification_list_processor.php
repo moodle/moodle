@@ -81,16 +81,17 @@ class notification_list_processor implements templatable, renderable {
      * Check if the given preference is enabled or not.
      *
      * @param string $name preference name
+     * @param string $locked Wether the preference is locked by admin.
      * @return bool
      */
-    private function is_preference_enabled($name) {
+    private function is_preference_enabled($name, $locked) {
         $processor = $this->processor;
         $preferences = $this->preferences;
         $defaultpreferences = get_message_output_default_preferences();
 
         $checked = false;
         // See if user has touched this preference.
-        if (isset($preferences->{$name})) {
+        if (!$locked && isset($preferences->{$name})) {
             // User has some preferences for this state in the database.
             $checked = isset($preferences->{$name}[$processor->name]);
         } else {
@@ -104,40 +105,64 @@ class notification_list_processor implements templatable, renderable {
         return $checked;
     }
 
+    /**
+     * Export this data so it can be used as the context for a mustache template.
+     * @todo Remove loggedin and loggedoff from context on MDL-73284.
+     *
+     * @param renderer_base $output
+     * @return stdClass
+     */
     public function export_for_template(\renderer_base $output) {
         $processor = $this->processor;
         $preferencebase = $this->get_preference_base();
-        $permitted = MESSAGE_DEFAULT_PERMITTED;
         $defaultpreferences = get_message_output_default_preferences();
-        $defaultpreference = $processor->name.'_provider_'.$preferencebase.'_permitted';
+        $defaultpreference = $processor->name.'_provider_'.$preferencebase.'_locked';
+        $providername = get_string('messageprovider:'.$this->provider->name, $this->provider->component);
+        $processorname = get_string('pluginname', 'message_'.$processor->name);
+        $labelparams = [
+            'provider'  => $providername,
+            'processor' => $processorname,
+        ];
+
         $context = [
-            'displayname' => get_string('pluginname', 'message_'.$processor->name),
+            'displayname' => $processorname,
             'name' => $processor->name,
             'locked' => false,
             'userconfigured' => $processor->object->is_user_configured(),
+            // Backward compatibility, deprecated attribute.
             'loggedin' => [
                 'name' => 'loggedin',
-                'displayname' => get_string('loggedindescription', 'message'),
-                'checked' => $this->is_preference_enabled($preferencebase.'_loggedin'),
+                'displayname' => 'loggedin',
+                'checked' => false,
             ],
+            // Backward compatibility, deprecated attribute.
             'loggedoff' => [
                 'name' => 'loggedoff',
-                'displayname' => get_string('loggedoffdescription', 'message'),
-                'checked' => $this->is_preference_enabled($preferencebase.'_loggedoff'),
+                'displayname' => 'loggedoff',
+                'checked' => false,
             ],
+            'enabled' => false,
+            'enabledlabel' => get_string('sendingviaenabled', 'message', $labelparams),
         ];
 
         // Determine the default setting.
         if (isset($defaultpreferences->{$defaultpreference})) {
-            $permitted = $defaultpreferences->{$defaultpreference};
+            $context['locked'] = $defaultpreferences->{$defaultpreference};
         }
+
+        $context['enabled'] = $this->is_preference_enabled($preferencebase.'_enabled', $context['locked']);
+        $context['loggedoff']['checked'] = $context['enabled']; // Backward compatibility, deprecated attribute.
+        $context['loggedin']['checked'] = $context['enabled']; // Backward compatibility, deprecated attribute.
+
         // If settings are disallowed or forced, just display the corresponding message, if not use user settings.
-        if ($permitted == 'disallowed') {
-            $context['locked'] = true;
-            $context['lockedmessage'] = get_string('disallowed', 'message');
-        } else if ($permitted == 'forced') {
-            $context['locked'] = true;
-            $context['lockedmessage'] = get_string('forced', 'message');
+        if ($context['locked']) {
+            if ($context['enabled']) {
+                $context['lockedmessage'] = get_string('forcedmessage', 'message');
+                $context['lockedlabel'] = get_string('providerprocesorislocked', 'message', $labelparams);
+            } else {
+                $context['lockedmessage'] = get_string('disallowed', 'message');
+                $context['lockedlabel'] = get_string('providerprocesorisdisallowed', 'message', $labelparams);
+            }
         }
 
         return $context;

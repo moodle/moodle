@@ -20,6 +20,8 @@ Feature: The Section links block can be configured to display section name in ad
       | showsectionname | 1 | block_section_links |
     And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Section links" block
     And I log out
 

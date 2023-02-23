@@ -157,7 +157,7 @@ class feedback_item_info extends feedback_item_base {
         $analysed_item = $this->get_analysed($item, $groupid, $courseid);
         $data = $analysed_item->data;
         if (is_array($data)) {
-            echo '<tr><th colspan="2" align="left">';
+            echo '<tr><th class="text-left">';
             echo $itemnr . ' ';
             if (strval($item->label) !== '') {
                 echo '('. format_string($item->label).') ';
@@ -167,7 +167,7 @@ class feedback_item_info extends feedback_item_base {
             $sizeofdata = count($data);
             for ($i = 0; $i < $sizeofdata; $i++) {
                 $class = strlen(trim($data[$i]->show)) ? '' : ' class="isempty"';
-                echo '<tr'.$class.'><td colspan="2" class="singlevalue">';
+                echo '<tr'.$class.'><td class="singlevalue">';
                 echo str_replace("\n", '<br />', $data[$i]->show);
                 echo '</td></tr>';
             }

@@ -35,15 +35,6 @@ function xmldb_tool_dataprivacy_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    // Automatically generated Moodle v3.6.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.7.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.8.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
 
@@ -77,6 +68,24 @@ function xmldb_tool_dataprivacy_upgrade($oldversion) {
         // Dataprivacy savepoint reached.
         upgrade_plugin_savepoint(true, 2020061501, 'tool', 'dataprivacy');
     }
+
+    // Automatically generated Moodle v4.0.0 release upgrade line.
+    // Put any upgrade step following this.
+    if ($oldversion < 2022053000) {
+
+        // Define key usermodified (foreign) to be added to tool_dataprivacy_purposerole.
+        $table = new xmldb_table('tool_dataprivacy_purposerole');
+        $key = new xmldb_key('usermodified', XMLDB_KEY_FOREIGN, ['usermodified'], 'user', ['id']);
+
+        // Launch add key usermodified.
+        $dbman->add_key($table, $key);
+
+        // Dataprivacy savepoint reached.
+        upgrade_plugin_savepoint(true, 2022053000, 'tool', 'dataprivacy');
+    }
+
+    // Automatically generated Moodle v4.1.0 release upgrade line.
+    // Put any upgrade step following this.
 
     return true;
 }

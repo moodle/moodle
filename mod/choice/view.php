@@ -17,18 +17,18 @@ if ($action !== '') {
 $PAGE->set_url($url);
 
 if (! $cm = get_coursemodule_from_id('choice', $id)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 $cm = cm_info::create($cm);
 
 if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
-    print_error('coursemisconf');
+    throw new \moodle_exception('coursemisconf');
 }
 
 require_course_login($course, false, $cm);
 
 if (!$choice = choice_get_choice($cm->instance)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 
 $strchoice = get_string('modulename', 'choice');
@@ -116,11 +116,6 @@ $eventdata['context'] = $context;
 
 /// Check to see if groups are being used in this choice
 $groupmode = groups_get_activity_groupmode($cm);
-
-if ($groupmode) {
-    groups_get_activity_group($cm, true);
-    groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/choice/view.php?id='.$id);
-}
 
 // Check if we want to include responses from inactive users.
 $onlyactive = $choice->includeinactive ? false : true;
@@ -233,6 +228,17 @@ if (!$choiceformshown) {
 if (choice_can_view_results($choice, $current, $choiceopen)) {
     $results = prepare_choice_show_results($choice, $course, $cm, $allresponses);
     $renderer = $PAGE->get_renderer('mod_choice');
+    if ($results->publish) { // If set to publish full results, display a heading for the responses section.
+        echo html_writer::tag('h3', format_string(get_string("responses", "choice")), ['class' => 'mt-4']);
+    }
+
+    if ($groupmode) { // If group mode is enabled, display the groups selector.
+        groups_get_activity_group($cm, true);
+        $groupsactivitymenu = groups_print_activity_menu($cm, new moodle_url('/mod/choice/view.php', ['id' => $id]),
+            true);
+        echo html_writer::div($groupsactivitymenu, 'mt-3 mb-1');
+    }
+
     $resultstable = $renderer->display_result($results);
     echo $OUTPUT->box($resultstable);
 

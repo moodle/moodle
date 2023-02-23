@@ -25,6 +25,19 @@ Feature: View activity completion in the assignment activity
       | completion               | 1             |
       | grade[modgrade_type]     | point         |
       | grade[modgrade_point]    | 100           |
+    And the following "activity" exists:
+      | activity                            | assign          |
+      | course                              | C1              |
+      | idnumber                            | mh2             |
+      | name                                | Music history 2 |
+      | section                             | 1               |
+      | assignsubmission_onlinetext_enabled | 1               |
+      | attemptreopenmethod                 | manual          |
+      | maxattempts                         | -1              |
+      | completion                          | 2               |
+      | completionsubmit                    | 1               |
+      | grade[modgrade_type]                | point           |
+      | grade[modgrade_point]               | 100             |
 
   @javascript
   Scenario: The manual completion button will be shown on the course page if the Show activity completion conditions is set to Yes
@@ -123,3 +136,27 @@ Feature: View activity completion in the assignment activity
     Then the "View" completion condition of "Music history" is displayed as "done"
     And the "Make a submission" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "done"
+
+  @javascript
+  Scenario: Automatic completion items should reset when a new attempt is manually given.
+    Given I am on the "Music history 2" "assign activity" page logged in as student1
+    And the "Make a submission" completion condition of "Music history 2" is displayed as "todo"
+    And I press "Add submission"
+    And I set the field "Online text" to "History of playing with drumsticks reversed"
+    And I press "Save changes"
+    And I press "Submit assignment"
+    And I press "Continue"
+    And the "Make a submission" completion condition of "Music history 2" is displayed as "done"
+    And I log out
+    And I am on the "Music history 2" "assign activity" page logged in as teacher1
+    And I follow "View all submissions"
+    And I click on "Grade" "link" in the "Vinnie Student1" "table_row"
+    And I set the field "Grade out of 100" to "33"
+    And I set the field "Notify student" to "0"
+    And I set the field "Allow another attempt" to "Yes"
+    And I press "Save changes"
+    And I log out
+    When I am on the "Music history 2" "assign activity" page logged in as student1
+    And I should see "Reopened"
+    And "Add a new attempt based on previous submission" "button" should exist
+    Then the "Make a submission" completion condition of "Music history 2" is displayed as "todo"

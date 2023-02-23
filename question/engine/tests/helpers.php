@@ -117,12 +117,13 @@ abstract class question_test_helper {
      */
     public static function get_question_editing_form($cat, $questiondata) {
         $catcontext = context::instance_by_id($cat->contextid, MUST_EXIST);
-        $contexts = new question_edit_contexts($catcontext);
+        $contexts = new core_question\local\bank\question_edit_contexts($catcontext);
         $dataforformconstructor = new stdClass();
         $dataforformconstructor->createdby = $questiondata->createdby;
         $dataforformconstructor->qtype = $questiondata->qtype;
         $dataforformconstructor->contextid = $questiondata->contextid = $catcontext->id;
         $dataforformconstructor->category = $questiondata->category = $cat->id;
+        $dataforformconstructor->status = $questiondata->status;
         $dataforformconstructor->formoptions = new stdClass();
         $dataforformconstructor->formoptions->canmove = true;
         $dataforformconstructor->formoptions->cansaveasnew = true;
@@ -178,8 +179,8 @@ class test_question_maker {
         $q->penalty = 0.3333333;
         $q->length = 1;
         $q->stamp = make_unique_id_code();
-        $q->version = make_unique_id_code();
-        $q->hidden = 0;
+        $q->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+        $q->version = 1;
         $q->timecreated = time();
         $q->timemodified = time();
         $q->createdby = $USER->id;
@@ -200,8 +201,8 @@ class test_question_maker {
         $qdata->penalty = 0.3333333;
         $qdata->length = 1;
         $qdata->stamp = make_unique_id_code();
-        $qdata->version = make_unique_id_code();
-        $qdata->hidden = 0;
+        $qdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+        $qdata->version = 1;
         $qdata->timecreated = time();
         $qdata->timemodified = time();
         $qdata->createdby = $USER->id;
@@ -478,6 +479,11 @@ abstract class data_loading_method_test_base extends advanced_testcase {
 
 
 abstract class question_testcase extends advanced_testcase {
+
+    /**
+     * Tolerance accepted in some unit tests when float operations are involved.
+     */
+    const GRADE_DELTA = 0.00000005;
 
     public function assert($expectation, $compare, $notused = '') {
 
@@ -1300,6 +1306,24 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
         // Does not currently verify hint text.
         return new question_contains_tag_with_attribute('div', 'class', 'hint');
     }
+
+    /**
+     * Returns an expectation that a string contains a corrupted question notification.
+     *
+     * @return question_pattern_expectation an expectation for use with check_current_output.
+     */
+    protected function get_contains_corruption_notification() {
+        return new question_pattern_expectation('/' . preg_quote(get_string('corruptedquestion', 'qtype_multianswer'), '/') . '/');
+    }
+
+    /**
+     * Returns an expectation that a string contains a corrupted subquestion message.
+     *
+     * @return question_pattern_expectation an expectation for use with check_current_output.
+     */
+    protected function get_contains_corrupted_subquestion_message() {
+        return new question_pattern_expectation('/' . preg_quote(get_string('missingsubquestion', 'qtype_multianswer'), '/') . '/');
+    }
 }
 
 /**
@@ -1341,10 +1365,12 @@ class question_test_recordset extends moodle_recordset {
         $this->close();
     }
 
+    #[\ReturnTypeWillChange]
     public function current() {
         return (object) current($this->records);
     }
 
+    #[\ReturnTypeWillChange]
     public function key() {
         if (is_null(key($this->records))) {
             return false;
@@ -1353,34 +1379,15 @@ class question_test_recordset extends moodle_recordset {
         return reset($current);
     }
 
-    public function next() {
+    public function next(): void {
         next($this->records);
     }
 
-    public function valid() {
+    public function valid(): bool {
         return !is_null(key($this->records));
     }
 
     public function close() {
         $this->records = null;
-    }
-}
-
-/**
- * Helper class for tests that help to test core_question_renderer.
- *
- * @copyright  2018 Huong Nguyen <huongnv13@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class testable_core_question_renderer extends core_question_renderer {
-
-    /**
-     * Test the private number function.
-     *
-     * @param null|string $number
-     * @return HTML
-     */
-    public function number($number) {
-        return parent::number($number);
     }
 }

@@ -40,19 +40,6 @@ Feature: Authentication
     When I click on "Log out" "link" in the "#page-footer" "css_element"
     Then I should see "You are not logged in" in the "page-footer" "region"
 
-  Scenario Outline: Checking the display of the Remember username checkbox
-    Given the following config values are set as admin:
-      | rememberusername | <settingvalue> |
-    And I am on homepage
-    When I click on "Log in" "link" in the ".logininfo" "css_element"
-    Then I should <expect> "Remember username"
-
-    Examples:
-      | settingvalue | expect  |
-      | 0            | not see |
-      | 1            | see     |
-      | 2            | see     |
-
   @javascript @accessibility
   Scenario: Login page must be accessible
     When I am on site homepage

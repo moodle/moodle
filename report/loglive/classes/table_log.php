@@ -404,4 +404,19 @@ class report_loglive_table_log extends table_sql {
             }
         }
     }
+
+    /**
+     * Returns the latest timestamp of the records in the table.
+     *
+     * @return int
+     */
+    public function get_until(): int {
+        $until = $this->filterparams->date;
+        if (!empty($this->rawdata)) {
+            foreach ($this->rawdata as $row) {
+                $until = max($row->timecreated, $until);
+            }
+        }
+        return $until;
+    }
 }

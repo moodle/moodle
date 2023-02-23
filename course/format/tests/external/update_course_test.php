@@ -133,7 +133,7 @@ class update_course_test extends \externallib_advanced_testcase {
                 'action' => 'format_do_something',
                 'expected' => [
                     'count' => 1,
-                    'action' => 'delete',
+                    'action' => 'remove',
                     'visible' => null,
                 ],
                 'expectexception' => false,

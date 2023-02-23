@@ -25,9 +25,9 @@
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
-$alignmentid = required_param('alignmentid', PARAM_INT); // Related badge ID.
+$alignmentid = required_param('alignmentid', PARAM_INT); // Alignment ID.
 $badgeid = required_param('id', PARAM_INT); // Badge ID.
-$action = optional_param('action', 'remove', PARAM_TEXT); // Remove.
+$action = optional_param('action', 'remove', PARAM_TEXT); // Action to perform.
 
 require_login();
 $return = new moodle_url('/badges/alignment.php', array('id' => $badgeid));
@@ -36,6 +36,8 @@ $context = $badge->get_context();
 require_capability('moodle/badges:configuredetails', $context);
 
 if ($action == 'remove') {
+    require_sesskey();
     $badge->delete_alignment($alignmentid);
 }
+
 redirect($return);

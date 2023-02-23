@@ -60,7 +60,8 @@ class recentlyaccesseditems_item_exporter extends \core\external\exporter {
                 get_fast_modinfo($this->data->courseid)->cms[$this->data->cmid]->get_icon_url(),
                 get_string('pluginname', $this->data->modname),
                 ['title' => get_string('pluginname', $this->data->modname), 'class' => 'icon']
-            )
+            ),
+            'purpose' => plugin_supports('mod', $this->data->modname, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER)
         );
     }
 
@@ -113,6 +114,9 @@ class recentlyaccesseditems_item_exporter extends \core\external\exporter {
             ),
             'icon' => array(
                 'type' => PARAM_RAW,
+            ),
+            'purpose' => array(
+                'type' => PARAM_TEXT,
             )
         );
     }

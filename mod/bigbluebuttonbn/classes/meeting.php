@@ -21,10 +21,10 @@ use cache_store;
 use context_course;
 use core_tag_tag;
 use Exception;
+use Firebase\JWT\Key;
 use mod_bigbluebuttonbn\local\config;
 use mod_bigbluebuttonbn\local\exceptions\bigbluebutton_exception;
 use mod_bigbluebuttonbn\local\exceptions\meeting_join_exception;
-use mod_bigbluebuttonbn\local\exceptions\server_not_available_exception;
 use mod_bigbluebuttonbn\local\helpers\roles;
 use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
 use stdClass;
@@ -63,7 +63,6 @@ class meeting {
      * @param int $origin
      * @return string
      * @throws meeting_join_exception this is sent if we cannot join (meeting full, user needs to wait...)
-     * @throws server_not_available_exception
      */
     public static function join_meeting(instance $instance, $origin = logger::ORIGIN_BASE): string {
         // See if the session is in progress.
@@ -78,8 +77,7 @@ class meeting {
     /**
      * Get currently stored meeting info
      *
-     * @return mixed|stdClass
-     * @throws \coding_exception
+     * @return stdClass
      */
     public function get_meeting_info() {
         if (!$this->meetinginfo) {
@@ -161,8 +159,6 @@ class meeting {
      * Creates a bigbluebutton meeting, send the message to BBB and returns the response in an array.
      *
      * @return array
-     * @throws bigbluebutton_exception
-     * @throws server_not_available_exception
      */
     public function create_meeting() {
         $data = $this->create_meeting_data();
@@ -195,19 +191,39 @@ class meeting {
      * Get meeting join URL
      *
      * @return string
-     * @throws \coding_exception
      */
-    public function get_join_url() {
+    public function get_join_url(): string {
         return bigbluebutton_proxy::get_join_url(
             $this->instance->get_meeting_id(),
             $this->instance->get_user_fullname(),
             $this->instance->get_current_user_password(),
             $this->instance->get_logout_url()->out(false),
+            $this->instance->get_current_user_role(),
             null,
             $this->instance->get_user_id(),
             $this->get_meeting_info()->createtime
         );
     }
+
+    /**
+     * Get meeting join URL for guest
+     *
+     * @param string $fullname
+     * @return string
+     */
+    public function get_guest_join_url(string $fullname): string {
+        return bigbluebutton_proxy::get_join_url(
+            $this->instance->get_meeting_id(),
+            $fullname,
+            $this->instance->get_current_user_password(),
+            $this->instance->get_guest_access_url()->out(false),
+            $this->instance->get_current_user_role(),
+            null,
+            0,
+            $this->get_meeting_info()->createtime
+        );
+    }
+
 
     /**
      * Return meeting information for this meeting.
@@ -238,16 +254,17 @@ class meeting {
         // This might raise an exception if info cannot be retrieved.
         // But this might be totally fine as the meeting is maybe not yet created on BBB side.
         $participantcount = 0;
-        try {
-            $info = self::retrieve_cached_meeting_info($this->instance->get_meeting_id(), $updatecache);
+        // This is the default value for any meeting that has not been created.
+        $meetinginfo->statusrunning = false;
+        $meetinginfo->createtime = null;
+
+        $info = self::retrieve_cached_meeting_info($this->instance->get_meeting_id(), $updatecache);
+        if (!empty($info)) {
             $meetinginfo->statusrunning = $info['running'] === 'true';
             $meetinginfo->createtime = $info['createTime'] ?? null;
             $participantcount = isset($info['participantCount']) ? $info['participantCount'] : 0;
-        } catch (bigbluebutton_exception $e) {
-            // The meeting is not created on BBB side, so we have to setup a couple of values here.
-            $meetinginfo->statusrunning = false;
-            $meetinginfo->createtime = null;
         }
+
         $meetinginfo->statusclosed = $activitystatus === 'ended';
         $meetinginfo->statusopen = !$meetinginfo->statusrunning && $activitystatus === 'open';
         $meetinginfo->participantcount = $participantcount;
@@ -258,26 +275,21 @@ class meeting {
             !$instance->has_user_limit_been_reached($participantcount)
             || !$instance->does_current_user_count_towards_user_limit()
             );
-        $canjoin = $canjoin && ($instance->is_currently_open() || $instance->user_can_force_join());
+        // User should only join during scheduled session start and end time, if defined.
+        $canjoin = $canjoin && ($instance->is_currently_open());
         // Double check that the user has the capabilities to join.
         $canjoin = $canjoin && $instance->can_join();
         $meetinginfo->canjoin = $canjoin;
 
         // If user is administrator, moderator or if is viewer and no waiting is required, join allowed.
         if ($meetinginfo->statusrunning) {
-            $meetinginfo->statusmessage = get_string('view_message_conference_in_progress', 'bigbluebuttonbn');
             $meetinginfo->startedat = floor(intval($info['startTime']) / 1000); // Milliseconds.
             $meetinginfo->moderatorcount = $info['moderatorCount'];
             $meetinginfo->moderatorplural = $info['moderatorCount'] > 1;
             $meetinginfo->participantcount = $participantcount - $meetinginfo->moderatorcount;
             $meetinginfo->participantplural = $meetinginfo->participantcount > 1;
-        } else {
-            if ($instance->user_must_wait_to_join() && !$instance->user_can_force_join()) {
-                $meetinginfo->statusmessage = get_string('view_message_conference_wait_for_moderator', 'bigbluebuttonbn');
-            } else {
-                $meetinginfo->statusmessage = get_string('view_message_conference_room_ready', 'bigbluebuttonbn');
-            }
         }
+        $meetinginfo->statusmessage = $this->get_status_message($meetinginfo, $instance);
 
         $presentation = $instance->get_presentation(); // This is for internal use.
         if (!empty($presentation)) {
@@ -290,7 +302,39 @@ class meeting {
                 $meetinginfo->attendees[] = (array) $attendee;
             }
         }
+        $meetinginfo->guestaccessenabled = $instance->is_guest_allowed();
+        if ($meetinginfo->guestaccessenabled && $instance->is_moderator()) {
+            $meetinginfo->guestjoinurl = $instance->get_guest_access_url()->out();
+            $meetinginfo->guestpassword = $instance->get_guest_access_password();
+        }
+
+        $meetinginfo->features = $instance->get_enabled_features();
         return $meetinginfo;
+    }
+
+    /**
+     * Deduce status message from the current meeting info and the instance
+     *
+     * Returns the human-readable message depending on if the user must wait to join, the meeting has not
+     * yet started ...
+     * @param object $meetinginfo
+     * @param instance $instance
+     * @return string
+     */
+    protected function get_status_message(object $meetinginfo, instance $instance): string {
+        if ($meetinginfo->statusrunning) {
+            return get_string('view_message_conference_in_progress', 'bigbluebuttonbn');
+        }
+        if ($instance->user_must_wait_to_join() && !$instance->user_can_force_join()) {
+            return get_string('view_message_conference_wait_for_moderator', 'bigbluebuttonbn');
+        }
+        if ($instance->before_start_time()) {
+            return get_string('view_message_conference_not_started', 'bigbluebuttonbn');
+        }
+        if ($instance->has_ended()) {
+            return get_string('view_message_conference_has_ended', 'bigbluebuttonbn');
+        }
+        return get_string('view_message_conference_room_ready', 'bigbluebuttonbn');
     }
 
     /**
@@ -300,8 +344,6 @@ class meeting {
      * @param bool $updatecache
      *
      * @return array
-     * @throws \coding_exception
-     * @throws bigbluebutton_exception
      */
     protected static function retrieve_cached_meeting_info($meetingid, $updatecache = false) {
         $cachettl = (int) config::get('waitformoderator_cache_ttl');
@@ -312,16 +354,36 @@ class meeting {
             // Use the value in the cache.
             return (array) json_decode($result['meeting_info']);
         }
-        $cache->delete($meetingid); // Make sure we purges the cache before checking info.
+        // We set the cache to an empty value so then if get_meeting_info raises an exception we still have the
+        // info about the last creation_time, so we don't ask the server again for a bit.
+        $defaultcacheinfo = ['creation_time' => time(), 'meeting_info' => '[]'];
         // Pings again and refreshes the cache.
-        $meetinginfo = bigbluebutton_proxy::get_meeting_info($meetingid);
-
-        $cache->set($meetingid, ['creation_time' => time(), 'meeting_info' => json_encode($meetinginfo)]);
+        try {
+            $meetinginfo = bigbluebutton_proxy::get_meeting_info($meetingid);
+            $cache->set($meetingid, ['creation_time' => time(), 'meeting_info' => json_encode($meetinginfo)]);
+        } catch (bigbluebutton_exception $e) {
+            // The meeting is not created on BBB side, so we set the value in the cache so we don't poll again
+            // and return an empty array.
+            $cache->set($meetingid, $defaultcacheinfo);
+            return [];
+        }
         return $meetinginfo;
     }
 
     /**
+     * Conversion between form settings and lockSettings as set in BBB API.
+     */
+    const LOCK_SETTINGS_MEETING_DATA = [
+        'disablecam' => 'lockSettingsDisableCam',
+        'disablemic' => 'lockSettingsDisableMic',
+        'disableprivatechat' => 'lockSettingsDisablePrivateChat',
+        'disablepublicchat' => 'lockSettingsDisablePublicChat',
+        'disablenote' => 'lockSettingsDisableNote',
+        'hideuserlist' => 'lockSettingsHideUserList'
+    ];
+    /**
      * Helper to prepare data used for create meeting.
+     * @todo moderatorPW and attendeePW will be removed from create after release of BBB v2.6.
      *
      * @return array
      */
@@ -336,10 +398,10 @@ class meeting {
         // Check if auto_start_record is enable.
         if ($data['record'] == 'true' && $this->instance->should_record_from_start()) {
             $data['autoStartRecording'] = 'true';
-            // Check if hide_record_button is enable.
-            if (!$this->instance->should_show_recording_button()) {
-                $data['allowStartStopRecording'] = 'false';
-            }
+        }
+        // Check if hide_record_button is enable.
+        if (!$this->instance->should_show_recording_button()) {
+            $data['allowStartStopRecording'] = 'false';
         }
         $data['welcome'] = trim($this->instance->get_welcome_message());
         $voicebridge = intval($this->instance->get_voice_bridge());
@@ -352,6 +414,21 @@ class meeting {
         }
         if ($this->instance->get_mute_on_start()) {
             $data['muteOnStart'] = 'true';
+        }
+        // Here a bit of a change compared to the API default behaviour: we should not allow guest to join
+        // a meeting managed by Moodle by default.
+        if ($this->instance->is_guest_allowed()) {
+            $data['guestPolicy'] = $this->instance->is_moderator_approval_required() ? 'ASK_MODERATOR' : 'ALWAYS_ACCEPT';
+        }
+        // Locks settings.
+        foreach (self::LOCK_SETTINGS_MEETING_DATA as $instancevarname => $lockname) {
+            $instancevar = $this->instance->get_instance_var($instancevarname);
+            if (!is_null($instancevar)) {
+                $data[$lockname] = $instancevar ? 'true' : 'false';
+                if ($instancevar) {
+                    $data['lockSettingsLockOnJoin'] = 'true'; // This will be locked whenever one settings is locked.
+                }
+            }
         }
         return $data;
     }
@@ -412,62 +489,31 @@ class meeting {
      *  - Body: <A JSON Object>
      *
      * @param instance $instance
-     * @return void
+     * @param object $data
+     * @return string
      */
-    public static function meeting_events(instance $instance) {
+    public static function meeting_events(instance $instance, object $data):  string {
         $bigbluebuttonbn = $instance->get_instance_data();
-        // Decodes the received JWT string.
-        try {
-            // Get the HTTP headers (getallheaders is a PHP function that may only work with Apache).
-            $headers = getallheaders();
-
-            // Pull the Bearer from the headers.
-            if (!array_key_exists('Authorization', $headers)) {
-                $msg = 'Authorization failed';
-                header('HTTP/1.0 400 Bad Request. ' . $msg);
-                return;
-            }
-            $authorization = explode(" ", $headers['Authorization']);
-
-            // Verify the authenticity of the request.
-            $token = \Firebase\JWT\JWT::decode(
-                $authorization[1],
-                config::get('shared_secret'),
-                ['HS512']
-            );
-
-            // Get JSON string from the body.
-            $jsonstr = file_get_contents('php://input');
-
-            // Convert JSON string to a JSON object.
-            $jsonobj = json_decode($jsonstr);
-        } catch (Exception $e) {
-            $msg = 'Caught exception: ' . $e->getMessage();
-            header('HTTP/1.0 400 Bad Request. ' . $msg);
-            return;
-        }
-
         // Validate that the bigbluebuttonbn activity corresponds to the meeting_id received.
-        $meetingidelements = explode('[', $jsonobj->{'meeting_id'});
+        $meetingidelements = explode('[', $data->{'meeting_id'});
         $meetingidelements = explode('-', $meetingidelements[0]);
         if (!isset($bigbluebuttonbn) || $bigbluebuttonbn->meetingid != $meetingidelements[0]) {
-            $msg = 'The activity may have been deleted';
-            header('HTTP/1.0 410 Gone. ' . $msg);
-            return;
+            return 'HTTP/1.0 410 Gone. The activity may have been deleted';
         }
 
         // We make sure events are processed only once.
-        $overrides = ['meetingid' => $jsonobj->{'meeting_id'}];
-        $meta['recordid'] = $jsonobj->{'internal_meeting_id'};
+        $overrides = ['meetingid' => $data->{'meeting_id'}];
+        $meta['internalmeetingid'] = $data->{'internal_meeting_id'};
         $meta['callback'] = 'meeting_events';
+        $meta['meetingid'] = $data->{'meeting_id'};
 
         $eventcount = logger::log_event_callback($instance, $overrides, $meta);
         if ($eventcount === 1) {
             // Process the events.
-            self::process_meeting_events($instance, $jsonobj);
-            header('HTTP/1.0 200 Accepted. Enqueued.');
+            self::process_meeting_events($instance, $data);
+            return 'HTTP/1.0 200 Accepted. Enqueued.';
         } else {
-            header('HTTP/1.0 202 Accepted. Already processed.');
+            return 'HTTP/1.0 202 Accepted. Already processed.';
         }
     }
 
@@ -497,22 +543,22 @@ class meeting {
     }
 
     /**
-     * Join a meeting.
+     * Prepare join meeting action
      *
-     * @param int $origin The spec
-     * @return string The URL to redirect to
-     * @throws meeting_join_exception
+     * @param int $origin
+     * @return void
      */
-    public function join(int $origin): string {
+    protected function prepare_meeting_join_action(int $origin) {
         $this->do_get_meeting_info(true);
         if ($this->is_running()) {
-            if ($this->instance->has_user_limit_been_reached($this->get_participant_count())
-                && $this->instance->does_current_user_count_towards_user_limit()) {
+            if (
+                    $this->instance->has_user_limit_been_reached($this->get_participant_count())
+                    && $this->instance->does_current_user_count_towards_user_limit()
+            ) {
                 throw new meeting_join_exception('userlimitreached');
             }
-        }
-        // If user is not administrator nor moderator (user is student) and waiting is required.
-        if ($this->instance->user_must_wait_to_join()) {
+        } else if ($this->instance->user_must_wait_to_join()) {
+            // If user is not administrator nor moderator (user is student) and waiting is required.
             throw new meeting_join_exception('waitformoderator');
         }
 
@@ -521,6 +567,29 @@ class meeting {
 
         // Before executing the redirect, increment the number of participants.
         roles::participant_joined($this->instance->get_meeting_id(), $this->instance->is_moderator());
+    }
+    /**
+     * Join a meeting.
+     *
+     * @param int $origin The spec
+     * @return string The URL to redirect to
+     * @throws meeting_join_exception
+     */
+    public function join(int $origin): string {
+        $this->prepare_meeting_join_action($origin);
+        return $this->get_join_url();
+    }
+
+    /**
+     * Join a meeting as a guest.
+     *
+     * @param int $origin The spec
+     * @param string $userfullname Fullname for the guest user
+     * @return string The URL to redirect to
+     * @throws meeting_join_exception
+     */
+    public function guest_join(int $origin, string $userfullname): string {
+        $this->prepare_meeting_join_action($origin);
         return $this->get_join_url();
     }
 }

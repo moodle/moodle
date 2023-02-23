@@ -86,12 +86,13 @@
             }
         }
     }
-    /* TODO: MDL-72481: Update this style to also apply to aria-selected. */
+
     .dropdown-item[aria-current="true"],
     .dropdown-item.active {
         background-color: transparent;
         color: $dropdown-link-color;
-        &:focus-within {
+        &:focus-within,
+        &:hover {
             background-color: $dropdown-link-active-bg;
             color: $dropdown-link-active-color;
             a {

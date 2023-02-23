@@ -149,6 +149,16 @@ $definitions = array(
         'ttl' => 3600, // Just in case.
     ),
 
+    // Cache the deprecated capabilities list. See get_deprecated_capability_info in accesslib.
+    'deprecatedcapabilities' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => false, // We need to hash the key.
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 1,
+        'ttl' => 3600, // Just in case.
+    ),
+
     // YUI Module cache.
     // This stores the YUI module metadata for Shifted YUI modules in Moodle.
     'yuimodules' => array(
@@ -211,6 +221,12 @@ $definitions = array(
         'simplekeys' => true,
         'ttl' => 3600,
     ),
+    // Course reactive state cache.
+    'courseeditorstate' => [
+        'mode' => cache_store::MODE_SESSION,
+        'simplekeys' => true,
+        'simpledata' => true,
+    ],
     // Used to store data for repositories to avoid repetitive DB queries within one request.
     'repositories' => array(
         'mode' => cache_store::MODE_REQUEST,
@@ -221,12 +237,21 @@ $definitions = array(
         'simplekeys' => true,
         'ttl' => 3600,
     ),
-    // Accumulated information about course modules and sections used to print course view page (user-independed).
-    // Used in function get_fast_modinfo(), reset in function rebuild_course_cache().
+    // Accumulated information about course modules and sections used to print course view page (user-independent).
+    // Used in functions:
+    // - course_modinfo::build_course_section_cache()
+    // - course_modinfo::inner_build_course_cache()
+    // - get_array_of_activities()
+    // Reset/update in functions:
+    // - rebuild_course_cache()
+    // - course_modinfo::purge_module_cache()
+    // - course_modinfo::purge_section_cache()
+    // - remove_course_contents().
     'coursemodinfo' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'canuselocalstore' => true,
+        'requirelockingbeforewrite' => true
     ),
     // This is the session user selections cache.
     // It's a special cache that is used to record user selections that should persist for the lifetime of the session.
@@ -291,6 +316,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
+        'canuselocalstore' => true,
         'staticacceleration' => true,
         'staticaccelerationsize' => 5
     ),
@@ -462,6 +488,13 @@ $definitions = array(
         'simpledata' => true,
     ],
 
+    // File cache for H5P Library ids.
+    'h5p_libraries' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'canuselocalstore' => true
+    ],
+
     // File cache for H5P Library files.
     'h5p_library_files' => [
         'mode' => cache_store::MODE_APPLICATION,
@@ -531,5 +564,15 @@ $definitions = array(
         'simpledata' => true,
         'staticacceleration' => true,
         'ttl' => 1800,
+    ],
+
+    // Cache image dimensions.
+    'file_imageinfo' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'canuselocalstore' => true,
+        'staticaccelerationsize' => 100,
     ],
 );

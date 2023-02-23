@@ -21,15 +21,15 @@ if ($hook !== 'ALL') {
 $PAGE->set_url($url);
 
 if (! $cm = get_coursemodule_from_id('glossary', $id)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 
 if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-    print_error('coursemisconf');
+    throw new \moodle_exception('coursemisconf');
 }
 
 if (! $glossary = $DB->get_record("glossary", array("id"=>$cm->instance))) {
-    print_error('invalidid', 'glossary');
+    throw new \moodle_exception('invalidid', 'glossary');
 }
 
 require_login($course, false, $cm);
@@ -52,10 +52,13 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_secondary_active_tab('modulepage');
 $PAGE->activityheader->disable();
 
+$form = new mod_glossary_import_form('');
+if ($form->is_cancelled()) {
+    redirect(new moodle_url('view.php', ['id' => $id]));
+}
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strimportentries);
-
-$form = new mod_glossary_import_form();
 
 if ( !$data = $form->get_data() ) {
     echo $OUTPUT->box_start('glossarydisplay generalbox');
@@ -182,7 +185,7 @@ if ($xml = glossary_read_imported_file($result)) {
         $newentry->concept = trim($xmlentry['#']['CONCEPT'][0]['#']);
         $definition = $xmlentry['#']['DEFINITION'][0]['#'];
         if (!is_string($definition)) {
-            print_error('errorparsingxml', 'glossary');
+            throw new \moodle_exception('errorparsingxml', 'glossary');
         }
         $newentry->definition = trusttext_strip($definition);
         if ( isset($xmlentry['#']['CASESENSITIVE'][0]['#']) ) {

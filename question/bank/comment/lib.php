@@ -84,7 +84,7 @@ function qbank_comment_preview_display($question, $courseid): string {
             && core\plugininfo\qbank::is_plugin_enabled('qbank_comment')) {
         \comment::init($PAGE);
         $args = new \stdClass;
-        $args->contextid = 1; // Static data to bypass comment sql as context is not needed.
+        $args->contextid = context_system::instance()->id; // Static data to bypass comment sql as context is not needed.
         $args->courseid  = $courseid;
         $args->area      = 'question';
         $args->itemid    = $question->id;
@@ -109,7 +109,7 @@ function qbank_comment_preview_display($question, $courseid): string {
  * @return string rendered output
  */
 function qbank_comment_output_fragment_question_comment($args): string {
-    global $USER, $PAGE, $CFG;
+    global $USER, $PAGE, $CFG, $DB;
     $displaydata = [];
     require_once($CFG->dirroot . '/question/engine/bank.php');
     $question = question_bank::load_question($args['questionid']);
@@ -119,11 +119,12 @@ function qbank_comment_output_fragment_question_comment($args): string {
     // Just in case of any regression, it should not break the modal, just show the comments.
     if (class_exists('\\qbank_previewquestion\\question_preview_options')) {
         $options = new \qbank_previewquestion\question_preview_options($question);
-        $options->load_user_defaults();
-        $options->set_from_request();
         $quba->set_preferred_behaviour($options->behaviour);
         $slot = $quba->add_question($question, $options->maxmark);
         $quba->start_question($slot, $options->variant);
+        $transaction = $DB->start_delegated_transaction();
+        question_engine::save_questions_usage_by_activity($quba);
+        $transaction->allow_commit();
         $displaydata['question'] = $quba->render_question($slot, $options, '1');
     }
     $displaydata['comment'] = qbank_comment_preview_display($question, $args['courseid']);
@@ -131,6 +132,11 @@ function qbank_comment_output_fragment_question_comment($args): string {
     if (empty($displaydata['comment']) && !$CFG->usecomments) {
         $displaydata['commenstdisabled'] = true;
     }
+
+    $selector = \core_question\output\question_version_selection::make_for_question('question_comment_version_dropdown',
+        $args['questionid']);
+    $qbankrenderer = $PAGE->get_renderer('core_question', 'bank');
+    $displaydata['versionselection'] = $selector->export_for_template($qbankrenderer);
 
     return $PAGE->get_renderer('qbank_comment')->render_comment_fragment($displaydata);
 }

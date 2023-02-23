@@ -27,15 +27,18 @@ use \core_contentbank\content;
 /**
  * Get the current user preferences that are available
  *
- * @return Array preferences configuration
+ * @uses core_user::is_current_user
+ *
+ * @return array[] preferences configuration
  */
-function core_contentbank_user_preferences() {
+function core_contentbank_user_preferences(): array {
     return [
         'core_contentbank_view_list' => [
             'choices' => array(0, 1),
             'type' => PARAM_INT,
             'null' => NULL_NOT_ALLOWED,
-            'default' => 'none'
+            'default' => 0,
+            'permissioncallback' => [core_user::class, 'is_current_user'],
         ],
         'core_contentbank_visibility' => [
             'choices' => [content::VISIBILITY_UNLISTED, content::VISIBILITY_PUBLIC],

@@ -139,7 +139,8 @@ abstract class base {
     }
 
     /**
-     * Override the default alias for given database table used in entity queries
+     * Override the default alias for given database table used in entity queries, to avoid table alias clashes that may occur
+     * if multiple entities of a report each define the same default alias for one of their tables
      *
      * @param string $tablename
      * @param string $alias
@@ -152,6 +153,21 @@ abstract class base {
         }
 
         $this->tablealiases[$tablename] = $alias;
+        return $this;
+    }
+
+    /**
+     * Override multiple default database table aliases used in entity queries as per {@see set_table_alias}, typically when
+     * you're adding an entity multiple times to a report you'd want to override the table aliases in the second instance to
+     * avoid clashes with the first
+     *
+     * @param array $aliases Array of tablename => alias values
+     * @return self
+     */
+    final public function set_table_aliases(array $aliases): self {
+        foreach ($aliases as $tablename => $alias) {
+            $this->set_table_alias($tablename, $alias);
+        }
         return $this;
     }
 
@@ -200,7 +216,7 @@ abstract class base {
      *
      * @return string[]
      */
-    final protected function get_joins(): array {
+    final public function get_joins(): array {
         return array_values($this->joins);
     }
 

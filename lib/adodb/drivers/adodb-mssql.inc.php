@@ -1,21 +1,25 @@
 <?php
-/*
-@version   v5.21.0  2021-02-27
-@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
-@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-  Released under both BSD license and Lesser GPL library license.
-  Whenever there is any discrepancy between the two licenses,
-  the BSD license will take precedence.
-Set tabs to 4 for best viewing.
-
-  Latest version is available at https://adodb.org/
-
-  Native mssql driver. Requires mssql client. Works on Windows.
-  To configure for Unix, see
-   	http://phpbuilder.com/columns/alberto20000919.php3
-
-*/
-
+/**
+ * Native MSSQL driver.
+ *
+ * Requires mssql client. Works on Windows.
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
 
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
@@ -110,7 +114,7 @@ class ADODB_mssql extends ADOConnection {
 		return " ISNULL($field, $ifNull) "; // if MS SQL Server
 	}
 
-	function _insertid()
+	protected function _insertID($table = '', $column = '')
 	{
 	// SCOPE_IDENTITY()
 	// Returns the last IDENTITY value inserted into an IDENTITY column in
@@ -425,7 +429,7 @@ class ADODB_mssql extends ADOConnection {
 		return $indexes;
 	}
 
-	function MetaForeignKeys($table, $owner=false, $upper=false)
+	public function metaForeignKeys($table, $owner = '', $upper = false, $associative = false)
 	{
 	global $ADODB_FETCH_MODE;
 
@@ -765,7 +769,7 @@ order by constraint_name, referenced_table_name, keyno";
 						$inputVar = $db->this($v);
 
 					$params .= "@P$i=N" . $inputVar;
-					
+
 				} else if (is_integer($v)) {
 					$decl .= "@P$i INT";
 					$params .= "@P$i=".$v;
@@ -815,7 +819,7 @@ order by constraint_name, referenced_table_name, keyno";
 		return $rez;
 	}
 
-	
+
 
 	/**
 	* Returns a substring of a varchar type field

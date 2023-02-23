@@ -32,7 +32,6 @@ require_once(__DIR__ . '/behat_form_textarea.php');
 /**
  * Moodle editor field.
  *
- * @todo Support for multiple editors
  * @package   core_form
  * @category  test
  * @copyright 2012 David Monllaó
@@ -44,29 +43,38 @@ class behat_form_editor extends behat_form_textarea {
      * Sets the value to a field.
      *
      * @param string $value
-     * @return void
      */
-    public function set_value($value) {
-
+    public function set_value($value): void {
         $editorid = $this->field->getAttribute('id');
         if ($this->running_javascript()) {
             $value = addslashes($value);
             // This will be transported in JSON, which doesn't allow newlines in strings, so we must escape them.
             $value = str_replace("\n", "\\n", $value);
-            $js = '
-(function() {
-    var editor = Y.one(document.getElementById("'.$editorid.'editable"));
-    if (editor) {
-        editor.setHTML("' . $value . '");
-    }
-    editor = Y.one(document.getElementById("'.$editorid.'"));
-    editor.set("value", "' . $value . '");
-})();
-';
-            behat_base::execute_script_in_session($this->session, $js);
+            behat_base::execute_in_matching_contexts('editor', 'set_editor_value', [
+                $editorid,
+                $value,
+            ]);
+
         } else {
             parent::set_value($value);
         }
+    }
+
+    /**
+     * Returns the current value of the select element.
+     *
+     * @return string
+     */
+    public function get_value(): string {
+        if ($this->running_javascript()) {
+            // Give any listening editors a chance to persist the value to the textarea.
+            // Some editors only do this on form submission or similar events.
+            behat_base::execute_in_matching_contexts('editor', 'store_current_value', [
+                $this->field->getAttribute('id'),
+            ]);
+        }
+
+        return parent::get_value();
     }
 
     /**
@@ -102,8 +110,60 @@ class behat_form_editor extends behat_form_textarea {
      * @return bool The provided value matches the field value?
      */
     public function matches($expectedvalue) {
-        // A text editor may silently wrap the content in p tags (or not). Neither is an error.
-        return $this->text_matches($expectedvalue) || $this->text_matches('<p>' . $expectedvalue . '</p>');
+        // Fetch the actual value to save fetching it multiple times.
+        $actualvalue = $this->get_value();
+
+        if ($this->text_matches($expectedvalue, $actualvalue)) {
+            // The text is an exact match already.
+            return true;
+        }
+
+        if ($this->text_matches("<p>{$expectedvalue}</p>", $actualvalue)) {
+            // A text editor may silently wrap the content in p tags.
+            return true;
+        }
+
+        // Standardise both the expected value and the actual field value.
+        // We are likely dealing with HTML content, given this is an editor.
+        $expectedvalue = $this->standardise_html($expectedvalue);
+        $actualvalue = $this->standardise_html($actualvalue);
+
+        // Note: We don't need to worry about the floats here that we care about in text_matches.
+        // That condition isn't relevant to the content of an editor.
+        if ($expectedvalue === $actualvalue) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Standardises the HTML content for comparison.
+     *
+     * @param string $html The HTML content to standardise
+     * @return string The standardised HTML content
+     */
+    protected function standardise_html(string $html): string {
+        $document = new DOMDocument();
+        $errorstate = libxml_use_internal_errors(true);
+
+        // Format the whitespace nicely.
+        $document->preserveWhiteSpace = false;
+        $document->formatOutput = true;
+
+        // Wrap the content in a DIV element so that it is not parsed weirdly.
+        // Note: We must remove newlines too because DOMDocument does not do so, despite preserveWhiteSpace being false.
+        // Unfortunately this is slightly limited in that it will also remove newlines from <pre> content and similar.
+        $document->loadHTML(str_replace("\n", "", "<div>{$html}</div>"), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        $document->normalizeDocument();
+        libxml_clear_errors();
+        libxml_use_internal_errors($errorstate);
+
+        // Save the content of the 'div' element, removing the <div> and </div> tags at the start and end.
+        return trim(substr(
+            $document->saveHTML($document->getElementsByTagName('div')->item(0)),
+            5,
+            -6
+        ));
     }
 }
-

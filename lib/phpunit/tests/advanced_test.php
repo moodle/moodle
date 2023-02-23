@@ -14,27 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * PHPUnit integration tests
- *
- * @package    core
- * @category   phpunit
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
+namespace core;
 
 /**
  * Test advanced_testcase extra features.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_phpunit_advanced_testcase extends advanced_testcase {
+class advanced_test extends \advanced_testcase {
 
     public function test_debugging() {
         global $CFG;
@@ -222,7 +212,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $DB->set_field('user', 'confirmed', 0, array('id'=>2));
         try {
             self::resetAllData(true);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
         }
         $this->assertEquals(1, $DB->get_field('user', 'confirmed', array('id'=>2)));
@@ -233,7 +223,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $CFG->rolesactive = 0;
         try {
             self::resetAllData(true);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
             $this->assertStringContainsString('xx', $e->getMessage());
             $this->assertStringContainsString('admin', $e->getMessage());
@@ -271,11 +261,11 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
 
         // COURSE change.
         $SITE->id = 10;
-        $COURSE = new stdClass();
+        $COURSE = new \stdClass();
         $COURSE->id = 7;
         try {
             self::resetAllData(true);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
             $this->assertEquals(1, $SITE->id);
             $this->assertSame($SITE, $COURSE);
@@ -286,7 +276,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->setUser(2);
         try {
             self::resetAllData(true);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
             $this->assertEquals(0, $USER->id);
         }
@@ -303,7 +293,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         try {
             $DB->get_record('pokus', array());
             $this->fail('Exception expected when accessing non existent table');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
         $DB = $this->createMock(get_class($DB));
@@ -403,7 +393,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
             $this->setCurrentTimeStart();
             $this->assertTimeCurrent(time()+10);
             $this->fail('Failed assert expected');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf('PHPUnit\Framework\ExpectationFailedException', $e);
         }
 
@@ -411,7 +401,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
             $this->setCurrentTimeStart();
             $this->assertTimeCurrent(time()-10);
             $this->fail('Failed assert expected');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf('PHPUnit\Framework\ExpectationFailedException', $e);
         }
     }
@@ -425,7 +415,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $processors1 = get_message_processors();
 
         // Add a new message processor and get all processors again.
-        $processor = new stdClass();
+        $processor = new \stdClass();
         $processor->name = 'test_processor';
         $processor->enabled = 1;
         $DB->insert_record('message_processors', $processor);
@@ -558,7 +548,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertEquals(1, $sink->count());
 
         // Test if sink can be carried over to next test.
-        $this->assertTrue(phpunit_util::is_redirecting_messages());
+        $this->assertTrue(\phpunit_util::is_redirecting_messages());
         return $sink;
     }
 
@@ -573,7 +563,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->preventResetByRollback(); // Messaging is not compatible with transactions...
         $this->resetAfterTest();
 
-        $this->assertTrue(phpunit_util::is_redirecting_messages());
+        $this->assertTrue(\phpunit_util::is_redirecting_messages());
         $this->assertEquals(1, $sink->count());
 
         $message = new \core\message\message();
@@ -597,7 +587,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
      * @depends test_message_redirection_noreset
      */
     public function test_message_redirection_reset() {
-        $this->assertFalse(phpunit_util::is_redirecting_messages(), 'Test reset must stop message redirection.');
+        $this->assertFalse(\phpunit_util::is_redirecting_messages(), 'Test reset must stop message redirection.');
     }
 
     public function test_set_timezone() {
@@ -625,19 +615,19 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
 
         try {
             $this->setTimezone('Pacific/Auckland', '');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
         }
 
         try {
             $this->setTimezone('Pacific/Auckland', 'xxxx');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
         }
 
         try {
             $this->setTimezone('Pacific/Auckland', null);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
         }
 
@@ -662,7 +652,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
 
         try {
             self::resetAllData(true);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
         }
 
@@ -697,14 +687,14 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $fakeagent = 'New user agent set.';
 
         // Sanity check: it should not be set when test begins.
-        self::assertFalse(core_useragent::get_user_agent_string(), 'It should not be set at first.');
+        self::assertFalse(\core_useragent::get_user_agent_string(), 'It should not be set at first.');
 
         // Set a fake useragent and check it was set properly.
-        core_useragent::instance(true, $fakeagent);
-        self::assertSame($fakeagent, core_useragent::get_user_agent_string(), 'It should be the forced agent.');
+        \core_useragent::instance(true, $fakeagent);
+        self::assertSame($fakeagent, \core_useragent::get_user_agent_string(), 'It should be the forced agent.');
 
         // Reset test data and ansure the useragent was cleaned.
         self::resetAllData(false);
-        self::assertFalse(core_useragent::get_user_agent_string(), 'It should not be set again, data was reset.');
+        self::assertFalse(\core_useragent::get_user_agent_string(), 'It should not be set again, data was reset.');
     }
 }

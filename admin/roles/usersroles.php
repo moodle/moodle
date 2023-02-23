@@ -55,7 +55,7 @@ if ($course->id == SITEID) {
 $canview = has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
         'moodle/role:override', 'moodle/role:manage'), $usercontext);
 if (!$canview) {
-    print_error('nopermissions', 'error', '', get_string('checkpermissions', 'core_role'));
+    throw new \moodle_exception('nopermissions', 'error', '', get_string('checkpermissions', 'core_role'));
 }
 
 if ($userid != $USER->id) {

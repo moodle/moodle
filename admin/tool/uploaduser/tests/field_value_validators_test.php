@@ -14,20 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for field value validators of tool_uploaduser.
- *
- * @package    tool_uploaduser
- * @copyright  2019 Jun Pataleta
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace tool_uploaduser;
 
 use tool_uploaduser\local\field_value_validators;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
 /**
  * Tests for field value validators of tool_uploaduser.
  *
@@ -35,7 +25,7 @@ global $CFG;
  * @copyright  2019 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class field_value_validators_testcase extends advanced_testcase {
+class field_value_validators_test extends \advanced_testcase {
 
     /**
      * Data provider for \field_value_validators_testcase::test_validate_theme().

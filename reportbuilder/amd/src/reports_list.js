@@ -70,7 +70,9 @@ export const init = () => {
             event.preventDefault();
 
             // Reload current report page after submission.
-            const reportModal = createReportModal(event.target, getString('editreportdetails', 'core_reportbuilder'),
+            // Use triggerElement to return focus to the action menu toggle.
+            const triggerElement = reportEdit.closest('.dropdown').querySelector('.dropdown-toggle');
+            const reportModal = createReportModal(triggerElement, getString('editreportdetails', 'core_reportbuilder'),
                 reportEdit.dataset.reportId);
             reportModal.addEventListener(reportModal.events.FORM_SUBMITTED, () => {
                 const reportElement = event.target.closest(reportSelectors.regions.report);
@@ -91,10 +93,13 @@ export const init = () => {
         if (reportDelete) {
             event.preventDefault();
 
+            // Use triggerElement to return focus to the action menu toggle.
+            const triggerElement = reportDelete.closest('.dropdown').querySelector('.dropdown-toggle');
             Notification.saveCancelPromise(
                 getString('deletereport', 'core_reportbuilder'),
                 getString('deletereportconfirm', 'core_reportbuilder', reportDelete.dataset.reportName),
-                getString('delete', 'core')
+                getString('delete', 'core'),
+                {triggerElement}
             ).then(() => {
                 const pendingPromise = new Pending('core_reportbuilder/reports:delete');
                 const reportElement = event.target.closest(reportSelectors.regions.report);

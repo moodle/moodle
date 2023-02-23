@@ -21,12 +21,10 @@ Feature: View activity completion information in the Wiki activity
       | course         | C1            |
       | idnumber       | mh1           |
       | name           | Music history |
-      | section        | 1             |
       | completion     | 2             |
       | completionview | 1             |
     And I am on the "Music history" "wiki activity" page logged in as teacher1
     And I click on "Create page" "button"
-    And I log out
 
   Scenario: View automatic completion items as a teacher and confirm all tabs display conditions
     When I am on the "Music history" "wiki activity" page logged in as teacher1
@@ -51,12 +49,12 @@ Feature: View activity completion information in the Wiki activity
     Given I am on the "Music history" "wiki activity" page logged in as teacher1
     And I am on the "Music history" "wiki activity editing" page
     And I expand all fieldsets
-    And I press "Unlock completion options"
+    And I press "Unlock completion settings"
+    And I expand all fieldsets
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
     And I press "Save and display"
     # Teacher view.
     And the manual completion button for "Music history" should be disabled
-    And I log out
     # Student view.
     When I am on the "Music history" "wiki activity" page logged in as student1
     Then the manual completion button of "Music history" is displayed as "Mark as done"

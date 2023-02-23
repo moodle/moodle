@@ -14,14 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the Moodle GIFT format.
- *
- * @package    qformat_gift
- * @copyright  2010 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qformat_gift;
 
+use qformat_gift;
+use question_bank;
+use question_check_specified_fields_expectation;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,14 +28,14 @@ require_once($CFG->dirroot . '/question/format.php');
 require_once($CFG->dirroot . '/question/format/gift/format.php');
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 
-
 /**
  * Unit tests for the GIFT import/export format.
  *
+ * @package   qformat_gift
  * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qformat_gift_test extends question_testcase {
+class giftformat_test extends \question_testcase {
     public function assert_same_gift($expectedtext, $text) {
         $this->assertEquals(str_replace("\r\n", "\n", $expectedtext),
                 str_replace("\r\n", "\n", $text));
@@ -1373,8 +1370,8 @@ FALSE#42 is the Ultimate Answer.#You gave the right answer.}";
         $category = $generator->create_question_category();
         $question = $generator->create_question('truefalse', null,
                 ['category' => $category->id, 'idnumber' => 'myid']);
-        core_tag_tag::set_item_tags('core_question', 'question', $question->id,
-                context::instance_by_id($category->contextid), ['tag1', 'tag2'], 0);
+        \core_tag_tag::set_item_tags('core_question', 'question', $question->id,
+                \context::instance_by_id($category->contextid), ['tag1', 'tag2'], 0);
 
         // Export it.
         $questiondata = question_bank::load_question_data($question->id);

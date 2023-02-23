@@ -44,7 +44,7 @@ require_login();
 
 if (has_capability('moodle/user:loginas', $systemcontext)) {
     if (is_siteadmin($userid)) {
-        print_error('nologinas');
+        throw new \moodle_exception('nologinas');
     }
     $context = $systemcontext;
     $PAGE->set_context($context);
@@ -52,10 +52,10 @@ if (has_capability('moodle/user:loginas', $systemcontext)) {
     require_login($course);
     require_capability('moodle/user:loginas', $coursecontext);
     if (is_siteadmin($userid)) {
-        print_error('nologinas');
+        throw new \moodle_exception('nologinas');
     }
     if (!is_enrolled($coursecontext, $userid)) {
-        print_error('usernotincourse');
+        throw new \moodle_exception('usernotincourse');
     }
     $context = $coursecontext;
 
@@ -72,7 +72,7 @@ if (has_capability('moodle/user:loginas', $systemcontext)) {
             }
         }
         if (!$samegroup) {
-            print_error('nologinas');
+            throw new \moodle_exception('nologinas');
         }
     }
 }

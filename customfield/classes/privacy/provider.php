@@ -33,7 +33,6 @@ use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\writer;
 use core_privacy\manager;
-use Horde\Socket\Client\Exception;
 
 /**
  * Class provider
@@ -196,7 +195,7 @@ class provider implements
                 $field = array_key_exists($record->fieldid, $fields) ? $fields[$record->fieldid] : null;
                 $data = data_controller::create(0, $record, $field);
                 self::export_customfield_data($data, array_merge($subcontext, [$record->id]));
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // We store some data that we can not initialise controller for. We still need to export it.
                 self::export_customfield_data_unknown($record, $field, array_merge($subcontext, [$record->id]));
             }

@@ -101,7 +101,8 @@ class manage_table extends \table_sql {
      * @return string
      */
     public function col_name($tool) {
-        $name = helper::get_name($tool);
+        $toolcontext = \context::instance_by_id($tool->contextid, IGNORE_MISSING);
+        $name = $toolcontext ? helper::get_name($tool) : $this->get_deleted_activity_name_html($tool);
 
         return $this->get_display_text($tool, $name);
     }
@@ -182,7 +183,8 @@ class manage_table extends \table_sql {
         $strenable = get_string('enable');
         $strdisable = get_string('disable');
 
-        $url = new \moodle_url('/enrol/lti/index.php', array('sesskey' => sesskey(), 'courseid' => $this->courseid));
+        $url = new \moodle_url('/enrol/lti/index.php',
+            array('sesskey' => sesskey(), 'courseid' => $this->courseid, 'legacy' => 1));
 
         if ($this->ltiplugin->can_delete_instance($instance)) {
             $aurl = new \moodle_url($url, array('action' => 'delete', 'instanceid' => $instance->id));
@@ -205,8 +207,11 @@ class manage_table extends \table_sql {
         if ($this->ltienabled && $this->canconfig) {
             $linkparams = array(
                 'courseid' => $instance->courseid,
-                'id' => $instance->id, 'type' => $instance->enrol,
-                'returnurl' => new \moodle_url('/enrol/lti/index.php', array('courseid' => $this->courseid))
+                'id' => $instance->id,
+                'type' => $instance->enrol,
+                'legacy' => 1,
+                'returnurl' => new \moodle_url('/enrol/lti/index.php',
+                    array('courseid' => $this->courseid, 'legacy' => 1))
             );
             $editlink = new \moodle_url("/enrol/editinstance.php", $linkparams);
             $buttons[] = $OUTPUT->action_icon($editlink, new \pix_icon('t/edit', get_string('edit'), 'core',
@@ -223,10 +228,10 @@ class manage_table extends \table_sql {
      * @param bool $useinitialsbar do you want to use the initials bar.
      */
     public function query_db($pagesize, $useinitialsbar = true) {
-        $total = \enrol_lti\helper::count_lti_tools(array('courseid' => $this->courseid));
+        $total = \enrol_lti\helper::count_lti_tools(['courseid' => $this->courseid, 'ltiversion' => 'LTI-1p0/LTI-2p0']);
         $this->pagesize($pagesize, $total);
-        $tools = \enrol_lti\helper::get_lti_tools(array('courseid' => $this->courseid), $this->get_page_start(),
-            $this->get_page_size());
+        $tools = \enrol_lti\helper::get_lti_tools(['courseid' => $this->courseid, 'ltiversion' => 'LTI-1p0/LTI-2p0'],
+            $this->get_page_start(), $this->get_page_size());
         $this->rawdata = $tools;
         // Set initial bars.
         if ($useinitialsbar) {
@@ -243,9 +248,39 @@ class manage_table extends \table_sql {
      */
     protected function get_display_text($tool, $text) {
         if ($tool->status != ENROL_INSTANCE_ENABLED) {
-            return \html_writer::tag('span', $text, array('class' => 'dimmed_text'));
+            return \html_writer::tag('div', $text, array('class' => 'dimmed_text'));
         }
 
         return $text;
+    }
+
+    /**
+     * Get a warning icon, with tooltip, describing enrolment instances sharing activities which have been deleted.
+     *
+     * @param \stdClass $tool the tool instance record.
+     * @return string the HTML for the name column.
+     */
+    protected function get_deleted_activity_name_html(\stdClass $tool): string {
+        global $OUTPUT;
+        $icon = \html_writer::tag(
+            'a',
+            $OUTPUT->pix_icon('enrolinstancewarning', get_string('deletedactivityalt' , 'enrol_lti'), 'enrol_lti'), [
+                "class" => "btn btn-link p-0",
+                "role" => "button",
+                "data-container" => "body",
+                "data-toggle" => "popover",
+                "data-placement" => right_to_left() ? "left" : "right",
+                "data-content" => get_string('deletedactivitydescription', 'enrol_lti'),
+                "data-html" => "true",
+                "tabindex" => "0",
+                "data-trigger" => "focus"
+            ]
+        );
+        $name = \html_writer::span($icon . get_string('deletedactivity', 'enrol_lti'));
+        if ($tool->name) {
+            $name .= \html_writer::empty_tag('br') . \html_writer::empty_tag('br') . $tool->name;
+        }
+
+        return $name;
     }
 }

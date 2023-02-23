@@ -18,16 +18,12 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\external\filters;
 
-use context_system;
-use external_api;
-use external_function_parameters;
-use external_value;
+use core_external\external_api;
+use core_external\external_value;
+use core_external\external_function_parameters;
+use core_reportbuilder\manager;
+use core_reportbuilder\permission;
 use core_reportbuilder\local\helpers\user_filter_manager;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once("{$CFG->libdir}/externallib.php");
 
 /**
  * External method for resetting report filters
@@ -46,6 +42,7 @@ class reset extends external_api {
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
             'reportid' => new external_value(PARAM_INT, 'Report ID'),
+            'parameters' => new external_value(PARAM_RAW, 'JSON encoded report parameters', VALUE_DEFAULT, ''),
         ]);
     }
 
@@ -53,17 +50,27 @@ class reset extends external_api {
      * External method execution
      *
      * @param int $reportid
+     * @param string $parameters JSON encoded parameters used to re-create the report, for instance for those reports that
+     *      require parameters as part of their {@see \core_reportbuilder\system_report::can_view} implementation
      * @return bool
      */
-    public static function execute(int $reportid): bool {
+    public static function execute(int $reportid, string $parameters = ''): bool {
         [
             'reportid' => $reportid,
+            'parameters' => $parameters,
         ] = self::validate_parameters(self::execute_parameters(), [
             'reportid' => $reportid,
+            'parameters' => $parameters,
         ]);
 
-        $context = context_system::instance();
-        self::validate_context($context);
+        $report = manager::get_report_from_id($reportid, (array) json_decode($parameters));
+        self::validate_context($report->get_context());
+
+        // System report permission is implicitly handled, we need to make sure custom report can be viewed.
+        $persistent = $report->get_report_persistent();
+        if ($persistent->get('type') === $report::TYPE_CUSTOM_REPORT) {
+            permission::require_can_view_report($persistent);
+        }
 
         return user_filter_manager::reset_all($reportid);
     }

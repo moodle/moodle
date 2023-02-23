@@ -295,6 +295,7 @@ abstract class filterset implements JsonSerializable {
      *
      * @return mixed|object
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize() {
         return (object) [
             'jointype' => $this->get_join_type(),

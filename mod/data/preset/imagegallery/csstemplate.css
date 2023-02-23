@@ -1,40 +1,38 @@
 /******  List View CSS ******/
 
-#pictures {
-    width: 750px;
+#imagegallery-list img.list_picture {
+    width: 100%;
+    height: 15vw;
+    object-fit: cover;
 }
 
-.picture {
-    padding: 5px;
-    border-style: solid;
-    border-width: thin;
-    border-color: #779;
-    background-color: white;
-    display: inline-block;
+#imagegallery-list .card {
+    margin-top: 30px;
+    margin-bottom: 15px;
 }
 
-.pictureframe {
-    padding: 5px;
-    display: inline-block;
-}
-
-.picturediv {
-    display: inline-block;
-    max-width: 150px;
-    max-height: 200px;
-}
-
-.inline {
-    display: inline;
+.imagegallery-listentry .card-title {
+    font-size: larger;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 /*****  Single View CSS *****/
 
-.caption {
-    font-style: italic;
+.imagegallery-single-body .col {
+    padding: 10px 15px;
 }
 
-#singleimage img {
-    width: 700px;
+.imagegallery-single img.list_picture {
+    max-width: 100%;
     height: auto;
+}
+
+/*****  Add entry CSS *****/
+
+.imagegallery-addentry .form-group label,
+.imagegallery-asearch .form-group label {
+    font-weight: bold;
+    padding-top: 20px;
 }

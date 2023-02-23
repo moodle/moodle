@@ -48,18 +48,18 @@ class rollback_test extends \advanced_testcase {
         set_config('usecomments', 0);
 
         // Create a preset and apply it.
-        $generator = $this->getDataGenerator()->get_plugin_generator('tool_admin_presets');
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_adminpresets');
         $presetid = $generator->create_preset(['applypreset' => true]);
-        $presetappid = $DB->get_field('tool_admin_presets_app', 'id', ['adminpresetid' => $presetid]);
+        $presetappid = $DB->get_field('adminpresets_app', 'id', ['adminpresetid' => $presetid]);
 
-        $currentpresets = $DB->count_records('tool_admin_presets');
-        $currentitems = $DB->count_records('tool_admin_presets_it');
-        $currentadvitems = $DB->count_records('tool_admin_presets_it_a');
-        $currentplugins = $DB->count_records('tool_admin_presets_plug');
-        $this->assertCount(1, $DB->get_records('tool_admin_presets_app'));
-        $this->assertCount(3, $DB->get_records('tool_admin_presets_app_it'));
-        $this->assertCount(1, $DB->get_records('tool_admin_presets_app_it_a'));
-        $this->assertCount(2, $DB->get_records('tool_admin_presets_app_plug'));
+        $currentpresets = $DB->count_records('adminpresets');
+        $currentitems = $DB->count_records('adminpresets_it');
+        $currentadvitems = $DB->count_records('adminpresets_it_a');
+        $currentplugins = $DB->count_records('adminpresets_plug');
+        $this->assertCount(1, $DB->get_records('adminpresets_app'));
+        $this->assertCount(3, $DB->get_records('adminpresets_app_it'));
+        $this->assertCount(1, $DB->get_records('adminpresets_app_it_a'));
+        $this->assertCount(2, $DB->get_records('adminpresets_app_plug'));
 
         // Check the setttings have changed accordingly after applying the preset.
         $this->assertEquals(0, get_config('core', 'enablebadges'));
@@ -88,15 +88,15 @@ class rollback_test extends \advanced_testcase {
         $action->execute();
 
         // Check the preset applied has been reverted (so the records in _appXX tables have been removed).
-        $this->assertCount(0, $DB->get_records('tool_admin_presets_app'));
-        $this->assertCount(0, $DB->get_records('tool_admin_presets_app_it'));
-        $this->assertCount(0, $DB->get_records('tool_admin_presets_app_it_a'));
-        $this->assertCount(0, $DB->get_records('tool_admin_presets_app_plug'));
+        $this->assertCount(0, $DB->get_records('adminpresets_app'));
+        $this->assertCount(0, $DB->get_records('adminpresets_app_it'));
+        $this->assertCount(0, $DB->get_records('adminpresets_app_it_a'));
+        $this->assertCount(0, $DB->get_records('adminpresets_app_plug'));
         // Check the preset data hasn't changed.
-        $this->assertCount($currentpresets, $DB->get_records('tool_admin_presets'));
-        $this->assertCount($currentitems, $DB->get_records('tool_admin_presets_it'));
-        $this->assertCount($currentadvitems, $DB->get_records('tool_admin_presets_it_a'));
-        $this->assertCount($currentplugins, $DB->get_records('tool_admin_presets_plug'));
+        $this->assertCount($currentpresets, $DB->get_records('adminpresets'));
+        $this->assertCount($currentitems, $DB->get_records('adminpresets_it'));
+        $this->assertCount($currentadvitems, $DB->get_records('adminpresets_it_a'));
+        $this->assertCount($currentplugins, $DB->get_records('adminpresets_plug'));
 
         // Check the setting values have been reverted accordingly.
         $this->assertEquals(1, get_config('core', 'enablebadges'));
@@ -130,9 +130,9 @@ class rollback_test extends \advanced_testcase {
         $this->setAdminUser();
 
         // Create a preset and apply it.
-        $generator = $this->getDataGenerator()->get_plugin_generator('tool_admin_presets');
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_adminpresets');
         $presetid = $generator->create_preset(['applypreset' => true]);
-        $presetappid = $DB->get_field('tool_admin_presets_app', 'id', ['adminpresetid' => $presetid]);
+        $presetappid = $DB->get_field('adminpresets_app', 'id', ['adminpresetid' => $presetid]);
 
         // Initialise the parameters.
         $_POST['action'] = 'rollback';

@@ -22,6 +22,10 @@
     * session - Moodle session
     * slot - The identifying number of the first question that was added to this usage
     * question - The html of the actual question from the engine
+    * questionicon - The icon of the question type
+    * questiontitle - The name of the question
+    * versiontitle - The string for displaying the version
+    * questionidumber - The idnumber of the question
     * restartdisabled - The attributes to enable or disable the button, same for finishdisabled and filldisabled
     * techinfo - Technical information like fraction, state, behaviour etc
     * exporttoxml - Link to export the question to xml
@@ -31,25 +35,39 @@
 
     Example context (json):
     {
-        "previewdata": [
-          {
-                "actionurl": "/",
-                "session": "E2PwCfrnzz",
-                "slot": "1",
-                "question": "<div>question html</div>",
-                "restartdisabled": "disabled='disabled'",
-                "finishdisabled": "disabled='disabled'",
-                "filldisabled": "disabled='disabled'",
-                "techinfo": "<div>Behaviour being used: Deferred feedback</div>",
-                "redirecturl": "/",
-                "exporttoxml": "Download this question in Moodle XML format",
-                "comments": "html from comments api",
-                "extrapreviewelements": "<div>callback to get html from plugins need to show info in preview</div>"
-          }
-        ]
+        "actionurl": "/",
+        "session": "E2PwCfrnzz",
+        "slot": "1",
+        "question": "<div>question html</div>",
+        "questionicon": "<i class='icon fa fa-search-plus fa-fw' title='Preview question' aria-label='Preview question'></i>",
+        "questiontitle": "Question title",
+        "versiontitle": "Version 3 (latest)",
+        "questionidumber": "qidnumber1",
+        "restartdisabled": "disabled='disabled'",
+        "finishdisabled": "disabled='disabled'",
+        "filldisabled": "disabled='disabled'",
+        "techinfo": "<div>Behaviour being used: Deferred feedback</div>",
+        "redirecturl": "/",
+        "exporttoxml": "Download this question in Moodle XML format",
+        "comments": "html from comments api",
+        "extrapreviewelements": "<div>callback to get html from plugins need to show info in preview</div>"
     }
 }}
 <form id="responseform" method="post" action="{{{actionurl}}}" enctype="multipart/form-data" autocomplete="off">
+    <div class="d-flex">
+        <h2 class="mt-2">{{{questionicon}}}</h2>
+        <h2 class="ml-2 mt-2"> {{questiontitle}}</h2>
+        <h3 class="px-2 py-1 ml-2 mt-2">
+            <span class="badge bg-primary text-light">{{versiontitle}}</span>
+        </h3>
+    </div>
+    <div class="d-flex">
+        <div class="badge-primary h-50 px-2 mt-n2">
+            <span class="accesshide">ID number</span>
+            {{questionidumber}}
+        </div>
+    </div>
+    <br>
     <div>
         <input type="hidden" name="sesskey" value="{{session}}">
         <input type="hidden" name="slots" value="{{slot}}">
@@ -69,21 +87,21 @@
         {{/redirect}}
     </div>
 </form>
-{{{techinfo}}}
-{{{exporttoxml}}}
+<br>
 {{#comments}}
-    <div class="row">
-        <div class="col-6 text-left">
-            {{{options}}}
-        </div>
-        <div class="col-6 question-comment-view">
-            {{{comments}}}
-        </div>
+    <a data-toggle="collapse" href="#commentcollapse" role="button" aria-expanded="false" aria-controls="commentcollapse">
+        {{#pix}} t/collapsed, core {{/pix}}
+        {{#str}} commentplural, qbank_comment{{/str}}
+    </a>
+    <div class="collapse" id="commentcollapse">
+        {{{comments}}}
     </div>
+    {{{options}}}
 {{/comments}}
 {{^comments}}
     {{{options}}}
 {{/comments}}
+{{{techinfo}}}
 {{#extrapreviewelements}}
     {{{extrapreviewelements}}}
 {{/extrapreviewelements}}

@@ -107,10 +107,58 @@ class mod_glossary_generator extends testing_module_generator {
     }
 
     public function create_content($glossary, $record = array(), $aliases = array()) {
+        global $DB;
+
+        $entry = $this->create_entry((array)$record + ['glossaryid' => $glossary->id]);
+
+        if ($aliases) {
+            foreach ($aliases as $alias) {
+                $ar = new stdClass();
+                $ar->entryid = $entry->id;
+                $ar->alias = $alias;
+                $DB->insert_record('glossary_alias', $ar);
+            }
+        }
+
+        if (array_key_exists('tags', $record)) {
+            $tags = is_array($record['tags']) ? $record['tags'] : preg_split('/,/', $record['tags']);
+
+            core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $entry->id,
+                context_module::instance($glossary->cmid), $tags);
+        }
+
+        return $entry;
+    }
+
+    /**
+     * Create an entry.
+     *
+     * @param array $data Data to create the entry record.
+     *        In addition to columns in the entry table, the following attributes are supported:
+     *         - glossaryid (required): Id of the glossary where the entry will be created.
+     *         - categoryids: Array of ids for the categories this entry belongs to.
+     *
+     * @return stdClass Entry record.
+     */
+    public function create_entry(array $data): stdClass {
         global $DB, $USER, $CFG;
+
+        // Prepare glossary.
+        $coursemodule = get_coursemodule_from_instance('glossary', $data['glossaryid']);
+        $glossary = $DB->get_record('glossary', ['id' => $data['glossaryid']], '*', MUST_EXIST);
+        $glossary->cmid = $coursemodule->id;
+
+        unset($data['glossaryid']);
+
+        // Prepare category ids.
+        $categoryids = $data['categoryids'] ?? [];
+
+        unset($data['categoryids']);
+
+        // Create entry.
         $this->entrycount++;
         $now = time();
-        $record = (array)$record + array(
+        $record = $data + [
             'glossaryid' => $glossary->id,
             'timecreated' => $now,
             'timemodified' => $now,
@@ -122,7 +170,7 @@ class mod_glossary_generator extends testing_module_generator {
             'usedynalink' => $CFG->glossary_linkentries,
             'casesensitive' => $CFG->glossary_casesensitive,
             'fullmatch' => $CFG->glossary_fullmatch
-        );
+        ];
         if (!isset($record['teacherentry']) || !isset($record['approved'])) {
             $context = context_module::instance($glossary->cmid);
             if (!isset($record['teacherentry'])) {
@@ -136,20 +184,8 @@ class mod_glossary_generator extends testing_module_generator {
 
         $id = $DB->insert_record('glossary_entries', $record);
 
-        if ($aliases) {
-            foreach ($aliases as $alias) {
-                $ar = new stdClass();
-                $ar->entryid = $id;
-                $ar->alias = $alias;
-                $DB->insert_record('glossary_alias', $ar);
-            }
-        }
-
-        if (array_key_exists('tags', $record)) {
-            $tags = is_array($record['tags']) ? $record['tags'] : preg_split('/,/', $record['tags']);
-
-            core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $id,
-                context_module::instance($glossary->cmid), $tags);
+        foreach ($categoryids as $categoryid) {
+            $DB->insert_record('glossary_entries_categories', ['entryid' => $id, 'categoryid' => $categoryid]);
         }
 
         return $DB->get_record('glossary_entries', array('id' => $id), '*', MUST_EXIST);

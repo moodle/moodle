@@ -619,6 +619,7 @@ class Html
         //    Load the HTML file into the DOM object
         //  Note the use of error suppression, because typically this will be an html fragment, so not fully valid markup
         $prefix = '<?xml encoding="UTF-8">';
+        /** @scrutinizer ignore-unhandled */
         @$dom->loadHTML($prefix . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         //    Discard excess white space
         $dom->preserveWhiteSpace = false;
@@ -641,7 +642,7 @@ class Html
                 $text = ltrim($text);
             }
             // Trim any spaces immediately after a line break
-            $text = preg_replace('/\n */mu', "\n", $text);
+            $text = (string) preg_replace('/\n */mu', "\n", $text);
             $element->setText($text);
         }
     }
@@ -684,9 +685,9 @@ class Html
         $this->stringData = '';
     }
 
-    protected function rgbToColour($rgb)
+    protected function rgbToColour(string $rgbValue): string
     {
-        preg_match_all('/\d+/', $rgb, $values);
+        preg_match_all('/\d+/', $rgbValue, $values);
         foreach ($values[0] as &$value) {
             $value = str_pad(dechex($value), 2, '0', STR_PAD_LEFT);
         }
@@ -694,9 +695,9 @@ class Html
         return implode('', $values[0]);
     }
 
-    public static function colourNameLookup(string $rgb): string
+    public static function colourNameLookup(string $colorName): string
     {
-        return self::$colourMap[$rgb] ?? '';
+        return self::$colourMap[$colorName] ?? '';
     }
 
     protected function startFontTag($tag): void
@@ -711,7 +712,7 @@ class Html
                 } elseif (strpos(trim($attributeValue), '#') === 0) {
                     $this->$attributeName = ltrim($attributeValue, '#');
                 } else {
-                    $this->$attributeName = $this->colourNameLookup($attributeValue);
+                    $this->$attributeName = static::colourNameLookup($attributeValue);
                 }
             } else {
                 $this->$attributeName = $attributeValue;
@@ -791,10 +792,10 @@ class Html
 
     protected function parseTextNode(DOMText $textNode): void
     {
-        $domText = preg_replace(
+        $domText = (string) preg_replace(
             '/\s+/u',
             ' ',
-            str_replace(["\r", "\n"], ' ', $textNode->nodeValue)
+            str_replace(["\r", "\n"], ' ', $textNode->nodeValue ?? '')
         );
         $this->stringData .= $domText;
         $this->buildTextRun();
@@ -808,6 +809,7 @@ class Html
         if (isset($callbacks[$callbackTag])) {
             $elementHandler = $callbacks[$callbackTag];
             if (method_exists($this, $elementHandler)) {
+                /** @phpstan-ignore-next-line */
                 call_user_func([$this, $elementHandler], $element);
             }
         }

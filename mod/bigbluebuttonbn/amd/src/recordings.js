@@ -23,46 +23,39 @@
 
 import * as repository from './repository';
 import {exception as displayException} from 'core/notification';
-import {get_strings as getStrings} from 'core/str';
+import {prefetchStrings} from 'core/prefetch';
+import {get_string as getString, get_strings as getStrings} from 'core/str';
 import {addIconToContainerWithPromise} from 'core/loadingicon';
 import ModalFactory from 'core/modal_factory';
 import ModalEvents from 'core/modal_events';
-import * as Str from 'core/str';
 import Pending from 'core/pending';
 
-const stringList = [
-    'view_recording_yui_first',
-    'view_recording_yui_prev',
-    'view_recording_yui_next',
-    'view_recording_yui_last',
-    'view_recording_yui_page',
-    'view_recording_yui_go',
-    'view_recording_yui_rows',
-    'view_recording_yui_show_all',
-];
+const stringsWithKeys = {
+    first: 'view_recording_yui_first',
+    prev: 'view_recording_yui_prev',
+    next: 'view_recording_yui_next',
+    last: 'view_recording_yui_last',
+    goToLabel: 'view_recording_yui_page',
+    goToAction: 'view_recording_yui_go',
+    perPage: 'view_recording_yui_rows',
+    showAll: 'view_recording_yui_show_all',
+};
+// Load global strings.
+prefetchStrings('bigbluebuttonbn', Object.entries(stringsWithKeys).map((entry) => entry[1]));
 
 const getStringsForYui = () => {
-    const stringMap = stringList.map(key => {
+    const stringMap = Object.keys(stringsWithKeys).map(key => {
         return {
-            key,
-            component: 'bigbluebuttonbn',
+            key: stringsWithKeys[key],
+            component: 'mod_bigbluebuttonbn',
         };
     });
 
+    // Return an object with the matching string keys (we want an object with {<stringkey>: <stringvalue>...}).
     return getStrings(stringMap)
-        .then(([first, prev, next, last, goToLabel, goToAction, perPage, showAll]) => {
-            return {
-                first,
-                prev,
-                next,
-                last,
-                goToLabel,
-                goToAction,
-                perPage,
-                showAll,
-            };
-        })
-        .catch();
+        .then((stringArray) => Object.assign({}, ...Object.keys(stringsWithKeys).map(
+            (key, index) => ({[key]: stringArray[index]})))
+        ).catch();
 };
 
 const getYuiInstance = lang => new Promise(resolve => {
@@ -78,20 +71,18 @@ const getYuiInstance = lang => new Promise(resolve => {
  * Format the supplied date per the specified locale.
  *
  * @param   {string} locale
- * @param   {array} dateList
+ * @param   {number} date
  * @returns {array}
  */
-const formatDates = (locale, dateList) => dateList.map(row => {
-    const date = new Date(row.date);
-    row.date = date.toLocaleDateString(locale, {
+const formatDate = (locale, date) => {
+    const realDate = new Date(date);
+    return realDate.toLocaleDateString(locale, {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
         day: 'numeric',
     });
-
-    return row;
-});
+};
 
 /**
  * Format response data for the table.
@@ -101,15 +92,16 @@ const formatDates = (locale, dateList) => dateList.map(row => {
  */
 const getFormattedData = response => {
     const recordingData = response.tabledata;
-    const rowData = JSON.parse(recordingData.data);
-
-    return formatDates(recordingData.locale, rowData);
+    return JSON.parse(recordingData.data);
 };
 
 const getTableNode = tableSelector => document.querySelector(tableSelector);
 
 const fetchRecordingData = tableSelector => {
     const tableNode = getTableNode(tableSelector);
+    if (tableNode === null) {
+        return Promise.resolve(false);
+    }
 
     if (tableNode.dataset.importMode) {
         return repository.fetchRecordingsToImport(
@@ -215,11 +207,11 @@ const getDataTableFunctions = (tableId, searchFormId, dataTable) => {
             // Create the confirmation dialogue.
             return new Promise((resolve) =>
                 ModalFactory.create({
-                    title: Str.get_string('confirm'),
+                    title: getString('confirm'),
                     body: recordingConfirmationMessage(payload),
                     type: ModalFactory.types.SAVE_CANCEL
                 }).then(async(modal) => {
-                    modal.setSaveButtonText(await Str.get_string('ok', 'moodle'));
+                    modal.setSaveButtonText(await getString('ok', 'moodle'));
 
                     // Handle save event.
                     modal.getRoot().on(ModalEvents.save, () => {
@@ -236,7 +228,7 @@ const getDataTableFunctions = (tableId, searchFormId, dataTable) => {
                     modal.show();
 
                     return modal;
-                }).catch(Notification.exception)
+                }).catch(displayException)
             ).then((proceed) =>
                 proceed ? repository.updateRecording(payload) : () => null
             );
@@ -248,12 +240,12 @@ const getDataTableFunctions = (tableId, searchFormId, dataTable) => {
     const recordingConfirmationMessage = async(data) => {
 
         const playbackElement = document.querySelector(`#playbacks-${data.recordingid}`);
-        const recordingType = await Str.get_string(
+        const recordingType = await getString(
             playbackElement.dataset.imported === 'true' ? 'view_recording_link' : 'view_recording',
             'bigbluebuttonbn'
         );
 
-        const confirmation = await Str.get_string(`view_recording_${data.action}_confirmation`, 'bigbluebuttonbn', recordingType);
+        const confirmation = await getString(`view_recording_${data.action}_confirmation`, 'bigbluebuttonbn', recordingType);
 
         if (data.action === 'import') {
             return confirmation;
@@ -265,7 +257,7 @@ const getDataTableFunctions = (tableId, searchFormId, dataTable) => {
             return confirmation;
         }
 
-        const confirmationWarning = await Str.get_string(
+        const confirmationWarning = await getString(
             associatedLinkCount === 1
                 ? `view_recording_${data.action}_confirmation_warning_p`
                 : `view_recording_${data.action}_confirmation_warning_s`,
@@ -303,9 +295,8 @@ const getDataTableFunctions = (tableId, searchFormId, dataTable) => {
 
             requestAction(clickedLink)
                 .then(refreshTableData)
-                .catch(displayException)
                 .then(iconPromise.resolve)
-                .catch();
+                .catch(displayException);
         }
     };
 
@@ -360,15 +351,22 @@ const setupDatatable = (tableId, searchFormId, response) => {
     const pendingPromise = new Pending('mod_bigbluebuttonbn/recordings/setupDatatable');
     return Promise.all([getYuiInstance(recordingData.locale), getStringsForYui()])
         .then(([yuiInstance, strings]) => {
+            // Here we use a custom formatter for date.
+            // See https://clarle.github.io/yui3/yui/docs/api/classes/DataTable.BodyView.Formatters.html
+            // Inspired from examples here: https://clarle.github.io/yui3/yui/docs/datatable/
+            // Normally formatter have the prototype: (col) => (cell) => <computed value>, see:
+            // https://clarle.github.io/yui3/yui/docs/api/files/datatable_js_formatters.js.html#l100 .
+            const dateCustomFormatter = () => (cell) => formatDate(recordingData.locale, cell.value);
             // Add the fetched strings to the YUI Instance.
             yuiInstance.Intl.add('datatable-paginator', yuiInstance.config.lang, {...strings});
-
+            yuiInstance.DataTable.BodyView.Formatters.customDate = dateCustomFormatter;
             return yuiInstance;
         })
         .then(yuiInstance => {
+
             const tableData = getFormattedData(response);
-            yuiInstance.RecordsPaginatorView = Y.Base.create('my-paginator-view',yuiInstance.DataTable.Paginator.View, [],{
-                _modelChange : function (e) {
+            yuiInstance.RecordsPaginatorView = Y.Base.create('my-paginator-view', yuiInstance.DataTable.Paginator.View, [], {
+                _modelChange: function(e) {
                     var changed = e.changed,
                         totalItems = (changed && changed.totalItems);
                     if (totalItems) {
@@ -376,7 +374,7 @@ const setupDatatable = (tableId, searchFormId, response) => {
                     }
                 }
             });
-            const dataTable = new yuiInstance.DataTable({
+            return new yuiInstance.DataTable({
                 paginatorView: "RecordsPaginatorView",
                 width: "1195px",
                 columns: recordingData.columns,
@@ -385,7 +383,6 @@ const setupDatatable = (tableId, searchFormId, response) => {
                 paginatorLocation: ['header', 'footer'],
                 autoSync: true
             });
-            return dataTable;
         })
         .then(dataTable => {
             dataTable.render(tableId);
@@ -410,7 +407,10 @@ const setupDatatable = (tableId, searchFormId, response) => {
  * @param {String} searchFormId The Id of the relate.
  */
 export const init = (tableId, searchFormId) => {
+    const pendingPromise = new Pending('mod_bigbluebuttonbn/recordings:init');
+
     fetchRecordingData(tableId)
         .then(response => setupDatatable(tableId, searchFormId, response))
+        .then(() => pendingPromise.resolve())
         .catch(displayException);
 };

@@ -56,7 +56,7 @@ class repost_crosssite_page implements renderable, templatable {
      */
     public function __construct(string $url, array $post) {
         $this->params = array_map(function($k) use ($post) {
-            return ["key" => $k, "value" => str_replace("\"", "&quot;", $post[$k])];
+            return ["key" => $k, "value" => $post[$k]];
         }, array_keys($post));
         $this->url = $url;
     }

@@ -14,16 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests that walks a question through the immediate feedback
- * behaviour.
- *
- * @package    qbehaviour
- * @subpackage immediatefeedback
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qbehaviour_immediatefeedback;
 
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,14 +28,15 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
 /**
  * Unit tests for the immediate feedback behaviour.
  *
+ * @package    qbehaviour_immediatefeedback
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_immediatefeedback_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class walkthrough_test extends \qbehaviour_walkthrough_test_base {
     public function test_immediatefeedback_feedback_multichoice_right() {
 
         // Create a true-false question with correct answer true.
-        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc = \test_question_maker::make_a_multichoice_single_question();
         $this->start_attempt_at_question($mc, 'immediatefeedback');
 
         $rightindex = $this->get_mc_right_answer_index($mc);
@@ -123,7 +117,7 @@ class qbehaviour_immediatefeedback_walkthrough_test extends qbehaviour_walkthrou
         $this->check_current_mark(0.5);
         $this->check_current_output(
                 $this->get_contains_partcorrect_expectation(),
-                new question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
+                new \question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
 
         // Now change the correct answer to the question, and regrade.
         $mc->answers[13]->fraction = -0.33333333;
@@ -143,7 +137,7 @@ class qbehaviour_immediatefeedback_walkthrough_test extends qbehaviour_walkthrou
     public function test_immediatefeedback_feedback_multichoice_try_to_submit_blank() {
 
         // Create a true-false question with correct answer true.
-        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc = \test_question_maker::make_a_multichoice_single_question();
         $this->start_attempt_at_question($mc, 'immediatefeedback');
 
         // Check the initial state.
@@ -192,13 +186,13 @@ class qbehaviour_immediatefeedback_walkthrough_test extends qbehaviour_walkthrou
         $this->check_current_mark(0.5);
         $this->check_current_output(
                 $this->get_contains_partcorrect_expectation(),
-                new question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
+                new \question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
     }
 
     public function test_immediatefeedback_feedback_multichoice_wrong_on_finish() {
 
         // Create a true-false question with correct answer true.
-        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc = \test_question_maker::make_a_multichoice_single_question();
         $this->start_attempt_at_question($mc, 'immediatefeedback');
 
         // Check the initial state.

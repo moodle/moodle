@@ -24,6 +24,7 @@
 "use strict";
 
 import 'core/inplace_editable';
+import {addIconToContainer} from 'core/loadingicon';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
 import Templates from 'core/templates';
@@ -69,7 +70,8 @@ export const init = () => {
 
             let customjs = '';
 
-            getReport(reportElement.dataset.reportId, toggledEditMode)
+            addIconToContainer(toggleEditViewMode)
+                .then(() => getReport(reportElement.dataset.reportId, toggledEditMode))
                 .then(response => {
                     customjs = response.javascript;
                     return Templates.render('core_reportbuilder/local/dynamictabs/editor', response);

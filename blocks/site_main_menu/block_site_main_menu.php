@@ -102,7 +102,7 @@ class block_site_main_menu extends block_list {
                             'contentwithoutlink activity-item activity'
                         );
                     } else {
-                        $cmname = new $cmnameclass($format, $cm->get_section_info(), $cm, $isediting);
+                        $cmname = new $cmnameclass($format, $cm->get_section_info(), $cm);
                         $activitybasis = html_writer::div(
                             $indent . $courserenderer->render($cmname),
                             'activity-basis d-flex align-items-center');
@@ -214,7 +214,7 @@ class block_site_main_menu extends block_list {
                             'contentwithoutlink activity-item activity'
                         );
                     } else {
-                        $cmname = new $cmnameclass($format, $mod->get_section_info(), $mod, $isediting);
+                        $cmname = new $cmnameclass($format, $mod->get_section_info(), $mod);
                         $activitybasis = html_writer::div(
                             $moveaction .
                             $indent .
@@ -237,9 +237,10 @@ class block_site_main_menu extends block_list {
             $this->content->icons[] = '';
         }
 
-        $this->content->footer = $courserenderer->course_section_add_cm_control($course,
+        if ($this->page->course->id === SITEID) {
+            $this->content->footer = $courserenderer->course_section_add_cm_control($course,
                 0, null, array('inblock' => true));
-
+        }
         return $this->content;
     }
 }

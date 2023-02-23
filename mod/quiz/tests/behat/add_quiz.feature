@@ -36,7 +36,7 @@ Feature: Add a quiz
     And I log out
 
     And I am on the "Test quiz name" "quiz activity" page logged in as student1
-    And I follow "Attempt quiz"
+    And I press "Attempt quiz"
     Then I should see "Question 1"
     And I should see "Answer the first question"
     And I set the field "True" to "1"
@@ -46,7 +46,7 @@ Feature: Add a quiz
 
   @javascript @skip_chrome_zerosize
   Scenario: Add and configure small quiz and perform an attempt as a student with Javascript enabled
-    Then I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
+    Then I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
     And I should see "So you think it is true"
     And I should see "Thank you, this is the general feedback"
     And I should see "The correct answer is 'False'."

@@ -31,7 +31,13 @@ import {
 
 import {eventTypes, notifyCurrentSessionEnded} from './events';
 
-export const init = (bigbluebuttonbnid) => {
+/**
+ * Init the room
+ *
+ * @param {Number} bigbluebuttonbnid bigblubeutton identifier
+ * @param {Number} pollInterval poll interval in miliseconds
+ */
+export const init = (bigbluebuttonbnid, pollInterval) => {
     const completionElement = document.querySelector('a[href*=completion_validate]');
     if (completionElement) {
         completionElement.addEventListener("click", () => {
@@ -42,10 +48,12 @@ export const init = (bigbluebuttonbnid) => {
     document.addEventListener('click', e => {
         const joinButton = e.target.closest('[data-action="join"]');
         if (joinButton) {
-            roomUpdater.start();
             window.open(joinButton.href, 'bigbluebutton_conference');
-
             e.preventDefault();
+            // Gives the user a bit of time to go into the meeting before polling the room.
+            setTimeout(() => {
+                roomUpdater.updateRoom(true);
+            }, pollInterval);
         }
     });
 
@@ -60,24 +68,23 @@ export const init = (bigbluebuttonbnid) => {
         roomUpdater.updateRoom();
         fetchNotifications();
     });
-};
-
-/**
- * Handle autoclosing of the window.
- */
-const autoclose = () => {
-    window.opener.setTimeout(() => {
-        roomUpdater.updateRoom(true);
-    }, 5000);
-    window.removeEventListener('onbeforeunload', autoclose);
+    // Room update.
+    roomUpdater.start(pollInterval);
 };
 
 /**
  * Auto close child windows when clicking the End meeting button.
+ * @param {Number} closeDelay time to wait in miliseconds before closing the window
  */
-export const setupWindowAutoClose = () => {
+export const setupWindowAutoClose = (closeDelay = 2000) => {
     notifyCurrentSessionEnded(window.opener);
-    window.addEventListener('onbeforeunload', autoclose);
-
+    window.addEventListener('onbeforeunload', () => {
+            window.opener.setTimeout(() => {
+                roomUpdater.updateRoom(true);
+            }, closeDelay);
+        },
+        {
+            once: true
+        });
     window.close(); // This does not work as scripts can only close windows that are opened by themselves.
 };

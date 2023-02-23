@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_moodlenet;
+
 /**
  * Unit tests for the profile manager
  *
@@ -22,15 +24,7 @@
  * @copyright  2020 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-/**
- * Class profile_manager tests
- */
-class tool_moodlenet_profile_manager_testcase extends advanced_testcase {
+class profile_manager_test extends \advanced_testcase {
 
     /**
      * Test that on this site we use the user table to hold moodle net profile information.
@@ -57,7 +51,7 @@ class tool_moodlenet_profile_manager_testcase extends advanced_testcase {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
 
-        $this->expectException(moodle_exception::class);
+        $this->expectException(\moodle_exception::class);
         $this->expectExceptionMessage(get_string('invalidmoodlenetprofile', 'tool_moodlenet'));
         $result = new \tool_moodlenet\moodlenet_user_profile("", $user->id);
     }

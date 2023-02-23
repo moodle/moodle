@@ -30,13 +30,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatedboninstall'] = '<p>データベースを作成できません。</p>
-<p>指定されたデータベースは存在しません。また、ユーザにはデータベースを作成するためのパーミッションがありません。</p>
-<p>サイト管理者はデータベース設定を確認してください。</p>';
+<p>指定されたデータベースは存在しません。また、指定されたユーザにはデータベースを作成するためのパーミッションがありません。</p>
+<p>サイト管理者はデータベース設定を確認する必要があります。</p>';
 $string['cannotcreatelangdir'] = 'langディレクトリを作成できません。';
 $string['cannotcreatetempdir'] = 'tempディレクトリを作成できません。';
 $string['cannotdownloadcomponents'] = 'コンポーネントをダウンロードできません。';
 $string['cannotdownloadzipfile'] = 'ZIPファイルをダウンロードできません。';
-$string['cannotfindcomponent'] = 'コンポーネントを見つけることができません。';
+$string['cannotfindcomponent'] = 'コンポーネントが見つかりません。';
 $string['cannotsavemd5file'] = 'mp5ファイルを保存できません。';
 $string['cannotsavezipfile'] = 'ZIPファイルを保存できません。';
 $string['cannotunzipfile'] = 'ZIPファイルを展開できません。';

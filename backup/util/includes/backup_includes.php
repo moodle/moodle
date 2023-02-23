@@ -61,6 +61,7 @@ require_once($CFG->dirroot . '/backup/util/helper/backup_null_iterator.class.php
 require_once($CFG->dirroot . '/backup/util/helper/backup_array_iterator.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/backup_anonymizer_helper.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/backup_file_manager.class.php');
+require_once($CFG->dirroot . '/backup/util/helper/copy_helper.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/restore_moodlexml_parser_processor.class.php'); // Required by backup_general_helper::get_backup_information().
 require_once($CFG->dirroot . '/backup/util/xml/xml_writer.class.php');
 require_once($CFG->dirroot . '/backup/util/xml/output/xml_output.class.php');
@@ -97,7 +98,6 @@ require_once($CFG->dirroot . '/backup/util/ui/backup_moodleform.class.php');
 require_once($CFG->dirroot . '/backup/util/ui/backup_ui.class.php');
 require_once($CFG->dirroot . '/backup/util/ui/backup_ui_stage.class.php');
 require_once($CFG->dirroot . '/backup/util/ui/backup_ui_setting.class.php');
-require_once($CFG->dirroot . '/backup/util/ui/classes/copy/copy.php');
 
 // And some moodle stuff too
 require_once($CFG->dirroot.'/course/lib.php');

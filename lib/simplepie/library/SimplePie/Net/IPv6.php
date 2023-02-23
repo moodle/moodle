@@ -267,3 +267,5 @@ class SimplePie_Net_IPv6
 		return self::check_ipv6($ip);
 	}
 }
+
+class_alias('SimplePie_Net_IPv6', 'SimplePie\Net\IPv6', false);

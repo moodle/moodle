@@ -14,21 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * User grade report functions unit tests
- *
- * @package    gradereport_user
- * @category   external
- * @copyright  2015 Juan Leyva <juan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace gradereport_user;
+
+use core_external\external_api;
+use externallib_advanced_testcase;
+use gradereport_user\external\user as user_external;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-require_once($CFG->dirroot . '/grade/report/user/externallib.php');
 
 /**
  * User grade report functions unit tests
@@ -38,50 +34,56 @@ require_once($CFG->dirroot . '/grade/report/user/externallib.php');
  * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class gradereport_user_externallib_testcase extends externallib_advanced_testcase {
+class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Loads some data to be used by the different tests
      * @param  int $s1grade Student 1 grade
      * @param  int $s2grade Student 2 grade
-     * @return array          Course and users instances
+     * @return array Course and users instances
      */
-    private function load_data($s1grade, $s2grade) {
+    private function load_data(int $s1grade, int $s2grade): array {
         global $DB;
 
-        $course = $this->getDataGenerator()->create_course(array('groupmode' => SEPARATEGROUPS, 'groupmodeforce' => 1));
+        $course = $this->getDataGenerator()->create_course(['groupmode' => SEPARATEGROUPS, 'groupmodeforce' => 1]);
 
-        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
-        $student1 = $this->getDataGenerator()->create_user(array('idnumber' => 'testidnumber'));
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $student1 = $this->getDataGenerator()->create_user(['idnumber' => 'testidnumber']);
         $this->getDataGenerator()->enrol_user($student1->id, $course->id, $studentrole->id);
 
         $student2 = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($student2->id, $course->id, $studentrole->id);
 
-        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher']);
         $teacher = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
 
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         assign_capability('moodle/site:accessallgroups', CAP_PROHIBIT, $teacherrole->id, $context);
         accesslib_clear_all_caches_for_unit_testing();
 
-        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
-        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
         groups_add_member($group1->id, $student1->id);
         groups_add_member($group1->id, $teacher->id);
         groups_add_member($group2->id, $student2->id);
 
-        $assignment = $this->getDataGenerator()->create_module('assign', array('name' => "Test assign", 'course' => $course->id));
+        $assignment = $this->getDataGenerator()->create_module('assign', ['name' => "Test assign", 'course' => $course->id]);
         $modcontext = get_coursemodule_from_instance('assign', $assignment->id, $course->id);
         $assignment->cmidnumber = $modcontext->id;
 
-        $student1grade = array('userid' => $student1->id, 'rawgrade' => $s1grade, 'idnumber' => 'testidnumber1');
-        $student2grade = array('userid' => $student2->id, 'rawgrade' => $s2grade, 'idnumber' => 'testidnumber2');
-        $studentgrades = array($student1->id => $student1grade, $student2->id => $student2grade);
+        $student1grade = ['userid' => $student1->id, 'rawgrade' => $s1grade, 'idnumber' => 'testidnumber1'];
+        $student2grade = ['userid' => $student2->id, 'rawgrade' => $s2grade, 'idnumber' => 'testidnumber2'];
+        $studentgrades = [$student1->id => $student1grade, $student2->id => $student2grade];
         assign_grade_item_update($assignment, $studentgrades);
 
-        return array($course, $teacher, $student1, $student2, $assignment);
+        return [
+            $course,
+            $teacher,
+            $student1,
+            $student2,
+            $assignment
+        ];
     }
 
     /**
@@ -99,8 +101,8 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
         // A teacher must see all student grades (in their group only).
         $this->setUser($teacher);
 
-        $studentgrades = gradereport_user_external::get_grades_table($course->id);
-        $studentgrades = external_api::clean_returnvalue(gradereport_user_external::get_grades_table_returns(), $studentgrades);
+        $studentgrades = user_external::get_grades_table($course->id);
+        $studentgrades = external_api::clean_returnvalue(user_external::get_grades_table_returns(), $studentgrades);
 
         // No warnings returned.
         $this->assertCount(0, $studentgrades['warnings']);
@@ -109,9 +111,10 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
         $this->assertCount(1, $studentgrades['tables']);
 
         // Read returned grades.
-        $studentreturnedgrades = array();
+        $studentreturnedgrades = [];
+
         $studentreturnedgrades[$studentgrades['tables'][0]['userid']] =
-            (int) $studentgrades['tables'][0]['tabledata'][1]['grade']['content'];
+            (int) $studentgrades['tables'][0]['tabledata'][2]['grade']['content'];
 
         $this->assertEquals($s1grade, $studentreturnedgrades[$student1->id]);
     }
@@ -131,14 +134,14 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
 
         // A user can see his own grades.
         $this->setUser($student1);
-        $studentgrade = gradereport_user_external::get_grades_table($course->id, $student1->id);
-        $studentgrade = external_api::clean_returnvalue(gradereport_user_external::get_grades_table_returns(), $studentgrade);
+        $studentgrade = user_external::get_grades_table($course->id, $student1->id);
+        $studentgrade = external_api::clean_returnvalue(user_external::get_grades_table_returns(), $studentgrade);
 
         // No warnings returned.
         $this->assertTrue(count($studentgrade['warnings']) == 0);
 
         $this->assertTrue(count($studentgrade['tables']) == 1);
-        $student1returnedgrade = (int) $studentgrade['tables'][0]['tabledata'][1]['grade']['content'];
+        $student1returnedgrade = (int) $studentgrade['tables'][0]['tabledata'][2]['grade']['content'];
         $this->assertEquals($s1grade, $student1returnedgrade);
 
     }
@@ -159,9 +162,9 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
         $this->setUser($student2);
 
         try {
-            $studentgrade = gradereport_user_external::get_grades_table($course->id, $student1->id);
+            $studentgrade = user_external::get_grades_table($course->id, $student1->id);
             $this->fail('Exception expected due to not perissions to view other user grades.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('notingroup', $e->errorcode);
         }
     }
@@ -182,34 +185,34 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
         $sink = $this->redirectEvents();
 
         $this->setUser($student1);
-        $result = gradereport_user_external::view_grade_report($course->id);
-        $result = external_api::clean_returnvalue(gradereport_user_external::view_grade_report_returns(), $result);
+        $result = user_external::view_grade_report($course->id);
+        $result = external_api::clean_returnvalue(user_external::view_grade_report_returns(), $result);
         $events = $sink->get_events();
         $this->assertCount(1, $events);
         $event = reset($events);
 
         // Check the event details are correct.
         $this->assertInstanceOf('\gradereport_user\event\grade_report_viewed', $event);
-        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals(\context_course::instance($course->id), $event->get_context());
         $this->assertEquals($USER->id, $event->get_data()['relateduserid']);
 
         $this->setUser($teacher);
-        $result = gradereport_user_external::view_grade_report($course->id, $student1->id);
-        $result = external_api::clean_returnvalue(gradereport_user_external::view_grade_report_returns(), $result);
+        $result = user_external::view_grade_report($course->id, $student1->id);
+        $result = external_api::clean_returnvalue(user_external::view_grade_report_returns(), $result);
         $events = $sink->get_events();
         $event = reset($events);
         $sink->close();
 
         // Check the event details are correct.
         $this->assertInstanceOf('\gradereport_user\event\grade_report_viewed', $event);
-        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals(\context_course::instance($course->id), $event->get_context());
         $this->assertEquals($student1->id, $event->get_data()['relateduserid']);
 
         $this->setUser($student2);
         try {
-            $studentgrade = gradereport_user_external::view_grade_report($course->id, $student1->id);
+            $studentgrade = user_external::view_grade_report($course->id, $student1->id);
             $this->fail('Exception expected due to not permissions to view other user grades.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('nopermissiontoviewgrades', $e->errorcode);
         }
     }
@@ -239,8 +242,8 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
         grade_set_setting($course->id, 'report_user_showlettergrade', 1);
         grade_set_setting($course->id, 'report_user_showaverage', 1);
 
-        $studentgrades = gradereport_user_external::get_grade_items($course->id);
-        $studentgrades = external_api::clean_returnvalue(gradereport_user_external::get_grade_items_returns(), $studentgrades);
+        $studentgrades = user_external::get_grade_items($course->id);
+        $studentgrades = external_api::clean_returnvalue(user_external::get_grade_items_returns(), $studentgrades);
         // No warnings returned.
         $this->assertCount(0, $studentgrades['warnings']);
 
@@ -298,13 +301,13 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
         $this->assertEquals(70, $studentgrades['usergrades'][0]['gradeitems'][1]['averageformatted']);
 
         // Now, override and lock a grade.
-        $gradegrade = grade_grade::fetch(['itemid' => $studentgrades['usergrades'][0]['gradeitems'][0]['id'],
+        $gradegrade = \grade_grade::fetch(['itemid' => $studentgrades['usergrades'][0]['gradeitems'][0]['id'],
             'userid' => $studentgrades['usergrades'][0]['userid']]);
         $gradegrade->set_overridden(true);
         $gradegrade->set_locked(1);
 
-        $studentgrades = gradereport_user_external::get_grade_items($course->id);
-        $studentgrades = external_api::clean_returnvalue(gradereport_user_external::get_grade_items_returns(), $studentgrades);
+        $studentgrades = user_external::get_grade_items($course->id);
+        $studentgrades = external_api::clean_returnvalue(user_external::get_grade_items_returns(), $studentgrades);
         // No warnings returned.
         $this->assertCount(0, $studentgrades['warnings']);
 
@@ -336,8 +339,8 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
 
         $this->setUser($student1);
 
-        $studentgrades = gradereport_user_external::get_grade_items($course->id, $student1->id);
-        $studentgrades = external_api::clean_returnvalue(gradereport_user_external::get_grade_items_returns(), $studentgrades);
+        $studentgrades = user_external::get_grade_items($course->id, $student1->id);
+        $studentgrades = external_api::clean_returnvalue(user_external::get_grade_items_returns(), $studentgrades);
         // No warnings returned.
         $this->assertCount(0, $studentgrades['warnings']);
 
@@ -379,11 +382,13 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
             $studentgrades['usergrades'][0]['gradeitems'][0]['idnumber']);
 
         // Hide one grade for the user.
-        $gradegrade = new grade_grade(array('userid' => $student1->id,
-                                        'itemid' => $studentgrades['usergrades'][0]['gradeitems'][0]['id']), true);
+        $gradegrade = new \grade_grade([
+            'userid' => $student1->id,
+            'itemid' => $studentgrades['usergrades'][0]['gradeitems'][0]['id']
+        ], true);
         $gradegrade->set_hidden(1);
-        $studentgrades = gradereport_user_external::get_grade_items($course->id, $student1->id);
-        $studentgrades = external_api::clean_returnvalue(gradereport_user_external::get_grade_items_returns(), $studentgrades);
+        $studentgrades = user_external::get_grade_items($course->id, $student1->id);
+        $studentgrades = external_api::clean_returnvalue(user_external::get_grade_items_returns(), $studentgrades);
 
         // Check we get only the course final grade.
         $this->assertCount(1, $studentgrades['usergrades']);

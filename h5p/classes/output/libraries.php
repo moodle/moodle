@@ -81,7 +81,6 @@ class libraries implements renderable, templatable {
                 // Get the action menu options.
                 $actionmenu = new action_menu();
                 $actionmenu->set_menu_trigger(get_string('actions', 'core_h5p'));
-                $actionmenu->set_alignment(action_menu::TL, action_menu::BL);
                 $actionmenu->prioritise = true;
                 $actionmenu->add_primary_action(new action_menu_link(
                     new moodle_url('/h5p/libraries.php', ['deletelibrary' => $version->id]),
@@ -93,11 +92,13 @@ class libraries implements renderable, templatable {
                     $version->toggleenabledurl = new moodle_url('/h5p/libraries.php', [
                         'id' => $version->id,
                         'action' => 'disable',
+                        'sesskey' => sesskey(),
                     ]);
                 } else {
                     $version->toggleenabledurl = new moodle_url('/h5p/libraries.php', [
                         'id' => $version->id,
                         'action' => 'enable',
+                        'sesskey' => sesskey(),
                     ]);
                 }
                 $installed[] = $version;

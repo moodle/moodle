@@ -3,32 +3,34 @@
 namespace PhpOffice\PhpSpreadsheet\Shared;
 
 use GdImage;
+use SimpleXMLElement;
 
 class Drawing
 {
     /**
      * Convert pixels to EMU.
      *
-     * @param int $pValue Value in pixels
+     * @param int $pixelValue Value in pixels
      *
      * @return int Value in EMU
      */
-    public static function pixelsToEMU($pValue)
+    public static function pixelsToEMU($pixelValue)
     {
-        return round($pValue * 9525);
+        return $pixelValue * 9525;
     }
 
     /**
      * Convert EMU to pixels.
      *
-     * @param int $pValue Value in EMU
+     * @param int|SimpleXMLElement $emuValue Value in EMU
      *
      * @return int Value in pixels
      */
-    public static function EMUToPixels($pValue)
+    public static function EMUToPixels($emuValue)
     {
-        if ($pValue != 0) {
-            return round($pValue / 9525);
+        $emuValue = (int) $emuValue;
+        if ($emuValue != 0) {
+            return (int) round($emuValue / 9525);
         }
 
         return 0;
@@ -39,50 +41,51 @@ class Drawing
      * By inspection of a real Excel file using Calibri 11, one finds 1000px ~ 142.85546875
      * This gives a conversion factor of 7. Also, we assume that pixels and font size are proportional.
      *
-     * @param int $pValue Value in pixels
-     * @param \PhpOffice\PhpSpreadsheet\Style\Font $pDefaultFont Default font of the workbook
+     * @param int $pixelValue Value in pixels
      *
-     * @return int Value in cell dimension
+     * @return float|int Value in cell dimension
      */
-    public static function pixelsToCellDimension($pValue, \PhpOffice\PhpSpreadsheet\Style\Font $pDefaultFont)
+    public static function pixelsToCellDimension($pixelValue, \PhpOffice\PhpSpreadsheet\Style\Font $defaultFont)
     {
         // Font name and size
-        $name = $pDefaultFont->getName();
-        $size = $pDefaultFont->getSize();
+        $name = $defaultFont->getName();
+        $size = $defaultFont->getSize();
 
         if (isset(Font::$defaultColumnWidths[$name][$size])) {
             // Exact width can be determined
-            $colWidth = $pValue * Font::$defaultColumnWidths[$name][$size]['width'] / Font::$defaultColumnWidths[$name][$size]['px'];
-        } else {
-            // We don't have data for this particular font and size, use approximation by
-            // extrapolating from Calibri 11
-            $colWidth = $pValue * 11 * Font::$defaultColumnWidths['Calibri'][11]['width'] / Font::$defaultColumnWidths['Calibri'][11]['px'] / $size;
+            return $pixelValue * Font::$defaultColumnWidths[$name][$size]['width']
+                / Font::$defaultColumnWidths[$name][$size]['px'];
         }
 
-        return $colWidth;
+        // We don't have data for this particular font and size, use approximation by
+        // extrapolating from Calibri 11
+        return $pixelValue * 11 * Font::$defaultColumnWidths['Calibri'][11]['width']
+            / Font::$defaultColumnWidths['Calibri'][11]['px'] / $size;
     }
 
     /**
      * Convert column width from (intrinsic) Excel units to pixels.
      *
-     * @param float $pValue Value in cell dimension
-     * @param \PhpOffice\PhpSpreadsheet\Style\Font $pDefaultFont Default font of the workbook
+     * @param float $cellWidth Value in cell dimension
+     * @param \PhpOffice\PhpSpreadsheet\Style\Font $defaultFont Default font of the workbook
      *
      * @return int Value in pixels
      */
-    public static function cellDimensionToPixels($pValue, \PhpOffice\PhpSpreadsheet\Style\Font $pDefaultFont)
+    public static function cellDimensionToPixels($cellWidth, \PhpOffice\PhpSpreadsheet\Style\Font $defaultFont)
     {
         // Font name and size
-        $name = $pDefaultFont->getName();
-        $size = $pDefaultFont->getSize();
+        $name = $defaultFont->getName();
+        $size = $defaultFont->getSize();
 
         if (isset(Font::$defaultColumnWidths[$name][$size])) {
             // Exact width can be determined
-            $colWidth = $pValue * Font::$defaultColumnWidths[$name][$size]['px'] / Font::$defaultColumnWidths[$name][$size]['width'];
+            $colWidth = $cellWidth * Font::$defaultColumnWidths[$name][$size]['px']
+                / Font::$defaultColumnWidths[$name][$size]['width'];
         } else {
             // We don't have data for this particular font and size, use approximation by
             // extrapolating from Calibri 11
-            $colWidth = $pValue * $size * Font::$defaultColumnWidths['Calibri'][11]['px'] / Font::$defaultColumnWidths['Calibri'][11]['width'] / 11;
+            $colWidth = $cellWidth * $size * Font::$defaultColumnWidths['Calibri'][11]['px']
+                / Font::$defaultColumnWidths['Calibri'][11]['width'] / 11;
         }
 
         // Round pixels to closest integer
@@ -94,26 +97,26 @@ class Drawing
     /**
      * Convert pixels to points.
      *
-     * @param int $pValue Value in pixels
+     * @param int $pixelValue Value in pixels
      *
      * @return float Value in points
      */
-    public static function pixelsToPoints($pValue)
+    public static function pixelsToPoints($pixelValue)
     {
-        return $pValue * 0.75;
+        return $pixelValue * 0.75;
     }
 
     /**
      * Convert points to pixels.
      *
-     * @param int $pValue Value in points
+     * @param int $pointValue Value in points
      *
      * @return int Value in pixels
      */
-    public static function pointsToPixels($pValue)
+    public static function pointsToPixels($pointValue)
     {
-        if ($pValue != 0) {
-            return (int) ceil($pValue / 0.75);
+        if ($pointValue != 0) {
+            return (int) ceil($pointValue / 0.75);
         }
 
         return 0;
@@ -122,26 +125,27 @@ class Drawing
     /**
      * Convert degrees to angle.
      *
-     * @param int $pValue Degrees
+     * @param int $degrees Degrees
      *
      * @return int Angle
      */
-    public static function degreesToAngle($pValue)
+    public static function degreesToAngle($degrees)
     {
-        return (int) round($pValue * 60000);
+        return (int) round($degrees * 60000);
     }
 
     /**
      * Convert angle to degrees.
      *
-     * @param int $pValue Angle
+     * @param int|SimpleXMLElement $angle Angle
      *
      * @return int Degrees
      */
-    public static function angleToDegrees($pValue)
+    public static function angleToDegrees($angle)
     {
-        if ($pValue != 0) {
-            return round($pValue / 60000);
+        $angle = (int) $angle;
+        if ($angle != 0) {
+            return (int) round($angle / 60000);
         }
 
         return 0;
@@ -152,25 +156,31 @@ class Drawing
      *
      * @see http://www.php.net/manual/en/function.imagecreatefromwbmp.php#86214
      *
-     * @param string $p_sFile Path to Windows DIB (BMP) image
+     * @param string $bmpFilename Path to Windows DIB (BMP) image
      *
      * @return GdImage|resource
      */
-    public static function imagecreatefrombmp($p_sFile)
+    public static function imagecreatefrombmp($bmpFilename)
     {
         //    Load the image into a string
-        $file = fopen($p_sFile, 'rb');
+        $file = fopen($bmpFilename, 'rb');
+        /** @phpstan-ignore-next-line */
         $read = fread($file, 10);
+        // @phpstan-ignore-next-line
         while (!feof($file) && ($read != '')) {
+            // @phpstan-ignore-next-line
             $read .= fread($file, 1024);
         }
 
+        /** @phpstan-ignore-next-line */
         $temp = unpack('H*', $read);
         $hex = $temp[1];
         $header = substr($hex, 0, 108);
 
         //    Process the header
         //    Structure: http://www.fastgraph.com/help/bmp_header_format.html
+        $width = 0;
+        $height = 0;
         if (substr($header, 0, 4) == '424d') {
             //    Cut it in parts of 2 bytes
             $header_parts = str_split($header, 2);
@@ -190,6 +200,8 @@ class Drawing
         $y = 1;
 
         //    Create newimage
+
+        /** @phpstan-ignore-next-line */
         $image = imagecreatetruecolor($width, $height);
 
         //    Grab the body from the image
@@ -235,7 +247,10 @@ class Drawing
             $b = hexdec($body[$i_pos] . $body[$i_pos + 1]);
 
             // Calculate and draw the pixel
+
+            /** @phpstan-ignore-next-line */
             $color = imagecolorallocate($image, $r, $g, $b);
+            // @phpstan-ignore-next-line
             imagesetpixel($image, $x, $height - $y, $color);
 
             // Raise the horizontal position
@@ -246,6 +261,7 @@ class Drawing
         unset($body);
 
         //    Return image-object
+        // @phpstan-ignore-next-line
         return $image;
     }
 }

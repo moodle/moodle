@@ -56,9 +56,9 @@ class sortedcontentqueue extends \SPLPriorityQueue {
      *
      * @param int $key1
      * @param int $key2
-     * @return bool
+     * @return int
      */
-    public function compare($key1 , $key2) {
+    public function compare($key1 , $key2): int {
         $record1 = $this->contents[$key1];
         $record2 = $this->contents[$key2];
 

@@ -68,8 +68,7 @@ class mod_scorm_generator extends testing_module_generator {
             'lastattemptlock' => $cfgscorm->lastattemptlock,
             'forcecompleted' => $cfgscorm->forcecompleted,
             'masteryoverride' => $cfgscorm->masteryoverride,
-            'auto' => $cfgscorm->auto,
-            'displayactivityname' => $cfgscorm->displayactivityname
+            'auto' => $cfgscorm->auto
         );
         if (empty($record['packagefilepath'])) {
             $record['packagefilepath'] = $CFG->dirroot.'/mod/scorm/tests/packages/singlescobasic.zip';

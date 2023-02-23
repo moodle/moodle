@@ -1,24 +1,26 @@
 <?php
-/*
-@version   v5.21.0  2021-02-27
-@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
-@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-  Released under both BSD license and Lesser GPL library license.
-  Whenever there is any discrepancy between the two licenses,
-  the BSD license will take precedence.
-Set tabs to 4 for best viewing.
-
-  Latest version is available at https://adodb.org/
-
-  Native mssql driver. Requires mssql client. Works on Windows.
-    http://www.microsoft.com/sql/technologies/php/default.mspx
-  To configure for Unix, see
-   	http://phpbuilder.com/columns/alberto20000919.php3
-
-    $stream = sqlsrv_get_field($stmt, $index, SQLSRV_SQLTYPE_STREAM(SQLSRV_ENC_BINARY));
-    stream_filter_append($stream, "convert.iconv.ucs-2/utf-8"); // Voila, UTF-8 can be read directly from $stream
-
-*/
+/**
+ * Native MSSQL driver.
+ *
+ * Requires mssql client. Works on Windows.
+ * https://docs.microsoft.com/sql/connect/php
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
 
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
@@ -49,6 +51,13 @@ class ADODB_mssqlnative extends ADOConnection {
 	var $replaceQuote = "''"; // string to use to replace quotes
 	var $fmtDate = "'Y-m-d'";
 	var $fmtTimeStamp = "'Y-m-d\TH:i:s'";
+	/**
+	 * Enabling InsertID capability will cause execution of an extra query
+	 * {@see $identitySQL} after each INSERT statement. To improve performance
+	 * when inserting a large number of records, you should switch this off by
+	 * calling {@see enableLastInsertID enableLastInsertID(false)}.
+	 * @var bool $hasInsertID
+	 */
 	var $hasInsertID = true;
 	var $substr = "substring";
 	var $length = 'len';
@@ -142,6 +151,8 @@ class ADODB_mssqlnative extends ADOConnection {
 
 		$arrServerInfo = sqlsrv_server_info($this->_connectionID);
 		$ADODB_FETCH_MODE = $savem;
+		
+		$arr = array();
 		$arr['description'] = $arrServerInfo['SQLServerName'].' connected to '.$arrServerInfo['CurrentDatabase'];
 		$arr['version'] = $arrServerInfo['SQLServerVersion'];//ADOConnection::_findvers($arr['description']);
 		return $arr;
@@ -152,12 +163,23 @@ class ADODB_mssqlnative extends ADOConnection {
 		return " ISNULL($field, $ifNull) "; // if MS SQL Server
 	}
 
-	function _insertid()
+	public function enableLastInsertID($enable = true) {
+		$this->hasInsertID = $enable;
+		$this->lastInsID = false;
+	}
+
+	/**
+	 * Get the last value inserted into an IDENTITY column.
+	 *
+	 * The value will actually be set in {@see _query()} when executing an
+	 * INSERT statement, but only if the connection's $hasInsertId property
+	 * is true; this can be set with {@see enableLastInsertId()}.
+	 *
+	 * @inheritDoc
+	 */
+	protected function _insertID($table = '', $column = '')
 	{
-		$rez = sqlsrv_query($this->_connectionID,$this->identitySQL);
-		sqlsrv_fetch($rez);
-		$this->lastInsertID = sqlsrv_get_field($rez, 0);
-		return $this->lastInsertID;
+		return $this->lastInsID;
 	}
 
 	function _affectedrows()
@@ -278,22 +300,25 @@ class ADODB_mssqlnative extends ADOConnection {
 	// Format date column in sql string given an input format that understands Y M D
 	function SQLDate($fmt, $col=false)
 	{
-		if (!$col) $col = $this->sysTimeStamp;
+		if (!$col) {
+			$col = $this->sysTimeStamp;
+		}
 		$s = '';
 
 		$ConvertableFmt=array(
-		       "m/d/Y"=>101,"m/d/y"=>101 // US
-		      ,"Y.m.d"=>102,"y/m/d"=>102 // ANSI
-		      ,"d/m/Y"=>103,"d/m/y"=>103 // French /english
-		      ,"d.m.Y"=>104,"d.m.y"=>104 // German
-		      ,"d-m-Y"=>105,"d-m-y"=>105 // Italian
-		      ,"m-d-Y"=>110,"m-d-y"=>110 // US Dash
-		      ,"Y/m/d"=>111,"y/m/d"=>111 // Japan
-		      ,"Ymd"=>112,"ymd"=>112 // ISO
-		      ,"H:i:s"=>108 // Time
+			"m/d/Y"=>101,  "m/d/y"=>101 // US
+			,"Y.m.d"=>102, "y.m.d"=>102 // ANSI
+			,"d/m/Y"=>103, "d/m/y"=>103 // French /english
+			,"d.m.Y"=>104, "d.m.y"=>104 // German
+			,"d-m-Y"=>105, "d-m-y"=>105 // Italian
+			,"m-d-Y"=>110, "m-d-y"=>110 // US Dash
+			,"Y/m/d"=>111, "y/m/d"=>111 // Japan
+			,"Ymd"=>112,   "ymd"=>112   // ISO
+			,"H:i:s"=>108 // Time
 		);
-		if(key_exists($fmt,$ConvertableFmt))
-		  return  "convert (varchar ,$col,".$ConvertableFmt[$fmt].")";
+		if (key_exists($fmt,$ConvertableFmt)) {
+			return "convert (varchar ,$col," . $ConvertableFmt[$fmt] . ")";
+		}
 
 		$len = strlen($fmt);
 		for ($i=0; $i < $len; $i++) {
@@ -439,9 +464,9 @@ class ADODB_mssqlnative extends ADOConnection {
 	function ErrorNo()
 	{
 		$err = sqlsrv_errors(SQLSRV_ERR_ALL);
-		if ($err && $err[0]) 
+		if ($err && $err[0])
 			return $err[0]['code'];
-		else 
+		else
 			return 0;
 	}
 
@@ -454,13 +479,13 @@ class ADODB_mssqlnative extends ADOConnection {
 				ADOConnection::outp('Microsoft SQL Server native driver (mssqlnative) not installed');
 			return null;
 		}
-	
+
 		if (!empty($this->port))
 			/*
-			* Port uses a comma 
+			* Port uses a comma
 			*/
 			$argHostname .= ",".$this->port;
-	
+
 		$connectionInfo 			= $this->connectionInfo;
 		$connectionInfo["Database"]	= $argDatabasename;
 		if ((string)$argUsername != '' || (string)$argPassword != '')
@@ -471,12 +496,12 @@ class ADODB_mssqlnative extends ADOConnection {
 			*/
 			$connectionInfo["UID"]		= $argUsername;
 			$connectionInfo["PWD"]		= $argPassword;
-			
+
 			if ($this->debug)
 				ADOConnection::outp('userid or password supplied, attempting connection with SQL Server Authentication');
-			
+
 		}
-		else 
+		else
 		{
 			/*
 			* If they don't pass either value, we won't add them to the
@@ -484,11 +509,11 @@ class ADODB_mssqlnative extends ADOConnection {
 			* to use windows authentication
 			*/
 			if ($this->debug)
-			
+
 				ADOConnection::outp('No userid or password supplied, attempting connection with Windows Authentication');
 		}
-				
-		
+
+
 		/*
 		* Now merge in the passed connection parameters setting
 		*/
@@ -501,7 +526,7 @@ class ADODB_mssqlnative extends ADOConnection {
 		if ($this->debug) ADOConnection::outp("connecting to host: $argHostname params: ".var_export($connectionInfo,true));
 		if(!($this->_connectionID = @sqlsrv_connect($argHostname,$connectionInfo)))
 		{
-			if ($this->debug) 
+			if ($this->debug)
 				ADOConnection::outp( 'Connection Failed: '.print_r( sqlsrv_errors(), true));
 			return false;
 		}
@@ -517,6 +542,7 @@ class ADODB_mssqlnative extends ADOConnection {
 		//return null;//not implemented. NOTE: Persistent connections have no effect if PHP is used as a CGI program. (FastCGI!)
 		return $this->_connect($argHostname, $argUsername, $argPassword, $argDatabasename);
 	}
+
 
 	function Prepare($sql)
 	{
@@ -575,38 +601,69 @@ class ADODB_mssqlnative extends ADOConnection {
 		return $this->Execute($sql) != false;
 	}
 
-	// returns query ID if successful, otherwise false
-	function _query($sql,$inputarr=false)
+	/**
+	 * Execute a query.
+	 *
+	 * If executing an INSERT statement and $hasInsertId is true, will set
+	 * $lastInsId.
+	 *
+	 * @param string $sql
+	 * @param array $inputarr
+	 * @return resource|false Query Id if successful, otherwise false
+	 */
+	function _query($sql, $inputarr = false)
 	{
 		$this->_errorMsg = false;
 
-		if (is_array($sql))
+		if (is_array($sql)) {
 			$sql = $sql[1];
-
-		$insert = false;
-		// handle native driver flaw for retrieving the last insert ID
-		if(preg_match('/^\W*insert[\s\w()[\]",.]+values\s*\((?:[^;\']|\'\'|(?:(?:\'\')*\'[^\']+\'(?:\'\')*))*;?$/i', $sql)) {
-			$insert = true;
-			$sql .= '; '.$this->identitySQL; // select scope_identity()
 		}
-		if($inputarr)
-		{
-			/*
-			* Ensure that the input array is numeric, as required by
-			* sqlsrv_query. If param() was used to create portable binds
-			* then the array might be associative
-			*/
+
+		// Handle native driver flaw for retrieving the last insert ID
+		if ($this->hasInsertID) {
+			// Check if it's an INSERT statement
+			$retrieveLastInsertID = preg_match(
+				'/^\W*insert[\s\w()[\]",.]+values\s*\((?:[^;\']|\'\'|(?:(?:\'\')*\'[^\']+\'(?:\'\')*))*;?$/i',
+				$sql
+			);
+			if ($retrieveLastInsertID) {
+				// Append the identity SQL, so it is executed in the same
+				// scope as the insert query.
+				$sql .= '; ' . $this->identitySQL;
+			}
+		} else {
+			$retrieveLastInsertID = false;
+		}
+
+		if ($inputarr) {
+			// Ensure that the input array is indexed numerically, as required
+			// by sqlsrv_query(). If param() was used to create portable binds
+			// then the array might be associative.
 			$inputarr = array_values($inputarr);
 			$rez = sqlsrv_query($this->_connectionID, $sql, $inputarr);
 		} else {
-			$rez = sqlsrv_query($this->_connectionID,$sql);
+			$rez = sqlsrv_query($this->_connectionID, $sql);
 		}
 
-		if ($this->debug) ADOConnection::outp("<hr>running query: ".var_export($sql,true)."<hr>input array: ".var_export($inputarr,true)."<hr>result: ".var_export($rez,true));
+		if ($this->debug) {
+			ADOConnection::outp("<hr>running query: " . var_export($sql, true)
+				. "<hr>input array: " . var_export($inputarr, true)
+				. "<hr>result: " . var_export($rez, true)
+			);
+		}
 
-		if(!$rez)
+		$this->lastInsID = false;
+		if (!$rez) {
 			$rez = false;
-
+		} elseif ($retrieveLastInsertID) {
+			// Get the inserted id from the last result
+			// Note: loop is required as server may return more than one row,
+			// e.g. if triggers are involved (see #41)
+			while (sqlsrv_next_result($rez)) {
+				sqlsrv_fetch($rez);
+				$this->lastInsID = sqlsrv_get_field($rez, 0, SQLSRV_PHPTYPE_INT);
+			}
+		}
 		return $rez;
 	}
 
@@ -623,7 +680,7 @@ class ADODB_mssqlnative extends ADOConnection {
 		return $rez;
 	}
 
-	
+
 	function MetaIndexes($table,$primary=false, $owner = false)
 	{
 		$table = $this->qstr($table);
@@ -664,7 +721,7 @@ class ADODB_mssqlnative extends ADOConnection {
 		return $indexes;
 	}
 
-	function MetaForeignKeys($table, $owner=false, $upper=false)
+	public function metaForeignKeys($table, $owner = '', $upper = false, $associative = false)
 	{
 		global $ADODB_FETCH_MODE;
 
@@ -711,7 +768,7 @@ class ADODB_mssqlnative extends ADOConnection {
 	function MetaDatabases()
 	{
 		$this->SelectDB("master");
-		$rs =& $this->Execute($this->metaDatabasesSQL);
+		$rs = $this->Execute($this->metaDatabasesSQL);
 		$rows = $rs->GetRows();
 		$ret = array();
 		for($i=0;$i<count($rows);$i++) {
@@ -899,51 +956,48 @@ class ADODB_mssqlnative extends ADOConnection {
 	 * @param	string $procedureNamePattern (optional)
 	 * @param	string $catalog				 (optional)
 	 * @param	string $schemaPattern		 (optional)
-	 
+
 	 * @return array of stored objects in current database.
 	 *
 	 */
 	public function metaProcedures($procedureNamePattern = null, $catalog  = null, $schemaPattern  = null)
 	{
-		
 		$metaProcedures = array();
 		$procedureSQL   = '';
 		$catalogSQL     = '';
 		$schemaSQL      = '';
-				
+
 		if ($procedureNamePattern)
 			$procedureSQL = "AND ROUTINE_NAME LIKE " . strtoupper($this->qstr($procedureNamePattern));
-		
+
 		if ($catalog)
 			$catalogSQL = "AND SPECIFIC_SCHEMA=" . strtoupper($this->qstr($catalog));
-		
+
 		if ($schemaPattern)
 			$schemaSQL = "AND ROUTINE_SCHEMA LIKE {$this->qstr($schemaPattern)}";
-		
-				
+
 		$fields = "	ROUTINE_NAME,ROUTINE_TYPE,ROUTINE_SCHEMA,ROUTINE_CATALOG";
-		
+
 		$SQL = "SELECT $fields
-		          FROM {$this->database}.information_schema.routines
-				 WHERE 1=1
-				  $procedureSQL
-				  $catalogSQL
-				  $schemaSQL
-				ORDER BY ROUTINE_NAME
-				";
-		
+			FROM {$this->database}.information_schema.routines
+			WHERE 1=1
+				$procedureSQL
+				$catalogSQL
+				$schemaSQL
+			ORDER BY ROUTINE_NAME
+			";
+
 		$result = $this->execute($SQL);
-		
+
 		if (!$result)
 			return false;
 		while ($r = $result->fetchRow()){
-			
 			if (!isset($r[0]))
 				/*
 				* Convert to numeric
 				*/
 				$r = array_values($r);
-			
+
 			$procedureName = $r[0];
 			$schemaName    = $r[2];
 			$routineCatalog= $r[3];
@@ -952,13 +1006,42 @@ class ADODB_mssqlnative extends ADOConnection {
 												   'schema'  => $schemaName,
 												   'remarks' => '',
 												    );
-													
 		}
-		
+
 		return $metaProcedures;
-		
 	}
-	
+
+	/**
+	* An SQL Statement that adds a specific number of
+	* days or part to local datetime
+	*
+	* @param float $dayFraction
+	* @param string $date
+	*
+	* @return string
+	*/
+	public function offsetDate($dayFraction, $date = false)
+	{
+		if (!$date)
+			/*
+			* Use GETDATE() via systTimestamp;
+			*/
+			$date = $this->sysTimeStamp;
+
+		/*
+		* seconds, number of seconds, date base
+		*/
+		$dateFormat = "DATEADD(s, %s, %s)";
+
+		/*
+		* Adjust the offset back to seconds
+		*/
+		$fraction = $dayFraction * 24 * 3600;
+
+		return sprintf($dateFormat,$fraction,$date);
+
+	}
+
 }
 
 /*--------------------------------------------------------------------------------------
@@ -972,13 +1055,8 @@ class ADORecordset_mssqlnative extends ADORecordSet {
 	var $fieldOffset = 0;
 	// _mths works only in non-localised system
 
-	/*
-	 * Holds a cached version of the metadata
-	 */
-	private $fieldObjects = false;
-
-	/*
-	 * Flags if we have retrieved the metadata
+	/**
+	 * @var bool True if we have retrieved the fields metadata
 	 */
 	private $fieldObjectsRetrieved = false;
 
@@ -986,7 +1064,6 @@ class ADORecordset_mssqlnative extends ADORecordSet {
 	* Cross-reference the objects by name for easy access
 	*/
 	private $fieldObjectsIndex = array();
-
 
 	/*
 	 * Cross references the dateTime objects for faster decoding
@@ -1075,9 +1152,9 @@ class ADORecordset_mssqlnative extends ADORecordSet {
 			* Too early
 			*/
 			return;
-		if ($this->fetchMode != ADODB_FETCH_NUM) 
+		if ($this->fetchMode != ADODB_FETCH_NUM)
 			return $this->fields[$colname];
-		
+
 		if (!$this->bind) {
 			$this->bind = array();
 			for ($i=0; $i < $this->_numOfFields; $i++) {
@@ -1098,26 +1175,23 @@ class ADORecordset_mssqlnative extends ADORecordSet {
 	* the next field that wasn't yet retrieved by fetchField()
 	* is retrieved.
 	*
-	* $param int $fieldOffset (optional default=-1 for all
+	* @param int $fieldOffset (optional default=-1 for all
 	* @return mixed an ADOFieldObject, or array of objects
 	*/
 	private function _fetchField($fieldOffset = -1)
 	{
-		if ($this->fieldObjectsRetrieved){
-			if ($this->fieldObjects) {
-				/*
-				 * Already got the information
-				 */
-				if ($fieldOffset == -1)
-					return $this->fieldObjects;
-				else
-					return $this->fieldObjects[$fieldOffset];
-			}
-			else
-				/*
-			     * No metadata available
-				 */
+		if ($this->fieldObjectsRetrieved) {
+			if ($this->fieldObjectsCache) {
+				// Already got the information
+				if ($fieldOffset == -1) {
+					return $this->fieldObjectsCache;
+				} else {
+					return $this->fieldObjectsCache[$fieldOffset];
+				}
+			} else {
+				// No metadata available
 				return false;
+			}
 		}
 
 		$this->fieldObjectsRetrieved = true;
@@ -1127,36 +1201,28 @@ class ADORecordset_mssqlnative extends ADORecordSet {
 		 */
 		$fieldMetaData = sqlsrv_field_metadata($this->_queryID);
 
-		if (!$fieldMetaData)
-			/*
-		     * Not a statement that gives us metaData
-			 */
+		if (!$fieldMetaData) {
+			// Not a statement that gives us metaData
 			return false;
+		}
 
 		$this->_numOfFields = count($fieldMetaData);
-		foreach ($fieldMetaData as $key=>$value)
-		{
-
+		foreach ($fieldMetaData as $key=>$value) {
 			$fld = new ADOFieldObject;
-			/*
-			 * Caution - keys are case-sensitive, must respect
-			 * casing of values
-			 */
-
+			// Caution - keys are case-sensitive, must respect casing of values
 			$fld->name          = $value['Name'];
 			$fld->max_length    = $value['Size'];
 			$fld->column_source = $value['Name'];
 			$fld->type          = $this->_typeConversion[$value['Type']];
 
-			$this->fieldObjects[$key] = $fld;
-
+			$this->fieldObjectsCache[$key] = $fld;
 			$this->fieldObjectsIndex[$fld->name] = $key;
-
 		}
-		if ($fieldOffset == -1)
-			return $this->fieldObjects;
+		if ($fieldOffset == -1) {
+			return $this->fieldObjectsCache;
+		}
 
-		return $this->fieldObjects[$fieldOffset];
+		return $this->fieldObjectsCache[$fieldOffset];
 	}
 
 	/*
@@ -1173,7 +1239,7 @@ class ADORecordset_mssqlnative extends ADORecordSet {
 	 */
 	function fetchField($fieldOffset = -1)
 	{
-		return $this->fieldObjects[$fieldOffset];
+		return $this->fieldObjectsCache[$fieldOffset];
 	}
 
 	function _seek($row)
@@ -1243,7 +1309,7 @@ class ADORecordset_mssqlnative extends ADORecordSet {
 			$this->_queryID = false;
 			return $rez;
 		}
-		
+
 		return true;
 	}
 

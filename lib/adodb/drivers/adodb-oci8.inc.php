@@ -1,20 +1,25 @@
 <?php
-/*
-
-  @version   v5.21.0  2021-02-27
-  @copyright (c) 2000-2013 John Lim. All rights reserved.
-  @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-
-  Released under both BSD license and Lesser GPL library license.
-  Whenever there is any discrepancy between the two licenses,
-  the BSD license will take precedence.
-
-  Latest version is available at https://adodb.org/
-
-  Code contributed by George Fourlanos <fou@infomap.gr>
-
-  13 Nov 2000 jlim - removed all ora_* references.
-*/
+/**
+ * FileDescription
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ * @author John Lim
+ * @author George Fourlanos <fou@infomap.gr>
+ */
 
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
@@ -106,12 +111,12 @@ END;
 	 * Legacy compatibility for sequence names for emulated auto-increments
 	 */
 	public $useCompactAutoIncrements = false;
-	
+
 	/*
 	 * Defines the schema name for emulated auto-increment columns
 	 */
 	public $schema = false;
-	
+
 	/*
 	 * Defines the prefix for emulated auto-increment columns
 	 */
@@ -313,33 +318,32 @@ END;
 	{
 		return " NVL($field, $ifNull) "; // if Oracle
 	}
-	
-	function _insertid($tabname,$column='')
+
+	protected function _insertID($table = '', $column = '')
 	{
-		
-		if (!$this->seqField) 
+
+		if (!$this->seqField)
 			return false;
 
-		
-		if ($this->schema) 
+		if ($this->schema)
 		{
-			$t = strpos($tabname,'.');
-			if ($t !== false) 
-				$tab = substr($tabname,$t+1);
-			else 
-				$tab = $tabname;
-			
+			$t = strpos($table,'.');
+			if ($t !== false)
+				$tab = substr($table,$t+1);
+			else
+				$tab = $table;
+
 			if ($this->useCompactAutoIncrements)
 				$tab = sprintf('%u',crc32(strtolower($tab)));
-				
+
 			$seqname = $this->schema.'.'.$this->seqPrefix.$tab;
-		} 
-		else 
+		}
+		else
 		{
 			if ($this->useCompactAutoIncrements)
-				$tabname = sprintf('%u',crc32(strtolower($tabname)));
-			
-			$seqname = $this->seqPrefix.$tabname;
+				$table = sprintf('%u',crc32(strtolower($table)));
+
+			$seqname = $this->seqPrefix.$table;
 		}
 
 		if (strlen($seqname) > 30)
@@ -347,7 +351,7 @@ END;
 			* We cannot successfully identify the sequence
 			*/
 			return false;
-		
+
 		return $this->getOne("SELECT $seqname.currval FROM dual");
 	}
 
@@ -787,6 +791,11 @@ END;
 					$nrows += $offset;
 				}
 				$sql = "select * from (".$sql.") where rownum <= :adodb_offset";
+
+				// If non-bound statement, $inputarr is false
+				if (!$inputarr) {
+					$inputarr = array();
+				}
 				$inputarr['adodb_offset'] = $nrows;
 				$nrows = -1;
 			}
@@ -969,9 +978,12 @@ END;
 	/**
 	 * Execute SQL
 	 *
-	 * @param sql		SQL statement to execute, or possibly an array holding prepared statement ($sql[0] will hold sql text)
-	 * @param [inputarr]	holds the input data to bind to. Null elements will be set to null.
-	 * @return 		RecordSet or false
+	 * @param string|array $sql     SQL statement to execute, or possibly an array holding
+	 *                              prepared statement ($sql[0] will hold sql text).
+	 * @param array|false $inputarr holds the input data to bind to.
+	 *                              Null elements will be set to null.
+	 *
+	 * @return ADORecordSet|false
 	 */
 	function Execute($sql,$inputarr=false)
 	{
@@ -1088,6 +1100,22 @@ END;
 			return array($sql,$stmt,0,$BINDNUM, ($cursor) ? oci_new_cursor($this->_connectionID) : false);
 		}
 		return array($sql,$stmt,0,$BINDNUM);
+	}
+
+	function releaseStatement(&$stmt)
+	{
+		if (is_array($stmt)
+			&& isset($stmt[1])
+			&& is_resource($stmt[1])
+			&& oci_free_statement($stmt[1])
+		) {
+			// Clearing the resource to avoid it being of type Unknown
+			$stmt[1] = null;
+			return true;
+		}
+
+		// Not a valid prepared statement
+		return false;
 	}
 
 	/*
@@ -1237,12 +1265,12 @@ END;
 	 *    $db->Parameter($stmt,$group,'group');
 	 *    $db->Execute($stmt);
 	 *
-	 * @param $stmt Statement returned by Prepare() or PrepareSP().
+	 * @param $stmt Statement returned by {@see Prepare()} or {@see PrepareSP()}.
 	 * @param $var PHP variable to bind to
 	 * @param $name Name of stored procedure variable name to bind to.
-	 * @param [$isOutput] Indicates direction of parameter 0/false=IN  1=OUT  2= IN/OUT. This is ignored in oci8.
-	 * @param [$maxLen] Holds an maximum length of the variable.
-	 * @param [$type] The data type of $var. Legal values depend on driver.
+	 * @param bool $isOutput Indicates direction of parameter 0/false=IN  1=OUT  2= IN/OUT. This is ignored in oci8.
+	 * @param int $maxLen Holds an maximum length of the variable.
+	 * @param mixed $type The data type of $var. Legal values depend on driver.
 	 *
 	 * @link http://php.net/oci_bind_by_name
 	*/
@@ -1480,16 +1508,17 @@ SELECT /*+ RULE */ distinct b.column_name
 	}
 
 	/**
-	 * returns assoc array where keys are tables, and values are foreign keys
+	 * Returns a list of Foreign Keys associated with a specific table.
 	 *
-	 * @param	str		$table
-	 * @param	str		$owner	[optional][default=NULL]
-	 * @param	bool	$upper	[optional][discarded]
-	 * @return	mixed[]			Array of foreign key information
+	 * @param string $table
+	 * @param string $owner
+	 * @param bool   $upper       discarded
+	 * @param bool   $associative discarded
 	 *
-	 * @link http://gis.mit.edu/classes/11.521/sqlnotes/referential_integrity.html
+	 * @return string[]|false An array where keys are tables, and values are foreign keys;
+	 *                        false if no foreign keys could be found.
 	 */
-	function MetaForeignKeys($table, $owner=false, $upper=false)
+	public function metaForeignKeys($table, $owner = '', $upper = false, $associative = false)
 	{
 		global $ADODB_FETCH_MODE;
 
@@ -1598,7 +1627,7 @@ class ADORecordset_oci8 extends ADORecordSet {
 		$this->adodbFetchMode = $mode;
 		$this->_queryID = $queryID;
 	}
-	
+
 	/**
 	* Overrides the core destructor method as that causes problems here
 	*
@@ -1806,7 +1835,12 @@ class ADORecordset_oci8 extends ADORecordSet {
 			$len = $fieldobj->max_length;
 		}
 
-		switch (strtoupper($t)) {
+		$t = strtoupper($t);
+
+		if (array_key_exists($t,$this->connection->customActualTypes))
+			return  $this->connection->customActualTypes[$t];
+
+		switch ($t) {
 		case 'VARCHAR':
 		case 'VARCHAR2':
 		case 'CHAR':

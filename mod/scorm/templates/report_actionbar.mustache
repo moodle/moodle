@@ -22,6 +22,7 @@
     * see mod/scorm/classes/output/actionbar.php
     Example context (json):
     {
+        "heading": "Heading",
         "scormreports": {
             "id": "url_select_test",
             "options": [
@@ -37,16 +38,16 @@
         "downloadtext": "http://localhost/moodle/mod/scorm/report.php?id=143&mode=basic&attemptsmode=0&sesskey=AmfcC7riSb&download=CSV"
     }
 }}
-<div class="container-fluid mb-3">
-    <div class="row justify-content-between">
-        <div class="mr-5">
-            {{#scormreports}}
+<div class="container-fluid tertiary-navigation">
+    <div class="row">
+        {{#scormreports}}
+            <div class="navitem">
                 {{>core/url_select}}
-            {{/scormreports}}
-        </div>
-        <div class="mr-5">
-            {{#candownload}}
-                <div class="dropdown show">
+            </div>
+        {{/scormreports}}
+        {{#candownload}}
+            <div class="navitem ml-auto">
+                <div class="dropdown">
                     <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         {{#str}} download {{/str}}
                     </a>
@@ -57,7 +58,7 @@
                         <a class="dropdown-item" href="{{ downloadtext }}">{{#str}} downloadtext {{/str}}</a>
                     </div>
                 </div>
-            {{/candownload}}
-        </div>
+            </div>
+        {{/candownload}}
     </div>
 </div>

@@ -5,6 +5,7 @@ PHPUnit testing support in Moodle
 Documentation
 -------------
 * [Moodle PHPUnit integration](http://docs.moodle.org/dev/PHPUnit)
+* [Moodle Writing PHPUnit tests](https://docs.moodle.org/dev/Writing_PHPUnit_tests)
 * [PHPUnit online documentation](http://www.phpunit.de/manual/current/en/)
 * [Composer dependency manager](http://getcomposer.org/)
 
@@ -38,17 +39,18 @@ this command also builds the phpunit.xml configuration files.
 Execute tests
 --------------
 * execute `vendor/bin/phpunit` from dirroot directory
-* you can execute a single test case class using class name followed by path to test file `vendor/bin/phpunit core_phpunit_basic_testcase lib/tests/phpunit_test.php`
+* you can execute a single test case class using class name followed by path to test file `vendor/bin/phpunit lib/tests/phpunit_test.php`
 * it is also possible to create custom configuration files in xml format and use `vendor/bin/phpunit -c mytestsuites.xml`
 
 
 How to add more tests?
 ----------------------
 1. create `tests/` directory in your add-on
-2. add test file, for example `local/mytest/tests/my_test.php` file with `local_my_testcase` class that extends `basic_testcase` or `advanced_testcase`
-3. add some test_*() methods
-4. execute your new test case `vendor/bin/phpunit local_my_testcase local/mytest/tests/my_test.php`
-5. execute `php admin/tool/phpunit/cli/init.php` to get the plugin tests included in main phpunit.xml configuration file
+2. add test file, for example `local/mytest/tests/my_test.php` file with `my_test` class that extends `basic_testcase` or `advanced_testcase`
+3. set the test class namespace to that of the class being tested
+4. add some `test_*()` methods
+5. execute your new test case `vendor/bin/phpunit local/mytest/tests/my_test.php`
+6. execute `php admin/tool/phpunit/cli/init.php` to get the plugin tests included in main phpunit.xml configuration file
 
 
 Windows support

@@ -24,7 +24,6 @@
  */
 require_once('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
 require_once('forms.php');
 
@@ -41,6 +40,9 @@ $node = $PAGE->settingsnav->find('externalservices', navigation_node::TYPE_SETTI
 if ($node) {
     $node->make_active();
 }
+$PAGE->set_primary_active_tab('siteadminnode');
+$PAGE->navbar->add(get_string('externalservices', 'webservice'),
+   new moodle_url('/admin/settings.php', ['section' => 'externalservices']));
 $PAGE->navbar->add(get_string('functions', 'webservice'),
         new moodle_url('/' . $CFG->admin . '/webservice/service_functions.php', array('id' => $serviceid)));
 
@@ -120,4 +122,3 @@ echo $OUTPUT->heading(get_string('addservicefunction', 'webservice', $service->n
 $functions = $webservicemanager->get_external_functions(array($service->id));
 echo $renderer->admin_service_function_list($functions, $service);
 echo $OUTPUT->footer();
-

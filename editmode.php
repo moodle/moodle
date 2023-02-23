@@ -34,14 +34,6 @@ require_login();
 $context = \context_helper::instance_by_id($contextid);
 $PAGE->set_context($context);
 
-if ($context->id === \context_user::instance($USER->id)->id) {
-    $PAGE->set_blocks_editing_capability('moodle/my:manageblocks');
-}
-
-if ($PAGE->user_allowed_editing()) {
-    $USER->editing = $setmode;
-} else {
-    \core\notification::add(get_string('cannotswitcheditmodeon', 'error'), \core\notification::ERROR);
-}
+$USER->editing = $setmode;
 
 redirect($pageurl);

@@ -79,7 +79,7 @@ class event_exporter_base extends exporter {
             $event->get_id()
         );
         $data->descriptionformat = $event->get_description()->get_format();
-        $data->location = external_format_text($event->get_location(), FORMAT_PLAIN, $related['context']->id)[0];
+        $data->location = \core_external\util::format_text($event->get_location(), FORMAT_PLAIN, $related['context']->id)[0];
         $data->groupid = $groupid;
         $data->userid = $userid;
         $data->categoryid = $categoryid;
@@ -262,6 +262,9 @@ class event_exporter_base extends exporter {
             'formattedtime' => [
                 'type' => PARAM_RAW,
             ],
+            'formattedlocation' => [
+                'type' => PARAM_RAW,
+            ],
             'isactionevent' => [
                 'type' => PARAM_BOOL
             ],
@@ -286,6 +289,9 @@ class event_exporter_base extends exporter {
             'action' => [
                 'type' => event_action_exporter::read_properties_definition(),
                 'optional' => true,
+            ],
+            'purpose' => [
+                'type' => PARAM_TEXT
             ],
         ];
     }
@@ -328,6 +334,12 @@ class event_exporter_base extends exporter {
         }
         $values['normalisedeventtypetext'] = $stringexists ? get_string($identifier, 'calendar') : '';
 
+        $purpose = 'none';
+        if ($moduleproxy) {
+            $purpose = plugin_supports('mod', $moduleproxy->get('modname'), FEATURE_MOD_PURPOSE, 'none');
+        }
+        $values['purpose'] = $purpose;
+
         $values['icon'] = $iconexporter->export($output);
 
         $subscriptionexporter = new event_subscription_exporter($event);
@@ -362,6 +374,7 @@ class event_exporter_base extends exporter {
         $values['viewurl'] = $viewurl->out(false);
         $values['formattedtime'] = calendar_format_event_time($legacyevent, time(), null, false,
                 $timesort);
+        $values['formattedlocation'] = calendar_format_event_location($legacyevent);
 
         if ($group = $event->get_group()) {
             $values['groupname'] = format_string($group->get('name'), true,

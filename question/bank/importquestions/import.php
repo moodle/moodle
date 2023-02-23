@@ -51,7 +51,7 @@ $category->context = $categorycontext;
 // This page can be called without courseid or cmid in which case.
 // We get the context from the category object.
 if ($contexts === null) { // Need to get the course from the chosen category.
-    $contexts = new question_edit_contexts($categorycontext);
+    $contexts = new core_question\local\bank\question_edit_contexts($categorycontext);
     $thiscontext = $contexts->lowest();
     if ($thiscontext->contextlevel == CONTEXT_COURSE) {
         require_login($thiscontext->instanceid, false);
@@ -75,13 +75,13 @@ $PAGE->set_title($txt->importquestions);
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->activityheader->disable();
 
+echo $OUTPUT->header();
+
 // Print horizontal nav if needed.
 $renderer = $PAGE->get_renderer('core_question', 'bank');
 
-echo $OUTPUT->header();
-
-$qbankaction = new \core_question\output\qbank_actionbar($thispageurl);
-echo $renderer->qbank_action_menu($qbankaction);
+$qbankaction = new \core_question\output\qbank_action_menu($thispageurl);
+echo $renderer->render($qbankaction);
 
 // File upload form submitted.
 if ($form = $importform->get_data()) {

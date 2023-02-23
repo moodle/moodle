@@ -1,27 +1,30 @@
 <?php
-
 /**
-  @version   v5.21.0  2021-02-27
-  @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
-  @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-  Released under both BSD license and Lesser GPL library license.
-  Whenever there is any discrepancy between the two licenses,
-  the BSD license will take precedence.
-
-  Set tabs to 4 for best viewing.
-
- 	DOCUMENTATION:
-
-		See adodb/tests/test-datadict.php for docs and examples.
-*/
-
-/*
-	Test script for parser
-*/
+ * ADOdb Data Dictionary base class.
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
 
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
 
+/**
+ * Test script for parser
+ */
 function lens_ParseTest()
 {
 $str = "`zcol ACOL` NUMBER(32,2) DEFAULT 'The \"cow\" (and Jim''s dog) jumps over the moon' PRIMARY, INTI INT AUTO DEFAULT 0, zcol2\"afs ds";
@@ -164,6 +167,7 @@ function lens_ParseArgs($args,$endstmtchar=',',$tokenchars='_.-')
 
 
 class ADODB_DataDict {
+	/** @var ADOConnection */
 	var $connection;
 	var $debug = false;
 	var $dropTable = 'DROP TABLE %s';
@@ -182,16 +186,18 @@ class ADODB_DataDict {
 	var $invalidResizeTypes4 = array('CLOB','BLOB','TEXT','DATE','TIME'); // for changeTableSQL
 	var $blobSize = 100; 	/// any varchar/char field this size or greater is treated as a blob
 							/// in other words, we use a text area for editing.
+	/** @var string Uppercase driver name */
+	var $upperName;
 
 	/*
 	* Indicates whether a BLOB/CLOB field will allow a NOT NULL setting
-	* The type is whatever is matched to an X or X2 or B type. We must 
+	* The type is whatever is matched to an X or X2 or B type. We must
 	* explicitly set the value in the driver to switch the behaviour on
 	*/
 	public $blobAllowsNotNull;
 	/*
 	* Indicates whether a BLOB/CLOB field will allow a DEFAULT set
-	* The type is whatever is matched to an X or X2 or B type. We must 
+	* The type is whatever is matched to an X or X2 or B type. We must
 	* explicitly set the value in the driver to switch the behaviour on
 	*/
 	public $blobAllowsDefaultValue;
@@ -347,7 +353,7 @@ class ADODB_DataDict {
 	function nameQuote($name = NULL,$allowBrackets=false)
 	{
 		if (!is_string($name)) {
-			return FALSE;
+			return false;
 		}
 
 		$name = trim($name);
@@ -421,6 +427,15 @@ class ADODB_DataDict {
 
 	function actualType($meta)
 	{
+		$meta = strtoupper($meta);
+
+		/*
+		* Add support for custom meta types. We do this
+		* first, that allows us to override existing types
+		*/
+		if (isset($this->connection->customMetaTypes[$meta]))
+			return $this->connection->customMetaTypes[$meta]['actual'];
+
 		return $meta;
 	}
 
@@ -492,7 +507,7 @@ class ADODB_DataDict {
 	 * @param string $tabname table-name
 	 * @param string $flds column-name and type for the changed column
 	 * @param string $tableflds='' complete definition of the new table, eg. for postgres, default ''
-	 * @param array/string $tableoptions='' options for the new table see createTableSQL, default ''
+	 * @param array|string $tableoptions='' options for the new table see createTableSQL, default ''
 	 * @return array with SQL strings
 	 */
 	function alterColumnSQL($tabname, $flds, $tableflds='',$tableoptions='')
@@ -547,7 +562,7 @@ class ADODB_DataDict {
 	 * @param string $tabname table-name
 	 * @param string $flds column-name and type for the changed column
 	 * @param string $tableflds='' complete definition of the new table, eg. for postgres, default ''
-	 * @param array/string $tableoptions='' options for the new table see createTableSQL, default ''
+	 * @param array|string $tableoptions='' options for the new table see createTableSQL, default ''
 	 * @return array with SQL strings
 	 */
 	function dropColumnSQL($tabname, $flds, $tableflds='',$tableoptions='')
@@ -678,27 +693,36 @@ class ADODB_DataDict {
 			//-----------------
 			// Parse attributes
 			foreach($fld as $attr => $v) {
-				if ($attr == 2 && is_numeric($v)) 
+				if ($attr == 2 && is_numeric($v))
 					$attr = 'SIZE';
-				elseif ($attr == 2 && strtoupper($ftype) == 'ENUM') 
+				elseif ($attr == 2 && strtoupper($ftype) == 'ENUM')
 					$attr = 'ENUM';
-				else if (is_numeric($attr) && $attr > 1 && !is_numeric($v)) 
+				else if (is_numeric($attr) && $attr > 1 && !is_numeric($v))
 					$attr = strtoupper($v);
 
 				switch($attr) {
 				case '0':
 				case 'NAME': 	$fname = $v; break;
 				case '1':
-				case 'TYPE': 	$ty = $v; $ftype = $this->actualType(strtoupper($v)); break;
+				case 'TYPE':
+
+					$ty = $v;
+					$ftype = $this->actualType(strtoupper($v));
+					break;
 
 				case 'SIZE':
-								$dotat = strpos($v,'.'); if ($dotat === false) $dotat = strpos($v,',');
-								if ($dotat === false) $fsize = $v;
-								else {
-									$fsize = substr($v,0,$dotat);
-									$fprec = substr($v,$dotat+1);
-								}
-								break;
+					$dotat = strpos($v,'.');
+					if ($dotat === false)
+						$dotat = strpos($v,',');
+					if ($dotat === false)
+						$fsize = $v;
+					else {
+
+						$fsize = substr($v,0,$dotat);
+						$fprec = substr($v,$dotat+1);
+
+					}
+					break;
 				case 'UNSIGNED': $funsigned = true; break;
 				case 'AUTOINCREMENT':
 				case 'AUTO':	$fautoinc = true; $fnotnull = true; break;
@@ -744,9 +768,9 @@ class ADODB_DataDict {
 				* some blob types do not accept nulls, so we override the
 				* previously defined value
 				*/
-				$fnotnull = false; 
+				$fnotnull = false;
 
-			if ($fprimary) 
+			if ($fprimary)
 				$pkey[] = $fname;
 
 			if (($ty == 'X' || $ty == 'X2' || $ty == 'XL' || $ty == 'B') && !$this->blobAllowsDefaultValue)
@@ -843,7 +867,7 @@ class ADODB_DataDict {
 			if (strlen($fprec)) $ftype .= ",".$fprec;
 			$ftype .= ')';
 		}
-		
+
 		/*
 		* Handle additional options
 		*/
@@ -856,12 +880,12 @@ class ADODB_DataDict {
 					case 'ENUM':
 					$ftype .= '(' . $value . ')';
 					break;
-					
+
 					default:
 				}
 			}
 		}
-		
+
 		return $ftype;
 	}
 
@@ -924,7 +948,7 @@ class ADODB_DataDict {
 				return $sql;
 			}
 		}
-		
+
 		$s = "CREATE TABLE $tabname (\n";
 		$s .= implode(",\n", $lines);
 		if (sizeof($pkey)>0) {

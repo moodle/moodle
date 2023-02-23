@@ -148,8 +148,12 @@ if (!empty($message)) {
     echo $output->management_message($message);
 }
 
-echo $output->heading(get_string('gradingmanagementtitle', 'core_grading', array(
-    'component' => $manager->get_component_title(), 'area' => $manager->get_area_title())));
+if ($PAGE->has_secondary_navigation()) {
+    echo $output->heading(get_string('gradingmanagement', 'core_grading'));
+} else {
+    echo $output->heading(get_string('gradingmanagementtitle', 'core_grading', array(
+        'component' => $manager->get_component_title(), 'area' => $manager->get_area_title())));
+}
 
 // display the active grading method information and selector
 echo $output->management_method_selector($manager, $PAGE->url);

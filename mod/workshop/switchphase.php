@@ -45,7 +45,7 @@ if ($confirm) {
         throw new moodle_exception('confirmsesskeybad');
     }
     if (!$workshop->switch_phase($phase)) {
-        print_error('errorswitchingphase', 'workshop', $workshop->view_url());
+        throw new \moodle_exception('errorswitchingphase', 'workshop', $workshop->view_url());
     }
     redirect($workshop->view_url());
 }
@@ -65,7 +65,11 @@ $PAGE->set_secondary_active_tab("modulepage");
 //
 echo $OUTPUT->header();
 $continuebtn = new single_button(
-    new moodle_url($PAGE->url, array('confirm' => 1)), get_string('continue'), 'post', true);
+    new moodle_url($PAGE->url, array('confirm' => 1)),
+    get_string('continue'),
+    'post',
+    single_button::BUTTON_PRIMARY
+);
 $continuebtn->class .= ' mr-3';
 echo $OUTPUT->confirm(get_string('switchphase' . $phase . 'info', 'workshop'),
                         $continuebtn, $workshop->view_url());

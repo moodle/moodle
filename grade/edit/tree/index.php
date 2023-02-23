@@ -40,7 +40,7 @@ $PAGE->set_pagelayout('admin');
 
 /// Make sure they can even access this course
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 require_login($course);
@@ -63,7 +63,7 @@ if (empty($eid)) {
 
 } else {
     if (!$element = $gtree->locate_element($eid)) {
-        print_error('invalidelementid', '', $returnurl);
+        throw new \moodle_exception('invalidelementid', '', $returnurl);
     }
     $object = $element['object'];
 }
@@ -89,7 +89,7 @@ switch ($action) {
     case 'duplicate':
         if ($eid and confirm_sesskey()) {
             if (!$el = $gtree->locate_element($eid)) {
-                print_error('invalidelementid', '', $returnurl);
+                throw new \moodle_exception('invalidelementid', '', $returnurl);
             }
 
             $object->duplicate();
@@ -136,7 +136,7 @@ switch ($action) {
             $first = optional_param('first', false,  PARAM_BOOL); // If First is set to 1, it means the target is the first child of the category $moveafter
 
             if(!$after_el = $gtree->locate_element($moveafter)) {
-                print_error('invalidelementid', '', $returnurl);
+                throw new \moodle_exception('invalidelementid', '', $returnurl);
             }
 
             $after = $after_el['object'];

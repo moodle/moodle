@@ -95,6 +95,16 @@ class mod_scorm_renderer extends plugin_renderer_base {
     public function user_report_actionbar(\mod_scorm\output\userreportsactionbar $userreportsactionbar): string {
         return $this->render_from_template('mod_scorm/user_report_actionbar', $userreportsactionbar->export_for_template($this));
     }
+
+    /**
+     * Generate the SCORM's "Exit activity" button
+     *
+     * @param string $url The url to be hooked up to the exit button
+     * @return string
+     */
+    public function generate_exitbar(string $url): string {
+        return $this->render_from_template('mod_scorm/player_exitbar', ['action' => $url]);
+    }
 }
 
 /**

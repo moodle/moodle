@@ -34,11 +34,11 @@ require_login();
 // Check capabilities but do not call require_login($course) - the user does not have to be enrolled.
 $context = context_course::instance($course->id);
 if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $context)) {
-    print_error('coursehidden', '', $CFG->wwwroot .'/');
+    throw new \moodle_exception('coursehidden', '', $CFG->wwwroot .'/');
 }
 require_capability('moodle/course:tag', $context);
 if (!core_tag_tag::is_enabled('core', 'course')) {
-    print_error('tagsaredisabled', 'tag');
+    throw new \moodle_exception('tagsaredisabled', 'tag');
 }
 
 $PAGE->set_course($course);

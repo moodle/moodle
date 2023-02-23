@@ -21,6 +21,9 @@
  * @copyright  2017 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace enrol_database;
+
+use course_enrolment_manager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,7 +35,19 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2017 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class enrol_database_lib_testcase extends advanced_testcase {
+class lib_test extends \advanced_testcase {
+
+    public static function tearDownAfterClass(): void {
+        global $DB;
+        // Apply sqlsrv native driver error and logging default
+        // settings while finishing the AdoDB tests.
+        if ($DB->get_dbfamily() === 'mssql') {
+            sqlsrv_configure("WarningsReturnAsErrors", false);
+            sqlsrv_configure("LogSubsystems", SQLSRV_LOG_SYSTEM_OFF);
+            sqlsrv_configure("LogSeverity", SQLSRV_LOG_SEVERITY_ERROR);
+        }
+    }
+
     /**
      * Test for getting user enrolment actions.
      */

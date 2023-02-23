@@ -39,8 +39,6 @@ ini_set('log_errors', '1');
 if (ini_get('opcache.enable') and strtolower(ini_get('opcache.enable')) !== 'off') {
     if (!ini_get('opcache.save_comments') or strtolower(ini_get('opcache.save_comments')) === 'off') {
         ini_set('opcache.enable', 0);
-    } else {
-        ini_set('opcache.load_comments', 1);
     }
 }
 

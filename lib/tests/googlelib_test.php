@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
+use Google_Service_Exception;
+use Google_Service_YouTube;
+
 /**
  * Tests for google library
  *
@@ -21,7 +26,7 @@
  * @copyright  2021 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_googlelib_testcase extends advanced_testcase {
+class googlelib_test extends \advanced_testcase {
 
     public function test_invalid_google_api_key() {
         global $CFG;

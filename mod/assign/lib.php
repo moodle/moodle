@@ -364,7 +364,7 @@ function assign_update_events($assign, $override = null) {
  * Return the list if Moodle features this module supports
  *
  * @param string $feature FEATURE_xx constant for requested feature
- * @return mixed True if module supports feature, null if doesn't know
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function assign_supports($feature) {
     switch($feature) {
@@ -392,6 +392,8 @@ function assign_supports($feature) {
             return true;
         case FEATURE_COMMENT:
             return true;
+        case FEATURE_MOD_PURPOSE:
+            return MOD_PURPOSE_ASSESSMENT;
 
         default:
             return null;
@@ -406,7 +408,7 @@ function assign_supports($feature) {
  * @return void
  */
 function assign_extend_settings_navigation(settings_navigation $settings, navigation_node $navref) {
-    global $PAGE, $DB;
+    global $DB;
 
     // We want to add these new nodes after the Edit settings node, and before the
     // Locally assigned roles node. Of course, both of those are controlled by capabilities.
@@ -419,34 +421,25 @@ function assign_extend_settings_navigation(settings_navigation $settings, naviga
         $beforekey = $keys[$i + 1];
     }
 
-    $cm = $PAGE->cm;
+    $cm = $settings->get_page()->cm;
     if (!$cm) {
         return;
     }
 
     $context = $cm->context;
-    $course = $PAGE->course;
+    $course = $settings->get_page()->course;
 
     if (!$course) {
         return;
     }
 
-    if (has_capability('mod/assign:manageoverrides', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/assign/overrides.php', array('cmid' => $PAGE->cm->id));
+    if (has_capability('mod/assign:manageoverrides', $settings->get_page()->cm->context)) {
+        $url = new moodle_url('/mod/assign/overrides.php', ['cmid' => $settings->get_page()->cm->id, 'mode' => 'user']);
 
         $node = navigation_node::create(get_string('overrides', 'assign'),
             $url,
             navigation_node::TYPE_SETTING, null, 'mod_assign_useroverrides');
         $navref->add_node($node, $beforekey);
-    }
-
-    // Link to gradebook.
-    if (has_capability('gradereport/grader:view', $cm->context) &&
-            has_capability('moodle/grade:viewall', $cm->context)) {
-        $link = new moodle_url('/grade/report/grader/index.php', array('id' => $course->id));
-        $linkname = get_string('viewgradebook', 'assign');
-        $node = $navref->add($linkname, $link, navigation_node::TYPE_SETTING);
-        $node->set_force_into_more_menu(true);
     }
 
     if (has_capability('mod/assign:revealidentities', $context)) {
@@ -946,7 +939,7 @@ function assign_print_recent_mod_activity($activity, $courseid, $detail, $modnam
     if ($detail) {
         $modname = $modnames[$activity->type];
         echo '<div class="title">';
-        echo $OUTPUT->image_icon('icon', $modname, 'assign');
+        echo $OUTPUT->image_icon('monologo', $modname, 'assign');
         echo '<a href="' . $CFG->wwwroot . '/mod/assign/view.php?id=' . $activity->cmid . '">';
         echo $activity->name;
         echo '</a>';
@@ -1445,6 +1438,14 @@ function mod_assign_output_fragment_gradingpanel($args) {
     $assign = new assign($context, null, null);
 
     $userid = clean_param($args['userid'], PARAM_INT);
+
+    $participant = $assign->get_participant($userid);
+    $isfiltered = $assign->is_userid_filtered($userid);
+    if (!$participant || !$isfiltered) {
+        // User is not enrolled or filtered out by filters and table preferences.
+        return '';
+    }
+
     $attemptnumber = clean_param($args['attemptnumber'], PARAM_INT);
     $formdata = array();
     if (!empty($args['jsonformdata'])) {

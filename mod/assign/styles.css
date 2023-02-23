@@ -782,23 +782,6 @@
     background-color: transparent;
 }
 
-.path-mod-assign [data-region="grade-panel"] .gradingform_rubric.evaluate .criterion .levels .level:hover {
-    background-color: #dff0d8;
-}
-
-.path-mod-assign [data-region="grade-panel"] .gradingform_rubric .criterion .levels .level.checked {
-    background-color: #dff0d8;
-    border: none;
-    border-left: 1px solid #ddd;
-}
-
-.path-mod-assign [data-region="grade-panel"] .gradingform_rubric .criterion .levels .level .score {
-    color: #468847;
-    font-weight: 500;
-    font-style: normal;
-    margin-top: 20px;
-}
-
 .path-mod-assign [data-region="grade-panel"] .gradingform_rubric .criterion .remark textarea {
     margin-bottom: 0;
 }

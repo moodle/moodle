@@ -24,14 +24,15 @@
 
 namespace core_courseformat\output\local\content\cm;
 
+use action_menu;
+use action_menu_link;
 use cm_info;
+use core\output\named_templatable;
 use core_courseformat\base as course_format;
+use core_courseformat\output\local\courseformat_named_templatable;
 use renderable;
 use section_info;
 use stdClass;
-use templatable;
-use action_menu;
-use action_menu_link;
 
 /**
  * Base class to render a course module menu inside a course format.
@@ -40,7 +41,9 @@ use action_menu_link;
  * @copyright 2020 Ferran Recio <ferran@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class controlmenu implements renderable, templatable {
+class controlmenu implements named_templatable, renderable {
+
+    use courseformat_named_templatable;
 
     /** @var course_format the course format */
     protected $format;
@@ -125,10 +128,7 @@ class controlmenu implements renderable, templatable {
 
         // Convert control array into an action_menu.
         $menu = new action_menu();
-        $menu->set_alignment(action_menu::TR, action_menu::BR);
-        $icon = $output->pix_icon('i/menu', get_string('edit'));
-        $menu->set_menu_trigger($icon, 'btn btn-icon d-flex align-items-center justify-content-center');
-
+        $menu->set_kebab_trigger(get_string('edit'));
         $menu->attributes['class'] .= ' section-cm-edit-actions commands';
 
         // Prioritise the menu ahead of all other actions.

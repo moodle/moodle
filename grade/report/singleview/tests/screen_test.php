@@ -14,26 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace gradereport_singleview;
+
+use gradereport_singleview_screen_testable;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once(__DIR__ . '/fixtures/screen.php');
+require_once($CFG->libdir . '/gradelib.php');
+
 /**
- * Unit tests for gradereport_singleview screen class.
+ * Tests for screen class.
  *
  * @package    gradereport_singleview
  * @category   test
  * @copyright  2014 onwards Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-global $CFG;
-require_once(__DIR__ . '/fixtures/screen.php');
-require_once($CFG->libdir . '/gradelib.php');
-
-defined('MOODLE_INTERNAL') || die();
-/**
- * Tests for screen class.
- *
- * Class gradereport_singleview_screen_testcase.
- */
-class gradereport_singleview_screen_testcase extends advanced_testcase {
+class screen_test extends \advanced_testcase {
 
     /**
      * Test load_users method.
@@ -44,21 +43,21 @@ class gradereport_singleview_screen_testcase extends advanced_testcase {
         $this->setAdminUser();
         $this->resetAfterTest(true);
 
-        $roleteacher = $DB->get_record('role', array('shortname' => 'teacher'), '*', MUST_EXIST);
+        $roleteacher = $DB->get_record('role', ['shortname' => 'teacher'], '*', MUST_EXIST);
 
         // Create a course, users and groups.
         $course = $this->getDataGenerator()->create_course();
-        $coursecontext = context_course::instance($course->id);
-        $group = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $coursecontext = \context_course::instance($course->id);
+        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
         $teacher = $this->getDataGenerator()->create_user();
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $roleteacher->id);
         $this->getDataGenerator()->enrol_user($user1->id, $course->id);
         $this->getDataGenerator()->enrol_user($user2->id, $course->id);
-        $this->getDataGenerator()->create_group_member(array('groupid' => $group->id, 'userid' => $teacher->id));
-        $this->getDataGenerator()->create_group_member(array('groupid' => $group->id, 'userid' => $user1->id));
-        $this->getDataGenerator()->create_group_member(array('groupid' => $group->id, 'userid' => $user2->id));
+        $this->getDataGenerator()->create_group_member(['groupid' => $group->id, 'userid' => $teacher->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group->id, 'userid' => $user1->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group->id, 'userid' => $user2->id]);
 
         // Perform a regrade before creating the report.
         grade_regrade_final_grades($course->id);

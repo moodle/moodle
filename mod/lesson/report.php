@@ -53,6 +53,7 @@ if ($action == 'reportdetail') {
 }
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
+$PAGE->activityheader->set_description('');
 $reportactionmenu = new \mod_lesson\output\report_action_menu($id, $url);
 $reportactionarea = $lessonoutput->render($reportactionmenu);
 
@@ -365,7 +366,7 @@ if ($action === 'delete') {
         echo html_writer::table($table);
     }
 } else {
-    print_error('unknowaction');
+    throw new \moodle_exception('unknowaction');
 }
 
 /// Finish the page

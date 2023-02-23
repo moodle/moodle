@@ -9,7 +9,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="definitionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the form definition this criterion is part of"/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Defines the order of the criterion in the rubric"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The criterion description"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The criterion description"/>
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="The format of the description field"/>
       </FIELDS>
       <KEYS>
@@ -22,7 +22,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="criterionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The rubric criterion we are level of"/>
         <FIELD NAME="score" TYPE="number" LENGTH="10" NOTNULL="true" SEQUENCE="false" DECIMALS="5" COMMENT="The score for this level"/>
-        <FIELD NAME="definition" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The optional text describing the level"/>
+        <FIELD NAME="definition" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The optional text describing the level"/>
         <FIELD NAME="definitionformat" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The format of the definition field"/>
       </FIELDS>
       <KEYS>
@@ -36,7 +36,7 @@
         <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the grading form instance"/>
         <FIELD NAME="criterionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the criterion (row) in the rubric"/>
         <FIELD NAME="levelid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="If a particular level was selected during the assessment, its ID is stored here"/>
-        <FIELD NAME="remark" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Side note feedback regarding this particular criterion"/>
+        <FIELD NAME="remark" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Side note feedback regarding this particular criterion"/>
         <FIELD NAME="remarkformat" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="The format of the remark field"/>
       </FIELDS>
       <KEYS>

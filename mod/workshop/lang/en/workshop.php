@@ -133,6 +133,7 @@ $string['eventsubmissionreassessed'] = 'Submission re-assessed';
 $string['eventsubmissionupdated'] = 'Submission updated';
 $string['eventsubmissiondeleted'] = 'Submission deleted';
 $string['eventsubmissionviewed'] = 'Submission viewed';
+$string['eventphaseautomaticallyswitched'] = 'Phase automatically switched';
 $string['eventphaseswitched'] = 'Phase switched';
 $string['example'] = 'Example submission';
 $string['exampleadd'] = 'Add example submission';

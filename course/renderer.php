@@ -66,7 +66,6 @@ class core_course_renderer extends plugin_renderer_base {
     public function __construct(moodle_page $page, $target) {
         $this->strings = new stdClass;
         $courseid = $page->course->id;
-        user_preference_allow_ajax_update('coursesectionspreferences_' . $courseid, PARAM_RAW);
         parent::__construct($page, $target);
     }
 
@@ -135,17 +134,10 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Build the HTML for the module chooser javascript popup
-     *
-     * @param array $modules A set of modules as returned form @see
-     * get_module_metadata
-     * @param object $course The course that will be displayed
-     * @return string The composed HTML for the module
+     * @deprecated since 3.9
      */
-    public function course_modchooser($modules, $course) {
-        debugging('course_modchooser() is deprecated. Please use course_activitychooser() instead.', DEBUG_DEVELOPER);
-
-        return $this->course_activitychooser($course->id);
+    public function course_modchooser() {
+        throw new coding_exception('course_modchooser() can not be used anymore, please use course_activitychooser() instead.');
     }
 
     /**
@@ -253,7 +245,6 @@ class core_course_renderer extends plugin_renderer_base {
         $menu = new action_menu();
         $menu->set_owner_selector($ownerselector);
         $menu->set_constraint($constraint);
-        $menu->set_alignment(action_menu::TR, action_menu::BR);
         $menu->set_menu_trigger(get_string('edit'));
 
         foreach ($actions as $action) {
@@ -595,7 +586,7 @@ class core_course_renderer extends plugin_renderer_base {
      */
     public function course_section_cm_name(cm_info $mod, $displayoptions = array()) {
         debugging(
-            'course_section_cm_name is deprecated. Use core_courseformat\output\local\content\cm\\cmname class instead.',
+            'course_section_cm_name is deprecated. Use core_courseformat\\output\\local\\content\\cm\\cmname class instead.',
             DEBUG_DEVELOPER
         );
 
@@ -615,14 +606,12 @@ class core_course_renderer extends plugin_renderer_base {
             $format,
             $mod->get_section_info(),
             $mod,
-            $this->page->user_is_editing(),
+            null,
             $displayoptions
         );
 
-        $data = $cmname->export_for_template($this->output);
-
-        return $this->output->render_from_template('core/inplace_editable', $data) .
-            $groupinglabel;
+        $renderer = $format->get_renderer($this->page);
+        return $renderer->render($cmname) . $groupinglabel;
     }
 
     /**
@@ -677,7 +666,7 @@ class core_course_renderer extends plugin_renderer_base {
     public function course_section_cm_name_title(cm_info $mod, $displayoptions = array()) {
 
         debugging(
-            'course_section_cm_name_title is deprecated. Use core_courseformat\\output\\local\\cm\\title classes instead.',
+            'course_section_cm_name_title is deprecated. Use core_courseformat\\output\\local\\cm\\title class instead.',
             DEBUG_DEVELOPER
         );
 
@@ -710,9 +699,13 @@ class core_course_renderer extends plugin_renderer_base {
         $onclick = htmlspecialchars_decode($mod->onclick, ENT_QUOTES);
 
         // Display link itself.
-        $activitylink = html_writer::empty_tag('img', array('src' => $mod->get_icon_url(),
-                'class' => 'iconlarge activityicon', 'alt' => '', 'role' => 'presentation', 'aria-hidden' => 'true')) .
-                html_writer::tag('span', $instancename . $altname, array('class' => 'instancename'));
+        $instancename = html_writer::tag('span', $instancename . $altname, ['class' => 'instancename ml-1']);
+
+        $imageicon = html_writer::empty_tag('img', ['src' => $mod->get_icon_url(),
+            'class' => 'activityicon', 'alt' => '', 'role' => 'presentation', 'aria-hidden' => 'true']);
+        $imageicon = html_writer::tag('span', $imageicon, ['class' => 'activityiconcontainer courseicon']);
+        $activitylink = $imageicon . $instancename;
+
         if ($mod->uservisible) {
             $output .= html_writer::link($url, $activitylink, array('class' => 'aalink' . $linkclasses, 'onclick' => $onclick));
         } else {
@@ -821,10 +814,8 @@ class core_course_renderer extends plugin_renderer_base {
             $mod->get_section_info(),
             $mod,
         );
-
         $renderer = $format->get_renderer($this->page);
-        $data = $availability->export_for_template($renderer);
-        return $data->info ?? '';
+        return $renderer->render($availability);
     }
 
     /**
@@ -875,7 +866,7 @@ class core_course_renderer extends plugin_renderer_base {
     public function course_section_cm($course, &$completioninfo, cm_info $mod, $sectionreturn, $displayoptions = []) {
 
         debugging(
-            'course_section_cm is deprecated. Use core_courseformat\output\content\cm output classes instead.',
+            'course_section_cm is deprecated. Use core_courseformat\\output\\content\\cm output class instead.',
             DEBUG_DEVELOPER
         );
 
@@ -944,7 +935,7 @@ class core_course_renderer extends plugin_renderer_base {
     public function course_section_cm_list($course, $section, $sectionreturn = null, $displayoptions = []) {
         global $USER;
 
-        debugging('course_section_cm_list is deprecated. Use core_course\\output\\section_format\\cmlist '.
+        debugging('course_section_cm_list is deprecated. Use core_courseformat\\output\\local\\content\\section\\cmlist '.
                 'classes instead.', DEBUG_DEVELOPER);
 
         $output = '';
@@ -1674,14 +1665,8 @@ class core_course_renderer extends plugin_renderer_base {
             $coursecat = core_course_category::get(is_object($category) ? $category->id : $category);
         }
         $site = get_site();
-        $output = '';
-
-        if ($coursecat->can_create_course() || $coursecat->has_manage_capability()) {
-            // Add 'Manage' button if user has permissions to edit this category.
-            $managebutton = $this->single_button(new moodle_url('/course/management.php',
-                array('categoryid' => $coursecat->id)), get_string('managecourses'), 'get');
-            $this->page->set_button($managebutton);
-        }
+        $actionbar = new \core_course\output\category_action_bar($this->page, $coursecat);
+        $output = $this->render_from_template('core_course/category_actionbar', $actionbar->export_for_template($this));
 
         if (core_course_category::is_simple_site()) {
             // There is only one category in the system, do not display link to it.
@@ -1693,17 +1678,6 @@ class core_course_renderer extends plugin_renderer_base {
         } else {
             $strfulllistofcourses = get_string('fulllistofcourses');
             $this->page->set_title("$site->shortname: $strfulllistofcourses");
-
-            // Print the category selector
-            $categorieslist = core_course_category::make_categories_list();
-            if (count($categorieslist) > 1) {
-                $output .= html_writer::start_tag('div', array('class' => 'categorypicker'));
-                $select = new single_select(new moodle_url('/course/index.php'), 'categoryid',
-                        core_course_category::make_categories_list(), $coursecat->id, null, 'switchcategory');
-                $select->set_label(get_string('categories').':', ['class' => 'sr-only']);
-                $output .= $this->render($select);
-                $output .= html_writer::end_tag('div'); // .categorypicker
-            }
         }
 
         // Print current category description
@@ -1748,32 +1722,9 @@ class core_course_renderer extends plugin_renderer_base {
             $catdisplayoptions['viewmoreurl'] = new moodle_url($baseurl, array('browse' => 'categories', 'page' => 1));
         }
         $chelper->set_courses_display_options($coursedisplayoptions)->set_categories_display_options($catdisplayoptions);
-        // Add course search form.
-        $output .= $this->course_search_form();
 
         // Display course category tree.
         $output .= $this->coursecat_tree($chelper, $coursecat);
-
-        // Add action buttons
-        $output .= $this->container_start('buttons');
-        if ($coursecat->is_uservisible()) {
-            $context = get_category_or_system_context($coursecat->id);
-            if (has_capability('moodle/course:create', $context)) {
-                // Print link to create a new course, for the 1st available category.
-                if ($coursecat->id) {
-                    $url = new moodle_url('/course/edit.php', array('category' => $coursecat->id, 'returnto' => 'category'));
-                } else {
-                    $url = new moodle_url('/course/edit.php',
-                        array('category' => $CFG->defaultrequestcategory, 'returnto' => 'topcat'));
-                }
-                $output .= $this->single_button($url, get_string('addnewcourse'), 'get');
-            }
-            ob_start();
-            print_course_request_buttons($context);
-            $output .= ob_get_contents();
-            ob_end_clean();
-        }
-        $output .= $this->container_end();
 
         return $output;
     }
@@ -2038,7 +1989,7 @@ class core_course_renderer extends plugin_renderer_base {
                 // There are more enrolled courses than we can display, display link to 'My courses'.
                 $courses = array_slice($courses, 0, $CFG->frontpagecourselimit, true);
                 $chelper->set_courses_display_options(array(
-                        'viewmoreurl' => new moodle_url('/my/'),
+                        'viewmoreurl' => new moodle_url('/my/courses.php'),
                         'viewmoretext' => new lang_string('mycourses')
                     ));
             } else if (core_course_category::top()->is_uservisible()) {

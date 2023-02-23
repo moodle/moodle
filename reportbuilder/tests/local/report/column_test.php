@@ -256,6 +256,17 @@ class column_test extends advanced_testcase {
     }
 
     /**
+     * Test column alias with a field containing an alias
+     */
+    public function test_column_alias_with_field_alias(): void {
+        $column = $this->create_column('test')
+            ->set_index(1)
+            ->add_field('COALESCE(t.foo, t.bar)', 'lionel');
+
+        $this->assertEquals('c1_lionel', $column->get_column_alias());
+    }
+
+    /**
      * Test alias of column without any fields throws exception
      */
     public function test_column_alias_no_fields(): void {
@@ -300,11 +311,11 @@ class column_test extends advanced_testcase {
     }
 
     /**
-     * Data provider for {@see test_format_value}
+     * Data provider for {@see test_get_default_value} and {@see test_format_value}
      *
      * @return array[]
      */
-    public function format_value_provider(): array {
+    public function column_type_provider(): array {
         return [
             [column::TYPE_INTEGER, 42],
             [column::TYPE_TEXT, 'Hello'],
@@ -316,13 +327,31 @@ class column_test extends advanced_testcase {
     }
 
     /**
-     * Test that column value is returned as correctly (value plus type)
+     * Test default value is returned from selected values, with correct type
      *
      * @param int $columntype
      * @param mixed $value
      * @param mixed|null $expected Expected value, or null to indicate it should be identical to value
      *
-     * @dataProvider format_value_provider
+     * @dataProvider column_type_provider
+     */
+    public function test_get_default_value(int $columntype, $value, $expected = null): void {
+        $defaultvalue = column::get_default_value([
+            'value' => $value,
+            'foo' => 'bar',
+        ], $columntype);
+
+        $this->assertSame($expected ?? $value, $defaultvalue);
+    }
+
+    /**
+     * Test that column value is returned correctly, with correct type
+     *
+     * @param int $columntype
+     * @param mixed $value
+     * @param mixed|null $expected Expected value, or null to indicate it should be identical to value
+     *
+     * @dataProvider column_type_provider
      */
     public function test_format_value(int $columntype, $value, $expected = null): void {
         $column = $this->create_column('test')
@@ -391,6 +420,22 @@ class column_test extends advanced_testcase {
     }
 
     /**
+     * Test that column value with callback (where aggregation is not set) is returned
+     */
+    public function test_format_value_callback_aggregation(): void {
+        $column = $this->create_column('test')
+            ->set_index(1)
+            ->add_field('t.foo')
+            ->set_type(column::TYPE_INTEGER)
+            ->add_callback(static function(int $value, stdClass $values, $argument, ?string $aggregation): string {
+                // Simple callback to return the given value, and append type of aggregation parameter.
+                return "{$value} " . gettype($aggregation);
+            });
+
+        $this->assertEquals("42 NULL", $column->format_value(['c1_foo' => 42]));
+    }
+
+    /**
      * Test adding multiple callbacks to a column
      */
     public function test_add_multiple_callback(): void {
@@ -439,6 +484,43 @@ class column_test extends advanced_testcase {
 
         $column->set_is_sortable(true);
         $this->assertTrue($column->get_is_sortable());
+    }
+
+    /**
+     * Test retrieving sort fields
+     */
+    public function test_get_sortfields(): void {
+        $column = $this->create_column('test')
+            ->set_index(1)
+            ->add_fields('t.foo, t.bar, t.baz')
+            ->set_is_sortable(true, ['t.baz', 't.bar']);
+
+        $this->assertEquals(['c1_baz', 'c1_bar'], $column->get_sort_fields());
+    }
+
+    /**
+     * Test retrieving sort fields when an aliased field is set as sortable
+     */
+    public function test_get_sortfields_with_field_alias(): void {
+        $column = $this->create_column('test')
+            ->set_index(1)
+            ->add_field('t.foo')
+            ->add_field('COALESCE(t.foo, t.bar)', 'lionel')
+            ->set_is_sortable(true, ['lionel']);
+
+        $this->assertEquals(['c1_lionel'], $column->get_sort_fields());
+    }
+
+    /**
+     * Test retrieving sort fields when an unknown field is set as sortable
+     */
+    public function test_get_sortfields_unknown_field(): void {
+        $column = $this->create_column('test')
+            ->set_index(1)
+            ->add_fields('t.foo')
+            ->set_is_sortable(true, ['t.baz']);
+
+        $this->assertEquals(['t.baz'], $column->get_sort_fields());
     }
 
     /**

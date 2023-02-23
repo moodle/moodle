@@ -27,7 +27,6 @@ use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
 use lang_string;
 use stdClass;
-use core_customfield\data;
 use core_customfield\data_controller;
 use core_customfield\field_controller;
 use core_customfield\handler;
@@ -120,8 +119,9 @@ class custom_fields {
                 $datacontroller = data_controller::create(0, null, $field);
                 $datafield = $datacontroller->datafield();
 
-                $alias = 'customfield_' . $field->get('shortname');
-                $selectfields = "{$customdatatablealias}.{$datafield} as {$alias}, {$customdatatablealias}.id";
+                // Select enough fields to re-create and format each custom field instance value.
+                $selectfields = "{$customdatatablealias}.{$datafield}, {$customdatatablealias}.id,
+                    {$customdatatablealias}.contextid";
                 if ($datafield === 'value') {
                     // We will take the format into account when displaying the individual values.
                     $selectfields .= ", {$customdatatablealias}.valueformat";
@@ -279,17 +279,6 @@ class custom_fields {
      * @return mixed|null
      */
     public function customfield_value($value, stdClass $row, field_controller $field) {
-        $defaults = [
-            'id'             => -1,
-            'shortcharvalue' => $value,
-            'charvalue'      => $value,
-            'intvalue'       => (int)$value,
-            'decvalue'       => (float)$value,
-            'value'          => $value,
-            'fieldid'        => $field->get('id'),
-            'valueformat'    => FORMAT_HTML,
-        ];
-        $row = array_intersect_key(array_merge($defaults, (array)$row), data::properties_definition());
         $data = data_controller::create(0, (object)$row, $field);
         return $data->export_value();
     }

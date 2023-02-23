@@ -62,3 +62,22 @@ Feature: View cohort list
     And I should not see "Cohort in category 2"
     And I should not see "Cohort in category 3"
     And I log out
+
+  @javascript
+  Scenario: Cohorts list can be filtered
+    When I log in as "admin"
+    And I navigate to "Users > Accounts > Cohorts" in site administration
+    And I follow "All cohorts"
+    And I click on "Filters" "button"
+    And I set the following fields in the "Name" "core_reportbuilder > Filter" to these values:
+      | Name operator | Contains    |
+      | Name value    | category 1  |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    Then the following should exist in the "reportbuilder-table" table:
+      | Category  | Name                  |
+      | Cat 1     | Cohort in category 1  |
+    And the following should not exist in the "reportbuilder-table" table:
+      | Category  | Name                  |
+      | Cat 2     | Cohort in category 2  |
+      | Cat 3     | Cohort in category 3  |
+      | System    | System cohort         |

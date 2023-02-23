@@ -14,24 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Provides the {@link mlbackend_python_processor_testcase} class.
- *
- * @package     mlbackend_python
- * @category    test
- * @copyright   2019 David Mudrák <david@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace mlbackend_python;
 
 /**
  * Unit tests for the {@link \mlbackend_python\processor} class.
  *
+ * @package   mlbackend_python
+ * @category  test
  * @copyright 2019 David Mudrák <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mlbackend_python_processor_testcase extends advanced_testcase {
+class processor_test extends \advanced_testcase {
 
     /**
      * Test implementation of the {@link \mlbackend_python\processor::check_pip_package_version()} method.

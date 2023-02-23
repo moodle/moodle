@@ -1,0 +1,5 @@
+{
+    "plugintypes": {
+        "tiny": "lib/editor/tiny/plugins"
+    }
+}

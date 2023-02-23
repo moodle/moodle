@@ -130,11 +130,6 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->hideIf('winoptgrp', 'popup', 'eq', 0);
         $mform->setAdvanced('winoptgrp', $cfgscorm->winoptgrp_adv);
 
-        // Display activity name.
-        $mform->addElement('advcheckbox', 'displayactivityname', get_string('displayactivityname', 'scorm'));
-        $mform->addHelpButton('displayactivityname', 'displayactivityname', 'scorm');
-        $mform->setDefault('displayactivityname', $cfgscorm->displayactivityname);
-
         // Skip view page.
         $skipviewoptions = scorm_get_skip_view_array();
         $mform->addElement('select', 'skipview', get_string('skipview', 'scorm'), $skipviewoptions);
@@ -276,7 +271,9 @@ class mod_scorm_mod_form extends moodleform_mod {
         $this->standard_coursemodule_elements();
 
         // A SCORM module should define this within itself and is not needed here.
-        $mform->removeElement('completionpassgrade');
+        if ($mform->elementExists('completionpassgrade')) {
+            $mform->removeElement('completionpassgrade');
+        }
 
         // Buttons.
         $this->add_action_buttons();

@@ -34,12 +34,13 @@
         }
     }
 }}
-<div class="container-fluid mb-4">
+<div class="container-fluid tertiary-navigation full-width-bottom-border">
     <div class="row">
-        <div class="d-flex">
-            {{#backbutton}}
+        {{#backbutton}}
+            <div class="navitem">
                 {{>core/single_button}}
-            {{/backbutton}}
-        </div>
+            </div>
+            <div class="navitem-divider"></div>
+        {{/backbutton}}
     </div>
 </div>

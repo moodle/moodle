@@ -67,6 +67,17 @@ class api {
         $DB->delete_records('h5p_library_dependencies', array('libraryid' => $library->id));
         $DB->delete_records('h5p_libraries', array('id' => $library->id));
 
+        // Remove the library from the cache.
+        $libscache = \cache::make('core', 'h5p_libraries');
+        $libarray = [
+            'machineName' => $library->machinename,
+            'majorVersion' => $library->majorversion,
+            'minorVersion' => $library->minorversion,
+        ];
+        $libstring = H5PCore::libraryToString($libarray);
+        $librarykey = helper::get_cache_librarykey($libstring);
+        $libscache->delete($librarykey);
+
         // Remove the libraries using this library.
         $requiredlibraries = self::get_dependent_libraries($library->id);
         foreach ($requiredlibraries as $requiredlibrary) {
@@ -163,7 +174,7 @@ class api {
             unset($library->major_version);
             $library->minorVersion = (int) $library->minorversion;
             unset($library->minorversion);
-            $library->metadataSettings = json_decode($library->metadatasettings);
+            $library->metadataSettings = json_decode($library->metadatasettings ?? '');
 
             // If we already add this library means that it is an old version,as the previous query was sorted by version.
             if (isset($added[$library->name])) {

@@ -29,7 +29,8 @@ require_once($CFG->libdir.'/gradelib.php');
 $courseid = optional_param('id', 0, PARAM_INT);
 $action   = optional_param('action', '', PARAM_ALPHA);
 
-$PAGE->set_url('/grade/edit/outcome/index.php', array('id' => $courseid));
+$url = new moodle_url('/grade/edit/outcome/index.php', ['id' => $courseid]);
+$PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 
 /// Make sure they can even access this course
@@ -44,6 +45,7 @@ if ($courseid) {
     }
     // This page doesn't exist on the navigation so map it to another
     navigation_node::override_active_url(new moodle_url('/grade/edit/outcome/course.php', array('id'=>$courseid)));
+    $PAGE->navbar->add(get_string('manageoutcomes', 'grades'), $url);
 } else {
     if (empty($CFG->enableoutcomes)) {
         redirect('../../../');
@@ -51,6 +53,7 @@ if ($courseid) {
     require_once $CFG->libdir.'/adminlib.php';
     admin_externalpage_setup('outcomes');
     $context = context_system::instance();
+    $PAGE->set_primary_active_tab('siteadminnode');
 }
 
 /// return tracking object
@@ -79,7 +82,7 @@ switch ($action) {
         if (empty($outcome->courseid)) {
             require_capability('moodle/grade:manage', context_system::instance());
         } else if ($outcome->courseid != $courseid) {
-            print_error('invalidcourseid');
+            throw new \moodle_exception('invalidcourseid');
         }
 
         if (!$outcome->can_delete()) {
@@ -90,6 +93,7 @@ switch ($action) {
 
         if(!$deleteconfirmed){
             $PAGE->set_title(get_string('outcomedelete', 'grades'));
+            $PAGE->navbar->add(get_string('outcomedelete', 'grades'));
             echo $OUTPUT->header();
             $confirmurl = new moodle_url('index.php', array(
                     'id' => $courseid, 'outcomeid' => $outcome->id,

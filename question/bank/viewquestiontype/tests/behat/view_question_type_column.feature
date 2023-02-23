@@ -22,11 +22,9 @@ Feature: Use the qbank plugin manager page for viewquestiontype
     When I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I should see "View question type"
     And I click on "Disable" "link" in the "View question type" "table_row"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Test quiz" "mod_quiz > question bank" page
     Then "#categoryquestions .header.qtype" "css_element" should not be visible
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "View question type" "table_row"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Test quiz" "mod_quiz > question bank" page
     And "#categoryquestions .header.qtype" "css_element" should be visible

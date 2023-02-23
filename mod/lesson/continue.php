@@ -76,13 +76,16 @@ if ($result->nodefaultresponse || $result->inmediatejump) {
 
 // Set Messages.
 $lesson->add_messages_on_page_process($page, $result, $reviewmode);
-
+$PAGE->set_secondary_active_tab('modulepage');
 $PAGE->set_url('/mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $page->id));
 $PAGE->set_subpage($page->id);
 
 /// Print the header, heading and tabs
 lesson_add_fake_blocks($PAGE, $cm, $lesson, $timer);
 echo $lessonoutput->header($lesson, $cm, 'view', true, $page->id, get_string('continue', 'lesson'));
+
+$editbuttons = new \mod_lesson\output\edit_action_buttons($lesson, $page->id ?? null);
+echo $lessonoutput->render($editbuttons);
 
 if ($lesson->displayleft) {
     echo '<a name="maincontent" id="maincontent" title="'.get_string('anchortitle', 'lesson').'"></a>';

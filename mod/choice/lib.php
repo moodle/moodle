@@ -330,12 +330,12 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
     $continueurl = new moodle_url('/mod/choice/view.php', array('id' => $cm->id));
 
     if (empty($formanswer)) {
-        print_error('atleastoneoption', 'choice', $continueurl);
+        throw new \moodle_exception('atleastoneoption', 'choice', $continueurl);
     }
 
     if (is_array($formanswer)) {
         if (!$choice->allowmultiple) {
-            print_error('multiplenotallowederror', 'choice', $continueurl);
+            throw new \moodle_exception('multiplenotallowederror', 'choice', $continueurl);
         }
         $formanswers = $formanswer;
     } else {
@@ -345,7 +345,7 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
     $options = $DB->get_records('choice_options', array('choiceid' => $choice->id), '', 'id');
     foreach ($formanswers as $key => $val) {
         if (!isset($options[$val])) {
-            print_error('cannotsubmit', 'choice', $continueurl);
+            throw new \moodle_exception('cannotsubmit', 'choice', $continueurl);
         }
     }
     // Start lock to prevent synchronous access to the same data
@@ -360,7 +360,7 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
         // Opening the lock.
         $choicelock = $lockfactory->get_lock($resouce, $timeout, MINSECS);
         if (!$choicelock) {
-            print_error('cannotsubmit', 'choice', $continueurl);
+            throw new \moodle_exception('cannotsubmit', 'choice', $continueurl);
         }
     }
 
@@ -476,7 +476,7 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
     } else {
         // This is a choice with limited options, and one of the options selected has just run over its limit.
         $choicelock->release();
-        print_error('choicefull', 'choice', $continueurl);
+        throw new \moodle_exception('choicefull', 'choice', $continueurl);
     }
 
     // Release lock.
@@ -836,7 +836,7 @@ function choice_get_response_data($choice, $cm, $groupmode, $onlyactive) {
  * @uses FEATURE_GRADE_HAS_GRADE
  * @uses FEATURE_GRADE_OUTCOMES
  * @param string $feature FEATURE_xx constant for requested feature
- * @return mixed True if module supports feature, null if doesn't know
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function choice_supports($feature) {
     switch($feature) {
@@ -849,6 +849,7 @@ function choice_supports($feature) {
         case FEATURE_GRADE_OUTCOMES:          return false;
         case FEATURE_BACKUP_MOODLE2:          return true;
         case FEATURE_SHOW_DESCRIPTION:        return true;
+        case FEATURE_MOD_PURPOSE:             return MOD_PURPOSE_COMMUNICATION;
 
         default: return null;
     }
@@ -861,11 +862,9 @@ function choice_supports($feature) {
  * @param navigation_node $choicenode The node to add module settings to
  */
 function choice_extend_settings_navigation(settings_navigation $settings, navigation_node $choicenode) {
-    global $PAGE;
-
-    if (has_capability('mod/choice:readresponses', $PAGE->cm->context)) {
+    if (has_capability('mod/choice:readresponses', $settings->get_page()->cm->context)) {
         $choicenode->add(get_string('responses', 'choice'),
-            new moodle_url('/mod/choice/report.php', array('id' => $PAGE->cm->id)));
+            new moodle_url('/mod/choice/report.php', array('id' => $settings->get_page()->cm->id)));
     }
 }
 

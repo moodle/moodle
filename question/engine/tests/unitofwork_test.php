@@ -14,15 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests for the question_engine_unit_of_work class.
- *
- * @package    moodlecore
- * @subpackage questionengine
- * @copyright  2012 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_question;
 
+use question_bank;
+use question_hint;
+use question_test_recordset;
+use question_usage_by_activity;
+use testable_question_engine_unit_of_work;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,14 +28,15 @@ global $CFG;
 require_once(__DIR__ . '/../lib.php');
 require_once(__DIR__ . '/helpers.php');
 
-
 /**
  * Unit tests for the {@link question_engine_unit_of_work} class.
  *
+ * @package    core_question
+ * @category   test
  * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_engine_unit_of_work_test extends data_loading_method_test_base {
+class unitofwork_test extends \data_loading_method_test_base {
     /** @var question_usage_by_activity the test question usage. */
     protected $quba;
 
@@ -52,7 +51,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
         // and attempted in interactive mode submitted responses 'toad' then 'frog'.
         // Then set it to use a new unit of work for any subsequent changes.
         // Create a short answer question.
-        $question = test_question_maker::make_question('shortanswer');
+        $question = \test_question_maker::make_question('shortanswer');
         $question->hints = array(
             new question_hint(0, 'This is the first hint.', FORMAT_HTML),
             new question_hint(0, 'This is the second hint.', FORMAT_HTML),
@@ -116,7 +115,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
 
     public function test_add_question() {
 
-        $slot = $this->quba->add_question(test_question_maker::make_question('truefalse'));
+        $slot = $this->quba->add_question(\test_question_maker::make_question('truefalse'));
 
         $newattempts = $this->observer->get_attempts_added();
         $this->assertEquals(1, count($newattempts));
@@ -129,7 +128,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
 
     public function test_add_and_start_question() {
 
-        $slot = $this->quba->add_question(test_question_maker::make_question('truefalse'));
+        $slot = $this->quba->add_question(\test_question_maker::make_question('truefalse'));
                 $this->quba->start_question($slot);
 
         // The point here is that, although we have added a step, it is not listed
@@ -282,7 +281,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
 
     public function test_move_question() {
 
-        $q = test_question_maker::make_question('truefalse');
+        $q = \test_question_maker::make_question('truefalse');
         $newslot = $this->quba->add_question_in_place_of_other($this->slot, $q);
         $this->quba->start_question($this->slot);
 
@@ -306,7 +305,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
 
     public function test_move_question_then_modify() {
 
-        $q = test_question_maker::make_question('truefalse');
+        $q = \test_question_maker::make_question('truefalse');
         $newslot = $this->quba->add_question_in_place_of_other($this->slot, $q);
         $this->quba->start_question($this->slot);
         $this->quba->process_action($this->slot, array('answer' => 'frog', '-submit' => 1));
@@ -337,11 +336,11 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
     public function test_move_question_then_move_again() {
         $originalqa = $this->quba->get_question_attempt($this->slot);
 
-        $q1 = test_question_maker::make_question('truefalse');
+        $q1 = \test_question_maker::make_question('truefalse');
         $newslot = $this->quba->add_question_in_place_of_other($this->slot, $q1);
         $this->quba->start_question($this->slot);
 
-        $q2 = test_question_maker::make_question('truefalse');
+        $q2 = \test_question_maker::make_question('truefalse');
         $newslot2 = $this->quba->add_question_in_place_of_other($newslot, $q2);
         $this->quba->start_question($newslot);
 
@@ -451,7 +450,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
     }
 
     public function test_set_metadata_in_new_question() {
-        $newslot = $this->quba->add_question(test_question_maker::make_question('truefalse'));
+        $newslot = $this->quba->add_question(\test_question_maker::make_question('truefalse'));
         $this->quba->start_question($newslot);
         $this->quba->set_question_attempt_metadata($newslot, 'metathingy', 'a value');
         $this->assertEquals('a value', $this->quba->get_question_attempt_metadata($newslot, 'metathingy'));
@@ -470,7 +469,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
 
     public function test_set_metadata_then_move() {
         $this->quba->set_question_attempt_metadata($this->slot, 'metathingy', 'a value');
-        $q = test_question_maker::make_question('truefalse');
+        $q = \test_question_maker::make_question('truefalse');
         $newslot = $this->quba->add_question_in_place_of_other($this->slot, $q);
         $this->quba->start_question($this->slot);
         $this->assertEquals('a value', $this->quba->get_question_attempt_metadata($newslot, 'metathingy'));
@@ -490,7 +489,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
     }
 
     public function test_move_then_set_metadata() {
-        $q = test_question_maker::make_question('truefalse');
+        $q = \test_question_maker::make_question('truefalse');
         $newslot = $this->quba->add_question_in_place_of_other($this->slot, $q);
         $this->quba->start_question($this->slot);
         $this->quba->set_question_attempt_metadata($newslot, 'metathingy', 'a value');

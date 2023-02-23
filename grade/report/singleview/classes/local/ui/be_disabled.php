@@ -36,5 +36,5 @@ interface be_disabled {
      *
      * @return bool
      */
-    public function is_disabled();
+    public function is_disabled(): bool;
 }

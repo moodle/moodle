@@ -94,10 +94,9 @@ const registerSelector = root => {
             const input = page.querySelector(SELECTORS.region.searchInput);
             if (input.value !== '') {
                 const clearIcon = page.querySelector(SELECTORS.region.clearIcon);
-                const searchIcon = page.querySelector(SELECTORS.region.searchIcon);
                 input.value = '';
                 // Triggers the init so wont need to call it again.
-                View.clearSearch(searchIcon, clearIcon, root);
+                View.clearSearch(clearIcon, root);
             } else {
                 View.init(root);
             }

@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Test xmlize xml import.
- *
- * @package    core
- * @category   test
- * @copyright  2017 Kilian Singer {@link http://quantumtechnology.info}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,10 +24,12 @@ require_once($CFG->libdir . '/xmlize.php');
 /**
  * This test compares library against the original xmlize XML importer.
  *
+ * @package    core
+ * @category   test
  * @copyright  2017 Kilian Singer {@link http://quantumtechnology.info}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_xmlize_testcase extends basic_testcase {
+class xmlize_test extends \basic_testcase {
     /**
      * Test an XML import using a valid XML file.
      *

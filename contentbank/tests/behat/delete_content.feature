@@ -5,12 +5,17 @@ Feature: Delete H5P file from the content bank
   I need to be able to delete any H5P content from the content bank
 
   Background:
-    Given I log in as "admin"
+    Given the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
+    And I log in as "admin"
     And I follow "Manage private files..."
     And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager
     And I click on "Save changes" "button"
     And I am on site homepage
     And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Navigation" block if not present
     And I configure the "Navigation" block
     And I set the following fields to these values:
@@ -27,15 +32,15 @@ Feature: Delete H5P file from the content bank
     And I click on "Save changes" "button"
 
   Scenario: Admins can delete content from the content bank
-    Given I open the action menu in "region-main-settings-menu" "region"
+    Given I click on "More" "button"
     And I should see "Delete"
-    When I choose "Delete" in the open action menu
+    And I click on "Delete" "link" in the ".cb-toolbar-container" "css_element"
     And I should see "Are you sure you want to delete the content 'content2delete.h5p'"
     And I should not see "The content will only be deleted from the content bank"
     And I click on "Cancel" "button" in the "Delete content" "dialogue"
     Then I should see "content2delete.h5p"
-    And I open the action menu in "region-main-settings-menu" "region"
-    And I choose "Delete" in the open action menu
+    And  I click on "More" "button"
+    And I click on "Delete" "link" in the ".cb-toolbar-container" "css_element"
     And I click on "Delete" "button" in the "Delete content" "dialogue"
     And I wait until the page is ready
     And I should see "The content has been deleted."
@@ -60,7 +65,8 @@ Feature: Delete H5P file from the content bank
     And I click on "Content bank" "link" in the "Navigation" "block"
     And I should see "content2delete.h5p"
     And I follow "content2delete.h5p"
-    Then "Delete" "link" should not exist in the "region-main-settings-menu" "region"
+    And I click on "More" "button"
+    Then I should not see "Delete"
     And I click on "Content bank" "link"
     And I click on "Upload" "link"
     And I click on "Choose a file..." "button"
@@ -68,11 +74,11 @@ Feature: Delete H5P file from the content bank
     And I click on "find-the-words.h5p" "link"
     And I click on "Select this file" "button"
     And I click on "Save changes" "button"
-    And I open the action menu in "region-main-settings-menu" "region"
+    And  I click on "More" "button"
     And I should see "Delete"
 
   Scenario: The number of times a content is used is displayed before removing it
-    Given I follow "Dashboard" in the user menu
+    Given I follow "Dashboard"
     And I follow "Manage private files..."
     And I click on "Add..." "button"
     And I select "Content bank" repository in file picker
@@ -83,8 +89,8 @@ Feature: Delete H5P file from the content bank
     When I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Content bank" "link" in the "Navigation" "block"
     And I follow "content2delete.h5p"
-    And I open the action menu in "region-main-settings-menu" "region"
-    And I choose "Delete" in the open action menu
+    And  I click on "More" "button"
+    And I click on "Delete" "link" in the ".cb-toolbar-container" "css_element"
     Then I should see "Are you sure you want to delete the content 'content2delete.h5p'"
     And I should see "The content will only be deleted from the content bank"
     And I click on "Delete" "button" in the "Delete content" "dialogue"

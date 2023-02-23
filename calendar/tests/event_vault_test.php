@@ -14,22 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains the class that handles testing of the calendar event vault.
- *
- * @package core_calendar
- * @copyright 2017 Ryan Wyllie <ryan@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_calendar;
+
+use action_event_test_factory;
+use core_calendar\local\event\data_access\event_vault;
+use core_calendar\local\event\strategies\raw_event_retrieval_strategy;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/calendar/tests/helpers.php');
 
-use core_calendar\local\event\data_access\event_vault;
-use core_calendar\local\event\strategies\raw_event_retrieval_strategy;
-
 /**
  * This file contains the class that handles testing of the calendar event vault.
  *
@@ -37,7 +32,7 @@ use core_calendar\local\event\strategies\raw_event_retrieval_strategy;
  * @copyright 2017 Ryan Wyllie <ryan@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_calendar_event_vault_testcase extends advanced_testcase {
+class event_vault_test extends \advanced_testcase {
 
     /**
      * Test that get_action_events_by_timesort returns events after the
@@ -517,7 +512,7 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         ];
 
         foreach ($events as $event) {
-            calendar_event::create($event, false);
+            \calendar_event::create($event, false);
         }
 
         $factory = new action_event_test_factory();
@@ -1174,7 +1169,7 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         ];
 
         foreach ($events as $event) {
-            calendar_event::create($event, false);
+            \calendar_event::create($event, false);
         }
 
         $factory = new action_event_test_factory();

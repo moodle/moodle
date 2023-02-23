@@ -132,12 +132,8 @@ class block_base {
     function name() {
         // Returns the block name, as present in the class name,
         // the database, the block directory, etc etc.
-        static $myname;
-        if ($myname === NULL) {
-            $myname = strtolower(get_class($this));
-            $myname = substr($myname, strpos($myname, '_') + 1);
-        }
-        return $myname;
+        $myname = strtolower(get_class($this));
+        return substr($myname, strpos($myname, '_') + 1);
     }
 
     /**
@@ -282,7 +278,7 @@ class block_base {
      * Return an object containing all the block content to be returned by external functions.
      *
      * If your block is returning formatted content or provide files for download, you should override this method to use the
-     * external_format_text, external_format_string functions for formatting or external_util::get_area_files for files.
+     * \core_external\util::format_text, \core_external\util::format_string functions for formatting or external_util::get_area_files for files.
      *
      * @param  core_renderer $output the rendered used for output
      * @return stdClass      object containing the block title, central content, footer and linked files (if any).
@@ -597,8 +593,19 @@ class block_base {
      * @return boolean
      */
     function user_can_addto($page) {
+        global $CFG;
+        require_once($CFG->dirroot . '/user/lib.php');
+
         // List of formats this block supports.
         $formats = $this->applicable_formats();
+
+        // Check if user is trying to add blocks to their profile page.
+        $userpagetypes = user_page_type_list($page->pagetype, null, null);
+        if (array_key_exists($page->pagetype, $userpagetypes)) {
+            $capability = 'block/' . $this->name() . ':addinstance';
+            return $this->has_add_block_capability($page, $capability)
+                && has_capability('moodle/user:manageownblocks', $page->context);
+        }
 
         // The blocks in My Moodle are a special case and use a different capability.
         $mypagetypes = my_page_type_list($page->pagetype); // Get list of possible my page types.
@@ -746,6 +753,18 @@ EOD;
      */
     public function get_aria_role() {
         return 'complementary';
+    }
+
+    /**
+     * This method can be overriden to add some extra checks to decide whether the block can be added or not to a page.
+     * It doesn't need to do the standard capability checks as they will be performed by has_add_block_capability().
+     * This method is user agnostic. If you want to check if a user can add a block or not, you should use user_can_addto().
+     *
+     * @param moodle_page $page The page where this block will be added.
+     * @return bool Whether the block can be added or not to the given page.
+     */
+    public function can_block_be_added(moodle_page $page): bool {
+        return true;
     }
 }
 

@@ -3,6 +3,7 @@
 namespace PhpOffice\PhpSpreadsheet\Worksheet;
 
 use GdImage;
+use PhpOffice\PhpSpreadsheet\Exception;
 
 class MemoryDrawing extends BaseDrawing
 {
@@ -21,7 +22,7 @@ class MemoryDrawing extends BaseDrawing
     /**
      * Image resource.
      *
-     * @var GdImage|resource
+     * @var null|GdImage|resource
      */
     private $imageResource;
 
@@ -46,25 +47,90 @@ class MemoryDrawing extends BaseDrawing
      */
     private $uniqueName;
 
+    /** @var null|resource */
+    private $alwaysNull;
+
     /**
      * Create a new MemoryDrawing.
      */
     public function __construct()
     {
         // Initialise values
-        $this->imageResource = null;
         $this->renderingFunction = self::RENDERING_DEFAULT;
         $this->mimeType = self::MIMETYPE_DEFAULT;
         $this->uniqueName = md5(mt_rand(0, 9999) . time() . mt_rand(0, 9999));
+        $this->alwaysNull = null;
 
         // Initialize parent
         parent::__construct();
     }
 
+    public function __destruct()
+    {
+        if ($this->imageResource) {
+            $rslt = @imagedestroy($this->imageResource);
+            // "Fix" for Scrutinizer
+            $this->imageResource = $rslt ? null : $this->alwaysNull;
+        }
+    }
+
+    public function __clone()
+    {
+        parent::__clone();
+        $this->cloneResource();
+    }
+
+    private function cloneResource(): void
+    {
+        if (!$this->imageResource) {
+            return;
+        }
+
+        $width = (int) imagesx($this->imageResource);
+        $height = (int) imagesy($this->imageResource);
+
+        if (imageistruecolor($this->imageResource)) {
+            $clone = imagecreatetruecolor($width, $height);
+            if (!$clone) {
+                throw new Exception('Could not clone image resource');
+            }
+
+            imagealphablending($clone, false);
+            imagesavealpha($clone, true);
+        } else {
+            $clone = imagecreate($width, $height);
+            if (!$clone) {
+                throw new Exception('Could not clone image resource');
+            }
+
+            // If the image has transparency...
+            $transparent = imagecolortransparent($this->imageResource);
+            if ($transparent >= 0) {
+                $rgb = imagecolorsforindex($this->imageResource, $transparent);
+                if (empty($rgb)) {
+                    throw new Exception('Could not get image colors');
+                }
+
+                imagesavealpha($clone, true);
+                $color = imagecolorallocatealpha($clone, $rgb['red'], $rgb['green'], $rgb['blue'], $rgb['alpha']);
+                if ($color === false) {
+                    throw new Exception('Could not get image alpha color');
+                }
+
+                imagefill($clone, 0, 0, $color);
+            }
+        }
+
+        //Create the Clone!!
+        imagecopy($clone, $this->imageResource, 0, 0, 0, 0, $width, $height);
+
+        $this->imageResource = $clone;
+    }
+
     /**
      * Get image resource.
      *
-     * @return GdImage|resource
+     * @return null|GdImage|resource
      */
     public function getImageResource()
     {
@@ -84,8 +150,8 @@ class MemoryDrawing extends BaseDrawing
 
         if ($this->imageResource !== null) {
             // Get width/height
-            $this->width = imagesx($this->imageResource);
-            $this->height = imagesy($this->imageResource);
+            $this->width = (int) imagesx($this->imageResource);
+            $this->height = (int) imagesy($this->imageResource);
         }
 
         return $this;
@@ -141,10 +207,8 @@ class MemoryDrawing extends BaseDrawing
 
     /**
      * Get indexed filename (using image index).
-     *
-     * @return string
      */
-    public function getIndexedFilename()
+    public function getIndexedFilename(): string
     {
         $extension = strtolower($this->getMimeType());
         $extension = explode('/', $extension);

@@ -14,14 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for float form element.
- *
- * @package    core_form
- * @category   test
- * @copyright  2019 Shamim Rezaie <shamim@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_form;
+
+use MoodleQuickForm_float;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,10 +29,11 @@ require_once($CFG->libdir . '/form/float.php');
  * Contains test cases for testing MoodleQuickForm_float
  *
  * @package    core_form
+ * @category   test
  * @copyright  2019 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_form_float_testcase extends advanced_testcase {
+class float_test extends \advanced_testcase {
 
     /**
      * Define a local decimal separator.

@@ -37,7 +37,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class base_testcase extends PHPUnit\Framework\TestCase {
-    // @codingStandardsIgnoreStart
+    // phpcs:disable
     // Following code is legacy code from phpunit to support assertTag
     // and assertNotTag.
 
@@ -569,6 +569,5 @@ abstract class base_testcase extends PHPUnit\Framework\TestCase {
 
         return str_replace('  ', ' ', $result);
     }
-
-    // @codingStandardsIgnoreEnd
+    // phpcs:enable
 }

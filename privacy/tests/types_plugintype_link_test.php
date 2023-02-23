@@ -14,29 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_privacy;
+
+use core_privacy\local\metadata\types\plugintype_link;
+
 /**
- * Types unit tests for the Plugintype Link.
+ * Tests for the \core_privacy API's types\plugintype_link functionality.
  *
  * @package     core_privacy
  * @category    test
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-use \core_privacy\local\metadata\types\plugintype_link;
-
-/**
- * Tests for the \core_privacy API's types\plugintype_link functionality.
- *
- * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\metadata\types\plugintype_link
  */
-class core_privacy_metadata_types_plugintype_link extends advanced_testcase {
+class types_plugintype_link_test extends \advanced_testcase {
 
     /**
      * Ensure that warnings are thrown if string identifiers contain invalid characters.

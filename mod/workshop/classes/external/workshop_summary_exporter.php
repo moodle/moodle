@@ -26,8 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
 use renderer_base;
-use external_util;
-use external_files;
+use core_external\util as external_util;
+use core_external\external_files;
 
 /**
  * Class for exporting partial workshop data (some fields are only viewable by admins).
@@ -63,6 +63,11 @@ class workshop_summary_exporter extends exporter {
                 'type' => PARAM_INT,
                 'default' => FORMAT_MOODLE,
                 'description' => 'Workshop intro text format.',
+            ),
+            'lang' => array(
+                'type' => PARAM_LANG,
+                'description' => 'Forced activity language',
+                'null' => NULL_ALLOWED,
             ),
             'instructauthors' => array(
                 'type' => PARAM_RAW,

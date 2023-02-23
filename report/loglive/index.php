@@ -65,23 +65,14 @@ $renderable = new report_loglive_renderable($logreader, $id, $url, 0, $page);
 $refresh = $renderable->get_refresh_rate();
 $logreader = $renderable->selectedlogreader;
 
-// Include and trigger ajax requests.
-if ($page == 0 && !empty($logreader)) {
-    // Tell Js to fetch new logs only, by passing time().
-    $jsparams = array('since' => time() , 'courseid' => $id, 'page' => $page, 'logreader' => $logreader,
-            'interval' => $refresh, 'perpage' => $renderable->perpage);
-    $PAGE->requires->strings_for_js(array('pause', 'resume'), 'report_loglive');
-    $PAGE->requires->yui_module('moodle-report_loglive-fetchlogs', 'Y.M.report_loglive.FetchLogs.init', array($jsparams));
-}
-
 $strlivelogs = get_string('livelogs', 'report_loglive');
 $strupdatesevery = get_string('updatesevery', 'moodle', $refresh);
 
 
 $PAGE->set_url($url);
 $PAGE->set_context($context);
-$PAGE->set_title("$coursename: $strlivelogs ($strupdatesevery)");
-$PAGE->set_heading("$coursename: $strlivelogs ($strupdatesevery)");
+$PAGE->set_title("$coursename: $strlivelogs");
+$PAGE->set_heading($coursename);
 
 $output = $PAGE->get_renderer('report_loglive');
 echo $output->header();
@@ -89,9 +80,20 @@ echo $output->header();
 // Print selector dropdown.
 $pluginname = get_string('pluginname', 'report_loglive');
 report_helper::print_report_selector($pluginname);
+echo html_writer::div(get_string('livelogswithupdate', 'report_loglive', $strupdatesevery), 'mb-3');
 echo $output->reader_selector($renderable);
 echo $output->toggle_liveupdate_button($renderable);
 echo $output->render($renderable);
+
+// Include and trigger ajax requests.
+if ($page == 0 && !empty($logreader)) {
+    // Tell Js to fetch new logs only, by passing the latest timestamp of records in the table.
+    $until = $renderable->get_table()->get_until();
+    $jsparams = array('since' => $until , 'courseid' => $id, 'page' => $page, 'logreader' => $logreader,
+        'interval' => $refresh, 'perpage' => $renderable->perpage);
+    $PAGE->requires->strings_for_js(array('pause', 'resume'), 'report_loglive');
+    $PAGE->requires->yui_module('moodle-report_loglive-fetchlogs', 'Y.M.report_loglive.FetchLogs.init', array($jsparams));
+}
 
 // Trigger a logs viewed event.
 $event = \report_loglive\event\report_viewed::create(array('context' => $context));

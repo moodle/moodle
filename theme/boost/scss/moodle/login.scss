@@ -35,8 +35,11 @@ $login-identity-provider-btn-border: $border-color !default;
     margin-bottom: 2rem;
     .login-languagemenu {
         display: flex;
-        justify-content: flex-end;
-        margin-bottom: 1rem;
+        justify-content: flex-start;
+        .dropdown-menu {
+            max-height: 300px;
+            overflow-y: auto;
+        }
     }
     .login-logo {
         display: flex;
@@ -61,10 +64,21 @@ $login-identity-provider-btn-border: $border-color !default;
             border: $border-width solid $login-identity-provider-btn-border;
         }
     }
+    .divider {
+        width: $border-width;
+        background-color: $gray-300;
+        height: $font-size-base * 2;
+    }
+    .action-menu-trigger {
+        a {
+            margin: 0.5rem 0;
+        }
+    }
 }
 
 @include media-breakpoint-up(md) {
     .login-container {
         max-width: 600px;
+        @include border-radius();
     }
 }

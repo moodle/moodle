@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Test for restore_stepslib.
- *
- * @package core_backup
- * @copyright 2016 Andrew Nicols <andrew@nicols.co.uk>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,7 +30,7 @@ require_once($CFG->libdir . '/completionlib.php');
  * @copyright 2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_backup_restore_gradebook_structure_step_testcase extends advanced_testcase {
+class restore_gradebook_structure_step_test extends \advanced_testcase {
 
     /**
      * Provide tests for rewrite_step_backup_file_for_legacy_freeze based upon fixtures.

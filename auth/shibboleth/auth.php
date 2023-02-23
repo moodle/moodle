@@ -105,7 +105,11 @@ class auth_plugin_shibboleth extends auth_plugin_base {
 
         // Check whether we have got all the essential attributes
         if ( empty($_SERVER[$this->config->user_attribute]) ) {
-            print_error( 'shib_not_all_attributes_error', 'auth_shibboleth' , '', "'".$this->config->user_attribute."' ('".$_SERVER[$this->config->user_attribute]."'), '".$this->config->field_map_firstname."' ('".$_SERVER[$this->config->field_map_firstname]."'), '".$this->config->field_map_lastname."' ('".$_SERVER[$this->config->field_map_lastname]."') and '".$this->config->field_map_email."' ('".$_SERVER[$this->config->field_map_email]."')");
+            throw new \moodle_exception( 'shib_not_all_attributes_error', 'auth_shibboleth' , '',
+                    "'".$this->config->user_attribute."' ('".$_SERVER[$this->config->user_attribute]."'), '".
+                $this->config->field_map_firstname."' ('".$_SERVER[$this->config->field_map_firstname]."'), '".
+                $this->config->field_map_lastname."' ('".$_SERVER[$this->config->field_map_lastname]."') and '".
+                $this->config->field_map_email."' ('".$_SERVER[$this->config->field_map_email]."')");
         }
 
         $attrmap = $this->get_attributes();

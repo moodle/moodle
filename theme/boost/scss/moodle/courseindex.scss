@@ -1,11 +1,12 @@
 $courseindex-link-color: $list-group-action-color !default;
+$courseindex-link-color-selected: color-yiq($primary) !default;
 $courseindex-link-dimmed-color: $gray-600 !default;
 $courseindex-link-hover-color: black !default;
 $courseindex-item-dragging-bg: theme-color-level('info', -11) !default;
 $courseindex-item-dragging-border: theme-color-level('info', -9) !default;
 $courseindex-item-active-border: $gray-300 !default;
 $courseindex-item-active-bg: $gray-100 !default;
-$courseindex-item-page-bg: $gray-200 !default;
+$courseindex-item-page-bg: $primary !default;
 $courseindex-item-padding-y: 0.5rem;
 $courseindex-item-padding-x: 0.5rem;
 $courseindex-item-radius: $border-radius !default;
@@ -15,14 +16,16 @@ $courseindex-item-current: $primary !default;
     @include hover-focus() {
         color: $courseindex-link-hover-color;
 
-        .courseindex-link {
+        .courseindex-link,
+        .courseindex-chevron {
             color: $courseindex-link-hover-color;
             cursor: pointer;
         }
         &.dimmed {
             color: $courseindex-link-hover-color;
 
-            .courseindex-link {
+            .courseindex-link,
+            .courseindex-chevron {
                 color: $courseindex-link-hover-color;
             }
         }
@@ -34,7 +37,7 @@ $courseindex-item-current: $primary !default;
 
 @mixin courseindex-item-dragging() {
     &.dragging {
-        border: $border-width $courseindex-item-dragging-border;
+        border: $border-width solid $courseindex-item-dragging-border;
         background-color: $courseindex-item-dragging-bg;
     }
 }
@@ -54,7 +57,8 @@ $courseindex-item-current: $primary !default;
             padding-right: 4px;
         }
 
-        .courseindex-link {
+        .courseindex-link,
+        .courseindex-chevron {
             color: $courseindex-link-color;
             @include hover-focus() {
                 color: $courseindex-link-hover-color;
@@ -75,8 +79,18 @@ $courseindex-item-current: $primary !default;
         &.dimmed {
             color: $courseindex-link-dimmed-color;
 
-            .courseindex-link {
+            .courseindex-link,
+            .courseindex-chevron {
                 color: $courseindex-link-dimmed-color;
+            }
+
+            // Current page dimmed item.
+            &.pageitem {
+                color: $courseindex-link-color-selected;
+
+                a {
+                    color: $courseindex-link-color-selected;
+                }
             }
         }
 
@@ -84,7 +98,7 @@ $courseindex-item-current: $primary !default;
         .courseindex-locked {
             display: none;
         }
-        &.rectrictions {
+        &.restrictions {
             .courseindex-locked {
                 display: block;
             }
@@ -93,9 +107,19 @@ $courseindex-item-current: $primary !default;
         // Current page item.
         &.pageitem {
             background-color: $courseindex-item-page-bg;
-            color: $courseindex-link-hover-color;
+            color: $courseindex-link-color-selected;
+            scroll-margin: 6rem;
             a {
-                color: $courseindex-link-hover-color;
+                color: $courseindex-link-color-selected;
+            }
+
+            @include hover-focus() {
+                background-color: darken($courseindex-item-page-bg, 7.5%);
+                color: darken($courseindex-link-color-selected, 10%);
+                .courseindex-link,
+                .courseindex-chevron {
+                    color: darken($courseindex-link-color-selected, 10%);
+                }
             }
         }
 

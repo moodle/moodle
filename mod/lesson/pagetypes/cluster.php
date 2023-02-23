@@ -132,7 +132,7 @@ class lesson_add_page_form_cluster extends lesson_add_page_form_base {
         if ($pageid == 0) {
             if ($lesson->has_pages()) {
                 if (!$page = $DB->get_record("lesson_pages", array("prevpageid" => 0, "lessonid" => $lesson->id))) {
-                    print_error('cannotfindpagerecord', 'lesson');
+                    throw new \moodle_exception('cannotfindpagerecord', 'lesson');
                 }
             } else {
                 // This is the ONLY page
@@ -141,7 +141,7 @@ class lesson_add_page_form_cluster extends lesson_add_page_form_base {
             }
         } else {
             if (!$page = $DB->get_record("lesson_pages", array("id" => $pageid))) {
-                print_error('cannotfindpagerecord', 'lesson');
+                throw new \moodle_exception('cannotfindpagerecord', 'lesson');
             }
         }
         $newpage = new stdClass;

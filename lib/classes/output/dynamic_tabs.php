@@ -31,19 +31,15 @@ use templatable;
  */
 class dynamic_tabs implements templatable {
 
-    /** @var array */
-    protected $attributes;
     /** @var base[]  */
     protected $tabs = [];
 
     /**
      * tabs constructor.
      *
-     * @param array $attributes additional attributes that will be passed to the webservice
      * @param base[] $tabs array of tab
      */
-    public function __construct(array $attributes = [], array $tabs = []) {
-        $this->attributes = $attributes;
+    public function __construct(array $tabs = []) {
         foreach ($tabs as $tab) {
             $this->add_tab($tab);
         }
@@ -66,20 +62,21 @@ class dynamic_tabs implements templatable {
      */
     public function export_for_template(renderer_base $output): array {
         $data = [
-            'dataattributes' => [],
             'tabs' => []
         ];
 
-        foreach ($this->attributes as $name => $value) {
-            $data['dataattributes'][] = ['name' => $name, 'value' => $value];
-        }
-
         foreach ($this->tabs as $tab) {
+            $dataattributes = [];
+            foreach ($tab->get_data() as $name => $value) {
+                $dataattributes[] = ['name' => $name, 'value' => $value];
+            }
+
             $data['tabs'][] = [
                 'shortname' => $tab->get_tab_id(),
                 'displayname' => $tab->get_tab_label(),
                 'enabled' => $tab->is_available(),
-                'tabclass' => get_class($tab)
+                'tabclass' => get_class($tab),
+                'dataattributes' => $dataattributes,
             ];
         }
 

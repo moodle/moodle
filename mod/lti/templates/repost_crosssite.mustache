@@ -37,9 +37,9 @@
     }
 
 }}
-<form action="{{{url}}}" method="POST" id="autopostme">
+<form action="{{url}}" method="POST" id="autopostme">
     {{#params}}
-    <input type="hidden" name="{{{key}}}" value="{{{value}}}">
+    <input type="hidden" name="{{key}}" value="{{value}}">
     {{/params}}
     <input type="hidden" name="repost" value="true">
 </form>

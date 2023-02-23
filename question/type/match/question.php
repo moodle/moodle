@@ -107,6 +107,48 @@ class qtype_match_question extends question_graded_automatically_with_countback 
         }
     }
 
+    public function validate_can_regrade_with_other_version(question_definition $otherversion): ?string {
+        $basemessage = parent::validate_can_regrade_with_other_version($otherversion);
+        if ($basemessage) {
+            return $basemessage;
+        }
+
+        if (count($this->stems) != count($otherversion->stems)) {
+            return get_string('regradeissuenumstemschanged', 'qtype_match');
+        }
+
+        if (count($this->choices) != count($otherversion->choices)) {
+            return get_string('regradeissuenumchoiceschanged', 'qtype_match');
+        }
+
+        return null;
+    }
+
+    public function update_attempt_state_data_for_new_version(
+            question_attempt_step $oldstep, question_definition $otherversion) {
+        $startdata = parent::update_attempt_state_data_for_new_version($oldstep, $otherversion);
+
+        // Process stems.
+        $mapping = array_combine(array_keys($otherversion->stems), array_keys($this->stems));
+        $oldstemorder = explode(',', $oldstep->get_qt_var('_stemorder'));
+        $newstemorder = [];
+        foreach ($oldstemorder as $oldid) {
+            $newstemorder[] = $mapping[$oldid] ?? $oldid;
+        }
+        $startdata['_stemorder'] = implode(',', $newstemorder);
+
+        // Process choices.
+        $mapping = array_combine(array_keys($otherversion->choices), array_keys($this->choices));
+        $oldchoiceorder = explode(',', $oldstep->get_qt_var('_choiceorder'));
+        $newchoiceorder = [];
+        foreach ($oldchoiceorder as $oldid) {
+            $newchoiceorder[] = $mapping[$oldid] ?? $oldid;
+        }
+        $startdata['_choiceorder'] = implode(',', $newchoiceorder);
+
+        return $startdata;
+    }
+
     public function get_question_summary() {
         $question = $this->html_to_text($this->questiontext, $this->questiontextformat);
         $stems = array();

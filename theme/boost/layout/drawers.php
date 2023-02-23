@@ -27,29 +27,14 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/behat/lib.php');
 require_once($CFG->dirroot . '/course/lib.php');
 
-// Add-a-block in editing mode.
-if (isset($PAGE->theme->addblockposition) && $PAGE->user_is_editing() && $PAGE->user_can_edit_blocks()) {
-    $url = new moodle_url($PAGE->url, ['bui_addblock' => '', 'sesskey' => sesskey()]);
+// Add block button in editing mode.
+$addblockbutton = $OUTPUT->addblockbutton();
 
-    $block = new block_contents;
-    $block->content = $OUTPUT->render_from_template('core/add_block_button',
-        [
-            'link' => $url->out(false),
-            'escapedlink' => "?{$url->get_query_string(false)}",
-            'pageType' => $PAGE->pagetype,
-            'pageLayout' => $PAGE->pagelayout,
-        ]
-    );
-
-    $PAGE->blocks->add_fake_block($block, BLOCK_POS_RIGHT);
-}
-
-user_preference_allow_ajax_update('drawer-open-nav', PARAM_ALPHA);
 user_preference_allow_ajax_update('drawer-open-index', PARAM_BOOL);
 user_preference_allow_ajax_update('drawer-open-block', PARAM_BOOL);
 
 if (isloggedin()) {
-    $courseindexopen = (get_user_preferences('drawer-open-index') == true);
+    $courseindexopen = (get_user_preferences('drawer-open-index', true) == true);
     $blockdraweropen = (get_user_preferences('drawer-open-block') == true);
 } else {
     $courseindexopen = false;
@@ -66,7 +51,7 @@ if ($courseindexopen) {
 }
 
 $blockshtml = $OUTPUT->blocks('side-pre');
-$hasblocks = strpos($blockshtml, 'data-block=') !== false;
+$hasblocks = (strpos($blockshtml, 'data-block=') !== false || !empty($addblockbutton));
 if (!$hasblocks) {
     $blockdraweropen = false;
 }
@@ -81,7 +66,8 @@ $forceblockdraweropen = $OUTPUT->firstview_fakeblocks();
 $secondarynavigation = false;
 $overflow = '';
 if ($PAGE->has_secondary_navigation()) {
-    $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs');
+    $tablistnav = $PAGE->has_tablist_secondary_navigation();
+    $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs', true, $tablistnav);
     $secondarynavigation = $moremenu->export_for_template($OUTPUT);
     $overflowdata = $PAGE->secondarynav->get_overflow_menu_data();
     if (!is_null($overflowdata)) {
@@ -118,9 +104,7 @@ $templatecontext = [
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'overflow' => $overflow,
     'headercontent' => $headercontent,
+    'addblockbutton' => $addblockbutton
 ];
-
-$nav = $PAGE->flatnav;
-$templatecontext['firstcollectionlabel'] = $nav->get_collectionlabel();
 
 echo $OUTPUT->render_from_template('theme_boost/drawers', $templatecontext);

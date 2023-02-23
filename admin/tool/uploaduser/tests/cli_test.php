@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for CLI tool_uploaduser.
- *
- * @package    tool_uploaduser
- * @copyright  2020 Marina Glancy
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-use \tool_uploaduser\cli_helper;
+namespace tool_uploaduser;
 
 /**
  * Tests for CLI tool_uploaduser.
@@ -31,7 +23,7 @@ use \tool_uploaduser\cli_helper;
  * @copyright  2020 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_uploaduser_cli_testcase extends advanced_testcase {
+class cli_test extends \advanced_testcase {
 
     /**
      * Generate cli_helper and mock $_SERVER['argv']
@@ -117,7 +109,7 @@ class tool_uploaduser_cli_testcase extends advanced_testcase {
         $this->assertEquals('Users created: 2', $stats[0]);
 
         // Users have default values applied.
-        $user1 = core_user::get_user_by_username('jonest');
+        $user1 = \core_user::get_user_by_username('jonest');
         $this->assertEquals('Brighton', $user1->city);
         $this->assertEquals('Purchasing', $user1->department);
     }
@@ -149,7 +141,7 @@ class tool_uploaduser_cli_testcase extends advanced_testcase {
         $this->assertEquals('Users created: 2', $stats[0]);
 
         // Created users have data in the profile fields.
-        $user1 = core_user::get_user_by_username('reznort');
+        $user1 = \core_user::get_user_by_username('reznort');
         $profilefields1 = profile_user_record($user1->id);
         $this->assertEquals((object)['superfield' => 'Loves cats'], $profilefields1);
     }
@@ -244,9 +236,9 @@ class tool_uploaduser_cli_testcase extends advanced_testcase {
         $enrols = array_values(enrol_get_course_users($course->id));
         $this->assertEqualsCanonicalizing(['jonest'], [$enrols[0]->username]);
         // User reznor is not created.
-        $this->assertFalse(core_user::get_user_by_username('reznor'));
+        $this->assertFalse(\core_user::get_user_by_username('reznor'));
         // User jonest is not updated.
-        $this->assertEquals('OLDNAME', core_user::get_user_by_username('jonest')->firstname);
+        $this->assertEquals('OLDNAME', \core_user::get_user_by_username('jonest')->firstname);
     }
 
     /**
@@ -287,8 +279,8 @@ class tool_uploaduser_cli_testcase extends advanced_testcase {
         $enrols = array_values(enrol_get_course_users($course->id));
         $this->assertEqualsCanonicalizing(['jonest'], [$enrols[0]->username]);
         // User reznor is not created.
-        $this->assertFalse(core_user::get_user_by_username('reznor'));
+        $this->assertFalse(\core_user::get_user_by_username('reznor'));
         // User jonest is updated, new first name is Tom.
-        $this->assertEquals('Tom', core_user::get_user_by_username('jonest')->firstname);
+        $this->assertEquals('Tom', \core_user::get_user_by_username('jonest')->firstname);
     }
 }

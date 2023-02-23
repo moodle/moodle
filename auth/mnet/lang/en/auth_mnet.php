@@ -59,8 +59,8 @@ $string['privacy:metadata:mnet_external:institution'] = 'The institution that th
 $string['privacy:metadata:mnet_external:lang'] = 'A user preference for the language shown.';
 $string['privacy:metadata:mnet_external:lastaccess'] = 'The time that the user last accessed the site.';
 $string['privacy:metadata:mnet_external:lastlogin'] = 'The last login of this user.';
-$string['privacy:metadata:mnet_external:lastname'] = 'The surname of the user.';
-$string['privacy:metadata:mnet_external:lastnamephonetic'] = 'The phonetic details about the user\'s surname.';
+$string['privacy:metadata:mnet_external:lastname'] = 'The last name of the user.';
+$string['privacy:metadata:mnet_external:lastnamephonetic'] = 'The phonetic details of the user\'s last name.';
 $string['privacy:metadata:mnet_external:maildigest'] = 'A setting for the mail digest for this user.';
 $string['privacy:metadata:mnet_external:maildisplay'] = 'A preference for the user about displaying their email address to other users.';
 $string['privacy:metadata:mnet_external:middlename'] = 'The middle name of the user';
@@ -95,7 +95,7 @@ $string['privacy:metadata:mnet_session:userid'] = 'ID of the user jumping to rem
 $string['privacy:metadata:mnet_session:username'] = 'Username of the user jumping to remote system.';
 $string['unknownhost'] = 'Unknown host';
 
-// Deprecated since Moodle 4.0.
+// Deprecated since Moodle 3.11.
 $string['privacy:metadata:mnet_external:aim'] = 'The AIM identifier of the user';
 $string['privacy:metadata:mnet_external:icq'] = 'The ICQ number of the user.';
 $string['privacy:metadata:mnet_external:msn'] = 'The MSN identifier of the user';

@@ -22,6 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core_backup;
+
+use backup_cron_automated_helper;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -32,17 +36,18 @@ require_once($CFG->libdir . '/completionlib.php');
 /**
  * Automated backup tests.
  *
+ * @package    core_backup
  * @copyright  2019 John Yao <johnyao@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_backup_automated_backup_testcase extends advanced_testcase {
+class automated_backup_test extends \advanced_testcase {
     /**
      * @var \backup_cron_automated_helper
      */
     protected $backupcronautomatedhelper;
 
     /**
-     * @var stdClass $course
+     * @var \stdClass $course
      */
     protected $course;
 
@@ -70,7 +75,7 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
         // We need a grade, easiest is to add an assignment.
         $assignrow = $generator->create_module('assign', array(
                 'course' => $this->course->id));
-        $assign = new assign(context_module::instance($assignrow->cmid), false, false);
+        $assign = new \assign(\context_module::instance($assignrow->cmid), false, false);
         $item = $assign->get_grade_item();
 
         // Make a test grouping as well.
@@ -111,11 +116,11 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
 
         $classobject = $this->backupcronautomatedhelper->return_this();
 
-        $method = new ReflectionMethod('\backup_cron_automated_helper', 'get_courses');
+        $method = new \ReflectionMethod('\backup_cron_automated_helper', 'get_courses');
         $method->setAccessible(true); // Allow accessing of private method.
         $courses = $method->invoke($classobject);
 
-        $method = new ReflectionMethod('\backup_cron_automated_helper', 'check_and_push_automated_backups');
+        $method = new \ReflectionMethod('\backup_cron_automated_helper', 'check_and_push_automated_backups');
         $method->setAccessible(true); // Allow accessing of private method.
         $emailpending = $method->invokeArgs($classobject, [$courses, $admin]);
 
@@ -140,12 +145,12 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
 
         $classobject = $this->backupcronautomatedhelper->return_this();
 
-        $method = new ReflectionMethod('\backup_cron_automated_helper', 'get_courses');
+        $method = new \ReflectionMethod('\backup_cron_automated_helper', 'get_courses');
         $method->setAccessible(true); // Allow accessing of private method.
         $courses = $method->invoke($classobject);
 
         // Create this backup course.
-        $backupcourse = new stdClass;
+        $backupcourse = new \stdClass;
         $backupcourse->courseid = $this->course->id;
         $backupcourse->laststatus = backup_cron_automated_helper::BACKUP_STATUS_NOTYETRUN;
         $DB->insert_record('backup_courses', $backupcourse);
@@ -156,7 +161,7 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
         $backupcourse->nextstarttime = time() - 10;
         $DB->update_record('backup_courses', $backupcourse);
 
-        $method = new ReflectionMethod('\backup_cron_automated_helper', 'check_and_push_automated_backups');
+        $method = new \ReflectionMethod('\backup_cron_automated_helper', 'check_and_push_automated_backups');
         $method->setAccessible(true); // Allow accessing of private method.
         $emailpending = $method->invokeArgs($classobject, [$courses, $admin]);
         $this->assertTrue($emailpending);
@@ -186,7 +191,7 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
         set_config('backup_auto_skip_hidden', true, 'backup');
         set_config('backup_auto_weekdays', '1111111', 'backup');
         // Create this backup course.
-        $backupcourse = new stdClass;
+        $backupcourse = new \stdClass;
         $backupcourse->courseid = $this->course->id;
         // This is the status we believe last run was OK.
         $backupcourse->laststatus = backup_cron_automated_helper::BACKUP_STATUS_SKIPPED;
@@ -199,7 +204,7 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
         $classobject = $this->backupcronautomatedhelper->return_this();
         $nextstarttime = backup_cron_automated_helper::calculate_next_automated_backup(null, time());
 
-        $method = new ReflectionMethod('\backup_cron_automated_helper', 'should_skip_course_backup');
+        $method = new \ReflectionMethod('\backup_cron_automated_helper', 'should_skip_course_backup');
         $method->setAccessible(true); // Allow accessing of private method.
         $skipped = $method->invokeArgs($classobject, [$backupcourse, $course, $nextstarttime]);
 
@@ -219,7 +224,7 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
         set_config('backup_auto_weekdays', '1111111', 'backup');
 
         // Create this backup course.
-        $backupcourse = new stdClass;
+        $backupcourse = new \stdClass;
         $backupcourse->courseid = $this->course->id;
         // This is the status we believe last run was OK.
         $backupcourse->laststatus = backup_cron_automated_helper::BACKUP_STATUS_SKIPPED;
@@ -234,7 +239,7 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
         $classobject = $this->backupcronautomatedhelper->return_this();
         $nextstarttime = backup_cron_automated_helper::calculate_next_automated_backup(null, time());
 
-        $method = new ReflectionMethod('\backup_cron_automated_helper', 'should_skip_course_backup');
+        $method = new \ReflectionMethod('\backup_cron_automated_helper', 'should_skip_course_backup');
         $method->setAccessible(true); // Allow accessing of private method.
         $skipped = $method->invokeArgs($classobject, [$backupcourse, $course, $nextstarttime]);
 
@@ -254,7 +259,7 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
         set_config('backup_auto_weekdays', '1111111', 'backup');
 
         // Create this backup course.
-        $backupcourse = new stdClass;
+        $backupcourse = new \stdClass;
         $backupcourse->courseid = $this->course->id;
         // This is the status we believe last run was OK.
         $backupcourse->laststatus = backup_cron_automated_helper::BACKUP_STATUS_SKIPPED;
@@ -269,7 +274,7 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
         $classobject = $this->backupcronautomatedhelper->return_this();
         $nextstarttime = backup_cron_automated_helper::calculate_next_automated_backup(null, time());
 
-        $method = new ReflectionMethod('\backup_cron_automated_helper', 'should_skip_course_backup');
+        $method = new \ReflectionMethod('\backup_cron_automated_helper', 'should_skip_course_backup');
         $method->setAccessible(true); // Allow accessing of private method.
         $skipped = $method->invokeArgs($classobject, [$backupcourse, $course, $nextstarttime]);
 
@@ -286,28 +291,28 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
         $classobject = $this->backupcronautomatedhelper->return_this();
 
         // Create this backup course.
-        $backupcourse = new stdClass;
+        $backupcourse = new \stdClass;
         $backupcourse->courseid = $this->course->id;
         $backupcourse->laststatus = backup_cron_automated_helper::BACKUP_STATUS_NOTYETRUN;
         $DB->insert_record('backup_courses', $backupcourse);
         $backupcourse = $DB->get_record('backup_courses', ['courseid' => $this->course->id]);
 
         // Create a backup task.
-        $method = new ReflectionMethod('\backup_cron_automated_helper', 'push_course_backup_adhoc_task');
+        $method = new \ReflectionMethod('\backup_cron_automated_helper', 'push_course_backup_adhoc_task');
         $method->setAccessible(true); // Allow accessing of private method.
         $method->invokeArgs($classobject, [$backupcourse, $admin]);
 
         // Delete course for this test.
         delete_course($this->course->id, false);
 
-        $task = core\task\manager::get_next_adhoc_task(time());
+        $task = \core\task\manager::get_next_adhoc_task(time());
 
         ob_start();
         $task->execute();
         $output = ob_get_clean();
 
         $this->assertStringContainsString('Invalid course id: ' . $this->course->id . ', task aborted.', $output);
-        core\task\manager::adhoc_task_complete($task);
+        \core\task\manager::adhoc_task_complete($task);
     }
 
     /**
@@ -319,21 +324,21 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
         $classobject = $this->backupcronautomatedhelper->return_this();
 
         // Create this backup course.
-        $backupcourse = new stdClass;
+        $backupcourse = new \stdClass;
         $backupcourse->courseid = $this->course->id;
         $backupcourse->laststatus = backup_cron_automated_helper::BACKUP_STATUS_NOTYETRUN;
         $DB->insert_record('backup_courses', $backupcourse);
         $backupcourse = $DB->get_record('backup_courses', ['courseid' => $this->course->id]);
 
         // Create a backup task.
-        $method = new ReflectionMethod('\backup_cron_automated_helper', 'push_course_backup_adhoc_task');
+        $method = new \ReflectionMethod('\backup_cron_automated_helper', 'push_course_backup_adhoc_task');
         $method->setAccessible(true); // Allow accessing of private method.
         $method->invokeArgs($classobject, [$backupcourse, $admin]);
 
         // Delete backup course for this test.
         $DB->delete_records('backup_courses', ['courseid' => $this->course->id]);
 
-        $task = core\task\manager::get_next_adhoc_task(time());
+        $task = \core\task\manager::get_next_adhoc_task(time());
 
         ob_start();
         $task->execute();
@@ -341,7 +346,7 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
 
         $this->assertStringContainsString('Automated backup for course: ' . $this->course->fullname . ' encounters an error.',
             $output);
-        core\task\manager::adhoc_task_complete($task);
+        \core\task\manager::adhoc_task_complete($task);
     }
 }
 

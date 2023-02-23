@@ -25,6 +25,8 @@
 
 namespace core_question\bank\search;
 
+use core_question\local\bank\question_version_status;
+
 /**
  * This class controls whether hidden / deleted questions are hidden in the list.
  *
@@ -46,7 +48,8 @@ class hidden_condition extends condition {
     public function __construct($hide = true) {
         $this->hide = $hide;
         if ($hide) {
-            $this->where = 'q.hidden = 0';
+            $this->where = "qv.status = '" . question_version_status::QUESTION_STATUS_READY . "' " .
+                " OR qv.status = '" . question_version_status::QUESTION_STATUS_DRAFT . "' ";
         }
     }
 
@@ -66,7 +69,7 @@ class hidden_condition extends condition {
         global $PAGE;
         $displaydata = [];
         if (!$this->hide) {
-            $displaydata['checked'] = 'checked="true"';
+            $displaydata['checked'] = 'checked';
         }
         return $PAGE->get_renderer('core_question', 'bank')->render_hidden_condition_advanced($displaydata);
     }

@@ -14,21 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for /lib/filestorage/zip_packer.php and zip_archive.php
- *
- * @package   core_files
- * @category  phpunit
- * @copyright 2012 Petr Skoda
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
+
+use file_archive;
+use file_progress;
+use zip_archive;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/filestorage/file_progress.php');
 
-class core_files_zip_packer_testcase extends advanced_testcase implements file_progress {
+/**
+ * Unit tests for /lib/filestorage/zip_packer.php and zip_archive.php
+ *
+ * @package   core
+ * @category  test
+ * @copyright 2012 Petr Skoda
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class zip_packer_test extends \advanced_testcase implements file_progress {
     protected $testfile;
     protected $files;
 
@@ -43,7 +48,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
         $this->testfile = __DIR__.'/fixtures/test.txt';
 
         $fs = get_file_storage();
-        $context = context_system::instance();
+        $context = \context_system::instance();
         if (!$file = $fs->get_file($context->id, 'phpunit', 'data', 0, '/', 'test.txt')) {
             $file = $fs->create_file_from_pathname(
                 array('contextid'=>$context->id, 'component'=>'phpunit', 'filearea'=>'data', 'itemid'=>0, 'filepath'=>'/', 'filename'=>'test.txt'),
@@ -198,7 +203,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
 
         $packer = get_file_packer('application/zip');
         $fs = get_file_storage();
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         $this->assertFalse($fs->file_exists($context->id, 'phpunit', 'test', 0, '/', 'archive.zip'));
         $result = $packer->archive_to_storage($this->files, $context->id, 'phpunit', 'test', 0, '/', 'archive.zip');
@@ -223,7 +228,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
 
         $packer = get_file_packer('application/zip');
         $fs = get_file_storage();
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         $target = "$CFG->tempdir/test/";
         $testcontent = file_get_contents($this->testfile);
@@ -337,7 +342,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
 
         $packer = get_file_packer('application/zip');
         $fs = get_file_storage();
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         $target = "$CFG->tempdir/onlyfiles/";
         $testcontent = file_get_contents($this->testfile);
@@ -412,7 +417,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
 
         $packer = get_file_packer('application/zip');
         $fs = get_file_storage();
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         $testcontent = file_get_contents($this->testfile);
 
@@ -534,7 +539,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
         try {
             // Old PHP versions were not printing any warning.
             $result = $zip_archive->close();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // New PHP versions print PHP Warning.
             $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
             $this->assertStringContainsString('ZipArchive::close', $e->getMessage());
@@ -543,7 +548,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
         try {
             // And some PHP versions do return correctly false (5.4.25, 5.6.14...)
             $this->assertFalse($result);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // But others do insist into returning true (5.6.13...). Only can accept them.
             $this->assertInstanceOf('PHPUnit\Framework\ExpectationFailedException', $e);
             $this->assertTrue($result);
@@ -626,7 +631,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
         $this->resetAfterTest(true);
         $packer = get_file_packer('application/zip');
         $archive = "$CFG->tempdir/archive.zip";
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         // Archive to pathname.
         $this->progress = array();

@@ -38,7 +38,7 @@ $THEME->scss = function($theme) {
 $THEME->layouts = [
     // Most backwards compatible layout without the blocks.
     'base' => array(
-        'file' => 'columns2.php',
+        'file' => 'drawers.php',
         'regions' => array(),
     ),
     // Standard layout with blocks.
@@ -81,14 +81,16 @@ $THEME->layouts = [
     // My courses page.
     'mycourses' => array(
         'file' => 'drawers.php',
-        'regions' => array()
+        'regions' => ['side-pre'],
+        'defaultregion' => 'side-pre',
+        'options' => array('nonavbar' => true),
     ),
     // My dashboard page.
     'mydashboard' => array(
         'file' => 'drawers.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
-        'options' => array('nonavbar' => true, 'langmenu' => true, 'nocontextheader' => true),
+        'options' => array('nonavbar' => true, 'langmenu' => true),
     ),
     // My public page.
     'mypublic' => array(

@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
+use filter_manager;
+
 /**
  * Unit tests for the {@link filter_manager} class.
  *
@@ -22,17 +26,7 @@
  * @copyright 2015 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-
-/**
- * Unit tests for the {@link filter_manager} class.
- *
- * @copyright 2015 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
-class core_filter_manager_testcase extends advanced_testcase {
+class filter_manager_test extends \advanced_testcase {
 
     /**
      * Helper method to apply filters to some text and return the result.

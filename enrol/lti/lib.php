@@ -23,6 +23,7 @@
  */
 
 use enrol_lti\data_connector;
+use enrol_lti\local\ltiadvantage\repository\resource_link_repository;
 use IMSGlobal\LTI\ToolProvider\ToolConsumer;
 
 defined('MOODLE_INTERNAL') || die();
@@ -109,6 +110,11 @@ class enrol_lti_plugin extends enrol_plugin {
             $data->$field = $value;
         }
 
+        // LTI Advantage: make a unique identifier for the published resource.
+        if (empty($data->ltiversion) || $data->ltiversion == 'LTI-1p3') {
+            $data->uuid = \core\uuid::generate();
+        }
+
         $DB->insert_record('enrol_lti_tools', $data);
 
         return $instanceid;
@@ -142,6 +148,11 @@ class enrol_lti_plugin extends enrol_plugin {
             $tool->$field = $value;
         }
 
+        // LTI Advantage: make a unique identifier for the published resource.
+        if ($tool->ltiversion == 'LTI-1p3' && empty($tool->uuid)) {
+            $tool->uuid = \core\uuid::generate();
+        }
+
         return $DB->update_record('enrol_lti_tools', $tool);
     }
 
@@ -156,6 +167,10 @@ class enrol_lti_plugin extends enrol_plugin {
 
         // Get the tool associated with this instance.
         $tool = $DB->get_record('enrol_lti_tools', array('enrolid' => $instance->id), 'id', MUST_EXIST);
+
+        // LTI Advantage: delete any resource_link and user_resource_link mappings.
+        $resourcelinkrepo = new resource_link_repository();
+        $resourcelinkrepo->delete_by_resource($tool->id);
 
         // Delete any users associated with this tool.
         $DB->delete_records('enrol_lti_users', array('toolid' => $tool->id));
@@ -213,6 +228,17 @@ class enrol_lti_plugin extends enrol_plugin {
     public function edit_instance_form($instance, MoodleQuickForm $mform, $context) {
         global $DB;
 
+        $versionoptions = [
+            'LTI-1p3' => get_string('lti13', 'enrol_lti'),
+            'LTI-1p0/LTI-2p0' => get_string('ltilegacy', 'enrol_lti')
+        ];
+        $mform->addElement('select', 'ltiversion', get_string('ltiversion', 'enrol_lti'), $versionoptions);
+        $mform->addHelpButton('ltiversion', 'ltiversion', 'enrol_lti');
+        $legacy = optional_param('legacy', 0, PARAM_INT);
+        if (empty($instance->id)) {
+            $mform->setDefault('ltiversion', $legacy ? 'LTI-1p0/LTI-2p0' : 'LTI-1p3');
+        }
+
         $nameattribs = array('size' => '20', 'maxlength' => '255');
         $mform->addElement('text', 'name', get_string('custominstancename', 'enrol'), $nameattribs);
         $mform->setType('name', PARAM_TEXT);
@@ -259,13 +285,32 @@ class enrol_lti_plugin extends enrol_plugin {
         $mform->setDefault('rolelearner', '5');
         $mform->addHelpButton('rolelearner', 'rolelearner', 'enrol_lti');
 
+        if (!$legacy) {
+            global $CFG;
+            require_once($CFG->dirroot . '/auth/lti/auth.php');
+            $authmodes = [
+                auth_plugin_lti::PROVISIONING_MODE_AUTO_ONLY => get_string('provisioningmodeauto', 'auth_lti'),
+                auth_plugin_lti::PROVISIONING_MODE_PROMPT_NEW_EXISTING => get_string('provisioningmodenewexisting', 'auth_lti'),
+                auth_plugin_lti::PROVISIONING_MODE_PROMPT_EXISTING_ONLY => get_string('provisioningmodeexistingonly', 'auth_lti')
+            ];
+            $mform->addElement('select', 'provisioningmodeinstructor', get_string('provisioningmodeteacherlaunch', 'enrol_lti'),
+                $authmodes);
+            $mform->addHelpButton('provisioningmodeinstructor', 'provisioningmode', 'enrol_lti');
+            $mform->setDefault('provisioningmodeinstructor', auth_plugin_lti::PROVISIONING_MODE_PROMPT_NEW_EXISTING);
+
+            $mform->addElement('select', 'provisioningmodelearner', get_string('provisioningmodestudentlaunch', 'enrol_lti'),
+                $authmodes);
+            $mform->addHelpButton('provisioningmodelearner', 'provisioningmode', 'enrol_lti');
+            $mform->setDefault('provisioningmodelearner', auth_plugin_lti::PROVISIONING_MODE_AUTO_ONLY);
+        }
+
         $mform->addElement('header', 'remotesystem', get_string('remotesystem', 'enrol_lti'));
 
         $mform->addElement('text', 'secret', get_string('secret', 'enrol_lti'), 'maxlength="64" size="25"');
         $mform->setType('secret', PARAM_ALPHANUM);
         $mform->setDefault('secret', random_string(32));
         $mform->addHelpButton('secret', 'secret', 'enrol_lti');
-        $mform->addRule('secret', get_string('required'), 'required');
+        $mform->hideIf('secret', 'ltiversion', 'eq', 'LTI-1p3');
 
         $mform->addElement('selectyesno', 'gradesync', get_string('gradesync', 'enrol_lti'));
         $mform->setDefault('gradesync', 1);
@@ -337,6 +382,10 @@ class enrol_lti_plugin extends enrol_plugin {
             $mform->setType('toolid', PARAM_INT);
             $mform->setConstant('toolid', $ltitool->id);
 
+            $mform->addElement('hidden', 'uuid');
+            $mform->setType('uuid', PARAM_ALPHANUMEXT);
+            $mform->setConstant('uuid', $ltitool->uuid);
+
             $mform->setDefaults((array) $ltitool);
         }
     }
@@ -356,6 +405,11 @@ class enrol_lti_plugin extends enrol_plugin {
         global $COURSE, $DB;
 
         $errors = array();
+
+        // Secret must be set.
+        if (empty($data['secret'])) {
+            $errors['secret'] = get_string('required');
+        }
 
         if (!empty($data['enrolenddate']) && $data['enrolenddate'] < $data['enrolstartdate']) {
             $errors['enrolenddate'] = get_string('enrolenddateerror', 'enrol_lti');
@@ -407,11 +461,36 @@ function enrol_lti_extend_navigation_course($navigation, $course, $context) {
         // Check that they can add an instance.
         $ltiplugin = enrol_get_plugin('lti');
         if ($ltiplugin->can_add_instance($course->id)) {
-            $url = new moodle_url('/enrol/lti/index.php', array('courseid' => $course->id));
+            $url = new moodle_url('/enrol/lti/index.php', ['courseid' => $course->id]);
             $settingsnode = navigation_node::create(get_string('sharedexternaltools', 'enrol_lti'), $url,
-                navigation_node::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
-
+                navigation_node::TYPE_SETTING, null, 'publishedtools', new pix_icon('i/settings', ''));
             $navigation->add_node($settingsnode);
         }
     }
+}
+
+/**
+ * Get icon mapping for font-awesome.
+ */
+function enrol_lti_get_fontawesome_icon_map() {
+    return [
+        'enrol_lti:managedeployments' => 'fa-sitemap',
+        'enrol_lti:platformdetails' => 'fa-pencil-square-o',
+        'enrol_lti:enrolinstancewarning' => 'fa-exclamation-circle text-danger',
+    ];
+}
+
+/**
+ * Pre-delete course module hook which disables any methods referring to the deleted module, preventing launches and allowing remap.
+ *
+ * @param stdClass $cm The deleted course module record.
+ */
+function enrol_lti_pre_course_module_delete(stdClass $cm) {
+    global $DB;
+    $sql = "id IN (SELECT t.enrolid
+                     FROM {enrol_lti_tools} t
+                     JOIN {context} c ON (t.contextid = c.id)
+                    WHERE c.contextlevel = :contextlevel
+                      AND c.instanceid = :cmid)";
+    $DB->set_field_select('enrol', 'status', ENROL_INSTANCE_DISABLED, $sql, ['contextlevel' => CONTEXT_MODULE, 'cmid' => $cm->id]);
 }

@@ -318,11 +318,6 @@
   padding: 0;
   min-width: 0;
 }
-@-moz-document url-prefix() {
-  .listgroup > .group.field {
-    display: table-column;
-  }
-}
 .content {
   display: block;
   margin: 0;

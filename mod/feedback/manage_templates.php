@@ -81,6 +81,7 @@ $renderer = $PAGE->get_renderer('mod_feedback');
 if (!$mode) {
     echo $renderer->main_action_bar($actionbar);
 }
+echo $OUTPUT->heading(get_string('templates', 'mod_feedback'), 3);
 
 // First we get the course templates.
 $templates = feedback_get_template_list($course, 'own');

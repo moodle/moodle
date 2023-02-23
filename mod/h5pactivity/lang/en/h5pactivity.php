@@ -131,6 +131,7 @@ $string['review_none'] = 'Participants cannot review their own attempts';
 $string['review_on_completion'] = 'Participants can review their own attempts';
 $string['score'] = 'Score';
 $string['score_out_of'] = '{$a->rawscore} out of {$a->maxscore}';
+$string['search:activity'] = 'H5P - activity information';
 $string['startdate'] = 'Start date';
 $string['statement_received'] = 'xAPI statement received';
 $string['totalscore'] = 'Total score';

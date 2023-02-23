@@ -658,4 +658,17 @@ class contenttype_test extends \advanced_testcase {
         $url = $contenttype->get_download_url($content);
         $this->assertEmpty($url);
     }
+
+    /**
+     * Tests pluginfile result.
+     *
+     * @covers ::pluginfile
+     */
+    public function test_pluginfile() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $systemcontext = context_system::instance();
+        $contenttype = new contenttype($systemcontext);
+        $this->assertIsCallable([$contenttype, 'pluginfile']);
+    }
 }

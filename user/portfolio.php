@@ -25,7 +25,7 @@
 require_once(__DIR__ . '/../config.php');
 
 if (empty($CFG->enableportfolios)) {
-    print_error('disabled', 'portfolio');
+    throw new \moodle_exception('disabled', 'portfolio');
 }
 
 require_once($CFG->libdir . '/portfoliolib.php');
@@ -41,7 +41,7 @@ if ($config !== 0) {
     $url->param('config', $config);
 }
 if (! $course = $DB->get_record("course", array("id" => $courseid))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 $user = $USER;
@@ -76,7 +76,7 @@ if (!empty($config)) {
         exit;
     } else if ($fromform = $mform->get_data()) {
         if (!confirm_sesskey()) {
-            print_error('confirmsesskeybad', '', $baseurl);
+            throw new \moodle_exception('confirmsesskeybad', '', $baseurl);
         }
         // This branch is where you process validated data.
         $instance->set_user_config($fromform, $USER->id);
@@ -105,7 +105,7 @@ if ($display) {
     echo html_writer::tag('p', $introstr);
 
     if (!$instances = portfolio_instances(true, false)) {
-        print_error('noinstances', 'portfolio', $CFG->wwwroot . '/user/view.php');
+        throw new \moodle_exception('noinstances', 'portfolio', $CFG->wwwroot . '/user/view.php');
     }
 
     $table = new html_table();

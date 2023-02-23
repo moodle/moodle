@@ -53,6 +53,8 @@ require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
 $l  = optional_param('l', 0, PARAM_INT);  // lti ID.
+$action = optional_param('action', '', PARAM_TEXT);
+$foruserid = optional_param('user', 0, PARAM_INT);
 $forceview = optional_param('forceview', 0, PARAM_BOOL);
 
 if ($l) {  // Two ways to specify the module.
@@ -72,8 +74,10 @@ if (empty($typeid) && ($tool = lti_get_tool_by_url_match($lti->toolurl))) {
 }
 if ($typeid) {
     $toolconfig = lti_get_type_config($typeid);
+    $toolurl = $toolconfig['toolurl'];
 } else {
     $toolconfig = array();
+    $toolurl = $lti->toolurl;
 }
 
 $PAGE->set_cm($cm, $course); // Set's up global $COURSE.
@@ -82,6 +86,10 @@ $PAGE->set_context($context);
 
 require_login($course, true, $cm);
 require_capability('mod/lti:view', $context);
+
+if (!empty($foruserid) && (int)$foruserid !== (int)$USER->id) {
+    require_capability('gradereport/grader:view', $context);
+}
 
 $url = new moodle_url('/mod/lti/view.php', array('id' => $cm->id));
 $PAGE->set_url($url);
@@ -124,32 +132,32 @@ if ($typeid) {
     $config = new stdClass();
     $config->lti_ltiversion = LTI_VERSION_1;
 }
-
-if (($launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW) &&
-    (($config->lti_ltiversion !== LTI_VERSION_1P3) || isset($SESSION->lti_initiatelogin_status))) {
-    unset($SESSION->lti_initiatelogin_status);
+$launchurl = new moodle_url('/mod/lti/launch.php', ['id' => $cm->id, 'triggerview' => 0]);
+if ($action) {
+    $launchurl->param('action', $action);;
+}
+if ($foruserid) {
+    $launchurl->param('user', $foruserid);;
+}
+unset($SESSION->lti_initiatelogin_status);
+if (($launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW)) {
     if (!$forceview) {
         echo "<script language=\"javascript\">//<![CDATA[\n";
-        echo "window.open('launch.php?id=" . $cm->id . "&triggerview=0','lti-" . $cm->id . "');";
+        echo "window.open('{$launchurl->out(true)}','lti-$cm->id');";
         echo "//]]\n";
         echo "</script>\n";
         echo "<p>".get_string("basiclti_in_new_window", "lti")."</p>\n";
     }
-    $url = new moodle_url('/mod/lti/launch.php', array('id' => $cm->id));
     echo html_writer::start_tag('p');
-    echo html_writer::link($url, get_string("basiclti_in_new_window_open", "lti"), array('target' => '_blank'));
+    echo html_writer::link($launchurl->out(false), get_string("basiclti_in_new_window_open", "lti"), array('target' => '_blank'));
     echo html_writer::end_tag('p');
 } else {
     $content = '';
-    if ($config->lti_ltiversion === LTI_VERSION_1P3) {
-        $content = lti_initiate_login($cm->course, $id, $lti, $config);
-    }
-
     // Build the allowed URL, since we know what it will be from $lti->toolurl,
     // If the specified toolurl is invalid the iframe won't load, but we still want to avoid parse related errors here.
     // So we set an empty default allowed url, and only build a real one if the parse is successful.
     $ltiallow = '';
-    $urlparts = parse_url($lti->toolurl);
+    $urlparts = parse_url($toolurl);
     if ($urlparts && array_key_exists('scheme', $urlparts) && array_key_exists('host', $urlparts)) {
         $ltiallow = $urlparts['scheme'] . '://' . $urlparts['host'];
         // If a port has been specified we append that too.
@@ -163,7 +171,7 @@ if (($launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW) &&
     $attributes['id'] = "contentframe";
     $attributes['height'] = '600px';
     $attributes['width'] = '100%';
-    $attributes['src'] = 'launch.php?id=' . $cm->id . '&triggerview=0';
+    $attributes['src'] = $launchurl;
     $attributes['allow'] = "microphone $ltiallow; " .
         "camera $ltiallow; " .
         "geolocation $ltiallow; " .

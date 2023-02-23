@@ -1,0 +1,65 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template auth_oauth2/idpresponse
+
+    Render response returned from the oAuth IdP for
+    supplied test user.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * pairs - array of key value pairs return from the oAuth IdP
+      * name - the name field from the IdP for the field
+      * value - the value of the field for the supplied test user
+
+    Example context (json):
+    {
+        "pairs": [{
+            "name": "firstname",
+            "value": "Jane"
+        },
+        {
+            "name": "lastname",
+            "value": "Awesome"
+        }]
+    }
+}}
+
+<div class="container mb-3">
+    <h3>{{#str}}userinfo, auth_oauth2{{/str}}</h3>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">{{#str}}key, auth_oauth2{{/str}}</th>
+            <th scope="col">{{#str}}value, auth_oauth2{{/str}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#pairs}}
+            <tr>
+                <td>{{name}}</td>
+                <td>{{{value}}}</td>
+            </tr>
+        {{/pairs}}
+        </tbody>
+    </table>
+</div>

@@ -2233,7 +2233,7 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
      * @method initializer
      * @return void
      */
-    initializer: function(config) {
+    initializer: function() {
         var editor,
             container,
             placeholder,
@@ -2259,8 +2259,6 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
 
         // Set the body content.
         this.set('bodyContent', container);
-
-        COMMENTSEARCH.superclass.initializer.call(this, config);
     },
 
     /**
@@ -2622,7 +2620,7 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      * @return bool true if menu is active, else false.
      */
     this.is_menu_active = function() {
-        return this.menu.get('visible');
+        return this.menu !== null && this.menu.get('visible');
     };
 
     /**

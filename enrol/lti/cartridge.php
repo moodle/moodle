@@ -47,13 +47,13 @@ if (!\enrol_lti\helper::verify_cartridge_token($toolid, $token)) {
 $tool = \enrol_lti\helper::get_lti_tool($toolid);
 
 if (!is_enabled_auth('lti')) {
-    print_error('pluginnotenabled', 'auth', '', get_string('pluginname', 'auth_lti'));
+    throw new \moodle_exception('pluginnotenabled', 'auth', '', get_string('pluginname', 'auth_lti'));
 
 } else if (!enrol_is_enabled('lti')) {
-    print_error('enrolisdisabled', 'enrol_lti');
+    throw new \moodle_exception('enrolisdisabled', 'enrol_lti');
 
 } else if ($tool->status != ENROL_INSTANCE_ENABLED) {
-    print_error('enrolisdisabled', 'enrol_lti');
+    throw new \moodle_exception('enrolisdisabled', 'enrol_lti');
 
 } else {
     header('Content-Type: text/xml; charset=utf-8');

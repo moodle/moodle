@@ -136,7 +136,8 @@ class question_category_object {
         foreach ($this->editlists as $key => $list) {
             list($paged, $count) = $this->editlists[$key]->list_from_records($paged, $count);
         }
-        $this->catform = new question_category_edit_form($this->pageurl, compact('contexts', 'currentcat'));
+        $this->catform = new question_category_edit_form($this->pageurl,
+                ['contexts' => $contexts, 'currentcat' => $currentcat ?? 0]);
         if (!$currentcat) {
             $this->catform->set_data(['parent' => $defaultcategory]);
         }
@@ -147,15 +148,8 @@ class question_category_object {
      *
      */
     public function display_user_interface(): void {
-
         // Interface for editing existing categories.
         $this->output_edit_lists();
-
-        echo \html_writer::empty_tag('br');
-        // Interface for adding a new category.
-        $this->output_new_table();
-        echo \html_writer::empty_tag('br');
-
     }
 
     /**
@@ -174,7 +168,7 @@ class question_category_object {
     public function output_edit_lists(): void {
         global $OUTPUT;
 
-        echo $OUTPUT->heading_with_help(get_string('editcategories', 'question'), 'editcategories', 'question');
+        echo $OUTPUT->heading_with_help(get_string('questioncategories', 'question'), 'editcategories', 'question');
 
         foreach ($this->editlists as $context => $list) {
             $listhtml = $list->to_html(0, ['str' => $this->str]);
@@ -208,26 +202,29 @@ class question_category_object {
     }
 
     /**
-     * Edit a category.
+     * Edit a category, or add a new one if the id is zero.
      *
      * @param int $categoryid Category id.
      */
     public function edit_single_category(int $categoryid): void {
         // Interface for adding a new category.
         global $DB;
-        // Interface for editing existing categories.
-        $category = $DB->get_record("question_categories", ["id" => $categoryid]);
-        if (empty($category)) {
-            throw new moodle_exception('invalidcategory', '', '', $categoryid);
-        } else if ($category->parent == 0) {
-            throw new moodle_exception('cannotedittopcat', 'question', '', $categoryid);
-        } else {
+
+        if ($categoryid) {
+            // Editing an existing category.
+            $category = $DB->get_record("question_categories", ["id" => $categoryid], '*', MUST_EXIST);
+            if ($category->parent == 0) {
+                throw new moodle_exception('cannotedittopcat', 'question', '', $categoryid);
+            }
+
             $category->parent = "{$category->parent},{$category->contextid}";
             $category->submitbutton = get_string('savechanges');
             $category->categoryheader = $this->str->edit;
             $this->catform->set_data($category);
-            $this->catform->display();
         }
+
+        // Show the form.
+        $this->catform->display();
     }
 
     /**
@@ -327,10 +324,8 @@ class question_category_object {
      * @throws \dml_exception
      */
     public function move_questions(int $oldcat, int $newcat): void {
-        global $DB;
-        $questionids = $DB->get_records_select_menu('question',
-                'category = ? AND (parent = 0 OR parent = id)', [$oldcat], '', 'id,1');
-        question_move_questions_to_category(array_keys($questionids), $newcat);
+        $questionids = $this->get_real_question_ids_in_category($oldcat);
+        question_move_questions_to_category($questionids, $newcat);
     }
 
     /**
@@ -472,22 +467,12 @@ class question_category_object {
             $cat->stamp = make_unique_id_code();
         }
         $DB->update_record('question_categories', $cat);
+        // Update the set_reference records when moving a category to a different context.
+        move_question_set_references($cat->id, $cat->id, $oldcat->contextid, $tocontextid);
 
         // Log the update of this category.
         $event = \core\event\question_category_updated::create_from_question_category_instance($cat);
         $event->trigger();
-
-        // If the category name has changed, rename any random questions in that category.
-        if ($oldcat->name != $cat->name) {
-            $where = "qtype = 'random' AND category = ? AND " . $DB->sql_compare_text('questiontext') . " = ?";
-
-            $randomqtype = question_bank::get_qtype('random');
-            $randomqname = $randomqtype->question_name($cat, false);
-            $DB->set_field_select('question', 'name', $randomqname, $where, [$cat->id, '0']);
-
-            $randomqname = $randomqtype->question_name($cat, true);
-            $DB->set_field_select('question', 'name', $randomqname, $where, [$cat->id, '1']);
-        }
 
         if ($oldcat->contextid != $tocontextid) {
             // Moving to a new context. Must move files belonging to questions.
@@ -500,5 +485,28 @@ class question_category_object {
             // Always redirect after successful action.
             redirect($this->pageurl);
         }
+    }
+
+    /**
+     * Returns ids of the question in the given question category.
+     *
+     * This method only returns the real question. It does not include
+     * subquestions of question types like multianswer.
+     *
+     * @param int $categoryid id of the category.
+     * @return int[] array of question ids.
+     */
+    public function get_real_question_ids_in_category(int $categoryid): array {
+        global $DB;
+
+        $sql = "SELECT q.id
+                  FROM {question} q
+                  JOIN {question_versions} qv ON qv.questionid = q.id
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                 WHERE qbe.questioncategoryid = :categoryid
+                   AND (q.parent = 0 OR q.parent = q.id)";
+
+        $questionids = $DB->get_records_sql($sql, ['categoryid' => $categoryid]);
+        return array_keys($questionids);
     }
 }

@@ -62,7 +62,7 @@ Feature: View activity completion in the quiz activity
     And the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
     And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "failed"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "todo"
-    And I follow "Attempt quiz"
+    And I press "Re-attempt quiz"
     And I set the field "<answer>" to "1"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
@@ -76,7 +76,7 @@ Feature: View activity completion in the quiz activity
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
-    And I select "Activity completion" from the "Report type" singleselect
+    And I click on "Activity completion" "link"
     And "<expectedactivitycompletion>" "icon" should exist in the "Student 1" "table_row"
 
     Examples:

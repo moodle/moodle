@@ -48,10 +48,13 @@ $assignment = new \assign($context, null, null);
 require_login($assignment->get_course(), false, $cm);
 
 if (!$assignment->can_view_submission($userid)) {
-    print_error('nopermission');
+    throw new \moodle_exception('nopermission');
 }
 
 if ($action === 'pollconversions') {
+    // Poll conversions does not require session lock.
+    \core\session\manager::write_close();
+
     $draft = true;
     if (!has_capability('mod/assign:grade', $context)) {
         // A student always sees the readonly version.
@@ -65,7 +68,22 @@ if ($action === 'pollconversions') {
         $draft = false;
     }
 
-    $response = (object) [
+    // Get a lock for the PDF/Image conversion of the assignment files.
+    $lockfactory = \core\lock\lock_config::get_lock_factory('assignfeedback_editpdf_pollconversions');
+    $resource = "user:{$userid},assignmentid:{$assignmentid},attemptnumber:{$attemptnumber}";
+    $lock = $lockfactory->get_lock($resource, 0);
+
+    // Could not get lock, send back JSON to poll again.
+    if (!$lock) {
+        echo json_encode([
+            'status' => 0
+        ]);
+        die();
+    }
+
+    // Obtained lock, now process the assignment conversion.
+    try {
+        $response = (object) [
             'status' => -1,
             'filecount' => 0,
             'pagecount' => 0,
@@ -74,80 +92,76 @@ if ($action === 'pollconversions') {
             'pages' => [],
         ];
 
-    $combineddocument = document_services::get_combined_document_for_attempt($assignment, $userid, $attemptnumber);
-    $response->status = $combineddocument->get_status();
-    $response->filecount = $combineddocument->get_document_count();
-
-    $readystatuslist = [combined_document::STATUS_READY, combined_document::STATUS_READY_PARTIAL];
-    $completestatuslist = [combined_document::STATUS_COMPLETE, combined_document::STATUS_FAILED];
-
-    if (in_array($response->status, $readystatuslist)) {
-        // It seems that the files for this submission haven't been combined by the
-        // "\assignfeedback_editpdf\task\convert_submissions" scheduled task.
-        // Try to combine them in the user session.
-        $combineddocument = document_services::get_combined_pdf_for_attempt($assignment, $userid, $attemptnumber);
+        $combineddocument = document_services::get_combined_document_for_attempt($assignment, $userid, $attemptnumber);
         $response->status = $combineddocument->get_status();
         $response->filecount = $combineddocument->get_document_count();
 
-        // Check status of the combined document and remove the submission
-        // from the task queue if combination completed.
+        $readystatuslist = [combined_document::STATUS_READY, combined_document::STATUS_READY_PARTIAL];
+        $completestatuslist = [combined_document::STATUS_COMPLETE, combined_document::STATUS_FAILED];
+
+        if (in_array($response->status, $readystatuslist)) {
+            // It seems that the files for this submission haven't been combined in cron yet.
+            // Try to combine them in the user session.
+            $combineddocument = document_services::get_combined_pdf_for_attempt($assignment, $userid, $attemptnumber);
+            $response->status = $combineddocument->get_status();
+            $response->filecount = $combineddocument->get_document_count();
+        }
+
         if (in_array($response->status, $completestatuslist)) {
-            $submission = $assignment->get_user_submission($userid, false, $attemptnumber);
-            if ($submission) {
-                $DB->delete_records('assignfeedback_editpdf_queue', array('submissionid' => $submission->id));
+            $pages = document_services::get_page_images_for_attempt($assignment,
+                                                                    $userid,
+                                                                    $attemptnumber,
+                                                                    $readonly);
+
+            $response->pagecount = $combineddocument->get_page_count();
+
+            $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
+
+            // The readonly files are stored in a different file area.
+            $filearea = document_services::PAGE_IMAGE_FILEAREA;
+            if ($readonly) {
+                $filearea = document_services::PAGE_IMAGE_READONLY_FILEAREA;
             }
-        }
-    }
+            $response->partial = $combineddocument->is_partial_conversion();
 
-    if (in_array($response->status, $completestatuslist)) {
-        $pages = document_services::get_page_images_for_attempt($assignment,
-                                                                $userid,
-                                                                $attemptnumber,
-                                                                $readonly);
-
-        $response->pagecount = $combineddocument->get_page_count();
-
-        $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
-
-        // The readonly files are stored in a different file area.
-        $filearea = document_services::PAGE_IMAGE_FILEAREA;
-        if ($readonly) {
-            $filearea = document_services::PAGE_IMAGE_READONLY_FILEAREA;
-        }
-        $response->partial = $combineddocument->is_partial_conversion();
-
-        foreach ($pages as $id => $pagefile) {
-            $index = count($response->pages);
-            $page = new stdClass();
-            $comments = page_editor::get_comments($grade->id, $index, $draft);
-            $page->url = moodle_url::make_pluginfile_url($context->id,
-                                                        'assignfeedback_editpdf',
-                                                        $filearea,
-                                                        $grade->id,
-                                                        '/',
-                                                        $pagefile->get_filename())->out();
-            $page->comments = $comments;
-            if ($imageinfo = $pagefile->get_imageinfo()) {
-                $page->width = $imageinfo['width'];
-                $page->height = $imageinfo['height'];
-            } else {
-                $page->width = 0;
-                $page->height = 0;
+            foreach ($pages as $id => $pagefile) {
+                $index = count($response->pages);
+                $page = new stdClass();
+                $comments = page_editor::get_comments($grade->id, $index, $draft);
+                $page->url = moodle_url::make_pluginfile_url($context->id,
+                                                            'assignfeedback_editpdf',
+                                                            $filearea,
+                                                            $grade->id,
+                                                            '/',
+                                                            $pagefile->get_filename())->out();
+                $page->comments = $comments;
+                if ($imageinfo = $pagefile->get_imageinfo()) {
+                    $page->width = $imageinfo['width'];
+                    $page->height = $imageinfo['height'];
+                } else {
+                    $page->width = 0;
+                    $page->height = 0;
+                }
+                $annotations = page_editor::get_annotations($grade->id, $index, $draft);
+                $page->annotations = $annotations;
+                $response->pages[] = $page;
             }
-            $annotations = page_editor::get_annotations($grade->id, $index, $draft);
-            $page->annotations = $annotations;
-            $response->pages[] = $page;
-        }
 
-        $component = 'assignfeedback_editpdf';
-        $filearea = document_services::PAGE_IMAGE_FILEAREA;
-        $filepath = '/';
-        $fs = get_file_storage();
-        $files = $fs->get_directory_files($context->id, $component, $filearea, $grade->id, $filepath);
-        $response->pageready = count($files);
+            $component = 'assignfeedback_editpdf';
+            $filearea = document_services::PAGE_IMAGE_FILEAREA;
+            $filepath = '/';
+            $fs = get_file_storage();
+            $files = $fs->get_directory_files($context->id, $component, $filearea, $grade->id, $filepath);
+            $response->pageready = count($files);
+        }
+    } catch (\Throwable $e) {
+        // Release lock, and re-throw exception.
+        $lock->release();
+        throw $e;
     }
 
     echo json_encode($response);
+    $lock->release();
     die();
 } else if ($action == 'savepage') {
     require_capability('mod/assign:grade', $context);

@@ -21,89 +21,90 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import Pending from 'core/pending';
 import Templates from "core/templates";
 import {exception as displayException} from 'core/notification';
 import {getMeetingInfo} from './repository';
 
-const timeout = 1000;
-const maxFactor = 10;
-
-let updateCount = 0;
-let updateFactor = 1;
 let timerReference = null;
 let timerRunning = false;
+let pollInterval = 0;
+let pollIntervalFactor = 1;
+const MAX_POLL_INTERVAL_FACTOR = 10;
 
 const resetValues = () => {
-    updateCount = 0;
-    updateFactor = 1;
+    timerRunning = false;
+    timerReference = null;
+    pollInterval = 0;
+    pollIntervalFactor = 1;
 };
 
 /**
  * Start the information poller.
+ * @param {Number} interval interval in miliseconds between each poll action.
  */
-export const start = () => {
+export const start = (interval) => {
+    resetValues();
     timerRunning = true;
-    timerReference = setTimeout(() => poll(), timeout);
+    pollInterval = interval;
+    poll();
 };
 
 /**
  * Stop the room updater.
  */
 export const stop = () => {
-    timerRunning = false;
     if (timerReference) {
-        clearInterval(timerReference);
-        timerReference = null;
+        clearTimeout(timerReference);
     }
-
     resetValues();
 };
 
+/**
+ * Start the information poller.
+ */
 const poll = () => {
-    if (!timerRunning) {
+    if (!timerRunning || !pollInterval) {
         // The poller has been stopped.
         return;
     }
-    if ((updateCount % updateFactor) === 0) {
-        updateRoom(true)
-        .then(() => {
-            if (updateFactor >= maxFactor) {
-                updateFactor = 1;
-            } else {
-                updateFactor++;
+    updateRoom()
+        .then((updateOk) => {
+            if (!updateOk) {
+                pollIntervalFactor = (pollIntervalFactor < MAX_POLL_INTERVAL_FACTOR) ?
+                    pollIntervalFactor + 1 : MAX_POLL_INTERVAL_FACTOR;
+                // We make sure if there is an error that we do not try too often.
             }
-
-            return;
-
-        })
-        .catch()
-        .then(() => {
-            timerReference = setTimeout(() => poll(), timeout);
-            return;
+            timerReference = setTimeout(() => poll(), pollInterval * pollIntervalFactor);
+            return true;
         })
         .catch();
-    }
 };
 
 /**
  * Update the room information.
  *
- * @param {boolean} [updatecache=false]
+ * @param {boolean} [updatecache=false] should we update cache
  * @returns {Promise}
  */
 export const updateRoom = (updatecache = false) => {
-    const bbbRoomViewElement = document.getElementById('bbb-room-view');
+    const bbbRoomViewElement = document.getElementById('bigbluebuttonbn-room-view');
+    if (bbbRoomViewElement === null) {
+        return Promise.resolve(false);
+    }
+
     const bbbId = bbbRoomViewElement.dataset.bbbId;
     const groupId = bbbRoomViewElement.dataset.groupId;
+
+    const pendingPromise = new Pending('mod_bigbluebuttonbn/roomupdater:updateRoom');
+
     return getMeetingInfo(bbbId, groupId, updatecache)
         .then(data => {
             // Just make sure we have the right information for the template.
-            data.haspresentations = false;
-            if (data.presentations && data.presentations.length) {
-                data.haspresentations = true;
-            }
+            data.haspresentations = !!(data.presentations && data.presentations.length);
             return Templates.renderForPromise('mod_bigbluebuttonbn/room_view', data);
         })
-        .then(({html, js}) => Templates.replaceNodeContents(bbbRoomViewElement, html, js))
+        .then(({html, js}) => Templates.replaceNode(bbbRoomViewElement, html, js))
+        .then(() => pendingPromise.resolve())
         .catch(displayException);
 };

@@ -40,7 +40,7 @@ admin_externalpage_setup('reportbackups', '', null, '', array('pagelayout'=>'rep
 
 $strftimedatetime = get_string('strftimerecent');
 $strerror = get_string('error');
-$strok = get_string('ok');
+$strok = get_string('statusok');
 $strunfinished = get_string('unfinished');
 $strskipped = get_string('skipped');
 $strwarning = get_string('warning');

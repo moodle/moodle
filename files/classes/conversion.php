@@ -129,15 +129,12 @@ class conversion extends \core\persistent {
         // Fetch actual conversions which relate to the specified source file, and have a matching conversion record,
         // and either have a valid destination file which still exists, or do not have a destination file at all.
         $sql = "SELECT {$sqlfields}
-                FROM {" . self::TABLE . "} c
-                INNER JOIN {files} conversionsourcefile ON conversionsourcefile.id = c.sourcefileid
-                LEFT JOIN {files} conversiondestfile ON conversiondestfile.id = c.destfileid
-                WHERE
-                    conversionsourcefile.contenthash = :ccontenthash
-                AND c.targetformat = :cformat
-                AND (
-                    c.destfileid IS NULL OR conversiondestfile.id IS NOT NULL
-                )";
+                  FROM {" . self::TABLE . "} c
+                  JOIN {files} conversionsourcefile ON conversionsourcefile.id = c.sourcefileid
+             LEFT JOIN {files} conversiondestfile ON conversiondestfile.id = c.destfileid
+                 WHERE conversionsourcefile.contenthash = :ccontenthash
+                       AND c.targetformat = :cformat
+                       AND (c.destfileid IS NULL OR conversiondestfile.id IS NOT NULL)";
 
         // Fetch a empty conversion record for each source/destination combination that we find to match where the
         // destination file is in the correct filearea/filepath/filename combination to meet the requirements.
@@ -173,7 +170,6 @@ class conversion extends \core\persistent {
         $records = $DB->get_records_sql($sql, [
             'ccontenthash' => $file->get_contenthash(),
             'osourcefileid' => $file->get_id(),
-            'cfilepath' => "/{$format}/",
             'ofilepath' => "/{$format}/",
             'cformat' => $format,
             'oformat' => $format,

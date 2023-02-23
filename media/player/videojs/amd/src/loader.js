@@ -100,10 +100,6 @@ const notifyVideoJS = e => {
             Promise.all([langStrings, ...modulePromises])
             .then(([langJson, videojs]) => {
                 if (firstLoad) {
-                    videojs.options.playbackRates = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
-                    videojs.options.userActions = {
-                        hotkeys: true,
-                    };
                     videojs.addLanguage(language, langJson);
 
                     firstLoad = false;

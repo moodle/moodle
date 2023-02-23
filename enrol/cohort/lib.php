@@ -483,9 +483,17 @@ class enrol_cohort_plugin extends enrol_plugin {
             'customint2' => $validgroups
         );
         $typeerrors = $this->validate_param_types($data, $tovalidate);
+        // When creating a new cohort enrolment, we allow multiple cohorts in just one go.
+        // When editing an existing enrolment, changing the cohort is no allowed, so cohort is a single value.
+        if (is_array($data['customint1'])) {
+            $cohorts = $data['customint1'];
+        } else {
+            $cohorts = [$data['customint1']];
+        }
+
         $errors = array_merge($errors, $typeerrors);
         // Check that the cohorts passed are valid.
-        if (!empty(array_diff($data['customint1'], $validcohorts))) {
+        if (!empty(array_diff($cohorts, $validcohorts))) {
             $errors['customint1'] = get_string('invaliddata', 'error');
         }
         return $errors;

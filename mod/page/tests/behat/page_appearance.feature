@@ -22,8 +22,6 @@ Feature: Configure page appearance
 
     Examples:
       | feature                    | lookfor        | value | shouldornot |
-      | Display page name          | PageName1      | 1     | should      |
-      | Display page name          | PageName1      | 0     | should not  |
       | Display page description   | PageDesc1      | 1     | should      |
       | Display page description   | PageDesc1      | 0     | should not  |
       | Display last modified date | Last modified: | 1     | should      |

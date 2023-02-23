@@ -14,35 +14,37 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the multiple choice, single response question definition classes.
- *
- * @package   qtype_multichoice
- * @copyright 2009 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_multichoice;
+
+use qtype_multichoice_multi_question;
+use question_answer;
+use question_attempt_step;
+use question_bank;
+use question_classified_response;
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 
-
 /**
  * Unit tests for the multiple choice, single response question definition class.
  *
+ * @package   qtype_multichoice
  * @copyright 2009 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \qtype_multichoice_single_question
  */
-class qtype_multichoice_single_question_test extends advanced_testcase {
+class question_single_test extends \advanced_testcase {
 
     public function test_get_expected_data() {
-        $question = test_question_maker::make_a_multichoice_single_question();
+        $question = \test_question_maker::make_a_multichoice_single_question();
         $this->assertEquals(array('answer' => PARAM_INT), $question->get_expected_data());
     }
 
     public function test_is_complete_response() {
-        $question = test_question_maker::make_a_multichoice_single_question();
+        $question = \test_question_maker::make_a_multichoice_single_question();
 
         $this->assertFalse($question->is_complete_response(array()));
         $this->assertTrue($question->is_complete_response(array('answer' => '0')));
@@ -52,7 +54,7 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
     }
 
     public function test_is_gradable_response() {
-        $question = test_question_maker::make_a_multichoice_single_question();
+        $question = \test_question_maker::make_a_multichoice_single_question();
 
         $this->assertFalse($question->is_gradable_response(array()));
         $this->assertTrue($question->is_gradable_response(array('answer' => '0')));
@@ -61,7 +63,7 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
     }
 
     public function test_is_same_response() {
-        $question = test_question_maker::make_a_multichoice_single_question();
+        $question = \test_question_maker::make_a_multichoice_single_question();
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertTrue($question->is_same_response(
@@ -102,7 +104,7 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
     }
 
     public function test_grading() {
-        $question = test_question_maker::make_a_multichoice_single_question();
+        $question = \test_question_maker::make_a_multichoice_single_question();
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEquals(array(1, question_state::$gradedright),
@@ -116,7 +118,7 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
     public function test_grading_rounding_three_right() {
         question_bank::load_question_definition_classes('multichoice');
         $mc = new qtype_multichoice_multi_question();
-        test_question_maker::initialise_a_question($mc);
+        \test_question_maker::initialise_a_question($mc);
         $mc->name = 'Odd numbers';
         $mc->questiontext = 'Which are the odd numbers?';
         $mc->generalfeedback = '1, 3 and 5 are the odd numbers.';
@@ -125,7 +127,7 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
         $mc->answernumbering = 'abc';
         $mc->showstandardinstruction = 0;
 
-        test_question_maker::set_standard_combined_feedback_fields($mc);
+        \test_question_maker::set_standard_combined_feedback_fields($mc);
 
         $mc->answers = array(
             11 => new question_answer(11, '1', 0.3333333, '', FORMAT_HTML),
@@ -144,27 +146,37 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
     }
 
     public function test_get_correct_response() {
-        $question = test_question_maker::make_a_multichoice_single_question();
+        $question = \test_question_maker::make_a_multichoice_single_question();
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEquals($question->prepare_simulated_post_data(array('answer' => 'A')), $question->get_correct_response());
     }
 
     public function test_summarise_response() {
-        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc = \test_question_maker::make_a_multichoice_single_question();
         $mc->start_attempt(new question_attempt_step(), 1);
 
         $summary = $mc->summarise_response($mc->prepare_simulated_post_data(array('answer' => 'A')),
-                                            test_question_maker::get_a_qa($mc));
+                                            \test_question_maker::get_a_qa($mc));
 
         $this->assertEquals('A', $summary);
 
-        $this->assertNull($mc->summarise_response(array(), test_question_maker::get_a_qa($mc)));
-        $this->assertNull($mc->summarise_response(array('answer' => '-1'), test_question_maker::get_a_qa($mc)));
+        $this->assertNull($mc->summarise_response([]));
+        $this->assertNull($mc->summarise_response(['answer' => '-1']));
+    }
+
+    public function test_un_summarise_response() {
+        $mc = \test_question_maker::make_a_multichoice_single_question();
+        $mc->shuffleanswers = false;
+        $mc->start_attempt(new question_attempt_step(), 1);
+
+        $this->assertEquals(['answer' => '1'], $mc->un_summarise_response('B'));
+
+        $this->assertEquals([], $mc->un_summarise_response(''));
     }
 
     public function test_classify_response() {
-        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc = \test_question_maker::make_a_multichoice_single_question();
         $mc->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEquals(array($mc->id => new question_classified_response(14, 'B', -0.3333333)),
@@ -180,7 +192,7 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
     }
 
     public function test_make_html_inline() {
-        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc = \test_question_maker::make_a_multichoice_single_question();
         $this->assertEquals('Frog', $mc->make_html_inline('<p>Frog</p>'));
         $this->assertEquals('Frog<br />Toad', $mc->make_html_inline("<p>Frog</p>\n<p>Toad</p>"));
         $this->assertEquals('<img src="http://example.com/pic.png" alt="Graph" />',
@@ -194,7 +206,7 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
     }
 
     public function test_simulated_post_data() {
-        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc = \test_question_maker::make_a_multichoice_single_question();
         $mc->shuffleanswers = false;
         $mc->answers[13]->answer = '<p>A</p>';
         $mc->answers[14]->answer = '<p>B</p>';
@@ -208,5 +220,62 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
 
         $reconstucted = $mc->prepare_simulated_post_data($simulated);
         $this->assertEquals($originalresponse, $reconstucted);
+    }
+
+    public function test_validate_can_regrade_with_other_version_bad() {
+        $mc = \test_question_maker::make_a_multichoice_single_question();
+
+        $newmc = clone($mc);
+        $newmc->answers = array(
+            23 => new question_answer(13, 'A', 1, 'A is right', FORMAT_HTML),
+            24 => new question_answer(14, 'B', -0.3333333, 'B is wrong', FORMAT_HTML),
+        );
+
+        $this->assertEquals(get_string('regradeissuenumchoiceschanged', 'qtype_multichoice'),
+                $newmc->validate_can_regrade_with_other_version($mc));
+    }
+
+    public function test_validate_can_regrade_with_other_version_ok() {
+        $mc = \test_question_maker::make_a_multichoice_single_question();
+
+        $newmc = clone($mc);
+        $newmc->answers = array(
+            23 => new question_answer(13, 'A', 1, 'A is right', FORMAT_HTML),
+            24 => new question_answer(14, 'B', -0.3333333, 'B is wrong', FORMAT_HTML),
+            25 => new question_answer(15, 'C', -0.3333333, 'C is wrong', FORMAT_HTML),
+        );
+
+        $this->assertNull($newmc->validate_can_regrade_with_other_version($mc));
+    }
+
+    public function test_update_attempt_state_date_from_old_version_bad() {
+        $mc = \test_question_maker::make_a_multichoice_single_question();
+
+        $newmc = clone($mc);
+        $newmc->answers = array(
+            23 => new question_answer(13, 'A', 1, 'A is right', FORMAT_HTML),
+            24 => new question_answer(14, 'B', -0.3333333, 'B is wrong', FORMAT_HTML),
+        );
+
+        $oldstep = new question_attempt_step();
+        $oldstep->set_qt_var('_order', '14,13,15');
+        $this->expectExceptionMessage(get_string('regradeissuenumchoiceschanged', 'qtype_multichoice'));
+        $newmc->update_attempt_state_data_for_new_version($oldstep, $mc);
+    }
+
+    public function test_update_attempt_state_date_from_old_version_ok() {
+        $mc = \test_question_maker::make_a_multichoice_single_question();
+
+        $newmc = clone($mc);
+        $newmc->answers = array(
+            23 => new question_answer(13, 'A', 1, 'A is right', FORMAT_HTML),
+            24 => new question_answer(14, 'B', -0.3333333, 'B is wrong', FORMAT_HTML),
+            25 => new question_answer(15, 'C', -0.3333333, 'C is wrong', FORMAT_HTML),
+        );
+
+        $oldstep = new question_attempt_step();
+        $oldstep->set_qt_var('_order', '14,13,15');
+        $this->assertEquals(['_order' => '24,23,25'],
+                $newmc->update_attempt_state_data_for_new_version($oldstep, $mc));
     }
 }

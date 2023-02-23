@@ -40,7 +40,7 @@ class groupconcatdistinct extends groupconcat {
     }
 
     /**
-     * This aggregation can be performed on all non-timestamp columns in MySQL and Postgres only
+     * This aggregation can be performed on all non-timestamp columns in MySQL, Postgres and Oracle only
      *
      * @param int $columntype
      * @return bool
@@ -51,6 +51,7 @@ class groupconcatdistinct extends groupconcat {
         $dbsupportedtype = in_array($DB->get_dbfamily(), [
             'mysql',
             'postgres',
+            'oracle',
         ]);
 
         return $dbsupportedtype && parent::compatible($columntype);
@@ -66,14 +67,17 @@ class groupconcatdistinct extends groupconcat {
     public static function get_field_sql(string $field, int $columntype): string {
         global $DB;
 
-        // DB limitations mean we only support MySQL and Postgres, and each handle it differently.
         $fieldsort = database::sql_group_concat_sort($field);
+
+        // Postgres handles group concatenation differently in that it requires the expression to be cast to char, so we can't
+        // simply pass "DISTINCT {$field}" to the {@see \moodle_database::sql_group_concat} method in all cases.
         if ($DB->get_dbfamily() === 'postgres') {
+            $field = $DB->sql_cast_to_char($field);
             if ($fieldsort !== '') {
                 $fieldsort = "ORDER BY {$fieldsort}";
             }
 
-            return "STRING_AGG(DISTINCT CAST({$field} AS VARCHAR), '" . self::FIELD_VALUE_DELIMETER . "' {$fieldsort})";
+            return "STRING_AGG(DISTINCT {$field}, '" . self::FIELD_VALUE_DELIMETER . "' {$fieldsort})";
         } else {
             return $DB->sql_group_concat("DISTINCT {$field}", self::FIELD_VALUE_DELIMETER, $fieldsort);
         }

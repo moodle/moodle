@@ -10,6 +10,7 @@ class Xlfn
         . '|beta[.]inv'
         . '|binom[.]dist'
         . '|binom[.]inv'
+        . '|ceiling[.]precise'
         . '|chisq[.]dist'
         . '|chisq[.]dist[.]rt'
         . '|chisq[.]inv'
@@ -27,6 +28,7 @@ class Xlfn
         . '|f[.]inv'
         . '|f[.]inv[.]rt'
         . '|f[.]test'
+        . '|floor[.]precise'
         . '|gamma[.]dist'
         . '|gamma[.]inv'
         . '|gammaln[.]precise'
@@ -138,6 +140,14 @@ class Xlfn
         . '|unique'
         . '|xlookup'
         . '|xmatch'
+        . '|arraytotext'
+        . '|call'
+        . '|let'
+        . '|register[.]id'
+        . '|textafter'
+        . '|textbefore'
+        . '|textsplit'
+        . '|valuetotext'
         . ')(?=\\s*[(])/i';
 
     /**
@@ -145,7 +155,7 @@ class Xlfn
      */
     public static function addXlfn(string $funcstring): string
     {
-        return preg_replace(self::XLFNREGEXP, '_xlfn.$1', $funcstring);
+        return (string) preg_replace(self::XLFNREGEXP, '_xlfn.$1', $funcstring);
     }
 
     /**

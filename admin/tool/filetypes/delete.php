@@ -47,6 +47,8 @@ $PAGE->navbar->add($title);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($SITE->fullname. ': ' . $title);
+$PAGE->set_primary_active_tab('siteadminnode');
+$PAGE->set_secondary_active_tab('server');
 
 // Display the page.
 echo $OUTPUT->header();

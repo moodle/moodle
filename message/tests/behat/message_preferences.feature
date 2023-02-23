@@ -9,8 +9,7 @@ Feature: To be able to see and save user message preferences as admin
       | student1 | Student   | 1        | student1@emample.com |
     And the following "user preferences" exist:
       | user      | preference                                        | value |
-      | student1  | message_provider_moodle_instantmessage_loggedin   | none  |
-      | student1  | message_provider_moodle_instantmessage_loggedoff  | email |
+      | student1  | message_provider_moodle_instantmessage_enabled    | email |
 
   @javascript
   Scenario: As an admin I can view and edit message preferences for a user
@@ -22,7 +21,8 @@ Feature: To be able to see and save user message preferences as admin
     And I click on "Student 1" "link" in the "Student 1" "table_row"
     And I click on "Preferences" "link" in the "#region-main-box" "css_element"
     And I click on "Message preferences" "link" in the "#region-main-box" "css_element"
-    And I click on "//label[@data-state='loggedoff']" "xpath_element"
+    And I should not see "Enabled" in the "Email" "table_row"
+    And I click on "//div[@class='preference-state']" "xpath_element"
     And I log out
     And I log in as "student1"
     And I follow "Preferences" in the user menu

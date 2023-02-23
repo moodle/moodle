@@ -71,7 +71,7 @@ class submission_unlocked extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' locked the submission for the user with id '$this->relateduserid' " .
+        return "The user with id '$this->userid' unlocked the submission for the user with id '$this->relateduserid' " .
             "for the assignment with course module id '$this->contextinstanceid'.";
     }
 

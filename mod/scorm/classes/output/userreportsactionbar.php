@@ -94,6 +94,7 @@ class userreportsactionbar implements renderable, templatable {
             }
             $urlselect = new url_select($reportmenu, $userreporturl, [], 'userscormreport');
             $data ['userreport'] = $urlselect->export_for_template($output);
+            $data ['heading'] = $reportmenu[$userreporturl] ?? null;
         }
 
         return $data;

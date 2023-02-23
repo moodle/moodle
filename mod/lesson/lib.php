@@ -981,7 +981,7 @@ function lesson_reset_userdata($data) {
  * @uses FEATURE_GRADE_HAS_GRADE
  * @uses FEATURE_GRADE_OUTCOMES
  * @param string $feature FEATURE_xx constant for requested feature
- * @return mixed True if module supports feature, false if not, null if doesn't know
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function lesson_supports($feature) {
     switch($feature) {
@@ -1003,6 +1003,8 @@ function lesson_supports($feature) {
             return true;
         case FEATURE_SHOW_DESCRIPTION:
             return true;
+        case FEATURE_MOD_PURPOSE:
+            return MOD_PURPOSE_CONTENT;
         default:
             return null;
     }
@@ -1017,9 +1019,7 @@ function lesson_supports($feature) {
  * @param settings_navigation $settings
  * @param navigation_node $lessonnode
  */
-function lesson_extend_settings_navigation($settings, $lessonnode) {
-    global $PAGE, $DB;
-
+function lesson_extend_settings_navigation(settings_navigation $settings, navigation_node $lessonnode) {
     // We want to add these new nodes after the Edit settings node, and before the
     // Locally assigned roles node. Of course, both of those are controlled by capabilities.
     $keys = $lessonnode->get_children_key_list();
@@ -1031,17 +1031,18 @@ function lesson_extend_settings_navigation($settings, $lessonnode) {
         $beforekey = $keys[$i + 1];
     }
 
-    if (has_capability('mod/lesson:manageoverrides', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/lesson/overrides.php', array('cmid' => $PAGE->cm->id));
+    if (has_capability('mod/lesson:manageoverrides', $settings->get_page()->cm->context)) {
+        $url = new moodle_url('/mod/lesson/overrides.php', ['cmid' => $settings->get_page()->cm->id, 'mode' => 'user']);
         $node = navigation_node::create(get_string('overrides', 'lesson'), $url,
                 navigation_node::TYPE_SETTING, null, 'mod_lesson_useroverrides');
         $lessonnode->add_node($node, $beforekey);
     }
 
-    if (has_capability('mod/lesson:viewreports', $PAGE->cm->context)) {
+    if (has_capability('mod/lesson:viewreports', $settings->get_page()->cm->context)) {
         $reportsnode = $lessonnode->add(
             get_string('reports', 'lesson'),
-            new moodle_url('/mod/lesson/report.php', ['id' => $PAGE->cm->id, 'action' => 'reportoverview'])
+            new moodle_url('/mod/lesson/report.php', ['id' => $settings->get_page()->cm->id,
+                'action' => 'reportoverview'])
         );
     }
 }

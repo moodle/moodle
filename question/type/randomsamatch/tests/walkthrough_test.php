@@ -14,15 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests that walks a question through the interactive
- * behaviour.
- *
- * @package   qtype_randomsamatch
- * @copyright 2013 Jean-Michel Vedrine
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_randomsamatch;
 
+use question_hint_with_parts;
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,15 +28,16 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 /**
  * Unit tests for the randomsamatch question type.
  *
+ * @package   qtype_randomsamatch
  * @copyright 2013 Jean-Michel Vedrine
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_randomsamatch_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     public function test_deferred_feedback_unanswered() {
 
         // Create a randomsamatch question.
-        $m = test_question_maker::make_question('randomsamatch');
+        $m = \test_question_maker::make_question('randomsamatch');
         $this->start_attempt_at_question($m, 'deferredfeedback', 4);
 
         $choiceorder = $m->get_choice_order();
@@ -97,7 +93,7 @@ class qtype_randomsamatch_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_deferred_feedback_partial_answer() {
 
         // Create a randomsamatching question.
-        $m = test_question_maker::make_question('randomsamatch');
+        $m = \test_question_maker::make_question('randomsamatch');
         $m->shufflestems = false;
         $this->start_attempt_at_question($m, 'deferredfeedback', 4);
 
@@ -154,7 +150,7 @@ class qtype_randomsamatch_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_interactive_correct_no_submit() {
 
         // Create a randomsamatching question.
-        $m = test_question_maker::make_question('randomsamatch');
+        $m = \test_question_maker::make_question('randomsamatch');
         $m->hints = array(
             new question_hint_with_parts(11, 'This is the first hint.', FORMAT_HTML, false, false),
             new question_hint_with_parts(12, 'This is the second hint.', FORMAT_HTML, true, true),
@@ -208,7 +204,7 @@ class qtype_randomsamatch_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_interactive_partial_no_submit() {
 
         // Create a randomsamatching question.
-        $m = test_question_maker::make_question('randomsamatch');
+        $m = \test_question_maker::make_question('randomsamatch');
         $m->hints = array(
             new question_hint_with_parts(11, 'This is the first hint.', FORMAT_HTML, false, false),
             new question_hint_with_parts(12, 'This is the second hint.', FORMAT_HTML, true, true),
@@ -262,7 +258,7 @@ class qtype_randomsamatch_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_interactive_with_invalid() {
 
         // Create a randomsamatching question.
-        $m = test_question_maker::make_question('randomsamatch');
+        $m = \test_question_maker::make_question('randomsamatch');
         $m->hints = array(
             new question_hint_with_parts(11, 'This is the first hint.', FORMAT_HTML, false, false),
             new question_hint_with_parts(12, 'This is the second hint.', FORMAT_HTML, true, true),
@@ -332,7 +328,7 @@ class qtype_randomsamatch_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_randomsamatch_clear_wrong() {
 
         // Create a randomsamatching question.
-        $m = test_question_maker::make_question('randomsamatch');
+        $m = \test_question_maker::make_question('randomsamatch');
         $m->hints = array(
             new question_hint_with_parts(11, 'This is the first hint.', FORMAT_HTML, false, true),
             new question_hint_with_parts(12, 'This is the second hint.', FORMAT_HTML, true, true),

@@ -38,7 +38,7 @@ Feature: Mute and unmute conversations
     And I select "Group 1" conversation in messaging
     And "muted" "icon_container" in the "Group 1" "core_message > Message header" should not be visible
     And I open contact menu
-    And I click on "Mute" "link" in the "[data-region='header-container']" "css_element"
+    And I click on "Mute" "link" in the "conversation-actions-menu" "region"
     And "muted" "icon_container" in the "Group 1" "core_message > Message header" should be visible
     And I go back in "view-conversation" message drawer
     And "muted" "icon_container" in the "Group 1" "core_message > Message" should be visible
@@ -53,7 +53,7 @@ Feature: Mute and unmute conversations
     And I select "Student 2" conversation in messaging
     And "muted" "icon_container" in the "[data-action='view-contact']" "css_element" should not be visible
     And I open contact menu
-    And I click on "Mute" "link" in the "[data-region='header-container']" "css_element"
+    And I click on "Mute" "link" in the "conversation-actions-menu" "region"
     And "muted" "icon_container" in the "[data-action='view-contact']" "css_element" should be visible
     And I go back in "view-conversation" message drawer
     And "muted" "icon_container" in the "Student 2" "core_message > Message" should be visible
@@ -70,7 +70,7 @@ Feature: Mute and unmute conversations
     And I select "Group 1" conversation in messaging
     And "muted" "icon_container" in the "Group 1" "core_message > Message header" should be visible
     And I open contact menu
-    And I click on "Unmute" "link" in the "[data-region='header-container']" "css_element"
+    And I click on "Unmute" "link" in the "conversation-actions-menu" "region"
     And "muted" "icon_container" in the "Group 1" "core_message > Message header" should not be visible
     And I go back in "view-conversation" message drawer
     And "muted" "icon_container" in the "Group 1" "core_message > Message" should not be visible
@@ -88,7 +88,7 @@ Feature: Mute and unmute conversations
     And I select "Student 2" conversation in messaging
     And "muted" "icon_container" in the "[data-action='view-contact']" "css_element" should be visible
     And I open contact menu
-    And I click on "Unmute" "link" in the "[data-region='header-container']" "css_element"
+    And I click on "Unmute" "link" in the "conversation-actions-menu" "region"
     And "muted" "icon_container" in the "[data-action='view-contact']" "css_element" should not be visible
     And I go back in "view-conversation" message drawer
     And "muted" "icon_container" in the "Student 2" "core_message > Message" should not be visible

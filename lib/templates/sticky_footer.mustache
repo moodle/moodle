@@ -1,0 +1,65 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/sticky_footer
+
+    Displays a page sticky footer element.
+
+    Sticky footer behaviour depends on the theme. The default template is
+    a regular element.
+
+    Classes required for JS:
+    * none
+
+    Data attributes optional for JS:
+    * data-disable Number|String - If the sticky footer should be disabled by default
+
+    Context variables required for this template:
+    * disable Boolean - if the sticky footer should be loaded hidden
+
+    Example context (json):
+    {
+        "stickycontent" : "<a href=\"#\">Moodle</a>",
+        "extras" : [
+            {
+                "attribute" : "data-example",
+                "value" : "stickyfooter"
+            }
+        ],
+        "stickyclasses" : "extraclasses"
+    }
+}}
+<div
+    id="sticky-footer"
+    class="{{$ stickyclasses }}{{stickyclasses}}{{/ stickyclasses }}"
+    {{$ disable }}
+        {{#disable}} data-disable="true" {{/disable}}
+    {{/ disable }}
+    {{#extras}}
+    {{attribute}}="{{value}}"
+    {{/extras}}
+>
+    {{$ stickycontent }}
+        {{{stickycontent}}}
+    {{/ stickycontent }}
+</div>
+{{#js}}
+require(['core/sticky-footer'], function(footer) {
+    footer.init();
+});
+
+{{/js}}

@@ -49,6 +49,9 @@ class client extends \oauth2_client {
     /** @var bool $autorefresh whether this client will use a refresh token to automatically renew access tokens.*/
     protected $autorefresh = false;
 
+    /** @var array $rawuserinfo Keep rawuserinfo from . */
+    protected $rawuserinfo = [];
+
     /**
      * Constructor.
      *
@@ -483,13 +486,20 @@ class client extends \oauth2_client {
     }
 
     /**
-     * Fetch the user info from the user info endpoint and map all
-     * the fields back into moodle fields.
+     * Fetch the user info from the user info endpoint.
      *
-     * @return array|false Moodle user fields for the logged in user (or false if request failed)
+     * @return stdClass|false Moodle user fields for the logged in user (or false if request failed)
+     * @throws moodle_exception if the response is empty after decoding it.
      */
-    public function get_userinfo() {
+    public function get_raw_userinfo() {
+        if (!empty($this->rawuserinfo)) {
+            return $this->rawuserinfo;
+        }
         $url = $this->get_issuer()->get_endpoint_url('userinfo');
+        if (empty($url)) {
+            return false;
+        }
+
         $response = $this->get($url);
         if (!$response) {
             return false;
@@ -498,6 +508,27 @@ class client extends \oauth2_client {
         try {
             $userinfo = json_decode($response);
         } catch (\Exception $e) {
+            return false;
+        }
+
+        if (is_null($userinfo)) {
+            // Throw an exception displaying the original response, because, at this point, $userinfo shouldn't be empty.
+            throw new moodle_exception($response);
+        }
+        $this->rawuserinfo = $userinfo;
+        return $userinfo;
+    }
+
+    /**
+     * Fetch the user info from the user info endpoint and map all
+     * the fields back into moodle fields.
+     *
+     * @return stdClass|false Moodle user fields for the logged in user (or false if request failed)
+     * @throws moodle_exception if the response is empty after decoding it.
+     */
+    public function get_userinfo() {
+        $userinfo = $this->get_raw_userinfo();
+        if ($userinfo === false) {
             return false;
         }
 

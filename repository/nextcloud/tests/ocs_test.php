@@ -14,23 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests for the repository_nextcloud class.
- *
- * @package    repository_nextcloud
- * @copyright  2017 Jan Dageförde (Learnweb, University of Münster)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace repository_nextcloud;
 
 /**
  * Class repository_nextcloud_ocs_testcase
+ *
+ * @package    repository_nextcloud
  * @group repository_nextcloud
  * @copyright  2017 Jan Dageförde (Learnweb, University of Münster)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class repository_nextcloud_ocs_testcase extends advanced_testcase {
+class ocs_test extends \advanced_testcase {
 
     /**
      * @var \core\oauth2\issuer
@@ -58,7 +52,7 @@ class repository_nextcloud_ocs_testcase extends advanced_testcase {
         $mock = $this->createMock(\core\oauth2\client::class);
         $mock->expects($this->once())->method('get_issuer')->willReturn($this->issuer);
 
-        $client = new \repository_nextcloud\ocs_client($mock);
+        $client = new ocs_client($mock);
         $functions = $client->get_api_functions();
 
         // Assert that relevant (and used) functions are actually present.

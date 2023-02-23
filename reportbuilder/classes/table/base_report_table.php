@@ -53,8 +53,8 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
     /** @var string $groupbysql */
     protected $groupbysql = '';
 
-    /** @var bool $applyfilters */
-    protected $applyfilters = true;
+    /** @var bool $editing */
+    protected $editing = false;
 
     /**
      * Initialises table SQL properties
@@ -86,7 +86,7 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
         }
 
         // For each filter, we also need to apply their values (will differ according to user viewing the report).
-        if ($this->applyfilters) {
+        if (!$this->editing) {
             $filtervalues = $this->report->get_filter_values();
             foreach ($this->report->get_active_filters() as $filter) {
                 [$filtersql, $filterparams] = $this->get_filter_sql($filter, $filtervalues);
@@ -125,13 +125,13 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
     }
 
     /**
-     * Whether active filters should be applied to the report, defaults to true except in the case where we are editing a report
-     * and we do not want filters to be applied to it
+     * Whether the current report table is being edited, in which case certain actions are not applied to it, e.g. user filtering
+     * and sorting. Default class value is false
      *
-     * @param bool $applyfilters
+     * @param bool $editing
      */
-    public function set_filters_applied(bool $applyfilters): void {
-        $this->applyfilters = $applyfilters;
+    public function set_report_editing(bool $editing): void {
+        $this->editing = $editing;
     }
 
     /**
@@ -149,14 +149,11 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
     }
 
     /**
-     * Override parent method of the same, to make use of a recordset and avoid issues with duplicate values in the first column
+     * Generate suitable SQL for the table
      *
-     * @param int $pagesize
-     * @param bool $useinitialsbar
+     * @return string
      */
-    public function query_db($pagesize, $useinitialsbar = true) {
-        global $DB;
-
+    protected function get_table_sql(): string {
         $sql = "SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where} {$this->groupbysql}";
 
         $sort = $this->get_sql_sort();
@@ -164,13 +161,54 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
             $sql .= " ORDER BY {$sort}";
         }
 
+        return $sql;
+    }
+
+    /**
+     * Override parent method of the same, to make use of a recordset and avoid issues with duplicate values in the first column
+     *
+     * @param int $pagesize
+     * @param bool $useinitialsbar
+     */
+    public function query_db($pagesize, $useinitialsbar = true): void {
+        global $DB;
+
         if (!$this->is_downloading()) {
             $this->pagesize($pagesize, $DB->count_records_sql($this->countsql, $this->countparams));
 
-            $this->rawdata = $DB->get_recordset_sql($sql, $this->sql->params, $this->get_page_start(), $this->get_page_size());
+            $this->rawdata = $DB->get_recordset_sql($this->get_table_sql(), $this->sql->params, $this->get_page_start(),
+                $this->get_page_size());
         } else {
-            $this->rawdata = $DB->get_recordset_sql($sql, $this->sql->params);
+            $this->rawdata = $DB->get_recordset_sql($this->get_table_sql(), $this->sql->params);
         }
+    }
+
+    /**
+     * Override parent method of the same, to ensure that any columns with custom sort fields are accounted for
+     *
+     * @return string
+     */
+    public function get_sql_sort() {
+        $columnsbyalias = $this->report->get_active_columns_by_alias();
+        $columnsortby = [];
+
+        // Iterate over all sorted report columns, replace with columns own fields if applicable.
+        foreach ($this->get_sort_columns() as $alias => $order) {
+            $column = $columnsbyalias[$alias] ?? null;
+
+            // If the column is not being aggregated and defines custom sort fields, then use them.
+            if ($column && !$column->get_aggregation() &&
+                    ($sortfields = $column->get_sort_fields())) {
+
+                foreach ($sortfields as $sortfield) {
+                    $columnsortby[$sortfield] = $order;
+                }
+            } else {
+                $columnsortby[$alias] = $order;
+            }
+        }
+
+        return static::construct_order_by($columnsortby);
     }
 
     /**
@@ -215,7 +253,7 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
 
         $this->wrap_html_start();
 
-        echo html_writer::start_tag('div', ['class' => 'no-overflow']);
+        echo html_writer::start_tag('div');
         echo html_writer::start_tag('table', $this->attributes);
     }
 }

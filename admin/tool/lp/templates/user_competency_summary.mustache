@@ -77,9 +77,10 @@
                 ucw.registerEvents('[data-region="user-competency-status"]');
                 ucw.on('status-changed', infoReloader.reload.bind(infoReloader));
                 ucw.on('error-occured', infoReloader.reload.bind(infoReloader));
-
-                var inlineGrader = new mod('#rate_{{uniqid}}', '{{competency.scaleid}}', '{{competency.competency.id}}', '{{user.id}}', '{{plan.id}}', '', '{{#str}}chooserating, tool_lp{{/str}}');
-                inlineGrader.on('competencyupdated', infoReloader.reload.bind(infoReloader));
+                {{#cangrade}}
+                    var inlineGrader = new mod('#rate_{{uniqid}}', '{{competency.scaleid}}', '{{competency.competency.id}}', '{{user.id}}', '{{plan.id}}', '', '{{#str}}chooserating, tool_lp{{/str}}');
+                    inlineGrader.on('competencyupdated', infoReloader.reload.bind(infoReloader));
+                {{/cangrade}}
             });
             {{/js}}
             {{/usercompetency}}

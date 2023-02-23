@@ -1,0 +1,114 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template enrol_lti/local/ltiadvantage/registration_view
+
+    Template which displays details about a registration, allowing users to view the dynamic registration URL, the manual
+    registration URLs and tool deployments. All the URLs support copy to clipboard, included in the
+    enrol_lti/local/ltiadvantage/tool_endpoints.mustache file.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * dynamic_registration_info
+    * dynamic_registration_url
+    * manual_registration_info
+    * manual_registration_urls
+    * platform_details_info
+    * platform_details
+    * edit_platform_details_url
+    * deployments_info
+    * has_deployments
+
+    Optional context variables for this template:
+    * tool_deployments
+
+    Example context (json):
+    {
+        "dynamic_registration_info": "Help/information about dynamic registration",
+        "dynamic_registration_url": {
+            "id": "ab34dgdfa",
+            "name": "Dynamic registration URL",
+            "url": "https://example.com/enrol/lti/register.php?tok=asdb123b12babsdb"
+        },
+        "manual_registration_info": "Help/information about manual registration",
+        "manual_registration_urls": [
+            {
+                "id": "asdb1234m",
+                "name": "Authentication Request URL",
+                "url": "https://example.com/enrol/lti/login.php?id=a2c94"
+            },
+            {
+                "id": "123GHn123",
+                "name": "JWKS URL",
+                "url": "https://example.com/enrol/lti/jwks.php"
+            }
+        ],
+        "platform_details_info": "Once the tool has been set up in the platform, details from the platform must...",
+        "platform_details": {
+            "name": "My LMS",
+            "platformid": "https://lms.example.com",
+            "clientid": "a265bcd3a8f5bcd",
+            "authenticationrequesturl": "https://lms.example.com/auth",
+            "jwksurl": "https://lms.example.com/jwks",
+            "accesstokenurl": "https://lms.example.com/token"
+        },
+        "edit_platform_details_url": "https://SITE/enrol/lti/register_platform.php?action=edit&regid=xx",
+        "deployments_info": "A deployment ID will be generated when...",
+        "has_deployments": true,
+        "tool_deployments": [
+            {
+                "name": "Site level deployment of tool x in platform y",
+                "deploymentid": "deploy-id-12345",
+                "deleteurl": "https://example.org/enrol/lti/manage_deployments.php?action=delete&id=2&registrationid=1"
+            }
+        ]
+    }
+}}
+<a class="btn btn-secondary mb-3" href="{{back_url}}">{{#str}}back, core{{/str}}</a>
+<ul class="nav nav-tabs mb-3" id="registration-tabs" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link {{#tool_details_active}}active{{/tool_details_active}}" id="tool-details-tab" data-toggle="tab" href="#tooldetails" role="tab" aria-controls="tooldetails" aria-selected="{{#tool_details_active}}true{{/tool_details_active}}{{^tool_details_active}}false{{/tool_details_active}}">
+            {{#str}}tooldetails, enrol_lti{{/str}}
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{#platform_details_active}}active{{/platform_details_active}}" id="platform-details-tab" data-toggle="tab" href="#platformdetails" role="tab" aria-controls="platformdetails" aria-selected="{{#platform_details_active}}true{{/platform_details_active}}{{^platform_details_active}}false{{/platform_details_active}}">
+            {{#str}}platformdetails, enrol_lti{{/str}}
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{#tool_deployments_active}}active{{/tool_deployments_active}}" id="tool-deployments-tab" data-toggle="tab" href="#tooldeployments" role="tab" aria-controls="tooldeployments" aria-selected="{{#tool_deployments_active}}true{{/tool_deployments_active}}{{^tool_deployments_active}}false{{/tool_deployments_active}}">
+            {{#str}}deployments, enrol_lti{{/str}}
+        </a>
+    </li>
+</ul>
+<div class="tab-content" id="registration-tab-content">
+    <div class="tab-pane fade {{#tool_details_active}}show active{{/tool_details_active}}" id="tooldetails" role="tabpanel" aria-labelledby="tool-details-tab">
+        {{> enrol_lti/local/ltiadvantage/tool_details}}
+    </div>
+    <div class="tab-pane fade {{#platform_details_active}}show active{{/platform_details_active}}" id="platformdetails" role="tabpanel" aria-labelledby="platform-details-tab">
+        {{> enrol_lti/local/ltiadvantage/platform_details}}
+    </div>
+    <div class="tab-pane fade {{#tool_deployments_active}}show active{{/tool_deployments_active}}" id="tooldeployments" role="tabpanel" aria-labelledby="tool-deployments-tab">
+        {{> enrol_lti/local/ltiadvantage/deployments}}
+    </div>
+</div>

@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . "/filelib.php");
 
+use tool_usertours\helper;
 use tool_usertours\step as stepsource;
 
 /**
@@ -67,24 +68,25 @@ class step implements \renderable {
         $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $systemcontext->id,
             'tool_usertours', 'stepcontent', $step->get_id());
 
+        $content = helper::get_string_from_input($content);
+        $content = $step::get_step_image_from_input($content);
+
         $result = (object) [
             'stepid'    => $step->get_id(),
-            'title'     => external_format_text(
-                    stepsource::get_string_from_input($step->get_title()),
+            'title'     => \core_external\util::format_text(
+                    helper::get_string_from_input($step->get_title()),
                     FORMAT_HTML,
                     $PAGE->context->id,
                     'tool_usertours'
                 )[0],
-            'content'   => external_format_text(
-                    stepsource::get_string_from_input($content),
+            'content'   => \core_external\util::format_text(
+                    $content,
                     $step->get_contentformat(),
                     $PAGE->context->id,
                     'tool_usertours'
                 )[0],
             'element'   => $step->get_target()->convert_to_css(),
         ];
-
-        $result->content = str_replace("\n", "<br>\n", $result->content);
 
         foreach ($step->get_config_keys() as $key) {
             $result->$key = $step->get_config($key);

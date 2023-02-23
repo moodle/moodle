@@ -14,14 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for core analysers.
- *
- * @package   core
- * @category  test
- * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
+
+use test_target_course_level_shortname;
+use test_target_shortname;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +33,7 @@ require_once(__DIR__ . '/../../lib/enrollib.php');
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_analytics_analysers_testcase extends advanced_testcase {
+class analysers_test extends \advanced_testcase {
 
     /**
      * test_courses_analyser
@@ -59,7 +55,7 @@ class core_analytics_analysers_testcase extends advanced_testcase {
         $this->assertInstanceOf('\context_course', $analyser->sample_access_context($course1->id));
 
         // Just 1 sample per course.
-        $class = new ReflectionClass('\core\analytics\analyser\courses');
+        $class = new \ReflectionClass('\core\analytics\analyser\courses');
         $method = $class->getMethod('get_all_samples');
         $method->setAccessible(true);
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
@@ -109,7 +105,7 @@ class core_analytics_analysers_testcase extends advanced_testcase {
         $this->assertInstanceOf('\context_system', $analyser->sample_access_context($course1->id));
         $this->assertInstanceOf('\context_system', $analyser->sample_access_context($course3->id));
 
-        $class = new ReflectionClass('\core\analytics\analyser\site_courses');
+        $class = new \ReflectionClass('\core\analytics\analyser\site_courses');
         $method = $class->getMethod('get_all_samples');
         $method->setAccessible(true);
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
@@ -161,7 +157,7 @@ class core_analytics_analysers_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core_analytics\course', $analyser->get_sample_analysable($ue1->id));
         $this->assertInstanceOf('\context_course', $analyser->sample_access_context($ue1->id));
 
-        $class = new ReflectionClass('\core\analytics\analyser\student_enrolments');
+        $class = new \ReflectionClass('\core\analytics\analyser\student_enrolments');
         $method = $class->getMethod('get_all_samples');
         $method->setAccessible(true);
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);

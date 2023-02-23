@@ -49,6 +49,9 @@
       <directory suffix="_test.php">lib/tests</directory>
       <!-- <directory suffix="_test.php">lib/ajax/tests</directory> -->
     </testsuite>
+    <testsuite name="core_external_testsuite">
+      <directory suffix="_test.php">lib/external/tests</directory>
+    </testsuite>
     <testsuite name="core_favourites_testsuite">
       <directory suffix="_test.php">favourites/tests</directory>
     </testsuite>
@@ -103,6 +106,9 @@
     <testsuite name="core_course_testsuite">
       <directory suffix="_test.php">course/tests</directory>
     </testsuite>
+    <testsuite name="core_courseformat_testsuite">
+      <directory suffix="_test.php">course/format/tests</directory>
+    </testsuite>
     <testsuite name="core_privacy_testsuite">
       <directory suffix="_test.php">privacy/tests</directory>
     </testsuite>
@@ -123,9 +129,6 @@
     </testsuite>
     <testsuite name="core_group_testsuite">
       <directory suffix="_test.php">group/tests</directory>
-    </testsuite>
-    <testsuite name="core_external_testsuite">
-      <directory suffix="_test.php">lib/external/tests</directory>
     </testsuite>
     <testsuite name="core_message_testsuite">
       <directory suffix="_test.php">message/tests</directory>
@@ -207,6 +210,12 @@
     </testsuite>
     <testsuite name="core_reportbuilder_testsuite">
       <directory suffix="_test.php">reportbuilder/tests</directory>
+    </testsuite>
+    <testsuite name="core_adminpresets_testsuite">
+      <directory suffix="_test.php">admin/presets/tests</directory>
+    </testsuite>
+    <testsuite name="core_admin_testsuite">
+      <directory suffix="_test.php">admin/tests</directory>
     </testsuite>
 
     <!--Plugin suites: use admin/tool/phpunit/cli/util.php to build phpunit.xml from

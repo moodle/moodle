@@ -22,6 +22,7 @@
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_forum;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +36,7 @@ require_once($CFG->dirroot . '/mod/forum/lib.php');
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_forum_locallib_testcase extends advanced_testcase {
+class locallib_test extends \advanced_testcase {
     public function test_forum_update_calendar() {
         global $DB;
 

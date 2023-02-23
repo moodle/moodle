@@ -117,7 +117,6 @@ class token_table extends \table_sql {
         $tokenpageurl = new \moodle_url(
             "/admin/webservice/tokens.php",
             [
-                "sesskey" => sesskey(),
                 "action" => "delete",
                 "tokenid" => $data->id
             ]

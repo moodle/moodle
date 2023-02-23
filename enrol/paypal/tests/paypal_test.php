@@ -14,19 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace enrol_paypal;
+
 /**
  * paypal enrolment plugin tests.
  *
  * @package    enrol_paypal
- * @category   phpunit
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-
-class enrol_paypal_testcase extends advanced_testcase {
+class paypal_test extends \advanced_testcase {
 
     protected function enable_plugin() {
         $enabled = enrol_get_plugins(true);
@@ -56,7 +54,7 @@ class enrol_paypal_testcase extends advanced_testcase {
         $paypalplugin = enrol_get_plugin('paypal');
 
         // Just make sure the sync does not throw any errors when nothing to do.
-        $paypalplugin->sync(new null_progress_trace());
+        $paypalplugin->sync(new \null_progress_trace());
     }
 
     public function test_expired() {
@@ -70,7 +68,7 @@ class enrol_paypal_testcase extends advanced_testcase {
         $this->assertNotEmpty($manualplugin);
 
         $now = time();
-        $trace = new null_progress_trace();
+        $trace = new \null_progress_trace();
         $this->enable_plugin();
 
 
@@ -90,8 +88,8 @@ class enrol_paypal_testcase extends advanced_testcase {
 
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
-        $context1 = context_course::instance($course1->id);
-        $context2 = context_course::instance($course2->id);
+        $context1 = \context_course::instance($course1->id);
+        $context2 = \context_course::instance($course2->id);
 
         $data = array('roleid'=>$studentrole->id, 'courseid'=>$course1->id);
         $id = $paypalplugin->add_instance($course1, $data);
@@ -200,7 +198,7 @@ class enrol_paypal_testcase extends advanced_testcase {
         $generator->enrol_user($student->id, $course->id, 'student', $pluginname);
 
         require_once($CFG->dirroot . '/enrol/locallib.php');
-        $manager = new course_enrolment_manager($PAGE, $course);
+        $manager = new \course_enrolment_manager($PAGE, $course);
         $userenrolments = $manager->get_user_enrolments($student->id);
         $this->assertCount(1, $userenrolments);
 

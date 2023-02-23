@@ -112,6 +112,8 @@ if ($mode == UPDATE_ALL_LANG) {
 }
 get_string_manager()->reset_caches();
 
+$PAGE->set_primary_active_tab('siteadminnode');
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('langimport', 'tool_langimport'));
 

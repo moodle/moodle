@@ -14,24 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Test unoconv functionality.
- *
- * @package    core
- * @copyright  2016 Damyon Wiese
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace fileconverter_unoconv;
 
 /**
  * A set of tests for some of the unoconv functionality within Moodle.
  *
- * @package    core
+ * @package    fileconverter_unoconv
  * @copyright  2016 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class fileconverter_unoconv_converter_testcase extends advanced_testcase {
+class converter_test extends \advanced_testcase {
 
     /**
      * Helper to skip tests which _require_ unoconv.
@@ -70,7 +62,7 @@ class fileconverter_unoconv_converter_testcase extends advanced_testcase {
 
         // Mock the file to be converted.
         $filerecord = [
-            'contextid' => context_system::instance()->id,
+            'contextid' => \context_system::instance()->id,
             'component' => 'test',
             'filearea'  => 'unittest',
             'itemid'    => 0,

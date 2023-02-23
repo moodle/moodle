@@ -53,8 +53,6 @@ class text_test extends advanced_testcase {
             [text::STARTS_WITH, 'sunlight', false],
             [text::ENDS_WITH, 'looking for?', true],
             [text::ENDS_WITH, 'your heart', false],
-            [text::IS_EMPTY, null, false],
-            [text::IS_NOT_EMPTY, null, true],
         ];
     }
 
@@ -95,6 +93,62 @@ class text_test extends advanced_testcase {
             $this->assertContains($course->fullname, $fullnames);
         } else {
             $this->assertNotContains($course->fullname, $fullnames);
+        }
+    }
+
+    /**
+     * Data provider for {@see test_get_sql_filter_empty}
+     *
+     * @return array
+     */
+    public function get_sql_filter_empty_provider(): array {
+        return [
+            [text::IS_EMPTY, null, true],
+            [text::IS_EMPTY, '', true],
+            [text::IS_EMPTY, 'hola', false],
+            [text::IS_NOT_EMPTY, null, false],
+            [text::IS_NOT_EMPTY, '', false],
+            [text::IS_NOT_EMPTY, 'hola', true],
+        ];
+    }
+
+    /**
+     * Test getting filter SQL using the {@see text::IS_EMPTY} and {@see text::IS_NOT_EMPTY} operators
+     *
+     * @param int $operator
+     * @param string|null $profilefieldvalue
+     * @param bool $expectmatch
+     *
+     * @dataProvider get_sql_filter_empty_provider
+     */
+    public function test_get_sql_filter_empty(int $operator, ?string $profilefieldvalue, bool $expectmatch): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // We are using the user.moodlenetprofile field because it is nullable.
+        $user = $this->getDataGenerator()->create_user([
+            'moodlenetprofile' => $profilefieldvalue,
+        ]);
+
+        $filter = new filter(
+            text::class,
+            'test',
+            new lang_string('user'),
+            'testentity',
+            'moodlenetprofile'
+        );
+
+        // Create instance of our filter, passing given operator.
+        [$select, $params] = text::create($filter)->get_sql_filter([
+            $filter->get_unique_identifier() . '_operator' => $operator,
+        ]);
+
+        $usernames = $DB->get_fieldset_select('user', 'username', $select, $params);
+        if ($expectmatch) {
+            $this->assertContains($user->username, $usernames);
+        } else {
+            $this->assertNotContains($user->username, $usernames);
         }
     }
 }

@@ -14,14 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External cohort API
- *
- * @package    core_cohort
- * @category   external
- * @copyright  MediaTouch 2000 srl
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_cohort;
+
+use core_cohort_external;
+use core_external\external_api;
+use externallib_advanced_testcase;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,7 +27,15 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/cohort/externallib.php');
 
-class core_cohort_externallib_testcase extends externallib_advanced_testcase {
+/**
+ * External cohort API
+ *
+ * @package    core_cohort
+ * @category   external
+ * @copyright  MediaTouch 2000 srl
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Test create_cohorts
@@ -42,7 +47,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
 
         set_config('allowcohortthemes', 1);
 
-        $contextid = context_system::instance()->id;
+        $contextid = \context_system::instance()->id;
         $category = $this->getDataGenerator()->create_category();
 
         $cohort1 = array(
@@ -97,7 +102,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
                 // As $CFG->allowcohortthemes is enabled, theme must be initialised.
                 $this->assertEquals($dbcohort->theme, $cohort1['theme']);
             } else if ($createdcohort['idnumber'] == $cohort2['idnumber']) {
-                $this->assertEquals($dbcohort->contextid, context_system::instance()->id);
+                $this->assertEquals($dbcohort->contextid, \context_system::instance()->id);
                 $this->assertEquals($dbcohort->name, $cohort2['name']);
                 $this->assertEquals($dbcohort->description, $cohort2['description']);
                 $this->assertEquals($dbcohort->visible, $cohort2['visible']);
@@ -129,7 +134,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/cohort:manage', $contextid, $roleid);
-        $this->expectException(required_capability_exception::class);
+        $this->expectException(\required_capability_exception::class);
         $createdcohorts = core_cohort_external::create_cohorts(array($cohort3));
     }
 
@@ -161,7 +166,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         $cohort1 = self::getDataGenerator()->create_cohort();
         $cohort2 = self::getDataGenerator()->create_cohort();
         $this->unassignUserCapability('moodle/cohort:manage', $contextid, $roleid);
-        $this->expectException(required_capability_exception::class);
+        $this->expectException(\required_capability_exception::class);
         core_cohort_external::delete_cohorts(array($cohort1->id, $cohort2->id));
     }
 
@@ -185,7 +190,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         $cohort1 = self::getDataGenerator()->create_cohort($cohort1);
         $cohort2 = self::getDataGenerator()->create_cohort();
 
-        $context = context_system::instance();
+        $context = \context_system::instance();
         $roleid = $this->assignUserCapability('moodle/cohort:view', $context->id);
 
         // Call the external function.
@@ -249,7 +254,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
             'theme' => 'classic'
             );
 
-        $context = context_system::instance();
+        $context = \context_system::instance();
         $roleid = $this->assignUserCapability('moodle/cohort:manage', $context->id);
 
         // Call the external function.
@@ -287,7 +292,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/cohort:manage', $context->id, $roleid);
-        $this->expectException(required_capability_exception::class);
+        $this->expectException(\required_capability_exception::class);
         core_cohort_external::update_cohorts(array($cohort1));
     }
 
@@ -308,7 +313,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         try {
             core_cohort_external::update_cohorts(array($cohort1));
             $this->fail('Expecting invalid_parameter_exception exception, none occured');
-        } catch (invalid_parameter_exception $e1) {
+        } catch (\invalid_parameter_exception $e1) {
             $this->assertStringContainsString('Invalid external api parameter: the value is "THIS IS NOT AN ID"', $e1->debuginfo);
         }
 
@@ -316,7 +321,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         try {
             core_cohort_external::update_cohorts(array($cohort1));
             $this->fail('Expecting invalid_parameter_exception exception, none occured');
-        } catch (invalid_parameter_exception $e2) {
+        } catch (\invalid_parameter_exception $e2) {
             $this->assertStringContainsString('Invalid external api parameter: the value is "9.999"', $e2->debuginfo);
         }
     }
@@ -335,8 +340,8 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         $category2 = self::getDataGenerator()->create_category(array(
             'name' => 'Test category 2'
         ));
-        $context1 = context_coursecat::instance($category1->id);
-        $context2 = context_coursecat::instance($category2->id);
+        $context1 = \context_coursecat::instance($category1->id);
+        $context2 = \context_coursecat::instance($category2->id);
 
         $cohort = array(
             'contextid' => $context1->id,
@@ -358,7 +363,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
 
         // Call the external function.
         // Should fail because we don't have permission on the dest category
-        $this->expectException(required_capability_exception::class);
+        $this->expectException(\required_capability_exception::class);
         core_cohort_external::update_cohorts(array($cohortupdate));
     }
 
@@ -376,8 +381,8 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         $category2 = self::getDataGenerator()->create_category(array(
             'name' => 'Test category 2'
         ));
-        $context1 = context_coursecat::instance($category1->id);
-        $context2 = context_coursecat::instance($category2->id);
+        $context1 = \context_coursecat::instance($category1->id);
+        $context2 = \context_coursecat::instance($category2->id);
 
         $cohort = array(
             'contextid' => $context1->id,
@@ -399,7 +404,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
 
         // Call the external function.
         // Should fail because we don't have permission on the src category
-        $this->expectException(required_capability_exception::class);
+        $this->expectException(\required_capability_exception::class);
         core_cohort_external::update_cohorts(array($cohortupdate));
     }
 
@@ -411,7 +416,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
 
         $this->resetAfterTest(true); // Reset all changes automatically after this test.
 
-        $contextid = context_system::instance()->id;
+        $contextid = \context_system::instance()->id;
 
         $cohort = array(
             'contextid' => $contextid,
@@ -450,7 +455,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
             'usertype' => array('type' => 'id', 'value' => '2')
             );
         $this->unassignUserCapability('moodle/cohort:assign', $contextid, $roleid);
-        $this->expectException(required_capability_exception::class);
+        $this->expectException(\required_capability_exception::class);
         $addcohortmembers = core_cohort_external::add_cohort_members(array($cohort2));
     }
 
@@ -467,7 +472,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         $cohort2 = self::getDataGenerator()->create_cohort();
         $user2 = self::getDataGenerator()->create_user();
 
-        $context = context_system::instance();
+        $context = \context_system::instance();
         $roleid = $this->assignUserCapability('moodle/cohort:assign', $context->id);
 
         $cohortaddmember1 = array(
@@ -507,7 +512,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/cohort:assign', $context->id, $roleid);
-        $this->expectException(required_capability_exception::class);
+        $this->expectException(\required_capability_exception::class);
         core_cohort_external::delete_cohort_members(array($cohortdel1, $cohortdel2));
     }
 
@@ -526,9 +531,9 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         $category = $this->getDataGenerator()->create_category();
         $othercategory = $this->getDataGenerator()->create_category();
         $course = $this->getDataGenerator()->create_course();
-        $syscontext = context_system::instance();
-        $catcontext = context_coursecat::instance($category->id);
-        $coursecontext = context_course::instance($course->id);
+        $syscontext = \context_system::instance();
+        $catcontext = \context_coursecat::instance($category->id);
+        $coursecontext = \context_course::instance($course->id);
 
         // Fetching default authenticated user role.
         $authrole = $DB->get_record('role', array('id' => $CFG->defaultuserroleid));
@@ -553,10 +558,10 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         // Enrol user in the course.
         $this->getDataGenerator()->enrol_user($courseuser->id, $course->id, 'courserole');
 
-        $syscontext = array('contextid' => context_system::instance()->id);
-        $catcontext = array('contextid' => context_coursecat::instance($category->id)->id);
-        $othercatcontext = array('contextid' => context_coursecat::instance($othercategory->id)->id);
-        $coursecontext = array('contextid' => context_course::instance($course->id)->id);
+        $syscontext = array('contextid' => \context_system::instance()->id);
+        $catcontext = array('contextid' => \context_coursecat::instance($category->id)->id);
+        $othercatcontext = array('contextid' => \context_coursecat::instance($othercategory->id)->id);
+        $coursecontext = array('contextid' => \context_course::instance($course->id)->id);
 
         $cohort1 = $this->getDataGenerator()->create_cohort(array_merge($syscontext, array('name' => 'Cohortsearch 1')));
         $cohort2 = $this->getDataGenerator()->create_cohort(array_merge($catcontext, array('name' => 'Cohortsearch 2')));
@@ -567,7 +572,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         try {
             $result = core_cohort_external::search_cohorts("Cohortsearch", $syscontext, 'parents');
             $this->fail('Invalid permissions in system');
-        } catch (required_capability_exception $e) {
+        } catch (\required_capability_exception $e) {
             // All good.
         }
 
@@ -576,7 +581,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         try {
             $result = core_cohort_external::search_cohorts("Cohortsearch", $catcontext, 'parents');
             $this->fail('Invalid permissions in category');
-        } catch (required_capability_exception $e) {
+        } catch (\required_capability_exception $e) {
             // All good.
         }
 
@@ -618,7 +623,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         try {
             $result = core_cohort_external::search_cohorts("Cohortsearch", $syscontext, 'invalid');
             $this->fail('Invalid parameter includes');
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             // All good.
         }
     }

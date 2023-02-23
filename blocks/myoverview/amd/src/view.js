@@ -228,7 +228,7 @@ const addToFavourites = (root, courseId) => {
 
     setCourseFavouriteState(courseId, true).then(success => {
         if (success) {
-            PubSub.publish(CourseEvents.favorited, courseId);
+            PubSub.publish(CourseEvents.favourited, courseId);
             removeAction.removeClass('hidden');
             addAction.addClass('hidden');
             showFavouriteIcon(root, courseId);
@@ -436,7 +436,7 @@ const setCourseFavouriteState = (courseId, status) => {
         if (result.warnings.length === 0) {
             loadedPages.forEach(courseList => {
                 courseList.courses.forEach((course, index) => {
-                    if (course.id === courseId) {
+                    if (course.id == courseId) {
                         courseList.courses[index].isfavourite = status;
                     }
                 });
@@ -456,8 +456,10 @@ const setCourseFavouriteState = (courseId, status) => {
  */
 const noCoursesRender = root => {
     const nocoursesimg = root.find(SELECTORS.courseView.region).attr('data-nocoursesimg');
+    const newcourseurl = root.find(SELECTORS.courseView.region).attr('data-newcourseurl');
     return Templates.render(TEMPLATES.NOCOURSES, {
-        nocoursesimg: nocoursesimg
+        nocoursesimg: nocoursesimg,
+        newcourseurl: newcourseurl
     });
 };
 
@@ -767,45 +769,41 @@ const registerEventListeners = (root, page) => {
     // Searching functionality event handlers.
     const input = page.querySelector(SELECTORS.region.searchInput);
     const clearIcon = page.querySelector(SELECTORS.region.clearIcon);
-    const searchIcon = page.querySelector(SELECTORS.region.searchIcon);
 
     clearIcon.addEventListener('click', () => {
         input.value = '';
-        clearSearch(searchIcon, clearIcon, root);
+        input.focus();
+        clearSearch(clearIcon, root);
     });
 
     input.addEventListener('input', debounce(() => {
         if (input.value === '') {
-            clearSearch(searchIcon, clearIcon, root);
+            clearSearch(clearIcon, root);
         } else {
-            activeSearch(searchIcon, clearIcon);
+            activeSearch(clearIcon);
             initializePagedContent(root, searchFunctionalityCurry(), input.value.trim());
         }
-    }, 300));
+    }, 1000));
 };
 
 /**
  * Reset the search icon and trigger the init for the block.
  *
- * @param {HTMLElement} searchIcon Our search icon to manipulate.
  * @param {HTMLElement} clearIcon Our closing icon to manipulate.
  * @param {Object} root The myoverview block container element.
  */
-export const clearSearch = (searchIcon, clearIcon, root) => {
-    searchIcon.classList.remove('d-none');
-    clearIcon.parentElement.classList.add('d-none');
+export const clearSearch = (clearIcon, root) => {
+    clearIcon.classList.add('d-none');
     init(root);
 };
 
 /**
  * Change the searching icon to its' active state.
  *
- * @param {HTMLElement} searchIcon Our search icon to manipulate.
  * @param {HTMLElement} clearIcon Our closing icon to manipulate.
  */
-const activeSearch = (searchIcon, clearIcon) => {
-    searchIcon.classList.add('d-none');
-    clearIcon.parentElement.classList.remove('d-none');
+const activeSearch = (clearIcon) => {
+    clearIcon.classList.remove('d-none');
 };
 
 /**

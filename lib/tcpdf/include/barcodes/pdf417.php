@@ -523,10 +523,10 @@ class PDF417 {
 	/**
 	 * This is the class constructor.
 	 * Creates a PDF417 object
-	 * @param $code (string) code to represent using PDF417
-	 * @param $ecl (int) error correction level (0-8); default -1 = automatic correction level
-	 * @param $aspectratio (float) the width to height of the symbol (excluding quiet zones)
-	 * @param $macro (array) information for macro block
+	 * @param string $code code to represent using PDF417
+	 * @param int $ecl error correction level (0-8); default -1 = automatic correction level
+	 * @param float $aspectratio the width to height of the symbol (excluding quiet zones)
+	 * @param array $macro information for macro block
 	 * @public
 	 */
 	public function __construct($code, $ecl=-1, $aspectratio=2, $macro=array()) {
@@ -734,8 +734,8 @@ class PDF417 {
 
 	/**
 	 * Returns the error correction level (0-8) to be used
-	 * @param $ecl (int) error correction level
-	 * @param $numcw (int) number of data codewords
+	 * @param int $ecl error correction level
+	 * @param int $numcw number of data codewords
 	 * @return int error correction level
 	 * @protected
 	 */
@@ -772,8 +772,8 @@ class PDF417 {
 
 	/**
 	 * Returns the error correction codewords
-	 * @param $cw (array) array of codewords including Symbol Length Descriptor and pad
-	 * @param $ecl (int) error correction level 0-8
+	 * @param array $cw array of codewords including Symbol Length Descriptor and pad
+	 * @param int $ecl error correction level 0-8
 	 * @return array of error correction codewords
 	 * @protected
 	 */
@@ -809,8 +809,8 @@ class PDF417 {
 
 	/**
 	 * Create array of sequences from input
-	 * @param $code (string) code
-	 * @return bidimensional array containing characters and classification
+	 * @param string $code code
+	 * @return array bi-dimensional array containing characters and classification
 	 * @protected
 	 */
 	protected function getInputSequences($code) {
@@ -864,9 +864,9 @@ class PDF417 {
 
 	/**
 	 * Compact data by mode.
-	 * @param $mode (int) compaction mode number
-	 * @param $code (string) data to compact
-	 * @param $addmode (boolean) if true add the mode codeword at first position
+	 * @param int $mode compaction mode number
+	 * @param string $code data to compact
+	 * @param boolean $addmode if true add the mode codeword at first position
 	 * @return array of codewords
 	 * @protected
 	 */

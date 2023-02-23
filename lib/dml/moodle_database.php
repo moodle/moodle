@@ -52,6 +52,10 @@ define('SQL_QUERY_STRUCTURE', 4);
 /** SQL_QUERY_AUX - Auxiliary query done by driver, setting connection config, getting table info, etc. */
 define('SQL_QUERY_AUX', 5);
 
+/** SQL_QUERY_AUX_READONLY - Auxiliary query that can be done using the readonly connection:
+ * database parameters, table/index/column lists, if not within transaction/ddl. */
+define('SQL_QUERY_AUX_READONLY', 6);
+
 /**
  * Abstract class representing moodle database interface.
  * @link http://docs.moodle.org/dev/DML_functions
@@ -414,13 +418,15 @@ abstract class moodle_database {
 
     /**
      * This should be called before each db query.
+     *
      * @param string $sql The query string.
-     * @param array $params An array of parameters.
-     * @param int $type The type of query. ( SQL_QUERY_SELECT | SQL_QUERY_AUX | SQL_QUERY_INSERT | SQL_QUERY_UPDATE | SQL_QUERY_STRUCTURE )
+     * @param array|null $params An array of parameters.
+     * @param int $type The type of query ( SQL_QUERY_SELECT | SQL_QUERY_AUX_READONLY | SQL_QUERY_AUX |
+     *                  SQL_QUERY_INSERT | SQL_QUERY_UPDATE | SQL_QUERY_STRUCTURE ).
      * @param mixed $extrainfo This is here for any driver specific extra information.
      * @return void
      */
-    protected function query_start($sql, array $params=null, $type, $extrainfo=null) {
+    protected function query_start($sql, ?array $params, $type, $extrainfo=null) {
         if ($this->loggingquery) {
             return;
         }
@@ -433,6 +439,7 @@ abstract class moodle_database {
         switch ($type) {
             case SQL_QUERY_SELECT:
             case SQL_QUERY_AUX:
+            case SQL_QUERY_AUX_READONLY:
                 $this->reads++;
                 break;
             case SQL_QUERY_INSERT:
@@ -483,6 +490,7 @@ abstract class moodle_database {
         switch ($type) {
             case SQL_QUERY_SELECT:
             case SQL_QUERY_AUX:
+            case SQL_QUERY_AUX_READONLY:
                 throw new dml_read_exception($error, $sql, $params);
             case SQL_QUERY_INSERT:
             case SQL_QUERY_UPDATE:
@@ -889,9 +897,6 @@ abstract class moodle_database {
         // convert table names
         $sql = $this->fix_table_names($sql);
 
-        // Optionally add debug trace to sql as a comment.
-        $sql = $this->add_sql_debugging($sql);
-
         // cast booleans to 1/0 int and detect forbidden objects
         foreach ($params as $key => $value) {
             $this->detect_objects($value);
@@ -902,6 +907,9 @@ abstract class moodle_database {
         $named_count = preg_match_all('/(?<!:):[a-z][a-z0-9_]*/', $sql, $named_matches); // :: used in pgsql casts
         $dollar_count = preg_match_all('/\$[1-9][0-9]*/', $sql, $dollar_matches);
         $q_count     = substr_count($sql, '?');
+
+        // Optionally add debug trace to sql as a comment.
+        $sql = $this->add_sql_debugging($sql);
 
         $count = 0;
 
@@ -2163,6 +2171,17 @@ abstract class moodle_database {
     }
 
     /**
+     * Return SQL for casting to char of given field/expression. Default implementation performs implicit cast using
+     * concatenation with an empty string
+     *
+     * @param string $field Table field or SQL expression to be cast
+     * @return string
+     */
+    public function sql_cast_to_char(string $field): string {
+        return $this->sql_concat("''", $field);
+    }
+
+    /**
      * Returns the SQL to be used in order to CAST one CHAR column to INTEGER.
      *
      * Be aware that the CHAR column you're trying to cast contains really
@@ -2336,6 +2355,19 @@ abstract class moodle_database {
     }
 
     /**
+     * Returns the SQL text to be used to order by columns, standardising the return
+     * pattern of null values across database types to sort nulls first when ascending
+     * and last when descending.
+     *
+     * @param string $fieldname The name of the field we need to sort by.
+     * @param int $sort An order to sort the results in.
+     * @return string The piece of SQL code to be used in your statement.
+     */
+    public function sql_order_by_null(string $fieldname, int $sort = SORT_ASC): string {
+        return $fieldname . ' ' . ($sort == SORT_ASC ? 'ASC' : 'DESC');
+    }
+
+    /**
      * Returns the SQL text to be used to calculate the length in characters of one expression.
      * @param string $fieldname The fieldname/expression to calculate its length in characters.
      * @return string the piece of SQL code to be used in the statement.
@@ -2480,6 +2512,30 @@ abstract class moodle_database {
      * @return string or empty if not supported
      */
     public function sql_regex($positivematch = true, $casesensitive = false) {
+        return '';
+    }
+
+    /**
+     * Returns the word-beginning boundary marker if this database driver supports regex syntax when searching.
+     * @return string The word-beginning boundary marker. Otherwise, an empty string.
+     */
+    public function sql_regex_get_word_beginning_boundary_marker() {
+        if ($this->sql_regex_supported()) {
+            return '[[:<:]]';
+        }
+
+        return '';
+    }
+
+    /**
+     * Returns the word-end boundary marker if this database driver supports regex syntax when searching.
+     * @return string The word-end boundary marker. Otherwise, an empty string.
+     */
+    public function sql_regex_get_word_end_boundary_marker() {
+        if ($this->sql_regex_supported()) {
+            return '[[:>:]]';
+        }
+
         return '';
     }
 

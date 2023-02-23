@@ -14,24 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains the test class testing the \core\ip_utils static helper class functions.
- *
- * @package    core
- * @copyright  2016 Jake Dallimore <jrhdallimore@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace core;
 
 /**
  * This tests the static helper functions contained in the class '\core\ip_utils'.
  *
  * @package    core
+ * @covers     \core\ip_utils
  * @copyright  2016 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_ip_utils_testcase extends basic_testcase {
+class ip_utils_test extends \basic_testcase {
     /**
      * Test for \core\ip_utils::is_domain_name().
      *
@@ -362,6 +355,7 @@ class core_ip_utils_testcase extends basic_testcase {
     public function data_domain_addresses() {
         return [
             [true, 'example.com'],
+            [true, 'ExAmPle.com'],
             [false, 'sub.example.com'],
             [false, 'example.com.au'],
             [false, ' example.com'], // A space at the front of the domain is invalid.
@@ -369,6 +363,8 @@ class core_ip_utils_testcase extends basic_testcase {
             [false, 'test.example.com'],
             [false, 'moodle.com'],
             [true, 'test.moodle.com'],
+            [true, 'TeSt.moodle.com'],
+            [true, 'test.MoOdLe.com'],
             [false, 'test.moodle.com.au'],
             [true, 'nice.address.per.this.penny-arcade.com'],
             [false, 'normal.per.this.penny-arcade.com.au'],

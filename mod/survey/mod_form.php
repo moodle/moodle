@@ -26,7 +26,7 @@ class mod_survey_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
 
         if (!$options = $DB->get_records_menu("survey", array("template"=>0), "name", "id, name")) {
-            print_error('cannotfindsurveytmpt', 'survey');
+            throw new \moodle_exception('cannotfindsurveytmpt', 'survey');
         }
 
         foreach ($options as $id => $name) {

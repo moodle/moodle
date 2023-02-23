@@ -23,17 +23,17 @@ namespace mod_bigbluebuttonbn\event;
  * @copyright 2010 onwards, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class live_session_event extends base
-{
+class live_session_event extends base {
     /**
      * Init method.
+     *
      * @param string $crud
      * @param int $edulevel
      */
     protected function init($crud = 'r', $edulevel = self::LEVEL_OTHER) {
         parent::init($crud, $edulevel);
-        $this->description = "The user with id '##userid' triggered action ##other in a ".
-            "bigbluebutton meeting for the bigbluebuttonbn activity with id ".
+        $this->description = "The user with id '##userid' triggered action ##other in a " .
+            "bigbluebutton meeting for the bigbluebuttonbn activity with id " .
             "'##objectid' for the course id '##courseid'.";
     }
 

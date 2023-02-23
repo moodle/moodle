@@ -34,6 +34,9 @@ class groupconcat extends base {
     /** @var string Character to use as a delimeter between column fields */
     protected const COLUMN_FIELD_DELIMETER = '<|>';
 
+    /** @var string Character to use a null coalesce value */
+    protected const COLUMN_NULL_COALESCE = '<^>';
+
     /** @var string Character to use as a delimeter between field values */
     protected const FIELD_VALUE_DELIMETER = '<,>';
 
@@ -75,32 +78,11 @@ class groupconcat extends base {
      * @return string
      */
     public static function get_column_field_sql(array $sqlfields): string {
-        global $DB;
-
         if (count($sqlfields) === 1) {
             return parent::get_column_field_sql($sqlfields);
         }
 
-        // Coalesce all the SQL fields, to remove all nulls.
-        $concatfields = [];
-        foreach ($sqlfields as $sqlfield) {
-
-            // We need to ensure all values are char (this ought to be done in the DML drivers, see MDL-72184).
-            switch ($DB->get_dbfamily()) {
-                case 'postgres' :
-                    $sqlfield = "CAST({$sqlfield} AS VARCHAR)";
-                break;
-                case 'oracle' :
-                    $sqlfield = "TO_CHAR({$sqlfield})";
-                break;
-            }
-
-            $concatfields[] = "COALESCE({$sqlfield}, ' ')";
-            $concatfields[] = "'" . self::COLUMN_FIELD_DELIMETER . "'";
-        }
-
-        // Slice off the last delimeter.
-        return $DB->sql_concat(...array_slice($concatfields, 0, -1));
+        return self::get_column_fields_concat($sqlfields, self::COLUMN_FIELD_DELIMETER, self::COLUMN_NULL_COALESCE);
     }
 
     /**
@@ -125,9 +107,15 @@ class groupconcat extends base {
      * @param mixed $value
      * @param array $values
      * @param array $callbacks
+     * @param int $columntype
      * @return mixed
      */
-    public static function format_value($value, array $values, array $callbacks) {
+    public static function format_value($value, array $values, array $callbacks, int $columntype) {
+        $firstvalue = reset($values);
+        if ($firstvalue === null) {
+            return '';
+        }
+
         $formattedvalues = [];
 
         // Store original names of all values that would be present without aggregation.
@@ -135,7 +123,7 @@ class groupconcat extends base {
         $valuenamescount = count($valuenames);
 
         // Loop over each extracted value from the concatenated string.
-        $values = explode(self::FIELD_VALUE_DELIMETER, (string) reset($values));
+        $values = explode(self::FIELD_VALUE_DELIMETER, (string)$firstvalue);
         foreach ($values as $value) {
 
             // Ensure we have equal number of value names/data, account for truncation by DB.
@@ -144,13 +132,18 @@ class groupconcat extends base {
                 continue;
             }
 
-            $originalvalue = array_combine($valuenames, $valuedata);
-            $originalfirstvalue = reset($originalvalue);
+            // Re-construct original values, also ensuring any nulls contained within are restored.
+            $originalvalues = array_map(static function(string $value): ?string {
+                return $value === self::COLUMN_NULL_COALESCE ? null : $value;
+            }, array_combine($valuenames, $valuedata));
+
+            $originalvalue = column::get_default_value($originalvalues, $columntype);
 
             // Once we've re-constructed each value, we can apply callbacks to it.
-            $formattedvalues[] = parent::format_value($originalfirstvalue, $originalvalue, $callbacks);
+            $formattedvalues[] = parent::format_value($originalvalue, $originalvalues, $callbacks, $columntype);
         }
 
-        return implode(', ', $formattedvalues);
+        $listseparator = get_string('listsep', 'langconfig') . ' ';
+        return implode($listseparator, $formattedvalues);
     }
 }

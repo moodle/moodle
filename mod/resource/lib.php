@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die;
 /**
  * List of features supported in Resource module
  * @param string $feature FEATURE_xx constant for requested feature
- * @return mixed True if module supports feature, false if not, null if doesn't know
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function resource_supports($feature) {
     switch($feature) {
@@ -39,6 +39,7 @@ function resource_supports($feature) {
         case FEATURE_GRADE_OUTCOMES:          return false;
         case FEATURE_BACKUP_MOODLE2:          return true;
         case FEATURE_SHOW_DESCRIPTION:        return true;
+        case FEATURE_MOD_PURPOSE:             return MOD_PURPOSE_CONTENT;
 
         default: return null;
     }
@@ -191,7 +192,7 @@ function resource_delete_instance($id) {
  * "extra" information that may be needed when printing
  * this activity in a course listing.
  *
- * See {@link get_array_of_activities()} in course/lib.php
+ * See {@link course_modinfo::get_array_of_activities()}
  *
  * @param stdClass $coursemodule
  * @return cached_cm_info info
@@ -217,7 +218,6 @@ function resource_get_coursemodule_info($coursemodule) {
     }
 
     if ($resource->tobemigrated) {
-        $info->icon ='i/invalid';
         return $info;
     }
 
@@ -226,7 +226,6 @@ function resource_get_coursemodule_info($coursemodule) {
     $files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder DESC, id ASC', false, 0, 0, 1);
     if (count($files) >= 1) {
         $mainfile = reset($files);
-        $info->icon = file_file_icon($mainfile, 24);
         $resource->mainfile = $mainfile->get_filename();
     }
 

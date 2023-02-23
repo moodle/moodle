@@ -25,7 +25,7 @@
 $string['anypagematchingtheabove'] = 'Any page matching the above';
 $string['appearsinsubcontexts'] = 'Appears in sub-contexts';
 $string['assignrolesinblock'] = 'Assign roles in {$a} block';
-$string['blocksdrawertoggle'] = 'Hide/show blocks drawer';
+$string['blocksdrawertoggle'] = 'Hide/show block drawer';
 $string['blocksettings'] = 'Block settings';
 $string['bracketfirst'] = '{$a} (first)';
 $string['bracketlast'] = '{$a} (last)';
@@ -42,7 +42,7 @@ $string['deletecheck'] = 'Delete {$a} block?';
 $string['deletecheck_modal'] = 'Delete block?';
 $string['deleteblock'] = 'Delete {$a} block';
 $string['deleteblockcheck'] = 'Are you sure that you want to delete this block titled {$a}?';
-$string['deleteblockinprogress'] = 'The block {$a} is currently being removed from this page.';
+$string['deleteblockinprogress'] = 'Block {$a} removal in progress...';
 $string['deleteblockwarning'] = '<p>You are about to delete a block that appears elsewhere.</p><p>Original block location: {$a->location}<br />Display on page types: {$a->pagetype}</p><p>Are you sure you want to continue?</p>';
 $string['hideblock'] = 'Hide {$a} block';
 $string['hidepanel'] = 'Hide panel';
@@ -73,11 +73,3 @@ $string['thisspecificpage'] = 'This specific page';
 $string['visible'] = 'Visible';
 $string['weight'] = 'Weight';
 $string['wherethisblockappears'] = 'Where this block appears';
-
-// Deprecated since Moodle 3.7.
-$string['addtodock'] = 'Move this to the dock';
-$string['dockblock'] = 'Dock {$a} block';
-$string['hidedockpanel'] = 'Hide the dock panel';
-$string['undockall'] = 'Undock all';
-$string['undockblock'] = 'Undock {$a} block';
-$string['undockitem'] = 'Undock this item';

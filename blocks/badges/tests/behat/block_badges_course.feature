@@ -28,7 +28,7 @@ Feature: Enable Block Badges in a course
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Teacher 1 (teacher1@example.com)"
     And I press "Award badge"
@@ -45,7 +45,7 @@ Feature: Enable Block Badges in a course
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Teacher 1 (teacher1@example.com)"
     And I press "Award badge"
@@ -64,7 +64,7 @@ Feature: Enable Block Badges in a course
     When I add the "Latest badges" block
     And I configure the "Latest badges" block
     And I set the following fields to these values:
-      | id_config_numberofbadges | 1 |
+      | Number of latest badges to display | 1 |
     And I press "Save changes"
     Then I should see "Badge 2" in the "Latest badges" "block"
     And I should not see "Badge 1" in the "Latest badges" "block"

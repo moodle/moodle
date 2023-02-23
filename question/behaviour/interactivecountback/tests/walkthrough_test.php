@@ -14,16 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests that walks a question through the interactive with
- * countback behaviour.
- *
- * @package    qbehaviour
- * @subpackage interactivecountback
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qbehaviour_interactivecountback;
 
+use question_hint_with_parts;
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,14 +29,15 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
 /**
  * Unit tests for the interactive with countback behaviour.
  *
+ * @package    qbehaviour_interactivecountback
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_interactivecountback_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class walkthrough_test extends \qbehaviour_walkthrough_test_base {
     public function test_interactive_feedback_match_reset() {
 
         // Create a matching question.
-        $m = test_question_maker::make_question('match');
+        $m = \test_question_maker::make_question('match');
         $m->shufflestems = false;
         $m->hints = array(
             new question_hint_with_parts(0, 'This is the first hint.', FORMAT_HTML, true, true),
@@ -87,7 +82,7 @@ class qbehaviour_interactivecountback_walkthrough_test extends qbehaviour_walkth
                 $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
-                new question_pattern_expectation('/Tries remaining: 2/'),
+                new \question_pattern_expectation('/Tries remaining: 2/'),
                 $this->get_contains_hint_expectation('This is the first hint'),
                 $this->get_contains_num_parts_correct(2),
                 $this->get_contains_standard_partiallycorrect_combined_feedback_expectation(),
@@ -142,7 +137,7 @@ class qbehaviour_interactivecountback_walkthrough_test extends qbehaviour_walkth
                 $this->get_does_not_contain_try_again_button_expectation(),
                 $this->get_contains_correct_expectation(),
                 $this->get_contains_standard_correct_combined_feedback_expectation(),
-                new question_no_pattern_expectation('/class="control\b[^"]*\bpartiallycorrect"/'));
+                new \question_no_pattern_expectation('/class="control\b[^"]*\bpartiallycorrect"/'));
         $this->check_output_contains_selectoptions(
                 $this->get_contains_select_expectation('sub0', $choices, $orderforchoice[1], false),
                 $this->get_contains_select_expectation('sub1', $choices, $orderforchoice[2], false),

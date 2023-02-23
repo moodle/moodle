@@ -5,8 +5,7 @@ Feature: Check label visibility works
   As a teacher
   I should create label activity
 
-  @javascript
-  Scenario: Hidden label activity should be show as hidden.
+  Background:
     Given the following "courses" exist:
       | fullname | shortname | category |
       | Test | C1 | 0 |
@@ -18,38 +17,26 @@ Feature: Check label visibility works
       | user | course | role |
       | teacher | C1 | editingteacher |
       | student | C1 | student |
+    And the following "activities" exist:
+      | activity | course | section | intro          | idnumber | visible |
+      | label    | C1     | 1       | Swanky label   | 1        | 1       |
+      | label    | C1     | 1       | Swanky label 2 | 2        | 0       |
+
+  Scenario: Hidden label activity should be show as hidden.
     Given I log in as "teacher"
-    And I am on "Test" course homepage with editing mode on
-    When I add a "label" to section "1" and I fill the form with:
-      | Label text | Swanky label |
-      | Availability | Hide from students |
-    Then "Swanky label" label should be hidden
+    When I am on "Test" course homepage with editing mode on
+    Then "Swanky label 2" label should be hidden
     And I turn editing mode off
-    And "Swanky label" label should be hidden
+    And "Swanky label 2" label should be hidden
     And I log out
     And I log in as "student"
     And I am on "Test" course homepage
-    And I should not see "Swanky label"
+    And I should not see "Swanky label 2"
     And I log out
 
-  @javascript
   Scenario: Visible label activity should be shown as visible.
-    Given the following "courses" exist:
-      | fullname | shortname | category |
-      | Test | C1 | 0 |
-    And the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher | Teacher | Frist | teacher1@example.com |
-      | student | Student | First | student1@example.com |
-    And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher | C1 | editingteacher |
-      | student | C1 | student |
     Given I log in as "teacher"
-    And I am on "Test" course homepage with editing mode on
-    When I add a "label" to section "1" and I fill the form with:
-      | Label text | Swanky label |
-      | Availability | Show on course page |
+    When I am on "Test" course homepage with editing mode on
     Then "Swanky label" activity should be visible
     And I log out
     And I log in as "student"
@@ -59,23 +46,9 @@ Feature: Check label visibility works
 
   @javascript
   Scenario: Teacher can not show label inside the hidden section
-    Given the following "courses" exist:
-      | fullname | shortname | category |
-      | Test | C1 | 0 |
-    And the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher | Teacher | Frist | teacher1@example.com |
-      | student | Student | First | student1@example.com |
-    And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher | C1 | editingteacher |
-      | student | C1 | student |
     Given I log in as "teacher"
     And I am on "Test" course homepage with editing mode on
-    When I add a "label" to section "1" and I fill the form with:
-      | Label text | Swanky label |
-      | Availability | Show on course page |
-    And I hide section "1"
+    When I hide section "1"
     Then "Swanky label" label should be hidden
     And I open "Swanky label" actions menu
     And "Swanky label" actions menu should not have "Show" item

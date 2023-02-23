@@ -1,5 +1,52 @@
 This files describes API changes for code that uses the user API.
 
+=== 4.2 ===
+
+* Added get_internalfield_list() and get_internalfields() in the user_field_mapping class.
+  The get_internalfield_list() returns data in an array by grouping profile fields based on field categories,
+  used for internal field name dropdown in the user field mapping of Oauth2 services
+  The get_internalfields() converts the result from get_internalfield_list() into flat array,
+  used to save/update the profile data when a user uses OAuth2 services.
+* Added get_profile_field_names() and get_profile_field_list() in the profile_field_base class.
+  The get_profile_field_names() returns the list of valid custom profile user fields.
+  The get_profile_field_list() returns the profile fields
+  in a format that can be used for choices in a group select menu.
+* New method `core_user::is_current_user`, useful for components implementing permission callbacks for their preferences
+
+=== 4.1 ===
+
+* Added a new method is_transform_supported() in the profile_field_base class.
+  The purpose is to allow the field to be transformed during the export process.
+  It has been implemented in the Date/Time data type (Applied in 4.1, 4.0.6).
+
+* user_get_user_details_courses() now accepts an optional second parameter, an array of userfields that should be
+  returned. The values passed into the $userfields parameter must all be included in the return from
+  user_get_default_fields().
+  It also allows you to reduce how much of a user record is required by the method. The minimum user record fields are:
+    * id
+    * deleted
+    * all potential fullname fields
+
+* Participant filter is moved to core as an API which can be used in different areas of core by implementing the API
+  and filterable objects. As a part of making the API mature as a core one, these are the js files moved from core
+  user to core library:
+  * user/amd/src/local/participantsfilter/filter.js → lib/amd/src/datafilter/filtertype.js
+  * user/amd/src/local/participantsfilter/filtertypes/country.js → lib/amd/src/datafilter/filtertypes/country.js
+  * user/amd/src/local/participantsfilter/filtertypes/courseid.js → lib/amd/src/datafilter/filtertypes/courseid.js
+  * user/amd/src/local/participantsfilter/filtertypes/keyword.js → lib/amd/src/datafilter/filtertypes/keyword.js
+  * user/amd/src/local/participantsfilter/selectors.js → lib/amd/src/datafilter/selectors.js
+  The following mustache have been moved from core user to core library:
+  * user/templates/local/participantsfilter/filterrow.mustache → lib/templates/datafilter/filter_row.mustache
+  * user/templates/local/participantsfilter/filtertype.mustache → lib/templates/datafilter/filter_type.mustache
+  * user/templates/local/participantsfilter/filtertypes.mustache → lib/templates/datafilter/filter_types.mustache
+  * user/templates/local/participantsfilter/autocomplete_layout.mustache → lib/templates/datafilter/autocomplete_layout.mustache
+  * user/templates/local/participantsfilter/autocomplete_selection.mustache → lib/templates/datafilter/autocomplete_selection.mustache
+  * user/templates/local/participantsfilter/autocomplete_selection_items.mustache → lib/templates/datafilter/autocomplete_selection_items.mustache
+  Class participant_filter now extends core filter api in core user.
+
+* The unified_filter function has been finally deprecated and cannot be used anymore
+* The class \core_user\output\unified_filter has been finally deprecated and removed
+
 === 4.0 ===
 
 * External function core_user_external::update_users() will now fail on a per user basis. Previously if one user
@@ -7,6 +54,8 @@ This files describes API changes for code that uses the user API.
 * External function core_user_external::update_users() now returns an error code and message to why a user update
   action failed.
 * New method `core_user\fields::get_sql_fullname` for retrieving user fullname format in SQL statement
+* The `profile_get_custom_field_data_by_shortname` method now accepts an optional parameter to determine whether
+  to use case-sensitive matching of the profile field shortname or not (default true)
 
 === 3.11 ===
 

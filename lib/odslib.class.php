@@ -1177,8 +1177,8 @@ class MoodleODSWriter {
                         if (isset($cell->formula)) {
                             $buffer .= '<table:table-cell table:formula="of:'.$cell->formula.'"'.$extra.'></table:table-cell>'."\n";
                         } else if ($cell->type == 'date') {
-                            $buffer .= '<table:table-cell office:value-type="date" office:date-value="' . strftime('%Y-%m-%dT%H:%M:%S', $cell->value) . '"'.$extra.'>'
-                                     . $pretext . strftime('%Y-%m-%dT%H:%M:%S', $cell->value) . $posttext
+                            $buffer .= '<table:table-cell office:value-type="date" office:date-value="' . date("Y-m-d\\TH:i:s", $cell->value) . '"'.$extra.'>'
+                                     . $pretext . date("Y-m-d\\TH:i:s", $cell->value) . $posttext
                                      . '</table:table-cell>'."\n";
                         } else if ($cell->type == 'float') {
                             $buffer .= '<table:table-cell office:value-type="float" office:value="' . htmlspecialchars($cell->value, ENT_QUOTES, 'utf-8') . '"'.$extra.'>'
@@ -1267,7 +1267,7 @@ class MoodleODSWriter {
     <office:meta>
         <meta:generator>Moodle '.$CFG->release.'</meta:generator>
         <meta:initial-creator>' . htmlspecialchars(fullname($USER, true), ENT_QUOTES, 'utf-8') . '</meta:initial-creator>
-        <meta:creation-date>'.strftime('%Y-%m-%dT%H:%M:%S').'</meta:creation-date>
+        <meta:creation-date>'.date("Y-m-d\\TH:i:s").'</meta:creation-date>
         <meta:document-statistic meta:table-count="1" meta:cell-count="0" meta:object-count="0"/>
     </office:meta>
 </office:document-meta>';

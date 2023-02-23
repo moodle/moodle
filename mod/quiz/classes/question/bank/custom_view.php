@@ -25,6 +25,9 @@
 
 namespace mod_quiz\question\bank;
 
+use core_question\local\bank\question_version_status;
+use mod_quiz\question\bank\filter\custom_category_condition;
+
 /**
  * Subclass to customise the view of the question bank for the quiz editing screen.
  *
@@ -33,6 +36,8 @@ namespace mod_quiz\question\bank;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class custom_view extends \core_question\local\bank\view {
+    /** @var int number of questions per page to show in the add from question bank modal. */
+    const DEFAULT_PAGE_SIZE = 20;
 
     /** @var bool $quizhasattempts whether the quiz this is used by has been attemptd. */
     protected $quizhasattempts = false;
@@ -44,8 +49,8 @@ class custom_view extends \core_question\local\bank\view {
     const MAX_TEXT_LENGTH = 200;
 
     /**
-     * Constructor for custom_view.
-     * @param \question_edit_contexts $contexts
+     * Constructor.
+     * @param \core_question\local\bank\question_edit_contexts $contexts
      * @param \moodle_url $pageurl
      * @param \stdClass $course course settings
      * @param \stdClass $cm activity settings.
@@ -54,6 +59,7 @@ class custom_view extends \core_question\local\bank\view {
     public function __construct($contexts, $pageurl, $course, $cm, $quiz) {
         parent::__construct($contexts, $pageurl, $course, $cm);
         $this->quiz = $quiz;
+        $this->pagesize = self::DEFAULT_PAGE_SIZE;
     }
 
     protected function get_question_bank_plugins(): array {
@@ -195,7 +201,7 @@ class custom_view extends \core_question\local\bank\view {
         echo \html_writer::start_tag('div', ['class' => 'pt-2']);
         if ($canuseall) {
             // Add selected questions to the quiz.
-            $params = array(
+            $params = [
                 'type' => 'submit',
                 'name' => 'add',
                 'class' => 'btn btn-primary',
@@ -204,7 +210,7 @@ class custom_view extends \core_question\local\bank\view {
                 'data-togglegroup' => 'qbank',
                 'data-toggle' => 'action',
                 'disabled' => true,
-            );
+            ];
             echo \html_writer::empty_tag('input', $params);
         }
         echo \html_writer::end_tag('div');
@@ -250,5 +256,82 @@ class custom_view extends \core_question\local\bank\view {
             $this->get_column_type($colname);
             $this->sort[$sort] = $order;
         }
+    }
+
+    protected function build_query(): void {
+        // Get the required tables and fields.
+        $joins = [];
+        $fields = ['qv.status', 'qc.id as categoryid', 'qv.version', 'qv.id as versionid', 'qbe.id as questionbankentryid'];
+        if (!empty($this->requiredcolumns)) {
+            foreach ($this->requiredcolumns as $column) {
+                $extrajoins = $column->get_extra_joins();
+                foreach ($extrajoins as $prefix => $join) {
+                    if (isset($joins[$prefix]) && $joins[$prefix] != $join) {
+                        throw new \coding_exception('Join ' . $join . ' conflicts with previous join ' . $joins[$prefix]);
+                    }
+                    $joins[$prefix] = $join;
+                }
+                $fields = array_merge($fields, $column->get_required_fields());
+            }
+        }
+        $fields = array_unique($fields);
+
+        // Build the order by clause.
+        $sorts = [];
+        foreach ($this->sort as $sort => $order) {
+            list($colname, $subsort) = $this->parse_subsort($sort);
+            $sorts[] = $this->requiredcolumns[$colname]->sort_expression($order < 0, $subsort);
+        }
+
+        // Build the where clause.
+        $latestversion = 'qv.version = (SELECT MAX(v.version)
+                                          FROM {question_versions} v
+                                          JOIN {question_bank_entries} be
+                                            ON be.id = v.questionbankentryid
+                                         WHERE be.id = qbe.id)';
+        $readyonly = "qv.status = '" . question_version_status::QUESTION_STATUS_READY . "' ";
+        $tests = ['q.parent = 0', $latestversion, $readyonly];
+        $this->sqlparams = [];
+        foreach ($this->searchconditions as $searchcondition) {
+            if ($searchcondition->where()) {
+                $tests[] = '((' . $searchcondition->where() .'))';
+            }
+            if ($searchcondition->params()) {
+                $this->sqlparams = array_merge($this->sqlparams, $searchcondition->params());
+            }
+        }
+        // Build the SQL.
+        $sql = ' FROM {question} q ' . implode(' ', $joins);
+        $sql .= ' WHERE ' . implode(' AND ', $tests);
+        $this->countsql = 'SELECT count(1)' . $sql;
+        $this->loadsql = 'SELECT ' . implode(', ', $fields) . $sql . ' ORDER BY ' . implode(', ', $sorts);
+    }
+
+    public function wanted_filters($cat, $tagids, $showhidden, $recurse, $editcontexts, $showquestiontext): void {
+        global $CFG;
+        list(, $contextid) = explode(',', $cat);
+        $catcontext = \context::instance_by_id($contextid);
+        $thiscontext = $this->get_most_specific_context();
+        // Category selection form.
+        $this->display_question_bank_header();
+
+        // Display tag filter if usetags setting is enabled/enablefilters is true.
+        if ($this->enablefilters) {
+            if (is_array($this->customfilterobjects)) {
+                foreach ($this->customfilterobjects as $filterobjects) {
+                    $this->searchconditions[] = $filterobjects;
+                }
+            } else {
+                if ($CFG->usetags) {
+                    array_unshift($this->searchconditions,
+                        new \core_question\bank\search\tag_condition([$catcontext, $thiscontext], $tagids));
+                }
+
+                array_unshift($this->searchconditions, new \core_question\bank\search\hidden_condition(!$showhidden));
+                array_unshift($this->searchconditions, new custom_category_condition(
+                    $cat, $recurse, $editcontexts, $this->baseurl, $this->course));
+            }
+        }
+        $this->display_options_form($showquestiontext);
     }
 }

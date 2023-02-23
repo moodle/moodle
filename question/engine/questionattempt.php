@@ -622,7 +622,8 @@ class question_attempt {
 
         // No files yet.
         $draftid = 0; // Will be filled in by file_prepare_draft_area.
-        file_prepare_draft_area($draftid, $contextid, 'question', 'response_' . $name, null);
+        $filearea = question_file_saver::clean_file_area_name('response_' . $name);
+        file_prepare_draft_area($draftid, $contextid, 'question', $filearea, null);
         return $draftid;
     }
 
@@ -1397,6 +1398,16 @@ class question_attempt {
     }
 
     /**
+     * Verify if this question_attempt in can be regraded with that other question version.
+     *
+     * @param question_definition $otherversion a different version of the question to use in the regrade.
+     * @return string|null null if the regrade can proceed, else a reason why not.
+     */
+    public function validate_can_regrade_with_other_version(question_definition $otherversion): ?string {
+        return $this->get_question(false)->validate_can_regrade_with_other_version($otherversion);
+    }
+
+    /**
      * Perform a regrade. This replays all the actions from $oldqa into this
      * attempt.
      * @param question_attempt $oldqa the attempt to regrade.
@@ -1412,7 +1423,8 @@ class question_attempt {
             if ($first) {
                 // First step of the attempt.
                 $first = false;
-                $this->start($oldqa->behaviour, $oldqa->get_variant(), $step->get_all_data(),
+                $this->start($oldqa->behaviour, $oldqa->get_variant(),
+                        $this->get_attempt_state_data_to_regrade_with_version($step, $oldqa->get_question()),
                         $step->get_timecreated(), $step->get_user_id(), $step->get_id());
 
             } else if ($step->has_behaviour_var('finish') && count($step->get_submitted_data()) > 1) {
@@ -1444,6 +1456,31 @@ class question_attempt {
         }
 
         $this->set_flagged($oldqa->is_flagged());
+    }
+
+    /**
+     * Helper used by regrading.
+     *
+     * Get the data from the first step of the old attempt and, if necessary,
+     * update it to be suitable for use with the other version of the question.
+     *
+     * @param question_attempt_step $oldstep First step at an attempt at $otherversion of this question.
+     * @param question_definition $otherversion Another version of the question being attempted.
+     * @return array updated data required to restart an attempt with the current version of this question.
+     */
+    protected function get_attempt_state_data_to_regrade_with_version(question_attempt_step $oldstep,
+            question_definition $otherversion): array {
+        if ($this->get_question(false) === $otherversion) {
+            return $oldstep->get_all_data();
+        } else {
+            $attemptstatedata = $this->get_question(false)->update_attempt_state_data_for_new_version(
+                    $oldstep, $otherversion);
+
+            foreach ($oldstep->get_behaviour_data() as $name => $value) {
+                $attemptstatedata['-' . $name] = $value;
+            }
+            return $attemptstatedata;
+        }
     }
 
     /**
@@ -1782,36 +1819,39 @@ class question_attempt_step_iterator implements Iterator, ArrayAccess {
     }
 
     /** @return question_attempt_step */
+    #[\ReturnTypeWillChange]
     public function current() {
         return $this->offsetGet($this->i);
     }
     /** @return int */
+    #[\ReturnTypeWillChange]
     public function key() {
         return $this->i;
     }
-    public function next() {
+    public function next(): void {
         ++$this->i;
     }
-    public function rewind() {
+    public function rewind(): void {
         $this->i = 0;
     }
     /** @return bool */
-    public function valid() {
+    public function valid(): bool {
         return $this->offsetExists($this->i);
     }
 
     /** @return bool */
-    public function offsetExists($i) {
+    public function offsetExists($i): bool {
         return $i >= 0 && $i < $this->qa->get_num_steps();
     }
     /** @return question_attempt_step */
+    #[\ReturnTypeWillChange]
     public function offsetGet($i) {
         return $this->qa->get_step($i);
     }
-    public function offsetSet($offset, $value) {
+    public function offsetSet($offset, $value): void {
         throw new coding_exception('You are only allowed read-only access to question_attempt::states through a question_attempt_step_iterator. Cannot set.');
     }
-    public function offsetUnset($offset) {
+    public function offsetUnset($offset): void {
         throw new coding_exception('You are only allowed read-only access to question_attempt::states through a question_attempt_step_iterator. Cannot unset.');
     }
 }
@@ -1825,11 +1865,11 @@ class question_attempt_step_iterator implements Iterator, ArrayAccess {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_attempt_reverse_step_iterator extends question_attempt_step_iterator {
-    public function next() {
+    public function next(): void {
         --$this->i;
     }
 
-    public function rewind() {
+    public function rewind(): void {
         $this->i = $this->qa->get_num_steps() - 1;
     }
 }
@@ -1901,21 +1941,23 @@ class question_attempt_steps_with_submitted_response_iterator extends question_a
     }
 
     /** @return question_attempt_step */
+    #[\ReturnTypeWillChange]
     public function current() {
         return $this->offsetGet($this->submittedresponseno);
     }
     /** @return int */
+    #[\ReturnTypeWillChange]
     public function key() {
         return $this->submittedresponseno;
     }
-    public function next() {
+    public function next(): void {
         ++$this->submittedresponseno;
     }
-    public function rewind() {
+    public function rewind(): void {
         $this->submittedresponseno = 1;
     }
     /** @return bool */
-    public function valid() {
+    public function valid(): bool {
         return $this->submittedresponseno >= 1 && $this->submittedresponseno <= count($this->stepswithsubmittedresponses);
     }
 
@@ -1923,7 +1965,7 @@ class question_attempt_steps_with_submitted_response_iterator extends question_a
      * @param int $submittedresponseno
      * @return bool
      */
-    public function offsetExists($submittedresponseno) {
+    public function offsetExists($submittedresponseno): bool {
         return $submittedresponseno >= 1;
     }
 
@@ -1931,6 +1973,7 @@ class question_attempt_steps_with_submitted_response_iterator extends question_a
      * @param int $submittedresponseno
      * @return question_attempt_step
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($submittedresponseno) {
         if ($submittedresponseno > count($this->stepswithsubmittedresponses)) {
             return null;
@@ -1942,7 +1985,7 @@ class question_attempt_steps_with_submitted_response_iterator extends question_a
     /**
      * @return int the count of steps with tries.
      */
-    public function count() {
+    public function count(): int {
         return count($this->stepswithsubmittedresponses);
     }
 
@@ -1961,11 +2004,11 @@ class question_attempt_steps_with_submitted_response_iterator extends question_a
         }
     }
 
-    public function offsetSet($offset, $value) {
+    public function offsetSet($offset, $value): void {
         throw new coding_exception('You are only allowed read-only access to question_attempt::states '.
                                    'through a question_attempt_step_iterator. Cannot set.');
     }
-    public function offsetUnset($offset) {
+    public function offsetUnset($offset): void {
         throw new coding_exception('You are only allowed read-only access to question_attempt::states '.
                                    'through a question_attempt_step_iterator. Cannot unset.');
     }

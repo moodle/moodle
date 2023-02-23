@@ -16,20 +16,15 @@
 
 namespace mod_bigbluebuttonbn\external;
 
-use external_api;
-use external_function_parameters;
-use external_multiple_structure;
-use external_single_structure;
-use external_value;
-use external_warnings;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\bigbluebutton\recordings\recording_data;
 use mod_bigbluebuttonbn\recording;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/externallib.php');
 
 /**
  * External service to fetch a list of recordings from the BBB service.
@@ -71,12 +66,13 @@ class get_recordings_to_import extends external_api {
      * Get a list of recordings
      *
      * @param int $destinationinstanceid the bigbluebuttonbn instance id where recordings have been already imported.
-     * @param int $sourcebigbluebuttonbnid the bigbluebuttonbn instance id to which the recordings are referred.
-     * @param int $sourcecourseid the source courseid to filter by
+     * @param int|null $sourcebigbluebuttonbnid the bigbluebuttonbn instance id to which the recordings are referred.
+     * @param int|null $sourcecourseid the source courseid to filter by
      * @param string|null $tools
      * @param int|null $groupid
      * @return array of warnings and status result
-     * @throws \webservice_access_exception
+     * @throws \invalid_parameter_exception
+     * @throws \restricted_context_exception
      */
     public static function execute(
         int $destinationinstanceid,

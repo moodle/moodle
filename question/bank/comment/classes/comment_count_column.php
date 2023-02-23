@@ -43,7 +43,7 @@ class comment_count_column extends column_base {
      *
      * @return string
      */
-    protected function get_title(): string {
+    public function get_title(): string {
         return get_string('commentplural', 'qbank_comment');
     }
 
@@ -55,11 +55,12 @@ class comment_count_column extends column_base {
      */
     protected function display_content($question, $rowclasses): void {
         global $DB, $PAGE;
+        $syscontext = \context_system::instance();
         $args = [
             'component' => 'qbank_comment',
             'commentarea' => 'question',
             'itemid' => $question->id,
-            'contextid' => 1
+            'contextid' => $syscontext->id,
         ];
         $commentcount = $DB->count_records('comments', $args);
         $attributes = [];
@@ -68,13 +69,18 @@ class comment_count_column extends column_base {
             $datatarget = '[data-target="' . $target . '"]';
             $PAGE->requires->js_call_amd('qbank_comment/comment', 'init', [$datatarget]);
             $attributes = [
+                'href' => '#',
                 'data-target' => $target,
                 'data-questionid' => $question->id,
                 'data-courseid' => $this->qbank->course->id,
-                'class' => 'link-primary comment-pointer'
+                'data-contextid' => $syscontext->id,
             ];
         }
         echo \html_writer::tag('a', $commentcount, $attributes);
+    }
+
+    public function get_extra_classes(): array {
+        return ['pr-3'];
     }
 
 }

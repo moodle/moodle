@@ -18,6 +18,10 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\models;
 
+use context;
+use core_reportbuilder\event\audience_created;
+use core_reportbuilder\event\audience_deleted;
+use core_reportbuilder\event\audience_updated;
 use lang_string;
 use core\persistent;
 use core_reportbuilder\local\helpers\audience as helper;
@@ -43,6 +47,11 @@ class audience extends persistent {
         return [
             'reportid' => [
                 'type' => PARAM_INT,
+            ],
+            'heading' => [
+                'type' => PARAM_TEXT,
+                'null' => NULL_ALLOWED,
+                'default' => null,
             ],
             'classname' => [
                 'type' => PARAM_TEXT,
@@ -80,6 +89,7 @@ class audience extends persistent {
      * Hook to execute after creation
      */
     protected function after_create(): void {
+        audience_created::create_from_object($this)->trigger();
         helper::purge_caches();
     }
 
@@ -90,6 +100,7 @@ class audience extends persistent {
      */
     protected function after_update($result): void {
         if ($result) {
+            audience_updated::create_from_object($this)->trigger();
             helper::purge_caches();
         }
     }
@@ -101,6 +112,7 @@ class audience extends persistent {
      */
     protected function after_delete($result): void {
         if ($result) {
+            audience_deleted::create_from_object($this)->trigger();
             helper::purge_caches();
         }
     }
@@ -112,5 +124,19 @@ class audience extends persistent {
      */
     public function get_report(): report {
         return new report($this->get('reportid'));
+    }
+
+    /**
+     * Return formatted audience heading
+     *
+     * @param context|null $context If the context of the report is already known, it should be passed here
+     * @return string
+     */
+    public function get_formatted_heading(?context $context = null): string {
+        if ($context === null) {
+            $context = $this->get_report()->get_context();
+        }
+
+        return format_string($this->raw_get('heading'), true, ['context' => $context]);
     }
 }

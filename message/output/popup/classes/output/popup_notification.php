@@ -68,7 +68,7 @@ class popup_notification implements templatable, renderable {
         $context->shortenedsubject = shorten_text($context->subject, 125);
 
         if (!empty($context->component) && substr($context->component, 0, 4) == 'mod_') {
-            $iconurl = $output->image_url('icon', $context->component);
+            $iconurl = $output->image_url('monologo', $context->component);
         } else {
             $iconurl = $output->image_url('i/marker', 'core');
         }

@@ -22,33 +22,31 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$functions = array(
+defined('MOODLE_INTERNAL') || die;
 
-    'gradereport_user_get_grades_table' => array(
-        'classname' => 'gradereport_user_external',
+$functions = [
+    'gradereport_user_get_grades_table' => [
+        'classname' => 'gradereport_user\\external\\user',
         'methodname' => 'get_grades_table',
-        'classpath' => 'grade/report/user/externallib.php',
         'description' => 'Get the user/s report grades table for a course',
         'type' => 'read',
         'capabilities' => 'gradereport/user:view',
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
-    'gradereport_user_view_grade_report' => array(
-        'classname' => 'gradereport_user_external',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'gradereport_user_view_grade_report' => [
+        'classname' => 'gradereport_user\\external\\user',
         'methodname' => 'view_grade_report',
-        'classpath' => 'grade/report/user/externallib.php',
         'description' => 'Trigger the report view event',
         'type' => 'write',
         'capabilities' => 'gradereport/user:view',
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
-    'gradereport_user_get_grade_items' => array(
-        'classname' => 'gradereport_user_external',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'gradereport_user_get_grade_items' => [
+        'classname' => 'gradereport_user\\external\\user',
         'methodname' => 'get_grade_items',
-        'classpath' => 'grade/report/user/externallib.php',
         'description' => 'Returns the complete list of grade items for users in a course',
         'type' => 'read',
         'capabilities' => 'gradereport/user:view',
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    )
-);
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+];

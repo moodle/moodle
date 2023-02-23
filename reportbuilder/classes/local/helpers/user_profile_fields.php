@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\helpers;
 
 use context_system;
+use core_text;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\select;
@@ -112,29 +113,58 @@ class user_profile_fields {
     }
 
     /**
+     * Generate table alias for given profile field
+     *
+     * @param profile_field_base $profilefield
+     * @return string
+     */
+    private function get_table_alias(profile_field_base $profilefield): string {
+        return "upfs{$profilefield->fieldid}";
+    }
+
+    /**
+     * Generate table join for given profile field
+     *
+     * @param profile_field_base $profilefield
+     * @return string
+     */
+    private function get_table_join(profile_field_base $profilefield): string {
+        $userinfotablealias = $this->get_table_alias($profilefield);
+
+        return "LEFT JOIN {user_info_data} {$userinfotablealias}
+                       ON {$userinfotablealias}.userid = {$this->usertablefieldalias}
+                      AND {$userinfotablealias}.fieldid = {$profilefield->fieldid}";
+    }
+
+    /**
      * Return the user profile fields visible columns.
      *
      * @return column[]
      */
     public function get_columns(): array {
-        $columns = [];
+        global $DB;
 
+        $columns = [];
         foreach ($this->userprofilefields as $profilefield) {
-            $userinfotablealias = database::generate_alias();
+            $columntype = $this->get_user_field_type($profilefield->field->datatype);
+
+            $columnfieldsql = $this->get_table_alias($profilefield) . '.data';
+            if ($DB->get_dbfamily() === 'oracle') {
+                $columnfieldsql = $DB->sql_order_by_text($columnfieldsql, 1024);
+            }
 
             $column = (new column(
-                'profilefield_' . $profilefield->field->shortname,
+                'profilefield_' . core_text::strtolower($profilefield->field->shortname),
                 new lang_string('customfieldcolumn', 'core_reportbuilder',
                     format_string($profilefield->field->name, true,
-                        ['escape' => true, 'context' => context_system::instance()])),
+                        ['escape' => false, 'context' => context_system::instance()])),
                 $this->entityname
             ))
                 ->add_joins($this->get_joins())
-                ->add_join("LEFT JOIN {user_info_data} {$userinfotablealias} " .
-                    "ON {$userinfotablealias}.userid = {$this->usertablefieldalias} " .
-                    "AND {$userinfotablealias}.fieldid = {$profilefield->fieldid}")
-                ->add_field("{$userinfotablealias}.data")
-                ->set_type($this->get_user_field_type($profilefield->field->datatype))
+                ->add_join($this->get_table_join($profilefield))
+                ->add_field($columnfieldsql, 'data')
+                ->set_type($columntype)
+                ->set_is_sortable($columntype !== column::TYPE_LONGTEXT)
                 ->add_callback([$this, 'format_profile_field'], $profilefield);
 
             $columns[] = $column;
@@ -153,42 +183,50 @@ class user_profile_fields {
 
         $filters = [];
         foreach ($this->userprofilefields as $profilefield) {
-            $userinfotablealias = database::generate_alias();
-            $field = "{$userinfotablealias}.data";
+            $field = $this->get_table_alias($profilefield) . '.data';
+            $params = [];
 
             switch ($profilefield->field->datatype) {
                 case 'checkbox':
                     $classname = boolean_select::class;
-                    $field = $DB->sql_cast_char2int($field);
+                    $fieldsql = "COALESCE(" . $DB->sql_cast_char2int($field, true) . ", 0)";
                     break;
                 case 'datetime':
                     $classname = date::class;
-                    $field = $DB->sql_cast_char2int($field);
+                    $fieldsql = $DB->sql_cast_char2int($field, true);
                     break;
                 case 'menu':
                     $classname = select::class;
+
+                    $emptyparam = database::generate_param_name();
+                    $fieldsql = "COALESCE(" . $DB->sql_compare_text($field, 255) . ", :{$emptyparam})";
+                    $params[$emptyparam] = '';
+
                     break;
                 case 'text':
                 case 'textarea':
                 default:
-                    $field = $DB->sql_compare_text($field, 255);
                     $classname = text::class;
+
+                    $emptyparam = database::generate_param_name();
+                    $fieldsql = "COALESCE(" . $DB->sql_compare_text($field, 255) . ", :{$emptyparam})";
+                    $params[$emptyparam] = '';
+
                     break;
             }
 
             $filter = (new filter(
                 $classname,
-                'profilefield_' . $profilefield->field->shortname,
+                'profilefield_' . core_text::strtolower($profilefield->field->shortname),
                 new lang_string('customfieldcolumn', 'core_reportbuilder',
                     format_string($profilefield->field->name, true,
                         ['escape' => false, 'context' => context_system::instance()])),
                 $this->entityname,
-                $field
+                $fieldsql,
+                $params
             ))
                 ->add_joins($this->get_joins())
-                ->add_join("LEFT JOIN {user_info_data} {$userinfotablealias} " .
-                    "ON {$userinfotablealias}.userid = {$this->usertablefieldalias} " .
-                    "AND {$userinfotablealias}.fieldid = {$profilefield->fieldid}");
+                ->add_join($this->get_table_join($profilefield));
 
             // If menu type then set filter options as appropriate.
             if ($profilefield->field->datatype === 'menu') {

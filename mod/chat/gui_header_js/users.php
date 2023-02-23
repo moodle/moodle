@@ -26,18 +26,18 @@ $PAGE->set_url('/mod/chat/gui_header_js/users.php', array('chat_sid' => $chatsid
 $PAGE->set_popup_notification_allowed(false);
 
 if (!$chatuser = $DB->get_record('chat_users', array('sid' => $chatsid))) {
-    print_error('notlogged', 'chat');
+    throw new \moodle_exception('notlogged', 'chat');
 }
 
 // Get the minimal course.
 if (!$course = $DB->get_record('course', array('id' => $chatuser->course))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 // Get the user theme and enough info to be used in chat_format_message() which passes it along to.
 // No optimisation here, it would break again in future!
 if (!$user = $DB->get_record('user', array('id' => $chatuser->userid, 'deleted' => 0, 'suspended' => 0))) {
-    print_error('invaliduser');
+    throw new \moodle_exception('invaliduser');
 }
 \core\session\manager::set_user($user);
 
@@ -49,7 +49,7 @@ $PAGE->set_course($course);
 $courseid = $chatuser->course;
 
 if (!$cm = get_coursemodule_from_instance('chat', $chatuser->chatid, $courseid)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 
 if ($beep) {
@@ -65,7 +65,7 @@ $refreshurl = "users.php?chat_sid=$chatsid";
 // Get list of users.
 
 if (!$chatusers = chat_get_users($chatuser->chatid, $chatuser->groupid, $cm->groupingid)) {
-    print_error('errornousers', 'chat');
+    throw new \moodle_exception('errornousers', 'chat');
 }
 
 $uidles = Array();

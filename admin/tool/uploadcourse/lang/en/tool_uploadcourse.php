@@ -70,9 +70,9 @@ $string['courseupdated'] = 'Course updated';
 $string['createall'] = 'Create all, increment shortname if needed';
 $string['createnew'] = 'Create new courses only, skip existing ones';
 $string['createorupdate'] = 'Create new courses, or update existing ones';
-$string['csvdelimiter'] = 'CSV delimiter';
-$string['csvdelimiter_help'] = 'CSV delimiter of the CSV file.';
-$string['csvfileerror'] = 'There is something wrong with the format of the CSV file. Please check the number of headings and columns match, and that the delimiter and file encoding are correct: {$a}';
+$string['csvdelimiter'] = 'CSV separator';
+$string['csvdelimiter_help'] = 'The character separating the series of data in each record.';
+$string['csvfileerror'] = 'There is something wrong with the format of the CSV file. Please check the number of headings and columns match, and that the separator and file encoding are correct. {$a}';
 $string['csvline'] = 'Line';
 $string['defaultvalues'] = 'Default course values';
 $string['defaultvaluescustomfieldcategory'] = 'Default values for \'{$a}\'';
@@ -131,7 +131,7 @@ $string['uploadcourses'] = 'Upload courses';
 $string['uploadcourses_help'] = 'Courses may be uploaded via text file. The format of the file should be as follows:
 
 * Each line of the file contains one record
-* Each record is a series of data separated by commas (or other delimiters)
+* Each record is a series of data separated by the selected separator
 * The first record contains a list of fieldnames defining the format of the rest of the file
 * Required fieldnames are shortname, fullname, and category';
 $string['uploadcoursespreview'] = 'Upload courses preview';

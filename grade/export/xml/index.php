@@ -24,7 +24,7 @@ $id = required_param('id', PARAM_INT); // course id
 $PAGE->set_url('/grade/export/xml/index.php', array('id'=>$id));
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 require_login($course);
@@ -33,7 +33,7 @@ $context = context_course::instance($id);
 require_capability('moodle/grade:export', $context);
 require_capability('gradeexport/xml:view', $context);
 
-$actionbar = new \core_grades\output\export_action_bar($context, $PAGE->url, 'xml');
+$actionbar = new \core_grades\output\export_action_bar($context, null, 'xml');
 print_grade_page_head($COURSE->id, 'export', 'xml',
     get_string('exportto', 'grades') . ' ' . get_string('pluginname', 'gradeexport_xml'),
     false, false, true, null, null, null, $actionbar);

@@ -14,14 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External choice functions unit tests
- *
- * @package    mod_choice
- * @category   external
- * @copyright  2015 Costantino Cito <ccito@cvaconsulting.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_choice;
+
+use core_external\external_api;
+use externallib_advanced_testcase;
+use mod_choice_external;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -38,7 +35,7 @@ require_once($CFG->dirroot . '/mod/choice/lib.php');
  * @copyright  2015 Costantino Cito <ccito@cvaconsulting.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_choice_externallib_testcase extends externallib_advanced_testcase {
+class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Test get_choice_results
@@ -49,7 +46,7 @@ class mod_choice_externallib_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
 
         $course = self::getDataGenerator()->create_course();
-        $params = new stdClass();
+        $params = new \stdClass();
         $params->course = $course->id;
         $params->option = array('fried rice', 'spring rolls', 'sweet and sour pork', 'satay beef', 'gyouza');
         $params->name = 'First Choice Activity';
@@ -265,7 +262,7 @@ class mod_choice_externallib_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
 
         $course = self::getDataGenerator()->create_course();
-        $params = new stdClass();
+        $params = new \stdClass();
         $params->course = $course->id;
         $params->option = array('fried rice', 'spring rolls', 'sweet and sour pork', 'satay beef', 'gyouza');
         $params->name = 'First Choice Activity';
@@ -306,14 +303,14 @@ class mod_choice_externallib_testcase extends externallib_advanced_testcase {
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $choice = $this->getDataGenerator()->create_module('choice', array('course' => $course->id));
-        $context = context_module::instance($choice->cmid);
+        $context = \context_module::instance($choice->cmid);
         $cm = get_coursemodule_from_instance('choice', $choice->id);
 
         // Test invalid instance id.
         try {
             mod_choice_external::view_choice(0);
             $this->fail('Exception expected due to invalid mod_choice instance id.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('invalidcoursemodule', $e->errorcode);
         }
 
@@ -323,7 +320,7 @@ class mod_choice_externallib_testcase extends externallib_advanced_testcase {
         try {
             mod_choice_external::view_choice($choice->id);
             $this->fail('Exception expected due to not enrolled user.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('requireloginerror', $e->errorcode);
         }
 
@@ -406,7 +403,7 @@ class mod_choice_externallib_testcase extends externallib_advanced_testcase {
 
         // Now, prohibit capabilities.
         $this->setUser($student1);
-        $contextcourse1 = context_course::instance($course1->id);
+        $contextcourse1 = \context_course::instance($course1->id);
         // Prohibit capability = mod:choice:choose on Course1 for students.
         assign_capability('mod/choice:choose', CAP_PROHIBIT, $studentrole->id, $contextcourse1->id);
         accesslib_clear_all_caches_for_unit_testing();
@@ -425,7 +422,7 @@ class mod_choice_externallib_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
 
         $course = self::getDataGenerator()->create_course();
-        $params = new stdClass();
+        $params = new \stdClass();
         $params->course = $course->id;
         $params->option = array('fried rice', 'spring rolls', 'sweet and sour pork', 'satay beef', 'gyouza');
         $params->name = 'First Choice Activity';
@@ -454,7 +451,7 @@ class mod_choice_externallib_testcase extends externallib_advanced_testcase {
         try {
             mod_choice_external::delete_choice_responses($choice->id, array($myresponses[0], $myresponses[0]));
             $this->fail('Exception expected due to missing permissions.');
-        } catch (required_capability_exception $e) {
+        } catch (\required_capability_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
 
@@ -464,7 +461,7 @@ class mod_choice_externallib_testcase extends externallib_advanced_testcase {
         try {
             mod_choice_external::delete_choice_responses($choice->id, array($myresponses[0], $myresponses[1]));
             $this->fail('Exception expected due to expired choice.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('expired', $e->errorcode);
         }
 

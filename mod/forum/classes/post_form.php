@@ -107,7 +107,7 @@ class mod_forum_post_form extends moodleform {
             // Here we want to display a warning if they can still post but have reached the warning threshold.
             if ($thresholdwarning->canpost) {
                 $message = get_string($thresholdwarning->errorcode, $thresholdwarning->module, $thresholdwarning->additional);
-                $mform->addElement('html', $OUTPUT->notification($message));
+                $mform->addElement('html', $OUTPUT->notification($message, \core\output\notification::NOTIFY_INFO));
             }
         }
 

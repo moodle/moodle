@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/blog/lib.php');
 require_login();
 
 if (empty($CFG->usetags)) {
-    print_error('tagsaredisabled', 'tag');
+    throw new \moodle_exception('tagsaredisabled', 'tag');
 }
 
 $tagid       = optional_param('id', 0, PARAM_INT); // tag id
@@ -72,6 +72,7 @@ if (empty($tag)) {
 if ($ctx && ($context = context::instance_by_id($ctx, IGNORE_MISSING)) && $context->contextlevel >= CONTEXT_COURSE) {
     list($context, $course, $cm) = get_context_info_array($context->id);
     require_login($course, false, $cm, false, true);
+    $PAGE->set_secondary_navigation(false);
 } else {
     $PAGE->set_context($systemcontext);
 }

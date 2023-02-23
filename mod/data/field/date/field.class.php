@@ -34,6 +34,23 @@ class data_field_date extends data_field_base {
     var $month = 0;
     var $year  = 0;
 
+    public function supports_preview(): bool {
+        return true;
+    }
+
+    public function get_data_content_preview(int $recordid): stdClass {
+        return (object)[
+            'id' => 0,
+            'fieldid' => $this->field->id,
+            'recordid' => $recordid,
+            'content' => (string) time(),
+            'content1' => null,
+            'content2' => null,
+            'content3' => null,
+            'content4' => null,
+        ];
+    }
+
     function display_add_field($recordid = 0, $formdata = null) {
         global $DB, $OUTPUT;
 
@@ -72,12 +89,20 @@ class data_field_date extends data_field_base {
         return $str;
     }
 
-    //Enable the following three functions once core API issues have been addressed.
-    function display_search_field($value=0) {
-        $selectors = html_writer::select_time('days', 'f_'.$this->field->id.'_d', $value['timestamp'])
-           . html_writer::select_time('months', 'f_'.$this->field->id.'_m', $value['timestamp'])
-           . html_writer::select_time('years', 'f_'.$this->field->id.'_y', $value['timestamp']);
-        $datecheck = html_writer::checkbox('f_'.$this->field->id.'_z', 1, $value['usedate']);
+    // Enable the following three functions once core API issues have been addressed.
+
+    /**
+     * Display the search field in advanced search page
+     * @param mixed $value
+     * @return string
+     * @throws coding_exception
+     */
+    public function display_search_field($value = null) {
+        $currenttime = time();
+        $selectors = html_writer::select_time('days', 'f_' . $this->field->id . '_d', $value['timestamp'] ?? $currenttime)
+            . html_writer::select_time('months', 'f_' . $this->field->id . '_m', $value['timestamp'] ?? $currenttime)
+            . html_writer::select_time('years', 'f_' . $this->field->id . '_y', $value['timestamp'] ?? $currenttime);
+        $datecheck = html_writer::checkbox('f_' . $this->field->id . '_z', 1, $value['usedate'] ?? 0);
         $str = '<div class="form-inline">' . $selectors . ' ' . $datecheck . ' ' . get_string('usedate', 'data') . '</div>';
 
         return $str;
@@ -164,11 +189,11 @@ class data_field_date extends data_field_base {
     }
 
     function display_browse_field($recordid, $template) {
-        global $CFG, $DB;
-
-        if ($content = $DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
-            return userdate($content, get_string('strftimedate'), 0);
+        $content = $this->get_data_content($recordid);
+        if (!$content || empty($content->content)) {
+            return '';
         }
+        return userdate($content->content, get_string('strftimedate'), 0);
     }
 
     function get_sort_sql($fieldname) {

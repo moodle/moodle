@@ -14,14 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the drag-and-drop words into sentences question type.
- *
- * @package   qtype_ddwtos
- * @copyright 2012 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_ddwtos;
 
+use question_display_options;
+use question_hint_with_parts;
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -33,10 +30,11 @@ require_once($CFG->dirroot . '/question/type/ddwtos/tests/helper.php');
 /**
  * Unit tests for the drag-and-drop words into sentences question type.
  *
+ * @package   qtype_ddwtos
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     protected function get_contains_drop_box_expectation($place, $group, $readonly,
             $stateclass = '0') {
@@ -50,13 +48,13 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
         }
         $expectedattrs['class'] = $class;
 
-        return new question_contains_tag_with_attributes('span', $expectedattrs);
+        return new \question_contains_tag_with_attributes('span', $expectedattrs);
     }
 
     public function test_interactive_behaviour() {
 
         // Create a drag-and-drop question.
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = \test_question_maker::make_question('ddwtos');
         $dd->hints = array(
             new question_hint_with_parts(13, 'This is the first hint.', FORMAT_HTML, false, false),
             new question_hint_with_parts(14, 'This is the second hint.', FORMAT_HTML, true, true),
@@ -166,7 +164,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_deferred_feedback() {
 
         // Create a drag-and-drop question.
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = \test_question_maker::make_question('ddwtos');
         $dd->shufflechoices = false;
         $this->start_attempt_at_question($dd, 'deferredfeedback', 3);
 
@@ -249,7 +247,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_deferred_feedback_unanswered() {
 
         // Create a drag-and-drop question.
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = \test_question_maker::make_question('ddwtos');
         $dd->shufflechoices = false;
         $this->start_attempt_at_question($dd, 'deferredfeedback', 3);
 
@@ -305,7 +303,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_deferred_feedback_partial_answer() {
 
         // Create a drag-and-drop question.
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = \test_question_maker::make_question('ddwtos');
         $dd->shufflechoices = false;
         $this->start_attempt_at_question($dd, 'deferredfeedback', 3);
 
@@ -360,7 +358,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_interactive_grading() {
 
         // Create a drag-and-drop question.
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = \test_question_maker::make_question('ddwtos');
         $dd->hints = array(
             new question_hint_with_parts(1, 'This is the first hint.',
                     FORMAT_MOODLE, true, true),
@@ -516,7 +514,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_interactive_correct_no_submit() {
 
         // Create a drag-and-drop question.
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = \test_question_maker::make_question('ddwtos');
         $dd->hints = array(
             new question_hint_with_parts(23, 'This is the first hint.',
                     FORMAT_MOODLE, false, false),
@@ -572,7 +570,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_interactive_partial_no_submit() {
 
         // Create a drag-and-drop question.
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = \test_question_maker::make_question('ddwtos');
         $dd->hints = array(
             new question_hint_with_parts(23, 'This is the first hint.',
                     FORMAT_MOODLE, false, false),
@@ -628,7 +626,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_interactive_no_right_clears() {
 
         // Create a drag-and-drop question.
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = \test_question_maker::make_question('ddwtos');
         $dd->hints = array(
             new question_hint_with_parts(23, 'This is the first hint.', FORMAT_MOODLE, false, true),
             new question_hint_with_parts(24, 'This is the second hint.', FORMAT_MOODLE, true, true),
@@ -695,7 +693,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_display_of_right_answer_when_shuffled() {
 
         // Create a drag-and-drop question.
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = \test_question_maker::make_question('ddwtos');
         $this->start_attempt_at_question($dd, 'deferredfeedback', 3);
 
         // Check the initial state.
@@ -748,7 +746,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_contains_drop_box_expectation('2', 2, true, 'correct'),
                 $this->get_contains_drop_box_expectation('3', 3, true, 'correct'),
                 $this->get_contains_correct_expectation(),
-                new question_pattern_expectation('/' .
+                new \question_pattern_expectation('/' .
                         preg_quote('The [quick] brown [fox] jumped over the [lazy] dog.', '/') . '/'));
     }
 }

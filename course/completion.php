@@ -46,19 +46,20 @@ if ($id) {
 
     if($id == SITEID){
         // Don't allow editing of 'site course' using this form.
-        print_error('cannoteditsiteform');
+        throw new \moodle_exception('cannoteditsiteform');
     }
 
     if (!$course = $DB->get_record('course', array('id'=>$id))) {
-        print_error('invalidcourseid');
+        throw new \moodle_exception('invalidcourseid');
     }
     require_login($course);
     $context = context_course::instance($course->id);
     if (!has_capability('moodle/course:update', $context)) {
         // User is not allowed to modify course completion.
         // Check if they can see default completion or edit bulk completion and redirect there.
-        if ($tabs = core_completion\manager::get_available_completion_tabs($course)) {
-            redirect($tabs[0]->link);
+        if ($options = core_completion\manager::get_available_completion_options($course->id)) {
+            // Redirect to the first available completion page.
+            redirect(array_key_first($options));
         } else {
             require_capability('moodle/course:update', $context);
         }
@@ -66,7 +67,7 @@ if ($id) {
 
 } else {
     require_login();
-    print_error('needcourseid');
+    throw new \moodle_exception('needcourseid');
 }
 
 // Set up the page.
@@ -161,9 +162,11 @@ $renderer = $PAGE->get_renderer('core_course', 'bulk_activity_completion');
 
 // Print the form.
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('editcoursecompletionsettings', 'core_completion'));
 
-echo $renderer->navigation($course, 'completion');
+$actionbar = new \core_course\output\completion_action_bar($course->id, $PAGE->url);
+echo $renderer->render_course_completion_action_bar($actionbar);
+
+echo $OUTPUT->heading(get_string('editcoursecompletionsettings', 'core_completion'));
 
 $form->display();
 

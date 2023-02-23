@@ -22,13 +22,15 @@
     Example context (json):
     {}
 }}
-<div data-region="course-items-loading-placeholder">
-    <ul class="list-group unstyled">
-        {{> block_timeline/course-item-loading-placeholder }}
-        {{> block_timeline/course-item-loading-placeholder }}
-    </ul>
-    <div class="bg-pulse-grey mt-1" style="width: 100px; height: 30px; margin-left: auto; margin-right: auto"></div>
-</div>
+{{#hascourses}}
+    <div data-region="course-items-loading-placeholder">
+        <ul class="list-group unstyled">
+            {{> block_timeline/course-item-loading-placeholder }}
+            {{> block_timeline/course-item-loading-placeholder }}
+        </ul>
+        <div class="bg-pulse-grey mt-1" style="width: 100px; height: 30px; margin-left: auto; margin-right: auto"></div>
+    </div>
+{{/hascourses}}
 <ul class="list-group unstyled" data-region="courses-list"></ul>
 <div class="hidden text-xs-center text-center pt-3" data-region="more-courses-button-container">
     <button type="button" class="btn btn-primary" data-action="more-courses">
@@ -38,11 +40,5 @@
         </span>
     </button>
 </div>
-<div class="hidden text-xs-center text-center mt-3" data-region="no-courses-empty-message">
-    <img
-        src="{{urls.noevents}}"
-        alt=""
-        style="height: 70px; width: 70px"
-    >
-    <p class="text-muted mt-1">{{#str}} nocoursesinprogress, block_timeline {{/str}}</p>
-</div>
+{{> block_timeline/no-events }}
+{{> block_timeline/no-courses }}

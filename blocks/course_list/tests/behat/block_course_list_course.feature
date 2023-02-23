@@ -28,6 +28,8 @@ Feature: Enable the course_list block on a course page and view it's contents
   Scenario: Add the course list block on course page and navigate to the course listing
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     When I add the "Courses" block
     Then I should see "Course 1" in the "My courses" "block"
     And I should see "Course 2" in the "My courses" "block"
@@ -39,6 +41,8 @@ Feature: Enable the course_list block on a course page and view it's contents
   Scenario: Add the course list block on course page and navigate to another course
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     When I add the "Courses" block
     Then I should see "Course 1" in the "My courses" "block"
     And I should see "Course 2" in the "My courses" "block"
@@ -50,6 +54,8 @@ Feature: Enable the course_list block on a course page and view it's contents
   Scenario: Add the course list block on course page and view as an admin
     Given I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     When I add the "Courses" block
     Then I should see "Category 1" in the "Course categories" "block"
     And I should see "Category A" in the "Course categories" "block"
@@ -62,7 +68,8 @@ Feature: Enable the course_list block on a course page and view it's contents
 
   Scenario: View the course list block on course page with hide all courses link enabled
     Given the following config values are set as admin:
-      | block_course_list_hideallcourseslink | 1 |
+      | block_course_list_hideallcourseslink | 1 |            |
+      | unaddableblocks                      |   | theme_boost|
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     When I add the "Courses" block
@@ -70,7 +77,8 @@ Feature: Enable the course_list block on a course page and view it's contents
 
   Scenario: View the course list block on course page with admin sees own course enabled
     Given the following config values are set as admin:
-      | block_course_list_adminview | own |
+      | block_course_list_adminview | own |            |
+      | unaddableblocks             |     | theme_boost|
     And the following "course enrolments" exist:
       | user | course | role           |
       | admin | C1 | editingteacher |

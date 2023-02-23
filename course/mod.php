@@ -71,8 +71,22 @@ if (!empty($add)) {
     $section     = required_param('section', PARAM_INT);
     $type        = optional_param('type', '', PARAM_ALPHA);
     $returntomod = optional_param('return', 0, PARAM_BOOL);
+    $beforemod   = optional_param('beforemod', 0, PARAM_INT);
 
-    redirect("$CFG->wwwroot/course/modedit.php?add=$add&type=$type&course=$id&section=$section&return=$returntomod&sr=$sectionreturn");
+    redirect(
+        new moodle_url(
+            '/course/modedit.php',
+            [
+                'add' => $add,
+                'type' => $type,
+                'course' => $id,
+                'section' => $section,
+                'return' => $returntomod,
+                'sr' => $sectionreturn,
+                'beforemod' => $beforemod,
+            ]
+        )
+    );
 
 } else if (!empty($update)) {
     $cm = get_coursemodule_from_id('', $update, 0, true, MUST_EXIST);
@@ -144,21 +158,21 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
 
     if (!empty($movetosection)) {
         if (!$section = $DB->get_record('course_sections', array('id'=>$movetosection, 'course'=>$cm->course))) {
-            print_error('sectionnotexist');
+            throw new \moodle_exception('sectionnotexist');
         }
         $beforecm = NULL;
 
     } else {                      // normal moveto
         if (!$beforecm = get_coursemodule_from_id('', $moveto, $cm->course, true)) {
-            print_error('invalidcoursemodule');
+            throw new \moodle_exception('invalidcoursemodule');
         }
         if (!$section = $DB->get_record('course_sections', array('id'=>$beforecm->section, 'course'=>$cm->course))) {
-            print_error('sectionnotexist');
+            throw new \moodle_exception('sectionnotexist');
         }
     }
 
     if (!ismoving($section->course)) {
-        print_error('needcopy', '', "view.php?id=$section->course");
+        throw new \moodle_exception('needcopy', '', "view.php?id=$section->course");
     }
 
     moveto_module($cm, $section, $beforecm);
@@ -190,7 +204,9 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
 
     $DB->set_field('course_modules', 'indent', $cm->indent, array('id'=>$cm->id));
 
-    rebuild_course_cache($cm->course);
+    \course_modinfo::purge_course_module_cache($cm->course, $cm->id);
+    // Rebuild invalidated module cache.
+    rebuild_course_cache($cm->course, false, true);
 
     redirect(course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn)));
 
@@ -275,5 +291,5 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     unset($USER->activitycopysectionreturn);
     redirect(course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn)));
 } else {
-    print_error('unknowaction');
+    throw new \moodle_exception('unknowaction');
 }

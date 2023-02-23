@@ -147,6 +147,7 @@
     td,
     th {
         padding: 0 0.2em;
+        max-width: 40vw;
     }
 
     th {
@@ -653,5 +654,14 @@ body.path-question-type .mform fieldset.hidden {
     }
     .que .content {
         margin: 0;
+    }
+}
+
+@include media-breakpoint-down(md) {
+    #categoryquestions {
+        td,
+        th {
+            max-width: 75vw;
+        }
     }
 }

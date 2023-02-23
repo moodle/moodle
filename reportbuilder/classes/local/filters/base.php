@@ -120,4 +120,14 @@ abstract class base {
 
         return $filtersql !== '';
     }
+
+    /**
+     * Return sample filter values, that when applied to a report would activate the filter - that is, cause the filter to return
+     * SQL snippet. Should be overridden in child classes, to ensure compatibility with stress tests of reports
+     *
+     * @return array
+     */
+    public function get_sample_values(): array {
+        return [];
+    }
 }

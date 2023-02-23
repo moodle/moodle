@@ -109,7 +109,8 @@ class cronrunning extends check {
             return new result($status, $summary, $details);
         }
 
-        if ($lastcroninterval > $expectedfrequency) {
+        // Add MINSECS to avoid spurious warning if cron is only a few seconds overdue.
+        if ($lastcroninterval > $expectedfrequency + MINSECS) {
             $status = result::WARNING;
             $summary = get_string('croninfrequent', 'admin', [
                 'actual'   => $formatinterval,

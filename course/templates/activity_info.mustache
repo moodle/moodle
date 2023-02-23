@@ -50,16 +50,10 @@
     }
 }}
 <div data-region="activity-information" data-activityname="{{activityname}}" class="activity-information">
-    {{#hasdates}}
-    <div data-region="activity-dates" class="mb-1">
-        {{#activitydates}}
-            {{>core_course/activity_date}}
-        {{/activitydates}}
-    </div>
-    {{/hasdates}}
+
     {{#hascompletion}}
         {{#uservisible}}
-            <div data-region="completion-info">
+            <div class="completion-info" data-region="completion-info">
                 {{#isautomatic}}
                     <div class="automatic-completion-conditions" data-region ="completionrequirements" role="list" aria-label="{{#str}}completionrequirements, core_course, {{activityname}}{{/str}}">
                         {{#completiondetails}}
@@ -75,4 +69,14 @@
             </div>
         {{/uservisible}}
     {{/hascompletion}}
+
+    {{#hasdates}}
+    <div data-region="activity-dates" class="activity-dates">
+        <div class="description-inner">
+            {{#activitydates}}
+                {{>core_course/activity_date}}
+            {{/activitydates}}
+        </div>
+    </div>
+    {{/hasdates}}
 </div>

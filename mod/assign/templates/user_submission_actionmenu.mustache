@@ -142,7 +142,7 @@
     }
 
 }}
-<div class="container-fluid mb-1">
+<div class="container-fluid mb-4">
     <div class="row">
         {{#submit}}
         <div class="col-xs-6 mr-3">
@@ -166,12 +166,19 @@
         {{/previoussubmission}}
         {{#edit}}
         <div class="col-xs-6 mr-3">
-            {{#button}}
-                {{>core/single_button}}
-            {{/button}}
-            {{#help}}
-                {{>core/help_icon}}
-            {{/help}}
+            {{#begin}}
+                {{#button}}
+                    {{>core/action_link}}
+                {{/button}}
+            {{/begin}}
+            {{^begin}}
+                {{#button}}
+                    {{>core/single_button}}
+                {{/button}}
+                {{#help}}
+                    {{>core/help_icon}}
+                {{/help}}
+            {{/begin}}
         </div>
         {{/edit}}
         {{#remove}}

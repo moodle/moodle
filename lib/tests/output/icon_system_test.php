@@ -31,7 +31,7 @@ use coding_exception;
 /**
  * Unit tests for the `icon_system` class.
  *
- * @coversDefaultClass core\output\icon_system
+ * @coversDefaultClass \core\output\icon_system
  */
 class icon_system_test extends advanced_testcase {
     /**

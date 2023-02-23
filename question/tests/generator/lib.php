@@ -14,15 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
- * Quiz module test data generator class
+ * Quiz module test data generator.
  *
- * @package    moodlecore
- * @subpackage question
+ * @package    core_question
  * @copyright  2013 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+use core_question\local\bank\question_version_status;
+
+/**
+ * Class core_question_generator for generating question data.
+ *
+ * @package   core_question
+ * @copyright 2013 The Open University
+ * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_question_generator extends component_generator_base {
 
@@ -31,19 +39,23 @@ class core_question_generator extends component_generator_base {
      */
     protected $categorycount = 0;
 
+    /**
+     * Make the category count to zero.
+     */
     public function reset() {
         $this->categorycount = 0;
     }
 
     /**
      * Create a new question category.
+     *
      * @param array|stdClass $record
      * @return stdClass question_categories record.
      */
     public function create_question_category($record = null) {
         global $DB;
 
-        $this->categorycount++;
+        $this->categorycount ++;
 
         $defaults = [
             'name'       => 'Test question category ' . $this->categorycount,
@@ -79,18 +91,11 @@ class core_question_generator extends component_generator_base {
      * @return stdClass the question data.
      */
     public function create_question($qtype, $which = null, $overrides = null) {
-        global $CFG;
-        require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
-
-        $fromform = test_question_maker::get_question_form_data($qtype, $which);
-        $fromform = (object) $this->datagenerator->combine_defaults_and_record(
-                (array) $fromform, $overrides);
-
         $question = new stdClass();
-        $question->category  = $fromform->category;
-        $question->qtype     = $qtype;
+        $question->qtype = $qtype;
         $question->createdby = 0;
         $question->idnumber = null;
+        $question->status = question_version_status::QUESTION_STATUS_READY;
 
         return $this->update_question($question, $which, $overrides);
     }
@@ -122,10 +127,9 @@ class core_question_generator extends component_generator_base {
         $qtype = $question->qtype;
 
         $fromform = test_question_maker::get_question_form_data($qtype, $which);
-        $fromform = (object) $this->datagenerator->combine_defaults_and_record(
-                (array) $question, $fromform);
-        $fromform = (object) $this->datagenerator->combine_defaults_and_record(
-                (array) $fromform, $overrides);
+        $fromform = (object) $this->datagenerator->combine_defaults_and_record((array) $question, $fromform);
+        $fromform = (object) $this->datagenerator->combine_defaults_and_record((array) $fromform, $overrides);
+        $fromform->status = $fromform->status ?? $question->status;
 
         $question = question_bank::get_qtype($qtype)->save_question($question, $fromform);
 

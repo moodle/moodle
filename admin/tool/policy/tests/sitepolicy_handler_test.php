@@ -14,31 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Provides the {@link tool_policy_sitepolicy_handler_testcase} class.
- *
- * @package     tool_policy
- * @category    test
- * @copyright   2018 David Mudrák <david@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace tool_policy;
 
-use tool_policy\api;
-use tool_policy\policy_version;
 use tool_policy\privacy\local\sitepolicy\handler;
 use tool_policy\test\helper;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
 
 /**
  * Unit tests for the {@link \tool_policy\privacy\local\sitepolicy\handler} class.
  *
+ * @package     tool_policy
+ * @category    test
  * @copyright 2018 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_policy_sitepolicy_handler_testcase extends advanced_testcase {
+class sitepolicy_handler_test extends \advanced_testcase {
 
     /**
      * Test behaviour of the {@link \tool_policy\privacy\local\sitepolicy\handler::get_redirect_url()} method.

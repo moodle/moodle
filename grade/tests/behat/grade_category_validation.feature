@@ -1,4 +1,4 @@
-@core_grades
+@core_grades @javascript
 Feature: Editing a grade item
   In order to ensure validation is provided to the teacher
   As a teacher
@@ -53,16 +53,20 @@ Feature: Editing a grade item
     And I press "Save changes"
 
   Scenario: Being able to change the grade type, scale and maximum grade for a grade category when there are no overridden grades
-    When I click on "Edit settings" "link" in the "EN Cat 1" "table_row"
+    When I open the action menu in "EN Cat 1" "table_row"
+    And I choose "Edit settings" in the open action menu
     Then I should not see "This category has associated grade items which have been overridden. Therefore some grades have already been awarded"
+    And I expand all fieldsets
     And I set the field "Grade type" to "Scale"
     And I press "Save changes"
     And I should see "Scale must be selected"
     And I set the field "Scale" to "EN ABCDEF"
     And I press "Save changes"
     And I should not see "You cannot change the type, as grades already exist for this item"
-    And I click on "Edit settings" "link" in the "EN Cat 1" "table_row"
+    And I open the action menu in "EN Cat 1" "table_row"
+    And I choose "Edit settings" in the open action menu
     And I should not see "This category has associated grade items which have been overridden. Therefore some grades have already been awarded"
+    And I expand all fieldsets
     And I set the field "Scale" to "EN Letter scale"
     And I press "Save changes"
     And I should not see "You cannot change the scale, as grades already exist for this item"
@@ -73,12 +77,16 @@ Feature: Editing a grade item
     And I give the grade "20.00" to the user "Student 1" for the grade item "EN Cat 1 total"
     And I press "Save changes"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    When I click on "Edit settings" "link" in the "EN Cat 1" "table_row"
+    And I open the action menu in "EN Cat 1" "table_row"
+    When I choose "Edit settings" in the open action menu
+    And I expand all fieldsets
     Then I should see "This category has associated grade items which have been overridden. Therefore some grades have already been awarded, so the grade type cannot be changed. If you wish to change the maximum grade, you must first choose whether or not to rescale existing grades."
     And "//div[contains(concat(' ', normalize-space(@class), ' '), 'felement') and contains(text(), 'Value')]" "xpath_element" should exist
 
   Scenario: Attempting to change a category item's scale when overridden grades already exist
-    Given I click on "Edit settings" "link" in the "EN Cat 1" "table_row"
+    Given I open the action menu in "EN Cat 1" "table_row"
+    And I choose "Edit settings" in the open action menu
+    And I expand all fieldsets
     And I set the field "Grade type" to "Scale"
     And I set the field "Scale" to "ABCDEF"
     And I press "Save changes"
@@ -87,7 +95,9 @@ Feature: Editing a grade item
     And I give the grade "C" to the user "Student 1" for the grade item "EN Cat 1 total"
     And I press "Save changes"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    When I click on "Edit settings" "link" in the "EN Cat 1" "table_row"
+    And I open the action menu in "EN Cat 1" "table_row"
+    When I choose "Edit settings" in the open action menu
+    And I expand all fieldsets
     Then I should see "This category has associated grade items which have been overridden. Therefore some grades have already been awarded, so the grade type and scale cannot be changed."
     And "//div[contains(concat(' ', normalize-space(@class), ' '), 'felement') and contains(text(), 'ABCDEF')]" "xpath_element" should exist
 
@@ -97,7 +107,29 @@ Feature: Editing a grade item
     And I give the grade "20.00" to the user "Student 1" for the grade item "EN Cat 1 total"
     And I press "Save changes"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I click on "Edit settings" "link" in the "EN Cat 1" "table_row"
-    And I set the field "Maximum grade" to "50"
+    And I open the action menu in "EN Cat 1" "table_row"
+    When I choose "Edit settings" in the open action menu
+    And I expand all fieldsets
+    Then I should see "This category has associated grade items which have been overridden. Therefore some grades have already been awarded, so the grade type cannot be changed. If you wish to change the maximum grade, you must first choose whether or not to rescale existing grades."
+    And I should see "Choose" in the "Rescale overridden grades" "field"
+    And the "Maximum grade" "field" should be disabled
+
+  Scenario: Perform changes to a grade category with custom decimal separator
+    Given the following "language customisations" exist:
+      | component       | stringid | value |
+      | core_langconfig | decsep   | #     |
+    And I navigate to "View > Grader report" in the course gradebook
+    And I turn editing mode on
+    And I give the grade "20#00" to the user "Student 1" for the grade item "EN Cat 1 total"
+    And I press "Save changes"
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
+    And I open the action menu in "EN Cat 1" "table_row"
+    And I choose "Edit settings" in the open action menu
+    And I expand all fieldsets
+    And I set the field "Rescale overridden grades" to "Yes"
+    And I set the field "Maximum grade" to "87#50"
     When I press "Save changes"
-    Then I should see "You must choose whether to rescale existing grades or not."
+    And I navigate to "View > Grader report" in the course gradebook
+    And I follow "Single view for Student 1"
+    Then I should see "Student 1"
+    And the field "Grade for Category total" matches value "17#50"

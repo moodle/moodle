@@ -47,15 +47,35 @@ class report_loglive_table_log_ajax extends report_loglive_table_log {
     public function out($pagesize, $useinitialsbar, $downloadhelpbutton = '') {
         $this->query_db($pagesize, false);
         $html = '';
-        $until = time();
         if ($this->rawdata && $this->columns) {
             foreach ($this->rawdata as $row) {
-                $formatedrow = $this->format_row($row, "newrow time$until");
+                $formatedrow = $this->format_row($row);
                 $formatedrow = $this->get_row_from_keyed($formatedrow);
-                $html .= $this->get_row_html($formatedrow, "newrow time$until");
+                $html .= $this->get_row_html($formatedrow, 'newrow');
             }
         }
-        $result = array('logs' => $html, 'until' => $until);
+        $result = array('logs' => $html, 'until' => $this->get_until());
         return json_encode($result);
+    }
+
+    /**
+     * Popup actions do not function when they are rendered in response to an AJAX request, encode within the link itself
+     *
+     * @param moodle_url $url
+     * @param string $text
+     * @param string $name
+     * @return string
+     */
+    protected function action_link(moodle_url $url, $text, $name = 'popup') {
+        global $OUTPUT;
+
+        $link = new action_link($url, $text, null, [
+            'data-action' => 'action-popup',
+            'data-popup-action' => json_encode(
+                new popup_action('click', $url, $name, ['height' => 440, 'width' => 700])
+            ),
+        ]);
+
+        return $OUTPUT->render($link);
     }
 }

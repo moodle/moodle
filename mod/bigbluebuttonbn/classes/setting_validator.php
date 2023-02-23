@@ -37,7 +37,19 @@ class setting_validator {
     public static function section_general_shown() {
         global $CFG;
         return (!isset($CFG->bigbluebuttonbn['server_url']) ||
-                !isset($CFG->bigbluebuttonbn['shared_secret']));
+                !isset($CFG->bigbluebuttonbn['shared_secret'])
+            );
+    }
+
+    /**
+     * Validate if default messages section will be shown.
+     *
+     * @return bool
+     */
+    public static function section_default_messages_shown() {
+        global $CFG;
+        return (!isset($CFG->bigbluebuttonbn['welcome_default']) ||
+                !isset($CFG->bigbluebuttonbn['welcome_editable']));
     }
 
     /**
@@ -49,7 +61,6 @@ class setting_validator {
         global $CFG;
         return (!isset($CFG->bigbluebuttonbn['recording_default']) ||
                 !isset($CFG->bigbluebuttonbn['recording_editable']) ||
-                !isset($CFG->bigbluebuttonbn['recording_icons_enabled']) ||
                 !isset($CFG->bigbluebuttonbn['recording_all_from_start_default']) ||
                 !isset($CFG->bigbluebuttonbn['recording_all_from_start_editable']) ||
                 !isset($CFG->bigbluebuttonbn['recording_hide_button_default']) ||
@@ -75,15 +86,12 @@ class setting_validator {
      */
     public static function section_show_recordings_shown() {
         global $CFG;
-        return (!isset($CFG->bigbluebuttonbn['recordings_html_default']) ||
-                !isset($CFG->bigbluebuttonbn['recordings_html_editable']) ||
-                !isset($CFG->bigbluebuttonbn['recordings_deleted_default']) ||
+        return (!isset($CFG->bigbluebuttonbn['recordings_deleted_default']) ||
                 !isset($CFG->bigbluebuttonbn['recordings_deleted_editable']) ||
                 !isset($CFG->bigbluebuttonbn['recordings_imported_default']) ||
                 !isset($CFG->bigbluebuttonbn['recordings_imported_editable']) ||
                 !isset($CFG->bigbluebuttonbn['recordings_preview_default']) ||
                 !isset($CFG->bigbluebuttonbn['recordings_preview_editable']) ||
-                !isset($CFG->bigbluebuttonbn['recordings_validate_url']) ||
                 !isset($CFG->bigbluebuttonbn['recording_protect_editable'])
               );
     }
@@ -118,7 +126,7 @@ class setting_validator {
      */
     public static function section_preupload_presentation_shown() {
         global $CFG;
-        return (!isset($CFG->bigbluebuttonbn['preuploadpresentation_enabled']));
+        return (!isset($CFG->bigbluebuttonbn['preuploadpresentation_editable']));
     }
 
     /**
@@ -140,16 +148,6 @@ class setting_validator {
     public static function section_moderator_default_shown() {
         global $CFG;
         return (!isset($CFG->bigbluebuttonbn['participant_moderator_default']));
-    }
-
-    /**
-     * Validate if send notification section will be shown.
-     *
-     * @return bool
-     */
-    public static function section_send_notifications_shown() {
-        global $CFG;
-        return (!isset($CFG->bigbluebuttonbn['sendnotifications_enabled']));
     }
 
     /**
@@ -241,35 +239,16 @@ class setting_validator {
     }
 
     /**
-     * Validate if lockedlayout section will be shown.
-     *
+     * Validate that session lock settings is shown or not
      * @return bool
      */
-    public static function section_lockedlayout_shown() {
-        global $CFG;
-        return (!isset($CFG->bigbluebuttonbn['lockedlayout_default']) ||
-            !isset($CFG->bigbluebuttonbn['lockedlayout_editable']));
-    }
-
-    /**
-     * Validate if lockonjoin section will be shown.
-     *
-     * @return bool
-     */
-    public static function section_lockonjoin_shown() {
-        global $CFG;
-        return (!isset($CFG->bigbluebuttonbn['lockonjoin_default']) ||
-            !isset($CFG->bigbluebuttonbn['lockonjoin_editable']));
-    }
-
-    /**
-     * Validate if lockonjoinconfigurable section will be shown.
-     *
-     * @return bool
-     */
-    public static function section_lockonjoinconfigurable_shown() {
-        global $CFG;
-        return (!isset($CFG->bigbluebuttonbn['lockonjoinconfigurable_default']) ||
-            !isset($CFG->bigbluebuttonbn['lockonjoinconfigurable_editable']));
+    public static function section_lock_shown() {
+        return self::section_disablecam_shown() ||
+                self::section_disablemic_shown() ||
+                self::section_disablenote_shown() ||
+                self::section_disableprivatechat_shown() ||
+                self::section_disablepublicchat_shown() ||
+                self::section_disablenote_shown() ||
+                self::section_hideuserlist_shown();
     }
 }

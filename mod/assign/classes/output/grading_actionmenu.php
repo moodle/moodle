@@ -39,14 +39,24 @@ class grading_actionmenu implements templatable, renderable {
 
     /** @var int Course module ID. */
     protected $cmid;
+    /** @var bool If any submission plugins are enabled. */
+    protected $submissionpluginenabled;
+    /** @var int The number of submissions made. */
+    protected $submissioncount;
+
 
     /**
      * Constructor for this object.
      *
      * @param int $cmid Course module ID.
+     * @param bool $submissionpluginenabled If any submission plugins are enabled.
+     * @param int $submissioncount The number of submissions made.
      */
-    public function __construct(int $cmid) {
+    public function __construct(int $cmid, bool $submissionpluginenabled = false, int $submissioncount = 0) {
         $this->cmid = $cmid;
+        $this->submissionpluginenabled = $submissionpluginenabled;
+        $this->submissioncount = $submissioncount;
+
     }
 
     /**
@@ -56,9 +66,13 @@ class grading_actionmenu implements templatable, renderable {
      * @return array Data to render.
      */
     public function export_for_template(\renderer_base $output): array {
+        $downloadall = '';
+        if ($this->submissionpluginenabled && $this->submissioncount) {
+            $downloadall = (new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'downloadall']))->out(false);
+        }
         return [
             'back' => (new moodle_url('/mod/assign/view.php', ['id' => $this->cmid]))->out(false),
-            'downloadall' => (new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'downloadall']))->out(false)
+            'downloadall' => $downloadall
         ];
     }
 }

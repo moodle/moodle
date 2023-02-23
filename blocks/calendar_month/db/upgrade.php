@@ -37,24 +37,36 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once("{$CFG->libdir}/db/upgradelib.php");
+
 /**
  * Upgrade the calendar_month block
  * @param int $oldversion
  * @param object $block
  */
 function xmldb_block_calendar_month_upgrade($oldversion, $block) {
-    global $CFG;
-
-    // Automatically generated Moodle v3.6.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.7.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.8.0 release upgrade line.
-    // Put any upgrade step following this.
+    global $CFG, $DB;
 
     // Automatically generated Moodle v3.9.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2022030200) {
+        // Update all calendar_month blocks in the my-index to be in the main content region.
+        upgrade_block_set_defaultregion('calendar_month', '__default', 'my-index', 'content');
+        upgrade_block_savepoint(true, 2022030200, 'calendar_month', false);
+    }
+
+    if ($oldversion < 2022041901) {
+        upgrade_block_set_my_user_parent_context('calendar_month', '__default', 'my-index');
+        upgrade_block_savepoint(true, 2022041901, 'calendar_month', false);
+    }
+
+    // Automatically generated Moodle v4.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

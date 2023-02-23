@@ -32,7 +32,7 @@ $courseid      = required_param('id', PARAM_INT);        // course id
 $page          = optional_param('page', 0, PARAM_INT);   // active page
 $edit          = optional_param('edit', -1, PARAM_BOOL); // sticky editting mode
 
-$sortitemid    = optional_param('sortitemid', 0, PARAM_ALPHANUM); // sort by which grade item
+$sortitemid    = optional_param('sortitemid', 0, PARAM_ALPHANUMEXT);
 $action        = optional_param('action', 0, PARAM_ALPHAEXT);
 $move          = optional_param('move', 0, PARAM_INT);
 $type          = optional_param('type', 0, PARAM_ALPHA);
@@ -44,12 +44,12 @@ $graderreportsifirst  = optional_param('sifirst', null, PARAM_NOTAGS);
 $graderreportsilast   = optional_param('silast', null, PARAM_NOTAGS);
 
 $PAGE->set_url(new moodle_url('/grade/report/grader/index.php', array('id'=>$courseid)));
-$PAGE->requires->yui_module('moodle-gradereport_grader-gradereporttable', 'Y.M.gradereport_grader.init', null, null, true);
 $PAGE->set_pagelayout('report');
+$PAGE->requires->js_call_amd('gradereport_grader/stickycolspan', 'init');
 
 // basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 require_login($course);
 $context = context_course::instance($course->id);
@@ -81,29 +81,18 @@ if (!isset($USER->grade_last_report)) {
 }
 $USER->grade_last_report[$course->id] = 'grader';
 
-// Build editing on/off buttons
+// Build editing on/off buttons.
 $buttons = '';
-if (has_capability('moodle/grade:edit', $context)) {
 
-    if (($edit != - 1) and $PAGE->user_allowed_editing()) {
+$PAGE->set_other_editing_capability('moodle/grade:edit');
+if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
+    if ($edit != - 1) {
         $USER->editing = $edit;
     }
 
-    // page params for the turn editting on
+    // Page params for the turn editing on button.
     $options = $gpr->get_options();
-    $options['sesskey'] = sesskey();
-
-    if (isset($USER->editing) && $USER->editing) {
-        $options['edit'] = 0;
-        $string = get_string('turneditingoff');
-    } else {
-        $options['edit'] = 1;
-        $string = get_string('turneditingon');
-    }
-
-    if (!$PAGE->theme->haseditswitch) {
-        $buttons = new single_button(new moodle_url('index.php', $options), $string, 'get');
-    }
+    $buttons = $OUTPUT->edit_button(new moodle_url($PAGE->url, $options), 'get');
 }
 
 $gradeserror = array();
@@ -123,13 +112,14 @@ $reportname = get_string('pluginname', 'gradereport_grader');
 // Do this check just before printing the grade header (and only do it once).
 grade_regrade_final_grades_if_required($course);
 
-// Print header
-print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons);
-
 //Initialise the grader report object that produces the table
 //the class grade_report_grader_ajax was removed as part of MDL-21562
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
 $numusers = $report->get_numusers(true, true);
+
+$actionbar = new \gradereport_grader\output\action_bar($context, $report, $numusers);
+print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons, true,
+    null, null, null, $actionbar);
 
 // make sure separate group does not prevent view
 if ($report->currentgroup == -2) {
@@ -148,15 +138,6 @@ if ($isediting && ($data = data_submitted()) && confirm_sesskey()) {
 // Final grades MUST be loaded after the processing.
 $report->load_users();
 $report->load_final_grades();
-echo $report->group_selector;
-
-// User search
-$url = new moodle_url('/grade/report/grader/index.php', array('id' => $course->id));
-$firstinitial = $SESSION->gradereport["filterfirstname-{$context->id}"] ?? '';
-$lastinitial  = $SESSION->gradereport["filtersurname-{$context->id}"] ?? '';
-$totalusers = $report->get_numusers(true, false);
-$renderer = $PAGE->get_renderer('core_user');
-echo $renderer->user_search($url, $firstinitial, $lastinitial, $numusers, $totalusers, $report->currentgroupname);
 
 //show warnings if any
 foreach ($warnings as $warning) {

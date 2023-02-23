@@ -68,7 +68,7 @@ class grade_export_xml extends grade_export {
         make_temp_directory('gradeexport');
         $tempfilename = $CFG->tempdir .'/gradeexport/'. md5(sesskey().microtime().$downloadfilename);
         if (!$handle = fopen($tempfilename, 'w+b')) {
-            print_error('cannotcreatetempdir');
+            throw new \moodle_exception('cannotcreatetempdir');
         }
 
         /// time stamp to ensure uniqueness of batch export

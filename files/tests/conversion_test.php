@@ -14,19 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
-/**
- * PHPUnit tests for conversion API.
- *
- * @package    core_files
- * @copyright  2017 Andrew nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-use core_files\conversion;
+namespace core_files;
 
 /**
  * PHPUnit tests for conversion persistent.
@@ -35,7 +23,7 @@ use core_files\conversion;
  * @copyright  2017 Andrew nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_files_conversion_testcase extends advanced_testcase {
+class conversion_test extends \advanced_testcase {
 
     /**
      * Helper to create a stored file object with the given supplied content.
@@ -47,7 +35,7 @@ class core_files_conversion_testcase extends advanced_testcase {
      */
     protected function create_stored_file($filecontent = 'content', $filename = 'testfile.txt', $filerecord = []) {
         $filerecord = array_merge([
-                'contextid' => context_system::instance()->id,
+                'contextid' => \context_system::instance()->id,
                 'component' => 'core',
                 'filearea'  => 'unittest',
                 'itemid'    => 0,
@@ -83,6 +71,53 @@ class core_files_conversion_testcase extends advanced_testcase {
         $conversion = array_shift($conversions);
         $conversionfile = $conversion->get_sourcefile();
 
+        $this->assertEquals($sourcefile->get_id(), $conversionfile->get_id());
+        $this->assertFalse($conversion->get_destfile());
+    }
+
+    /**
+     * Ensure that get_conversions_for_file returns an existing conversion
+     * record with matching sourcefileid and targetformat when a file with the same
+     * contenthash is uploaded several times.
+     *
+     * @covers \core_files\conversion::get_conversions_for_file
+     */
+    public function test_get_conversions_for_multiple_files_existing_conversion_incomplete() {
+        $this->resetAfterTest();
+
+        // Create a bunch of files with the same content.
+        for ($i = 0; $i < 5; $i++) {
+            $sourcefiles[] = $this->create_stored_file('test content', 'testfile' . $i . '.txt');
+        }
+
+        // Use only one file for the conversion.
+        // Pick some file in the middle.
+        $sourcefile = $sourcefiles[count($sourcefiles) - 2];
+
+        $existing = new conversion(0, (object) [
+            'sourcefileid' => $sourcefile->get_id(),
+            'targetformat' => 'pdf',
+        ]);
+        $existing->create();
+
+        $conversions = conversion::get_conversions_for_file($sourcefile, 'pdf');
+        $this->assertCount(1, $conversions);
+
+        $conversion = array_shift($conversions);
+        $conversionfile = $conversion->get_sourcefile();
+
+        $this->assertEquals($sourcefile->get_id(), $conversionfile->get_id());
+        $this->assertFalse($conversion->get_destfile());
+
+        // Check that getting the conversion for a different file record with the same contenthash
+        // returns the same conversion as above.
+        $conversions = conversion::get_conversions_for_file($sourcefiles[count($sourcefiles) - 1], 'pdf');
+        $this->assertCount(1, $conversions);
+
+        $conversion = array_shift($conversions);
+        $conversionfile = $conversion->get_sourcefile();
+
+        $this->assertEquals($existing->get('id'), $conversion->get('id'));
         $this->assertEquals($sourcefile->get_id(), $conversionfile->get_id());
         $this->assertFalse($conversion->get_destfile());
     }
@@ -151,6 +186,7 @@ class core_files_conversion_testcase extends advanced_testcase {
 
         $conversion = array_shift($conversions);
 
+        $this->assertEquals($existing->get('id'), $conversion->get('id'));
         $this->assertEquals($sourcefile->get_id(), $conversion->get_sourcefile()->get_id());
         $this->assertEquals($destfile->get_id(), $conversion->get_destfile()->get_id());
     }

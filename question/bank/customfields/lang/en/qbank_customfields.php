@@ -24,7 +24,7 @@
  */
 
 $string['pluginname'] = 'Question custom fields';
-$string['privacy:metadata'] = 'Question custom fields plugin does not store any user data.';
+$string['privacy:metadata'] = 'The Question custom fields question bank plugin does not store any personal data.';
 
 $string['customfield'] = 'Question custom fields';
 $string['customfield_islocked'] = 'Locked';

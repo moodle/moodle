@@ -116,8 +116,12 @@
     text-align: right;
 }
 
-.mod-data-default-template.notapproved {
-    background-color: #fcc;
+#page-mod-data-view .notapproved {
+    background-color: #fff3cd;
+    color: #856404;
+    border-radius: 0.5em;
+    padding: 0.5em 1em;
+    gap: 1em;
 }
 
 #page-mod-data-templates td.save_template,
@@ -141,10 +145,63 @@
     text-align: left;
 }
 
-#page-mod-data-edit .mod-data-input {
-    margin-left: 10px;
-}
-
 #page-mod-data-edit .datatagcontrol {
     padding-left: 10px;
+}
+
+.preset_action_menu .dropdown-toggle::after,
+.entry-actionsmenu .dropdown-toggle::after,
+.fields-actions .dropdown-toggle::after {
+    display: none;
+}
+
+.defaulttemplate-single-body img.list_picture {
+    max-width: 100%;
+}
+
+.defaulttemplate-list-body img.list_picture {
+    max-width: 100%;
+}
+
+/* Date information displayed in templates/presets */
+.data-timeinfo {
+    color: var(–gray);
+}
+
+/* Legacy icons */
+.dataicon,
+.portfolio-add-icon {
+    color: var(--dark);
+}
+
+/* Preset preview styles */
+#page-mod-data-preset .nopreview {
+    border: 1px solid var(--secondary);
+    padding: 0.2rem;
+    border-radius: 5px;
+}
+/* Disable links and buttons in the preset preview */
+.template-preview-content .preview-disabled,
+.template-preview-content .action-icon,
+.template-preview-content .dropdown-menu a,
+.template-preview-content .data-field-link,
+.template-preview-content .data-field-html a,
+.template-preview-content .data-field-html button {
+    pointer-events: none;
+}
+
+/* Actions menu */
+.presetsactions .dropdown-toggle,
+.presetsactions .dropdown-toggle:hover,
+.presetsactions .show > .btn-secondary.dropdown-toggle,
+.entriesactions .dropdown-toggle,
+.entriesactions .dropdown-toggle:hover,
+.entriesactions .show > .btn-secondary.dropdown-toggle,
+#page-mod-data-view .whitebutton .btn-secondary,
+#page-mod-data-preset .whitebutton .btn-secondary,
+#page-mod-data-field- .whitebutton .btn-secondary,
+#page-mod-data-templates .whitebutton .btn-secondary {
+    background: white;
+    border-color: var(--primary);
+    color: var(--primary);
 }

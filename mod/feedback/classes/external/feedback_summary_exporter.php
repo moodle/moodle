@@ -14,26 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Class for exporting partial feedback data.
- *
- * @package    mod_feedback
- * @copyright  2017 Juan Leyva <juan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace mod_feedback\external;
-defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
 use renderer_base;
-use external_util;
-use external_files;
+use core_external\util as external_util;
+use core_external\external_files;
 
 /**
  * Class for exporting partial feedback data (some fields are only viewable by admins).
  *
  * @copyright  2017 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod_feedback
  */
 class feedback_summary_exporter extends exporter {
 
@@ -61,6 +54,11 @@ class feedback_summary_exporter extends exporter {
                 'type' => PARAM_INT,
                 'default' => FORMAT_MOODLE,
                 'description' => 'Feedback intro text format.',
+            ),
+            'lang' => array(
+                'type' => PARAM_LANG,
+                'description' => 'Forced activity language',
+                'null' => NULL_ALLOWED,
             ),
             'anonymous' => array(
                 'type' => PARAM_INT,

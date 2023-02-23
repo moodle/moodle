@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/completionlib.php');
 $id = required_param('course',PARAM_INT);
 $course = $DB->get_record('course',array('id'=>$id));
 if (!$course) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 $context = context_course::instance($course->id);
 
@@ -53,6 +53,7 @@ $silast  = optional_param('silast', 'all', PARAM_NOTAGS);
 $groupid = optional_param('group', 0, PARAM_INT);
 $activityinclude = optional_param('activityinclude', 'all', PARAM_TEXT);
 $activityorder = optional_param('activityorder', 'orderincourse', PARAM_TEXT);
+$activitysection = optional_param('activitysection', -1, PARAM_INT);
 
 // Whether to show extra user identity information
 $userfields = \core_user\fields::for_identity($context);
@@ -93,6 +94,9 @@ if ($activityinclude !== '') {
 if ($activityorder !== '') {
     $url->param('activityorder', $activityorder);
 }
+if ($activitysection !== '') {
+    $url->param('activitysection', $activitysection);
+}
 
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
@@ -111,7 +115,7 @@ if ($group===0 && $course->groupmode==SEPARATEGROUPS) {
 // Get data on activities and progress of all users, and give error if we've
 // nothing to display (no users or no activities).
 $completion = new completion_info($course);
-list($activitytypes, $activities) = helper::get_activities_to_show($completion, $activityinclude, $activityorder);
+list($activitytypes, $activities) = helper::get_activities_to_show($completion, $activityinclude, $activityorder, $activitysection);
 $output = $PAGE->get_renderer('report_progress');
 
 if ($sifirst !== 'all') {
@@ -200,9 +204,7 @@ if ($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are
     $PAGE->requires->js_call_amd('report_progress/completion_override', 'init', [fullname($USER)]);
 
     // Handle groups (if enabled).
-    $groupurl = fullclone($url);
-    $groupurl->remove_params(['page', 'group']);
-    groups_print_course_menu($course, $groupurl);
+    echo $output->render_groups_select($url, $course);
 
     // Display include activity filter.
     echo $output->render_include_activity_select($url, $activitytypes, $activityinclude);
@@ -210,6 +212,21 @@ if ($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are
     // Display activity order options.
     echo $output->render_activity_order_select($url, $activityorder);
 
+    // Display section selector.
+    $modinfo = get_fast_modinfo($course);
+    $sections = [];
+    $cmids = array_keys($completion->get_activities());
+    foreach ($modinfo->get_sections() as $sectionnum => $section) {
+        if (empty(array_intersect($section, $cmids))) {
+            continue;
+        }
+        $sectionname = get_section_name($course, $sectionnum);
+        if (empty($sectionname)) {
+            $sectionname = get_string('section') . ' ' . $sectionnum;
+        }
+        $sections[$sectionnum] = $sectionname;
+    }
+    echo $output->render_activity_section_select($url, $activitysection, $sections);
 }
 
 if (count($activities)==0) {
@@ -318,7 +335,7 @@ foreach($activities as $activity) {
             '/view.php?id='.$activity->id.'" title="' . s($displayname) . '">'.
             '<div class="rotated-text-container"><span class="rotated-text">'.$shortenedname.'</span></div>'.
             '<div class="modicon">'.
-            $OUTPUT->image_icon('icon', get_string('modulename', $activity->modname), $activity->modname) .
+            $OUTPUT->image_icon('monologo', get_string('modulename', $activity->modname), $activity->modname) .
             '</div>'.
             '</a>';
         if ($activity->completionexpected) {

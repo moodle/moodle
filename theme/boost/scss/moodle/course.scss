@@ -9,6 +9,7 @@
 
 .section-modchooser {
     clear: both;
+    margin-top: map-get($spacers, 1);
 }
 
 .block_tree .tree_item.branch {
@@ -69,6 +70,9 @@ body:not(.editing)  .sitetopic ul.section {
     }
 
     .activity {
+        list-style: none;
+        padding: map-get($spacers, 1) 0;
+
         .spinner {
             left: 100%;
             position: absolute;
@@ -85,14 +89,10 @@ body:not(.editing)  .sitetopic ul.section {
         .contentwithoutlink,
         .activityinstance {
             min-width: 40%;
-            display: table-cell;
-            padding-right: 4px;
-            min-height: 2em;
 
             > a {
-                display: inline-block;
-                text-indent: -31px;
-                padding-left: 31px;
+                display: inline-flex;
+                align-items: center;
             }
 
             .dimmed {
@@ -154,14 +154,10 @@ body:not(.editing)  .sitetopic ul.section {
     }
 }
 
-.activity img.activityicon {
-    margin-right: 6px;
-    vertical-align: text-bottom;
-}
-
-.section .activity .activityinstance,
-.section .activity .activityinstance div {
-    display: inline-block;
+.section .activity .activityinstance {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 1rem;
 }
 
 .editing {
@@ -295,14 +291,25 @@ body:not(.editing)  .sitetopic ul.section {
     }
 }
 
+// Compensate for the border widths when dropzones are displayed.
 .course-content .section.dropready {
 
     &.main.drop-down {
-        border-bottom: 2px solid $dropzone-border;
+        border-bottom: 1px solid $dropzone-border;
+    }
+
+    .course-section-header.dropready.drop-zone {
+        margin-top: -2px;
     }
 
     li.activity.dropready.drop-down {
-        border-bottom: 2px solid $dropzone-border;
+        border-bottom: 1px solid $dropzone-border;
+        margin-bottom: -1px;
+    }
+
+    li.activity.dropready.drop-up {
+        border-top: 1px solid $dropzone-border;
+        margin-top: -1px;
     }
 }
 
@@ -333,12 +340,12 @@ body:not(.editing)  .sitetopic ul.section {
 }
 
 .course-content .current::before {
-    content: "";
-    border-left: $primary 2px solid;
-    position: absolute;
-    left: -$card-spacer-x;
-    top: 0;
+    border-left: $primary 3px solid;
     bottom: 0;
+    content: "";
+    left: -8px;
+    position: absolute;
+    top: 0;
 }
 
 .course-content .section-summary {
@@ -627,11 +634,7 @@ input.titleeditor {
 }
 
 span.editinstructions {
-    /*rtl:remove*/
     position: absolute;
-    /*rtl:raw:
-    position: relative;
-    */
     top: 0;
     margin-top: -22px;
     margin-left: 30px;
@@ -667,11 +670,14 @@ span.editinstructions {
 }
 
 .dndupload-preview {
-    color: #909090;
-    border: 1px dashed #909090;
-    list-style: none;
-    margin-top: .2em;
-    padding: .3em;
+    padding: $modal-inner-padding;
+    background-color: $primary;
+    color: $white;
+    text-align: center;
+    font-size: $font-size-lg;
+    max-width: 600px;
+    margin: 0 auto;
+    @include border-radius();
 }
 
 .dndupload-hidden {
@@ -811,11 +817,7 @@ span.editinstructions {
     font-weight: normal;
     padding: 2px 18px;
 }
-/* rtl:raw:
-.course_category_tree .category > .info > .categoryname {
-    background-image:url([[pix:moodle|t/collapsed_empty_rtl]]);
-}
- */
+
 .course_category_tree .category.with_children > .info > .categoryname {
     background-image: url([[pix:moodle|t/expanded]]);
     background-repeat: no-repeat;
@@ -1001,6 +1003,7 @@ span.editinstructions {
 
             .coursename {
                 display: inline-block;
+                flex-basis: 10rem;
             }
         }
 
@@ -1125,7 +1128,6 @@ span.editinstructions {
     }
 
     > div {
-        display: inline-block;
         float: right;
 
         > div {
@@ -1241,24 +1243,23 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
 
 .activity-add,
 .block-add {
-    @if $enable-rounded {
-        @include border-radius($card-border-radius);
-    }
-    @include alert-variant($primary-light-background, $primary-light-border, $primary-light-border);
+    @include border-radius();
+    @include alert-variant($primary-light-background, $primary-light-border, $primary);
     border-width: $border-width;
-    border-style: dashed;
     .pluscontainer {
         border: $border-width solid $primary-light-border;
     }
     &:hover {
         cursor: pointer;
         background-color: $activity-add-hover;
+        .activity-add-text {
+            text-decoration: underline;
+        }
     }
     width: 100%;
-    border-radius: 4px;
 }
 
-#changenumsections {
+.changenumsections {
     border-top: $border-width solid $primary-light-border;
 }
 
@@ -1291,7 +1292,7 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
     padding-left: 0;
     border-bottom: $border-width solid $border-color;
 
-    &:last-child {
+    &:last-child:not(.section-summary) {
         border-bottom: 0;
     }
 
@@ -1320,7 +1321,7 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         margin-bottom: map-get($spacers, 2);
         margin-top: map-get($spacers, 2);
         @if $enable-rounded {
-            @include border-radius($border-radius-lg);
+            @include border-radius();
         }
     }
 
@@ -1331,29 +1332,36 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         white-space: nowrap;
         display: inline-block;
     }
-}
 
-$activity-iconcontainer-width: 50px;
-$activity-iconcontainer-height: 50px;
+    // Legacy dndupload classes. Can be removed in 4.4 as part of MDL-77124.
+    &.dndupload-dropzone {
+        border: 2px dashed $primary;
+        padding-left: 2px;
+        padding-right: 2px;
+        position: relative;
 
-.activity-item .activityiconcontainer {
-    width: $activity-iconcontainer-width;
-    height: $activity-iconcontainer-height;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    background-color: $gray-100;
-    border-radius: $border-radius;
-    padding: 0.7rem;
+        .dndupload-preview-overlay {
+            background-color: $white;
+            opacity: 0.8;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
 
-    .activityicon {
-        margin: 0;
-        height: 24px;
-        width: 24px;
+        .dndupload-preview-wrapper {
+            position: absolute;
+            top: 0;
+            padding: 2rem;
+            width: 100%;
+        }
     }
 }
 
 .description .course-description-item {
+    @include font-size($small-font-size);
+
     background-color: $gray-100;
     padding-left: map-get($spacers, 3);
     padding-right: map-get($spacers, 3);
@@ -1392,12 +1400,23 @@ $activity-iconcontainer-height: 50px;
     }
 }
 
+.course-content .description-inner {
+    ul {
+        list-style: disc;
+        ul {
+            list-style: circle;
+            ul {
+                list-style: square;
+            }
+        }
+    }
+}
+
 .activity-item {
     position: relative;
-    margin: map-get($spacers, 2) 0;
 
     @if $enable-rounded {
-        @include border-radius($border-radius-lg);
+        @include border-radius();
     }
 
     &:not(.activityinline) {
@@ -1432,9 +1451,16 @@ $activity-iconcontainer-height: 50px;
         flex: 0 1 auto;
         max-width: 100%;
     }
-    .inplaceeditable .quickeditlink,
-    .afterlink {
-        margin: 1.5rem 0 0.2rem 0.5rem;
+
+    /* Prevent bootstrap strech-link from covering the inplace editable button using z-index. */
+    .activityname {
+        .afterlink {
+            margin-left: 0.5rem;
+        }
+        .inplaceeditable .quickeditlink {
+            z-index: 2;
+            margin-left: 0.5rem;
+        }
     }
 
     .action-menu-item {
@@ -1487,7 +1513,8 @@ $activity-iconcontainer-height: 50px;
         cursor: pointer;
     }
 
-    &:hover {
+    &:hover,
+    &.selected {
         @include alert-variant($activity-item-hover, $activity-item-border, $activity-item-color);
 
         .description .course-description-item,
@@ -1515,5 +1542,70 @@ $activity-iconcontainer-height: 50px;
 
     &:first-child {
         margin-top: 0;
+    }
+}
+
+.activity:focus-within + .activity div.divider button,
+.course-section-header:focus-within + .content .section .activity:first-child div.divider button,
+.content .section .activity:focus-within div.divider button {
+    visibility: visible;
+}
+
+.activity {
+    div.divider {
+        height: 2rem;
+        margin-top: -1.25rem;
+        margin-bottom: -0.75rem;
+        z-index: 5;
+        button {
+            border-radius: 100%;
+            width: 2rem;
+            height: 2rem;
+            position: relative;
+            left: calc(50% - 1rem);
+            top: calc(50% - 1rem);
+            opacity: 0;
+            visibility: hidden;
+            transition: visibility 0.1s;
+            margin: 0;
+            padding: 0;
+            i.icon {
+                height: 1.5rem;
+                width: 1.5rem;
+                font-size: 1.5rem;
+                position: absolute;
+                left: 0.25rem;
+                top: 0.25rem;
+            }
+        }
+    }
+    &:not(.dragging) div.divider {
+        &:hover button,
+        &:focus button,
+        &:focus-within button {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+}
+
+.bulkenabled .bulk-hidden {
+    display: none !important; // stylelint-disable-line declaration-no-important
+}
+
+.activity-item .bulkselect {
+    position: absolute;
+    left: -2rem;
+}
+
+.course-section-header .bulkselect {
+    left: -2rem;
+    position: relative;
+    width: 0;
+}
+
+@include media-breakpoint-down(sm) {
+    .bulkenabled .course-content {
+        margin-left: 2rem;
     }
 }

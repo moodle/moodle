@@ -1,0 +1,51 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/datafilter/autocomplete_selection_items
+
+    Moodle template for the currently selected items in an autocomplete form element.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * data-value
+
+    Context variables required for this template:
+    * items List of items with label and value fields.
+    *   - value Value of the selected item.
+    *   - label HTML representing the value.
+    * noSelectionString String to use when no items are selected
+
+    Example context (json):
+    {
+        "items": [
+            { "label": "Item label with <strong>tags</strong>", "value": "5" },
+            { "label": "Another item label with <strong>tags</strong>", "value": "4" }
+        ],
+        "noSelectionString": "No selection"
+    }
+}}
+{{#items}}
+    <span role="option" data-value="{{value}}" aria-selected="true"
+            class="badge badge-secondary clickable text-wrap text-break line-height-4 m-1">
+        {{{label}}}<i class="icon fa fa-times pl-2 mr-0"></i>
+    </span>
+{{/items}}
+{{^items}}
+    <span class="mb-3 mr-1">{{noSelectionString}}</span>
+{{/items}}

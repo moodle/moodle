@@ -26,8 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
 use renderer_base;
-use external_files;
-use external_util;
+use core_external\external_files;
+use core_external\util as external_util;
 
 /**
  * Class for exporting partial database data (some fields are only viewable by admins).
@@ -57,6 +57,11 @@ class database_summary_exporter extends exporter {
                 'choices' => array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN),
                 'type' => PARAM_INT,
                 'default' => FORMAT_MOODLE
+            ),
+            'lang' => array(
+                'type' => PARAM_LANG,
+                'description' => 'Forced activity language',
+                'null' => NULL_ALLOWED,
             ),
             'comments' => array(
                 'type' => PARAM_BOOL,

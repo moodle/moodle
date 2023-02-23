@@ -23,6 +23,8 @@ Feature: Search content in the content bank
   Scenario: Admins can search content in the content bank
     Given I am on site homepage
     And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Navigation" block if not present
     And I expand "Site pages" node
     And I click on "Content bank" "link"

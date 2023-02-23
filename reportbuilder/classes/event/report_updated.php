@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\event;
 
+use coding_exception;
 use core\event\base;
 use core_reportbuilder\local\models\report;
 use moodle_url;
@@ -83,6 +84,18 @@ class report_updated extends base {
      */
     public function get_description() {
         return "The user with id '$this->userid' updated the custom report with id '$this->objectid'.";
+    }
+
+    /**
+     * Custom validations.
+     *
+     * @throws coding_exception
+     */
+    protected function validate_data(): void {
+        parent::validate_data();
+        if (!isset($this->objectid)) {
+            throw new coding_exception('The \'objectid\' must be set.');
+        }
     }
 
     /**

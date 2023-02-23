@@ -35,6 +35,11 @@ if ($ADMIN->fulltree) {
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
+    // Unaddable blocks.
+    $setting = new admin_setting_configtext('theme_classic/unaddableblocks',
+        get_string('unaddableblocks', 'theme_boost'), get_string('unaddableblocks_desc', 'theme_boost'), '', PARAM_TEXT);
+    $page->add($setting);
+
     // Preset.
     $name = 'theme_classic/preset';
     $title = get_string('preset', 'theme_classic');

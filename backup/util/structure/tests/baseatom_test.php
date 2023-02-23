@@ -14,12 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package   core_backup
- * @category  phpunit
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use base_atom_content_exception;
+use base_atom_struct_exception;
+use mock_base_atom;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -28,10 +27,16 @@ require_once(__DIR__.'/fixtures/structure_fixtures.php');
 
 
 /**
- * Unit test case the base_atom class. Note: as it's abstract we are testing
- * mock_base_atom instantiable class instead
+ * Unit test case the base_atom class.
+ *
+ * Note: as it's abstract we are testing mock_base_atom instantiable class instead
+ *
+ * @package   core_backup
+ * @category  test
+ * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_base_atom_testcase extends basic_testcase {
+class baseatom_test extends \basic_testcase {
 
     /**
      * Correct base_atom_tests
@@ -80,7 +85,7 @@ class backup_base_atom_testcase extends basic_testcase {
         try {
             $instance = new mock_base_atom('');
             $this->fail("Expecting base_atom_struct_exception exception, none occurred");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_atom_struct_exception);
         }
 
@@ -88,7 +93,7 @@ class backup_base_atom_testcase extends basic_testcase {
         try {
             $instance = new mock_base_atom('TESTING ATOM');
             $this->fail("Expecting base_atom_struct_exception exception, none occurred");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_atom_struct_exception);
         }
 
@@ -96,13 +101,13 @@ class backup_base_atom_testcase extends basic_testcase {
         try {
             $instance = new mock_base_atom('TESTING-ATOM');
             $this->fail("Expecting base_atom_struct_exception exception, none occurred");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_atom_struct_exception);
         }
         try {
             $instance = new mock_base_atom('TESTING_ATOM_Á');
             $this->fail("Expecting base_atom_struct_exception exception, none occurred");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_atom_struct_exception);
         }
 
@@ -112,7 +117,7 @@ class backup_base_atom_testcase extends basic_testcase {
         try {
             $instance->set_value('test');
             $this->fail("Expecting base_atom_content_exception exception, none occurred");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_atom_content_exception);
         }
     }

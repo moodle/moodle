@@ -198,4 +198,51 @@ class behat_data_generators extends behat_base {
         $instance = new $componentclass($component);
         return $instance;
     }
+
+    /**
+     * Get all entities that can be created in all components using the_following_entities_exist()
+     *
+     * @return array
+     * @throws coding_exception
+     */
+    public function get_all_entities(): array {
+        global $CFG;
+        // Ensure the generator class is loaded.
+        require_once($CFG->libdir . '/behat/classes/behat_generator_base.php');
+        $componenttypes = core_component::get_component_list();
+        $coregenerator = $this->get_instance_for_component('core');
+        $pluginswithentities = ['core' => array_keys($coregenerator->get_available_generators())];
+        foreach ($componenttypes as $components) {
+            foreach ($components as $component => $componentdir) {
+                try {
+                    $plugingenerator = $this->get_instance_for_component($component);
+                    $entities = array_keys($plugingenerator->get_available_generators());
+                    if (!empty($entities)) {
+                        $pluginswithentities[$component] = $entities;
+                    }
+                } catch (Exception $e) {
+                    // The component has no generator, skip it.
+                    continue;
+                }
+            }
+        }
+        return $pluginswithentities;
+    }
+
+    /**
+     * Get the required fields for a specific creatable entity.
+     *
+     * @param string $entitytype
+     * @return mixed
+     * @throws coding_exception
+     */
+    public function get_entity(string $entitytype): array {
+        [$component, $entity] = $this->parse_entity_type($entitytype);
+        $generator = $this->get_instance_for_component($component);
+        $entities = $generator->get_available_generators();
+        if (!array_key_exists($entity, $entities)) {
+            throw new coding_exception('No generator for ' . $entity . ' in component ' . $component);
+        }
+        return $entities[$entity];
+    }
 }

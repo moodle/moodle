@@ -22,7 +22,7 @@ $id = required_param('id', PARAM_INT);   // Course.
 $PAGE->set_url('/mod/chat/index.php', array('id' => $id));
 
 if (! $course = $DB->get_record('course', array('id' => $id))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 require_course_login($course);

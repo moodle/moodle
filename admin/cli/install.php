@@ -75,6 +75,7 @@ Options:
                       required in non-interactive mode.
 --adminemail=STRING   Email address for the moodle admin account.
 --sitepreset=STRING   Admin site preset to be applied during the installation process.
+--supportemail=STRING Email address for support and help.
 --upgradekey=STRING   The upgrade key to be set in the config.php, leave empty to not set it.
 --non-interactive     No interactive questions, installation fails if any
                       problem encountered.
@@ -256,6 +257,7 @@ list($options, $unrecognized) = cli_get_params(
         'adminpass'         => '',
         'adminemail'        => '',
         'sitepreset'        => '',
+        'supportemail'      => '',
         'upgradekey'        => '',
         'non-interactive'   => false,
         'agree-license'     => false,
@@ -737,6 +739,20 @@ if (!$skipdatabase) {
     // Validate that the address provided was an e-mail address.
     if (!empty($options['adminemail']) && !validate_email($options['adminemail'])) {
         $a = (object)['option' => 'adminemail', 'value' => $options['adminemail']];
+        cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
+    }
+
+    // Ask for the support email address.
+    if ($interactive) {
+        cli_separator();
+        cli_heading(get_string('clisupportemail', 'install'));
+        $prompt = get_string('clitypevaluedefault', 'admin', $options['supportemail']);
+        $options['supportemail'] = cli_input($prompt, $options['supportemail']);
+    }
+
+    // Validate that the support email address provided is valid.
+    if (!empty($options['supportemail']) && !validate_email($options['supportemail'])) {
+        $a = (object)['option' => 'supportemail', 'value' => $options['supportemail']];
         cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
     }
 }

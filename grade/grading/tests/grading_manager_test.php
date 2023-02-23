@@ -14,42 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the advanced grading subsystem
- *
- * @package    core_grading
- * @category   phpunit
- * @copyright  2011 David Mudrak <david@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_grading;
+
+use grading_manager;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/grade/grading/lib.php'); // Include the code to test
 
-
-/**
- * Makes protected method accessible for testing purposes
- *
- * @package    core_grading
- * @category   phpunit
- * @copyright  2011 David Mudrak <david@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class testable_grading_manager extends grading_manager {
-}
-
-
 /**
  * Test cases for the grading manager API
  *
  * @package    core_grading
- * @category   phpunit
+ * @category   test
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_grade_grading_manager_testcase extends advanced_testcase {
+class grading_manager_test extends \advanced_testcase {
     public function test_basic_instantiation() {
         $manager1 = get_grading_manager();
 
@@ -103,7 +85,7 @@ class core_grade_grading_manager_testcase extends advanced_testcase {
         $this->assertEquals('rubric', $gradingman->get_active_method());
 
         // attempting to set an invalid method
-        $this->expectException(moodle_exception::class);
+        $this->expectException(\moodle_exception::class);
         $gradingman->set_active_method('no_one_should_ever_try_to_implement_a_method_with_this_silly_name');
     }
 
@@ -115,27 +97,27 @@ class core_grade_grading_manager_testcase extends advanced_testcase {
         $UTFfailuremessage = 'A test using UTF-8 characters has failed. Consider updating PHP and PHP\'s PCRE or INTL extensions (MDL-30494)';
 
         $needle = "    šašek, \n\n   \r    a král;  \t";
-        $tokens = testable_grading_manager::tokenize($needle);
+        $tokens = grading_manager::tokenize($needle);
         $this->assertEquals(2, count($tokens), $UTFfailuremessage);
         $this->assertTrue(in_array('šašek', $tokens), $UTFfailuremessage);
         $this->assertTrue(in_array('král', $tokens), $UTFfailuremessage);
 
         $needle = ' "   šašek a král "    ';
-        $tokens = testable_grading_manager::tokenize($needle);
+        $tokens = grading_manager::tokenize($needle);
         $this->assertEquals(1, count($tokens));
         $this->assertTrue(in_array('šašek a král', $tokens));
 
         $needle = '""';
-        $tokens = testable_grading_manager::tokenize($needle);
+        $tokens = grading_manager::tokenize($needle);
         $this->assertTrue(empty($tokens));
 
         $needle = '"0"';
-        $tokens = testable_grading_manager::tokenize($needle);
+        $tokens = grading_manager::tokenize($needle);
         $this->assertEquals(1, count($tokens));
         $this->assertTrue(in_array('0', $tokens));
 
         $needle = '<span>Aha</span>, then who\'s a bad guy here he?';
-        $tokens = testable_grading_manager::tokenize($needle);
+        $tokens = grading_manager::tokenize($needle);
         $this->assertEquals(8, count($tokens));
         $this->assertTrue(in_array('span', $tokens)); // Extracted the tag name
         $this->assertTrue(in_array('Aha', $tokens));
@@ -144,7 +126,7 @@ class core_grade_grading_manager_testcase extends advanced_testcase {
         $this->assertTrue(in_array('he', $tokens)); // Removed the trailing ?
 
         $needle = 'grammar, "english language"';
-        $tokens = testable_grading_manager::tokenize($needle);
+        $tokens = grading_manager::tokenize($needle);
         $this->assertTrue(in_array('grammar', $tokens));
         $this->assertTrue(in_array('english', $tokens));
         $this->assertTrue(in_array('language', $tokens));

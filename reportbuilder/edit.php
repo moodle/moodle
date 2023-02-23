@@ -30,6 +30,7 @@ use core_reportbuilder\permission;
 use core_reportbuilder\output\dynamictabs\access;
 use core_reportbuilder\output\dynamictabs\audience;
 use core_reportbuilder\output\dynamictabs\editor;
+use core_reportbuilder\output\dynamictabs\schedules;
 
 require_once(__DIR__ . '/../config.php');
 require_once("{$CFG->libdir}/adminlib.php");
@@ -61,10 +62,11 @@ $tabdata = ['reportid' => $reportid];
 $tabs = [
     new editor($tabdata),
     new audience($tabdata),
+    new schedules($tabdata),
     new access($tabdata),
 ];
 
 echo $OUTPUT->render_from_template('core/dynamic_tabs',
-    (new dynamic_tabs($tabdata, $tabs))->export_for_template($OUTPUT));
+    (new dynamic_tabs($tabs))->export_for_template($OUTPUT));
 
 echo $OUTPUT->footer();

@@ -28,11 +28,14 @@ Feature: Teachers can override the grade for any question
     And quiz "Quiz 1" contains the following questions:
       | question | page |
       | TF1      | 1    |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
     And I am on the "Quiz 1" "mod_quiz > View" page logged in as "student1"
-    And I follow "Attempt quiz"
+    And I press "Attempt quiz"
     And I follow "Finish attempt ..."
     And I press "Submit all and finish"
-    And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
+    And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
     And I log out
 
   @javascript @_switch_window @_bug_phantomjs
@@ -53,7 +56,8 @@ Feature: Teachers can override the grade for any question
     And I switch to "commentquestion" window
     And I should see "Teacher 1" in the "Manually graded 10 with comment: " "table_row"
 
-  @javascript @_switch_window @_file_upload @_bug_phantomjs
+  # This scenario has Atto-specific steps. See MDL-75913 for further details.
+  @javascript @_switch_window @_file_upload @_bug_phantomjs @editor_atto
   Scenario: Comment on a response to an essay question attempt.
     When I log in as "teacher1"
     And I follow "Manage private files"

@@ -23,10 +23,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/filter/data/filter.php');
+namespace filter_data;
 
 /**
  * Tests for filter_data.
@@ -35,7 +32,7 @@ require_once($CFG->dirroot . '/filter/data/filter.php');
  * @copyright 2015 David Monllao
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filter_data_filter_testcase extends advanced_testcase {
+class filter_test extends \advanced_testcase {
 
     /**
      * Tests that the filter applies the required changes.
@@ -46,17 +43,17 @@ class filter_data_filter_testcase extends advanced_testcase {
 
         $this->resetAfterTest(true);
         $this->setAdminUser();
-        filter_manager::reset_caches();
+        \filter_manager::reset_caches();
 
         filter_set_global_state('data', TEXTFILTER_ON);
 
         $course1 = $this->getDataGenerator()->create_course();
-        $coursecontext1 = context_course::instance($course1->id);
+        $coursecontext1 = \context_course::instance($course1->id);
 
         $course2 = $this->getDataGenerator()->create_course();
-        $coursecontext2 = context_course::instance($course2->id);
+        $coursecontext2 = \context_course::instance($course2->id);
 
-        $sitecontext = context_course::instance(SITEID);
+        $sitecontext = \context_course::instance(SITEID);
 
         $site = get_site();
         $this->add_simple_database_instance($site, array('SiteEntry'));
@@ -83,7 +80,7 @@ class filter_data_filter_testcase extends advanced_testcase {
     /**
      * Adds a database instance to the provided course + a text field + adds all attached entries.
      *
-     * @param stdClass $course
+     * @param \stdClass $course
      * @param array $entries A list of entry names.
      * @return void
      */
@@ -95,7 +92,7 @@ class filter_data_filter_testcase extends advanced_testcase {
 
         // A database field.
         $field = data_get_field_new('text', $database);
-        $fielddetail = new stdClass();
+        $fielddetail = new \stdClass();
         $fielddetail->d = $database->id;
         $fielddetail->mode = 'add';
         $fielddetail->type = 'text';

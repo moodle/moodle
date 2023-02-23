@@ -15,11 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * xml_output tests (base, memory and file).
+ *
  * @package   core_backup
- * @category  phpunit
+ * @category  test
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace core_backup;
+
+use file_xml_output;
+use memory_xml_output;
+use xml_output;
+use xml_output_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -29,10 +38,15 @@ require_once($CFG->dirroot . '/backup/util/xml/output/xml_output.class.php');
 require_once($CFG->dirroot . '/backup/util/xml/output/memory_xml_output.class.php');
 require_once($CFG->dirroot . '/backup/util/xml/output/file_xml_output.class.php');
 
-/*
+/**
  * xml_output tests (base, memory and file)
+ *
+ * @package   core_backup
+ * @category  test
+ * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class xml_output_test extends advanced_testcase {
+class output_test extends \advanced_testcase {
 
     /*
      * test memory_xml_output
@@ -47,7 +61,7 @@ class xml_output_test extends advanced_testcase {
         try {
             $xo->write('test');
             $this->assertTrue(false, 'xml_output_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_output_exception);
             $this->assertEquals($e->errorcode, 'xml_output_not_started');
         }
@@ -57,7 +71,7 @@ class xml_output_test extends advanced_testcase {
         try {
             $xo->set_buffersize(8192);
             $this->assertTrue(false, 'xml_output_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_output_exception);
             $this->assertEquals($e->errorcode, 'xml_output_buffer_nosupport');
         }
@@ -68,7 +82,7 @@ class xml_output_test extends advanced_testcase {
         try {
             $xo->set_buffersize(8192);
             $this->assertTrue(false, 'xml_output_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_output_exception);
             $this->assertEquals($e->errorcode, 'xml_output_already_started');
         }
@@ -78,7 +92,7 @@ class xml_output_test extends advanced_testcase {
         try {
             $xo->stop();
             $this->assertTrue(false, 'xml_output_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_output_exception);
             $this->assertEquals($e->errorcode, 'xml_output_not_started');
         }
@@ -88,7 +102,7 @@ class xml_output_test extends advanced_testcase {
         try {
             $xo->debug_info();
             $this->assertTrue(false, 'xml_output_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_output_exception);
             $this->assertEquals($e->errorcode, 'xml_output_not_stopped');
         }
@@ -99,7 +113,7 @@ class xml_output_test extends advanced_testcase {
         try {
             $xo->start();
             $this->assertTrue(false, 'xml_output_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_output_exception);
             $this->assertEquals($e->errorcode, 'xml_output_already_started');
         }
@@ -110,7 +124,7 @@ class xml_output_test extends advanced_testcase {
         try {
             $xo->debug_info();
             $this->assertTrue(false, 'xml_output_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_output_exception);
             $this->assertEquals($e->errorcode, 'xml_output_not_stopped');
         }
@@ -122,7 +136,7 @@ class xml_output_test extends advanced_testcase {
         try {
             $xo->stop();
             $this->assertTrue(false, 'xml_output_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_output_exception);
             $this->assertEquals($e->errorcode, 'xml_output_not_started');
         }
@@ -134,7 +148,7 @@ class xml_output_test extends advanced_testcase {
         try {
             $xo->start();
             $this->assertTrue(false, 'xml_output_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_output_exception);
             $this->assertEquals($e->errorcode, 'xml_output_already_stopped');
         }
@@ -145,7 +159,7 @@ class xml_output_test extends advanced_testcase {
         try {
             $xo->get_allcontents();
             $this->assertTrue(false, 'xml_output_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_output_exception);
             $this->assertEquals($e->errorcode, 'xml_output_not_stopped');
         }
@@ -220,7 +234,7 @@ class xml_output_test extends advanced_testcase {
         @remove_dir(dirname($file));
         // Recreate test dir
         if (!check_dir_exists(dirname($file), true, true)) {
-            throw new moodle_exception('error_creating_temp_dir', 'error', dirname($file));
+            throw new \moodle_exception('error_creating_temp_dir', 'error', dirname($file));
         }
 
         // Instantiate xml_output
@@ -233,7 +247,7 @@ class xml_output_test extends advanced_testcase {
         try {
             $xo->start();
             $this->assertTrue(false, 'xml_output_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_output_exception);
             $this->assertEquals($e->errorcode, 'directory_not_exists');
         }
@@ -245,7 +259,7 @@ class xml_output_test extends advanced_testcase {
         try {
             $xo->start();
             $this->assertTrue(false, 'xml_output_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_output_exception);
             $this->assertEquals($e->errorcode, 'file_already_exists');
         }

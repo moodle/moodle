@@ -22,9 +22,7 @@
  * @copyright  2021 Tomo Tsuyuki <tomotsuyuki@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tests\core_course;
-
-defined('MOODLE_INTERNAL') || die();
+namespace core_course;
 
 /**
  * Tests for the \core_course\task\course_delete_modules class.
@@ -101,7 +99,7 @@ class course_delete_modules_test extends \advanced_testcase {
         } catch (\coding_exception $e) {
             // Assert exception.
             $this->assertInstanceOf(\coding_exception::class, $e);
-            $errormsg = $e->getMessage();
+            $errormsg = str_replace('\\', '/', $e->getMessage()); // Normalise dir separator.
             $this->assertStringContainsString('cannotdeletemodulemissinglib', $errormsg);
             $this->assertStringContainsString('course/lib.php', $errormsg);
             $this->assertStringContainsString('mod/TestModuleToDelete/lib.php is missing', $errormsg);

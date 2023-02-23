@@ -30,7 +30,13 @@ use core_reportbuilder\permission;
 defined('MOODLE_INTERNAL') || die;
 
 /** @var admin_root $ADMIN */
-$ADMIN->add('reports', new admin_category('reportbuilder', new lang_string('reportbuilder', 'core_reportbuilder')));
+$ADMIN->add(
+    'reports', new admin_category(
+        'reportbuilder',
+        new lang_string('reportbuilder', 'core_reportbuilder'),
+        empty($CFG->enablecustomreports)
+    )
+);
 
 $ADMIN->add(
     'reportbuilder', new accesscallback(
@@ -39,6 +45,22 @@ $ADMIN->add(
         (new moodle_url('/reportbuilder/index.php'))->out(),
         static function(accesscallback $accesscallback): bool {
             return permission::can_view_reports_list();
-        }
+        },
+        empty($CFG->enablecustomreports)
     )
 );
+
+$settings = new admin_settingpage('reportbuildersettings', get_string('customreportssettings', 'core_reportbuilder'),
+    'moodle/site:config', empty($CFG->enablecustomreports));
+
+$settings->add(new admin_setting_configtext(
+    'customreportslimit',
+    new lang_string('customreportslimit', 'core_reportbuilder'),
+    new lang_string('customreportslimit_desc', 'core_reportbuilder'), 0, PARAM_INT));
+
+$settings->add(new admin_setting_configcheckbox(
+    'customreportsliveediting',
+    new lang_string('customreportsliveediting', 'core_reportbuilder'),
+    new lang_string('customreportsliveediting_desc', 'core_reportbuilder'), 1));
+
+$ADMIN->add('reportbuilder', $settings);

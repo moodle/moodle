@@ -6,21 +6,19 @@ Feature: Test creating a Select missing words question
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email               |
-      | teacher1 | T1        | Teacher1 | teacher1@moodle.com |
+      | username |
+      | teacher  |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
     And the following "course enrolments" exist:
-      | user     | course | role           |
-      | teacher1 | C1     | editingteacher |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
+      | user    | course | role           |
+      | teacher | C1     | editingteacher |
 
   @javascript
   Scenario: Create a Select missing words question
-    Given I add a "Select missing words" question filling the form with:
+    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
+    And I add a "Select missing words" question filling the form with:
       | Question name             | Select missing words 001   |
       | Question text             | The [[1]] [[2]] on the [[3]]. |
       | General feedback          | The cat sat on the mat.       |
@@ -32,10 +30,41 @@ Feature: Test creating a Select missing words question
       | id_choices_4_answer       | table                         |
       | Hint 1                    | First hint                    |
       | Hint 2                    | Second hint                   |
-    And I should see "Select missing words 001"
+    Then I should see "Select missing words 001"
     # Checking that the next new question form displays user preferences settings.
-    When I press "Create a new question ..."
+    And I press "Create a new question ..."
     And I set the field "item_qtype_gapselect" to "1"
     And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
-    Then the following fields match these values:
+    And the following fields match these values:
       | id_shuffleanswers | 1 |
+
+  Scenario: Edit a Select missing words question with 2 choice and should not have empty choice.
+    Given I am on the "Course 1" "core_question > course question bank" page logged in as teacher
+    And I add a "Select missing words" question filling the form with:
+      | Question name            | Select missing words 002    |
+      | Question text            | The [[1]] [[2]] on the mat. |
+      | General feedback         | The cat sat on the mat.     |
+      | id_shuffleanswers        | 1                           |
+      | id_choices_0_answer      | cat                         |
+      | id_choices_1_answer      | sat                         |
+      | id_choices_2_answer      | dog                         |
+      | id_choices_2_choicegroup | 2                           |
+      | id_choices_3_answer      | stand                       |
+      | id_choices_3_choicegroup | 2                           |
+      | Hint 1                   | First hint                  |
+      | Hint 2                   | Second hint                 |
+    When I choose "Edit question" action for "Select missing words 002" in the question bank
+    And the following fields match these values:
+      | Question name            | Select missing words 002    |
+      | Question text            | The [[1]] [[2]] on the mat. |
+      | General feedback         | The cat sat on the mat.     |
+      | id_shuffleanswers        | 1                           |
+      | id_choices_0_answer      | cat                         |
+      | id_choices_1_answer      | sat                         |
+      | id_choices_2_answer      | dog                         |
+      | id_choices_2_choicegroup | 2                           |
+      | id_choices_3_answer      | stand                       |
+      | id_choices_3_choicegroup | 2                           |
+      | Hint 1                   | First hint                  |
+      | Hint 2                   | Second hint                 |
+    Then I should not see "Choice [[5]]"

@@ -16,14 +16,10 @@
 
 namespace core_form\external;
 
-use core_search\engine_exception;
-use external_api;
-use external_function_parameters;
-use external_value;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->libdir.'/externallib.php');
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 /**
  * Implements the external functions provided by the core_form subsystem.
@@ -91,10 +87,10 @@ class dynamic_form extends external_api {
 
     /**
      * Return for modal
-     * @return \external_single_structure
+     * @return external_single_structure
      */
-    public static function execute_returns(): \external_single_structure {
-        return new \external_single_structure(
+    public static function execute_returns(): external_single_structure {
+        return new external_single_structure(
             array(
                 'submitted' => new external_value(PARAM_BOOL, 'If form was submitted and validated'),
                 'data' => new external_value(PARAM_RAW, 'JSON-encoded return data from form processing method', VALUE_OPTIONAL),

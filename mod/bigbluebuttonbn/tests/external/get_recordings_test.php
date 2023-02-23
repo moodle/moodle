@@ -16,7 +16,7 @@
 
 namespace mod_bigbluebuttonbn\external;
 
-use external_api;
+use core_external\external_api;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\test\testcase_helper_trait;
 use require_login_exception;
@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2021 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David (laurent@call-learning.fr)
- * @coversDefaultClass \mod_bigbluebuttonbn\external\get_recordings
+ * @covers \mod_bigbluebuttonbn\external\get_recordings
  */
 class get_recordings_test extends \externallib_advanced_testcase {
     use testcase_helper_trait;
@@ -50,7 +50,7 @@ class get_recordings_test extends \externallib_advanced_testcase {
     /**
      * Helper
      *
-     * @param ... $params
+     * @param mixed ...$params
      * @return array|bool|mixed
      */
     protected function get_recordings(...$params) {
@@ -123,7 +123,7 @@ class get_recordings_test extends \externallib_advanced_testcase {
         $this->assertArrayHasKey('status', $getrecordings);
         $this->assertEquals(true, $getrecordings['status']);
         $this->assertNotEmpty($getrecordings['tabledata']);
-        $this->assertEquals($getrecordings['tabledata']['data'], '[]');
+        $this->assertEquals('[]', $getrecordings['tabledata']['data']);
     }
 
     /**
@@ -210,6 +210,7 @@ class get_recordings_test extends \externallib_advanced_testcase {
 
     /**
      * Check we can see all recording from a course in a room only instance
+     * @covers \mod_bigbluebuttonbn\external\get_recordings::execute
      */
     public function test_get_recordings_room_only() {
         $this->resetAfterTest();
@@ -252,6 +253,7 @@ class get_recordings_test extends \externallib_advanced_testcase {
 
     /**
      * Check if we can see the imported recording in a new instance
+     * @covers \mod_bigbluebuttonbn\external\get_recordings::execute
      */
     public function test_get_recordings_imported() {
         $this->resetAfterTest();
@@ -313,20 +315,72 @@ class get_recordings_test extends \externallib_advanced_testcase {
     }
 
     /**
-     * Check if recording are visible/invisible depending on the group.
+     * Check we can see only imported recordings in a recordings only instance when "Show only imported links" enabled.
+     * @covers \mod_bigbluebuttonbn\external\get_recordings::execute
      */
-    public function test_get_recordings_groups_visible() {
+    public function test_get_imported_recordings_only() {
         $this->resetAfterTest();
+        set_config('bigbluebuttonbn_importrecordings_enabled', 1);
         $dataset = [
             'type' => instance::TYPE_ALL,
-            'groups' => ['G1' => ['s1'], 'G2' => ['s2']],
-            'users' => [['username' => 't1', 'role' => 'editingteacher'], ['username' => 's1', 'role' => 'student'],
-                ['username' => 's2', 'role' => 'student']],
+            'groups' => null,
+            'users' => [['username' => 's1', 'role' => 'student']],
             'recordingsdata' => [
-                'G1' => [['name' => 'Recording1']],
-                'G2' => [['name' => 'Recording2']]
+                [['name' => 'Recording1']],
+                [['name' => 'Recording2']]
             ],
         ];
+        $activityid = $this->create_from_dataset($dataset);
+        $instance = instance::get_from_instanceid($activityid);
+
+        // Now create a recording only activity.
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
+        // Now create a new activity and import the first record.
+        $newactivity = $plugingenerator->create_instance([
+            'course' => $instance->get_course_id(),
+            'type' => instance::TYPE_RECORDING_ONLY,
+            'name' => 'Example 2'
+        ]);
+        $plugingenerator->create_meeting([
+            'instanceid' => $newactivity->id,
+        ]); // We need to have a meeting created in order to import recordings.
+        $newinstance = instance::get_from_instanceid($newactivity->id);
+        $recordings = $instance->get_recordings();
+        foreach ($recordings as $recording) {
+            if ($recording->get('name') == 'Recording1') {
+                $recording->create_imported_recording($newinstance);
+            }
+        }
+        $user = \core_user::get_user_by_username('s1');
+        $this->setUser($user);
+        $getrecordings = $this->get_recordings($newinstance->get_instance_id());
+        $data = json_decode($getrecordings['tabledata']['data']);
+        // Check that all recordings including the imported recording appear.
+        $this->assertCount(3, $data);
+        // Set the flags to enable "Show only imported links".
+        set_config('bigbluebuttonbn_recordings_imported_default', 1);
+        set_config('bigbluebuttonbn_recordings_imported_editable', 0);
+        $getrecordings = $this->get_recordings($newinstance->get_instance_id());
+        $data = json_decode($getrecordings['tabledata']['data']);
+        $this->assertCount(1, $data);
+    }
+
+    /**
+     * Check if recording are visible/invisible depending on the group.
+     *
+     * @param string $type
+     * @param array $groups
+     * @param array $users
+     * @param array $recordingsdata
+     * @param array $test
+     * @param int $coursemode
+     *
+     * @covers   \mod_bigbluebuttonbn\external\get_recordings::execute
+     * @dataProvider recording_group_test_data
+     */
+    public function test_get_recordings_groups($type, $groups, $users, $recordingsdata, $test, $coursemode) {
+        $this->resetAfterTest();
+        $dataset = compact('type', 'groups', 'users', 'recordingsdata', 'test', 'coursemode');
         $activityid = $this->create_from_dataset($dataset);
         $instance = instance::get_from_instanceid($activityid);
 
@@ -334,25 +388,84 @@ class get_recordings_test extends \externallib_advanced_testcase {
             $user = \core_user::get_user_by_username($userdef['username']);
             $this->setUser($user);
             $groups = array_values(groups_get_my_groups());
-            $usergroupnames = array_map(function($g) {
-                return $g->name;
-            }, $groups);
             $mygroup = !empty($groups) ? end($groups) : null;
 
             $getrecordings = $this->get_recordings(
                 $instance->get_instance_id(), null, !empty($mygroup) ? $mygroup->id : null);
+            $allrecordingsnames = [];
+            foreach ($recordingsdata as $groups => $rsinfo) {
+                $rnames = array_map(function($rdata) {
+                    return $rdata['name'];
+                }, $rsinfo);
+                $allrecordingsnames = array_merge($allrecordingsnames, $rnames);
+            }
             // Check users see or do not see recording dependings on their groups.
-            foreach ($dataset['recordingsdata'] as $groupname => $recordingdata) {
-                foreach ($recordingdata as $recording) {
-                    if (in_array($groupname, $usergroupnames) || $instance->can_manage_recordings()) {
-                        $this->assertStringContainsString($recording['name'], $getrecordings['tabledata']['data'],
-                            "User $user->username, should see recording {$recording['name']}");
-                    } else {
-                        $this->assertStringNotContainsString($recording['name'], $getrecordings['tabledata']['data'],
-                            "User $user->username, should not see recording {$recording['name']}");
-                    }
+            foreach ($dataset['test'][$user->username] as $viewablerecordings) {
+                $viewablerecordings = $dataset['test'][$user->username];
+                $invisiblerecordings = array_diff($allrecordingsnames, $viewablerecordings);
+                foreach ($viewablerecordings as $viewablerecordingname) {
+                    $this->assertStringContainsString($viewablerecordingname, $getrecordings['tabledata']['data'],
+                        "User $user->username, should see recording {$viewablerecordingname}");
+                }
+                foreach ($invisiblerecordings as $invisiblerecordingname) {
+                    $this->assertStringNotContainsString($invisiblerecordingname, $getrecordings['tabledata']['data'],
+                        "User $user->username, should not see recording {$viewablerecordingname}");
                 }
             }
         }
+    }
+
+    /**
+     * Recording group test
+     *
+     * @return array[]
+     */
+    public function recording_group_test_data() {
+        return [
+            'visiblegroups' => [
+                'type' => instance::TYPE_ALL,
+                'groups' => ['G1' => ['s1'], 'G2' => ['s2']],
+                'users' => [
+                    ['username' => 't1', 'role' => 'editingteacher'],
+                    ['username' => 's1', 'role' => 'student'],
+                    ['username' => 's2', 'role' => 'student'],
+                    ['username' => 's3', 'role' => 'student']
+                ],
+                'recordingsdata' => [
+                    'G1' => [['name' => 'Recording1']],
+                    'G2' => [['name' => 'Recording2']],
+                    '' => [['name' => 'Recording3']]
+                ],
+                'test' => [
+                    't1' => ['Recording1', 'Recording2', 'Recording3'], // A moderator should see all recordings.
+                    's1' => ['Recording1'], // S1 can only see the recordings from his group.
+                    's2' => ['Recording2'], // S2 can only see the recordings from his group.
+                    's3' => ['Recording3', 'Recording2', 'Recording1']
+                    // S3 should see recordings which have no groups and his groups's recording.
+                ],
+                'coursemode' => VISIBLEGROUPS
+            ],
+            'separategroups' => [
+                'type' => instance::TYPE_ALL,
+                'groups' => ['G1' => ['s1'], 'G2' => ['s2']],
+                'users' => [
+                    ['username' => 't1', 'role' => 'editingteacher'],
+                    ['username' => 's1', 'role' => 'student'],
+                    ['username' => 's2', 'role' => 'student']
+                ],
+                'recordingsdata' => [
+                    'G1' => [['name' => 'Recording1']],
+                    'G2' => [['name' => 'Recording2']],
+                    '' => [['name' => 'Recording3']]
+                ],
+                'test' => [
+                    't1' => ['Recording1', 'Recording2', 'Recording3'], // A moderator should see all recordings.
+                    's1' => ['Recording1'], // S1 can only see the recordings from his group.
+                    's2' => ['Recording2'], // S2 can only see the recordings from his group.
+                    's3' => ['Recording3'] // S3 should see recordings which have no groups.
+                ],
+                'coursemode' => SEPARATEGROUPS
+            ]
+        ];
     }
 }

@@ -55,7 +55,7 @@ function admin_page_type_list($pagetype, $parentcontext, $currentcontext) {
 function core_admin_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
     global $CFG;
 
-    if (in_array($filearea, ['logo', 'logocompact'])) {
+    if (in_array($filearea, ['logo', 'logocompact', 'favicon'])) {
         $size = array_shift($args); // The path hides the size.
         $itemid = clean_param(array_shift($args), PARAM_INT);
         $filename = clean_param(array_shift($args), PARAM_FILE);

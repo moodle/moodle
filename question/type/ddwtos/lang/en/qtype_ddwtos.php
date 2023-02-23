@@ -26,6 +26,7 @@ $string['addmorechoiceblanks'] = 'Blanks for {no} more choices';
 $string['answer'] = 'Answer';
 $string['blank'] = 'blank';
 $string['correctansweris'] = 'The correct answer is: {$a}';
+$string['errorlimitedchoice'] = 'Choice [[{$a}]] has been used more than once without being set to "Unlimited". Please recheck this question.';
 $string['infinite'] = 'Unlimited';
 $string['pleaseputananswerineachbox'] = 'Please put an answer in each box.';
 $string['pluginname'] = 'Drag and drop into text';

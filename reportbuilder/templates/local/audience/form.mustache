@@ -23,7 +23,8 @@
     {
         "instanceid": 1,
         "classname": "some\\class\\name",
-        "title": "Title",
+        "heading": "Title",
+        "headingeditable": "Title (edit me)",
         "showormessage": 1,
         "canedit": 1,
         "candelete": 1,
@@ -31,7 +32,7 @@
         "form": "form"
     }
 }}
-<div class="instance-card" data-classname="{{identifier}}" data-instanceid="{{instanceid}}" data-title="{{title}}" data-region="audience-card">
+<div class="instance-card" data-instanceid="{{instanceid}}" data-title="{{heading}}" data-region="audience-card">
     {{#showormessage}}
         <span class="audience-separator d-flex mb-3 justify-content-center align-items-center small text-muted font-weight-bold">
             {{#str}} or, core_reportbuilder {{/str}}
@@ -40,15 +41,15 @@
     <div class="mb-3 card">
         <div class="card-header p-0">
             <div class="mb-0 d-flex">
-                <h3 class="h6 text-left m-0 align-self-center pl-3">
-                    {{title}}
+                <h3 class="h6 text-left m-0 align-self-center pl-3" data-region="audience-heading">
+                    {{{headingeditable}}}
                 </h3>
                 <span class="ml-auto">
                     {{#canedit}}
                         <button class="btn btn-link px-0"
                                 data-action="edit-audience"
-                                title="{{#str}} editaudience, core_reportbuilder, {{title}} {{/str}}"
-                                aria-label="{{#str}} editaudience, core_reportbuilder, {{title}} {{/str}}"
+                                title="{{#str}} editaudience, core_reportbuilder, {{heading}} {{/str}}"
+                                aria-label="{{#str}} editaudience, core_reportbuilder, {{heading}} {{/str}}"
                                 {{^description}}disabled{{/description}}>
                             {{#pix}} i/settings, core {{/pix}}
                         </button>
@@ -56,8 +57,8 @@
                     {{#candelete}}
                         <button class="btn btn-link px-0 mr-2"
                                 data-action="delete-audience"
-                                title="{{#str}} deleteaudience, core_reportbuilder, {{title}} {{/str}}"
-                                aria-label="{{#str}} deleteaudience, core_reportbuilder, {{title}} {{/str}}"
+                                title="{{#str}} deleteaudience, core_reportbuilder, {{heading}} {{/str}}"
+                                aria-label="{{#str}} deleteaudience, core_reportbuilder, {{heading}} {{/str}}"
                                 {{^description}}disabled{{/description}}>
                             {{#pix}} i/trash, core {{/pix}}
                         </button>

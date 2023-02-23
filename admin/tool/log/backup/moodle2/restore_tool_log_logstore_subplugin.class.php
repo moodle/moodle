@@ -88,7 +88,7 @@ abstract class restore_tool_log_logstore_subplugin extends restore_subplugin {
         // There is no need to roll dates. Logs are supposed to be immutable. See MDL-44961.
 
         // Revert other to its original php way.
-        $data->other = \tool_log\helper\reader::decode_other(base64_decode($data->other));
+        $data->other = \tool_log\local\privacy\helper::decode_other(base64_decode($data->other));
 
         // Arrived here, we have both 'objectid' and 'other' to be converted. This is the tricky part.
         // Both are pointing to other records id, but the sources are not identified in the

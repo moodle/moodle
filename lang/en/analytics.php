@@ -144,6 +144,10 @@ $string['privacy:metadata:analytics:predictionactions:predictionid'] = 'The pred
 $string['privacy:metadata:analytics:predictionactions:userid'] = 'The user that made the action';
 $string['privacy:metadata:analytics:predictionactions:actionname'] = 'The action name';
 $string['privacy:metadata:analytics:predictionactions:timecreated'] = 'When the prediction action was performed';
+$string['privacy:metadata:analytics:analyticsmodels'] = 'Analytics models';
+$string['privacy:metadata:analytics:analyticsmodels:usermodified'] = 'The user that modified the model';
+$string['privacy:metadata:analytics:analyticsmodelslog'] = 'The log used for analytics models';
+$string['privacy:metadata:analytics:analyticsmodelslog:usermodified'] = 'The user that modified the log';
 $string['processingsitecontents'] = 'Processing site contents';
 $string['successfullyanalysed'] = 'Successfully analysed';
 $string['timesplittingmethod'] = 'Analysis interval';
@@ -159,6 +163,3 @@ $string['viewinsight'] = 'View insight';
 $string['viewinsightdetails'] = 'View insight details';
 $string['viewprediction'] = 'View prediction details';
 $string['washelpful'] = 'Was this helpful?';
-
-// Deprecated since Moodle 3.10.
-$string['modeloutputdirinfo'] = 'Directory where prediction processors store all evaluation info. Useful for debugging and research.';

@@ -14,24 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_forum;
+
 /**
  * Tests for the local\container class.
  *
  * @package    mod_forum
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Tests for the local\container class.
- *
- * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_forum\local\container
  */
-class mod_forum_local_container_testcase extends advanced_testcase {
+class local_container_test extends \advanced_testcase {
     /**
      * Ensure that a renderer factory is returned.
      *

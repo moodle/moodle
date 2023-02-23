@@ -49,25 +49,25 @@ if ($newcontent) {
 }
 
 if (!$page = wiki_get_page($pageid)) {
-    print_error('incorrectpageid', 'wiki');
+    throw new \moodle_exception('incorrectpageid', 'wiki');
 }
 
 if (!$subwiki = wiki_get_subwiki($page->subwikiid)) {
-    print_error('incorrectsubwikiid', 'wiki');
+    throw new \moodle_exception('incorrectsubwikiid', 'wiki');
 }
 if (!$cm = get_coursemodule_from_instance("wiki", $subwiki->wikiid)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
-    print_error('incorrectwikiid', 'wiki');
+    throw new \moodle_exception('incorrectwikiid', 'wiki');
 }
 require_login($course, true, $cm);
 
 if ($action == 'add' || $action == 'edit') {
     //just check sesskey
     if (!confirm_sesskey()) {
-        print_error(get_string('invalidsesskey', 'wiki'));
+        throw new \moodle_exception(get_string('invalidsesskey', 'wiki'));
     }
     $comm = new page_wiki_handlecomments($wiki, $subwiki, $cm, 'modulepage');
     $comm->set_page($page);
@@ -80,7 +80,7 @@ if ($action == 'add' || $action == 'edit') {
         $comm = new page_wiki_handlecomments($wiki, $subwiki, $cm, 'modulepage');
         $comm->set_page($page);
         if (!confirm_sesskey()) {
-            print_error(get_string('invalidsesskey', 'wiki'));
+            throw new \moodle_exception(get_string('invalidsesskey', 'wiki'));
         }
     }
 }

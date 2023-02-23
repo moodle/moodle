@@ -43,7 +43,7 @@ $string['dmlexceptiononinstall'] = '<p>Terjadi kesalahan basis data [{$a->errorc
 $string['downloadedfilecheckfailed'] = 'Pemeriksaan berkas yang diunduh gagal';
 $string['invalidmd5'] = 'Variabel periksa salah - coba lagi';
 $string['missingrequiredfield'] = 'Beberapa ruas wajib tidak ada';
-$string['remotedownloaderror'] = '<p> Pengunduhan komponen ke peladen Anda gagal. Harap verifikasi setelan proksi; ekstensi PHP cURL sangat direkomendasikan. </p> <p> Anda harus mengunduh berkas <a href="{$a->url} ">{$a->url} </a> secara manual, menyalinnya ke"{$a->dest} "di peladen Anda dan uraikan di sana. </p>';
+$string['remotedownloaderror'] = '<p> Pengunduhan komponen ke server Anda gagal. Harap verifikasi setelan proksi; ekstensi PHP cURL sangat direkomendasikan. </p> <p> Anda harus mengunduh berkas <a href="{$a->url} ">{$a->url} </a> secara manual, menyalinnya ke"{$a->dest} "di server Anda dan uraikan di sana. </p>';
 $string['wrongdestpath'] = 'Jalur tujuan salah';
 $string['wrongsourcebase'] = 'Basis URL sumber salah';
 $string['wrongzipfilename'] = 'Nama file ZIP salah';

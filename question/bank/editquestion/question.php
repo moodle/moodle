@@ -37,7 +37,7 @@ $wizardnow = optional_param('wizardnow', '', PARAM_ALPHA);
 $originalreturnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 $appendqnumstring = optional_param('appendqnumstring', '', PARAM_ALPHA);
 $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
-$scrollpos = optional_param('scrollpos', 0, PARAM_INT);
+$mdlscrollto = optional_param('mdlscrollto', 0, PARAM_INT);
 
 \core_question\local\bank\helper::require_plugin_enabled('qbank_editquestion');
 
@@ -72,8 +72,8 @@ if ($appendqnumstring !== '') {
 if ($inpopup !== 0) {
     $url->param('inpopup', $inpopup);
 }
-if ($scrollpos) {
-    $url->param('scrollpos', $scrollpos);
+if ($mdlscrollto) {
+    $url->param('mdlscrollto', $mdlscrollto);
 }
 $PAGE->set_url($url);
 
@@ -92,8 +92,8 @@ if ($originalreturnurl) {
 } else {
     $returnurl = $questionbankurl;
 }
-if ($scrollpos) {
-    $returnurl->param('scrollpos', $scrollpos);
+if ($mdlscrollto) {
+    $returnurl->param('mdlscrollto', $mdlscrollto);
 }
 
 if ($cmid) {
@@ -108,7 +108,7 @@ if ($cmid) {
 } else {
     throw new moodle_exception('missingcourseorcmid', 'question');
 }
-$contexts = new question_edit_contexts($thiscontext);
+$contexts = new core_question\local\bank\question_edit_contexts($thiscontext);
 $PAGE->set_pagelayout('admin');
 
 if (optional_param('addcancel', false, PARAM_BOOL)) {
@@ -174,10 +174,12 @@ if ($id) {
     if (!$formeditable) {
         question_require_capability_on($question, 'view');
     }
+    $question->beingcopied = false;
     if ($makecopy) {
         // If we are duplicating a question, add some indication to the question name.
         $question->name = get_string('questionnamecopy', 'question', $question->name);
-        $question->idnumber = core_question_find_next_unused_idnumber($question->idnumber, $category->id);
+        $question->idnumber = isset($question->idnumber) ?
+            core_question_find_next_unused_idnumber($question->idnumber, $category->id) : '';
         $question->beingcopied = true;
     }
 
@@ -202,7 +204,7 @@ if ($wizardnow !== '') {
 }
 $toform = fullclone($question); // Send the question object and a few more parameters to the form.
 $toform->category = "{$category->id},{$category->contextid}";
-$toform->scrollpos = $scrollpos;
+$toform->mdlscrollto = $mdlscrollto;
 if ($formeditable && $id) {
     $toform->categorymoveto = $toform->category;
 }
@@ -210,6 +212,17 @@ if ($formeditable && $id) {
 $toform->appendqnumstring = $appendqnumstring;
 $toform->returnurl = $originalreturnurl;
 $toform->makecopy = $makecopy;
+$toform->idnumber = null;
+if (!empty($question->id)) {
+    $questionobject = question_bank::load_question($question->id);
+    $toform->status = $questionobject->status;
+    $toform->idnumber = $questionobject->idnumber;
+} else {
+    $toform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+}
+if ($makecopy) {
+    $toform->idnumber = core_question_find_next_unused_idnumber($toform->idnumber, $category->id);
+}
 if ($cm !== null) {
     $toform->cmid = $cm->id;
     $toform->courseid = $cm->course;
@@ -236,7 +249,13 @@ if ($mform->is_cancelled()) {
     // If we are saving as a copy, break the connection to the old question.
     if ($makecopy) {
         $question->id = 0;
-        $question->hidden = 0; // Copies should not be hidden.
+        // Copies should not be hidden.
+        $question->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+    }
+
+    // If is will be added directly to a module send the module name to be referenced.
+    if ($appendqnumstring && $cm) {
+        $fromform->modulename = 'mod_' . $cm->modname;
     }
 
     // Process the combination of usecurrentcat, categorymoveto and category form
@@ -248,7 +267,7 @@ if ($mform->is_cancelled()) {
     // If we are moving a question, check we have permission to move it from
     // whence it came (Where we are moving to is validated by the form).
     list($newcatid, $newcontextid) = explode(',', $fromform->category);
-    if (!empty($question->id) && $newcatid != $question->category) {
+    if (!empty($question->id) && $newcatid != $question->categoryobject->id) {
         $contextid = $newcontextid;
         question_require_capability_on($question, 'move');
     } else {
@@ -313,10 +332,11 @@ if ($mform->is_cancelled()) {
         }
 
     } else {
-        $nexturlparams = array(
+        $nexturlparams = [
                 'returnurl' => $originalreturnurl,
                 'appendqnumstring' => $appendqnumstring,
-                'scrollpos' => $scrollpos);
+                'mdlscrollto' => $mdlscrollto,
+        ];
         if (isset($fromform->nextpageparam) && is_array($fromform->nextpageparam)) {
             // Useful for passing data to the next page which is not saved in the database.
             $nexturlparams += $fromform->nextpageparam;
@@ -339,6 +359,9 @@ $PAGE->set_title($streditingquestion);
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->activityheader->disable();
 $PAGE->navbar->add($streditingquestion);
+if ($PAGE->course->id == $SITE->id) {
+    $PAGE->set_primary_active_tab('home');
+}
 
 // Display a heading, question editing form and possibly some extra content needed for
 // for this question type.

@@ -34,6 +34,7 @@ function tool_task_status_checks() : array {
         new \tool_task\check\cronrunning(),
         new \tool_task\check\maxfaildelay(),
         new \tool_task\check\adhocqueue(),
+        new \tool_task\check\longrunningtasks(),
     ];
 }
 

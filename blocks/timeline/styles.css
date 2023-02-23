@@ -1,3 +1,12 @@
+#block-region-side-pre .block_timeline .nav-search {
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+
+.block_timeline .input-group.searchbar {
+    width: 100%;
+}
+
 #block-region-side-pre .block_timeline h6.event-action {
     flex-basis: 100%;
 }

@@ -14,19 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * folder external API
- *
- * @package    mod_folder
- * @category   external
- * @copyright  2015 Juan Leyva <juan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.0
- */
-
-defined('MOODLE_INTERNAL') || die;
-
-require_once("$CFG->libdir/externallib.php");
+use core_course\external\helper_for_get_mods_by_courses;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
+use core_external\util;
 
 /**
  * folder external functions
@@ -92,7 +87,7 @@ class mod_folder_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.0
      */
     public static function view_folder_returns() {
@@ -147,21 +142,13 @@ class mod_folder_external extends external_api {
         // Ensure there are courseids to loop through.
         if (!empty($params['courseids'])) {
 
-            list($courses, $warnings) = external_util::validate_courses($params['courseids'], $mycourses);
+            list($courses, $warnings) = util::validate_courses($params['courseids'], $mycourses);
 
             // Get the folders in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
             $folders = get_all_instances_in_courses("folder", $courses);
             foreach ($folders as $folder) {
-                $context = context_module::instance($folder->coursemodule);
-                // Entry to return.
-                $folder->name = external_format_string($folder->name, $context->id);
-
-                $options = array('noclean' => true);
-                list($folder->intro, $folder->introformat) =
-                    external_format_text($folder->intro, $folder->introformat, $context->id, 'mod_folder', 'intro', null, $options);
-                $folder->introfiles = external_util::get_area_files($context->id, 'mod_folder', 'intro', false, false);
-
+                helper_for_get_mods_by_courses::format_name_and_intro($folder, 'mod_folder');
                 $returnedfolders[] = $folder;
             }
         }
@@ -183,27 +170,17 @@ class mod_folder_external extends external_api {
         return new external_single_structure(
             array(
                 'folders' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'Module id'),
-                            'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
-                            'course' => new external_value(PARAM_INT, 'Course id'),
-                            'name' => new external_value(PARAM_RAW, 'Page name'),
-                            'intro' => new external_value(PARAM_RAW, 'Summary'),
-                            'introformat' => new external_format_value('intro', 'Summary format'),
-                            'introfiles' => new external_files('Files in the introduction text'),
+                    new external_single_structure(array_merge(
+                        helper_for_get_mods_by_courses::standard_coursemodule_elements_returns(),
+                        [
                             'revision' => new external_value(PARAM_INT, 'Incremented when after each file changes, to avoid cache'),
                             'timemodified' => new external_value(PARAM_INT, 'Last time the folder was modified'),
                             'display' => new external_value(PARAM_INT, 'Display type of folder contents on a separate page or inline'),
                             'showexpanded' => new external_value(PARAM_INT, '1 = expanded, 0 = collapsed for sub-folders'),
                             'showdownloadfolder' => new external_value(PARAM_INT, 'Whether to show the download folder button'),
                             'forcedownload' => new external_value(PARAM_INT, 'Whether file download is forced'),
-                            'section' => new external_value(PARAM_INT, 'Course section id'),
-                            'visible' => new external_value(PARAM_INT, 'Module visibility'),
-                            'groupmode' => new external_value(PARAM_INT, 'Group mode'),
-                            'groupingid' => new external_value(PARAM_INT, 'Grouping id'),
-                        )
-                    )
+                        ]
+                    ))
                 ),
                 'warnings' => new external_warnings(),
             )

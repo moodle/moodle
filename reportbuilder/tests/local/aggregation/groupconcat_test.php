@@ -18,9 +18,13 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\aggregation;
 
+use core_badges_generator;
+use core_badges\reportbuilder\datasource\badges;
 use core_reportbuilder_testcase;
 use core_reportbuilder_generator;
+use core_reportbuilder\manager;
 use core_user\reportbuilder\datasource\users;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -54,14 +58,14 @@ class groupconcat_test extends core_reportbuilder_testcase {
         $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
 
         // First column, sorted.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname'])
-            ->set('sortenabled', true)
-            ->update();
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname', 'sortenabled' => 1]);
 
         // This is the column we'll aggregate.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:lastname'])
-            ->set('aggregation', groupconcat::get_class_name())
-            ->update();
+        $generator->create_column([
+            'reportid' => $report->get('id'),
+            'uniqueidentifier' => 'user:lastname',
+            'aggregation' => groupconcat::get_class_name(),
+        ]);
 
         // Assert lastname column was aggregated, and sorted predictably.
         $content = $this->get_custom_report_content($report->get('id'));
@@ -75,6 +79,34 @@ class groupconcat_test extends core_reportbuilder_testcase {
                 'c1_lastname' => 'Apple, Banana, Banana',
             ],
         ], $content);
+    }
+
+    /**
+     * Test aggregation when applied to column with multiple fields
+     */
+    public function test_column_aggregation_multiple_fields(): void {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user(['firstname' => 'Adam', 'lastname' => 'Apple']);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
+
+        // This is the column we'll aggregate.
+        $generator->create_column([
+            'reportid' => $report->get('id'),
+            'uniqueidentifier' => 'user:fullnamewithlink',
+            'aggregation' => groupconcat::get_class_name(),
+        ]);
+
+        $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertCount(1, $content);
+
+        // Ensure users are sorted predictably (Adam -> Admin).
+        [$userone, $usertwo] = explode(', ', reset($content[0]));
+        $this->assertStringContainsString(fullname($user, true), $userone);
+        $this->assertStringContainsString(fullname(get_admin(), true), $usertwo);
     }
 
     /**
@@ -93,25 +125,82 @@ class groupconcat_test extends core_reportbuilder_testcase {
         $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
 
         // First column, sorted.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname'])
-            ->set('sortenabled', true)
-            ->update();
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname', 'sortenabled' => 1]);
 
         // This is the column we'll aggregate.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:confirmed'])
-            ->set('aggregation', groupconcat::get_class_name())
-            ->update();
+        $generator->create_column([
+            'reportid' => $report->get('id'),
+            'uniqueidentifier' => 'user:confirmed',
+            'aggregation' => groupconcat::get_class_name(),
+        ]);
+
+        // Add callback to format the column.
+        $instance = manager::get_report_from_persistent($report);
+        $instance->get_column('user:confirmed')
+            ->add_callback(static function(string $value, stdClass $row, $arguments, ?string $aggregation): string {
+                // Simple callback to return the given value, and append aggregation type.
+                return "{$value} ({$aggregation})";
+            });
 
         // Assert confirmed column was aggregated, and sorted predictably with callback applied.
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertEquals([
             [
                 'c0_firstname' => 'Admin',
-                'c1_confirmed' => 'Yes',
+                'c1_confirmed' => 'Yes (groupconcat)',
             ],
             [
                 'c0_firstname' => 'Bob',
-                'c1_confirmed' => 'No, Yes, Yes',
+                'c1_confirmed' => 'No (groupconcat), Yes (groupconcat), Yes (groupconcat)',
+            ],
+        ], $content);
+    }
+
+    /**
+     * Test aggregation when applied to column with callback that expects/handles null values
+     */
+    public function test_datasource_aggregate_column_callback_with_null(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $userone = $this->getDataGenerator()->create_user(['description' => 'First user']);
+        $usertwo = $this->getDataGenerator()->create_user(['description' => 'Second user']);
+
+        /** @var core_badges_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_badges');
+
+        // Create course badge, issue to both users.
+        $badgeone = $generator->create_badge(['name' => 'First badge']);
+        $badgeone->issue($userone->id, true);
+        $badgeone->issue($usertwo->id, true);
+
+        // Create second badge, without issuing to anyone.
+        $badgetwo = $generator->create_badge(['name' => 'Second badge']);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'Badges', 'source' => badges::class, 'default' => 0]);
+
+        // First column, sorted.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge:name', 'sortenabled' => 1]);
+
+        // This is the column we'll aggregate.
+        $generator->create_column([
+            'reportid' => $report->get('id'),
+            'uniqueidentifier' => 'user:description',
+            'aggregation' => groupconcat::get_class_name(),
+        ]);
+
+        // Assert description column was aggregated, with callbacks accounting for null values.
+        $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertEquals([
+            [
+                'c0_name' => $badgeone->name,
+                'c1_description' => "{$userone->description}, {$usertwo->description}",
+            ],
+            [
+                'c0_name' => $badgetwo->name,
+                'c1_description' => '',
             ],
         ], $content);
     }

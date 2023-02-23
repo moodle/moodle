@@ -16,6 +16,8 @@
 
 namespace qbank_usage;
 
+use core_question\local\bank\view;
+
 /**
  * Class plugin_feature is the entrypoint for the columns.
  *
@@ -26,9 +28,11 @@ namespace qbank_usage;
  */
 class plugin_feature extends \core_question\local\bank\plugin_features_base {
 
-    public function get_question_columns($qbank): array {
+    public function get_question_columns(view $qbank): array {
         return [
-            new question_usage_column($qbank)
+            new question_usage_column($qbank),
+            new question_last_used_column($qbank)
         ];
     }
+
 }

@@ -33,7 +33,7 @@ $classformode = array(
     'view' => 'core_role_allow_view_page'
 );
 if (!isset($classformode[$mode])) {
-    print_error('invalidmode', '', '', $mode);
+    throw new \moodle_exception('invalidmode', '', '', $mode);
 }
 
 $baseurl = new moodle_url('/admin/roles/allow.php', array('mode'=>$mode));
@@ -48,6 +48,9 @@ if (optional_param('submit', false, PARAM_BOOL) && data_submitted() && confirm_s
     $controller->process_submission();
     redirect($baseurl);
 }
+
+$PAGE->set_secondary_active_tab('users');
+$PAGE->set_primary_active_tab('siteadminnode');
 
 $controller->load_current_settings();
 

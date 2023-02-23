@@ -3,8 +3,13 @@
   <library>
     <location>S3.php</location>
     <name>S3</name>
-    <license>BSD</license>
+    <description>A standalone Amazon S3 (REST) client for PHP 5.2.x using CURL that does not require PEAR.</description>
     <version>0.5.1</version>
-    <licenseversion></licenseversion>
+    <license>BSD</license>
+    <repository>https://github.com/tpyo/amazon-s3-php-class</repository>
+    <copyrights>
+      <copyright>2013, Donovan Schönknecht</copyright>
+    </copyrights>
+    <customised/>
   </library>
 </libraries>

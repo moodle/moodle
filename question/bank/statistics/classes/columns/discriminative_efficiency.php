@@ -19,7 +19,7 @@ namespace qbank_statistics\columns;
 use core_question\local\bank\column_base;
 use qbank_statistics\helper;
 /**
- * Discriminative efficiency column
+ * This column show the average discriminative efficiency for this question.
  *
  * @package    qbank_statistics
  * @copyright  2021 Catalyst IT Australia Pty Ltd
@@ -33,8 +33,12 @@ class discriminative_efficiency extends column_base {
      *
      * @return string column title
      */
-    protected function get_title(): string {
+    public function get_title(): string {
         return get_string('discriminative_efficiency', 'qbank_statistics');
+    }
+
+    public function help_icon(): ?\help_icon {
+        return new \help_icon('discriminative_efficiency', 'qbank_statistics');
     }
 
     /**
@@ -56,5 +60,9 @@ class discriminative_efficiency extends column_base {
         // Average discriminative efficiency per quiz.
         $discriminativeefficiency = helper::calculate_average_question_discriminative_efficiency($question->id);
         echo $PAGE->get_renderer('qbank_statistics')->render_discriminative_efficiency($discriminativeefficiency);
+    }
+
+    public function get_extra_classes(): array {
+        return ['pr-3'];
     }
 }

@@ -23,6 +23,8 @@ Feature: Adding blog tag block
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Blog tags" block
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     # TODO MDL-57120 site "Blogs" link not accessible without navigation block.
     And I add the "Navigation" block if not present
 

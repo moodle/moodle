@@ -151,6 +151,7 @@ class backup_plan extends base_plan implements loggable {
                                 'mode' => $this->controller->get_mode(),
                                 'interactive' => $this->controller->get_interactive(),
                                 'type' => $this->controller->get_type(),
+                                'backupid' => $this->controller->get_backupid()
             );
             $event = \core\event\course_backup_created::create(array(
                 'objectid' => $this->get_courseid(),

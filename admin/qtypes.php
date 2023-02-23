@@ -24,6 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_question\local\bank\question_version_status;
 
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/questionlib.php');
@@ -43,24 +44,44 @@ $pluginmanager = core_plugin_manager::instance();
 
 // Get some data we will need - question counts and which types are needed.
 $counts = $DB->get_records_sql("
-        SELECT qtype, COUNT(1) as numquestions, SUM(hidden) as numhidden
-        FROM {question} GROUP BY qtype", array());
-$needed = array();
+        SELECT q.qtype,
+               COUNT(qv.id) AS numquestions,
+               SUM(CASE WHEN qv.status = :hiddenstatus THEN 1 ELSE 0 END) AS numhidden,
+               SUM(CASE WHEN qv.status = :draftstatus THEN 1 ELSE 0 END) AS numdraft
+
+          FROM {question_bank_entries} qbe
+          JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
+                    AND qv.version = (
+                            SELECT MAX(version)
+                              FROM {question_versions}
+                             WHERE questionbankentryid = qbe.id
+                        )
+          JOIN {question} q ON q.id = qv.questionid
+
+      GROUP BY q.qtype
+    ", [
+        'hiddenstatus' => question_version_status::QUESTION_STATUS_HIDDEN,
+        'draftstatus' => question_version_status::QUESTION_STATUS_DRAFT,
+    ]);
+
+$needed = [];
 foreach ($qtypes as $qtypename => $qtype) {
     if (!isset($counts[$qtypename])) {
         $counts[$qtypename] = new stdClass;
         $counts[$qtypename]->numquestions = 0;
         $counts[$qtypename]->numhidden = 0;
+        $counts[$qtypename]->numdraft = 0;
     }
     $needed[$qtypename] = $counts[$qtypename]->numquestions > 0 ||
             $pluginmanager->other_plugins_that_require($qtype->plugin_name());
-    $counts[$qtypename]->numquestions -= $counts[$qtypename]->numhidden;
+    $counts[$qtypename]->numquestions -= ($counts[$qtypename]->numhidden + $counts[$qtypename]->numdraft);
 }
 $needed['missingtype'] = true; // The system needs the missing question type.
 foreach ($counts as $qtypename => $count) {
     if (!isset($qtypes[$qtypename])) {
-        $counts['missingtype']->numquestions += $count->numquestions - $count->numhidden;
+        $counts['missingtype']->numquestions += $count->numquestions - ($count->numhidden + $count->numdraft);
         $counts['missingtype']->numhidden += $count->numhidden;
+        $counts['missingtype']->numdraft += $count->numdraft;
     }
 }
 
@@ -77,7 +98,7 @@ $sortedqtypes = question_bank::sort_qtype_array($sortedqtypes, $config);
 // Disable.
 if (($disable = optional_param('disable', '', PARAM_PLUGIN)) && confirm_sesskey()) {
     if (!isset($qtypes[$disable])) {
-        print_error('unknownquestiontype', 'question', $thispageurl, $disable);
+        throw new \moodle_exception('unknownquestiontype', 'question', $thispageurl, $disable);
     }
 
     $class = \core_plugin_manager::resolve_plugininfo_class('qtype');
@@ -88,11 +109,11 @@ if (($disable = optional_param('disable', '', PARAM_PLUGIN)) && confirm_sesskey(
 // Enable.
 if (($enable = optional_param('enable', '', PARAM_PLUGIN)) && confirm_sesskey()) {
     if (!isset($qtypes[$enable])) {
-        print_error('unknownquestiontype', 'question', $thispageurl, $enable);
+        throw new \moodle_exception('unknownquestiontype', 'question', $thispageurl, $enable);
     }
 
     if (!$qtypes[$enable]->menu_name()) {
-        print_error('cannotenable', 'question', $thispageurl, $enable);
+        throw new \moodle_exception('cannotenable', 'question', $thispageurl, $enable);
     }
 
     $class = \core_plugin_manager::resolve_plugininfo_class('qtype');
@@ -103,7 +124,7 @@ if (($enable = optional_param('enable', '', PARAM_PLUGIN)) && confirm_sesskey())
 // Move up in order.
 if (($up = optional_param('up', '', PARAM_PLUGIN)) && confirm_sesskey()) {
     if (!isset($qtypes[$up])) {
-        print_error('unknownquestiontype', 'question', $thispageurl, $up);
+        throw new \moodle_exception('unknownquestiontype', 'question', $thispageurl, $up);
     }
 
     $neworder = question_reorder_qtypes($sortedqtypes, $up, -1);
@@ -114,7 +135,7 @@ if (($up = optional_param('up', '', PARAM_PLUGIN)) && confirm_sesskey()) {
 // Move down in order.
 if (($down = optional_param('down', '', PARAM_PLUGIN)) && confirm_sesskey()) {
     if (!isset($qtypes[$down])) {
-        print_error('unknownquestiontype', 'question', $thispageurl, $down);
+        throw new \moodle_exception('unknownquestiontype', 'question', $thispageurl, $down);
     }
 
     $neworder = question_reorder_qtypes($sortedqtypes, $down, +1);
@@ -153,8 +174,8 @@ foreach ($sortedqtypes as $qtypename => $localname) {
     $row[] = $icon . ' ' . $localname;
 
     // Number of questions of this type.
-    if ($counts[$qtypename]->numquestions + $counts[$qtypename]->numhidden > 0) {
-        if ($counts[$qtypename]->numhidden > 0) {
+    if ($counts[$qtypename]->numquestions + $counts[$qtypename]->numhidden + $counts[$qtypename]->numdraft > 0) {
+        if ($counts[$qtypename]->numhidden + $counts[$qtypename]->numdraft > 0) {
             $strcount = get_string('numquestionsandhidden', 'question', $counts[$qtypename]);
         } else {
             $strcount = $counts[$qtypename]->numquestions;

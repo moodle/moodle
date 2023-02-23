@@ -31,10 +31,8 @@ defined('MOODLE_INTERNAL') || die;
  * @param navigation_node $node The node to add module settings to
  */
 function booktool_importhtml_extend_settings_navigation(settings_navigation $settings, navigation_node $node) {
-    global $PAGE;
-
-    if (has_capability('booktool/importhtml:import', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/book/tool/importhtml/index.php', array('id'=>$PAGE->cm->id));
+    if (has_capability('booktool/importhtml:import', $settings->get_page()->cm->context)) {
+        $url = new moodle_url('/mod/book/tool/importhtml/index.php', array('id' => $settings->get_page()->cm->id));
         $node->add(get_string('import', 'booktool_importhtml'), $url, navigation_node::TYPE_SETTING, null, 'importchapter', null);
     }
 }

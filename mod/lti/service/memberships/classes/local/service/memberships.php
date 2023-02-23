@@ -430,7 +430,10 @@ class memberships extends \mod_lti\local\ltiservice\service_base {
                                             'source.value' => format_string($user->lastname)],
                 'Person.email.primary' => ['type' => 'email',
                                             'member.field' => 'email',
-                                            'source.value' => format_string($user->email)]
+                                            'source.value' => format_string($user->email)],
+                'User.username'        => ['type' => 'name',
+                                           'member.field' => 'ext_user_username',
+                                           'source.value' => format_string($user->username)],
             ];
 
             if (!is_null($lti)) {

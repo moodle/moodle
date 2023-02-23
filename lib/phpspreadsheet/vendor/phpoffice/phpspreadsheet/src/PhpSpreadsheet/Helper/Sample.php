@@ -4,8 +4,8 @@ namespace PhpOffice\PhpSpreadsheet\Helper;
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\IWriter;
-use PhpOffice\PhpSpreadsheet\Writer\Pdf;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RecursiveRegexIterator;
@@ -71,7 +71,7 @@ class Sample
     /**
      * Returns an array of all known samples.
      *
-     * @return string[] [$name => $path]
+     * @return string[][] [$name => $path]
      */
     public function getSamples()
     {
@@ -85,8 +85,8 @@ class Sample
         foreach ($regex as $file) {
             $file = str_replace(str_replace('\\', '/', $baseDir) . '/', '', str_replace('\\', '/', $file[0]));
             $info = pathinfo($file);
-            $category = str_replace('_', ' ', $info['dirname']);
-            $name = str_replace('_', ' ', preg_replace('/(|\.php)/', '', $info['filename']));
+            $category = str_replace('_', ' ', $info['dirname'] ?? '');
+            $name = str_replace('_', ' ', (string) preg_replace('/(|\.php)/', '', $info['filename']));
             if (!in_array($category, ['.', 'boostrap', 'templates'])) {
                 if (!isset($files[$category])) {
                     $files[$category] = [];
@@ -119,17 +119,17 @@ class Sample
         foreach ($writers as $writerType) {
             $path = $this->getFilename($filename, mb_strtolower($writerType));
             $writer = IOFactory::createWriter($spreadsheet, $writerType);
-            if ($writer instanceof Pdf) {
-                // PDF writer needs temporary directory
-                $tempDir = $this->getTemporaryFolder();
-                $writer->setTempDir($tempDir);
-            }
             $callStartTime = microtime(true);
             $writer->save($path);
             $this->logWrite($writer, $path, $callStartTime);
         }
 
         $this->logEndingNotes();
+    }
+
+    protected function isDirOrMkdir(string $folder): bool
+    {
+        return \is_dir($folder) || \mkdir($folder);
     }
 
     /**
@@ -140,10 +140,8 @@ class Sample
     private function getTemporaryFolder()
     {
         $tempFolder = sys_get_temp_dir() . '/phpspreadsheet';
-        if (!is_dir($tempFolder)) {
-            if (!mkdir($tempFolder) && !is_dir($tempFolder)) {
-                throw new RuntimeException(sprintf('Directory "%s" was not created', $tempFolder));
-            }
+        if (!$this->isDirOrMkdir($tempFolder)) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $tempFolder));
         }
 
         return $tempFolder;
@@ -183,6 +181,33 @@ class Sample
     {
         $eol = $this->isCli() ? PHP_EOL : '<br />';
         echo date('H:i:s ') . $message . $eol;
+    }
+
+    public function titles(string $category, string $functionName, ?string $description = null): void
+    {
+        $this->log(sprintf('%s Functions:', $category));
+        $description === null
+            ? $this->log(sprintf('Function: %s()', rtrim($functionName, '()')))
+            : $this->log(sprintf('Function: %s() - %s.', rtrim($functionName, '()'), rtrim($description, '.')));
+    }
+
+    public function displayGrid(array $matrix): void
+    {
+        $renderer = new TextGrid($matrix, $this->isCli());
+        echo $renderer->render();
+    }
+
+    public function logCalculationResult(
+        Worksheet $worksheet,
+        string $functionName,
+        string $formulaCell,
+        ?string $descriptionCell = null
+    ): void {
+        if ($descriptionCell !== null) {
+            $this->log($worksheet->getCell($descriptionCell)->getValue());
+        }
+        $this->log($worksheet->getCell($formulaCell)->getValue());
+        $this->log(sprintf('%s() Result is ', $functionName) . $worksheet->getCell($formulaCell)->getCalculatedValue());
     }
 
     /**

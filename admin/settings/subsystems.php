@@ -64,6 +64,12 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
         1)
     );
 
+    $optionalsubsystems->add(new admin_setting_configcheckbox('enablecustomreports',
+        new lang_string('enablecustomreports', 'core_reportbuilder'),
+        new lang_string('enablecustomreports_desc', 'core_reportbuilder'),
+        1
+    ));
+
     $fullunicodesupport = true;
     if ($DB->get_dbfamily() == 'mysql') {
         $collation = $DB->get_dbcollation();

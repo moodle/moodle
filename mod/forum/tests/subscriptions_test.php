@@ -14,13 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * The module forums tests
- *
- * @package    mod_forum
- * @copyright  2013 Frédéric Massart
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_forum;
+
+use mod_forum_tests_generator_trait;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -28,7 +24,14 @@ global $CFG;
 require_once(__DIR__ . '/generator_trait.php');
 require_once("{$CFG->dirroot}/mod/forum/lib.php");
 
-class mod_forum_subscriptions_testcase extends advanced_testcase {
+/**
+ * The module forums tests
+ *
+ * @package    mod_forum
+ * @copyright  2013 Frédéric Massart
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class subscriptions_test extends \advanced_testcase {
     // Include the mod_forum test helpers.
     // This includes functions to create forums, users, discussions, and posts.
     use mod_forum_tests_generator_trait;
@@ -843,7 +846,7 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         $this->assertEquals($usercount, count($subscribers));
 
         // Manually insert an extra subscription for one of the users.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->userid = $users[2]->id;
         $record->forum = $forum->id;
         $record->discussion = $discussion->id;

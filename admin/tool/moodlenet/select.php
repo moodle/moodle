@@ -31,7 +31,7 @@ $id = required_param('id', PARAM_ALPHANUM);
 // Access control.
 require_login();
 if (!get_config('tool_moodlenet', 'enablemoodlenet')) {
-    print_error('moodlenetnotenabled', 'tool_moodlenet');
+    throw new \moodle_exception('moodlenetnotenabled', 'tool_moodlenet');
 }
 
 if (is_null($importinfo = import_info::load($id))) {

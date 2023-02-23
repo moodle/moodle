@@ -33,7 +33,6 @@ class recording_name_editable extends recording_editable {
      *
      * @param recording $rec
      * @param instance $instance
-     * @throws \coding_exception
      */
     public function __construct(recording $rec, instance $instance) {
         parent::__construct($rec, $instance,

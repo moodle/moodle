@@ -14,14 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for grade/report/user/lib.php.
- *
- * @package  core_grades
- * @category phpunit
- * @copyright 2012 Andrew Davis
- * @license  http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
+namespace core_grades;
+
+use grade_plugin_return;
+use grade_report_grader;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,8 +27,14 @@ require_once($CFG->dirroot.'/grade/report/grader/lib.php');
 
 /**
  * Tests grade_report_grader (the grader report)
+ *
+ * @package  core_grades
+ * @covers   \grade_report_grader
+ * @category test
+ * @copyright 2012 Andrew Davis
+ * @license  http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class core_grade_report_graderlib_testcase extends advanced_testcase {
+class report_graderlib_test extends \advanced_testcase {
 
     /**
      * Tests grade_report_grader::process_data()
@@ -57,12 +59,12 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         $forummax = 80;
         $forum1 = $this->getDataGenerator()->create_module('forum', array('assessed' => 1, 'scale' => $forummax, 'course' => $course->id));
         // Switch the stdClass instance for a grade item instance.
-        $forum1 = grade_item::fetch(array('itemtype' => 'mod', 'itemmodule' => 'forum', 'iteminstance' => $forum1->id, 'courseid' => $course->id));
+        $forum1 = \grade_item::fetch(array('itemtype' => 'mod', 'itemmodule' => 'forum', 'iteminstance' => $forum1->id, 'courseid' => $course->id));
 
         $report = $this->create_report($course);
         $testgrade = 60.00;
 
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->id = $course->id;
         $data->report = 'grader';
         $data->timepageload = time();
@@ -74,7 +76,7 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         $warnings = $report->process_data($data);
         $this->assertEquals(count($warnings), 0);
 
-        $studentgrade = grade_grade::fetch(array('itemid' => $forum1->id, '' => $student->id));
+        $studentgrade = \grade_grade::fetch(array('itemid' => $forum1->id, '' => $student->id));
         $this->assertEquals($studentgrade->finalgrade, $testgrade);
 
         // Grade above max. Should be pulled down to max.
@@ -84,7 +86,7 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         $warnings = $report->process_data($data);
         $this->assertEquals(count($warnings), 1);
 
-        $studentgrade = grade_grade::fetch(array('itemid' => $forum1->id, '' => $student->id));
+        $studentgrade = \grade_grade::fetch(array('itemid' => $forum1->id, '' => $student->id));
         $this->assertEquals($studentgrade->finalgrade, $forummax);
 
         // Grade below min. Should be pulled up to min.
@@ -94,7 +96,7 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         $warnings = $report->process_data($data);
         $this->assertEquals(count($warnings), 1);
 
-        $studentgrade = grade_grade::fetch(array('itemid' => $forum1->id, '' => $student->id));
+        $studentgrade = \grade_grade::fetch(array('itemid' => $forum1->id, '' => $student->id));
         $this->assertEquals($studentgrade->finalgrade, 0);
 
         // Test unlimited grades so we can give a student a grade about max.
@@ -105,7 +107,7 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         $warnings = $report->process_data($data);
         $this->assertEquals(count($warnings), 0);
 
-        $studentgrade = grade_grade::fetch(array('itemid' => $forum1->id, '' => $student->id));
+        $studentgrade = \grade_grade::fetch(array('itemid' => $forum1->id, '' => $student->id));
         $this->assertEquals($studentgrade->finalgrade, $toobig);
     }
 
@@ -231,6 +233,226 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test some special cases of the conversion from old preferences to new ones
+     *
+     * @covers \grade_report_grader::get_collapsed_preferences
+     * @covers \grade_report_grader::filter_collapsed_categories
+     */
+    public function test_old_collapsed_preferences() {
+        $this->resetAfterTest(true);
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+
+        $course1cats = $course2cats = $course3cats = [];
+        for ($i = 0; $i < 10; $i++) {
+            $course1cats[] = $this->create_grade_category($course1)->id;
+            $course2cats[] = $this->create_grade_category($course2)->id;
+            $course3cats[] = $this->create_grade_category($course3)->id;
+        }
+
+        $report1 = $this->create_report($course1);
+        // Collapse all the cats in course1.
+        foreach ($course1cats as $catid) {
+            $report1->process_action('cg'. $catid, 'switch_minus');
+        }
+
+        // Expand all the cats in course2.
+        $report2 = $this->create_report($course2);
+        foreach ($course2cats as $catid) {
+            $report2->process_action('cg'.$catid, 'switch_minus');
+            $report2->process_action('cg'.$catid, 'switch_plus');
+        }
+
+        // Collapse odd cats and expand even cats in course3.
+        $report3 = $this->create_report($course3);
+        foreach ($course3cats as $catid) {
+            $report3->process_action('cg'.$catid, 'switch_minus');
+            if (($i++) % 2) {
+                $report3->process_action('cg'.$catid, 'switch_plus');
+            }
+        }
+
+        $report1 = $this->create_report($course1);
+        $this->assertEquals(10, count($report1->collapsed['aggregatesonly']));
+        $this->assertEquals(0, count($report1->collapsed['gradesonly']));
+        $report2 = $this->create_report($course2);
+        $this->assertEquals(0, count($report2->collapsed['aggregatesonly']));
+        $this->assertEquals(10, count($report2->collapsed['gradesonly']));
+        $report3 = $this->create_report($course3);
+        $this->assertEquals(5, count($report3->collapsed['aggregatesonly']));
+        $this->assertEquals(5, count($report3->collapsed['gradesonly']));
+
+        // Use the preferences generated for user1 and set it in the old format for other users.
+
+        // User2: both gradesonly and aggregatesonly.
+        $user2 = $this->getDataGenerator()->create_user();
+        $alldata = [
+            'gradesonly' => array_merge(
+                $report1->collapsed['gradesonly'],
+                $report2->collapsed['gradesonly'],
+                $report3->collapsed['gradesonly']),
+            'aggregatesonly' => array_merge(
+                $report1->collapsed['aggregatesonly'],
+                $report2->collapsed['aggregatesonly'],
+                $report3->collapsed['aggregatesonly']),
+        ];
+        set_user_preference('grade_report_grader_collapsed_categories', serialize($alldata), $user2);
+
+        $this->setUser($user2);
+        $convertedreport1 = $this->create_report($course1);
+        $this->assertEquals($report1->collapsed['gradesonly'], $convertedreport1->collapsed['gradesonly']);
+        $this->assertEquals($report1->collapsed['aggregatesonly'], $convertedreport1->collapsed['aggregatesonly']);
+        $newprefs1 = get_user_preferences('grade_report_grader_collapsed_categories' . $course1->id); // Also verify new prefs.
+        $this->assertEquals($report1->collapsed['gradesonly'], json_decode($newprefs1, true)['gradesonly']);
+        $this->assertEquals($report1->collapsed['aggregatesonly'], json_decode($newprefs1, true)['aggregatesonly']);
+
+        $convertedreport2 = $this->create_report($course2);
+        $this->assertEquals($report2->collapsed['gradesonly'], $convertedreport2->collapsed['gradesonly']);
+        $this->assertEquals($report2->collapsed['aggregatesonly'], $convertedreport2->collapsed['aggregatesonly']);
+        $newprefs2 = get_user_preferences('grade_report_grader_collapsed_categories' . $course2->id); // Also verify new prefs.
+        $this->assertEquals($report2->collapsed['gradesonly'], json_decode($newprefs2, true)['gradesonly']);
+        $this->assertEquals($report2->collapsed['aggregatesonly'], json_decode($newprefs2, true)['aggregatesonly']);
+
+        $convertedreport3 = $this->create_report($course3);
+        $this->assertEquals($report3->collapsed['gradesonly'], $convertedreport3->collapsed['gradesonly']);
+        $this->assertEquals($report3->collapsed['aggregatesonly'], $convertedreport3->collapsed['aggregatesonly']);
+        $newprefs3 = get_user_preferences('grade_report_grader_collapsed_categories' . $course3->id); // Also verify new prefs.
+        $this->assertEquals($report3->collapsed['gradesonly'], json_decode($newprefs3, true)['gradesonly']);
+        $this->assertEquals($report3->collapsed['aggregatesonly'], json_decode($newprefs3, true)['aggregatesonly']);
+
+        // Make sure the old style user preference is removed now.
+        $this->assertEmpty(get_user_preferences('grade_report_grader_collapsed_categories'));
+
+        // User3: only gradesonly (missing aggregatesonly).
+        $user3 = $this->getDataGenerator()->create_user();
+        $alldata = [
+            'gradesonly' => array_merge(
+                $report1->collapsed['gradesonly'],
+                $report2->collapsed['gradesonly'],
+                $report3->collapsed['gradesonly']),
+        ];
+        set_user_preference('grade_report_grader_collapsed_categories', serialize($alldata), $user3);
+
+        $this->setUser($user3);
+        $convertedreport1 = $this->create_report($course1);
+        $this->assertEquals($report1->collapsed['gradesonly'], $convertedreport1->collapsed['gradesonly']);
+        $this->assertEquals([], $convertedreport1->collapsed['aggregatesonly']);
+        $newprefs1 = get_user_preferences('grade_report_grader_collapsed_categories' . $course1->id); // Also verify new prefs.
+        $this->assertNull($newprefs1);
+
+        $convertedreport2 = $this->create_report($course2);
+        $this->assertEquals($report2->collapsed['gradesonly'], $convertedreport2->collapsed['gradesonly']);
+        $this->assertEquals([], $convertedreport2->collapsed['aggregatesonly']);
+        $newprefs2 = get_user_preferences('grade_report_grader_collapsed_categories' . $course2->id); // Also verify new prefs.
+        $this->assertEquals($report2->collapsed['gradesonly'], json_decode($newprefs2, true)['gradesonly']);
+        $this->assertEquals([], json_decode($newprefs2, true)['aggregatesonly']);
+
+        $convertedreport3 = $this->create_report($course3);
+        $this->assertEquals($report3->collapsed['gradesonly'], $convertedreport3->collapsed['gradesonly']);
+        $this->assertEquals([], $convertedreport3->collapsed['aggregatesonly']);
+        $newprefs3 = get_user_preferences('grade_report_grader_collapsed_categories' . $course3->id); // Also verify new prefs.
+        $this->assertEquals($report3->collapsed['gradesonly'], json_decode($newprefs3, true)['gradesonly']);
+        $this->assertEquals([], json_decode($newprefs3, true)['aggregatesonly']);
+
+        // Make sure the old style user preference is removed now.
+        $this->assertEmpty(get_user_preferences('grade_report_grader_collapsed_categories'));
+
+        // User4: only aggregatesonly (missing gradesonly).
+        $user4 = $this->getDataGenerator()->create_user();
+        $alldata = [
+            'aggregatesonly' => array_merge(
+                $report1->collapsed['aggregatesonly'],
+                $report2->collapsed['aggregatesonly'],
+                $report3->collapsed['aggregatesonly']),
+        ];
+        set_user_preference('grade_report_grader_collapsed_categories', serialize($alldata), $user4);
+
+        $this->setUser($user4);
+        $convertedreport1 = $this->create_report($course1);
+        $this->assertEquals([], $convertedreport1->collapsed['gradesonly']);
+        $this->assertEquals($report1->collapsed['aggregatesonly'], $convertedreport1->collapsed['aggregatesonly']);
+        $newprefs1 = get_user_preferences('grade_report_grader_collapsed_categories' . $course1->id); // Also verify new prefs.
+        $this->assertEquals([], json_decode($newprefs1, true)['gradesonly']);
+        $this->assertEquals($report1->collapsed['aggregatesonly'], json_decode($newprefs1, true)['aggregatesonly']);
+
+        $convertedreport2 = $this->create_report($course2);
+        $this->assertEquals([], $convertedreport2->collapsed['gradesonly']);
+        $this->assertEquals($report2->collapsed['aggregatesonly'], $convertedreport2->collapsed['aggregatesonly']);
+        $newprefs2 = get_user_preferences('grade_report_grader_collapsed_categories' . $course2->id); // Also verify new prefs.
+        $this->assertNull($newprefs2);
+
+        $convertedreport3 = $this->create_report($course3);
+        $this->assertEquals([], $convertedreport3->collapsed['gradesonly']);
+        $this->assertEquals($report3->collapsed['aggregatesonly'], $convertedreport3->collapsed['aggregatesonly']);
+        $newprefs3 = get_user_preferences('grade_report_grader_collapsed_categories' . $course3->id); // Also verify new prefs.
+        $this->assertEquals([], json_decode($newprefs3, true)['gradesonly']);
+        $this->assertEquals($report3->collapsed['aggregatesonly'], json_decode($newprefs3, true)['aggregatesonly']);
+
+        // Make sure the old style user preference is removed now.
+        $this->assertEmpty(get_user_preferences('grade_report_grader_collapsed_categories'));
+
+        // User5: both missing gradesonly and aggregatesonly.
+        $user5 = $this->getDataGenerator()->create_user();
+        $alldata = [];
+        set_user_preference('grade_report_grader_collapsed_categories', serialize($alldata), $user5);
+
+        $this->setUser($user5);
+        $convertedreport1 = $this->create_report($course1);
+        $this->assertEquals([], $convertedreport1->collapsed['gradesonly']);
+        $this->assertEquals([], $convertedreport1->collapsed['aggregatesonly']);
+        $newprefs1 = get_user_preferences('grade_report_grader_collapsed_categories' . $course1->id); // Also verify new prefs.
+        $this->assertNull($newprefs1);
+
+        $convertedreport2 = $this->create_report($course2);
+        $this->assertEquals([], $convertedreport2->collapsed['gradesonly']);
+        $this->assertEquals([], $convertedreport2->collapsed['aggregatesonly']);
+        $newprefs2 = get_user_preferences('grade_report_grader_collapsed_categories' . $course2->id); // Also verify new prefs.
+        $this->assertNull($newprefs2);
+
+        $convertedreport3 = $this->create_report($course3);
+        $this->assertEquals([], $convertedreport3->collapsed['gradesonly']);
+        $this->assertEquals([], $convertedreport3->collapsed['aggregatesonly']);
+        $newprefs3 = get_user_preferences('grade_report_grader_collapsed_categories' . $course3->id); // Also verify new prefs.
+        $this->assertNull($newprefs3);
+
+        // Make sure the old style user preference is removed now.
+        $this->assertEmpty(get_user_preferences('grade_report_grader_collapsed_categories'));
+
+        // User6: both empty gradesonly and aggregatesonly.
+        $user6 = $this->getDataGenerator()->create_user();
+        $alldata = [
+            'gradesonly' => [],
+            'aggregatesonly' => []
+        ];
+        set_user_preference('grade_report_grader_collapsed_categories', serialize($alldata), $user6);
+
+        $this->setUser($user6);
+        $convertedreport1 = $this->create_report($course1);
+        $this->assertEquals([], $convertedreport1->collapsed['gradesonly']);
+        $this->assertEquals([], $convertedreport1->collapsed['aggregatesonly']);
+        $newprefs1 = get_user_preferences('grade_report_grader_collapsed_categories' . $course1->id); // Also verify new prefs.
+        $this->assertNull($newprefs1);
+
+        $convertedreport2 = $this->create_report($course2);
+        $this->assertEquals([], $convertedreport2->collapsed['gradesonly']);
+        $this->assertEquals([], $convertedreport2->collapsed['aggregatesonly']);
+        $newprefs2 = get_user_preferences('grade_report_grader_collapsed_categories' . $course2->id); // Also verify new prefs.
+        $this->assertNull($newprefs2);
+
+        $convertedreport3 = $this->create_report($course3);
+        $this->assertEquals([], $convertedreport3->collapsed['gradesonly']);
+        $this->assertEquals([], $convertedreport3->collapsed['aggregatesonly']);
+        $newprefs3 = get_user_preferences('grade_report_grader_collapsed_categories' . $course3->id); // Also verify new prefs.
+        $this->assertNull($newprefs3);
+
+        // Make sure the old style user preference is removed now.
+        $this->assertEmpty(get_user_preferences('grade_report_grader_collapsed_categories'));
+    }
+
+    /**
      * Tests the get_right_rows function with one 'normal' and one 'ungraded' quiz.
      *
      * Previously, with an ungraded quiz (which results in a grade item with type GRADETYPE_NONE)
@@ -284,7 +506,7 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
 
         // Supposing the user cannot view hidden grades, this shouldn't make any difference (due
         // to a bug, it previously did).
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $managerroleid = $DB->get_field('role', 'id', array('shortname' => 'manager'));
         assign_capability('moodle/grade:viewhidden', CAP_PROHIBIT, $managerroleid, $context->id, true);
         $this->assertFalse(has_capability('moodle/grade:viewhidden', $context));
@@ -297,19 +519,60 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         $this->assertCount(3, $result);
     }
 
+    /**
+     * Test loading report users when per page preferences are set
+     */
+    public function test_load_users_paging_preference(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+
+        // The report users will default to sorting by their lastname.
+        $user1 = $this->getDataGenerator()->create_and_enrol($course, 'student', ['lastname' => 'Apple']);
+        $user2 = $this->getDataGenerator()->create_and_enrol($course, 'student', ['lastname' => 'Banana']);
+        $user3 = $this->getDataGenerator()->create_and_enrol($course, 'student', ['lastname' => 'Carrot']);
+
+        // Set to empty string.
+        $report = $this->create_report($course);
+        $report->set_pref('studentsperpage', '');
+        $users = $report->load_users();
+        $this->assertEquals([$user1->id, $user2->id, $user3->id], array_column($users, 'id'));
+
+        // Set to valid value.
+        $report = $this->create_report($course);
+        $report->set_pref('studentsperpage', 2);
+        $users = $report->load_users();
+        $this->assertEquals([$user1->id, $user2->id], array_column($users, 'id'));
+    }
+
+    /**
+     * Test getting students per page report preference
+     */
+    public function test_get_students_per_page(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $report = $this->create_report($course);
+        $report->set_pref('studentsperpage', 10);
+
+        $perpage = $report->get_students_per_page();
+        $this->assertSame(10, $perpage);
+    }
+
     private function create_grade_category($course) {
         static $cnt = 0;
         $cnt++;
-        $grade_category = new grade_category(array('courseid' => $course->id, 'fullname' => 'Cat '.$cnt), false);
-        $grade_category->apply_default_settings();
-        $grade_category->apply_forced_settings();
-        $grade_category->insert();
-        return $grade_category;
+        $gradecat = new \grade_category(array('courseid' => $course->id, 'fullname' => 'Cat '.$cnt), false);
+        $gradecat->apply_default_settings();
+        $gradecat->apply_forced_settings();
+        $gradecat->insert();
+        return $gradecat;
     }
 
     private function create_report($course) {
 
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $gpr = new grade_plugin_return(array('type' => 'report', 'plugin'=>'grader', 'courseid' => $course->id));
         $report = new grade_report_grader($course->id, $gpr, $coursecontext);
 

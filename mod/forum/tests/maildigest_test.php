@@ -15,21 +15,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * The module forums external functions unit tests
- *
- * @package    mod_forum
- * @category   external
- * @copyright  2013 Andrew Nicols
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_forum;
 
-defined('MOODLE_INTERNAL') || die();
+use mod_forum_tests_cron_trait;
+use mod_forum_tests_generator_trait;
+
+defined('MOODLE_INTERNAL') || die;
 
 require_once(__DIR__ . '/cron_trait.php');
 require_once(__DIR__ . '/generator_trait.php');
 
-class mod_forum_maildigest_testcase extends advanced_testcase {
+/**
+ * The module forums external functions unit tests
+ *
+ * @package    mod_forum
+ * @category   test
+ * @copyright  2013 Andrew Nicols
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class maildigest_test extends \advanced_testcase {
 
     // Make use of the cron tester trait.
     use mod_forum_tests_cron_trait;
@@ -95,9 +99,9 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
     protected function helper_setup_user_in_course() {
         global $DB;
 
-        $return = new stdClass();
-        $return->courses = new stdClass();
-        $return->forums = new stdClass();
+        $return = new \stdClass();
+        $return->courses = new \stdClass();
+        $return->forums = new \stdClass();
         $return->forumids = array();
 
         // Create a user.
@@ -108,7 +112,7 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         $return->courses->course1 = $this->getDataGenerator()->create_course();
 
         // Create forums.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->course = $return->courses->course1->id;
         $record->forcesubscribe = 1;
 
@@ -649,7 +653,7 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         ];
         $this->queue_tasks_and_assert($expect);
 
-        $tasks = $DB->get_records('task_adhoc');
+        $tasks = $DB->get_records('task_adhoc', ['component' => 'mod_forum']);
         $task = reset($tasks);
         $this->assertGreaterThanOrEqual(time(), $task->nextruntime);
     }
@@ -689,7 +693,7 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         ];
         $this->queue_tasks_and_assert($expect);
 
-        $tasks = $DB->get_records('task_adhoc');
+        $tasks = $DB->get_records('task_adhoc', ['component' => 'mod_forum']);
         $task = reset($tasks);
         $digesttime = usergetmidnight(time(), \core_date::get_server_timezone()) + ($CFG->digestmailtime * 3600);
         $this->assertLessThanOrEqual($digesttime, $task->nextruntime);
@@ -742,7 +746,7 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         $this->queue_tasks_and_assert($expect);
 
         // There should now be two tasks queued.
-        $tasks = $DB->get_records('task_adhoc');
+        $tasks = $DB->get_records('task_adhoc', ['component' => 'mod_forum']);
         $this->assertCount(2, $tasks);
 
         // Add yet another another discussions to forum 1.
@@ -758,7 +762,7 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         $this->queue_tasks_and_assert($expect);
 
         // There should still be two tasks queued.
-        $tasks = $DB->get_records('task_adhoc');
+        $tasks = $DB->get_records('task_adhoc', ['component' => 'mod_forum']);
         $this->assertCount(2, $tasks);
     }
 

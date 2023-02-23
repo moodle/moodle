@@ -118,7 +118,8 @@ Feature: Message delete conversations
     And I should not see "Hi!" in the "Student 2" "core_message > Message conversation"
     And I go back in "view-conversation" message drawer
     And I should not see "Student 2" in the "favourites" "core_message > Message list area"
-    And I send "Hi!" message to "Student 2" user
-    And I go back in "view-conversation" message drawer
-    And I go back in "view-search" message drawer
+    And the following "private messages" exist:
+      | user     | contact  | message       |
+      | student1 | student2 | Hi!           |
+    And I open messaging
     And I should see "Student 2" in the "favourites" "core_message > Message list area"

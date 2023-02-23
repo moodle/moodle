@@ -57,7 +57,7 @@ function tool_monitor_extend_navigation_frontpage($navigation, $course, $context
         $url = new moodle_url('/admin/tool/monitor/managerules.php', array('courseid' => $course->id));
         $settingsnode = navigation_node::create(get_string('managerules', 'tool_monitor'), $url, navigation_node::TYPE_SETTING,
                 null, null, new pix_icon('i/settings', ''));
-        $reportnode = $navigation->get('frontpagereports');
+        $reportnode = $navigation->get('coursereports');
 
         if (isset($settingsnode) && !empty($reportnode)) {
             $reportnode->add_node($settingsnode);

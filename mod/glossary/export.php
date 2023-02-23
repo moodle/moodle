@@ -20,15 +20,15 @@ if ($mode !== '') {
 $PAGE->set_url($url);
 
 if (! $cm = get_coursemodule_from_id('glossary', $id)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 
 if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-    print_error('coursemisconf');
+    throw new \moodle_exception('coursemisconf');
 }
 
 if (! $glossary = $DB->get_record("glossary", array("id"=>$cm->instance))) {
-    print_error('invalidid', 'glossary');
+    throw new \moodle_exception('invalidid', 'glossary');
 }
 
 require_login($course, false, $cm);
@@ -54,6 +54,9 @@ $PAGE->set_secondary_active_tab('modulepage');
 $PAGE->activityheader->disable();
 
 echo $OUTPUT->header();
+$backlink = html_writer::link(new moodle_url('view.php', ['id' => $cm->id]),
+    get_string('back'), ['class' => 'btn btn-secondary']);
+echo html_writer::tag('div', $backlink, ['class' => 'tertiary-navigation']);
 echo $OUTPUT->heading($strexportentries);
 echo $OUTPUT->box_start('glossarydisplay generalbox');
 $exporturl = moodle_url::make_pluginfile_url($context->id, 'mod_glossary', 'export', 0, "/$cat/", 'export.xml', true);

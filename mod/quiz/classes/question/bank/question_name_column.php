@@ -36,7 +36,7 @@ class question_name_column extends \core_question\local\bank\column_base {
         return 'questionname';
     }
 
-    protected function get_title(): string {
+    public function get_title(): string {
         return get_string('question');
     }
 

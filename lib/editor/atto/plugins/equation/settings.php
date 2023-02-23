@@ -159,7 +159,7 @@ if ($ADMIN->fulltree) {
 (a)
 [a]
 \lbrace{a}\rbrace
-\left| \begin{matrix} a_1 & a_2 \\ a_3 & a_4 \end{matrix} \right|
+\left| \begin{matrix} a_1 & a_2 \\\\ a_3 & a_4 \end{matrix} \right|
 \frac{a}{b+c}
 \vec{a}
 \binom {a} {b}

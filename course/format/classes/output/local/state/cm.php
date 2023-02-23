@@ -18,6 +18,7 @@ namespace core_courseformat\output\local\state;
 
 use core_courseformat\base as course_format;
 use completion_info;
+use renderer_base;
 use section_info;
 use cm_info;
 use renderable;
@@ -70,8 +71,8 @@ class cm implements renderable {
      * @param renderer_base $output typically, the renderer that's calling this function
      * @return stdClass data context for a mustache template
      */
-    public function export_for_template(\renderer_base $output): stdClass {
-        global $USER, $CFG;
+    public function export_for_template(renderer_base $output): stdClass {
+        global $USER;
 
         $format = $this->format;
         $section = $this->section;
@@ -80,25 +81,20 @@ class cm implements renderable {
 
         $data = (object)[
             'id' => $cm->id,
-            'name' => external_format_string($cm->name, $cm->context, true),
+            'anchor' => "module-{$cm->id}",
+            'name' => \core_external\util::format_string($cm->name, $cm->context, true),
             'visible' => !empty($cm->visible),
+            'stealth' => $cm->is_stealth(),
             'sectionid' => $section->id,
             'sectionnumber' => $section->section,
             'uservisible' => $cm->uservisible,
+            'hascmrestrictions' => $this->get_has_restrictions(),
+            'modname' => get_string('pluginname', 'mod_' . $cm->modname),
         ];
 
         // Check the user access type to this cm.
         $info = new info_module($cm);
         $data->accessvisible = ($data->visible && $info->is_available_for_all());
-
-        // Check if restriction access are visible to the user.
-        $canviewhidden = has_capability('moodle/course:viewhiddenactivities', $cm->context);
-        if (!empty($CFG->enableavailability) && $canviewhidden) {
-            // Some users can see restrictions even if it does not apply to them.
-            $data->hascmrectrictions = !empty($cm->availableinfo);
-        } else {
-            $data->hascmrectrictions = !$data->accessvisible || !$cm->uservisible;
-        }
 
         // Add url if the activity is compatible.
         $url = $cm->url;
@@ -119,5 +115,34 @@ class cm implements renderable {
         }
 
         return $data;
+    }
+
+    /**
+     * Return if the activity has a restrictions icon displayed or not.
+     *
+     * @return bool if the activity has visible restrictions for the user.
+     */
+    protected function get_has_restrictions(): bool {
+        global $CFG;
+        $cm = $this->cm;
+
+        if (empty($cm->visible) || empty($CFG->enableavailability)) {
+            return false;
+        }
+        // Nothing to be displayed to the user.
+        if (!$cm->is_visible_on_course_page()) {
+            return false;
+        }
+        // Not allowed to see the module but might be allowed to see some availability.
+        if (!$cm->uservisible) {
+            return !empty($cm->availableinfo);
+        }
+        // Content editors can see all restrictions if the activity is visible.
+        if (has_capability('moodle/course:viewhiddenactivities', $cm->context)) {
+            $ci = new info_module($cm);
+            return !empty($ci->get_full_information());
+        }
+        // Regular users can only see restrictions if apply to them.
+        return false;
     }
 }

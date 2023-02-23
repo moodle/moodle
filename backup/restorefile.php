@@ -48,13 +48,23 @@ if (!empty($filecontextid)) {
 
 $url = new moodle_url('/backup/restorefile.php', array('contextid'=>$contextid));
 
+$PAGE->set_url($url);
+$PAGE->set_context($context);
+
 switch ($context->contextlevel) {
+    case CONTEXT_COURSECAT:
+        core_course_category::page_setup();
+        break;
     case CONTEXT_MODULE:
-        $heading = get_string('restoreactivity', 'backup');
+        $PAGE->set_heading(get_string('restoreactivity', 'backup'));
         break;
     case CONTEXT_COURSE:
+        $course = get_course($context->instanceid);
+        $PAGE->set_heading($course->fullname);
+        $PAGE->set_secondary_active_tab('coursereuse');
+        break;
     default:
-        $heading = get_string('restorecourse', 'backup');
+        $PAGE->set_heading($SITE->fullname);
 }
 
 
@@ -109,10 +119,7 @@ if ($action == 'choosebackupfile') {
     die;
 }
 
-$PAGE->set_url($url);
-$PAGE->set_context($context);
 $PAGE->set_title(get_string('course') . ': ' . $coursefullname);
-$PAGE->set_heading($heading);
 $PAGE->set_pagelayout('admin');
 $PAGE->activityheader->disable();
 $PAGE->requires->js_call_amd('core_backup/async_backup', 'asyncBackupAllStatus', array($context->id));

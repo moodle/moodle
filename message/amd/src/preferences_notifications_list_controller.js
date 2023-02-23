@@ -42,9 +42,9 @@ define(['jquery',
     var SELECTORS = {
         DISABLE_NOTIFICATIONS: '[data-region="disable-notification-container"] [data-disable-notifications]',
         DISABLE_NOTIFICATIONS_CONTAINER: '[data-region="disable-notification-container"]',
-        PREFERENCE: '[data-state]',
+        PREFERENCE: '.preference-state',
         PREFERENCE_ROW: '[data-region="preference-row"]',
-        PREFERENCE_INPUT: '[data-state] input',
+        PREFERENCE_INPUT: '.preference-state input',
         PROCESSOR_SETTING: '[data-processor-setting]',
     };
 

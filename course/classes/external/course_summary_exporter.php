@@ -64,7 +64,7 @@ class course_summary_exporter extends \core\external\exporter {
         if ($progress === 0 || $progress > 0) {
             $hasprogress = true;
         }
-        $progress = floor($progress);
+        $progress = floor($progress ?? 0);
         $coursecategory = \core_course_category::get($this->data->category, MUST_EXIST, true);
         return array(
             'fullnamedisplay' => get_course_display_name_for_list($this->data),

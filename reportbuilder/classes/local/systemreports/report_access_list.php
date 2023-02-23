@@ -24,6 +24,7 @@ use core_reportbuilder\permission;
 use core_reportbuilder\system_report;
 use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\helpers\audience as audience_helper;
+use core_user\fields;
 
 /**
  * Report access list
@@ -57,8 +58,9 @@ class report_access_list extends system_report {
 
         $this->add_base_condition_sql("($allwheres)", $params);
 
-        $this->add_column_from_entity('user:fullnamewithpicturelink');
-        $this->add_filter_from_entity('user:fullname');
+        $this->add_columns();
+        $this->add_filters();
+
         $this->set_downloadable(false);
     }
 
@@ -69,8 +71,39 @@ class report_access_list extends system_report {
      */
     protected function can_view(): bool {
         $reportid = $this->get_parameter('id', 0, PARAM_INT);
-        $reportpersistent = new report($reportid);
-        return permission::can_edit_report($reportpersistent);
+        $report = report::get_record(['id' => $reportid], MUST_EXIST);
+
+        return permission::can_edit_report($report);
+    }
+
+    /**
+     * Add columns to report
+     */
+    protected function add_columns(): void {
+        $userentity = $this->get_entity('user');
+        $this->add_column($userentity->get_column('fullnamewithpicturelink'));
+
+        // Include all identity field columns.
+        $identityfields = fields::for_identity($this->get_context(), true)->get_required_fields();
+        foreach ($identityfields as $identityfield) {
+            $this->add_column($userentity->get_identity_column($identityfield));
+        }
+
+        $this->set_initial_sort_column('user:fullnamewithpicturelink', SORT_ASC);
+    }
+
+    /**
+     * Add filters to report
+     */
+    protected function add_filters(): void {
+        $userentity = $this->get_entity('user');
+        $this->add_filter($userentity->get_filter('fullname'));
+
+        // Include all identity field filters.
+        $identityfields = fields::for_identity($this->get_context(), true)->get_required_fields();
+        foreach ($identityfields as $identityfield) {
+            $this->add_filter($userentity->get_identity_filter($identityfield));
+        }
     }
 
     /**

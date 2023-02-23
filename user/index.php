@@ -34,7 +34,8 @@ use core_table\local\filter\filter;
 use core_table\local\filter\integer_filter;
 use core_table\local\filter\string_filter;
 
-define('DEFAULT_PAGE_SIZE', 20);
+$participantsperpage = intval(get_config('moodlecourse', 'participantsperpage'));
+define('DEFAULT_PAGE_SIZE', (!empty($participantsperpage) ? $participantsperpage : 20));
 
 $page         = optional_param('page', 0, PARAM_INT); // Which page to show.
 $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT); // How many per page.
@@ -54,7 +55,7 @@ $PAGE->set_url('/user/index.php', array(
 if ($contextid) {
     $context = context::instance_by_id($contextid, MUST_EXIST);
     if ($context->contextlevel != CONTEXT_COURSE) {
-        print_error('invalidcontext');
+        throw new \moodle_exception('invalidcontext');
     }
     $course = $DB->get_record('course', array('id' => $context->instanceid), '*', MUST_EXIST);
 } else {
@@ -82,8 +83,6 @@ if ($isfrontpage) {
 
 // Trigger events.
 user_list_view($course, $context);
-
-$bulkoperations = has_capability('moodle/course:bulkmessaging', $context);
 
 $PAGE->set_title("$course->shortname: ".get_string('participants'));
 $PAGE->set_heading($course->fullname);
@@ -117,7 +116,7 @@ echo $OUTPUT->render_participants_tertiary_nav($course, html_writer::div($enrolb
     'data-table-uniqueid' => $participanttable->uniqueid,
 ]));
 
-echo $OUTPUT->heading(get_string('participants'));
+echo $OUTPUT->heading(get_string('enrolledusers', 'enrol'));
 
 $filterset = new \core_user\table\participants_filterset();
 $filterset->add_filter(new integer_filter('courseid', filter::JOINTYPE_DEFAULT, [(int)$course->id]));
@@ -208,90 +207,89 @@ $bulkoptions = (object) [
     'uniqueid' => $participanttable->uniqueid,
 ];
 
-if ($bulkoperations) {
-    echo '<br /><div class="buttons"><div class="form-inline">';
+echo '<br /><div class="buttons"><div class="form-inline">';
 
-    echo html_writer::start_tag('div', array('class' => 'btn-group'));
+echo html_writer::start_tag('div', array('class' => 'btn-group'));
 
-    if ($participanttable->get_page_size() < $participanttable->totalrows) {
-        // Select all users, refresh table showing all users and mark them all selected.
-        $label = get_string('selectalluserswithcount', 'moodle', $participanttable->totalrows);
-        echo html_writer::empty_tag('input', [
-            'type' => 'button',
-            'id' => 'checkall',
-            'class' => 'btn btn-secondary',
-            'value' => $label,
-            'data-target-page-size' => TABLE_SHOW_ALL_PAGE_SIZE,
-        ]);
-    }
-    echo html_writer::end_tag('div');
-    $displaylist = array();
-    if (!empty($CFG->messaging) && has_all_capabilities(['moodle/site:sendmessage', 'moodle/course:bulkmessaging'], $context)) {
-        $displaylist['#messageselect'] = get_string('messageselectadd');
-    }
-    if (!empty($CFG->enablenotes) && has_capability('moodle/notes:manage', $context) && $context->id != $frontpagectx->id) {
-        $displaylist['#addgroupnote'] = get_string('addnewnote', 'notes');
-    }
-
-    $params = ['operation' => 'download_participants'];
-
-    $downloadoptions = [];
-    $formats = core_plugin_manager::instance()->get_plugins_of_type('dataformat');
-    foreach ($formats as $format) {
-        if ($format->is_enabled()) {
-            $params = ['operation' => 'download_participants', 'dataformat' => $format->name];
-            $url = new moodle_url('bulkchange.php', $params);
-            $downloadoptions[$url->out(false)] = get_string('dataformat', $format->component);
-        }
-    }
-
-    if (!empty($downloadoptions)) {
-        $displaylist[] = [get_string('downloadas', 'table') => $downloadoptions];
-    }
-
-    if ($context->id != $frontpagectx->id) {
-        $instances = $manager->get_enrolment_instances();
-        $plugins = $manager->get_enrolment_plugins(false);
-        foreach ($instances as $key => $instance) {
-            if (!isset($plugins[$instance->enrol])) {
-                // Weird, some broken stuff in plugin.
-                continue;
-            }
-            $plugin = $plugins[$instance->enrol];
-            $bulkoperations = $plugin->get_bulk_operations($manager);
-
-            $pluginoptions = [];
-            foreach ($bulkoperations as $key => $bulkoperation) {
-                $params = ['plugin' => $plugin->get_name(), 'operation' => $key];
-                $url = new moodle_url('bulkchange.php', $params);
-                $pluginoptions[$url->out(false)] = $bulkoperation->get_title();
-            }
-            if (!empty($pluginoptions)) {
-                $name = get_string('pluginname', 'enrol_' . $plugin->get_name());
-                $displaylist[] = [$name => $pluginoptions];
-            }
-        }
-    }
-
-    $selectactionparams = array(
-        'id' => 'formactionid',
-        'class' => 'ml-2',
-        'data-action' => 'toggle',
-        'data-togglegroup' => 'participants-table',
-        'data-toggle' => 'action',
-        'disabled' => 'disabled'
-    );
-    $label = html_writer::tag('label', get_string("withselectedusers"),
-            ['for' => 'formactionid', 'class' => 'col-form-label d-inline']);
-    $select = html_writer::select($displaylist, 'formaction', '', ['' => 'choosedots'], $selectactionparams);
-    echo html_writer::tag('div', $label . $select);
-
-    echo '<input type="hidden" name="id" value="' . $course->id . '" />';
-    echo '<div class="d-none" data-region="state-help-icon">' . $OUTPUT->help_icon('publishstate', 'notes') . '</div>';
-    echo '</div></div></div>';
-
-    $bulkoptions->noteStateNames = note_get_state_names();
+if ($participanttable->get_page_size() < $participanttable->totalrows) {
+    // Select all users, refresh table showing all users and mark them all selected.
+    $label = get_string('selectalluserswithcount', 'moodle', $participanttable->totalrows);
+    echo html_writer::empty_tag('input', [
+        'type' => 'button',
+        'id' => 'checkall',
+        'class' => 'btn btn-secondary',
+        'value' => $label,
+        'data-target-page-size' => TABLE_SHOW_ALL_PAGE_SIZE,
+    ]);
 }
+echo html_writer::end_tag('div');
+$displaylist = array();
+if (!empty($CFG->messaging) && has_all_capabilities(['moodle/site:sendmessage', 'moodle/course:bulkmessaging'], $context)) {
+    $displaylist['#messageselect'] = get_string('messageselectadd');
+}
+if (!empty($CFG->enablenotes) && has_capability('moodle/notes:manage', $context) && $context->id != $frontpagectx->id) {
+    $displaylist['#addgroupnote'] = get_string('addnewnote', 'notes');
+}
+
+$params = ['operation' => 'download_participants'];
+
+$downloadoptions = [];
+$formats = core_plugin_manager::instance()->get_plugins_of_type('dataformat');
+foreach ($formats as $format) {
+    if ($format->is_enabled()) {
+        $params = ['operation' => 'download_participants', 'dataformat' => $format->name];
+        $url = new moodle_url('bulkchange.php', $params);
+        $downloadoptions[$url->out(false)] = get_string('dataformat', $format->component);
+    }
+}
+
+if (!empty($downloadoptions)) {
+    $displaylist[] = [get_string('downloadas', 'table') => $downloadoptions];
+}
+
+if ($context->id != $frontpagectx->id) {
+    $instances = $manager->get_enrolment_instances();
+    $plugins = $manager->get_enrolment_plugins(false);
+    foreach ($instances as $key => $instance) {
+        if (!isset($plugins[$instance->enrol])) {
+            // Weird, some broken stuff in plugin.
+            continue;
+        }
+        $plugin = $plugins[$instance->enrol];
+        $bulkoperations = $plugin->get_bulk_operations($manager);
+
+        $pluginoptions = [];
+        foreach ($bulkoperations as $key => $bulkoperation) {
+            $params = ['plugin' => $plugin->get_name(), 'operation' => $key];
+            $url = new moodle_url('bulkchange.php', $params);
+            $pluginoptions[$url->out(false)] = $bulkoperation->get_title();
+        }
+        if (!empty($pluginoptions)) {
+            $name = get_string('pluginname', 'enrol_' . $plugin->get_name());
+            $displaylist[] = [$name => $pluginoptions];
+        }
+    }
+}
+
+$selectactionparams = array(
+    'id' => 'formactionid',
+    'class' => 'ml-2',
+    'data-action' => 'toggle',
+    'data-togglegroup' => 'participants-table',
+    'data-toggle' => 'action',
+    'disabled' => 'disabled'
+);
+$label = html_writer::tag('label', get_string("withselectedusers"),
+        ['for' => 'formactionid', 'class' => 'col-form-label d-inline']);
+$select = html_writer::select($displaylist, 'formaction', '', ['' => 'choosedots'], $selectactionparams);
+echo html_writer::tag('div', $label . $select);
+
+echo '<input type="hidden" name="id" value="' . $course->id . '" />';
+echo '<div class="d-none" data-region="state-help-icon">' . $OUTPUT->help_icon('publishstate', 'notes') . '</div>';
+echo '</div></div></div>';
+
+$bulkoptions->noteStateNames = note_get_state_names();
+
 echo '</form>';
 
 $PAGE->requires->js_call_amd('core_user/participants', 'init', [$bulkoptions]);

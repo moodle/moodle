@@ -40,12 +40,16 @@ Local changes (to reapply until upstream upgrades contain them):
     * MDL-67034 php74 compliance fixes
     * MDL-67115 php74 implode() compliance fixes. This is fixed in upstream library v2.2.4
       (verify that https://github.com/googleapis/google-api-php-client/pull/1683 is applied)
-
+    * MDL-73523 php80 compliance. openssl_xxx_free() methods deprecated. I've been unable to
+      find any issue upstream and the current library versions are way different from the ones
+      we are using here.
+    * MDL-76355 php81 compliance. Class methods require overriding methods to declare a
+      compatible return type.
 
 Information
 -----------
 
-Repository: https://github.com/google/google-api-php-client
+Repository: https://github.com/googleapis/google-api-php-client
 Documentation: https://developers.google.com/api-client-library/php/
 Global documentation: https://developers.google.com
 

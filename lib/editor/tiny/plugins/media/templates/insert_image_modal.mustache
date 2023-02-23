@@ -1,0 +1,113 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tiny_media/insert_image_modal
+
+    Insert image template.
+
+    Example context (json):
+    {
+
+    }
+}}
+{{< core/modal }}
+    {{$body}}
+        <form class="tiny_image_form">
+            <div style="display:none" role="alert" class="alert alert-warning mb-1 tiny_image_urlwarning">
+                <label for="{{elementid}}_tiny_image_urlentry">
+                    {{#str}} imageurlrequired, tiny_media {{/str}}
+                </label>
+            </div>
+            {{#showfilepicker}}
+                <div class="mb-1">
+                    <label for="{{elementid}}_tiny_image_urlentry">{{#str}} enterurl, tiny_media {{/str}}</label>
+                    <div class="input-group input-append w-100">
+                        <input name=urlentry class="form-control tiny_image_urlentry" type="url" id="{{elementid}}_tiny_image_urlentry" size="32" value="{{src}}"/>
+                        <span class="input-group-append">
+                            <button class="btn btn-secondary openimagebrowser" type="button">
+                                {{#str}} browserepositories, tiny_media {{/str}}
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            {{/showfilepicker}}
+            {{^showfilepicker}}
+                <div class="mb-1">
+                    <label for="{{elementid}}_tiny_image_urlentry">{{#str}} enterurl, tiny_media {{/str}}</label>
+                    <input name="urlentry" class="form-control fullwidth tiny_image_urlentry" type="url" id="{{elementid}}_tiny_image_urlentry" size="32"/>
+                </div>
+            {{/showfilepicker}}
+            <div style="display:none" role="alert" class="alert alert-warning mb-1 tiny_image_altwarning">
+                <label for="{{elementid}}_tiny_image_altentry">
+                    {{#str}} presentationoraltrequired, tiny_media {{/str}}
+                </label>
+            </div>
+            <div class="mb-1">
+                <label for="{{elementid}}_tiny_image_altentry">{{#str}} enteralt, tiny_media {{/str}}</label>
+                <textarea class="form-control fullwidth tiny_image_altentry" id="{{elementid}}_tiny_image_altentry" name="altentry" maxlength="125">{{alt}}</textarea>
+
+                <div id="the-count" class="d-flex justify-content-end small">
+                    <span id="currentcount">0</span>
+                    <span id="maximumcount"> / 125</span>
+                </div>
+
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input tiny_image_presentation" id="{{elementid}}_tiny_image_presentation" {{# presentation }}checked{{/ presentation }}/>
+                    <label class="form-check-label" for="{{elementid}}_tiny_image_presentation">{{#str}} presentation, tiny_media {{/str}}</label>
+                </div>
+            </div>
+            <div class="mb-1">
+                <label class="" for="{{elementid}}_tiny_image_size">{{#str}} size, tiny_media {{/str}}</label>
+                <div id="{{elementid}}_tiny_image_size" class="form-inline tiny_image_size">
+                    <label class="accesshide" for="{{elementid}}_tiny_image_widthentry">{{#str}} width, tiny_media {{/str}}</label>
+                    <input type="text" class="form-control mr-1 input-mini tiny_image_widthentry" id="{{elementid}}_tiny_image_widthentry" size="4" value="{{width}}"/>
+                    x
+                    <label class="accesshide" for="{{elementid}}_tiny_image_heightentry">{{#str}} height, tiny_media {{/str}}</label>
+                    <input type="text" class="form-control ml-1 input-mini tiny_image_heightentry" id="{{elementid}}_tiny_image_heightentry" size="4" value="{{height}}"/>
+
+                    <div class="form-check ml-2">
+                        <input type="checkbox" class="form-check-input tiny_image_constrain" id="{{elementid}}_tiny_image_constrain"/>
+                        <label class="form-check-label" for="{{elementid}}_tiny_image_constrain">{{#str}} constrain, tiny_media {{/str}}</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-inline mb-1">
+                <label for="{{elementid}}_tiny_image_alignment">{{#str}} alignment, tiny_media {{/str}}</label>
+                <select class="custom-select tiny_image_alignment" id="{{elementid}}_tiny_image_alignment">
+                    {{#alignoptions}}
+                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{{text}}}</option>
+                    {{/alignoptions}}
+                </select>
+            </div>
+            <input type="hidden" class="tiny_image_customstyle" value="{{customStyle}}"/>
+            <br/>
+            <div class="mdl-align">
+                <div class="tiny_image_preview_box">
+                    <img class="tiny_image_preview" alt=""
+                        {{#haspreview}} src="{{src}}" {{/haspreview}}
+                        {{^haspreview}} style="display: none;" {{/haspreview}}
+                    />
+                </div>
+            </div>
+        </form>
+    {{/body}}
+
+    {{$footer}}
+        <button class="btn btn-secondary tiny_image_urlentrysubmit" type="submit">{{#str}} saveimage, tiny_media {{/str}}</button>
+        <button type="button" class="btn btn-secondary" data-action="cancel">{{#str}} cancel, moodle {{/str}}</button>
+    {{/footer}}
+{{/ core/modal }}

@@ -49,6 +49,7 @@
                 </span>
             </div>
         </div>
+        {{#caneditownmessageprofile}}
         <div class="ml-2">
             <a
                 href="#"
@@ -60,15 +61,18 @@
                 {{#pix}} t/edit, core {{/pix}}
             </a>
         </div>
+        {{/caneditownmessageprofile}}
     </div>
     <div class="text-right mt-sm-3">
         <a href="#" data-route="view-contacts" role="button">
             {{#pix}} i/user, core {{/pix}}
             {{#str}} contacts, core_message {{/str}}
-            <span class="badge badge-primary bg-primary ml-2 {{^contactrequestcount}}hidden{{/contactrequestcount}}"
-            data-region="contact-request-count"
-            aria-label="{{#str}} pendingcontactrequests, core_message, {{contactrequestcount}} {{/str}}">
-                {{contactrequestcount}}
+            <span
+                class="badge badge-primary bg-primary ml-2 {{^contactrequestcount}}hidden{{/contactrequestcount}}"
+                data-region="contact-request-count"
+            >
+                <span aria-hidden="true">{{contactrequestcount}}</span>
+                <span class="sr-only">{{#str}} pendingcontactrequests, core_message, {{contactrequestcount}} {{/str}}</span>
             </span>
         </a>
     </div>

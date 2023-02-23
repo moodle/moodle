@@ -10,7 +10,7 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
     require_once('../../config.php');
 
     if (!filter_is_enabled('tex')) {
-        print_error('filternotenabled');
+        throw new \moodle_exception('filternotenabled');
     }
 
     require_once($CFG->libdir.'/filelib.php');
@@ -28,7 +28,7 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
         $image    = $args[0];
         $pathname = $CFG->dataroot.'/filter/tex/'.$image;
     } else {
-        print_error('invalidarguments', 'error');
+        throw new \moodle_exception('invalidarguments', 'error');
     }
 
     if (!file_exists($pathname)) {

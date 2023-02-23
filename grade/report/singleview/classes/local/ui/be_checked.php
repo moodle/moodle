@@ -38,5 +38,5 @@ interface be_checked {
      * Return true if this is checked.
      * @return bool
      */
-    public function is_checked();
+    public function is_checked(): bool;
 }

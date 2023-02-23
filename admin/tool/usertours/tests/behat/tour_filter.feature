@@ -27,8 +27,8 @@ Feature: Apply tour filters to a tour
       | Tour is enabled     | 1 |
       | Role                | Student,Non-editing teacher |
     And I add steps to the "First tour" tour:
-      | targettype                  | Title             | Content |
-      | Display in middle of page   | Welcome           | Welcome to your course tour.|
+      | targettype                | Title   | id_content                   | Content type   |
+      | Display in middle of page | Welcome | Welcome to your course tour. | Manual |
     And I log out
     And I log in as "editor1"
     When I am on "Course 1" course homepage
@@ -68,8 +68,8 @@ Feature: Apply tour filters to a tour
       | Tour is enabled    | 1                 |
       | Category           | MainCat           |
     And I add steps to the "First tour" tour:
-      | targettype                | Title   | Content                     |
-      | Display in middle of page | Welcome | Welcome to your course tour.|
+      | targettype                | Title   | id_content                   | Content type   |
+      | Display in middle of page | Welcome | Welcome to your course tour. | Manual |
     And I log out
     And I log in as "student1"
     When I am on "Course 1" course homepage
@@ -100,8 +100,8 @@ Feature: Apply tour filters to a tour
       | Tour is enabled    | 1                 |
       | Course format      | Weekly format     |
     And I add steps to the "First tour" tour:
-      | targettype                | Title   | Content                     |
-      | Display in middle of page | Welcome | Welcome to your course tour.|
+      | targettype                | Title   | id_content                   | Content type   |
+      | Display in middle of page | Welcome | Welcome to your course tour. | Manual |
     And I log out
     And I log in as "student1"
     When I am on "Course 1" course homepage
@@ -132,8 +132,8 @@ Feature: Apply tour filters to a tour
       | Tour is enabled    | 1                 |
       | Courses            | C1                |
     And I add steps to the "First tour" tour:
-      | targettype                | Title   | Content                     |
-      | Display in middle of page | Welcome | Welcome to your course tour.|
+      | targettype                | Title   | id_content                   | Content type   |
+      | Display in middle of page | Welcome | Welcome to your course tour. | Manual |
     And I log out
     And I log in as "student1"
     When I am on "Course 1" course homepage
@@ -152,14 +152,11 @@ Feature: Apply tour filters to a tour
       | fullname | shortname | format | enablecompletion |
       | Course 1 | C1        | topics | 1                |
       | Course 2 | C2        | topics | 1                |
+    And the following "activities" exist:
+      | activity | course | name           | firstpagetitle | wikimode      |
+      | wiki     | C1     | Test wiki name | First page     | collaborative |
     And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Wiki" to section "1" and I fill the form with:
-      | Wiki name       | Test wiki name        |
-      | Description     | Test wiki description |
-      | First page name | First page            |
-      | Wiki mode       | Collaborative wiki    |
-    And I am on "Course 2" course homepage
+    And I am on "Course 2" course homepage with editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name  | Test forum name                |
       | Forum type  | Standard forum for general use |
@@ -171,8 +168,8 @@ Feature: Apply tour filters to a tour
       | Tour is enabled    | 1                        |
       | CSS selector       | .modtype_wiki            |
     And I add steps to the "Wiki tour" tour:
-      | targettype                | Title   | Content                  |
-      | Display in middle of page | Welcome | Welcome to the Wiki tour |
+      | targettype                | Title   | id_content               | Content type   |
+      | Display in middle of page | Welcome | Welcome to the Wiki tour | Manual |
     And I add a new user tour with:
       | Name               | Forum tour               |
       | Description        | A tour with both matches |
@@ -180,8 +177,8 @@ Feature: Apply tour filters to a tour
       | Tour is enabled    | 1                        |
       | CSS selector       | .modtype_forum           |
     And I add steps to the "Forum tour" tour:
-      | targettype                | Title   | Content                   |
-      | Display in middle of page | Welcome | Welcome to the Forum tour |
+      | targettype                | Title   | id_content                | Content type   |
+      | Display in middle of page | Welcome | Welcome to the Forum tour | Manual |
     And I am on "Course 1" course homepage
     Then I should see "Welcome to the Wiki tour"
     And I am on "Course 2" course homepage
@@ -200,8 +197,8 @@ Feature: Apply tour filters to a tour
       | Tour is enabled    | 1              |
       | CSS selector       | #page-my-index |
     And I add steps to the "First tour" tour:
-      | targettype                | Title   | Content                   |
-      | Display in middle of page | Welcome | Welcome to the First tour |
+      | targettype                | Title   | id_content                | Content type   |
+      | Display in middle of page | Welcome | Welcome to the First tour | Manual |
     And I add a new user tour with:
       | Name               | Second tour     |
       | Description        | The second tour |
@@ -209,8 +206,8 @@ Feature: Apply tour filters to a tour
       | Tour is enabled    | 0               |
       | CSS selector       | #page-my-index  |
     And I add steps to the "Second tour" tour:
-      | targettype                | Title   | Content                    |
-      | Display in middle of page | Welcome | Welcome to the Second tour |
+      | targettype                | Title   | id_content                 | Content type   |
+      | Display in middle of page | Welcome | Welcome to the Second tour | Manual |
     And I add a new user tour with:
       | Name               | Third tour     |
       | Description        | The third tour |
@@ -218,8 +215,8 @@ Feature: Apply tour filters to a tour
       | Tour is enabled    | 1               |
       | CSS selector       | #page-my-index  |
     And I add steps to the "Third tour" tour:
-      | targettype                | Title   | Content                   |
-      | Display in middle of page | Welcome | Welcome to the Third tour |
+      | targettype                | Title   | id_content                | Content type   |
+      | Display in middle of page | Welcome | Welcome to the Third tour | Manual |
     And I am on homepage
     Then I should see "Welcome to the First tour"
     And I open the User tour settings page

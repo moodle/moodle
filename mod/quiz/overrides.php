@@ -25,8 +25,6 @@
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot.'/mod/quiz/lib.php');
 require_once($CFG->dirroot.'/mod/quiz/locallib.php');
-require_once($CFG->dirroot.'/mod/quiz/override_form.php');
-
 
 $cmid = required_param('cmid', PARAM_INT);
 $mode = optional_param('mode', '', PARAM_ALPHA); // One of 'user' or 'group', default is 'group'.
@@ -66,6 +64,7 @@ $title = get_string('overridesforquiz', 'quiz',
         format_string($quiz->name, true, ['context' => $context]));
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
 $PAGE->activityheader->disable();
@@ -234,7 +233,7 @@ foreach ($overrides as $override) {
         $groupcell = new html_table_cell();
         $groupcell->rowspan = count($fields);
         $groupcell->text = html_writer::link(new moodle_url($groupurl, ['group' => $override->groupid]),
-                $override->name . $extranamebit);
+            format_string($override->name, true, ['context' => $context]) . $extranamebit);
         $usercells[] = $groupcell;
     } else {
         $usercell = new html_table_cell();
@@ -302,39 +301,17 @@ foreach ($overrides as $override) {
     }
 }
 
-// Display a list of overrides.
-echo $OUTPUT->header();
-echo $OUTPUT->heading($title);
-
-// Output the table and button.
-$output = '';
-
-$output .= html_writer::start_tag('div', ['id' => 'quizoverrides']);
-if (count($table->data)) {
-    $output .= html_writer::table($table);
-} else {
-    if ($groupmode) {
-        $output .= $OUTPUT->notification(get_string('overridesnoneforgroups', 'quiz'), 'info', false);
-    } else {
-        $output .= $OUTPUT->notification(get_string('overridesnoneforusers', 'quiz'), 'info', false);
-    }
-}
-if ($hasinactive) {
-    $output .= $OUTPUT->notification(get_string('inactiveoverridehelp', 'quiz'), 'info', false);
-}
-
-$addbutton = '';
-$options = [];
+// Work out what else needs to be displayed.
+$addenabled = true;
+$warningmessage = '';
 if ($canedit) {
-    $output .= html_writer::start_tag('div', ['class' => 'buttons']);
     if ($groupmode) {
         if (empty($groups)) {
             // There are no groups.
-            $output .= $OUTPUT->notification(get_string('groupsnone', 'quiz'), 'error');
-            $options['disabled'] = true;
+            $warningmessage = get_string('groupsnone', 'quiz');
+            $addenabled = false;
         }
     } else {
-        $users = [];
         // See if there are any students in the quiz.
         if ($showallgroups) {
             $users = get_users_by_capability($context, 'mod/quiz:attempt', 'u.id');
@@ -343,6 +320,7 @@ if ($canedit) {
             $users = get_users_by_capability($context, 'mod/quiz:attempt', 'u.id', '', '', '', array_keys($groups));
             $nousermessage = get_string('usersnone', 'quiz');
         } else {
+            $users = [];
             $nousermessage = get_string('groupsnone', 'quiz');
         }
         $info = new \core_availability\info_module($cm);
@@ -350,22 +328,44 @@ if ($canedit) {
 
         if (empty($users)) {
             // There are no students.
-            $output .= $OUTPUT->notification($nousermessage, 'error');
-            $options['disabled'] = true;
+            $warningmessage = $nousermessage;
+            $addenabled = false;
         }
     }
-    $output .= html_writer::end_tag('div');
 }
 
-$output .= html_writer::end_tag('div');
-
-// Outputs overrides action.
-$overridesaction = new \mod_quiz\output\overridesaction($cmid, $mode, $canedit, $options);
+// Tertiary navigation.
+echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('mod_quiz');
-echo $renderer->overrides_action($overridesaction);
+$tertiarynav = new \mod_quiz\output\overrides_actions($cmid, $mode, $canedit, $addenabled);
+echo $renderer->render($tertiarynav);
 
-// Now output what we captured after the overrides action.
-echo $output;
+if ($mode === 'user') {
+    echo $OUTPUT->heading(get_string('useroverrides', 'quiz'));
+} else {
+    echo $OUTPUT->heading(get_string('groupoverrides', 'quiz'));
+}
+
+// Output the table and button.
+echo html_writer::start_tag('div', ['id' => 'quizoverrides']);
+if (count($table->data)) {
+    echo html_writer::table($table);
+} else {
+    if ($groupmode) {
+        echo $OUTPUT->notification(get_string('overridesnoneforgroups', 'quiz'), 'info', false);
+    } else {
+        echo $OUTPUT->notification(get_string('overridesnoneforusers', 'quiz'), 'info', false);
+    }
+}
+if ($hasinactive) {
+    echo $OUTPUT->notification(get_string('inactiveoverridehelp', 'quiz'), 'info', false);
+}
+
+if ($warningmessage) {
+    echo $OUTPUT->notification($warningmessage, 'error');
+}
+
+echo html_writer::end_tag('div');
 
 // Finish the page.
 echo $OUTPUT->footer();

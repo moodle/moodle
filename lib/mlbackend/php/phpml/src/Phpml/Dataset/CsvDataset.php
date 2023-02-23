@@ -35,8 +35,8 @@ class CsvDataset extends ArrayDataset
         }
 
         $samples = $targets = [];
-        while (($data = fgetcsv($handle, $maxLineLength, $delimiter)) !== false) {
-            $samples[] = array_slice((array) $data, 0, $features);
+        while ($data = fgetcsv($handle, $maxLineLength, $delimiter)) {
+            $samples[] = array_slice($data, 0, $features);
             $targets[] = $data[$features];
         }
 

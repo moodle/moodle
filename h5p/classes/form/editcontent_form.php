@@ -63,6 +63,8 @@ class editcontent_form extends \moodleform {
         $mformid = 'h5peditor';
         $mform->setAttributes(array('id' => $mformid) + $mform->getAttributes());
 
+        $this->set_display_vertical();
+
         $this->add_action_buttons();
 
         $editor->add_editor_to_form($mform);

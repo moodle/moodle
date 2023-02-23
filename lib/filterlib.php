@@ -664,6 +664,13 @@ function filter_set_global_state($filtername, $state, $move = 0) {
 
     // Move only active.
     if ($move != 0 and isset($on[$filter->filter])) {
+        // Capture the old order for logging.
+        $oldorder = implode(', ', array_map(
+                function($f) {
+                    return $f->filter;
+                }, $on));
+
+        // Work out the new order.
         $i = 1;
         foreach ($on as $f) {
             $f->newsortorder = $i;
@@ -686,6 +693,13 @@ function filter_set_global_state($filtername, $state, $move = 0) {
         }
 
         core_collator::asort_objects_by_property($on, 'newsortorder', core_collator::SORT_NUMERIC);
+
+        // Log in config_log.
+        $neworder = implode(', ', array_map(
+                function($f) {
+                    return $f->filter;
+                }, $on));
+        add_to_config_log('order', $oldorder, $neworder, 'core_filter');
     }
 
     // Inactive are sorted by filter name.

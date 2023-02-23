@@ -99,7 +99,7 @@ class block_social_activities extends block_list {
                         $this->content->items[] = $content;
                         $this->content->icons[] = '';
                     } else {
-                        $cmname = new $cmnameclass($format, $cm->get_section_info(), $cm, $isediting);
+                        $cmname = new $cmnameclass($format, $cm->get_section_info(), $cm);
                         $activitybasis = html_writer::div(
                             $courserenderer->render($cmname),
                             'activity-basis d-flex align-items-center');
@@ -205,7 +205,7 @@ class block_social_activities extends block_list {
                         $this->content->items[] = $content;
                         $this->content->icons[] = '';
                     } else {
-                        $cmname = new $cmnameclass($format, $mod->get_section_info(), $mod, $isediting);
+                        $cmname = new $cmnameclass($format, $mod->get_section_info(), $mod);
                         $activitybasis = html_writer::div(
                             $courserenderer->render($cmname) .
                             $editbuttons,

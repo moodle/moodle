@@ -120,7 +120,18 @@ class api {
         $sql = "SELECT $uniqueidsql AS uniqueid, m.id, m.useridfrom, mcm.userid as useridto, m.subject, m.fullmessage,
                        m.fullmessagehtml, m.fullmessageformat, m.smallmessage, m.conversationid, m.timecreated, 0 as isread,
                        $ufields, mub.id as userfrom_blocked, $ufields2, mub2.id as userto_blocked
-                  FROM {messages} m
+                  FROM (
+                        SELECT m2.id AS id
+                          FROM {messages} m2
+                         WHERE m2.useridfrom = ?
+                         UNION
+                        SELECT m3.id AS id
+                          FROM {message_conversation_members} mcm3
+                    INNER JOIN {messages} m3 ON mcm3.conversationid = m3.conversationid
+                         WHERE mcm3.userid = ?
+                       ) der
+            INNER JOIN {messages} m
+                    ON der.id = m.id
             INNER JOIN {user} u
                     ON u.id = m.useridfrom
             INNER JOIN {message_conversations} mc
@@ -143,7 +154,7 @@ class api {
                    AND " . $DB->sql_like('smallmessage', '?', false) . "
               ORDER BY timecreated DESC";
 
-        $params = array($userid, $userid, $userid, self::MESSAGE_ACTION_DELETED, $userid, $userid,
+        $params = array($userid, $userid, $userid, $userid, $userid, self::MESSAGE_ACTION_DELETED, $userid, $userid,
             self::MESSAGE_CONVERSATION_TYPE_SELF, '%' . $search . '%');
 
         // Convert the messages into searchable contacts with their last message being the message that was searched.
@@ -203,6 +214,8 @@ class api {
             throw new \moodle_exception('disabled', 'message');
         }
 
+        require_once($CFG->dirroot . '/user/lib.php');
+
         // Used to search for contacts.
         $fullname = $DB->sql_fullname();
 
@@ -236,6 +249,11 @@ class api {
             }
         }
 
+        // We need to get all the user details for a fullname in the visibility checks.
+        $namefields = \core_user\fields::for_name()
+            // Required by the visibility checks.
+            ->including('deleted');
+
         // Let's get those non-contacts.
         // Because we can't achieve all the required visibility checks in SQL, we'll iterate through the non-contact records
         // and stop once we have enough matching the 'visible' criteria.
@@ -247,7 +265,8 @@ class api {
             $params,
             $excludeparams,
             $userid,
-            $selfconversation
+            $selfconversation,
+            $namefields
         ) {
             global $DB, $CFG;
 
@@ -258,8 +277,9 @@ class api {
 
             // Since we want to order a UNION we need to list out all the user fields individually this will
             // allow us to reference the fullname correctly.
-            $userfields = implode(', u.', get_user_fieldnames());
-            $select = "u.id, " . $DB->sql_fullname() ." AS sortingname, u." . $userfields;
+            $userfields = $namefields->get_sql('u')->selects;
+
+            $select = "u.id, " . $DB->sql_fullname() . " AS sortingname" . $userfields;
 
             // When messageallusers is false valid non-contacts must be enrolled on one of the users courses.
             if (empty($CFG->messagingallusers)) {
@@ -313,13 +333,17 @@ class api {
         // See MDL-63983 dealing with performance improvements to this area of code.
         $noofvalidseenrecords = 0;
         $returnedusers = [];
+
+        // Only fields that are also part of user_get_default_fields() are valid when passed into user_get_user_details().
+        $fields = array_intersect($namefields->get_required_fields(), user_get_default_fields());
+
         foreach ($getnoncontactusers(0, $batchlimit) as $users) {
             foreach ($users as $id => $user) {
                 // User visibility checks: only return users who are visible to the user performing the search.
                 // Which visibility check to use depends on the 'messagingallusers' (site wide messaging) setting:
                 // - If enabled, return matched users whose profiles are visible to the current user anywhere (site or course).
                 // - If disabled, only return matched users whose course profiles are visible to the current user.
-                $userdetails = \core_message\helper::search_get_user_details($user);
+                $userdetails = \core_message\helper::search_get_user_details($user, $fields);
 
                 // Return the user only if the searched field is returned.
                 // Otherwise it means that the $USER was not allowed to search the returned user.
@@ -1048,88 +1072,17 @@ class api {
     }
 
     /**
-     * Returns the an array of the users the given user is in a conversation
-     * with who are a contact and the number of unread messages.
-     *
      * @deprecated since 3.10
-     * TODO: MDL-69643
-     * @param int $userid The user id
-     * @param int $limitfrom
-     * @param int $limitnum
-     * @return array
      */
-    public static function get_contacts_with_unread_message_count($userid, $limitfrom = 0, $limitnum = 0) {
-        global $DB;
-
-        debugging('\core_message\api::get_contacts_with_unread_message_count is deprecated and no longer used',
-            DEBUG_DEVELOPER);
-
-        $userfieldsapi = \core_user\fields::for_userpic()->including('lastaccess');
-        $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
-        $unreadcountssql = "SELECT $userfields, count(m.id) as messagecount
-                              FROM {message_contacts} mc
-                        INNER JOIN {user} u
-                                ON (u.id = mc.contactid OR u.id = mc.userid)
-                         LEFT JOIN {messages} m
-                                ON ((m.useridfrom = mc.contactid OR m.useridfrom = mc.userid) AND m.useridfrom != ?)
-                         LEFT JOIN {message_conversation_members} mcm
-                                ON mcm.conversationid = m.conversationid AND mcm.userid = ? AND mcm.userid != m.useridfrom
-                         LEFT JOIN {message_user_actions} mua
-                                ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ?)
-                         LEFT JOIN {message_users_blocked} mub
-                                ON (mub.userid = ? AND mub.blockeduserid = u.id)
-                             WHERE mua.id is NULL
-                               AND mub.id is NULL
-                               AND (mc.userid = ? OR mc.contactid = ?)
-                               AND u.id != ?
-                               AND u.deleted = 0
-                          GROUP BY $userfields";
-
-        return $DB->get_records_sql($unreadcountssql, [$userid, $userid, $userid, self::MESSAGE_ACTION_READ,
-            $userid, $userid, $userid, $userid], $limitfrom, $limitnum);
+    public static function get_contacts_with_unread_message_count() {
+        throw new \coding_exception('\core_message\api::get_contacts_with_unread_message_count has been removed.');
     }
 
     /**
-     * Returns the an array of the users the given user is in a conversation
-     * with who are not a contact and the number of unread messages.
-     *
      * @deprecated since 3.10
-     * TODO: MDL-69643
-     * @param int $userid The user id
-     * @param int $limitfrom
-     * @param int $limitnum
-     * @return array
      */
-    public static function get_non_contacts_with_unread_message_count($userid, $limitfrom = 0, $limitnum = 0) {
-        global $DB;
-
-        debugging('\core_message\api::get_non_contacts_with_unread_message_count is deprecated and no longer used',
-            DEBUG_DEVELOPER);
-
-        $userfieldsapi = \core_user\fields::for_userpic()->including('lastaccess');
-        $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
-        $unreadcountssql = "SELECT $userfields, count(m.id) as messagecount
-                              FROM {user} u
-                        INNER JOIN {messages} m
-                                ON m.useridfrom = u.id
-                        INNER JOIN {message_conversation_members} mcm
-                                ON mcm.conversationid = m.conversationid
-                         LEFT JOIN {message_user_actions} mua
-                                ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ?)
-                         LEFT JOIN {message_contacts} mc
-                                ON (mc.userid = ? AND mc.contactid = u.id)
-                         LEFT JOIN {message_users_blocked} mub
-                                ON (mub.userid = ? AND mub.blockeduserid = u.id)
-                             WHERE mcm.userid = ?
-                               AND mcm.userid != m.useridfrom
-                               AND mua.id is NULL
-                               AND mub.id is NULL
-                               AND mc.id is NULL
-                               AND u.deleted = 0
-                          GROUP BY $userfields";
-
-        return $DB->get_records_sql($unreadcountssql, [$userid, self::MESSAGE_ACTION_READ, $userid, $userid, $userid],
-            $limitfrom, $limitnum);
+    public static function get_non_contacts_with_unread_message_count() {
+        throw new \coding_exception('\core_message\api::get_non_contacts_with_unread_message_count has been removed.');
     }
 
     /**
@@ -1898,7 +1851,7 @@ class api {
                 }
                 $processor->available = 1;
             } else {
-                print_error('errorcallingprocessor', 'message');
+                throw new \moodle_exception('errorcallingprocessor', 'message');
             }
         } else {
             $processor->available = 0;

@@ -20,6 +20,7 @@
  * @copyright  2018 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+$string['moreitems'] = 'Show more items';
 $string['noitems'] = 'No recent items';
 $string['pluginname'] = 'Recently accessed items';
 $string['privacy:metadata:cmid'] = 'The ID of the activity or resource';

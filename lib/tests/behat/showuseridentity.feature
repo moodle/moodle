@@ -32,6 +32,19 @@ Feature: Select user identity fields
     And I press "Save changes"
     And the field "Speciality" matches value "1"
 
+  Scenario: The admin settings screen correctly formats custom field names
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And the following "custom profile field" exists:
+      | datatype  | text  |
+      | name      | <span class="multilang" lang="en">Field (EN)</span><span class="multilang" lang="de">Field (DE)</span> |
+      | shortname | stuff |
+      | param2    | 100   |
+    When I log in as "admin"
+    And I navigate to "Users > Permissions > User policies" in site administration
+    Then I should see "Field (EN)" in the "#admin-showuseridentity" "css_element"
+    And I should not see "Field (DE)" in the "#admin-showuseridentity" "css_element"
+
   Scenario: When you choose custom fields, these should be displayed in the 'Browse list of users' screen
     Given the following config values are set as admin:
       | showuseridentity | username,department,profile_field_speciality |

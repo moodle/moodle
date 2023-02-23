@@ -48,7 +48,7 @@ class question_name_text_column extends question_name_column {
         $fields = parent::get_required_fields();
         $fields[] = 'q.questiontext';
         $fields[] = 'q.questiontextformat';
-        $fields[] = 'q.idnumber';
+        $fields[] = 'qbe.idnumber';
         return $fields;
     }
 

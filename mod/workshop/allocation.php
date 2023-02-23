@@ -63,7 +63,7 @@ $actionbar = new \mod_workshop\output\actionbar($url, $workshop);
 
 $output = $PAGE->get_renderer('mod_workshop');
 echo $output->header();
-echo $actionbar->get_allocation_menu();
+echo $output->render_allocation_menu($actionbar);
 
 if (is_null($initresult->get_status()) or $initresult->get_status() == workshop_allocation_result::STATUS_VOID) {
     echo $output->container_start('allocator-ui');

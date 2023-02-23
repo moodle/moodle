@@ -32,7 +32,7 @@ require_once('lib/filelib.php');
 
 require_login();
 if (isguestuser()) {
-    print_error('noguest');
+    throw new \moodle_exception('noguest');
 }
 
 $relativepath = get_file_argument();
@@ -40,16 +40,16 @@ $preview = optional_param('preview', null, PARAM_ALPHANUM);
 
 // relative path must start with '/'
 if (!$relativepath) {
-    print_error('invalidargorconf');
+    throw new \moodle_exception('invalidargorconf');
 } else if ($relativepath[0] != '/') {
-    print_error('pathdoesnotstartslash');
+    throw new \moodle_exception('pathdoesnotstartslash');
 }
 
 // extract relative path components
 $args = explode('/', ltrim($relativepath, '/'));
 
 if (count($args) == 0) { // always at least user id
-    print_error('invalidarguments');
+    throw new \moodle_exception('invalidarguments');
 }
 
 $contextid = (int)array_shift($args);
@@ -68,7 +68,7 @@ if ($context->contextlevel != CONTEXT_USER) {
 
 $userid = $context->instanceid;
 if ($USER->id != $userid) {
-    print_error('invaliduserid');
+    throw new \moodle_exception('invaliduserid');
 }
 
 

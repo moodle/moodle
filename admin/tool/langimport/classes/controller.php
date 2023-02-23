@@ -124,6 +124,12 @@ class controller {
         }
 
         if ($rm1 or $rm2) {
+            // Set the default site language to en if the deleted language pack is the default site language.
+            if ($CFG->lang === $lang) {
+                set_config('lang', 'en');
+                // Fix the user's current language to the default site language.
+                fix_current_language($CFG->lang);
+            }
             $this->info[] = get_string('langpackremoved', 'tool_langimport', $lang);
             event\langpack_removed::event_with_langcode($lang)->trigger();
             return true;

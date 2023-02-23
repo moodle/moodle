@@ -94,14 +94,37 @@ class load extends base {
      * the preset available settings.
      */
     public function show(): void {
+        $this->display_preset(true);
+    }
+
+    /**
+     * Displays a preset information (name, description, settings different from the current configuration...).
+     */
+    public function preview(): void {
+        $this->display_preset(false, false);
+    }
+
+    /**
+     * Method to prepare the information to preview/load the preset.
+     *
+     * @param bool $displayform Whether the form should be displayed in the page or not.
+     * @param bool $raiseexception Whether the exception should be raised or not when the preset doesn't exist. When it's set
+     * to false, a message is displayed, instead of raising the exception.
+     */
+    protected function display_preset(bool $displayform = true, bool $raiseexception = true) {
         global $DB, $OUTPUT;
 
         $data = new stdClass();
         $data->id = $this->id;
 
         // Preset data.
-        if (!$preset = $DB->get_record('tool_admin_presets', ['id' => $data->id])) {
-            throw new moodle_exception('errornopreset', 'tool_admin_presets');
+        if (!$preset = $DB->get_record('adminpresets', ['id' => $data->id])) {
+            if ($raiseexception) {
+                throw new moodle_exception('errornopreset', 'core_adminpresets');
+            } else {
+                $this->outputs = get_string('errornopreset', 'core_adminpresets');
+                return;
+            }
         }
 
         // Print preset basic data.
@@ -125,22 +148,23 @@ class load extends base {
         $applieddata->settings = $applied;
         $applieddata->beforeapplying = true;
         $application->appliedchanges = $applieddata;
-        if (empty($applied)) {
-            // Display a warning when no settings will be applied.
-            $applieddata->message = get_string('nosettingswillbeapplied', 'tool_admin_presets');
+        if ($displayform) {
+            if (empty($applied)) {
+                // Display a warning when no settings will be applied.
+                $applieddata->message = get_string('nosettingswillbeapplied', 'tool_admin_presets');
 
-            // Only display the Continue button.
-            $url = new \moodle_url('/admin/tool/admin_presets/index.php');
-            $this->moodleform = new continue_form($url);
-        } else {
-            // Display the form to apply the preset.
-            $url = new \moodle_url('/admin/tool/admin_presets/index.php', ['action' => 'load', 'mode' => 'execute']);
-            $this->moodleform = new load_form($url);
-            $this->moodleform->set_data($data);
+                // Only display the Continue button.
+                $url = new \moodle_url('/admin/tool/admin_presets/index.php');
+                $this->moodleform = new continue_form($url);
+            } else {
+                // Display the form to apply the preset.
+                $url = new \moodle_url('/admin/tool/admin_presets/index.php', ['action' => 'load', 'mode' => 'execute']);
+                $this->moodleform = new load_form($url);
+                $this->moodleform->set_data($data);
+            }
         }
 
         $this->outputs .= $OUTPUT->render_from_template('tool_admin_presets/settings_application', $application);
-
     }
 
     protected function get_explanatory_description(): ?string {

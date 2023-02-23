@@ -1,0 +1,3 @@
+username,password,firstname,lastname,email,course1,group1
+bilbob,verysecret,Bilbo,Baggins,bilbo@example.com,math102,Section 1
+frodob,somesecret,Frodo,Baggins,frodo@example.com,math102,Section 3

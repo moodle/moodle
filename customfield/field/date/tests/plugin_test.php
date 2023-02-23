@@ -14,18 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for class customfield_date
- *
- * @package    customfield_date
- * @copyright  2019 Marina Glancy
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace customfield_date;
 
-defined('MOODLE_INTERNAL') || die();
-
-use customfield_date\field_controller;
-use customfield_date\data_controller;
+use core_customfield_generator;
+use core_customfield_test_instance_form;
 
 /**
  * Functional test for customfield_date
@@ -34,7 +26,7 @@ use customfield_date\data_controller;
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class customfield_date_plugin_testcase extends advanced_testcase {
+class plugin_test extends \advanced_testcase {
 
     /** @var stdClass[]  */
     private $courses = [];
@@ -167,7 +159,7 @@ class customfield_date_plugin_testcase extends advanced_testcase {
         $this->assertStringMatchesFormat('%a 1 January 2019%a', $this->cfdata[1]->export_value());
 
         // Field without data.
-        $d = core_customfield\data_controller::create(0, null, $this->cfields[2]);
+        $d = \core_customfield\data_controller::create(0, null, $this->cfields[2]);
         $this->assertEquals(0, $d->get_value());
         $this->assertEquals(null, $d->export_value());
     }

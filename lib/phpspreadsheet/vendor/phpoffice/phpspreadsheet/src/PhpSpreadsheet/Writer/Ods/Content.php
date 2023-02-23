@@ -7,13 +7,13 @@ use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Shared\XMLWriter;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\Font;
 use PhpOffice\PhpSpreadsheet\Worksheet\Row;
+use PhpOffice\PhpSpreadsheet\Worksheet\RowCellIterator;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Exception;
 use PhpOffice\PhpSpreadsheet\Writer\Ods;
 use PhpOffice\PhpSpreadsheet\Writer\Ods\Cell\Comment;
+use PhpOffice\PhpSpreadsheet\Writer\Ods\Cell\Style;
 
 /**
  * @author     Alexander Pervakov <frost-nzcr4@jagmort.com>
@@ -22,7 +22,6 @@ class Content extends WriterPart
 {
     const NUMBER_COLS_REPEATED_MAX = 1024;
     const NUMBER_ROWS_REPEATED_MAX = 1048576;
-    const CELL_STYLE_PREFIX = 'ce';
 
     private $formulaConvertor;
 
@@ -41,7 +40,7 @@ class Content extends WriterPart
      *
      * @return string XML Output
      */
-    public function write()
+    public function write(): string
     {
         $objWriter = null;
         if ($this->getParentWriter()->getUseDiskCaching()) {
@@ -103,6 +102,7 @@ class Content extends WriterPart
 
         $this->writeSheets($objWriter);
 
+        (new AutoFilters($objWriter, $this->getParentWriter()->getSpreadsheet()))->write();
         // Defined names (ranges and formulae)
         (new NamedExpressions($objWriter, $this->getParentWriter()->getSpreadsheet(), $this->formulaConvertor))->write();
 
@@ -120,14 +120,22 @@ class Content extends WriterPart
     {
         $spreadsheet = $this->getParentWriter()->getSpreadsheet(); /** @var Spreadsheet $spreadsheet */
         $sheetCount = $spreadsheet->getSheetCount();
-        for ($i = 0; $i < $sheetCount; ++$i) {
+        for ($sheetIndex = 0; $sheetIndex < $sheetCount; ++$sheetIndex) {
             $objWriter->startElement('table:table');
-            $objWriter->writeAttribute('table:name', $spreadsheet->getSheet($i)->getTitle());
+            $objWriter->writeAttribute('table:name', $spreadsheet->getSheet($sheetIndex)->getTitle());
+            $objWriter->writeAttribute('table:style-name', Style::TABLE_STYLE_PREFIX . (string) ($sheetIndex + 1));
             $objWriter->writeElement('office:forms');
-            $objWriter->startElement('table:table-column');
-            $objWriter->writeAttribute('table:number-columns-repeated', self::NUMBER_COLS_REPEATED_MAX);
-            $objWriter->endElement();
-            $this->writeRows($objWriter, $spreadsheet->getSheet($i));
+            foreach ($spreadsheet->getSheet($sheetIndex)->getColumnDimensions() as $columnDimension) {
+                $objWriter->startElement('table:table-column');
+                $objWriter->writeAttribute(
+                    'table:style-name',
+                    sprintf('%s_%d_%d', Style::COLUMN_STYLE_PREFIX, $sheetIndex, $columnDimension->getColumnNumeric())
+                );
+                $objWriter->writeAttribute('table:default-cell-style-name', 'ce0');
+//                $objWriter->writeAttribute('table:number-columns-repeated', self::NUMBER_COLS_REPEATED_MAX);
+                $objWriter->endElement();
+            }
+            $this->writeRows($objWriter, $spreadsheet->getSheet($sheetIndex), $sheetIndex);
             $objWriter->endElement();
         }
     }
@@ -135,47 +143,49 @@ class Content extends WriterPart
     /**
      * Write rows of the specified sheet.
      */
-    private function writeRows(XMLWriter $objWriter, Worksheet $sheet): void
+    private function writeRows(XMLWriter $objWriter, Worksheet $sheet, int $sheetIndex): void
     {
         $numberRowsRepeated = self::NUMBER_ROWS_REPEATED_MAX;
         $span_row = 0;
         $rows = $sheet->getRowIterator();
-        while ($rows->valid()) {
+        foreach ($rows as $row) {
+            $cellIterator = $row->getCellIterator();
             --$numberRowsRepeated;
-            $row = $rows->current();
-            if ($row->getCellIterator()->valid()) {
+            if ($cellIterator->valid()) {
+                $objWriter->startElement('table:table-row');
                 if ($span_row) {
-                    $objWriter->startElement('table:table-row');
                     if ($span_row > 1) {
                         $objWriter->writeAttribute('table:number-rows-repeated', $span_row);
                     }
                     $objWriter->startElement('table:table-cell');
-                    $objWriter->writeAttribute('table:number-columns-repeated', self::NUMBER_COLS_REPEATED_MAX);
-                    $objWriter->endElement();
+                    $objWriter->writeAttribute('table:number-columns-repeated', (string) self::NUMBER_COLS_REPEATED_MAX);
                     $objWriter->endElement();
                     $span_row = 0;
+                } else {
+                    if ($sheet->getRowDimension($row->getRowIndex())->getRowHeight() > 0) {
+                        $objWriter->writeAttribute(
+                            'table:style-name',
+                            sprintf('%s_%d_%d', Style::ROW_STYLE_PREFIX, $sheetIndex, $row->getRowIndex())
+                        );
+                    }
+                    $this->writeCells($objWriter, $cellIterator);
                 }
-                $objWriter->startElement('table:table-row');
-                $this->writeCells($objWriter, $row);
                 $objWriter->endElement();
             } else {
                 ++$span_row;
             }
-            $rows->next();
         }
     }
 
     /**
      * Write cells of the specified row.
      */
-    private function writeCells(XMLWriter $objWriter, Row $row): void
+    private function writeCells(XMLWriter $objWriter, RowCellIterator $cells): void
     {
         $numberColsRepeated = self::NUMBER_COLS_REPEATED_MAX;
         $prevColumn = -1;
-        $cells = $row->getCellIterator();
-        while ($cells->valid()) {
+        foreach ($cells as $cell) {
             /** @var \PhpOffice\PhpSpreadsheet\Cell\Cell $cell */
-            $cell = $cells->current();
             $column = Coordinate::columnIndexFromString($cell->getColumn()) - 1;
 
             $this->writeCellSpan($objWriter, $column, $prevColumn);
@@ -185,7 +195,7 @@ class Content extends WriterPart
             // Style XF
             $style = $cell->getXfIndex();
             if ($style !== null) {
-                $objWriter->writeAttribute('table:style-name', self::CELL_STYLE_PREFIX . $style);
+                $objWriter->writeAttribute('table:style-name', Style::CELL_STYLE_PREFIX . $style);
             }
 
             switch ($cell->getDataType()) {
@@ -196,7 +206,10 @@ class Content extends WriterPart
 
                     break;
                 case DataType::TYPE_ERROR:
-                    throw new Exception('Writing of error not implemented yet.');
+                    $objWriter->writeAttribute('table:formula', 'of:=#NULL!');
+                    $objWriter->writeAttribute('office:value-type', 'string');
+                    $objWriter->writeAttribute('office:string-value', '');
+                    $objWriter->writeElement('text:p', '#NULL!');
 
                     break;
                 case DataType::TYPE_FORMULA:
@@ -218,16 +231,14 @@ class Content extends WriterPart
                     $objWriter->writeElement('text:p', $formulaValue);
 
                     break;
-                case DataType::TYPE_INLINE:
-                    throw new Exception('Writing of inline not implemented yet.');
-
-                    break;
                 case DataType::TYPE_NUMERIC:
                     $objWriter->writeAttribute('office:value-type', 'float');
                     $objWriter->writeAttribute('office:value', $cell->getValue());
                     $objWriter->writeElement('text:p', $cell->getValue());
 
                     break;
+                case DataType::TYPE_INLINE:
+                    // break intentionally omitted
                 case DataType::TYPE_STRING:
                     $objWriter->writeAttribute('office:value-type', 'string');
                     $objWriter->writeElement('text:p', $cell->getValue());
@@ -237,8 +248,8 @@ class Content extends WriterPart
             Comment::write($objWriter, $cell);
             $objWriter->endElement();
             $prevColumn = $column;
-            $cells->next();
         }
+
         $numberColsRepeated = $numberColsRepeated - $prevColumn - 1;
         if ($numberColsRepeated > 0) {
             if ($numberColsRepeated > 1) {
@@ -274,89 +285,31 @@ class Content extends WriterPart
      */
     private function writeXfStyles(XMLWriter $writer, Spreadsheet $spreadsheet): void
     {
+        $styleWriter = new Style($writer);
+
+        $sheetCount = $spreadsheet->getSheetCount();
+        for ($i = 0; $i < $sheetCount; ++$i) {
+            $worksheet = $spreadsheet->getSheet($i);
+            $styleWriter->writeTableStyle($worksheet, $i + 1);
+
+            $worksheet->calculateColumnWidths();
+            foreach ($worksheet->getColumnDimensions() as $columnDimension) {
+                if ($columnDimension->getWidth() !== -1.0) {
+                    $styleWriter->writeColumnStyles($columnDimension, $i);
+                }
+            }
+        }
+        for ($i = 0; $i < $sheetCount; ++$i) {
+            $worksheet = $spreadsheet->getSheet($i);
+            foreach ($worksheet->getRowDimensions() as $rowDimension) {
+                if ($rowDimension->getRowHeight() > 0.0) {
+                    $styleWriter->writeRowStyles($rowDimension, $i);
+                }
+            }
+        }
+
         foreach ($spreadsheet->getCellXfCollection() as $style) {
-            $writer->startElement('style:style');
-            $writer->writeAttribute('style:name', self::CELL_STYLE_PREFIX . $style->getIndex());
-            $writer->writeAttribute('style:family', 'table-cell');
-            $writer->writeAttribute('style:parent-style-name', 'Default');
-
-            // style:text-properties
-
-            // Font
-            $writer->startElement('style:text-properties');
-
-            $font = $style->getFont();
-
-            if ($font->getBold()) {
-                $writer->writeAttribute('fo:font-weight', 'bold');
-                $writer->writeAttribute('style:font-weight-complex', 'bold');
-                $writer->writeAttribute('style:font-weight-asian', 'bold');
-            }
-
-            if ($font->getItalic()) {
-                $writer->writeAttribute('fo:font-style', 'italic');
-            }
-
-            if ($color = $font->getColor()) {
-                $writer->writeAttribute('fo:color', sprintf('#%s', $color->getRGB()));
-            }
-
-            if ($family = $font->getName()) {
-                $writer->writeAttribute('fo:font-family', $family);
-            }
-
-            if ($size = $font->getSize()) {
-                $writer->writeAttribute('fo:font-size', sprintf('%.1Fpt', $size));
-            }
-
-            if ($font->getUnderline() && $font->getUnderline() != Font::UNDERLINE_NONE) {
-                $writer->writeAttribute('style:text-underline-style', 'solid');
-                $writer->writeAttribute('style:text-underline-width', 'auto');
-                $writer->writeAttribute('style:text-underline-color', 'font-color');
-
-                switch ($font->getUnderline()) {
-                    case Font::UNDERLINE_DOUBLE:
-                        $writer->writeAttribute('style:text-underline-type', 'double');
-
-                        break;
-                    case Font::UNDERLINE_SINGLE:
-                        $writer->writeAttribute('style:text-underline-type', 'single');
-
-                        break;
-                }
-            }
-
-            $writer->endElement(); // Close style:text-properties
-
-            // style:table-cell-properties
-
-            $writer->startElement('style:table-cell-properties');
-            $writer->writeAttribute('style:rotation-align', 'none');
-
-            // Fill
-            if ($fill = $style->getFill()) {
-                switch ($fill->getFillType()) {
-                    case Fill::FILL_SOLID:
-                        $writer->writeAttribute('fo:background-color', sprintf(
-                            '#%s',
-                            strtolower($fill->getStartColor()->getRGB())
-                        ));
-
-                        break;
-                    case Fill::FILL_GRADIENT_LINEAR:
-                    case Fill::FILL_GRADIENT_PATH:
-                        /// TODO :: To be implemented
-                        break;
-                    case Fill::FILL_NONE:
-                    default:
-                }
-            }
-
-            $writer->endElement(); // Close style:table-cell-properties
-
-            // End
-
-            $writer->endElement(); // Close style:style
+            $styleWriter->write($style);
         }
     }
 
@@ -374,9 +327,9 @@ class Content extends WriterPart
         $start = Coordinate::coordinateFromString($startCell);
         $end = Coordinate::coordinateFromString($endCell);
         $columnSpan = Coordinate::columnIndexFromString($end[0]) - Coordinate::columnIndexFromString($start[0]) + 1;
-        $rowSpan = $end[1] - $start[1] + 1;
+        $rowSpan = ((int) $end[1]) - ((int) $start[1]) + 1;
 
-        $objWriter->writeAttribute('table:number-columns-spanned', $columnSpan);
-        $objWriter->writeAttribute('table:number-rows-spanned', $rowSpan);
+        $objWriter->writeAttribute('table:number-columns-spanned', (string) $columnSpan);
+        $objWriter->writeAttribute('table:number-rows-spanned', (string) $rowSpan);
     }
 }

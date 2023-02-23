@@ -14,23 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for mod_lti gradebookservices
- * @package    ltiservice_gradebookservices
- * @category   external
- * @copyright  2020 Claude Vervoort <claude.vervoort@cengage.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-use ltiservice_gradebookservices\local\service\gradebookservices;
+namespace ltiservice_gradebookservices;
 
-defined('MOODLE_INTERNAL') || die();
+use ltiservice_gradebookservices\local\service\gradebookservices;
 
 /**
  * Unit tests for lti gradebookservices.
+ *
+ * @package    ltiservice_gradebookservices
+ * @category   test
+ * @copyright  2020 Claude Vervoort <claude.vervoort@cengage.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \mod_lti\service\gradebookservices\local\gradebookservices
  */
-class mod_lti_gradebookservices_testcase extends advanced_testcase {
+class gradebookservices_test extends \advanced_testcase {
 
     /**
+     * @covers ::instance_added
+     *
      * Test saving a graded LTI with resource and tag info (as a result of
      * content item selection) creates a gradebookservices record
      * that can be retrieved using the gradebook service API.
@@ -48,8 +49,10 @@ class mod_lti_gradebookservices_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $resourceid = 'test-resource-id';
         $tag = 'tag';
+        $subreviewurl = 'https://subreview.example.com';
+        $subreviewparams = 'a=2';
 
-        $ltiinstance = $this->create_graded_lti($typeid, $course, $resourceid, $tag);
+        $ltiinstance = $this->create_graded_lti($typeid, $course, $resourceid, $tag, $subreviewurl, $subreviewparams);
 
         $this->assertNotNull($ltiinstance);
 
@@ -58,11 +61,47 @@ class mod_lti_gradebookservices_testcase extends advanced_testcase {
         $this->assertNotNull($gbs);
         $this->assertEquals($resourceid, $gbs->resourceid);
         $this->assertEquals($tag, $gbs->tag);
-
-        $this->assert_lineitems($course, $typeid, $ltiinstance->name, $ltiinstance, $resourceid, $tag);
+        $this->assertEquals($subreviewurl, $gbs->subreviewurl);
+        $this->assertEquals($subreviewparams, $gbs->subreviewparams);
+        $this->assert_lineitems($course, $typeid, $ltiinstance->name,
+            $ltiinstance, $resourceid, $tag, $subreviewurl, $subreviewparams);
     }
 
     /**
+     * @covers ::instance_added
+     *
+     * Test saving a graded LTI with resource and tag info (as a result of
+     * content item selection) creates a gradebookservices record
+     * that can be retrieved using the gradebook service API.
+     */
+    public function test_lti_add_coupled_lineitem_default_subreview() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/lti/locallib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a tool type, associated with that proxy.
+
+        $typeid = $this->create_type();
+        $course = $this->getDataGenerator()->create_course();
+        $resourceid = 'test-resource-id';
+        $tag = 'tag';
+
+        $ltiinstance = $this->create_graded_lti($typeid, $course, $resourceid, $tag, 'DEFAULT');
+
+        $this->assertNotNull($ltiinstance);
+
+        $gbs = gradebookservices::find_ltiservice_gradebookservice_for_lti($ltiinstance->id);
+
+        $this->assertNotNull($gbs);
+        $this->assertEquals('DEFAULT', $gbs->subreviewurl);
+        $this->assert_lineitems($course, $typeid, $ltiinstance->name, $ltiinstance, $resourceid, $tag, 'DEFAULT');
+    }
+
+    /**
+     * @covers ::add_standalone_lineitem
+     *
      * Test saving a standalone LTI lineitem with resource and tag info
      * that can be retrieved using the gradebook service API.
      */
@@ -81,6 +120,8 @@ class mod_lti_gradebookservices_testcase extends advanced_testcase {
     }
 
     /**
+     * @covers ::find_ltiservice_gradebookservice_for_lti
+     *
      * Test line item URL is populated for coupled line item only
      * if there is not another line item bound to the lti instance,
      * since in that case there would be no rule to define which of
@@ -98,7 +139,7 @@ class mod_lti_gradebookservices_testcase extends advanced_testcase {
         $typeid = $this->create_type();
         $course = $this->getDataGenerator()->create_course();
 
-        $ltiinstance = $this->create_graded_lti($typeid, $course, 'resource-id', 'tag');
+        $ltiinstance = $this->create_graded_lti($typeid, $course, 'resource-id', 'tag', 'https://subreview.url', 'sub=review');
 
         $this->assertNotNull($ltiinstance);
 
@@ -115,6 +156,70 @@ class mod_lti_gradebookservices_testcase extends advanced_testcase {
     }
 
     /**
+     * @covers ::override_endpoint
+     *
+     * Test Submission Review URL and custom parameter is applied when the
+     * launch is submission review.
+     */
+    public function test_get_launch_parameters_coupled_subreview_override() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/lti/locallib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a tool type, associated with that proxy.
+
+        $typeid = $this->create_type();
+        $course = $this->getDataGenerator()->create_course();
+
+        $ltiinstance = $this->create_graded_lti($typeid, $course, 'resource-id', 'tag',
+            'https://example.com/subreview', 'action=review');
+
+        $this->assertNotNull($ltiinstance);
+
+        $gbservice = new gradebookservices();
+        $overrides = $gbservice->override_endpoint('LtiSubmissionReviewRequest', 'https://example.com/lti',
+            "color=blue", $course->id, $ltiinstance);
+
+        $this->assertEquals('https://example.com/subreview', $overrides[0]);
+        $this->assertEquals("color=blue\naction=review", $overrides[1]);
+    }
+
+    /**
+     * @covers ::override_endpoint
+     *
+     * Test Submission Review URL and custom parameter is applied when the
+     * launch is submission review.
+     */
+    public function test_get_launch_parameters_coupled_subreview_override_default() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/lti/locallib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a tool type, associated with that proxy.
+
+        $typeid = $this->create_type();
+        $course = $this->getDataGenerator()->create_course();
+
+        $ltiinstance = $this->create_graded_lti($typeid, $course, 'resource-id', 'tag',
+            'DEFAULT', '');
+
+        $this->assertNotNull($ltiinstance);
+
+        $gbservice = new gradebookservices();
+        $overrides = $gbservice->override_endpoint('LtiSubmissionReviewRequest', 'https://example.com/lti',
+            "color=blue", $course->id, $ltiinstance);
+
+        $this->assertEquals('https://example.com/lti', $overrides[0]);
+        $this->assertEquals("color=blue", $overrides[1]);
+    }
+
+    /**
+     * @covers ::get_launch_parameters
+     *
      * Test line item URL is populated for not coupled line item only
      * if there is a single line item attached to that lti instance.
      */
@@ -151,6 +256,8 @@ class mod_lti_gradebookservices_testcase extends advanced_testcase {
     }
 
     /**
+     * @covers ::is_user_gradable_in_course
+     *
      * Test if a user can be graded in a course.
      */
     public function test_is_user_gradable_in_course() {
@@ -176,20 +283,36 @@ class mod_lti_gradebookservices_testcase extends advanced_testcase {
      * @param object|null $ltiinstance lti instance related to that line item
      * @param string|null $resourceid resourceid the line item should have
      * @param string|null $tag tag the line item should have
+     * @param string|null $subreviewurl submission review url
+     * @param string|null $subreviewparams submission review custom params
      */
     private function assert_lineitems(object $course, int $typeid,
-            string $label, ?object $ltiinstance, ?string $resourceid, ?string $tag) : void {
+            string $label, ?object $ltiinstance, ?string $resourceid, ?string $tag,
+            ?string $subreviewurl = null, ?string $subreviewparams = null) : void {
         $gbservice = new gradebookservices();
         $gradeitems = $gbservice->get_lineitems($course->id, null, null, null, null, null, $typeid);
 
         // The 1st item in the array is the items count.
         $this->assertEquals(1, $gradeitems[0]);
-
         $lineitem = gradebookservices::item_for_json($gradeitems[1][0], '', $typeid);
         $this->assertEquals(10, $lineitem->scoreMaximum);
         $this->assertEquals($resourceid, $lineitem->resourceId);
         $this->assertEquals($tag, $lineitem->tag);
         $this->assertEquals($label, $lineitem->label);
+        $this->assertEquals(!empty($subreviewurl), isset($lineitem->submissionReview));
+        if ($subreviewurl) {
+            if ($subreviewurl == 'DEFAULT') {
+                $this->assertFalse(isset($this->submissionReview->url));
+            } else {
+                $this->assertEquals($subreviewurl, $lineitem->submissionReview->url);
+            }
+            if ($subreviewparams) {
+                $custom = $lineitem->submissionReview->custom;
+                $this->assertEquals($subreviewparams, join("\n", array_map(fn($k) => $k.'='.$custom[$k], array_keys($custom))));
+            } else {
+                $this->assertFalse(isset($this->submissionReview->custom));
+            }
+        }
 
         $gradeitems = $gbservice->get_lineitems($course->id, $resourceid, null, null, null, null, $typeid);
         $this->assertEquals(1, $gradeitems[0]);
@@ -218,17 +341,22 @@ class mod_lti_gradebookservices_testcase extends advanced_testcase {
      * @param object $course course where to add the lti instance.
      * @param string|null $resourceid resource id
      * @param string|null $tag tag
+     * @param string|null $subreviewurl submission review url
+     * @param string|null $subreviewparams submission review custom params
      *
      * @return object lti instance created
      */
-    private function create_graded_lti(int $typeid, object $course, ?string $resourceid, ?string $tag) : object {
+    private function create_graded_lti(int $typeid, object $course, ?string $resourceid, ?string $tag,
+            ?string $subreviewurl = null, ?string $subreviewparams = null) : object {
 
         $lti = ['course' => $course->id,
             'typeid' => $typeid,
             'instructorchoiceacceptgrades' => LTI_SETTING_ALWAYS,
             'grade' => 10,
             'lineitemresourceid' => $resourceid,
-            'lineitemtag' => $tag];
+            'lineitemtag' => $tag,
+            'lineitemsubreviewurl' => $subreviewurl,
+            'lineitemsubreviewparams' => $subreviewparams];
 
         return $this->getDataGenerator()->create_module('lti', $lti, array());
     }
@@ -278,14 +406,14 @@ class mod_lti_gradebookservices_testcase extends advanced_testcase {
      * Creates a new LTI Tool Type.
      */
     private function create_type() {
-        $type = new stdClass();
+        $type = new \stdClass();
         $type->state = LTI_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->clientid = "Test client ID";
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
-        $config = new stdClass();
+        $config = new \stdClass();
         $config->ltiservice_gradesynchronization = 2;
         return lti_add_type($type, $config);
     }

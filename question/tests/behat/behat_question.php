@@ -14,125 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Behat question-related steps definitions.
- *
- * @package    core_question
- * @category   test
- * @copyright  2013 David Monllaó
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
+require_once(__DIR__ . '/../../../lib/behat/behat_deprecated_base.php');
 require_once(__DIR__ . '/behat_question_base.php');
 
-use Behat\Gherkin\Node\TableNode as TableNode,
-    Behat\Mink\Exception\ExpectationException as ExpectationException,
-    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
-
 /**
- * Steps definitions related with the question bank management.
+ * Deprecated class, only kept for backwards compatibility.
  *
- * @package    core_question
- * @category   test
- * @copyright  2013 David Monllaó
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_question
+ * @category  test
+ * @copyright 2022 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since Moodle 4.0. Use behat_core_question instead
+ *      (if you need to refer to this class at all, which you probably don't).
  */
-class behat_question extends behat_question_base {
-
-    /**
-     * Creates a question in the current course questions bank with the provided data. This step can only be used when creating question types composed by a single form.
-     *
-     * @Given /^I add a "(?P<question_type_name_string>(?:[^"]|\\")*)" question filling the form with:$/
-     * @param string $questiontypename The question type name
-     * @param TableNode $questiondata The data to fill the question type form.
-     */
-    public function i_add_a_question_filling_the_form_with($questiontypename, TableNode $questiondata) {
-        // Click on create question.
-        $this->execute('behat_forms::press_button', get_string('createnewquestion', 'question'));
-
-        // Add question.
-        $this->finish_adding_question($questiontypename, $questiondata);
-    }
-
-    /**
-     * Checks the state of the specified question.
-     *
-     * @Then /^the state of "(?P<question_description_string>(?:[^"]|\\")*)" question is shown as "(?P<state_string>(?:[^"]|\\")*)"$/
-     * @throws ExpectationException
-     * @throws ElementNotFoundException
-     * @param string $questiondescription
-     * @param string $state
-     */
-    public function the_state_of_question_is_shown_as($questiondescription, $state) {
-
-        // Using xpath literal to avoid quotes problems.
-        $questiondescriptionliteral = behat_context_helper::escape($questiondescription);
-        $stateliteral = behat_context_helper::escape($state);
-
-        // Split in two checkings to give more feedback in case of exception.
-        $exception = new ElementNotFoundException($this->getSession(), 'Question "' . $questiondescription . '" ');
-        $questionxpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' que ')]" .
-                "[contains(div[@class='content']/div[contains(concat(' ', normalize-space(@class), ' '), ' formulation ')]," .
-                "{$questiondescriptionliteral})]";
-        $this->find('xpath', $questionxpath, $exception);
-
-        $exception = new ExpectationException('Question "' . $questiondescription . '" state is not "' . $state . '"', $this->getSession());
-        $xpath = $questionxpath . "/div[@class='info']/div[@class='state' and contains(., {$stateliteral})]";
-        $this->find('xpath', $xpath, $exception);
-    }
-
-    /**
-     * Activates a particular action on a particular question in the question bank UI.
-     *
-     * @When I choose :action action for :questionname in the question bank
-     * @param string $action the label for the action you want to activate.
-     * @param string $questionname the question name.
-     */
-    public function i_action_the_question($action, $questionname) {
-        // Open the menu.
-        $this->execute("behat_general::i_click_on_in_the",
-                [get_string('edit'), 'link', $questionname, 'table_row']);
-
-        // Click the action from the menu.
-        $this->execute("behat_general::i_click_on_in_the",
-                [$action, 'link', $questionname, 'table_row']);
-    }
-
-    /**
-     * A particular bulk action is visible in the question bank UI.
-     *
-     * @When I should see question bulk action :action
-     * @param string $action the value of the input for the action.
-     */
-    public function i_should_see_question_bulk_action($action) {
-        // Check if its visible.
-        $this->execute("behat_general::should_be_visible",
-            ["#bulkactionsui-container input[name='$action']", "css_element"]);
-    }
-
-    /**
-     * A particular bulk action should not be visible in the question bank UI.
-     *
-     * @When I should not see question bulk action :action
-     * @param string $action the value of the input for the action.
-     */
-    public function i_should_not_see_question_bulk_action($action) {
-        // Check if its visible.
-        $this->execute("behat_general::should_not_be_visible",
-            ["#bulkactionsui-container input[name='$action']", "css_element"]);
-    }
-
-    /**
-     * A click on a particular bulk action in the question bank UI.
-     *
-     * @When I click on question bulk action :action
-     * @param string $action the value of the input for the action.
-     */
-    public function i_click_on_question_bulk_action($action) {
-        // Click the bulk action.
-        $this->execute("behat_general::i_click_on",
-            ["#bulkactionsui-container input[name='$action']", "css_element"]);
+class behat_question extends behat_deprecated_base {
+    public function __call($name, $arguments) {
+        if (method_exists(behat_core_question::class, $name)) {
+            $this->deprecated_message('The behat_question class has been moved to behat_core_question.');
+            $this->execute("behat_core_question::{$name}", $arguments);
+        }
     }
 }

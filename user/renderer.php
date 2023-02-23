@@ -75,6 +75,53 @@ class core_user_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Construct a partial user search that'll require form handling implemented by the caller.
+     * This allows the developer to have an initials bar setup that does not automatically redirect.
+     *
+     * @param string $url the url to return to, complete with any parameters needed for the return
+     * @param string $firstinitial the first initial of the firstname
+     * @param string $lastinitial the first initial of the lastname
+     * @param bool $minirender Return a trimmed down view of the initials bar.
+     * @return string html output
+     * @throws coding_exception
+     */
+    public function partial_user_search(String $url, String $firstinitial, String $lastinitial, Bool $minirender = false): String {
+
+        $content = '';
+
+        if ($firstinitial !== 'all') {
+            set_user_preference('ifirst', $firstinitial);
+        }
+        if ($lastinitial !== 'all') {
+            set_user_preference('ilast', $lastinitial);
+        }
+
+        // Initials bar.
+        $prefixfirst = 'sifirst';
+        $prefixlast = 'silast';
+        $content .= $this->output->initials_bar(
+            $firstinitial,
+            'firstinitial',
+            get_string('firstname'),
+            $prefixfirst,
+            $url,
+            null,
+            $minirender
+        );
+        $content .= $this->output->initials_bar(
+            $lastinitial,
+            'lastinitial',
+            get_string('lastname'),
+            $prefixlast,
+            $url,
+            null,
+            $minirender
+        );
+
+        return $content;
+    }
+
+    /**
      * Displays the list of tagged users
      *
      * @param array $userlist
@@ -110,163 +157,19 @@ class core_user_renderer extends plugin_renderer_base {
 
     /**
      * Renders the unified filter element for the course participants page.
-     * @deprecated since Moodle 3.9 MDL-68612 - Please use participants_filter() instead.
-     *
-     * @param stdClass $course The course object.
-     * @param context $context The context object.
-     * @param array $filtersapplied Array of currently applied filters.
-     * @param string|moodle_url $baseurl The url with params needed to call up this page.
-     * @return bool|string
+     * @deprecated since 3.9
+     * @throws coding_exception
      */
-    public function unified_filter($course, $context, $filtersapplied, $baseurl = null) {
-        global $CFG, $DB, $USER;
+    public function unified_filter() {
+        throw new coding_exception('unified_filter cannot be used any more, please use participants_filter instead');
 
-        debugging('core_user_renderer->unified_filter() is deprecated. Please use participants_filter() instead.', DEBUG_DEVELOPER);
-
-        require_once($CFG->dirroot . '/enrol/locallib.php');
-        require_once($CFG->dirroot . '/lib/grouplib.php');
-        $manager = new course_enrolment_manager($this->page, $course);
-
-        $filteroptions = [];
-
-        // Filter options for role.
-        $roleseditable = has_capability('moodle/role:assign', $context);
-        $roles = get_viewable_roles($context);
-        if ($roleseditable) {
-            $roles += get_assignable_roles($context, ROLENAME_ALIAS);
-        }
-
-        $criteria = get_string('role');
-        $roleoptions = $this->format_filter_option(USER_FILTER_ROLE, $criteria, -1, get_string('noroles', 'role'));
-        foreach ($roles as $id => $role) {
-            $roleoptions += $this->format_filter_option(USER_FILTER_ROLE, $criteria, $id, $role);
-        }
-        $filteroptions += $roleoptions;
-
-        // Filter options for groups, if available.
-        if (has_capability('moodle/site:accessallgroups', $context) || $course->groupmode != SEPARATEGROUPS) {
-            // List all groups if the user can access all groups, or we are in visible group mode or no groups mode.
-            $groups = $manager->get_all_groups();
-            if (!empty($groups)) {
-                // Add 'No group' option, to enable filtering users without any group.
-                $nogroup[USERSWITHOUTGROUP] = (object)['name' => get_string('nogroup', 'group')];
-                $groups = $nogroup + $groups;
-            }
-        } else {
-            // Otherwise, just list the groups the user belongs to.
-            $groups = groups_get_all_groups($course->id, $USER->id);
-        }
-        $criteria = get_string('group');
-        $groupoptions = [];
-        foreach ($groups as $id => $group) {
-            $groupoptions += $this->format_filter_option(USER_FILTER_GROUP, $criteria, $id, $group->name);
-        }
-        $filteroptions += $groupoptions;
-
-        $canreviewenrol = has_capability('moodle/course:enrolreview', $context);
-
-        // Filter options for status.
-        if ($canreviewenrol) {
-            $criteria = get_string('status');
-            // Add statuses.
-            $filteroptions += $this->format_filter_option(USER_FILTER_STATUS, $criteria, ENROL_USER_ACTIVE, get_string('active'));
-            $filteroptions += $this->format_filter_option(USER_FILTER_STATUS, $criteria, ENROL_USER_SUSPENDED,
-                get_string('inactive'));
-        }
-
-        // Filter options for enrolment methods.
-        if ($canreviewenrol && $enrolmentmethods = $manager->get_enrolment_instance_names(true)) {
-            $criteria = get_string('enrolmentinstances', 'enrol');
-            $enroloptions = [];
-            foreach ($enrolmentmethods as $id => $enrolname) {
-                $enroloptions += $this->format_filter_option(USER_FILTER_ENROLMENT, $criteria, $id, $enrolname);
-            }
-            $filteroptions += $enroloptions;
-        }
-
-        $isfrontpage = ($course->id == SITEID);
-
-        // Get the list of fields we have to hide.
-        $hiddenfields = array();
-        if (!has_capability('moodle/course:viewhiddenuserfields', $context)) {
-            $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
-        }
-        $haslastaccess = !isset($hiddenfields['lastaccess']);
-        // Filter options for last access.
-        if ($haslastaccess) {
-            // Get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
-            // We need to make it diferently for normal courses and site course.
-            if (!$isfrontpage) {
-                $params = ['courseid' => $course->id, 'timeaccess' => 0];
-                $select = 'courseid = :courseid AND timeaccess != :timeaccess';
-                $minlastaccess = $DB->get_field_select('user_lastaccess', 'MIN(timeaccess)', $select, $params);
-                $lastaccess0exists = $DB->record_exists('user_lastaccess', $params);
-            } else {
-                $params = ['lastaccess' => 0];
-                $select = 'lastaccess != :lastaccess';
-                $minlastaccess = $DB->get_field_select('user', 'MIN(lastaccess)', $select, $params);
-                $lastaccess0exists = $DB->record_exists('user', $params);
-            }
-            $now = usergetmidnight(time());
-            $timeoptions = [];
-            $criteria = get_string('usersnoaccesssince');
-
-            // Days.
-            for ($i = 1; $i < 7; $i++) {
-                $timestamp = strtotime('-' . $i . ' days', $now);
-                if ($timestamp < $minlastaccess) {
-                    break;
-                }
-                $value = get_string('numdays', 'moodle', $i);
-                $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
-            }
-            // Weeks.
-            for ($i = 1; $i < 10; $i++) {
-                $timestamp = strtotime('-'.$i.' weeks', $now);
-                if ($timestamp < $minlastaccess) {
-                    break;
-                }
-                $value = get_string('numweeks', 'moodle', $i);
-                $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
-            }
-            // Months.
-            for ($i = 2; $i < 12; $i++) {
-                $timestamp = strtotime('-'.$i.' months', $now);
-                if ($timestamp < $minlastaccess) {
-                    break;
-                }
-                $value = get_string('nummonths', 'moodle', $i);
-                $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
-            }
-            // Try a year.
-            $timestamp = strtotime('-1 year', $now);
-            if ($timestamp >= $minlastaccess) {
-                $value = get_string('numyear', 'moodle', 1);
-                $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
-            }
-            if (!empty($lastaccess0exists)) {
-                $value = get_string('never', 'moodle');
-                $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
-            }
-            if (count($timeoptions) > 1) {
-                $filteroptions += $timeoptions;
-            }
-        }
-
-        // Add missing applied filters to the filter options.
-        $filteroptions = $this->handle_missing_applied_filters($filtersapplied, $filteroptions);
-
-        $indexpage = new \core_user\output\unified_filter($filteroptions, $filtersapplied, $baseurl);
-        $context = $indexpage->export_for_template($this->output);
-
-        return $this->output->render_from_template('core_user/unified_filter', $context);
     }
 
     /**
      * Render the data required for the participants filter on the course participants page.
      *
      * @param context $context The context of the course being displayed
-     * @param string $tableregionid The table to be updated by this filter
+     * @param string $tableregionid Container of the table to be updated by this filter, is used to retrieve the table
      * @return string
      */
     public function participants_filter(context $context, string $tableregionid): string {

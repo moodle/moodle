@@ -44,7 +44,7 @@ Feature: User can view activity log.
     And I follow "Ann, Jill, Grainne, Beauchamp"
     When I follow "Today's logs"
     And I should see "Assignment: Test assignment name"
-    And I click on "Back" "button"
+    And I follow "Ann, Jill, Grainne, Beauchamp"
     And I follow "All logs"
     Then I should see "Assignment: Test assignment name"
 
@@ -69,7 +69,7 @@ Feature: User can view activity log.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
-    And I select "Logs" from the "Report type" singleselect
+    And I click on "Logs" "link"
     And I set the field with xpath "//select[@name='user']" to "Ann, Jill, Grainne, Beauchamp"
     When I click on "Get these logs" "button"
     Then I should see "Ann, Jill, Grainne, Beauchamp"

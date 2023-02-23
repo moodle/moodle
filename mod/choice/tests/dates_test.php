@@ -56,30 +56,30 @@ class dates_test extends advanced_testcase {
             ],
             'only with opening time' => [
                 $after, null, [
-                    ['label' => 'Opens:', 'timestamp' => $after],
+                    ['label' => 'Opens:', 'timestamp' => $after, 'dataid' => 'timeopen'],
                 ]
             ],
             'only with closing time' => [
                 null, $after, [
-                    ['label' => 'Closes:', 'timestamp' => $after],
+                    ['label' => 'Closes:', 'timestamp' => $after, 'dataid' => 'timeclose'],
                 ]
             ],
             'with both times' => [
                 $after, $later, [
-                    ['label' => 'Opens:', 'timestamp' => $after],
-                    ['label' => 'Closes:', 'timestamp' => $later],
+                    ['label' => 'Opens:', 'timestamp' => $after, 'dataid' => 'timeopen'],
+                    ['label' => 'Closes:', 'timestamp' => $later, 'dataid' => 'timeclose'],
                 ]
             ],
             'between the dates' => [
                 $before, $after, [
-                    ['label' => 'Opened:', 'timestamp' => $before],
-                    ['label' => 'Closes:', 'timestamp' => $after],
+                    ['label' => 'Opened:', 'timestamp' => $before, 'dataid' => 'timeopen'],
+                    ['label' => 'Closes:', 'timestamp' => $after, 'dataid' => 'timeclose'],
                 ]
             ],
             'dates are past' => [
                 $earlier, $before, [
-                    ['label' => 'Opened:', 'timestamp' => $earlier],
-                    ['label' => 'Closed:', 'timestamp' => $before],
+                    ['label' => 'Opened:', 'timestamp' => $earlier, 'dataid' => 'timeopen'],
+                    ['label' => 'Closed:', 'timestamp' => $before, 'dataid' => 'timeclose'],
                 ]
             ],
         ];

@@ -14,16 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * core_customfield test data generator test.
- *
- * @package    core_customfield
- * @category   test
- * @copyright  2018 Ruslan Kabalin
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace core_customfield;
 
 /**
  * core_customfield test data generator testcase.
@@ -33,13 +24,13 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Ruslan Kabalin
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_customfield_generator_testcase extends advanced_testcase {
+class generator_test extends \advanced_testcase {
 
     /**
      * Get generator
      * @return core_customfield_generator
      */
-    protected function get_generator(): core_customfield_generator {
+    protected function get_generator(): \core_customfield_generator {
         return $this->getDataGenerator()->get_plugin_generator('core_customfield');
     }
 
@@ -69,7 +60,7 @@ class core_customfield_generator_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core_customfield\field_controller', $field);
         $this->assertTrue(\core_customfield\field::record_exists($field->get('id')));
 
-        $category = core_customfield\category_controller::create($category->get('id'));
+        $category = \core_customfield\category_controller::create($category->get('id'));
         $category = \core_customfield\api::get_categories_with_fields($category->get('component'),
             $category->get('area'), $category->get('itemid'))[$category->get('id')];
         $this->assertCount(1, $category->get_fields());
