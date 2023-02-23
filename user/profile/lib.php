@@ -440,12 +440,16 @@ class profile_field_base {
     /**
      * Check if the field data is visible to the current user
      * @internal This method should not generally be overwritten by child classes.
+     *
+     * @param context|null $context
      * @return bool
      */
-    public function is_visible() {
+    public function is_visible(?context $context = null): bool {
         global $USER, $COURSE;
 
-        $context = ($this->userid > 0) ? context_user::instance($this->userid) : context_system::instance();
+        if ($context === null) {
+            $context = ($this->userid > 0) ? context_user::instance($this->userid) : context_system::instance();
+        }
 
         switch ($this->field->visible) {
             case PROFILE_VISIBLE_TEACHERS:
@@ -594,12 +598,31 @@ class profile_field_base {
 }
 
 /**
+ * Return profile field instance for given type
+ *
+ * @param string $type
+ * @param int $fieldid
+ * @param int $userid
+ * @param stdClass|null $fielddata
+ * @return profile_field_base
+ */
+function profile_get_user_field(string $type, int $fieldid = 0, int $userid = 0, ?stdClass $fielddata = null): profile_field_base {
+    global $CFG;
+
+    require_once("{$CFG->dirroot}/user/profile/field/{$type}/field.class.php");
+
+    // Return instance of profile field type.
+    $profilefieldtype = "profile_field_{$type}";
+    return new $profilefieldtype($fieldid, $userid, $fielddata);
+}
+
+/**
  * Returns an array of all custom field records with any defined data (or empty data), for the specified user id.
  * @param int $userid
  * @return profile_field_base[]
  */
 function profile_get_user_fields_with_data(int $userid): array {
-    global $DB, $CFG;
+    global $DB;
 
     // Join any user info data present with each user info field for the user object.
     $sql = 'SELECT uif.*, uic.name AS categoryname ';
@@ -615,11 +638,8 @@ function profile_get_user_fields_with_data(int $userid): array {
     $fields = $DB->get_records_sql($sql, ['userid' => $userid]);
     $data = [];
     foreach ($fields as $field) {
-        require_once($CFG->dirroot . '/user/profile/field/' . $field->datatype . '/field.class.php');
-        $classname = 'profile_field_' . $field->datatype;
         $field->hasuserdata = !empty($field->hasuserdata);
-        /** @var profile_field_base $fieldobject */
-        $fieldobject = new $classname($field->id, $userid, $field);
+        $fieldobject = profile_get_user_field($field->datatype, $field->id, $userid, $field);
         $fieldobject->set_category_name($field->categoryname);
         unset($field->categoryname);
         $data[] = $fieldobject;

@@ -3,6 +3,8 @@ This files describes API changes for code that uses the user API.
 === 4.0.7 ===
 
 * New method `core_user::is_current_user`, useful for components implementing permission callbacks for their preferences
+* New `profile_get_user_field` method for returning profile field instance of given type
+* The `profile_field_base::is_visible` method now accepts an optional `$context` argument
 
 === 4.0.6 ===
 * Added a new method is_transform_supported() in the profile_field_base class.
