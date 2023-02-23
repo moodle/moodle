@@ -94,6 +94,8 @@ require_once($CFG->dirroot . '/mod/assign/renderable.php');
 require_once($CFG->dirroot . '/mod/assign/gradingtable.php');
 require_once($CFG->libdir . '/portfolio/caller.php');
 
+use mod_assign\event\submission_removed;
+use mod_assign\event\submission_status_updated;
 use \mod_assign\output\grading_app;
 use \mod_assign\output\assign_header;
 use \mod_assign\output\assign_submission_status;
@@ -8211,6 +8213,7 @@ class assign {
      *
      * @param int $userid
      * @return boolean
+     * @throws coding_exception
      */
     public function remove_submission($userid) {
         global $USER;
@@ -8248,9 +8251,8 @@ class assign {
             $completion->update_state($this->get_course_module(), COMPLETION_INCOMPLETE, $userid);
         }
 
-        if ($submission->userid != 0) {
-            \mod_assign\event\submission_status_updated::create_from_submission($this, $submission)->trigger();
-        }
+        submission_removed::create_from_submission($this, $submission)->trigger();
+        submission_status_updated::create_from_submission($this, $submission)->trigger();
         return true;
     }
 
