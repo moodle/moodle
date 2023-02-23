@@ -191,6 +191,80 @@ class events_test extends \advanced_testcase {
         }
     }
 
+    /**
+     * Test submission_removed event.
+     *
+     * @covers \mod_assign\event\submission_removed
+     */
+    public function test_submission_removed() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        $assign = $this->create_instance($course);
+        $this->add_submission($student, $assign);
+        $submission = $assign->get_user_submission($student->id, 0);
+
+        $sink = $this->redirectEvents();
+        $assign->remove_submission($student->id);
+        $events = $sink->get_events();
+        $this->assertCount(2, $events);
+        $event = $events[0];
+        $this->assertInstanceOf('mod_assign\event\submission_removed', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $this->assertEquals($submission->id, $event->objectid);
+        $this->assertEquals($student->id, $event->relateduserid);
+        $this->assertEquals($submission->id, $event->other['submissionid']);
+        $this->assertEquals(0, $event->other['submissionattempt']);
+        $this->assertEquals(ASSIGN_SUBMISSION_STATUS_NEW, $event->other['submissionstatus']);
+        $this->assertEquals(0, $event->other['groupid']);
+        $this->assertEquals(null, $event->other['groupname']);
+        $sink->close();
+    }
+
+    /**
+     * Test submission_removed event when a team submission is removed.
+     *
+     * @covers \mod_assign\event\submission_removed
+     */
+    public function test_team_submission_removed() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        groups_add_member($group, $student);
+
+        $otherstudent = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        groups_add_member($group, $otherstudent);
+
+        $assign = $this->create_instance($course, [
+            'teamsubmission' => 1,
+        ]);
+        $this->add_submission($student, $assign);
+        $submission = $assign->get_group_submission($student->id, 0, true);
+
+        $sink = $this->redirectEvents();
+        $assign->remove_submission($student->id);
+        $events = $sink->get_events();
+        $this->assertCount(2, $events);
+        $event = $events[0];
+        $this->assertInstanceOf('mod_assign\event\submission_removed', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $this->assertEquals($submission->id, $event->objectid);
+        $this->assertEquals(null, $event->relateduserid);
+        $this->assertEquals($submission->id, $event->other['submissionid']);
+        $this->assertEquals(0, $event->other['submissionattempt']);
+        $this->assertEquals(ASSIGN_SUBMISSION_STATUS_NEW, $event->other['submissionstatus']);
+        $this->assertEquals($group->id, $event->other['groupid']);
+        $this->assertEquals($group->name, $event->other['groupname']);
+        $sink->close();
+    }
+
     public function test_extension_granted() {
         $this->resetAfterTest();
 
@@ -345,7 +419,12 @@ class events_test extends \advanced_testcase {
         $this->assertEventContextNotUsed($event);
     }
 
-    public function test_submission_status_updated() {
+    /**
+     * Test submission_status_updated event when a submission is updated.
+     *
+     * @covers \mod_assign\event\submission_status_updated
+     */
+    public function test_submission_status_updated_on_update() {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -379,6 +458,95 @@ class events_test extends \advanced_testcase {
                 'fullname' => fullname($student))),
             $assign->get_course_module()->id
         );
+        $this->assertEventLegacyLogData($expected, $event);
+        $sink->close();
+    }
+
+    /**
+     * Test submission_status_updated event when a submission is removed.
+     *
+     * @covers \mod_assign\event\submission_status_updated
+     */
+    public function test_submission_status_updated_on_remove() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        $assign = $this->create_instance($course);
+        $this->add_submission($student, $assign);
+        $submission = $assign->get_user_submission($student->id, false);
+
+        $sink = $this->redirectEvents();
+        $assign->remove_submission($student->id);
+
+        $events = $sink->get_events();
+        $this->assertCount(2, $events);
+
+        $event = $events[1];
+        $this->assertInstanceOf('\mod_assign\event\submission_status_updated', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $this->assertEquals($submission->id, $event->objectid);
+        $this->assertEquals($student->id, $event->relateduserid);
+        $this->assertEquals(ASSIGN_SUBMISSION_STATUS_NEW, $event->other['newstatus']);
+        $expected = [
+            $assign->get_course()->id,
+            'assign',
+            'revert submission to draft',
+            'view.php?id=' . $assign->get_course_module()->id,
+            get_string('reverttodraftforstudent', 'assign', ['id' => $student->id,
+                'fullname' => fullname($student)]),
+            $assign->get_course_module()->id
+        ];
+        $this->assertEventLegacyLogData($expected, $event);
+        $sink->close();
+    }
+
+    /**
+     * Test submission_status_updated event when a team submission is removed.
+     *
+     * @covers \mod_assign\event\submission_status_updated
+     */
+    public function test_team_submission_status_updated_on_remove() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        groups_add_member($group, $student);
+
+        $otherstudent = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        groups_add_member($group, $otherstudent);
+
+        $assign = $this->create_instance($course, [
+            'teamsubmission' => 1,
+        ]);
+        $this->add_submission($student, $assign);
+        $submission = $assign->get_group_submission($student->id, 0, false);
+
+        $sink = $this->redirectEvents();
+        $assign->remove_submission($student->id);
+
+        $events = $sink->get_events();
+        $this->assertCount(2, $events);
+
+        $event = $events[1];
+        $this->assertInstanceOf('\mod_assign\event\submission_status_updated', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $this->assertEquals($submission->id, $event->objectid);
+        $this->assertEquals(null, $event->relateduserid);
+        $this->assertEquals(ASSIGN_SUBMISSION_STATUS_NEW, $event->other['newstatus']);
+        $expected = [
+            $course->id,
+            'assign',
+            'revert submission to draft',
+            'view.php?id=' . $assign->get_course_module()->id,
+            get_string('reverttodraftforgroup', 'assign', $group->id),
+            $assign->get_course_module()->id
+        ];
         $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
     }
