@@ -14,19 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Stats check
- *
- * @package    core
- * @category   check
- * @copyright  2020 Brendan Heywood <brendan@catalyst-au.net>
- * @copyright  2008 petr Skoda
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\check\performance;
-
-defined('MOODLE_INTERNAL') || die();
 
 use core\check\check;
 use core\check\result;
@@ -34,7 +22,10 @@ use core\check\result;
 /**
  * Stats check
  *
+ * @package    core
+ * @category   check
  * @copyright  2020 Brendan Heywood <brendan@catalyst-au.net>
+ * @copyright  2008 petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class stats extends check {
@@ -45,7 +36,7 @@ class stats extends check {
      * @return string
      */
     public function get_name(): string {
-        return get_string('check_riskadmin_name', 'report_security');
+        return get_string('stats');
     }
 
     /**
