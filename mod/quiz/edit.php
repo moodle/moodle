@@ -150,9 +150,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     // If rescaling is required save the new maximum.
     $maxgrade = unformat_float(optional_param('maxgrade', '', PARAM_RAW_TRIMMED), true);
     if (is_float($maxgrade) && $maxgrade >= 0) {
-        quiz_set_grade($maxgrade, $quiz);
-        $gradecalculator->recompute_all_final_grades();
-        quiz_update_grades($quiz, 0, true);
+        $gradecalculator->update_quiz_maximum_grade($maxgrade);
     }
 
     redirect($afteractionurl);

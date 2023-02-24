@@ -351,3 +351,25 @@ function quiz_update_all_final_grades($quiz) {
         'Please use a standard grade_calculator::recompute_all_final_grades instead.', DEBUG_DEVELOPER);
     quiz_settings::create($quiz->id)->get_grade_calculator()->recompute_all_final_grades();
 }
+
+/**
+ * The quiz grade is the maximum that student's results are marked out of. When it
+ * changes, the corresponding data in quiz_grades and quiz_feedback needs to be
+ * rescaled. After calling this function, you probably need to call
+ * quiz_update_all_attempt_sumgrades, grade_calculator::recompute_all_final_grades();
+ * quiz_update_grades. (At least, that is what this comment has said for years, but
+ * it seems to call recompute_all_final_grades itself.)
+ *
+ * @param float $newgrade the new maximum grade for the quiz.
+ * @param stdClass $quiz the quiz we are updating. Passed by reference so its
+ *      grade field can be updated too.
+ * @return bool indicating success or failure.
+ * @deprecated since Moodle 4.2. Please use grade_calculator::update_quiz_maximum_grade.
+ * @todo MDL-76612 Final deprecation in Moodle 4.6
+ */
+function quiz_set_grade($newgrade, $quiz) {
+    debugging('quiz_set_grade is deprecated. ' .
+        'Please use a standard grade_calculator::update_quiz_maximum_grade instead.', DEBUG_DEVELOPER);
+    quiz_settings::create($quiz->id)->get_grade_calculator()->update_quiz_maximum_grade($newgrade);
+    return true;
+}

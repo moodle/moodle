@@ -16,7 +16,9 @@
 
 namespace mod_quiz;
 
+use mod_quiz\event\quiz_grade_updated;
 use question_engine_data_mapper;
+use stdClass;
 
 /**
  * This class contains all the logic for computing the grade of a quiz.
@@ -64,7 +66,7 @@ class grade_calculator {
      *
      * You should call {@see quiz_delete_previews()} before you call this function.
      */
-    public function recompute_quiz_sumgrades() {
+    public function recompute_quiz_sumgrades(): void {
         global $DB;
         $quiz = $this->quizobj->get_quiz();
 
@@ -86,14 +88,14 @@ class grade_calculator {
             // If the quiz has been attempted, and the sumgrades has been
             // set to 0, then we must also set the maximum possible grade to 0, or
             // we will get a divide by zero error.
-            quiz_set_grade(0, $quiz);
+            self::update_quiz_maximum_grade(0);
         }
     }
 
     /**
      * Update the sumgrades field of attempts at this quiz.
      */
-    public function recompute_all_attempt_sumgrades() {
+    public function recompute_all_attempt_sumgrades(): void {
         global $DB;
         $dm = new question_engine_data_mapper();
         $timenow = time();
@@ -259,5 +261,78 @@ class grade_calculator {
             $DB->delete_records_select('quiz_grades', 'quiz = ? AND userid ' . $test,
                     array_merge([$quiz->id], $params));
         }
+    }
+
+    /**
+     * Update the quiz setting for the grade the quiz is out of.
+     *
+     * This function will update the data in quiz_grades and quiz_feedback, and
+     * pass the new grades on to the gradebook.
+     *
+     * @param float $newgrade the new maximum grade for the quiz.
+     */
+    public function update_quiz_maximum_grade(float $newgrade): void {
+        global $DB;
+        $quiz = $this->quizobj->get_quiz();
+
+        // This is potentially expensive, so only do it if necessary.
+        if (abs($quiz->grade - $newgrade) < self::ALMOST_ZERO) {
+            // Nothing to do.
+            return;
+        }
+
+        // Use a transaction.
+        $transaction = $DB->start_delegated_transaction();
+
+        // Update the quiz table.
+        $oldgrade = $quiz->grade;
+        $quiz->grade = $newgrade;
+        $timemodified = time();
+        $DB->update_record('quiz', (object) [
+            'id' => $quiz->id,
+            'grade' => $newgrade,
+            'timemodified' => $timemodified,
+        ]);
+
+        // Rescale the grade of all quiz attempts.
+        if ($oldgrade < $newgrade) {
+            // The new total is bigger, so we need to recompute fully to avoid underflow problems.
+            $this->recompute_all_final_grades();
+
+        } else {
+            // New total smaller, so we can rescale the grades efficiently.
+            $DB->execute("
+                    UPDATE {quiz_grades}
+                       SET grade = ? * grade, timemodified = ?
+                     WHERE quiz = ?
+            ", [$newgrade / $oldgrade, $timemodified, $quiz->id]);
+        }
+
+        // Rescale the overall feedback boundaries.
+        if ($oldgrade > self::ALMOST_ZERO) {
+            // Update the quiz_feedback table.
+            $factor = $newgrade / $oldgrade;
+            $DB->execute("
+                    UPDATE {quiz_feedback}
+                    SET mingrade = ? * mingrade, maxgrade = ? * maxgrade
+                    WHERE quizid = ?
+            ", [$factor, $factor, $quiz->id]);
+        }
+
+        // Update grade item and send all grades to gradebook.
+        quiz_grade_item_update($quiz);
+        quiz_update_grades($quiz);
+
+        // Log quiz grade updated event.
+        quiz_grade_updated::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $quiz->id,
+            'other' => [
+                'oldgrade' => $oldgrade + 0, // Remove trailing 0s.
+                'newgrade' => $newgrade,
+            ]
+        ])->trigger();
+
+        $transaction->allow_commit();
     }
 }

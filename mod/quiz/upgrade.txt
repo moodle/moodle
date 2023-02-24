@@ -82,6 +82,7 @@ This files describes API changes in the quiz code.
   - quiz_update_sumgrades -> recompute_quiz_sumgrades
   - quiz_update_all_attempt_sumgrades -> recompute_all_attempt_sumgrades
   - quiz_update_all_final_grades -> recompute_all_final_grades
+  - quiz_set_grade -> update_quiz_maximum_grade
 
 * Final deprecation (complete removal) of the following functions which were deprecated long ago:
   - quiz_groups_member_added_handler - deprecated since 2.6
