@@ -85,6 +85,7 @@ This files describes API changes in the quiz code.
   - quiz_set_grade -> update_quiz_maximum_grade
   - quiz_save_best_grade -> recompute_final_grade
   - quiz_calculate_best_grade -> [no public direct replacement]
+  - quiz_calculate_best_attempt - [no replacement. It was not used.]
 
 * Final deprecation (complete removal) of the following functions which were deprecated long ago:
   - quiz_groups_member_added_handler - deprecated since 2.6

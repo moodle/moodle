@@ -441,3 +441,46 @@ function quiz_calculate_best_grade($quiz, $attempts) {
             return $max;
     }
 }
+
+/**
+ * Return the attempt with the best grade for a quiz
+ *
+ * Which attempt is the best depends on $quiz->grademethod. If the grade
+ * method is GRADEAVERAGE then this function simply returns the last attempt.
+ * @return stdClass         The attempt with the best grade
+ * @param stdClass $quiz    The quiz for which the best grade is to be calculated
+ * @param array $attempts An array of all the attempts of the user at the quiz
+ * @deprecated since Moodle 4.2. No direct replacement.
+ * @todo MDL-76612 Final deprecation in Moodle 4.6
+ */
+function quiz_calculate_best_attempt($quiz, $attempts) {
+    debugging('quiz_calculate_best_attempt is deprecated with no direct replacement. ' .
+        'It was not used anywhere!', DEBUG_DEVELOPER);
+
+    switch ($quiz->grademethod) {
+
+        case QUIZ_ATTEMPTFIRST:
+            foreach ($attempts as $attempt) {
+                return $attempt;
+            }
+            break;
+
+        case QUIZ_GRADEAVERAGE: // We need to do something with it.
+        case QUIZ_ATTEMPTLAST:
+            foreach ($attempts as $attempt) {
+                $final = $attempt;
+            }
+            return $final;
+
+        default:
+        case QUIZ_GRADEHIGHEST:
+            $max = -1;
+            foreach ($attempts as $attempt) {
+                if ($attempt->sumgrades > $max) {
+                    $max = $attempt->sumgrades;
+                    $maxattempt = $attempt;
+                }
+            }
+            return $maxattempt;
+    }
+}
