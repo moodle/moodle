@@ -362,3 +362,21 @@ Feature: Basic OAuth2 functionality
     And I navigate to "Server > OAuth 2 services" in site administration
     And "Allow login" "icon" should exist in the "Empty custom service" "table_row"
     And "Do not allow services" "icon" should exist in the "Empty custom service" "table_row"
+
+  @javascript
+  Scenario: Changes to "Authenticate token requests via HTTP headers" are saved
+    Given I press "Custom"
+    And I set the following fields to these values:
+      | Name                              | Custom service                     |
+      | Client ID                         | thisistheclientid                  |
+      | Client secret                     | supersecret                        |
+    And I press "Save changes"
+    When I click on "Edit" "link" in the "Custom service" "table_row"
+    And I click on "Authenticate token requests via HTTP headers" "checkbox"
+    And I press "Save changes"
+    And I click on "Edit" "link" in the "Custom service" "table_row"
+    And the field "Authenticate token requests via HTTP headers" matches value "1"
+    And I click on "Authenticate token requests via HTTP headers" "checkbox"
+    And I press "Save changes"
+    And I click on "Edit" "link" in the "Custom service" "table_row"
+    Then the field "Authenticate token requests via HTTP headers" matches value ""
