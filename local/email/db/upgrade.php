@@ -427,6 +427,21 @@ function xmldb_local_email_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018112402, 'local', 'email');
     }
 
+    if ($oldversion < 2023022400) {
+
+        // Define field default to be added to email_templateset.
+        $table = new xmldb_table('email_templateset');
+        $field = new xmldb_field('isdefault', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'templatesetname');
+
+        // Conditionally launch add field default.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Email savepoint reached.
+        upgrade_plugin_savepoint(true, 2023022400, 'local', 'email');
+    }
+
     return $result;
 
 }

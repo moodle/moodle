@@ -153,6 +153,15 @@ class block_iomad_company_admin_external extends external_api {
             $companydetails = $DB->get_record('company', array('id' => $companyid));
             $companydetails->category = $coursecat->id;
             $DB->update_record('company', $companydetails);
+
+            // Deal with default email template set.
+            if ($emailtemplateset = $DB->get_record('email_templateset', ['isdefault' => 1])) {
+
+                $companyobj = new company($companyid);
+                $companyobj->apply_email_templates($emailtemplateset->id);
+            }
+
+
         }
 
         return $companyinfo;

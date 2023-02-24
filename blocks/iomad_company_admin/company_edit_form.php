@@ -94,6 +94,9 @@ if (!$new) {
     $companyrecord->previousroletemplateid = 0;
     $companyrecord->previousemailtemplateid = 0;
     $companyrecord->maxusers = 0;
+    if ($emailtemplateset = $DB->get_record('email_templateset', ['isdefault' => 1])) {
+        $companyrecord->emailtemplate = $emailtemplateset->id;
+    }
 
     if (!empty($parentid) && iomad::has_capability('block/iomad_company_admin:company_add_child', $context)) {
         // We are adding a child company.

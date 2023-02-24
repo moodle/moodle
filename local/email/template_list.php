@@ -27,54 +27,6 @@ require_once( 'config.php');
 require_once( 'lib.php');
 require_once($CFG->dirroot . '/local/iomad/lib/user.php');
 
-// Set up the save form.
-class company_templateset_save_form extends company_moodleform {
-
-    public function __construct($actionurl,
-                                $companyid,
-                                $templatesetid) {
-
-        $this->companyid = $companyid;
-        $this->templatesetid = $templatesetid;
-
-        parent::__construct($actionurl);
-    }
-
-    public function definition() {
-        $this->_form->addElement('hidden', 'companyid', $this->companyid);
-        $this->_form->setType('companyid', PARAM_INT);
-    }
-
-    public function definition_after_data() {
-
-        $mform =& $this->_form;
-
-        $mform->addElement('hidden', 'templatesetid', $this->templatesetid);
-        $mform->setType('templatesetid', PARAM_INT);
-
-        $mform->addElement('text',  'templatesetname', get_string('templatesetname', 'local_email'),
-                           'maxlength="254" size="50"');
-        $mform->addHelpButton('templatesetname', 'templatesetname', 'local_email');
-        $mform->addRule('templatesetname', get_string('missingtemplatesetname', 'local_email'), 'required', null, 'client');
-        $mform->setType('templatesetname', PARAM_MULTILANG);
-
-        $this->add_action_buttons(true, get_string('savetemplateset', 'local_email'));
-    }
-
-    public function validation($data, $files) {
-        global $DB;
-        $errors = array();
-
-        if ($DB->get_record_sql("SELECT id FROM {email_templateset}
-                                 where " . $DB->sql_compare_text('templatesetname') ." = :templatesetname",
-                                 array('templatesetname' => $data['templatesetname']))) {
-            $errors['templatesetname'] = get_string('templatesetnamealreadyinuse', 'local_email');
-        }
-
-        return $errors;
-    }
-}
-
 $delete       = optional_param('delete', 0, PARAM_INT);
 $confirm      = optional_param('confirm', '', PARAM_ALPHANUM);   // Md5 confirmation hash.
 $sort         = optional_param('sort', 'name', PARAM_ALPHA);
@@ -123,7 +75,8 @@ $block = 'local_email';
 $linktext = get_string('template_list_title', $block);
 // Set the url.
 $linkurl = new moodle_url('/local/email/template_list.php');
-$manageurl = new moodle_url('/local/email/template_list.php', array('manage' => 1));
+$manageurl = new moodle_url('/local/email/template_list.php', ['manage' => 1]);
+$finishedurl = new moodle_url('/local/email/template_list.php', ['manage' => 1, 'finished' => 1]);
 
 // Print the page header.
 $PAGE->set_context($context);
@@ -495,9 +448,51 @@ if ($action == 'delete' && confirm_sesskey()) {
         redirect($manageurl,get_string('templatesetdeleted', 'local_email'), null, \core\output\notification::NOTIFY_SUCCESS);
         die;
     }
+} else if ($action == 'setdefault' && confirm_sesskey()) {
+    if ($confirm != md5($templatesetid)) {
+        echo $output->header();
+
+        if (!$templatesetinfo = $DB->get_record('email_templateset', array('id' => $templatesetid))) {
+            print_error('templatesetnotfound', 'local_email');
+        }
+
+        $optionsyes = array('templatesetid' => $templatesetid, 'confirm' => md5($templatesetid), 'sesskey' => sesskey(), 'action' => 'setdefault');
+        echo $OUTPUT->confirm(get_string('setdefaulttemplatesetfull', 'local_email', "'" . $templatesetinfo->templatesetname ."'"),
+                              new moodle_url('/local/email/template_list.php', $optionsyes),
+                                             '/local/email/template_list.php');
+        echo $OUTPUT->footer();
+        die;
+    } else {
+        // Set the template set as default.
+        $DB->set_field('email_templateset', 'isdefault', 0, []);
+        $DB->set_field('email_templateset', 'isdefault', 1, ['id' => $templatesetid]);
+        redirect($finishedurl, get_string('templatesetsetdefault', 'local_email'), null, \core\output\notification::NOTIFY_SUCCESS);
+        die;
+    }
+} else if ($action == 'unsetdefault' && confirm_sesskey()) {
+    if ($confirm != md5($templatesetid)) {
+        echo $output->header();
+
+        if (!$templatesetinfo = $DB->get_record('email_templateset', array('id' => $templatesetid))) {
+            print_error('templatesetnotfound', 'local_email');
+        }
+
+        $optionsyes = array('templatesetid' => $templatesetid, 'confirm' => md5($templatesetid), 'sesskey' => sesskey(), 'action' => 'unsetdefault');
+        echo $OUTPUT->confirm(get_string('unsetdefaulttemplatesetfull', 'local_email', "'" . $templatesetinfo->templatesetname ."'"),
+                              new moodle_url('/local/email/template_list.php', $optionsyes),
+                                             '/local/email/template_list.php');
+        echo $OUTPUT->footer();
+        die;
+    } else {
+        // Set the template set as default.
+        $DB->set_field('email_templateset', 'isdefault', 0, []);
+        redirect($finishedurl, get_string('templatesetsetdefault', 'local_email'), null, \core\output\notification::NOTIFY_SUCCESS);
+        die;
+    }
 }
 
-$mform = new company_templateset_save_form($linkurl, $companyid, $templatesetid);
+// Set up the form.
+$mform = new \local_email\forms\company_templateset_save_form($linkurl, $companyid, $templatesetid);
 
 if ($data = $mform->get_data()) {
     // Save the template.
@@ -524,6 +519,7 @@ if (!empty($save)) {
 }
 
 $company = new company($companyid);
+
 // Check we can actually do anything on this page.
 if (empty($templatesetid)) {
     iomad::require_capability('local/email:list', $context);
@@ -565,8 +561,17 @@ $ntemplates = count($configtemplates);
 if ($manage) {
     if (empty($templatesetid)) {
         // Display the list of templates.
-        $templates = $DB->get_records('email_templateset', array(), 'templatesetname');
-        echo $output->email_templatesets($templates, $linkurl);
+        $table = new \local_email\tables\templatesets_table('email_templatessets_table');
+        $table->set_sql('*', '{email_templateset}', '1=1', []);
+        $table->define_baseurl($baseurl);
+        $table->define_columns(['templatesetname', 'actions']);
+        $table->define_headers([get_string('name'), '']);
+        $table->no_sorting('actions');
+
+        echo '<a class="btn btn-primary" href="'.$linkurl.'">' .
+                                           get_string('back') . '</a>';
+        $table->out(30, true);
+
     }
 } else {
     // Get the number of templates.
