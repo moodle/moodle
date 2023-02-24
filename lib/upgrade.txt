@@ -72,6 +72,8 @@ information provided here is intended especially for developers.
 * The core/modal module and all their versions (SAVE_CANCEL, DELETE_CANCEL...) now has a setButtonDisable to disable or enable
   specific modal action buttons. This function allows developers to have modals that could only be submited if the user do some
   action in the modal body like ticking a checkbox or selecting an element.
+* Support for serving of AMD modules built in really old versions of Moodle (<= 3.8) has been removed.
+  Please ensure that your AMD modules have been rebuilt with a supported Moodle version.
 
 === 4.1 ===
 
