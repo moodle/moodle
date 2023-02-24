@@ -159,7 +159,7 @@ class report_test extends \advanced_testcase {
                     $update->timemodified = $timestart + 1200;
                     $update->sumgrades = $quba->get_total_mark();
                     $DB->update_record('quiz_attempts', $update);
-                    quiz_save_best_grade($attemptobj->get_quiz(), $student->id);
+                    $attemptobj->get_quizobj()->get_grade_calculator()->recompute_final_grade($student->id);
                     break;
             }
         }

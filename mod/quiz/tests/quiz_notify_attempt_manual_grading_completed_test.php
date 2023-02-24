@@ -150,7 +150,7 @@ class quiz_notify_attempt_manual_grading_completed_test extends advanced_testcas
         $update->timemodified = $timenow;
         $update->sumgrades = $attemptobj1->get_question_usage()->get_total_mark();
         $DB->update_record('quiz_attempts', $update);
-        quiz_save_best_grade($attemptobj1->get_quiz(), $this->student->id);
+        $attemptobj1->get_quizobj()->get_grade_calculator()->recompute_final_grade();
 
         // Not quite time to send yet.
         $task = new quiz_notify_attempt_manual_grading_completed();
@@ -217,7 +217,7 @@ class quiz_notify_attempt_manual_grading_completed_test extends advanced_testcas
         $update->timemodified = $timenow;
         $update->sumgrades = $attemptobj->get_question_usage()->get_total_mark();
         $DB->update_record('quiz_attempts', $update);
-        quiz_save_best_grade($attemptobj->get_quiz(), $this->student->id);
+        $attemptobj->get_quizobj()->get_grade_calculator()->recompute_final_grade();
 
         // Run the quiz notify attempt manual graded task.
         ob_start();
@@ -257,7 +257,7 @@ class quiz_notify_attempt_manual_grading_completed_test extends advanced_testcas
         $update->timemodified = $timenow;
         $update->sumgrades = $attemptobj->get_question_usage()->get_total_mark();
         $DB->update_record('quiz_attempts', $update);
-        quiz_save_best_grade($attemptobj->get_quiz(), $this->student->id);
+        $attemptobj->get_quizobj()->get_grade_calculator()->recompute_final_grade();
 
         // Run the quiz notify attempt manual graded task.
         ob_start();

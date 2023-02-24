@@ -16,6 +16,7 @@
 
 namespace mod_quiz;
 
+use coding_exception;
 use mod_quiz\event\quiz_grade_updated;
 use question_engine_data_mapper;
 use stdClass;
@@ -115,10 +116,110 @@ class grade_calculator {
     }
 
     /**
+     * Update the final grade at this quiz for a particular student.
+     *
+     * That is, given the quiz settings, and all the attempts this user has made,
+     * compute their final grade for the quiz, as shown in the gradebook.
+     *
+     * The $attempts parameter is for efficiency. If you already have the data for
+     * all this user's attempts loaded (for example from {@see quiz_get_user_attempts()}
+     * or because you are looping through a large recordset fetched in one efficient query,
+     * then you can pass that data here to save DB queries.
+     *
+     * @param int|null $userid The userid to calculate the grade for. Defaults to the current user.
+     * @param array $attempts if you already have this user's attempt records loaded, pass them here to save queries.
+     */
+    public function recompute_final_grade(?int $userid = null, array $attempts = []): void {
+        global $DB, $USER;
+        $quiz = $this->quizobj->get_quiz();
+
+        if (empty($userid)) {
+            $userid = $USER->id;
+        }
+
+        if (!$attempts) {
+            // Get all the attempts made by the user.
+            $attempts = quiz_get_user_attempts($quiz->id, $userid);
+        }
+
+        // Calculate the best grade.
+        $bestgrade = $this->compute_final_grade_from_attempts($attempts);
+        $bestgrade = quiz_rescale_grade($bestgrade, $quiz, false);
+
+        // Save the best grade in the database.
+        if (is_null($bestgrade)) {
+            $DB->delete_records('quiz_grades', ['quiz' => $quiz->id, 'userid' => $userid]);
+
+        } else if ($grade = $DB->get_record('quiz_grades',
+                ['quiz' => $quiz->id, 'userid' => $userid])) {
+            $grade->grade = $bestgrade;
+            $grade->timemodified = time();
+            $DB->update_record('quiz_grades', $grade);
+
+        } else {
+            $grade = new stdClass();
+            $grade->quiz = $quiz->id;
+            $grade->userid = $userid;
+            $grade->grade = $bestgrade;
+            $grade->timemodified = time();
+            $DB->insert_record('quiz_grades', $grade);
+        }
+
+        quiz_update_grades($quiz, $userid);
+    }
+
+    /**
+     * Calculate the overall grade for a quiz given a number of attempts by a particular user.
+     *
+     * @param array $attempts an array of all the user's attempts at this quiz in order.
+     * @return float|null the overall grade, or null if the user does not have a grade.
+     */
+    protected function compute_final_grade_from_attempts(array $attempts): ?float {
+
+        $grademethod = $this->quizobj->get_quiz()->grademethod;
+        switch ($grademethod) {
+
+            case QUIZ_ATTEMPTFIRST:
+                $firstattempt = reset($attempts);
+                return $firstattempt->sumgrades;
+
+            case QUIZ_ATTEMPTLAST:
+                $lastattempt = end($attempts);
+                return $lastattempt->sumgrades;
+
+            case QUIZ_GRADEAVERAGE:
+                $sum = 0;
+                $count = 0;
+                foreach ($attempts as $attempt) {
+                    if (!is_null($attempt->sumgrades)) {
+                        $sum += $attempt->sumgrades;
+                        $count++;
+                    }
+                }
+                if ($count == 0) {
+                    return null;
+                }
+                return $sum / $count;
+
+            case QUIZ_GRADEHIGHEST:
+                $max = null;
+                foreach ($attempts as $attempt) {
+                    if ($attempt->sumgrades > $max) {
+                        $max = $attempt->sumgrades;
+                    }
+                }
+                return $max;
+
+            default:
+                throw new coding_exception('Unrecognised grading method ' . $grademethod);
+        }
+    }
+
+    /**
      * Update the final grade at this quiz for all students.
      *
-     * This function is equivalent to calling quiz_save_best_grade for all
-     * users, but much more efficient.
+     * This function is equivalent to calling {@see recompute_final_grade()} for all
+     * users who have attempted the quiz, but is much more efficient.
      */
     public function recompute_all_final_grades(): void {
         global $DB;

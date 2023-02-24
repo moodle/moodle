@@ -1643,7 +1643,7 @@ class quiz_attempt {
         }
 
         if (!$this->is_preview() && $this->attempt->state == self::FINISHED) {
-            quiz_save_best_grade($this->get_quiz(), $this->get_userid());
+            $this->recompute_final_grade();
         }
 
         $transaction->allow_commit();
@@ -1770,7 +1770,7 @@ class quiz_attempt {
         $DB->update_record('quiz_attempts', $this->attempt);
 
         if (!$this->is_preview()) {
-            quiz_save_best_grade($this->get_quiz(), $this->attempt->userid);
+            $this->recompute_final_grade();
 
             // Trigger event.
             $this->fire_state_transition_event('\mod_quiz\event\attempt_submitted', $timestamp, $studentisonline);
@@ -1793,6 +1793,13 @@ class quiz_attempt {
             $this->attempt->timecheckstate = $time;
             $DB->set_field('quiz_attempts', 'timecheckstate', $time, ['id' => $this->attempt->id]);
         }
+    }
+
+    /**
+     * Needs to be called after this attempt's grade is changed, to update the overall quiz grade.
+     */
+    protected function recompute_final_grade(): void {
+        $this->quizobj->get_grade_calculator()->recompute_final_grade($this->get_userid());
     }
 
     /**

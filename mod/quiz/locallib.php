@@ -444,10 +444,11 @@ function quiz_delete_attempt($attempt, $quiz) {
     // If none, then delete record for this quiz, this user from quiz_grades
     // else recalculate best grade.
     $userid = $attempt->userid;
+    $gradecalculator = quiz_settings::create($quiz->id)->get_grade_calculator();
     if (!$DB->record_exists('quiz_attempts', ['userid' => $userid, 'quiz' => $quiz->id])) {
         $DB->delete_records('quiz_grades', ['userid' => $userid, 'quiz' => $quiz->id]);
     } else {
-        quiz_save_best_grade($quiz, $userid);
+        $gradecalculator->recompute_final_grade($userid);
     }
 
     quiz_update_grades($quiz, $userid);
@@ -627,99 +628,6 @@ function quiz_has_feedback($quiz) {
                 [$quiz->id]);
     }
     return $cache[$quiz->id];
-}
-
-/**
- * Save the overall grade for a user at a quiz in the quiz_grades table
- *
- * @param stdClass $quiz The quiz for which the best grade is to be calculated and then saved.
- * @param int $userid The userid to calculate the grade for. Defaults to the current user.
- * @param array $attempts The attempts of this user. Useful if you are
- * looping through many users. Attempts can be fetched in one master query to
- * avoid repeated querying.
- * @return bool Indicates success or failure.
- */
-function quiz_save_best_grade($quiz, $userid = null, $attempts = []) {
-    global $DB, $OUTPUT, $USER;
-
-    if (empty($userid)) {
-        $userid = $USER->id;
-    }
-
-    if (!$attempts) {
-        // Get all the attempts made by the user.
-        $attempts = quiz_get_user_attempts($quiz->id, $userid);
-    }
-
-    // Calculate the best grade.
-    $bestgrade = quiz_calculate_best_grade($quiz, $attempts);
-    $bestgrade = quiz_rescale_grade($bestgrade, $quiz, false);
-
-    // Save the best grade in the database.
-    if (is_null($bestgrade)) {
-        $DB->delete_records('quiz_grades', ['quiz' => $quiz->id, 'userid' => $userid]);
-
-    } else if ($grade = $DB->get_record('quiz_grades',
-            ['quiz' => $quiz->id, 'userid' => $userid])) {
-        $grade->grade = $bestgrade;
-        $grade->timemodified = time();
-        $DB->update_record('quiz_grades', $grade);
-
-    } else {
-        $grade = new stdClass();
-        $grade->quiz = $quiz->id;
-        $grade->userid = $userid;
-        $grade->grade = $bestgrade;
-        $grade->timemodified = time();
-        $DB->insert_record('quiz_grades', $grade);
-    }
-
-    quiz_update_grades($quiz, $userid);
-}
-
-/**
- * Calculate the overall grade for a quiz given a number of attempts by a particular user.
- *
- * @param stdClass $quiz    the quiz settings object.
- * @param array $attempts an array of all the user's attempts at this quiz in order.
- * @return float          the overall grade
- */
-function quiz_calculate_best_grade($quiz, $attempts) {
-
-    switch ($quiz->grademethod) {
-
-        case QUIZ_ATTEMPTFIRST:
-            $firstattempt = reset($attempts);
-            return $firstattempt->sumgrades;
-
-        case QUIZ_ATTEMPTLAST:
-            $lastattempt = end($attempts);
-            return $lastattempt->sumgrades;
-
-        case QUIZ_GRADEAVERAGE:
-            $sum = 0;
-            $count = 0;
-            foreach ($attempts as $attempt) {
-                if (!is_null($attempt->sumgrades)) {
-                    $sum += $attempt->sumgrades;
-                    $count++;
-                }
-            }
-            if ($count == 0) {
-                return null;
-            }
-            return $sum / $count;
-
-        case QUIZ_GRADEHIGHEST:
-        default:
-            $max = null;
-            foreach ($attempts as $attempt) {
-                if ($attempt->sumgrades > $max) {
-                    $max = $attempt->sumgrades;
-                }
-            }
-            return $max;
-    }
 }
 
 /**

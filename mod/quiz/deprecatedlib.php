@@ -373,3 +373,71 @@ function quiz_set_grade($newgrade, $quiz) {
     quiz_settings::create($quiz->id)->get_grade_calculator()->update_quiz_maximum_grade($newgrade);
     return true;
 }
+
+/**
+ * Save the overall grade for a user at a quiz in the quiz_grades table
+ *
+ * @param stdClass $quiz The quiz for which the best grade is to be calculated and then saved.
+ * @param int $userid The userid to calculate the grade for. Defaults to the current user.
+ * @param array $attempts The attempts of this user. Useful if you are
+ * looping through many users. Attempts can be fetched in one master query to
+ * avoid repeated querying.
+ * @return bool Indicates success or failure.
+ * @deprecated since Moodle 4.2. Please use grade_calculator::update_quiz_maximum_grade.
+ * @todo MDL-76612 Final deprecation in Moodle 4.6
+ */
+function quiz_save_best_grade($quiz, $userid = null, $attempts = []) {
+    debugging('quiz_save_best_grade is deprecated. ' .
+        'Please use a standard grade_calculator::recompute_final_grade instead.', DEBUG_DEVELOPER);
+    quiz_settings::create($quiz->id)->get_grade_calculator()->recompute_final_grade($userid, $attempts);
+    return true;
+}
+
+/**
+ * Calculate the overall grade for a quiz given a number of attempts by a particular user.
+ *
+ * @param stdClass $quiz    the quiz settings object.
+ * @param array $attempts an array of all the user's attempts at this quiz in order.
+ * @return float          the overall grade
+ * @deprecated since Moodle 4.2. No direct replacement.
+ * @todo MDL-76612 Final deprecation in Moodle 4.6
+ */
+function quiz_calculate_best_grade($quiz, $attempts) {
+    debugging('quiz_calculate_best_grade is deprecated with no direct replacement. It was only used ' .
+        'in one place in the quiz code so this logic is now private to grade_calculator.', DEBUG_DEVELOPER);
+
+    switch ($quiz->grademethod) {
+
+        case QUIZ_ATTEMPTFIRST:
+            $firstattempt = reset($attempts);
+            return $firstattempt->sumgrades;
+
+        case QUIZ_ATTEMPTLAST:
+            $lastattempt = end($attempts);
+            return $lastattempt->sumgrades;
+
+        case QUIZ_GRADEAVERAGE:
+            $sum = 0;
+            $count = 0;
+            foreach ($attempts as $attempt) {
+                if (!is_null($attempt->sumgrades)) {
+                    $sum += $attempt->sumgrades;
+                    $count++;
+                }
+            }
+            if ($count == 0) {
+                return null;
+            }
+            return $sum / $count;
+
+        case QUIZ_GRADEHIGHEST:
+        default:
+            $max = null;
+            foreach ($attempts as $attempt) {
+                if ($attempt->sumgrades > $max) {
+                    $max = $attempt->sumgrades;
+                }
+            }
+            return $max;
+    }
+}
