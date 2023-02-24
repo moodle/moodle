@@ -26,7 +26,13 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_local_report_user_logins_install() {
     global $CFG, $DB;
 
-     upgrade_set_timeout(7200); // Set installation time to 2 hours as this takes a long time.
+    // Only do this if the logstore table exists.
+    $dbman = $DB->get_manager();
+    if (!$dbman->table_exists('logstore_standard_log')) {
+        return true;
+    }
+
+    upgrade_set_timeout(7200); // Set installation time to 2 hours as this takes a long time.
 
     // Populate the report table from any previous users.
     $users = $DB->get_records('user', array('deleted' => 0));
