@@ -20,7 +20,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
-
+require_once($CFG->libdir . '/rsslib.php');
 
 /**
  * These tests rely on the rsstest.xml file on download.moodle.org,
@@ -139,5 +139,20 @@ EOD;
         $this->assertNull($feed->error());
         $this->assertSame('Moodle News', $feed->get_title());
         $this->assertSame('http://moodle.org/mod/forum/view.php?f=1', $feed->get_link());
+    }
+
+    /**
+     * Test that we can get the right user ID based on the provided private key (token).
+     *
+     * @covers ::rss_get_userid_from_token
+     */
+    public function test_rss_get_userid_from_token() {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setGuestUser();
+
+        $key = rss_get_token($USER->id);
+        $this->assertSame(rss_get_userid_from_token($key), $USER->id);
     }
 }
