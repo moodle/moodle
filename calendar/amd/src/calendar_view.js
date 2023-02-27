@@ -16,7 +16,7 @@
 /**
  * This module is responsible for handle calendar day and upcoming view.
  *
- * @module     core_calendar/calendar
+ * @module     core_calendar/calendar_view
  * @copyright  2017 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
