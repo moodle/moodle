@@ -315,3 +315,73 @@ Feature: Group assignment submissions
     When I follow "View all submissions"
     Then "Student 1" row "Status" column of "generaltable" table should contain "Submitted for grading"
     And "Student 2" row "Status" column of "generaltable" table should contain "Submitted for grading"
+
+  @javascript @_file_upload
+  Scenario: Student can submit or edit group assignment depending on 'requireallteammemberssubmit' setting
+    Given the following "courses" exist:
+      | fullname | shortname | category | groupmode   |
+      | Course 1 | C1        | 0        | 2           |
+    And the following "users" exist:
+      | username | firstname | lastname  | email                |
+      | teacher1 | Terry     | Alexander | teacher1@example.com |
+      | student1 | Sam       | Edwards   | student1@example.com |
+      | student2 | Carlos    | Rivera    | student2@example.com |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
+      | student2 | C1     | student        |
+    And the following "groups" exist:
+      | name    | course | idnumber |
+      | Group 1 | C1     | G1       |
+    And the following "group members" exist:
+      | user     | group |
+      | student1 | G1    |
+      | student2 | G1    |
+    And the following "activities" exist:
+      | activity | course | name     | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | assignsubmission_file_maxfiles | assignsubmission_file_maxsizebytes | submissiondrafts | teamsubmission | requireallteammemberssubmit |
+      | assign   | C1     | Assign 1 | 1                                   | 1                             | 1                              | 2097152                            | 1                | 1              | 1                           |
+      | assign   | C1     | Assign 2 | 1                                   | 1                             | 1                              | 2097152                            | 0                | 1              | 0                           |
+    # Submit an assignment with 'requireallteammemberssubmit' setting enabled
+    When I am on the "Assign 1" "assign activity" page logged in as student1
+    Then I should see "Group 1"
+    And I should not see "Carlos Rivera"
+    And I press "Add submission"
+    And I set the field "Online text" to "student1 submission"
+    And I upload "lib/tests/fixtures/empty.txt" file to "File submissions" filemanager
+    And I press "Save changes"
+    # Confirm that Submission status remains as draft and all students appear because 'Submit assignment' was not yet clicked
+    And I should see "Draft (not submitted)" in the "Submission status" "table_row"
+    And I should see "Users who need to submit: Sam Edwards, Carlos Rivera"
+    And I press "Submit assignment"
+    And I press "Continue"
+    # Confirm that Submission status remains as draft and only student2 appears because student2 has not yet submitted assignment
+    And I am on the "Assign 1" "assign activity" page logged in as student2
+    And I should see "Draft (not submitted)" in the "Submission status" "table_row"
+    And I should see "Users who need to submit: Carlos Rivera"
+    And I press "Edit submission"
+    And I set the field "Online text" to "student2 updated submission"
+    And I delete "empty.txt" from "File submissions" filemanager
+    And I upload "lib/tests/fixtures/tabfile.csv" file to "File submissions" filemanager
+    And I press "Save changes"
+    And I press "Submit assignment"
+    And I press "Continue"
+    # Confirm that Submission status is now Submitted for grading and all changes made by student2 is reflected on assignment
+    And I am on the "Assign 1" "assign activity" page logged in as student1
+    And I should see "Submitted for grading" in the "Submission status" "table_row"
+    And I should see "student2 updated submission" in the "Online text" "table_row"
+    And I should see "tabfile.csv" in the "File submissions" "table_row"
+    And I should not see "student1 submission" in the "Online text" "table_row"
+    And I should not see "empty.txt" in the "File submissions" "table_row"
+    # Submit an assignment with 'requireallteammemberssubmit' disabled
+    And I am on the "Assign 2" "assign activity" page logged in as student1
+    And I should see "Group 1"
+    And I should not see "Carlos Rivera"
+    And I press "Add submission"
+    And I set the field "Online text" to "student1 submission"
+    And I upload "lib/tests/fixtures/empty.txt" file to "File submissions" filemanager
+    And I press "Save changes"
+    # Confirm that Submission status is immediately set to Submitted for grading for all students after student1 submits assignments
+    And I am on the "Assign 2" "assign activity" page logged in as student2
+    And I should see "Submitted for grading" in the "Submission status" "table_row"
+    And I should not see "Users who need to submit"
