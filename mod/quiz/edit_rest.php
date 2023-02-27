@@ -62,7 +62,7 @@ require_login($course, false, $cm);
 
 $structure = $quizobj->get_structure();
 $gradecalculator = $quizobj->get_grade_calculator();
-$modcontext = context_module::instance($cm->id);
+$modcontext = $quizobj->get_context();
 
 echo $OUTPUT->header(); // Send headers.
 

@@ -16,6 +16,7 @@
 
 namespace mod_quiz;
 
+use context_module;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\qubaids_for_quiz;
 use stdClass;
@@ -339,6 +340,15 @@ class structure {
      */
     public function get_cmid() {
         return $this->quizobj->get_cmid();
+    }
+
+    /**
+     * Get the quiz context.
+     *
+     * @return context_module the context of the quiz that this is the structure of.
+     */
+    public function get_context(): context_module {
+        return $this->quizobj->get_context();
     }
 
     /**

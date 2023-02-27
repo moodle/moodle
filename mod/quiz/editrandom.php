@@ -64,7 +64,7 @@ if (!$category = $DB->get_record('question_categories', ['id' => $filterconditio
 $catcontext = context::instance_by_id($category->contextid);
 require_capability('moodle/question:useall', $catcontext);
 
-$thiscontext = context_module::instance($cm->id);
+$thiscontext = $quizobj->get_context();
 $contexts = new core_question\local\bank\question_edit_contexts($thiscontext);
 
 // Create the editing form.

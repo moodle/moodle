@@ -41,7 +41,7 @@ $cm = $quizobj->get_cm();
 $course = $quizobj->get_course();
 require_login($course, false, $cm);
 
-$reportlist = quiz_report_list(context_module::instance($cm->id));
+$reportlist = quiz_report_list($quizobj->get_context());
 if (empty($reportlist) || $userid == $USER->id) {
     // If the user cannot see reports, or can see reports but is looking
     // at their own grades, redirect them to the view.php page.

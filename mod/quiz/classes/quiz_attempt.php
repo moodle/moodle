@@ -364,6 +364,15 @@ class quiz_attempt {
     }
 
     /**
+     * Get the quiz context.
+     *
+     * @return context_module the context of the quiz this attempt belongs to.
+     */
+    public function get_context(): context_module {
+        return $this->quizobj->get_context();
+    }
+
+    /**
      * Is the current user is someone who previews the quiz, rather than attempting it?
      *
      * @return bool true user is a preview user. False, if they can do real attempts.
@@ -2108,7 +2117,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid(),
                 'page' => $this->get_currentpage()
@@ -2129,7 +2138,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid(),
                 'page' => $this->get_currentpage()
@@ -2150,7 +2159,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid(),
                 'page' => $this->get_currentpage()
@@ -2173,7 +2182,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid(),
                 'page' => $this->get_currentpage(),
@@ -2197,7 +2206,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid()
             ]
@@ -2218,7 +2227,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid()
             ]
@@ -2236,7 +2245,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid()
             ]
