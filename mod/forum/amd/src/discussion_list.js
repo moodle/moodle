@@ -56,7 +56,9 @@ define([
             }
         });
 
-        root.on('click', Selectors.favourite.toggle, function() {
+        root.on('click', Selectors.favourite.toggle, function(e) {
+            e.preventDefault();
+
             var toggleElement = $(this);
             var forumId = toggleElement.data('forumid');
             var discussionId = toggleElement.data('discussionid');
