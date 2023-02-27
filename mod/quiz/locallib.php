@@ -1800,7 +1800,7 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
 
     if (!$qreferenceitem) {
         // Create a new reference record for questions created already.
-        $questionreferences = new \StdClass();
+        $questionreferences = new stdClass();
         $questionreferences->usingcontextid = context_module::instance($quiz->cmid)->id;
         $questionreferences->component = 'mod_quiz';
         $questionreferences->questionarea = 'slot';
@@ -1810,13 +1810,13 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
         $DB->insert_record('question_references', $questionreferences);
 
     } else if ($qreferenceitem->itemid === 0 || $qreferenceitem->itemid === null) {
-        $questionreferences = new \StdClass();
+        $questionreferences = new stdClass();
         $questionreferences->id = $qreferenceitem->id;
         $questionreferences->itemid = $slotid;
         $DB->update_record('question_references', $questionreferences);
     } else {
         // If the reference record exits for another quiz.
-        $questionreferences = new \StdClass();
+        $questionreferences = new stdClass();
         $questionreferences->usingcontextid = context_module::instance($quiz->cmid)->id;
         $questionreferences->component = 'mod_quiz';
         $questionreferences->questionarea = 'slot';
