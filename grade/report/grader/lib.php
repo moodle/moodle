@@ -1117,7 +1117,12 @@ class grade_report_grader extends grade_report {
                     }
                 }
 
-                if (!$item->needsupdate) {
+                if ($item->gradetype == GRADE_TYPE_TEXT && !empty($grade->feedback)) {
+                    $context->text = html_writer::span(shorten_text(strip_tags($grade->feedback), 20), '',
+                        ['data-action' => 'feedback', 'role' => 'button', 'data-courseid' => $this->courseid]);
+                }
+
+                if (!$item->needsupdate && !($item->gradetype == GRADE_TYPE_TEXT && empty($USER->editing))) {
                     $context->actionmenu = $this->gtree->get_cell_action_menu($element, 'gradeitem', $this->gpr);
                 }
 

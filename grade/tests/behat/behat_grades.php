@@ -38,6 +38,10 @@ class behat_grades extends behat_base {
                 'initials bar',
                 [".//*[contains(concat(' ', @class, ' '), ' initialbar ')]//span[contains(., %locator%)]/parent::div"]
             ),
+            new behat_component_named_selector(
+                'grade_actions',
+                ["//td[count(//table[@id='user-grades']//th[contains(., %locator%)]/preceding-sibling::th)]//*[@data-type='grade']"]
+            ),
         ];
     }
 

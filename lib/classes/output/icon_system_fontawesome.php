@@ -195,6 +195,7 @@ class icon_system_fontawesome extends icon_system_font {
             'theme:fp/view_tree_active' => 'fa-folder',
             'core:i/addblock' => 'fa-plus-square',
             'core:i/assignroles' => 'fa-user-plus',
+            'core:i/asterisk' => 'fa-asterisk',
             'core:i/backup' => 'fa-file-zip-o',
             'core:i/badge' => 'fa-shield',
             'core:i/breadcrumbdivider' => 'fa-angle-right',
