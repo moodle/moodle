@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -30,12 +29,12 @@
 
 define('CLI_SCRIPT', true);
 
-require(__DIR__.'/../../config.php');
-require_once($CFG->libdir.'/clilib.php');      // cli only functions
-require_once($CFG->libdir.'/cronlib.php');
+require(__DIR__ . '/../../config.php');
+require_once($CFG->libdir . '/clilib.php');
+require_once($CFG->libdir . '/cronlib.php');
 
-// now get cli options
-list($options, $unrecognized) = cli_get_params(
+// Now get cli option.
+[$options, $unrecognized] = cli_get_params(
     [
         'help' => false,
         'stop' => false,
@@ -44,7 +43,8 @@ list($options, $unrecognized) = cli_get_params(
         'enable' => false,
         'disable' => false,
         'disable-wait' => false,
-    ], [
+    ],
+    [
         'h' => 'help',
         's' => 'stop',
         'l' => 'list',
@@ -62,7 +62,7 @@ if ($unrecognized) {
 
 if ($options['help']) {
     $help =
-"Execute periodic cron actions.
+    "Execute periodic cron actions.
 
 Options:
 -h, --help               Print out this help
@@ -105,7 +105,8 @@ if ($options['list']) {
     $tasks = \core\task\manager::get_running_tasks();
     mtrace('The list of currently running tasks:');
     $format = "%7s %-12s %-9s %-20s %-52s\n";
-    printf ($format,
+    printf(
+        $format,
         'PID',
         'HOST',
         'TYPE',
@@ -113,7 +114,8 @@ if ($options['list']) {
         'CLASSNAME'
     );
     foreach ($tasks as $task) {
-        printf ($format,
+        printf(
+            $format,
             $task->pid,
             substr($task->hostname, 0, 12),
             $task->type,
@@ -137,7 +139,7 @@ if ($wait = $options['disable-wait']) {
     set_config('cron_enabled', 0);
     \core\task\manager::clear_static_caches();
     mtrace('Cron has been disabled for the site.');
-    mtrace('Allocating '. format_time($waitsec) . ' for the tasks to finish.');
+    mtrace('Allocating ' . format_time($waitsec) . ' for the tasks to finish.');
 
     $lastcount = 0;
     while ($wait) {
@@ -151,7 +153,7 @@ if ($wait = $options['disable-wait']) {
 
         if (time() - $started >= $waitsec) {
             mtrace('');
-            mtrace('Wait time ('. format_time($waitsec) . ') elapsed, but ' . count($tasks) . ' task(s) still running.');
+            mtrace('Wait time (' . format_time($waitsec) . ') elapsed, but ' . count($tasks) . ' task(s) still running.');
             mtrace('Exiting with code 1.');
             exit(1);
         }
