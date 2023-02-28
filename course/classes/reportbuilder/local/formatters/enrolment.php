@@ -69,13 +69,19 @@ class enrolment {
      *
      * @param string $value
      * @param stdClass $row
-     * @return lang_string|null
+     * @return string|null
      */
-    public static function enrolment_status(string $value, stdClass $row): ?lang_string {
+    public static function enrolment_status(string $value, stdClass $row): ?string {
         if (!$row->userid) {
             return null;
         }
         $statusvalues = self::enrolment_values();
-        return $statusvalues[(int) $value] ?? null;
+
+        $value = (int) $value;
+        if (!array_key_exists($value, $statusvalues)) {
+            return null;
+        }
+
+        return (string) $statusvalues[$value];
     }
 }
