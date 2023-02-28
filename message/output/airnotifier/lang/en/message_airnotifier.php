@@ -39,6 +39,8 @@ $string['deletecheckdevicename'] = 'Delete your device: {$a->name}';
 $string['deletedevice'] = 'Delete the device. Note that an app can register the device again. If the device keeps reappearing, disable it.';
 $string['devicetoken'] = 'Device token';
 $string['enableprocessor'] = 'Enable mobile notifications';
+$string['encryptnotifications'] = 'Encrypt notifications';
+$string['encryptnotifications_help'] = 'Enable end-to-end encryption of app notifications where possible. Only personal data is encrypted, some data may be removed from notification payload if it can\'t be encrypted.';
 $string['errorretrievingkey'] = 'An error occurred while retrieving the access key. Your site must be registered to use this service. If your site is already registered, please try updating your registration. Alternatively, you can obtain an access key by creating an account on the <a href="https://apps.moodle.com">Moodle Apps Portal</a>.';
 $string['keyretrievedsuccessfully'] = 'The access key was retrieved successfully. To access Moodle app usage statistics, please create an account on the <a href="https://apps.moodle.com">Moodle Apps Portal</a>.';
 $string['messageprovidersempty'] = 'There are no mobile notifications enabled in default notification preferences.';
@@ -77,3 +79,4 @@ $string['serverconnectivityerror'] = 'This site is not able to connect to the no
 $string['unknowndevice'] = 'Unknown device';
 $string['userdevices'] = 'User devices';
 $string['airnotifier:managedevice'] = 'Manage devices';
+$string['view_notification'] = 'Tap to view';
