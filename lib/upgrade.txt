@@ -72,6 +72,8 @@ information provided here is intended especially for developers.
 * The core/modal module and all their versions (SAVE_CANCEL, DELETE_CANCEL...) now has a setButtonDisable to disable or enable
   specific modal action buttons. This function allows developers to have modals that could only be submited if the user do some
   action in the modal body like ticking a checkbox or selecting an element.
+* Course module indentation has been recovered for course format using components via Move right/left feature.
+  Course formats using components will be allowed to use one level indentation only.
 
 === 4.1 ===
 

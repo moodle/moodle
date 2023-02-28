@@ -90,6 +90,7 @@ class cm implements renderable {
             'uservisible' => $cm->uservisible,
             'hascmrestrictions' => $this->get_has_restrictions(),
             'modname' => get_string('pluginname', 'mod_' . $cm->modname),
+            'indent' => $cm->indent,
         ];
 
         // Check the user access type to this cm.
