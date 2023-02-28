@@ -331,6 +331,27 @@ if ($hassiteconfig) {
     $setting->set_updatedcallback('theme_reset_static_caches');
     $temp->add($setting);
 
+    // Note: At the moment cron functions live in lib/cronlib.php which is not guaranteed to be loaded everywhere.
+    // We have no sensible place to put constants.
+    $setting = new admin_setting_configduration(
+        'cron_keepalive',
+        new lang_string('cron_keepalive', 'admin'),
+        new lang_string('cron_keepalive_desc', 'admin'),
+
+        // Use a default value of 3 minutes.
+        // The recommended cron frequency is every minute, and the default adhoc concurrency is 3.
+        // A default value of 3 minutes allows all adhoc tasks to be run concurrently at their default value.
+        3 * MINSECS,
+
+        // The default unit is minutes.
+        MINSECS,
+    );
+
+    // Set an upper limit of 15 minutes.
+    $setting->set_max_duration(15 * MINSEC);
+
+    $temp->add($setting);
+
     $temp->add(
         new admin_setting_configtext(
             'task_scheduled_concurrency_limit',

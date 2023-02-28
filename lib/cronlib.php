@@ -25,8 +25,10 @@
 
 /**
  * Execute cron tasks
+ *
+ * @param int|null $keepalive The keepalive time for this cron run.
  */
-function cron_run(): void {
+function cron_run(?int $keepalive = null): void {
     global $DB, $CFG;
 
     if (CLI_MAINTENANCE) {
@@ -49,7 +51,6 @@ function cron_run(): void {
     }
 
     core_php_time_limit::raise();
-    $starttime = microtime();
 
     // Increase memory limit.
     raise_memory_limit(MEMORY_EXTRA);
@@ -69,20 +70,66 @@ function cron_run(): void {
         set_config('lastcroninterval', max(1, $timenow - $laststart), 'tool_task');
     }
 
-    // Run all scheduled tasks.
-    cron_run_scheduled_tasks($timenow);
+    // Determine the time when the cron should finish.
+    if ($keepalive === null) {
+        $keepalive = get_config('core', 'cron_keepalive');
+        if ($keepalive === false) {
+            // Use a default value of 3 minutes.
+            // The recommended cron frequency is every minute, and the default adhoc concurrency is 3.
+            // A default value of 3 minutes allows all adhoc tasks to be run concurrently at their default value.
+            $keepalive = 3 * MINSECS;
+        }
+    }
 
-    // Run adhoc tasks.
-    cron_run_adhoc_tasks($timenow);
+    if ($keepalive > 15 * MINSECS) {
+        // Attempt to prevent abnormally long keepalives.
+        mtrace("Cron keepalive time is too long, reducing to 15 minutes.");
+        $keepalive = 15 * MINSECS;
+    }
 
-    mtrace("Cron run completed correctly");
+    // Calculate the finish time based on the start time and keepalive.
+    $finishtime = $timenow + $keepalive;
 
-    gc_collect_cycles();
+    do {
+        $startruntime = microtime();
+        // Run all scheduled tasks.
+        cron_run_scheduled_tasks($timenow);
 
-    $completiontime = date('H:i:s');
-    $difftime = microtime_diff($starttime, microtime());
-    $memoryused = display_size(memory_get_usage());
-    mtrace("Cron completed at {$completiontime} in {$difftime} seconds. Memory used: {$memoryused}.");
+        // Run adhoc tasks.
+        cron_run_adhoc_tasks($timenow);
+
+        mtrace("Cron run completed correctly");
+
+        gc_collect_cycles();
+
+        $completiontime = date('H:i:s');
+        $difftime = microtime_diff($startruntime, microtime());
+        $memoryused = display_size(memory_get_usage());
+
+        $message = "Cron completed at {$completiontime} in {$difftime} seconds. Memory used: {$memoryused}.";
+
+        // Check if we should continue to run.
+        // Only continue to run if:
+        // - The finish time has not been reached; and
+        // - The graceful exit flag has not been set; and
+        // - The static caches have not been cleared since the start of the cron run.
+        $remaining = $finishtime - time();
+        $runagain = $remaining > 0;
+        $runagain = $runagain && !\core\local\cli\shutdown::should_gracefully_exit();
+        $runagain = $runagain && !\core\task\manager::static_caches_cleared_since($timenow);
+
+        if ($runagain) {
+            $message .= " Continuing to check for tasks for {$remaining} more seconds.";
+            mtrace($message);
+            sleep(1);
+
+            // Re-check the graceful exit and cache clear flags after sleeping as these may have changed.
+            $runagain = $runagain && !\core\local\cli\shutdown::should_gracefully_exit();
+            $runagain = $runagain && !\core\task\manager::static_caches_cleared_since($timenow);
+        } else {
+            mtrace($message);
+        }
+    } while ($runagain);
 }
 
 /**

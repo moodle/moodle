@@ -43,6 +43,7 @@ require_once($CFG->libdir . '/cronlib.php');
         'enable' => false,
         'disable' => false,
         'disable-wait' => false,
+        'keep-alive' => null,
     ],
     [
         'h' => 'help',
@@ -52,6 +53,7 @@ require_once($CFG->libdir . '/cronlib.php');
         'e' => 'enable',
         'd' => 'disable',
         'w' => 'disable-wait',
+        'k' => 'keep-alive',
     ]
 );
 
@@ -72,6 +74,9 @@ Options:
 -e, --enable             Enable cron
 -d, --disable            Disable cron
 -w, --disable-wait=600   Disable cron and wait until all tasks finished or fail after N seconds (optional param)
+-k, --keep-alive=N       Keep this script alive for N seconds and poll for new tasks
+                         The default value can be set by administrators in:
+                         Site administration > Server > Tasks > Task processing > Keep alive time
 
 Example:
 \$sudo -u www-data /usr/bin/php admin/cli/cron.php
@@ -177,4 +182,6 @@ if (!get_config('core', 'cron_enabled') && !$options['force']) {
 
 \core\local\cli\shutdown::script_supports_graceful_exit();
 
-cron_run();
+
+$keepalive = $options['keep-alive'];
+cron_run($keepalive);
