@@ -12,7 +12,8 @@ Feature: Add the glossary random block when main feature is disabled
 
   Scenario: The glossary random block is displayed even when glossary module is disabled
     Given I turn editing mode on
-    And I add the "Random glossary entry" block
+    And I add the "Random glossary entry" block to the default region with:
+      | Title | Random glossary entry |
     When I navigate to "Plugins > Activity modules > Manage activities" in site administration
     And I click on "Disable the Glossary plugin" "icon" in the "Glossary" "table_row"
     And I am on "Course 1" course homepage with editing mode on
@@ -20,7 +21,8 @@ Feature: Add the glossary random block when main feature is disabled
 
   Scenario: The glossary random block can be removed even when glossary module is disabled
     Given I turn editing mode on
-    And I add the "Random glossary entry" block
+    And I add the "Random glossary entry" block to the default region with:
+      | Title | Random glossary entry |
     And I open the "Random glossary entry" blocks action menu
     And I click on "Delete Random glossary entry block" "link" in the "Random glossary entry" "block"
     And "Delete block?" "dialogue" should exist
