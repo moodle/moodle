@@ -26,8 +26,8 @@
 /**
  * Execute cron tasks
  */
-function cron_run() {
-    global $DB, $CFG, $OUTPUT;
+function cron_run(): void {
+    global $DB, $CFG;
 
     if (CLI_MAINTENANCE) {
         echo "CLI maintenance mode active, cron execution suspended.\n";
@@ -39,7 +39,7 @@ function cron_run() {
         exit(1);
     }
 
-    require_once($CFG->libdir.'/adminlib.php');
+    require_once($CFG->libdir . '/adminlib.php');
 
     if (!empty($CFG->showcronsql)) {
         $DB->set_debug(true);
@@ -51,15 +51,15 @@ function cron_run() {
     core_php_time_limit::raise();
     $starttime = microtime();
 
-    // Increase memory limit
+    // Increase memory limit.
     raise_memory_limit(MEMORY_EXTRA);
 
-    // Emulate normal session - we use admin accoutn by default
+    // Emulate normal session. - we use admin account by default.
     cron_setup_user();
 
-    // Start output log
+    // Start output log.
     $timenow  = time();
-    mtrace("Server Time: ".date('r', $timenow)."\n\n");
+    mtrace("Server Time: " . date('r', $timenow) . "\n\n");
 
     // Record start time and interval between the last cron runs.
     $laststart = get_config('tool_task', 'lastcronstart');
@@ -75,12 +75,14 @@ function cron_run() {
     // Run adhoc tasks.
     cron_run_adhoc_tasks($timenow);
 
-    mtrace("Cron script completed correctly");
+    mtrace("Cron run completed correctly");
 
     gc_collect_cycles();
-    mtrace('Cron completed at ' . date('H:i:s') . '. Memory used ' . display_size(memory_get_usage()) . '.');
+
+    $completiontime = date('H:i:s');
     $difftime = microtime_diff($starttime, microtime());
-    mtrace("Execution took ".$difftime." seconds");
+    $memoryused = display_size(memory_get_usage());
+    mtrace("Cron completed at {$completiontime} in {$difftime} seconds. Memory used: {$memoryused}.");
 }
 
 /**
