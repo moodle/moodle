@@ -1651,7 +1651,7 @@ class core_plugin_manager {
         }
 
         // To be able to remove the plugin folder, its parent must be writable, too.
-        if (!is_writable(dirname($pluginfo->rootdir))) {
+        if (!isset($pluginfo->rootdir) || !is_writable(dirname($pluginfo->rootdir))) {
             return false;
         }
 
