@@ -85,6 +85,7 @@ class message_output_airnotifier extends message_output {
         $extra->site            = $siteid;
         $extra->date            = (!empty($eventdata->timecreated)) ? $eventdata->timecreated : time();
         $extra->notification    = (!empty($eventdata->notification)) ? 1 : 0;
+        $extra->encrypted = get_config('message_airnotifier', 'encryptnotifications') == 1;
 
         // Site name.
         $site = get_site();
@@ -110,7 +111,6 @@ class message_output_airnotifier extends message_output {
         $devicetokens = $airnotifiermanager->get_user_devices($CFG->airnotifiermobileappname, $eventdata->userto->id);
 
         foreach ($devicetokens as $devicetoken) {
-
             if (!$devicetoken->enable) {
                 continue;
             }
@@ -124,17 +124,92 @@ class message_output_airnotifier extends message_output {
             $curl->setopt(array('CURLOPT_TIMEOUT' => 2, 'CURLOPT_CONNECTTIMEOUT' => 2));
             $curl->setHeader($header);
 
+            $extra = $this->encrypt_payload($extra, $devicetoken);
             $params = array(
                 'device'    => $devicetoken->platform,
                 'token'     => $devicetoken->pushid,
                 'extra'     => $extra
             );
+            if ($extra->encrypted) {
+                // Setting alert to null makes air notifier send the notification as a data payload,
+                // this forces Android phones to call the app onMessageReceived function to decrypt the notification.
+                // Otherwise notifications are created by the Android system and will not be decrypted.
+                $params['alert'] = null;
+            }
 
             // JSON POST raw body request.
             $resp = $curl->post($serverurl, json_encode($params));
         }
 
         return true;
+    }
+
+    /**
+     * Encrypt the notification payload.
+     *
+     * @param stdClass $payload The notification payload.
+     * @param stdClass $devicetoken The device token record
+     * @return stdClass
+     */
+    protected function encrypt_payload(stdClass $payload, stdClass $devicetoken): stdClass {
+        if (empty($payload->encrypted)) {
+            return $payload;
+        }
+
+        if (empty($devicetoken->publickey)) {
+            $payload->encrypted = false;
+            return $payload;
+        }
+
+        // Clone the data to avoid modifying the original.
+        $payload = clone $payload;
+        $publickey = sodium_base642bin($devicetoken->publickey, SODIUM_BASE64_VARIANT_ORIGINAL);
+        $fields = [
+            'userfromfullname',
+            'userfromid',
+            'sitefullname',
+            'smallmessage',
+            'fullmessage',
+            'fullmessagehtml',
+            'subject',
+            'contexturl',
+        ];
+        foreach ($fields as $field) {
+            if (!isset($payload->$field)) {
+                continue;
+            }
+            $payload->$field = sodium_bin2base64(sodium_crypto_box_seal(
+                $payload->$field,
+                $publickey
+            ), SODIUM_BASE64_VARIANT_ORIGINAL);
+        }
+
+        // Remove extra fields which may contain personal data.
+        // They cannot be encrypted otherwise we would go over the 4KB payload size limit.
+        unset($payload->usertoid);
+        unset($payload->replyto);
+        unset($payload->replytoname);
+        unset($payload->name);
+        unset($payload->siteshortname);
+        unset($payload->customdata);
+        unset($payload->contexturlname);
+        unset($payload->replytoname);
+        unset($payload->attachment);
+        unset($payload->attachname);
+        unset($payload->fullmessageformat);
+        unset($payload->fullmessagetrust);
+
+        // We use Firebase to deliver all Push Notifications, and for all device types.
+        // Firebase has a 4KB payload limit.
+        // https://firebase.google.com/docs/cloud-messaging/concept-options#notifications_and_data_messages
+        // If the message is over that limit we remove unneeded fields and replace the title with a simple message.
+        if (\core_text::strlen(json_encode($payload), '8bit') > 4000) {
+            unset($payload->fullmessage);
+            unset($payload->fullmessagehtml);
+            $payload->smallmessage = get_string('view_notification', 'message_airnotifier');
+        }
+
+        return $payload;
     }
 
     /**
@@ -221,4 +296,3 @@ class message_output_airnotifier extends message_output {
         return $airnotifiermanager->is_system_configured();
     }
 }
-
