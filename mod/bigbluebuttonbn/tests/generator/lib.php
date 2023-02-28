@@ -50,6 +50,7 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
      */
     public function create_instance($record = null, array $options = null) {
         // Prior to creating the instance, make sure that the BigBlueButton module is enabled.
+        set_config('bigbluebuttonbn_default_dpa_accepted', true);
         $modules = \core_plugin_manager::instance()->get_plugins_of_type('mod');
         if (!$modules['bigbluebuttonbn']->is_enabled()) {
             mod::enable_plugin('bigbluebuttonbn', true);
