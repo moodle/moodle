@@ -10,3 +10,7 @@ Import procedure:
 - Check the minim php driver version in https://docs.mongodb.com/drivers/php#compatibility and change the value in the "are_requirements_met" method if necessary.
 
 This version (1.8.0) requires PHP mongodb extension >= 1.8.0
+
+Local changes:
+- Replaced 4 occurrences of get_debug_type() by gettype() to keep PHP 7.4 compatibility. Note this
+  has not been applied to 4.2dev and up because, there, it's safe to use get_debug_type().
