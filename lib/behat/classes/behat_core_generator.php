@@ -259,6 +259,11 @@ class behat_core_generator extends behat_generator_base {
                 'datagenerator' => 'customlang',
                 'required' => ['component', 'stringid', 'value'],
             ],
+            'language packs' => [
+                'singular' => 'language pack',
+                'datagenerator' => 'langpack',
+                'required' => ['language'],
+            ],
             'analytics models' => [
                 'singular' => 'analytics model',
                 'datagenerator' => 'analytics_model',
@@ -548,6 +553,16 @@ class behat_core_generator extends behat_generator_base {
             $DB->update_record('tool_customlang', $record);
             tool_customlang_utils::checkin($USER->lang);
         }
+    }
+    /**
+     * Imports a langpack.
+     *
+     * @param array $data
+     */
+    protected function process_langpack($data) {
+        $controller = new \tool_langimport\controller();
+        $controller->install_languagepacks($data['language']);
+        get_string_manager()->reset_caches();
     }
 
     /**
