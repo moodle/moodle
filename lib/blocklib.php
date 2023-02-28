@@ -821,6 +821,7 @@ class block_manager {
      * @param boolean $showinsubcontexts whether this block appears in subcontexts, or just the current context.
      * @param string|null $pagetypepattern which page types this block should appear on. Defaults to just the current page type.
      * @param string|null $subpagepattern which subpage this block should appear on. NULL = any (the default), otherwise only the specified subpage.
+     * @return block_base
      */
     public function add_block($blockname, $region, $weight, $showinsubcontexts, $pagetypepattern = NULL, $subpagepattern = NULL) {
         global $DB;
@@ -853,6 +854,13 @@ class block_manager {
         if ($block = block_instance($blockname, $blockinstance)) {
             $block->instance_create();
         }
+
+        if (!is_null($this->birecordsbyregion)) {
+            // If blocks were already loaded on this page, reload them.
+            $this->birecordsbyregion = null;
+            $this->load_blocks();
+        }
+        return $block;
     }
 
     /**
@@ -860,11 +868,12 @@ class block_manager {
      *
      * @param string $blockname Name of the block to add.
      * @param null|string $blockregion If defined add the new block to the specified region.
+     * @return ?block_base
      */
     public function add_block_at_end_of_default_region($blockname, $blockregion = null) {
         if (empty($this->birecordsbyregion)) {
             // No blocks or block regions exist yet.
-            return;
+            return null;
         }
 
         if ($blockregion === null) {
@@ -911,7 +920,7 @@ class block_manager {
         // Surely other pages like course-report will need this too, they just are not important
         // enough now. This will be decided in the coming days. (MDL-27829, MDL-28150)
 
-        $this->add_block($blockname, $defaulregion, $weight, false, $pagetypepattern, $subpage);
+        return $this->add_block($blockname, $defaulregion, $weight, false, $pagetypepattern, $subpage);
     }
 
     /**
@@ -1335,7 +1344,13 @@ class block_manager {
                 $editactionurl,
                 new pix_icon('t/edit', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 $str,
-                array('class' => 'editing_edit')
+                [
+                    'class' => 'editing_edit',
+                    'data-action' => 'editblock',
+                    'data-blockid' => $block->instance->id,
+                    'data-blockform' => self::get_block_edit_form_class($block->name()),
+                    'data-header' => $str,
+                ]
             );
 
         }
@@ -1654,7 +1669,7 @@ class block_manager {
      * @param string $blockname name of the block plugin (without block_ prefix)
      * @return string
      */
-    public static function get_block_edit_form_class(string $blockname) {
+    public static function get_block_edit_form_class(string $blockname): string {
         global $CFG;
         require_once("$CFG->dirroot/blocks/moodleblock.class.php");
         $blockname = clean_param($blockname, PARAM_PLUGIN);
@@ -1776,7 +1791,7 @@ class block_manager {
 
         $classname = self::get_block_edit_form_class($block->name());
         /** @var block_edit_form $mform */
-        $mform = new $classname($editpage->url, $block, $this->page);
+        $mform = new $classname($editpage->url->out(false), ['page' => $this->page, 'block' => $block, 'actionbuttons' => true]);
         $mform->set_data($block->instance);
 
         if ($mform->is_cancelled()) {
@@ -1815,8 +1830,9 @@ class block_manager {
      *
      * @param block_base $block
      * @param stdClass $data data from the block edit form
+     * @return void
      */
-    public function save_block_data(block_base $block, stdClass $data) {
+    public function save_block_data(block_base $block, stdClass $data): void {
         global $DB;
 
         $bi = new stdClass;

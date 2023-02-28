@@ -5088,9 +5088,8 @@ EOD;
                 [
                     'link' => $url->out(false),
                     'escapedlink' => "?{$url->get_query_string(false)}",
-                    'pageType' => $this->page->pagetype,
-                    'pageLayout' => $this->page->pagelayout,
-                    'subPage' => $this->page->subpage,
+                    'pagehash' => $this->page->get_edited_page_hash(),
+                    'blockregion' => $region,
                 ]
             );
         }
