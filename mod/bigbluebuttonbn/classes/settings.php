@@ -43,7 +43,7 @@ use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
  */
 class settings {
 
-    /** @var admin_setting shared value */
+    /** @var admin_category shared value */
     private $admin;
 
     /** @var bool Module is enabled */

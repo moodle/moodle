@@ -5487,7 +5487,7 @@ class restore_create_question_files extends restore_execution_step {
      *
      * @param int             $oldctxid Old context id.
      * @param int             $newctxid New context id.
-     * @param \core\progress  $progress Progress object to use.
+     * @param \core\progress\base  $progress Progress object to use.
      */
     private function send_common_files($oldctxid, $newctxid, $progress) {
         // Add common question files (question and question_answer ones).
@@ -5515,7 +5515,7 @@ class restore_create_question_files extends restore_execution_step {
      * @param text            $qtype The qtype name to send.
      * @param int             $oldctxid Old context id.
      * @param int             $newctxid New context id.
-     * @param \core\progress  $progress Progress object to use.
+     * @param \core\progress\base  $progress Progress object to use.
      */
     private function send_qtype_files($qtype, $oldctxid, $newctxid, $progress) {
         if (!isset($this->qtypecomponentscache[$qtype])) {

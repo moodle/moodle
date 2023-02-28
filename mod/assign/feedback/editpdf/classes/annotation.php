@@ -68,7 +68,7 @@ class annotation {
 
     /**
      * Convert a compatible stdClass into an instance of this class.
-     * @param stdClass $record
+     * @param \stdClass $record
      */
     public function __construct(\stdClass $record = null) {
         if ($record) {

@@ -106,7 +106,7 @@ class core_plugin_manager {
     /**
      * Factory method for this class
      *
-     * @return core_plugin_manager the singleton instance
+     * @return static the singleton instance
      */
     public static function instance() {
         if (is_null(static::$singletoninstance)) {

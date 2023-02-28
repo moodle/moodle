@@ -197,7 +197,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
     /**
      * Format a row in the table
      *
-     * @param user $item
+     * @param stdClass $item
      * @return array
      */
     public function format_line($item): array {

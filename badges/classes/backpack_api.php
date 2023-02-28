@@ -545,7 +545,8 @@ class backpack_api {
     /**
      * Authenticate using the stored email and password and save the valid access tokens.
      *
-     * @return integer The id of the authenticated user.
+     * @return mixed The id of the authenticated user as returned by the backpack. Can have
+     *    different formats - numeric, empty, object with 'error' property, etc.
      */
     public function authenticate() {
         global $SESSION;

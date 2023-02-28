@@ -30,7 +30,7 @@ abstract class externallib_advanced_testcase extends advanced_testcase {
      * The function creates a student $USER if $USER->id is empty
      *
      * @param string $capability capability name
-     * @param int $contextid
+     * @param int|context $contextid
      * @param int $roleid
      * @return int the role id - mainly returned for creation, so calling function can reuse it
      */

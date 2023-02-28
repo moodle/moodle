@@ -64,6 +64,7 @@ class tiny extends \core\plugininfo\base {
         // In case settings.php wants to refer to them.
         global $CFG, $USER, $DB, $OUTPUT, $PAGE;
 
+        /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
         $plugininfo = $this; // Also can be used inside settings.php.
 

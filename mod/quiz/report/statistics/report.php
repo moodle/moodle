@@ -762,7 +762,8 @@ class quiz_statistics_report extends report_base {
      *
      * @param int    $lastcachetime  the time the stats were last cached.
      * @param int    $quizid         the quiz id.
-     * @param array  $groupstudentsjoins (joins, wheres, params) for students in the group or empty array if groups not used.
+     * @param \core\dml\sql_join $groupstudentsjoins (joins, wheres, params) for students in the group
+     *                                   or empty array if groups not used.
      * @param string $whichattempts which attempts to use, represented internally as one of the constants as used in
      *                                   $quiz->grademethod ie.
      *                                   QUIZ_GRADEAVERAGE, QUIZ_GRADEHIGHEST, QUIZ_ATTEMPTLAST or QUIZ_ATTEMPTFIRST

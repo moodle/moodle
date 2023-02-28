@@ -206,7 +206,7 @@ abstract class restore_dbops {
      * @param int $restoreid id of backup
      * @param string $itemname name of the item
      * @param int $itemid id of item
-     * @return array backup id's
+     * @return stdClass|false record from 'backup_ids_temp' table
      * @todo MDL-25290 replace static backupids* with MUC code
      */
     protected static function get_backup_ids_cached($restoreid, $itemname, $itemid) {

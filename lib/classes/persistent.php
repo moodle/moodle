@@ -31,7 +31,7 @@ use stdClass;
  */
 abstract class persistent {
 
-    /** The table name. */
+    /** @var string The table name. */
     const TABLE = null;
 
     /** @var array The model data. */

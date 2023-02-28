@@ -93,7 +93,7 @@ class navigation_node implements renderable {
     public $id = null;
     /** @var string|int The identifier for the node, used to retrieve the node */
     public $key = null;
-    /** @var string The text to use for the node */
+    /** @var string|lang_string The text to use for the node */
     public $text = null;
     /** @var string Short text to use if requested [optional] */
     public $shorttext = null;
@@ -362,7 +362,7 @@ class navigation_node implements renderable {
      * Adds a navigation node as a child of this node.
      *
      * @param string $text
-     * @param moodle_url|action_link $action
+     * @param moodle_url|action_link|string $action
      * @param int $type
      * @param string $shorttext
      * @param string|int $key
@@ -1166,7 +1166,7 @@ class navigation_node_collection implements IteratorAggregate, Countable {
      *
      * @param string|int $key  The key of the node we want to find.
      * @param int $type  One of navigation_node::TYPE_*.
-     * @return navigation_node|null
+     * @return navigation_node|false
      */
     public function find($key, $type=null) {
         if ($type !== null && array_key_exists($type, $this->orderedcollection) && array_key_exists($key, $this->orderedcollection[$type])) {
@@ -2362,7 +2362,7 @@ class global_navigation extends navigation_node {
     /**
      * Loads a stealth module from unavailable section
      * @param navigation_node $coursenode
-     * @param stdClass $modinfo
+     * @param stdClass|course_modinfo $modinfo
      * @return navigation_node or null if not accessible
      */
     protected function load_stealth_activity(navigation_node $coursenode, $modinfo) {
@@ -4267,7 +4267,7 @@ class flat_navigation extends navigation_node_collection {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class settings_navigation extends navigation_node {
-    /** @var stdClass the current context */
+    /** @var context the current context */
     protected $context;
     /** @var moodle_page the moodle page that the navigation belongs to */
     protected $page;
@@ -5749,8 +5749,6 @@ class settings_navigation_ajax extends settings_navigation {
 
     /**
      * Initialise the site admin navigation.
-     *
-     * @return array An array of the expandable nodes
      */
     public function initialise() {
         if ($this->initialised || during_initial_install()) {

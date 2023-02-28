@@ -409,7 +409,7 @@ class grade_category_test extends \grade_base_testcase {
 
     /**
      * Test grade category aggregation using the supplied grade objects and aggregation method
-     * @param grade_category $grade_category the category to be tested
+     * @param \grade_category $grade_category the category to be tested
      * @param array $grade_items array of instance of grade_item
      * @param array $grade_grades array of instances of grade_grade
      * @param int $aggmethod the aggregation method to apply ie GRADE_AGGREGATE_MEAN
@@ -433,9 +433,9 @@ class grade_category_test extends \grade_base_testcase {
 
     /**
      * Verify the value of the category grade item for $this->userid
-     * @param grade_category $grade_category the category to be tested
+     * @param \grade_category $grade_category the category to be tested
      * @param int $correctgrade the expected grade
-     * @param string msg The message that should be displayed if the correct grade is not found
+     * @param string $msg The message that should be displayed if the correct grade is not found
      * @return void
      */
     protected function helper_test_grade_aggregation_result($grade_category, $correctgrade, $msg) {

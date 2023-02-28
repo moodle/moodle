@@ -3265,7 +3265,7 @@ class initials_bar implements renderable, templatable {
     public $urlvar;
 
     /**
-     * @var string URL object.
+     * @var moodle_url URL object.
      */
     public $url;
 

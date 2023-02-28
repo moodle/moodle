@@ -54,7 +54,7 @@ class completion_criteria_role extends completion_criteria {
    /**
     * Add appropriate form elements to the critieria form
     *
-    * @param moodleform $mform Moodle forms object
+    * @param MoodleQuickForm $mform Moodle forms object
     * @param stdClass $data used to set default values of the form
     */
     public function config_form_display(&$mform, $data = null) {

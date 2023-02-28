@@ -96,7 +96,7 @@ class external extends external_api {
      * potential_contexts return
      *
      * @since  Moodle 3.8
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function potential_contexts_returns() {
         return new external_multiple_structure(

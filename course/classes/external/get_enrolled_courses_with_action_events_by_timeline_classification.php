@@ -205,7 +205,7 @@ class get_enrolled_courses_with_action_events_by_timeline_classification extends
     /**
      * Returns description of method result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function execute_returns(): external_single_structure {
         return new external_single_structure(

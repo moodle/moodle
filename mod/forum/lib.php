@@ -1336,7 +1336,7 @@ function forum_get_user_involved_discussions($forumid, $userid) {
  * @global object
  * @param int $forumid
  * @param int $userid
- * @return array of counts or false
+ * @return stdClass|false collection of counts or false
  */
 function forum_count_user_posts($forumid, $userid) {
     global $CFG, $DB;
@@ -5360,7 +5360,7 @@ function forum_reset_userdata($data) {
 /**
  * Called by course/reset.php
  *
- * @param $mform form passed by reference
+ * @param MoodleQuickForm $mform form passed by reference
  */
 function forum_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'forumheader', get_string('modulenameplural', 'forum'));

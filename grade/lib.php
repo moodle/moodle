@@ -3646,7 +3646,7 @@ abstract class grade_helper {
     /**
      * Get information on outcomes
      * @param int $courseid
-     * @return grade_plugin_info
+     * @return grade_plugin_info[]|false
      */
     public static function get_info_outcomes($courseid) {
         global $CFG, $SITE;

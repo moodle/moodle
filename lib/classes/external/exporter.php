@@ -389,7 +389,7 @@ abstract class exporter {
     /**
      * Get the context structure.
      *
-     * @return external_single_structure
+     * @return array
      */
     final protected static function get_context_structure() {
         return array(

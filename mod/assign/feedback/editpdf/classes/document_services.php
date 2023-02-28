@@ -91,7 +91,7 @@ EOD;
      * This function will take an int or an assignment instance and
      * return an assignment instance. It is just for convenience.
      * @param int|\assign $assignment
-     * @return assign
+     * @return \assign
      */
     private static function get_assignment_from_param($assignment) {
         global $CFG;
@@ -642,7 +642,7 @@ EOD;
      * @param int|\assign $assignment
      * @param int $userid
      * @param int $attemptnumber (-1 means latest attempt)
-     * @return stored_file
+     * @return \stored_file
      */
     public static function generate_feedback_document($assignment, $userid, $attemptnumber) {
         global $CFG;
@@ -826,7 +826,7 @@ EOD;
      * @param int|\assign $assignment
      * @param int $userid
      * @param int $attemptnumber (-1 means latest attempt)
-     * @return stored_file
+     * @return \stored_file
      */
     public static function get_feedback_document($assignment, $userid, $attemptnumber) {
 

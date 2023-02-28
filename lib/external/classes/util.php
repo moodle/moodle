@@ -572,9 +572,9 @@ class util {
     /**
      * Validate text field format against known FORMAT_XXX
      *
-     * @param array $format the format to validate
-     * @return the validated format
-     * @throws coding_exception
+     * @param string $format the format to validate
+     * @return string the validated format
+     * @throws \moodle_exception
      * @since Moodle 2.3
      */
     public static function validate_format($format) {

@@ -1806,7 +1806,7 @@ class core_renderer extends renderer_base {
     /**
      * Renders a Check API result
      *
-     * @param result $result
+     * @param core\check\result $result
      * @return string HTML fragment
      */
     protected function render_check_result(core\check\result $result) {
@@ -1816,7 +1816,7 @@ class core_renderer extends renderer_base {
     /**
      * Renders a Check API result
      *
-     * @param result $result
+     * @param core\check\result $result
      * @return string HTML fragment
      */
     public function check_result(core\check\result $result) {
@@ -2764,7 +2764,7 @@ class core_renderer extends renderer_base {
      * Theme developers: DO NOT OVERRIDE! Please override function
      * {@link core_renderer::render_file_picker()} instead.
      *
-     * @param array $options associative array with file manager options
+     * @param stdClass $options file manager options
      *   options are:
      *       maxbytes=>-1,
      *       itemid=>0,
@@ -4819,7 +4819,7 @@ EOD;
      * Renders a bar chart.
      *
      * @param \core\chart_bar $chart The chart.
-     * @return string.
+     * @return string
      */
     public function render_chart_bar(\core\chart_bar $chart) {
         return $this->render_chart($chart);
@@ -4829,7 +4829,7 @@ EOD;
      * Renders a line chart.
      *
      * @param \core\chart_line $chart The chart.
-     * @return string.
+     * @return string
      */
     public function render_chart_line(\core\chart_line $chart) {
         return $this->render_chart($chart);
@@ -4839,7 +4839,7 @@ EOD;
      * Renders a pie chart.
      *
      * @param \core\chart_pie $chart The chart.
-     * @return string.
+     * @return string
      */
     public function render_chart_pie(\core\chart_pie $chart) {
         return $this->render_chart($chart);
@@ -4850,7 +4850,7 @@ EOD;
      *
      * @param \core\chart_base $chart The chart.
      * @param bool $withtable Whether to include a data table with the chart.
-     * @return string.
+     * @return string
      */
     public function render_chart(\core\chart_base $chart, $withtable = true) {
         $chartdata = json_encode($chart);

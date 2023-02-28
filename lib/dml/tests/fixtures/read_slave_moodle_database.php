@@ -119,7 +119,7 @@ class read_slave_moodle_database extends test_moodle_database {
      * @param string $sql
      * @param array $params
      * @return bool true
-     * @throws Exception
+     * @throws \Exception
      */
     public function execute($sql, array $params = null) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);

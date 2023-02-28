@@ -2426,7 +2426,7 @@ abstract class enrol_plugin {
     /**
      * Returns list of unenrol links for all enrol instances in course.
      *
-     * @param int $instance
+     * @param stdClass $instance
      * @return moodle_url or NULL if self unenrolment not supported
      */
     public function get_unenrolself_link($instance) {
@@ -2708,7 +2708,7 @@ abstract class enrol_plugin {
      * for enrolment, name of enrolment plugin etc.
      *
      * @param stdClass $instance enrolment instance
-     * @return array instance info.
+     * @return stdClass|null instance info.
      */
     public function get_enrol_info(stdClass $instance) {
         return null;

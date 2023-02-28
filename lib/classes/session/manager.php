@@ -1175,7 +1175,7 @@ class manager {
      * @param string $component The string component for the message to show on failure.
      * @param int $frequency The update frequency in seconds.
      * @param int $timeout The timeout of each request in seconds.
-     * @throws coding_exception IF the frequency is longer than the session lifetime.
+     * @throws \coding_exception IF the frequency is longer than the session lifetime.
      */
     public static function keepalive($identifier = 'sessionerroruser', $component = 'error', $frequency = null, $timeout = 0) {
         global $CFG, $PAGE;

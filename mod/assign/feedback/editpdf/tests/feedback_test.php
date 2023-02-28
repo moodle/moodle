@@ -50,8 +50,8 @@ class feedback_test extends \advanced_testcase {
     /**
      * Helper method to add a file to a submission.
      *
-     * @param stdClass $student Student submitting.
-     * @param assign   $assign Assignment being submitted.
+     * @param \stdClass $student Student submitting.
+     * @param \assign   $assign Assignment being submitted.
      * @param bool     $textfile Use textfile fixture instead of pdf.
      */
     protected function add_file_submission($student, $assign, $textfile = false) {

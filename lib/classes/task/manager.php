@@ -163,7 +163,7 @@ class manager {
      * Checks if the task with the same classname, component and customdata is already scheduled
      *
      * @param adhoc_task $task
-     * @return bool
+     * @return \stdClass|false
      */
     protected static function get_queued_adhoc_task_record($task) {
         global $DB;

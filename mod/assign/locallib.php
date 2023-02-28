@@ -9629,8 +9629,8 @@ class assign {
      * Get the correct submission statement depending on single submisison, team submission or team submission
      * where all team memebers must submit.
      *
-     * @param array $adminconfig
-     * @param assign $instance
+     * @param stdClass $adminconfig
+     * @param stdClass $instance
      * @param context $context
      *
      * @return string

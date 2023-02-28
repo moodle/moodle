@@ -1519,7 +1519,7 @@ function unassign_capability($capability, $roleid, $contextid = null) {
  * @param string $capability capability name (string)
  * @param string $permission optional, the permission defined for this capability
  *                      either CAP_ALLOW, CAP_PREVENT or CAP_PROHIBIT. Defaults to null which means any.
- * @param stdClass $context null means any
+ * @param context|null $context null means any
  * @return array of role records
  */
 function get_roles_with_capability($capability, $permission = null, $context = null) {
@@ -4008,7 +4008,7 @@ function sort_by_roleassignment_authority($users, context $context, $roles = arr
  * (and $sort by extension) params according to it, as the first field
  * returned by the database should be unique (ra.id is the best candidate).
  *
- * @param int $roleid (can also be an array of ints!)
+ * @param int|array $roleid (can also be an array of ints!)
  * @param context $context
  * @param bool $parent if true, get list of users assigned in higher context too
  * @param string $fields fields from user (u.) , role assignment (ra) or role (r.)
@@ -4694,7 +4694,7 @@ function role_fix_names($roleoptions, context $context = null, $rolenamedisplay 
  * Most of the time, if the 2 components are different we should print a new line, (e.g. course system->rss client)
  * but when we are in grade, all reports/import/export capabilities should be together
  *
- * @param string $cap component string a
+ * @param stdClass $cap component string a
  * @param string $comp component string b
  * @param int $contextlevel
  * @return bool whether 2 component are in different "sections"
@@ -4952,7 +4952,7 @@ function prohibit_is_removable($roleid, context $context, $capability) {
  * it should produce as few overrides as possible.
  *
  * @param int $roleid
- * @param stdClass $context
+ * @param stdClass|context $context
  * @param string $capname capability name
  * @param int $permission
  * @return void

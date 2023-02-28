@@ -173,8 +173,8 @@ class provider_test extends provider_testcase {
     /**
      * Generate a guide controller with sample data required for testing of this class.
      *
-     * @param context_module $context
-     * @return gradingform_guide_controller
+     * @param \context_module $context
+     * @return \gradingform_guide_controller
      */
     protected function get_test_guide(\context_module $context): \gradingform_guide_controller {
         $generator = \testing_util::get_data_generator();
@@ -186,7 +186,7 @@ class provider_test extends provider_testcase {
     /**
      * Fetch a set of sample data.
      *
-     * @param gradingform_guide_controller $controller
+     * @param \gradingform_guide_controller $controller
      * @param int $itemid
      * @param float $spellingscore
      * @param string $spellingremark

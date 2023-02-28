@@ -41,8 +41,8 @@ class helper {
      * Store an H5P file.
      *
      * @param factory $factory The \core_h5p\factory object
-     * @param stored_file $file Moodle file instance
-     * @param stdClass $config Button options config
+     * @param \stored_file $file Moodle file instance
+     * @param \stdClass $config Button options config
      * @param bool $onlyupdatelibs Whether new libraries can be installed or only the existing ones can be updated
      * @param bool $skipcontent Should the content be skipped (so only the libraries will be saved)?
      *
@@ -77,10 +77,10 @@ class helper {
     /**
      * Get the error messages stored in our H5P framework.
      *
-     * @param stdClass $messages The error, exception and info messages, raised while preparing and running an H5P content.
+     * @param \stdClass $messages The error, exception and info messages, raised while preparing and running an H5P content.
      * @param factory $factory The \core_h5p\factory object
      *
-     * @return stdClass with framework error messages.
+     * @return \stdClass with framework error messages.
      */
     public static function get_messages(\stdClass $messages, factory $factory): \stdClass {
         $core = $factory->get_core();
@@ -198,7 +198,7 @@ class helper {
      * @param string $filepath The filepath of the file
      * @param  int   $userid  The author of the file
      * @param  \context $context The context where the file will be created
-     * @return stored_file The file created
+     * @return \stored_file The file created
      */
     public static function create_fake_stored_file_from_path(string $filepath, int $userid = 0,
             \context $context = null): \stored_file {

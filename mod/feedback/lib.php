@@ -677,7 +677,7 @@ function feedback_reset_userdata($data) {
  *
  * @global object
  * @uses FEEDBACK_RESETFORM_RESET
- * @param object $mform form passed by reference
+ * @param MoodleQuickForm $mform form passed by reference
  */
 function feedback_reset_course_form_definition(&$mform) {
     global $COURSE, $DB;
@@ -1181,7 +1181,7 @@ function feedback_get_receivemail_users($cmid, $groups = false) {
  * @param int $courseid
  * @param string $name the name of template shown in the templatelist
  * @param int $ispublic 0:privat 1:public
- * @return int the new templateid
+ * @return stdClass the new template
  */
 function feedback_create_template($courseid, $name, $ispublic = 0) {
     global $DB;
@@ -1966,7 +1966,7 @@ function feedback_delete_completedtmp() {
  *
  * @global object
  * @param int $feedbackid
- * @return mixed false if there already is a pagebreak on last position or the id of the pagebreak-item
+ * @return int|false false if there already is a pagebreak on last position or the id of the pagebreak-item
  */
 function feedback_create_pagebreak($feedbackid) {
     global $DB;

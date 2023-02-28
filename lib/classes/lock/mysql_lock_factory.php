@@ -49,7 +49,7 @@ class mysql_lock_factory implements lock_factory {
     /**
      * Return a unique prefix based on the database name and prefix.
      * @param string $type - Used to prefix lock keys.
-     * @return string.
+     * @return string
      */
     protected function get_unique_db_prefix($type) {
         global $CFG;

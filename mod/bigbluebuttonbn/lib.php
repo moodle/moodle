@@ -273,9 +273,9 @@ function bigbluebuttonbn_get_extra_capabilities() {
 /**
  * Called by course/reset.php
  *
- * @param object $mform
+ * @param MoodleQuickForm $mform
  */
-function bigbluebuttonbn_reset_course_form_definition(object &$mform) {
+function bigbluebuttonbn_reset_course_form_definition(&$mform) {
     $items = reset::reset_course_items();
     $mform->addElement('header', 'bigbluebuttonbnheader', get_string('modulenameplural', 'bigbluebuttonbn'));
     foreach ($items as $item => $default) {
@@ -388,7 +388,7 @@ function bigbluebuttonbn_get_coursemodule_info($coursemodule) {
  * Serves the bigbluebuttonbn attachments. Implements needed access control ;-).
  *
  * @param stdClass $course course object
- * @param cm_info $cm course module object
+ * @param stdClass $cm course module object
  * @param context $context context object
  * @param string $filearea file area
  * @param array $args extra arguments

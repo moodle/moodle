@@ -42,7 +42,7 @@ trait privacy_helper {
      *
      * @param   \context            $context    The context being stored.
      * @param   array               $subcontext The subcontext path to check.
-     * @return  array
+     * @return  \stdClass|array
      */
     protected function get_tags_on_subcontext(\context $context, array $subcontext) {
         $writer = \core_privacy\local\request\writer::with_context($context);

@@ -541,7 +541,7 @@ class auth_plugin_db extends auth_plugin_base {
      * Reads user information from DB and return it in an object.
      *
      * @param string $username username
-     * @return array
+     * @return stdClass
      */
     function get_userinfo_asobj($username) {
         $user_array = truncate_userinfo($this->get_userinfo($username));

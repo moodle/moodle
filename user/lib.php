@@ -33,7 +33,7 @@ define('USER_FILTER_STRING', 6);
  * Creates a user
  *
  * @throws moodle_exception
- * @param stdClass $user user to create
+ * @param stdClass|array $user user to create
  * @param bool $updatepassword if true, authentication plugin will update password.
  * @param bool $triggerevent set false if user_created event should not be triggred.
  *             This will not affect user_password_updated event triggering.
@@ -144,7 +144,7 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
  * Update a user with a user object (will compare against the ID)
  *
  * @throws moodle_exception
- * @param stdClass $user the user to update
+ * @param stdClass|array $user the user to update
  * @param bool $updatepassword if true, authentication plugin will update password.
  * @param bool $triggerevent set false if user_updated event should not be triggred.
  *             This will not affect user_password_updated event triggering.
@@ -1321,7 +1321,7 @@ function user_get_lastaccess_sql($columnname, $accesssince, $tableprefix, $havea
  * @param string $itemtype - Only user_roles is supported.
  * @param string $itemid - Courseid and userid separated by a :
  * @param string $newvalue - json encoded list of roleids.
- * @return \core\output\inplace_editable
+ * @return \core\output\inplace_editable|null
  */
 function core_user_inplace_editable($itemtype, $itemid, $newvalue) {
     if ($itemtype === 'user_roles') {

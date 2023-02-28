@@ -1716,7 +1716,7 @@ class admin_settingpage implements part_of_admin_tree, linkable_settings_page {
 abstract class admin_setting {
     /** @var string unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins. */
     public $name;
-    /** @var string localised name */
+    /** @var lang_string|string localised name */
     public $visiblename;
     /** @var string localised long description in Markdown format */
     public $description;
@@ -8321,6 +8321,7 @@ class admin_setting_managemediaplayers extends admin_setting {
         $usedextensions = [];
         foreach ($plugins as $name => $plugin) {
             $url->param('media', $name);
+            /** @var \core\plugininfo\media $plugininfo */
             $plugininfo = $pluginmanager->get_plugin_info('media_'.$name);
             $version = $plugininfo->versiondb;
             $supports = $plugininfo->supports($usedextensions);

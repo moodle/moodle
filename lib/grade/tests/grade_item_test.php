@@ -796,7 +796,7 @@ class grade_item_test extends \grade_base_testcase {
      *
      * @param int $courseid id of course
      * @param int $sortorder numeric sorting order of item
-     * @return stdClass grade item object from the database.
+     * @return \stdClass grade item object from the database.
      */
     private function insert_fake_grade_item_sortorder($courseid, $sortorder) {
         global $DB, $CFG;

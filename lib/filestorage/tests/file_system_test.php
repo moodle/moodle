@@ -66,7 +66,7 @@ class file_system_test extends \advanced_testcase {
      * @param   string  $filename The file name to use in the stored_file
      * @param   array   $mockedmethods A list of methods you intend to override
      *                  If no methods are specified, only abstract functions are mocked.
-     * @return stored_file
+     * @return \stored_file
      */
     protected function get_stored_file($filecontent, $filename = null, $mockedmethods = []) {
         $contenthash = \file_storage::hash_from_string($filecontent);
