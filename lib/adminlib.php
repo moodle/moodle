@@ -3874,6 +3874,12 @@ class admin_setting_configduration extends admin_setting {
     /** @var callable|null Validation function */
     protected $validatefunction = null;
 
+    /** @var int The minimum allowed value */
+    protected int $minduration = 0;
+
+    /** @var null|int The maximum allowed value */
+    protected null|int $maxduration = null;
+
     /**
      * Constructor
      * @param string $name unique ascii name, either 'mysetting' for settings that in config,
@@ -3894,6 +3900,31 @@ class admin_setting_configduration extends admin_setting {
             $this->defaultunit = 86400;
         }
         parent::__construct($name, $visiblename, $description, $defaultsetting);
+    }
+
+    /**
+     * Set the minimum allowed value.
+     * This must be at least 0.
+     *
+     * @param int $duration
+     */
+    public function set_min_duration(int $duration): void {
+        if ($duration < 0) {
+            throw new coding_exception('The minimum duration must be at least 0.');
+        }
+
+        $this->minduration = $duration;
+    }
+
+    /**
+     * Set the maximum allowed value.
+     *
+     * A value of null will disable the maximum duration value.
+     *
+     * @param int|null $duration
+     */
+    public function set_max_duration(?int $duration): void {
+        $this->maxduration = $duration;
     }
 
     /**
@@ -3918,15 +3949,23 @@ class admin_setting_configduration extends admin_setting {
      * @since Moodle 3.10
      */
     protected function validate_setting(int $data): string {
+        if ($data < $this->minduration) {
+            return get_string(
+                'configduration_low',
+                'admin',
+                self::get_duration_text($this->minduration, get_string('numseconds', 'core', 0))
+            );
+        }
+
+        if ($this->maxduration && $data > $this->maxduration) {
+            return get_string('configduration_high', 'admin', self::get_duration_text($this->maxduration));
+        }
+
         // If validation function is specified, call it now.
         if ($this->validatefunction) {
             return call_user_func($this->validatefunction, $data);
-        } else {
-            if ($data < 0) {
-                return get_string('errorsetting', 'admin');
-            }
-            return '';
         }
+        return '';
     }
 
     /**
@@ -3948,10 +3987,14 @@ class admin_setting_configduration extends admin_setting {
      * Converts seconds to some more user friendly string.
      * @static
      * @param int $seconds
+     * @param null|string The value to use when the duration is empty. If not specified, a "None" value is used.
      * @return string
      */
-    protected static function get_duration_text($seconds) {
+    protected static function get_duration_text(int $seconds, ?string $emptyvalue = null): string {
         if (empty($seconds)) {
+            if ($emptyvalue !== null) {
+                return $emptyvalue;
+            }
             return get_string('none');
         }
         $data = self::parse_seconds($seconds);
@@ -4043,7 +4086,15 @@ class admin_setting_configduration extends admin_setting {
         }
 
         $inputid = $this->get_id() . 'v';
-        $units = self::get_units();
+        $units = array_filter(self::get_units(), function($unit): bool {
+            if (!$this->maxduration) {
+                // No duration limit. All units are valid.
+                return true;
+            }
+
+            return $unit <= $this->maxduration;
+        }, ARRAY_FILTER_USE_KEY);
+
         $defaultunit = $this->defaultunit;
 
         $context = (object) [
