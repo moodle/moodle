@@ -84,6 +84,9 @@ abstract class attempts_report_table extends \table_sql {
     /** @var string The toggle group name for the checkboxes in the checkbox column. */
     protected $togglegroup = 'quiz-attempts';
 
+    /** @var string strftime format. */
+    protected $strtimeformat;
+
     /**
      * Constructor.
      *

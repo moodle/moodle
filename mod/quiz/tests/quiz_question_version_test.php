@@ -36,6 +36,9 @@ require_once(__DIR__ . '/quiz_question_helper_test_trait.php');
 class quiz_question_version_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
 
+    /** @var \stdClass user record. */
+    protected $student;
+
     /**
      * Called before every test.
      */

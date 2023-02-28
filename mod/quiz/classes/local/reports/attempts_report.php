@@ -64,6 +64,14 @@ abstract class attempts_report extends report_base {
     protected $showgrades = null;
 
     /**
+     * Can be used in subclasses to cache this information, but it will only get set if you set it.
+     * @example an example use in quiz_overview_report.
+     *
+     * @var bool
+     */
+    protected $hasgroupstudents;
+
+    /**
      *  Initialise various aspects of this report.
      *
      * @param string $mode
