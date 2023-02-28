@@ -289,7 +289,7 @@ class block_edit_form extends moodleform {
 
     /**
      * Override this to create any form fields specific to this type of block.
-     * @param object $mform the form being built.
+     * @param \MoodleQuickForm $mform the form being built.
      */
     protected function specific_definition($mform) {
         // By default, do nothing.

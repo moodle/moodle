@@ -1295,8 +1295,8 @@ class block_manager {
      * Get the appropriate list of editing icons for a block. This is used
      * to set {@link block_contents::$controls} in {@link block_base::get_contents_for_output()}.
      *
-     * @param $output The core_renderer to use when generating the output. (Need to get icon paths.)
-     * @return an array in the format for {@link block_contents::$controls}
+     * @param block_base $block
+     * @return array an array in the format for {@link block_contents::$controls}
      */
     public function edit_controls($block) {
         global $CFG;
@@ -2081,7 +2081,7 @@ function block_instance_by_id($blockinstanceid) {
  * Creates a new instance of the specified block class.
  *
  * @param string $blockname the name of the block.
- * @param $instance block_instances DB table row (optional).
+ * @param stdClass $instance block_instances DB table row (optional).
  * @param moodle_page $page the page this block is appearing on.
  * @return block_base the requested block instance.
  */
@@ -2090,6 +2090,7 @@ function block_instance($blockname, $instance = NULL, $page = NULL) {
         return false;
     }
     $classname = 'block_'.$blockname;
+    /** @var block_base $retval */
     $retval = new $classname;
     if($instance !== NULL) {
         if (is_null($page)) {

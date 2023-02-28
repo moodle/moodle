@@ -71,13 +71,13 @@ class block_base {
 
     /**
      * An object to contain the information to be displayed in the block.
-     * @var stdObject $content
+     * @var stdClass $content
      */
     var $content       = NULL;
 
     /**
      * The initialized instance of this block object.
-     * @var block $instance
+     * @var stdClass $instance
      */
     var $instance      = NULL;
 
@@ -89,13 +89,13 @@ class block_base {
 
     /**
      * This blocks's context.
-     * @var stdClass
+     * @var context
      */
     public $context    = NULL;
 
     /**
      * An object containing the instance configuration information for the current instance of this block.
-     * @var stdObject $config
+     * @var stdClass $config
      */
     var $config        = NULL;
 
@@ -462,7 +462,7 @@ class block_base {
      * table and the current page. (See {@link block_manager::load_blocks()}.)
      *
      * @param stdClass $instance data from block_insances, block_positions, etc.
-     * @param moodle_page $the page this block is on.
+     * @param moodle_page $page the page this block is on.
      */
     function _load_instance($instance, $page) {
         if (!empty($instance->configdata)) {
