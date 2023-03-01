@@ -209,7 +209,7 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
     // Display options.
     $params['recurse'] = optional_param('recurse',    null, PARAM_BOOL);
     $params['showhidden'] = optional_param('showhidden', null, PARAM_BOOL);
-    $params['qbshowtext'] = optional_param('qbshowtext', null, PARAM_BOOL);
+    $params['qbshowtext'] = optional_param('qbshowtext', null, PARAM_INT);
     // Category list page.
     $params['cpage'] = optional_param('cpage', null, PARAM_INT);
     $params['qtagids'] = optional_param_array('qtagids', null, PARAM_INT);
@@ -241,7 +241,7 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
  *      'cpage' => PARAM_INT,
  *      'recurse' => PARAM_BOOL,
  *      'showhidden' => PARAM_BOOL,
- *      'qbshowtext' => PARAM_BOOL,
+ *      'qbshowtext' => PARAM_INT,
  *      'qtagids' => [PARAM_INT], (array of integers)
  *      'qbs1' => PARAM_TEXT,
  *      'qbs2' => PARAM_TEXT,
@@ -279,7 +279,7 @@ function question_build_edit_resources($edittab, $baseurl, $params,
         'cpage' => PARAM_INT,
         'recurse' => PARAM_BOOL,
         'showhidden' => PARAM_BOOL,
-        'qbshowtext' => PARAM_BOOL
+        'qbshowtext' => PARAM_INT,
     ];
 
     foreach ($paramtypes as $name => $type) {
