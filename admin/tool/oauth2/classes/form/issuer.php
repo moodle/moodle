@@ -108,7 +108,7 @@ class issuer extends persistent {
         $mform->addHelpButton('clientsecret', 'issuerclientsecret', 'tool_oauth2');
 
         // Use basic authentication.
-        $mform->addElement('checkbox', 'basicauth', get_string('usebasicauth', 'tool_oauth2'));
+        $mform->addElement('advcheckbox', 'basicauth', get_string('usebasicauth', 'tool_oauth2'));
         $mform->addHelpButton('basicauth', 'usebasicauth', 'tool_oauth2');
 
         // Base Url.
