@@ -14,22 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir.'/cronlib.php');
+namespace core\task;
 
 /**
- * Unit tests for the cron.
+ * Unit tests for the file_temp_cleanup task.
  *
  * @package   core
  * @category  test
  * @copyright 2013 Tim Gusak <tim.gusak@remote-learner.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \core\task\file_temp_cleanup_task
  */
-class cronlib_test extends \basic_testcase {
+class file_temp_cleanup_task_test extends \basic_testcase {
 
     /**
      * Data provider for cron_delete_from_temp.
@@ -144,6 +140,7 @@ class cronlib_test extends \basic_testcase {
      * @dataProvider cron_delete_from_temp_provider
      * @param array $nodes List of files and directories
      * @param array $expected The expected results
+     * @covers ::execute
      */
     public function test_cron_delete_from_temp($nodes, $expected) {
         global $CFG;
