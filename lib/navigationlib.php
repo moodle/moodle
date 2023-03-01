@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\moodlenet\utilities;
 use core_contentbank\contentbank;
 
 defined('MOODLE_INTERNAL') || die();
@@ -4799,7 +4800,7 @@ class settings_navigation extends navigation_node {
      * @return navigation_node|false
      */
     protected function load_module_settings() {
-        global $CFG;
+        global $CFG, $USER;
 
         if (!$this->page->cm && $this->context->contextlevel == CONTEXT_MODULE && $this->context->instanceid) {
             $cm = get_coursemodule_from_id(false, $this->context->instanceid, 0, false, MUST_EXIST);
@@ -4878,6 +4879,22 @@ class settings_navigation extends navigation_node {
         $function = $this->page->activityname.'_extend_settings_navigation';
         if (function_exists($function)) {
             $function($this, $modulenode);
+        }
+
+        // Send to MoodleNet.
+        $usercanshare = utilities::can_user_share($this->context->get_course_context(), $USER->id);
+        $issuerid = get_config('moodlenet', 'oauthservice');
+        $issuer = \core\oauth2\api::get_issuer($issuerid);
+        $isvalidinstance = utilities::is_valid_instance($issuer);
+        if ($usercanshare && $isvalidinstance) {
+            $this->page->requires->js_call_amd('core/moodlenet/send_resource', 'init');
+            $action = new action_link(new moodle_url(''), '', null, [
+                'data-action' => 'sendtomoodlenet',
+                'data-type' => 'activity',
+                'data-sharetype' => 'resource',
+            ]);
+            $modulenode->add(get_string('moodlenet:sharetomoodlenet', 'moodle'),
+                $action, self::TYPE_SETTING, null, 'exportmoodlenet')->set_force_into_more_menu(true);
         }
 
         // Remove the module node if there are no children.

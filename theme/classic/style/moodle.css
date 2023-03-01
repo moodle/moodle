@@ -37667,6 +37667,84 @@ div.editor_atto_toolbar button .icon {
   border-bottom: 0;
 }
 
+.moodlenet-share-dialog {
+  min-height: 500px;
+}
+.moodlenet-share-dialog .modal-header .moodlenet-share-moodlenetinfo {
+  align-items: baseline;
+}
+.moodlenet-share-dialog .modal-header .moodlenet-share-moodlenetinfo .moodlenet-logo {
+  display: flex;
+}
+.moodlenet-share-dialog .modal-header .moodlenet-share-moodlenetinfo .moodlenet-logo .icon {
+  width: auto;
+  height: 1.3rem;
+}
+.moodlenet-share-dialog .modal-header .moodlenet-share-moodlenetinfo .moodlenet-title {
+  display: flex;
+  padding-left: 0.5em;
+}
+.moodlenet-share-dialog .modal-header.no-border {
+  border-bottom: none;
+}
+.moodlenet-share-dialog .modal-header.no-header-text .moodlenet-share-moodlenetinfo .moodlenet-title {
+  display: none;
+}
+.moodlenet-share-dialog .modal-body .moodlenet-share-activity-info {
+  border-radius: 0.25rem;
+  color: #1d2125;
+  background-color: #f5f9fc;
+  border-color: #3584c9;
+  border-width: 1px;
+  border-style: solid;
+  padding: 0.6em 1.5em;
+  margin-bottom: 1rem;
+}
+.moodlenet-share-dialog .modal-body .moodlenet-share-activity-info hr {
+  border-top-color: #3077b5;
+}
+.moodlenet-share-dialog .modal-body .moodlenet-share-activity-info .alert-link {
+  color: #070808;
+}
+.moodlenet-share-dialog .modal-body .moodlenet-share-activity-info .moodlenet-share-activity-info-hr {
+  border-bottom: 1px solid #dee2e6;
+}
+.moodlenet-share-dialog .modal-body .moodlenet-share-activity-info .moodlenet-activity-type,
+.moodlenet-share-dialog .modal-body .moodlenet-share-activity-info .moodlenet-activity-name {
+  display: block;
+}
+.moodlenet-share-dialog .modal-body .moodlenet-share-notice {
+  background-color: #f8f9fa;
+  padding: 1rem;
+}
+.moodlenet-share-dialog .modal-body .moodlenet-share-modal-content .loading-icon .icon {
+  width: 60px;
+  height: 60px;
+  font-size: 60px;
+}
+.moodlenet-share-dialog .modal-body .moodlenet-share-modal-content .moodlenet-circle-status {
+  height: 18rem;
+  margin: auto;
+}
+.moodlenet-share-dialog .modal-body .moodlenet-share-modal-content .moodlenet-circle-status.success {
+  background: radial-gradient(circle, rgba(25, 143, 81, 0.1) 9rem, transparent 9rem);
+}
+.moodlenet-share-dialog .modal-body .moodlenet-share-modal-content .moodlenet-circle-status.fail {
+  background: radial-gradient(circle, rgba(202, 49, 32, 0.1) 9rem, transparent 9rem);
+}
+.moodlenet-share-dialog .modal-body .moodlenet-share-modal-content .moodlenet-circle-status span {
+  display: block;
+  margin: auto;
+}
+.moodlenet-share-dialog .modal-body .moodlenet-share-modal-content .moodlenet-circle-status span.status-icon .icon {
+  font-size: 8rem;
+  width: auto;
+  margin: 0;
+}
+.moodlenet-share-dialog .modal-footer .moodlenet-share-to {
+  margin-right: auto;
+}
+
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
