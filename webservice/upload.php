@@ -112,6 +112,8 @@ foreach ($_FILES as $fieldname=>$uploaded_file) {
         $file->filepath = $_FILES[$fieldname]['tmp_name'];
         // calculate total size of upload
         $totalsize += $_FILES[$fieldname]['size'];
+        // Size of individual file.
+        $file->size = $_FILES[$fieldname]['size'];
     }
     $files[] = $file;
 }
@@ -148,6 +150,7 @@ foreach ($files as $file) {
     $file_record->license   = $CFG->sitedefaultlicense;
     $file_record->author    = fullname($authenticationinfo['user']);
     $file_record->source    = serialize((object)array('source' => $file->filename));
+    $file_record->filesize = $file->size;
 
     //Check if the file already exist
     $existingfile = $fs->file_exists($file_record->contextid, $file_record->component, $file_record->filearea,
@@ -159,6 +162,20 @@ foreach ($files as $file) {
     } else {
         $stored_file = $fs->create_file_from_pathname($file_record, $file->filepath);
         $results[] = $file_record;
+
+        // Log the event when a file is uploaded to the draft area.
+        $logevent = \core\event\draft_file_added::create([
+                'objectid' => $stored_file->get_id(),
+                'context' => $context,
+                'other' => [
+                        'itemid' => $file_record->itemid,
+                        'filename' => $file_record->filename,
+                        'filesize' => $file_record->filesize,
+                        'filepath' => $file_record->filepath,
+                        'contenthash' => $stored_file->get_contenthash(),
+                ],
+        ]);
+        $logevent->trigger();
     }
 }
 echo json_encode($results);

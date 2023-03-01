@@ -23,6 +23,8 @@
  * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/repository/lib.php');
 
 /**
@@ -190,13 +192,14 @@ class repository_upload extends repository {
             $record->itemid = 0;
         }
 
-        if (($maxbytes!==-1) && (filesize($_FILES[$elname]['tmp_name']) > $maxbytes)) {
+        $filesize = filesize($_FILES[$elname]['tmp_name']);
+        if (($maxbytes !== -1) && ($filesize > $maxbytes)) {
             $maxbytesdisplay = display_size($maxbytes, 0);
             throw new file_exception('maxbytesfile', (object) array('file' => $record->filename,
                                                                     'size' => $maxbytesdisplay));
         }
 
-        if (file_is_draft_area_limit_reached($record->itemid, $areamaxbytes, filesize($_FILES[$elname]['tmp_name']))) {
+        if (file_is_draft_area_limit_reached($record->itemid, $areamaxbytes, $filesize)) {
             throw new file_exception('maxareabytes');
         }
         // Ensure the user does not upload too many draft files in a short period.
@@ -232,6 +235,19 @@ class repository_upload extends repository {
         } else {
             $stored_file = $fs->create_file_from_pathname($record, $_FILES[$elname]['tmp_name']);
         }
+
+        $logevent = \core\event\draft_file_added::create([
+                'objectid' => $stored_file->get_id(),
+                'context' => $context,
+                'other' => [
+                        'itemid' => $record->itemid,
+                        'filename' => $record->filename,
+                        'filesize' => $filesize,
+                        'filepath' => $record->filepath,
+                        'contenthash' => $stored_file->get_contenthash(),
+                ],
+        ]);
+        $logevent->trigger();
 
         return array(
             'url'=>moodle_url::make_draftfile_url($record->itemid, $record->filepath, $record->filename)->out(false),
