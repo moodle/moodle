@@ -767,6 +767,7 @@ class restore_decode_interlinks extends restore_execution_step {
 
     protected function define_execution() {
         // Get the decoder (from the plan)
+        /** @var restore_decode_processor $decoder */
         $decoder = $this->task->get_decoder();
         restore_decode_processor::register_link_decoders($decoder); // Add decoder contents and rules
         // And launch it, everything will be processed
@@ -5468,17 +5469,22 @@ class restore_process_file_aliases_queue extends restore_execution_step {
     protected function define_execution() {
         global $DB;
 
-        $this->log('processing file aliases queue', backup::LOG_DEBUG);
-
         $fs = get_file_storage();
 
         // Load the queue.
+        $aliascount = $DB->count_records('backup_ids_temp',
+            ['backupid' => $this->get_restoreid(), 'itemname' => 'file_aliases_queue']);
         $rs = $DB->get_recordset('backup_ids_temp',
-            array('backupid' => $this->get_restoreid(), 'itemname' => 'file_aliases_queue'),
+            ['backupid' => $this->get_restoreid(), 'itemname' => 'file_aliases_queue'],
             '', 'info');
+
+        $this->log('processing file aliases queue. ' . $aliascount . ' entries.', backup::LOG_DEBUG);
+        $progress = $this->task->get_progress();
+        $progress->start_progress('Processing file aliases queue', $aliascount);
 
         // Iterate over aliases in the queue.
         foreach ($rs as $record) {
+            $progress->increment_progress();
             $info = backup_controller_dbops::decode_backup_temp_info($record->info);
 
             // Try to pick a repository instance that should serve the alias.
@@ -5603,6 +5609,7 @@ class restore_process_file_aliases_queue extends restore_execution_step {
                 }
             }
         }
+        $progress->end_progress();
         $rs->close();
     }
 
