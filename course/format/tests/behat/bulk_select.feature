@@ -9,7 +9,7 @@ Feature: Bulk activity and section selection.
       | fullname    | Course 1 |
       | shortname   | C1       |
       | category    | 0        |
-      | numsections | 2        |
+      | numsections | 4        |
     And the following "activities" exist:
       | activity | name              | intro                       | course | idnumber | section |
       | assign   | Activity sample 1 | Test assignment description | C1     | sample1  | 1       |
@@ -84,13 +84,15 @@ Feature: Bulk activity and section selection.
     And I should see "1 selected" in the "sticky-footer" "region"
     And the "Select all" "checkbox" should be enabled
     When I click on "Select all" "checkbox" in the "sticky-footer" "region"
-    Then I should see "2 selected" in the "sticky-footer" "region"
+    Then I should see "4 selected" in the "sticky-footer" "region"
 
   Scenario: Click on a select all with all sections selected unselects all sections
     Given I click on "Bulk edit" "button"
     And I click on "Select topic Topic 1" "checkbox"
     And I click on "Select topic Topic 2" "checkbox"
-    And I should see "2 selected" in the "sticky-footer" "region"
+    And I click on "Select topic Topic 3" "checkbox"
+    And I click on "Select topic Topic 4" "checkbox"
+    And I should see "4 selected" in the "sticky-footer" "region"
     And the "Select all" "checkbox" should be enabled
     When I click on "Select all" "checkbox" in the "sticky-footer" "region"
     Then I should see "0 selected" in the "sticky-footer" "region"
@@ -116,3 +118,29 @@ Feature: Bulk activity and section selection.
     And I should see "2 selected" in the "sticky-footer" "region"
     Then I click on "Activity sample 1" "link" in the "Topic 1" "section"
     And I should see "1 selected" in the "sticky-footer" "region"
+
+  Scenario: Select a range of activities using shift
+    Given I click on "Bulk edit" "button"
+    And I should see "0 selected" in the "sticky-footer" "region"
+    When I click on "Activity sample 1" "link" in the "Topic 1" "section"
+    And I shift click on "Activity sample 3" "link" in the "Topic 2" "section"
+    Then I should see "3 selected" in the "sticky-footer" "region"
+
+  Scenario: Select all activities in a section using alt
+    Given I click on "Bulk edit" "button"
+    And I should see "0 selected" in the "sticky-footer" "region"
+    When I alt click on "Activity sample 3" "link" in the "Topic 2" "section"
+    Then I should see "2 selected" in the "sticky-footer" "region"
+
+  Scenario: Select a range of sections using shift
+    Given I click on "Bulk edit" "button"
+    And I should see "0 selected" in the "sticky-footer" "region"
+    When I click on "Select topic Topic 1" "checkbox"
+    And I shift click on "Select topic Topic 3" "checkbox" in the "page" "region"
+    Then I should see "3 selected" in the "sticky-footer" "region"
+
+  Scenario: Select all section with alt click
+    Given I click on "Bulk edit" "button"
+    And I should see "0 selected" in the "sticky-footer" "region"
+    When I alt click on "Select topic Topic 3" "checkbox" in the "page" "region"
+    And I should see "4 selected" in the "sticky-footer" "region"
