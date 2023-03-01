@@ -31,6 +31,20 @@ use stdClass;
 class cron {
 
     /**
+     * Use a default value of 3 minutes.
+     * The recommended cron frequency is every minute, and the default adhoc concurrency is 3.
+     * A default value of 3 minutes allows all adhoc tasks to be run concurrently at their default value.
+     *
+     * @var int The default keepalive value for the main cron runner
+     */
+    public const DEFAULT_MAIN_PROCESS_KEEPALIVE = 3 * MINSECS;
+
+    /**
+     * @var int The max keepalive value for the main cron runner
+     */
+    public const MAX_MAIN_PROCESS_KEEPALIVE = 15 * MINSECS;
+
+    /**
      * Execute cron tasks
      *
      * @param int|null $keepalive The keepalive time for this cron run.
@@ -81,17 +95,14 @@ class cron {
         if ($keepalive === null) {
             $keepalive = get_config('core', 'cron_keepalive');
             if ($keepalive === false) {
-                // Use a default value of 3 minutes.
-                // The recommended cron frequency is every minute, and the default adhoc concurrency is 3.
-                // A default value of 3 minutes allows all adhoc tasks to be run concurrently at their default value.
-                $keepalive = 3 * MINSECS;
+                $keepalive = self::DEFAULT_MAIN_PROCESS_KEEPALIVE;
             }
         }
 
-        if ($keepalive > 15 * MINSECS) {
+        if ($keepalive > self::MAX_MAIN_PROCESS_KEEPALIVE) {
             // Attempt to prevent abnormally long keepalives.
             mtrace("Cron keepalive time is too long, reducing to 15 minutes.");
-            $keepalive = 15 * MINSECS;
+            $keepalive = self::MAX_MAIN_PROCESS_KEEPALIVE;
         }
 
         // Calculate the finish time based on the start time and keepalive.
