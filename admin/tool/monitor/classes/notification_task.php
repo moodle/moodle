@@ -111,12 +111,22 @@ class notification_task extends \core\task\adhoc_task {
      */
     protected function replace_placeholders($template, subscription $subscription, $eventobj, $context) {
         $template = str_replace('{link}', $eventobj->link, $template);
-        if ($eventobj->contextlevel == CONTEXT_MODULE && !empty($eventobj->contextinstanceid)
-            && (strpos($template, '{modulelink}') !== false)) {
-            $cm = get_fast_modinfo($eventobj->courseid)->get_cm($eventobj->contextinstanceid);
-            $modulelink = $cm->url;
-            $template = str_replace('{modulelink}', $modulelink, $template);
+        if ($eventobj->contextlevel >= CONTEXT_COURSE && !empty($eventobj->courseid) &&
+            (strpos($template, '{module') !== false || strpos($template, '{course') !== false)) {
+            $modinfo = get_fast_modinfo($eventobj->courseid);
+            $course = $modinfo->get_course();
+            $template = str_replace('{coursefullname}', $course->fullname, $template);
+            $template = str_replace('{courseshortname}', $course->shortname, $template);
+            if ($eventobj->contextlevel == CONTEXT_MODULE && !empty($eventobj->contextinstanceid) &&
+                strpos($template, '{module') !== false) {
+                $cm = $modinfo->get_cm($eventobj->contextinstanceid);
+                $modulelink = $cm->url;
+                $modulename = $cm->get_name();
+                $template = str_replace('{modulelink}', $modulelink, $template);
+                $template = str_replace('{modulename}', $modulename, $template);
+            }
         }
+
         $template = str_replace('{rulename}', $subscription->get_name($context), $template);
         $template = str_replace('{description}', $subscription->get_description($context), $template);
         $template = str_replace('{eventname}', $subscription->get_event_name(), $template);
