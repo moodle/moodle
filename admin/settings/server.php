@@ -348,7 +348,7 @@ if ($hassiteconfig) {
     );
 
     // Set an upper limit of 15 minutes.
-    $setting->set_max_duration(15 * MINSEC);
+    $setting->set_max_duration(15 * MINSECS);
 
     $temp->add($setting);
 

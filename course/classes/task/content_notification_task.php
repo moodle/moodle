@@ -68,7 +68,7 @@ class content_notification_task extends adhoc_task {
             from user with id {$userfrom->id}.");
         foreach ($users as $user) {
 
-            cron_setup_user($user, $course);
+            \core\cron::setup_user($user, $course);
 
             $cm = get_fast_modinfo($course)->cms[$cm->id];
 

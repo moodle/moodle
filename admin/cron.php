@@ -50,7 +50,6 @@ define('NO_OUTPUT_BUFFERING', true);
 
 require('../config.php');
 require_once($CFG->libdir . '/clilib.php');
-require_once($CFG->libdir . '/cronlib.php');
 
 // extra safety
 \core\session\manager::write_close();
@@ -78,4 +77,4 @@ if (!empty($CFG->cronremotepassword)) {
 @ini_set('html_errors', 'off');
 
 // Execute the cron, disabling keepalive.
-cron_run(0);
+\core\cron::run_main_process(0);

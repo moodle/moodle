@@ -28,8 +28,6 @@ define('NO_OUTPUT_BUFFERING', true);
 
 require('../../../config.php');
 
-require_once($CFG->libdir.'/cronlib.php');
-
 /**
  * Function used to handle mtrace by outputting the text to normal browser window.
  *

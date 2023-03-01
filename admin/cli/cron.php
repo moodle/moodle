@@ -31,7 +31,6 @@ define('CLI_SCRIPT', true);
 
 require(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/clilib.php');
-require_once($CFG->libdir . '/cronlib.php');
 
 // Now get cli option.
 [$options, $unrecognized] = cli_get_params(
@@ -184,4 +183,4 @@ if (!get_config('core', 'cron_enabled') && !$options['force']) {
 
 
 $keepalive = $options['keep-alive'];
-cron_run($keepalive);
+\core\cron::run_main_process($keepalive);

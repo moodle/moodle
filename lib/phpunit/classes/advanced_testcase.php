@@ -689,8 +689,7 @@ abstract class advanced_testcase extends base_testcase {
      * @param   int     $matchuserid The userid to match.
      */
     protected function runAdhocTasks($matchclass = '', $matchuserid = null) {
-        global $CFG, $DB;
-        require_once($CFG->libdir.'/cronlib.php');
+        global $DB;
 
         $params = [];
         if (!empty($matchclass)) {
@@ -729,7 +728,7 @@ abstract class advanced_testcase extends base_testcase {
                 $task->set_cron_lock($cronlock);
             }
 
-            cron_prepare_core_renderer();
+            \core\cron::prepare_core_renderer();
             $this->setUser($user);
 
             $task->execute();

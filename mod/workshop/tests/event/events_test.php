@@ -32,7 +32,6 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/mod/workshop/lib.php'); // Include the code to test.
 require_once($CFG->dirroot . '/mod/workshop/locallib.php'); // Include the code to test.
-require_once($CFG->dirroot . '/lib/cronlib.php'); // Include the code to test.
 require_once(__DIR__ . '/../fixtures/testable.php');
 
 

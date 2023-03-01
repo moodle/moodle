@@ -1108,9 +1108,6 @@ EOF;
      * @param string $taskname Name of task e.g. 'mod_whatever\task\do_something'
      */
     public function i_run_the_scheduled_task($taskname) {
-        global $CFG;
-        require_once("{$CFG->libdir}/cronlib.php");
-
         $task = \core\task\manager::get_scheduled_task($taskname);
         if (!$task) {
             throw new DriverException('The "' . $taskname . '" scheduled task does not exist');
@@ -1118,7 +1115,7 @@ EOF;
 
         // Do setup for cron task.
         raise_memory_limit(MEMORY_EXTRA);
-        cron_setup_user();
+        \core\cron::setup_user();
 
         // Get lock.
         $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
@@ -1138,7 +1135,7 @@ EOF;
 
         try {
             // Prepare the renderer.
-            cron_prepare_core_renderer();
+            \core\cron::prepare_core_renderer();
 
             // Discard task output as not appropriate for Behat output!
             ob_start();
@@ -1146,13 +1143,13 @@ EOF;
             ob_end_clean();
 
             // Restore the previous renderer.
-            cron_prepare_core_renderer(true);
+            \core\cron::prepare_core_renderer(true);
 
             // Mark task complete.
             \core\task\manager::scheduled_task_complete($task);
         } catch (Exception $e) {
             // Restore the previous renderer.
-            cron_prepare_core_renderer(true);
+            \core\cron::prepare_core_renderer(true);
 
             // Mark task failed and throw exception.
             \core\task\manager::scheduled_task_failed($task);
@@ -1175,11 +1172,10 @@ EOF;
      * @throws DriverException
      */
     public function i_run_all_adhoc_tasks() {
-        global $CFG, $DB;
-        require_once("{$CFG->libdir}/cronlib.php");
+        global $DB;
 
         // Do setup for cron task.
-        cron_setup_user();
+        \core\cron::setup_user();
 
         // Discard task output as not appropriate for Behat output!
         ob_start();
@@ -1193,7 +1189,7 @@ EOF;
             ob_clean();
 
             // Run the task.
-            cron_run_inner_adhoc_task($task);
+            \core\cron::run_inner_adhoc_task($task);
 
             // Check whether the task record still exists.
             // If a task was successful it will be removed.
