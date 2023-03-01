@@ -1032,7 +1032,7 @@ class renderer extends plugin_renderer_base {
      * Output the page information
      *
      * @param stdClass $quiz the quiz settings.
-     * @param stdClass $cm the course_module object.
+     * @param cm_info|stdClass $cm the course_module object.
      * @param context $context the quiz context.
      * @param array $messages any access messages that should be described.
      * @param bool $quizhasquestions does quiz has questions added.
@@ -1357,11 +1357,11 @@ class renderer extends plugin_renderer_base {
      * Render a summary of the number of group and user overrides, with corresponding links.
      *
      * @param stdClass $quiz the quiz settings.
-     * @param stdClass $cm the cm object.
+     * @param cm_info|stdClass $cm the cm object.
      * @param int $currentgroup currently selected group, if there is one.
      * @return string HTML fragment for the link.
      */
-    public function quiz_override_summary_links(stdClass $quiz, stdClass $cm, $currentgroup = 0): string {
+    public function quiz_override_summary_links(stdClass $quiz, cm_info|stdClass $cm, $currentgroup = 0): string {
 
         $baseurl = new moodle_url('/mod/quiz/overrides.php', ['cmid' => $cm->id]);
         $counts = quiz_override_summary($quiz, $cm, $currentgroup);

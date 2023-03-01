@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use mod_quiz\access_manager;
 use mod_quiz\form\add_random_form;
+use mod_quiz\grade_calculator;
 use mod_quiz\question\bank\custom_view;
 use mod_quiz\question\display_options;
 use mod_quiz\question\qubaids_for_quiz;
@@ -149,7 +150,8 @@ function quiz_update_instance($quiz, $mform) {
     quiz_after_add_or_update($quiz);
 
     if ($oldquiz->grademethod != $quiz->grademethod) {
-        quiz_update_all_final_grades($quiz);
+        $gradecalculator = quiz_settings::create($quiz->id)->get_grade_calculator();
+        $gradecalculator->recompute_all_final_grades();
         quiz_update_grades($quiz);
     }
 
@@ -461,7 +463,7 @@ function quiz_get_best_grade($quiz, $userid) {
  * @return bool whether this is a graded quiz.
  */
 function quiz_has_grades($quiz) {
-    return $quiz->grade >= 0.000005 && $quiz->sumgrades >= 0.000005;
+    return $quiz->grade >= grade_calculator::ALMOST_ZERO && $quiz->sumgrades >= grade_calculator::ALMOST_ZERO;
 }
 
 /**
@@ -1171,21 +1173,19 @@ function quiz_review_option_form_to_db($fromform, $field) {
  * @return \core\output\inplace_editable|void
  */
 function mod_quiz_inplace_editable(string $itemtype, int $itemid, string $newvalue): \core\output\inplace_editable {
+    global $DB;
+
     if ($itemtype === 'slotdisplaynumber') {
-        global $DB;
         $record = $DB->get_record('quiz_slots', ['id' => $itemid], '*', MUST_EXIST);
-        $quiz = $DB->get_record('quiz', ['id' => $record->quizid], '*', MUST_EXIST);
-        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
-        $course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
+        $quizobj = quiz_settings::create($record->quizid);
 
         // Call validate_context for course module to check access and set current context.
-        $context = context_module::instance($cm->id);
+        $context = $quizobj->get_context();
         \core_external\external_api::validate_context($context);
 
         // Check permission of the user to update this item (customise question number).
         require_capability('mod/quiz:manage', $context);
 
-        $quizobj = new quiz_settings($quiz, $cm, $course);
         $structure = $quizobj->get_structure();
         $warning = false;
         // Clean input and update the record.
@@ -2117,7 +2117,7 @@ function mod_quiz_core_calendar_provide_event_action(calendar_event $event,
  * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
  *
  * @param stdClass $coursemodule The coursemodule object (record).
- * @return cached_cm_info An object on information that the courses
+ * @return cached_cm_info|false An object on information that the courses
  *                        will know about (most noticeably, an icon).
  */
 function quiz_get_coursemodule_info($coursemodule) {
@@ -2424,7 +2424,7 @@ function mod_quiz_output_fragment_quiz_question_bank($args) {
             question_build_edit_resources('editq', '/mod/quiz/edit.php', $params, custom_view::DEFAULT_PAGE_SIZE);
 
     // Get the course object and related bits.
-    $course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
+    $course = get_course($quiz->course);
     require_capability('mod/quiz:manage', $contexts->lowest());
 
     // Create quiz question bank view.

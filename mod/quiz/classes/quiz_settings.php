@@ -16,6 +16,7 @@
 
 namespace mod_quiz;
 
+use cm_info;
 use coding_exception;
 use context;
 use context_module;
@@ -84,25 +85,50 @@ class quiz_settings {
     }
 
     /**
-     * Static function to create a new quiz object for a specific user.
+     * Helper used by the other factory methods.
      *
-     * @param int $quizid the the quiz id.
+     * @param stdClass $quiz
+     * @param cm_info|stdClass $cm
+     * @param stdClass $course
      * @param int|null $userid the the userid (optional). If passed, relevant overrides are applied.
-     * @return quiz_settings the new quiz object.
+     * @return quiz_settings the new quiz settings object.
      */
-    public static function create($quizid, $userid = null) {
-        global $DB;
-
-        $quiz = access_manager::load_quiz_and_settings($quizid);
-        $course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
-        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
-
+    protected static function create_helper(stdClass $quiz, cm_info|stdClass $cm, stdClass $course, ?int $userid): self {
         // Update quiz with override information.
         if ($userid) {
             $quiz = quiz_update_effective_access($quiz, $userid);
         }
 
         return new quiz_settings($quiz, $cm, $course);
+    }
+
+    /**
+     * Static function to create a new quiz settings object from a quiz id, for a specific user.
+     *
+     * @param int $quizid the quiz id.
+     * @param int|null $userid the the userid (optional). If passed, relevant overrides are applied.
+     * @return quiz_settings the new quiz settings object.
+     */
+    public static function create(int $quizid, int $userid = null): self {
+        $quiz = access_manager::load_quiz_and_settings($quizid);
+        $course = get_course($quiz->course);
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
+
+        return self::create_helper($quiz, $cm, $course, $userid);
+    }
+
+    /**
+     * Static function to create a new quiz settings object from a cmid, for a specific user.
+     *
+     * @param int $cmid the course-module id.
+     * @param int|null $userid the the userid (optional). If passed, relevant overrides are applied.
+     * @return quiz_settings the new quiz settings object.
+     */
+    public static function create_for_cmid(int $cmid, int $userid = null): self {
+        [$course, $cm] = get_course_and_cm_from_cmid($cmid, 'quiz');
+        $quiz = access_manager::load_quiz_and_settings($cm->instance);
+
+        return self::create_helper($quiz, $cm, $course, $userid);
     }
 
     /**
@@ -347,7 +373,7 @@ class quiz_settings {
      * for this quiz at this time.
      *
      * @param int $timenow the current time as a unix timestamp.
-     * @return access_manager and instance of the access_manager class
+     * @return access_manager an instance of the access_manager class
      *      for this quiz at this time.
      */
     public function get_access_manager($timenow) {
@@ -356,6 +382,15 @@ class quiz_settings {
                     has_capability('mod/quiz:ignoretimelimits', $this->context, null, false));
         }
         return $this->accessmanager;
+    }
+
+    /**
+     * Return the grade_calculator object for this quiz.
+     *
+     * @return grade_calculator
+     */
+    public function get_grade_calculator(): grade_calculator {
+        return grade_calculator::create($this);
     }
 
     /**

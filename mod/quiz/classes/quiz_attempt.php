@@ -125,7 +125,7 @@ class quiz_attempt {
 
         $attempt = $DB->get_record('quiz_attempts', $conditions, '*', MUST_EXIST);
         $quiz = access_manager::load_quiz_and_settings($attempt->quiz);
-        $course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
+        $course = get_course($quiz->course);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
         // Update quiz with override information.
@@ -361,6 +361,15 @@ class quiz_attempt {
      */
     public function get_cmid() {
         return $this->quizobj->get_cmid();
+    }
+
+    /**
+     * Get the quiz context.
+     *
+     * @return context_module the context of the quiz this attempt belongs to.
+     */
+    public function get_context(): context_module {
+        return $this->quizobj->get_context();
     }
 
     /**
@@ -1634,7 +1643,7 @@ class quiz_attempt {
         }
 
         if (!$this->is_preview() && $this->attempt->state == self::FINISHED) {
-            quiz_save_best_grade($this->get_quiz(), $this->get_userid());
+            $this->recompute_final_grade();
         }
 
         $transaction->allow_commit();
@@ -1761,7 +1770,7 @@ class quiz_attempt {
         $DB->update_record('quiz_attempts', $this->attempt);
 
         if (!$this->is_preview()) {
-            quiz_save_best_grade($this->get_quiz(), $this->attempt->userid);
+            $this->recompute_final_grade();
 
             // Trigger event.
             $this->fire_state_transition_event('\mod_quiz\event\attempt_submitted', $timestamp, $studentisonline);
@@ -1784,6 +1793,13 @@ class quiz_attempt {
             $this->attempt->timecheckstate = $time;
             $DB->set_field('quiz_attempts', 'timecheckstate', $time, ['id' => $this->attempt->id]);
         }
+    }
+
+    /**
+     * Needs to be called after this attempt's grade is changed, to update the overall quiz grade.
+     */
+    protected function recompute_final_grade(): void {
+        $this->quizobj->get_grade_calculator()->recompute_final_grade($this->get_userid());
     }
 
     /**
@@ -2108,7 +2124,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid(),
                 'page' => $this->get_currentpage()
@@ -2129,7 +2145,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid(),
                 'page' => $this->get_currentpage()
@@ -2150,7 +2166,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid(),
                 'page' => $this->get_currentpage()
@@ -2173,7 +2189,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid(),
                 'page' => $this->get_currentpage(),
@@ -2197,7 +2213,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid()
             ]
@@ -2218,7 +2234,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid()
             ]
@@ -2236,7 +2252,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid()
             ]

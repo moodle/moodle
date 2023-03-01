@@ -305,3 +305,182 @@ class moodle_quiz_exception extends moodle_exception {
         parent::__construct($errorcode, 'quiz', $link, $a, $debuginfo);
     }
 }
+
+/**
+ * Update the sumgrades field of the quiz. This needs to be called whenever
+ * the grading structure of the quiz is changed. For example if a question is
+ * added or removed, or a question weight is changed.
+ *
+ * You should call {@see quiz_delete_previews()} before you call this function.
+ *
+ * @param stdClass $quiz a quiz.
+ * @deprecated since Moodle 4.2. Please use grade_calculator::recompute_quiz_sumgrades.
+ * @todo MDL-76612 Final deprecation in Moodle 4.6
+ */
+function quiz_update_sumgrades($quiz) {
+    debugging('quiz_update_sumgrades is deprecated. ' .
+        'Please use a standard grade_calculator::recompute_quiz_sumgrades instead.', DEBUG_DEVELOPER);
+    quiz_settings::create($quiz->id)->get_grade_calculator()->recompute_quiz_sumgrades();
+}
+
+/**
+ * Update the sumgrades field of the attempts at a quiz.
+ *
+ * @param stdClass $quiz a quiz.
+ * @deprecated since Moodle 4.2. Please use grade_calculator::recompute_all_attempt_sumgrades.
+ * @todo MDL-76612 Final deprecation in Moodle 4.6
+ */
+function quiz_update_all_attempt_sumgrades($quiz) {
+    debugging('quiz_update_all_attempt_sumgrades is deprecated. ' .
+        'Please use a standard grade_calculator::recompute_all_attempt_sumgrades instead.', DEBUG_DEVELOPER);
+    quiz_settings::create($quiz->id)->get_grade_calculator()->recompute_all_attempt_sumgrades();
+}
+
+/**
+ * Update the final grade at this quiz for all students.
+ *
+ * This function is equivalent to calling quiz_save_best_grade for all
+ * users, but much more efficient.
+ *
+ * @param stdClass $quiz the quiz settings.
+ * @deprecated since Moodle 4.2. Please use grade_calculator::recompute_all_final_grades.
+ * @todo MDL-76612 Final deprecation in Moodle 4.6
+ */
+function quiz_update_all_final_grades($quiz) {
+    debugging('quiz_update_all_final_grades is deprecated. ' .
+        'Please use a standard grade_calculator::recompute_all_final_grades instead.', DEBUG_DEVELOPER);
+    quiz_settings::create($quiz->id)->get_grade_calculator()->recompute_all_final_grades();
+}
+
+/**
+ * The quiz grade is the maximum that student's results are marked out of. When it
+ * changes, the corresponding data in quiz_grades and quiz_feedback needs to be
+ * rescaled. After calling this function, you probably need to call
+ * quiz_update_all_attempt_sumgrades, grade_calculator::recompute_all_final_grades();
+ * quiz_update_grades. (At least, that is what this comment has said for years, but
+ * it seems to call recompute_all_final_grades itself.)
+ *
+ * @param float $newgrade the new maximum grade for the quiz.
+ * @param stdClass $quiz the quiz we are updating. Passed by reference so its
+ *      grade field can be updated too.
+ * @return bool indicating success or failure.
+ * @deprecated since Moodle 4.2. Please use grade_calculator::update_quiz_maximum_grade.
+ * @todo MDL-76612 Final deprecation in Moodle 4.6
+ */
+function quiz_set_grade($newgrade, $quiz) {
+    debugging('quiz_set_grade is deprecated. ' .
+        'Please use a standard grade_calculator::update_quiz_maximum_grade instead.', DEBUG_DEVELOPER);
+    quiz_settings::create($quiz->id)->get_grade_calculator()->update_quiz_maximum_grade($newgrade);
+    return true;
+}
+
+/**
+ * Save the overall grade for a user at a quiz in the quiz_grades table
+ *
+ * @param stdClass $quiz The quiz for which the best grade is to be calculated and then saved.
+ * @param int $userid The userid to calculate the grade for. Defaults to the current user.
+ * @param array $attempts The attempts of this user. Useful if you are
+ * looping through many users. Attempts can be fetched in one master query to
+ * avoid repeated querying.
+ * @return bool Indicates success or failure.
+ * @deprecated since Moodle 4.2. Please use grade_calculator::update_quiz_maximum_grade.
+ * @todo MDL-76612 Final deprecation in Moodle 4.6
+ */
+function quiz_save_best_grade($quiz, $userid = null, $attempts = []) {
+    debugging('quiz_save_best_grade is deprecated. ' .
+        'Please use a standard grade_calculator::recompute_final_grade instead.', DEBUG_DEVELOPER);
+    quiz_settings::create($quiz->id)->get_grade_calculator()->recompute_final_grade($userid, $attempts);
+    return true;
+}
+
+/**
+ * Calculate the overall grade for a quiz given a number of attempts by a particular user.
+ *
+ * @param stdClass $quiz    the quiz settings object.
+ * @param array $attempts an array of all the user's attempts at this quiz in order.
+ * @return float          the overall grade
+ * @deprecated since Moodle 4.2. No direct replacement.
+ * @todo MDL-76612 Final deprecation in Moodle 4.6
+ */
+function quiz_calculate_best_grade($quiz, $attempts) {
+    debugging('quiz_calculate_best_grade is deprecated with no direct replacement. It was only used ' .
+        'in one place in the quiz code so this logic is now private to grade_calculator.', DEBUG_DEVELOPER);
+
+    switch ($quiz->grademethod) {
+
+        case QUIZ_ATTEMPTFIRST:
+            $firstattempt = reset($attempts);
+            return $firstattempt->sumgrades;
+
+        case QUIZ_ATTEMPTLAST:
+            $lastattempt = end($attempts);
+            return $lastattempt->sumgrades;
+
+        case QUIZ_GRADEAVERAGE:
+            $sum = 0;
+            $count = 0;
+            foreach ($attempts as $attempt) {
+                if (!is_null($attempt->sumgrades)) {
+                    $sum += $attempt->sumgrades;
+                    $count++;
+                }
+            }
+            if ($count == 0) {
+                return null;
+            }
+            return $sum / $count;
+
+        case QUIZ_GRADEHIGHEST:
+        default:
+            $max = null;
+            foreach ($attempts as $attempt) {
+                if ($attempt->sumgrades > $max) {
+                    $max = $attempt->sumgrades;
+                }
+            }
+            return $max;
+    }
+}
+
+/**
+ * Return the attempt with the best grade for a quiz
+ *
+ * Which attempt is the best depends on $quiz->grademethod. If the grade
+ * method is GRADEAVERAGE then this function simply returns the last attempt.
+ * @return stdClass         The attempt with the best grade
+ * @param stdClass $quiz    The quiz for which the best grade is to be calculated
+ * @param array $attempts An array of all the attempts of the user at the quiz
+ * @deprecated since Moodle 4.2. No direct replacement.
+ * @todo MDL-76612 Final deprecation in Moodle 4.6
+ */
+function quiz_calculate_best_attempt($quiz, $attempts) {
+    debugging('quiz_calculate_best_attempt is deprecated with no direct replacement. ' .
+        'It was not used anywhere!', DEBUG_DEVELOPER);
+
+    switch ($quiz->grademethod) {
+
+        case QUIZ_ATTEMPTFIRST:
+            foreach ($attempts as $attempt) {
+                return $attempt;
+            }
+            break;
+
+        case QUIZ_GRADEAVERAGE: // We need to do something with it.
+        case QUIZ_ATTEMPTLAST:
+            foreach ($attempts as $attempt) {
+                $final = $attempt;
+            }
+            return $final;
+
+        default:
+        case QUIZ_GRADEHIGHEST:
+            $max = -1;
+            foreach ($attempts as $attempt) {
+                if ($attempt->sumgrades > $max) {
+                    $max = $attempt->sumgrades;
+                    $maxattempt = $attempt;
+                }
+            }
+            return $maxattempt;
+    }
+}

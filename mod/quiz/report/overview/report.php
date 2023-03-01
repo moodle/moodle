@@ -25,6 +25,7 @@
 use mod_quiz\local\reports\attempts_report;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -54,7 +55,7 @@ class quiz_overview_report extends attempts_report {
     protected $newquestionidsforold = null;
 
     public function display($quiz, $cm, $course) {
-        global $DB, $OUTPUT, $PAGE;
+        global $DB, $PAGE;
 
         list($currentgroup, $studentsjoins, $groupstudentsjoins, $allowedjoins) = $this->init(
                 'overview', 'quiz_overview_settings_form', $quiz, $cm, $course);
@@ -686,8 +687,9 @@ class quiz_overview_report extends attempts_report {
      * @param stdClass $quiz the quiz settings.
      */
     protected function update_overall_grades($quiz) {
-        quiz_update_all_attempt_sumgrades($quiz);
-        quiz_update_all_final_grades($quiz);
+        $gradecalculator = $this->quizobj->get_grade_calculator();
+        $gradecalculator->recompute_all_attempt_sumgrades();
+        $gradecalculator->recompute_all_final_grades();
         quiz_update_grades($quiz);
     }
 

@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\quiz_settings;
+
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
@@ -30,18 +32,13 @@ $slotid = required_param('slotid', PARAM_INT);
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 
 // Get the quiz slot.
-$slot = $DB->get_record('quiz_slots', ['id' => $slotid]);
-if (!$slot) {
-    new moodle_exception('invalidrandomslot', 'mod_quiz');
-}
+$slot = $DB->get_record('quiz_slots', ['id' => $slotid], '*', MUST_EXIST);
+$quizobj = quiz_settings::create($slot->quizid);
+$quiz = $quizobj->get_quiz();
+$cm = $quizobj->get_cm();
+$course = $quizobj->get_course();
 
-if (!$quiz = $DB->get_record('quiz', ['id' => $slot->quizid])) {
-    new moodle_exception('invalidquizid', 'quiz');
-}
-
-$cm = get_coursemodule_from_instance('quiz', $slot->quizid, $quiz->course);
-
-require_login($cm->course, false, $cm);
+require_login($course, false, $cm);
 
 if ($returnurl) {
     $returnurl = new moodle_url($returnurl);
@@ -67,7 +64,7 @@ if (!$category = $DB->get_record('question_categories', ['id' => $filterconditio
 $catcontext = context::instance_by_id($category->contextid);
 require_capability('moodle/question:useall', $catcontext);
 
-$thiscontext = context_module::instance($cm->id);
+$thiscontext = $quizobj->get_context();
 $contexts = new core_question\local\bank\question_edit_contexts($thiscontext);
 
 // Create the editing form.

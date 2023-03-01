@@ -16,6 +16,8 @@
 
 namespace mod_quiz\local\structure;
 
+use context_module;
+
 /**
  * Class slot_random, represents a random question slot type.
  *
@@ -210,7 +212,7 @@ class slot_random {
         // Log slot created event.
         $cm = get_coursemodule_from_instance('quiz', $quiz->id);
         $event = \mod_quiz\event\slot_created::create([
-            'context' => \context_module::instance($cm->id),
+            'context' => context_module::instance($cm->id),
             'objectid' => $this->record->id,
             'other' => [
                 'quizid' => $quiz->id,

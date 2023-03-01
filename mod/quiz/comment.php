@@ -90,7 +90,7 @@ if (data_submitted() && confirm_sesskey()) {
         $params = [
             'objectid' => $attemptobj->get_question_attempt($slot)->get_question_id(),
             'courseid' => $attemptobj->get_courseid(),
-            'context' => context_module::instance($attemptobj->get_cmid()),
+            'context' => $attemptobj->get_quizobj()->get_context(),
             'other' => [
                 'quizid' => $attemptobj->get_quizid(),
                 'attemptid' => $attemptobj->get_attemptid(),

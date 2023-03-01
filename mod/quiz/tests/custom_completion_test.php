@@ -113,7 +113,7 @@ class custom_completion_test extends advanced_testcase {
      * @param array $attemptoptions ['quiz'] => object, ['student'] => object, ['tosubmit'] => array, ['attemptnumber'] => int
      */
     private function do_attempt_quiz(array $attemptoptions) {
-        $quizobj = quiz_settings::create($attemptoptions['quiz']->id);
+        $quizobj = quiz_settings::create((int) $attemptoptions['quiz']->id);
 
         // Start the passing attempt.
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());

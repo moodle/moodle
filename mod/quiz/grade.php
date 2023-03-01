@@ -25,6 +25,7 @@
  */
 
 use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
@@ -34,12 +35,13 @@ require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 $id = required_param('id', PARAM_INT);
 $userid = optional_param('userid', 0, PARAM_INT);
 
-$cm = get_coursemodule_from_id('quiz', $id, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
-$quiz = $DB->get_record('quiz', ['id' => $cm->instance], '*', MUST_EXIST);
+$quizobj = quiz_settings::create_for_cmid($id);
+$quiz = $quizobj->get_quiz();
+$cm = $quizobj->get_cm();
+$course = $quizobj->get_course();
 require_login($course, false, $cm);
 
-$reportlist = quiz_report_list(context_module::instance($cm->id));
+$reportlist = quiz_report_list($quizobj->get_context());
 if (empty($reportlist) || $userid == $USER->id) {
     // If the user cannot see reports, or can see reports but is looking
     // at their own grades, redirect them to the view.php page.

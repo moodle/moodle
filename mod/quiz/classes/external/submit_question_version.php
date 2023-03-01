@@ -64,14 +64,14 @@ class submit_question_version extends external_api {
             'newversion' => $newversion
         ];
         $params = self::validate_parameters(self::execute_parameters(), $params);
-        $response = ['result' => false];
+        $response = [];
         // Get the required data.
         $referencedata = $DB->get_record('question_references',
             ['itemid' => $params['slotid'], 'component' => 'mod_quiz', 'questionarea' => 'slot']);
         $slotdata = $DB->get_record('quiz_slots', ['id' => $slotid]);
 
         // Capability check.
-        list($course, $cm) = get_course_and_cm_from_instance($slotdata->quizid, 'quiz');
+        [, $cm] = get_course_and_cm_from_instance($slotdata->quizid, 'quiz');
         $context = \context_module::instance($cm->id);
         self::validate_context($context);
         require_capability('mod/quiz:manage', $context);

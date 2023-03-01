@@ -51,21 +51,22 @@ $mdlscrollto = optional_param('mdlscrollto', '', PARAM_INT);
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
         question_edit_setup('editq', '/mod/quiz/edit.php', true);
 
+$PAGE->set_url($thispageurl);
+$PAGE->set_secondary_active_tab("mod_quiz_edit");
+
+// You need mod/quiz:manage in addition to question capabilities to access this page.
+require_capability('mod/quiz:manage', $contexts->lowest());
+
+// Get the course object and related bits.
+$course = get_course($quiz->course);
+$quizobj = new quiz_settings($quiz, $cm, $course);
+$structure = $quizobj->get_structure();
+$gradecalculator = $quizobj->get_grade_calculator();
+
 $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
 
 $quizhasattempts = quiz_has_attempts($quiz->id);
-
-$PAGE->set_url($thispageurl);
-$PAGE->set_secondary_active_tab("mod_quiz_edit");
-
-// Get the course object and related bits.
-$course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
-$quizobj = new quiz_settings($quiz, $cm, $course);
-$structure = $quizobj->get_structure();
-
-// You need mod/quiz:manage in addition to question capabilities to access this page.
-require_capability('mod/quiz:manage', $contexts->lowest());
 
 // Process commands ============================================================.
 
@@ -100,7 +101,7 @@ if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sess
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
     quiz_add_quiz_question($addquestion, $quiz, $addonpage);
     quiz_delete_previews($quiz);
-    quiz_update_sumgrades($quiz);
+    $gradecalculator->recompute_quiz_sumgrades();
     $thispageurl->param('lastchanged', $addquestion);
     redirect($afteractionurl);
 }
@@ -118,7 +119,7 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
         }
     }
     quiz_delete_previews($quiz);
-    quiz_update_sumgrades($quiz);
+    $gradecalculator->recompute_quiz_sumgrades();
     redirect($afteractionurl);
 }
 
@@ -140,7 +141,7 @@ if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
     quiz_add_random_questions($quiz, $addonpage, $categoryid, $randomcount, $recurse);
 
     quiz_delete_previews($quiz);
-    quiz_update_sumgrades($quiz);
+    $gradecalculator->recompute_quiz_sumgrades();
     redirect($afteractionurl);
 }
 
@@ -149,9 +150,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     // If rescaling is required save the new maximum.
     $maxgrade = unformat_float(optional_param('maxgrade', '', PARAM_RAW_TRIMMED), true);
     if (is_float($maxgrade) && $maxgrade >= 0) {
-        quiz_set_grade($maxgrade, $quiz);
-        quiz_update_all_final_grades($quiz);
-        quiz_update_grades($quiz, 0, true);
+        $gradecalculator->update_quiz_maximum_grade($maxgrade);
     }
 
     redirect($afteractionurl);

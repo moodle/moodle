@@ -751,7 +751,7 @@ class edit_renderer extends \plugin_renderer_base {
 
         if ($structure->can_display_number_be_customised($slot)) {
             $questionnumbercustomised = $this->output->render($structure->make_slot_display_number_in_place_editable(
-                    $slotid, \context_module::instance($structure->get_cmid())));
+                    $slotid, $structure->get_context()));
             $questionnumber = $questionnumbercustomised;
         } else {
             $questionnumber = $structure->get_displayed_number_for_slot($slot);
