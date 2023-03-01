@@ -84,6 +84,30 @@ class testable_mod_quiz_external extends mod_quiz_external {
  */
 class external_test extends externallib_advanced_testcase {
 
+    /** @var \stdClass course record. */
+    protected $course;
+
+    /** @var \stdClass activity record. */
+    protected $quiz;
+
+    /** @var \context_module context instance. */
+    protected $context;
+
+    /** @var \stdClass */
+    protected $cm;
+
+    /** @var \stdClass user record. */
+    protected $student;
+
+    /** @var \stdClass user record. */
+    protected $teacher;
+
+    /** @var \stdClass user role record. */
+    protected $studentrole;
+
+    /** @var \stdClass  user role record. */
+    protected $teacherrole;
+
     /**
      * Set up for every test
      */

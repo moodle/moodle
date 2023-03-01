@@ -88,6 +88,13 @@ This files describes API changes in the quiz code.
   - The file mod/quiz/report/statistics/statistics_graph.php - deprecated since 3.2
   - quiz_print_overview - deprecated since 3.3
 
+* For properties that were previously only declared dynamically, a few classes now include property declarations to support PHP 8.2.
+  The affected classes are:
+   - restore_quiz_activity_structure_step
+   - attempts_report_table
+   - attempts_report
+   - quiz_overview_report (Removing $hasgroupstudents, because the parent attempts_report class has the same variable.)
+
 === 4.1 ===
 
 * quiz_has_question_use is now deprecated. Use mod_quiz\structure::has_use_capability istead.

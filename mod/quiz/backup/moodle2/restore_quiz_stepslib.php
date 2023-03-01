@@ -42,6 +42,9 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
      */
     protected $legacyshufflequestionsoption = false;
 
+    /** @var stdClass */
+    protected $oldquizlayout;
+
     protected function define_structure() {
 
         $paths = [];

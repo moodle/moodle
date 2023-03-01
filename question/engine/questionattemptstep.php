@@ -647,12 +647,12 @@ class question_attempt_step_subquestion_adapter extends question_attempt_step {
 
     /**
      * Constructor.
-     * @param question_attempt_step $realqas the step to wrap. (Can be null if you
+     * @param question_attempt_step $realstep the step to wrap. (Can be null if you
      *      just want to call add/remove.prefix.)
      * @param string $extraprefix the extra prefix that is used for date fields.
      */
-    public function __construct($realqas, $extraprefix) {
-        $this->realqas = $realqas;
+    public function __construct($realstep, $extraprefix) {
+        $this->realstep = $realstep;
         $this->extraprefix = $extraprefix;
     }
 
@@ -704,7 +704,7 @@ class question_attempt_step_subquestion_adapter extends question_attempt_step {
     }
 
     public function get_state() {
-        return $this->realqas->get_state();
+        return $this->realstep->get_state();
     }
 
     public function set_state($state) {
@@ -712,7 +712,7 @@ class question_attempt_step_subquestion_adapter extends question_attempt_step {
     }
 
     public function get_fraction() {
-        return $this->realqas->get_fraction();
+        return $this->realstep->get_fraction();
     }
 
     public function set_fraction($fraction) {
@@ -720,51 +720,51 @@ class question_attempt_step_subquestion_adapter extends question_attempt_step {
     }
 
     public function get_user_id() {
-        return $this->realqas->get_user_id();
+        return $this->realstep->get_user_id();
     }
 
     public function get_timecreated() {
-        return $this->realqas->get_timecreated();
+        return $this->realstep->get_timecreated();
     }
 
     public function has_qt_var($name) {
-        return $this->realqas->has_qt_var($this->add_prefix($name));
+        return $this->realstep->has_qt_var($this->add_prefix($name));
     }
 
     public function get_qt_var($name) {
-        return $this->realqas->get_qt_var($this->add_prefix($name));
+        return $this->realstep->get_qt_var($this->add_prefix($name));
     }
 
     public function set_qt_var($name, $value) {
-        $this->realqas->set_qt_var($this->add_prefix($name), $value);
+        $this->realstep->set_qt_var($this->add_prefix($name), $value);
     }
 
     public function get_qt_data() {
-        return $this->filter_array($this->realqas->get_qt_data());
+        return $this->filter_array($this->realstep->get_qt_data());
     }
 
     public function has_behaviour_var($name) {
-        return $this->realqas->has_behaviour_var($this->add_prefix($name));
+        return $this->realstep->has_behaviour_var($this->add_prefix($name));
     }
 
     public function get_behaviour_var($name) {
-        return $this->realqas->get_behaviour_var($this->add_prefix($name));
+        return $this->realstep->get_behaviour_var($this->add_prefix($name));
     }
 
     public function set_behaviour_var($name, $value) {
-        return $this->realqas->set_behaviour_var($this->add_prefix($name), $value);
+        return $this->realstep->set_behaviour_var($this->add_prefix($name), $value);
     }
 
     public function get_behaviour_data() {
-        return $this->filter_array($this->realqas->get_behaviour_data());
+        return $this->filter_array($this->realstep->get_behaviour_data());
     }
 
     public function get_submitted_data() {
-        return $this->filter_array($this->realqas->get_submitted_data());
+        return $this->filter_array($this->realstep->get_submitted_data());
     }
 
     public function get_all_data() {
-        return $this->filter_array($this->realqas->get_all_data());
+        return $this->filter_array($this->realstep->get_all_data());
     }
 
     public function get_qt_files($name, $contextid) {
