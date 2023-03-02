@@ -38,7 +38,9 @@ if (empty($SESSION->company)) {
     $wantedcompanyid = optional_param('id', 0, PARAM_INT);
     if (!empty($wantedcompanyid)) {
         $wantedcompanyshort = required_param('code', PARAM_CLEAN);
-        $SESSION->company = new company($wantedcompanyid);
+        if (!$SESSION->company = $DB->get_record('company', ['id' => $wantedcompanyid, 'shortname' => $wantedcompanyshort])) {
+             print_error(get_string('unknown_company', 'local_iomad_signup'));
+         }
     } else {
         $wantedcompanyshort = '';
     }
