@@ -74,6 +74,7 @@ information provided here is intended especially for developers.
   action in the modal body like ticking a checkbox or selecting an element.
 * Course module indentation has been recovered for course format using components via Move right/left feature.
   Course formats using components will be allowed to use one level indentation only.
+* The method `flexible_table::set_columnsattributes` now can be used with 'class' key to add custom classes to the DOM.
 
 === 4.1 ===
 

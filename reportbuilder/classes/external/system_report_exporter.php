@@ -77,6 +77,7 @@ class system_report_exporter extends persistent_exporter {
                 ],
                 'multiple' => true,
             ],
+            'classes' => ['type' => PARAM_TEXT],
         ];
     }
 
@@ -116,10 +117,15 @@ class system_report_exporter extends persistent_exporter {
             $filtersform->set_data_for_dynamic_submission();
         }
 
-        // Get the report attributes.
+        // Get the report classes and attributes.
+        $sourceattributes = $source->get_attributes();
+        if (isset($sourceattributes['class'])) {
+            $classes = $sourceattributes['class'];
+            unset($sourceattributes['class']);
+        }
         $attributes = array_map(static function($key, $value): array {
             return ['name' => $key, 'value' => $value];
-        }, array_keys($source->get_attributes()), $source->get_attributes());
+        }, array_keys($sourceattributes), $sourceattributes);
 
         return [
             'table' => $output->render($table),
@@ -128,6 +134,7 @@ class system_report_exporter extends persistent_exporter {
             'filtersapplied' => $source->get_applied_filter_count(),
             'filtersform' => $filterspresent ? $filtersform->render() : '',
             'attributes' => $attributes,
+            'classes' => $classes ?? '',
         ];
     }
 }
