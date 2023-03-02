@@ -1143,6 +1143,12 @@ class flexible_table {
         foreach ($row as $index => $data) {
             $column = $colbyindex[$index];
 
+            $columnattributes = $this->columnsattributes[$column] ?? [];
+            if (isset($columnattributes['class'])) {
+                $this->column_class($column, $columnattributes['class']);
+                unset($columnattributes['class']);
+            }
+
             $attributes = [
                 'class' => "cell c{$index}" . $this->column_class[$column],
                 'id' => "{$rowid}_c{$index}",
@@ -1155,7 +1161,7 @@ class flexible_table {
                 $attributes['scope'] = 'row';
             }
 
-            $attributes += $this->columnsattributes[$column] ?? [];
+            $attributes += $columnattributes;
 
             if (empty($this->prefs['collapse'][$column])) {
                 if ($this->column_suppress[$column] && $suppresslastrow !== null && $suppresslastrow[$index] === $data) {
