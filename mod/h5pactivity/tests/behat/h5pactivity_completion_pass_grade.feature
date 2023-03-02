@@ -76,9 +76,7 @@ Feature: Pass grade activity completion information in the h5p activity
     And the "View" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "done"
     And the "Receive a passing grade" completion condition of "Music history" is displayed as "failed"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" "course" page logged in as "teacher1"
     And "Vinnie Student1" user has completed "Music history" activity
     And "Vinnie Student2" user has completed "Music history" activity
     And "Vinnie Student3" user has not completed "Music history" activity
