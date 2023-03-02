@@ -54,10 +54,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # MySQL builds always run with the lowest PHP supported version.
           - os: ubuntu-22.04
             php: 8.0
             extensions:
             db: mysqli
+          # PostgreSQL builds always run with the highest PHP supported version.
           - os: ubuntu-22.04
             php: 8.0
             db: pgsql
