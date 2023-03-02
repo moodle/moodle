@@ -33,6 +33,7 @@ require_once($CFG->dirroot . '/question/type/ddimageortext/tests/helper.php');
  * @package   qtype_ddimageortext
  * @copyright 2009 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers qtype_ddimageortext_question
  */
 class question_test extends \basic_testcase {
 
@@ -89,6 +90,17 @@ class question_test extends \basic_testcase {
     public function test_get_random_guess_score_maths() {
         $dd = \test_question_maker::make_question('ddimageortext', 'maths');
         $this->assertEquals(0.5, $dd->get_random_guess_score());
+    }
+
+    public function test_get_random_guess_score_broken_question() {
+        // Before MDL-76298 was fixed, it was possible to create a question with
+        // no drop zones, and that caused a fatal division by zero error. Because
+        // people might have questions like that in their database, we need to
+        // check the calculation is robust to it.
+        /** @var \qtype_ddimageortext_question $dd */
+        $dd = \test_question_maker::make_question('ddimageortext');
+        $dd->places = [];
+        $this->assertNull($dd->get_random_guess_score());
     }
 
     public function test_get_right_choice_for() {
