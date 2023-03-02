@@ -205,7 +205,7 @@ Feature: View the user report as the student will see it
       | Course total            | -                 | 383.00 | 0–600 | 63.83 %    | -                            |
     And I log out
     And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on "C1" course homepage
     And I navigate to "User report" in the course gradebook
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
