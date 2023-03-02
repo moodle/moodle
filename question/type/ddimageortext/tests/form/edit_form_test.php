@@ -83,6 +83,13 @@ class edit_form_test extends \advanced_testcase {
                 ['dragitemtype' => 'word'],
                 ['dragitemtype' => 'word'],
             ],
+            'dragitem' => [
+                0,
+                0,
+                0,
+                0,
+                0,
+            ],
             'draglabel' => [
                 'frog',
                 '<b>toad</b>',
@@ -94,12 +101,12 @@ class edit_form_test extends \advanced_testcase {
 
         $errors = $form->validation($submitteddata, []);
 
-        $this->assertArrayNotHasKey('drags[0]', $errors);
+        $this->assertArrayNotHasKey('draglabel[0]', $errors);
         $this->assertEquals('HTML tags are not allowed in this text which is the alt text for a draggable image.',
-                $errors['drags[1]']);
-        $this->assertArrayNotHasKey('drags[2]', $errors);
-        $this->assertArrayNotHasKey('drags[3]', $errors);
+                $errors['draglabel[1]']);
+        $this->assertArrayNotHasKey('draglabel[2]', $errors);
+        $this->assertArrayNotHasKey('draglabel[3]', $errors);
         $this->assertEquals('Only "&lt;br&gt;&lt;sub&gt;&lt;sup&gt;&lt;b&gt;&lt;i&gt;&lt;strong&gt;&lt;em&gt;&lt;span&gt;" ' .
-                'tags are allowed in this draggable text.', $errors['drags[4]']);
+                'tags are allowed in this draggable text.', $errors['draglabel[4]']);
     }
 }
