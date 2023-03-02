@@ -21,6 +21,7 @@ To update to the latest release of twitter bootstrap:
     }
   It breaks when compiled with phpscss.
 * update ./thirdpartylibs.xml
+* follow the instructions in admin/tool/component_library/readme_moodle.txt to update the Bootstrap documentation there.
 
 Javascript:
 
