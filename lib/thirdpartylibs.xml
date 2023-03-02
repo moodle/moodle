@@ -400,7 +400,7 @@ All rights reserved.</copyright>
     <location>maxmind/GeoIp2</location>
     <name>GeoIP2 PHP API</name>
     <description>Library for processing of GeoIP data files.</description>
-    <version>2.11.0</version>
+    <version>2.13.0</version>
     <license>Apache</license>
     <licenseversion>2.0</licenseversion>
     <repository>https://github.com/maxmind/GeoIP2-php</repository>
