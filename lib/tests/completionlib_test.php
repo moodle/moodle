@@ -1319,6 +1319,30 @@ class completionlib_test extends advanced_testcase {
         $this->assertEquals(
             COMPLETION_COMPLETE,
             completion_info::internal_get_grade_state($item, $grade));
+
+        // Item is hidden, but returnpassfail is true and the grade is passing.
+        $item->hidden = 1;
+        $item->gradepass = 4;
+        $grade->finalgrade = 5.0;
+        $this->assertEquals(
+            COMPLETION_COMPLETE_PASS,
+            completion_info::internal_get_grade_state($item, $grade, true));
+
+        // Item is hidden, but returnpassfail is true and the grade is failing.
+        $item->hidden = 1;
+        $item->gradepass = 4;
+        $grade->finalgrade = 3.0;
+        $this->assertEquals(
+            COMPLETION_COMPLETE_FAIL_HIDDEN,
+            completion_info::internal_get_grade_state($item, $grade, true));
+
+        // Item is not hidden, but returnpassfail is true and the grade is failing.
+        $item->hidden = 0;
+        $item->gradepass = 4;
+        $grade->finalgrade = 3.0;
+        $this->assertEquals(
+            COMPLETION_COMPLETE_FAIL,
+            completion_info::internal_get_grade_state($item, $grade, true));
     }
 
     /**

@@ -89,6 +89,11 @@ define('COMPLETION_COMPLETE_PASS', 2);
 define('COMPLETION_COMPLETE_FAIL', 3);
 
 /**
+ * Indicates that the user has received a failing grade for a hidden grade item.
+ */
+define('COMPLETION_COMPLETE_FAIL_HIDDEN', 4);
+
+/**
  * The effect of this change to completion status is unknown.
  * A completion effect changes (used only in update_state)
  */
@@ -784,7 +789,8 @@ class completion_info {
                 $this->internal_systemerror("Unexpected result: multiple grades for
                         item '{$item->id}', user '{$userid}'");
             }
-            return self::internal_get_grade_state($item, reset($grades));
+            $returnpassfail = !empty($cm->completionpassgrade);
+            return self::internal_get_grade_state($item, reset($grades), $returnpassfail);
         }
 
         return COMPLETION_INCOMPLETE;
@@ -1113,6 +1119,9 @@ class completion_info {
 
                 if (empty($data->coursemoduleid)) {
                     $cacheddata[$data->cmid] = $defaultdata;
+                    if ($data->viewed) {
+                        $cacheddata[$data->cmid]['viewed'] = $data->viewed;
+                    }
                     $cacheddata[$data->cmid]['coursemoduleid'] = $data->cmid;
                 } else {
                     unset($data->cmid);
@@ -1171,12 +1180,16 @@ class completion_info {
                     $newstate = COMPLETION_COMPLETE_PASS;
                 }
 
-                // The activity is using 'passing grade' criteria therefore fail indication should be on this criteria.
-                // The user has received a (failing) grade so 'completiongrade' should properly indicate this.
-                if ($newstate == COMPLETION_COMPLETE_FAIL) {
+                // No need to show failing status for the completiongrade condition when passing grade condition is set.
+                if (in_array($newstate, [COMPLETION_COMPLETE_FAIL, COMPLETION_COMPLETE_FAIL_HIDDEN])) {
                     $data['completiongrade'] = COMPLETION_COMPLETE;
-                }
 
+                    // If the grade received by the user is a failing grade for a hidden grade item,
+                    // the 'Require passing grade' criterion is considered incomplete.
+                    if ($newstate == COMPLETION_COMPLETE_FAIL_HIDDEN) {
+                        $newstate = COMPLETION_INCOMPLETE;
+                    }
+                }
                 $data['passgrade'] = $newstate;
             }
         }
@@ -1547,9 +1560,10 @@ class completion_info {
      *
      * @param grade_item $item an instance of grade_item
      * @param grade_grade $grade an instance of grade_grade
+     * @param bool $returnpassfail If course module has pass grade completion criteria
      * @return int Completion state e.g. COMPLETION_INCOMPLETE
      */
-    public static function internal_get_grade_state($item, $grade) {
+    public static function internal_get_grade_state($item, $grade, bool $returnpassfail = false) {
         // If no grade is supplied or the grade doesn't have an actual value, then
         // this is not complete.
         if (!$grade || (is_null($grade->finalgrade) && is_null($grade->rawgrade))) {
@@ -1557,15 +1571,19 @@ class completion_info {
         }
 
         // Conditions to show pass/fail:
+        // a) Completion criteria to achieve pass grade is enabled
+        // or
         // a) Grade has pass mark (default is 0.00000 which is boolean true so be careful)
         // b) Grade is visible (neither hidden nor hidden-until)
-        if ($item->gradepass && $item->gradepass > 0.000009 && !$item->hidden) {
+        if ($item->gradepass && $item->gradepass > 0.000009 && ($returnpassfail || !$item->hidden)) {
             // Use final grade if set otherwise raw grade
             $score = !is_null($grade->finalgrade) ? $grade->finalgrade : $grade->rawgrade;
 
             // We are displaying and tracking pass/fail
             if ($score >= $item->gradepass) {
                 return COMPLETION_COMPLETE_PASS;
+            } else if ($item->hidden) {
+                return COMPLETION_COMPLETE_FAIL_HIDDEN;
             } else {
                 return COMPLETION_COMPLETE_FAIL;
             }
