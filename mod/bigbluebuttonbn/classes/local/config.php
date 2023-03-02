@@ -39,6 +39,16 @@ class config {
     /** @var string Default bigbluebutton data processing agreement url */
     public const DEFAULT_DPA_URL = 'https://blindsidenetworks.com/dpa-moodle-free-tier';
 
+    /** @var string the default bigbluebutton checksum algorithm */
+    public const DEFAULT_CHECKSUM_ALGORITHM = 'SHA1';
+
+    /** @var array list of supported bigbluebutton checksum algorithm */
+    const CHECKSUM_ALGORITHMS = [
+        self::DEFAULT_CHECKSUM_ALGORITHM,
+        'SHA256',
+        'SHA512'
+    ];
+
     /**
      * Returns moodle version.
      *
@@ -112,6 +122,7 @@ class config {
             'welcome_default' => '',
             'default_dpa_accepted' => false,
             'poll_interval' => bigbluebutton_proxy::DEFAULT_POLL_INTERVAL,
+            'checksum_algorithm' => self::DEFAULT_CHECKSUM_ALGORITHM,
         ];
     }
 
