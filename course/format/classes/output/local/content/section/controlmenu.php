@@ -152,6 +152,17 @@ class controlmenu implements named_templatable, renderable {
                 'pixattr' => ['class' => ''],
                 'attr' => ['class' => 'icon edit'],
             ];
+
+            $duplicatesectionurl = clone($baseurl);
+            $duplicatesectionurl->param('section', $section->section);
+            $duplicatesectionurl->param('duplicatesection', $section->section);
+            $controls['duplicate'] = [
+                'url' => $duplicatesectionurl,
+                'icon' => 't/copy',
+                'name' => get_string('duplicate'),
+                'pixattr' => ['class' => ''],
+                'attr' => ['class' => 'icon duplicate'],
+            ];
         }
 
         if ($section->section) {
