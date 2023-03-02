@@ -57,5 +57,5 @@ Feature: Add forum activities and discussions
       | Forum type | single     |
       | Group mode | 1          |
     When I press "Save and display"
-    Then I should see "Separate groups cannot be used with single discussion topic"
-    And I should see "Single discussion topic cannot be used with separate groups"
+    Then I should see "Separate groups can't be used with a single simple discussion."
+    And I should see "A single simple discussion can't be used with separate groups."
