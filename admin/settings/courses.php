@@ -260,8 +260,11 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
             'activitychoosertabmode',
             new lang_string('activitychoosertabmode', 'course'),
             new lang_string('activitychoosertabmode_desc', 'course'),
-            0,
+            3,
             [
+                3 => new lang_string('activitychoosertabmodefour', 'course'),
+                4 => new lang_string('activitychoosertabmodefive', 'course'),
+                5 => new lang_string('activitychoosertabmodesix', 'course'),
                 0 => new lang_string('activitychoosertabmodeone', 'course'),
                 1 => new lang_string('activitychoosertabmodetwo', 'course'),
                 2 => new lang_string('activitychoosertabmodethree', 'course'),
