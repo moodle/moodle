@@ -1847,6 +1847,39 @@ class quiz_attempt {
     }
 
     /**
+     * This method takes an attempt in the 'Never submitted' state, and reopens it.
+     *
+     * If, for this student, time has not expired (perhaps, because an override has
+     * been added, then the attempt is left open. Otherwise, it is immediately submitted
+     * for grading.
+     *
+     * @param int $timestamp the time to deem as now.
+     */
+    public function process_reopen_abandoned($timestamp) {
+        global $DB;
+
+        // Verify that things are as we expect.
+        if ($this->get_state() != self::ABANDONED) {
+            throw new coding_exception('Can only reopen an attempt that was never submitted.');
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+        $this->attempt->timemodified = $timestamp;
+        $this->attempt->state = self::IN_PROGRESS;
+        $this->attempt->timecheckstate = null;
+        $DB->update_record('quiz_attempts', $this->attempt);
+
+        $this->fire_state_transition_event('\mod_quiz\event\attempt_reopened', $timestamp, false);
+
+        $timeclose = $this->get_access_manager($timestamp)->get_end_time($this->attempt);
+        if ($timeclose && $timestamp > $timeclose) {
+            $this->process_finish($timestamp, false, $timeclose);
+        }
+
+        $transaction->allow_commit();
+    }
+
+    /**
      * Fire a state transition event.
      *
      * @param string $eventclass the event class name.

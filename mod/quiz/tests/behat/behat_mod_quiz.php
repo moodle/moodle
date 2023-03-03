@@ -842,10 +842,6 @@ class behat_mod_quiz extends behat_question_base {
     /**
      * Start a quiz attempt without answers.
      *
-     * Then there should be a number of rows of data, one for each question you want to add.
-     * There is no need to supply answers to all questions. If so, other qusetions will be
-     * left unanswered.
-     *
      * @param string $username the username of the user that will attempt.
      * @param string $quizname the name of the quiz the user will attempt.
      * @Given /^user "([^"]*)" has started an attempt at quiz "([^"]*)"$/
@@ -984,6 +980,31 @@ class behat_mod_quiz extends behat_question_base {
         $attempts = quiz_get_user_attempts($quizid, $user->id, 'unfinished', true);
         $attemptobj = quiz_attempt::create(key($attempts));
         $attemptobj->process_finish(time(), true);
+
+        $this->set_user();
+    }
+
+    /**
+     * Finish an existing quiz attempt.
+     *
+     * @param string $quizname the name of the quiz the user will attempt.
+     * @param string $username the username of the user that will attempt.
+     * @Given the attempt at :quizname by :username was never submitted
+     */
+    public function attempt_was_abandoned($quizname, $username) {
+        global $DB;
+
+        $quizid = $DB->get_field('quiz', 'id', ['name' => $quizname], MUST_EXIST);
+        $user = $DB->get_record('user', ['username' => $username], '*', MUST_EXIST);
+
+        $this->set_user($user);
+
+        $attempt = quiz_get_user_attempt_unfinished($quizid, $user->id);
+        if (!$attempt) {
+            throw new coding_exception("No in-progress attempt found for $username and quiz $quizname.");
+        }
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj->process_abandon(time(), false);
 
         $this->set_user();
     }
