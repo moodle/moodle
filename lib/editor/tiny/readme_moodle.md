@@ -74,7 +74,7 @@
  cat strings.php >> "${MOODLEDIR}/lang/en/editor_tiny.php"
  ```
 
-7. Commit changes
+7. Commit changes. Note: You may need to review individual language changes which do not meet Moodle's guidelines.
 8. If required, the remaining language strings can be fed into AMOS.
 
 ---
