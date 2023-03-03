@@ -456,14 +456,14 @@ All rights reserved.</copyright>
   </library>
   <library>
     <location>fonts</location>
-    <name>Font Awesome - http://fontawesome.io</name>
+    <name>Font Awesome - http://fontawesome.com</name>
     <description>The Font Awesome font. Font Awesome is the Internet's icon library and toolkit, used by millions of designers, developers, and content creators.</description>
-    <version>4.7.0</version>
+    <version>6.3.0</version>
     <license>SIL OFL</license>
     <licenseversion>1.1</licenseversion>
     <repository>https://github.com/FortAwesome/Font-Awesome</repository>
     <copyrights>
-      <copyright>Dave Gandy</copyright>
+      <copyright>2023 Fonticons, Inc</copyright>
     </copyrights>
   </library>
   <library>
