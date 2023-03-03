@@ -1921,6 +1921,9 @@ function upgrade_core($version, $verbose) {
         $syscontext->mark_dirty();
         core_upgrade_time::record_detail('context_system::mark_dirty');
 
+        // Prompt admin to register site. Reminder flow handles sites already registered, so admin won't be prompted if registered.
+        set_config('registrationpending', true);
+
         print_upgrade_part_end('moodle', false, $verbose);
     } catch (Exception $ex) {
         upgrade_handle_exception($ex);

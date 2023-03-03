@@ -578,7 +578,7 @@ class registration {
     }
 
     /**
-     * Redirect to the site registration form if it's a new install or registration needs updating
+     * Redirect to the site registration form if it's a new install, upgrade or registration needs updating.
      *
      * @param string|moodle_url $url
      */
