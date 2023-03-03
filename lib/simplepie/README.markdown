@@ -11,7 +11,7 @@ compatibility and standards compliance][what_is].
 
 Requirements
 ------------
-* PHP 5.6+ (Required since SimplePie 1.5.3)
+* PHP 7.2+ (Required since SimplePie 1.8.0)
 * libxml2 (certain 2.7.x releases are too buggy for words, and will crash)
 * One of iconv, mbstring or intl extensions
 * cURL or fsockopen()
@@ -20,7 +20,7 @@ Requirements
 
 What comes in the package?
 --------------------------
-1. `library/` - SimplePie classes for use with the autoloader
+1. `src/` - SimplePie classes for use with the autoloader
 2. `autoloader.php` - The SimplePie Autoloader if you want to use the separate
    file version.
 3. `README.markdown` - This document.
@@ -75,9 +75,20 @@ to be prioritized.
 
 If you'd like to contribute to SimplePie, the best way to get started is to fork
 the project on GitHub and send pull requests for patches. When doing so, please
-be aware of our [coding standards][].
+be aware of our [coding standards](http://simplepie.org/wiki/misc/coding_standards).
 
-[coding standards]: http://simplepie.org/wiki/misc/coding_standards
+The main development for the next minor release happens in `master` branch.
+Please create your pull requests primarily against this branch.
+
+We do not actively provide bug fixes or security fixes for older versions. Nevertheless,
+you are welcome to create backport PRs if you still need support for older PHP versions.
+Please open your PR against the appropriate branch.
+
+| branch                                                                     | requires    |
+|----------------------------------------------------------------------------|-------------|
+| [master](https://github.com/simplepie/simplepie/tree/master)               | PHP 7.2.0+  |
+| [one-dot-seven](https://github.com/simplepie/simplepie/tree/one-dot-seven) | PHP 5.6.0+  |
+| [one-dot-three](https://github.com/simplepie/simplepie/tree/one-dot-three) | PHP 5.2.0+  |
 
 
 Authors and contributors
