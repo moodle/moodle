@@ -69,7 +69,8 @@ if ($hassiteconfig) {
             CONTACT_SUPPORT_DISABLED => new lang_string('disabled', 'admin'),
         ]
     ));
-
+    $temp->add(new admin_setting_configtext('servicespage', new lang_string('servicespage', 'admin'),
+        new lang_string('configservicespage', 'admin'), '', PARAM_URL));
 
     $ADMIN->add('server', $temp);
 
