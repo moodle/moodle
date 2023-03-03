@@ -61,6 +61,36 @@ function email_cron() {
             }
         }
     }
+
+    // Send company suspended emails. Users are suspended so not picked up above.
+    if ($emails = $DB->get_records_sql("SELECT e.* from {email} e
+                                        JOIN {user} u ON (e.userid = u.id)
+                                        WHERE e.sent IS NULL
+                                        AND e.due < :now
+                                        AND e.templatename = :templatename
+                                        AND u.deleted = 0",
+                                        ['now' => $now,
+                                         'templatename' => 'company_suspended'])) {
+        foreach ($emails as $email) {
+            $company = new company($email->companyid);
+            $managertype = 0;
+            if (strpos($email->templatename, 'manager')) {
+                $manapegertype = 1;
+            }
+            if (strpos($email->templatename, 'supervisor')) {
+                $managertype = 2;
+            }
+            if (!$company->email_template_is_enabled($email->templatename, $managertype)) {
+                $DB->delete_records('email', array('id' => $email->id));
+                continue;
+            } else {
+                EmailTemplate::send_to_user($email);
+                $email->modifiedtime = $email->sent = time();
+                $email->id = $email->id;
+                $DB->update_record('email', $email);
+            }
+        }
+    }
 }
 
 /**
