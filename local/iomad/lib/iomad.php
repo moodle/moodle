@@ -68,10 +68,10 @@ class iomad {
         } else if (self::is_company_user()) {
             $companyid = self::companyid();
         } else if (self::has_capability('block/iomad_company_admin:edit_departments', $context) && $required) {
-            if (!empty($SESSION->company->id)) {
-                return $SESSION->company->id;
+            if (!empty($SESSION->currenteditingcompany)) {
+                return $SESSION->currenteditingcompany;
             } else {
-                redirect(new moodle_url('/my'), get_string('pleaseselect', 'block_iomad_company_admin'));
+                redirect(new moodle_url('/blocks/iomad_company_admin/index.php'), get_string('pleaseselect', 'block_iomad_company_admin'));
             }
         } else {
             $companyid = 0;
