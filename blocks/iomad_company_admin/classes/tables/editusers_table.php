@@ -33,6 +33,7 @@ use \iomad;
 use \html_writer;
 use \company;
 use \context_system;
+use \context_user;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -56,8 +57,15 @@ class editusers_table extends table_sql {
         if (!empty($row->suspended)) {
             $name = format_string("$name (S)");
         }
-        $profileurl = new moodle_url('/user/profile.php', ['id' => $row->id]);
-        return html_writer::tag('a', $name, ['href' => $profileurl]);
+
+        // Can we see a link?
+        $usercontext = context_user::instance($row->id);
+        if (has_capability('moodle/user:viewdetails', $usercontext) || has_capability('moodle/user:viewalldetails', $usercontext)) {
+            $profileurl = new moodle_url('/user/profile.php', ['id' => $row->id]);
+            return html_writer::tag('a', $name, ['href' => $profileurl]);
+        } else {
+            return $name;
+        }
     }
 
     /**
