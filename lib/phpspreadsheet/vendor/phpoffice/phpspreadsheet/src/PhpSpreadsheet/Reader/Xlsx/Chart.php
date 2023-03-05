@@ -150,6 +150,7 @@ class Chart
                                             }
                                             $xAxis->setAxisType($chartDetailKey);
                                             $this->readEffects($chartDetail, $xAxis);
+                                            $this->readLineStyle($chartDetail, $xAxis);
                                             if (isset($chartDetail->spPr)) {
                                                 $sppr = $chartDetail->spPr->children($this->aNamespace);
                                                 if (isset($sppr->solidFill)) {
@@ -219,6 +220,7 @@ class Chart
                                                 }
                                             }
                                             $this->readEffects($chartDetail, $whichAxis);
+                                            $this->readLineStyle($chartDetail, $whichAxis);
                                             if ($whichAxis !== null && isset($chartDetail->spPr)) {
                                                 $sppr = $chartDetail->spPr->children($this->aNamespace);
                                                 if (isset($sppr->solidFill)) {
@@ -400,6 +402,7 @@ class Chart
     {
         $caption = [];
         $titleLayout = null;
+        $titleOverlay = false;
         foreach ($titleDetails as $titleDetailKey => $chartDetail) {
             $chartDetail = Xlsx::testSimpleXml($chartDetail);
             switch ($titleDetailKey) {
@@ -423,6 +426,10 @@ class Chart
                     }
 
                     break;
+                case 'overlay':
+                    $titleOverlay = self::getAttribute($chartDetail, 'val', 'boolean');
+
+                    break;
                 case 'layout':
                     $titleLayout = $this->chartLayoutDetails($chartDetail);
 
@@ -430,7 +437,7 @@ class Chart
             }
         }
 
-        return new Title($caption, $titleLayout);
+        return new Title($caption, $titleLayout, (bool) $titleOverlay);
     }
 
     private function chartLayoutDetails(SimpleXMLElement $chartDetail): ?Layout
@@ -830,6 +837,7 @@ class Chart
 
         foreach ($seriesValueSet->lvl as $seriesLevelIdx => $seriesLevel) {
             foreach ($seriesLevel as $seriesValueIdx => $seriesValue) {
+                $seriesValue = Xlsx::testSimpleXml($seriesValue);
                 switch ($seriesValueIdx) {
                     case 'ptCount':
                         $pointCount = self::getAttribute($seriesValue, 'val', 'integer');

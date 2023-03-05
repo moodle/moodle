@@ -11,12 +11,12 @@
 PhpSpreadsheet is a library written in pure PHP and offers a set of classes that
 allow you to read and write various spreadsheet file formats such as Excel and LibreOffice Calc.
 
-## PHP version support
+## PHP Version Support
 
 LTS: Support for PHP versions will only be maintained for a period of six months beyond the
-[end of life of that PHP version](https://www.php.net/eol.php).
+[end of life](https://www.php.net/supported-versions) of that PHP version.
 
-Currently the required PHP minimum version is PHP __7.3__.
+Currently the required PHP minimum version is PHP __7.4__, and we [will support that version](https://www.php.net/eol.php) until 28th June 2023.
 
 See the `composer.json` for other requirements.
 
@@ -36,7 +36,7 @@ If you are building your installation on a development machine that is on a diff
     },
     "config": {
         "platform": {
-            "php": "7.3"
+            "php": "7.4"
         }
     }
 }
@@ -90,6 +90,36 @@ One or the other of these libraries is necessary if you want to generate HTML or
 Read more about it, including install instructions, in the [official documentation](https://phpspreadsheet.readthedocs.io). Or check out the [API documentation](https://phpoffice.github.io/PhpSpreadsheet).
 
 Please ask your support questions on [StackOverflow](https://stackoverflow.com/questions/tagged/phpspreadsheet), or have a quick chat on [Gitter](https://gitter.im/PHPOffice/PhpSpreadsheet).
+
+## Patreon
+
+I am now running a [Patreon](https://www.patreon.com/MarkBaker) to support the work that I do on PhpSpreadsheet.
+
+Supporters will receive access to articles about working with PhpSpreadsheet, and how to use some of its more advanced features.
+
+Posts already available to Patreon supporters:
+ - The Dating Game
+   - A  look at how MS Excel (and PhpSpreadsheet) handle date and time values.
+- Looping the Loop
+    - Advice on Iterating through the rows and cells in a worksheet.
+
+The next post (currently being written) will be:
+ - Behind the Mask
+   - A look at Number Format Masks.
+
+My aim is to post at least one article each month, taking a detailed look at some feature of MS Excel and how to use that feature in PhpSpreadsheet, or on how to perform different activities in PhpSpreadsheet.
+
+Planned posts for the future include topics like:
+ - Tables
+ - Structured References
+ - AutoFiltering
+ - Array Formulae
+ - Conditional Formatting
+ - Data Validation
+ - Formula Debugging
+ - Value Binders
+
+After a period of six months exclusive to Patreon supporters, articles will be incorporated into the public documentation for the library.
 
 ## PHPExcel vs PhpSpreadsheet ?
 

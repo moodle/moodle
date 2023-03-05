@@ -78,7 +78,7 @@ class Style extends Supervisor
      * @see Style::applyFromArray()
      * @see Style::getHashCode()
      *
-     * @var ?array<string, array>
+     * @var null|array<string, array>
      */
     private static $cachedStyles;
 
@@ -99,7 +99,7 @@ class Style extends Supervisor
         // Initialise values
         $this->font = new Font($isSupervisor, $isConditional);
         $this->fill = new Fill($isSupervisor, $isConditional);
-        $this->borders = new Borders($isSupervisor);
+        $this->borders = new Borders($isSupervisor, $isConditional);
         $this->alignment = new Alignment($isSupervisor, $isConditional);
         $this->numberFormat = new NumberFormat($isSupervisor, $isConditional);
         $this->protection = new Protection($isSupervisor, $isConditional);
@@ -130,7 +130,7 @@ class Style extends Supervisor
             $xfIndex = 0;
         }
 
-        return $activeSheet->getParent()->getCellXfByIndex($xfIndex);
+        return $activeSheet->getParentOrThrow()->getCellXfByIndex($xfIndex);
     }
 
     /**
@@ -138,7 +138,7 @@ class Style extends Supervisor
      */
     public function getParent(): Spreadsheet
     {
-        return $this->getActiveSheet()->getParent();
+        return $this->getActiveSheet()->getParentOrThrow();
     }
 
     /**
@@ -372,7 +372,7 @@ class Style extends Supervisor
             $oldXfIndexes = $this->getOldXfIndexes($selectionType, $rangeStartIndexes, $rangeEndIndexes, $columnStart, $columnEnd, $styleArray);
 
             // clone each of the affected styles, apply the style array, and add the new styles to the workbook
-            $workbook = $this->getActiveSheet()->getParent();
+            $workbook = $this->getActiveSheet()->getParentOrThrow();
             $newXfIndexes = [];
             foreach ($oldXfIndexes as $oldXfIndex => $dummy) {
                 $style = $workbook->getCellXfByIndex($oldXfIndex);
@@ -461,7 +461,7 @@ class Style extends Supervisor
                 case 'CELL':
                     for ($col = $rangeStartIndexes[0]; $col <= $rangeEndIndexes[0]; ++$col) {
                         for ($row = $rangeStartIndexes[1]; $row <= $rangeEndIndexes[1]; ++$row) {
-                            $cell = $this->getActiveSheet()->getCellByColumnAndRow($col, $row);
+                            $cell = $this->getActiveSheet()->getCell([$col, $row]);
                             $oldXfIndex = $cell->getXfIndex();
                             $cell->setXfIndex($newXfIndexes[$oldXfIndex]);
                         }
@@ -538,7 +538,7 @@ class Style extends Supervisor
             case 'CELL':
                 for ($col = $rangeStart[0]; $col <= $rangeEnd[0]; ++$col) {
                     for ($row = $rangeStart[1]; $row <= $rangeEnd[1]; ++$row) {
-                        $oldXfIndexes[$this->getActiveSheet()->getCellByColumnAndRow($col, $row)->getXfIndex()] = true;
+                        $oldXfIndexes[$this->getActiveSheet()->getCell([$col, $row])->getXfIndex()] = true;
                     }
                 }
 

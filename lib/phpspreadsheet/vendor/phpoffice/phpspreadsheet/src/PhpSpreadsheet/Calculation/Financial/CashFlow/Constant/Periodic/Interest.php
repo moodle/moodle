@@ -88,6 +88,8 @@ class Interest
      * @param mixed $period is the period to calculate the interest rate.  It must be betweeen 1 and number_payments.
      * @param mixed $numberOfPeriods is the number of payments for the annuity
      * @param mixed $principleRemaining is the loan amount or present value of the payments
+     *
+     * @return float|string
      */
     public static function schedulePayment($interestRate, $period, $numberOfPeriods, $principleRemaining)
     {
@@ -197,7 +199,8 @@ class Interest
         return $close ? $rate : ExcelError::NAN();
     }
 
-    private static function rateNextGuess($rate, $numberOfPeriods, $payment, $presentValue, $futureValue, $type)
+    /** @return float|string */
+    private static function rateNextGuess(float $rate, int $numberOfPeriods, float $payment, float $presentValue, float $futureValue, int $type)
     {
         if ($rate == 0.0) {
             return ExcelError::NAN();

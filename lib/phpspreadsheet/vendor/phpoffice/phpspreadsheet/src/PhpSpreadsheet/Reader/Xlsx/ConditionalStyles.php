@@ -37,19 +37,27 @@ class ConditionalStyles
 
     public function load(): void
     {
+        $selectedCells = $this->worksheet->getSelectedCells();
+
         $this->setConditionalStyles(
             $this->worksheet,
             $this->readConditionalStyles($this->worksheetXml),
             $this->worksheetXml->extLst
         );
+
+        $this->worksheet->setSelectedCells($selectedCells);
     }
 
     public function loadFromExt(StyleReader $styleReader): void
     {
+        $selectedCells = $this->worksheet->getSelectedCells();
+
         $this->ns = $this->worksheetXml->getNamespaces(true);
         $this->setConditionalsFromExt(
             $this->readConditionalsFromExt($this->worksheetXml->extLst, $styleReader)
         );
+
+        $this->worksheet->setSelectedCells($selectedCells);
     }
 
     private function setConditionalsFromExt(array $conditionals): void
@@ -155,7 +163,7 @@ class ConditionalStyles
         $conditionals = [];
         foreach ($xmlSheet->conditionalFormatting as $conditional) {
             foreach ($conditional->cfRule as $cfRule) {
-                if (Conditional::isValidConditionType((string) $cfRule['type']) && isset($this->dxfs[(int) ($cfRule['dxfId'])])) {
+                if (Conditional::isValidConditionType((string) $cfRule['type']) && (!isset($cfRule['dxfId']) || isset($this->dxfs[(int) ($cfRule['dxfId'])]))) {
                     $conditionals[(string) $conditional['sqref']][(int) ($cfRule['priority'])] = $cfRule;
                 } elseif ((string) $cfRule['type'] == Conditional::CONDITION_DATABAR) {
                     $conditionals[(string) $conditional['sqref']][(int) ($cfRule['priority'])] = $cfRule;
@@ -189,6 +197,7 @@ class ConditionalStyles
             $objConditional = new Conditional();
             $objConditional->setConditionType((string) $cfRule['type']);
             $objConditional->setOperatorType((string) $cfRule['operator']);
+            $objConditional->setNoFormatSet(!isset($cfRule['dxfId']));
 
             if ((string) $cfRule['text'] != '') {
                 $objConditional->setText((string) $cfRule['text']);
@@ -219,7 +228,7 @@ class ConditionalStyles
                 $objConditional->setDataBar(
                     $this->readDataBarOfConditionalRule($cfRule, $conditionalFormattingRuleExtensions) // @phpstan-ignore-line
                 );
-            } else {
+            } elseif (isset($cfRule['dxfId'])) {
                 $objConditional->setStyle(clone $this->dxfs[(int) ($cfRule['dxfId'])]);
             }
 
