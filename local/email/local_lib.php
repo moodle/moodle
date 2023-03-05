@@ -149,35 +149,50 @@ class local_email {
 
         return $email;
     }
-}
 
-class email_template_edit_form extends moodleform {
+    public static function get_user_templates($getall = true) {
+        $email = [];
 
-    public function __construct($actionurl, $companyid, $templatename, $templatesetid) {
-        global $DB;
+        // Add emails with subject and body strings from lang/??/local_email.php.
+        $emailarray = ['advertise_classroom_based_course',
+                       'approval',
+                       'company_licenseassigned',
+                       'completion_course_user',
+                       'completion_warn_user',
+                       'course_not_started_warning',
+                       'expire',
+                       'expiry_warn_user',
+                       'license_allocated',
+                       'license_reminder',
+                       'license_removed',
+                       'microlearning_nugget_scheduled',
+                       'microlearning_nugget_reminder1',
+                       'microlearning_nugget_reminder2',
+                       'password_update',
+                       'trainingevent_not_selected',
+                       'user_added_to_course',
+                       'user_create',
+                       'user_deleted',
+                       'user_programcompleted',
+                       'user_promoted',
+                       'user_removed_from_event',
+                       'user_removed_from_event_teacher',
+                       'user_removed_from_event_waitlist',
+                       'user_reset',
+                       'user_signed_up_for_event',
+                       'user_suspended',
+                       'user_unsuspended'];
 
-        $this->langs = get_string_manager()->get_list_of_translations(true);
-        $this->templatesetid = $templatesetid;
+        // Set up the email template array.
+        foreach ($emailarray as $templatename) {
+            if ($getall) {
+                $email[$templatename] = ['subject' => get_string($templatename . '_subject', 'local_email' ),
+                                         'body' => get_string($templatename . '_body', 'local_email')];
+            } else {
+                $email[$templatename] = $templatename;
+            }
+        }
 
-        parent::__construct($actionurl);
-    }
-
-    public function definition() {
-        global $DB,$CFG, $USER;
-
-        $mform =& $this->_form;
-
-        $mform->addElement('hidden', 'templatename');
-        $mform->addElement('hidden', 'templatesetid', $this->templatesetid);
-        $mform->setType('templatename', PARAM_CLEAN);
-        $mform->setType('templatesetid', PARAM_INT);
-        $mform->addElement('select', 'lang', get_string('language'), $this->langs);
-        $mform->setDefault('lang', $USER->lang);
-        $buttonarr = array();
-        $buttonarr[] = &$mform->createElement('submit', 'edit', get_string('edit'));
-        $buttonarr[] = &$mform->createElement('submit', 'view', get_string('view'));
-        $buttonarr[] = &$mform->createElement('submit', 'add', get_string('add'));
-        $mform->addGroup($buttonarr, 'buttonar', '', array(' '), false);
-
+        return $email;
     }
 }

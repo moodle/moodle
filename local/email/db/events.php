@@ -21,7 +21,23 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->release  = '4.1+ (Build: 20221209)'; // Human-friendly version name
-$plugin->version  = 2023022500;   // The (date) version of this plugin.
-$plugin->requires = 2019052000;   // Requires this Moodle version.
-$plugin->component  = 'local_email';
+$observers = [
+
+    [
+     'eventname' => '\block_iomad_company_admin\event\company_created',
+     'callback' => '\local_email\observer::company_created',
+     'internal' => false,
+    ],
+
+    [
+     'eventname' => '\tool_langimport\event\langpack_removed',
+     'callback' => '\local_email\observer::langpack_removed',
+     'internal' => false,
+    ],
+
+    [
+     'eventname' => '\tool_langimport\event\langpack_imported',
+     'callback' => '\local_email\observer::langpack_imported',
+     'internal' => false,
+    ],
+];

@@ -442,6 +442,183 @@ function xmldb_local_email_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2023022400, 'local', 'email');
     }
 
+    if ($oldversion < 2023022500) {
+
+        // Changing nullability of field subject on table email_template to null.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('subject', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'lang');
+
+        // Launch change of nullability for field subject.
+        $dbman->change_field_notnull($table, $field);
+
+        // Changing nullability of field body on table email_template to null.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('body', XMLDB_TYPE_TEXT, null, null, null, null, null, 'subject');
+
+        // Launch change of nullability for field body.
+        $dbman->change_field_notnull($table, $field);
+
+        // Changing nullability of field subject on table email_templateset_templates to null.
+        $table = new xmldb_table('email_templateset_templates');
+        $field = new xmldb_field('subject', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'lang');
+
+        // Launch change of nullability for field subject.
+        $dbman->change_field_notnull($table, $field);
+
+        // Changing nullability of field body on table email_templateset_templates to null.
+        $table = new xmldb_table('email_templateset_templates');
+        $field = new xmldb_field('body', XMLDB_TYPE_TEXT, null, null, null, null, null, 'subject');
+
+        // Launch change of nullability for field body.
+        $dbman->change_field_notnull($table, $field);
+
+        // Define index compidnamelang (not unique) to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $index = new xmldb_index('compidnamelang', XMLDB_INDEX_NOTUNIQUE, ['companyid', 'name', 'lang']);
+
+        // Conditionally launch add index compidnamelang.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index tempidnamelang (not unique) to be added to email_templateset_templates.
+        $table = new xmldb_table('email_templateset_templates');
+        $index = new xmldb_index('tempidnamelang', XMLDB_INDEX_NOTUNIQUE, ['templateset', 'name', 'lang']);
+
+        // Conditionally launch add index tempidnamelang.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index compidlang (not unique) to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $index = new xmldb_index('compidlang', XMLDB_INDEX_NOTUNIQUE, ['companyid', 'lang']);
+
+        // Conditionally launch add index compidlang.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index tempidlang (not unique) to be added to email_templateset_templates.
+        $table = new xmldb_table('email_templateset_templates');
+        $index = new xmldb_index('tempidlang', XMLDB_INDEX_NOTUNIQUE, ['templateset', 'lang']);
+
+        // Conditionally launch add index tempidlang.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+
+        // Define field signature to be added to email_templateset_templates.
+        $table = new xmldb_table('email_templateset_templates');
+        $field = new xmldb_field('signature', XMLDB_TYPE_TEXT, null, null, null, null, null, 'body');
+
+        // Conditionally launch add field signature.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field emailto to be added to email_templateset_templates.
+        $table = new xmldb_table('email_templateset_templates');
+        $field = new xmldb_field('emailto', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'disabledsupervisor');
+
+        // Conditionally launch add field emailto.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field emailtoother to be added to email_templateset_templates.
+        $table = new xmldb_table('email_templateset_templates');
+        $field = new xmldb_field('emailtoother', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'emailto');
+
+        // Conditionally launch add field emailtoother.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field emailcc to be added to email_templateset_templates.
+        $table = new xmldb_table('email_templateset_templates');
+        $field = new xmldb_field('emailcc', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'emailtoother');
+
+        // Conditionally launch add field emailcc.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field emailccother to be added to email_templateset_templates.
+        $table = new xmldb_table('email_templateset_templates');
+        $field = new xmldb_field('emailccother', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'emailcc');
+
+        // Conditionally launch add field emailccother.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field emailfrom to be added to email_templateset_templates.
+        $table = new xmldb_table('email_templateset_templates');
+        $field = new xmldb_field('emailfrom', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'emailccother');
+
+        // Conditionally launch add field emailfrom.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field emailfromother to be added to email_templateset_templates.
+        $table = new xmldb_table('email_templateset_templates');
+        $field = new xmldb_field('emailfromother', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'emailfrom');
+
+        // Conditionally launch add field emailfromother.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field emailreplyto to be added to email_templateset_templates.
+        $table = new xmldb_table('email_templateset_templates');
+        $field = new xmldb_field('emailreplyto', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'emailfromother');
+
+        // Conditionally launch add field emailreplyto.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field emailreplytoother to be added to email_templateset_templates.
+        $table = new xmldb_table('email_templateset_templates');
+        $field = new xmldb_field('emailreplytoother', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'emailreplyto');
+
+        // Conditionally launch add field emailreplytoother.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field emailfromothername to be added to email_templateset_templates.
+        $table = new xmldb_table('email_templateset_templates');
+        $field = new xmldb_field('emailfromothername', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'repeateday');
+
+        // Conditionally launch add field emailfromothername.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Rename field repeateday on table email_templateset_templates to repeatday.
+        $table = new xmldb_table('email_templateset_templates');
+        $field = new xmldb_field('repeateday', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'repeatvalue');
+
+        // Launch rename field repeateday.
+        $dbman->rename_field($table, $field, 'repeatday');
+
+        // Mark that something is happening.
+        set_config('local_email_templates_migrating', 1);
+
+        // Set up an AdHoc task to migrate all of the email templates.
+        $migratetask = new \local_email\task\migratetemplates();
+
+        // Queue the task.
+        \core\task\manager::queue_adhoc_task($migratetask);
+
+        // Email savepoint reached.
+        upgrade_plugin_savepoint(true, 2023022500, 'local', 'email');
+    }
+
     return $result;
 
 }

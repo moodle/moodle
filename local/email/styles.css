@@ -11,6 +11,7 @@
 }
 
 .switch {
+  vertical-align: middle!important;
   position: relative;
   display: inline-block;
   width: 60px;
@@ -70,4 +71,16 @@ input:checked + .slider:before {
     position: relative;
     font-size: smaller;
     left: 18%;
+}
+
+#templatesearchfform {
+    padding-left: 15px;
+}
+
+#templatesearchform .col-form-label {
+    display: none;
+}
+
+div.templatesearchfform #fgroup_id_searchgroup {
+    display: contents;
 }

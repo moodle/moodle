@@ -584,7 +584,6 @@ class EmailTemplate {
                                 }
                             }
                         }
-} else {
                     }
                 }
 
@@ -1008,6 +1007,15 @@ class EmailTemplate {
                     print_error("Email template '$templatename' not found");
                 }
             }
+        }
+
+        // Deal with default lang strings.
+        if (empty($template->subject)) {
+            $template->subject = (string) new lang_string($templatename . '_subject', 'local_email', null, $this->user->lang);
+        }
+
+        if (empty($template->body)) {
+            $template->body = (string) new lang_string($templatename . '_body', 'local_email', null, $this->user->lang);
         }
 
         return $template;
