@@ -840,6 +840,8 @@ foreach ($pluginswithfunction as $plugins) {
 }
 
 \core\session\manager::start();
+// Prevent ignoresesskey hack from getting carried over to a next page.
+unset($USER->ignoresesskey);
 
 if (!empty($CFG->proxylogunsafe) || !empty($CFG->proxyfixunsafe)) {
     if (!empty($CFG->proxyfixunsafe)) {
