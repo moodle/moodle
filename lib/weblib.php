@@ -1323,9 +1323,15 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
 
     switch ($format) {
         case FORMAT_HTML:
+            $filteroptions['stage'] = 'pre_format';
+            $text = $filtermanager->filter_text($text, $context, $filteroptions);
+            // Text is already in HTML format, so just continue to the next filtering stage.
+            $filteroptions['stage'] = 'pre_clean';
+            $text = $filtermanager->filter_text($text, $context, $filteroptions);
             if (!$options['noclean']) {
                 $text = clean_text($text, FORMAT_HTML, $options);
             }
+            $filteroptions['stage'] = 'post_clean';
             $text = $filtermanager->filter_text($text, $context, $filteroptions);
             break;
 
@@ -1345,17 +1351,27 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
             break;
 
         case FORMAT_MARKDOWN:
+            $filteroptions['stage'] = 'pre_format';
+            $text = $filtermanager->filter_text($text, $context, $filteroptions);
             $text = markdown_to_html($text);
+            $filteroptions['stage'] = 'pre_clean';
+            $text = $filtermanager->filter_text($text, $context, $filteroptions);
             // The markdown parser does not strip dangerous html so we need to clean it, even if noclean is set to true.
             $text = clean_text($text, FORMAT_HTML, $options);
+            $filteroptions['stage'] = 'post_clean';
             $text = $filtermanager->filter_text($text, $context, $filteroptions);
             break;
 
         default:  // FORMAT_MOODLE or anything else.
+            $filteroptions['stage'] = 'pre_format';
+            $text = $filtermanager->filter_text($text, $context, $filteroptions);
             $text = text_to_html($text, null, $options['para'], $options['newlines']);
+            $filteroptions['stage'] = 'pre_clean';
+            $text = $filtermanager->filter_text($text, $context, $filteroptions);
             if (!$options['noclean']) {
                 $text = clean_text($text, FORMAT_HTML, $options);
             }
+            $filteroptions['stage'] = 'post_clean';
             $text = $filtermanager->filter_text($text, $context, $filteroptions);
             break;
     }
