@@ -796,6 +796,8 @@ if (empty($CFG->sessiontimeout)) {
     $CFG->sessiontimeout = 8 * 60 * 60;
 }
 \core\session\manager::start();
+// Prevent ignoresesskey hack from getting carried over to a next page.
+unset($USER->ignoresesskey);
 
 // Set default content type and encoding, developers are still required to use
 // echo $OUTPUT->header() everywhere, anything that gets set later should override these headers.
