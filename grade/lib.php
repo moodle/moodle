@@ -1722,15 +1722,15 @@ class grade_structure {
      * Returns a link leading to the grade analysis page
      *
      * @param grade_grade $grade
-     * @param string $gradeanalysisstring Language string
      * @return string|null
      */
-    public function get_grade_analysis_link(grade_grade $grade, string $gradeanalysisstring): ?string {
+    public function get_grade_analysis_link(grade_grade $grade): ?string {
         $url = $this->get_grade_analysis_url($grade);
         if (is_null($url)) {
             return null;
         }
 
+        $gradeanalysisstring = grade_helper::get_lang_string('gradeanalysis', 'grades');
         return html_writer::link($url, $gradeanalysisstring,
             ['class' => 'dropdown-item', 'aria-label' => $gradeanalysisstring, 'role' => 'menuitem']);
     }
@@ -1945,10 +1945,9 @@ class grade_structure {
      *
      * @param array  $element An array representing an element in the grade_tree
      * @param object $gpr A grade_plugin_return object
-     * @param array $langstrings Language strings
      * @return string|null
      */
-    public function get_edit_link(array $element, object $gpr, array $langstrings): ?string {
+    public function get_edit_link(array $element, object $gpr): ?string {
         $url = null;
         $title = '';
         if ((!has_capability('moodle/grade:manage', $this->context) &&
@@ -1967,7 +1966,7 @@ class grade_structure {
                     ['courseid' => $this->courseid, 'id' => $object->id]);
             }
             $url = $gpr->add_url_params($url);
-            $title = $langstrings[0];
+            $title = grade_helper::get_lang_string('editgrade', 'grades');
         } else if (($element['type'] == 'item') || ($element['type'] == 'categoryitem') ||
             ($element['type'] == 'courseitem')) {
             if (empty($object->outcomeid) || empty($CFG->enableoutcomes)) {
@@ -1978,12 +1977,12 @@ class grade_structure {
                     ['courseid' => $this->courseid, 'id' => $object->id]);
             }
             $url = $gpr->add_url_params($url);
-            $title = $langstrings[1];
+            $title = grade_helper::get_lang_string('itemsedit', 'grades');
         } else if ($element['type'] == 'category') {
             $url = new moodle_url('/grade/edit/tree/category.php',
                 ['courseid' => $this->courseid, 'id' => $object->id]);
             $url = $gpr->add_url_params($url);
-            $title = $langstrings[2];
+            $title = grade_helper::get_lang_string('categoryedit', 'grades');
         }
         return html_writer::link($url, $title,
             ['class' => 'dropdown-item', 'aria-label' => $title, 'role' => 'menuitem']);
@@ -2109,10 +2108,9 @@ class grade_structure {
      *
      * @param array  $element An array representing an element in the grade_tree
      * @param object $gpr A grade_plugin_return object
-     * @param array $langstrings Language strings
      * @return string|null
      */
-    public function get_hiding_link(array $element, object $gpr, array $langstrings): ?string {
+    public function get_hiding_link(array $element, object $gpr): ?string {
         if (!$element['object']->can_control_visibility() || !has_capability('moodle/grade:manage', $this->context) ||
             !has_capability('moodle/grade:hide', $this->context)) {
             return null;
@@ -2124,10 +2122,10 @@ class grade_structure {
 
         if ($element['object']->is_hidden()) {
             $url->param('action', 'show');
-            $title = $langstrings[0];
+            $title = grade_helper::get_lang_string('show');
         } else {
             $url->param('action', 'hide');
-            $title = $langstrings[1];
+            $title = grade_helper::get_lang_string('hide');
         }
 
         $url = html_writer::link($url, $title,
@@ -2209,11 +2207,10 @@ class grade_structure {
      *
      * @param array  $element An array representing an element in the grade_tree
      * @param object $gpr A grade_plugin_return object
-     * @param array $langstrings Language strings
      *
      * @return string|null
      */
-    public function get_locking_link(array $element, object $gpr, array $langstrings): ?string {
+    public function get_locking_link(array $element, object $gpr): ?string {
 
         if (has_capability('moodle/grade:manage', $this->context) && isset($element['object'])) {
             $title = '';
@@ -2226,19 +2223,19 @@ class grade_structure {
                 $strparamobj = new stdClass();
                 $strparamobj->itemname = $element['object']->grade_item->get_name(true, true);
                 $strnonunlockable = get_string('nonunlockableverbose', 'grades', $strparamobj);
-                $title = $langstrings[0];
+                $title = grade_helper::get_lang_string('unlock', 'grades');
                 return html_writer::span($title, 'text-muted dropdown-item', ['title' => $strnonunlockable,
                     'aria-label' => $title, 'role' => 'menuitem']);
             } else if ($element['object']->is_locked()) {
                 if (has_capability('moodle/grade:unlock', $this->context)) {
-                    $title = $langstrings[0];
+                    $title = grade_helper::get_lang_string('unlock', 'grades');
                     $url->param('action', 'unlock');
                 } else {
                     return null;
                 }
             } else {
                 if (has_capability('moodle/grade:lock', $this->context)) {
-                    $title = $langstrings[1];
+                    $title = grade_helper::get_lang_string('lock', 'grades');
                     $url->param('action', 'lock');
                 } else {
                     return null;
@@ -2304,12 +2301,10 @@ class grade_structure {
      *
      * @param array  $element An array representing an element in the grade_tree
      * @param object $gpr A grade_plugin_return object
-     * @param string $editcalculationstrings Language string
      *
      * @return string|null
      */
-    public function get_edit_calculation_link(array $element, object $gpr,
-            string $editcalculationstrings): ?string {
+    public function get_edit_calculation_link(array $element, object $gpr): ?string {
 
         if (has_capability('moodle/grade:manage', $this->context) && isset($element['object'])) {
             $object = $element['object'];
@@ -2318,32 +2313,184 @@ class grade_structure {
 
             // Show calculation icon only when calculation possible.
             if (!$object->is_external_item() && ($isscale || $isvalue)) {
+                $editcalculationstring = grade_helper::get_lang_string('editcalculation', 'grades');
                 $url = new moodle_url('/grade/edit/tree/calculation.php',
                     ['courseid' => $this->courseid, 'id' => $object->id]);
                 $url = $gpr->add_url_params($url);
-                return html_writer::link($url, $editcalculationstrings,
-                    ['class' => 'dropdown-item', 'aria-label' => $editcalculationstrings, 'role' => 'menuitem']);
+                return html_writer::link($url, $editcalculationstring,
+                    ['class' => 'dropdown-item', 'aria-label' => $editcalculationstring, 'role' => 'menuitem']);
             }
         }
         return null;
     }
 
     /**
-     * Returns link to change category view mode.
+     * Sets status icons for the grade.
      *
-     * @param moodle_url $url Url to grader report page
-     * @param string $title Menu item title
-     * @param string $action View mode to change to
-     * @param bool $active Whether link is active in dropdown
-     *
-     * @return string|null
+     * @param array $element array with grade item info
+     * @return string status icons container HTML
      */
-    public function get_category_view_mode_link(moodle_url $url, string $title, string $action, bool $active = false): ?string {
-        $urlnew = $url;
-        $urlnew->param('action', $action);
-        $active = $active ? 'true' : 'false';
-        return html_writer::link($urlnew, $title,
-            ['class' => 'dropdown-item', 'aria-label' => $title, 'aria-current' => $active, 'role' => 'menuitem']);
+    public function set_grade_status_icons(array $element): string {
+        global $OUTPUT;
+
+        $attributes = ['class' => 'text-muted'];
+
+        $statusicons = '';
+        if ($element['object']->is_hidden()) {
+            $statusicons .= $OUTPUT->pix_icon('i/show', grade_helper::get_lang_string('hidden', 'grades'),
+                'moodle', $attributes);
+        }
+
+        if ($element['object']->is_locked()) {
+            $statusicons .= $OUTPUT->pix_icon('i/lock', grade_helper::get_lang_string('locked', 'grades'),
+                'moodle', $attributes);
+        }
+
+        if ($element['object'] instanceof grade_grade) {
+            $grade = $element['object'];
+            if ($grade->is_overridden()) {
+                $statusicons .= $OUTPUT->pix_icon('i/overriden_grade',
+                    grade_helper::get_lang_string('overridden', 'grades'), 'moodle', $attributes);
+            }
+
+            if ($grade->is_excluded()) {
+                $statusicons .= $OUTPUT->pix_icon('i/excluded', grade_helper::get_lang_string('excluded', 'grades'),
+                    'moodle', $attributes);
+            }
+        }
+
+        $class = 'grade_icons';
+        if (isset($element['type']) && ($element['type'] == 'category')) {
+            $class = 'category_grade_icons';
+        }
+        if ($statusicons) {
+            $statusicons = $OUTPUT->container($statusicons, $class);
+        }
+        return $statusicons;
+    }
+
+    /**
+     * Returns an action menu for the grade.
+     *
+     * @param array $element Array with cell info.
+     * @param string $mode Mode - gradeitem or user
+     * @param grade_plugin_return $gpr
+     * @param moodle_url|null $baseurl
+     * @return string
+     */
+    public function get_cell_action_menu(array $element, string $mode, grade_plugin_return $gpr,
+            ?moodle_url $baseurl = null): string {
+        global $OUTPUT, $USER;
+
+        $context = new stdClass();
+
+        if ($mode == 'gradeitem') {
+            $editable = true;
+
+            if ($element['type'] == 'grade') {
+                $item = $element['object']->grade_item;
+                if ($item->is_course_item() || $item->is_category_item()) {
+                    $editable = (bool)get_config('moodle', 'grade_overridecat');;
+                }
+
+                if (!empty($USER->editing)) {
+                    if ($editable) {
+                        $context->editurl = $this->get_edit_link($element, $gpr);
+                    }
+                    $context->hideurl = $this->get_hiding_link($element, $gpr);
+                    $context->lockurl = $this->get_locking_link($element, $gpr);
+                }
+
+                $context->gradeanalysisurl = $this->get_grade_analysis_link($element['object']);
+            } else if (($element['type'] == 'item') || ($element['type'] == 'categoryitem') ||
+                    ($element['type'] == 'courseitem') || ($element['type'] == 'userfield')) {
+
+                $context->datatype = 'item';
+
+                if ($element['type'] == 'item') {
+                    $context =
+                        grade_report::get_additional_context($this->context, $this->courseid, $element, $gpr, $mode, $context, true);
+                    $context->advancedgradingurl = $this->get_advanced_grading_link($element, $gpr);
+                }
+
+                if ($element['type'] == 'item') {
+                    $context->divider1 = true;
+                }
+
+                if (!empty($USER->editing)) {
+                    if ($element['type'] !== 'userfield') {
+                        $context->divider1 = true;
+                        $context->divider2 = true;
+                    }
+
+                    if ($element['type'] == 'item') {
+                        $context->editurl = $this->get_edit_link($element, $gpr);
+                    }
+
+                    $context->editcalculationurl =
+                        $this->get_edit_calculation_link($element, $gpr);
+
+                    if (isset($element['object'])) {
+                        $object = $element['object'];
+                        if ($object->itemmodule !== 'quiz') {
+                            $context->hideurl = $this->get_hiding_link($element, $gpr);
+                        }
+                    }
+                    $context->lockurl = $this->get_locking_link($element, $gpr);
+                }
+
+                // Sorting item.
+                if ($baseurl) {
+                    $sortlink = $baseurl;
+                    if (isset($element['object']->id)) {
+                        $sortlink->param('sortitemid', $element['object']->id);
+                    } else if ($element['type'] == 'userfield') {
+                        $context->datatype = $element['name'];
+                        $sortlink->param('sortitemid', $element['name']);
+                    }
+
+                    if (($element['type'] == 'userfield') && ($element['name'] == 'fullname')) {
+                        $sortlink->param('sortitemid', 'firstname');
+                        $context->ascendingfirstnameurl = $this->get_sorting_link($sortlink, $gpr);
+                        $context->descendingfirstnameurl = $this->get_sorting_link($sortlink, $gpr, 'desc');
+
+                        $sortlink->param('sortitemid', 'lastname');
+                        $context->ascendinglastnameurl = $this->get_sorting_link($sortlink, $gpr);
+                        $context->descendinglastnameurl = $this->get_sorting_link($sortlink, $gpr, 'desc');
+                    } else {
+                        $context->ascendingurl = $this->get_sorting_link($sortlink, $gpr);
+                        $context->descendingurl = $this->get_sorting_link($sortlink, $gpr, 'desc');
+                    }
+                }
+            } else if ($element['type'] == 'category') {
+                $context->datatype = 'category';
+                $mode = 'category';
+                $context = grade_report::get_additional_context($this->context, $this->courseid, $element, $gpr, $mode, $context);
+                if (!empty($USER->editing)) {
+                    $context->divider1 = true;
+                }
+                $context->editurl = $this->get_edit_link($element, $gpr);
+                $context->hideurl = $this->get_hiding_link($element, $gpr);
+                $context->lockurl = $this->get_locking_link($element, $gpr);
+            }
+
+            if (isset($element['object'])) {
+                $context->dataid = $element['object']->id;
+            } else if ($element['type'] == 'userfield') {
+                $context->dataid = $element['name'];
+            }
+        } else if ($mode == 'user') {
+            $context->datatype = 'user';
+            $context = grade_report::get_additional_context($this->context, $this->courseid, $element, $gpr, $mode, $context, true);
+            $context->dataid = $element['userid'];
+        }
+
+        if (!empty($USER->editing) || isset($context->gradeanalysisurl) || isset($context->gradesonlyurl)
+                || isset($context->aggregatesonlyurl) || isset($context->fullmodeurl) || isset($context->reporturl0)
+                || isset($context->ascendingfirstnameurl) || isset($context->ascendingurl)) {
+            return $OUTPUT->render_from_template('core_grades/cellmenu', $context);
+        }
+        return '';
     }
 
     /**
@@ -2351,11 +2498,16 @@ class grade_structure {
      *
      * @param moodle_url $sortlink A base link for sorting
      * @param object $gpr A grade_plugin_return object
-     * @param string $title Language string
      * @param string $direction Direction od sorting
      * @return string
      */
-    public function get_sorting_link(moodle_url $sortlink, object $gpr, string $title, string $direction = 'asc'): string {
+    public function get_sorting_link(moodle_url $sortlink, object $gpr, string $direction = 'asc'): string {
+
+        if ($direction == 'asc') {
+            $title = grade_helper::get_lang_string('asc');
+        } else {
+            $title = grade_helper::get_lang_string('desc');
+        }
 
         $sortlink->param('sort', $direction);
         $gpr->add_url_params($sortlink);

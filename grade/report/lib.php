@@ -92,12 +92,6 @@ abstract class grade_report {
      */
     public $page;
 
-    /**
-     * Array of cached language strings (using get_string() all the time takes a long time!).
-     * @var array $lang_strings
-     */
-    public $lang_strings = array();
-
     // GROUP VARIABLES (including SQL)
 
     /**
@@ -307,37 +301,51 @@ abstract class grade_report {
     abstract public function process_action($target, $action);
 
     /**
-     * Returns an array of links to appropriate report pages for the current element
+     * Add additional links specific to plugin
      * @param context_course $context Course context
      * @param int $courseid Course ID
      * @param array  $element An array representing an element in the grade_tree
      * @param grade_plugin_return $gpr A grade_plugin_return object
-     * @param string $mode Mode - gradeitem or user
-     * @return array Link to appropriate report
+     * @param string $mode Mode (user or grade item)
+     * @param stdClass $templatecontext Template context
+     * @param bool $otherplugins If we need to insert links to other plugins
+     * @return ?stdClass Updated template context
      */
-    public function get_report_links(context_course $context, int $courseid, array $element,
-            grade_plugin_return $gpr, string $mode): array {
+    public static function get_additional_context(context_course $context, int $courseid, array $element,
+            grade_plugin_return $gpr, string $mode, stdClass $templatecontext, bool $otherplugins = false): ?stdClass {
 
-        $reports = [];
-        foreach (core_component::get_plugin_list('gradereport') as $plugin => $plugindir) {
-            $params = [$context, $courseid, $element, $gpr, $mode];
-            $component = 'gradereport_' . $plugin;
-            if ($reportlink = component_callback($component, 'get_report_link', $params)) {
-                $reports[] = $reportlink;
+        if (!$otherplugins) {
+            $component = 'gradereport_' . $gpr->plugin;
+            $params = [$context, $courseid, $element, $gpr, $mode, $templatecontext];
+            return component_callback($component, 'get_report_link', $params);
+        } else {
+            // Loop through all installed grade reports.
+            foreach (core_component::get_plugin_list('gradereport') as $plugin => $plugindir) {
+                $params = [$context, $courseid, $element, $gpr, $mode, $templatecontext];
+                $component = 'gradereport_' . $plugin;
+                $templatecontextupdated = component_callback($component, 'get_report_link', $params);
+                if ($templatecontextupdated) {
+                    $templatecontext = $templatecontextupdated;
+                }
             }
-
+            return $templatecontext;
         }
-        return $reports;
     }
 
     /**
      * First checks the cached language strings, then returns match if found, or uses get_string()
      * to get it from the DB, caches it then returns it.
+     *
+     * @deprecated since 4.2
+     * @todo MDL-77307 This will be deleted in Moodle 4.6.
      * @param string $strcode
      * @param string $section Optional language section
      * @return string
      */
     public function get_lang_string($strcode, $section=null) {
+        debugging('grade_report::get_lang_string() is deprecated, please use' .
+            ' grade_helper::get_lang_string() instead.', DEBUG_DEVELOPER);
+
         if (empty($this->lang_strings[$strcode])) {
             $this->lang_strings[$strcode] = get_string($strcode, $section);
         }
@@ -588,7 +596,7 @@ abstract class grade_report {
         global $OUTPUT;
         $pix = ['up' => 't/sort_desc', 'down' => 't/sort_asc'];
         $matrix = ['up' => 'desc', 'down' => 'asc'];
-        $strsort = $this->get_lang_string($matrix[$direction], 'moodle');
+        $strsort = grade_helper::get_lang_string($matrix[$direction], 'moodle');
         $arrow = $OUTPUT->pix_icon($pix[$direction], '', '', ['class' => 'sorticon']);
         return html_writer::link($sortlink, $arrow, ['title' => $strsort, 'aria-label' => $strsort]);
     }

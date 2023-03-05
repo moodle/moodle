@@ -58,6 +58,8 @@ class behat_gradereport_grader extends behat_base {
     /**
      * Gets the grade item id from its name.
      *
+     * @deprecated since 4.2
+     * @todo MDL-77107 This will be deleted in Moodle 4.6.
      * @throws Exception
      * @param string $itemname
      * @return int
@@ -65,6 +67,9 @@ class behat_gradereport_grader extends behat_base {
     protected function get_grade_item_id($itemname) {
 
         global $DB;
+
+        debugging('behat_gradereport_grader::get_grade_item_id() is deprecated, please use' .
+            ' behat_grades::get_grade_item_id() instead.', DEBUG_DEVELOPER);
 
         if ($id = $DB->get_field('grade_items', 'id', array('itemname' => $itemname))) {
             return $id;

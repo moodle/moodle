@@ -30,12 +30,16 @@
  * @param array  $element An array representing an element in the grade_tree
  * @param grade_plugin_return $gpr A grade_plugin_return object
  * @param string $mode Mode - gradeitem or user
- * @return string|null
+ * @param ?stdClass $templatecontext Template context
+ * @return stdClass|null
  */
 function gradereport_singleview_get_report_link(context_course $context, int $courseid,
-        array $element, grade_plugin_return $gpr, string $mode): ?string {
+        array $element, grade_plugin_return $gpr, string $mode, ?stdClass $templatecontext): ?stdClass {
 
     $reportstring = grade_helper::get_lang_string('singleviewreport_' . $mode, 'gradereport_singleview');
+    if (!isset($templatecontext)) {
+        $templatecontext = new stdClass();
+    }
 
     if ($mode == 'gradeitem') {
         // View all grades items.
@@ -50,8 +54,9 @@ function gradereport_singleview_get_report_link(context_course $context, int $co
                     'itemid' => $element['object']->id
                 ]);
                 $gpr->add_url_params($url);
-                return html_writer::link($url, $reportstring,
+                $templatecontext->reporturl0 = html_writer::link($url, $reportstring,
                     ['class' => 'dropdown-item', 'aria-label' => $reportstring, 'role' => 'menuitem']);
+                return $templatecontext;
             }
         }
     } else if ($mode == 'user') {
@@ -66,8 +71,9 @@ function gradereport_singleview_get_report_link(context_course $context, int $co
             $url = new moodle_url('/grade/report/singleview/index.php',
                 ['id' => $courseid, 'itemid' => $element['userid'], 'item' => 'user']);
             $gpr->add_url_params($url);
-            return html_writer::link($url, $reportstring,
+            $templatecontext->reporturl0 = html_writer::link($url, $reportstring,
                 ['class' => 'dropdown-item', 'aria-label' => $reportstring, 'role' => 'menuitem']);
+            return $templatecontext;
         }
     }
     return null;
