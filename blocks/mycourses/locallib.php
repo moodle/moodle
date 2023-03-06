@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-function mycourses_get_my_completion($datefrom = 0) {
+function mycourses_get_my_completion($datefrom = 0, $sort = 'coursefullname', $dir = 'ASC') {
     global $DB, $USER, $CFG;
 
     $companyid = iomad::get_my_companyid(context_system::instance(), false);
@@ -37,14 +37,14 @@ function mycourses_get_my_completion($datefrom = 0) {
     }
 
     $mycompletions = new stdclass();
-    $mycompleted = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, cc.finalscore as finalgrade, cc.timecompleted, c.fullname as coursefullname, c.summary as coursesummary, c.visible, ic.hasgrade
+    $mycompleted = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, cc.finalscore as finalgrade, cc.timecompleted, cc.timestarted, c.fullname as coursefullname, c.summary as coursesummary, c.visible, ic.hasgrade
                                        FROM {local_iomad_track} cc
                                        JOIN {course} c ON (c.id = cc.courseid)
                                        JOIN {iomad_courses} ic ON (c.id = ic.courseid and cc.courseid = ic.courseid)
                                        WHERE cc.userid = :userid
                                        AND cc.timecompleted IS NOT NULL",
                                        array('userid' => $USER->id));
-    $myinprogress = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, c.fullname as coursefullname, c.summary as coursesummary, c.visible, ic.hasgrade
+    $myinprogress = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, c.fullname as coursefullname, c.summary as coursesummary, c.visible, ic.hasgrade, cc.timestarted
                                           FROM {local_iomad_track} cc
                                           JOIN {course} c ON (c.id = cc.courseid)
                                           JOIN {user_enrolments} ue ON (ue.userid = cc.userid)
@@ -52,7 +52,7 @@ function mycourses_get_my_completion($datefrom = 0) {
                                           LEFT JOIN {iomad_courses} ic ON (c.id = ic.courseid AND cc.courseid = ic.courseid)
                                           WHERE cc.userid = :userid
                                           AND c.visible = 1
-                                          AND cc.timecompleted IS NULL
+                                          AND cc.timecompleted IS NOT NULL
                                           AND ue.timestart != 0",
                                           array('userid' => $USER->id));
 
@@ -187,9 +187,9 @@ function mycourses_get_my_completion($datefrom = 0) {
     }
 
     // Put them into alpahbetical order.
-    ksort($myavailablecourses, SORT_NATURAL | SORT_FLAG_CASE);
-    ksort($myinprogress, SORT_NATURAL | SORT_FLAG_CASE);
-    ksort($mycompleted, SORT_NATURAL | SORT_FLAG_CASE);
+    $myavailablecourses = mycourses_sort($myavailablecourses, 'coursefullname', $dir);
+    $myinprogress = mycourses_sort($myinprogress, $sort, $dir);
+    $mycompleted = mycourses_sort($mycompleted, $sort, $dir);
 
     $mycompletions->mycompleted = $mycompleted;
     $mycompletions->myinprogress = $myinprogress;
@@ -252,4 +252,18 @@ function mycourses_get_my_archive($dateto = 0) {
     $mycompletions->myarchive = $myarchive;
 
     return $mycompletions;
+}
+
+function mycourses_sort($courselist, $sorton = 'timestarted', $direction = "ASC") {
+    $namedcourses = [];
+    foreach ($courselist as $id => $course) {
+        $namedcourses[$course->$sorton] = $courselist[$id];
+    }
+    if ($direction == "ASC") {
+        ksort($namedcourses, SORT_NATURAL | SORT_FLAG_CASE);
+    } else {
+        krsort($namedcourses, SORT_NATURAL | SORT_FLAG_CASE);
+    }
+
+    return $namedcourses;
 }

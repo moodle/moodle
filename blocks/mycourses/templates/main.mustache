@@ -27,7 +27,28 @@
     Example context (json):
     {}
 }}
+<div class="buttoncontrols" style="display:inline-flex;">
+  <div class="dropdown show" style='padding-right: 5px'>
+    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="mycoursesdropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      {{#str}} sort {{/str}}
+    </a>
 
+    <div class="dropdown-menu" aria-labelledby="mycoursesdropdownMenuLink">
+      <a class="dropdown-item" href="{{sortnameurl}}">{{#str}} name {{/str}}</a>
+      <a class="dropdown-item" href="{{sortdateurl}}">{{#str}} date {{/str}}</a>
+    </div>
+  </div>
+  <div class="dropdown show">
+    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="mycoursesdropdownMenuLinkorder" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      {{#str}} order {{/str}}
+    </a>
+
+    <div class="dropdown-menu" aria-labelledby="mycoursesdropdownMenuLinkorder">
+      <a class="dropdown-item" href="{{sortascurl}}">{{#str}} asc {{/str}}</a>
+      <a class="dropdown-item" href="{{sortdescurl}}">{{#str}} desc {{/str}}</a>
+    </div>
+  </div>
+</div>
 <div class="block-mycourses" data-region="mycourses">
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
@@ -35,7 +56,7 @@
                       href="#mycourses_available_view"
                       role="tab"
                       data-toggle="tab"
-                      aria-selected="{{#viewingavailable}}true{{/viewingavailable}}{{^viewingavailable}}flase{{/viewingavailable}}">
+                      aria-selected="{{#viewingavailable}}true{{/viewingavailable}}{{^viewingavailable}}false{{/viewingavailable}}">
                 {{#str}} availableheader, block_mycourses {{/str}}
             </a>
         </li>

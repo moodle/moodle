@@ -46,6 +46,8 @@ class block_mycourses extends block_base {
             $tab = 'inprogress';
         }
 
+echo "TAB = $tab</br>"; 
+
         $renderable = new \block_mycourses\output\main($tab);
         $renderer = $this->page->get_renderer('block_mycourses');
         $this->content = new stdClass();

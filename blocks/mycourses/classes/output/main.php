@@ -28,7 +28,8 @@ use renderable;
 use renderer_base;
 use templatable;
 use core_completion\progress;
-use  core_course_renderer;
+use core_course_renderer;
+use moodle_url;
 
 require_once($CFG->dirroot . '/blocks/mycourses/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
@@ -62,13 +63,17 @@ class main implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        global $CFG, $USER;
+        global $CFG, $USER, $PAGE;
 
         // Get the cut off date.
         $cutoffdate = time() - ($CFG->mycourses_archivecutoff * 24 * 60 * 60);
 
+        // Get the sorting params.
+        $sort = optional_param('sort', 'coursefullname', PARAM_CLEAN);
+        $dir = optional_param('dir', 'ASC', PARAM_CLEAN);
+
         // Get the completion info.
-        $mycompletion = mycourses_get_my_completion();
+        $mycompletion = mycourses_get_my_completion(0, $sort, $dir);
 
         $availableview = new available_view($mycompletion, $cutoffdate);
         $inprogressview = new inprogress_view($mycompletion, $cutoffdate);
@@ -86,6 +91,10 @@ class main implements renderable, templatable {
             $viewinginprogress = true;
         }
         $nocoursesurl = $output->image_url('courses', 'block_mycourses')->out();
+        $sortnameurl = new moodle_url($PAGE->url->out(false), ['sort' => 'coursefullname', 'dir' => $dir, 'tab' => $this->tab]);
+        $sortdateurl = new moodle_url($PAGE->url->out(false), ['sort' => 'timestarted', 'dir' => $dir, 'tab' => $this->tab]);
+        $sortascurl = new moodle_url($PAGE->url->out(false), ['sort' => $sort, 'dir' => 'ASC', 'tab' => $this->tab]);
+        $sortdescurl = new moodle_url($PAGE->url->out(false), ['sort' => $sort, 'dir' => 'DESC', 'tab' => $this->tab]);
 
         return [
             'midnight' => usergetmidnight(time()),
@@ -95,7 +104,11 @@ class main implements renderable, templatable {
             'completedview' => $completedview->export_for_template($output),
             'viewingavailable' => $viewingavailable,
             'viewinginprogress' => $viewinginprogress,
-            'viewingcompleted' => $viewingcompleted
+            'viewingcompleted' => $viewingcompleted,
+            'sortnameurl' => $sortnameurl->out(false),
+            'sortdateurl' => $sortdateurl->out(false),
+            'sortascurl' => $sortascurl->out(false),
+            'sortdescurl' => $sortdescurl->out(false),
         ];
     }
 }
