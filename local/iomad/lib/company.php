@@ -3557,6 +3557,13 @@ class company {
         global $DB, $USER;
 
         $context = context_system::instance();
+
+        // If this is ourselves or we can see all users then we can see this one.
+        if ($USER->id == $userid ||
+            iomad::has_capability('block/iomad_company_admin:editallusers', $context)) {
+            return true;
+        }
+
         // Set the companyid
         $companyid = iomad::get_my_companyid($context);
 
