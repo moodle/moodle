@@ -462,6 +462,13 @@ class iomad {
             $companycoursecategoriescache->set($company->id, $companycourses);
         }
 
+        // Get all of the categories of open shared courses.
+        $sharedcourses = $DB->get_records_sql("SELECT distinct c.category
+                                               FROM {course} c
+                                               JOIN {iomad_courses} ic ON (c.id = ic.courseid)
+                                               WHERE ic.shared = 1",
+                                               []);
+
         // Set up the return array;
         $iomadcategories = array();
 
@@ -473,11 +480,6 @@ class iomad {
                 $iomadcategories[$id] = $category;
             }
 
-            // Is this another company category?
-            if (empty($allcompanycategories[$id])) {
-                $iomadcategories[$id] = $category;
-            }
-
             // Is this a category which has a course you are enrolled on?
             if (!empty($usercategories[$id])) {
                 $iomadcategories[$id] = $category;
@@ -485,6 +487,16 @@ class iomad {
 
             // Is this a category for a course assigned to the company?
             if (!empty($companycourses[$id])) {
+                $iomadcategories[$id] = $category;
+            }
+
+            // Is this an open shared course category?
+            if (!empty($sharedcourses[$id])) {
+                $iomadcategories[$id] = $category;
+            }
+
+            // Is this another company category?
+            if (empty($allcompanycategories[$id])) {
                 $iomadcategories[$id] = $category;
             }
         }
