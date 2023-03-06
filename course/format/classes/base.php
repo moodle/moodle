@@ -808,12 +808,14 @@ abstract class base {
         $stringmanager = get_string_manager();
         $component = 'format_' . $this->format;
         $formatoverridbles = [
+            'sectionavailability_title',
             'sectiondelete_title',
             'sectiondelete_info',
             'sectionsdelete_title',
             'sectionsdelete_info',
             'sectionmove_title',
             'sectionmove_info',
+            'sectionsavailability_title',
             'sectionsmove_title',
             'sectionsmove_info',
             'selectsection'

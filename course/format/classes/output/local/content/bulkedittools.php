@@ -155,7 +155,7 @@ class bulkedittools implements named_templatable, renderable {
                 'icon' => 't/show',
                 'action' => 'sectionAvailability',
                 'name' => get_string('availability'),
-                'title' => get_string('sectionavailability', 'core_courseformat'),
+                'title' => $this->format->get_format_string('sectionsavailability'),
                 'bulk' => 'section',
             ];
         }
