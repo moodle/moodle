@@ -159,16 +159,20 @@ class behat_grades extends behat_base {
             throw new Exception('Unknown item type: ' . $itemtype);
         }
 
-        if ($page == 'grader') {
+        $xpath = "//table[@id='grade_edit_tree_table']";
+
+        if (($page == 'grader') || ($page == 'setup')) {
+            if ($page == 'grader') {
+                $xpath = "//table[@id='user-grades']";
+            }
+
             if ($itemtype == 'gradeitem') {
-                $xpath = "//table[@id='user-grades']//*[@data-type='item'][@data-id='" . $itemid . "']";
+                $xpath .= "//*[@data-type='item'][@data-id='" . $itemid . "']";
             } else if (($itemtype == 'category') || ($itemtype == 'course')) {
-                $xpath = "//table[@id='user-grades']//*[@data-type='category'][@data-id='" . $itemid . "']";
+                $xpath .= "//*[@data-type='category'][@data-id='" . $itemid . "']";
             } else {
                 throw new Exception('Unknown item type: ' . $itemtype);
             }
-        } else if ($page == 'setup') {
-            $xpath = "//table[@id='grade_edit_tree_table']//*[@data-id='" . $itemid . "']";
         } else {
             throw new Exception('Unknown page: ' . $page);
         }

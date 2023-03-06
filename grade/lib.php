@@ -1859,6 +1859,81 @@ class grade_structure {
     }
 
     /**
+     * Returns a link to reset weights for the given element.
+     *
+     * @param array  $element An array representing an element in the grade_tree
+     * @param object $gpr A grade_plugin_return object
+     * @return string|null
+     */
+    public function get_reset_weights_link(array $element, object $gpr): ?string {
+
+        // Limit to category items set to use the natural weights aggregation method, and users
+        // with the capability to manage grades.
+        if ($element['type'] != 'category' || $element['object']->aggregation != GRADE_AGGREGATE_SUM ||
+                !has_capability('moodle/grade:manage', $this->context)) {
+            return null;
+        }
+
+        $title = grade_helper::get_lang_string('resetweightsshort', 'grades');
+        $str = get_string('resetweights', 'grades', $this->get_params_for_iconstr($element));
+        $url = new moodle_url('/grade/edit/tree/action.php', [
+            'id' => $this->courseid,
+            'action' => 'resetweights',
+            'eid' => $element['eid'],
+            'sesskey' => sesskey(),
+        ]);
+        $gpr->add_url_params($url);
+        return html_writer::link($url, $title,
+            ['class' => 'dropdown-item', 'aria-label' => $str, 'role' => 'menuitem']);
+    }
+
+    /**
+     * Returns a link to delete a given element.
+     *
+     * @param array  $element An array representing an element in the grade_tree
+     * @param object $gpr A grade_plugin_return object
+     * @return string|null
+     */
+    public function get_delete_link(array $element, object $gpr): ?string {
+        if ($element['type'] == 'item' || ($element['type'] == 'category' && $element['depth'] > 1)) {
+            if (grade_edit_tree::element_deletable($element)) {
+                $url = new moodle_url('index.php',
+                    ['id' => $this->courseid, 'action' => 'delete', 'eid' => $element['eid'], 'sesskey' => sesskey()]);
+                $title = grade_helper::get_lang_string('delete');
+                $gpr->add_url_params($url);
+                return html_writer::link($url, $title,
+                    ['class' => 'dropdown-item', 'aria-label' => $title, 'role' => 'menuitem']);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns a link to duplicate a given element.
+     *
+     * @param array  $element An array representing an element in the grade_tree
+     * @param object $gpr A grade_plugin_return object
+     * @return string|null
+     */
+    public function get_duplicate_link(array $element, object $gpr): ?string {
+        if ($element['type'] == 'item' || ($element['type'] == 'category' && $element['depth'] > 1)) {
+            if (grade_edit_tree::element_duplicatable($element)) {
+                $duplicateparams = [];
+                $duplicateparams['id'] = $this->courseid;
+                $duplicateparams['action'] = 'duplicate';
+                $duplicateparams['eid'] = $element['eid'];
+                $duplicateparams['sesskey'] = sesskey();
+                $url = new moodle_url('index.php', $duplicateparams);
+                $title = grade_helper::get_lang_string('duplicate');
+                $gpr->add_url_params($url);
+                return html_writer::link($url, $title,
+                    ['class' => 'dropdown-item', 'aria-label' => $title, 'role' => 'menuitem']);
+            }
+        }
+        return null;
+    }
+
+    /**
      * Return edit icon for give element
      *
      * @param array  $element An array representing an element in the grade_tree
@@ -2384,7 +2459,7 @@ class grade_structure {
 
         $context = new stdClass();
 
-        if ($mode == 'gradeitem') {
+        if ($mode == 'gradeitem' || $mode == 'setup') {
             $editable = true;
 
             if ($element['type'] == 'grade') {
@@ -2408,17 +2483,23 @@ class grade_structure {
                 $context->datatype = 'item';
 
                 if ($element['type'] == 'item') {
-                    $context =
-                        grade_report::get_additional_context($this->context, $this->courseid, $element, $gpr, $mode, $context, true);
-                    $context->advancedgradingurl = $this->get_advanced_grading_link($element, $gpr);
+                    if ($mode == 'setup') {
+                        $context->deleteurl = $this->get_delete_link($element, $gpr);
+                        $context->duplicateurl = $this->get_duplicate_link($element, $gpr);
+                    } else {
+                        $context =
+                            grade_report::get_additional_context($this->context, $this->courseid,
+                                $element, $gpr, $mode, $context, true);
+                        $context->advancedgradingurl = $this->get_advanced_grading_link($element, $gpr);
+                    }
                 }
 
                 if ($element['type'] == 'item') {
                     $context->divider1 = true;
                 }
 
-                if (!empty($USER->editing)) {
-                    if ($element['type'] !== 'userfield') {
+                if (!empty($USER->editing) || $mode == 'setup') {
+                    if (($element['type'] !== 'userfield') && ($mode !== 'setup')) {
                         $context->divider1 = true;
                         $context->divider2 = true;
                     }
@@ -2464,14 +2545,23 @@ class grade_structure {
                 }
             } else if ($element['type'] == 'category') {
                 $context->datatype = 'category';
-                $mode = 'category';
-                $context = grade_report::get_additional_context($this->context, $this->courseid, $element, $gpr, $mode, $context);
-                if (!empty($USER->editing)) {
-                    $context->divider1 = true;
+                if ($mode !== 'setup') {
+                    $mode = 'category';
+                    $context = grade_report::get_additional_context($this->context, $this->courseid,
+                        $element, $gpr, $mode, $context);
+                } else {
+                    $context->deleteurl = $this->get_delete_link($element, $gpr);
+                    $context->resetweightsurl = $this->get_reset_weights_link($element, $gpr);
                 }
-                $context->editurl = $this->get_edit_link($element, $gpr);
-                $context->hideurl = $this->get_hiding_link($element, $gpr);
-                $context->lockurl = $this->get_locking_link($element, $gpr);
+
+                if (!empty($USER->editing) || $mode == 'setup') {
+                    if ($mode !== 'setup') {
+                        $context->divider1 = true;
+                    }
+                    $context->editurl = $this->get_edit_link($element, $gpr);
+                    $context->hideurl = $this->get_hiding_link($element, $gpr);
+                    $context->lockurl = $this->get_locking_link($element, $gpr);
+                }
             }
 
             if (isset($element['object'])) {
@@ -2487,7 +2577,7 @@ class grade_structure {
 
         if (!empty($USER->editing) || isset($context->gradeanalysisurl) || isset($context->gradesonlyurl)
                 || isset($context->aggregatesonlyurl) || isset($context->fullmodeurl) || isset($context->reporturl0)
-                || isset($context->ascendingfirstnameurl) || isset($context->ascendingurl)) {
+                || isset($context->ascendingfirstnameurl) || isset($context->ascendingurl) || ($mode == 'setup')) {
             return $OUTPUT->render_from_template('core_grades/cellmenu', $context);
         }
         return '';
@@ -3801,4 +3891,3 @@ abstract class grade_helper {
         self::$aggregationstrings = null;
     }
 }
-

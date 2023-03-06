@@ -372,6 +372,7 @@
                             .weightoverride {
                                 margin-right: 5px;
                             }
+                            min-width: 10em;
                         }
 
                         &.column-actions {
@@ -481,6 +482,14 @@
                 }
             }
         }
+
+        .badge-light {
+            color: #1d2125;
+            background-color: #ced4da;
+            margin-right: 0.5em;
+            margin-bottom: 0.5em;
+        }
+
     }
 }
 

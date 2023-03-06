@@ -34867,6 +34867,9 @@ p.arrow_button {
   width: 18px;
   height: 18px;
 }
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-weight {
+  min-width: 10em;
+}
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-weight .weightoverride {
   margin-right: 5px;
 }
@@ -34941,6 +34944,12 @@ p.arrow_button {
 }
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item.categoryitem td:not(.column-actions), .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item.courseitem td:not(.column-actions) {
   font-weight: bold;
+}
+.path-grade-edit-tree .gradetree-wrapper .badge-light {
+  color: #1d2125;
+  background-color: #ced4da;
+  margin-right: 0.5em;
+  margin-bottom: 0.5em;
 }
 
 /**
