@@ -30,21 +30,6 @@ use core\task\manager;
  */
 class longrunningtasks extends check {
 
-    /** @var string adhocqueue id. */
-    protected string $id = '';
-
-    /** @var string adhocqueue name. */
-    protected string $name = '';
-
-    /**
-     * Constructor
-     */
-    public function __construct() {
-        global $CFG;
-        $this->id = 'longrunningtasks';
-        $this->name = get_string('checklongrunningtasks', 'tool_task');
-    }
-
     /**
      * Links to the running task list
      *
