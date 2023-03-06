@@ -147,64 +147,31 @@ abstract class advanced_testcase extends base_testcase {
     }
 
     /**
-     * Creates a new XMLDataSet with the given $xmlFile. (absolute path.)
-     *
      * @deprecated since Moodle 3.10 - See MDL-67673 and MDL-64600 for more info.
-     * @todo This will be removed for Moodle 4.2 as part of MDL-69882.
-     *
-     * @param string $xmlFile
-     * @return phpunit_dataset
      */
-    protected function createXMLDataSet($xmlFile) {
-        debugging(__FUNCTION__ . '() is deprecated. Please use dataset_from_files() instead.', DEBUG_DEVELOPER);
-        return $this->dataset_from_files([$xmlFile]);
+    protected function createXMLDataSet() {
+        throw new coding_exception(__FUNCTION__ . '() is deprecated. Please use dataset_from_files() instead.');
     }
 
     /**
-     * Creates a new CsvDataSet from the given array of csv files. (absolute paths.)
-     *
      * @deprecated since Moodle 3.10 - See MDL-67673 and MDL-64600 for more info.
-     * @todo This will be removed for Moodle 4.2 as part of MDL-69882.
-     *
-     * @param array $files array tablename=>cvsfile
-     * @param string $delimiter unused
-     * @param string $enclosure unused
-     * @param string $escape unused
-     * @return phpunit_dataset
      */
-    protected function createCsvDataSet($files, $delimiter = ',', $enclosure = '"', $escape = '"') {
-        debugging(__FUNCTION__ . '() is deprecated. Please use dataset_from_files() instead.', DEBUG_DEVELOPER);
-        return $this->dataset_from_files($files);
+    protected function createCsvDataSet() {
+        throw new coding_exception(__FUNCTION__ . '() is deprecated. Please use dataset_from_files() instead.');
     }
 
     /**
-     * Creates new ArrayDataSet from given array
-     *
      * @deprecated since Moodle 3.10 - See MDL-67673 and MDL-64600 for more info.
-     * @todo This will be removed for Moodle 4.2 as part of MDL-69882.
-     *
-     * @param array $data array of tables, first row in each table is columns
-     * @return phpunit_dataset
      */
-    protected function createArrayDataSet(array $data) {
-        debugging(__FUNCTION__ . '() is deprecated. Please use dataset_from_array() instead.', DEBUG_DEVELOPER);
-        return $this->dataset_from_array($data);
+    protected function createArrayDataSet() {
+        throw new coding_exception(__FUNCTION__ . '() is deprecated. Please use dataset_from_array() instead.');
     }
 
     /**
-     * Load date into moodle database tables from standard PHPUnit data set.
-     *
      * @deprecated since Moodle 3.10 - See MDL-67673 and MDL-64600 for more info.
-     * @todo This will be removed for Moodle 4.2 as part of MDL-69882.
-     *
-     * Note: it is usually better to use data generators
-     *
-     * @param phpunit_dataset $dataset
-     * @return void
      */
-    protected function loadDataSet(phpunit_dataset $dataset) {
-        debugging(__FUNCTION__ . '() is deprecated. Please use dataset->to_database() instead.', DEBUG_DEVELOPER);
-        $dataset->to_database();
+    protected function loadDataSet() {
+        throw new coding_exception(__FUNCTION__ . '() is deprecated. Please use dataset->to_database() instead.');
     }
 
     /**

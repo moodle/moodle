@@ -79,6 +79,11 @@ information provided here is intended especially for developers.
   Course formats using components will be allowed to use one level indentation only.
 * The method `flexible_table::set_columnsattributes` now can be used with 'class' key to add custom classes to the DOM.
 * The editor_tinymce plugin has been removed from core.
+* The following phpunit advanced testcase helper methods, deprecated since 3.10, have been removed and can no longer be used:
+  - `createXMLDataSet`
+  - `createCsvDataSet`
+  - `createArrayDataSet`
+  - `loadDataSet`
 
 === 4.1 ===
 
