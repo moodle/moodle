@@ -18,7 +18,7 @@ Feature: Tinymce with enable/disable function.
     And I set the field "Text editor" to "TinyMCE HTML editor"
     And I press "Save changes"
     And I am on "Course 1" course homepage
-    And I follow "Control Enable/Disable Tinymce"
+    And I click on "Control Enable/Disable Tinymce" "link" in the "region-main" "region"
 
   @javascript
   Scenario: Check disable Tinymce editor.
