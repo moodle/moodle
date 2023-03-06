@@ -33,7 +33,7 @@ Feature: We can bulk insert grades for students in a course
 
   Scenario: I can not save bulk insert until I fill required form elements
     Given I navigate to "View > Grader report" in the course gradebook
-    And I click on grade item menu "Test assignment one"
+    And I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
     And I choose "Single view for this item" in the open action menu
     And I click on "Actions" "link"
     When I click on "Bulk insert" "link"
@@ -61,7 +61,7 @@ Feature: We can bulk insert grades for students in a course
     And I press "Save changes"
     And I am on "Course 1" course homepage with editing mode on
     And I navigate to "View > Grader report" in the course gradebook
-    And I click on grade item menu "Test assignment one"
+    And I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
     And I choose "Single view for this item" in the open action menu
     And the field "Grade for Student 1" matches value "50.00"
     And the field "Override for Student 1" matches value "0"
@@ -125,7 +125,7 @@ Feature: We can bulk insert grades for students in a course
 
   Scenario: I can not update grades if the value is out of bounds.
     Given I navigate to "View > Grader report" in the course gradebook
-    And I click on grade item menu "Test assignment one"
+    And I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
     And I choose "Single view for this item" in the open action menu
     And I click on "Actions" "link"
     When I click on "Bulk insert" "link"

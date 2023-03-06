@@ -50,14 +50,14 @@ Feature: We can sort grades/user fields on the grader report
     And "StudentA 2" "table_row" should appear before "StudentC 3" "table_row"
     And "StudentC 3" "table_row" should appear before "StudentB 4" "table_row"
     # Sort by grades in descending order.
-    And I click on grade item menu "Test assignment name 1"
+    And I click on grade item menu "Test assignment name 1" of type "gradeitem" on "grader" page
     And I choose "Descending" in the open action menu
     And I wait until the page is ready
     Then "StudentA 2" "table_row" should appear before "StudentC 3" "table_row"
     And "StudentC 3" "table_row" should appear before "StudentB 4" "table_row"
     And "StudentB 4" "table_row" should appear before "StudentD 1" "table_row"
     # Sort by grades in ascending order.
-    And I click on grade item menu "Test assignment name 1"
+    And I click on grade item menu "Test assignment name 1" of type "gradeitem" on "grader" page
     And I choose "Ascending" in the open action menu
     And I wait until the page is ready
     Then "StudentD 1" "table_row" should appear before "StudentB 4" "table_row"

@@ -62,7 +62,7 @@ Feature: We can set the grade to pass value
       | Grade to pass | 25 |
     And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
-    And I click on grade item menu "Test Assignment 1"
+    And I click on grade item menu "Test Assignment 1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     Then the field "Grade to pass" matches value "25"
     And I am on "Course 1" course homepage
@@ -72,7 +72,7 @@ Feature: We can set the grade to pass value
     And I set the field "Grade to pass" to "30"
     And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
-    And I click on grade item menu "Test Assignment 1"
+    And I click on grade item menu "Test Assignment 1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Grade to pass" matches value "30"
 
@@ -86,7 +86,7 @@ Feature: We can set the grade to pass value
       | Grade to pass | 3 |
     And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
-    And I click on grade item menu "Test Assignment 1"
+    And I click on grade item menu "Test Assignment 1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "3"
@@ -121,13 +121,13 @@ Feature: We can set the grade to pass value
       | Assessment grade to pass | 10 |
     And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
-    And I click on grade item menu "Test Workshop 1 (submission)"
+    And I click on grade item menu "Test Workshop 1 (submission)" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "40"
     And I set the field "Grade to pass" to "45"
     And I press "Save changes"
-    And I click on grade item menu "Test Workshop 1 (assessment)"
+    And I click on grade item menu "Test Workshop 1 (assessment)" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I expand all fieldsets
     And the field "Grade to pass" matches value "10"
@@ -163,7 +163,7 @@ Feature: We can set the grade to pass value
       | Grade to pass | 9.5 |
     And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
-    And I click on grade item menu "Test Quiz 1"
+    And I click on grade item menu "Test Quiz 1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "9.5"
@@ -184,7 +184,7 @@ Feature: We can set the grade to pass value
       | Grade to pass | 90            |
     And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
-    And I click on grade item menu "Test Lesson 1"
+    And I click on grade item menu "Test Lesson 1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "90"
@@ -206,7 +206,7 @@ Feature: We can set the grade to pass value
       | Grade to pass | 90#50 |
     And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
-    And I click on grade item menu "Test Lesson 1"
+    And I click on grade item menu "Test Lesson 1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "90#50"
@@ -229,7 +229,7 @@ Feature: We can set the grade to pass value
       | Ratings > Grade to pass  | 90                 |
     And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
-    And I click on grade item menu "Test Database 1"
+    And I click on grade item menu "Test Database 1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "90"
@@ -270,7 +270,7 @@ Feature: We can set the grade to pass value
       | Ratings > Grade to pass  | 90                 |
     And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
-    And I click on grade item menu "Test Forum 1 rating"
+    And I click on grade item menu "Test Forum 1 rating" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "90"
@@ -294,7 +294,7 @@ Feature: We can set the grade to pass value
       | Ratings > Grade to pass  | 90                 |
     And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
-    And I click on grade item menu "Test Glossary 1"
+    And I click on grade item menu "Test Glossary 1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "90"
