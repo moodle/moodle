@@ -31,6 +31,7 @@ require_once($CFG->dirroot . '/blocks/iomad_company_admin/lib.php');
 require_once('lib.php');
 require_once('config.php');
 
+$confirm      = optional_param('confirm', '', PARAM_ALPHANUM);   // Md5 confirmation hash.
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $templateid = optional_param('templateid', 0, PARAM_INTEGER);
 $templatesetid = optional_param('templatesetid', 0, PARAM_INTEGER);
@@ -40,6 +41,7 @@ $lang = optional_param('lang', '', PARAM_LANG);
 $edit = optional_param('edit', '', PARAM_TEXT);
 $view = optional_param('view', '', PARAM_TEXT);
 $add = optional_param('add', '', PARAM_TEXT);
+$reset = optional_param('reset', '', PARAM_TEXT);
 
 if (!empty($edit)) {
     $isediting = true;
@@ -69,64 +71,27 @@ if ($returnurl) {
 $companyid = iomad::get_my_companyid($context);
 $company = new company($companyid);
 
-if ($templatename && empty($add)) {
-    if (empty($templatesetid)) {
-        if (!$templaterecord = $DB->get_record('email_template', array('name' => $templatename, 'companyid' => $companyid, 'lang' => $lang))) {
-            $templaterecord = new stdclass();
-            $templaterecord->name = $templatename;
-            $templaterecord->lang = $lang;
-            $templaterecord->templateset = 0;
-            $templaterecord->companyid = $companyid;
-            $templaterecord->subject = get_string($templatename . '_subject', 'local_email', $lang);
-            $templaterecord->body = get_string($templatename . '_body', 'local_email', $lang);
-            $templaterecord->emailto = '';
-            $templaterecord->emailcc = '';
-            $templaterecord->emailfromothername = '{Company_Name}';
-            $templaterecord->repeatday = 0;
-            $templaterecord->repeatperiod = 0;
-            $templaterecord->repeatvalue = 0;
-            $templaterecord->signature = "";
-        } else {
-            $templateid = $templaterecord->id;
-        }
-    } else {
-        if (!$templaterecord = $DB->get_record('email_templateset_templates', array('name' => $templatename, 'templateset' => $templatesetid, 'lang' => $lang))) {
-            $templaterecord = new stdclass();
-            $templaterecord->name = $templatename;
-            $templaterecord->lang = $lang;
-            $templaterecord->templateset = $templatesetid;
-            $templaterecord->subject = get_string($templatename . '_subject', 'local_email', $lang);
-            $templaterecord->body = get_string($templatename . '_body', 'local_email', $lang);
-            $templaterecord->emailto = '';
-            $templaterecord->emailcc = '';
-            $templaterecord->emailfromothername = '{Company_Name}';
-            $templaterecord->repeatday = 0;
-            $templaterecord->repeatperiod = 0;
-            $templaterecord->repeatvalue = 0;
-            $templaterecord->signature = "";
-        } else {
-            $templateid = $templaterecord->id;
-        }
-    }
-    iomad::require_capability('local/email:edit', $context);
-} else {
-    $isadding = true;
-    $templaterecord = new stdclass();
-    $templaterecord->name = $templatename;
-    $templaterecord->lang = $lang;
-    $templaterecord->companyid = $companyid;
-    $templaterecord->subject = get_string($templatename . '_subject', 'local_email', $lang);
-    $templaterecord->body = get_string($templatename . '_body', 'local_email', $lang);
-    $templaterecord->emailto = '';
-    $templaterecord->emailcc = '';
-    $templaterecord->emailfromothername = '{Company_Name}';
-    $templaterecord->repeatday = 0;
-    $templaterecord->repeatperiod = 0;
-    $templaterecord->repeatvalue = 0;
-    $templaterecord->signature = "";
-    $templaterecord->templateset = $templatesetid;
+iomad::require_capability('local/email:edit', $context);
 
-    iomad::require_capability('local/email:add', $context);
+if (empty($templatesetid)) {
+    if (!$templaterecord = $DB->get_record('email_template',['id' => $templateid])) {
+        throw new \moodle_exception('templatenotfound', 'local_email', new moodle_url('/local/email/template_list.php'));
+    }
+} else {
+    if (!$templaterecord = $DB->get_record('email_templateset_templates', ['id' => $templateid])) {
+        throw new \moodle_exception('templatenotfound', 'local_email', new moodle_url('/local/email/template_list.php'));
+    }
+}
+
+echo "RECORD = <pre>";print_r($templaterecord);echo "</pre>";
+if (empty($templaterecord->subject)) {
+    $templaterecord->subject = get_string($templatename . '_subject', 'local_email', $lang);
+}
+if (empty($templaterecord->body)) {
+    $templaterecord->body = get_string($templatename . '_subject', 'local_email', $lang);
+}
+if (empty($templaterecord->emailfromothername)) {
+    $templaterecord->emailfromothername = '{Company_Name}';
 }
 
 // Correct the navbar.
@@ -145,6 +110,55 @@ $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->requires->jquery();
 $PAGE->requires->js('/local/email/module.js');
+
+// Are we dealing with a reset?
+//  Deal with any deletes.
+if ($reset == 'Reset' && confirm_sesskey()) {
+    if ($confirm != md5($templateid)) {
+        echo $OUTPUT->header();
+
+        $optionsyes = ['templateid' => $templateid,
+                       'templatesetid' => $templatesetid,
+                       'templatename' => $templatename,
+                       'lang' => $lang,
+                       'confirm' => md5($templateid),
+                       'sesskey' => sesskey(),
+                       'reset' => 'Reset'];
+        echo $OUTPUT->confirm(get_string('resettemplatefull', 'local_email', "'" . get_string($templaterecord->name . "_name", 'local_email') ."'"),
+                              new moodle_url('/local/email/template_edit_form.php', $optionsyes),
+                                             '/local/email/template_list.php');
+        echo $OUTPUT->footer();
+        die;
+    } else {
+        // Reset the template.
+        $templaterecord->subject = '';
+        $templaterecord->body = '';
+        $templaterecord->emailto = '';
+        $templaterecord->emailfrom = '';
+        $templaterecord->emailreplyto = '';
+        $templaterecord->emailcc = '';
+        $templaterecord->emailfromothername = '{Company_Name}';
+        $templaterecord->emailtoother = '';
+        $templaterecord->emailfromother = '';
+        $templaterecord->emailreplytoother = '';
+        $templaterecord->emailccother = '';
+        $templaterecord->repeatday = 0;
+        $templaterecord->repeatperiod = 0;
+        $templaterecord->repeatvalue = 0;
+        $templaterecord->signature = "";
+        if (empty($templatesetid)) {
+            $DB->update_record('email_template', $templaterecord);
+        } else {
+            $DB->update_record('email_templateset_templates', $templaterecord);
+        }
+
+        redirect(new moodle_url('/local/email/template_list.php', ['templatesetid' => $templatesetid]),
+                 get_string('templateresetok', 'local_email', "'" . get_string($templaterecord->name . "_name", 'local_email') ."'"),
+                 null,
+                 \core\output\notification::NOTIFY_SUCCESS);
+        die;
+    }
+}
 
 // Set the name for the page.
 if (!empty($templatesetid)) {

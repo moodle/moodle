@@ -481,15 +481,6 @@ function xmldb_local_email_upgrade($oldversion) {
             $dbman->add_index($table, $index);
         }
 
-        // Define index tempidnamelang (not unique) to be added to email_templateset_templates.
-        $table = new xmldb_table('email_templateset_templates');
-        $index = new xmldb_index('tempidnamelang', XMLDB_INDEX_NOTUNIQUE, ['templateset', 'name', 'lang']);
-
-        // Conditionally launch add index tempidnamelang.
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
         // Define index compidlang (not unique) to be added to email_template.
         $table = new xmldb_table('email_template');
         $index = new xmldb_index('compidlang', XMLDB_INDEX_NOTUNIQUE, ['companyid', 'lang']);
@@ -498,16 +489,6 @@ function xmldb_local_email_upgrade($oldversion) {
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
-
-        // Define index tempidlang (not unique) to be added to email_templateset_templates.
-        $table = new xmldb_table('email_templateset_templates');
-        $index = new xmldb_index('tempidlang', XMLDB_INDEX_NOTUNIQUE, ['templateset', 'lang']);
-
-        // Conditionally launch add index tempidlang.
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
 
         // Define field signature to be added to email_templateset_templates.
         $table = new xmldb_table('email_templateset_templates');
@@ -599,12 +580,19 @@ function xmldb_local_email_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Rename field repeateday on table email_templateset_templates to repeatday.
-        $table = new xmldb_table('email_templateset_templates');
-        $field = new xmldb_field('repeateday', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'repeatvalue');
+        //// Rename field repeateday on table email_templateset_templates to repeatday.
+        //$table = new xmldb_table('email_templateset_templates');
+        //$field = new xmldb_field('repeateday', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'repeatvalue');
 
         // Launch rename field repeateday.
-        $dbman->rename_field($table, $field, 'repeatday');
+        //$dbman->rename_field($table, $field, 'repeatday');
+
+        // Define key templateset (foreign) to be added to email_templateset_templates.
+        $table = new xmldb_table('email_templateset_templates');
+        $key = new xmldb_key('templateset', XMLDB_KEY_FOREIGN, ['templateset'], 'email_templateset', ['id']);
+
+        // Launch add key templateset.
+        $dbman->add_key($table, $key);
 
         // Mark that something is happening.
         set_config('local_email_templates_migrating', 1);

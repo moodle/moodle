@@ -34,11 +34,12 @@ use \block_iomad_commerce\helper;
 // Set up the template edit control form.
 class email_template_edit_form extends moodleform {
 
-    public function __construct($actionurl, $companyid, $templatename, $templatesetid) {
+    public function __construct($actionurl, $companyid, $templatename, $templatesetid, $ismodified = false) {
         global $DB;
 
         $this->langs = get_string_manager()->get_list_of_translations(true);
         $this->templatesetid = $templatesetid;
+        $this->ismodified = $ismodified;
 
         parent::__construct($actionurl);
     }
@@ -48,15 +49,20 @@ class email_template_edit_form extends moodleform {
 
         $mform =& $this->_form;
 
+        $mform->addElement('hidden', 'templateid');
         $mform->addElement('hidden', 'templatename');
         $mform->addElement('hidden', 'templatesetid', $this->templatesetid);
         $mform->setType('templatename', PARAM_CLEAN);
         $mform->setType('templatesetid', PARAM_INT);
+        $mform->setType('templateid', PARAM_INT);
         $mform->addElement('select', 'lang', '', $this->langs);
         $mform->setDefault('lang', $USER->lang);
         $buttonarr = array();
         $buttonarr[] = &$mform->createElement('submit', 'edit', get_string('edit'));
         $buttonarr[] = &$mform->createElement('submit', 'view', get_string('view'));
+        if (!empty($this->ismodified)) {
+            $buttonarr[] = &$mform->createElement('submit', 'reset', get_string('reset'));
+        }
         $mform->addGroup($buttonarr, 'buttonar', '', array(' '), false);
 
     }

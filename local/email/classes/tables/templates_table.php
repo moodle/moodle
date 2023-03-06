@@ -136,7 +136,26 @@ class templates_table extends table_sql {
         } else {
             $idnum = $row->templateset;
         }
-        $rowform = new local_email\forms\email_template_edit_form(new moodle_url('template_edit_form.php'), $idnum, $row->name, $row->id);
+        $ismodified = false;
+        if (!empty($row->subject) ||
+            !empty($row->body) ||
+            !empty($row->signature) ||
+            !empty($row->emailto) ||
+            !empty($row->emailtoother) ||
+            !empty($row->emailcc) ||
+            !empty($row->emailccother) ||
+            !empty($row->emailfrom) ||
+            !empty($row->emailfromother) ||
+            !empty($row->replyto) ||
+            !empty($row->replytoother) ||
+            !empty($row->repeatperiod) ||
+            !empty($row->repeatevalue) ||
+            !empty($row->repeatday) ||
+            $row->emailfromothername != '{Company_Name}') {
+            $ismodified = true;        
+        }
+            
+        $rowform = new local_email\forms\email_template_edit_form(new moodle_url('template_edit_form.php'), $idnum, $row->name, $row->id, $ismodified);
         $rowform->set_data(['templatename' => $row->name,
                             'lang' => $row->lang,
                             'templateid' => $row->id]);
