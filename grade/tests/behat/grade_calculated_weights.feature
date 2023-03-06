@@ -57,7 +57,7 @@ Feature: We can understand the gradebook user report
 
   @javascript @skip_chrome_zerosize
   Scenario: Mean of grades aggregation
-    And I set the following settings for grade item "Course 1":
+    And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Mean of grades |
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
@@ -74,15 +74,15 @@ Feature: We can understand the gradebook user report
 
   @javascript @skip_chrome_zerosize
   Scenario: Weighted mean of grades aggregation
-    And I set the following settings for grade item "Course 1":
+    And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Weighted mean of grades |
-    And I set the following settings for grade item "EN Test assignment one":
+    And I set the following settings for grade item "Test assignment one" of type "gradeitem" on "setup" page:
       | Item weight | 2.0 |
-    And I set the following settings for grade item "EN Test assignment two":
+    And I set the following settings for grade item "Test assignment two" of type "gradeitem" on "setup" page:
       | Item weight | 1.0 |
-    And I set the following settings for grade item "EN Test assignment three":
+    And I set the following settings for grade item "Test assignment three" of type "gradeitem" on "setup" page:
       | Item weight | 1.0 |
-    And I set the following settings for grade item "EN Sub category":
+    And I set the following settings for grade item "Sub category" of type "category" on "setup" page:
       | Item weight | 1.0 |
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
@@ -99,11 +99,11 @@ Feature: We can understand the gradebook user report
 
   @javascript @skip_chrome_zerosize
   Scenario: Simple weighted mean of grades aggregation
-    And I set the following settings for grade item "Course 1":
+    And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Simple weighted mean of grades |
-    And I set the following settings for grade item "EN Sub category":
+    And I set the following settings for grade item "Sub category" of type "category" on "setup" page:
       | Aggregation | Simple weighted mean of grades |
-    And I set the following settings for grade item "EN Test assignment three":
+    And I set the following settings for grade item "Test assignment three" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
@@ -120,9 +120,9 @@ Feature: We can understand the gradebook user report
 
   @javascript @skip_chrome_zerosize
   Scenario: Mean of grades (with extra credits) aggregation
-    And I set the following settings for grade item "Course 1":
+    And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Mean of grades (with extra credits) |
-    And I set the following settings for grade item "EN Test assignment three":
+    And I set the following settings for grade item "Test assignment three" of type "gradeitem" on "setup" page:
       | Extra credit weight | 1.0 |
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
@@ -139,7 +139,7 @@ Feature: We can understand the gradebook user report
 
   @javascript @skip_chrome_zerosize
   Scenario: Median of grades aggregation
-    And I set the following settings for grade item "Course 1":
+    And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Median of grades |
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
@@ -156,7 +156,7 @@ Feature: We can understand the gradebook user report
 
   @javascript @skip_chrome_zerosize
   Scenario: Lowest grade aggregation
-    And I set the following settings for grade item "Course 1":
+    And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Lowest grade |
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
@@ -173,7 +173,7 @@ Feature: We can understand the gradebook user report
 
   @javascript @skip_chrome_zerosize
   Scenario: Highest grade aggregation
-    And I set the following settings for grade item "Course 1":
+    And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Highest grade |
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
@@ -190,7 +190,7 @@ Feature: We can understand the gradebook user report
 
   @javascript @skip_chrome_zerosize
   Scenario: Mode of grades aggregation
-    And I set the following settings for grade item "Course 1":
+    And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Mode of grades |
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
@@ -207,11 +207,11 @@ Feature: We can understand the gradebook user report
 
   @javascript @skip_chrome_zerosize
   Scenario: View user report with mixed aggregation methods
-    And I set the following settings for grade item "Course 1":
+    And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Natural |
-    And I set the following settings for grade item "EN Sub category":
+    And I set the following settings for grade item "Sub category" of type "category" on "setup" page:
       | Aggregation | Weighted mean of grades |
-    And I set the following settings for grade item "EN Test assignment three":
+    And I set the following settings for grade item "Test assignment three" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
@@ -230,7 +230,7 @@ Feature: We can understand the gradebook user report
 
   @javascript @skip_chrome_zerosize
   Scenario: View user report with natural aggregation
-    And I set the following settings for grade item "EN Test assignment three":
+    And I set the following settings for grade item "Test assignment three" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget

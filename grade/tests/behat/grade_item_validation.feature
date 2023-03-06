@@ -36,8 +36,8 @@ Feature: Grade item validation
     And I press "Save changes"
 
   Scenario: Being able to change the grade type, scale and maximum grade for a manual grade item when there are no grades
-    Given I open the action menu in "MI 1" "table_row"
-    And I choose "Edit settings" in the open action menu
+    Given I click on grade item menu "MI 1" of type "gradeitem" on "setup" page
+    And I choose "Edit grade item" in the open action menu
     When I should not see "Some grades have already been awarded, so the grade type"
     Then I set the field "Grade type" to "Scale"
     And I press "Save changes"
@@ -45,8 +45,8 @@ Feature: Grade item validation
     And I set the field "Scale" to "ABCDEF"
     And I press "Save changes"
     And I should not see "You cannot change the type, as grades already exist for this item"
-    And I open the action menu in "MI 1" "table_row"
-    And I choose "Edit settings" in the open action menu
+    And I click on grade item menu "MI 1" of type "gradeitem" on "setup" page
+    And I choose "Edit grade item" in the open action menu
     And I should not see "Some grades have already been awarded, so the grade type"
     And I set the field "Scale" to "Letter scale"
     And I press "Save changes"
@@ -58,14 +58,14 @@ Feature: Grade item validation
     And I give the grade "20.00" to the user "Student 1" for the grade item "MI 1"
     And I press "Save changes"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I open the action menu in "MI 1" "table_row"
-    When I choose "Edit settings" in the open action menu
+    And I click on grade item menu "MI 1" of type "gradeitem" on "setup" page
+    And I choose "Edit grade item" in the open action menu
     Then I should see "Some grades have already been awarded, so the grade type cannot be changed. If you wish to change the maximum grade, you must first choose whether or not to rescale existing grades."
     And "//div[contains(concat(' ', normalize-space(@class), ' '), 'felement') and contains(text(), 'Value')]" "xpath_element" should exist
 
   Scenario: Attempting to change a manual item's scale when grades already exist
-    Given I open the action menu in "MI 1" "table_row"
-    And I choose "Edit settings" in the open action menu
+    Given I click on grade item menu "MI 1" of type "gradeitem" on "setup" page
+    And I choose "Edit grade item" in the open action menu
     And I set the field "Grade type" to "Scale"
     And I set the field "Scale" to "ABCDEF"
     And I press "Save changes"
@@ -74,8 +74,8 @@ Feature: Grade item validation
     And I give the grade "C" to the user "Student 1" for the grade item "MI 1"
     And I press "Save changes"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I open the action menu in "MI 1" "table_row"
-    When I choose "Edit settings" in the open action menu
+    And I click on grade item menu "MI 1" of type "gradeitem" on "setup" page
+    And I choose "Edit grade item" in the open action menu
     Then I should see "Some grades have already been awarded, so the grade type and scale cannot be changed."
     And "//div[contains(concat(' ', normalize-space(@class), ' '), 'felement') and contains(text(), 'ABCDEF')]" "xpath_element" should exist
 
@@ -85,8 +85,8 @@ Feature: Grade item validation
     And I give the grade "20.00" to the user "Student 1" for the grade item "MI 1"
     And I press "Save changes"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I open the action menu in "MI 1" "table_row"
-    When I choose "Edit settings" in the open action menu
+    And I click on grade item menu "MI 1" of type "gradeitem" on "setup" page
+    And I choose "Edit grade item" in the open action menu
     Then I should see "Some grades have already been awarded, so the grade type cannot be changed. If you wish to change the maximum grade, you must first choose whether or not to rescale existing grades."
     And I should see "Choose" in the "Rescale existing grades" "field"
     And the "Maximum grade" "field" should be disabled

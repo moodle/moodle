@@ -107,14 +107,9 @@ Feature: View gradebook when scales are used
       | Course total        | 4.00  | 0–5   | 80.00 %    | -                            |
 
   Scenario Outline: Test displaying scales in gradebook in all other aggregation methods
-    Given I click on course grade category menu "Course 1"
-    And I choose "Edit category" in the open action menu
-    And I set the following fields to these values:
+    Given I set the following settings for grade item "Course 1" of type "course" on "grader" page:
       | Aggregation | <aggregation> |
-    And I press "Save changes"
-    And I click on grade category menu "Sub category 1"
-    And I choose "Edit category" in the open action menu
-    And I set the following fields to these values:
+    And I set the following settings for grade item "Sub category 1" of type "category" on "grader" page:
       | Aggregation   | <aggregation>                |
       | Category name | Sub category (<aggregation>) |
       | Maximum grade | 5                            |
@@ -142,8 +137,8 @@ Feature: View gradebook when scales are used
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                | Max grade |
       | Test assignment one | A (5)     |
-      | Sub category (<aggregation>) total<aggregation>. |           |
-      | Course total<aggregation>.   |           |
+      | Sub category (<aggregation>) total |           |
+      | Course total   |           |
     And I log out
     And I log in as "student2"
     And I follow "Grades" in the user menu
