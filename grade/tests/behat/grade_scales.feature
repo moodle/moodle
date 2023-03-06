@@ -6,16 +6,14 @@ Feature: View gradebook when scales are used
 
   Background:
     Given I log in as "admin"
-    And the "multilang" filter is "on"
-    And the "multilang" filter applies to "content and headings"
     And I set the following administration settings values:
       | grade_report_showranges    | 1 |
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
     And I navigate to "Grades > Scales" in site administration
     And I press "Add a new scale"
     And I set the following fields to these values:
-      | Name  | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Letterscale |
-      | Scale | F,D,C,B,A                                                                                          |
+      | Name  | Letterscale |
+      | Scale | F,D,C,B,A   |
     And I press "Save changes"
     And I log out
     And the following "courses" exist:
@@ -46,7 +44,7 @@ Feature: View gradebook when scales are used
     And I am on the "Test assignment one" "assign activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the field "grade[modgrade_type]" to "Scale"
-    And I set the field "grade[modgrade_scale]" to "EN Letterscale"
+    And I set the field "grade[modgrade_scale]" to "Letterscale"
     And I press "Save and display"
     And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
@@ -121,7 +119,6 @@ Feature: View gradebook when scales are used
       | Category name | Sub category (<aggregation>) |
       | Maximum grade | 5                            |
       | Minimum grade | 1                            |
-    And I press "Save changes"
     And I turn editing mode off
     Then the following should exist in the "user-grades" table:
       | -1-                | -1-                  | -3-      | -4-            | -5-            |

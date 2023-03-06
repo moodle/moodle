@@ -17,18 +17,16 @@ Feature: Student and teacher's view of aggregated grade items is consistent when
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And the following "grade categories" exist:
-      | fullname | course |
-      | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Sub category 1 | C1 |
-      | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Sub category 2 | C1 |
+      | fullname       | course |
+      | Sub category 1 | C1     |
+      | Sub category 2 | C1     |
     And the following "activities" exist:
-      | activity | course | idnumber | name | intro | gradecategory| grade |
-      | assign | C1 | a1 | Test assignment one | Submit something! | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Sub category 1 | 100 |
-      | assign | C1 | a2 | Test assignment two | Submit something! | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Sub category 1 | 100 |
-      | assign | C1 | a3 | Test assignment three | Submit something! | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Sub category 2 | 100 |
-      | assign | C1 | a4 | Test assignment four | Submit something! | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Sub category 2 | 100 |
+      | activity | course | idnumber | name                  | intro             | gradecategory  | grade |
+      | assign   | C1     | a1       | Test assignment one   | Submit something! | Sub category 1 | 100   |
+      | assign   | C1     | a2       | Test assignment two   | Submit something! | Sub category 1 | 100   |
+      | assign   | C1     | a3       | Test assignment three | Submit something! | Sub category 2 | 100   |
+      | assign   | C1     | a4       | Test assignment four  | Submit something! | Sub category 2 | 100   |
     And I log in as "admin"
-    And the "multilang" filter is "on"
-    And the "multilang" filter applies to "content and headings"
     And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I press "Add grade item"
@@ -36,7 +34,7 @@ Feature: Student and teacher's view of aggregated grade items is consistent when
       | Item name | calculated |
     And I press "Save changes"
     And I set "=[[a4]]/2" calculation for grade item "calculated" with idnumbers:
-      | EN Sub category 1 | sub1 |
+      | Sub category 1 | sub1 |
     And I navigate to "Grades > Report settings > Overview report" in site administration
     And I set the field "s__grade_report_overview_showtotalsifcontainhidden" to "Show totals excluding hidden items"
     And I navigate to "Grades > Report settings > User report" in site administration
@@ -54,7 +52,6 @@ Feature: Student and teacher's view of aggregated grade items is consistent when
     And I choose "Edit grade item" in the open action menu
     And I set the following fields to these values:
       | Hidden | 1 |
-    And I press "Save changes"
     And I am on "Course 1" course homepage
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
