@@ -39,5 +39,5 @@ $string['cliunknowoption'] = 'Танихгүй сонголтууд:
 {$a}
 Тусламж хэсгийг сонгоно уу.';
 $string['cliyesnoprompt'] = 'y (гэвэл Тийм) n (гэвэл Үгүй)';
-$string['environmentrequireinstall'] = 'суусан/идэвхжсэн байх ёстой';
-$string['environmentrequireversion'] = 'та {$a->current} хувилбар ашиглаж байна {$a->needed} хувилбарыг ашиглагх ёстой';
+$string['environmentrequireinstall'] = 'суулгаж идэвхжүүлсэн байх ёстой';
+$string['environmentrequireversion'] = 'та {$a->current} хувилбарыг ашиглаж байгаа ба {$a->needed} хувилбарыг ашиглах ёстой';
