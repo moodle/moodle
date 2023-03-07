@@ -107,6 +107,7 @@ $string['category:visibility'] = 'See hidden categories';
 $string['cohort:assign'] = 'Add and remove cohort members';
 $string['cohort:view'] = 'View site-wide cohorts';
 $string['cohort:manage'] = 'Create, delete and move cohorts';
+$string['cohort:configurecustomfields'] = 'Configure cohort custom fields';
 $string['comment:delete'] = 'Delete comments';
 $string['comment:post'] = 'Post comments';
 $string['comment:view'] = 'View comments';

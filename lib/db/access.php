@@ -781,6 +781,13 @@ $capabilities = array(
         )
     ),
 
+    'moodle/cohort:configurecustomfields' => array(
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+
     'moodle/course:create' => array(
 
         'riskbitmask' => RISK_XSS,

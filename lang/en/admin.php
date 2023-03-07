@@ -146,6 +146,7 @@ $string['cliupgradenoneed'] = 'No upgrade needed for the installed version {$a}.
 $string['cliupgradepending'] = 'An upgrade is pending';
 $string['cliyesnoprompt'] = 'type y (means yes) or n (means no)';
 $string['close'] = 'Close';
+$string['cohort_customfield'] = 'Cohort custom fields';
 $string['commentsperpage'] = 'Comments displayed per page';
 $string['commonactivitysettings'] = 'Common activity settings';
 $string['commonfiltersettings'] = 'Common filter settings';
