@@ -68,6 +68,9 @@ class adminpresets_setting {
      */
     protected $attributesvalues;
 
+    /** @var array To store the behaviors. */
+    protected array $behaviors = [];
+
     /**
      * Stores the setting data and the selected value
      *

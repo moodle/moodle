@@ -65,6 +65,9 @@ class manage_competencies_page implements renderable, templatable {
     /** @var \core_competency\competency $competency The competency to show when the page loads. */
     protected $competency = null;
 
+    /** @var array */
+    protected array $navigation = [];
+
     /**
      * Construct this renderable.
      *

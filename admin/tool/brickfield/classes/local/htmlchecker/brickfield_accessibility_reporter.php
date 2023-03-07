@@ -47,6 +47,9 @@ class brickfield_accessibility_reporter {
     /** @var array An array of attributes to search for to turn into absolute paths rather than relative paths */
     public $absoluteattributes = ['src', 'href'];
 
+    /** @var object|null A guideline object. */
+    public ?object $guideline = null;
+
     /**
      * The class constructor
      * @param object $dom The current DOMDocument object
