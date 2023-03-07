@@ -28,6 +28,14 @@ function mycourses_get_my_completion($datefrom = 0, $sort = 'coursefullname', $d
 
     $companyid = iomad::get_my_companyid(context_system::instance(), false);
 
+    // Do we need to tie courses down to only my company courses?
+    $companycoursesql = "";
+    if (!empty($companyid)) {
+        $company = new company($companyid);
+        $companycourses = $company->get_menu_courses(true);
+        $companycoursesql = "AND cc.courseid IN (" . join(',', array_keys($companycourses)) . ")";
+    } 
+
     // Check if there is a iomadcertificate module.
     if ($certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
         $hasiomadcertificate = true;
@@ -42,6 +50,7 @@ function mycourses_get_my_completion($datefrom = 0, $sort = 'coursefullname', $d
                                        JOIN {course} c ON (c.id = cc.courseid)
                                        JOIN {iomad_courses} ic ON (c.id = ic.courseid and cc.courseid = ic.courseid)
                                        WHERE cc.userid = :userid
+                                       $companycoursesql
                                        AND cc.timecompleted IS NOT NULL",
                                        array('userid' => $USER->id));
     $myinprogress = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, c.fullname as coursefullname, c.summary as coursesummary, c.visible, ic.hasgrade, cc.timestarted
@@ -51,6 +60,7 @@ function mycourses_get_my_completion($datefrom = 0, $sort = 'coursefullname', $d
                                           JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = c.id)
                                           LEFT JOIN {iomad_courses} ic ON (c.id = ic.courseid AND cc.courseid = ic.courseid)
                                           WHERE cc.userid = :userid
+                                          $companycoursesql
                                           AND c.visible = 1
                                           AND cc.timecompleted IS NOT NULL
                                           AND ue.timestart != 0",
