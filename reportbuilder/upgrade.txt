@@ -5,6 +5,8 @@ Information provided here is intended especially for developers.
 
 * New database helper method `sql_replace_parameter_names` to help ensure uniqueness of parameters within an expression (where
   that expression can be used multiple times as part of a larger query)
+* The local report filter class has a new `get_field_sql_and_params` method which should be used by filter types that re-use
+  the filter field SQL within their generated expression, to ensure SQL containing parameters works correctly
 
 === 4.1.2 ===
 

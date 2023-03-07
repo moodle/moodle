@@ -109,6 +109,18 @@ class filter_test extends advanced_testcase {
     }
 
     /**
+     * Test getting field SQL and params, while providing index for uniqueness
+     */
+    public function test_get_field_sql_and_params(): void {
+        $filter = $this->create_filter('username', 'u.username = :username AND u.idnumber = :idnumber',
+            ['username' => 'test', 'idnumber' => 'bar']);
+
+        [$sql, $params] = $filter->get_field_sql_and_params(1);
+        $this->assertEquals('u.username = :username_1 AND u.idnumber = :idnumber_1', $sql);
+        $this->assertEquals(['username_1' => 'test', 'idnumber_1' => 'bar'], $params);
+    }
+
+    /**
      * Test adding single join
      */
     public function test_add_join(): void {
