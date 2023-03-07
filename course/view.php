@@ -17,6 +17,7 @@
     $idnumber    = optional_param('idnumber', '', PARAM_RAW);
     $sectionid   = optional_param('sectionid', 0, PARAM_INT);
     $section     = optional_param('section', 0, PARAM_INT);
+    $expandsection = optional_param('expandsection', -1, PARAM_INT);
     $move        = optional_param('move', 0, PARAM_INT);
     $marker      = optional_param('marker',-1 , PARAM_INT);
     $switchrole  = optional_param('switchrole',-1, PARAM_INT); // Deprecated, use course/switchrole.php instead.
@@ -43,6 +44,9 @@
     }
     if ($section) {
         $urlparams['section'] = $section;
+    }
+    if ($expandsection !== -1) {
+        $urlparams['expandsection'] = $expandsection;
     }
 
     $PAGE->set_url('/course/view.php', $urlparams); // Defined here to avoid notices on errors etc
