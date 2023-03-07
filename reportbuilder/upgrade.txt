@@ -1,6 +1,11 @@
 This file describes API changes in /reportbuilder/*
 Information provided here is intended especially for developers.
 
+=== 4.0.8 ===
+
+* New database helper method `sql_replace_parameter_names` to help ensure uniqueness of parameters within an expression (where
+  that expression can be used multiple times as part of a larger query)
+
 === 4.0.7 ===
 
 * The schedule helper `create_schedule` method accepts a `$timenow` parameter to use for comparisons against current date
