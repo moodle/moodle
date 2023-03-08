@@ -50,6 +50,10 @@ class format_topics extends core_courseformat\base {
         return true;
     }
 
+    public function uses_indentation(): bool {
+        return (get_config('format_topics', 'indentation')) ? true : false;
+    }
+
     /**
      * Returns the display name of the given section that the course prefers.
      *

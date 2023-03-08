@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use \core_external\external_api;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -2730,13 +2732,19 @@ class externallib_test extends externallib_advanced_testcase {
         // Expect to receive all the fields.
         $this->assertCount(41, $result['courses'][0]);
         // Check default values for course format topics.
-        $this->assertCount(2, $result['courses'][0]['courseformatoptions']);
+        $this->assertCount(3, $result['courses'][0]['courseformatoptions']);
         foreach ($result['courses'][0]['courseformatoptions'] as $option) {
-            if ($option['name'] == 'hiddensections') {
-                $this->assertEquals(1, $option['value']);
-            } else {
-                $this->assertEquals('coursedisplay', $option['name']);
-                $this->assertEquals(0, $option['value']);
+            switch ($option['name']) {
+                case 'hiddensections':
+                    $this->assertEquals(1, $option['value']);
+                    break;
+                case 'coursedisplay':
+                    $this->assertEquals(0, $option['value']);
+                    break;
+                case 'indentation':
+                    $this->assertEquals(1, $option['value']);
+                    break;
+                default:
             }
         }
 
