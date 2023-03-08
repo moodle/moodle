@@ -146,14 +146,40 @@ if ($childcompanies = $realcompany->get_child_companies_recursive()) {
 }
 
 if (!$showsummary) {
+    $fieldnames= array();
+    $allfields = array();
     if ($category = $DB->get_record_sql("SELECT uic.id, uic.name FROM {user_info_category} uic, {company} c
                                          WHERE c.id = :companyid
                                          AND c.profileid=uic.id", array('companyid' => $companyid))) {
         // Get field names from company category.
         if ($fields = $DB->get_records('user_info_field', array('categoryid' => $category->id))) {
             foreach ($fields as $field) {
+                $allfields[$field->id] = $field;
                 $fieldnames[$field->id] = 'profile_field_'.$field->shortname;
-                ${'profile_field_'.$field->shortname} = optional_param('profile_field_'.$field->shortname, null, PARAM_RAW);
+                require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
+                $newfield = 'profile_field_'.$field->datatype;
+                $formfield = new $newfield($field->id);
+                $fieldoptions = $formfield->get_field_properties();
+                ${'profile_field_'.$field->shortname} = optional_param('profile_field_'.$field->shortname, null, $fieldoptions[0]);
+            }
+        }
+    }
+    if ($categories = $DB->get_records_sql("SELECT id FROM {user_info_category}
+                                                    WHERE id NOT IN (
+                                                     SELECT profileid FROM {company})")) {
+        foreach ($categories as $category) {
+            if ($fields = $DB->get_records('user_info_field', array('categoryid' => $category->id))) {
+                foreach ($fields as $field) {
+                    $allfields[$field->id] = $field;
+                    $fieldnames[$field->id] = 'profile_field_'.$field->shortname;
+                    require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
+                    $newfield = 'profile_field_'.$field->datatype;
+                    $formfield = new $newfield($field->id);
+                    $fieldoptions = $formfield->get_field_properties();
+                    ${'profile_field_'.$field->shortname} = optional_param('profile_field_'. $field->shortname,
+                                                                           null,
+                                                                           $fieldoptions[0]);
+                }
             }
         }
     }
@@ -163,8 +189,8 @@ if (!$showsummary) {
     if (!empty($fieldnames)) {
         $fieldids = array();
         foreach ($fieldnames as $id => $fieldname) {
-            if ($fields[$id]->datatype == "menu") {
-                $paramarray = explode("\n", $fields[$id]->param1);
+            if (!empty($allfields[$id]->datatype) && $allfields[$id]->datatype == "menu") {
+                $paramarray = explode("\n", $allfields[$id]->param1);
                 if (!empty($paramarray[${$fieldname}])) {
                     ${$fieldname} = $paramarray[${$fieldname}];
                 }
@@ -234,6 +260,7 @@ if (!$viewchildren && !$canseechildren && $parentslist = $company->get_parent_co
 }
 
 // Add the optional button to show the summary again.
+$buttons = '';
 if (!$showsummary && $canseechildren && $viewchildren && $haschildren) {
     $buttoncaption = get_string('returntooriginaluser', 'moodle', get_string('summary', 'moodle'));
     $buttonparams = $params;

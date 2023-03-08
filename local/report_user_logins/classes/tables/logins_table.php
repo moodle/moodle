@@ -143,7 +143,7 @@ class logins_table extends table_sql {
      */
     public function col_company($row) {
         global $DB;
-        $companies = $DB->get_records_sql("SELECT c.name FROM {company} c
+        $companies = $DB->get_records_sql("SELECT DISTINCT c.name FROM {company} c
                                            JOIN {company_users} cu ON (c.id = cu.companyid)
                                            WHERE cu.userid = :userid",
                                            ['userid' => $row->id]);

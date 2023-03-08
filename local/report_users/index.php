@@ -129,14 +129,20 @@ if ($departmentid == 0 ) {
 
 // Get the company additional optional user parameter names.
 $fieldnames = array();
+$allfields = array();
 if ($category = $DB->get_record_sql("SELECT uic.id, uic.name FROM {user_info_category} uic, {company} c
                                      WHERE c.id = :companyid
                                      AND c.profileid=uic.id", array('companyid' => $companyid))) {
     // Get field names from company category.
     if ($fields = $DB->get_records('user_info_field', array('categoryid' => $category->id))) {
         foreach ($fields as $field) {
+            $allfields[$field->id] = $field;
             $fieldnames[$field->id] = 'profile_field_'.$field->shortname;
-            ${'profile_field_'.$field->shortname} = optional_param('profile_field_'.$field->shortname, null, PARAM_RAW);
+            require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
+            $newfield = 'profile_field_'.$field->datatype;
+            $formfield = new $newfield($field->id);
+            $fieldoptions = $formfield->get_field_properties();
+            ${'profile_field_'.$field->shortname} = optional_param('profile_field_'.$field->shortname, null, $fieldoptions[0]);
         }
     }
 }
@@ -146,9 +152,15 @@ if ($categories = $DB->get_records_sql("SELECT id FROM {user_info_category}
     foreach ($categories as $category) {
         if ($fields = $DB->get_records('user_info_field', array('categoryid' => $category->id))) {
             foreach ($fields as $field) {
+                $allfields[$field->id] = $field;
                 $fieldnames[$field->id] = 'profile_field_'.$field->shortname;
-                ${'profile_field_'.$field->shortname} = optional_param('profile_field_'.
-                                                          $field->shortname, null, PARAM_RAW);
+                require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
+                $newfield = 'profile_field_'.$field->datatype;
+                $formfield = new $newfield($field->id);
+                $fieldoptions = $formfield->get_field_properties();
+                ${'profile_field_'.$field->shortname} = optional_param('profile_field_'. $field->shortname,
+                                                                       null,
+                                                                       $fieldoptions[0]);
             }
         }
     }
@@ -162,8 +174,8 @@ if (!empty($fieldnames)) {
     $fieldids = array();
     foreach ($fieldnames as $id => $fieldname) {
         $paramarray = array();
-        if (!empty($fields[$id]->datatype) && $fields[$id]->datatype == "menu" ) {
-            $paramarray = explode("\n", $fields[$id]->param1);
+        if (!empty($allfields[$id]->datatype) && $allfields[$id]->datatype == "menu" ) {
+            $paramarray = explode("\n", $allfields[$id]->param1);
             if (!empty($paramarray[${$fieldname}])) {
                 ${$fieldname} = $paramarray[${$fieldname}];
             }
