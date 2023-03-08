@@ -20590,7 +20590,9 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
 
 @media (min-width: 576px) {
   #page.drawers .main-inner {
-    margin-top: 1.5rem; } }
+    margin-top: 1.5rem; }
+  #page.drawers .drawer-right-toggle {
+    margin-right: 0.7rem; } }
 
 @media (min-width: 768px) {
   #page.drawers {
