@@ -29,18 +29,22 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['cannotcreatelangdir'] = 'lang хавтсыг үүсгэх боломжгүй.';
-$string['cannotcreatetempdir'] = 'temp  директор үүсгэж чадахгүй байна';
-$string['cannotdownloadcomponents'] = 'Компонент татаж чадахгүй байна.';
-$string['cannotdownloadzipfile'] = 'Zip файл татаж чадахгүй байна';
-$string['cannotfindcomponent'] = 'Компонент олж чадахгүй байна';
-$string['cannotsavemd5file'] = 'md5  файл хадгалж чадахгүй байна.';
-$string['cannotsavezipfile'] = 'Zip  файл хадгалж чадахгүй байна.';
-$string['cannotunzipfile'] = 'Файл unzip хийж чадахгүй байна.';
-$string['componentisuptodate'] = 'Компонент сүүлийн хувилбар байна.';
-$string['downloadedfilecheckfailed'] = 'Татаж авсан файлыг шалгах үйл ажиллагаа бүтсэнгүй.';
-$string['invalidmd5'] = 'Буруу md5';
-$string['missingrequiredfield'] = 'Зарим шаардлагатай талбар орхигдсон байна.';
+$string['cannotcreatedboninstall'] = '<p>Өгөгдлийн санг үүсгэх боломжгүй.</p>
+<p>Тодорхойлсон өгөгдлийн сан байхгүй, тухайн хэрэглэгч өгөгдлийн сан үүсгэх зөвшөөрөлгүй байна.</p>
+<p>Сайтын администратор нь өгөгдлийн сангийн тохиргоог шалгах шаардлагатай.</p>';
+$string['cannotcreatelangdir'] = 'Хэлний лавлахыг үүсгэх боломжгүй';
+$string['cannotcreatetempdir'] = 'Завсрын лавлахыг үүсгэх боломжгүй';
+$string['cannotdownloadcomponents'] = 'Бүрэлдэхүүн хэсгийг татаж авах боломжгүй';
+$string['cannotdownloadzipfile'] = 'ZIP файлыг татаж авах боломжгүй байна';
+$string['cannotfindcomponent'] = 'Бүрэлдэхүүн хэсгийг олж чадсангүй';
+$string['cannotsavemd5file'] = 'md5 файлыг хадгалах боломжгүй';
+$string['cannotsavezipfile'] = 'ZIP файлыг хадгалах боломжгүй';
+$string['cannotunzipfile'] = 'Файлын архивыг задлах боломжгүй';
+$string['componentisuptodate'] = 'Бүрэлдэхүүн хэсгийг шинэчилсэн';
+$string['dmlexceptiononinstall'] = '<p>Өгөгдлийн сангийн алдаа гарлаа [{$a->errorcode}].<br />{$a->debuginfo}</p>';
+$string['downloadedfilecheckfailed'] = 'Татаж авсан файлыг шалгаж чадсангүй';
+$string['invalidmd5'] = 'Шалгах хувьсагч буруу байсан - дахин оролдоно уу';
+$string['missingrequiredfield'] = 'Зарим шаардлагатай талбар байхгүй байна';
 $string['wrongdestpath'] = 'Буруу очих зам байна. .';
 $string['wrongsourcebase'] = 'Буруу хаягийн мэдээлэл байна.';
 $string['wrongzipfilename'] = 'Буруу архивласан файлын нэр байна.';
