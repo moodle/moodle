@@ -49,6 +49,10 @@ class format_weeks extends core_courseformat\base {
         return true;
     }
 
+    public function uses_indentation(): bool {
+        return (get_config('format_weeks', 'indentation')) ? true : false;
+    }
+
     /**
      * Generate the title for this section page
      * @return string the page title
