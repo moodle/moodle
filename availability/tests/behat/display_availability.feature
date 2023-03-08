@@ -55,7 +55,7 @@ Feature: display_availability
     And I set the field "x[month]" to "March"
     And I press "Save and return to course"
 
-    # Add a Page with 2 restrictions - one is set to hide from students if failed.
+    # Add a Page with 2 restrictions - one is set to Hide on course page if failed.
     And I add a "Page" to section "2"
     And I set the following fields to these values:
       | Name         | Page 2 |

@@ -179,7 +179,7 @@ $string['config_recordings_preview_default_description'] = 'If enabled the table
 $string['config_recordings_preview_editable'] = 'Preview feature can be edited';
 $string['config_recordings_preview_editable_description'] = 'Preview feature can be edited when the instance is added or updated.';
 $string['config_recordings_asc_sort'] = 'List recordings in chronological order';
-$string['config_recordings_asc_sort_description'] = 'Recordings are ordered by date, either chronological or reverse chronological order.';
+$string['config_recordings_asc_sort_description'] = 'Recordings are ordered by date, either chronological or reverse chronological order (most recent recording first).';
 
 $string['config_importrecordings'] = 'Import recordings';
 $string['config_importrecordings_description'] = 'These settings are feature specific.';
