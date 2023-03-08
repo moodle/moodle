@@ -55,6 +55,10 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     Then I should see "Finished regrading (1/1)"
     And I should see "Regrade completed"
     And I press "Continue"
+    # Regrade a second time, to ensure the first regrade did not corrupt any data.
+    And I press "Regrade all"
+    And I should see "Finished regrading (1/1)"
+    And I should see "Regrade completed"
 
   @javascript
   Scenario: Start attempt, teacher edits question, redo picks up latest non-draft version
