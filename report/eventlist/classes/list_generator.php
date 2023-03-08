@@ -54,7 +54,6 @@ class report_eventlist_list_generator {
         // List of exceptional events that will cause problems if displayed.
         $eventsignore = [
             \core\event\unknown_logged::class,
-            \logstore_legacy\event\legacy_logged::class,
         ];
 
         $eventinformation = [];
@@ -248,7 +247,7 @@ class report_eventlist_list_generator {
                     if (method_exists($plugineventname, 'get_static_info')) {
                         if ($detail) {
                             $ref = new \ReflectionClass($plugineventname);
-                            if (!$ref->isAbstract() && $plugintype . '_' . $plugin !== 'logstore_legacy') {
+                            if (!$ref->isAbstract()) {
                                 $noncorepluginlist = self::format_data($noncorepluginlist, $plugineventname);
                             }
                         } else {
@@ -302,7 +301,6 @@ class report_eventlist_list_generator {
 
         $eventdata[$eventfullpath]['crud'] = self::get_crud_string($eventdata[$eventfullpath]['crud']);
         $eventdata[$eventfullpath]['edulevel'] = self::get_edulevel_string($eventdata[$eventfullpath]['edulevel']);
-        $eventdata[$eventfullpath]['legacyevent'] = $eventfullpath::get_legacy_eventname();
 
         // Mess around getting since information.
         $ref = new \ReflectionClass($eventdata[$eventfullpath]['eventname']);

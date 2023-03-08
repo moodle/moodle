@@ -51,18 +51,6 @@ class webservice_token_created extends base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    protected function get_legacy_logdata() {
-        if (!empty($this->other['auto'])) {
-            // The token has been automatically created.
-            return array(SITEID, 'webservice', 'automatically create user token', '' , 'User ID: ' . $this->relateduserid);
-        }
-    }
-
-    /**
      * Return localised event name.
      *
      * @return string

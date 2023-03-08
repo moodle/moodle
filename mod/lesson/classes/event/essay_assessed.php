@@ -65,17 +65,6 @@ class essay_assessed extends \core\event\base {
     }
 
     /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        $lesson = $this->get_record_snapshot('lesson', $this->other['lessonid']);
-        return array($this->courseid, 'lesson', 'update grade', 'essay.php?id=' .
-                $this->contextinstanceid, $lesson->name, $this->contextinstanceid);
-    }
-
-    /**
      * Return localised event name.
      *
      * @return string

@@ -92,32 +92,6 @@ class course_restored extends base {
     }
 
     /**
-     * Returns the name of the legacy event.
-     *
-     * @return string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return 'course_restored';
-    }
-
-    /**
-     * Returns the legacy event data.
-     *
-     * @return \stdClass the legacy event data
-     */
-    protected function get_legacy_eventdata() {
-        return (object) array(
-            'courseid' => $this->objectid,
-            'userid' => $this->userid,
-            'type' => $this->other['type'],
-            'target' => $this->other['target'],
-            'mode' => $this->other['mode'],
-            'operation' => $this->other['operation'],
-            'samesite' => $this->other['samesite'],
-        );
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

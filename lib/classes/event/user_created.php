@@ -78,33 +78,6 @@ class user_created extends base {
     }
 
     /**
-     * Return name of the legacy event, which is replaced by this event.
-     *
-     * @return string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return 'user_created';
-    }
-
-    /**
-     * Return user_created legacy event data.
-     *
-     * @return \stdClass user data.
-     */
-    protected function get_legacy_eventdata() {
-        return $this->get_record_snapshot('user', $this->objectid);
-    }
-
-    /**
-     * Returns array of parameters to be passed to legacy add_to_log() function.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array(SITEID, 'user', 'add', '/view.php?id='.$this->objectid, fullname($this->get_legacy_eventdata()));
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

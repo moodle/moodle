@@ -578,6 +578,10 @@ defined or can't be applied.
   - message_unblock_contact
   - message_block_contact
   - message_get_contact
+  - get_legacy_logdata
+  - set_legacy_logdata
+  - get_legacy_eventname
+  - get_legacy_eventdata
 * The following renamed classes have been completely removed:
     - course_in_list (now: core_course_list_element)
     - coursecat (now: core_course_category)

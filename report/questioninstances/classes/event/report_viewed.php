@@ -71,16 +71,6 @@ class report_viewed extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        $requestedqtype = $this->other['requestedqtype'];
-        return array(SITEID, "admin", "report questioninstances", "report/questioninstances/index.php?qtype=$requestedqtype", $requestedqtype);
-    }
-
-    /**
      * Returns relevant URL.
      *
      * @return \moodle_url

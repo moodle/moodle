@@ -1092,10 +1092,6 @@ class core_tag_tag {
                 'rawname' => $this->rawname
             )
         ));
-        if (isset($data['rawname'])) {
-            $event->set_legacy_logdata(array($COURSE->id, 'tag', 'update', 'index.php?id='. $this->id,
-                $originalname . '->'. $this->name));
-        }
         $event->trigger();
         return true;
     }

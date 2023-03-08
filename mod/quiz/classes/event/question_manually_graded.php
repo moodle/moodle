@@ -82,16 +82,6 @@ class question_manually_graded extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return [$this->courseid, 'quiz', 'manualgrade', 'comment.php?attempt=' . $this->other['attemptid'] .
-            '&slot=' . $this->other['slot'], $this->other['quizid'], $this->contextinstanceid];
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

@@ -79,16 +79,6 @@ class user_override_deleted extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return [$this->courseid, 'quiz', 'delete override', 'overrides.php?cmid=' . $this->contextinstanceid,
-            $this->other['quizid'], $this->contextinstanceid];
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

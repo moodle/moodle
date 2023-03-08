@@ -69,54 +69,12 @@ class attempt_started extends \core\event\base {
     }
 
     /**
-     * Does this event replace a legacy event?
-     *
-     * @return string legacy event name
-     */
-    static public function get_legacy_eventname() {
-        return 'quiz_attempt_started';
-    }
-
-    /**
      * Returns relevant URL.
      *
      * @return \moodle_url
      */
     public function get_url() {
         return new \moodle_url('/mod/quiz/review.php', ['attempt' => $this->objectid]);
-    }
-
-    /**
-     * Legacy event data if get_legacy_eventname() is not empty.
-     *
-     * @return \stdClass
-     */
-    protected function get_legacy_eventdata() {
-        $attempt = $this->get_record_snapshot('quiz_attempts', $this->objectid);
-
-        $legacyeventdata = new \stdClass();
-        $legacyeventdata->component = 'mod_quiz';
-        $legacyeventdata->attemptid = $attempt->id;
-        $legacyeventdata->timestart = $attempt->timestart;
-        $legacyeventdata->timestamp = $attempt->timestart;
-        $legacyeventdata->userid = $this->relateduserid;
-        $legacyeventdata->quizid = $attempt->quiz;
-        $legacyeventdata->cmid = $this->contextinstanceid;
-        $legacyeventdata->courseid = $this->courseid;
-
-        return $legacyeventdata;
-    }
-
-    /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        $attempt = $this->get_record_snapshot('quiz_attempts', $this->objectid);
-
-        return [$this->courseid, 'quiz', 'attempt', 'review.php?attempt=' . $this->objectid,
-            $attempt->quiz, $this->contextinstanceid];
     }
 
     /**
