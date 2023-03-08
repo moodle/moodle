@@ -57,12 +57,12 @@ $heading = get_string('itemsedit', 'grades');
 if ($grade_item = grade_item::fetch(array('id'=>$id, 'courseid'=>$courseid))) {
     // redirect if outcomeid present
     if (!empty($grade_item->outcomeid) && !empty($CFG->enableoutcomes)) {
-        $url = $CFG->wwwroot.'/grade/edit/tree/outcomeitem.php?id='.$id.'&amp;courseid='.$courseid;
+        $url = new moodle_url('/grade/edit/tree/outcomeitem.php', ['id' => $id, 'courseid' => $courseid]);
         redirect($gpr->add_url_params($url));
     }
     if ($grade_item->is_course_item() or $grade_item->is_category_item()) {
         $grade_category = $grade_item->get_item_category();
-        $url = $CFG->wwwroot.'/grade/edit/tree/category.php?id='.$grade_category->id.'&amp;courseid='.$courseid;
+        $url = new moodle_url('/grade/edit/tree/category.php', ['id' => $grade_category->id, 'courseid' => $courseid]);
         redirect($gpr->add_url_params($url));
     }
 
