@@ -3088,5 +3088,16 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023030300.01);
     }
 
+    if ($oldversion < 2023030300.02) {
+        // If cachestore_mongodb is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/cache/stores/mongodb/version.php')) {
+            // Clean config.
+            unset_all_config_for_plugin('cachestore_mongodb');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023030300.02);
+    }
+
     return true;
 }

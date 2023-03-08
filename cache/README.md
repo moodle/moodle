@@ -242,9 +242,6 @@ Both the cache API and the cache stores have tests.
 Please be aware that several of the cache stores require configuration in order to be able operate in the tests.
 Tests for stores requiring configuration that haven't been configured will be skipped.
 All configuration is done in your sites config.php through definitions.
-The following snippet illustrates how to configure core cache stores that require configuration.
-
-    define('TEST_CACHESTORE_MONGODB_TESTSERVER', 'mongodb://localhost:27017');
 
 As of Moodle 2.8 it is also possible to set the default cache stores used when running tests.
 You can do this by adding the following define to your config.php file:
