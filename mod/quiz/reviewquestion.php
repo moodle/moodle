@@ -101,7 +101,9 @@ $summarydata['questionname'] = array(
 
 // Other attempts at the quiz.
 if ($attemptobj->has_capability('mod/quiz:viewreports')) {
-    $attemptlist = $attemptobj->links_to_other_attempts($baseurl);
+    $otherattemptsurl = clone($baseurl);
+    $otherattemptsurl->param('slot', $attemptobj->get_original_slot($slot));
+    $attemptlist = $attemptobj->links_to_other_attempts($otherattemptsurl);
     if ($attemptlist) {
         $summarydata['attemptlist'] = array(
             'title'   => get_string('attempts', 'quiz'),
