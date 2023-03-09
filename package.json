@@ -25,6 +25,7 @@
     "gherkin-lint": "^4.2.2",
     "glob": "^8.1.0",
     "grunt": "^1.6.1",
+    "grunt-contrib-uglify": "5.0.1",
     "grunt-contrib-watch": "1.1.0",
     "grunt-eslint": "24.0.0",
     "grunt-jsdoc": "^2.4.1",
