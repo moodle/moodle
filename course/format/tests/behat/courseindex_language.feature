@@ -5,7 +5,7 @@ Feature: The course index language should change according to user preferences.
 
   Background:
     Given remote langimport tests are enabled
-    Given the following "users" exist:
+    And the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
       | student1 | Student   | 1        | student1@example.com |
