@@ -607,6 +607,22 @@ function xmldb_local_email_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2023022500, 'local', 'email');
     }
 
+    if ($oldversion < 2023030900) {
+
+        require_once($CFG->dirroot.'/'.$CFG->admin.'/tool/customlang/locallib.php');
+
+        $progressbar = new progress_bar();
+        $progressbar->create();         // prints the HTML code of the progress bar
+
+        // we may need a bit of extra execution time and memory here
+        core_php_time_limit::raise(HOURSECS);
+        raise_memory_limit(MEMORY_EXTRA);
+        tool_customlang_utils::checkout($CFG->lang, $progressbar);
+
+        // Email savepoint reached.
+        upgrade_plugin_savepoint(true, 2023030900, 'local', 'email');
+    }
+
     return $result;
 
 }
