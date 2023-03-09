@@ -75,14 +75,9 @@ information provided here is intended especially for developers.
 * The core/modal module and all their versions (SAVE_CANCEL, DELETE_CANCEL...) now has a setButtonDisable to disable or enable
   specific modal action buttons. This function allows developers to have modals that could only be submited if the user do some
   action in the modal body like ticking a checkbox or selecting an element.
-<<<<<<< HEAD
 * Course module indentation has been recovered for course format using components via Move right/left feature.
   Course formats using components will be allowed to use one level indentation only.
 * The method `flexible_table::set_columnsattributes` now can be used with 'class' key to add custom classes to the DOM.
-=======
-* Support for serving of AMD modules built in really old versions of Moodle (<= 3.8) has been removed.
-  Please ensure that your AMD modules have been rebuilt with a supported Moodle version.
->>>>>>> 33b1e41f137ebbdf63f771e8424f7dcc81a5cee8
 
 === 4.1 ===
 
