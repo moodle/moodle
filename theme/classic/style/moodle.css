@@ -9581,8 +9581,8 @@ a.text-dark:hover, a.text-dark:focus {
     color: inherit;
     border-color: #dee2e6; } }
 
-/* stylelint-disable function-url-scheme-disallowed-list */
-/* stylelint-enable function-url-scheme-disallowed-list */
+/* stylelint-disable function-url-scheme-blacklist */
+/* stylelint-enable function-url-scheme-blacklist */
 .tag {
   display: inline-block;
   padding: 0.25rem 0.4em;

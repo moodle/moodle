@@ -80,9 +80,7 @@ const registerStyleLintTasks = (grunt, files, fullRunDir) => {
         return {
             stylelint: {
                 scss: {
-                    options: {
-                        customSyntax: 'postcss-scss',
-                    },
+                    options: {syntax: 'scss'},
                     src: files,
                 },
             },
@@ -221,7 +219,7 @@ module.exports = function(grunt) {
     }
 
     /**
-     * Function to generate the destination for the minification task
+     * Function to generate the destination for the uglify task
      * (e.g. build/file.min.js). This function will be passed to
      * the rename property of files array when building dynamically:
      * http://gruntjs.com/configuring-tasks#building-the-files-object-dynamically
@@ -350,7 +348,7 @@ module.exports = function(grunt) {
         };
     };
 
-    const terser = require('@rollup/plugin-terser');
+    const terser = require('rollup-plugin-terser').terser;
 
     // Project configuration.
     grunt.initConfig({
@@ -376,13 +374,6 @@ module.exports = function(grunt) {
                     sourcemap: true,
                     treeshake: false,
                     context: 'window',
-
-                    // Treat all modules as external and do not try to resolve them.
-                    // https://rollupjs.org/configuration-options/#external
-                    // We do not need to resolve them as each module is transpiled individually and there is no tree shaking
-                    // or combining of dependencies.
-                    external: true,
-
                     plugins: [
                         rateLimit({initialDelay: 0}),
                         babel({
@@ -406,6 +397,16 @@ module.exports = function(grunt) {
                             ],
                             presets: [
                                 ['@babel/preset-env', {
+                                    targets: {
+                                        browsers: [
+                                            ">0.25%",
+                                            "last 2 versions",
+                                            "not ie <= 10",
+                                            "not op_mini all",
+                                            "not Opera > 0",
+                                            "not dead"
+                                        ]
+                                    },
                                     modules: false,
                                     useBuiltIns: false
                                 }]
@@ -904,6 +905,7 @@ module.exports = function(grunt) {
     });
 
     // Register NPM tasks.
+    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-eslint');
