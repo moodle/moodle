@@ -27,6 +27,7 @@
     "grunt": "^1.6.1",
     "grunt-contrib-watch": "1.1.0",
     "grunt-eslint": "24.0.0",
+    "grunt-jsdoc": "^2.4.1",
     "grunt-rollup": "^11.9.0",
     "grunt-sass": "3.1.0",
     "grunt-stylelint": "^0.18.0",
