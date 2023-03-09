@@ -64,6 +64,9 @@ class date extends base {
     /** @var int Date in the future */
     public const DATE_FUTURE = 8;
 
+    /** @var int Date before [X relative date unit(s)] */
+    public const DATE_BEFORE = 9;
+
     /** @var int Relative date unit for an hour */
     public const DATE_UNIT_HOUR = 0;
 
@@ -90,6 +93,7 @@ class date extends base {
             self::DATE_NOT_EMPTY => new lang_string('filterisnotempty', 'core_reportbuilder'),
             self::DATE_EMPTY => new lang_string('filterisempty', 'core_reportbuilder'),
             self::DATE_RANGE => new lang_string('filterrange', 'core_reportbuilder'),
+            self::DATE_BEFORE => new lang_string('filterdatebefore', 'core_reportbuilder'),
             self::DATE_LAST => new lang_string('filterdatelast', 'core_reportbuilder'),
             self::DATE_CURRENT => new lang_string('filterdatecurrent', 'core_reportbuilder'),
             self::DATE_NEXT => new lang_string('filterdatenext', 'core_reportbuilder'),
@@ -195,6 +199,13 @@ class date extends base {
 
                 $sql = implode(' AND ', $clauses);
 
+                break;
+            case self::DATE_BEFORE:
+                $param = database::generate_param_name();
+
+                // We can use the start date of the "Last" operator as the end date here.
+                $sql = "{$fieldsql} < :{$param}";
+                $params[$param] = self::get_relative_timeframe(self::DATE_LAST, $dateunitvalue, $dateunit)[0];
                 break;
             // Relative helper method can handle these three cases.
             case self::DATE_LAST:
