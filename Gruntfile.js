@@ -219,7 +219,7 @@ module.exports = function(grunt) {
     }
 
     /**
-     * Function to generate the destination for the minification task
+     * Function to generate the destination for the uglify task
      * (e.g. build/file.min.js). This function will be passed to
      * the rename property of files array when building dynamically:
      * http://gruntjs.com/configuring-tasks#building-the-files-object-dynamically
@@ -905,6 +905,7 @@ module.exports = function(grunt) {
     });
 
     // Register NPM tasks.
+    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-eslint');
