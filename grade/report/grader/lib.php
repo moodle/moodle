@@ -621,6 +621,9 @@ class grade_report_grader extends grade_report {
     public function get_left_rows($displayaverages) {
         global $CFG, $OUTPUT;
 
+        // Course context to determine how the user details should be displayed.
+        $coursecontext = context_course::instance($this->courseid);
+
         $rows = [];
 
         $showuserimage = $this->get_pref('showuserimage');
@@ -703,14 +706,16 @@ class grade_report_grader extends grade_report {
             $usercell->scope = 'row';
 
             if ($showuserimage) {
-                $usercell->text = $OUTPUT->user_picture($user, ['link' => false, 'visibletoscreenreaders' => false]);
+                $usercell->text = $OUTPUT->render(\core_user::get_profile_picture($user, $coursecontext, [
+                    'link' => false, 'visibletoscreenreaders' => false
+                ]));
             }
 
             $fullname = fullname($user, $viewfullnames);
             $usercell->text = html_writer::link(
-                    new moodle_url('/user/view.php', ['id' => $user->id, 'course' => $this->course->id]),
-                    $usercell->text . $fullname,
-                    ['class' => 'username']
+                \core_user::get_profile_url($user, $coursecontext),
+                $usercell->text . $fullname,
+                ['class' => 'username']
             );
 
             if (!empty($user->suspendedenrolment)) {
