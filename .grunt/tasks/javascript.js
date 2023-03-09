@@ -127,7 +127,7 @@ module.exports = grunt => {
         };
     };
 
-    const terser = require('@rollup/plugin-terser');
+    const terser = require('rollup-plugin-terser').terser;
     grunt.config.merge({
         rollup: {
             options: {
@@ -136,13 +136,6 @@ module.exports = grunt => {
                 sourcemap: true,
                 treeshake: false,
                 context: 'window',
-
-                // Treat all modules as external and do not try to resolve them.
-                // https://rollupjs.org/configuration-options/#external
-                // We do not need to resolve them as each module is transpiled individually and there is no tree shaking
-                // or combining of dependencies.
-                external: true,
-
                 plugins: [
                     rateLimit(),
                     babel({
