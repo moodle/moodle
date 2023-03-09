@@ -297,3 +297,14 @@ Feature: Course index depending on role
       | large  | be        | Close   | not be   | Open    | be       |
       | tablet | not be    | Open    | not be   | Open    | not be   |
       | mobile | not be    | Open    | not be   | Open    | not be   |
+
+  @javascript
+  Scenario: Course index is refreshed when we change role.
+    When I am on the "C1" "Course" page logged in as "teacher1"
+    And I turn editing mode on
+    And I hide section "1"
+    And I turn editing mode off
+    And I should see "Topic 1" in the "courseindex-content" "region"
+    And I follow "Switch role to..." in the user menu
+    And I press "Student"
+    Then I should not see "Topic 1" in the "courseindex-content" "region"
