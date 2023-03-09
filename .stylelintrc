@@ -1,14 +1,9 @@
 {
-    "customSyntax": "postcss-scss",
     "plugins": [
         "stylelint-csstree-validator"
     ],
     "rules": {
-        "csstree/validator": {
-          "syntaxExtensions": [
-            "sass"
-          ]
-        },
+        "csstree/validator": true,
         "at-rule-empty-line-before": [ "always",
           {"except": [ "blockless-after-blockless"], ignore: ["after-comment", "inside-block"]}
         ],
@@ -50,7 +45,7 @@
         "function-name-case": "lower",
         "function-parentheses-newline-inside": "always-multi-line",
         "function-parentheses-space-inside": "never-single-line",
-        "function-url-scheme-disallowed-list": ["data"],
+        "function-url-scheme-blacklist": ["data"],
         "function-whitespace-after": "always",
         "indentation": 4,
         "keyframe-declaration-no-important": true,
@@ -89,19 +84,12 @@
         "selector-type-no-unknown": true,
         "string-no-newline": true,
         "time-min-milliseconds": 100,
-        "unit-disallowed-list": ["pt"],
+        "unit-blacklist": ["pt"],
         "unit-case": "lower",
         "unit-no-unknown": true,
         "value-keyword-case": ["lower", {"ignoreKeywords": ["/(@|$)/"]}],
         "value-list-comma-newline-after": "always-multi-line",
         "value-list-comma-space-after": "always-single-line",
         "value-list-comma-space-before": "never",
-  },
-  "overrides": [
-    {
-      "files": ["**/yui/**/*.css"],
-      "rules": {
-      }
-    }
-  ]
+  }
 }
