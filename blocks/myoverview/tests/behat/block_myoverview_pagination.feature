@@ -146,6 +146,7 @@ Feature: My overview block pagination
       | student1 | C12 | student |
       | student1 | C13 | student |
     When I am on the "My courses" page logged in as "student1"
+    And I wait until ".block_myoverview [data-control='next']" "css_element" exists
     And I click on "[data-control='next']" "css_element" in the "Course overview" "block"
     Then the "class" attribute of ".block_myoverview [data-control='next']" "css_element" should contain "disabled"
     And I log out
