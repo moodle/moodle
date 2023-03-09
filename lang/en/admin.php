@@ -607,6 +607,7 @@ $string['enableplugin'] = 'Enable the {$a} plugin';
 $string['enablerecordcache'] = 'Enable record cache';
 $string['enablerssfeeds'] = 'Enable RSS feeds';
 $string['enablesearchareas'] = 'Enable search areas';
+$string['enablesharingtomoodlenet'] = 'Enable sharing to MoodleNet';
 $string['enablestats'] = 'Enable statistics';
 $string['enabletrusttext'] = 'Enable trusted content';
 $string['enableuserfeedback'] = 'Enable feedback about this software';
