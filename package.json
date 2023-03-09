@@ -53,14 +53,5 @@
   },
   "dependencies": {
     "@babel/eslint-parser": "^7.17.0"
-  },
-  "browserslist": [
-    ">0.3%",
-    "last 2 versions",
-    "not Android < 5",
-    "not ie >= 0",
-    "not op_mini all",
-    "not Opera > 0",
-    "not dead"
-  ]
+  }
 }
