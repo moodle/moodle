@@ -2,8 +2,6 @@
 // "Gradebook setup" > "Simple view" and "Full view".
 .gradetreebox {
     margin: 20px 0 30px 0;
-    padding: 10px 10px;
-    background-color: $gray-100;
 
     h4 {
         // Force back the base font-size to minimise width.
@@ -300,137 +298,56 @@
 }
 
 // Set up grades layout.
-.path-grade-edit-tree .setup-grades {
-    h4 {
-        margin: 0;
-    }
+.path-grade-edit-tree {
+    .gradetree-wrapper {
+        padding: 10px 10px;
+        background-color: $gray-100;
 
-    .column-rowspan {
-        padding: 0;
-        width: 24px;
-        min-width: 24px;
-        max-width: 24px;
-    }
-
-    .emptyrow {
-        display: none;
-    }
-
-    .gradeitemdescription {
-        font-weight: normal;
-        padding-left: 24px;
-    }
-
-    &.generaltable {
-
-        tr {
-            &.spacer {
-                height: 0.5rem;
+        .setup-grades {
+            h4 {
+                margin: 0;
             }
 
-            th {
-                vertical-align: bottom;
-                border: none;
-                text-align: left;
-                background-color: $gray-100;
-
-                &.rowspan {
-                    padding: 0;
-                    width: 24px;
-                    min-width: 24px;
-                }
+            .column-rowspan {
+                padding: 0;
+                width: 24px;
+                min-width: 24px;
+                max-width: 24px;
             }
 
-            td {
-                min-width: 4.5em;
-                background-color: $gray-100;
-                border: none;
-                vertical-align: middle;
+            .emptyrow {
+                display: none;
+            }
 
-                &.column-name {
-                    padding-left: 24px;
+            .gradeitemdescription {
+                font-weight: normal;
+                padding-left: 24px;
+            }
 
-                    .small {
-                        font-size: 70%;
+            &.generaltable {
+
+                tr {
+                    &.spacer {
+                        height: 0.5rem;
                     }
 
-                    .itemicon {
-                        font-size: 18px;
-                        width: 18px;
-                        height: 18px;
-                    }
-                }
-
-                &.column-weight {
-                    .weightoverride {
-                        margin-right: 5px;
-                    }
-                }
-
-                &.column-actions {
-                    .dropdown-toggle::after {
+                    &[data-hidden="true"] {
                         display: none;
                     }
-                }
 
-                &.movehere {
-                    padding: 0;
+                    th {
+                        vertical-align: bottom;
+                        border: none;
+                        text-align: left;
+                        background-color: $gray-100;
 
-                    a.movehere {
-                        display: block;
-                        width: 100%;
-                        margin: 5px 0 5px 0;
-                        padding: 3px 0 3px 0;
-
-                        hr {
-                            border-top: 2px dashed $gray-500;
-                            margin: 0;
-                        }
-
-                        &:hover {
-                            hr {
-                                border-top: 2px dashed $blue;
-                            }
-
+                        &.rowspan {
+                            padding: 0;
+                            width: 24px;
+                            min-width: 24px;
                         }
                     }
-                }
-            }
 
-            &.category {
-                td {
-                    background-color: white;
-                    border-top: 1px solid $gray-300;
-                    border-bottom: 1px solid $gray-300;
-
-                    &:first-child {
-                        border-left: 1px solid $gray-300;
-                    }
-
-                    &:last-child {
-                        border-right: 1px solid $gray-300;
-                    }
-
-                    &.column-name {
-                        font-weight: bold;
-
-                        div {
-                            display: flex;
-                            min-height: 30px;
-                            align-items: center;
-                        }
-                    }
-                }
-            }
-
-            &.item {
-                td {
-                    background-color: white;
-                    border-top: 3px solid $gray-100;
-                }
-
-                &.categoryitem,
-                &.courseitem {
                     td {
                         min-width: 4.5em;
                         background-color: $gray-100;
@@ -438,11 +355,127 @@
                         vertical-align: middle;
 
                         &.column-name {
-                            padding-left: 0;
+                            padding-left: 38px;
+
+                            .small {
+                                font-size: 70%;
+                            }
+
+                            .itemicon {
+                                font-size: 18px;
+                                width: 18px;
+                                height: 18px;
+                            }
                         }
 
-                        &:not(.column-actions) {
-                            font-weight: bold;
+                        &.column-weight {
+                            .weightoverride {
+                                margin-right: 5px;
+                            }
+                        }
+
+                        &.column-actions {
+                            .dropdown-toggle::after {
+                                display: none;
+                            }
+                        }
+
+                        &.movehere {
+                            padding: 0;
+
+                            a.movehere {
+                                display: block;
+                                width: 100%;
+                                margin: 5px 0 5px 0;
+                                padding: 3px 0 3px 0;
+
+                                hr {
+                                    border-top: 2px dashed $gray-500;
+                                    margin: 0;
+                                }
+
+                                &:hover {
+                                    hr {
+                                        border-top: 2px dashed $blue;
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+
+                    &.category {
+                        td {
+                            background-color: white;
+                            border-top: 1px solid $gray-300;
+                            border-bottom: 1px solid $gray-300;
+
+                            &:first-child {
+                                border-left: 1px solid $gray-300;
+                            }
+
+                            &:last-child {
+                                border-right: 1px solid $gray-300;
+                            }
+
+                            &.column-name {
+                                padding-left: 10px;
+                                font-weight: bold;
+
+                                div {
+                                    display: flex;
+                                    min-height: 30px;
+                                    align-items: center;
+
+                                    a {
+                                        &.toggle-category {
+                                            height: 24px;
+                                            width: 24px;
+                                            font-size: 12px;
+                                            line-height: 24px;
+                                            margin-right: 3px;
+
+                                            &[aria-expanded="true"] .expanded,
+                                            &[aria-expanded="false"] .collapsed {
+                                                display: none;
+                                            }
+
+                                            i {
+                                                font-size: 12px;
+                                                width: 12px;
+                                                height: 12px;
+                                                color: #1d2125;
+                                                margin: 0;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    &.item {
+                        td {
+                            background-color: white;
+                            border-top: 3px solid $gray-100;
+                        }
+
+                        &.categoryitem,
+                        &.courseitem {
+                            td {
+                                min-width: 4.5em;
+                                background-color: $gray-100;
+                                border: none;
+                                vertical-align: middle;
+
+                                &.column-name {
+                                    padding-left: 0;
+                                }
+
+                                &:not(.column-actions) {
+                                    font-weight: bold;
+                                }
+                            }
                         }
                     }
                 }

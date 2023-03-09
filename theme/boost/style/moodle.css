@@ -24461,8 +24461,6 @@ p.arrow_button {
 
 .gradetreebox {
   margin: 20px 0 30px 0;
-  padding: 10px 10px;
-  background-color: #f8f9fa;
 }
 .gradetreebox h4 {
   font-size: 0.9375rem;
@@ -24683,108 +24681,133 @@ p.arrow_button {
   display: block;
 }
 
-.path-grade-edit-tree .setup-grades h4 {
+.path-grade-edit-tree .gradetree-wrapper {
+  padding: 10px 10px;
+  background-color: #f8f9fa;
+}
+.path-grade-edit-tree .gradetree-wrapper .setup-grades h4 {
   margin: 0;
 }
-.path-grade-edit-tree .setup-grades .column-rowspan {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades .column-rowspan {
   padding: 0;
   width: 24px;
   min-width: 24px;
   max-width: 24px;
 }
-.path-grade-edit-tree .setup-grades .emptyrow {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades .emptyrow {
   display: none;
 }
-.path-grade-edit-tree .setup-grades .gradeitemdescription {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades .gradeitemdescription {
   font-weight: normal;
   padding-left: 24px;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr.spacer {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.spacer {
   height: 0.5rem;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr th {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr[data-hidden=true] {
+  display: none;
+}
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr th {
   vertical-align: bottom;
   border: none;
   text-align: left;
   background-color: #f8f9fa;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr th.rowspan {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr th.rowspan {
   padding: 0;
   width: 24px;
   min-width: 24px;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr td {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td {
   min-width: 4.5em;
   background-color: #f8f9fa;
   border: none;
   vertical-align: middle;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr td.column-name {
-  padding-left: 24px;
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-name {
+  padding-left: 38px;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr td.column-name .small {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-name .small {
   font-size: 70%;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr td.column-name .itemicon {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-name .itemicon {
   font-size: 18px;
   width: 18px;
   height: 18px;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr td.column-weight .weightoverride {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-weight .weightoverride {
   margin-right: 5px;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr td.column-actions .dropdown-toggle::after {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-actions .dropdown-toggle::after {
   display: none;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr td.movehere {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.movehere {
   padding: 0;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr td.movehere a.movehere {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.movehere a.movehere {
   display: block;
   width: 100%;
   margin: 5px 0 5px 0;
   padding: 3px 0 3px 0;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr td.movehere a.movehere hr {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.movehere a.movehere hr {
   border-top: 2px dashed #8f959e;
   margin: 0;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr td.movehere a.movehere:hover hr {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.movehere a.movehere:hover hr {
   border-top: 2px dashed #0f6cbf;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr.category td {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td {
   background-color: white;
   border-top: 1px solid #dee2e6;
   border-bottom: 1px solid #dee2e6;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr.category td:first-child {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td:first-child {
   border-left: 1px solid #dee2e6;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr.category td:last-child {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td:last-child {
   border-right: 1px solid #dee2e6;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr.category td.column-name {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name {
+  padding-left: 10px;
   font-weight: bold;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr.category td.column-name div {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name div {
   display: flex;
   min-height: 30px;
   align-items: center;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr.item td {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name div a.toggle-category {
+  height: 24px;
+  width: 24px;
+  font-size: 12px;
+  line-height: 24px;
+  margin-right: 3px;
+}
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name div a.toggle-category[aria-expanded=true] .expanded, .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name div a.toggle-category[aria-expanded=false] .collapsed {
+  display: none;
+}
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name div a.toggle-category i {
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
+  color: #1d2125;
+  margin: 0;
+}
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item td {
   background-color: white;
   border-top: 3px solid #f8f9fa;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr.item.categoryitem td, .path-grade-edit-tree .setup-grades.generaltable tr.item.courseitem td {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item.categoryitem td, .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item.courseitem td {
   min-width: 4.5em;
   background-color: #f8f9fa;
   border: none;
   vertical-align: middle;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr.item.categoryitem td.column-name, .path-grade-edit-tree .setup-grades.generaltable tr.item.courseitem td.column-name {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item.categoryitem td.column-name, .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item.courseitem td.column-name {
   padding-left: 0;
 }
-.path-grade-edit-tree .setup-grades.generaltable tr.item.categoryitem td:not(.column-actions), .path-grade-edit-tree .setup-grades.generaltable tr.item.courseitem td:not(.column-actions) {
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item.categoryitem td:not(.column-actions), .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item.courseitem td:not(.column-actions) {
   font-weight: bold;
 }
 

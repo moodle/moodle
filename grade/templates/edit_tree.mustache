@@ -27,6 +27,7 @@
     * showbulkmove - boolean - Whether to show the bulk move select menu.
     * table - string - HTML content of the grade items table.
     * bulkmoveoptions - array - Key-value pair array for the options of the the bulk move select menu element.
+    * cancelmovingbutton - HTML content of the cancel move button.
 
     Example context (json):
     {
@@ -38,33 +39,36 @@
         "showbulkmove": "true",
         "bulkmoveoptions": "{'value' : '1', 'name' : 'Test grade category'}",
         "value": "1",
-        "name": "Test grade category"
+        "name": "Test grade category",
+        "cancelmovingbutton": "<div class='singlebutton'></div>"
     }
 }}
-
-<form id="gradetreeform" method="post" action="{{actionurl}}">
-    <div>
-        <input type="hidden" name="sesskey" value="{{sesskey}}">
-        {{#notification}}
-            {{>core/notification_info}}
-        {{/notification}}
-        {{{table}}}
-        <div id="gradetreesubmit">
-            {{#showsave}}
-                <input class="advanced btn btn-primary" type="submit" value="{{#cleanstr}}savechanges{{/cleanstr}}">
-            {{/showsave}}
-            {{#showbulkmove}}
-                <div class="form-inline mt-3">
-                    <input type="hidden" name="bulkmove" value="0" id="bulkmoveinput">
-                    <label for="menumoveafter">{{#str}}moveselectedto, grades{{/str}}</label>
-                    <select name="moveafter" id="menumoveafter" class="ignoredirty singleselect custom-select form-control"
-                            data-action="toggle" data-toggle="action" data-togglegroup="category" disabled>
-                        {{#bulkmoveoptions}}
-                            <option value="{{value}}">{{{name}}}</option>
-                        {{/bulkmoveoptions}}
-                    </select>
-                </div>
-            {{/showbulkmove}}
+{{#notification}}
+    {{>core/notification_info}}
+{{/notification}}
+<div class="gradetree-wrapper d-none">
+    <form id="gradetreeform" method="post" action="{{actionurl}}" >
+        <div>
+            <input type="hidden" name="sesskey" value="{{sesskey}}">
+            {{{table}}}
+            <div id="gradetreesubmit">
+                {{#showsave}}
+                    <input class="advanced btn btn-primary" type="submit" value="{{#cleanstr}}savechanges{{/cleanstr}}">
+                {{/showsave}}
+                {{#showbulkmove}}
+                    <div class="form-inline mt-3">
+                        <input type="hidden" name="bulkmove" value="0" id="bulkmoveinput">
+                        <label for="menumoveafter">{{#str}}moveselectedto, grades{{/str}}</label>
+                        <select name="moveafter" id="menumoveafter" class="ignoredirty singleselect custom-select form-control"
+                                data-action="toggle" data-toggle="action" data-togglegroup="category" disabled>
+                            {{#bulkmoveoptions}}
+                                <option value="{{value}}">{{{name}}}</option>
+                            {{/bulkmoveoptions}}
+                        </select>
+                    </div>
+                {{/showbulkmove}}
+            </div>
         </div>
-    </div>
-</form>
+    </form>
+    {{{cancelmovingbutton}}}
+</div>
