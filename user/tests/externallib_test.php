@@ -1271,7 +1271,7 @@ class externallib_test extends externallib_advanced_testcase {
             ),
             array(
                 'name' => 'htmleditor',
-                'value' => 'tinymce',
+                'value' => 'tiny',
                 'userid' => $user2->id,
             )
         );
@@ -1284,7 +1284,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Get preference from DB to avoid cache.
         $this->assertEquals('atto', $DB->get_field('user_preferences', 'value',
             array('userid' => $user1->id, 'name' => 'htmleditor')));
-        $this->assertEquals('tinymce', $DB->get_field('user_preferences', 'value',
+        $this->assertEquals('tiny', $DB->get_field('user_preferences', 'value',
             array('userid' => $user2->id, 'name' => 'htmleditor')));
     }
 

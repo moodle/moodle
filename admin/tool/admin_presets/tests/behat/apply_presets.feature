@@ -96,7 +96,6 @@ Feature: I can apply presets
     And I should see "Starred courses" in the "Setting changes" "table"
     And I should see "Survey" in the "Setting changes" "table"
     And I should see "Tags" in the "Setting changes" "table"
-    And I should see "TinyMCE HTML editor" in the "Setting changes" "table"
     And I should see "URL downloader" in the "Setting changes" "table"
     And I should see "Wiki" in the "Setting changes" "table"
     And I should see "Wikimedia" in the "Setting changes" "table"

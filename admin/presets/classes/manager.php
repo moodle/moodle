@@ -105,7 +105,6 @@ class manager {
             'adminpresets_auth_shibboleth_admin_setting_special_idp_configtextarea' => 'adminpresets_admin_setting_configtext',
             'adminpresets_auth_shibboleth_admin_setting_special_wayf_select' => 'adminpresets_admin_setting_configselect',
             'adminpresets_editor_atto_toolbar_setting' => 'adminpresets_admin_setting_configtext',
-            'adminpresets_editor_tinymce_json_setting_textarea' => 'adminpresets_admin_setting_configtext',
             'adminpresets_enrol_database_admin_setting_category' => 'adminpresets_admin_setting_configselect',
             'adminpresets_enrol_flatfile_role_setting' => 'adminpresets_admin_setting_configtext',
             'adminpresets_enrol_ldap_admin_setting_category' => 'adminpresets_admin_setting_configselect',

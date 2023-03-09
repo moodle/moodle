@@ -176,10 +176,6 @@ class outputrequirementslib_test extends \advanced_testcase {
         $libdir = rtrim($CFG->libdir, '/');
         $admin = "/{$CFG->admin}/"; // Deprecated, just for coverage purposes.
 
-        require_once($libdir . '/editor/tinymce/lib.php');
-        $tiny = new \tinymce_texteditor();
-        $tinyversion = $tiny->version;
-
         // Note: $CFG->slasharguments is enabled by default; it will be a forced setting one day (MDL-62640).
         return [
             'Environment XML file' => [
@@ -206,16 +202,6 @@ class outputrequirementslib_test extends \advanced_testcase {
                 new \moodle_url('/h5p/js/embed.js'),
                 0,
                 $wwwroot . '/lib/javascript.php?rev=1&jsfile=%2Fh5p%2Fjs%2Fembed.js'
-            ],
-            'TinyMCE internal resource' => [
-                new \moodle_url('/lib/editor/tinymce/tiny_mce/' . $tinyversion . '/tiny_mce.js'),
-                1,
-                $wwwroot . '/lib/javascript.php/1/lib/editor/tinymce/tiny_mce/' . $tinyversion . '/tiny_mce.js'
-            ],
-            'A Moodle JS resource using the full path including the proper JS Handler' => [
-                new \moodle_url($wwwroot . '/lib/javascript.php/1/lib/editor/tinymce/tiny_mce/' . $tinyversion . '/tiny_mce.js'),
-                1,
-                $wwwroot . '/lib/javascript.php/1/lib/editor/tinymce/tiny_mce/' . $tinyversion . '/tiny_mce.js'
             ],
             'A custom Moodle CSS Handler' => [
                 new \moodle_url('/mod/data/css.php?d=1234567890'),
