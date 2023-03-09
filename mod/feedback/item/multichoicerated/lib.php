@@ -106,7 +106,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
      * @param stdClass $item the db-object from feedback_item
      * @param int $groupid
      * @param int $courseid
-     * @return array
+     * @return array|null
      */
     protected function get_analysed($item, $groupid = false, $courseid = false) {
         $analysed_item = array();
@@ -228,6 +228,9 @@ class feedback_item_multichoicerated extends feedback_item_base {
                              $groupid, $courseid = false) {
 
         $analysed_item = $this->get_analysed($item, $groupid, $courseid);
+        if (!$analysed_item) {
+            return $row_offset;
+        }
 
         $data = $analysed_item[2];
 
@@ -491,7 +494,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         $externaldata = array();
         $data = $this->get_analysed($item, $groupid, $courseid);
 
-        if (!empty($data[2]) && is_array($data[2])) {
+        if ($data && !empty($data[2]) && is_array($data[2])) {
             foreach ($data[2] as $d) {
                 $externaldata[] = json_encode($d);
             }
