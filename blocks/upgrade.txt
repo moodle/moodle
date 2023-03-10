@@ -8,8 +8,10 @@ information provided here is intended especially for developers.
 * Block plugins can specify that they want to display configuration form when block is
   added to the page by overriding static method block_edit_form::display_form_when_adding().
 * Web service 'core_block_fetch_addable_blocks' accepts new parameter 'pagehash'
-* Functions in the JS modules 'core/addblockmodal' and 'moodle-core-blockdraganddrop'
-  have changed their parameters. File lib/ajax/blocks.php takes different arguments.
+* JS module 'core/addblockmodal' is deprecated, instead there is new module
+  'core_block/add_modal' with similar functionality but different arguments.
+* Functions in the JS modules 'moodle-core-blockdraganddrop' have changed their parameters.
+  File lib/ajax/blocks.php takes different arguments.
   No backward-compatibility is provided since these files are not part of the blocks API
   and not intended to be used by plugins.
 
