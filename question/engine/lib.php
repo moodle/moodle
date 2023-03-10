@@ -640,6 +640,20 @@ class question_display_options {
     public $userinfoinhistory = self::HIDDEN;
 
     /**
+     * This identifier should be added to the labels of all input fields in the question.
+     *
+     * This is so people using assistive technology can easily tell which input belong to
+     * which question. The helper {@see self::add_question_identifier_to_label() makes this easier.
+     *
+     * If not set before the question is rendered, then it defaults to 'Question N'.
+     * (lang string)
+     *
+     * @var string The identifier that the question being rendered is associated with.
+     *              E.g. The question number when it is rendered on a quiz.
+     */
+    public $questionidentifier = null;
+
+    /**
      * Set all the feedback-related fields {@link $feedback}, {@link generalfeedback},
      * {@link rightanswer} and {@link manualcomment} to
      * {@link question_display_options::HIDDEN}.
@@ -668,6 +682,38 @@ class question_display_options {
             $options[$i] = $i;
         }
         return $options;
+    }
+
+    /**
+     * Helper to add the question identify (if there is one) to the label of an input field in a question.
+     *
+     * @param string $label The plain field label. E.g. 'Answer 1'
+     * @param bool $sridentifier If true, the question identifier, if added, will be wrapped in a sr-only span. Default false.
+     * @param bool $addbefore If true, the question identifier will be added before the label.
+     * @return string The amended label. For example 'Answer 1, Question 1'.
+     */
+    public function add_question_identifier_to_label(string $label, bool $sridentifier = false, bool $addbefore = false): string {
+        if (!$this->has_question_identifier()) {
+            return $label;
+        }
+        $identifier = $this->questionidentifier;
+        if ($sridentifier) {
+            $identifier = html_writer::span($identifier, 'sr-only');
+        }
+        $fieldlang = 'fieldinquestion';
+        if ($addbefore) {
+            $fieldlang = 'fieldinquestionpre';
+        }
+        return get_string($fieldlang, 'question', (object)['fieldname' => $label, 'questionindentifier' => $identifier]);
+    }
+
+    /**
+     * Whether a question number has been provided for the question that is being displayed.
+     *
+     * @return bool
+     */
+    public function has_question_identifier(): bool {
+        return $this->questionidentifier !== null && trim($this->questionidentifier) !== '';
     }
 }
 

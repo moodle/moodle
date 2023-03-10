@@ -128,6 +128,7 @@ class qtype_multianswer_renderer extends qtype_renderer {
         } else {
             throw new coding_exception('Unexpected subquestion type.', $subq);
         }
+        /** @var qtype_multianswer_subq_renderer_base $renderer */
         $renderer = $this->page->get_renderer('qtype_multianswer', $subrenderer);
         return $renderer->subquestion($qa, $options, $index, $subq);
     }
@@ -146,6 +147,12 @@ class qtype_multianswer_renderer extends qtype_renderer {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class qtype_multianswer_subq_renderer_base extends qtype_renderer {
+
+    /** @var int[] Stores the counts of answer instances for questions. */
+    protected static $answercount = [];
+
+    /** @var question_display_options Question display options instance for any necessary information for rendering the question. */
+    protected $displayoptions;
 
     abstract public function subquestion(question_attempt $qa,
             question_display_options $options, $index,
@@ -198,6 +205,36 @@ abstract class qtype_multianswer_subq_renderer_base extends qtype_renderer {
         return html_writer::tag('span', implode('<br />', $feedback),
                 array('class' => 'feedbackspan accesshide'));
     }
+
+    /**
+     * Generates a label for an answer field.
+     *
+     * If the question number is set ({@see qtype_renderer::$questionnumber}), the label will
+     * include the question number in order to indicate which question the answer field belongs to.
+     *
+     * @param string $langkey The lang string key for the lang string that does not include the question number.
+     * @param string $component The Frankenstyle component name.
+     * @return string
+     * @throws coding_exception
+     */
+    protected function get_answer_label(
+        string $langkey = 'answerx',
+        string $component = 'question'
+    ): string {
+        // There may be multiple answer fields for a question, so we need to increment the answer fields in order to distinguish
+        // them from one another.
+        $questionnumber = $this->displayoptions->questionidentifier ?? '';
+        $questionnumberindex = $questionnumber !== '' ? $questionnumber : 0;
+        if (isset(self::$answercount[$questionnumberindex][$langkey])) {
+            self::$answercount[$questionnumberindex][$langkey]++;
+        } else {
+            self::$answercount[$questionnumberindex][$langkey] = 1;
+        }
+
+        $params = self::$answercount[$questionnumberindex][$langkey];
+
+        return $this->displayoptions->add_question_identifier_to_label(get_string($langkey, $component, $params));
+    }
 }
 
 
@@ -212,6 +249,8 @@ class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_render
 
     public function subquestion(question_attempt $qa, question_display_options $options,
             $index, question_graded_automatically $subq) {
+
+        $this->displayoptions = $options;
 
         $fieldprefix = 'sub' . $index . '_';
         $fieldname = $fieldprefix . 'answer';
@@ -272,7 +311,8 @@ class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_render
                 s($correctanswer->answer), $options);
 
         $output = html_writer::start_tag('span', array('class' => 'subquestion form-inline d-inline'));
-        $output .= html_writer::tag('label', get_string('answer'),
+
+        $output .= html_writer::tag('label', $this->get_answer_label(),
                 array('class' => 'subq accesshide', 'for' => $inputattributes['id']));
         $output .= html_writer::empty_tag('input', $inputattributes);
         $output .= $feedbackimg;
@@ -295,6 +335,8 @@ class qtype_multianswer_multichoice_inline_renderer
 
     public function subquestion(question_attempt $qa, question_display_options $options,
             $index, question_graded_automatically $subq) {
+
+        $this->displayoptions = $options;
 
         $fieldprefix = 'sub' . $index . '_';
         $fieldname = $fieldprefix . 'answer';
@@ -340,7 +382,7 @@ class qtype_multianswer_multichoice_inline_renderer
                         $qa, 'question', 'answer', $rightanswer->id), $options);
 
         $output = html_writer::start_tag('span', array('class' => 'subquestion'));
-        $output .= html_writer::tag('label', get_string('answer'),
+        $output .= html_writer::tag('label', $this->get_answer_label(),
                 array('class' => 'subq accesshide', 'for' => $inputattributes['id']));
         $output .= $select;
         $output .= $feedbackimg;
@@ -364,6 +406,8 @@ class qtype_multianswer_multichoice_vertical_renderer extends qtype_multianswer_
     public function subquestion(question_attempt $qa, question_display_options $options,
             $index, question_graded_automatically $subq) {
 
+        $this->displayoptions = $options;
+
         $fieldprefix = 'sub' . $index . '_';
         $fieldname = $fieldprefix . 'answer';
         $response = $qa->get_last_qt_var($fieldname);
@@ -371,6 +415,7 @@ class qtype_multianswer_multichoice_vertical_renderer extends qtype_multianswer_
         $inputattributes = array(
             'type' => 'radio',
             'name' => $qa->get_qt_field_name($fieldname),
+            'class' => 'form-check-input',
         );
         if ($options->readonly) {
             $inputattributes['disabled'] = 'disabled';
@@ -392,7 +437,7 @@ class qtype_multianswer_multichoice_vertical_renderer extends qtype_multianswer_
                 unset($inputattributes['checked']);
             }
 
-            $class = 'r' . ($value % 2);
+            $class = 'form-check text-wrap text-break';
             if ($options->correctness && $isselected) {
                 $feedbackimg = $this->feedback_image($ans->fraction);
                 $class .= ' ' . $this->feedback_class($ans->fraction);
@@ -404,7 +449,7 @@ class qtype_multianswer_multichoice_vertical_renderer extends qtype_multianswer_
             $result .= html_writer::empty_tag('input', $inputattributes);
             $result .= html_writer::tag('label', $subq->format_text($ans->answer,
                     $ans->answerformat, $qa, 'question', 'answer', $ansid),
-                    array('for' => $inputattributes['id']));
+                    array('for' => $inputattributes['id'], 'class' => 'form-check-label text-body'));
             $result .= $feedbackimg;
 
             if ($options->feedback && $isselected && trim($ans->feedback)) {
@@ -465,14 +510,17 @@ class qtype_multianswer_multichoice_vertical_renderer extends qtype_multianswer_
      * @return string HTML to go before all the choices.
      */
     protected function all_choices_wrapper_start() {
-        return html_writer::start_tag('div', array('class' => 'answer'));
+        $wrapperstart = html_writer::start_tag('fieldset', array('class' => 'answer'));
+        $legendtext = $this->get_answer_label('multichoicex', 'qtype_multianswer');
+        $wrapperstart .= html_writer::tag('legend', $legendtext, ['class' => 'sr-only']);
+        return $wrapperstart;
     }
 
     /**
      * @return string HTML to go after all the choices.
      */
     protected function all_choices_wrapper_end() {
-        return html_writer::end_tag('div');
+        return html_writer::end_tag('fieldset');
     }
 }
 
@@ -488,21 +536,22 @@ class qtype_multianswer_multichoice_horizontal_renderer
         extends qtype_multianswer_multichoice_vertical_renderer {
 
     protected function choice_wrapper_start($class) {
-        return html_writer::start_tag('td', array('class' => $class));
+        return html_writer::start_tag('div', array('class' => $class . ' form-check-inline'));
     }
 
     protected function choice_wrapper_end() {
-        return html_writer::end_tag('td');
+        return html_writer::end_tag('div');
     }
 
     protected function all_choices_wrapper_start() {
-        return html_writer::start_tag('table', array('class' => 'answer')) .
-                html_writer::start_tag('tbody') . html_writer::start_tag('tr');
+        $wrapperstart = html_writer::start_tag('fieldset', ['class' => 'answer']);
+        $captiontext = $this->get_answer_label('multichoicex', 'qtype_multianswer');
+        $wrapperstart .= html_writer::tag('legend', $captiontext, ['class' => 'sr-only']);
+        return $wrapperstart;
     }
 
     protected function all_choices_wrapper_end() {
-        return html_writer::end_tag('tr') . html_writer::end_tag('tbody') .
-                html_writer::end_tag('table');
+        return html_writer::end_tag('fieldset');
     }
 }
 
