@@ -68,7 +68,7 @@ M.gradingform_rubriceditor.editmode = function(el, editmode, focustb) {
     var ta = el.one('textarea')
     if (!editmode && ta.hasClass('hiddenelement')) return;
     if (editmode && !ta.hasClass('hiddenelement')) return;
-    var pseudotablink = '<input type="text" size="1" class="pseudotablink"/>',
+    var pseudotablink = '<span class="pseudotablink" tabindex="0"></span>',
         taplain = ta.get('parentNode').one('.plainvalue'),
         tbplain = null,
         tb = el.one('.score input[type=text]')
