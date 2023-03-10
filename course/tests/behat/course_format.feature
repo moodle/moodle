@@ -11,8 +11,8 @@ Feature: Teacher can change the course format
       | teacher1 | Teacher   | 1        | teacher1@example.com |
     # Course format is initially set to Topics format
     And the following "courses" exist:
-      | fullname | shortname | format |
-      | Course 1 | C1        | topics |
+      | fullname | shortname | format | startdate       |
+      | Course 1 | C1        | topics | ## 1 day ago ## |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
