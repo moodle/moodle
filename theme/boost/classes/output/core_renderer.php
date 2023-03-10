@@ -167,7 +167,9 @@ class core_renderer extends \core_renderer {
                 $purposeclass .= ' activityiconcontainer';
                 $purposeclass .= ' modicon_' . $this->page->activityname;
                 $imagedata = html_writer::tag('div', $imagedata, ['class' => $purposeclass]);
-                $prefix = get_string('modulename', $this->page->activityname);
+                if (!empty($USER->editing)) {
+                    $prefix = get_string('modulename', $this->page->activityname);
+                }
             }
         }
 
