@@ -3118,5 +3118,15 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023030300.03);
     }
 
+    if ($oldversion < 2023031000.01) {
+        // If logstore_legacy is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/admin/tool/log/store/legacy/version.php')) {
+            unset_all_config_for_plugin('logstore_legacy');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023031000.01);
+    }
+
     return true;
 }
