@@ -12647,9 +12647,6 @@ blockquote {
 .timewarninghidden {
   display: none; }
 
-#page-admin-report-capability-index #capabilitysearch {
-  width: 30em; }
-
 #page-admin-qtypes #qtypes div,
 #page-admin-qtypes #qtypes form,
 #page-admin-qbehaviours #qbehaviours div,
