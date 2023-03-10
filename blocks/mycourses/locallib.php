@@ -62,7 +62,7 @@ function mycourses_get_my_completion($datefrom = 0, $sort = 'coursefullname', $d
                                           WHERE cc.userid = :userid
                                           $companycoursesql
                                           AND c.visible = 1
-                                          AND cc.timecompleted IS NOT NULL
+                                          AND cc.timecompleted IS NULL
                                           AND ue.timestart != 0",
                                           array('userid' => $USER->id));
 
