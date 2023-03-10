@@ -475,6 +475,7 @@ $string['view_message_conference_not_started'] = 'The session has not started ye
 $string['view_message_conference_wait_for_moderator'] = 'Waiting for a moderator to join.';
 $string['view_message_conference_in_progress'] = 'The session is in progress.';
 $string['view_message_conference_has_ended'] = 'The session has ended.';
+$string['view_message_conference_user_limit_reached'] = 'The number of users allowed in a session has been reached';
 $string['view_message_tab_close'] = 'This tab/window must be closed manually';
 $string['view_message_recordings_disabled'] = 'Recordings are disabled on the server. BigBlueButton activities of type \'Recordings only\' cannot be used.';
 $string['view_message_importrecordings_disabled'] = 'Import recording links is disabled on the server.';
