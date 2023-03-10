@@ -136,11 +136,6 @@ class oci_native_moodle_database extends moodle_database {
             //Enforce prefixes for everybody but mysql
             throw new dml_exception('prefixcannotbeempty', $this->get_dbfamily());
         }
-        if (!$this->external and strlen($prefix) > 2) {
-            //Max prefix length for Oracle is 2cc
-            $a = (object)array('dbfamily'=>'oracle', 'maxlength'=>2);
-            throw new dml_exception('prefixtoolong', $a);
-        }
 
         $driverstatus = $this->driver_installed();
 
