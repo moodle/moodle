@@ -148,9 +148,16 @@ class quiz_grading_report extends quiz_default_report {
 
         // Process any submitted data.
         if ($data = data_submitted() && confirm_sesskey() && $this->validate_submitted_marks()) {
-            $this->process_submitted_data();
+            // Changes done to handle attempts being missed from grading due to redirecting to new page.
+            $attemptsgraded = $this->process_submitted_data();
 
-            redirect($this->grade_question_url($slot, $questionid, $grade, $page + 1));
+            $nextpagenumber = $page + 1;
+            // If attempts need grading and one or more have now been graded, then page number should remain the same.
+            if ($grade == 'needsgrading' && $attemptsgraded) {
+                $nextpagenumber = $page;
+            }
+
+            redirect($this->grade_question_url($slot, $questionid, $grade, $nextpagenumber));
         }
 
         // Get the group, and the list of significant users.
@@ -552,15 +559,17 @@ class quiz_grading_report extends quiz_default_report {
 
     /**
      * Save all submitted marks to the database.
+     *
+     * @return bool returns true if some attempts or all are graded. False, if none of the attempts are graded.
      */
-    protected function process_submitted_data() {
+    protected function process_submitted_data(): bool {
         global $DB;
 
         $qubaids = optional_param('qubaids', null, PARAM_SEQUENCE);
         $assumedslotforevents = optional_param('slot', null, PARAM_INT);
 
         if (!$qubaids) {
-            return;
+            return false;
         }
 
         $qubaids = clean_param_array(explode(',', $qubaids), PARAM_INT);
@@ -568,10 +577,23 @@ class quiz_grading_report extends quiz_default_report {
         $events = [];
 
         $transaction = $DB->start_delegated_transaction();
+        $attemptsgraded = false;
         foreach ($qubaids as $qubaid) {
             $attempt = $attempts[$qubaid];
             $attemptobj = new quiz_attempt($attempt, $this->quiz, $this->cm, $this->course);
+
+            // State of the attempt before grades are changed.
+            $attemptoldtstate = $attemptobj->get_question_state($assumedslotforevents);
+
             $attemptobj->process_submitted_actions(time());
+
+            // Get attempt state after grades are changed.
+            $attemptnewtstate = $attemptobj->get_question_state($assumedslotforevents);
+
+            // Check if any attempts are graded.
+            if (!$attemptsgraded && $attemptoldtstate->is_graded() != $attemptnewtstate->is_graded()) {
+                $attemptsgraded = true;
+            }
 
             // Add the event we will trigger later.
             $params = [
@@ -592,6 +614,8 @@ class quiz_grading_report extends quiz_default_report {
         foreach ($events as $event) {
             $event->trigger();
         }
+
+        return $attemptsgraded;
     }
 
     /**

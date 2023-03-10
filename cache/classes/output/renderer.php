@@ -353,7 +353,7 @@ class renderer extends \plugin_renderer_base {
         foreach ($locks as $lock) {
             $actions = array();
             if ($lock['uses'] === 0 && !$lock['default']) {
-                $url = new moodle_url('/cache/admin.php', array('lock' => $lock['name'], 'action' => 'deletelock', 'sesskey' => sesskey()));
+                $url = new moodle_url('/cache/admin.php', array('lock' => $lock['name'], 'action' => 'deletelock'));
                 $actions[] = html_writer::link($url, get_string('delete', 'cache'));
             }
             $table->data[] = new html_table_row(array(
@@ -378,7 +378,7 @@ class renderer extends \plugin_renderer_base {
      * @return string
      */
     public function additional_lock_actions() : string {
-        $url = new moodle_url('/cache/admin.php', array('action' => 'newlockinstance', 'sesskey' => sesskey()));
+        $url = new moodle_url('/cache/admin.php', array('action' => 'newlockinstance'));
         $select = new single_select($url, 'lock', cache_factory::get_administration_display_helper()->get_addable_lock_options());
         $select->label = get_string('addnewlockinstance', 'cache');
 

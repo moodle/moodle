@@ -152,7 +152,7 @@ class behat_forms extends behat_base {
             $expandsectionold = "//legend[@class='ftoggler']" .
                     "//a[contains(concat(' ', @class, ' '), ' icons-collapse-expand ') and @aria-expanded = 'false']";
             // Else, look for the first expand fieldset link (current theme structure).
-            $expandsectioncurrent = "//legend/div[contains(concat(' ', @class, ' '), ' ftoggler ')]" .
+            $expandsectioncurrent = "//fieldset//div[contains(concat(' ', @class, ' '), ' ftoggler ')]" .
                     "//a[contains(concat(' ', @class, ' '), ' icons-collapse-expand ') and @aria-expanded = 'false']";
 
             $collapseexpandlink = $this->find('xpath', $expandallxpath . '|' . $expandsectionold . '|' . $expandsectioncurrent,

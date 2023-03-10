@@ -1,3 +1,7 @@
+=== 4.1.2 ===
+* The external methods get_items() and get_page_items() now only return the items when the user can access the feedback; if the
+user can't see them, a warning message will be returned, with the reasons.
+
 === 4.0 ===
 * The following files and classes within them have been deprecated in favour of dynamic forms:
     * edit_form.php

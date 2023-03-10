@@ -2219,7 +2219,7 @@ privatefiles,moodle|/user/files.php';
         // Creating temporary field questionid to populate the data in question version table.
         // This will make sure the appropriate question id is inserted the version table without making any complex joins.
         $table = new xmldb_table('question_bank_entries');
-        $field = new xmldb_field('questionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_TYPE_INTEGER);
+        $field = new xmldb_field('questionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -2268,7 +2268,7 @@ privatefiles,moodle|/user/files.php';
 
         // Dropping temporary field questionid.
         $table = new xmldb_table('question_bank_entries');
-        $field = new xmldb_field('questionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_TYPE_INTEGER);
+        $field = new xmldb_field('questionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
         if ($dbman->field_exists($table, $field)) {
             $dbman->drop_field($table, $field);
         }

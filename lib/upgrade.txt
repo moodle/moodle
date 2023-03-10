@@ -1,9 +1,17 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.1.2 ===
+
+* The method `flexible_table::set_columnsattributes` now can be used with 'class' key to add custom classes to the DOM.
+* A new constant COMPLETION_COMPLETE_FAIL_HIDDEN is introduced to mark that user has received a failing grade
+  for a hidden grade item. This state returned by internal_get_grade_state() and is only used by get_core_completion_state()
+  for processing the passgrade completion data.
+
 === 4.1.1 ===
 
 * There is a new helper function mtrace_exception to help with reporting exceptions you have caught in scheduled tasks.
+* Convert a floating value to an integer in lib/graphlib.php to avoid PHP 8.1 deprecated function error.
 
 === 4.1 ===
 

@@ -99,7 +99,7 @@ class Horde_Mail_Rfc822_Address extends Horde_Mail_Rfc822_Object
             break;
 
         case 'personal':
-            $this->_personal = strlen($value)
+            $this->_personal = !empty($value)
                 ? Horde_Mime::decode($value)
                 : null;
             break;
@@ -144,7 +144,7 @@ class Horde_Mail_Rfc822_Address extends Horde_Mail_Rfc822_Object
                 : $this->_personal;
 
         case 'personal':
-            return (strcasecmp($this->_personal, $this->bare_address) === 0)
+            return $this->_personal === null || (strcasecmp($this->_personal, $this->bare_address) === 0)
                 ? null
                 : $this->_personal;
 
@@ -152,7 +152,7 @@ class Horde_Mail_Rfc822_Address extends Horde_Mail_Rfc822_Object
             return Horde_Mime::encode($this->personal);
 
         case 'valid':
-            return (bool)strlen($this->mailbox);
+            return !empty($this->mailbox);
         }
     }
 
@@ -164,11 +164,11 @@ class Horde_Mail_Rfc822_Address extends Horde_Mail_Rfc822_Object
 
         $address = $rfc822->encode($this->mailbox, 'address');
         $host = empty($opts['idn']) ? $this->host : $this->host_idn;
-        if (strlen($host)) {
+        if (!empty($host)) {
             $address .= '@' . $host;
         }
         $personal = $this->personal;
-        if (strlen($personal)) {
+        if (!empty($personal)) {
             if (!empty($opts['encode'])) {
                 $personal = Horde_Mime::encode($this->personal, $opts['encode']);
             }
@@ -182,7 +182,7 @@ class Horde_Mail_Rfc822_Address extends Horde_Mail_Rfc822_Object
             }
         }
 
-        return (strlen($personal) && ($personal != $address))
+        return (!empty($personal) && ($personal != $address))
             ? ltrim($personal) . ' <' . $address . '>'
             : $address;
     }

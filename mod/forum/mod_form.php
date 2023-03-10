@@ -341,6 +341,11 @@ class mod_forum_mod_form extends moodleform_mod {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
+        if ($data['type'] === 'single' && $data['groupmode'] == SEPARATEGROUPS) {
+            $errors['type'] = get_string('cannotusesingletopicandseperategroups', 'forum');
+            $errors['groupmode'] = get_string('cannotuseseperategroupsandsingletopic', 'forum');
+        }
+
         if ($data['duedate'] && $data['cutoffdate']) {
             if ($data['duedate'] > $data['cutoffdate']) {
                 $errors['cutoffdate'] = get_string('cutoffdatevalidation', 'forum');

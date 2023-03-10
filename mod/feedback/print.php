@@ -33,6 +33,20 @@ $PAGE->set_url('/mod/feedback/print.php', array('id'=>$id));
 list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
 require_course_login($course, true, $cm);
 
+// This page should be only displayed to users with capability to edit or view reports (to include non-editing teachers too).
+$context = context_module::instance($cm->id);
+$capabilities = [
+    'mod/feedback:edititems',
+    'mod/feedback:viewreports',
+];
+if (!has_any_capability($capabilities, $context)) {
+    $capability = 'mod/feedback:edititems';
+    if (has_capability($capability, $context)) {
+        $capability = 'mod/feedback:viewreports';
+    }
+    throw new required_capability_exception($context, $capability, 'nopermissions', '');
+}
+
 $feedback = $PAGE->activityrecord;
 $feedbackstructure = new mod_feedback_structure($feedback, $cm, $courseid);
 
@@ -64,4 +78,3 @@ echo $OUTPUT->continue_button($continueurl);
 
 // Finish the page.
 echo $OUTPUT->footer();
-

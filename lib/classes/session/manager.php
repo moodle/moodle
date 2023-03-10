@@ -1140,7 +1140,8 @@ class manager {
         $PAGE->requires->js_call_amd('core/network', 'keepalive', array(
                 $frequency,
                 $timeout,
-                get_string($identifier, $component)
+                $identifier,
+                $component
             ));
     }
 

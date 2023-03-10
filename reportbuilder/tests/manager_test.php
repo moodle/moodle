@@ -18,13 +18,18 @@ declare(strict_types=1);
 
 namespace core_reportbuilder;
 
-use advanced_testcase;
 use context_system;
 use core_reportbuilder_generator;
+use core_reportbuilder_testcase;
 use core_user\reportbuilder\datasource\users;
 use stdClass;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\report\base;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
 
 /**
  * Unit tests for the report manager class
@@ -34,7 +39,7 @@ use core_reportbuilder\local\report\base;
  * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manager_test extends advanced_testcase {
+class manager_test extends core_reportbuilder_testcase {
 
     /**
      * Test creating a report instance from persistent
@@ -52,6 +57,44 @@ class manager_test extends advanced_testcase {
 
         $systemreport = manager::get_report_from_persistent($report);
         $this->assertInstanceOf(system_report::class, $systemreport);
+    }
+
+    /**
+     * Test creating a report instance from persistent differs per-user, using a report source whose own initialization is
+     * dependent on the current user (the users report source, loading available user profile fields)
+     *
+     * Note: internally the {@see get_custom_report_content} test helper calls {@see manager::get_report_from_persistent}
+     */
+    public function test_get_report_from_persistent_per_user(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Custom profile field, visible only to the admin.
+        $this->getDataGenerator()->create_custom_profile_field([
+            'shortname' => 'text', 'name' => 'Text field', 'datatype' => 'text', 'visible' => 0]);
+        $user = $this->getDataGenerator()->create_user(['username' => 'usertwo', 'profile_field_text' => 'Hello']);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+
+        $report = $generator->create_report(['name' => 'Hidden profile field', 'source' => users::class, 'default' => 0]);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:username', 'sortenabled' => 1]);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:profilefield_text']);
+
+        $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertEquals([
+            ['admin', ''],
+            ['usertwo', 'Hello'],
+        ], array_map('array_values', $content));
+
+        // Now switch to second, non-admin, user.
+        $this->setUser($user);
+
+        $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertEquals([
+            ['admin'],
+            ['usertwo'],
+        ], array_map('array_values', $content));
     }
 
     /**

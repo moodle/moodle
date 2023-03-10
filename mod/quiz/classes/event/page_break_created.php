@@ -41,8 +41,8 @@ namespace mod_quiz\event;
 class page_break_created extends \core\event\base {
     protected function init() {
         $this->data['objecttable'] = 'quiz_slots';
-        $this->data['crud'] = 'u';
-        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
+        $this->data['crud'] = 'c';
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     public static function get_name() {

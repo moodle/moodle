@@ -94,6 +94,7 @@ class Horde_Imap_Client_Data_AclRights extends Horde_Imap_Client_Data_AclCommon 
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return (bool)$this[$offset];
@@ -101,6 +102,7 @@ class Horde_Imap_Client_Data_AclRights extends Horde_Imap_Client_Data_AclCommon 
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         if (isset($this->_optional[$offset])) {
@@ -116,6 +118,7 @@ class Horde_Imap_Client_Data_AclRights extends Horde_Imap_Client_Data_AclCommon 
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->_optional[$offset] = $value;
@@ -124,6 +127,7 @@ class Horde_Imap_Client_Data_AclRights extends Horde_Imap_Client_Data_AclCommon 
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         unset($this->_optional[$offset]);
@@ -140,6 +144,7 @@ class Horde_Imap_Client_Data_AclRights extends Horde_Imap_Client_Data_AclCommon 
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function current()
     {
         $val = current($this->_required);
@@ -150,6 +155,7 @@ class Horde_Imap_Client_Data_AclRights extends Horde_Imap_Client_Data_AclCommon 
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function key()
     {
         $key = key($this->_required);
@@ -160,6 +166,7 @@ class Horde_Imap_Client_Data_AclRights extends Horde_Imap_Client_Data_AclCommon 
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function next()
     {
         if (key($this->_required) === null) {
@@ -171,6 +178,7 @@ class Horde_Imap_Client_Data_AclRights extends Horde_Imap_Client_Data_AclCommon 
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function rewind()
     {
         reset($this->_required);
@@ -179,6 +187,7 @@ class Horde_Imap_Client_Data_AclRights extends Horde_Imap_Client_Data_AclCommon 
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function valid()
     {
         return ((key($this->_required) !== null) ||
@@ -192,17 +201,31 @@ class Horde_Imap_Client_Data_AclRights extends Horde_Imap_Client_Data_AclCommon 
      */
     public function serialize()
     {
-        return json_encode(array(
-            $this->_required,
-            $this->_optional
-        ));
+        return serialize($this->__serialize());
     }
 
     /**
      */
     public function unserialize($data)
     {
-        list($this->_required, $this->_optional) = json_decode($data);
+        $data = @unserialize($data);
+        if (!is_array($data)) {
+            throw new Exception('Cache version changed.');
+        }
+        $this->__unserialize($data);
+    }
+
+    /**
+     * @return array
+     */
+    public function __serialize()
+    {
+        return [$this->_required, $this->_optional];
+    }
+
+    public function __unserialize(array $data)
+    {
+        list($this->_required, $this->_optional) = $data;
     }
 
 }

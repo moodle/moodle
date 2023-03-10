@@ -796,8 +796,8 @@ function initialise_local_config_cache() {
     if (!empty($CFG->siteidentifier) && !file_exists($bootstrapcachefile)) {
         $contents = "<?php
 // ********** This file is generated DO NOT EDIT **********
-\$CFG->siteidentifier = '" . addslashes($CFG->siteidentifier) . "';
-\$CFG->bootstraphash = '" . hash_local_config_cache() . "';
+\$CFG->siteidentifier = " . var_export($CFG->siteidentifier, true) . ";
+\$CFG->bootstraphash = " . var_export(hash_local_config_cache(), true) . ";
 // Only if the file is not stale and has not been defined.
 if (\$CFG->bootstraphash === hash_local_config_cache() && !defined('SYSCONTEXTID')) {
     define('SYSCONTEXTID', ".SYSCONTEXTID.");

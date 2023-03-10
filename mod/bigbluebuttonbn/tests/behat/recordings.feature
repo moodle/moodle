@@ -63,6 +63,7 @@ Feature: The recording can be managed through the room page
   @javascript
   Scenario: I can delete a recording
     Given I am on the "RoomRecordings" "bigbluebuttonbn activity" page logged in as admin
+    And I change window size to "large"
     When I click on "a[data-action='delete']" "css_element" in the "Recording 1" "table_row"
     And I click on "OK" "button" in the "Confirm" "dialogue"
     Then I should not see "Recording 1"

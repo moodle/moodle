@@ -22,8 +22,8 @@ Feature: Collapse course sections
       | activity | name         | intro                        | course | idnumber | section | completion |
       | assign   | Assignment 1 | Test assignment description1 | C1     | assign1  | 1       | 1          |
       | assign   | Assignment 2 | Test assignment description2 | C1     | assign2  | 2       | 1          |
-      | book     | Book 2       | Test book description2       | C1     | book2    | 2       | 1          |
-      | book     | Book 3       | Test book description3       | C1     | book3    | 3       | 1          |
+      | book     | Book 2       |                              | C1     | book2    | 2       | 1          |
+      | book     | Book 3       |                              | C1     | book3    | 3       | 1          |
       | forum    | Forum 4      | Test forum description4      | C1     | forum4   | 4       | 1          |
       | forum    | Forum 5      | Test forum description5      | C1     | forum5   | 5       | 1          |
     And the following "course enrolments" exist:
@@ -58,8 +58,7 @@ Feature: Collapse course sections
 
   @javascript
   Scenario: Expand/collapse sections for Topics format.
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as student1
     And "[data-toggle=collapse]" "css_element" should exist in the "region-main" "region"
     And I should see "Assignment 1" in the "region-main" "region"
     And I should see "Assignment 2" in the "region-main" "region"
@@ -97,8 +96,7 @@ Feature: Collapse course sections
 
   @javascript
   Scenario: Expand/collapse sections for Weeks format.
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as teacher1
     When I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:

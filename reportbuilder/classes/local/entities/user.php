@@ -109,28 +109,30 @@ class user extends base {
     }
 
     /**
-     * Returns column that corresponds to the given identity field
+     * Returns column that corresponds to the given identity field, profile field identifiers will be converted to those
+     * used by the {@see user_profile_fields} helper
      *
-     * @param string $identityfield Field from the user table, or the shortname of a custom profile field
+     * @param string $identityfield Field from the user table, or a custom profile field
      * @return column
      */
     public function get_identity_column(string $identityfield): column {
-        if (preg_match("/^profile_field_(?<shortname>.*)$/", $identityfield, $matches)) {
-            $identityfield = 'profilefield_' . $matches['shortname'];
+        if (preg_match(fields::PROFILE_FIELD_REGEX, $identityfield, $matches)) {
+            $identityfield = 'profilefield_' . $matches[1];
         }
 
         return $this->get_column($identityfield);
     }
 
     /**
-     * Returns filter that corresponds to the given identity field
+     * Returns filter that corresponds to the given identity field, profile field identifiers will be converted to those
+     * used by the {@see user_profile_fields} helper
      *
-     * @param string $identityfield Field from the user table, or the shortname of a custom profile field
+     * @param string $identityfield Field from the user table, or a custom profile field
      * @return filter
      */
     public function get_identity_filter(string $identityfield): filter {
-        if (preg_match("/^profile_field_(?<shortname>.*)$/", $identityfield, $matches)) {
-            $identityfield = 'profilefield_' . $matches['shortname'];
+        if (preg_match(fields::PROFILE_FIELD_REGEX, $identityfield, $matches)) {
+            $identityfield = 'profilefield_' . $matches[1];
         }
 
         return $this->get_filter($identityfield);

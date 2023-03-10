@@ -171,9 +171,7 @@ class block_accessreview extends block_base {
      * @return bool
      */
     public function can_block_be_added(moodle_page $page): bool {
-        global $CFG;
-
-        return $CFG->enableaccessibilitytools;
+        return accessibility::is_accessibility_enabled();
     }
 
     /**

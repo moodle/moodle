@@ -1,6 +1,11 @@
 This file describes API changes in /reportbuilder/*
 Information provided here is intended especially for developers.
 
+=== 4.1.2 ===
+
+* The schedule helper `create_schedule` method accepts a `$timenow` parameter to use for comparisons against current date
+  during tests
+
 === 4.1.1 ===
 
 * The `datasource_stress_test_columns` test helper now enables sorting on those columns that support it
