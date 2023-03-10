@@ -17,13 +17,11 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And the following "activities" exist:
-      | activity | name             | intro                   | deadline   | retake | course | idnumber |
-      | lesson   | Test lesson name | Test lesson description | 1893481200 | 1      | C1     | lesson1  |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
+      | activity | name             | deadline   | retake | course | idnumber |
+      | lesson   | Test lesson name | 1893481200 | 1      | C1     | lesson1  |
 
   Scenario: A completed lesson with only questions that allows multiple attempts
-    Given I follow "Test lesson name"
+    Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
@@ -50,10 +48,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_response_editor_1 | Wrong |
       | id_jumpto_1 | This page |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
       | False | 1 |
@@ -67,8 +62,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
     And I should see "Congratulations - end of lesson reached"
 
   Scenario: A completed lesson with only questions that does not allow multiple attempts
-    Given  I follow "Test lesson name"
-    And I navigate to "Settings" in current page administration
+    Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | Re-takes allowed | 0 |
     And I press "Save and display"
@@ -98,10 +92,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_response_editor_1 | Wrong |
       | id_jumpto_1 | This page |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
       | False | 1 |
@@ -113,10 +104,9 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
     And I press "Submit"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
-    And I log out
 
   Scenario: A completed lesson with only content pages that allows multiple attempts
-    Given I follow "Test lesson name"
+    Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Add a content page"
     And I set the following fields to these values:
       | Page title | First page name |
@@ -133,19 +123,14 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_answer_editor_1 | End of lesson |
       | id_jumpto_1 | End of lesson |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "First page contents"
     And I press "Next page"
     And I should see "Second page contents"
     And I press "End of lesson"
-    And I log out
 
   Scenario: A completed lesson with only content pages that does not allow multiple attempts
-    Given I follow "Test lesson name"
-    And I navigate to "Settings" in current page administration
+    Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | Re-takes allowed | 0 |
     And I press "Save and display"
@@ -165,18 +150,14 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_answer_editor_1 | End of lesson |
       | id_jumpto_1 | End of lesson |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "First page contents"
     And I press "Next page"
     And I should see "Second page contents"
     And I press "End of lesson"
-    And I log out
 
   Scenario: An incomplete lesson with only questions.
-    Given I follow "Test lesson name"
+    Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
@@ -203,19 +184,15 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_response_editor_1 | Wrong |
       | id_jumpto_1 | This page |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
       | False | 1 |
     And I press "Submit"
     And I press "Continue"
-    And I log out
 
   Scenario: An incomplete lesson with only content pages.
-    Given I follow "Test lesson name"
+    Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Add a content page"
     And I set the following fields to these values:
       | Page title | First page name |
@@ -232,17 +209,13 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_answer_editor_1 | End of lesson |
       | id_jumpto_1 | End of lesson |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "First page contents"
     And I press "Next page"
     And I should see "Second page contents"
-    And I log out
 
   Scenario: A lesson with only questions that has not been started.
-    Given I follow "Test lesson name"
+    Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
@@ -269,10 +242,9 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_response_editor_1 | Wrong |
       | id_jumpto_1 | This page |
     And I press "Save page"
-    And I log out
 
   Scenario: A lesson with only content pages that has not been started.
-    Given I follow "Test lesson name"
+    Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Add a content page"
     And I set the following fields to these values:
       | Page title | First page name |
@@ -289,7 +261,6 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_answer_editor_1 | End of lesson |
       | id_jumpto_1 | End of lesson |
     And I press "Save page"
-    And I log out
 
   Scenario: Viewing the status for multiple lessons in multiple courses
     Given the following "courses" exist:
@@ -300,11 +271,10 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | teacher1 | C2 | editingteacher |
       | student1 | C2 | student |
     And the following "activities" exist:
-      | activity | name               | intro                   | deadline   | retake | course | idnumber |
-      | lesson   | Test lesson name 2 | Test lesson description | 1893481200 | 1      | C1     | lesson1  |
-      | lesson   | Test lesson name 3 | Test lesson description | 1893481200 | 1      | C2     | lesson1  |
-    And I turn editing mode off
-    And I follow "Test lesson name"
+      | activity | name               | deadline   | retake | course | idnumber |
+      | lesson   | Test lesson name 2 | 1893481200 | 1      | C1     | lesson1  |
+      | lesson   | Test lesson name 3 | 1893481200 | 1      | C2     | lesson1  |
+    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
@@ -314,8 +284,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_answer_editor_0 | True |
       | id_answer_editor_1 | False |
     And I press "Save page"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name 2"
+    And I am on the "Test lesson name 2" "lesson activity" page
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
@@ -325,8 +294,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_answer_editor_0 | True |
       | id_answer_editor_1 | False |
     And I press "Save page"
-    And I am on "Course 2" course homepage
-    And I follow "Test lesson name 3"
+    And I am on the "Test lesson name 3" "lesson activity" page
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
@@ -345,18 +313,13 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_answer_editor_0 | True |
       | id_answer_editor_1 | False |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "D035 M00d13 r0x0rz j00 b0x0rs?"
     And I set the following fields to these values:
       | True | 1 |
     And I press "Submit"
-    And I am on "Course 2" course homepage
-    And I follow "Test lesson name 3"
+    And I am on the "Test lesson name 3" "lesson activity" page
     And I should see "D035 M00d13 r0x0rz j00 b0x0rs?"
     And I set the following fields to these values:
       | True | 1 |
     And I press "Submit"
-    And I log out

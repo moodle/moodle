@@ -76,6 +76,11 @@ class renderer_base {
     private $mustache;
 
     /**
+     * @var array $templatecache The mustache template cache.
+     */
+    protected $templatecache = [];
+
+    /**
      * Return an instance of the mustache class.
      *
      * @since 2.9
@@ -174,7 +179,6 @@ class renderer_base {
      * @return string|boolean
      */
     public function render_from_template($templatename, $context) {
-        static $templatecache = array();
         $mustache = $this->get_mustache();
 
         try {
@@ -190,12 +194,12 @@ class renderer_base {
         // e.g. aria attributes that only work with id attributes and must be
         // unique in a page.
         $mustache->addHelper('uniqid', new \core\output\mustache_uniqid_helper());
-        if (isset($templatecache[$templatename])) {
-            $template = $templatecache[$templatename];
+        if (isset($this->templatecache[$templatename])) {
+            $template = $this->templatecache[$templatename];
         } else {
             try {
                 $template = $mustache->loadTemplate($templatename);
-                $templatecache[$templatename] = $template;
+                $this->templatecache[$templatename] = $template;
             } catch (Mustache_Exception_UnknownTemplateException $e) {
                 throw new moodle_exception('Unknown template: ' . $templatename);
             }

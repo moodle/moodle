@@ -87,7 +87,13 @@ define(['jquery'],
                             attoEditor.html(value.text);
                         } else if (typeof tinyMCE !== 'undefined') {
                             // If the editor is not Atto, try to fallback to TinyMCE.
-                            tinyMCE.execInstanceCommand(this.id, 'mceInsertContent', false, value.text);
+                            if (tinyMCE.majorVersion == "3") {
+                                // Tiny 3.
+                                tinyMCE.execInstanceCommand(this.id, 'mceInsertContent', false, value.text);
+                            } else {
+                                // Tiny 4+.
+                                tinyMCE.get(this.id).setContent(value.text);
+                            }
                         }
 
                         // Set text to actual editor text area.

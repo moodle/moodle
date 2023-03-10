@@ -546,9 +546,11 @@ class backup_course_structure_step extends backup_structure_step {
                                      backup_helper::is_sqlparam('course'),
                                      backup::VAR_PARENTID));
 
+        // Section level settings are dealt with in backup_section_structure_step.
+        // We only need to deal with course level (sectionid = 0) here.
         $courseformatoption->set_source_sql('SELECT id, format, sectionid, name, value
                                  FROM {course_format_options}
-                                 WHERE courseid = ?', [ backup::VAR_PARENTID ]);
+                                 WHERE courseid = ? AND sectionid = 0', [ backup::VAR_PARENTID ]);
 
         $handler = core_course\customfield\course_handler::create();
         $fieldsforbackup = $handler->get_instance_data_for_backup($this->task->get_courseid());

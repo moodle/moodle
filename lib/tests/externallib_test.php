@@ -95,7 +95,8 @@ class externallib_test extends \advanced_testcase {
         $this->assertSame('666', $result['scalar']);
 
         $params = array('text'=>'aaa');
-        $description = new \external_function_parameters(array('someid' => new \external_value(PARAM_INT, 'Some int value', false),
+        $description = new \external_function_parameters(array(
+            'someid' => new \external_value(PARAM_INT, 'Some int value', VALUE_DEFAULT),
             'text'   => new \external_value(PARAM_ALPHA, 'Some text value')));
         $result = \external_api::validate_parameters($description, $params);
         $this->assertCount(2, $result);
@@ -105,7 +106,8 @@ class externallib_test extends \advanced_testcase {
         $this->assertSame('aaa', $result['text']);
 
         $params = array('text'=>'aaa');
-        $description = new \external_function_parameters(array('someid' => new \external_value(PARAM_INT, 'Some int value', false, 6),
+        $description = new \external_function_parameters(array(
+            'someid' => new \external_value(PARAM_INT, 'Some int value', VALUE_DEFAULT, 6),
             'text'   => new \external_value(PARAM_ALPHA, 'Some text value')));
         $result = \external_api::validate_parameters($description, $params);
         $this->assertCount(2, $result);

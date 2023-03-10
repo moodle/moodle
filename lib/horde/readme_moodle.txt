@@ -13,6 +13,10 @@ Description of import of Horde libraries
   passing in your path to Horde (the directory you've cloned the repository):
     /tmp/copyhorde.sh ~/git/base/directory/from/step/2
 
+Notes:
+* 2023-01-20 Applied patch https://github.com/horde/Util/pull/10
+* 2023-01-20 Horde/Mail is copied from https://github.com/bytestream/Mail/tree/v2.7.1 for PHP 8.1 compatibility
+
 ====
 #!/bin/sh
 
@@ -36,8 +40,3 @@ do
     cp -Rf $locale/* $target/locale
   fi
 done
-
-Local modifications:
-- lib/Horde/Imap/Client/Exception/ServerResponse.php has been minimally modified for php80 compatibility
-  The fix applied is already upstream, see https://github.com/horde/Imap_Client/pull/13 and it's available
-  in Imap_Client 2.30.4 and up. See MDL-73405 for more details.

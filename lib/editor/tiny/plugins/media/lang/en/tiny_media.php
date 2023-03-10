@@ -97,6 +97,7 @@ $string['tracks'] = 'Subtitles and captions';
 $string['unusedfilesdesc'] = 'The following embedded files are not used in the text area:';
 $string['unusedfilesheader'] = 'Unused files';
 $string['unusedfilesremovalnotice'] = 'Any unused files will be automatically deleted when saving changes.';
+$string['updatemedia'] = 'Update media';
 $string['video'] = 'Video';
 $string['videoheight'] = 'Video height';
 $string['videosourcelabel'] = 'Video source URL';

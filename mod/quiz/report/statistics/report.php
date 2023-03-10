@@ -835,33 +835,29 @@ class quiz_statistics_report extends quiz_default_report {
     public function load_and_initialise_questions_for_calculations($quiz) {
         // Load the questions.
         $questions = quiz_report_get_significant_questions($quiz);
-        $questionids = [];
-        $randomquestions = [];
+        $questiondata = [];
         foreach ($questions as $qs => $question) {
             if ($question->qtype === 'random') {
                 $question->id = 0;
                 $question->name = get_string('random', 'quiz');
                 $question->questiontext = get_string('random', 'quiz');
                 $question->parenttype = 'random';
-                $randomquestions [] = $question;
-                unset($questions[$qs]);
-                continue;
+                $questiondata[$question->slot] = $question;
+            } else if ($question->qtype === 'missingtype') {
+                $question->id = is_numeric($question->id) ? (int) $question->id : 0;
+                $questiondata[$question->slot] = $question;
+                $question->name = get_string('deletedquestion', 'qtype_missingtype');
+                $question->questiontext = get_string('deletedquestiontext', 'qtype_missingtype');
+            } else {
+                $q = question_bank::load_question_data($question->id);
+                $q->maxmark = $question->maxmark;
+                $q->slot = $question->slot;
+                $q->number = $question->number;
+                $q->parenttype = null;
+                $questiondata[$question->slot] = $q;
             }
-            $questionids[] = $question->id;
         }
-        $fullquestions = question_load_questions($questionids);
-        foreach ($questions as $qno => $question) {
-            $q = $fullquestions[$question->id];
-            $q->maxmark = $question->maxmark;
-            $q->slot = $question->slot;
-            $q->number = $question->number;
-            $q->parenttype = null;
-            $questiondata[$question->slot] = $q;
-        }
-        foreach ($randomquestions as $randomquestion) {
-            $questiondata[$randomquestion->slot] = $randomquestion;
-        }
-        ksort($questiondata);
+
         return $questiondata;
     }
 

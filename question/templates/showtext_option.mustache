@@ -15,19 +15,18 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_question/showtext_checkbox
+    @template core_question/showtext_option
 
     Example context (json):
     {
-        "sortdata": [
-          {
-                "checked": "true/false"
-          }
-        ]
+        "selected1": true
     }
 }}
 <div>
-    <input type="hidden" name="qbshowtext" value="0" id="qbshowtext_off">
-    <input id="qbshowtext_on" class="searchoptions mr-1" type="checkbox" value="1" name="qbshowtext" {{#checked}} checked{{/checked}}>
-    <label for="qbshowtext_on">{{#str}} showquestiontext, question {{/str}}</label>
+    <label for="qbshowtext">{{#str}} showquestiontext, question {{/str}}</label>
+    <select id="qbshowtext" name="qbshowtext" class="searchoptions custom-select align-baseline">
+        <option value="0"{{#selected0}} selected{{/selected0}}>{{#str}} showquestiontext_off, question {{/str}}</option>
+        <option value="1"{{#selected1}} selected{{/selected1}}>{{#str}} showquestiontext_plain, question {{/str}}</option>
+        <option value="2"{{#selected2}} selected{{/selected2}}>{{#str}} showquestiontext_full, question {{/str}}</option>
+    </select>
 </div>

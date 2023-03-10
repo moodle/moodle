@@ -144,7 +144,8 @@ class Client
     {
         if ($this->connected && !$this->secure) {
             if (defined('STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT')) {
-                $mode = STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT
+                $mode = STREAM_CRYPTO_METHOD_TLS_CLIENT
+                    | STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT
                     | STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT
                     | STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
             } else {

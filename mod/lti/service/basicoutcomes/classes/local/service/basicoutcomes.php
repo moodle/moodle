@@ -90,4 +90,27 @@ class basicoutcomes extends \mod_lti\local\ltiservice\service_base {
         return [self::SCOPE_BASIC_OUTCOMES];
     }
 
+    /**
+     * Return an array of key/claim mapping allowing LTI 1.1 custom parameters
+     * to be transformed to LTI 1.3 claims.
+     *
+     * @return array Key/value pairs of params to claim mapping.
+     */
+    public function get_jwt_claim_mappings(): array {
+        return [
+            'lis_outcome_service_url' => [
+                'suffix' => 'bo',
+                'group' => 'basicoutcome',
+                'claim' => 'lis_outcome_service_url',
+                'isarray' => false
+            ],
+            'lis_result_sourcedid' => [
+                'suffix' => 'bo',
+                'group' => 'basicoutcome',
+                'claim' => 'lis_result_sourcedid',
+                'isarray' => false
+            ]
+        ];
+    }
+
 }

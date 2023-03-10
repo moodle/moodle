@@ -1026,8 +1026,8 @@ class locallib_test extends mod_lti_testcase {
                 'isarray' => false
             ],
         ];
-
-        $this->assertEquals($mapping, lti_get_jwt_claim_mapping());
+        $actual = lti_get_jwt_claim_mapping();
+        $this->assertEquals($mapping, $actual);
     }
 
     /**
@@ -1135,7 +1135,7 @@ MwIDAQAB
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
         $config = new \stdClass();
-        $config->lti_publickeyset = dirname(__FILE__) . '/fixtures/test_keyset';
+        $config->lti_publickeyset = $this->getExternalTestFileUrl('/lti_keyset.json');
 
         $config->lti_keytype = LTI_JWK_KEYSET;
 

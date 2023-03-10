@@ -24,6 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_question\local\bank\question_version_status;
 
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/questionlib.php');
@@ -42,36 +43,23 @@ $qtypes = question_bank::get_all_qtypes();
 $pluginmanager = core_plugin_manager::instance();
 
 // Get some data we will need - question counts and which types are needed.
-$hiddenstatus = \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN;
-$draftstatus = \core_question\local\bank\question_version_status::QUESTION_STATUS_DRAFT;
+// The second JOIN on question_versions (qv2) is to get the latest version of each question. 
+// (Using this sort of JOIN is a known trick for doing this in the fastest possible way.)
+$counts = $DB->get_records_sql("
+        SELECT q.qtype,
+               COUNT(qv.id) AS numquestions,
+               SUM(CASE WHEN qv.status = :hiddenstatus THEN 1 ELSE 0 END) AS numhidden,
+               SUM(CASE WHEN qv.status = :draftstatus THEN 1 ELSE 0 END) AS numdraft
+          FROM {question} q
+          JOIN {question_versions} qv ON q.id = qv.questionid
+     LEFT JOIN {question_versions} qv2 ON qv.questionbankentryid = qv2.questionbankentryid AND qv.version < qv2.version
+         WHERE qv2.questionbankentryid IS NULL
+      GROUP BY q.qtype
+    ", [
+        'hiddenstatus' => question_version_status::QUESTION_STATUS_HIDDEN,
+        'draftstatus' => question_version_status::QUESTION_STATUS_DRAFT,
+    ]);
 
-$sql = "SELECT result.qtype,
-               SUM(result.numquestions) AS numquestions,
-               SUM(result.numhidden) AS numhidden,
-               SUM(result.numdraft) AS numdraft
-          FROM (SELECT data.qtype,
-                       data.versionid,
-                       COUNT(data.numquestions) AS numquestions,
-                       (SELECT COUNT(qv.id)
-                          FROM {question_versions} qv
-                         WHERE qv.id = data.versionid
-                           AND qv.status = :hiddenstatus) AS numhidden,
-                       (SELECT COUNT(qv.id)
-                         FROM {question_versions} qv
-                        WHERE qv.id = data.versionid
-                          AND qv.status = :draftstatus) AS numdraft
-                  FROM (SELECT q.qtype, qv.id AS versionid, 1 AS numquestions
-                         FROM {question} q
-                         JOIN {question_versions} qv ON qv.questionid = q.id
-                         JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-                         AND qv.version = (SELECT MAX(v.version)
-                                             FROM {question_versions} v
-                                             JOIN {question_bank_entries} be ON be.id = v.questionbankentryid
-                                            WHERE be.id = qbe.id)) data
-                GROUP BY data.qtype, data.versionid) result
-       GROUP BY result.qtype";
-
-$counts = $DB->get_records_sql($sql, ['hiddenstatus' => $hiddenstatus, 'draftstatus' => $draftstatus]);
 $needed = [];
 foreach ($qtypes as $qtypename => $qtype) {
     if (!isset($counts[$qtypename])) {

@@ -158,7 +158,10 @@ export default class Component extends BaseComponent {
      */
     _sectionTogglers(event) {
         const sectionlink = event.target.closest(this.selectors.TOGGLER);
-        const isChevron = event.target.closest(this.selectors.COLLAPSE);
+        const closestCollapse = event.target.closest(this.selectors.COLLAPSE);
+        // Assume that chevron is the only collapse toggler in a section heading;
+        // I think this is the most efficient way to verify at the moment.
+        const isChevron = closestCollapse?.closest(this.selectors.SECTION_ITEM);
 
         if (sectionlink || isChevron) {
 

@@ -24,6 +24,7 @@ class Horde_Support_CaseInsensitiveArray extends ArrayIterator
 {
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return (is_null($offset = $this->_getRealOffset($offset)))
@@ -33,6 +34,7 @@ class Horde_Support_CaseInsensitiveArray extends ArrayIterator
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         if (is_null($roffset = $this->_getRealOffset($offset))) {
@@ -44,6 +46,7 @@ class Horde_Support_CaseInsensitiveArray extends ArrayIterator
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return !is_null($offset = $this->_getRealOffset($offset));
@@ -51,6 +54,7 @@ class Horde_Support_CaseInsensitiveArray extends ArrayIterator
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         if (!is_null($offset = $this->_getRealOffset($offset))) {

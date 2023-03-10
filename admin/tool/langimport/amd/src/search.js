@@ -36,7 +36,7 @@ const DEBOUNCE_TIMER = 250;
  *
  * @param {Element} form
  */
-const init = (form) => {
+export const init = form => {
     const availableLangsElement = form.querySelector(SELECTORS.AVAILABLE_LANG_SELECT);
 
     const availableLangsFilter = (event) => {
@@ -84,16 +84,13 @@ const init = (form) => {
     });
 
     // Debounce the event listener to allow the user to finish typing.
+    const availableLangsSearchDebounce = debounce(availableLangsFilter, DEBOUNCE_TIMER);
     availableLangsSearch.addEventListener('keyup', (event) => {
         const pendingPromise = new Pending('tool_langimport/search:keyup');
 
-        debounce(availableLangsFilter, DEBOUNCE_TIMER)(event);
+        availableLangsSearchDebounce(event);
         setTimeout(() => {
             pendingPromise.resolve();
         }, DEBOUNCE_TIMER);
     });
-};
-
-export default {
-    init: init,
 };

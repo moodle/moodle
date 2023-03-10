@@ -95,6 +95,7 @@ class Horde_Support_Stub implements ArrayAccess, Countable, IteratorAggregate
 
      /**
       */
+    #[ReturnTypeWillChange]
      public function offsetGet($offset)
      {
          return null;
@@ -102,12 +103,14 @@ class Horde_Support_Stub implements ArrayAccess, Countable, IteratorAggregate
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
     }
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return false;
@@ -115,6 +118,7 @@ class Horde_Support_Stub implements ArrayAccess, Countable, IteratorAggregate
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
     }
@@ -123,6 +127,7 @@ class Horde_Support_Stub implements ArrayAccess, Countable, IteratorAggregate
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function count()
     {
         return 0;
@@ -132,6 +137,7 @@ class Horde_Support_Stub implements ArrayAccess, Countable, IteratorAggregate
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function getIterator()
     {
         return new ArrayIterator(array());

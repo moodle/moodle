@@ -9,7 +9,7 @@ on:
       - v[0-9]+.[0-9]+.[0-9]+*
 
 env:
-  php: 8.0
+  php: 8.1
 
 jobs:
   Grunt:
@@ -59,14 +59,13 @@ jobs:
             extensions:
             db: mysqli
           - os: ubuntu-22.04
-            php: 8.0
+            php: 8.1
             db: pgsql
-            extensions: xmlrpc-beta
 
     steps:
       - name: Setting up DB mysql
         if: ${{ matrix.db == 'mysqli' }}
-        uses: johanmeiring/mysql-action@tmpfs-patch
+        uses: moodlehq/mysql-action@v1
         with:
           collation server: utf8mb4_bin
           mysql version: 5.7
@@ -74,6 +73,8 @@ jobs:
           mysql user: test
           mysql password: test
           use tmpfs: true
+          tmpfs size: '1024M'
+          extra conf: --skip-log-bin
 
       - name: Setting up DB pgsql
         if: ${{ matrix.db == 'pgsql' }}

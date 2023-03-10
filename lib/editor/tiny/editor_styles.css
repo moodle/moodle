@@ -2,3 +2,12 @@ body.mce-content-body {
     margin: revert;
     text-align: initial;
 }
+
+/** Web Accessibility - color contrast. */
+body.mce-content-body a[data-mce-selected="inline-boundary"] {
+    background-color: unset;
+}
+body.mce-content-body a {
+    color: #0f6cbf;
+}
+/** */

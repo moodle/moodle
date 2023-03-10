@@ -134,6 +134,13 @@ class mod_forum_renderer extends plugin_renderer_base {
             $strparams->count = count($users);
             $output .= $this->output->heading(get_string("subscriberstowithcount", "forum", $strparams));
             $table = new html_table();
+            $table->id = 'subscribers-table';
+            $table->head = [];
+            $table->head[] = get_string('pictureofuser');
+            $table->head[] = get_string('fullname');
+            if ($canviewemail) {
+                $table->head[] = get_string('email');
+            }
             $table->cellpadding = 5;
             $table->cellspacing = 5;
             $table->tablealign = 'center';

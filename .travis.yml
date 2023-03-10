@@ -50,20 +50,20 @@ jobs:
           php: 7.4
           env: DB=mysqli   TASK=PHPUNIT
 
-        # Then, conditionally, all the highest php ones (8.0)
+        # Then, conditionally, all the highest php ones (8.1)
         - if: env(MOODLE_PHP) = "all"
-          php: 8.0
+          php: 8.1
           env: DB=none     TASK=CITEST
         - if: env(MOODLE_PHP) = "all"
-          php: 8.0
+          php: 8.1
           env: DB=none     TASK=GRUNT
 
         - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present)
-          php: 8.0
+          php: 8.1
           env: DB=pgsql    TASK=PHPUNIT
 
         - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all")
-          php: 8.0
+          php: 8.1
           env: DB=mysqli   TASK=PHPUNIT
 
 cache:
@@ -90,7 +90,8 @@ install:
             sudo service mysql stop
             sudo mv /var/lib/mysql /mnt/ramdisk
             sudo ln -s /mnt/ramdisk/mysql /var/lib/mysql
-            sudo service mysql restart
+            echo -e "[mysqld]\nskip-log-bin" | sudo tee -a /etc/mysql/my.cnf
+            sudo service mysql start
         fi
     - >
         if [ "$DB" = 'pgsql' ];
@@ -101,6 +102,7 @@ install:
             sudo mv /var/lib/postgresql /mnt/ramdisk
             sudo ln -s /mnt/ramdisk/postgresql /var/lib/postgresql
             sudo service postgresql start
+            sh -c 'until pg_isready -p $PGPORT; do echo "Waiting for the DB to be up..."; sleep 2; done'
         fi
     - >
         if [ "$TASK" = 'PHPUNIT' ];
@@ -127,7 +129,6 @@ install:
         fi
 
 before_script:
-    - if [[ ${TRAVIS_PHP_VERSION:0:1} -gt 7 ]]; then pecl install xmlrpc-beta; fi
     - echo 'max_input_vars=5000' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
     - phpenv config-rm xdebug.ini
     - >

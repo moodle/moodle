@@ -38,7 +38,7 @@
 }}
 <div id="searchform-auto-{{uniqid}}" class="form-inline simplesearchform">
     <div class="input-group searchbar w-100" role="search">
-        <label for="searchinput">
+        <label for="searchinput-{{uniqid}}">
             <span class="sr-only">{{$label}}{{#str}} search, core {{/str}}{{/label}}</span>
         </label>
         <input
@@ -46,7 +46,7 @@
            role="searchbox"
            data-region="input"
            data-action="search"
-           id="searchinput"
+           id="searchinput-{{uniqid}}"
            class="form-control withclear rounded"
            placeholder="{{$placeholder}}{{#str}} search, core {{/str}}{{/placeholder}}"
            name="search"

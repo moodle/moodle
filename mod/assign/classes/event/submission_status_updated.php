@@ -103,8 +103,12 @@ class submission_status_updated extends base {
      */
     protected function get_legacy_logdata() {
         $submission = $this->get_record_snapshot('assign_submission', $this->objectid);
-        $user = $this->get_record_snapshot('user', $submission->userid);
-        $logmessage = get_string('reverttodraftforstudent', 'assign', array('id' => $user->id, 'fullname' => fullname($user)));
+        if ($this->assign->get_instance()->teamsubmission) {
+            $logmessage = get_string('reverttodraftforgroup', 'assign', $submission->groupid);
+        } else {
+            $user = $this->get_record_snapshot('user', $submission->userid);
+            $logmessage = get_string('reverttodraftforstudent', 'assign', ['id' => $user->id, 'fullname' => fullname($user)]);
+        }
         $this->set_legacy_logdata('revert submission to draft', $logmessage);
         return parent::get_legacy_logdata();
     }

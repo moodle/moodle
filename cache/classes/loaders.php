@@ -1679,7 +1679,7 @@ class cache_application extends cache implements cache_loader_with_locking {
         if ($this->get_loader() !== false) {
             $this->get_loader()->acquire_lock($key);
         }
-        $key = $this->parse_key($key);
+        $key = cache_helper::hash_key($key, $this->get_definition());
         $before = microtime(true);
         if ($this->nativelocking) {
             $lock = $this->get_store()->acquire_lock($key, $this->get_identifier());
@@ -1706,7 +1706,7 @@ class cache_application extends cache implements cache_loader_with_locking {
      *      someone else has the lock.
      */
     public function check_lock_state($key) {
-        $key = $this->parse_key($key);
+        $key = cache_helper::hash_key($key, $this->get_definition());
         if (!empty($this->locks[$key])) {
             return true; // Shortcut to save having to make a call to the cache store if the lock is held by this process.
         }
@@ -1726,7 +1726,7 @@ class cache_application extends cache implements cache_loader_with_locking {
      */
     public function release_lock($key) {
         $loaderkey = $key;
-        $key = $this->parse_key($key);
+        $key = cache_helper::hash_key($key, $this->get_definition());
         if ($this->nativelocking) {
             $released = $this->get_store()->release_lock($key, $this->get_identifier());
         } else {

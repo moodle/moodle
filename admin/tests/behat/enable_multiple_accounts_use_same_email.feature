@@ -35,9 +35,7 @@ Feature: Allowing multiple accounts to have the same email address
       | username  | firstname | lastname | email           |
       | s1        | John      | Doe      | s1@example.com  |
       | s2        | Jane      | Doe      | s2@example.com  |
-    When I log in as "admin"
-    And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I click on "Edit" "link" in the "Jane Doe" "table_row"
+    When I am on the "s2" "user > editing" page logged in as "admin"
     And I set the field "Email address" to "<email>"
     And I press "Update profile"
     Then I should <expect> "This email address is already registered."

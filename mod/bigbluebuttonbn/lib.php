@@ -730,7 +730,11 @@ function bigbluebuttonbn_pre_enable_plugin_actions(): bool {
     // agreement, do not enable the plugin. Instead, display a dynamic form where the administrator can confirm that he
     // accepts the DPA prior to enabling the plugin.
     if (config::get('server_url') === config::DEFAULT_SERVER_URL && !config::get('default_dpa_accepted')) {
-        $PAGE->requires->js_call_amd('mod_bigbluebuttonbn/accept_dpa', 'init', []);
+        $url = new moodle_url('/admin/category.php', ['category' => 'modbigbluebuttonbnfolder']);
+        \core\notification::add(
+            get_string('dpainfonotsigned', 'mod_bigbluebuttonbn', $url->out(false)),
+            \core\notification::ERROR
+        );
         return false;
     }
     // Otherwise, continue and enable the plugin.

@@ -554,4 +554,26 @@ class memberships extends \mod_lti\local\ltiservice\service_base {
         return $launchparameters;
     }
 
+    /**
+     * Return an array of key/claim mapping allowing LTI 1.1 custom parameters
+     * to be transformed to LTI 1.3 claims.
+     *
+     * @return array Key/value pairs of params to claim mapping.
+     */
+    public function get_jwt_claim_mappings(): array {
+        return [
+            'custom_context_memberships_v2_url' => [
+                'suffix' => 'nrps',
+                'group' => 'namesroleservice',
+                'claim' => 'context_memberships_url',
+                'isarray' => false
+            ],
+            'custom_context_memberships_versions' => [
+                'suffix' => 'nrps',
+                'group' => 'namesroleservice',
+                'claim' => 'service_versions',
+                'isarray' => true
+            ]
+        ];
+    }
 }

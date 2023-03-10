@@ -17,11 +17,9 @@ Feature: In a lesson activity, I need to edit pages in the lesson taking into ac
       | component       | stringid | value |
       | core_langconfig | decsep   | #     |
     And the following "activities" exist:
-      | activity   | name                   | intro                         | course | idnumber    | section | modattempts |
-      | lesson     | Test lesson name       | Test lesson description       | C1     | lesson1     | 1       | 1           |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+      | activity   | name                   | course | idnumber    | modattempts |
+      | lesson     | Test lesson name       | C1     | lesson1     | 1           |
+    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Add a question page"
     And I set the field "Select a question type" to "Numerical"
     And I press "Add a question page"
@@ -37,32 +35,23 @@ Feature: In a lesson activity, I need to edit pages in the lesson taking into ac
       | id_jumpto_1 | This page |
       | id_score_1 | 0 |
     And I press "Save page"
-    And I log out
 
   Scenario: Edit a numerical question with the locale specific variables
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test lesson name"
+    Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I edit the lesson
     And I follow "Hardest question ever"
     Then I should see "2#87"
     And I should see "2#1:2#8"
-    And I log out
 
   Scenario: View the detailed page of lesson
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test lesson name"
+    Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I edit the lesson
     And I select edit type "Expanded"
     Then I should see "2#87"
     And I should see "2#1:2#8"
-    And I log out
 
   Scenario: Attempt the lesson successfully as a student
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    Given I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "1 + 1?"
     And I set the following fields to these values:
       | Your answer | 2#87 |
@@ -72,12 +61,9 @@ Feature: In a lesson activity, I need to edit pages in the lesson taking into ac
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
     And I should see "Your score is 1 (out of 1)."
-    And I log out
 
   Scenario: Attempt the lesson unsuccessfully as a student
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    Given I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "1 + 1?"
     And I set the following fields to these values:
       | Your answer | 2#7 |
@@ -87,12 +73,9 @@ Feature: In a lesson activity, I need to edit pages in the lesson taking into ac
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
     And I should see "Your score is 0 (out of 1)."
-    And I log out
 
   Scenario: Attempt the lesson successfully as a student and review
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    Given I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "1 + 1?"
     And I set the following fields to these values:
       | Your answer | 2#87 |
@@ -106,23 +89,18 @@ Feature: In a lesson activity, I need to edit pages in the lesson taking into ac
     Then I should see "1 + 1?"
     And the following fields match these values:
       | Your answer | 2#87 |
-    And I log out
 
   Scenario: Edit lesson question page with updated locale setting and wrong answer
     Given I log in as "teacher1"
     And the following "language customisations" exist:
       | component       | stringid | value |
       | core_langconfig | decsep   | ,     |
-    And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test lesson name"
-    Then I edit the lesson
+    When I am on the "Test lesson name" "lesson activity" page
+    And I edit the lesson
     And I follow "Hardest question ever"
     Then I should see "2,87"
     And I should see "2,1:2,8"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "1 + 1?"
     And I set the following fields to these values:
       | Your answer | 2,7 |

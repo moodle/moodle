@@ -310,17 +310,16 @@ class store_test extends \advanced_testcase {
         $logmanager = get_log_manager();
         $allreports = \core_component::get_plugin_list('report');
 
-        $supportedreports = array(
-            'report_log' => '/report/log',
-            'report_loglive' => '/report/loglive'
-        );
-
         // Make sure all supported reports are installed.
-        $expectedreports = array_keys(array_intersect_key($allreports, $supportedreports));
-        $reports = $logmanager->get_supported_reports('logstore_database');
-        $reports = array_keys($reports);
+        $expectedreports = array_intersect_key([
+            'log' => 'report_log',
+            'loglive' => 'report_loglive',
+        ], $allreports);
+
+        $supportedreports = $logmanager->get_supported_reports('logstore_database');
+
         foreach ($expectedreports as $expectedreport) {
-            $this->assertContains($expectedreport, $reports);
+            $this->assertArrayHasKey($expectedreport, $supportedreports);
         }
     }
 }

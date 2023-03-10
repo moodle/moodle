@@ -302,6 +302,7 @@ class Horde_Imap_Client_Fetch_Query implements ArrayAccess, Countable, Iterator
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return isset($this->_data[$offset]);
@@ -309,6 +310,7 @@ class Horde_Imap_Client_Fetch_Query implements ArrayAccess, Countable, Iterator
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return isset($this->_data[$offset])
@@ -318,6 +320,7 @@ class Horde_Imap_Client_Fetch_Query implements ArrayAccess, Countable, Iterator
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->_data[$offset] = $value;
@@ -325,6 +328,7 @@ class Horde_Imap_Client_Fetch_Query implements ArrayAccess, Countable, Iterator
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         unset($this->_data[$offset]);
@@ -334,6 +338,7 @@ class Horde_Imap_Client_Fetch_Query implements ArrayAccess, Countable, Iterator
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function count()
     {
         return count($this->_data);
@@ -343,6 +348,7 @@ class Horde_Imap_Client_Fetch_Query implements ArrayAccess, Countable, Iterator
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function current()
     {
         $opts = current($this->_data);
@@ -354,6 +360,7 @@ class Horde_Imap_Client_Fetch_Query implements ArrayAccess, Countable, Iterator
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function key()
     {
         return key($this->_data);
@@ -361,6 +368,7 @@ class Horde_Imap_Client_Fetch_Query implements ArrayAccess, Countable, Iterator
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function next()
     {
         next($this->_data);
@@ -368,6 +376,7 @@ class Horde_Imap_Client_Fetch_Query implements ArrayAccess, Countable, Iterator
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function rewind()
     {
         reset($this->_data);
@@ -375,6 +384,7 @@ class Horde_Imap_Client_Fetch_Query implements ArrayAccess, Countable, Iterator
 
     /**
      */
+    #[ReturnTypeWillChange]
     public function valid()
     {
         return !is_null($this->key());

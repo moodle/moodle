@@ -218,9 +218,13 @@ Feature: Basic OAuth2 functionality
       | Name                       | Invalid custom service                    |
       | Client ID                  | thisistheclientid                         |
       | Client secret              | supersecret                               |
-      | Service base URL           | https://dc.imsglobal.org/                 |
+      | Service base URL           | http://dc.imsglobal.org/                 |
     When I press "Save changes"
-    Then I should see "Could not discover end points for identity issuer: Invalid custom service"
+    Then I should see "For security reasons only https connections are allowed, sorry"
+    And I set the following fields to these values:
+      | Service base URL           | https://dc.imsglobal.org/                 |
+    And I press "Save changes"
+    And I should see "Could not discover end points for identity issuer: Invalid custom service"
     And I should see "URL: https://dc.imsglobal.org/.well-known/openid-configuration"
     And "Allow services" "icon" should exist in the "Invalid custom service" "table_row"
     And "Do not allow login" "icon" should exist in the "Invalid custom service" "table_row"
@@ -358,3 +362,21 @@ Feature: Basic OAuth2 functionality
     And I navigate to "Server > OAuth 2 services" in site administration
     And "Allow login" "icon" should exist in the "Empty custom service" "table_row"
     And "Do not allow services" "icon" should exist in the "Empty custom service" "table_row"
+
+  @javascript
+  Scenario: Changes to "Authenticate token requests via HTTP headers" are saved
+    Given I press "Custom"
+    And I set the following fields to these values:
+      | Name                              | Custom service                     |
+      | Client ID                         | thisistheclientid                  |
+      | Client secret                     | supersecret                        |
+    And I press "Save changes"
+    When I click on "Edit" "link" in the "Custom service" "table_row"
+    And I click on "Authenticate token requests via HTTP headers" "checkbox"
+    And I press "Save changes"
+    And I click on "Edit" "link" in the "Custom service" "table_row"
+    And the field "Authenticate token requests via HTTP headers" matches value "1"
+    And I click on "Authenticate token requests via HTTP headers" "checkbox"
+    And I press "Save changes"
+    And I click on "Edit" "link" in the "Custom service" "table_row"
+    Then the field "Authenticate token requests via HTTP headers" matches value ""

@@ -386,12 +386,21 @@ class preset_test extends \advanced_testcase {
         $files = $ziparchive->list_files();
         foreach ($files as $file) {
             $this->assertContains($file->pathname, $presetfilenames);
+
             // Check the file is not empty (except CSS, JS and listtemplateheader/footer files which are empty by default).
-            $ishtmlorxmlfile = str_ends_with($file->pathname, '.html') || str_ends_with($file->pathname, '.xml');
-            $islistheader = $file->pathname != manager::TEMPLATES_LIST['listtemplateheader'];
-            $islistfooter = $file->pathname != manager::TEMPLATES_LIST['listtemplatefooter'];
-            if ($ishtmlorxmlfile && !$islistheader && !$islistfooter) {
+            $extension = pathinfo($file->pathname, PATHINFO_EXTENSION);
+            $ishtmlorxmlfile = in_array($extension, ['html', 'xml']);
+
+            $expectedemptyfiles = array_intersect_key(manager::TEMPLATES_LIST, array_flip([
+                'listtemplateheader',
+                'listtemplatefooter',
+                'rsstitletemplate',
+            ]));
+
+            if ($ishtmlorxmlfile && !in_array($file->pathname, $expectedemptyfiles)) {
                 $this->assertGreaterThan(0, $file->size);
+            } else {
+                $this->assertEquals(0, $file->size);
             }
         }
         $ziparchive->close();

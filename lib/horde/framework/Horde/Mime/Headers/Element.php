@@ -142,6 +142,9 @@ implements IteratorAggregate
         }
 
         /* Ensure no null characters exist in header data. */
+		if ($data === null) {
+			return '';
+		}
         return str_replace("\0", '', $data);
     }
 
@@ -173,6 +176,7 @@ implements IteratorAggregate
 
     /**
      */
+	#[ReturnTypeWillChange]
     public function getIterator()
     {
         return new ArrayIterator($this->_values);

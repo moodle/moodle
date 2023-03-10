@@ -21,7 +21,7 @@ use MongoDB\Driver\Exception\InvalidArgumentException as DriverInvalidArgumentEx
 
 use function array_pop;
 use function count;
-use function get_debug_type;
+use function gettype;
 use function implode;
 use function is_array;
 use function sprintf;
@@ -57,6 +57,6 @@ class InvalidArgumentException extends DriverInvalidArgumentException implements
             $expectedType = $typeString;
         }
 
-        return new static(sprintf('Expected %s to have type "%s" but found "%s"', $name, $expectedType, get_debug_type($value)));
+        return new static(sprintf('Expected %s to have type "%s" but found "%s"', $name, $expectedType, gettype($value)));
     }
 }

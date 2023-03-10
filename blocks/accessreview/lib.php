@@ -51,7 +51,9 @@ function block_accessreview_get_fontawesome_icon_map() {
 /**
  * Define preferences which may be set via the core_user_set_user_preferences external function.
  *
- * @return  array
+ * @uses core_user::is_current_user
+ *
+ * @return array[]
  */
 function block_accessreview_user_preferences(): array {
     return [
@@ -60,6 +62,7 @@ function block_accessreview_user_preferences(): array {
             'null' => NULL_NOT_ALLOWED,
             'default' => 0,
             'choices' => [0, 1],
+            'permissioncallback' => [core_user::class, 'is_current_user'],
         ],
     ];
 }

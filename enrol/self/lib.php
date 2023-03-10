@@ -403,7 +403,7 @@ class enrol_self_plugin extends enrol_plugin {
         $a->coursename = format_string($course->fullname, true, array('context'=>$context));
         $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
 
-        if (trim($instance->customtext1) !== '') {
+        if (!is_null($instance->customtext1) && trim($instance->customtext1) !== '') {
             $message = $instance->customtext1;
             $key = array('{$a->coursename}', '{$a->profileurl}', '{$a->fullname}', '{$a->email}');
             $value = array($a->coursename, $a->profileurl, fullname($user), $user->email);

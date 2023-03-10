@@ -44,6 +44,19 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And I should see "Marked out of 2.00" in the "First question" "question"
 
   @javascript
+  Scenario: After redoing a question, regrade works
+    Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    When I press "Attempt quiz"
+    And I click on "False" "radio" in the "First question" "question"
+    And I click on "Check" "button" in the "First question" "question"
+    And I press "Try another question like this one"
+    And I am on the "Quiz 1" "mod_quiz > Grades report" page logged in as "teacher"
+    And I press "Regrade all"
+    Then I should see "Finished regrading (1/1)"
+    And I should see "Regrade completed"
+    And I press "Continue"
+
+  @javascript
   Scenario: Start attempt, teacher edits question, redo picks up latest non-draft version
     # Start attempt as student.
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
@@ -177,7 +190,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     When I click on "update grades" "link" in the "SA1" "table_row"
     Then I set the field "Comment" to "I have adjusted your mark to 1.0"
     And I set the field "Mark" to "1.0"
-    And I press "Save and go to next page"
+    And I press "Save and show next"
     And I follow "Results"
     And I follow "Review attempt"
     And I should see "Teacher One" in the "I have adjusted your mark to 1.0" "table_row"

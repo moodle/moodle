@@ -64,7 +64,14 @@
     {{/body}}
 
     {{$footer}}
-        <button type="button" class="btn btn-primary" data-action="save">{{#str}} createmedia, tiny_media {{/str}}</button>
+        <button type="button" class="btn btn-primary" data-action="save">
+            {{#isupdating}}
+                {{#str}} updatemedia, tiny_media {{/str}}
+            {{/isupdating}}
+            {{^isupdating}}
+                {{#str}} createmedia, tiny_media {{/str}}
+            {{/isupdating}}
+        </button>
         <button type="button" class="btn btn-secondary" data-action="cancel">{{#str}} cancel, moodle {{/str}}</button>
     {{/footer}}
 
