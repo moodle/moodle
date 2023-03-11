@@ -150,11 +150,32 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
  *             This will not affect user_password_updated event triggering.
  */
 function user_update_user($user, $updatepassword = true, $triggerevent = true) {
-    global $DB;
+    global $DB, $CFG;
 
     // Set the timecreate field to the current time.
     if (!is_object($user)) {
         $user = (object) $user;
+    }
+
+    // Communication api update for user.
+    if (core_communication\api::is_available()) {
+        $usercourses = enrol_get_users_courses($user->id);
+        $currentrecord = $DB->get_record('user', ['id' => $user->id]);
+        if (!empty($currentrecord) && isset($user->suspended) && $currentrecord->suspended !== $user->suspended) {
+            foreach ($usercourses as $usercourse) {
+                $communication = \core_communication\api::load_by_instance(
+                    'core_course',
+                    'coursecommunication',
+                    $usercourse->id
+                );
+                // If the record updated the suspended for a user.
+                if ($user->suspended === 0) {
+                    $communication->add_members_to_room([$user->id]);
+                } else if ($user->suspended === 1) {
+                    $communication->remove_members_from_room([$user->id]);
+                }
+            }
+        }
     }
 
     // Check username.
