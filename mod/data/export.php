@@ -102,12 +102,12 @@ if ($mform->is_cancelled()) {
         case 'csv':
             data_export_csv($exportdata, $formdata['delimiter_name'], $data->name, $count);
             break;
-        case 'xls':
-            data_export_xls($exportdata, $data->name, $count);
-            break;
         case 'ods':
             data_export_ods($exportdata, $data->name, $count);
             break;
+        default:
+            throw new coding_exception('Invalid export format has been specified. '
+                . 'Only "csv" and "ods" are currently supported.');
     }
 }
 

@@ -61,3 +61,42 @@ function data_get_completion_state($course, $cm, $userid, $type) {
     }
     return $result;
 }
+
+/**
+ * @deprecated since Moodle 4.3.
+ * @global object
+ * @param array $export
+ * @param string $dataname
+ * @param int $count
+ * @return string
+ */
+function data_export_xls($export, $dataname, $count) {
+    global $CFG;
+
+    debugging('Function data_export_xls() has been deprecated, because xls export has been dropped.',
+        DEBUG_DEVELOPER);
+    require_once("$CFG->libdir/excellib.class.php");
+    $filename = clean_filename("{$dataname}-{$count}_record");
+    if ($count > 1) {
+        $filename .= 's';
+    }
+    $filename .= clean_filename('-' . gmdate("Ymd_Hi"));
+    $filename .= '.xls';
+
+    $filearg = '-';
+    $workbook = new MoodleExcelWorkbook($filearg);
+    $workbook->send($filename);
+    $worksheet = array();
+    $worksheet[0] = $workbook->add_worksheet('');
+    $rowno = 0;
+    foreach ($export as $row) {
+        $colno = 0;
+        foreach($row as $col) {
+            $worksheet[0]->write($rowno, $colno, $col);
+            $colno++;
+        }
+        $rowno++;
+    }
+    $workbook->close();
+    return $filename;
+}

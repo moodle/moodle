@@ -1,6 +1,9 @@
 This files describes API changes in /mod/data - plugins,
 information provided here is intended especially for developers.
 
+== 4.3 ==
+* Function data_export_xls() has been deprecated and moved to deprecatedlib, because xls support has already been dropped.
+
 == 4.2 ==
 * The field base class now has a method validate(). Overwrite it in the field type to provide validation of field type's
   parameters in the field add/modify form.
