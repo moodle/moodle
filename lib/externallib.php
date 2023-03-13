@@ -103,7 +103,7 @@ function external_create_service_token($servicename, $contextid) {
 /**
  * Delete all pre-built services (+ related tokens) and external functions information defined in the specified component.
  *
- * @param string $component name of component (moodle, mod_assignment, etc.)
+ * @param string $component name of component (moodle, etc.)
  */
 function external_delete_descriptions($component) {
     util::delete_service_descriptions($component);
