@@ -335,12 +335,16 @@ class data_field_picture extends data_field_base {
         // If thumbnail width and height are BOTH not specified then no thumbnail is generated, and
         // additionally an attempted delete of the existing thumbnail takes place.
         $fs = get_file_storage();
-        $file_record = array('contextid'=>$file->get_contextid(), 'component'=>$file->get_component(), 'filearea'=>$file->get_filearea(),
-                             'itemid'=>$file->get_itemid(), 'filepath'=>$file->get_filepath(),
-                             'filename'=>'thumb_'.$file->get_filename(), 'userid'=>$file->get_userid());
+        $filerecord = [
+            'contextid' => $file->get_contextid(), 'component' => $file->get_component(), 'filearea' => $file->get_filearea(),
+            'itemid' => $file->get_itemid(), 'filepath' => $file->get_filepath(),
+            'filename' => 'thumb_' . $file->get_filename(), 'userid' => $file->get_userid()
+        ];
         try {
-            // this may fail for various reasons
-            $fs->convert_image($file_record, $file, (int) $this->field->param4, (int) $this->field->param5, true);
+            // This may fail for various reasons.
+            $newwidth = isset($this->field->param4) ? (int) $this->field->param4 : null;
+            $newheight = isset($this->field->param5) ? (int) $this->field->param5 : null;
+            $fs->convert_image($filerecord, $file, $newwidth, $newheight, true);
             return true;
         } catch (Exception $e) {
             debugging($e->getMessage());
