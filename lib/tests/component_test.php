@@ -892,6 +892,9 @@ class component_test extends advanced_testcase {
         $apis = $sortedapis = core_component::get_core_apis();
         ksort($sortedapis); // We'll need this later.
 
+        $subsystems = core_component::get_core_subsystems(); // To verify all apis are pointing to valid subsystems.
+        $subsystems['core'] = 'anything'; // Let's add 'core' because it's a valid component for apis.
+
         // General structure validations.
         $this->assertIsArray($apis);
         $this->assertGreaterThan(25, count($apis));
@@ -911,11 +914,16 @@ class component_test extends advanced_testcase {
 
             // Verify attributes.
             if ($apiname !== 'core') { // Exception for core api, it doesn't have component.
+                // Check that component attribute looks correct.
                 $this->assertMatchesRegularExpression('/^(core|[a-z][a-z0-9_]+)$/', $attributes->component, $message);
+                // Ensure that the api component (without the core_ prefix) is a correct subsystem.
+                $this->assertArrayHasKey(str_replace('core_', '', $attributes->component), $subsystems, $message);
             } else {
                 $this->assertNull($attributes->component, $message);
             }
 
+
+            // Now check for the rest of attributes.
             $this->assertIsBool($attributes->allowedlevel2, $message);
             $this->assertIsBool($attributes->allowedspread, $message);
 

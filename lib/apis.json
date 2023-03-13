@@ -110,7 +110,7 @@
         "allowedspread": true
     },
     "grade": {
-        "component": "core_grade",
+        "component": "core_grades",
         "allowedlevel2": false,
         "allowedspread": false
     },
