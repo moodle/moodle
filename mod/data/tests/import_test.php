@@ -20,6 +20,7 @@ use coding_exception;
 use dml_exception;
 use mod_data\local\mod_data_csv_importer;
 use moodle_exception;
+use zip_archive;
 
 /**
  * Unit tests for import.php.
@@ -73,6 +74,13 @@ class import_test extends \advanced_testcase {
         $fieldrecord->type = 'text';
         $generator->create_field($fieldrecord, $data);
 
+        $fieldrecord->name = 'filefield';
+        $fieldrecord->type = 'file';
+        $generator->create_field($fieldrecord, $data);
+
+        $fieldrecord->name = 'picturefield';
+        $fieldrecord->type = 'picture';
+        $generator->create_field($fieldrecord, $data);
 
         return [
             'teacher' => $teacher,
@@ -116,8 +124,6 @@ class import_test extends \advanced_testcase {
      *
      * At least one entry has an identifiable user, which is assigned as author.
      *
-     * @throws coding_exception
-     * @throws moodle_exception
      * @throws dml_exception
      */
     public function test_import_with_userdata(): void {
@@ -151,7 +157,6 @@ class import_test extends \advanced_testcase {
      * as the current lang string for username. In that case, the first Username entry is used for the field.
      * The second one is used to identify the author.
      *
-     * @throws moodle_exception
      * @throws coding_exception
      * @throws dml_exception
      */
@@ -214,8 +219,8 @@ class import_test extends \advanced_testcase {
      * as the current lang string for username. In that case, the only Username entry is used for the field.
      * The author should not be set.
      *
+     * @throws coding_exception
      * @throws dml_exception
-     * @throws moodle_exception
      */
     public function test_import_with_field_username_without_userdata(): void {
         [
@@ -266,10 +271,97 @@ class import_test extends \advanced_testcase {
     }
 
     /**
+     * Tests the import including files from a zip archive.
+     *
+     * @covers \mod_data\local\importer
+     * @covers \mod_data\local\csv_importer
+     * @return void
+     * @throws coding_exception
+     * @throws moodle_exception
+     * @throws dml_exception
+     */
+    public function test_import_with_files(): void {
+        [
+            'data' => $data,
+            'cm' => $cm,
+        ] = $this->get_test_data();
+
+        $importer = new mod_data_csv_importer(__DIR__ . '/fixtures/test_data_import_with_files.zip',
+            'test_data_import_with_files.zip');
+        $importer->import_csv($cm, $data, 'UTF-8', 'comma');
+
+        $records = $this->get_data_records($data->id);
+        $ziparchive = new zip_archive();
+        $ziparchive->open(__DIR__ . '/fixtures/test_data_import_with_files.zip');
+
+        $importedcontent = array_values($records)[0]->items;
+        $this->assertEquals(17, $importedcontent['ID']->content);
+        $this->assertEquals('samplefile.png', $importedcontent['filefield']->content);
+        $this->assertEquals('samplepicture.png', $importedcontent['picturefield']->content);
+
+        // We now check if content of imported file from zip content is identical to the content of the file
+        // stored in the mod_data record in the field 'filefield'.
+        $fileindex = array_values(array_map(fn($file) => $file->index,
+            array_filter($ziparchive->list_files(), fn($file) => $file->pathname === 'files/samplefile.png')))[0];
+        $filestream = $ziparchive->get_stream($fileindex);
+        $filefield = data_get_field_from_name('filefield', $data);
+        $filefieldfilecontent = fread($filestream, $ziparchive->get_info($fileindex)->size);
+        $this->assertEquals($filefield->get_file(array_keys($records)[0])->get_content(),
+            $filefieldfilecontent);
+        fclose($filestream);
+
+        // We now check if content of imported picture from zip content is identical to the content of the picture file
+        // stored in the mod_data record in the field 'picturefield'.
+        $fileindex = array_values(array_map(fn($file) => $file->index,
+            array_filter($ziparchive->list_files(), fn($file) => $file->pathname === 'files/samplepicture.png')))[0];
+        $filestream = $ziparchive->get_stream($fileindex);
+        $filefield = data_get_field_from_name('picturefield', $data);
+        $filefieldfilecontent = fread($filestream, $ziparchive->get_info($fileindex)->size);
+        $this->assertEquals($filefield->get_file(array_keys($records)[0])->get_content(),
+            $filefieldfilecontent);
+        fclose($filestream);
+
+        $ziparchive->close();
+    }
+
+    /**
+     * Tests the import including files from a zip archive.
+     *
+     * @covers \mod_data\local\importer
+     * @covers \mod_data\local\csv_importer
+     * @return void
+     * @throws coding_exception
+     * @throws moodle_exception
+     * @throws dml_exception
+     */
+    public function test_import_with_files_missing_file(): void {
+        [
+            'data' => $data,
+            'cm' => $cm,
+        ] = $this->get_test_data();
+
+        $importer = new mod_data_csv_importer(__DIR__ . '/fixtures/test_data_import_with_files_missing_file.zip',
+            'test_data_import_with_files_missing_file.zip');
+        $importer->import_csv($cm, $data, 'UTF-8', 'comma');
+
+        $records = $this->get_data_records($data->id);
+        $ziparchive = new zip_archive();
+        $ziparchive->open(__DIR__ . '/fixtures/test_data_import_with_files_missing_file.zip');
+
+        $importedcontent = array_values($records)[0]->items;
+        $this->assertEquals(17, $importedcontent['ID']->content);
+        $this->assertFalse(isset($importedcontent['filefield']));
+        $this->assertEquals('samplepicture.png', $importedcontent['picturefield']->content);
+
+        $ziparchive->close();
+    }
+
+    /**
      * Returns the records of the data instance.
      *
      * Each records has an item entry, which contains all fields associated with this item.
      * Each fields has the parameters name, type and content.
+     *
      * @param int $dataid Id of the data instance.
      * @return array The records of the data instance.
      * @throws dml_exception

@@ -16,6 +16,10 @@ information provided here is intended especially for developers.
   type will have to export the name of the file by overwriting text_export_supported() to return true and make the
   method export_text_value() return the name of the file.
 * The field types file and picture now are able to export the file/picture.
+* Field base class now has two new methods file_import_supported() and import_file_value(). The method
+  file_import_supported() can be overwritten to declare that a field type is able to import a file. In this case this
+  field type will have to implement the method import_file_value() doing the actual import of the file being passed.
+* The field types file and picture now are able to import the file/picture.
 
 == 4.2 ==
 * The field base class now has a method validate(). Overwrite it in the field type to provide validation of field type's

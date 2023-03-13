@@ -662,6 +662,29 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     }
 
     /**
+     * Per default, a field does not support the import of files.
+     *
+     * A field type can overwrite this function and return true. In this case it also has to implement the function
+     * import_file_value().
+     *
+     * @return false means file imports are not supported
+     */
+    public function file_import_supported(): bool {
+        return false;
+    }
+
+    /**
+     * Returns a stored_file object for exporting a file of a given record.
+     *
+     * @param int $contentid content id
+     * @param string $filecontent the content of the file as string
+     * @param string $filename the filename the file should have
+     */
+    public function import_file_value(int $contentid, string $filecontent, string $filename): void {
+        return;
+    }
+
+    /**
      * Per default, return the record's text value only from the "content" field.
      * Override this in fields class if necessary.
      *

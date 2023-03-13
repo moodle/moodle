@@ -391,6 +391,39 @@ class data_field_picture extends data_field_base {
         return $file ? $file->get_content() : null;
     }
 
+    /**
+     * Specifies that this field type supports the import of files.
+     *
+     * @return bool true which means that file import is being supported by this field type
+     */
+    public function file_import_supported(): bool {
+        return true;
+    }
+
+    /**
+     * Provides the necessary code for importing a file when importing the content of a mod_data instance.
+     *
+     * @param int $contentid the id of the mod_data content record
+     * @param string $filecontent the content of the file to import as string
+     * @param string $filename the filename the imported file should get
+     * @return void
+     * @throws file_exception
+     * @throws stored_file_creation_exception
+     */
+    public function import_file_value(int $contentid, string $filecontent, string $filename): void {
+        $filerecord = [
+            'contextid' => $this->context->id,
+            'component' => 'mod_data',
+            'filearea' => 'content',
+            'itemid' => $contentid,
+            'filepath' => '/',
+            'filename' => $filename,
+        ];
+        $fs = get_file_storage();
+        $file = $fs->create_file_from_string($filerecord, $filecontent);
+        $this->update_thumbnail(null, $file);
+    }
+
     function file_ok($path) {
         return true;
     }

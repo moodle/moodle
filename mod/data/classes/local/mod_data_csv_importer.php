@@ -27,7 +27,7 @@ use moodle_exception;
 use stdClass;
 
 /**
- * CSV importer class for importing data.
+ * CSV importer class for importing data and - if needed - files as well from a zip archive.
  *
  * @package    mod_data
  * @copyright  2023 ISB Bayern
@@ -143,7 +143,17 @@ class mod_data_csv_importer extends csv_importer {
                             $content->fieldid = $field->field->id;
                             $content->content = $value;
                             $content->recordid = $recordid;
-                            $DB->insert_record('data_content', $content);
+                            if ($field->file_import_supported() && $this->importfiletype === 'zip') {
+                                $filecontent = $this->get_file_content_from_zip($content->content);
+                                if (!$filecontent) {
+                                    // No corresponding file in zip archive, so no record for this field being added at all.
+                                    continue;
+                                }
+                                $contentid = $DB->insert_record('data_content', $content);
+                                $field->import_file_value($contentid, $filecontent, $content->content);
+                            } else {
+                                $DB->insert_record('data_content', $content);
+                            }
                         }
                     }
 
