@@ -103,6 +103,9 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals($expectedstate, quiz_attempt_state($quiz, $attempt));
     }
 
+    /**
+     * @covers ::quiz_question_tostring
+     */
     public function test_quiz_question_tostring() {
         $question = new \stdClass();
         $question->qtype = 'multichoice';
@@ -113,6 +116,21 @@ class locallib_test extends \advanced_testcase {
         $summary = quiz_question_tostring($question);
         $this->assertEquals('<span class="questionname">The question name</span> ' .
                 '<span class="questiontext">What sort of INEQUALITY is x &lt; y[?]' . "\n" . '</span>', $summary);
+    }
+
+    /**
+     * @covers ::quiz_question_tostring
+     */
+    public function test_quiz_question_tostring_does_not_filter() {
+        $question = new \stdClass();
+        $question->qtype = 'multichoice';
+        $question->name = 'The question name';
+        $question->questiontext = '<p>No emoticons here :-)</p>';
+        $question->questiontextformat = FORMAT_HTML;
+
+        $summary = quiz_question_tostring($question);
+        $this->assertEquals('<span class="questionname">The question name</span> ' .
+                '<span class="questiontext">No emoticons here :-)' . "\n</span>", $summary);
     }
 
     /**

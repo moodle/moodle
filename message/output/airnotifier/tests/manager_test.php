@@ -46,7 +46,6 @@ class manager_test extends \advanced_testcase {
         $this->assertEquals(\core\check\result::ERROR, $checks[3]->get_status());    // Airnotifier NOT configured, missing key.
         $this->assertEquals(\core\check\result::OK, $checks[4]->get_status());   // Airnotifier URL available.
         $this->assertEquals(\core\check\result::ERROR, $checks[5]->get_status());    // Missing access key.
-        $this->assertEquals(\core\check\result::OK, $checks[6]->get_status());  // Enough default mobile notifications.
         $this->assertEquals(\core\check\result::ERROR, $checks[7]->get_status());  // No registered devices yet.
     }
 
@@ -70,7 +69,6 @@ class manager_test extends \advanced_testcase {
         $this->assertEquals(\core\check\result::OK, $checks[3]->get_status());    // Airnotifier configured.
         $this->assertEquals(\core\check\result::OK, $checks[4]->get_status());   // Airnotifier URL available.
         // The original function fourth check (access key valid in the remote Airnotifier server) is not mockable.
-        $this->assertEquals(\core\check\result::OK, $checks[5]->get_status());  // Enough default mobile notifications.
         $this->assertEquals(\core\check\result::ERROR, $checks[6]->get_status());  // No registered devices yet.
     }
 
@@ -98,7 +96,6 @@ class manager_test extends \advanced_testcase {
         $this->assertEquals(\core\check\result::ERROR, $checks[4]->get_status());   // Airnotifier URL available.
         $this->assertEquals(\core\check\result::OK, $checks[5]->get_status());   // Invalid setting (empty space).
         // The original function fifth check (access key valid in the remote Airnotifier server) is not mockable.
-        $this->assertEquals(\core\check\result::OK, $checks[6]->get_status());  // Enough default mobile notifications.
         $this->assertEquals(\core\check\result::ERROR, $checks[7]->get_status());  // No registered devices yet.
     }
 

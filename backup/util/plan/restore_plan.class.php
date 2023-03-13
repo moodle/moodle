@@ -201,9 +201,16 @@ class restore_plan extends base_plan implements loggable {
      */
     public function execute_after_restore() {
         // Simply iterate over each task in the plan and delegate to them the execution
+        $progress = $this->get_progress();
+        $progress->start_progress($this->get_name() .
+                ': executing execute_after_restore for all tasks', count($this->tasks));
+
+        /** @var base_task $task */
         foreach ($this->tasks as $task) {
             $task->execute_after_restore();
+            $progress->increment_progress();
         }
+        $progress->end_progress();
     }
 }
 

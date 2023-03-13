@@ -430,7 +430,10 @@ class memberships extends \mod_lti\local\ltiservice\service_base {
                                             'source.value' => format_string($user->lastname)],
                 'Person.email.primary' => ['type' => 'email',
                                             'member.field' => 'email',
-                                            'source.value' => format_string($user->email)]
+                                            'source.value' => format_string($user->email)],
+                'User.username'        => ['type' => 'name',
+                                           'member.field' => 'ext_user_username',
+                                           'source.value' => format_string($user->username)],
             ];
 
             if (!is_null($lti)) {
@@ -551,4 +554,26 @@ class memberships extends \mod_lti\local\ltiservice\service_base {
         return $launchparameters;
     }
 
+    /**
+     * Return an array of key/claim mapping allowing LTI 1.1 custom parameters
+     * to be transformed to LTI 1.3 claims.
+     *
+     * @return array Key/value pairs of params to claim mapping.
+     */
+    public function get_jwt_claim_mappings(): array {
+        return [
+            'custom_context_memberships_v2_url' => [
+                'suffix' => 'nrps',
+                'group' => 'namesroleservice',
+                'claim' => 'context_memberships_url',
+                'isarray' => false
+            ],
+            'custom_context_memberships_versions' => [
+                'suffix' => 'nrps',
+                'group' => 'namesroleservice',
+                'claim' => 'service_versions',
+                'isarray' => true
+            ]
+        ];
+    }
 }

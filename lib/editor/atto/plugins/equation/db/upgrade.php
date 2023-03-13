@@ -48,5 +48,8 @@ function xmldb_atto_equation_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022110700, 'atto', 'equation');
     }
 
+    // Automatically generated Moodle v4.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

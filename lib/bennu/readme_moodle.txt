@@ -10,7 +10,7 @@ Mozilla Sunbird.
 Information
 -----------
 
-* Bennu version: based on upstream 0.1 from 2005, heavily customized since then
+* Bennu version: based on upstream 0.2, heavily customized since then
 * Licence: GNU LGPL 2.1
 * WWW: http://bennu.sourceforge.net/
 

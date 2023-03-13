@@ -44,3 +44,18 @@ Feature: Add forum activities and discussions
     And I should see "empty.txt"
     And I follow "Edit"
     And the field "Attachment" matches value "empty.txt"
+
+  @javascript
+  Scenario: Test forum settings validation
+    Given the following "courses" exist:
+      | fullname | shortname | category |
+      | Course 1 | C1        | 0        |
+    And I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
+    And I add a "Forum" to section "0" and I fill the form with:
+      | Forum name | Test forum |
+      | Forum type | single     |
+      | Group mode | 1          |
+    When I press "Save and display"
+    Then I should see "Separate groups can't be used with a single simple discussion."
+    And I should see "A single simple discussion can't be used with separate groups."

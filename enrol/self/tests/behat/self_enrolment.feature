@@ -25,7 +25,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
       | Custom instance name | Test student enrolment |
     And I log out
     When I am on "Course 1" course homepage
-    And I press "Log in as a guest"
+    And I press "Access as a guest"
     Then I should see "Guests cannot access this course. Please log in."
     And I press "Continue"
     And I should see "Log in"
@@ -140,3 +140,19 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     And I navigate to "Unenrol me from C1" in current page administration
     And I click on "Continue" "button" in the "Confirm" "dialogue"
     Then I should see "You are unenrolled from the course \"Course 1\""
+
+  @javascript
+  Scenario: Self-enrolment enabled with simultaneous guest access
+    Given I log in as "teacher1"
+    And I am on the "Course 1" "enrolment methods" page
+    And I click on "Enable" "link" in the "Self enrolment (Student)" "table_row"
+    And I click on "Edit" "link" in the "Guest access" "table_row"
+    And I set the following fields to these values:
+      | Allow guest access | Yes |
+    And I press "Save changes"
+    And I log out
+    And I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I navigate to "Enrol me in this course" in current page administration
+    And I click on "Enrol me" "button"
+    Then I should see "Topic 1"

@@ -238,7 +238,7 @@ class filter_algebra extends moodle_text_filter {
                   $DB->insert_record("cache_filters", $texcache, false);
                   $text = str_replace( $matches[0][$i], filter_algebra_image($filename, $texexp, '', '', $align), $text);
                } else {
-                  $text = str_replace( $matches[0][$i],"<b>Undetermined error:</b> ",$text);
+                  $text = str_replace( $matches[0][$i],"<b>Undetermined error:</b> " . $matches[0][$i], $text);
                }
             } else {
                $text = str_replace( $matches[0][$i], filter_algebra_image($filename, $texcache->rawtext), $text);

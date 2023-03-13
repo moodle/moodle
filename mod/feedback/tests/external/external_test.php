@@ -29,6 +29,7 @@ namespace mod_feedback\external;
 use externallib_advanced_testcase;
 use feedback_item_multichoice;
 use mod_feedback_external;
+use moodle_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -45,8 +46,20 @@ require_once($CFG->dirroot . '/mod/feedback/lib.php');
  * @copyright  2017 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.3
+ * @covers     \mod_feedback_external
  */
 class external_test extends externallib_advanced_testcase {
+
+    // TODO These should be removed.
+    // Testcase classes should not have any properties or store state.
+    protected $course;
+    protected $feedback;
+    protected $context;
+    protected $cm;
+    protected $student;
+    protected $teacher;
+    protected $studentrole;
+    protected $teacherrole;
 
     /**
      * Set up for every test
@@ -119,12 +132,14 @@ class external_test extends externallib_advanced_testcase {
         // Execute real Moodle enrolment as we'll call unenrol() method on the instance later.
         $enrol = enrol_get_plugin('manual');
         $enrolinstances = enrol_get_instances($course2->id, true);
+        $instance2 = (object) [];
         foreach ($enrolinstances as $courseenrolinstance) {
             if ($courseenrolinstance->enrol == "manual") {
                 $instance2 = $courseenrolinstance;
                 break;
             }
         }
+
         $enrol->enrol_user($instance2, $this->student->id, $this->studentrole->id);
 
         self::setUser($this->student);
@@ -270,7 +285,7 @@ class external_test extends externallib_advanced_testcase {
      */
     public function test_view_feedback_invalid_id() {
         // Test invalid instance id.
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         mod_feedback_external::view_feedback(0);
     }
     /**
@@ -279,7 +294,7 @@ class external_test extends externallib_advanced_testcase {
     public function test_view_feedback_not_enrolled_user() {
         $usernotenrolled = self::getDataGenerator()->create_user();
         $this->setUser($usernotenrolled);
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         mod_feedback_external::view_feedback(0);
     }
     /**
@@ -290,7 +305,7 @@ class external_test extends externallib_advanced_testcase {
         // We need a explicit prohibit since this capability is allowed for students by default.
         assign_capability('mod/feedback:view', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
         accesslib_clear_all_caches_for_unit_testing();
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         mod_feedback_external::view_feedback(0);
     }
     /**
@@ -375,6 +390,130 @@ class external_test extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_items, to confirm validation is done too.
+     *
+     * @dataProvider items_provider
+     * @param string $role Whether the current user should be a student or a teacher.
+     * @param array $info Settings to create the feedback.
+     * @param string|null $warning The warning message to display or null if warnings result is empty.
+     */
+    public function test_get_items_validation(string $role, array $info, ?string $warning): void {
+        global $DB;
+
+        // Test user with full capabilities.
+        if ($role === 'teacher') {
+            $this->setUser($this->teacher);
+        } else {
+            $this->setUser($this->student);
+        }
+
+        // Create the feedback.
+        $data = ['course' => $this->course->id];
+        if (array_key_exists('closed', $info) && $info['closed']) {
+            $data['timeopen'] = time() + DAYSECS;
+        }
+        $feedback = $this->getDataGenerator()->create_module('feedback', $data);
+
+        $empty = true;
+        if (!array_key_exists('empty', $info) || !$info['empty']) {
+            $empty = false;
+            /** @var \mod_feedback_generator $feedbackgenerator */
+            $feedbackgenerator = $this->getDataGenerator()->get_plugin_generator('mod_feedback');
+            // Add,at least, one item to the feedback.
+            $feedbackgenerator->create_item_label($feedback);
+        }
+
+        if (array_key_exists('complete', $info) && !$info['complete']) {
+            $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+            $coursecontext = \context_course::instance($this->course->id);
+            assign_capability('mod/feedback:complete', CAP_PROHIBIT, $studentrole->id, $coursecontext->id);
+            // Empty all the caches that may be affected by this change.
+            accesslib_clear_all_caches_for_unit_testing();
+            \course_modinfo::clear_instance_cache();
+        }
+
+        $result = mod_feedback_external::get_items($feedback->id);
+        $result = \external_api::clean_returnvalue(mod_feedback_external::get_items_returns(), $result);
+        if ($warning) {
+            $this->assertEmpty($result['items']);
+            $this->assertCount(1, $result['warnings']);
+            $resultwarning = reset($result['warnings']);
+            if ($warning == 'required_capability_exception') {
+                $this->assertStringContainsString('error/nopermission', $resultwarning['message']);
+            } else {
+                $this->assertEquals($warning, $resultwarning['message']);
+            }
+        } else {
+            if ($empty) {
+                $this->assertEmpty($result['items']);
+            } else {
+                $this->assertCount(1, $result['items']);
+            }
+            $this->assertEmpty($result['warnings']);
+        }
+    }
+
+    /**
+     * Data provider for test_get_items_validation() and test_get_page_items_validation().
+     *
+     * @return array
+     */
+    public function items_provider(): array {
+        return [
+            'Valid feedback (as student)' => [
+                'role' => 'student',
+                'info' => [],
+                'warning' => null,
+            ],
+            'Closed feedback (as student)' => [
+                'role' => 'student',
+                'info' => ['closed' => true],
+                'warning' => get_string('feedback_is_not_open', 'feedback'),
+            ],
+            'Empty feedback (as student)' => [
+                'role' => 'student',
+                'info' => ['empty' => true],
+                'warning' => get_string('no_items_available_yet', 'feedback'),
+            ],
+            'Closed feedback (as student)' => [
+                'role' => 'student',
+                'info' => ['closed' => true],
+                'warning' => get_string('feedback_is_not_open', 'feedback'),
+            ],
+            'Cannot complete feedback (as student)' => [
+                'role' => 'student',
+                'info' => ['complete' => false],
+                'warning' => 'required_capability_exception',
+            ],
+            'Valid feedback (as teacher)' => [
+                'role' => 'teacher',
+                'info' => [],
+                'warning' => null,
+            ],
+            'Closed feedback (as teacher)' => [
+                'role' => 'teacher',
+                'info' => ['closed' => true],
+                'warning' => null,
+            ],
+            'Empty feedback (as teacher)' => [
+                'role' => 'teacher',
+                'info' => ['empty' => true],
+                'warning' => null,
+            ],
+            'Closed feedback (as teacher)' => [
+                'role' => 'teacher',
+                'info' => ['closed' => true],
+                'warning' => null,
+            ],
+            'Cannot complete feedback (as teacher)' => [
+                'role' => 'teacher',
+                'info' => ['complete' => false],
+                'warning' => null,
+            ],
+        ];
+    }
+
+    /**
      * Test launch_feedback.
      */
     public function test_launch_feedback() {
@@ -452,6 +591,70 @@ class external_test extends externallib_advanced_testcase {
         $this->assertCount(5, $result['items']);    // The second page has 5 items (page break doesn't count).
         $this->assertFalse($result['hasnextpage']);
         $this->assertTrue($result['hasprevpage']);
+    }
+
+    /**
+     * Test get_page_items, to confirm validation is done too.
+     *
+     * @dataProvider items_provider
+     * @param string $role Whether the current user should be a student or a teacher.
+     * @param array $info Settings to create the feedback.
+     * @param string|null $warning The warning message to display or null if warnings result is empty.
+     */
+    public function test_get_page_items_validation(string $role, array $info, ?string $warning): void {
+        global $DB;
+
+        // Test user with full capabilities.
+        if ($role === 'teacher') {
+            $this->setUser($this->teacher);
+        } else {
+            $this->setUser($this->student);
+        }
+
+        // Create the feedback.
+        $data = ['course' => $this->course->id];
+        if (array_key_exists('closed', $info) && $info['closed']) {
+            $data['timeopen'] = time() + DAYSECS;
+        }
+        $feedback = $this->getDataGenerator()->create_module('feedback', $data);
+
+        $empty = true;
+        if (!array_key_exists('empty', $info) || !$info['empty']) {
+            $empty = false;
+            /** @var \mod_feedback_generator $feedbackgenerator */
+            $feedbackgenerator = $this->getDataGenerator()->get_plugin_generator('mod_feedback');
+            // Add,at least, one item to the feedback.
+            $feedbackgenerator->create_item_label($feedback);
+        }
+
+        if (array_key_exists('complete', $info) && !$info['complete']) {
+            $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+            $coursecontext = \context_course::instance($this->course->id);
+            assign_capability('mod/feedback:complete', CAP_PROHIBIT, $studentrole->id, $coursecontext->id);
+            // Empty all the caches that may be affected by this change.
+            accesslib_clear_all_caches_for_unit_testing();
+            \course_modinfo::clear_instance_cache();
+        }
+
+        $result = mod_feedback_external::get_page_items($feedback->id, 0);
+        $result = \external_api::clean_returnvalue(mod_feedback_external::get_items_returns(), $result);
+        if ($warning) {
+            $this->assertEmpty($result['items']);
+            $this->assertCount(1, $result['warnings']);
+            $resultwarning = reset($result['warnings']);
+            if ($warning == 'required_capability_exception') {
+                $this->assertStringContainsString('error/nopermission', $resultwarning['message']);
+            } else {
+                $this->assertEquals($warning, $resultwarning['message']);
+            }
+        } else {
+            if ($empty) {
+                $this->assertEmpty($result['items']);
+            } else {
+                $this->assertCount(1, $result['items']);
+            }
+            $this->assertEmpty($result['warnings']);
+        }
     }
 
     /**
@@ -773,7 +976,7 @@ class external_test extends externallib_advanced_testcase {
      */
     public function test_get_non_respondents_no_permissions() {
         $this->setUser($this->student);
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         mod_feedback_external::get_non_respondents($this->feedback->id);
     }
 
@@ -782,7 +985,7 @@ class external_test extends externallib_advanced_testcase {
      */
     public function test_get_non_respondents_from_anonymous_feedback() {
         $this->setUser($this->student);
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         $this->expectExceptionMessage(get_string('anonymous', 'feedback'));
         mod_feedback_external::get_non_respondents($this->feedback->id);
     }
@@ -965,7 +1168,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->student);
 
         $this->expectExceptionMessage(get_string('anonymous', 'feedback'));
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         mod_feedback_external::get_last_completed($this->feedback->id);
     }
 
@@ -992,7 +1195,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->student);
 
         $this->expectExceptionMessage(get_string('anonymous', 'feedback'));
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         mod_feedback_external::get_last_completed($this->feedback->id);
     }
 
@@ -1035,7 +1238,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->student);
 
         $this->expectExceptionMessage(get_string('not_completed_yet', 'feedback'));
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         mod_feedback_external::get_last_completed($this->feedback->id);
     }
 
@@ -1061,7 +1264,7 @@ class external_test extends externallib_advanced_testcase {
         // Access the site feedback via course where I'm not enrolled.
         $othercourse = $this->getDataGenerator()->create_course();
 
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         mod_feedback_external::get_feedback_access_information($sitefeedback->id, $othercourse->id);
     }
 
@@ -1085,7 +1288,7 @@ class external_test extends externallib_advanced_testcase {
         $othercourse = $this->getDataGenerator()->create_course();
         $this->getDataGenerator()->enrol_user($this->student->id, $othercourse->id, $this->studentrole->id, 'manual');
 
-        $this->expectException('\moodle_exception');
+        $this->expectException(moodle_exception::class);
         $this->expectExceptionMessage(get_string('cannotaccess', 'mod_feedback'));
         mod_feedback_external::get_feedback_access_information($sitefeedback->id, $othercourse->id);
     }

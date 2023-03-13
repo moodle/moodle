@@ -126,7 +126,12 @@ function lti_get_jwt_message_type_mapping() {
  * @return array
  */
 function lti_get_jwt_claim_mapping() {
-    return array(
+    $mapping = [];
+    $services = lti_get_services();
+    foreach ($services as $service) {
+        $mapping = array_merge($mapping, $service->get_jwt_claim_mappings());
+    }
+    $mapping = array_merge($mapping, [
         'accept_copy_advice' => [
             'suffix' => 'dl',
             'group' => 'deep_linking_settings',
@@ -443,74 +448,9 @@ function lti_get_jwt_claim_mapping() {
             'group' => 'tool_platform',
             'claim' => 'url',
             'isarray' => false
-        ],
-        'custom_context_memberships_v2_url' => [
-            'suffix' => 'nrps',
-            'group' => 'namesroleservice',
-            'claim' => 'context_memberships_url',
-            'isarray' => false
-        ],
-        'custom_context_memberships_versions' => [
-            'suffix' => 'nrps',
-            'group' => 'namesroleservice',
-            'claim' => 'service_versions',
-            'isarray' => true
-        ],
-        'custom_gradebookservices_scope' => [
-            'suffix' => 'ags',
-            'group' => 'endpoint',
-            'claim' => 'scope',
-            'isarray' => true
-        ],
-        'custom_lineitems_url' => [
-            'suffix' => 'ags',
-            'group' => 'endpoint',
-            'claim' => 'lineitems',
-            'isarray' => false
-        ],
-        'custom_lineitem_url' => [
-            'suffix' => 'ags',
-            'group' => 'endpoint',
-            'claim' => 'lineitem',
-            'isarray' => false
-        ],
-        'custom_results_url' => [
-            'suffix' => 'ags',
-            'group' => 'endpoint',
-            'claim' => 'results',
-            'isarray' => false
-        ],
-        'custom_result_url' => [
-            'suffix' => 'ags',
-            'group' => 'endpoint',
-            'claim' => 'result',
-            'isarray' => false
-        ],
-        'custom_scores_url' => [
-            'suffix' => 'ags',
-            'group' => 'endpoint',
-            'claim' => 'scores',
-            'isarray' => false
-        ],
-        'custom_score_url' => [
-            'suffix' => 'ags',
-            'group' => 'endpoint',
-            'claim' => 'score',
-            'isarray' => false
-        ],
-        'lis_outcome_service_url' => [
-            'suffix' => 'bo',
-            'group' => 'basicoutcome',
-            'claim' => 'lis_outcome_service_url',
-            'isarray' => false
-        ],
-        'lis_result_sourcedid' => [
-            'suffix' => 'bo',
-            'group' => 'basicoutcome',
-            'claim' => 'lis_result_sourcedid',
-            'isarray' => false
-        ],
-    );
+        ]
+    ]);
+    return $mapping;
 }
 
 /**
@@ -1388,8 +1328,12 @@ function lti_verify_with_keyset($jwtparam, $keyseturl, $clientid) {
         $jwt = JWT::decode($jwtparam, $keys);
     } catch (Exception $e) {
         // Something went wrong, so attempt to update cached keyset and then try again.
-        $keyset = file_get_contents($keyseturl);
+        $keyset = download_file_content($keyseturl);
         $keysetarr = json_decode($keyset, true);
+
+        // Fix for firebase/php-jwt's dependency on the optional 'alg' property in the JWK.
+        $keysetarr = jwks_helper::fix_jwks_alg($keysetarr, $jwtparam);
+
         // JWK::parseKeySet uses RS256 algorithm by default.
         $keys = JWK::parseKeySet($keysetarr);
         $jwt = JWT::decode($jwtparam, $keys);
@@ -2437,7 +2381,7 @@ function lti_get_configured_types($courseid, $sectionreturn = 0) {
         $type->name     = 'lti_type_' . $ltitype->id;
         // Clean the name. We don't want tags here.
         $type->title    = clean_param($ltitype->name, PARAM_NOTAGS);
-        $trimmeddescription = trim($ltitype->description);
+        $trimmeddescription = trim($ltitype->description ?? '');
         if ($trimmeddescription != '') {
             // Clean the description. We don't want tags here.
             $type->help     = clean_param($trimmeddescription, PARAM_NOTAGS);
@@ -2454,7 +2398,7 @@ function lti_get_configured_types($courseid, $sectionreturn = 0) {
 function lti_get_domain_from_url($url) {
     $matches = array();
 
-    if (preg_match(LTI_URL_DOMAIN_REGEX, $url, $matches)) {
+    if (preg_match(LTI_URL_DOMAIN_REGEX, $url ?? '', $matches)) {
         return $matches[1];
     }
 }
@@ -3557,8 +3501,8 @@ function lti_post_launch_html($newparms, $endpoint, $debug=false) {
 
     // Contruct html for the launch parameters.
     foreach ($newparms as $key => $value) {
-        $key = htmlspecialchars($key);
-        $value = htmlspecialchars($value);
+        $key = htmlspecialchars($key, ENT_COMPAT);
+        $value = htmlspecialchars($value, ENT_COMPAT);
         if ( $key == "ext_submit" ) {
             $r .= "<input type=\"submit\"";
         } else {
@@ -3590,8 +3534,8 @@ function lti_post_launch_html($newparms, $endpoint, $debug=false) {
         $r .= $endpoint . "<br/>\n&nbsp;<br/>\n";
         $r .= "<b>".get_string("basiclti_parameters", "lti")."</b><br/>\n";
         foreach ($newparms as $key => $value) {
-            $key = htmlspecialchars($key);
-            $value = htmlspecialchars($value);
+            $key = htmlspecialchars($key, ENT_COMPAT);
+            $value = htmlspecialchars($value, ENT_COMPAT);
             $r .= "$key = $value<br/>\n";
         }
         $r .= "&nbsp;<br/>\n";
@@ -3634,8 +3578,8 @@ function lti_initiate_login($courseid, $cmid, $instance, $config, $messagetype =
         "encType=\"application/x-www-form-urlencoded\">\n";
 
     foreach ($params as $key => $value) {
-        $key = htmlspecialchars($key);
-        $value = htmlspecialchars($value);
+        $key = htmlspecialchars($key, ENT_COMPAT);
+        $value = htmlspecialchars($value, ENT_COMPAT);
         $r .= "  <input type=\"hidden\" name=\"{$key}\" value=\"{$value}\"/>\n";
     }
     $r .= "</form>\n";

@@ -92,13 +92,13 @@ Feature: Users can view and manage data presets
     And I follow "Templates"
     When I click on "Actions" "button"
     And I choose "Publish preset on this site" in the open action menu
-    Then I should see "Name" in the "Save all fields and templates as preset" "dialogue"
-    And I should see "Description" in the "Save all fields and templates as preset" "dialogue"
+    Then I should see "Name" in the "Save all fields and templates and publish as preset on this site" "dialogue"
+    And I should see "Description" in the "Save all fields and templates and publish as preset on this site" "dialogue"
     And "Replace existing preset with this name and overwrite its contents" "checkbox" should not be visible
     # Teacher should be able to save preset.
     And I set the field "Name" to "New saved preset"
     And I set the field "Description" to "My funny description goes here."
-    And I click on "Save" "button" in the "Save all fields and templates as preset" "dialogue"
+    And I click on "Save" "button" in the "Save all fields and templates and publish as preset on this site" "dialogue"
     And I should see "Preset saved."
     And I follow "Presets"
     And I should see "New saved preset"
@@ -108,20 +108,20 @@ Feature: Users can view and manage data presets
     And I click on "Actions" "button"
     And I choose "Publish preset on this site" in the open action menu
     And I set the field "Name" to "Saved preset 1"
-    And I click on "Save" "button" in the "Save all fields and templates as preset" "dialogue"
+    And I click on "Save" "button" in the "Save all fields and templates and publish as preset on this site" "dialogue"
     And I should see "A preset with this name already exists. Choose a different name."
     And "Replace existing preset with this name and overwrite its contents" "checkbox" should not be visible
     # Teacher can overwrite existing presets created by them, but they are not overwritten if the checkbox is not marked.
     And I set the field "Name" to "New saved preset"
     And I set the field "Description" to "This is a new description that shouldn't be saved."
-    And I click on "Save" "button" in the "Save all fields and templates as preset" "dialogue"
+    And I click on "Save" "button" in the "Save all fields and templates and publish as preset on this site" "dialogue"
     And I should see "A preset with this name already exists."
     And "Replace existing preset with this name and overwrite its contents" "checkbox" should be visible
     # Confirm the checkbox is still displayed and nothing happens if it's not checked and no change is done in the name.
-    And I click on "Save" "button" in the "Save all fields and templates as preset" "dialogue"
+    And I click on "Save" "button" in the "Save all fields and templates and publish as preset on this site" "dialogue"
     And I should see "A preset with this name already exists."
     And "Replace existing preset with this name and overwrite its contents" "checkbox" should be visible
-    And I click on "Cancel" "button" in the "Save all fields and templates as preset" "dialogue"
+    And I click on "Cancel" "button" in the "Save all fields and templates and publish as preset on this site" "dialogue"
     And I follow "Presets"
     And I should see "New saved preset"
     And I should see "My funny description goes here." in the "New saved preset" "table_row"
@@ -132,11 +132,11 @@ Feature: Users can view and manage data presets
     And I choose "Publish preset on this site" in the open action menu
     And I set the field "Name" to "New saved preset"
     And I set the field "Description" to "This is a new description that will be overwritten."
-    And I click on "Save" "button" in the "Save all fields and templates as preset" "dialogue"
+    And I click on "Save" "button" in the "Save all fields and templates and publish as preset on this site" "dialogue"
     And I should see "A preset with this name already exists."
     And "Replace existing preset with this name and overwrite its contents" "checkbox" should be visible
-    And I click on "Replace existing preset with this name and overwrite its contents" "checkbox" in the "Save all fields and templates as preset" "dialogue"
-    And I click on "Save" "button" in the "Save all fields and templates as preset" "dialogue"
+    And I click on "Replace existing preset with this name and overwrite its contents" "checkbox" in the "Save all fields and templates and publish as preset on this site" "dialogue"
+    And I click on "Save" "button" in the "Save all fields and templates and publish as preset on this site" "dialogue"
     And I should see "Preset saved."
     And I follow "Presets"
     And I should see "New saved preset"
@@ -282,7 +282,7 @@ Feature: Users can view and manage data presets
     And I choose "Publish preset on this site" in the open action menu
     And I set the field "Name" to "New saved preset"
     And I set the field "Description" to "My funny description goes here."
-    And I click on "Save" "button" in the "Save all fields and templates as preset" "dialogue"
+    And I click on "Save" "button" in the "Save all fields and templates and publish as preset on this site" "dialogue"
     And I should see "Preset saved"
     When I click on "Preview preset" "link"
     Then I should see "Preview"

@@ -941,7 +941,7 @@ class theme_config {
 
             $url = new moodle_url("/theme/styles.php");
             if (!empty($CFG->slasharguments)) {
-                $url->set_slashargument("{$this->name}/{$rev}/{$type}", 'noparam', true);
+                $url->set_slashargument("/{$this->name}/{$rev}/{$type}", 'noparam', true);
             } else {
                 $url->params([
                     'theme' => $this->name,
@@ -1854,7 +1854,7 @@ class theme_config {
         // Now resolve all theme settings or do any other postprocessing.
         // This needs to be done before calling core parser, since the parser strips [[settings]] tags.
         $csspostprocess = $this->csspostprocess;
-        if (function_exists($csspostprocess)) {
+        if ($csspostprocess && function_exists($csspostprocess)) {
             $css = $csspostprocess($css, $this);
         }
 

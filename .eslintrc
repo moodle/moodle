@@ -87,6 +87,7 @@
     'no-octal-escape': 'error',
     'no-proto': 'error',
     'no-redeclare': 'warn',
+    'no-restricted-globals': ['error', { 'name': 'Notification' }],
     'no-return-assign': 'error',
     'no-script-url': 'error',
     'no-self-assign': 'error',

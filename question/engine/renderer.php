@@ -80,6 +80,12 @@ class core_question_renderer extends plugin_renderer_base {
     public function question(question_attempt $qa, qbehaviour_renderer $behaviouroutput,
             qtype_renderer $qtoutput, question_display_options $options, $number) {
 
+        // If not already set, record the questionidentifier.
+        $options = clone($options);
+        if (!$options->has_question_identifier()) {
+            $options->questionidentifier = $this->question_number_text($number);
+        }
+
         $output = '';
         $output .= html_writer::start_tag('div', array(
             'id' => $qa->get_outer_question_div_unique_id(),
@@ -149,17 +155,36 @@ class core_question_renderer extends plugin_renderer_base {
      * @return HTML fragment.
      */
     protected function number($number) {
-        if (trim($number) === '') {
+        if (trim($number ?? '') === '') {
             return '';
         }
-        $numbertext = '';
         if (trim($number) === 'i') {
             $numbertext = get_string('information', 'question');
         } else {
             $numbertext = get_string('questionx', 'question',
-                    html_writer::tag('span', $number, array('class' => 'qno')));
+                    html_writer::tag('span', s($number), array('class' => 'qno')));
         }
         return html_writer::tag('h3', $numbertext, array('class' => 'no'));
+    }
+
+    /**
+     * Get the question number as a string.
+     *
+     * @param string|null $number e.g. '123' or 'i'. null or '' means do not display anything number-related.
+     * @return string e.g. 'Question 123' or 'Information' or ''.
+     */
+    protected function question_number_text(?string $number): string {
+        $number = $number ?? '';
+        // Trim the question number of whitespace, including &nbsp;.
+        $trimmed = trim(html_entity_decode($number), " \n\r\t\v\x00\xC2\xA0");
+        if ($trimmed === '') {
+            return '';
+        }
+        if (trim($number) === 'i') {
+            return get_string('information', 'question');
+        } else {
+            return get_string('questionx', 'question', s($number));
+        }
     }
 
     /**

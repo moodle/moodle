@@ -18,7 +18,7 @@ Feature: Course index depending on role
     And the following "activities" exist:
       | activity | name                | intro                       | course | idnumber | section |
       | assign   | Activity sample 1   | Test assignment description | C1     | sample1  | 1       |
-      | book     | Activity sample 2   | Test book description       | C1     | sample2  | 2       |
+      | book     | Activity sample 2   |                             | C1     | sample2  | 2       |
       | choice   | Activity sample 3   | Test choice description     | C1     | sample3  | 3       |
     And the following "course enrolments" exist:
       | user     | course | role           |
@@ -129,10 +129,9 @@ Feature: Course index depending on role
   @javascript
   Scenario: Course index toggling
     Given the following "activities" exist:
-      | activity | name                         | intro                       | course | idnumber | section |
-      | book     | Second activity in section 1 | Test book description       | C1     | sample4  | 1       |
-    And I log in as "teacher1"
-    When I am on "Course 1" course homepage
+      | activity | name                         | course | idnumber | section |
+      | book     | Second activity in section 1 | C1     | sample4  | 1       |
+    When I am on the "Course 1" course page logged in as teacher1
     # Sections should be opened by default.
     Then I should see "Topic 1" in the "courseindex-content" "region"
     And I should see "Activity sample 1" in the "courseindex-content" "region"
@@ -298,3 +297,14 @@ Feature: Course index depending on role
       | large  | be        | Close   | not be   | Open    | be       |
       | tablet | not be    | Open    | not be   | Open    | not be   |
       | mobile | not be    | Open    | not be   | Open    | not be   |
+
+  @javascript
+  Scenario: Course index is refreshed when we change role.
+    When I am on the "C1" "Course" page logged in as "teacher1"
+    And I turn editing mode on
+    And I hide section "1"
+    And I turn editing mode off
+    And I should see "Topic 1" in the "courseindex-content" "region"
+    And I follow "Switch role to..." in the user menu
+    And I press "Student"
+    Then I should not see "Topic 1" in the "courseindex-content" "region"

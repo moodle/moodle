@@ -5608,7 +5608,7 @@ class api_test extends messagelib_test {
     /**
      * Data provider for test_get_conversation_counts().
      */
-    public function test_get_conversation_counts_test_cases() {
+    public function get_conversation_counts_test_cases() {
         $typeindividual = api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL;
         $typegroup = api::MESSAGE_CONVERSATION_TYPE_GROUP;
         $typeself = api::MESSAGE_CONVERSATION_TYPE_SELF;
@@ -5971,7 +5971,7 @@ class api_test extends messagelib_test {
     /**
      * Test the get_conversation_counts() function.
      *
-     * @dataProvider test_get_conversation_counts_test_cases()
+     * @dataProvider get_conversation_counts_test_cases
      * @param array $conversationconfigs Conversations to create
      * @param int $deletemessagesuser The user who is deleting the messages
      * @param array $deletemessages The list of messages to delete (by index)
@@ -6094,7 +6094,7 @@ class api_test extends messagelib_test {
     /**
      * Test the get_unread_conversation_counts() function.
      *
-     * @dataProvider test_get_conversation_counts_test_cases()
+     * @dataProvider get_conversation_counts_test_cases
      * @param array $conversationconfigs Conversations to create
      * @param int $deletemessagesuser The user who is deleting the messages
      * @param array $deletemessages The list of messages to delete (by index)

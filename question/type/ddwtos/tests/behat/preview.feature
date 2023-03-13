@@ -25,9 +25,15 @@ Feature: Preview a drag-drop into text question
   @javascript @_bug_phantomjs
   Scenario: Preview a question using the mouse.
     When I am on the "Drag to text" "core_question > preview" page logged in as teacher
+    And I should see "quick" in the home area of drag and drop into text question
+    And I should see "slow" in the home area of drag and drop into text question
     And I drag "quick" to space "1" in the drag and drop into text question
     And I drag "fox" to space "2" in the drag and drop into text question
     And I drag "assiduous" to space "3" in the drag and drop into text question
+    And I drag "slow" to placed drag "1" in the drag and drop into text question
+    And I should see "quick" in the home area of drag and drop into text question
+    And I drag "quick" to placed drag "1" in the drag and drop into text question
+    And I should see "slow" in the home area of drag and drop into text question
     And I press "Submit and finish"
     Then the state of "The" question is shown as "Partially correct"
     And I should see "Mark 0.67 out of 1.00"

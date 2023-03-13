@@ -2362,18 +2362,6 @@ function userdate_htmltime($date, $format = '', $timezone = 99, $fixday = true, 
  * @since Moodle 2.3.3
  */
 function date_format_string($date, $format, $tz = 99) {
-    global $CFG;
-
-    $localewincharset = null;
-    // Get the calendar type user is using.
-    if ($CFG->ostype == 'WINDOWS') {
-        $calendartype = \core_calendar\type_factory::get_calendar_instance();
-        $localewincharset = $calendartype->locale_win_charset();
-    }
-
-    if ($localewincharset) {
-        $format = core_text::convert($format, 'utf-8', $localewincharset);
-    }
 
     date_default_timezone_set(core_date::get_user_timezone($tz));
 
@@ -2390,10 +2378,6 @@ function date_format_string($date, $format, $tz = 99) {
 
     $datestring = core_date::strftime($format, $date);
     core_date::set_default_server_timezone();
-
-    if ($localewincharset) {
-        $datestring = core_text::convert($datestring, $localewincharset, 'utf-8');
-    }
 
     return $datestring;
 }
@@ -2899,7 +2883,8 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
 
     // Check that the user has agreed to a site policy if there is one - do not test in case of admins.
     // Do not test if the script explicitly asked for skipping the site policies check.
-    if (!$USER->policyagreed && !is_siteadmin() && !NO_SITEPOLICY_CHECK) {
+    // Or if the user auth type is webservice.
+    if (!$USER->policyagreed && !is_siteadmin() && !NO_SITEPOLICY_CHECK && $USER->auth !== 'webservice') {
         $manager = new \core_privacy\local\sitepolicy\manager();
         if ($policyurl = $manager->get_redirect_url(isguestuser())) {
             if ($preventredirect) {
@@ -6391,18 +6376,19 @@ function can_send_from_real_email_address($from, $user, $unused = null) {
  * @return string
  */
 function generate_email_signoff() {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     $signoff = "\n";
     if (!empty($CFG->supportname)) {
         $signoff .= $CFG->supportname."\n";
     }
-    if (!empty($CFG->supportemail)) {
-        $signoff .= $CFG->supportemail."\n";
+
+    $supportemail = $OUTPUT->supportemail(['class' => 'font-weight-bold']);
+
+    if ($supportemail) {
+        $signoff .= "\n" . $supportemail . "\n";
     }
-    if (!empty($CFG->supportpage)) {
-        $signoff .= $CFG->supportpage."\n";
-    }
+
     return $signoff;
 }
 
@@ -8400,7 +8386,7 @@ function count_words($string) {
                 </                              # Start of close tag.
                 (?!                             # Do not match any of these specific close tag names.
                     a> | b> | del> | em> | i> |
-                    ins> | s> | small> |
+                    ins> | s> | small> | span> |
                     strong> | sub> | sup> | u>
                 )
                 \w+                             # But, apart from those execptions, match any tag name.
@@ -8412,7 +8398,7 @@ function count_words($string) {
     // Now remove HTML tags.
     $string = strip_tags($string);
     // Decode HTML entities.
-    $string = html_entity_decode($string);
+    $string = html_entity_decode($string, ENT_COMPAT);
 
     // Now, the word count is the number of blocks of characters separated
     // by any sort of space. That seems to be the definition used by all other systems.
@@ -8434,7 +8420,7 @@ function count_words($string) {
  */
 function count_letters($string) {
     $string = strip_tags($string); // Tags are out now.
-    $string = html_entity_decode($string);
+    $string = html_entity_decode($string, ENT_COMPAT);
     $string = preg_replace('/[[:space:]]*/', '', $string); // Whitespace are out now.
 
     return core_text::strlen($string);
@@ -9303,6 +9289,25 @@ function mtrace($string, $eol="\n", $sleep=0) {
     if ($sleep) {
         sleep($sleep);
     }
+}
+
+/**
+ * Helper to {@see mtrace()} an exception or throwable, including all relevant information.
+ *
+ * @param Throwable $e the error to ouptput.
+ */
+function mtrace_exception(Throwable $e): void {
+    $info = get_exception_info($e);
+
+    $message = $info->message;
+    if ($info->debuginfo) {
+        $message .= "\n\n" . $info->debuginfo;
+    }
+    if ($info->backtrace) {
+        $message .= "\n\n" . format_backtrace($info->backtrace, true);
+    }
+
+    mtrace($message);
 }
 
 /**

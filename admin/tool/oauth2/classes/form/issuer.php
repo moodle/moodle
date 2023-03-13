@@ -108,7 +108,7 @@ class issuer extends persistent {
         $mform->addHelpButton('clientsecret', 'issuerclientsecret', 'tool_oauth2');
 
         // Use basic authentication.
-        $mform->addElement('checkbox', 'basicauth', get_string('usebasicauth', 'tool_oauth2'));
+        $mform->addElement('advcheckbox', 'basicauth', get_string('usebasicauth', 'tool_oauth2'));
         $mform->addHelpButton('basicauth', 'usebasicauth', 'tool_oauth2');
 
         // Base Url.
@@ -244,7 +244,6 @@ class issuer extends persistent {
      * @return array of additional errors, or overridden errors.
      */
     protected function extra_validation($data, $files, array &$errors) {
-        $errors = [];
         if ($data->showonloginpage != \core\oauth2\issuer::SERVICEONLY) {
             if (!strlen(trim($data->loginscopes))) {
                 $errors['loginscopes'] = get_string('required');

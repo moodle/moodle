@@ -21,6 +21,7 @@
 
     Example context (json):
     {
+        "showcompletion": true,
         "mods": [
             {
                 "name": "Forums",
@@ -39,6 +40,8 @@
     <span class="activity-count">{{name}}: {{count}}</span>
     {{/mods}}
 </div>
-<div class="section-summary-activities pr-2 mdl-right">
-    <span class="activity-count">{{modprogress}}</span>
-</div>
+{{#showcompletion}}
+    <div class="section-summary-activities pr-2 mdl-right">
+        <span class="activity-count">{{modprogress}}</span>
+    </div>
+{{/showcompletion}}

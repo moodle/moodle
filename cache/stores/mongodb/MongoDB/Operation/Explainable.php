@@ -30,7 +30,6 @@ interface Explainable extends Executable
     /**
      * Returns the command document for this operation.
      *
-     * @param Server $server
      * @return array
      */
     public function getCommandDocument(Server $server);

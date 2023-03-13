@@ -55,14 +55,12 @@ class sum_test extends core_reportbuilder_testcase {
         $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
 
         // First column, sorted.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname'])
-            ->set('sortenabled', true)
-            ->update();
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname', 'sortenabled' => 1]);
 
         // This is the column we'll aggregate.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:suspended'])
-            ->set('aggregation', sum::get_class_name())
-            ->update();
+        $generator->create_column([
+            'reportid' => $report->get('id'), 'uniqueidentifier' => 'user:suspended', 'aggregation' => sum::get_class_name()
+        ]);
 
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertEquals([
@@ -92,14 +90,12 @@ class sum_test extends core_reportbuilder_testcase {
         $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
 
         // First column, sorted.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname'])
-            ->set('sortenabled', true)
-            ->update();
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname', 'sortenabled' => 1]);
 
         // This is the column we'll aggregate.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:suspended'])
-            ->set('aggregation', sum::get_class_name())
-            ->update();
+        $generator->create_column(
+            ['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:suspended', 'aggregation' => sum::get_class_name()]
+        );
 
         // Set callback to format the column (hack column definition to ensure callbacks are executed).
         $instance = manager::get_report_from_persistent($report);

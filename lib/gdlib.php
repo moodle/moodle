@@ -216,8 +216,8 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
         $im3 = imagecreate(512, 512);
     }
 
-    $cx = $image->width / 2;
-    $cy = $image->height / 2;
+    $cx = floor($image->width / 2);
+    $cy = floor($image->height / 2);
 
     if ($image->width < $image->height) {
         $half = floor($image->width / 2.0);

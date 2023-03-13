@@ -613,7 +613,7 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-edit .section-heading .instancesectioncontainer h3 {
     display: inline;
-    color: #999;
+    color: #555;
 }
 
 #page-mod-quiz-edit .section-heading .editing_section,
@@ -891,7 +891,8 @@ table.quizreviewsummary td.cell {
 }
 
 #categoryquestions td.modifiername,
-#categoryquestions td.creatorname {
+#categoryquestions td.creatorname,
+#categoryquestions td.questionlastused {
     line-height: 1em;
 }
 

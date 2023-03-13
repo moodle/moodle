@@ -333,6 +333,11 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         $replacement[] = userdate($record->timecreated);
         $replacement[] = userdate($record->timemodified);
 
+        if (empty($this->data->singletemplate)) {
+            // Use default template if the template is not created.
+            $this->data->singletemplate = data_generate_default_template($this->data, 'singletemplate', 0, false, false);
+        }
+
         // actual replacement of the tags
         return array(str_ireplace($patterns, $replacement, $this->data->singletemplate), $files);
     }

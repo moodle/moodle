@@ -22,8 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Tiny Autosave';
-$string['helplinktext'] = 'Moodle Autosave';
+$string['pluginname'] = 'Tiny autosave';
+$string['helplinktext'] = 'Autosave';
 $string['privacy:metadata:database:tiny_autosave:userid'] = 'The user ID of the user who created the autosave session';
 $string['privacy:metadata:database:tiny_autosave:drafttext'] = 'The text content of the autosave session';
 $string['privacy:metadata:database:tiny_autosave:timemodified'] = 'The time that the autosave session was last modified';

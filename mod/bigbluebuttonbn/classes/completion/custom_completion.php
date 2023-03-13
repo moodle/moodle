@@ -229,7 +229,7 @@ class custom_completion extends activity_custom_completion {
      */
     protected static function get_completionattendance_value(stdClass $log): int {
         $summary = json_decode($log->meta);
-        return empty($summary->data->duration) ? 0 : $summary->data->duration / 60;
+        return empty($summary->data->duration) ? 0 : (int)($summary->data->duration / 60);
     }
 
     /**

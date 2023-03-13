@@ -304,7 +304,7 @@ class entry extends \core_search\base_mod {
                 continue;
             }
             $content->priority = $classname::get_priority();
-            $content->addtemplateposition = strpos($template, '[['.$content->fldname.']]');
+            $content->addtemplateposition = strpos($template ?? '', '[['.$content->fldname.']]');
         }
 
         $orderqueue = new \SPLPriorityQueue();

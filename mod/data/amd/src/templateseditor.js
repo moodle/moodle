@@ -30,7 +30,6 @@ import Templates from 'core/templates';
 prefetchStrings('admin', ['confirmation']);
 prefetchStrings('mod_data', [
     'resettemplateconfirmtitle',
-    'resettemplateconfirm',
     'enabletemplateeditorcheck',
     'editorenable'
 ]);
@@ -57,11 +56,11 @@ const selectors = {
  * @param {string} mode The template mode
  */
 const registerEventListeners = (instanceId, mode) => {
-    registerResetButton();
+    registerResetButton(mode);
     registerEditorToggler(instanceId, mode);
 };
 
-const registerResetButton = () => {
+const registerResetButton = (mode) => {
     const editForm = document.querySelector(selectors.editForm);
     const resetButton = document.querySelector(selectors.resetButton);
     const resetTemplate = document.querySelector(selectors.resetTemplate);
@@ -73,9 +72,13 @@ const registerResetButton = () => {
 
     resetButton.addEventListener('click', async(event) => {
         event.preventDefault();
+        const params = {
+            resetallname: "resetallcheck",
+            templatename: await getString(mode, 'mod_data'),
+        };
         saveCancel(
             getString('resettemplateconfirmtitle', 'mod_data'),
-            Templates.render('mod_data/template_editor_resetmodal', {resetallname: "resetallcheck"}),
+            Templates.render('mod_data/template_editor_resetmodal', params),
             getString('reset', 'core'),
             () => {
                 resetTemplate.value = "true";

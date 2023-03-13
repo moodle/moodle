@@ -2219,7 +2219,7 @@ privatefiles,moodle|/user/files.php';
         // Creating temporary field questionid to populate the data in question version table.
         // This will make sure the appropriate question id is inserted the version table without making any complex joins.
         $table = new xmldb_table('question_bank_entries');
-        $field = new xmldb_field('questionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_TYPE_INTEGER);
+        $field = new xmldb_field('questionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -2268,7 +2268,7 @@ privatefiles,moodle|/user/files.php';
 
         // Dropping temporary field questionid.
         $table = new xmldb_table('question_bank_entries');
-        $field = new xmldb_field('questionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_TYPE_INTEGER);
+        $field = new xmldb_field('questionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
         if ($dbman->field_exists($table, $field)) {
             $dbman->drop_field($table, $field);
         }
@@ -2332,10 +2332,16 @@ privatefiles,moodle|/user/files.php';
         $runinsert = function (int $lastslot, array $tagstrings) use ($DB) {
             $conditiondata = $DB->get_field('question_set_references', 'filtercondition',
                 ['itemid' => $lastslot, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
-            $condition = json_decode($conditiondata);
-            $condition->tags = $tagstrings;
-            $DB->set_field('question_set_references', 'filtercondition', json_encode($condition),
-                ['itemid' => $lastslot, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
+
+            // It is possible to have leftover tags in the database, without a corresponding
+            // slot, because of an old bugs (e.g. MDL-76193). Therefore, if the slot is not found,
+            // we can safely discard these tags.
+            if (!empty($conditiondata)) {
+                $condition = json_decode($conditiondata);
+                $condition->tags = $tagstrings;
+                $DB->set_field('question_set_references', 'filtercondition', json_encode($condition),
+                        ['itemid' => $lastslot, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
+            }
         };
 
         foreach ($slottags as $tag) {
@@ -3029,6 +3035,20 @@ privatefiles,moodle|/user/files.php';
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2022110600.00);
+    }
+
+    // Automatically generated Moodle v4.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2022112800.03) {
+
+        // Remove any orphaned role assignment records (pointing to non-existing roles).
+        $DB->delete_records_select('role_assignments', 'NOT EXISTS (
+            SELECT r.id FROM {role} r WHERE r.id = {role_assignments}.roleid
+        )');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022112800.03);
     }
 
     return true;

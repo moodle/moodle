@@ -874,7 +874,7 @@ class locallib_test extends \advanced_testcase {
      * We only test combinations of plugins here. Individual plugins are tested
      * in their respective test files.
      *
-     * @dataProvider test_new_submission_empty_testcases
+     * @dataProvider new_submission_empty_testcases
      * @param string $data The file submission data
      * @param bool $expected The expected return value
      */
@@ -914,7 +914,7 @@ class locallib_test extends \advanced_testcase {
      *
      * @return array of testcases
      */
-    public function test_new_submission_empty_testcases() {
+    public function new_submission_empty_testcases() {
         return [
             'With file and onlinetext' => [
                 [
@@ -3601,7 +3601,18 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
             $fileareas = $plugin->get_file_areas();
 
             if ($type == 'editpdf') {
-                $this->assertEquals(array('download' => 'Annotate PDF'), $fileareas);
+                $checkareas = [
+                    'download' => 'Annotate PDF',
+                    'combined' => 'Annotate PDF',
+                    'partial' => 'Annotate PDF',
+                    'importhtml' => 'Annotate PDF',
+                    'pages' => 'Annotate PDF',
+                    'readonlypages' => 'Annotate PDF',
+                    'stamps' => 'Annotate PDF',
+                    'tmp_jpg_to_pdf' => 'Annotate PDF',
+                    'tmp_rotated_jpg' => 'Annotate PDF'
+                ];
+                $this->assertEquals($checkareas, $fileareas);
                 $usingfilearea++;
             } else if ($type == 'file') {
                 $this->assertEquals(array('feedback_files' => 'Feedback files'), $fileareas);

@@ -82,7 +82,7 @@ $string['hideremote'] = 'Hide remote users';
 $string['host'] = 'host';
 $string['hostcoursenotfound'] = 'Host or course not found';
 $string['hostdeleted'] = 'Host deleted';
-$string['hostexists'] = 'A record already exists for a host with that hostname (it may be deleted). <a href="{$a}">Click here</a> to edit that record.';
+$string['hostexists'] = 'A record already exists for a host with that hostname. (It may have been deleted.) <a href="{$a}">Edit the record</a>';
 $string['hostlist'] = 'List of networked hosts';
 $string['hostname'] = 'Hostname';
 $string['hostnamehelp'] = 'The fully-qualified domain name of the remote host, e.g. www.example.com';
@@ -110,6 +110,7 @@ $string['is_in_range'] = 'The IP address <code>{$a}</code> represents a valid tr
 $string['ispublished'] = '{$a} has enabled this service for you.';
 $string['issubscribed'] = '{$a} is subscribing to this service on your host.';
 $string['keydeleted'] = 'Your key has been successfully deleted and replaced.';
+$string['keydeletedcancelled'] = 'No changes made to key.';
 $string['keymismatch'] = 'The public key you are holding for this host is different from the public key it is currently publishing. The currently published key is:';
 $string['last_connect_time'] = 'Last connect time';
 $string['last_connect_time_help'] = 'The time that you last connected to this host.';

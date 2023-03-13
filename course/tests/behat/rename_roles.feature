@@ -35,9 +35,8 @@ Feature: Rename roles within a course
     And I should see "Learner (Student)" in the ".form-autocomplete-suggestions" "css_element"
     And I press the escape key
     And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Tutor (Non-editing teacher)"
-
     And I click on "Student 1's role assignments" "link"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Student 1" "table_row"
+    And I open the autocomplete suggestions list in the "Student 1" "table_row"
     And "Tutor (Non-editing teacher)" "autocomplete_suggestions" should exist
     And I click on "Cancel" "link"
     And I press "Enrol users"

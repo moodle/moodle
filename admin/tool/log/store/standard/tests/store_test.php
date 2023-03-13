@@ -38,8 +38,7 @@ class store_test extends \advanced_testcase {
      * Tests log writing.
      *
      * @param bool $jsonformat True to test with JSON format
-     * @dataProvider test_log_writing_provider
-     * @throws moodle_exception
+     * @dataProvider log_writing_provider
      */
     public function test_log_writing(bool $jsonformat) {
         global $DB;
@@ -227,9 +226,9 @@ class store_test extends \advanced_testcase {
      * Returns different JSON format settings so the test can be run with JSON format either on or
      * off.
      *
-     * @return [bool] Array of true/false
+     * @return bool[] Array of true/false
      */
-    public static function test_log_writing_provider(): array {
+    public static function log_writing_provider(): array {
         return [
             [false],
             [true]
@@ -243,20 +242,19 @@ class store_test extends \advanced_testcase {
         $logmanager = get_log_manager();
         $allreports = \core_component::get_plugin_list('report');
 
-        $supportedreports = array(
-            'report_log' => '/report/log',
-            'report_loglive' => '/report/loglive',
-            'report_outline' => '/report/outline',
-            'report_participation' => '/report/participation',
-            'report_stats' => '/report/stats'
-        );
-
         // Make sure all supported reports are installed.
-        $expectedreports = array_keys(array_intersect_key($allreports, $supportedreports));
-        $reports = $logmanager->get_supported_reports('logstore_standard');
-        $reports = array_keys($reports);
+        $expectedreports = array_intersect_key([
+            'log' => 'report_log',
+            'loglive' => 'report_loglive',
+            'outline' => 'report_outline',
+            'participation' => 'report_participation',
+            'stats' => 'report_stats'
+        ], $allreports);
+
+        $supportedreports = $logmanager->get_supported_reports('logstore_standard');
+
         foreach ($expectedreports as $expectedreport) {
-            $this->assertContains($expectedreport, $reports);
+            $this->assertArrayHasKey($expectedreport, $supportedreports);
         }
     }
 
@@ -372,7 +370,7 @@ class store_test extends \advanced_testcase {
      * Tests the decode_other function can cope with both JSON and PHP serialized format.
      *
      * @param mixed $value Value to encode and decode
-     * @dataProvider test_decode_other_provider
+     * @dataProvider decode_other_provider
      */
     public function test_decode_other($value) {
         $this->assertEquals($value, \logstore_standard\log\store::decode_other(serialize($value)));
@@ -391,7 +389,7 @@ class store_test extends \advanced_testcase {
      *
      * @return array Array of parameters
      */
-    public function test_decode_other_provider(): array {
+    public function decode_other_provider(): array {
         return [
             [['info' => 'd2819896', 'logurl' => 'discuss.php?d=2819896']],
             [null],
@@ -404,8 +402,7 @@ class store_test extends \advanced_testcase {
      * Checks that backup and restore of log data works correctly.
      *
      * @param bool $jsonformat True to test with JSON format
-     * @dataProvider test_log_writing_provider
-     * @throws moodle_exception
+     * @dataProvider log_writing_provider
      */
     public function test_backup_restore(bool $jsonformat) {
         global $DB;

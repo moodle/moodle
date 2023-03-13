@@ -52,11 +52,10 @@ class WithTransaction
      * @see Client::startSession
      *
      * @param Session $session A session object as retrieved by Client::startSession
-     * @return void
      * @throws RuntimeException for driver errors while committing the transaction
      * @throws Exception for any other errors, including those thrown in the callback
      */
-    public function execute(Session $session)
+    public function execute(Session $session): void
     {
         $startTime = time();
 
@@ -123,9 +122,8 @@ class WithTransaction
      * Returns whether the time limit for retrying transactions in the convenient transaction API has passed
      *
      * @param int $startTime The time the transaction was started
-     * @return bool
      */
-    private function isTransactionTimeLimitExceeded($startTime)
+    private function isTransactionTimeLimitExceeded(int $startTime): bool
     {
         return time() - $startTime >= 120;
     }

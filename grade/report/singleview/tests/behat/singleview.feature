@@ -93,7 +93,7 @@ Feature: We can use Single view
     And I press "Save"
     Then I should see "Grades were set for 1 items"
     And the following should exist in the "generaltable" table:
-        | First name (Alternate name) Surname | Grade |
+        | First name (Alternate name) Last name | Grade |
         | Ann, Jill, Grainne, Beauchamp | Very good |
     And I log out
     And I log in as "teacher2"
@@ -120,7 +120,7 @@ Feature: We can use Single view
     And I click on "Bulk insert" "link"
     And I click on "I understand that my unsaved changes will be lost." "checkbox"
     And I click on "All grades" "radio"
-    And I set the field "Insert value" to "1.0"
+    And I set the field "Insert new grade" to "1.0"
     And I click on "Save" "button" in the ".modal-dialog" "css_element"
     Then I should see "Grades were set for 6 items"
 
@@ -135,7 +135,7 @@ Feature: We can use Single view
     And I click on "Bulk insert" "link"
     And I click on "I understand that my unsaved changes will be lost." "checkbox"
     And I click on "All grades" "radio"
-    And I set the field "Insert value" to "1#25"
+    And I set the field "Insert new grade" to "1#25"
     And I click on "Save" "button" in the ".modal-dialog" "css_element"
     Then I should see "Grades were set for 6 items"
     # Custom scale, cast to int

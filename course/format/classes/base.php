@@ -225,6 +225,18 @@ abstract class base {
             self::$instances = array();
         }
     }
+    /**
+     * Reset the current user for all courses.
+     *
+     * The course format cache resets every time the course cache resets but
+     * also when the user changes their language, all course editors
+     *
+     * @return void
+     */
+    public static function session_cache_reset_all(): void {
+        $statecache = cache::make('core', 'courseeditorstate');
+        $statecache->purge();
+    }
 
     /**
      * Reset the current user course format cache.
@@ -608,7 +620,7 @@ abstract class base {
         $course = $this->get_course();
         try {
             $sectionpreferences = (array) json_decode(
-                get_user_preferences('coursesectionspreferences_' . $course->id, null, $USER->id)
+                get_user_preferences("coursesectionspreferences_{$course->id}", '', $USER->id)
             );
             if (empty($sectionpreferences)) {
                 $sectionpreferences = [];

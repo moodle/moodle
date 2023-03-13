@@ -94,6 +94,8 @@ require_once($CFG->dirroot . '/mod/assign/renderable.php');
 require_once($CFG->dirroot . '/mod/assign/gradingtable.php');
 require_once($CFG->libdir . '/portfolio/caller.php');
 
+use mod_assign\event\submission_removed;
+use mod_assign\event\submission_status_updated;
 use \mod_assign\output\grading_app;
 use \mod_assign\output\assign_header;
 use \mod_assign\output\assign_submission_status;
@@ -2955,9 +2957,16 @@ class assign {
 
         // If the conditions are met, allow another attempt.
         if ($submission) {
-            $this->reopen_submission_if_required($grade->userid,
+            $isreopened = $this->reopen_submission_if_required($grade->userid,
                     $submission,
                     $reopenattempt);
+            if ($isreopened) {
+                $completion = new completion_info($this->get_course());
+                if ($completion->is_enabled($this->get_course_module()) &&
+                    $this->get_instance()->completionsubmit) {
+                    $completion->update_state($this->get_course_module(), COMPLETION_INCOMPLETE, $grade->userid);
+                }
+            }
         }
 
         return true;
@@ -5437,15 +5446,19 @@ class assign {
             $grader = null;
             $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
 
+            $gradingcontrollergrade = '';
             if ($hasgrade) {
                 if ($controller = $gradingmanager->get_active_controller()) {
                     $menu = make_grades_menu($this->get_instance()->grade);
                     $controller->set_grade_range($menu, $this->get_instance()->grade > 0);
-                    $gradefordisplay = $controller->render_grade($PAGE,
-                                                                 $grade->id,
-                                                                 $gradingitem,
-                                                                 $gradebookgrade->str_long_grade,
-                                                                 $cangrade);
+                    $gradingcontrollergrade = $controller->render_grade(
+                        $PAGE,
+                        $grade->id,
+                        $gradingitem,
+                        '',
+                        $cangrade
+                    );
+                    $gradefordisplay = $gradebookgrade->str_long_grade;
                 } else {
                     $gradefordisplay = $this->display_grade($gradebookgrade->grade, false);
                 }
@@ -5472,15 +5485,18 @@ class assign {
             if ($grade) {
                 \mod_assign\event\feedback_viewed::create_from_grade($this, $grade)->trigger();
             }
-            $feedbackstatus = new assign_feedback_status($gradefordisplay,
-                                                  $gradeddate,
-                                                  $grader,
-                                                  $this->get_feedback_plugins(),
-                                                  $grade,
-                                                  $this->get_course_module()->id,
-                                                  $this->get_return_action(),
-                                                  $this->get_return_params(),
-                                                  $viewfullnames);
+            $feedbackstatus = new assign_feedback_status(
+                $gradefordisplay,
+                $gradeddate,
+                $grader,
+                $this->get_feedback_plugins(),
+                $grade,
+                $this->get_course_module()->id,
+                $this->get_return_action(),
+                $this->get_return_params(),
+                $viewfullnames,
+                $gradingcontrollergrade
+            );
 
             // Show the grader's identity if 'Hide Grader' is disabled or has the 'Show Hidden Grader' capability.
             $showgradername = (
@@ -8210,6 +8226,7 @@ class assign {
      *
      * @param int $userid
      * @return boolean
+     * @throws coding_exception
      */
     public function remove_submission($userid) {
         global $USER;
@@ -8247,9 +8264,8 @@ class assign {
             $completion->update_state($this->get_course_module(), COMPLETION_INCOMPLETE, $userid);
         }
 
-        if ($submission->userid != 0) {
-            \mod_assign\event\submission_status_updated::create_from_submission($this, $submission)->trigger();
-        }
+        submission_removed::create_from_submission($this, $submission)->trigger();
+        submission_status_updated::create_from_submission($this, $submission)->trigger();
         return true;
     }
 

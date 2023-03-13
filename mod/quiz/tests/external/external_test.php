@@ -1321,7 +1321,6 @@ class external_test extends externallib_advanced_testcase {
         // Now, get the summary.
         $result = mod_quiz_external::get_attempt_summary($attempt->id);
         $result = \external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
-        $this->assertDebuggingCalled(); // Expect $PAGE->set_url debugging.
 
         // Check it's marked as completed only the first one.
         $this->assertEquals('complete', $result['questions'][0]['state']);

@@ -166,6 +166,7 @@ $string['errconceptalreadyexists'] = 'This concept already exists. No duplicates
 $string['errdeltimeexpired'] = 'You can\'t delete this. Time expired!';
 $string['erredittimeexpired'] = 'The editing time for this entry has expired.';
 $string['errorparsingxml'] = 'Errors occurred while parsing the file. Make sure it is valid XML syntax.';
+$string['errreservedkeywords'] = 'One or more keywords contain a special character which cannot be used.';
 $string['eventcategorycreated'] = 'Category has been created';
 $string['eventcategorydeleted'] = 'Category has been deleted';
 $string['eventcategoryupdated'] = 'Category has been updated';

@@ -235,7 +235,7 @@ foreach ($overrides as $override) {
         $groupcell = new html_table_cell();
         $groupcell->rowspan = count($fields);
         $groupcell->text = html_writer::link(new moodle_url($groupurl, ['group' => $override->groupid]),
-                $override->name . $extranamebit);
+            format_string($override->name, true, ['context' => $context]) . $extranamebit);
         $usercells[] = $groupcell;
     } else {
         $usercell = new html_table_cell();

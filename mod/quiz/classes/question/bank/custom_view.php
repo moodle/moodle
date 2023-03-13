@@ -72,7 +72,7 @@ class custom_view extends \core_question\local\bank\view {
             'preview_action_column'
         ];
 
-        if (question_get_display_preference('qbshowtext', 0, PARAM_BOOL, new \moodle_url(''))) {
+        if (question_get_display_preference('qbshowtext', 0, PARAM_INT, new \moodle_url(''))) {
             $corequestionbankcolumns[] = 'question_text_row';
         }
 

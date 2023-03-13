@@ -31,3 +31,5 @@ Changed:
  * Add "use stdClass;" in h5peditor.class.php and h5peditor-file.class.php (check that it's still used before replacing it when
    upgrading the library).
  * Edit language/en.js and remove the content for 'filters' (it's a JSON with several fields, such as level or language).
+ * If https://github.com/h5p/h5p-editor-php-library/pull/148 hasn't been merged, a patch needs to be added in
+ h5p/h5plib/v124/joubel/editor/h5peditor-file.class.php, to replace FILTER_SANITIZE_STRING to FILTER_SANITIZE_FULL_SPECIAL_CHARS.

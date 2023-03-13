@@ -44,6 +44,23 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And I should see "Marked out of 2.00" in the "First question" "question"
 
   @javascript
+  Scenario: After redoing a question, regrade works
+    Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    When I press "Attempt quiz"
+    And I click on "False" "radio" in the "First question" "question"
+    And I click on "Check" "button" in the "First question" "question"
+    And I press "Try another question like this one"
+    And I am on the "Quiz 1" "mod_quiz > Grades report" page logged in as "teacher"
+    And I press "Regrade all"
+    Then I should see "Finished regrading (1/1)"
+    And I should see "Regrade completed"
+    And I press "Continue"
+    # Regrade a second time, to ensure the first regrade did not corrupt any data.
+    And I press "Regrade all"
+    And I should see "Finished regrading (1/1)"
+    And I should see "Regrade completed"
+
+  @javascript
   Scenario: Start attempt, teacher edits question, redo picks up latest non-draft version
     # Start attempt as student.
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
@@ -102,7 +119,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
   @javascript @_switch_window
   Scenario: Teachers reviewing can see all the questions attempted in a slot
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    When I press "Attempt quiz"
+    And I press "Attempt quiz"
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
     And I press "Try another question like this one"
@@ -110,7 +127,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And I press "Submit all and finish"
     And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
     And I log out
-    And I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher"
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher"
     And I follow "Attempts: 1"
     And I follow "Review attempt"
     And I click on "1" "link" in the "First question" "question"
@@ -126,6 +143,34 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And "False" row "Frequency" column of "quizresponseanalysis" table should contain "100.00%"
     And "True" row "Frequency" column of "quizresponseanalysis" table should contain "0.00%"
     And "[No response]" row "Frequency" column of "quizresponseanalysis" table should contain "100.00%"
+
+  @javascript @_switch_window
+  Scenario: Teachers reviewing can switch between attempts in the review question popup
+    Given I am on the "Quiz 1" "mod_quiz > View" page logged in as student
+    # Create two attempts, only one of which has a redo.
+    When I press "Attempt quiz"
+    And I click on "False" "radio" in the "First question" "question"
+    And I click on "Check" "button" in the "First question" "question"
+    And I press "Try another question like this one"
+    And I press "Finish attempt ..."
+    And I press "Submit all and finish"
+    And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
+    And I follow "Finish review"
+    And I press "Re-attempt quiz"
+    And I click on "True" "radio" in the "First question" "question"
+    And I click on "Check" "button" in the "First question" "question"
+    And I log out
+    And I am on the "Quiz 1" "mod_quiz > View" page logged in as teacher
+    And I follow "Attempts: 2"
+    # Review the first attempt - and switch to the first question seen.
+    And I follow "Review attempt"
+    And I click on "1" "link" in the "First question" "question"
+    And I switch to "reviewquestion" window
+    And the state of "First question" question is shown as "Incorrect"
+    # Now switch to the other quiz attempt using the link at the top, which does not have a redo.
+    And I click on "2" "link" in the "Attempts" "table_row"
+    Then the state of "First question" question is shown as "Correct"
+    And I should not see "Other questions attempted here"
 
   @javascript
   Scenario: Redoing question 1 should save any changes to question 2 on the same page
@@ -177,7 +222,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     When I click on "update grades" "link" in the "SA1" "table_row"
     Then I set the field "Comment" to "I have adjusted your mark to 1.0"
     And I set the field "Mark" to "1.0"
-    And I press "Save and go to next page"
+    And I press "Save and show next"
     And I follow "Results"
     And I follow "Review attempt"
     And I should see "Teacher One" in the "I have adjusted your mark to 1.0" "table_row"

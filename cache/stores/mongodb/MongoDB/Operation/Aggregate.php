@@ -30,7 +30,6 @@ use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnexpectedValueException;
 use MongoDB\Exception\UnsupportedException;
 use stdClass;
-use Traversable;
 
 use function current;
 use function is_array;
@@ -137,7 +136,7 @@ class Aggregate implements Executable, Explainable
      * @param array       $options        Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
-    public function __construct($databaseName, $collectionName, array $pipeline, array $options = [])
+    public function __construct(string $databaseName, ?string $collectionName, array $pipeline, array $options = [])
     {
         $expectedIndex = 0;
 
@@ -246,8 +245,8 @@ class Aggregate implements Executable, Explainable
             unset($options['batchSize']);
         }
 
-        $this->databaseName = (string) $databaseName;
-        $this->collectionName = isset($collectionName) ? (string) $collectionName : null;
+        $this->databaseName = $databaseName;
+        $this->collectionName = $collectionName;
         $this->pipeline = $pipeline;
         $this->options = $options;
     }
@@ -256,8 +255,7 @@ class Aggregate implements Executable, Explainable
      * Execute the operation.
      *
      * @see Executable::execute()
-     * @param Server $server
-     * @return Traversable
+     * @return ArrayIterator|Cursor
      * @throws UnexpectedValueException if the command response was malformed
      * @throws UnsupportedException if read concern or write concern is used and unsupported
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
@@ -296,7 +294,7 @@ class Aggregate implements Executable, Explainable
 
         $result = current($cursor->toArray());
 
-        if (! isset($result->result) || ! is_array($result->result)) {
+        if (! is_object($result) || ! isset($result->result) || ! is_array($result->result)) {
             throw new UnexpectedValueException('aggregate command did not return a "result" array');
         }
 
@@ -307,7 +305,6 @@ class Aggregate implements Executable, Explainable
      * Returns the command document for this operation.
      *
      * @see Explainable::getCommandDocument()
-     * @param Server $server
      * @return array
      */
     public function getCommandDocument(Server $server)
@@ -317,10 +314,8 @@ class Aggregate implements Executable, Explainable
 
     /**
      * Create the aggregate command document.
-     *
-     * @return array
      */
-    private function createCommandDocument()
+    private function createCommandDocument(): array
     {
         $cmd = [
             'aggregate' => $this->collectionName ?? 1,

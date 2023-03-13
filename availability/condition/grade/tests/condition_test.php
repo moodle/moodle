@@ -77,7 +77,7 @@ class condition_test extends \advanced_testcase {
         $this->assertFalse($cond->is_available(false, $info, true, $user->id));
         $information = $cond->get_description(false, false, $info);
         $information = \core_availability\info::format_info($information, $course);
-        $this->assertMatchesRegularExpression('~achieve a required score.*Test!~', $information);
+        $this->assertMatchesRegularExpression('~achieve higher than.*Test!~', $information);
         $this->assertTrue($cond->is_available(true, $info, true, $user->id));
 
         // Min grade (success).
@@ -95,7 +95,7 @@ class condition_test extends \advanced_testcase {
         $this->assertFalse($cond->is_available(false, $info, true, $user->id));
         $information = $cond->get_description(false, false, $info);
         $information = \core_availability\info::format_info($information, $course);
-        $this->assertMatchesRegularExpression('~get an appropriate score.*Test!~', $information);
+        $this->assertMatchesRegularExpression('~achieve lower than a certain score in.*Test!~', $information);
         $this->assertTrue($cond->is_available(true, $info, true, $user->id));
 
         // Max grade (success).
@@ -113,7 +113,7 @@ class condition_test extends \advanced_testcase {
         $this->assertFalse($cond->is_available(false, $info, true, $user->id));
         $information = $cond->get_description(false, false, $info);
         $information = \core_availability\info::format_info($information, $course);
-        $this->assertMatchesRegularExpression('~get a particular score.*Test!~', $information);
+        $this->assertMatchesRegularExpression('~achieve a score within a certain range.*Test!~', $information);
         $this->assertTrue($cond->is_available(true, $info, true, $user->id));
 
         // Still fail (other end).

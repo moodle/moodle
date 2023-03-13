@@ -30,7 +30,7 @@ require_login();
 core_question\local\bank\helper::require_plugin_enabled('qbank_history');
 
 $entryid = required_param('entryid', PARAM_INT);
-$returnurl = required_param('returnurl', PARAM_RAW);
+$returnurl = required_param('returnurl', PARAM_LOCALURL);
 
 list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
         question_edit_setup('questions', '/question/bank/history/history.php');

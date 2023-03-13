@@ -40,7 +40,8 @@
         "icon": {
             "key": "icon",
             "component": "mod_assign",
-            "alttext": "Assignment icon"
+            "alttext": "Assignment icon",
+            "iconurl": "#"
         },
         "overdue": false,
         "purpose": "assessment"
@@ -54,7 +55,14 @@
                 {{#userdate}} {{timesort}}, {{#str}} strftimetime24, core_langconfig {{/str}} {{/userdate}}
             </small>
             <div class="activityiconcontainer small {{purpose}} courseicon align-self-top align-self-center mx-3  mb-1 mb-sm-0 text-nowrap">
-                {{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}
+                {{#icon}}
+                {{#iconurl}}
+                    <img alt="{{alttext}}" title="{{alttext}}" src="{{{ iconurl }}}" class="icon ">
+                {{/iconurl}}
+                {{^iconurl}}
+                    {{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}
+                {{/iconurl}}
+                {{/icon}}
             </div>
             <div class="event-name-container flex-grow-1 line-height-3 nowrap text-truncate">
                 <div class="d-flex">
@@ -71,7 +79,7 @@
                         {{activitystr}}
                     {{/courseview}}
                     {{^courseview}}
-                        {{#course.fullnamedisplay}}{{{course.fullnamedisplay}}} &middot; {{/course.fullnamedisplay}}{{activitystr}}
+                        {{activitystr}}{{#course.fullnamedisplay}} &middot; {{{course.fullnamedisplay}}}{{/course.fullnamedisplay}}
                     {{/courseview}}
                 </small>
             </div>

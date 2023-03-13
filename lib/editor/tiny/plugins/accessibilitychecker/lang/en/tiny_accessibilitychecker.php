@@ -24,15 +24,15 @@
 
 $string['emptytext'] = 'Empty text';
 $string['entiredocument'] = 'Entire document';
-$string['imagesmissingalt'] = '<i><b>Images</b></i> require alternative text. To fix this warning, add an alt attribute to your img tags. An empty alt attribute may be used, but only when the image is purely decorative and carries no information.';
+$string['imagesmissingalt'] = 'Images require alternative text. To fix this warning, add an alt attribute to your img tags. An empty alt attribute may be used, but only when the image is purely decorative and carries no information.';
 $string['needsmorecontrast'] = 'The colours of the foreground and background text do not have enough contrast. To fix this warning, change either foreground or background colour of the text so that it is easier to read.';
-$string['needsmoreheadings'] = 'There is a lot of text with no <i><b>headings</b></i>. <i><b>Headings</b></i> will allow screen reader users to navigate through the page easily and will make the page more usable for everyone.';
+$string['needsmoreheadings'] = 'There is a lot of text with no headings. Headings allow screen reader users to navigate through the page easily and make the page more usable for everyone.';
 $string['nowarnings'] = 'Congratulations, no accessibility issues found!';
 $string['pluginname'] = 'Accessibility checker';
 $string['report'] = 'Accessibility report:';
-$string['tablesmissingcaption'] = '<i><b>Tables</b></i> should have captions. While it is not necessary for each table to have a caption, a caption is generally very helpful.';
-$string['tablesmissingheaders'] = '<i><b>Tables</b></i> should use row and/or column headers.';
-$string['tableswithmergedcells'] = '<i><b>Tables</b></i> should not contain merged cells. Despite being standard markup for <i><b>tables</b></i> for many years, some screen readers still do not fully support complex tables. When possible, try to "flatten" the table and avoid merged cells.';
-$string['privacy:metadata'] = 'The tiny_accessibilitychecker plugin does not store any personal data.';
+$string['tablesmissingcaption'] = 'A table caption is not required, but is generally helpful.';
+$string['tablesmissingheaders'] = 'Tables should use row and/or column headers.';
+$string['tableswithmergedcells'] = 'Tables should not contain merged cells, as screen readers may not support them.';
+$string['privacy:metadata'] = 'The accessibility checker for TinyMCE does not store any personal data.';
 $string['viewissue'] = 'View';
-$string['helplinktext'] = 'Moodle Accessibility helper';
+$string['helplinktext'] = 'Accessibility helper';

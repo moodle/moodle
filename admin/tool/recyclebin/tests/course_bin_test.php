@@ -187,6 +187,11 @@ class course_bin_test extends \advanced_testcase {
                 (object)['plugin' => 'backup', 'name' => 'backup_auto_storage', 'value' => 2],
                 (object)['plugin' => 'backup', 'name' => 'backup_auto_destination', 'value' => true],
             ]],
+
+            'restore/restore_general_users moodle' => [[
+                (object)['plugin' => 'restore', 'name' => 'restore_general_users', 'value' => 0],
+                (object)['plugin' => 'restore', 'name' => 'restore_general_groups', 'value' => 0],
+            ]],
         ];
     }
 
@@ -235,6 +240,29 @@ class course_bin_test extends \advanced_testcase {
         $attemptobj = \quiz_attempt::create($attempt->id);
         $this->assertEquals($student->id, $attemptobj->get_userid());
         $this->assertEquals(true, $attemptobj->is_finished());
+    }
+
+    /**
+     * Test that the activity is NOT stored in bin when
+     * in Automated backup setup settings "backup_auto_activities" is disabled.
+     *
+     * @dataProvider recycle_bin_settings_provider
+     * @covers ::store_item
+     */
+    public function test_coursemodule_restore_with_activity_setting_disabled() {
+
+        // Set the configuration to not include activities in the automated backup.
+        set_config('backup_auto_activities', false, 'backup');
+
+        // Delete the course module.
+        course_delete_module($this->quiz->cmid);
+
+        // Now, run the course module deletion adhoc task.
+        \phpunit_util::run_all_adhoc_tasks();
+
+        // Check there is no items in the recycle bin.
+        $recyclebin = new \tool_recyclebin\course_bin($this->course->id);
+        $this->assertEquals(0, count($recyclebin->get_items()));
     }
 
     /**

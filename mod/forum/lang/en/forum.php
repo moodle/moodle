@@ -95,7 +95,9 @@ $string['cannotfavourite'] = 'Sorry, but you do not have the permission to star 
 $string['cannottrack'] = 'Could not stop tracking that forum';
 $string['cannotunsubscribe'] = 'Could not unsubscribe you from that forum';
 $string['cannotupdatepost'] = 'You can not update this post';
-$string['cannotviewpostyet'] = 'You cannot read other students questions in this discussion yet because you haven\'t posted';
+$string['cannotuseseperategroupsandsingletopic'] = 'Separate groups can\'t be used with a single simple discussion.';
+$string['cannotusesingletopicandseperategroups'] = 'A single simple discussion can\'t be used with separate groups.';
+$string['cannotviewpostyet'] = 'You can\'t read other students\' posts in this discussion yet because you haven\'t posted.';
 $string['cannotviewusersposts'] = 'There are no posts made by this user that you are able to view.';
 $string['cleanreadtime'] = 'Mark old posts as read hour';
 $string['clicktolockdiscussion'] = 'Click to lock this discussion';
@@ -190,7 +192,7 @@ $string['discussionmoved'] = 'This discussion has been moved to \'{$a}\'.';
 $string['discussionmovedpost'] = 'This discussion has been moved to <a href="{$a->discusshref}">here</a> in the forum <a href="{$a->forumhref}">{$a->forumname}</a>';
 $string['discussionname'] = 'Discussion name';
 $string['discussionnownotsubscribed'] = '{$a->name} will NOT be notified of new posts in \'{$a->discussion}\' of \'{$a->forum}\'';
-$string['discussionnowsubscribed'] = '{$a->name} will be notified of new posts in \'{$a->discussion}\' of \'{$a->forum}\'';
+$string['discussionnowsubscribed'] = 'You will be notified of new posts in \'{$a->discussion}\' in the forum \'{$a->forum}\'.';
 $string['discussionpin'] = 'Pin';
 $string['discussionpinned'] = 'Pinned';
 $string['discussionpinned_help'] = 'Pinned discussions will appear at the top of a forum.';
@@ -337,7 +339,7 @@ $string['forumtype_help'] = 'There are 5 forum types:
 
 * A single simple discussion - A single discussion topic which everyone can reply to (cannot be used with separate groups)
 * Each person posts one discussion - Each student can post exactly one new discussion topic, which everyone can then reply to
-* Q and A forum - Students must first post their perspectives before viewing other students\' posts
+* Q and A forum - A student must first post their reply to a question posted by the teacher, before viewing other students\' posts
 * Standard forum displayed in a blog-like format - An open forum where anyone can start a new discussion at any time, and in which discussion topics are displayed on one page with "Discuss this topic" links
 * Standard forum for general use - An open forum where anyone can start a new discussion at any time';
 $string['forum:viewallratings'] = 'View all raw ratings given by individuals';
@@ -491,7 +493,7 @@ $string['nowallsubscribed'] = 'You are now subscribed to all forums in {$a}.';
 $string['nowallunsubscribed'] = 'You are now unsubscribed from all forums in {$a}.';
 $string['nownotsubscribed'] = '{$a->name} will NOT be notified of new posts in \'{$a->forum}\'';
 $string['nownottracking'] = '{$a->name} is no longer tracking \'{$a->forum}\'.';
-$string['nowsubscribed'] = '{$a->name} will be notified of new posts in \'{$a->forum}\'';
+$string['nowsubscribed'] = 'You will be notified of new posts in the forum \'{$a->forum}\'.';
 $string['nowtracking'] = '{$a->name} is now tracking \'{$a->forum}\'.';
 $string['numposts'] = '{$a} posts';
 $string['numberofreplies'] = 'Number of replies: {$a}';
@@ -506,7 +508,7 @@ $string['parentofthispost'] = 'Parent of this post';
 $string['permalink'] = 'Permalink';
 $string['permanentlinktopost'] = 'Permanent link to this post';
 $string['permanentlinktoparentpost'] = 'Permanent link to the parent of this post';
-$string['postisprivatereply'] = 'This is a private reply. It is only visible to you and anyone with the capability to view private replies, such as teachers or managers.';
+$string['postisprivatereply'] = 'This is a private reply. (Teachers and other users with the capability to view private replies can also see it.)';
 $string['pindiscussion'] = 'Pin this discussion';
 $string['pinupdated'] = 'The pin option has been updated.';
 $string['posttomygroups'] = 'Post a copy to all groups';
@@ -600,7 +602,7 @@ $string['privacy:request:delete:post:message'] = 'The content of this post has b
 $string['privacy:request:delete:post:subject'] = 'Delete at the request of the author';
 $string['privacy:subscribedtoforum'] = 'You are subscribed to this forum.';
 $string['privatereply'] = 'Reply privately';
-$string['privatereply_help'] = 'A private reply can only be viewed by the author of the post being replied to, and any users with the capability to view private replies.';
+$string['privatereply_help'] = 'When you reply privately, your post is also visible to users with the capability to view private replies, such as teachers.';
 $string['processingdigest'] = 'Processing email digest for user {$a}';
 $string['processingpost'] = 'Processing post {$a}';
 $string['prune'] = 'Split';
@@ -608,7 +610,7 @@ $string['prunediscussion'] = 'Split discussion';
 $string['prunedpost'] = 'A new discussion has been created from that post';
 $string['pruneheading'] = 'Split the discussion and move this post to a new discussion';
 $string['qandaforum'] = 'Q and A forum';
-$string['qandanotify'] = 'This is a question and answer forum. In order to see other responses to these questions, you must first post your answer';
+$string['qandanotify'] = 'This is a question and answer forum. To see other replies, you must first post your reply.';
 $string['re'] = 'Re:';
 $string['readtherest'] = 'Read the rest of this topic';
 $string['removeallforumtags'] = 'Remove all forum tags';

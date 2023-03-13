@@ -39,15 +39,13 @@ use core\check\result;
 class maxfaildelay extends check {
 
     /**
-     * Constructor
+     * Links to the task log report
+     *
+     * @return \action_link|null
      */
-    public function __construct() {
-        global $CFG;
-        $this->id = 'cronfaildelay';
-        $this->name = get_string('checkmaxfaildelay', 'tool_task');
-        $this->actionlink = new \action_link(
-            new \moodle_url('/admin/tool/task/scheduledtasks.php'),
-            get_string('scheduledtasks', 'tool_task'));
+    public function get_action_link(): ?\action_link {
+        $url = new \moodle_url('/admin/tasklogs.php');
+        return new \action_link($url, get_string('tasklogs', 'tool_task'));
     }
 
     /**

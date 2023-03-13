@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Airnotifier message processor to send messages to the APNS provider: airnotfier. (https://github.com/dongsheng/airnotifier)
+ * Airnotifier message processor to send messages to the APNS provider: airnotfier. (https://github.com/dcai/airnotifier)
  *
  * @package    message_airnotifier
  * @category   external

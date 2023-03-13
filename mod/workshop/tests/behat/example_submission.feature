@@ -17,11 +17,10 @@ Feature: Provide example submission
       | user     | course | role           |
       | teacher1 | c1     | editingteacher |
     And the following "activities" exist:
-      | activity | name         | intro                     | course | idnumber  | useexamples |
-      | workshop | TestWorkshop | Test workshop description | c1     | workshop1 | 1           |
+      | activity | name         | course | idnumber  | useexamples |
+      | workshop | TestWorkshop | c1     | workshop1 | 1           |
     # As a teacher, define the assessment form to be used in the workshop.
-    When I log in as "teacher1"
-    And I am on "Course1" course homepage
+    When I am on the "Course1" course page logged in as teacher1
     And I edit assessment form in workshop "TestWorkshop" as:"
       | id_description__idx_0_editor | Aspect1 |
       | id_description__idx_1_editor | Aspect2 |

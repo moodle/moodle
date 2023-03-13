@@ -48,7 +48,7 @@ class bump_submission_for_stale_conversions extends adhoc_task {
                                                      FROM {files}
                                                     WHERE filearea = 'documentconversion'");
 
-        if ($earliestconversion) {
+        if (isset($earliestconversion->min)) {
             ['sql' => $extensionsql, 'params' => $extensionparams] = array_reduce(
                 ['doc', 'docx', 'rtf', 'xls', 'xlsx', 'ppt', 'pptx', 'html', 'odt', 'ods', 'png', 'jpg', 'txt', 'gif'],
                 function(array $c, string $ext) use ($DB): array {

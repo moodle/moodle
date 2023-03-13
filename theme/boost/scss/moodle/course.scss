@@ -1003,6 +1003,7 @@ span.editinstructions {
 
             .coursename {
                 display: inline-block;
+                flex-basis: 10rem;
             }
         }
 
@@ -1394,6 +1395,18 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         .description-inner {
             padding-bottom: 0;
             border-bottom: 0;
+        }
+    }
+}
+
+.course-content .description-inner {
+    ul {
+        list-style: disc;
+        ul {
+            list-style: circle;
+            ul {
+                list-style: square;
+            }
         }
     }
 }

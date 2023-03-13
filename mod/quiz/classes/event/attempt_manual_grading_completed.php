@@ -28,7 +28,7 @@ class attempt_manual_grading_completed extends \core\event\base {
     protected function init() {
         $this->data['objecttable'] = 'quiz_attempts';
         $this->data['crud'] = 'u';
-        $this->data['edulevel'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     public function get_description() {

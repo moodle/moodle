@@ -64,7 +64,7 @@ class blog_edit_external_form extends moodleform {
         $mform->setDefault('id', 0);
 
         $mform->addElement('hidden', 'returnurl');
-        $mform->setType('returnurl', PARAM_URL);
+        $mform->setType('returnurl', PARAM_LOCALURL);
         $mform->setDefault('returnurl', 0);
     }
 
@@ -98,8 +98,8 @@ class blog_edit_external_form extends moodleform {
         global $CFG, $COURSE;
         $mform =& $this->_form;
 
-        $name = trim($mform->getElementValue('name'));
-        $description = trim($mform->getElementValue('description'));
+        $name = trim($mform->getElementValue('name') ?? '');
+        $description = trim($mform->getElementValue('description') ?? '');
         $url = $mform->getElementValue('url');
 
         if (empty($name) || empty($description)) {

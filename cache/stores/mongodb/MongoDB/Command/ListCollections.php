@@ -73,7 +73,7 @@ class ListCollections implements Executable
      * @param array  $options      Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
-    public function __construct($databaseName, array $options = [])
+    public function __construct(string $databaseName, array $options = [])
     {
         if (isset($options['authorizedCollections']) && ! is_bool($options['authorizedCollections'])) {
             throw InvalidArgumentException::invalidType('"authorizedCollections" option', $options['authorizedCollections'], 'boolean');
@@ -95,7 +95,7 @@ class ListCollections implements Executable
             throw InvalidArgumentException::invalidType('"session" option', $options['session'], Session::class);
         }
 
-        $this->databaseName = (string) $databaseName;
+        $this->databaseName = $databaseName;
         $this->options = $options;
     }
 
@@ -103,11 +103,9 @@ class ListCollections implements Executable
      * Execute the operation.
      *
      * @see Executable::execute()
-     * @param Server $server
-     * @return CachingIterator
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
-    public function execute(Server $server)
+    public function execute(Server $server): CachingIterator
     {
         $cursor = $server->executeReadCommand($this->databaseName, $this->createCommand(), $this->createOptions());
         $cursor->setTypeMap(['root' => 'array', 'document' => 'array']);
@@ -117,10 +115,8 @@ class ListCollections implements Executable
 
     /**
      * Create the listCollections command.
-     *
-     * @return Command
      */
-    private function createCommand()
+    private function createCommand(): Command
     {
         $cmd = ['listCollections' => 1];
 
@@ -144,9 +140,8 @@ class ListCollections implements Executable
      * the command be executed on the primary.
      *
      * @see https://php.net/manual/en/mongodb-driver-server.executecommand.php
-     * @return array
      */
-    private function createOptions()
+    private function createOptions(): array
     {
         $options = [];
 

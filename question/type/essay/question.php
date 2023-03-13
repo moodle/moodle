@@ -111,10 +111,14 @@ class qtype_essay_question extends question_with_responses {
     }
 
     public function un_summarise_response(string $summary) {
-        if (!empty($summary)) {
-            return ['answer' => text_to_html($summary)];
-        } else {
+        if (empty($summary)) {
             return [];
+        }
+
+        if (str_contains($this->responseformat, 'editor')) {
+            return ['answer' => text_to_html($summary), 'answerformat' => FORMAT_HTML];
+        } else {
+            return ['answer' => $summary, 'answerformat' => FORMAT_PLAIN];
         }
     }
 

@@ -77,6 +77,7 @@ class restore_decode_processor {
      */
     public function execute() {
         // Iterate over all contents, visiting them
+        /** @var restore_decode_content $content */
         foreach ($this->contents as $content) {
             $content->process($this);
         }
@@ -170,7 +171,7 @@ class restore_decode_processor {
      */
     protected function precheck_content($content) {
         // Look for $@ in content (all interlinks contain that)
-        return (strpos($content, '$@') === false) ? false : $content;
+        return (strpos($content ?? '', '$@') === false) ? false : $content;
     }
 }
 

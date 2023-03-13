@@ -47,3 +47,10 @@
         {{#str}}addanewdiscussion, forum{{/str}}
     </a>
 {{/forum.capabilities.create}}
+{{^forum.capabilities.create}}
+    {{#forum.capabilities.selfenrol}}
+        <a class="btn btn-primary" href="{{forum.urls.create}}">
+            {{#str}}addanewdiscussion, forum{{/str}}
+        </a>
+    {{/forum.capabilities.selfenrol}}
+{{/forum.capabilities.create}}

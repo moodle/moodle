@@ -278,7 +278,7 @@ if (empty($parallelrun)) {
     // Print combined run o/p from processes.
     $exitcodes = print_combined_run_output($processes, $stoponfail);
     // Time to finish run.
-    $time = round(microtime(true) - $time, 1);
+    $time = round(microtime(true) - $time, 0);
     echo "Finished in " . gmdate("G\h i\m s\s", $time) . PHP_EOL . PHP_EOL;
     ksort($exitcodes);
 
@@ -437,7 +437,7 @@ function print_combined_run_output($processes, $stoponfail = false) {
                         $process->stop(0);
                     }
 
-                    $strlentoprint = strlen($update);
+                    $strlentoprint = strlen($update ?? '');
 
                     // If not enough dots printed on line then just print.
                     if ($strlentoprint < $remainingprintlen) {

@@ -86,8 +86,7 @@ class groups_test extends core_reportbuilder_testcase {
 
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:fullname']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'grouping:name']);
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'group:name'])
-            ->set('sortenabled', true)->update();
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'group:name', 'sortenabled' => 1]);
 
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(2, $content);

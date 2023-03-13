@@ -14,16 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Completion tests.
- *
- * @package    core_completion
- * @category   phpunit
- * @copyright  2008 Sam Marshall
- * @copyright  2013 Frédéric Massart
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -33,7 +23,7 @@ require_once($CFG->libdir.'/completionlib.php');
  * Completion tests.
  *
  * @package    core_completion
- * @category   phpunit
+ * @category   test
  * @copyright  2008 Sam Marshall
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -401,9 +391,8 @@ class completionlib_test extends advanced_testcase {
      * Provider for the test_internal_get_state_with_grade_criteria.
      *
      * @return array
-     * @covers ::internal_get_state
      */
-    public function test_internal_get_state_with_grade_criteria_provider() {
+    public function internal_get_state_with_grade_criteria_provider() {
         return [
             "Passing grade enabled and achieve. State should be COMPLETION_COMPLETE_PASS" => [
                 [
@@ -451,7 +440,7 @@ class completionlib_test extends advanced_testcase {
     /**
      * Tests that the right completion state is being set based on the grade criteria.
      *
-     * @dataProvider test_internal_get_state_with_grade_criteria_provider
+     * @dataProvider internal_get_state_with_grade_criteria_provider
      * @param array $completioncriteria The completion criteria to use
      * @param int|null $studentgrade Grade to assign to student
      * @param int $expectedstate Expected completion state
@@ -1330,6 +1319,30 @@ class completionlib_test extends advanced_testcase {
         $this->assertEquals(
             COMPLETION_COMPLETE,
             completion_info::internal_get_grade_state($item, $grade));
+
+        // Item is hidden, but returnpassfail is true and the grade is passing.
+        $item->hidden = 1;
+        $item->gradepass = 4;
+        $grade->finalgrade = 5.0;
+        $this->assertEquals(
+            COMPLETION_COMPLETE_PASS,
+            completion_info::internal_get_grade_state($item, $grade, true));
+
+        // Item is hidden, but returnpassfail is true and the grade is failing.
+        $item->hidden = 1;
+        $item->gradepass = 4;
+        $grade->finalgrade = 3.0;
+        $this->assertEquals(
+            COMPLETION_COMPLETE_FAIL_HIDDEN,
+            completion_info::internal_get_grade_state($item, $grade, true));
+
+        // Item is not hidden, but returnpassfail is true and the grade is failing.
+        $item->hidden = 0;
+        $item->gradepass = 4;
+        $grade->finalgrade = 3.0;
+        $this->assertEquals(
+            COMPLETION_COMPLETE_FAIL,
+            completion_info::internal_get_grade_state($item, $grade, true));
     }
 
     /**

@@ -19,16 +19,23 @@ Feature: Teachers can embed images into instructions and conclusion fields
     And the following "blocks" exist:
       | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
       | private_files | System       | 1         | my-index        | side-post     |
+    And the following "activities" exist:
+      | activity | course | name                          |
+      | workshop | C1     | Workshop with embedded images |
+    And I am on the "Workshop with embedded images" "workshop activity editing" page logged in as admin
+    And I set the following fields to these values:
+      | instructauthorseditor[format]   | 1 |
+      | instructreviewerseditor[format] | 1 |
+      | conclusioneditor[format]        | 1 |
+    And I press "Save and display"
+    And I log out
     And I log in as "teacher1"
     # Upload an image into the private files.
     And I follow "Manage private files"
     And I upload "mod/workshop/tests/fixtures/moodlelogo.png" file to "Files" filemanager
     And I click on "Save changes" "button"
-    And I am on "Course 1" course homepage with editing mode on
-    # Create and edit the workshop.
-    When I add a "Workshop" to section "1" and I fill the form with:
-      | Workshop name | Workshop with embedded images  |
-    And I am on the "Workshop with embedded images" "workshop activity editing" page
+    # Edit the workshop.
+    When I am on the "Workshop with embedded images" "workshop activity editing" page
     And I expand all fieldsets
     And I set the field "Instructions for submission" to "<p>Image test</p>"
     And I select the text in the "Instructions for submission" Atto editor

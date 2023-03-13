@@ -116,7 +116,9 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
         ];
 
         return [
-            'data' => $data
+            'data' => $data,
+            'videoAllowed' => $videoallowed,
+            'audioAllowed' => $audioallowed,
         ];
     }
 }

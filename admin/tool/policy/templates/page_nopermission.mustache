@@ -45,7 +45,7 @@
             "Policy 2"
         ],
         "supportname": "Admin",
-        "supportemail": "admin@yoursite.com"
+        "supportemail": "moodlesite/user/contactsitesupport.php"
     }
 }}
 
@@ -61,13 +61,10 @@
         </ul>
     </div>
 
-    <p class="mt-3">{{#str}}nopermissiontoagreedocscontact, tool_policy{{/str}}</p>
-    <div class="agreedoc-officer card">
-        <div>
-            <p class="mb-0">{{{supportname}}}</p>
-            <p class="mb-0"><a href="mailto:{{supportemail}}">{{supportemail}}</a></p>
-        </div>
-    </div>
+    {{#supportemail}}
+        <p>{{#str}}nopermissiontoagreedocscontact, tool_policy{{/str}}</p>
+        <p>{{{supportemail}}}</p>
+    {{/supportemail}}
 {{/haspermissionagreedocs}}
 
 {{#js}}

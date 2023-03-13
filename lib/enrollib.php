@@ -1211,8 +1211,12 @@ function enrol_try_internal_enrol($courseid, $userid, $roleid = null, $timestart
     if (!$instances = $DB->get_records('enrol', array('enrol'=>'manual', 'courseid'=>$courseid, 'status'=>ENROL_INSTANCE_ENABLED), 'sortorder,id ASC')) {
         return false;
     }
-    $instance = reset($instances);
 
+    if ($roleid && !$DB->record_exists('role', ['id' => $roleid])) {
+        return false;
+    }
+
+    $instance = reset($instances);
     $enrol->enrol_user($instance, $userid, $roleid, $timestart, $timeend);
 
     return true;
@@ -1235,7 +1239,12 @@ function enrol_selfenrol_available($courseid) {
         if ($instance->enrol === 'guest') {
             continue;
         }
-        if ($plugins[$instance->enrol]->show_enrolme_link($instance)) {
+        if ((isguestuser() || !isloggedin()) &&
+            ($plugins[$instance->enrol]->is_self_enrol_available($instance) === true)) {
+            $result = true;
+            break;
+        }
+        if ($plugins[$instance->enrol]->show_enrolme_link($instance) === true) {
             $result = true;
             break;
         }
@@ -2012,6 +2021,17 @@ abstract class enrol_plugin {
     }
 
     /**
+     * Does this plugin support some way to self enrol?
+     * This function doesn't check user capabilities. Use can_self_enrol to check capabilities.
+     *
+     * @param stdClass $instance enrolment instance
+     * @return bool - true means "Enrol me in this course" link could be available.
+     */
+    public function is_self_enrol_available(stdClass $instance) {
+        return false;
+    }
+
+    /**
      * Attempt to automatically enrol current user in course without any interaction,
      * calling code has to make sure the plugin and instance are active.
      *
@@ -2725,10 +2745,14 @@ abstract class enrol_plugin {
 
         $icons = array();
         if ($this->use_standard_editing_ui()) {
-            $linkparams = array('courseid' => $instance->courseid, 'id' => $instance->id, 'type' => $instance->enrol);
-            $editlink = new moodle_url("/enrol/editinstance.php", $linkparams);
-            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
-                array('class' => 'iconsmall')));
+            $context = context_course::instance($instance->courseid);
+            $cap = 'enrol/' . $instance->enrol . ':config';
+            if (has_capability($cap, $context)) {
+                $linkparams = array('courseid' => $instance->courseid, 'id' => $instance->id, 'type' => $instance->enrol);
+                $editlink = new moodle_url("/enrol/editinstance.php", $linkparams);
+                $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
+                    array('class' => 'iconsmall')));
+            }
         }
         return $icons;
     }

@@ -1,9 +1,11 @@
 This files describes API changes in the quiz code.
 
+=== 4.1.1 ===
+* 'firstslotid' value is not used in section_shuffle_updated event anymore.
+
 === 4.1 ===
 
 * quiz_has_question_use is now deprecated. Use mod_quiz\structure::has_use_capability istead.
-
 
 === 4.0.3, 4.1 ===
 

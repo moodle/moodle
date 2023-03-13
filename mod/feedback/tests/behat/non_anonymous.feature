@@ -39,15 +39,11 @@ Feature: Non anonymous feedback
   Scenario: Guests can see non anonymous feedback on front page but can not complete
     When I am on the "Site feedback" "feedback activity" page
     Then I should not see "Answer the questions"
-    And I follow "Preview"
-    And I should see "Do you like our site?"
-    And I press "Continue"
+    And I should not see "Preview questions"
 
   Scenario: Complete non anonymous feedback on the front page as an authenticated user
     When I am on the "Site feedback" "feedback activity" page logged in as user1
-    And I follow "Preview"
-    And I should see "Do you like our site?"
-    And I press "Continue"
+    And I should not see "Preview questions"
     And I follow "Answer the questions"
     And I should see "Do you like our site?"
     And I set the following fields to these values:
@@ -144,6 +140,12 @@ Feature: Non anonymous feedback
     And I should not see "Next"
     And I should see "Prev"
     And I click on "Back" "link" in the "region-main" "region"
+    # Sort the feedback responses.
+    And I click on "Do you like this course?" "link" in the "generaltable" "table"
+    And "Username 1" "table_row" should appear before "Username 2" "table_row"
+    # Now sort descending.
+    And I click on "Do you like this course?" "link" in the "generaltable" "table"
+    And "Username 2" "table_row" should appear before "Username 1" "table_row"
     # Delete non anonymous response
     And I click on "Delete entry" "link" in the "Username 1" "table_row"
     And I press "Yes"

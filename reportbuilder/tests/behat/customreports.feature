@@ -26,7 +26,7 @@ Feature: Manage custom reports
     # Confirm we see the default sorting in the report
     And "Admin User" "table_row" should appear before "User 2" "table_row"
     And I click on "Show/hide 'Sorting'" "button"
-    And "Disable sorting for column 'Full name'" "checkbox" should exist in the "#settingssorting" "css_element"
+    And "Disable initial sorting for column Full name" "checkbox" should exist in the "#settingssorting" "css_element"
     And I click on "Show/hide 'Sorting'" "button"
     # Confirm we only see not suspended users in the report.
     And I should see "Admin User" in the "reportbuilder-table" "table"
@@ -96,10 +96,9 @@ Feature: Manage custom reports
     And I click on "Close 'Manager report' editor" "button"
     # Manager can edit their own report, but not those of other users.
     And I set the field "Edit report name" in the "Manager report" "table_row" to "Manager report (renamed)"
-    And I open the action menu in "Manager report (renamed)" "table_row"
-    Then "Edit report content" "link" should be visible
+    Then the "Edit report content" item should exist in the "Actions" action menu of the "Manager report (renamed)" "table_row"
     And "Edit report name" "link" should not exist in the "My report" "table_row"
-    And ".dropdown-toggle" "css_element" should not exist in the "My report" "table_row"
+    And "Actions" "actionmenu" should not exist in the "My report" "table_row"
 
   Scenario: Rename custom report
     Given the following "core_reportbuilder > Reports" exist:
@@ -252,3 +251,24 @@ Feature: Manage custom reports
     And I click on "Close 'Report users' editor" "button"
     And I press "View" action in the "Report users" report row
     And I should see "admin" in the "reportbuilder-table" "table"
+
+  Scenario Outline: Download custom report in different formats
+    Given the following "users" exist:
+      | username  | firstname | lastname |
+      | user1     | User      | 1        |
+      | user2     | User      | 2        |
+    And the following "core_reportbuilder > Reports" exist:
+      | name           | source                                       |
+      | Report users   | core_user\reportbuilder\datasource\users     |
+    When I am on the "Report users" "reportbuilder > Editor" page logged in as "admin"
+    And I click on "Switch to preview mode" "button"
+    Then I set the field "Download table data as" to "<format>"
+    And I press "Download"
+    Examples:
+      | format                             |
+      | Comma separated values (.csv)      |
+      | Microsoft Excel (.xlsx)            |
+      | HTML table                         |
+      | Javascript Object Notation (.json) |
+      | OpenDocument (.ods)                |
+      | Portable Document Format (.pdf)    |

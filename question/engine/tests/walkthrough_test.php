@@ -18,11 +18,12 @@ namespace core_question;
 
 use question_bank;
 use question_display_options;
+use question_state;
+use test_question_maker;
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-require_once(__DIR__ . '/..//lib.php');
+require_once(__DIR__ . '/../lib.php');
 require_once(__DIR__ . '/helpers.php');
 
 
@@ -38,7 +39,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
     public function test_regrade_does_not_lose_flag() {
 
         // Create a true-false question with correct answer true.
-        $tf = \test_question_maker::make_question('truefalse', 'true');
+        $tf = test_question_maker::make_question('truefalse', 'true');
         $this->start_attempt_at_question($tf, 'deferredfeedback', 2);
 
         // Process a true answer.
@@ -124,5 +125,67 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         // The step just show the user profile link if the step's userid is different with student id.
         preg_match_all("/<a ?.*>(.*)<\/a>/", $result, $matches);
         $this->assertEquals(1, count($matches[0]));
+    }
+
+    /**
+     * @covers \question_usage_by_activity::regrade_question
+     * @covers \question_attempt::regrade
+     * @covers \question_attempt::get_attempt_state_data_to_regrade_with_version
+     */
+    public function test_regrading_an_interactive_attempt_while_in_progress() {
+
+        // Start an attempt at a matching question.
+        $q = test_question_maker::make_question('match');
+        $this->start_attempt_at_question($q, 'interactive', 1);
+        $this->save_quba();
+
+        // Verify.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_step_count(1);
+        $this->check_current_output($this->get_tries_remaining_expectation(1));
+
+        // Regrade the attempt.
+        // Duplicating the question here essential to triggering the bug we are trying to reproduce.
+        $reloadedquestion = clone($q);
+        $this->quba->regrade_question($this->slot, false, null, $reloadedquestion);
+
+        // Verify.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_step_count(1);
+        $this->check_current_output($this->get_tries_remaining_expectation(1));
+    }
+
+    /**
+     * @covers \question_usage_by_activity::regrade_question
+     * @covers \question_attempt::regrade
+     * @covers \question_attempt::get_attempt_state_data_to_regrade_with_version
+     */
+    public function test_regrading_does_not_lose_metadata() {
+
+        // Start an attempt at a matching question.
+        $q = test_question_maker::make_question('match');
+        $this->start_attempt_at_question($q, 'interactive', 1);
+        // Like in process_redo_question in mod_quiz.
+        $this->quba->set_question_attempt_metadata($this->slot, 'originalslot', 42);
+        $this->save_quba();
+
+        // Verify.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_step_count(1);
+        $this->check_current_output($this->get_tries_remaining_expectation(1));
+
+        // Regrade the attempt.
+        $reloadedquestion = clone($q);
+        $this->quba->regrade_question($this->slot, false, null, $reloadedquestion);
+
+        // Verify.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_step_count(1);
+        $this->check_current_output($this->get_tries_remaining_expectation(1));
+        $this->assertEquals(42, $this->quba->get_question_attempt_metadata($this->slot, 'originalslot'));
     }
 }

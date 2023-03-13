@@ -66,14 +66,10 @@ Feature: Upload users
   @javascript
   Scenario: Upload users with custom profile fields
     # Create user profile field.
-    Given I log in as "admin"
-    And I navigate to "Users > Accounts > User profile fields" in site administration
-    And I click on "Create a new profile field" "link"
-    And I click on "Text area" "link"
-    And I set the following fields to these values:
-      | Short name | superfield  |
-      | Name       | Super field |
-    And I click on "Save changes" "button"
+    Given the following "custom profile fields" exist:
+      | datatype | shortname  | name        |
+      | text     | superfield | Super field |
+    And I log in as "admin"
     # Upload users.
     When I navigate to "Users > Accounts > Upload users" in site administration
     And I upload "lib/tests/fixtures/upload_users_profile.csv" file to "File" filemanager
@@ -129,12 +125,10 @@ Feature: Upload users
     And I should see "Users created: 4"
     And I press "Continue"
     # Boost check.
-    And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I click on ".icon[title=Edit]" "css_element" in the "jonest@example.com" "table_row"
+    And I am on the "jonest@example.com" "user > editing" page
     And I should see "Boost"
     # Classic check.
-    And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I click on ".icon[title=Edit]" "css_element" in the "reznor@example.com" "table_row"
+    And I am on the "reznor@example.com" "user > editing" page
     And I should see "Classic"
 
   @javascript

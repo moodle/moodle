@@ -31,15 +31,67 @@ use moodle_url;
 class general_action_bar_test extends advanced_testcase {
 
     /**
+     * Load required test libraries
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+        require_once("{$CFG->dirroot}/grade/lib.php");
+    }
+
+    /**
+     * Search array $options for an element which is an array containing 'name' => $name.
+     *
+     * @param array $options the array of options.
+     * @param string $name the name to find.
+     * @return array|null the particular option if found, else null.
+     */
+    protected function find_option_by_name(array $options, string $name): ?array {
+        foreach ($options as $option) {
+            if ($option['name'] == $name) {
+                return $option;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Test the exported data for the general action bar for different user roles and settings.
      *
-     * @dataProvider test_export_for_template_provider
+     * @dataProvider export_for_template_provider
      * @param string $userrole The user role to test
      * @param bool $enableoutcomes Whether to enable outcomes
      * @param array $expectedoptions The expected options returned in the general action selector
+     * @covers \core_grades\output\general_action_bar::export_for_template
      */
-    public function test_export_for_template_admin(string $userrole, bool $enableoutcomes, array $expectedoptions) {
+    public function test_export_for_template(string $userrole, bool $enableoutcomes, array $expectedoptions): void {
         global $PAGE;
+
+        // There may be additional plugins installed in the codebase where this
+        // test is being run, therefore, we need to know which links can be
+        // present in a standard Moodle install, and only check them.
+        $allcorenavlinks = [
+            get_string('view') => [
+                get_string('pluginname', 'gradereport_grader'),
+                get_string('pluginname', 'gradereport_history'),
+                get_string('pluginname', 'gradereport_outcomes'),
+                get_string('pluginname', 'gradereport_overview'),
+                get_string('pluginname', 'gradereport_singleview'),
+                get_string('pluginname', 'gradereport_summary'),
+                get_string('pluginname', 'gradereport_user'),
+            ],
+            get_string('setup', 'grades') => [
+                get_string('gradebooksetup', 'grades'),
+                get_string('coursegradesettings', 'grades'),
+                get_string('preferences', 'grades') . ': ' . get_string('pluginname', 'gradereport_grader'),
+            ],
+            get_string('moremenu') => [
+                get_string('scales'),
+                get_string('outcomes', 'grades'),
+                get_string('gradeletters', 'grades'),
+                get_string('import', 'grades'),
+                get_string('export', 'grades'),
+            ],
+        ];
 
         $this->resetAfterTest();
         // Reset the cache.
@@ -70,18 +122,29 @@ class general_action_bar_test extends advanced_testcase {
         $this->assertArrayHasKey('generalnavselector', $generalactionbardata);
 
         $generalnavselector = $generalactionbardata['generalnavselector'];
-        // Assert the correct number of available option groups in the general navigation selector.
-        foreach ($generalnavselector->options as $option) {
-            if ($option['isgroup']) {
-                $groupname = $option['name'];
-                $groupoptions = $option['options'];
-                // Assert that the group name exists.
-                $this->assertArrayHasKey($groupname, $expectedoptions);
-                // Assert that the actual number of group options matches the number of expected options.
-                $this->assertEquals(count($expectedoptions[$groupname]), count($groupoptions));
 
-                foreach ($groupoptions as $option) {
-                    $this->assertTrue(in_array($option['name'], $expectedoptions[$groupname]));
+        // Assert that the right links are present in each group.
+        foreach ($allcorenavlinks as $groupname => $corelinks) {
+            $actualgroup = $this->find_option_by_name($generalnavselector->options, $groupname);
+
+            if (!isset($expectedoptions[$groupname])) {
+                // This group should not be present.
+                $this->assertNull($actualgroup, "Nav link group '$groupname' should not be present, but is.");
+                continue;
+            }
+
+            $this->assertNotNull($actualgroup, "Nav link group '$groupname' should be present, but is not.");
+            $this->assertTrue($actualgroup['isgroup'], "the thing claiming to be nav link group '$groupname' is not a group.");
+
+            foreach ($corelinks as $corelinkname) {
+                $actuallink = $this->find_option_by_name($actualgroup['options'], $corelinkname);
+
+                if (!in_array($corelinkname, $expectedoptions[$groupname])) {
+                    $this->assertNull($actuallink,
+                            "Nav link '$corelinkname' should not be present in group '$groupname', but is.");
+                } else {
+                    $this->assertNotNull($actuallink,
+                            "Nav link '$corelinkname' should be present in group '$groupname', but is not.");
                 }
             }
         }
@@ -92,30 +155,52 @@ class general_action_bar_test extends advanced_testcase {
      *
      * @return array
      */
-    public function test_export_for_template_provider() : array {
+    public function export_for_template_provider(): array {
+        $graderpluginname = get_string('pluginname', 'gradereport_grader');
+        $historypluginname = get_string('pluginname', 'gradereport_history');
+        $outcomespluginname = get_string('pluginname', 'gradereport_outcomes');
+        $overviewpluginname = get_string('pluginname', 'gradereport_overview');
+        $singleviewpluginname = get_string('pluginname', 'gradereport_singleview');
+        $summarypluginname = get_string('pluginname', 'gradereport_summary');
+        $userpluginname = get_string('pluginname', 'gradereport_user');
+
+        $viewstr = get_string('view');
+        $setupstr = get_string('setup', 'grades');
+        $morestr = get_string('moremenu');
+
+        $gradebooksetupstr = get_string('gradebooksetup', 'grades');
+        $coursegradesettingsstr = get_string('coursegradesettings', 'grades');
+        $graderpreferencesstr = get_string('preferences', 'grades') . ': ' . get_string('pluginname', 'gradereport_grader');
+
+        $scalesstr = get_string('scales');
+        $outcomesstr = get_string('outcomes', 'grades');
+        $gradelettersstr = get_string('gradeletters', 'grades');
+        $importstr = get_string('import', 'grades');
+        $exportstr = get_string('export', 'grades');
+
         return [
             'Gradebook general navigation for admin; outcomes disabled.' => [
                 'admin',
                 false,
                 [
-                    'View' => [
-                        'Grader report',
-                        'Grade history',
-                        'Grade summary',
-                        'Overview report',
-                        'Single view',
-                        'User report',
+                    $viewstr => [
+                        $graderpluginname,
+                        $historypluginname,
+                        $overviewpluginname,
+                        $singleviewpluginname,
+                        $summarypluginname,
+                        $userpluginname,
                     ],
-                    'Setup' => [
-                        'Gradebook setup',
-                        'Course grade settings',
-                        'Preferences: Grader report',
+                    $setupstr => [
+                        $gradebooksetupstr,
+                        $coursegradesettingsstr,
+                        $graderpreferencesstr,
                     ],
-                    'More' => [
-                        'Scales',
-                        'Grade letters',
-                        'Import',
-                        'Export',
+                    $morestr => [
+                        $scalesstr,
+                        $gradelettersstr,
+                        $importstr,
+                        $exportstr,
                     ],
                 ],
             ],
@@ -123,26 +208,26 @@ class general_action_bar_test extends advanced_testcase {
                 'admin',
                 true,
                 [
-                    'View' => [
-                        'Grader report',
-                        'Grade history',
-                        'Grade summary',
-                        'Outcomes report',
-                        'Overview report',
-                        'Single view',
-                        'User report',
+                    $viewstr => [
+                        $graderpluginname,
+                        $historypluginname,
+                        $outcomespluginname,
+                        $overviewpluginname,
+                        $singleviewpluginname,
+                        $summarypluginname,
+                        $userpluginname,
                     ],
-                    'Setup' => [
-                        'Gradebook setup',
-                        'Course grade settings',
-                        'Preferences: Grader report',
+                    $setupstr => [
+                        $gradebooksetupstr,
+                        $coursegradesettingsstr,
+                        $graderpreferencesstr,
                     ],
-                    'More' => [
-                        'Scales',
-                        'Outcomes',
-                        'Grade letters',
-                        'Import',
-                        'Export',
+                    $morestr => [
+                        $scalesstr,
+                        $outcomesstr,
+                        $gradelettersstr,
+                        $importstr,
+                        $exportstr,
                     ],
                 ],
             ],
@@ -150,24 +235,24 @@ class general_action_bar_test extends advanced_testcase {
                 'editingteacher',
                 false,
                 [
-                    'View' => [
-                        'Grader report',
-                        'Grade history',
-                        'Grade summary',
-                        'Overview report',
-                        'Single view',
-                        'User report',
+                    $viewstr => [
+                        $graderpluginname,
+                        $historypluginname,
+                        $overviewpluginname,
+                        $singleviewpluginname,
+                        $summarypluginname,
+                        $userpluginname,
                     ],
-                    'Setup' => [
-                        'Gradebook setup',
-                        'Course grade settings',
-                        'Preferences: Grader report',
+                    $setupstr => [
+                        $gradebooksetupstr,
+                        $coursegradesettingsstr,
+                        $graderpreferencesstr,
                     ],
-                    'More' => [
-                        'Scales',
-                        'Grade letters',
-                        'Import',
-                        'Export',
+                    $morestr => [
+                        $scalesstr,
+                        $gradelettersstr,
+                        $importstr,
+                        $exportstr,
                     ],
                 ],
             ],
@@ -175,26 +260,26 @@ class general_action_bar_test extends advanced_testcase {
                 'editingteacher',
                 true,
                 [
-                    'View' => [
-                        'Grader report',
-                        'Grade history',
-                        'Grade summary',
-                        'Outcomes report',
-                        'Overview report',
-                        'Single view',
-                        'User report',
+                    $viewstr => [
+                        $graderpluginname,
+                        $historypluginname,
+                        $outcomespluginname,
+                        $overviewpluginname,
+                        $singleviewpluginname,
+                        $summarypluginname,
+                        $userpluginname,
                     ],
-                    'Setup' => [
-                        'Gradebook setup',
-                        'Course grade settings',
-                        'Preferences: Grader report',
+                    $setupstr => [
+                        $gradebooksetupstr,
+                        $coursegradesettingsstr,
+                        $graderpreferencesstr,
                     ],
-                    'More' => [
-                        'Scales',
-                        'Outcomes',
-                        'Grade letters',
-                        'Import',
-                        'Export',
+                    $morestr => [
+                        $scalesstr,
+                        $outcomesstr,
+                        $gradelettersstr,
+                        $importstr,
+                        $exportstr,
                     ],
                 ],
             ],
@@ -202,19 +287,19 @@ class general_action_bar_test extends advanced_testcase {
                 'teacher',
                 true,
                 [
-                    'View' => [
-                        'Grader report',
-                        'Grade history',
-                        'Grade summary',
-                        'Outcomes report',
-                        'Overview report',
-                        'User report',
+                    $viewstr => [
+                        $graderpluginname,
+                        $historypluginname,
+                        $outcomespluginname,
+                        $overviewpluginname,
+                        $summarypluginname,
+                        $userpluginname,
                     ],
-                    'Setup' => [
-                        'Preferences: Grader report',
+                    $setupstr => [
+                        $graderpreferencesstr,
                     ],
-                    'More' => [
-                        'Export',
+                    $morestr => [
+                        $exportstr,
                     ],
                 ],
             ],
@@ -222,9 +307,9 @@ class general_action_bar_test extends advanced_testcase {
                 'student',
                 true,
                 [
-                    'View' => [
-                        'Overview report',
-                        'User report',
+                    $viewstr => [
+                        $overviewpluginname,
+                        $userpluginname,
                     ],
                 ],
             ],

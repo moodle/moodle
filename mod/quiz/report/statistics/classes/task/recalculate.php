@@ -16,6 +16,7 @@
 
 namespace quiz_statistics\task;
 
+use core\dml\sql_join;
 use quiz_attempt;
 use quiz;
 use quiz_statistics_report;
@@ -36,53 +37,87 @@ require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class recalculate extends \core\task\scheduled_task {
+    /** @var int the maximum length of time one instance of this task will run. */
+    const TIME_LIMIT = 3600;
 
-    public function get_name() {
+    public function get_name(): string {
         return get_string('recalculatetask', 'quiz_statistics');
     }
 
-    public function execute() {
+    public function execute(): void {
         global $DB;
+        $stoptime = time() + self::TIME_LIMIT;
+        $dateformat = get_string('strftimedatetimeshortaccurate', 'core_langconfig');
+
         // TODO: MDL-75197, add quizid in quiz_statistics so that it is simpler to find quizzes for stats calculation.
         // Only calculate stats for quizzes which have recently finished attempt.
-        $sql = "
-            SELECT qa.quiz, MAX(qa.timefinish) as timefinish
-              FROM {quiz_attempts} qa
-             WHERE qa.preview = 0
-               AND qa.state = :quizstatefinished
-          GROUP BY qa.quiz
-        ";
+        $latestattempts = $DB->get_records_sql("
+                SELECT q.id AS quizid,
+                       q.name AS quizname,
+                       q.grademethod AS quizgrademethod,
+                       c.id AS courseid,
+                       c.shortname AS courseshortname,
+                       MAX(quiza.timefinish) AS mostrecentattempttime,
+                       COUNT(1) AS numberofattempts
 
-        $params = [
-            "quizstatefinished" => quiz_attempt::FINISHED,
-        ];
+                  FROM {quiz_attempts} quiza
+                  JOIN {quiz} q ON q.id = quiza.quiz
+                  JOIN {course} c ON c.id = q.course
 
-        $latestattempts = $DB->get_records_sql($sql, $params);
+                 WHERE quiza.preview = 0
+                   AND quiza.state = :quizstatefinished
 
-        foreach ($latestattempts as $attempt) {
-            $quizobj = quiz::create($attempt->quiz);
-            $quiz = $quizobj->get_quiz();
-            // Hash code for question stats option in question bank.
-            $qubaids = quiz_statistics_qubaids_condition($quiz->id, new \core\dml\sql_join(), $quiz->grademethod);
+              GROUP BY q.id, q.name, q.grademethod, c.id, c.shortname
+              ORDER BY MAX(quiza.timefinish) DESC
+            ", ["quizstatefinished" => quiz_attempt::FINISHED]);
+
+        $anyexception = null;
+        foreach ($latestattempts as $latestattempt) {
+            if (time() >= $stoptime) {
+                mtrace("This task has been running for more than " .
+                        format_time(self::TIME_LIMIT) . " so stopping this execution.");
+                break;
+            }
 
             // Check if there is any existing question stats, and it has been calculated after latest quiz attempt.
-            $records = $DB->get_records_select(
-                'quiz_statistics',
-                'hashcode = :hashcode AND timemodified > :timefinish',
-                [
-                    'hashcode' => $qubaids->get_hash_code(),
-                    'timefinish' => $attempt->timefinish
-                ]
-            );
+            $qubaids = quiz_statistics_qubaids_condition($latestattempt->quizid,
+                    new sql_join(), $latestattempt->quizgrademethod);
+            $lateststatstime = $DB->get_field('quiz_statistics', 'COALESCE(MAX(timemodified), 0)',
+                    ['hashcode' => $qubaids->get_hash_code()]);
 
-            if (empty($records)) {
+            $quizinfo = "'$latestattempt->quizname' ($latestattempt->quizid) in course " .
+                    "$latestattempt->courseshortname ($latestattempt->courseid) has most recent attempt finished at " .
+                        userdate($latestattempt->mostrecentattempttime, $dateformat);
+            if ($lateststatstime) {
+                $quizinfo .= " and statistics from " . userdate($lateststatstime, $dateformat);
+            }
+
+            if ($lateststatstime >= $latestattempt->mostrecentattempttime) {
+                mtrace("  " . $quizinfo . " so nothing to do.");
+                continue;
+            }
+
+            // OK, so we need to calculate for this quiz.
+            mtrace("  " . $quizinfo . " so re-calculating statistics for $latestattempt->numberofattempts attempts, start time " .
+                    userdate(time(), $dateformat) . " ...");
+
+            try {
+                $quizobj = quiz::create($latestattempt->quizid);
                 $report = new quiz_statistics_report();
-                // Clear old cache.
                 $report->clear_cached_data($qubaids);
-                // Calculate new stats.
-                $report->calculate_questions_stats_for_question_bank($quiz->id);
+                $report->calculate_questions_stats_for_question_bank($quizobj->get_quizid());
+                mtrace("    Calculations completed at " . userdate(time(), $dateformat) . ".");
+
+            } catch (\Throwable $e) {
+                // We don't want an exception from one quiz to stop processing of other quizzes.
+                mtrace_exception($e);
+                $anyexception = $e;
             }
         }
-        return true;
+
+        if ($anyexception) {
+            // If there was any error, ensure the task fails.
+            throw $anyexception;
+        }
     }
 }

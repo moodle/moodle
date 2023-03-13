@@ -940,6 +940,9 @@ class manager {
 
         // Init session key.
         sesskey();
+
+        // Make sure the user is correct in web server access logs.
+        set_access_log_user();
     }
 
     /**
@@ -1137,7 +1140,8 @@ class manager {
         $PAGE->requires->js_call_amd('core/network', 'keepalive', array(
                 $frequency,
                 $timeout,
-                get_string($identifier, $component)
+                $identifier,
+                $component
             ));
     }
 

@@ -33,6 +33,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 2.9
+ * @coversDefaultClass \mod_data_external
  */
 class externallib_test extends externallib_advanced_testcase {
 
@@ -1192,7 +1193,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_entry for an empty database (no fields).
      *
-     * @covers \mod_data\mod_data_external::add_entry
+     * @covers ::add_entry
      */
     public function test_add_entry_empty_database() {
         $this->expectException('moodle_exception');

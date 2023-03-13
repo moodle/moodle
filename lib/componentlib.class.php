@@ -302,9 +302,10 @@ class component_installer {
 
         $zipfile= $CFG->tempdir.'/'.$this->zipfilename;
 
-        if($contents = download_file_content($source)) {
+        $contents = download_file_content($source, null, null, true);
+        if ($contents->results && (int) $contents->status === 200) {
             if ($file = fopen($zipfile, 'w')) {
-                if (!fwrite($file, $contents)) {
+                if (!fwrite($file, $contents->results)) {
                     fclose($file);
                     $this->errorstring='cannotsavezipfile';
                     return COMPONENT_ERROR;
@@ -319,7 +320,7 @@ class component_installer {
             return COMPONENT_ERROR;
         }
     /// Calculate its md5
-        $new_md5 = md5($contents);
+        $new_md5 = md5($contents->results);
     /// Compare it with the remote md5 to check if we have the correct zip file
         if (!$remote_md5 = $this->get_component_md5()) {
             return COMPONENT_ERROR;
@@ -508,9 +509,10 @@ class component_installer {
         /// Not downloaded, let's do it now
             $availablecomponents = array();
 
-            if ($contents = download_file_content($source)) {
+            $contents = download_file_content($source, null, null, true);
+            if ($contents->results && (int) $contents->status === 200) {
             /// Split text into lines
-                $lines=preg_split('/\r?\n/',$contents);
+                $lines = preg_split('/\r?\n/', $contents->results);
             /// Each line will be one component
                 foreach($lines as $line) {
                     $availablecomponents[] = explode(',', $line);
@@ -705,8 +707,9 @@ class lang_installer {
         $source = 'https://download.moodle.org/langpack/' . $this->version . '/languages.md5';
         $availablelangs = array();
 
-        if ($content = download_file_content($source)) {
-            $alllines = explode("\n", $content);
+        $contents = download_file_content($source, null, null, true);
+        if ($contents->results && (int) $contents->status === 200) {
+            $alllines = explode("\n", $contents->results);
             foreach($alllines as $line) {
                 if (!empty($line)){
                     $availablelangs[] = explode(',', $line);

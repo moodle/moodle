@@ -139,8 +139,9 @@ class moodle1_mod_wiki_handler extends moodle1_mod_handler {
         if (!empty($data['initialcontent'])) {
             //convert file in <INITIALCONTENT>filename</INITIALCONTENT> into a subwiki page if no entry created.
             $temppath = $this->converter->get_tempdir_path();
-            $this->initialcontent = file_get_contents($temppath.'/course_files/'.$data['initialcontent']);
-            $this->initialcontentfilename = $data['initialcontent'];
+            $filename = clean_param($data['initialcontent'], PARAM_FILE);
+            $this->initialcontent = file_get_contents($temppath . '/course_files/' . $filename);
+            $this->initialcontentfilename = $filename;
             $this->needinitpage = true;
         }
         unset($data['initialcontent']);

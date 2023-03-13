@@ -35,8 +35,7 @@ class InsertOneResult
     private $isAcknowledged;
 
     /**
-     * @param WriteResult $writeResult
-     * @param mixed       $insertedId
+     * @param mixed $insertedId
      */
     public function __construct(WriteResult $writeResult, $insertedId)
     {
@@ -51,7 +50,7 @@ class InsertOneResult
      * This method should only be called if the write was acknowledged.
      *
      * @see InsertOneResult::isAcknowledged()
-     * @return integer
+     * @return integer|null
      * @throws BadMethodCallException is the write result is unacknowledged
      */
     public function getInsertedCount()

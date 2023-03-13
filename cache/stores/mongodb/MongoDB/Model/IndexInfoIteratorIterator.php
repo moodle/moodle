@@ -18,7 +18,6 @@
 namespace MongoDB\Model;
 
 use IteratorIterator;
-use ReturnTypeWillChange;
 use Traversable;
 
 use function array_key_exists;
@@ -41,10 +40,7 @@ class IndexInfoIteratorIterator extends IteratorIterator implements IndexInfoIte
     /** @var string|null $ns */
     private $ns;
 
-    /**
-     * @param string|null $ns
-     */
-    public function __construct(Traversable $iterator, $ns = null)
+    public function __construct(Traversable $iterator, ?string $ns = null)
     {
         parent::__construct($iterator);
 
@@ -56,10 +52,8 @@ class IndexInfoIteratorIterator extends IteratorIterator implements IndexInfoIte
      *
      * @see IndexInfoIterator::current()
      * @see https://php.net/iterator.current
-     * @return IndexInfo
      */
-    #[ReturnTypeWillChange]
-    public function current()
+    public function current(): IndexInfo
     {
         $info = parent::current();
 

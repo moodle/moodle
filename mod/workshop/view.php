@@ -695,7 +695,7 @@ switch ($workshop->phase) {
                 echo $output->render($workshop->prepare_submission_summary($submission, $shownames));
                 echo $output->box_end();
 
-                if (strlen(trim($assessment->feedbackreviewer)) > 0) {
+                if (!empty($assessment->feedbackreviewer) && strlen(trim($assessment->feedbackreviewer)) > 0) {
                     echo $output->render(new workshop_feedback_reviewer($assessment));
                 }
             }

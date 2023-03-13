@@ -146,7 +146,7 @@ class provider implements
         foreach ($autosaves as $autosave) {
             $context = \context::instance_by_id($autosave->contextid);
             $subcontext = [
-                get_string('autosaves', 'tiny_autosave'),
+                get_string('pluginname', 'tiny_autosave'),
                 $autosave->id,
             ];
 

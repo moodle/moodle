@@ -33,3 +33,26 @@ Feature: Licence manager
     And "This is the site default licence" "icon" should exist in the "cc" "table_row"
     And "Enable licence" "icon" should not exist in the "cc" "table_row"
     And "This is the site default licence" "icon" should not exist in the "public" "table_row"
+
+  @javascript @_file_upload
+  Scenario Outline: User licence preference is remembered depending of setting value
+    Given the following config values are set as admin:
+      | sitedefaultlicense      | cc                        |
+      | rememberuserlicensepref | <rememberuserlicensepref> |
+    And I log in as "admin"
+    And I follow "Private files" in the user menu
+    And I follow "Add..."
+    And I follow "Upload a file"
+    And the field with xpath "//select[@name='license']" matches value "Creative Commons"
+    And I click on "Close" "button" in the "File picker" "dialogue"
+    When I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager as:
+      | Save as | empty_copy.txt |
+      | license | Public domain |
+    And I press "Save changes"
+    And I follow "Add..."
+    Then the field with xpath "//select[@name='license']" matches value "<expectedlicence>"
+
+    Examples:
+      | rememberuserlicensepref | expectedlicence  |
+      | 0                       | Creative Commons |
+      | 1                       | Public domain    |

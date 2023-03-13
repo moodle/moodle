@@ -767,6 +767,7 @@ class restore_decode_interlinks extends restore_execution_step {
 
     protected function define_execution() {
         // Get the decoder (from the plan)
+        /** @var restore_decode_processor $decoder */
         $decoder = $this->task->get_decoder();
         restore_decode_processor::register_link_decoders($decoder); // Add decoder contents and rules
         // And launch it, everything will be processed
@@ -1952,6 +1953,10 @@ class restore_course_structure_step extends restore_structure_step {
         // Course record ready, update it
         $DB->update_record('course', $data);
 
+        // Apply any course format options that may be saved against the course
+        // entity in earlier-version backups.
+        course_get_format($data)->update_course_format_options($data);
+
         // Role name aliases
         restore_dbops::set_course_role_names($this->get_restoreid(), $this->get_courseid());
     }
@@ -1989,8 +1994,14 @@ class restore_course_structure_step extends restore_structure_step {
     public function process_course_format_option(array $data) : void {
         global $DB;
 
+        if ($data['sectionid']) {
+            // Ignore section-level format options saved course-level in earlier-version backups.
+            return;
+        }
+
         $courseid = $this->get_courseid();
-        $record = $DB->get_record('course_format_options', [ 'courseid' => $courseid, 'name' => $data['name'] ], 'id');
+        $record = $DB->get_record('course_format_options', [ 'courseid' => $courseid, 'name' => $data['name'],
+                'format' => $data['format'], 'sectionid' => 0 ], 'id');
         if ($record !== false) {
             $DB->update_record('course_format_options', (object) [ 'id' => $record->id, 'value' => $data['value'] ]);
         } else {
@@ -5293,6 +5304,7 @@ class restore_move_module_questions_categories extends restore_execution_step {
                                                        AND parentitemid = ?", array($this->get_restoreid(), $contextid));
                 $top = question_get_top_category($newcontext->newitemid, true);
                 $oldtopid = 0;
+                $categoryids = [];
                 foreach ($modulecats as $modulecat) {
                     // Before 3.5, question categories could be created at top level.
                     // From 3.5 onwards, all question categories should be a child of a special category called the "top" category.
@@ -5308,12 +5320,37 @@ class restore_move_module_questions_categories extends restore_execution_step {
                             $cat->parent = $top->id;
                         }
                         $DB->update_record('question_categories', $cat);
+                        $categoryids[] = (int)$cat->id;
                     }
 
                     // And set new contextid (and maybe update newitemid) also in question_category mapping (will be
                     // used by {@link restore_create_question_files} later.
                     restore_dbops::set_backup_ids_record($this->get_restoreid(), 'question_category', $modulecat->itemid,
                             $modulecat->newitemid, $newcontext->newitemid);
+                }
+
+                // Update the context id of any tags applied to any questions in these categories.
+                if ($categoryids) {
+                    [$categorysql, $categoryidparams] = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED);
+                    $sqlupdate = "UPDATE {tag_instance}
+                                     SET contextid = :newcontext
+                                   WHERE component = :component
+                                         AND itemtype = :itemtype
+                                         AND itemid IN (SELECT DISTINCT bi.newitemid as questionid
+                                                          FROM {backup_ids_temp} bi
+                                                          JOIN {question} q ON q.id = bi.newitemid
+                                                          JOIN {question_versions} qv ON qv.questionid = q.id
+                                                          JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                                                         WHERE bi.backupid = :backupid AND bi.itemname = 'question_created'
+                                                               AND qbe.questioncategoryid {$categorysql}) ";
+                    $params = [
+                        'newcontext' => $newcontext->newitemid,
+                        'component' => 'core_question',
+                        'itemtype' => 'question',
+                        'backupid' => $this->get_restoreid(),
+                    ];
+                    $params += $categoryidparams;
+                    $DB->execute($sqlupdate, $params);
                 }
 
                 // Now set the parent id for the question categories that were in the top category in the course context
@@ -5464,17 +5501,22 @@ class restore_process_file_aliases_queue extends restore_execution_step {
     protected function define_execution() {
         global $DB;
 
-        $this->log('processing file aliases queue', backup::LOG_DEBUG);
-
         $fs = get_file_storage();
 
         // Load the queue.
+        $aliascount = $DB->count_records('backup_ids_temp',
+            ['backupid' => $this->get_restoreid(), 'itemname' => 'file_aliases_queue']);
         $rs = $DB->get_recordset('backup_ids_temp',
-            array('backupid' => $this->get_restoreid(), 'itemname' => 'file_aliases_queue'),
+            ['backupid' => $this->get_restoreid(), 'itemname' => 'file_aliases_queue'],
             '', 'info');
+
+        $this->log('processing file aliases queue. ' . $aliascount . ' entries.', backup::LOG_DEBUG);
+        $progress = $this->task->get_progress();
+        $progress->start_progress('Processing file aliases queue', $aliascount);
 
         // Iterate over aliases in the queue.
         foreach ($rs as $record) {
+            $progress->increment_progress();
             $info = backup_controller_dbops::decode_backup_temp_info($record->info);
 
             // Try to pick a repository instance that should serve the alias.
@@ -5599,6 +5641,7 @@ class restore_process_file_aliases_queue extends restore_execution_step {
                 }
             }
         }
+        $progress->end_progress();
         $rs->close();
     }
 

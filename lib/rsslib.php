@@ -413,10 +413,15 @@ function rss_geterrorxmlfile($errortype = 'rsserror') {
 function rss_get_userid_from_token($token) {
     global $DB;
 
-    $sql = 'SELECT u.id FROM {user} u
-            JOIN {user_private_key} k ON u.id = k.userid
-            WHERE u.deleted = 0 AND u.confirmed = 1
-            AND u.suspended = 0 AND k.value = ?';
+    $sql = "SELECT u.id
+              FROM {user} u
+              JOIN {user_private_key} k ON u.id = k.userid
+             WHERE u.deleted = 0
+               AND u.confirmed = 1
+               AND u.suspended = 0
+               AND k.script = 'rss'
+               AND k.value = ?";
+
     return $DB->get_field_sql($sql, array($token), IGNORE_MISSING);
 }
 
@@ -491,7 +496,7 @@ function rss_end_tag($tag,$level=0,$endline=true) {
 function rss_full_tag($tag, $level, $endline, $content, $attributes = null) {
     $st = rss_start_tag($tag,$level,$endline,$attributes);
     $co="";
-    $co = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content));
+    $co = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content, ENT_COMPAT));
     $et = rss_end_tag($tag,0,true);
 
     return $st.$co.$et;

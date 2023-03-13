@@ -937,6 +937,7 @@ if (!isset($CFG->theme)) {
 if (isset($_GET['lang']) and ($lang = optional_param('lang', '', PARAM_SAFEDIR))) {
     if (get_string_manager()->translation_exists($lang, false)) {
         $SESSION->lang = $lang;
+        \core_courseformat\base::session_cache_reset_all();
     }
 }
 unset($lang);

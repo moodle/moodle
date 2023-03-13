@@ -14,21 +14,14 @@ Feature: Block region moving
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Survey" to section "1" and I fill the form with:
-      | Name | Test survey name |
-      | Survey type | ATTLS (20 item version) |
-      | Description | Test survey description |
-    And I add a "Book" to section "1" and I fill the form with:
-      | Name | Test book name |
-      | Description | Test book description |
-    And I follow "Test book name"
-    And I set the following fields to these values:
-      | Chapter title | Book title |
-      | Content       | Book content test test |
-    And I press "Save changes"
-    And I log out
+    And the following "activities" exist:
+      | activity | course | name             | template |
+      | survey   | C1     | Test survey name | 4        |
+      | book     | C1     | Test book name   |          |
+    And the following "mod_book > chapter" exists:
+      | book    | Test book name         |
+      | title   | Book title             |
+      | content | Book content test test |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Comments" block

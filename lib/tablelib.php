@@ -573,7 +573,7 @@ class flexible_table {
         global $SESSION;
         if (isset($SESSION->flextable[$uniqueid])) {
             $prefs = $SESSION->flextable[$uniqueid];
-        } else if (!$prefs = json_decode(get_user_preferences('flextable_' . $uniqueid), true)) {
+        } else if (!$prefs = json_decode(get_user_preferences("flextable_{$uniqueid}", ''), true)) {
             return '';
         }
 
@@ -1143,6 +1143,12 @@ class flexible_table {
         foreach ($row as $index => $data) {
             $column = $colbyindex[$index];
 
+            $columnattributes = $this->columnsattributes[$column] ?? [];
+            if (isset($columnattributes['class'])) {
+                $this->column_class($column, $columnattributes['class']);
+                unset($columnattributes['class']);
+            }
+
             $attributes = [
                 'class' => "cell c{$index}" . $this->column_class[$column],
                 'id' => "{$rowid}_c{$index}",
@@ -1155,7 +1161,7 @@ class flexible_table {
                 $attributes['scope'] = 'row';
             }
 
-            $attributes += $this->columnsattributes[$column] ?? [];
+            $attributes += $columnattributes;
 
             if (empty($this->prefs['collapse'][$column])) {
                 if ($this->column_suppress[$column] && $suppresslastrow !== null && $suppresslastrow[$index] === $data) {
@@ -1463,7 +1469,7 @@ class flexible_table {
 
         // Load any existing user preferences.
         if ($this->persistent) {
-            $this->prefs = json_decode(get_user_preferences('flextable_' . $this->uniqueid), true);
+            $this->prefs = json_decode(get_user_preferences("flextable_{$this->uniqueid}", ''), true);
             $oldprefs = $this->prefs;
         } else if (isset($SESSION->flextable[$this->uniqueid])) {
             $this->prefs = $SESSION->flextable[$this->uniqueid];
@@ -2204,7 +2210,7 @@ class table_default_export_format_parent {
     function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL) {
         //use some whitespace to indicate where there was some line spacing.
         $text = str_replace(array('</p>', "\n", "\r"), '   ', $text);
-        return html_entity_decode(strip_tags($text));
+        return html_entity_decode(strip_tags($text), ENT_COMPAT);
     }
 
     /**
@@ -2346,4 +2352,3 @@ class table_dataformat_export_format extends table_default_export_format_parent 
         exit();
     }
 }
-

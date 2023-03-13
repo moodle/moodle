@@ -42,7 +42,7 @@ Feature: Report relevant content availability
       | Teacher 1 | 1   | 0   | 0   | 1   | 2   | 8   |
     And "select-all-users" "checkbox" should be visible
     And "First name" "link" should be visible
-    And "Surname" "link" should be visible
+    And "Last name" "link" should be visible
     And "Number of discussions posted" "link" should be visible
     And "Number of replies posted" "link" should be visible
     And "Number of attachments" "link" should be visible
@@ -74,7 +74,7 @@ Feature: Report relevant content availability
       | Teacher 1 |
     And "select-all-users" "checkbox" should not exist
     And "First name" "link" should be visible
-    And "Surname" "link" should be visible
+    And "Last name" "link" should be visible
     And "Number of discussions posted" "link" should be visible
     And "Number of replies posted" "link" should be visible
     And "Number of attachments" "link" should be visible

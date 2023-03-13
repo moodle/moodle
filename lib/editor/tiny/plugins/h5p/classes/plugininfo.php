@@ -41,7 +41,7 @@ class plugininfo extends plugin implements
         ?\editor_tiny\editor $editor = null
     ): bool {
         // Users must have permission to embed content.
-        return has_capability('atto/h5p:addembed', $context);
+        return has_capability('tiny/h5p:addembed', $context);
     }
 
     public static function get_available_buttons(): array {
