@@ -32,6 +32,11 @@ defined('MOODLE_INTERNAL') || die();
  * Class for HTML editors
  */
 class editor extends base {
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     /**
      * Finds all enabled plugins, the result may include missing plugins.
      * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown

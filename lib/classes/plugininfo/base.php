@@ -72,6 +72,15 @@ abstract class base {
     protected $availableupdates;
 
     /**
+     * Whether this plugintype supports its plugins being disabled.
+     *
+     * @return bool
+     */
+    public static function plugintype_supports_disabling(): bool {
+        return false;
+    }
+
+    /**
      * Finds all enabled plugins, the result may include missing plugins.
      * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
      */

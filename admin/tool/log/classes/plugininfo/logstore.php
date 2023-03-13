@@ -33,6 +33,10 @@ use part_of_admin_tree;
  */
 class logstore extends base {
 
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     public function is_enabled() {
         $enabled = get_config('tool_log', 'enabled_stores');
         if (!$enabled) {

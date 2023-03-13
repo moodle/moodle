@@ -31,6 +31,11 @@ use part_of_admin_tree;
  * Class for enrolment plugins
  */
 class enrol extends base {
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     /**
      *
      * Finds all enabled plugins, the result may include missing plugins.

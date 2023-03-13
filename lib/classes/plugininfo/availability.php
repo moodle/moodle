@@ -33,6 +33,11 @@ use admin_settingpage;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class availability extends base {
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     public static function get_enabled_plugins() {
         global $DB;
 

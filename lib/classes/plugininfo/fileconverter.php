@@ -32,6 +32,10 @@ namespace core\plugininfo;
  */
 class fileconverter extends base {
 
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     /**
      * Should there be a way to uninstall the plugin via the administration UI.
      *

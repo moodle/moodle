@@ -32,6 +32,9 @@ namespace core\plugininfo;
  */
 class contenttype extends base {
 
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
 
     /**
      * Defines if there should be a way to uninstall the plugin via the administration UI.

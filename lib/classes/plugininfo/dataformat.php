@@ -37,6 +37,10 @@ use part_of_admin_tree;
  */
 class dataformat extends base {
 
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     /**
      * Display name
      */

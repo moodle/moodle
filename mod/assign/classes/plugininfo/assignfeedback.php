@@ -29,6 +29,9 @@ use moodle_url;
  */
 class assignfeedback extends base {
 
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
 
     /**
      * Finds all enabled plugins, the result may include missing plugins.

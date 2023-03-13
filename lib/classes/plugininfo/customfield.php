@@ -35,6 +35,10 @@ use moodle_url;
  */
 class customfield extends base {
 
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     /**
      * Allow uninstall
      * @return bool

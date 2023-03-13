@@ -32,6 +32,10 @@ namespace core\plugininfo;
  */
 class media extends base {
 
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     public function is_uninstall_allowed() {
         return true;
     }

@@ -31,6 +31,11 @@ namespace core\plugininfo;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class paygw extends base {
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     public function is_uninstall_allowed() {
         return true;
     }

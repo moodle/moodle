@@ -31,6 +31,11 @@ use part_of_admin_tree;
  * Class for authentication plugins
  */
 class auth extends base {
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     public function is_uninstall_allowed() {
         global $DB;
 

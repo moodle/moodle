@@ -32,6 +32,10 @@ use part_of_admin_tree;
  */
 class filter extends base {
 
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     public function init_display_name() {
         if (!get_string_manager()->string_exists('filtername', $this->component)) {
             $this->displayname = '[filtername,' . $this->component . ']';

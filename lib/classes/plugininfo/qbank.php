@@ -35,6 +35,10 @@ namespace core\plugininfo;
  */
 class qbank extends base {
 
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     public function is_uninstall_allowed(): bool {
         if (in_array($this->name, \core_plugin_manager::standard_plugins_list('qbank'))) {
             return false;
