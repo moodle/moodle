@@ -1,6 +1,11 @@
 This file describes API changes in /reportbuilder/*
 Information provided here is intended especially for developers.
 
+=== 4.3 ===
+
+* Trying to add/annotate duplicate entity names to a report will now throw a coding exception
+* The `get_default_entity_name` method of the base entity class is now private, and shouldn't be overridden in extending classes
+
 === 4.2 ===
 
 * New method `set_checkbox_toggleall` in system report class to allow reports to easily create checkbox toggle columns

@@ -33,7 +33,7 @@ use core_reportbuilder\local\report\filter;
 abstract class base {
 
     /** @var string $entityname Internal reference to name of entity */
-    private $entityname = '';
+    private $entityname = null;
 
     /** @var lang_string $entitytitle Used as a title for the entity in reports */
     private $entitytitle = null;
@@ -87,7 +87,7 @@ abstract class base {
      *
      * @return string
      */
-    protected function get_default_entity_name(): string {
+    private function get_default_entity_name(): string {
         $namespace = explode('\\', get_called_class());
 
         return end($namespace);
@@ -98,13 +98,8 @@ abstract class base {
      *
      * @param string $entityname
      * @return self
-     * @throws coding_exception
      */
     final public function set_entity_name(string $entityname): self {
-        if ($entityname === '' || $entityname !== clean_param($entityname, PARAM_ALPHANUMEXT)) {
-            throw new coding_exception('Entity name must be comprised of alphanumeric character, underscore or dash');
-        }
-
         $this->entityname = $entityname;
         return $this;
     }
@@ -115,7 +110,7 @@ abstract class base {
      * @return string
      */
     final public function get_entity_name(): string {
-        return $this->entityname ?: $this->get_default_entity_name();
+        return $this->entityname ?? $this->get_default_entity_name();
     }
 
     /**

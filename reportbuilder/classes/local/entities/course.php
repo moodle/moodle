@@ -64,15 +64,6 @@ class course extends base {
     }
 
     /**
-     * The default machine-readable name for this entity that will be used in the internal names of the columns/filters.
-     *
-     * @return string
-     */
-    protected function get_default_entity_name(): string {
-        return 'course';
-    }
-
-    /**
      * The default title for this entity in the list of columns/filters in the report builder.
      *
      * @return lang_string

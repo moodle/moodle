@@ -127,17 +127,6 @@ class base_test extends advanced_testcase {
     }
 
     /**
-     * Test invalid entity name
-     */
-    public function test_set_entity_name_invalid(): void {
-        $entity = new base_test_entity();
-
-        $this->expectException(coding_exception::class);
-        $this->expectExceptionMessage('Entity name must be comprised of alphanumeric character, underscore or dash');
-        $entity->set_entity_name('');
-    }
-
-    /**
      * Test entity title
      */
     public function test_set_entity_title(): void {
