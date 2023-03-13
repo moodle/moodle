@@ -23,9 +23,8 @@
  */
 namespace core\plugininfo;
 
-use moodle_url, core_plugin_manager;
-
-defined('MOODLE_INTERNAL') || die();
+use core_plugin_manager;
+use moodle_url;
 
 /**
  * Class for question behaviours.

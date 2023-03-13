@@ -25,8 +25,6 @@ namespace core\plugininfo;
 
 use admin_settingpage;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class for availability plugins.
  *

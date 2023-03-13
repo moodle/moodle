@@ -25,8 +25,6 @@
 
 namespace core\plugininfo;
 
-use qbank_columnsortorder\column_manager;
-
 /**
  * Base class for qbank plugins.
  *

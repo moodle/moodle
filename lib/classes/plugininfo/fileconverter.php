@@ -23,8 +23,6 @@
  */
 namespace core\plugininfo;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class for document converter plugins
  *

@@ -23,9 +23,7 @@
  */
 namespace core\plugininfo;
 
-use core_component, core_plugin_manager, moodle_url, coding_exception;
-
-defined('MOODLE_INTERNAL') || die();
+use moodle_url;
 
 /**
  * Class for portfolios

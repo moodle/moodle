@@ -23,9 +23,10 @@
  */
 namespace core\plugininfo;
 
-use moodle_url, part_of_admin_tree, admin_settingpage, core_plugin_manager;
-
-defined('MOODLE_INTERNAL') || die();
+use admin_settingpage;
+use core_plugin_manager;
+use moodle_url;
+use part_of_admin_tree;
 
 /**
  * Class for question types

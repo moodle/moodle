@@ -23,7 +23,9 @@
  */
 namespace core\plugininfo;
 
-use moodle_url, part_of_admin_tree, admin_externalpage;
+use admin_externalpage;
+use moodle_url;
+use part_of_admin_tree;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/repository/lib.php');

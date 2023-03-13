@@ -24,8 +24,6 @@
 
 namespace core\plugininfo;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Payment gateway subplugin info class.
  *

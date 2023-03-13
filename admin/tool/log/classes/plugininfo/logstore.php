@@ -23,9 +23,10 @@
  */
 namespace tool_log\plugininfo;
 
-use core\plugininfo\base, moodle_url, part_of_admin_tree, admin_settingpage;
-
-defined('MOODLE_INTERNAL') || die();
+use admin_settingpage;
+use core\plugininfo\base;
+use moodle_url;
+use part_of_admin_tree;
 
 /**
  * Plugin info class for logging store plugins.
