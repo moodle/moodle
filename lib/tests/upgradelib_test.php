@@ -1355,6 +1355,42 @@ class upgradelib_test extends advanced_testcase {
     }
 
     /**
+     * Test the check_mod_assignment check if mod_assignment is still used.
+     *
+     * @return void
+     */
+    public function test_check_mod_assignment_is_used(): void {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        $result = new environment_results('custom_checks');
+
+        if (file_exists("{$CFG->dirroot}/mod/assignment/version.php")) {
+            // This is for when the test is run on sites where mod_assignment is most likely reinstalled.
+            $this->assertNull(check_mod_assignment($result));
+            $this->assertTrue($result->getStatus());
+        } else {
+            // This is for when the test is run on sites with mod_assignment now gone.
+            $this->assertFalse($DB->get_manager()->table_exists('assignment'));
+            $this->assertNull(check_mod_assignment($result));
+
+            // Then we can simulate a scenario here where the assignment records are still present during the upgrade
+            // by recreating the assignment table and adding a record to it.
+            $dbman = $DB->get_manager();
+            $table = new xmldb_table('assignment');
+            $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+            $table->add_field('name', XMLDB_TYPE_CHAR, '255');
+            $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+            $dbman->create_table($table);
+            $DB->insert_record('assignment', (object)['name' => 'test_assign']);
+
+            $this->assertNotNull(check_mod_assignment($result));
+            $this->assertEquals('Assignment 2.2 is in use', $result->getInfo());
+            $this->assertFalse($result->getStatus());
+        }
+    }
+
+    /**
      * Data provider of usermenu items.
      *
      * @return array
