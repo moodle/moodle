@@ -16,6 +16,11 @@
 
 namespace mod_data;
 
+use coding_exception;
+use dml_exception;
+use mod_data\local\mod_data_csv_importer;
+use moodle_exception;
+
 /**
  * Unit tests for import.php.
  *
@@ -79,6 +84,7 @@ class import_test extends \advanced_testcase {
 
     /**
      * Test uploading entries for a data instance without userdata.
+     *
      * @throws dml_exception
      */
     public function test_import(): void {
@@ -88,10 +94,9 @@ class import_test extends \advanced_testcase {
             'teacher' => $teacher,
         ] = $this->get_test_data();
 
-        $filecontent = file_get_contents(__DIR__ . '/fixtures/test_data_import.csv');
-        ob_start();
-        data_import_csv($cm, $data, $filecontent, 'UTF-8', 'comma');
-        ob_end_clean();
+        $importer = new mod_data_csv_importer(__DIR__ . '/fixtures/test_data_import.csv',
+            'test_data_import.csv');
+        $importer->import_csv($cm, $data, 'UTF-8', 'comma');
 
         // No userdata is present in the file: Fallback is to assign the uploading user as author.
         $expecteduserids = array();
@@ -110,6 +115,9 @@ class import_test extends \advanced_testcase {
      * Test uploading entries for a data instance with userdata.
      *
      * At least one entry has an identifiable user, which is assigned as author.
+     *
+     * @throws coding_exception
+     * @throws moodle_exception
      * @throws dml_exception
      */
     public function test_import_with_userdata(): void {
@@ -120,10 +128,9 @@ class import_test extends \advanced_testcase {
             'student' => $student,
         ] = $this->get_test_data();
 
-        $filecontent = file_get_contents(__DIR__ . '/fixtures/test_data_import_with_userdata.csv');
-        ob_start();
-        data_import_csv($cm, $data, $filecontent, 'UTF-8', 'comma');
-        ob_end_clean();
+        $importer = new mod_data_csv_importer(__DIR__ . '/fixtures/test_data_import_with_userdata.csv',
+            'test_data_import_with_userdata.csv');
+        $importer->import_csv($cm, $data, 'UTF-8', 'comma');
 
         $expecteduserids = array();
         $expecteduserids[1] = $student->id; // User student exists and is assigned as author.
@@ -143,6 +150,8 @@ class import_test extends \advanced_testcase {
      * This should test the corner case, in which a user has defined a data fields, which has the same name
      * as the current lang string for username. In that case, the first Username entry is used for the field.
      * The second one is used to identify the author.
+     *
+     * @throws moodle_exception
      * @throws coding_exception
      * @throws dml_exception
      */
@@ -161,10 +170,9 @@ class import_test extends \advanced_testcase {
         $fieldrecord->type = 'text';
         $generator->create_field($fieldrecord, $data);
 
-        $filecontent = file_get_contents(__DIR__ . '/fixtures/test_data_import_with_field_username.csv');
-        ob_start();
-        data_import_csv($cm, $data, $filecontent, 'UTF-8', 'comma');
-        ob_end_clean();
+        $importer = new mod_data_csv_importer(__DIR__ . '/fixtures/test_data_import_with_field_username.csv',
+            'test_data_import_with_field_username.csv');
+        $importer->import_csv($cm, $data, 'UTF-8', 'comma');
 
         $expecteduserids = array();
         $expecteduserids[1] = $student->id; // User student exists and is assigned as author.
@@ -193,7 +201,7 @@ class import_test extends \advanced_testcase {
 
             foreach ($expectedcontent[$identifier] as $field => $value) {
                 $this->assertEquals($value, $record->items[$field]->content,
-                    "The value of field \"$field\" for the record at position \"$identifier\" ".
+                    "The value of field \"$field\" for the record at position \"$identifier\" " .
                     "which is \"{$record->items[$field]->content}\" does not match the expected value \"$value\".");
             }
         }
@@ -205,8 +213,9 @@ class import_test extends \advanced_testcase {
      * This should test the corner case, in which a user has defined a data fields, which has the same name
      * as the current lang string for username. In that case, the only Username entry is used for the field.
      * The author should not be set.
-     * @throws coding_exception
+     *
      * @throws dml_exception
+     * @throws moodle_exception
      */
     public function test_import_with_field_username_without_userdata(): void {
         [
@@ -223,10 +232,9 @@ class import_test extends \advanced_testcase {
         $fieldrecord->type = 'text';
         $generator->create_field($fieldrecord, $data);
 
-        $filecontent = file_get_contents(__DIR__ . '/fixtures/test_data_import_with_userdata.csv');
-        ob_start();
-        data_import_csv($cm, $data, $filecontent, 'UTF-8', 'comma');
-        ob_end_clean();
+        $importer = new mod_data_csv_importer(__DIR__ . '/fixtures/test_data_import_with_userdata.csv',
+            'test_data_import_with_userdata.csv');
+        $importer->import_csv($cm, $data, 'UTF-8', 'comma');
 
         // No userdata is present in the file: Fallback is to assign the uploading user as author.
         $expecteduserids = array();
@@ -251,7 +259,7 @@ class import_test extends \advanced_testcase {
 
             foreach ($expectedcontent[$identifier] as $field => $value) {
                 $this->assertEquals($value, $record->items[$field]->content,
-                    "The value of field \"$field\" for the record at position \"$identifier\" ".
+                    "The value of field \"$field\" for the record at position \"$identifier\" " .
                     "which is \"{$record->items[$field]->content}\" does not match the expected value \"$value\".");
             }
         }

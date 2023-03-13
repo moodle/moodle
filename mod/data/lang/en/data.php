@@ -152,6 +152,7 @@ $string['entrieslefttoadd'] = 'You must add {$a->entriesleft} more entry/entries
 $string['entrieslefttoaddtoview'] = 'You must add {$a->entrieslefttoview} more entry/entries before you can view other participants\' entries.';
 $string['entry'] = 'Entry';
 $string['entrysaved'] = 'Your entry has been saved';
+$string['errordatafilenotfound'] = 'The file could not be imported. Please upload a CSV file.';
 $string['errormustbeteacher'] = 'You need to be a teacher to use this page!';
 $string['errorpresetexists'] = 'A preset with this name already exists.';
 $string['errorpresetexistsbutnotoverwrite'] = 'A preset with this name already exists. Choose a different name.';

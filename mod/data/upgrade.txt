@@ -7,6 +7,9 @@ information provided here is intended especially for developers.
   refactoring of the way data is being exported. This is now being done by new exporter classes
   \mod_data\local\csv_exporter and \mod_data\local\ods_exporter (inheriting from exporter base class
   \mod_data\local\exporter) as well as \mod_data\local\exporter_utils::data_exportdata().
+* Function data_import_csv() has been deprecated and moved to deprecatedlib due to a bigger rework of the way data is
+  being imported. This is now being done by new importer class \mod_data\local\mod_data_csv_importer inheriting from new
+  classes \mod_data\local\csv_importer and \mod_data\local\importer.
 
 == 4.2 ==
 * The field base class now has a method validate(). Overwrite it in the field type to provide validation of field type's
