@@ -109,8 +109,9 @@ if ($mform->is_cancelled()) {
                 . 'Only "csv" and "ods" are currently supported.');
     }
 
+    $includefiles = !empty($formdata['includefiles']);
     \mod_data\local\exporter_utils::data_exportdata($data->id, $fields, $selectedfields, $exporter, $currentgroup, $context,
-        $exportuser, $exporttime, $exportapproval, $tags);
+        $exportuser, $exporttime, $exportapproval, $tags, $includefiles);
     $count = $exporter->get_records_count();
     $filename = clean_filename("{$data->name}-{$count}_record");
     if ($count > 1) {

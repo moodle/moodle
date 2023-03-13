@@ -10,6 +10,12 @@ information provided here is intended especially for developers.
 * Function data_import_csv() has been deprecated and moved to deprecatedlib due to a bigger rework of the way data is
   being imported. This is now being done by new importer class \mod_data\local\mod_data_csv_importer inheriting from new
   classes \mod_data\local\csv_importer and \mod_data\local\importer.
+* Field base class now has two new methods file_export_supported() and export_file_value(). The method
+  file_export_supported() can be overwritten to declare that a field type can/wants to export a file. In this case this
+  field type will have to implement the method export_file_value() returning this file for exporting. Also: This field
+  type will have to export the name of the file by overwriting text_export_supported() to return true and make the
+  method export_text_value() return the name of the file.
+* The field types file and picture now are able to export the file/picture.
 
 == 4.2 ==
 * The field base class now has a method validate(). Overwrite it in the field type to provide validation of field type's

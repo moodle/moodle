@@ -63,8 +63,23 @@ class export_test extends \advanced_testcase {
         $fieldrecord->type = 'text';
         $textfield = $generator->create_field($fieldrecord, $data);
 
+        $fieldrecord->name = 'filefield1';
+        $fieldrecord->type = 'file';
+        $filefield1 = $generator->create_field($fieldrecord, $data);
+
+        $fieldrecord->name = 'filefield2';
+        $fieldrecord->type = 'file';
+        $filefield2 = $generator->create_field($fieldrecord, $data);
+
+        $fieldrecord->name = 'picturefield';
+        $fieldrecord->type = 'picture';
+        $picturefield = $generator->create_field($fieldrecord, $data);
+
         $contents[$numberfield->field->id] = '3';
         $contents[$textfield->field->id] = 'a simple text';
+        $contents[$filefield1->field->id] = 'samplefile.png';
+        $contents[$filefield2->field->id] = 'samplefile.png';
+        $contents[$picturefield->field->id] = ['picturefile.png', 'this picture shows something'];
         $generator->create_entry($data, $contents);
 
         return [
@@ -105,10 +120,49 @@ class export_test extends \advanced_testcase {
         $exporttime = false;
         $exportapproval = false;
         $tags = false;
-
+        // We first test the export without exporting files.
+        // This means file and picture fields will be exported, but only as text (which is the filename),
+        // so we will receive a csv export file.
+        $includefiles = false;
         exporter_utils::data_exportdata($data->id, $fields, $selectedfields, $exporter, $currentgroup, $context,
-            $exportuser, $exporttime, $exportapproval, $tags);
-        $this->assertEquals(file_get_contents(__DIR__ . '/fixtures/test_data_export.csv'),
+            $exportuser, $exporttime, $exportapproval, $tags, $includefiles);
+        $this->assertEquals(file_get_contents(__DIR__ . '/fixtures/test_data_export_without_files.csv'),
             $exporter->send_file(false));
+
+        // We now test the export including files. This will generate a zip archive.
+        $includefiles = true;
+        $exporter = new csv_exporter();
+        $exporter->set_export_file_name('testexportfile');
+        exporter_utils::data_exportdata($data->id, $fields, $selectedfields, $exporter, $currentgroup, $context,
+            $exportuser, $exporttime, $exportapproval, $tags, $includefiles);
+        // We now write the zip archive temporary to disc to be able to parse it and assert it has the correct structure.
+        $tmpdir = make_request_directory();
+        file_put_contents($tmpdir . '/testexportarchive.zip', $exporter->send_file(false));
+        $ziparchive = new \zip_archive();
+        $ziparchive->open($tmpdir . '/testexportarchive.zip');
+        $expectedfilecontents = [
+            // The test generator for mod_data uses a copy of pix/monologo.png as sample file content for the file stored in a
+            // file and picture field.
+            // So we expect that this file has to have the same content as monologo.png.
+            // Also, the default value for the subdirectory in the zip archive containing the files is 'files/'.
+            'files/samplefile.png' => 'mod/data/pix/monologo.png',
+            'files/samplefile_1.png' => 'mod/data/pix/monologo.png',
+            'files/picturefile.png' => 'mod/data/pix/monologo.png',
+            // By checking that the content of the exported csv is identical to the fixture file it is verified
+            // that the filenames in the csv file correspond to the names of the exported file.
+            // It also verifies that files with identical file names in different fields (or records) will be numbered
+            // automatically (samplefile.png, samplefile_1.png, ...).
+            'testexportfile.csv' => __DIR__ . '/fixtures/test_data_export_with_files.csv'
+        ];
+        for ($i = 0; $i < $ziparchive->count(); $i++) {
+            // We here iterate over all files in the zip archive and check if their content is identical to the files
+            // in the $expectedfilecontents array.
+            $filestream = $ziparchive->get_stream($i);
+            $fileinfo = $ziparchive->get_info($i);
+            $filecontent = fread($filestream, $fileinfo->size);
+            $this->assertEquals(file_get_contents($expectedfilecontents[$fileinfo->pathname]), $filecontent);
+            fclose($filestream);
+        }
+        $ziparchive->close();
     }
 }

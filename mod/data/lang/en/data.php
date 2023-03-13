@@ -228,6 +228,7 @@ $string['importapreset'] = 'Import a preset';
 $string['importsuccess'] = 'Preset applied.';
 $string['importpresetmissingcapability'] = 'You don\'t have permission to import a preset.';
 $string['includeapproval'] = 'Include approval status';
+$string['includefiles'] = 'Include files in export';
 $string['includetags'] = 'Include tags';
 $string['includetime'] = 'Include time added/modified';
 $string['includeuserdetails'] = 'Include user details';

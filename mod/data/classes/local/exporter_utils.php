@@ -46,6 +46,7 @@ class exporter_utils {
      * @param bool $time whether to include time created/modified
      * @param bool $approval whether to include approval status
      * @param bool $tags whether to include tags
+     * @param bool $includefiles whether files should be exported as well
      * @return void
      * @throws coding_exception
      * @throws dml_exception
@@ -53,7 +54,7 @@ class exporter_utils {
      */
     public static function data_exportdata(int $dataid, array $fields, array $selectedfields, exporter $exporter,
         int $currentgroup = 0, context $context = null, bool $userdetails = false, bool $time = false, bool $approval = false,
-        bool $tags = false): void {
+        bool $tags = false, bool $includefiles = true): void {
         global $DB;
 
         if (is_null($context)) {
@@ -108,6 +109,15 @@ class exporter_utils {
                     $contents = '';
                     if (isset($content[$field->field->id])) {
                         $contents = $field->export_text_value($content[$field->field->id]);
+                        if (!empty($contents) && $field->file_export_supported() && $includefiles
+                            && !is_null($field->export_file_value($record))) {
+                            // For exporting overwrite the content of the column with a unique
+                            // filename, even it is not exactly the name of the file in the
+                            // mod_data instance content. But it's more important to match the name
+                            // of the exported file.
+                            $contents = $exporter->create_unique_filename($contents);
+                            $exporter->add_file_from_string($contents, $field->export_file_value($record));
+                        }
                     }
                     // Just be double sure.
                     $contents = !empty($contents) ? $contents : '';

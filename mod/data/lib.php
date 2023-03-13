@@ -640,16 +640,39 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     }
 
     /**
-     * Per default, return the record's text value only from the "content" field.
-     * Override this in fields class if necesarry.
+     * Per default, it is assumed that fields do not support file exporting. Override this (return true)
+     * on fields supporting file export. You will also have to implement export_file_value().
      *
-     * @param string $record
+     * @return bool true if field will export a file, false otherwise
+     */
+    public function file_export_supported(): bool {
+        return false;
+    }
+
+    /**
+     * Per default, does not return a file (just null).
+     * Override this in fields class, if you want your field to export a file content.
+     * In case you are exporting a file value, export_text_value() should return the corresponding file name.
+     *
+     * @param stdClass $record
+     * @return null|string the file content as string or null, if no file content is being provided
+     */
+    public function export_file_value(stdClass $record): null|string {
+        return null;
+    }
+
+    /**
+     * Per default, return the record's text value only from the "content" field.
+     * Override this in fields class if necessary.
+     *
+     * @param stdClass $record
      * @return string
      */
-    function export_text_value($record) {
+    public function export_text_value(stdClass $record) {
         if ($this->text_export_supported()) {
             return $record->content;
         }
+        return '';
     }
 
     /**

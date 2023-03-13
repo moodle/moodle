@@ -218,8 +218,43 @@ class data_field_file extends data_field_base {
         $DB->update_record('data_content', $content);
     }
 
-    function text_export_supported() {
-        return false;
+    /**
+     * File field supports export of text. The text being exported is the filename of the stored file.
+     *
+     * @return bool true
+     */
+    public function text_export_supported() {
+        return true;
+    }
+
+    /**
+     * Here we export the text value of a file field which is the filename of the exported file.
+     *
+     * @param stdClass $record the record which is being exported
+     * @return string the value which will be stored in the exported file for this field
+     */
+    public function export_text_value(stdClass $record): string {
+        return !empty($record->content) ? $record->content : '';
+    }
+
+    /**
+     * Specifies that this field type supports the export of files.
+     *
+     * @return bool true which means that file export is being supported by this field type
+     */
+    public function file_export_supported(): bool {
+        return true;
+    }
+
+    /**
+     * Exports the file content for file export.
+     *
+     * @param stdClass $record the data content record the file belongs to
+     * @return null|string The file content of the stored file or null if no file should be exported for this record
+     */
+    public function export_file_value(stdClass $record): null|string {
+        $file = $this->get_file($record->id);
+        return $file ? $file->get_content() : null;
     }
 
     function file_ok($path) {
