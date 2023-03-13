@@ -137,9 +137,7 @@ if ($category = $DB->get_record_sql("SELECT uic.id, uic.name FROM {user_info_cat
             $fieldnames[$field->id] = 'profile_field_'.$field->shortname;
             require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
             $newfield = 'profile_field_'.$field->datatype;
-            $formfield = new $newfield($field->id);
-            $fieldoptions = $formfield->get_field_properties();
-            ${'profile_field_'.$field->shortname} = optional_param('profile_field_'.$field->shortname, null, $fieldoptions[0]);
+            ${'profile_field_'.$field->shortname} = optional_param('profile_field_'.$field->shortname, null, PARAM_ALPHANUMEXT);
         }
     }
 }
@@ -153,11 +151,9 @@ if ($categories = $DB->get_records_sql("SELECT id FROM {user_info_category}
                 $fieldnames[$field->id] = 'profile_field_'.$field->shortname;
                 require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
                 $newfield = 'profile_field_'.$field->datatype;
-                $formfield = new $newfield($field->id);
-                $fieldoptions = $formfield->get_field_properties();
                 ${'profile_field_'.$field->shortname} = optional_param('profile_field_'. $field->shortname,
                                                                        null,
-                                                                       $fieldoptions[0]);
+                                                                       PARAM_ALPHANUMEXT);
             }
         }
     }
