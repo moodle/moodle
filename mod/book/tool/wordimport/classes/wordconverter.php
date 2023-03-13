@@ -130,8 +130,8 @@ class wordconverter {
         global $CFG;
 
         // Check that we can unzip the Word .docx file into its component files.
-        $zipres = zip_open($filename);
-        if (!is_resource($zipres)) {
+        $zipfile = new \ZipArchive();
+        if (!($zipfile->open($filename))) {
             // Cannot unzip file.
             unlink($filename);
             throw new \moodle_exception('cannotunzipfile', 'error');
@@ -153,20 +153,26 @@ class wordconverter {
         $gifimagefilenames = array();
         $pngimagefilenames = array();
 
-        $zipentry = zip_read($zipres);
-        while ($zipentry) {
-            if (!zip_entry_open($zipres, $zipentry, "r")) {
+        $filecount = $zipfile->numFiles;
+        for ($idx = 0; $idx < $filecount; $idx++) {
+            $entry = $zipfile->statIndex($idx);
+            if ($entry === false) {
                 // Can't read the XML file from the Word .docx file.
-                zip_close($zipres);
+                $zipfile->close();
                 throw new \moodle_exception('errorunzippingfiles', 'error');
             }
 
-            $zefilename = zip_entry_name($zipentry);
-            $zefilesize = zip_entry_filesize($zipentry);
+            $zefilename = $entry['name'];
+
+            $data = $zipfile->getFromIndex($idx);
+            if ($data === false) {
+                // A directory.
+                continue;
+            }
 
             // Insert internal images into the array of images.
             if (!(strpos($zefilename, "media") === false)) {
-                $imagedata = zip_entry_read($zipentry, $zefilesize);
+                $imagedata = $data;
                 $imagename = basename($zefilename);
                 $imagesuffix = strtolower(pathinfo($zefilename, PATHINFO_EXTENSION));
                 if ($imagesuffix == 'jpg') {
@@ -181,7 +187,7 @@ class wordconverter {
                 }
 
                 // Internet formats like GIF, PNG and JPEG are supported, but not non-Internet formats like BMP or EPS.
-                if ($imagesuffix == 'gif' or $imagesuffix == 'png' or $imagesuffix == 'jpeg') {
+                if ($imagesuffix == 'gif' || $imagesuffix == 'png' || $imagesuffix == 'jpeg') {
                     $imagesforzipping[$imagename] = $imagedata;
                     $imagemimetype = "image/" . $imagesuffix;
                     $imagestring .= '<file filename="media/' . $imagename . '" mime-type="' . $imagemimetype . '">'
@@ -190,7 +196,7 @@ class wordconverter {
             } else {
                 // Look for required XML files, read and wrap it, remove the XML declaration, and add it to the XML string.
                 // Read and wrap XML files, remove the XML declaration, and add them to the XML string.
-                $xmlfiledata = preg_replace('/<\?xml version="1.0" ([^>]*)>/', "", zip_entry_read($zipentry, $zefilesize));
+                $xmlfiledata = preg_replace('/<\?xml version="1.0" ([^>]*)>/', "", $data);
                 switch ($zefilename) {
                     case "word/document.xml":
                         $wordmldata .= "<wordmlContainer>" . $xmlfiledata . "</wordmlContainer>\n";
@@ -215,10 +221,8 @@ class wordconverter {
                         break;
                 }
             }
-            // Get the next file in the Zip package.
-            $zipentry = zip_read($zipres);
-        }  // End while loop.
-        zip_close($zipres);
+        }  // End for loop.
+        $zipfile->close();
 
         // Preprocess the document links and images to rename any re-formatted GIF images to be PNGs instead.
         // Fixing filenames in the document links is the simplest solution for this issue.
@@ -406,6 +410,7 @@ class wordconverter {
     public function zip_images(string $zipfilename, array $images) {
         // Create a temporary Zip file.
         $zipfile = new \ZipArchive();
+        unlink($zipfilename);
         if (!($zipfile->open($zipfilename, ZipArchive::CREATE))) {
             // Cannot open zip file.
             throw new \moodle_exception('cannotopenzip', 'error');
@@ -433,7 +438,7 @@ class wordconverter {
      * @param string $chapterid the chapter or page ID (optional)
      * @return string the modified HTML with embedded images
      */
-    public function base64_images(string $contextid, string $component, string $filearea, $chapterid = null, array &$giffilenames) {
+    public function base64_images(string $contextid, string $component, string $filearea, array &$giffilenames, $chapterid = null) {
         // Get the list of files embedded in the book or chapter.
         // Note that this will break on images in the Book Intro section.
         $imagestring = '';
@@ -449,7 +454,7 @@ class wordconverter {
         foreach ($files as $fileinfo) {
             // Process image files, converting them into Base64 encoding.
             $fileext = strtolower(pathinfo($fileinfo->get_filename(), PATHINFO_EXTENSION));
-            if ($fileext == 'png' or $fileext == 'jpg' or $fileext == 'jpeg' or $fileext == 'gif') {
+            if ($fileext == 'png' || $fileext == 'jpg' || $fileext == 'jpeg' || $fileext == 'gif') {
                 $filename = $fileinfo->get_filename();
                 $filetype = ($fileext == 'jpg') ? 'jpeg' : $fileext;
                 $fileitemid = $fileinfo->get_itemid();
@@ -558,7 +563,6 @@ class wordconverter {
      * @return string XHTML text inside <body> element
      */
     public function htmlbody($xhtmldata) {
-        ;
         if (($htmlbody = toolbook_importhtml_parse_body($xhtmldata)) != '') {
             return $htmlbody;
         } else {
@@ -645,7 +649,7 @@ class wordconverter {
         $foundpluginfilenames = preg_match_all('~(.*?)<img src="@@PLUGINFILE@@/([^"]*)(.*)~s', $cleanxhtml,
                                     $pluginfilematches, PREG_SET_ORDER);
         $nummatches = count($pluginfilematches);
-        if ($foundpluginfilenames and $foundpluginfilenames != 0) {
+        if ($foundpluginfilenames && $foundpluginfilenames != 0) {
             $urldecodedstring = "";
             // Process the possibly-URL-escaped filename so that it matches the name in the file element.
             for ($i = 0; $i < $nummatches; $i++) {

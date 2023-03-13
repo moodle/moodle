@@ -110,7 +110,7 @@
 <xsl:variable name="answers_label" select="$moodle_labels/data[@name = 'quiz_answers']"/>
 <xsl:variable name="categoryname_label" select="$moodle_labels/data[@name = 'moodle_categoryname']"/>
 <xsl:variable name="defaultmark_label" select="concat($moodle_labels/data[@name = 'question_defaultmark'], $colon_string)"/>
-<xsl:variable name="grade_label" select="$moodle_labels/data[@name = 'moodle_grade']"/>
+<xsl:variable name="grade_label" select="$moodle_labels/data[@name = 'moodle_gradenoun']"/>
 <xsl:variable name="no_label" select="$moodle_labels/data[@name = 'moodle_no']"/>
 <xsl:variable name="yes_label" select="$moodle_labels/data[@name = 'moodle_yes']"/>
 <xsl:variable name="item_label" select="$moodle_labels/data[@name = 'grades_item']"/>

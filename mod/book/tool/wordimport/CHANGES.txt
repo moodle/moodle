@@ -1,6 +1,7 @@
 # Change log
 
 Date          Version   Comment
+2023/02/15    1.4.12    Fix PHP 8 warnings.
 2021/08/31    1.4.11    Improve question import support.
 2021/08/21    1.4.10    Support import of Word questions, convert GIF images, manage access to import/export facilities.
 2021/07/14    1.4.9     Strip out unwanted markup inside Word document XML file.

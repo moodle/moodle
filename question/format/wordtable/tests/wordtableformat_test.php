@@ -82,10 +82,15 @@ class qformat_wordtable_export_test extends question_testcase {
   </question>';
 
         $expectedhtml = '<h2 class="MsoHeading2">A description</h2><p class="MsoBodyText"/>' .
-            '<div class="TableDiv"><table border="1" dir="ltr"><thead>
+            '<div class="TableDiv">
+<table border="1" dir="ltr"><thead>
 <tr>
-<td colspan="3" style="width: 12.0cm"><p class="Cell">The question text.</p></td>
+<td colspan="3" style="width: 12.0cm"><div class="chapter">The question text.</div></td>
 <td style="width: 1.0cm"><p class="QFType">DE</p></td></tr>
+
+<tr>
+<td colspan="3" style="width: 12.0cm"><p class="TableRowHead" style="text-align: right">ID number:</p></td>
+<td style="width: 1.0cm"><p class="QFID"></p></td></tr>
 <tr>
 <td style="width: 1.0cm"><p class="Cell"></p></td>
 <td style="width: 5.0cm"><p class="TableHead"></p></td>
@@ -95,7 +100,7 @@ class qformat_wordtable_export_test extends question_testcase {
 
 <tr>
 <td style="width: 1.0cm"><p class="Cell"></p></td>
-<th style="width: 5.0cm"><p class="TableRowHead">Tags:</p></th>
+<th style="width: 5.0cm"><p class="TableRowHead"><p class="TableRowHead">Tags:</p></p></th>
 <td style="width: 6.0cm"><p class="Cell"></p></td>
 <td style="width: 1.0cm"><p class="Cell"></p></td></tr>
 <tr>
@@ -105,6 +110,8 @@ class qformat_wordtable_export_test extends question_testcase {
         'This is similar to the way that labels can be used to add content to the course page.</i></p></td>
 <td style="width: 1.0cm"><p class="Cell"></p></td></tr>
 </tbody></table></div><p class="MsoNormal"></p>
+
+</container>
   </body>
 </html>
 ';
@@ -144,9 +151,10 @@ class qformat_wordtable_export_test extends question_testcase {
   </question>';
 
         $expectedhtml = '<h2 class="MsoHeading2">Moodle 2.9 Essay Question</h2><p class="MsoBodyText"/>' .
-        '<div class="TableDiv"><table border="1" dir="ltr"><thead>
+        '<div class="TableDiv">
+<table border="1" dir="ltr"><thead>
 <tr>
-<td colspan="3" style="width: 12.0cm"><p class="Cell">Essay question text.</p></td>
+<td colspan="3" style="width: 12.0cm"><div class="chapter"><p class="MsoBodyText">Essay question text.</p></div></td>
 <td style="width: 1.0cm"><p class="QFType">ES</p></td></tr>
 <tr>
 <td colspan="3" style="width: 12.0cm"><p class="TableRowHead" style="text-align: right">Default mark:</p></td>
@@ -167,6 +175,13 @@ class qformat_wordtable_export_test extends question_testcase {
 <td colspan="3" style="width: 12.0cm"><p class="TableRowHead" style="text-align: right">Require attachments:</p></td>
 <td style="width: 1.0cm"><p class="Cell">0</p></td></tr>
 <tr>
+<td colspan="3" style="width: 12.0cm"><p class="TableRowHead" style="text-align: right">Accepted file types:</p></td>
+<td style="width: 1.0cm"><p class="Cell"></p></td></tr>
+
+<tr>
+<td colspan="3" style="width: 12.0cm"><p class="TableRowHead" style="text-align: right">ID number:</p></td>
+<td style="width: 1.0cm"><p class="QFID"></p></td></tr>
+<tr>
 <td style="width: 1.0cm"><p class="Cell"></p></td>
 <td style="width: 5.0cm"><p class="TableHead">Response template</p></td>
 <td style="width: 6.0cm"><p class="TableHead">Information for graders</p></td>
@@ -174,24 +189,25 @@ class qformat_wordtable_export_test extends question_testcase {
 </thead><tbody>
 <tr>
 <td style="width: 1.0cm"><p class="Cell"></p></td>
-<td style="width: 5.0cm"><p class="Cell">Optional response template.</p></td>
-<td style="width: 6.0cm"><p class="Cell">Grader information.</p></td>
+<td style="width: 5.0cm"><div class="chapter"><p class="Cell">Optional response template.</p></div></td>
+<td style="width: 6.0cm"><div class="chapter"><p class="Cell">Grader information.</p></div></td>
 <td style="width: 1.0cm"><p class="Cell"></p></td></tr>
 <tr>
 <td style="width: 1.0cm"><p class="Cell"></p></td>
-<th style="width: 5.0cm"><p class="TableRowHead">General feedback:</p></th>
-<td style="width: 6.0cm"><p class="Cell">General Feedback led the charge</p></td>
+<th style="width: 5.0cm"><p class="TableRowHead"><p class="TableRowHead">General feedback:</p></p></th>
+<td style="width: 6.0cm"><div class="chapter"><p class="MsoBodyText">General Feedback led the charge</p></div></td>
 <td style="width: 1.0cm"><p class="Cell"></p></td></tr>
 <tr>
 <td style="width: 1.0cm"><p class="Cell"></p></td>
-<th style="width: 5.0cm"><p class="TableRowHead">Tags:</p></th>
+<th style="width: 5.0cm"><p class="TableRowHead"><p class="TableRowHead">Tags:</p></p></th>
 <td style="width: 6.0cm"><p class="Cell"></p></td>
 <td style="width: 1.0cm"><p class="Cell"></p></td></tr>
 <tr>
-<td colspan="3" style="width: 12.0cm"><p class="Cell"><i>Allows a response of a few sentences or paragraphs. ' .
-        'This must then be graded manually.</i></p></td>
+<td colspan="3" style="width: 12.0cm"><p class="Cell"><i>Allows a response of a file upload and/or online text. This must then be graded manually.</i></p></td>
 <td style="width: 1.0cm"><p class="Cell"></p></td></tr>
 </tbody></table></div><p class="MsoNormal"></p>
+
+</container>
   </body>
 </html>
 ';

@@ -24,8 +24,6 @@
 
 namespace booktool_wordimport\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy Subsystem for booktool_wordimport implementing null_provider.
  *

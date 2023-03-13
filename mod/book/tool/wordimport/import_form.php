@@ -45,7 +45,7 @@ class booktool_wordimport_form extends moodleform {
      */
     public function definition() {
         $mform = $this->_form;
-        $data  = $this->_customdata;
+        $data = $this->_customdata;
 
         $mform->addElement('header', 'general', get_string('importchapters', 'booktool_wordimport'));
 

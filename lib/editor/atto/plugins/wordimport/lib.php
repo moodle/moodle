@@ -103,7 +103,7 @@ function atto_wordimport_convert_to_xhtml(string $wordfilename, int $usercontext
     $word2xml = new wordconverter();
     $word2xml->set_heading1styleoffset((int) get_config('atto_wordimport', 'heading1stylelevel'));
     $xsltoutput = $word2xml->import($wordfilename, $imagesforzipping);
-    $htmlcontent = $word2xml->body_only($xsltoutput);
+    $htmlcontent = $word2xml->htmlbody($xsltoutput);
 
     // Prepare filerecord array to create each new image file in the user/draft file area for the current user.
     $fileinfo = array(

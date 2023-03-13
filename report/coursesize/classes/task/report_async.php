@@ -17,7 +17,7 @@
 /**
  * report_coursesize tasks
  *
- * @package   report_async
+ * @package   report_coursesize
  * @copyright Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,7 +26,7 @@ namespace report_coursesize\task;
 /**
  * report_async tasks
  *
- * @package   report_async
+ * @package   report_coursesize
  * @copyright Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

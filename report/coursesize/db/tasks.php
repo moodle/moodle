@@ -28,7 +28,7 @@ $tasks = array(
     array(
         'classname' => 'report_coursesize\task\report_async',
         'blocking'  => 0,
-        'minute'    => '*',
+        'minute'    => 'R',
         'hour'      => '1',
         'day'       => '*',
         'dayofweek' => '*',

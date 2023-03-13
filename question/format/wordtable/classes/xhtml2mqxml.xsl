@@ -92,7 +92,7 @@
 
 <xsl:variable name="categoryname_label" select="$moodle_labels/data[@name = 'moodle_categoryname']"/>
 <xsl:variable name="defaultmark_label" select="normalize-space($moodle_labels/data[@name = 'question_defaultmark'])"/>
-<xsl:variable name="grade_label" select="$moodle_labels/data[@name = 'moodle_grade']"/>
+<xsl:variable name="grade_label" select="$moodle_labels/data[@name = 'moodle_gradenoun']"/>
 <xsl:variable name="no_label" select="normalize-space(translate($moodle_labels/data[@name = 'moodle_no'], $ucase, $lcase))"/>
 <xsl:variable name="yes_label" select="normalize-space(translate($moodle_labels/data[@name = 'moodle_yes'], $ucase, $lcase))"/>
 <xsl:variable name="item_label" select="$moodle_labels/data[@name = 'grades_item']"/>

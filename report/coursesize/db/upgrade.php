@@ -22,6 +22,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+ /**
+  * Upgrade coursesize plugin.
+  *
+  * @param int $oldversion
+  * @return boolean
+  */
 function xmldb_report_coursesize_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();

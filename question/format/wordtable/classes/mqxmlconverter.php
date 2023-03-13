@@ -205,7 +205,7 @@ class mqxmlconverter {
         $textstrings = array(
             'grades' => array('item'),
             'moodle' => array('categoryname', 'no', 'yes', 'feedback', 'format', 'formathtml', 'formatmarkdown',
-                            'formatplain', 'formattext', 'grade', 'question', 'tags'),
+                            'formatplain', 'formattext', 'gradenoun', 'question', 'tags'),
             'qformat_wordtable' => array('cloze_instructions', 'cloze_distractor_column_label', 'cloze_feedback_column_label',
                             'cloze_mcformat_label', 'description_instructions', 'essay_instructions',
                             'interface_language_mismatch', 'multichoice_instructions', 'truefalse_instructions',
@@ -237,12 +237,17 @@ class mqxmlconverter {
                             'defaultgrade', 'incorrect', 'shuffle')
             );
 
+        // Get the question type field labels, to populate table cell labels on export, recognise cell labels on import.
         $questionlabels = "<moodlelabels>\n";
         foreach ($textstrings as $typegroup => $grouparray) {
             foreach ($grouparray as $stringid) {
+                // Use 'grade' instead of 'gradenoun' in Moodle versions prior to 3.11.6.
+                if ($CFG->version < 2021051706 && $stringid === 'gradenoun') {
+                    $labeltext = get_string('grade', 'moodle');
+                } else {
+                    $labeltext = get_string($stringid, $typegroup);
+                }
                 $namestring = $typegroup . '_' . $stringid;
-                // Get the question type field label text.
-                $labeltext = get_string($stringid, $typegroup);
                 $questionlabels .= '<data name="' . $namestring . '"><value>' . $labeltext . "</value></data>\n";
             }
         }

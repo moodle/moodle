@@ -85,7 +85,7 @@ function booktool_wordimport_export(stdClass $book, context_module $context, int
         $booktext .= '<p class="MsoTitle">' . $book->name . "</p>\n";
         // Grab the images, convert any GIFs to PNG, and return the list of converted images.
         $giffilenames = array();
-        $imagestring = $word2xml->base64_images($context->id, 'mod_book', 'intro', null, $giffilenames);
+        $imagestring = $word2xml->base64_images($context->id, 'mod_book', 'intro', $giffilenames, null);
 
         $introcontent = $book->intro;
         if (count($giffilenames) > 0) {
@@ -102,15 +102,15 @@ function booktool_wordimport_export(stdClass $book, context_module $context, int
         if (!$chapter->hidden || has_capability('mod/book:viewhiddenchapters', $context)) {
             $booktext .= '<div class="chapter" id="' . $chapter->id . '">';
             // Check if the chapter title is duplicated inside the content, and include it if not.
-            if (!$chapter->subchapter and !strpos($chapter->content, "<h1")) {
+            if (!$chapter->subchapter && !strpos($chapter->content, "<h1")) {
                 $booktext .= "<h1>" . $chapter->title . "</h1>\n";
-            } else if ($chapter->subchapter and !strpos($chapter->content, "<h2")) {
+            } else if ($chapter->subchapter && !strpos($chapter->content, "<h2")) {
                 $booktext .= "<h2>" . $chapter->title . "</h2>\n";
             }
 
             // Grab the images, convert any GIFs to PNG, and return the list of converted images.
             $giffilenames = array();
-            $imagestring = $word2xml->base64_images($context->id, 'mod_book', 'chapter', $chapter->id, $giffilenames);
+            $imagestring = $word2xml->base64_images($context->id, 'mod_book', 'chapter', $giffilenames, $chapter->id);
 
             // Grab the chapter text content, and update any GIF image names to the new PNG name.
             $chaptercontent = $chapter->content;

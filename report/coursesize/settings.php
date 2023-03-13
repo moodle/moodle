@@ -29,9 +29,22 @@ $ADMIN->add('reports', new admin_externalpage('reportcoursesize', get_string('pl
 
 $settings = new admin_settingpage('report_coursesize_settings', new lang_string('pluginname', 'report_coursesize'));
 if ($ADMIN->fulltree) {
-    $settings->add(new admin_setting_configselect('report_coursesize/calcmethod',
+    $settings->add(new admin_setting_configselect(
+        'report_coursesize/calcmethod',
         new lang_string('calcmethod', 'report_coursesize'),
         new lang_string('calcmethodhelp', 'report_coursesize'),
-        'cron', array('cron' => new lang_string('calcmethodcron', 'report_coursesize'),
-            'live' => new lang_string('calcmethodlive', 'report_coursesize'))));
+        'cron',
+        array(
+            'cron' => new lang_string('calcmethodcron', 'report_coursesize'),
+            'live' => new lang_string('calcmethodlive', 'report_coursesize'),
+        )
+    ));
+
+    $settings->add(new admin_setting_configtext(
+        'report_coursesize/numberofusers',
+        new lang_string('numberofusers', 'report_coursesize'),
+        new lang_string('numberofusershelp', 'report_coursesize'),
+        10,
+        PARAM_INT
+    ));
 }

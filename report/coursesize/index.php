@@ -32,18 +32,15 @@ admin_externalpage_setup('reportcoursesize');
 $coursecategory = optional_param('category', 0, PARAM_INT);
 $download = optional_param('download', '', PARAM_INT);
 $viewtab = optional_param('view', 'coursesize', PARAM_ALPHA);
+$reportconfig = get_config('report_coursesize');
 
 // If we should show or hide empty courses.
 if (!defined('REPORT_COURSESIZE_SHOWEMPTYCOURSES')) {
     define('REPORT_COURSESIZE_SHOWEMPTYCOURSES', false);
 }
-// How many users should we show in the User list.
-if (!defined('REPORT_COURSESIZE_NUMBEROFUSERS')) {
-    define('REPORT_COURSESIZE_NUMBEROFUSERS', 10);
-}
 
 // Data for the tabs in the report.
-$tabdata = ['coursesize' => '', 'userstopnum' => REPORT_COURSESIZE_NUMBEROFUSERS];
+$tabdata = ['coursesize' => '', 'userstopnum' => $reportconfig->numberofusers];
 if (!array_key_exists($viewtab, $tabdata)) {
     // For invalid parameter value use 'coursesize'.
     $viewtab = array_keys($tabdata)[0];
@@ -75,12 +72,12 @@ if ($viewtab == 'userstopnum') {
             $row[] = '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $userid . '">' . fullname($user) . '</a>';
             $row[] = display_size($size->totalsize);
             $usertable->data[] = $row;
-            if ($usercount >= REPORT_COURSESIZE_NUMBEROFUSERS) {
+            if ($usercount >= $reportconfig->numberofusers) {
                 break;
             }
         }
         unset($users);
-        print $OUTPUT->heading(get_string('userstopnum', 'report_coursesize', REPORT_COURSESIZE_NUMBEROFUSERS));
+        print $OUTPUT->heading(get_string('userstopnum', 'report_coursesize', $reportconfig->numberofusers));
 
         if (!isset($usertable)) {
             print get_string('nouserfiles', 'report_coursesize');
@@ -91,7 +88,6 @@ if ($viewtab == 'userstopnum') {
     }
 } else if ($viewtab == 'coursesize') {
 
-    $reportconfig = get_config('report_coursesize');
     if (!empty($reportconfig->filessize) && !empty($reportconfig->filessizeupdated)) {
         // Total files usage has stored by scheduled task.
         $totalusage = $reportconfig->filessize;
