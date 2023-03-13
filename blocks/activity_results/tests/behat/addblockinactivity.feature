@@ -60,7 +60,7 @@ Feature: The activity results block displays student scores
     And I should see "Student 3" in the "Activity results" "block"
     And I should see "70.00" in the "Activity results" "block"
 
-  @javascript
+  @javascript @addablocklink
   Scenario: Block should select current activity by default
     Given I click on "Test assignment 1" "link" in the "region-main" "region"
     When I add the "Activity results..." block
