@@ -2953,6 +2953,12 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ],
+    'core_admin_set_plugin_state' => [
+        'classname' => 'core_admin\external\set_plugin_state',
+        'description' => 'Set the state of a plugin',
+        'type' => 'write',
+        'ajax' => true,
+    ],
 );
 
 $services = array(
