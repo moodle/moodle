@@ -141,7 +141,6 @@ class editor_test extends advanced_testcase {
 
                     // Disabled editors are listed alphabetically at the end.
                     'atto',
-                    'tinymce',
                 ],
             ],
             [
@@ -153,7 +152,6 @@ class editor_test extends advanced_testcase {
                     // Disabled editors are listed alphabetically at the end.
                     'atto',
                     'textarea',
-                    'tinymce',
                 ],
             ],
         ];
@@ -204,7 +202,6 @@ class editor_test extends advanced_testcase {
                     'tiny',
                     'textarea',
                     'atto',
-                    'tinymce',
                 ],
                 'newtexteditors' => 'tiny,textarea',
             ],
@@ -217,7 +214,6 @@ class editor_test extends advanced_testcase {
                     'textarea',
                     'tiny',
                     'atto',
-                    'tinymce',
                 ],
                 'newtexteditors' => 'textarea,tiny',
             ],
@@ -230,7 +226,6 @@ class editor_test extends advanced_testcase {
                     'textarea',
                     'tiny',
                     'atto',
-                    'tinymce',
                 ],
                 'newtexteditors' => 'textarea,tiny',
             ],
@@ -242,7 +237,6 @@ class editor_test extends advanced_testcase {
                     'tiny',
                     'textarea',
                     'atto',
-                    'tinymce',
                 ],
                 'newtexteditors' => 'tiny,textarea',
             ],
@@ -255,7 +249,6 @@ class editor_test extends advanced_testcase {
                     'tiny',
                     'textarea',
                     'atto',
-                    'tinymce',
                 ],
                 'newtexteditors' => 'tiny,textarea',
             ],
@@ -268,20 +261,18 @@ class editor_test extends advanced_testcase {
                     'textarea',
                     'tiny',
                     'atto',
-                    'tinymce',
                 ],
                 'newtexteditors' => 'textarea,tiny',
             ],
             [
                 'texteditors' => 'textarea,tiny',
-                'pluginname' => 'tinymce',
+                'pluginname' => 'atto',
                 'direction' => base::MOVE_UP,
-                // TinyMCE is not enabled. No change expected.
+                // Atto is not enabled. No change expected.
                 'expected' => [
                     'textarea',
                     'tiny',
                     'atto',
-                    'tinymce',
                 ],
                 'newtexteditors' => 'textarea,tiny',
             ],
@@ -294,7 +285,6 @@ class editor_test extends advanced_testcase {
                     'textarea',
                     'tiny',
                     'atto',
-                    'tinymce',
                 ],
                 'newtexteditors' => 'textarea,tiny',
             ],

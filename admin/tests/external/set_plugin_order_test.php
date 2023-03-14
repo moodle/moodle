@@ -77,50 +77,46 @@ class set_plugin_order_test extends \externallib_advanced_testcase {
             [
                 'initialstate' => 'textarea,tiny',
                 'pluginname' => 'editor_textarea',
-                1, // DOWN.
+                'direction' => 1, // DOWN.
                 'expected' => [
                     'tiny',
                     'textarea',
                     'atto',
-                    'tinymce',
                 ],
                 'newtexteditors' => 'tiny,textarea',
             ],
             [
                 'initialstate' => 'textarea,tiny',
                 'pluginname' => 'editor_textarea',
-                -1, // UP.
+                'direction' => -1, // UP.
                 'expected' => [
                     'textarea',
                     'tiny',
                     'atto',
-                    'tinymce',
                 ],
                 'newtexteditors' => 'textarea,tiny',
             ],
             [
                 'initialstate' => 'textarea,tiny',
                 'pluginname' => 'editor_tiny',
-                1, // DOWN.
+                'direction' => 1, // DOWN.
                 // Tiny is already at the bottom of the list of enabled plugins.
                 'expected' => [
                     'textarea',
                     'tiny',
                     'atto',
-                    'tinymce',
                 ],
                 'newtexteditors' => 'textarea,tiny',
             ],
             [
                 'initialstate' => 'textarea,tiny',
                 'pluginname' => 'editor_atto',
-                1, // DOWN.
+                'direction' => 1, // DOWN.
                 // Atto is not enabled. Disabled editors are listed lexically after enabled editors.
                 'expected' => [
                     'textarea',
                     'tiny',
                     'atto',
-                    'tinymce',
                 ],
                 'newtexteditors' => 'textarea,tiny',
             ],
