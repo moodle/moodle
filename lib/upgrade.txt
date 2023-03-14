@@ -79,6 +79,7 @@ information provided here is intended especially for developers.
   Course formats using components will be allowed to use one level indentation only.
 * The method `flexible_table::set_columnsattributes` now can be used with 'class' key to add custom classes to the DOM.
 * The editor_tinymce plugin has been removed from core.
+* A new grunt task, upgradablelibs, has been added to get the list of libraries that have a newer version in their repositories.
 
 === 4.1 ===
 
