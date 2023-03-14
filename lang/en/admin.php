@@ -95,10 +95,13 @@ $string['blockediplist'] = 'Blocked IP List';
 $string['blockinstances'] = 'Instances';
 $string['blockmultiple'] = 'Multiple';
 $string['blockprotect'] = 'Protect instances';
+$string['blockprotectblock'] = 'Protect instances of the {$a} block';
+$string['blockprotected'] = 'The {$a} block is now protected';
 $string['blockprotect_help'] = 'If you lock a particular type of block, then no-one will be able to add or delete instances. (You can, of course, unlock again if you need to edit instances.)
 
 This is intended to protect blocks like the navigation and settings which are very hard to get back if accidentally deleted.';
-$string['blockunprotect'] = 'Unprotect';
+$string['blockunprotectblock'] = 'Unprotect instances of the {$a} block';
+$string['blockunprotected'] = 'The {$a} block is no longer protected';
 $string['blocksettings'] = 'Manage blocks';
 $string['bloglevel'] = 'Blog visibility';
 $string['bookmarkadded'] = 'Bookmark added.';
@@ -508,6 +511,7 @@ $string['devicedetectregexexpression'] = 'Regular expression';
 $string['devicedetectregexvalue'] = 'Return value';
 $string['devicetype'] = 'Device type';
 $string['disabled'] = 'Disabled';
+$string['disableplugin'] = 'Disable the {$a} plugin';
 $string['disableuserimages'] = 'Disable user profile images';
 $string['displayerrorswarning'] = 'Enabling the PHP setting <em>display_errors</em> is not recommended on production sites because some error messages may reveal sensitive information about your server.';
 $string['displayloginfailures'] = 'Display login failures';
@@ -582,6 +586,7 @@ $string['enablegravatar_help'] = 'When enabled Moodle will attempt to fetch a us
 $string['enablemobilewebservice'] = 'Enable web services for mobile devices';
 $string['enablepdfexportfont'] = 'Enable PDF fonts';
 $string['enablepdfexportfont_desc'] = 'If your site has courses in different languages which need other fonts in generated PDF files, you can provide the option to set the font in the course settings. You need to specify available fonts in $CFG->pdfexportfont in config.php.';
+$string['enableplugin'] = 'Enable the {$a} plugin';
 $string['enablerecordcache'] = 'Enable record cache';
 $string['enablerssfeeds'] = 'Enable RSS feeds';
 $string['enablesearchareas'] = 'Enable search areas';
@@ -992,6 +997,8 @@ $string['pleaserefreshregistration'] = 'Your site is registered. Registration la
 $string['pleaserefreshregistrationunknown'] = 'Your site has been registered but the registration date is unknown. Please update your registration using the \'Update registration\' button or ensure that the \'Site registration\' scheduled task is enabled so your registration is automatically updated.';
 $string['pleaserefreshregistrationnewdata'] = 'Registration information has been changed. Please confirm it using the \'Update registration\' button.';
 $string['plugin'] = 'Plugin';
+$string['plugin_disabled'] = 'The {$a} plugin has been disabled';
+$string['plugin_enabled'] = 'The {$a} plugin has been enabled';
 $string['plugins'] = 'Plugins';
 $string['pluginscheck'] = 'Plugin dependencies check';
 $string['pluginscheckfailed'] = 'Dependencies check failed for {$a->pluginslist}';
@@ -1579,3 +1586,6 @@ $string['mediapluginswfnote'] = 'As a default security measure, normal users sho
 
 // Deprecated since Moodle 4.1.
 $string['multilangforceold'] = 'Force old multilang syntax: &lt;span&gt; without the class="multilang" and &lt;lang&gt;';
+
+// Deprecated since Moodle 4.2.
+$string['blockunprotect'] = 'Unprotect';

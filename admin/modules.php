@@ -31,133 +31,37 @@ define('MODULE_TABLE', 'module_administration_table');
 
 admin_externalpage_setup('managemodules');
 
-$show = optional_param('show', '', PARAM_PLUGIN);
-$hide = optional_param('hide', '', PARAM_PLUGIN);
-
-// Print headings.
-$stractivities = get_string("activities");
-$struninstall = get_string('uninstallplugin', 'core_admin');
-$strversion = get_string("version");
-$strhide = get_string("hide");
-$strshow = get_string("show");
-$strsettings = get_string("settings");
-$stractivities = get_string("activities");
-$stractivitymodule = get_string("activitymodule");
-$strshowmodulecourse = get_string('showmodulecourse');
+$plugin = optional_param('plugin', '', PARAM_PLUGIN);
+$action = optional_param('action', '', PARAM_ALPHA);
 
 // If data submitted, then process and store.
-if (!empty($hide) && confirm_sesskey()) {
-    $class = \core_plugin_manager::resolve_plugininfo_class('mod');
-    if ($class::enable_plugin($hide, false)) {
-        // Settings not required - only pages.
-        admin_get_root(true, false);
-    }
-    redirect(new moodle_url('/admin/modules.php'));
-}
+if (!empty($action) && !empty($plugin) && confirm_sesskey()) {
+    $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+    $pluginname = get_string('pluginname', $plugin);
 
-if (!empty($show) && confirm_sesskey()) {
-    $class = \core_plugin_manager::resolve_plugininfo_class('mod');
-    if ($class::enable_plugin($show, true)) {
+    if ($action === 'disable' && $manager::enable_plugin($plugin, 0)) {
+        \core\notification::add(
+            get_string('plugin_disabled', 'core_admin', $pluginname),
+            \core\notification::SUCCESS
+        );
+        // Settings not required - only pages.
+        admin_get_root(true, false);
+    } else if ($action === 'enable' && $manager::enable_plugin($plugin, 1)) {
+        \core\notification::add(
+            get_string('plugin_enabled', 'core_admin', $pluginname),
+            \core\notification::SUCCESS
+        );
+
         // Settings not required - only pages.
         admin_get_root(true, false);
     }
+
+    // Redirect back to the modules page with out any params.
     redirect(new moodle_url('/admin/modules.php'));
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($stractivities);
-
-// Get and sort the existing modules.
-if (!$modules = $DB->get_records('modules', [], 'name ASC')) {
-    throw new \moodle_exception('moduledoesnotexist', 'error');
-}
-
-// Print the table of all modules.
-// Construct the flexible table ready to display.
-$table = new flexible_table(MODULE_TABLE);
-$table->define_columns(['name', 'instances', 'version', 'hideshow', 'uninstall', 'settings']);
-$table->define_headers([$stractivitymodule, $stractivities, $strversion, "$strhide/$strshow", $strsettings, $struninstall]);
-$table->define_baseurl($CFG->wwwroot . '/' . $CFG->admin . '/modules.php');
-$table->set_attribute('id', 'modules');
-$table->set_attribute('class', 'admintable generaltable');
-$table->setup();
-
-$pluginmanager = core_plugin_manager::instance();
-
-foreach ($modules as $module) {
-    $plugininfo = $pluginmanager->get_plugin_info('mod_' . $module->name);
-    $status = $plugininfo->get_status();
-
-    if ($status === core_plugin_manager::PLUGIN_STATUS_MISSING) {
-        $strmodulename = '<span class="notifyproblem">' . $module->name . ' (' . get_string('missingfromdisk') . ')</span>';
-        $missing = true;
-    } else {
-        $icon = "<img src=\"" . $OUTPUT->image_url('monologo', $module->name) . "\" class=\"icon\" alt=\"\" />";
-        $strmodulename = $icon . ' ' . get_string('modulename', $module->name);
-        $missing = false;
-    }
-
-    $uninstall = '';
-    if ($uninstallurl = core_plugin_manager::instance()->get_uninstall_url('mod_' . $module->name, 'manage')) {
-        $uninstall = html_writer::link($uninstallurl, $struninstall);
-    }
-
-    if (
-        file_exists("$CFG->dirroot/mod/$module->name/settings.php") ||
-        file_exists("$CFG->dirroot/mod/$module->name/settingstree.php")
-    ) {
-        $settings = "<a href=\"settings.php?section=modsetting$module->name\">$strsettings</a>";
-    } else {
-        $settings = "";
-    }
-
-    try {
-        $count = $DB->count_records_select($module->name, "course<>0");
-    } catch (dml_exception $e) {
-        $count = -1;
-    }
-    if ($count > 0) {
-        $countlink = $OUTPUT->action_link(
-            new moodle_url('/course/search.php', ['modulelist' => $module->name]),
-            $count,
-            null,
-            ['title' => $strshowmodulecourse]
-        );
-    } else if ($count < 0) {
-        $countlink = get_string('error');
-    } else {
-        $countlink = "$count";
-    }
-
-    if ($missing) {
-        $visible = '';
-        $class = '';
-    } else if ($module->visible) {
-        $visible = "<a href=\"modules.php?hide=$module->name&amp;sesskey=" . sesskey() . "\" title=\"$strhide\">" .
-            $OUTPUT->pix_icon('t/hide', $strhide) . '</a>';
-        $class = '';
-    } else {
-        $visible = "<a href=\"modules.php?show=$module->name&amp;sesskey=" . sesskey() . "\" title=\"$strshow\">" .
-            $OUTPUT->pix_icon('t/show', $strshow) . '</a>';
-        $class = 'dimmed_text';
-    }
-    if ($module->name == "forum") {
-        $uninstall = "";
-        $visible = "";
-        $class = "";
-    }
-    $version = get_config('mod_' . $module->name, 'version');
-
-    $table->add_data([
-        $strmodulename,
-        $countlink,
-        $version,
-        $visible,
-        $settings,
-        $uninstall,
-    ], $class);
-}
-
-$table->finish_html();
-
+echo $OUTPUT->heading(get_string("activities"));
+$table = new \core_admin\table\activity_management_table();
+$table->out();
 echo $OUTPUT->footer();

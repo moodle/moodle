@@ -23,14 +23,18 @@
  */
 namespace core\plugininfo;
 
-use moodle_url, part_of_admin_tree, admin_settingpage, admin_externalpage;
-
-defined('MOODLE_INTERNAL') || die();
+use admin_settingpage;
+use moodle_url;
+use part_of_admin_tree;
 
 /**
  * Class for text filters
  */
 class filter extends base {
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
 
     public function init_display_name() {
         if (!get_string_manager()->string_exists('filtername', $this->component)) {

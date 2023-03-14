@@ -23,9 +23,10 @@
  */
 namespace core\plugininfo;
 
-use moodle_url, part_of_admin_tree, admin_settingpage, admin_externalpage, core_plugin_manager;
-
-defined('MOODLE_INTERNAL') || die();
+use admin_settingpage;
+use core_plugin_manager;
+use moodle_url;
+use part_of_admin_tree;
 
 /**
  * Class for dataformats
@@ -35,6 +36,10 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2016 Brendan Heywood (brendan@catalyst-au.net)
  */
 class dataformat extends base {
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
 
     /**
      * Display name

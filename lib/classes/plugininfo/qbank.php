@@ -25,8 +25,6 @@
 
 namespace core\plugininfo;
 
-use qbank_columnsortorder\column_manager;
-
 /**
  * Base class for qbank plugins.
  *
@@ -36,6 +34,10 @@ use qbank_columnsortorder\column_manager;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbank extends base {
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
 
     public function is_uninstall_allowed(): bool {
         if (in_array($this->name, \core_plugin_manager::standard_plugins_list('qbank'))) {

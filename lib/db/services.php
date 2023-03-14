@@ -2953,6 +2953,24 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ],
+    'core_admin_set_plugin_state' => [
+        'classname' => 'core_admin\external\set_plugin_state',
+        'description' => 'Set the state of a plugin',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+    'core_admin_set_plugin_order' => [
+        'classname' => 'core_admin\external\set_plugin_order',
+        'description' => 'Set the order of a plugin',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+    'core_admin_set_block_protection' => [
+        'classname' => 'core_admin\external\set_block_protection',
+        'description' => 'Set the protection state for a block plugin',
+        'type' => 'write',
+        'ajax' => true,
+    ],
 );
 
 $services = array(

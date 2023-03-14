@@ -23,10 +23,9 @@
  */
 namespace core\plugininfo;
 
-use moodle_url, part_of_admin_tree, admin_settingpage;
-
-defined('MOODLE_INTERNAL') || die();
-
+use admin_settingpage;
+use moodle_url;
+use part_of_admin_tree;
 
 /**
  * Class for Antiviruses
@@ -36,6 +35,11 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class antivirus extends base {
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     /**
      * Finds all enabled plugins, the result may include missing plugins.
      * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown

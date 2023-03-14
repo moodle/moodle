@@ -23,14 +23,18 @@
  */
 namespace core\plugininfo;
 
-use part_of_admin_tree, admin_settingpage;
-
-defined('MOODLE_INTERNAL') || die();
+use admin_settingpage;
+use part_of_admin_tree;
 
 /**
  * Class for webservice protocols
  */
 class webservice extends base {
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     /**
      * Finds all enabled plugins, the result may include missing plugins.
      * @return array of enabled plugins $pluginname => $pluginname
