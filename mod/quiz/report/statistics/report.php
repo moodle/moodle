@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_question\statistics\responses\analyser;
 use core_question\statistics\questions\all_calculated_for_qubaid_condition;
 
 require_once($CFG->dirroot . '/mod/quiz/report/default.php');
@@ -420,7 +421,7 @@ class quiz_statistics_report extends quiz_default_report {
             }
         }
 
-        $responesanalyser = new \core_question\statistics\responses\analyser($question, $whichtries);
+        $responesanalyser = new analyser($question, $whichtries);
         $responseanalysis = $responesanalyser->load_cached($qubaids, $whichtries);
 
         $qtable->question_setup($reporturl, $question, $s, $responseanalysis);
@@ -748,10 +749,8 @@ class quiz_statistics_report extends quiz_default_report {
         foreach ($questions as $question) {
             $progress->increment_progress();
             if (question_bank::get_qtype($question->qtype, false)->can_analyse_responses()  && !isset($done[$question->id])) {
-                $responesstats = new \core_question\statistics\responses\analyser($question, $whichtries);
-                if ($responesstats->get_last_analysed_time($qubaids, $whichtries) === false) {
-                    $responesstats->calculate($qubaids, $whichtries);
-                }
+                $responesstats = new analyser($question, $whichtries);
+                $responesstats->calculate($qubaids, $whichtries);
             }
             $done[$question->id] = 1;
         }
