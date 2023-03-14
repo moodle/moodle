@@ -21,6 +21,10 @@ use core_php_time_limit;
 use moodle_exception;
 use stdClass;
 
+// Disable the moodle.PHP.ForbiddenFunctions.FoundWithAlternative sniff for this file.
+// It detects uses of error_log() which are valid in this file.
+// phpcs:disable moodle.PHP.ForbiddenFunctions.FoundWithAlternative
+
 /**
  * Cron and adhoc task functionality.
  *
@@ -86,7 +90,7 @@ class cron {
         self::setup_user();
 
         // Start output log.
-        $timenow  = time();
+        $timenow = time();
         mtrace("Server Time: " . date('r', $timenow) . "\n\n");
 
         // Record start time and interval between the last cron runs.
@@ -394,7 +398,7 @@ class cron {
         self::trace_time_and_memory();
         $predbqueries = null;
         $predbqueries = $DB->perf_get_queries();
-        $pretime      = microtime(1);
+        $pretime = microtime(1);
 
         if ($userid = $task->get_userid()) {
             // This task has a userid specified.
@@ -413,8 +417,8 @@ class cron {
             }
 
             if (empty($user)) {
-                // A user missing in the database will never reappear so the task needs to be failed to ensure that locks are removed,
-                // and then removed to prevent future runs.
+                // A user missing in the database will never reappear so the task needs to be failed to ensure that locks are
+                // removed, and then removed to prevent future runs.
                 // A task running as a user should only be run as that user.
                 \core\task\manager::adhoc_task_failed($task);
                 $DB->delete_records('task_adhoc', ['id' => $task->get_id()]);
