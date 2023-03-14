@@ -26,10 +26,10 @@ function local_qubits_site_render_list($search, $page, $perpage, $sortcolumn, $s
     }
     $limit = $perpage;
     $offset = $page * $perpage;
-    $sql = "SELECT s.* FROM {local_qubits_sites} as s WHERE 1 $where $orderby";
+    $sql = "SELECT s.* FROM {local_qubits_sites} as s WHERE true $where $orderby";
     $sites = $DB->get_records_sql($sql, array(), $offset, $limit);
 
-    $sqlall = "SELECT s.id FROM {local_qubits_sites} as s WHERE 1 $where";
+    $sqlall = "SELECT s.id FROM {local_qubits_sites} as s WHERE true $where";
     $sitesall = $DB->get_records_sql($sqlall);
     $totalsites = count($sitesall);
 

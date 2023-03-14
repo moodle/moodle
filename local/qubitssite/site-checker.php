@@ -1,5 +1,5 @@
 <?php
-global $CFG;
+global $CFG, $DB;
 $fname = basename($_SERVER['PHP_SELF']);
 
 function main_api_brandsettings() {
@@ -84,39 +84,14 @@ EOD;
 
 
 if (SITE_MAIN_DOMAIN != $_SERVER['HTTP_HOST']) {
-    $servername = $CFG->dbhost;
-    $username = $CFG->dbuser;
-    $password = $CFG->dbpass;
-    $dbname = $CFG->dbname;
-
-    $tbl_pfx = $CFG->prefix;
-
-    // Create connection
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-    $tblname = $tbl_pfx . 'local_qubits_sites';
     $hostname = $_SERVER['HTTP_HOST'];
-    $sql = "SELECT s.* FROM $tblname as s WHERE s.hostname = '$hostname' ";
-    $result = $conn->query($sql);
-    if (!$result || $result->num_rows == "0") {
+    $result = $DB->get_record_sql('SELECT * FROM {local_qubits_sites} WHERE hostname = :hostname ', array('hostname' => $hostname));
+    $isvaliddomain = ($result->status == "1");
+    if (!$isvaliddomain) {
         $html = render_not_found_html(); // Render Not found default content
         echo $html;
         exit;
-    } else if ($result->num_rows > 0) {
-        $row = $result->fetch_object();
-        $isvaliddomain = ($row->status == "1");
-        if (!$isvaliddomain) {
-            $html = render_not_found_html(); // Render Not found default content
-            echo $html;
-            exit;
-        }
-        $CFG->cursitesettings = $row;
-        $CFG->cursitesettings->ismainsite = "no";
     }
-    $conn->close();
 }
 
 if (SITE_MAIN_DOMAIN == $_SERVER['HTTP_HOST']) {

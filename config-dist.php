@@ -1,5 +1,5 @@
 <?php  // Moodle configuration file
-define('SITE_MAIN_DOMAIN', 'qubits.localhost.com');
+define('SITE_MAIN_DOMAIN', 'qubits.localhost.info');
 unset($CFG);
 global $CFG;
 $CFG = new stdClass();
@@ -47,18 +47,19 @@ if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
     $CFG->maindomainwwwroot = 'http://' . SITE_MAIN_DOMAIN;
 }
 
-require_once(__DIR__ . '/local/qubitssite/site-checker.php'); // For checking domain
 //$CFG->dataroot  = 'D:\\xampp\\htdocs\\qubits\\moodledata';
 // Creating the separate cache
 $CFG->dataroot = __DIR__ . "/../moodledata/";
 $CFG->tempdir = $CFG->dataroot . ($tenantdomain ? '/' . $tenantdomain : '') . '/tempdir';
 $CFG->cachedir = $CFG->dataroot . ($tenantdomain ? '/' . $tenantdomain : '') . '/cache';
 $CFG->localcachedir = $CFG->dataroot . ($tenantdomain ? '/' . $tenantdomain : '') . '/localcachedir';
+$CFG->tenantdir = $CFG->dataroot . ($tenantdomain ? '/' . $tenantdomain : '');
 
 $CFG->admin     = 'admin';
 $CFG->directorypermissions = 0777;
 
 require_once(__DIR__ . '/lib/setup.php');
+require_once(__DIR__ . '/local/qubitssite/site-checker.php'); // For checking domain
 
 // There is no php closing tag in this file,
 // it is intentional because it prevents trailing whitespace problems!
