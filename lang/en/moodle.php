@@ -1663,6 +1663,7 @@ $string['pluginarea'] = 'Area';
 $string['plugindeletefiles'] = 'All data associated with the plugin \'{$a->name}\' has been deleted from the database. To prevent the plugin re-installing itself, you should now delete this directory from your server: {$a->directory}';
 $string['plugincheck'] = 'Plugins check';
 $string['pluginitemid'] = 'Item ID';
+$string['pluginmissingfromdisk'] = '{$a->name} (Missing from disk)';
 $string['pluginsetup'] = 'Setting up plugin tables';
 $string['policyaccept'] = 'I understand and agree';
 $string['policyagree'] = 'You must agree to this policy to continue using this site.  Do you agree?';

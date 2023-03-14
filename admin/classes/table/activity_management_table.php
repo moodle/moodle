@@ -70,7 +70,7 @@ class activity_management_table extends plugin_management_table {
         $status = $row->plugininfo->get_status();
         if ($status === core_plugin_manager::PLUGIN_STATUS_MISSING) {
             return html_writer::span(
-                get_string('missingfromdisk'),
+                get_string('pluginmissingfromdisk', 'core', $row->plugininfo),
                 'notifyproblem'
             );
         }

@@ -275,6 +275,14 @@ abstract class plugin_management_table extends flexible_table implements dynamic
      * @return string
      */
     protected function col_name(stdClass $row): string {
+        $status = $row->plugininfo->get_status();
+        if ($status === core_plugin_manager::PLUGIN_STATUS_MISSING) {
+            return html_writer::span(
+                get_string('pluginmissingfromdisk', 'core', $row->plugininfo),
+                'notifyproblem'
+            );
+        }
+
         if ($row->plugininfo->is_installed_and_upgraded()) {
             return $row->plugininfo->displayname;
         }
