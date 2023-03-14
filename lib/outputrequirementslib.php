@@ -447,6 +447,10 @@ class page_requirements_manager {
      * @param bool $inhead initialise in head
      */
     public function js($url, $inhead = false) {
+        if ($url == '/question/qengine.js') {
+            debugging('The question/qengine.js has been deprecated. ' .
+                'Please use core_question/question_engine', DEBUG_DEVELOPER);
+        }
         $url = $this->js_fix_url($url);
         $where = $inhead ? 'head' : 'footer';
         $this->jsincludes[$where][$url->out()] = $url;

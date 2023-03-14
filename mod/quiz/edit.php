@@ -201,7 +201,7 @@ for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
 }
 
 $PAGE->requires->data_for_js('quiz_edit_config', $quizeditconfig);
-$PAGE->requires->js('/question/qengine.js');
+$PAGE->requires->js_call_amd('core_question/question_engine');
 
 // Questions wrapper start.
 echo html_writer::start_tag('div', ['class' => 'mod-quiz-edit-content']);
