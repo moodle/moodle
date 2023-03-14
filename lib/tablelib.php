@@ -1954,6 +1954,15 @@ class flexible_table {
     }
 
     /**
+     * Get the class used as a filterset.
+     *
+     * @return string
+     */
+    public static function get_filterset_class(): string {
+        return static::class . '_filterset';
+    }
+
+    /**
      * Attempt to guess the base URL.
      */
     public function guess_base_url(): void {

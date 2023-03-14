@@ -201,7 +201,7 @@ class get extends external_api {
             throw new \UnexpectedValueException("Table handler class {$tableclass} does not support dynamic updating.");
         }
 
-        $filtersetclass = "{$tableclass}_filterset";
+        $filtersetclass = $tableclass::get_filterset_class();
         if (!class_exists($filtersetclass)) {
             throw new \UnexpectedValueException("The filter specified ({$filtersetclass}) is invalid.");
         }
