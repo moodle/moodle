@@ -90,7 +90,7 @@ class cm implements renderable {
             'uservisible' => $cm->uservisible,
             'hascmrestrictions' => $this->get_has_restrictions(),
             'modname' => get_string('pluginname', 'mod_' . $cm->modname),
-            'indent' => $cm->indent,
+            'indent' => ($format->uses_indentation()) ? $cm->indent : 0,
             'module' => $cm->modname,
             'plugin' => 'mod_' . $cm->modname,
         ];
