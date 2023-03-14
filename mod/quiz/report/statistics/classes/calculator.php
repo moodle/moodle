@@ -128,12 +128,17 @@ class calculator {
      * Load cached statistics from the database.
      *
      * @param \qubaid_condition $qubaids
-     * @return calculated The statistics for overall attempt scores or false if not cached.
+     * @return calculated|false The statistics for overall attempt scores or false if not cached.
      */
     public function get_cached($qubaids) {
         global $DB;
 
-        $fromdb = $DB->get_record('quiz_statistics', ['hashcode' => $qubaids->get_hash_code()]);
+        $lastcalculatedtime = $this->get_last_calculated_time($qubaids);
+        if (!$lastcalculatedtime) {
+            return false;
+        }
+        $fromdb = $DB->get_record('quiz_statistics', ['hashcode' => $qubaids->get_hash_code(),
+                'timemodified' => $lastcalculatedtime]);
         $stats = new calculated();
         $stats->populate_from_record($fromdb);
         return $stats;
@@ -147,7 +152,13 @@ class calculator {
      */
     public function get_last_calculated_time($qubaids) {
         global $DB;
-        return $DB->get_field('quiz_statistics', 'timemodified', ['hashcode' => $qubaids->get_hash_code()]);
+        $lastcalculatedtime = $DB->get_field('quiz_statistics', 'COALESCE(MAX(timemodified), 0)',
+                ['hashcode' => $qubaids->get_hash_code()]);
+        if ($lastcalculatedtime) {
+            return $lastcalculatedtime;
+        } else {
+            return false;
+        }
     }
 
     /**
