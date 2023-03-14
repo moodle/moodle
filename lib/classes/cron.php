@@ -30,6 +30,12 @@ use stdClass;
  */
 class cron {
 
+    /** @var ?stdClass A copy of the standard cron 'user' */
+    protected static ?stdClass $cronuser = null;
+
+    /** @var ?stdClass The cron user's session data */
+    protected static ?stdClass $cronsession = null;
+
     /**
      * Use a default value of 3 minutes.
      * The recommended cron frequency is every minute, and the default adhoc concurrency is 3.
@@ -539,13 +545,64 @@ class cron {
      * Sets up a user and course environment in cron.
      * Do not use outside of cron script!
      *
-     * @param stdClass $user full user object, null means default cron user (admin),
-     *                 value 'reset' means reset internal static caches.
-     * @param stdClass $course full course record, null means $SITE
-     * @param bool $leavepagealone If specified, stops it messing with global page object
-     * @return void
+     * Please note that this function stores cache data statically.
+     * @see reset_user_cache() to reset this cache.
+     *
+     * @param null|stdClass $user full user object, null means default cron user (admin)
+     * @param null|stdClass $course full course record, null means $SITE
+     * @param null|bool $leavepagealone If specified, stops it messing with global page object
      */
     public static function setup_user(?stdClass $user = null, ?stdClass $course = null, bool $leavepagealone = false): void {
-        cron_setup_user($user, $course, $leavepagealone);
+        // This function uses the $GLOBALS super global. Disable the VariableNameLowerCase sniff for this function.
+        // phpcs:disable moodle.NamingConventions.ValidVariableName.VariableNameLowerCase
+        global $CFG, $SITE, $PAGE;
+
+        if (!CLI_SCRIPT && !$leavepagealone) {
+            throw new coding_exception('It is not possible to use \core\cron\setup_user() in normal requests!');
+        }
+
+        if (empty(self::$cronuser)) {
+            // The cron user is essentially the admin user, but with some value removed.
+            // We ginore the timezone language, and locale preferences - use the site default instead.
+            self::$cronuser = get_admin();
+            self::$cronuser->timezone = $CFG->timezone;
+            self::$cronuser->lang = '';
+            self::$cronuser->theme = '';
+            unset(self::$cronuser->description);
+
+            self::$cronsession = new stdClass();
+        }
+
+        if (!$user) {
+            // Cached default cron user (==modified admin for now).
+            \core\session\manager::init_empty_session();
+            \core\session\manager::set_user(self::$cronuser);
+            $GLOBALS['SESSION'] = self::$cronsession;
+        } else {
+            // Emulate real user session - needed for caps in cron.
+            if ($GLOBALS['USER']->id != $user->id) {
+                \core\session\manager::init_empty_session();
+                \core\session\manager::set_user($user);
+            }
+        }
+
+        // TODO MDL-19774 relying on global $PAGE in cron is a bad idea.
+        // Temporary hack so that cron does not give fatal errors.
+        if (!$leavepagealone) {
+            $PAGE = new \moodle_page();
+            $PAGE->set_course($course ?? $SITE);
+        }
+
+        // TODO: it should be possible to improve perf by caching some limited number of users here.
+        // phpcs:enable
+    }
+
+    /**
+     * Resets the cache for the cron user used by `setup_user()`.
+     */
+    public static function reset_user_cache(): void {
+        self::$cronuser = null;
+        self::$cronsession = null;
+        \core\session\manager::init_empty_session();
     }
 }
