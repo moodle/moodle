@@ -222,15 +222,6 @@ $tasks = array(
         'month' => '*'
     ),
     array(
-        'classname' => 'core\task\question_stats_cleanup_task',
-        'blocking' => 0,
-        'minute' => '*',
-        'hour' => '*',
-        'day' => '*',
-        'dayofweek' => '*',
-        'month' => '*'
-    ),
-    array(
         'classname' => 'core\task\registration_cron_task',
         'blocking' => 0,
         'minute' => 'R',
