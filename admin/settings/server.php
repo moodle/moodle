@@ -331,6 +331,20 @@ if ($hassiteconfig) {
     $setting->set_updatedcallback('theme_reset_static_caches');
     $temp->add($setting);
 
+    $setting = new admin_setting_configduration(
+        'cron_keepalive',
+        new lang_string('cron_keepalive', 'admin'),
+        new lang_string('cron_keepalive_desc', 'admin'),
+        \core\cron::DEFAULT_MAIN_PROCESS_KEEPALIVE,
+        // The default unit is minutes.
+        MINSECS,
+    );
+
+    // Set an upper limit.
+    $setting->set_max_duration(\core\cron::MAX_MAIN_PROCESS_KEEPALIVE);
+
+    $temp->add($setting);
+
     $temp->add(
         new admin_setting_configtext(
             'task_scheduled_concurrency_limit',
