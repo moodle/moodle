@@ -129,6 +129,26 @@ class extension_test extends \advanced_testcase {
     }
 
     /**
+     * Test the action_url_addons with plugin enabled
+     *
+     * @return void
+     * @covers \mod_bigbluebuttonbn\extension::action_url_addons
+     */
+    public function test_action_url_addons() {
+        // Enable plugin.
+        $this->enable_plugins(true);
+        // Set a random var here.
+        $var1 = [];
+        $var2 = ['Test'];
+        ['data' => $additionalvar1, 'metadata' => $additionalvar2] = extension::action_url_addons('create', [], ['Test']);
+        $this->assertEmpty($additionalvar1);
+        $this->assertCount(2, $additionalvar2);
+        ['data' => $additionalvar1, 'metadata' => $additionalvar2] = extension::action_url_addons('delete');
+        $this->assertNotEmpty($additionalvar1);
+        $this->assertEmpty($additionalvar2);
+    }
+
+    /**
      * Data provider for testing get_class_implementing
      *
      * @return array[]

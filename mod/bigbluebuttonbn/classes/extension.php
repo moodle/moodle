@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 namespace mod_bigbluebuttonbn;
 
+use mod_bigbluebuttonbn\local\extension\action_url_addons;
 use mod_bigbluebuttonbn\local\extension\mod_instance_helper;
 use stdClass;
 use core_plugin_manager;
@@ -32,6 +33,32 @@ class extension {
      * Plugin name for extension
      */
     const BBB_EXTENSION_PLUGIN_NAME = 'bbbext';
+
+    /**
+     * Invoke a subplugin hook that will return additional parameters
+     *
+     * @param string $action
+     * @param array $data
+     * @param array $metadata
+     * @return array associative array with the additional data and metadata (indexed by 'data' and
+     * 'metadata' keys).
+     */
+    public static function action_url_addons(string $action = '', array $data = [], array $metadata = []): array {
+        $allmutationclass = self::get_instances_implementing(action_url_addons::class);
+        $additionaldata = [];
+        $additionalmetadata = [];
+        foreach ($allmutationclass as $mutationclass) {
+            // Here we intentionally just pass data and metadata and not the result as we
+            // do not want subplugin to assume that another subplugin is doing a modification.
+            ['data' => $newdata, 'metadata' => $newmetadata] = $mutationclass->execute($action, $data, $metadata);
+            $additionaldata = array_merge($additionaldata, $newdata ?? []);
+            $additionalmetadata = array_merge($additionalmetadata, $newmetadata ?? []);
+        }
+        return [
+            'data' => $additionaldata,
+            'metadata' => $additionalmetadata
+        ];
+    }
 
     /**
      * Add instance processing
