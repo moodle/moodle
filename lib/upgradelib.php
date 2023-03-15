@@ -508,6 +508,11 @@ function upgrade_stale_php_files_present(): bool {
     global $CFG;
 
     $someexamplesofremovedfiles = [
+        // Removed in 4.2.
+        '/admin/auth_config.php',
+        '/auth/yui/passwordunmask/passwordunmask.js',
+        '/lib/spout/readme_moodle.txt',
+        '/lib/yui/src/tooltip/js/tooltip.js',
         // Removed in 4.1.
         '/mod/forum/classes/task/refresh_forum_post_counts.php',
         '/user/amd/build/participantsfilter.min.js',
