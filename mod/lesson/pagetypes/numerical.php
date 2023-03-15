@@ -347,6 +347,21 @@ class lesson_page_type_numerical extends lesson_page {
 
         return $data;
     }
+
+    /**
+     * Custom formats the answer to display
+     *
+     * @param string $answer
+     * @param context $context
+     * @param int $answerformat
+     * @param array $options Optional param for additional options.
+     * @return string Returns formatted string
+     */
+    public function format_answer($answer, $context, $answerformat, $options = []) {
+        $answer = helper::lesson_format_numeric_value($answer);
+
+        return parent::format_answer($answer, $context, $answerformat, $options);
+    }
 }
 
 class lesson_add_page_form_numerical extends lesson_add_page_form_base {
