@@ -246,8 +246,10 @@ abstract class attempts_report extends report_base {
      * @param array $headers the columns headings. Added to.
      */
     protected function add_state_column(&$columns, &$headers) {
+        global $PAGE;
         $columns[] = 'state';
         $headers[] = get_string('attemptstate', 'quiz');
+        $PAGE->requires->js_call_amd('mod_quiz/reopen_attempt_ui', 'init');
     }
 
     /**
