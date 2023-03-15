@@ -14,33 +14,32 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_bigbluebuttonbn\task;
+
+use core\task\scheduled_task;
+use mod_bigbluebuttonbn\recording;
+
 /**
- * Definition of scheduled tasks for mod_bigbluebuttonbn.
+ * Synchronise pending and dismissed recordings from the server.
  *
  * @package   mod_bigbluebuttonbn
- * @copyright 2021 Andrew Lyons <andrew@nicols.co.uk>
+ * @copyright 2022 Laurent David Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class check_dismissed_recordings extends scheduled_task {
+    /**
+     * Run the migration task.
+     */
+    public function execute() {
+        recording::sync_pending_recordings_from_server(true);
+    }
 
-defined('MOODLE_INTERNAL') || die();
-
-$tasks = [
-    [
-        'classname' => 'mod_bigbluebuttonbn\task\check_pending_recordings',
-        'blocking' => 0,
-        'minute' => '*/5',
-        'hour' => '*',
-        'day' => '*',
-        'month' => '*',
-        'dayofweek' => '*'
-    ],
-    [
-        'classname' => 'mod_bigbluebuttonbn\task\check_dismissed_recordings',
-        'blocking' => 0,
-        'minute' => '*',
-        'hour' => '*',
-        'day' => '*/10', // Every 10 days.
-        'month' => '*',
-        'dayofweek' => '*'
-    ],
-];
+    /**
+     * Get the name of the task for use in the interface.
+     *
+     * @return string
+     */
+    public function get_name(): string {
+        return get_string('taskname:check_dismissed_recordings', 'mod_bigbluebuttonbn');
+    }
+}
