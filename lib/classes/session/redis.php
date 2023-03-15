@@ -57,6 +57,8 @@ class redis extends handler {
     protected $host = '';
     /** @var int $port The port to connect to */
     protected $port = 6379;
+    /** @var array $sslopts SSL options, if applicable */
+    protected $sslopts = [];
     /** @var string $auth redis password  */
     protected $auth = '';
     /** @var int $database the Redis database to store sesions in */
@@ -103,6 +105,11 @@ class redis extends handler {
 
         if (isset($CFG->session_redis_port)) {
             $this->port = (int)$CFG->session_redis_port;
+        }
+
+        if (isset($CFG->session_redis_encrypt) && $CFG->session_redis_encrypt) {
+            $this->host = 'tls://' . $this->host;
+            $this->sslopts = $CFG->session_redis_encrypt;
         }
 
         if (isset($CFG->session_redis_auth)) {
@@ -210,6 +217,11 @@ class redis extends handler {
         // MDL-59866: Add retries for connections (up to 5 times) to make sure it goes through.
         $counter = 1;
         $maxnumberofretries = 5;
+        $opts = [];
+        if ($this->sslopts) {
+            // Do not set $opts['stream'] = [], breaks connect().
+            $opts['stream'] = $this->sslopts;
+        }
 
         while ($counter <= $maxnumberofretries) {
 
@@ -218,7 +230,7 @@ class redis extends handler {
                 $delay = rand(100, 500);
 
                 // One second timeout was chosen as it is long for connection, but short enough for a user to be patient.
-                if (!$this->connection->connect($this->host, $this->port, 1, null, $delay)) {
+                if (!$this->connection->connect($this->host, $this->port, 1, null, $delay, 1, $opts)) {
                     throw new RedisException('Unable to connect to host.');
                 }
 
@@ -238,6 +250,16 @@ class redis extends handler {
                         throw new RedisException('Unable to set Redis Prefix option.');
                     }
                 }
+
+                if ($this->sslopts && !$this->connection->ping()) {
+                    /*
+                     * In case of a TLS connection, if phpredis client does not
+                     * communicate immediately with the server the connection hangs.
+                     * See https://github.com/phpredis/phpredis/issues/2332 .
+                     */
+                    throw new \RedisException("Ping failed");
+                }
+
                 if ($this->database !== 0) {
                     if (!$this->connection->select($this->database)) {
                         throw new RedisException('Unable to select Redis database '.$this->database.'.');
