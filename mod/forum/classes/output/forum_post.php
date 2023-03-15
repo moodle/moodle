@@ -107,6 +107,9 @@ class forum_post implements \renderable, \templatable {
         'viewfullnames'    => true,
     );
 
+    /** @var \stdClass user record. */
+    protected $userfrom;
+
     /**
      * Builds a renderable forum post
      *
