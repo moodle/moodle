@@ -35,7 +35,7 @@ class behat_mod_data_generator extends behat_generator_base {
                 'singular' => 'entry',
                 'datagenerator' => 'entry',
                 'required' => ['database'],
-                'switchids' => ['database' => 'databaseid', 'user' => 'userid'],
+                'switchids' => ['database' => 'databaseid', 'user' => 'userid', 'group' => 'groupid'],
             ],
             'fields' => [
                 'singular' => 'field',
@@ -86,6 +86,12 @@ class behat_mod_data_generator extends behat_generator_base {
             $userid = $data['userid'];
             unset($data['userid']);
         }
+        if (array_key_exists('groupid', $data)) {
+            $groupid = $data['groupid'];
+            unset($data['groupid']);
+        } else {
+            $groupid = 0;
+        }
 
         $data = array_reduce(array_keys($data), function ($fields, $fieldname) use ($data, $database) {
             global $DB;
@@ -97,7 +103,7 @@ class behat_mod_data_generator extends behat_generator_base {
             return $fields;
         }, []);
 
-        $this->get_data_generator()->create_entry($database, $data, 0, [], null, $userid);
+        $this->get_data_generator()->create_entry($database, $data, $groupid, [], null, $userid);
     }
 
     /**

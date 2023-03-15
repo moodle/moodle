@@ -1156,6 +1156,17 @@ $capabilities = array(
         )
     ),
 
+    'moodle/course:viewhiddengroups' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'READ',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
     'moodle/course:reset' => array(
 
         'riskbitmask' => RISK_DATALOSS,

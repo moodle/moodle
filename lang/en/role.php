@@ -204,6 +204,7 @@ $string['course:view'] = 'View courses without participation';
 $string['course:viewcoursegrades'] = 'View course grades';
 $string['course:viewhiddenactivities'] = 'View hidden activities';
 $string['course:viewhiddencourses'] = 'View hidden courses';
+$string['course:viewhiddengroups'] = 'View hidden groups';
 $string['course:viewhiddensections'] = 'View hidden sections';
 $string['course:viewhiddenuserfields'] = 'View hidden user fields';
 $string['course:viewparticipants'] = 'View participants';

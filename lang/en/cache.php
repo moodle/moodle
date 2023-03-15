@@ -51,6 +51,7 @@ $string['cachedef_coursesectionspreferences'] = 'Course section preferences';
 $string['cachedef_coursecattree'] = 'Course categories tree';
 $string['cachedef_coursecompletion'] = 'Course completion status';
 $string['cachedef_coursecontacts'] = 'List of course contacts';
+$string['cachedef_coursehiddengroups'] = 'Number of groups on a course with restricted visibility';
 $string['cachedef_coursemodinfo'] = 'Accumulated information about modules and sections for each course';
 $string['cachedef_courseeditorstate'] = 'Session course state cache keys to detect course changes in the frontend';
 $string['cachedef_course_image'] = 'Course images';

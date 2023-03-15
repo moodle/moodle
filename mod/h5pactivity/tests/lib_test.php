@@ -145,10 +145,11 @@ class lib_test extends advanced_testcase {
         $groups = array();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
 
-        for ($i = 1; $i < 4; $i++) {
+        for ($i = 1; $i < 6; $i++) {
             $students[$i] = $this->getDataGenerator()->create_and_enrol($course, 'student');
             $groups[$i] = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
         }
+        $groups[$i] = $this->getDataGenerator()->create_group(array('courseid' => $course->id, 'participation' => 0));
 
         // Update the course set the groupmode SEPARATEGROUPS and forced.
         update_course((object)array('id' => $course->id, 'groupmode' => SEPARATEGROUPS, 'groupmodeforce' => true));
@@ -163,6 +164,11 @@ class lib_test extends advanced_testcase {
 
         // Student 3 is only in group 3.
         groups_add_member($groups[3], $students[3]);
+
+        // Student 4 is only in group 5 (non-participation).
+        groups_add_member($groups[6], $students[4]);
+
+        // Student 5 is not in any groups.
 
         // Grader is only in group 3.
         groups_add_member($groups[3], $teacher);
@@ -238,5 +244,13 @@ class lib_test extends advanced_testcase {
         // Grader, Student 1 and 2 are in Group 1.
         $this->assertEquals($students[1]->id, $recentactivity[$students[1]->id]->userid);
         $this->assertEquals($students[2]->id, $recentactivity[$students[2]->id]->userid);
+
+        // Grader is in no group.
+        groups_remove_member($groups[1], $teacher);
+        get_fast_modinfo($course->id, 0, true);
+        $recentactivity = h5pactivity_fetch_recent_activity($submissions, $course->id);
+        // Student 4 and Student 5 have submissions, but they are not in a participation group, so they do not show up in recent
+        // activity for separate groups mode.
+        $this->assertCount(0, $recentactivity);
     }
 }

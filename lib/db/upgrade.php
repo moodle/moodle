@@ -3142,5 +3142,25 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023031000.02);
     }
 
+    if ($oldversion < 2023031400.01) {
+        // Define field id to be added to groups.
+        $table = new xmldb_table('groups');
+        $field = new xmldb_field('visibility', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'picture');
+
+        // Conditionally launch add field visibility.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field participation to be added to groups.
+        $field = new xmldb_field('participation', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'visibility');
+
+        // Conditionally launch add field participation.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_main_savepoint(true, 2023031400.01);
+    }
+
     return true;
 }

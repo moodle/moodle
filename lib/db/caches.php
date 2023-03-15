@@ -119,6 +119,14 @@ $definitions = array(
         'staticaccelerationsize' => 2, // The original cache used 1, we've increased that to two.
     ),
 
+    // Whether a course currently has hidden groups.
+    'coursehiddengroups' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true, // The course id the groupings exist for.
+        'simpledata' => true, // Booleans.
+        'staticacceleration' => true, // Likely there will be a couple of calls to this.
+    ),
+
     // Used to cache calendar subscriptions.
     'calendar_subscriptions' => array(
         'mode' => cache_store::MODE_APPLICATION,
