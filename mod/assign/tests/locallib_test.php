@@ -46,6 +46,12 @@ class locallib_test extends \advanced_testcase {
     // Use the generator helper.
     use mod_assign_test_generator;
 
+    /** @var array */
+    public $extrastudents;
+
+    /** @var array */
+    public $extrasuspendedstudents;
+
     public function test_return_links() {
         global $PAGE;
 
