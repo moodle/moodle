@@ -57,6 +57,7 @@ Feature: In a lesson activity, I need to edit pages in the lesson taking into ac
       | Your answer | 2#87 |
     And I press "Submit"
     Then I should see "Correct answer"
+    And I should see "2#87"
     And I should not see "Incorrect answer"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
@@ -69,6 +70,7 @@ Feature: In a lesson activity, I need to edit pages in the lesson taking into ac
       | Your answer | 2#7 |
     And I press "Submit"
     Then I should not see "Correct answer"
+    And I should see "2#7"
     And I should see "Incorrect answer"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
@@ -81,6 +83,7 @@ Feature: In a lesson activity, I need to edit pages in the lesson taking into ac
       | Your answer | 2#87 |
     And I press "Submit"
     Then I should see "Correct answer"
+    And I should see "2#87"
     And I should not see "Incorrect answer"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
@@ -106,6 +109,7 @@ Feature: In a lesson activity, I need to edit pages in the lesson taking into ac
       | Your answer | 2,7 |
     And I press "Submit"
     And I should see "Incorrect answer"
+    And I should see "2,7"
     And I should not see "Correct answer"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
