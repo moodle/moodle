@@ -188,7 +188,7 @@
     <location>yuilib</location>
     <name>YUI</name>
     <description>The Yahoo! User Interface Library is a set of utilities and controls, in JavaScript, for building richly interactive web applications using techniques such as DOM scripting, DHTML and AJAX. The YUI Library also includes several core CSS resources.Set of user-interface components using AJAX, DHTML etc. We use it for all our AJAX-related stuff.</description>
-    <version>3.17.2</version>
+    <version>3.18.1</version>
     <license>BSD</license>
     <repository>https://github.com/yui/yui3</repository>
     <copyrights>
