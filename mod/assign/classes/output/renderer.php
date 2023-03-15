@@ -39,6 +39,9 @@ use \mod_assign\output\grading_app;
  */
 class renderer extends \plugin_renderer_base {
 
+    /** @var string a unique ID. */
+    public $htmlid;
+
     /**
      * Rendering assignment files
      *

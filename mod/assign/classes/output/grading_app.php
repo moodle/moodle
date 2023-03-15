@@ -57,6 +57,11 @@ class grading_app implements templatable, renderable {
     public $assignment = null;
 
     /**
+     * @var array - List of user records with extra fields.
+     */
+    public $participants = [];
+
+    /**
      * Constructor for this renderable.
      *
      * @param int $userid The user we will open the grading app too.
