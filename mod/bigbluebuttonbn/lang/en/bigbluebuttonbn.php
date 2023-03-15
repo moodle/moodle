@@ -364,6 +364,7 @@ $string['index_heading_users'] = 'Users';
 $string['index_heading_viewer'] = 'Viewers';
 $string['index_heading'] = 'BigBlueButton rooms';
 $string['instanceprofilewithoutrecordings'] = 'This instance profile cannot display recordings';
+$string['managebbbextplugins'] = 'Manage BigBlueButton extension plugins';
 $string['mod_form_block_general'] = 'General';
 $string['mod_form_block_guestaccess'] = 'Guest access';
 $string['mod_form_block_room'] = 'Room settings';
@@ -660,3 +661,6 @@ $string['userlimitreached'] = 'The number of users allowed in a session has been
 $string['waitformoderator'] = 'Waiting for a moderator to join.';
 
 $string['recordingurlnotfound'] = 'The recording URL is invalid.';
+
+$string['subplugintype_bbbext'] = 'BigBlueButton activity extension';
+$string['subplugintype_bbbext_plural'] = 'BigBlueButton activity extensions';
