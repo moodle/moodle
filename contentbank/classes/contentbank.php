@@ -247,7 +247,7 @@ class contentbank {
 
         if ($categories === false || $courses === false) {
             list($categories, $courses) = get_user_capability_contexts($capability, true, $userid, true,
-                'shortname, ctxlevel, ctxinstance, ctxid', 'name, ctxlevel, ctxinstance, ctxid', 'shortname', 'name');
+                'fullname, ctxlevel, ctxinstance, ctxid', 'name, ctxlevel, ctxinstance, ctxid', 'fullname', 'name');
             $categoriescache->set($userid, $categories);
             $coursescache->set($userid, $courses);
         }
