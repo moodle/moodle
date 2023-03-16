@@ -2043,7 +2043,8 @@
   src: url("[[font:core|fa-regular-400.woff2]]") format("woff2"), url("[[font:core|fa-regular-400.ttf]]") format("truetype");
 }
 .far,
-.fa-regular {
+.fa-regular,
+.content-bank-container.view-grid .cb-unlisted::after {
   font-weight: 400;
 }
 
@@ -2065,7 +2066,29 @@
   src: url("[[font:core|fa-solid-900.woff2]]") format("woff2"), url("[[font:core|fa-solid-900.ttf]]") format("truetype");
 }
 .fas,
-.fa-solid {
+.fa-solid,
+.moremenu .dropdown-item[aria-current=true]:before,
+.moremenu .dropdown-item.active:before,
+.dir-rtl .navbar.fixed-top .usermenu .dropdown-menu .dropdown-item.carousel-navigation-link::after,
+.navbar.fixed-top .usermenu .dropdown-menu .submenu .items .dropdown-item[aria-current=true]::before,
+.navbar.fixed-top .usermenu .dropdown-menu .dropdown-item.carousel-navigation-link::after,
+.toast.toast-warning .toast-body:before,
+.toast.toast-info .toast-body:before,
+.toast.toast-danger .toast-body:before,
+.toast.toast-success .toast-body:before,
+.editing .editinprogress:after,
+.dir-rtl .block_settings .block_tree [aria-expanded=false] > p:before,
+.dir-rtl .block_navigation .block_tree [aria-expanded=false] > p:before,
+.block_settings .block_tree [aria-expanded=false] > p:before,
+.block_navigation .block_tree [aria-expanded=false] > p:before,
+.block_settings .block_tree [aria-expanded=true] > p:before,
+.block_navigation .block_tree [aria-expanded=true] > p:before,
+.dropup .dropdown-toggle::after,
+.dropright .dropdown-toggle::after,
+.dropleft .dropdown-toggle::before,
+.dropdown-toggle::after,
+.dropdown-item[aria-current=true]:before,
+.dropdown-item[aria-selected=true]:before {
   font-weight: 900;
 }
 
@@ -4915,8 +4938,31 @@
 .fa-sharp,
 .fas,
 .fa-solid,
+.moremenu .dropdown-item[aria-current=true]:before,
+.moremenu .dropdown-item.active:before,
+.dir-rtl .navbar.fixed-top .usermenu .dropdown-menu .dropdown-item.carousel-navigation-link::after,
+.navbar.fixed-top .usermenu .dropdown-menu .submenu .items .dropdown-item[aria-current=true]::before,
+.navbar.fixed-top .usermenu .dropdown-menu .dropdown-item.carousel-navigation-link::after,
+.toast.toast-warning .toast-body:before,
+.toast.toast-info .toast-body:before,
+.toast.toast-danger .toast-body:before,
+.toast.toast-success .toast-body:before,
+.editing .editinprogress:after,
+.dir-rtl .block_settings .block_tree [aria-expanded=false] > p:before,
+.dir-rtl .block_navigation .block_tree [aria-expanded=false] > p:before,
+.block_settings .block_tree [aria-expanded=false] > p:before,
+.block_navigation .block_tree [aria-expanded=false] > p:before,
+.block_settings .block_tree [aria-expanded=true] > p:before,
+.block_navigation .block_tree [aria-expanded=true] > p:before,
+.dropup .dropdown-toggle::after,
+.dropright .dropdown-toggle::after,
+.dropleft .dropdown-toggle::before,
+.dropdown-toggle::after,
+.dropdown-item[aria-current=true]:before,
+.dropdown-item[aria-selected=true]:before,
 .far,
 .fa-regular,
+.content-bank-container.view-grid .cb-unlisted::after,
 .fab,
 .fa-brands {
   -moz-osx-font-smoothing: grayscale;
@@ -4931,8 +4977,31 @@
 .fas,
 .fa-classic,
 .fa-solid,
+.moremenu .dropdown-item[aria-current=true]:before,
+.moremenu .dropdown-item.active:before,
+.dir-rtl .navbar.fixed-top .usermenu .dropdown-menu .dropdown-item.carousel-navigation-link::after,
+.navbar.fixed-top .usermenu .dropdown-menu .submenu .items .dropdown-item[aria-current=true]::before,
+.navbar.fixed-top .usermenu .dropdown-menu .dropdown-item.carousel-navigation-link::after,
+.toast.toast-warning .toast-body:before,
+.toast.toast-info .toast-body:before,
+.toast.toast-danger .toast-body:before,
+.toast.toast-success .toast-body:before,
+.editing .editinprogress:after,
+.dir-rtl .block_settings .block_tree [aria-expanded=false] > p:before,
+.dir-rtl .block_navigation .block_tree [aria-expanded=false] > p:before,
+.block_settings .block_tree [aria-expanded=false] > p:before,
+.block_navigation .block_tree [aria-expanded=false] > p:before,
+.block_settings .block_tree [aria-expanded=true] > p:before,
+.block_navigation .block_tree [aria-expanded=true] > p:before,
+.dropup .dropdown-toggle::after,
+.dropright .dropdown-toggle::after,
+.dropleft .dropdown-toggle::before,
+.dropdown-toggle::after,
+.dropdown-item[aria-current=true]:before,
+.dropdown-item[aria-selected=true]:before,
 .far,
-.fa-regular {
+.fa-regular,
+.content-bank-container.view-grid .cb-unlisted::after {
   font-family: "Font Awesome 6 Free";
 }
 
@@ -25148,14 +25217,7 @@ ul {
   align-items: center;
 }
 .dropdown-item[aria-current=true]:before, .dropdown-item[aria-selected=true]:before {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  content: \f00c;
+  content: "\f00c";
   position: absolute;
   left: 0.4rem;
   font-size: 0.7rem;
@@ -25749,16 +25811,9 @@ body.dragging .dragging {
 }
 
 .dropdown-toggle::after {
-  content: \f078;
+  content: "\f078";
   margin-right: 0;
   margin-left: 4px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
   font-size: 9px;
   width: 9px;
   border: 0;
@@ -25766,14 +25821,7 @@ body.dragging .dragging {
 
 .dropleft .dropdown-toggle::before {
   border: 0;
-  content: \f053;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
+  content: "\f053";
   font-size: 9px;
   margin-left: 0;
   margin-right: 4px;
@@ -25782,12 +25830,12 @@ body.dragging .dragging {
 
 .dropright .dropdown-toggle::after {
   border: 0;
-  content: \f054;
+  content: "\f054";
 }
 
 .dropup .dropdown-toggle::after {
   border: 0;
-  content: \f077;
+  content: "\f077";
 }
 
 .select-menu li:first-child ul[role=group] {
@@ -26942,37 +26990,23 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .dashboard-card-deck 
 
 .block_settings .block_tree [aria-expanded=true] > p:before,
 .block_navigation .block_tree [aria-expanded=true] > p:before {
-  content: \f107;
+  content: "\f107";
   margin-right: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
   font-size: 16px;
   width: 16px;
 }
 
 .block_settings .block_tree [aria-expanded=false] > p:before,
 .block_navigation .block_tree [aria-expanded=false] > p:before {
-  content: \f105;
+  content: "\f105";
   margin-right: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
   font-size: 16px;
   width: 16px;
 }
 
 .dir-rtl .block_settings .block_tree [aria-expanded=false] > p:before,
 .dir-rtl .block_navigation .block_tree [aria-expanded=false] > p:before {
-  content: \f104;
+  content: "\f104";
 }
 
 .block_navigation .block_tree p.hasicon,
@@ -27620,12 +27654,11 @@ table.calendartable caption {
   opacity: 0.15;
 }
 .content-bank-container.view-grid .cb-unlisted::after {
+  content: "\f070";
   position: absolute;
   top: 20px;
   left: 0;
   width: 100%;
-  content: \f070;
-  font-family: FontAwesome;
   font-size: 26px;
   text-align: center;
   opacity: 0.9;
@@ -27903,7 +27936,6 @@ body:not(.editing) .sitetopic ul.section .label .mod-indent-outer {
 }
 .editing .editinprogress:after {
   position: absolute;
-  font-family: "FontAwesome";
   font-size: 20px;
   color: #6a737b;
   content: "\f110";
@@ -36556,15 +36588,8 @@ div.editor_atto_toolbar button .icon {
   color: #1c3f1a;
 }
 .toast.toast-success .toast-body:before {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
   margin: 2px 5px 0 0;
-  content: \f058;
+  content: "\f058";
 }
 .toast.toast-danger {
   background-color: rgba(244, 214, 210, 0.95);
@@ -36574,15 +36599,8 @@ div.editor_atto_toolbar button .icon {
   color: #691911;
 }
 .toast.toast-danger .toast-body:before {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
   margin: 2px 5px 0 0;
-  content: \f057;
+  content: "\f057";
 }
 .toast.toast-info {
   background-color: rgba(204, 230, 234, 0.95);
@@ -36592,15 +36610,8 @@ div.editor_atto_toolbar button .icon {
   color: #00434e;
 }
 .toast.toast-info .toast-body:before {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
   margin: 2px 5px 0 0;
-  content: \f05a;
+  content: "\f05a";
 }
 .toast.toast-warning {
   background-color: rgba(252, 239, 220, 0.95);
@@ -36610,15 +36621,8 @@ div.editor_atto_toolbar button .icon {
   color: #7d5a29;
 }
 .toast.toast-warning .toast-body:before {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
   margin: 2px 5px 0 0;
-  content: \f06a;
+  content: "\f06a";
 }
 .toast .close {
   color: inherit;
@@ -36681,8 +36685,7 @@ div.editor_atto_toolbar button .icon {
   padding: 0.25rem 1.75rem 0.25rem 0.75rem;
 }
 .navbar.fixed-top .usermenu .dropdown-menu .dropdown-item.carousel-navigation-link::after {
-  font-family: FontAwesome;
-  content: \f0da;
+  content: "\f0da";
   font-size: 1rem;
   right: 0.75rem;
   position: absolute;
@@ -36698,8 +36701,7 @@ div.editor_atto_toolbar button .icon {
   margin: 0;
 }
 .navbar.fixed-top .usermenu .dropdown-menu .submenu .items .dropdown-item[aria-current=true]::before {
-  font-family: FontAwesome;
-  content: \f00c;
+  content: "\f00c";
   font-size: 0.75rem;
   padding-left: 0.25rem;
 }
@@ -36739,7 +36741,7 @@ div.editor_atto_toolbar button .icon {
 }
 
 .dir-rtl .navbar.fixed-top .usermenu .dropdown-menu .dropdown-item.carousel-navigation-link::after {
-  content: \f0d9;
+  content: "\f0d9";
 }
 .dir-rtl .navbar.fixed-top .usermenu .dropdown-menu .carousel .carousel-inner .carousel-item-prev.carousel-item-right,
 .dir-rtl .navbar.fixed-top .usermenu .dropdown-menu .carousel .carousel-inner .carousel-item-next.carousel-item-left {
@@ -37457,7 +37459,7 @@ div.editor_atto_toolbar button .icon {
 }
 .moremenu .dropdown-item[aria-current=true]:before,
 .moremenu .dropdown-item.active:before {
-  content: \f00c;
+  content: "\f00c";
 }
 
 .primary-navigation .navigation {

@@ -219,11 +219,11 @@ body:not(.editing)  .sitetopic ul.section {
         }
 
         &:after {
+            @extend .fa-solid;
             position: absolute;
-            font-family: "FontAwesome";
             font-size: 20px;
             color: $gray-600;
-            content: "";
+            content: fa-content($fa-var-spinner);
             display: flex;
             justify-content: center;
             align-items: center;

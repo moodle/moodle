@@ -4,6 +4,7 @@ information provided here is intended especially for theme designer.
 === 4.2 ===
 * The moodle-core-popuphelp YUI modal has been removed. It has not been actively used in Moodle since 3.3. It should be replaced with appropriate ESM/AMD JavaScript.
 * The moodle-core-tooltip YUI modal has been removed. It should be replaced with appropriate ESM/AMD JavaScript.
+* The Font Awesome library has been upgraded from 4.7 to 6.3.0. The free version included in Moodle supports the solid and regular styles.
 
 === 4.1 ===
 * The function core_course_renderer::course_modchooser() has been finally deprecated and can not be used anymore.

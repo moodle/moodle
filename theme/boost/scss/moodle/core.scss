@@ -2390,8 +2390,8 @@ $footer-link-color: $bg-inverse-link-color !default;
         display: flex;
         align-items: center;
         &:before {
-            @include fa-icon();
-            content: $fa-var-check;
+            @extend .fa-solid;
+            content: fa-content($fa-var-check);
             position: absolute;
             left: 0.4rem;
             font-size: 0.7rem;
@@ -2979,10 +2979,10 @@ body.dragging {
 }
 
 .dropdown-toggle::after {
-    content: $fa-var-chevron-down;
+    @extend .fa-solid;
+    content: fa-content($fa-var-chevron-down);
     margin-right: 0;
     margin-left: 4px;
-    @include fa-icon();
     font-size: 9px;
     width: 9px;
     border: 0;
@@ -2991,8 +2991,8 @@ body.dragging {
 
 .dropleft .dropdown-toggle::before {
     border: 0;
-    content: $fa-var-chevron-left;
-    @include fa-icon();
+    @extend .fa-solid;
+    content: fa-content($fa-var-chevron-left);
     font-size: 9px;
     margin-left: 0;
     margin-right: 4px;
@@ -3001,12 +3001,14 @@ body.dragging {
 
 .dropright .dropdown-toggle::after {
     border: 0;
-    content: $fa-var-chevron-right;
+    @extend .fa-solid;
+    content: fa-content($fa-var-chevron-right);
 }
 
 .dropup .dropdown-toggle::after {
     border: 0;
-    content: $fa-var-chevron-up;
+    @extend .fa-solid;
+    content: fa-content($fa-var-chevron-up);
 }
 
 .select-menu {
