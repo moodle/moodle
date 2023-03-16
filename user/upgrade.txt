@@ -14,6 +14,7 @@ This files describes API changes for code that uses the user API.
 * New method `core_user::is_current_user`, useful for components implementing permission callbacks for their preferences
 * New `profile_get_user_field` method for returning profile field instance of given type
 * The `profile_field_base::is_visible` method now accepts an optional `$context` argument
+* External function core_user_external::add_user_private_files() now returns moodle_exception when the user quota is exceeded
 
 === 4.1 ===
 
