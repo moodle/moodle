@@ -172,7 +172,7 @@ class activity_packager {
         }
 
         // Ensure we can handle files at the upper end of the limit supported by MoodleNet.
-        raise_memory_limit('1070000000');
+        raise_memory_limit(activity_sender::MAX_FILESIZE);
 
         // Get the actual file content.
         $packagedfiledata['filecontents'] = $packagedfiledata['storedfile']->get_content();
