@@ -14,16 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_xapi\task;
+
 /**
- * Plugin version and other meta-data are defined here.
+ * A scheduled task to clear up old xAPI state data.
  *
- * @package     mod_h5pactivity
- * @copyright   2020 Ferran Recio <ferran@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_xapi
+ * @since      Moodle 4.2
+ * @copyright  2022 Ferran Recio <ferran@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class state_cleanup_task extends \core\task\scheduled_task {
 
-defined('MOODLE_INTERNAL') || die();
+    /**
+     * Get a descriptive name for this task (shown to admins).
+     *
+     * @return string
+     */
+    public function get_name() {
+        return get_string('xapicleanup', 'xapi');
+    }
 
-$plugin->component = 'mod_h5pactivity';
-$plugin->version = 2023020900;
-$plugin->requires = 2022111800;
+    /**
+     * Run task.
+     */
+    public function execute() {
+        \core_xapi\api::execute_state_cleanup();
+    }
+}

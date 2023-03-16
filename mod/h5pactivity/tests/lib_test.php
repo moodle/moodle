@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for (some of) mod/h5pactivity/lib.php.
- *
- * @package    mod_h5pactivity
- * @copyright  2021 Ilya Tregubov <ilya@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 use mod_h5pactivity\local\manager;
 
 defined('MOODLE_INTERNAL') || die();
@@ -32,10 +24,80 @@ require_once($CFG->dirroot . '/mod/h5pactivity/lib.php');
 /**
  * Unit tests for (some of) mod/h5pactivity/lib.php.
  *
+ * @package    mod_h5pactivity
  * @copyright  2021 Ilya Tregubov <ilya@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class lib_test extends advanced_testcase {
+
+    /**
+     * Test that h5pactivity_delete_instance removes data.
+     *
+     * @covers ::h5pactivity_delete_instance
+     */
+    public function test_h5pactivity_delete_instance() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $activity = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
+        $this->setUser($user);
+
+        /** @var \mod_h5pactivity_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_h5pactivity');
+
+        /** @var \core_h5p_generator $h5pgenerator */
+        $h5pgenerator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+
+        // Add an attempt to the H5P activity.
+        $attemptinfo = [
+            'userid' => $user->id,
+            'h5pactivityid' => $activity->id,
+            'attempt' => 1,
+            'interactiontype' => 'compound',
+            'rawscore' => 2,
+            'maxscore' => 2,
+            'duration' => 1,
+            'completion' => 1,
+            'success' => 0,
+        ];
+        $generator->create_attempt($attemptinfo);
+
+        // Add also a xAPI state to the H5P activity.
+        $filerecord = [
+            'contextid' => \context_module::instance($activity->cmid)->id,
+            'component' => 'mod_h5pactivity',
+            'filearea' => 'package',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filepath' => '/',
+            'filename' => 'dummy.h5p',
+            'addxapistate' => true,
+        ];
+        $h5pgenerator->generate_h5p_data(false, $filerecord);
+
+        // Check the H5P activity exists and the attempt has been created.
+        $this->assertNotEmpty($DB->get_record('h5pactivity', ['id' => $activity->id]));
+        $this->assertEquals(2, $DB->count_records('grade_items'));
+        $this->assertEquals(2, $DB->count_records('grade_grades'));
+        $this->assertEquals(1, $DB->count_records('xapi_states'));
+
+        // Check nothing happens when given activity id doesn't exist.
+        h5pactivity_delete_instance($activity->id + 1);
+        $this->assertNotEmpty($DB->get_record('h5pactivity', ['id' => $activity->id]));
+        $this->assertEquals(2, $DB->count_records('grade_items'));
+        $this->assertEquals(2, $DB->count_records('grade_grades'));
+        $this->assertEquals(1, $DB->count_records('xapi_states'));
+
+        // Check the H5P instance and its associated data is removed.
+        h5pactivity_delete_instance($activity->id);
+        $this->assertEmpty($DB->get_record('h5pactivity', ['id' => $activity->id]));
+        $this->assertEquals(1, $DB->count_records('grade_items'));
+        $this->assertEquals(1, $DB->count_records('grade_grades'));
+        $this->assertEquals(0, $DB->count_records('xapi_states'));
+    }
 
     /**
      * Test that assign_print_recent_activity shows ungraded submitted assignments.
@@ -252,5 +314,103 @@ class lib_test extends advanced_testcase {
         // Student 4 and Student 5 have submissions, but they are not in a participation group, so they do not show up in recent
         // activity for separate groups mode.
         $this->assertCount(0, $recentactivity);
+    }
+
+    /**
+     * Test that h5pactivity_reset_userdata reset user data.
+     *
+     * @covers ::h5pactivity_reset_userdata
+     */
+    public function test_h5pactivity_reset_userdata() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $activity = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
+        $this->setUser($user);
+
+        /** @var \mod_h5pactivity_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_h5pactivity');
+
+        /** @var \core_h5p_generator $h5pgenerator */
+        $h5pgenerator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+
+        // Add an attempt to the H5P activity.
+        $attemptinfo = [
+            'userid' => $user->id,
+            'h5pactivityid' => $activity->id,
+            'attempt' => 1,
+            'interactiontype' => 'compound',
+            'rawscore' => 2,
+            'maxscore' => 2,
+            'duration' => 1,
+            'completion' => 1,
+            'success' => 0,
+        ];
+        $generator->create_attempt($attemptinfo);
+
+        // Add also a xAPI state to the H5P activity.
+        $filerecord = [
+            'contextid' => \context_module::instance($activity->cmid)->id,
+            'component' => 'mod_h5pactivity',
+            'filearea' => 'package',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filepath' => '/',
+            'filename' => 'dummy.h5p',
+            'addxapistate' => true,
+        ];
+        $h5pgenerator->generate_h5p_data(false, $filerecord);
+
+        // Check the H5P activity exists and the attempt has been created with the expected data.
+        $this->assertNotEmpty($DB->get_record('h5pactivity', ['id' => $activity->id]));
+        $this->assertEquals(2, $DB->count_records('grade_items'));
+        $this->assertEquals(2, $DB->count_records('grade_grades'));
+        $this->assertEquals(1, $DB->count_records('xapi_states'));
+
+        // Check nothing happens when reset_h5pactivity is not set.
+        $data = new stdClass();
+        h5pactivity_reset_userdata($data);
+        $this->assertNotEmpty($DB->get_record('h5pactivity', ['id' => $activity->id]));
+        $this->assertEquals(2, $DB->count_records('grade_items'));
+        $this->assertEquals(2, $DB->count_records('grade_grades'));
+        $this->assertEquals(1, $DB->count_records('xapi_states'));
+        $this->assertEquals(1, $DB->count_records('xapi_states'));
+
+        // Check nothing happens when reset_h5pactivity is not set.
+        $data = (object) [
+            'courseid' => $course->id,
+        ];
+        h5pactivity_reset_userdata($data);
+        $this->assertNotEmpty($DB->get_record('h5pactivity', ['id' => $activity->id]));
+        $this->assertEquals(2, $DB->count_records('grade_items'));
+        $this->assertEquals(2, $DB->count_records('grade_grades'));
+        $this->assertEquals(1, $DB->count_records('xapi_states'));
+        $this->assertEquals(1, $DB->count_records('xapi_states'));
+
+        // Check nothing happens when the given course doesn't exist.
+        $data = (object) [
+            'reset_h5pactivity' => true,
+            'courseid' => $course->id + 1,
+        ];
+        h5pactivity_reset_userdata($data);
+        $this->assertNotEmpty($DB->get_record('h5pactivity', ['id' => $activity->id]));
+        $this->assertEquals(2, $DB->count_records('grade_items'));
+        $this->assertEquals(2, $DB->count_records('grade_grades'));
+        $this->assertEquals(1, $DB->count_records('xapi_states'));
+        $this->assertEquals(1, $DB->count_records('xapi_states'));
+
+        // Check the H5P instance and its associated data is reset.
+        $data = (object) [
+            'reset_h5pactivity' => true,
+            'courseid' => $course->id,
+        ];
+        h5pactivity_reset_userdata($data);
+        $this->assertNotEmpty($DB->get_record('h5pactivity', ['id' => $activity->id]));
+        $this->assertEquals(2, $DB->count_records('grade_items'));
+        $this->assertEquals(1, $DB->count_records('grade_grades'));
+        $this->assertEquals(0, $DB->count_records('xapi_states'));
     }
 }

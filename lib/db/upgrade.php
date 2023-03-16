@@ -3162,5 +3162,42 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023031400.01);
     }
 
+    if ($oldversion < 2023031400.02) {
+
+        // Define table xapi_states to be created.
+        $table = new xmldb_table('xapi_states');
+
+        // Adding fields to table xapi_states.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('stateid', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('statedata', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('registration', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        // Adding keys to table xapi_states.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Adding indexes to table xapi_states.
+        $table->add_index('component-itemid', XMLDB_INDEX_NOTUNIQUE, ['component', 'itemid']);
+        $table->add_index('userid', XMLDB_INDEX_NOTUNIQUE, ['userid']);
+        $table->add_index('timemodified', XMLDB_INDEX_NOTUNIQUE, ['timemodified']);
+
+        // Conditionally launch create table for xapi_states.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        if (!isset($CFG->xapicleanupperiod)) {
+            set_config('xapicleanupperiod', WEEKSECS * 8);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023031400.02);
+    }
+
     return true;
 }

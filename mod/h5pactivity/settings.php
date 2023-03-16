@@ -15,15 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Module admin settings.
  *
- * @package     mod_h5pactivity
- * @copyright   2020 Ferran Recio <ferran@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod_h5pactivity
+ * @copyright  2023 Sara Arjona (sara@moodle.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->component = 'mod_h5pactivity';
-$plugin->version = 2023020900;
-$plugin->requires = 2022111800;
+if ($ADMIN->fulltree) {
+    $settings->add(new admin_setting_configcheckbox('mod_h5pactivity/enablesavestate',
+        get_string('enablesavestate', 'mod_h5pactivity'), get_string('enablesavestate_help', 'mod_h5pactivity'), 1));
+
+    $settings->add(new admin_setting_configtext('mod_h5pactivity/savestatefreq',
+        get_string('savestatefreq', 'mod_h5pactivity'), get_string('savestatefreq_help', 'mod_h5pactivity'), 60, PARAM_INT));
+}

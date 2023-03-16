@@ -314,18 +314,20 @@ class helper {
     /**
      * Get the settings needed by the H5P library.
      *
+     * @param string|null $component
      * @return array The settings.
      */
-    public static function get_core_settings(): array {
+    public static function get_core_settings(?string $component = null): array {
         global $CFG, $USER;
 
         $basepath = $CFG->wwwroot . '/';
         $systemcontext = context_system::instance();
 
-        // Generate AJAX paths.
-        $ajaxpaths = [];
-        $ajaxpaths['xAPIResult'] = '';
-        $ajaxpaths['contentUserData'] = '';
+        // H5P doesn't currently support xAPI State. It implements a mechanism in contentUserDataAjax() in h5p.js to update user
+        // data. However, in our case, we're overriding this method to call the xAPI State web services.
+        $ajaxpaths = [
+            'contentUserData' => '',
+        ];
 
         $factory = new factory();
         $core = $factory->get_core();
@@ -336,13 +338,17 @@ class helper {
             $usersettings['name'] = $USER->username;
             $usersettings['id'] = $USER->id;
         }
+        $savefreq = false;
+        if ($component !== null && get_config($component, 'enablesavestate')) {
+            $savefreq = get_config($component, 'savestatefreq');
+        }
         $settings = array(
             'baseUrl' => $basepath,
             'url' => "{$basepath}pluginfile.php/{$systemcontext->instanceid}/core_h5p",
             'urlLibraries' => "{$basepath}pluginfile.php/{$systemcontext->id}/core_h5p/libraries",
             'postUserStatistics' => false,
             'ajax' => $ajaxpaths,
-            'saveFreq' => false,
+            'saveFreq' => $savefreq,
             'siteUrl' => $CFG->wwwroot,
             'l10n' => array('H5P' => $core->getLocalization()),
             'user' => $usersettings,
@@ -360,13 +366,14 @@ class helper {
     /**
      * Get the core H5P assets, including all core H5P JavaScript and CSS.
      *
+     * @param string|null $component
      * @return Array core H5P assets.
      */
-    public static function get_core_assets(): array {
-        global $CFG, $PAGE;
+    public static function get_core_assets(?string $component = null): array {
+        global $PAGE;
 
         // Get core settings.
-        $settings = self::get_core_settings();
+        $settings = self::get_core_settings($component);
         $settings['core'] = [
             'styles' => [],
             'scripts' => []

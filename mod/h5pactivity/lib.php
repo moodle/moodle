@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use mod_h5pactivity\local\manager;
 use mod_h5pactivity\local\grader;
+use mod_h5pactivity\xapi\handler;
 
 /**
  * Checks if H5P activity supports a specific feature.
@@ -143,6 +144,12 @@ function h5pactivity_delete_instance(int $id): bool {
     $activity = $DB->get_record('h5pactivity', ['id' => $id]);
     if (!$activity) {
         return false;
+    }
+
+    if ($cm = get_coursemodule_from_instance('h5pactivity', $activity->id)) {
+        $context = context_module::instance($cm->id);
+        $xapihandler = handler::create('mod_h5pactivity');
+        $xapihandler->wipe_states($context->id);
     }
 
     $DB->delete_records('h5pactivity', ['id' => $id]);
@@ -270,6 +277,7 @@ function h5pactivity_reset_userdata(stdClass $data): array {
         $params = ['courseid' => $data->courseid];
         $sql = "SELECT a.id FROM {h5pactivity} a WHERE a.course=:courseid";
         if ($activities = $DB->get_records_sql($sql, $params)) {
+            $xapihandler = handler::create('mod_h5pactivity');
             foreach ($activities as $activity) {
                 $cm = get_coursemodule_from_instance('h5pactivity',
                                                      $activity->id,
@@ -277,6 +285,8 @@ function h5pactivity_reset_userdata(stdClass $data): array {
                                                      false,
                                                      MUST_EXIST);
                 mod_h5pactivity\local\attempt::delete_all_attempts ($cm);
+                $context = context_module::instance($cm->id);
+                $xapihandler->wipe_states($context->id);
             }
         }
         // Remove all grades from gradebook.
