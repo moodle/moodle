@@ -69,5 +69,31 @@ function xmldb_label_upgrade($oldversion) {
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2022112801) {
+        $prevlang = force_current_language($CFG->lang);
+        $labels = $DB->get_recordset('label');
+        foreach ($labels as $label) {
+            // Make sure that all labels have now the same name according to the new convention.
+            // Note this is the same (and duplicated) code as in get_label_name as we cannot call any API function
+            // during upgrade.
+            $name = html_to_text(format_string($label->intro, true));
+            $name = preg_replace('/@@PLUGINFILE@@\/[[:^space:]]+/i', '', $name);
+            // Remove double space and also nbsp; characters.
+            $name = preg_replace('/\s+/u', ' ', $name);
+            $name = trim($name);
+            if (core_text::strlen($name) > LABEL_MAX_NAME_LENGTH) {
+                $name = core_text::substr($name, 0, LABEL_MAX_NAME_LENGTH) . "...";
+            }
+            if (empty($name)) {
+                $name = get_string('modulename', 'label');
+            }
+            $label->name = $name;
+            $DB->update_record('label', $label);
+        }
+        $labels->close();
+        force_current_language($prevlang);
+        upgrade_mod_savepoint(true, 2022112801, 'label');
+    }
+
     return true;
 }
