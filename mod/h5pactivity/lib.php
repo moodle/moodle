@@ -145,6 +145,13 @@ function h5pactivity_delete_instance(int $id): bool {
         return false;
     }
 
+    // Remove activity record, and all associated attempt data.
+    $attemptids = $DB->get_fieldset_select('h5pactivity_attempts', 'id', 'h5pactivityid = ?', [$id]);
+    if ($attemptids) {
+        $DB->delete_records_list('h5pactivity_attempts_results', 'attemptid', $attemptids);
+        $DB->delete_records_list('h5pactivity_attempts', 'id', $attemptids);
+    }
+
     $DB->delete_records('h5pactivity', ['id' => $id]);
 
     h5pactivity_grade_item_delete($activity);
