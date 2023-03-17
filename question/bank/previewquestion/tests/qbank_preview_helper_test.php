@@ -93,12 +93,32 @@ class qbank_preview_helper_test extends \advanced_testcase {
      */
     public function test_question_preview_action_url() {
         $actionurl = helper::question_preview_action_url($this->questiondata->id, $this->quba->get_id(), $this->options,
-                $this->context, $this->returnurl);
+                $this->context, $this->returnurl, question_preview_options::ALWAYS_LATEST);
         $params = [
            'id' => $this->questiondata->id,
            'previewid' => $this->quba->get_id(),
            'returnurl' => $this->returnurl,
-           'courseid' => $this->context->instanceid
+           'courseid' => $this->context->instanceid,
+           'restartversion' => question_preview_options::ALWAYS_LATEST,
+        ];
+        $params = array_merge($params, $this->options->get_url_params());
+        $expectedurl = new moodle_url('/question/bank/previewquestion/preview.php', $params);
+        $this->assertEquals($expectedurl, $actionurl);
+    }
+
+    /**
+     * Test the preview action url from the helper class when no restartversion is passed.
+     *
+     * @covers ::question_preview_action_url
+     */
+    public function test_question_preview_action_url_no_restartversion() {
+        $actionurl = helper::question_preview_action_url($this->questiondata->id, $this->quba->get_id(), $this->options,
+                $this->context, $this->returnurl);
+        $params = [
+            'id' => $this->questiondata->id,
+            'previewid' => $this->quba->get_id(),
+            'returnurl' => $this->returnurl,
+            'courseid' => $this->context->instanceid
         ];
         $params = array_merge($params, $this->options->get_url_params());
         $expectedurl = new moodle_url('/question/bank/previewquestion/preview.php', $params);
@@ -111,7 +131,8 @@ class qbank_preview_helper_test extends \advanced_testcase {
      * @covers ::question_preview_form_url
      */
     public function test_question_preview_form_url() {
-        $formurl = helper::question_preview_form_url($this->questiondata->id, $this->context, $this->quba->get_id(), $this->returnurl);
+        $formurl = helper::question_preview_form_url(
+                $this->questiondata->id, $this->context, $this->quba->get_id(), $this->returnurl);
         $params = [
             'id' => $this->questiondata->id,
             'previewid' => $this->quba->get_id(),
@@ -129,12 +150,40 @@ class qbank_preview_helper_test extends \advanced_testcase {
      */
     public function test_question_preview_url() {
         $previewurl = helper::question_preview_url($this->questiondata->id, $this->options->behaviour, $this->options->maxmark,
-                $this->options, $this->options->variant, $this->context);
+                $this->options, $this->options->variant, $this->context, null, question_preview_options::ALWAYS_LATEST);
         $params = [
             'id' => $this->questiondata->id,
             'behaviour' => $this->options->behaviour,
             'maxmark' => $this->options->maxmark,
-            'courseid' => $this->context->instanceid
+            'courseid' => $this->context->instanceid,
+            'restartversion' => question_preview_options::ALWAYS_LATEST,
+        ];
+        // Extra params for options.
+        $params['correctness']     = $this->options->correctness;
+        $params['marks']           = $this->options->marks;
+        $params['markdp']          = $this->options->markdp;
+        $params['feedback']        = (bool) $this->options->feedback;
+        $params['generalfeedback'] = (bool) $this->options->generalfeedback;
+        $params['rightanswer']     = (bool) $this->options->rightanswer;
+        $params['history']         = (bool) $this->options->history;
+        $expectedurl = new moodle_url('/question/bank/previewquestion/preview.php', $params);
+        $this->assertEquals($expectedurl, $previewurl);
+    }
+
+
+    /**
+     * Test the preview url from the helper class.
+     *
+     * @covers ::question_preview_url
+     */
+    public function test_question_preview_url_no_restartversion() {
+        $previewurl = helper::question_preview_url($this->questiondata->id, $this->options->behaviour, $this->options->maxmark,
+                $this->options, $this->options->variant, $this->context, null);
+        $params = [
+            'id' => $this->questiondata->id,
+            'behaviour' => $this->options->behaviour,
+            'maxmark' => $this->options->maxmark,
+            'courseid' => $this->context->instanceid,
         ];
         // Extra params for options.
         $params['correctness']     = $this->options->correctness;
@@ -187,5 +236,29 @@ class qbank_preview_helper_test extends \advanced_testcase {
         $qtypeobj->save_question($questiongenerated, $fromform);
         $versionids = helper::load_versions($question->questionbankentryid);
         $this->assertCount(2, $versionids);
+    }
+
+    /**
+     * Test method get_restart_id().
+     *
+     * This should return the value of the specified version number, or the latest version if ALWAYS_LATEST is passed.
+     *
+     * @covers ::get_restart_id
+     * @return void
+     */
+    public function test_get_restart_id(): void {
+        $versions = [
+            100 => 1,
+            200 => 2,
+            300 => 3
+        ];
+
+        $this->assertEquals(100, helper::get_restart_id($versions, 1));
+        $this->assertEquals(200, helper::get_restart_id($versions, 2));
+        $this->assertEquals(300, helper::get_restart_id($versions, 3));
+        $this->assertEquals(300, helper::get_restart_id($versions, question_preview_options::ALWAYS_LATEST));
+        $this->assertNull(helper::get_restart_id($versions, 4));
+        $this->assertNull(helper::get_restart_id([], 1));
+        $this->assertNull(helper::get_restart_id([], question_preview_options::ALWAYS_LATEST));
     }
 }
