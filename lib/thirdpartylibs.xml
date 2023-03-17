@@ -388,11 +388,11 @@ All rights reserved.</copyright>
     <location>amd/src/chartjs-lazy.js</location>
     <name>Chart.js</name>
     <description>Simple yet flexible JavaScript charting for designers &amp; developers.</description>
-    <version>3.8.0</version>
+    <version>4.2.1</version>
     <license>MIT</license>
     <repository>https://github.com/chartjs/Chart.js</repository>
     <copyrights>
-      <copyright>2016 Nick Downie</copyright>
+      <copyright>2014-2022 Chart.js Contributors</copyright>
     </copyrights>
     <customised/>
   </library>
