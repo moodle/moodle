@@ -121,3 +121,19 @@ Feature: Quiz question versioning
     And I set the field "question_status_dropdown" in the "First question" "table_row" to "Draft"
     When I am on the "Quiz 1" "mod_quiz > Edit" page
     Then I should see "This question has all versions in Draft status. The quiz will not work with this question in place."
+
+  @javascript
+  Scenario: Previewing a question set to use always latest version will set the preview to always latest version
+    When I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher"
+    And the field "version" in the "First question" "list_item" matches value "Always latest"
+    When I follow "Preview question"
+    And I expand all fieldsets
+    Then the field "Question version" matches value "Always latest"
+
+  @javascript
+  Scenario: Previewing a question set to use a specific version will set the preview to that version
+    When I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher"
+    And I set the field "version" to "v1 (latest)"
+    When I follow "Preview question"
+    And I expand all fieldsets
+    Then the field "Question version" matches value "1"
