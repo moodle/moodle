@@ -429,4 +429,3 @@ class lib_test extends advanced_testcase {
         $this->assertEquals(0, $DB->count_records('xapi_states'));
     }
 }
-

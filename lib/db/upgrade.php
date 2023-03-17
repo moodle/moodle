@@ -3159,6 +3159,8 @@ privatefiles,moodle|/user/files.php';
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+
+        // Main savepoint reached.
         upgrade_main_savepoint(true, 2023031400.01);
     }
 
