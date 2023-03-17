@@ -29,8 +29,16 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'Gŏdka';
-$string['moodlelogo'] = 'Logo Moodle';
-$string['next'] = 'Dalij';
-$string['previous'] = 'Nazŏd';
-$string['reload'] = 'Ôdświyż';
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 't';
+$string['cliincorrectvalueerror'] = 'Błōnd, niynŏleżny wert "{$a->value}" dlŏ "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'Niynŏleżny wert, sprōbuj zaś';
+$string['clitypevalue'] = 'wert zorty';
+$string['clitypevaluedefault'] = 'Zorta wertu, naciś Ynter, coby użyć wertu wychodnyj ({$a})';
+$string['cliunknowoption'] = 'Niyznōme ôpcyje:
+  {$a}
+Proszã użyć ôpcyje --help.';
+$string['cliyesnoprompt'] = 'wpisz y (to znaczy tak) abo n (to znaczy niy)';
+$string['environmentrequireinstall'] = 'je zdatne, coby było zainstalowane i włōnczōne';
+$string['environmentrequireversion'] = 'wymŏganŏ je wersyjŏ {$a->needed}, a ty używŏsz wersyje {$a->current}';
+$string['upgradekeyset'] = 'Zaktualizuj klucz (ôstŏw prōzne jeźli niy ma to skōnfigurowane)';
