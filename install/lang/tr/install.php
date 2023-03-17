@@ -99,7 +99,7 @@ $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Bilgisayarınıza <strong>{$a->packname} {$a->packversion}</strong> paketini başarıyla kurdunuz. Tebrikler!';
 $string['welcomep30'] = '<strong>{$a->installername}</strong>\'nin bu sürümü <strong>Moodle</strong>\'da bir ortam oluşturmak için uygulamaları içerir:';
 $string['welcomep40'] = 'Bu paket <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong> sürümünü de içerir.';
-$string['welcomep50'] = 'Bu paketteki tüm uygulamaların kullanımı her biri kendine ait olan lisanslar tarafından yönetilir. <strong>{$a->installername}</strong> paketinin tamamı <a href="http://www.opensource.org/docs/definition_plain.html">açık kaynak</a> kodludur ve <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> lisansı altında dağıtılır.';
+$string['welcomep50'] = 'Bu paketteki tüm uygulamaların kullanımı ilgili lisanslarına tabidir.  Eksiksiz <strong>{$a->installername}</strong> paketi <a href="https://www.opensource.org/docs/definition_plain.html">açık kaynak</a>\'tır ve altında dağıtılır <a href="https://www.gnu.org/copyleft/gpl.html">GPL</a> lisansı.';
 $string['welcomep60'] = 'Aşağıdaki sayfalar <strong>Moodle</strong>ın kurulumu ve yapılandırılması için size basitçe yol gösterecektir. Varsayılan ayarları kabul edebilir veya ihtiyaçlarınıza göre bunları değiştirebilirsiniz.';
 $string['welcomep70'] = '<strong>Moodle</strong> kurulumu için aşağıdaki "İleri" tuşuna basın.';
 $string['wwwroot'] = 'Web adresi';
