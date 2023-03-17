@@ -23,7 +23,7 @@ Feature: MoodleNet outbound configuration
     Then I should see "MoodleNet outbound settings"
     And I click on "MoodleNet outbound settings" "link"
     And the field "OAuth 2 service" matches value "None"
-    And I should see "Select the OAuth 2 service that is configured to talk to the MoodleNet server. If the service doesn't exist yet, you will need to create it."
+    And I should see "Select a MoodleNet OAuth 2 service to enable sharing to that MoodleNet site. If the service doesn't exist yet, you will need to create it."
     And I click on "create" "link"
     And I should see "OAuth 2 services"
 

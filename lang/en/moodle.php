@@ -1365,7 +1365,7 @@ $string['moodledocslink'] = 'Help and documentation';
 $string['moodleversion'] = 'Moodle version';
 $string['moodlerelease'] = 'Moodle release';
 $string['moodleservicesandsupport'] = 'Services and support';
-$string['moodlenet:configoauthservice'] = 'Select the OAuth 2 service that is configured to talk to the MoodleNet server. If the service doesn\'t exist yet, you will need to <a href="{$a}">create</a> it.';
+$string['moodlenet:configoauthservice'] = 'Select a MoodleNet OAuth 2 service to enable sharing to that MoodleNet site. If the service doesn\'t exist yet, you will need to <a href="{$a}">create</a> it.';
 $string['moodlenet:outboundsettings'] = 'MoodleNet outbound settings';
 $string['more'] = 'more';
 $string['morehelp'] = 'More help';

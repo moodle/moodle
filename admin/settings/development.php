@@ -36,7 +36,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     // Sharing to MoodleNet setting.
     $temp->add(new admin_setting_configcheckbox('enablesharingtomoodlenet',
         new lang_string('enablesharingtomoodlenet', 'core_admin'),
-        '', 0));
+        new lang_string('enablesharingtomoodlenet_desc', 'core_admin'), 0));
 
     $ADMIN->add('experimental', $temp);
 
