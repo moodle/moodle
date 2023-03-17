@@ -34951,9 +34951,6 @@ p.arrow_button {
   border: none;
   vertical-align: middle;
 }
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-name {
-  padding-left: 38px;
-}
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-name .small {
   font-size: 70%;
 }
