@@ -20,6 +20,7 @@ use cm_info;
 use coding_exception;
 use context;
 use context_module;
+use core_question\local\bank\question_version_status;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
 use moodle_exception;
@@ -561,6 +562,10 @@ class quiz_settings {
         $qcategories = [];
 
         foreach ($this->get_questions() as $questiondata) {
+            if ($questiondata->status == question_version_status::QUESTION_STATUS_DRAFT) {
+                // Skip questions where all versions are draft.
+                continue;
+            }
             if ($questiondata->qtype === 'random' && $includepotential) {
                 if (!isset($qcategories[$questiondata->category])) {
                     $qcategories[$questiondata->category] = false;
