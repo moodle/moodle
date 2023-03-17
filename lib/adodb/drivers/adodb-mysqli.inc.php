@@ -1119,6 +1119,10 @@ class ADODB_mysqli extends ADOConnection {
 		if (!is_array($inputarr)) {
 			$inputarr = array($inputarr);
 		}
+		else {
+			//remove alphanumeric placeholders
+			$inputarr = array_values($inputarr);
+		}
 
 		if (!is_array($sql)) {
 			// Check if we are bulkbinding. If so, $inputarr is a 2d array,
@@ -1307,6 +1311,10 @@ class ADODB_mysqli extends ADOConnection {
 
 				$ret = mysqli_stmt_execute($stmt);
 
+				// Store error code and message
+				$this->_errorCode = $stmt->errno;
+				$this->_errorMsg = $stmt->error;
+
 				/*
 				* Did we throw an error?
 				*/
@@ -1332,6 +1340,10 @@ class ADODB_mysqli extends ADOConnection {
 			*/
 			$this->usePreparedStatement   = false;
 			$this->useLastInsertStatement = false;
+
+			// Reset error code and message
+			$this->_errorCode = 0;
+			$this->_errorMsg = '';
 		}
 
 		/*
@@ -1373,10 +1385,13 @@ class ADODB_mysqli extends ADOConnection {
 	 */
 	function ErrorMsg()
 	{
-		if (empty($this->_connectionID))
-			$this->_errorMsg = @mysqli_connect_error();
-		else
-			$this->_errorMsg = @mysqli_error($this->_connectionID);
+		if (!$this->_errorMsg) {
+			if (empty($this->_connectionID)) {
+				$this->_errorMsg = mysqli_connect_error();
+			} else {
+				$this->_errorMsg = $this->_connectionID->error ?? $this->_connectionID->connect_error;
+			}
+		}
 		return $this->_errorMsg;
 	}
 
@@ -1387,10 +1402,14 @@ class ADODB_mysqli extends ADOConnection {
 	 */
 	function ErrorNo()
 	{
-		if (empty($this->_connectionID))
-			return @mysqli_connect_errno();
-		else
-			return @mysqli_errno($this->_connectionID);
+		if (!$this->_errorCode) {
+			if (empty($this->_connectionID)) {
+				$this->_errorCode = mysqli_connect_errno();
+			} else {
+				$this->_errorCode = $this->_connectionID->errno ?? $this->_connectionID->connect_errno;
+			}
+		}
+		return $this->_errorCode;
 	}
 
 	/**
