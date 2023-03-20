@@ -227,6 +227,7 @@ export default class {
         const course = stateManager.get('course');
         this.cmLock(stateManager, cmids, true);
         const updates = await this._callEditWebservice('cm_move', course.id, cmids, targetSectionId, targetCmId);
+        this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
         this.cmLock(stateManager, cmids, false);
     }

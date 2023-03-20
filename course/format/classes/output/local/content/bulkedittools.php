@@ -113,6 +113,14 @@ class bulkedittools implements named_templatable, renderable {
 
         $hasmanageactivities = has_capability('moodle/course:manageactivities', $context, $user);
         if ($hasmanageactivities) {
+            $controls['move'] = [
+                'icon' => 'i/dragdrop',
+                'action' => 'moveCm',
+                'name' => get_string('move'),
+                'title' => get_string('cmsmove', 'core_courseformat'),
+                'bulk' => 'cm',
+            ];
+
             $controls['delete'] = [
                 'icon' => 'i/delete',
                 'action' => 'cmDelete',

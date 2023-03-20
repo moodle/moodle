@@ -31,7 +31,7 @@ import ModalEvents from 'core/modal_events';
 import Templates from 'core/templates';
 import {prefetchStrings} from 'core/prefetch';
 import {get_string as getString} from 'core/str';
-import {getList, getFirst} from 'core/normalise';
+import {getFirst} from 'core/normalise';
 import * as CourseEvents from 'core_course/events';
 import Pending from 'core/pending';
 import ContentTree from 'core_courseformat/local/courseeditor/contenttree';
@@ -291,39 +291,48 @@ export default class extends BaseComponent {
      */
     async _requestMoveCm(target, event) {
         // Check we have an id.
-        const cmId = target.dataset.id;
-        if (!cmId) {
+        const cmIds = this._getTargetIds(target);
+        if (cmIds.length == 0) {
             return;
         }
-        const cmInfo = this.reactive.get('cm', cmId);
 
         event.preventDefault();
 
         // The section edit menu to refocus on end.
         const editTools = this._getClosestActionMenuToogler(target);
 
-        // Collect section information from the state.
+        // Collect information from the state.
         const exporter = this.reactive.getExporter();
         const data = exporter.course(this.reactive.state);
 
-        // Add the target cm info.
-        data.cmid = cmInfo.id;
-        data.cmname = cmInfo.name;
+        let titleText = null;
+        if (cmIds.length == 1) {
+            const cmInfo = this.reactive.get('cm', cmIds[0]);
+            data.cmid = cmInfo.id;
+            data.cmname = cmInfo.name;
+            data.information = await this.reactive.getFormatString('cmmove_info', data.cmname);
+            titleText = this.reactive.getFormatString('cmmove_title');
+        } else {
+            data.information = await this.reactive.getFormatString('cmsmove_info', cmIds.length);
+            titleText = this.reactive.getFormatString('cmsmove_title');
+        }
 
         // Build the modal parameters from the event data.
         const modalParams = {
-            title: getString('movecoursemodule', 'core'),
+            title: titleText,
             body: Templates.render('core_courseformat/local/content/movecm', data),
         };
 
         // Create the modal.
         const modal = await this._modalBodyRenderedPromise(modalParams);
 
-        const modalBody = getList(modal.getBody())[0];
+        const modalBody = getFirst(modal.getBody());
 
-        // Disable current element.
-        let currentElement = modalBody.querySelector(`${this.selectors.CMLINK}[data-id='${cmId}']`);
-        this._disableLink(currentElement);
+        // Disable current selected section ids.
+        cmIds.forEach(cmId => {
+            const currentElement = modalBody.querySelector(`${this.selectors.CMLINK}[data-id='${cmId}']`);
+            this._disableLink(currentElement);
+        });
 
         // Setup keyboard navigation.
         new ContentTree(
@@ -337,17 +346,20 @@ export default class extends BaseComponent {
         );
 
         // Open the cm section node if possible (Bootstrap 4 uses jQuery to interact with collapsibles).
-        // All jQuery int this code can be replaced when MDL-71979 is integrated.
-        const sectionnode = currentElement.closest(this.selectors.SECTIONNODE);
-        const toggler = jQuery(sectionnode).find(this.selectors.MODALTOGGLER);
-        let collapsibleId = toggler.data('target') ?? toggler.attr('href');
-        if (collapsibleId) {
-            // We cannot be sure we have # in the id element name.
-            collapsibleId = collapsibleId.replace('#', '');
-            jQuery(`#${collapsibleId}`).collapse('toggle');
-        }
+        // All jQuery in this code can be replaced when MDL-71979 is integrated.
+        cmIds.forEach(cmId => {
+            const currentElement = modalBody.querySelector(`${this.selectors.CMLINK}[data-id='${cmId}']`);
+            const sectionnode = currentElement.closest(this.selectors.SECTIONNODE);
+            const toggler = jQuery(sectionnode).find(this.selectors.MODALTOGGLER);
+            let collapsibleId = toggler.data('target') ?? toggler.attr('href');
+            if (collapsibleId) {
+                // We cannot be sure we have # in the id element name.
+                collapsibleId = collapsibleId.replace('#', '');
+                const expandNode = modalBody.querySelector(`#${collapsibleId}`);
+                jQuery(expandNode).collapse('show');
+            }
+        });
 
-        // Capture click.
         modalBody.addEventListener('click', (event) => {
             const target = event.target;
             if (!target.matches('a') || target.dataset.for === undefined || target.dataset.id === undefined) {
@@ -358,7 +370,6 @@ export default class extends BaseComponent {
             }
             event.preventDefault();
 
-            // Get draggable data from cm or section to dispatch.
             let targetSectionId;
             let targetCmId;
             if (target.dataset.for == 'cm') {
@@ -370,8 +381,7 @@ export default class extends BaseComponent {
                 targetSectionId = target.dataset.id;
                 targetCmId = section?.cmlist[0];
             }
-
-            this.reactive.dispatch('cmMove', [cmId], targetSectionId, targetCmId);
+            this.reactive.dispatch('cmMove', cmIds, targetSectionId, targetCmId);
             this._destroyModal(modal, editTools);
         });
     }
