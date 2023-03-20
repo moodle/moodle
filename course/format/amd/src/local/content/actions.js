@@ -211,11 +211,10 @@ export default class extends BaseComponent {
      */
     async _requestMoveSection(target, event) {
         // Check we have an id.
-        const sectionId = target.dataset.id;
-        if (!sectionId) {
+        const sectionIds = this._getTargetIds(target);
+        if (sectionIds.length == 0) {
             return;
         }
-        const sectionInfo = this.reactive.get('section', sectionId);
 
         event.preventDefault();
 
@@ -225,27 +224,38 @@ export default class extends BaseComponent {
         // Collect section information from the state.
         const exporter = this.reactive.getExporter();
         const data = exporter.course(this.reactive.state);
+        let titleText = null;
 
         // Add the target section id and title.
-        data.sectionid = sectionInfo.id;
-        data.sectiontitle = sectionInfo.title;
+        let sectionInfo = null;
+        if (sectionIds.length == 1) {
+            sectionInfo = this.reactive.get('section', sectionIds[0]);
+            data.sectionid = sectionInfo.id;
+            data.sectiontitle = sectionInfo.title;
+            data.information = await this.reactive.getFormatString('sectionmove_info', data.sectiontitle);
+            titleText = this.reactive.getFormatString('sectionmove_title');
+        } else {
+            data.information = await this.reactive.getFormatString('sectionsmove_info', sectionIds.length);
+            titleText = this.reactive.getFormatString('sectionsmove_title');
+        }
+
 
         // Build the modal parameters from the event data.
         const modalParams = {
-            title: getString('movecoursesection', 'core'),
+            title: titleText,
             body: Templates.render('core_courseformat/local/content/movesection', data),
         };
 
         // Create the modal.
         const modal = await this._modalBodyRenderedPromise(modalParams);
 
-        const modalBody = getList(modal.getBody())[0];
+        const modalBody = getFirst(modal.getBody());
 
-        // Disable current element and section zero.
-        const currentElement = modalBody.querySelector(`${this.selectors.SECTIONLINK}[data-id='${sectionId}']`);
-        this._disableLink(currentElement);
-        const generalSection = modalBody.querySelector(`${this.selectors.SECTIONLINK}[data-number='0']`);
-        this._disableLink(generalSection);
+        // Disable current selected section ids.
+        sectionIds.forEach(sectionId => {
+            const currentElement = modalBody.querySelector(`${this.selectors.SECTIONLINK}[data-id='${sectionId}']`);
+            this._disableLink(currentElement);
+        });
 
         // Setup keyboard navigation.
         new ContentTree(
@@ -268,7 +278,7 @@ export default class extends BaseComponent {
                 return;
             }
             event.preventDefault();
-            this.reactive.dispatch('sectionMove', [sectionId], target.dataset.id);
+            this.reactive.dispatch('sectionMoveAfter', sectionIds, target.dataset.id);
             this._destroyModal(modal, editTools);
         });
     }

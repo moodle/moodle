@@ -245,6 +245,26 @@ export default class {
         const course = stateManager.get('course');
         this.sectionLock(stateManager, sectionIds, true);
         const updates = await this._callEditWebservice('section_move', course.id, sectionIds, targetSectionId);
+        this.bulkReset(stateManager);
+        stateManager.processUpdates(updates);
+        this.sectionLock(stateManager, sectionIds, false);
+    }
+
+    /**
+     * Move course modules after a specific course location.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the list of section ids to move
+     * @param {number} targetSectionId the target section id
+     */
+    async sectionMoveAfter(stateManager, sectionIds, targetSectionId) {
+        if (!targetSectionId) {
+            throw new Error(`Mutation sectionMoveAfter requires targetSectionId`);
+        }
+        const course = stateManager.get('course');
+        this.sectionLock(stateManager, sectionIds, true);
+        const updates = await this._callEditWebservice('section_move_after', course.id, sectionIds, targetSectionId);
+        this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
         this.sectionLock(stateManager, sectionIds, false);
     }

@@ -154,3 +154,58 @@ Feature: Bulk course section actions.
     And I should not see "Activity sample 3" in the "Topic 2" "section"
     And I should not see "Activity sample 4" in the "Topic 2" "section"
     And I should see "0 selected" in the "sticky-footer" "region"
+
+  Scenario: Bulk move topics after general section
+    Given I set the field "Edit topic name" in the "Topic 2" "section" to "Move one"
+    And I set the field "Edit topic name" in the "Topic 3" "section" to "Move two"
+    And I click on "Select topic Move one" "checkbox"
+    And I click on "Select topic Move two" "checkbox"
+    And I should see "2 selected" in the "sticky-footer" "region"
+    When I click on "Move topics" "button" in the "sticky-footer" "region"
+    And I click on "General" "link" in the "Move selected topics" "dialogue"
+    # Check activities are moved with the topics.
+    Then I should see "Activity sample 1" in the "Topic 3" "section"
+    And I should see "Activity sample 2" in the "Topic 3" "section"
+    And I should see "Activity sample 3" in the "Move one" "section"
+    And I should see "Activity sample 4" in the "Move one" "section"
+    # Check new section order.
+    And "Move one" "section" should appear after "General" "section"
+    And "Move two" "section" should appear after "Move one" "section"
+    And "Topic 3" "section" should appear after "Move two" "section"
+    And "Topic 4" "section" should appear after "Topic 3" "section"
+
+  Scenario: Bulk move topics at the end of the course
+    Given I set the field "Edit topic name" in the "Topic 3" "section" to "Move me"
+    And I click on "Select topic Topic 2" "checkbox"
+    And I click on "Select topic Move me" "checkbox"
+    And I should see "2 selected" in the "sticky-footer" "region"
+    When I click on "Move topics" "button" in the "sticky-footer" "region"
+    And I click on "Topic 4" "link" in the "Move selected topics" "dialogue"
+    # Check activities are moved with the topics.
+    Then I should see "Activity sample 1" in the "Topic 1" "section"
+    And I should see "Activity sample 2" in the "Topic 1" "section"
+    And I should see "Activity sample 3" in the "Topic 3" "section"
+    And I should see "Activity sample 4" in the "Topic 3" "section"
+    # Check new section order.
+    And "Topic 1" "section" should appear after "General" "section"
+    And "Topic 2" "section" should appear after "Topic 1" "section"
+    And "Topic 3" "section" should appear after "Topic 2" "section"
+    And "Move me" "section" should appear after "Topic 3" "section"
+
+  Scenario: Bulk move topics in the middle of the course
+    Given I set the field "Edit topic name" in the "Topic 4" "section" to "Move me"
+    And I click on "Select topic Topic 1" "checkbox"
+    And I click on "Select topic Move me" "checkbox"
+    And I should see "2 selected" in the "sticky-footer" "region"
+    When I click on "Move topics" "button" in the "sticky-footer" "region"
+    And I click on "Topic 2" "link" in the "Move selected topics" "dialogue"
+    # Check activities are moved with the topics.
+    Then I should see "Activity sample 1" in the "Topic 2" "section"
+    And I should see "Activity sample 2" in the "Topic 2" "section"
+    And I should see "Activity sample 3" in the "Topic 1" "section"
+    And I should see "Activity sample 4" in the "Topic 1" "section"
+    # Check new section order.
+    And "Topic 1" "section" should appear after "General" "section"
+    And "Topic 2" "section" should appear after "Topic 1" "section"
+    And "Move me" "section" should appear after "Topic 2" "section"
+    And "Topic 4" "section" should appear after "Move me" "section"
