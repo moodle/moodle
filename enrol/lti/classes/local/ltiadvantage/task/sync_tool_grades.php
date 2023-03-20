@@ -16,8 +16,8 @@
 
 namespace enrol_lti\local\ltiadvantage\task;
 
+use core\http_client;
 use core\task\adhoc_task;
-use enrol_lti\local\ltiadvantage\lib\http_client;
 use enrol_lti\local\ltiadvantage\lib\issuer_database;
 use enrol_lti\local\ltiadvantage\lib\launch_cache_session;
 use enrol_lti\local\ltiadvantage\repository\application_registration_repository;
@@ -145,7 +145,7 @@ class sync_tool_grades extends adhoc_task {
                         );
                         global $CFG;
                         require_once($CFG->libdir . '/filelib.php');
-                        $sc = new LtiServiceConnector(new launch_cache_session(), new http_client(new \curl()));
+                        $sc = new LtiServiceConnector(new launch_cache_session(), new http_client());
 
                         $lineitemurl = $gradeservice->get_lineitemurl();
                         $lineitemsurl = $gradeservice->get_lineitemsurl();

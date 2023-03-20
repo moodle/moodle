@@ -91,4 +91,9 @@ class LtiConstants
     public const COURSE_OFFERING = 'http://purl.imsglobal.org/vocab/lis/v2/course#CourseOffering';
     public const COURSE_SECTION = 'http://purl.imsglobal.org/vocab/lis/v2/course#CourseSection';
     public const COURSE_GROUP = 'http://purl.imsglobal.org/vocab/lis/v2/course#Group';
+
+    // Message Types
+    public const MESSAGE_TYPE_DEEPLINK = 'LtiDeepLinkingRequest';
+    public const MESSAGE_TYPE_RESOURCE = 'LtiResourceLinkRequest';
+    public const MESSAGE_TYPE_SUBMISSIONREVIEW = 'LtiSubmissionReviewRequest';
 }
