@@ -273,6 +273,7 @@ export default class {
     async sectionDelete(stateManager, sectionIds) {
         const course = stateManager.get('course');
         const updates = await this._callEditWebservice('section_delete', course.id, sectionIds);
+        this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
     }
 
@@ -285,6 +286,7 @@ export default class {
         const course = stateManager.get('course');
         this.cmLock(stateManager, cmIds, true);
         const updates = await this._callEditWebservice('cm_delete', course.id, cmIds);
+        this.bulkReset(stateManager);
         this.cmLock(stateManager, cmIds, false);
         stateManager.processUpdates(updates);
     }

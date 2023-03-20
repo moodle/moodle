@@ -238,9 +238,9 @@ class stateactions {
         require_capability('moodle/course:update', $coursecontext);
         require_capability('moodle/course:movesections', $coursecontext);
 
-        $modinfo = get_fast_modinfo($course);
-
         foreach ($ids as $sectionid) {
+            // We need to get the latest modinfo on each iteration because the section numbers change.
+            $modinfo = get_fast_modinfo($course);
             $section = $modinfo->get_section_info_by_id($sectionid, MUST_EXIST);
             // Send all activity deletions.
             if (!empty($modinfo->sections[$section->section])) {

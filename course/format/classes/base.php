@@ -794,6 +794,52 @@ abstract class base {
     }
 
     /**
+     * Return custom strings for the course editor.
+     *
+     * This method is mainly used to translate the "section" related strings into
+     * the specific format plugins name such as "Topics" or "Weeks".
+     *
+     * @return stdClass[] an array of objects with string "component" and "key"
+     */
+    public function get_editor_custom_strings(): array {
+        $result = [];
+        $stringmanager = get_string_manager();
+        $component = 'format_' . $this->format;
+        $formatoverridbles = [
+            'sectiondelete_title',
+            'sectiondelete_info',
+            'sectionsdelete_title',
+            'sectionsdelete_info',
+            'selectsection'
+        ];
+        foreach ($formatoverridbles as $key) {
+            if ($stringmanager->string_exists($key, $component)) {
+                $result[] = (object)['component' => $component, 'key' => $key];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Get the proper format plugin string if it exists.
+     *
+     * If the format_PLUGINNAME does not provide a valid string,
+     * core_courseformat will be user as the component.
+     *
+     * @param string $key the string key
+     * @param string|object|array $data extra data that can be used within translation strings
+     * @param string|null $lang moodle translation language, null means use current
+     * @return string the get_string result
+     */
+    public function get_format_string(string $key, $data = null, $lang = null): string {
+        $component = 'format_' . $this->get_format();
+        if (!get_string_manager()->string_exists($key, $component)) {
+            $component = 'core_courseformat';
+        }
+        return get_string($key, $component, $data, $lang);
+    }
+
+    /**
      * Returns the localised name of this course format plugin
      *
      * @return lang_string
