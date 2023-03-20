@@ -50,15 +50,15 @@ abstract class question_category_base extends base {
      * @return \moodle_url
      */
     public function get_url() {
+        $cat = $this->objectid . ',' . $this->contextid;
         if ($this->courseid) {
-            $cat = $this->objectid . ',' . $this->contextid;
             if ($this->contextlevel == CONTEXT_MODULE) {
                 return new \moodle_url('/question/edit.php', ['cmid' => $this->contextinstanceid, 'cat' => $cat]);
             }
             return new \moodle_url('/question/edit.php', ['courseid' => $this->courseid, 'cat' => $cat]);
         }
         // Lets try viewing from the frontpage for contexts above course.
-        return new \moodle_url('/question/bank/managecategories/category.php', ['courseid' => SITEID, 'edit' => $this->objectid]);
+        return new \moodle_url('/question/edit.php', ['courseid' => SITEID, 'cat' => $cat, 'edit' => $this->objectid]);
     }
 
     /**
