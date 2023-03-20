@@ -1631,7 +1631,7 @@ class theme_config {
 
         // Getting all the candidate functions.
         $candidates = array();
-        foreach ($this->parent_configs as $parent_config) {
+        foreach (array_reverse($this->parent_configs) as $parent_config) {
             if (!isset($parent_config->prescsscallback)) {
                 continue;
             }
