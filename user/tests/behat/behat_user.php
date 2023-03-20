@@ -84,4 +84,29 @@ class behat_user extends behat_base {
             throw new ExpectationException('The "' . $field . '" field does have purpose "' . $purpose . '"', $this->getSession());
         }
     }
+
+    /**
+     * Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
+     *
+     * Recognised page names are:
+     * | Page Type | Identifier meaning | Description                           |
+     * | profile   | username or email  | User profile page (/user/profile.php) |
+     *
+     * @param string $type identifies which type of page this is, e.g. 'Editing'.
+     * @param string $identifier identifies the user, e.g. 'student1'.
+     * @return moodle_url the corresponding URL.
+     * @throws Exception with a meaningful error message if the specified page cannot be found.
+     */
+    protected function resolve_page_instance_url(string $type, string $identifier): moodle_url {
+        switch (strtolower($type)) {
+            case 'profile':
+                $userid = $this->get_user_id_by_identifier($identifier);
+                if (!$userid) {
+                    throw new Exception('The specified user with username or email "' . $identifier . '" does not exist');
+                }
+                return new moodle_url('/user/profile.php', ['id' => $userid]);
+            default:
+                throw new Exception("Unrecognised page type '{$type}'.");
+        }
+    }
 }

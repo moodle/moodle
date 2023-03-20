@@ -18,8 +18,7 @@ Feature: To be able to see and save user message preferences as admin
     And I navigate to "Messaging > Notification settings" in site administration
     And I set the field "email" to "1"
     And I press "Save changes"
-    And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I click on "Student 1" "link" in the "Student 1" "table_row"
+    And I am on the "student1" "user > profile" page
     And I click on "Preferences" "link" in the "#region-main-box" "css_element"
     And I click on "Message preferences" "link" in the "#region-main-box" "css_element"
     And I click on "//label[@data-state='loggedoff']" "xpath_element"
