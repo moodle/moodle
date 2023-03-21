@@ -94,6 +94,7 @@ information provided here is intended especially for developers.
    - groups_get_groups_members()
   groups_print_activity_menu() will now only return groups where particiation == true.
 * Cron utility functions have been moved from the global namespaces to the \core\cron class.
+* The `run_scheduled_tasks` and `run_adhoc_tasks` functions take an additional parameter to calculate the start of a run.
 * The following phpunit advanced testcase helper methods, deprecated since 3.10, have been removed and can no longer be used:
   - `createXMLDataSet`
   - `createCsvDataSet`

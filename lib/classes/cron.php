@@ -120,11 +120,12 @@ class cron {
 
         do {
             $startruntime = microtime();
+
             // Run all scheduled tasks.
-            self::run_scheduled_tasks($timenow);
+            self::run_scheduled_tasks(time(), $timenow);
 
             // Run adhoc tasks.
-            self::run_adhoc_tasks($timenow);
+            self::run_adhoc_tasks(time(), 0, true, $timenow);
 
             mtrace("Cron run completed correctly");
 
@@ -163,14 +164,22 @@ class cron {
     /**
      * Execute all queued scheduled tasks, applying necessary concurrency limits and time limits.
      *
-     * @param   int     $timenow The time this process started.
+     * @param   int       $startruntime The time this run started.
+     * @param   null|int  $startprocesstime The time the process that owns this runner started.
      * @throws \moodle_exception
      */
-    public static function run_scheduled_tasks(int $timenow): void {
+    public static function run_scheduled_tasks(
+        int $startruntime,
+        ?int $startprocesstime = null,
+    ): void {
         // Allow a restriction on the number of scheduled task runners at once.
         $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
         $maxruns = get_config('core', 'task_scheduled_concurrency_limit');
         $maxruntime = get_config('core', 'task_scheduled_max_runtime');
+
+        if ($startprocesstime === null) {
+            $startprocesstime = $startruntime;
+        }
 
         $scheduledlock = null;
         for ($run = 0; $run < $maxruns; $run++) {
@@ -193,8 +202,8 @@ class cron {
         try {
             while (
                 !\core\local\cli\shutdown::should_gracefully_exit() &&
-                !\core\task\manager::static_caches_cleared_since($timenow) &&
-                $task = \core\task\manager::get_next_scheduled_task($timenow)
+                !\core\task\manager::static_caches_cleared_since($startprocesstime) &&
+                $task = \core\task\manager::get_next_scheduled_task($startruntime)
             ) {
                 self::run_inner_scheduled_task($task);
                 unset($task);
@@ -213,16 +222,26 @@ class cron {
     /**
      * Execute all queued adhoc tasks, applying necessary concurrency limits and time limits.
      *
-     * @param   int     $timenow The time this process started.
+     * @param   int     $startruntime The time this run started.
      * @param   int     $keepalive Keep this public static function alive for N seconds and poll for new adhoc tasks.
      * @param   bool    $checklimits Should we check limits?
+     * @param   null|int $startprocesstime The time this process started.
      * @throws \moodle_exception
      */
-    public static function run_adhoc_tasks(int $timenow, $keepalive = 0, $checklimits = true) {
+    public static function run_adhoc_tasks(
+        int $startruntime,
+        $keepalive = 0,
+        $checklimits = true,
+        ?int $startprocesstime = null,
+    ): void {
         // Allow a restriction on the number of adhoc task runners at once.
         $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
         $maxruns = get_config('core', 'task_adhoc_concurrency_limit');
         $maxruntime = get_config('core', 'task_adhoc_max_runtime');
+
+        if ($startprocesstime === null) {
+            $startprocesstime = $startruntime;
+        }
 
         $adhoclock = null;
         if ($checklimits) {
@@ -241,18 +260,18 @@ class cron {
             }
         }
 
-        $humantimenow = date('r', $timenow);
-        $finishtime = $timenow + $keepalive;
+        $humantimenow = date('r', $startruntime);
+        $finishtime = $startruntime + $keepalive;
         $waiting = false;
         $taskcount = 0;
 
         // Run all adhoc tasks.
         while (
             !\core\local\cli\shutdown::should_gracefully_exit() &&
-            !\core\task\manager::static_caches_cleared_since($timenow)
+            !\core\task\manager::static_caches_cleared_since($startprocesstime)
         ) {
 
-            if ($checklimits && (time() - $timenow) >= $maxruntime) {
+            if ($checklimits && (time() - $startruntime) >= $maxruntime) {
                 if ($waiting) {
                     $waiting = false;
                     mtrace('');
