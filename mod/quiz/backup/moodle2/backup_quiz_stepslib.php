@@ -49,8 +49,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         $qinstances = new backup_nested_element('question_instances');
 
         $qinstance = new backup_nested_element('question_instance', ['id'],
-            ['slot', 'page', 'displaynumber', 'requireprevious', 'questionid',
-                    'questioncategoryid', 'includingsubcategories', 'maxmark']);
+                ['quizid', 'slot', 'page', 'displaynumber', 'requireprevious', 'maxmark']);
 
         $this->add_question_references($qinstance, 'mod_quiz', 'slot');
 
@@ -146,7 +145,6 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         $attempt->set_source_alias('attempt', 'attemptnum');
 
         // Define id annotations.
-        $qinstance->annotate_ids('question', 'questionid');
         $override->annotate_ids('user', 'userid');
         $override->annotate_ids('group', 'groupid');
         $grade->annotate_ids('user', 'userid');
