@@ -7,6 +7,7 @@ information provided here is intended especially for developers.
 * The function duplicate_module() now has two new optional parameters:
   - $sectionid to specify section the duplicated course module is placed in
   - $changename to disable changing the name of the course module using the 'duplicatedmodule' lang string
+* The method `make_categories_options`, deprecated since 3.10, has been removed
 
 === 4.1 ===
 * The function course_modchooser() has been finally deprecated and can not be used anymore. Please use
