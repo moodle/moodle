@@ -16,6 +16,10 @@
 
 namespace mod_quiz\external;
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once(__DIR__ . '/../../../../webservice/tests/helpers.php');
+
 use coding_exception;
 use core_question_generator;
 use externallib_advanced_testcase;
