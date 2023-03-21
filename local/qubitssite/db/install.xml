@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/qubitssite/db" VERSION="20230223" COMMENT="XMLDB file for Moodle local/qubitssite"
+<XMLDB PATH="local/qubitssite/db" VERSION="20230321" COMMENT="XMLDB file for Moodle local/qubitssite"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -15,6 +15,8 @@
         <FIELD NAME="color1" TYPE="char" LENGTH="12" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="color2" TYPE="char" LENGTH="12" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="color3" TYPE="char" LENGTH="12" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="logo1" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Logo1"/>
+        <FIELD NAME="logo2" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Logo2"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

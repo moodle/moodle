@@ -1,5 +1,5 @@
 <?php  // Moodle configuration file
-define('SITE_MAIN_DOMAIN', 'qubits.localhost.info');
+define('SITE_MAIN_DOMAIN', 'qubits.localhost.com');
 unset($CFG);
 global $CFG;
 $CFG = new stdClass();
@@ -15,20 +15,18 @@ $CFG->debug = 32767; // DEBUG_DEVELOPER // NOT FOR PRODUCTION SERVERS!
 
 /* --- Debugging mode ends ---- */
 
-require_once('db-config.php');
-
-$CFG->dbtype = MD_DBTYPE;
-$CFG->dblibrary = MD_DBLIBRARY;
-$CFG->dbhost = MD_DBHOST;
-$CFG->dbname = MD_DBNAME;
-$CFG->dbuser = MD_DBUSER;
-$CFG->dbpass = MD_DBPASS;
-$CFG->prefix = MD_PREFIX;
+$CFG->dbtype = "mariadb";
+$CFG->dblibrary = "native";
+$CFG->dbhost = "localhost";
+$CFG->dbname = "qubits-new";
+$CFG->dbuser = "qubits";
+$CFG->dbpass = "qubits123";
+$CFG->prefix = "mdl_";
 $CFG->dboptions = array(
-    'dbpersist' => MD_DBPERSIST,
-    'dbport' => MD_DBPORT,
-    'dbsocket' => MD_DBSOCKET,
-    'dbcollation' => MD_DBCOLLATION,
+    'dbpersist' => 0,
+    'dbport' => "",
+    'dbsocket' => "",
+    'dbcollation' => "utf8mb4_unicode_ci",
 );
 
 $aCurrenturl = explode('.', @$_SERVER['HTTP_HOST']);
