@@ -143,6 +143,9 @@ class blogs_test extends core_reportbuilder_testcase {
         // Comment entity.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'comment:content']);
 
+        // Commenter entity.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'commenter:fullname']);
+
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(1, $content);
 
@@ -154,6 +157,7 @@ class blogs_test extends core_reportbuilder_testcase {
             $tags,
             $filesize,
             $comment,
+            $commenter,
         ] = array_values($content[0]);
 
         $this->assertStringContainsString('Horses', $body);
@@ -163,6 +167,7 @@ class blogs_test extends core_reportbuilder_testcase {
         $this->assertEquals('horse', $tags);
         $this->assertEquals("5\xc2\xa0bytes", $filesize);
         $this->assertEquals(format_text('Cool'), $comment);
+        $this->assertEquals(fullname($user), $commenter);
     }
 
     /**
