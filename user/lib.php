@@ -1381,3 +1381,4 @@ function user_edit_map_field_purpose($userid, $fieldname) {
 
     return $purpose;
 }
+

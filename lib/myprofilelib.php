@@ -299,7 +299,8 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
                 $groupstr = '';
                 foreach ($usergroups as $group) {
                     if ($course->groupmode == SEPARATEGROUPS and !$accessallgroups and $user->id != $USER->id) {
-                        if (!groups_is_member($group->id, $user->id)) {
+                        // In separate groups mode, I only have to see the groups shared between both users.
+                        if (!groups_is_member($group->id, $USER->id)) {
                             continue;
                         }
                     }
