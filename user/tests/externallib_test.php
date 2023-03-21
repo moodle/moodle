@@ -356,6 +356,12 @@ class externallib_test extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($return->user2->id, $return->course->id, $return->roleid, 'manual');
         $this->getDataGenerator()->enrol_user($USER->id, $return->course->id, $return->roleid, 'manual');
 
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $return->course->id, 'name' => 'G1']);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $return->course->id, 'name' => 'G2']);
+
+        groups_add_member($group1->id, $return->user1->id);
+        groups_add_member($group2->id, $return->user2->id);
+
         return $return;
     }
 
@@ -399,6 +405,9 @@ class externallib_test extends externallib_advanced_testcase {
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $enrolledusers = \external_api::clean_returnvalue(core_user_external::get_course_user_profiles_returns(), $enrolledusers);
+        // Check we get the requested user and that is in a group.
+        $this->assertCount(1, $enrolledusers);
+        $this->assertCount(1, $enrolledusers[0]['groups']);
 
         foreach($enrolledusers as $enrolleduser) {
             if ($enrolleduser['username'] == $data->user1->username) {
