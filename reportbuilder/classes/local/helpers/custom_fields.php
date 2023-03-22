@@ -127,12 +127,11 @@ class custom_fields {
                     $selectfields .= ", {$customdatatablealias}.valueformat";
                 }
 
-                $columnname = $field->get_formatted_name();
                 $columntype = $this->get_column_type($field, $datafield);
 
                 $newcolumn = (new column(
                     'customfield_' . $field->get('shortname'),
-                    new lang_string('customfieldcolumn', 'core_reportbuilder', $columnname),
+                    new lang_string('customfieldcolumn', 'core_reportbuilder', $field->get_formatted_name()),
                     $this->entityname
                 ))
                     ->add_joins($this->get_joins())
@@ -207,7 +206,7 @@ class custom_fields {
                 $filter = (new filter(
                     $typeclass,
                     'customfield_' . $field->get('shortname'),
-                    new lang_string('customfieldcolumn', 'core_reportbuilder', $field->get('name')),
+                    new lang_string('customfieldcolumn', 'core_reportbuilder', $field->get_formatted_name()),
                     $this->entityname,
                     "{$customdatatablealias}.{$datafield}"
                 ))
