@@ -116,3 +116,14 @@ Feature: Bulk activity and section selection.
     And I should see "2 selected" in the "sticky-footer" "region"
     Then I click on "Activity sample 1" "link" in the "Topic 1" "section"
     And I should see "1 selected" in the "sticky-footer" "region"
+
+  Scenario: Bulk section selection is available also in one section per page
+    Given I navigate to "Settings" in current page administration
+    And I expand all fieldsets
+    And I set the field "Course layout" to "Show one section per page"
+    And I click on "Save and display" "button"
+    And I click on "Bulk edit" "button"
+    And I should see "0 selected" in the "sticky-footer" "region"
+    When I click on "Select topic Topic 1" "checkbox"
+    And I click on "Select topic Topic 2" "checkbox"
+    Then I should see "2 selected" in the "sticky-footer" "region"
