@@ -29,5 +29,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['parentlanguage'] = 'pl';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Ślōnski';
