@@ -74,6 +74,7 @@ class question_usage_table extends table_sql {
         $this->define_columns($columns);
         $this->define_headers($headers);
         $this->define_baseurl($PAGE->url);
+        $this->set_attribute('id', 'question_usage_table');
     }
 
     public function query_db($pagesize, $useinitialsbar = true) {

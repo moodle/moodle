@@ -128,9 +128,10 @@ class helper {
                   JOIN {quiz_attempts} qa ON qa.quiz = qz.id
                   JOIN {question_usages} qu ON qu.id = qa.uniqueid
                   JOIN {question_attempts} qatt ON qatt.questionusageid = qu.id
-                  JOIN {question} q ON q.id = qatt.questionid
-                 WHERE qa.preview = 0
-                   AND q.id = ?";
+                  JOIN {question_versions} qv ON qv.questionid = qatt.questionid
+                  JOIN {question_versions} qv2 ON qv.questionbankentryid = qv2.questionbankentryid
+                  WHERE qa.preview = 0
+        AND qv2.questionid = ?";
         return $sql;
     }
 
