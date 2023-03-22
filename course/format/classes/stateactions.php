@@ -512,13 +512,12 @@ class stateactions {
     ): void {
         global $CFG;
 
-        $this->validate_cms($course, $ids, __FUNCTION__);
-
-        // Check capabilities on every activity context.
-        foreach ($ids as $cmid) {
-            $modcontext = context_module::instance($cmid);
-            require_all_capabilities(['moodle/course:manageactivities', 'moodle/course:activityvisibility'], $modcontext);
-        }
+        $this->validate_cms(
+            $course,
+            $ids,
+            __FUNCTION__,
+            ['moodle/course:manageactivities', 'moodle/course:activityvisibility']
+        );
 
         $format = course_get_format($course->id);
         $modinfo = get_fast_modinfo($course);
@@ -532,6 +531,7 @@ class stateactions {
                 $coursevisible = ($allowstealth) ? 0 : 1;
             }
             set_coursemodule_visible($cm->id, $visible, $coursevisible);
+            $modcontext = context_module::instance($cm->id);
             course_module_updated::create_from_cm($cm, $modcontext)->trigger();
             $updates->add_cm_put($cm->id);
         }
@@ -553,18 +553,18 @@ class stateactions {
         ?int $targetsectionid = null,
         ?int $targetcmid = null
     ): void {
-        $this->validate_cms($course, $ids, __FUNCTION__);
+        $this->validate_cms(
+            $course,
+            $ids,
+            __FUNCTION__,
+            ['moodle/course:manageactivities', 'moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport']
+        );
 
         $modinfo = get_fast_modinfo($course);
         $cms = $this->get_cm_info($modinfo, $ids);
 
         // Check capabilities on every activity context.
-        foreach ($cms as $cmid => $cm) {
-            $modcontext = context_module::instance($cmid);
-            require_all_capabilities(
-                ['moodle/course:manageactivities', 'moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport'],
-                $modcontext
-            );
+        foreach ($cms as $cm) {
             if (!course_allowed_module($course, $cm->modname)) {
                 throw new moodle_exception('No permission to create that activity');
             }
@@ -619,13 +619,7 @@ class stateactions {
         ?int $targetcmid = null
     ): void {
 
-        $this->validate_cms($course, $ids, __FUNCTION__);
-
-        // Check capabilities on every activity context.
-        foreach ($ids as $cmid) {
-            $modcontext = context_module::instance($cmid);
-            require_capability('moodle/course:manageactivities', $modcontext);
-        }
+        $this->validate_cms($course, $ids, __FUNCTION__, ['moodle/course:manageactivities']);
 
         $format = course_get_format($course->id);
         $modinfo = get_fast_modinfo($course);
@@ -698,13 +692,7 @@ class stateactions {
     ): void {
         global $DB;
 
-        $this->validate_cms($course, $ids, __FUNCTION__);
-
-        // Check capabilities on every activity context.
-        foreach ($ids as $cmid) {
-            $modcontext = context_module::instance($cmid);
-            require_capability('moodle/course:manageactivities', $modcontext);
-        }
+        $this->validate_cms($course, $ids, __FUNCTION__, ['moodle/course:manageactivities']);
         $modinfo = get_fast_modinfo($course);
         $cms = $this->get_cm_info($modinfo, $ids);
         list($insql, $inparams) = $DB->get_in_or_equal(array_keys($cms), SQL_PARAMS_NAMED);
