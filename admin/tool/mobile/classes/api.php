@@ -360,6 +360,11 @@ class api {
             $settings->customusermenuitems = $CFG->customusermenuitems;
         }
 
+        if (empty($section) || $section === 'locationsettings') {
+            $settings->timezone = $CFG->timezone;
+            $settings->forcetimezone = $CFG->forcetimezone;
+        }
+
         return $settings;
     }
 
