@@ -1,34 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Reader;
 
 /**
- * Interface SheetInterface.
+ * @template T of RowIteratorInterface
  */
 interface SheetInterface
 {
     /**
-     * @return IteratorInterface iterator to iterate over the sheet's rows
+     * @return T iterator to iterate over the sheet's rows
      */
-    public function getRowIterator();
+    public function getRowIterator(): RowIteratorInterface;
 
     /**
      * @return int Index of the sheet
      */
-    public function getIndex();
+    public function getIndex(): int;
 
     /**
      * @return string Name of the sheet
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * @return bool Whether the sheet was defined as active
      */
-    public function isActive();
-
-    /**
-     * @return bool Whether the sheet is visible
-     */
-    public function isVisible();
+    public function isActive(): bool;
 }

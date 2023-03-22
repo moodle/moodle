@@ -1,92 +1,52 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Reader\CSV;
 
-use OpenSpout\Common\Exception\IOException;
-use OpenSpout\Common\Helper\GlobalFunctionsHelper;
-use OpenSpout\Common\Manager\OptionsManagerInterface;
-use OpenSpout\Reader\Common\Creator\InternalEntityFactoryInterface;
-use OpenSpout\Reader\Common\Entity\Options;
-use OpenSpout\Reader\CSV\Creator\InternalEntityFactory;
-use OpenSpout\Reader\ReaderAbstract;
+use OpenSpout\Common\Helper\EncodingHelper;
+use OpenSpout\Reader\AbstractReader;
 
 /**
- * This class provides support to read data from a CSV file.
+ * @extends AbstractReader<SheetIterator>
  */
-class Reader extends ReaderAbstract
+final class Reader extends AbstractReader
 {
     /** @var resource Pointer to the file to be written */
-    protected $filePointer;
+    private $filePointer;
 
     /** @var SheetIterator To iterator over the CSV unique "sheet" */
-    protected $sheetIterator;
+    private SheetIterator $sheetIterator;
 
     /** @var string Original value for the "auto_detect_line_endings" INI value */
-    protected $originalAutoDetectLineEndings;
+    private string $originalAutoDetectLineEndings;
 
     /** @var bool Whether the code is running with PHP >= 8.1 */
-    private $isRunningAtLeastPhp81;
+    private bool $isRunningAtLeastPhp81;
+
+    private Options $options;
+    private EncodingHelper $encodingHelper;
 
     public function __construct(
-        OptionsManagerInterface $optionsManager,
-        GlobalFunctionsHelper $globalFunctionsHelper,
-        InternalEntityFactoryInterface $entityFactory
+        ?Options $options = null,
+        ?EncodingHelper $encodingHelper = null
     ) {
-        parent::__construct($optionsManager, $globalFunctionsHelper, $entityFactory);
-        $this->isRunningAtLeastPhp81 = version_compare(PHP_VERSION, '8.1.0') >= 0;
+        $this->options = $options ?? new Options();
+        $this->encodingHelper = $encodingHelper ?? EncodingHelper::factory();
+        $this->isRunningAtLeastPhp81 = \PHP_VERSION_ID >= 80100;
     }
 
-    /**
-     * Sets the field delimiter for the CSV.
-     * Needs to be called before opening the reader.
-     *
-     * @param string $fieldDelimiter Character that delimits fields
-     *
-     * @return Reader
-     */
-    public function setFieldDelimiter($fieldDelimiter)
+    public function getSheetIterator(): SheetIterator
     {
-        $this->optionsManager->setOption(Options::FIELD_DELIMITER, $fieldDelimiter);
+        $this->ensureStreamOpened();
 
-        return $this;
-    }
-
-    /**
-     * Sets the field enclosure for the CSV.
-     * Needs to be called before opening the reader.
-     *
-     * @param string $fieldEnclosure Character that enclose fields
-     *
-     * @return Reader
-     */
-    public function setFieldEnclosure($fieldEnclosure)
-    {
-        $this->optionsManager->setOption(Options::FIELD_ENCLOSURE, $fieldEnclosure);
-
-        return $this;
-    }
-
-    /**
-     * Sets the encoding of the CSV file to be read.
-     * Needs to be called before opening the reader.
-     *
-     * @param string $encoding Encoding of the CSV file to be read
-     *
-     * @return Reader
-     */
-    public function setEncoding($encoding)
-    {
-        $this->optionsManager->setOption(Options::ENCODING, $encoding);
-
-        return $this;
+        return $this->sheetIterator;
     }
 
     /**
      * Returns whether stream wrappers are supported.
-     *
-     * @return bool
      */
-    protected function doesSupportStreamWrapper()
+    protected function doesSupportStreamWrapper(): bool
     {
         return true;
     }
@@ -99,51 +59,45 @@ class Reader extends ReaderAbstract
      *
      * @throws \OpenSpout\Common\Exception\IOException
      */
-    protected function openReader($filePath)
+    protected function openReader(string $filePath): void
     {
         // "auto_detect_line_endings" is deprecated in PHP 8.1
         if (!$this->isRunningAtLeastPhp81) {
-            $this->originalAutoDetectLineEndings = ini_get('auto_detect_line_endings');
+            // @codeCoverageIgnoreStart
+            $originalAutoDetectLineEndings = \ini_get('auto_detect_line_endings');
+            \assert(false !== $originalAutoDetectLineEndings);
+            $this->originalAutoDetectLineEndings = $originalAutoDetectLineEndings;
             ini_set('auto_detect_line_endings', '1');
+            // @codeCoverageIgnoreEnd
         }
 
-        $this->filePointer = $this->globalFunctionsHelper->fopen($filePath, 'r');
-        if (!$this->filePointer) {
-            throw new IOException("Could not open file {$filePath} for reading.");
-        }
+        $resource = fopen($filePath, 'r');
+        \assert(false !== $resource);
+        $this->filePointer = $resource;
 
-        /** @var InternalEntityFactory $entityFactory */
-        $entityFactory = $this->entityFactory;
-
-        $this->sheetIterator = $entityFactory->createSheetIterator(
-            $this->filePointer,
-            $this->optionsManager,
-            $this->globalFunctionsHelper
+        $this->sheetIterator = new SheetIterator(
+            new Sheet(
+                new RowIterator(
+                    $this->filePointer,
+                    $this->options,
+                    $this->encodingHelper
+                )
+            )
         );
-    }
-
-    /**
-     * Returns an iterator to iterate over sheets.
-     *
-     * @return SheetIterator To iterate over sheets
-     */
-    protected function getConcreteSheetIterator()
-    {
-        return $this->sheetIterator;
     }
 
     /**
      * Closes the reader. To be used after reading the file.
      */
-    protected function closeReader()
+    protected function closeReader(): void
     {
-        if (\is_resource($this->filePointer)) {
-            $this->globalFunctionsHelper->fclose($this->filePointer);
-        }
+        fclose($this->filePointer);
 
         // "auto_detect_line_endings" is deprecated in PHP 8.1
         if (!$this->isRunningAtLeastPhp81) {
+            // @codeCoverageIgnoreStart
             ini_set('auto_detect_line_endings', $this->originalAutoDetectLineEndings);
+            // @codeCoverageIgnoreEnd
         }
     }
 }

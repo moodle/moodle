@@ -1,7 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Common\Exception;
 
-class InvalidArgumentException extends SpoutException
+final class InvalidArgumentException extends OpenSpoutException
 {
 }

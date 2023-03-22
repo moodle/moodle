@@ -1,51 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Reader\Common\Manager;
 
+use OpenSpout\Common\Entity\Cell;
 use OpenSpout\Common\Entity\Row;
-use OpenSpout\Reader\Common\Creator\InternalEntityFactoryInterface;
 
-class RowManager
+/**
+ * @internal
+ */
+final class RowManager
 {
-    /** @var InternalEntityFactoryInterface Factory to create entities */
-    private $entityFactory;
-
-    /**
-     * @param InternalEntityFactoryInterface $entityFactory Factory to create entities
-     */
-    public function __construct(InternalEntityFactoryInterface $entityFactory)
-    {
-        $this->entityFactory = $entityFactory;
-    }
-
-    /**
-     * Detect whether a row is considered empty.
-     * An empty row has all of its cells empty.
-     *
-     * @return bool
-     */
-    public function isEmpty(Row $row)
-    {
-        foreach ($row->getCells() as $cell) {
-            if (!$cell->isEmpty()) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     /**
      * Fills the missing indexes of a row with empty cells.
-     *
-     * @return Row
      */
-    public function fillMissingIndexesWithEmptyCells(Row $row)
+    public function fillMissingIndexesWithEmptyCells(Row $row): void
     {
         $numCells = $row->getNumCells();
 
         if (0 === $numCells) {
-            return $row;
+            return;
         }
 
         $rowCells = $row->getCells();
@@ -62,7 +37,7 @@ class RowManager
 
         for ($cellIndex = 0; $cellIndex < $maxCellIndex; ++$cellIndex) {
             if (!isset($rowCells[$cellIndex])) {
-                $row->setCellAtIndex($this->entityFactory->createCell(''), $cellIndex);
+                $row->setCellAtIndex(Cell::fromValue(''), $cellIndex);
                 $needsSorting = true;
             }
         }
@@ -72,7 +47,5 @@ class RowManager
             ksort($rowCells);
             $row->setCells($rowCells);
         }
-
-        return $row;
     }
 }

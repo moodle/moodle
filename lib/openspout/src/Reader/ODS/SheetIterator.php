@@ -1,24 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Reader\ODS;
 
+use DOMElement;
 use OpenSpout\Common\Exception\IOException;
+use OpenSpout\Common\Helper\Escaper\ODS;
+use OpenSpout\Reader\Common\XMLProcessor;
 use OpenSpout\Reader\Exception\XMLProcessingException;
-use OpenSpout\Reader\IteratorInterface;
-use OpenSpout\Reader\ODS\Creator\InternalEntityFactory;
+use OpenSpout\Reader\ODS\Helper\CellValueFormatter;
 use OpenSpout\Reader\ODS\Helper\SettingsHelper;
+use OpenSpout\Reader\SheetIteratorInterface;
 use OpenSpout\Reader\Wrapper\XMLReader;
 
 /**
- * Iterate over ODS sheet.
+ * @implements SheetIteratorInterface<Sheet>
  */
-class SheetIterator implements IteratorInterface
+final class SheetIterator implements SheetIteratorInterface
 {
     public const CONTENT_XML_FILE_PATH = 'content.xml';
 
     public const XML_STYLE_NAMESPACE = 'urn:oasis:names:tc:opendocument:xmlns:style:1.0';
 
-    /** Definition of XML nodes name and attribute used to parse sheet data */
+    /**
+     * Definition of XML nodes name and attribute used to parse sheet data.
+     */
     public const XML_NODE_AUTOMATIC_STYLES = 'office:automatic-styles';
     public const XML_NODE_STYLE_TABLE_PROPERTIES = 'table-properties';
     public const XML_NODE_TABLE = 'table:table';
@@ -28,45 +35,37 @@ class SheetIterator implements IteratorInterface
     public const XML_ATTRIBUTE_TABLE_DISPLAY = 'table:display';
 
     /** @var string Path of the file to be read */
-    protected $filePath;
+    private string $filePath;
 
-    /** @var \OpenSpout\Common\Manager\OptionsManagerInterface Reader's options manager */
-    protected $optionsManager;
-
-    /** @var InternalEntityFactory Factory to create entities */
-    protected $entityFactory;
+    private Options $options;
 
     /** @var XMLReader The XMLReader object that will help read sheet's XML data */
-    protected $xmlReader;
+    private XMLReader $xmlReader;
 
-    /** @var \OpenSpout\Common\Helper\Escaper\ODS Used to unescape XML data */
-    protected $escaper;
+    /** @var ODS Used to unescape XML data */
+    private ODS $escaper;
 
     /** @var bool Whether there are still at least a sheet to be read */
-    protected $hasFoundSheet;
+    private bool $hasFoundSheet;
 
     /** @var int The index of the sheet being read (zero-based) */
-    protected $currentSheetIndex;
+    private int $currentSheetIndex;
 
     /** @var string The name of the sheet that was defined as active */
-    protected $activeSheetName;
+    private ?string $activeSheetName;
 
-    /** @var array Associative array [STYLE_NAME] => [IS_SHEET_VISIBLE] */
-    protected $sheetsVisibility;
+    /** @var array<string, bool> Associative array [STYLE_NAME] => [IS_SHEET_VISIBLE] */
+    private array $sheetsVisibility;
 
-    /**
-     * @param string                                            $filePath       Path of the file to be read
-     * @param \OpenSpout\Common\Manager\OptionsManagerInterface $optionsManager
-     * @param \OpenSpout\Common\Helper\Escaper\ODS              $escaper        Used to unescape XML data
-     * @param SettingsHelper                                    $settingsHelper Helper to get data from "settings.xml"
-     * @param InternalEntityFactory                             $entityFactory  Factory to create entities
-     */
-    public function __construct($filePath, $optionsManager, $escaper, $settingsHelper, $entityFactory)
-    {
+    public function __construct(
+        string $filePath,
+        Options $options,
+        ODS $escaper,
+        SettingsHelper $settingsHelper
+    ) {
         $this->filePath = $filePath;
-        $this->optionsManager = $optionsManager;
-        $this->entityFactory = $entityFactory;
-        $this->xmlReader = $entityFactory->createXMLReader();
+        $this->options = $options;
+        $this->xmlReader = new XMLReader();
         $this->escaper = $escaper;
         $this->activeSheetName = $settingsHelper->getActiveSheetName($filePath);
     }
@@ -78,8 +77,7 @@ class SheetIterator implements IteratorInterface
      *
      * @throws \OpenSpout\Common\Exception\IOException If unable to open the XML file containing sheets' data
      */
-    #[\ReturnTypeWillChange]
-    public function rewind()
+    public function rewind(): void
     {
         $this->xmlReader->close();
 
@@ -103,13 +101,15 @@ class SheetIterator implements IteratorInterface
      * Checks if current position is valid.
      *
      * @see http://php.net/manual/en/iterator.valid.php
-     *
-     * @return bool
      */
-    #[\ReturnTypeWillChange]
-    public function valid()
+    public function valid(): bool
     {
-        return $this->hasFoundSheet;
+        $valid = $this->hasFoundSheet;
+        if (!$valid) {
+            $this->xmlReader->close();
+        }
+
+        return $valid;
     }
 
     /**
@@ -117,8 +117,7 @@ class SheetIterator implements IteratorInterface
      *
      * @see http://php.net/manual/en/iterator.next.php
      */
-    #[\ReturnTypeWillChange]
-    public function next()
+    public function next(): void
     {
         $this->hasFoundSheet = $this->xmlReader->readUntilNodeFound(self::XML_NODE_TABLE);
 
@@ -131,27 +130,29 @@ class SheetIterator implements IteratorInterface
      * Return the current element.
      *
      * @see http://php.net/manual/en/iterator.current.php
-     *
-     * @return \OpenSpout\Reader\ODS\Sheet
      */
-    #[\ReturnTypeWillChange]
-    public function current()
+    public function current(): Sheet
     {
         $escapedSheetName = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_TABLE_NAME);
+        \assert(null !== $escapedSheetName);
         $sheetName = $this->escaper->unescape($escapedSheetName);
 
         $isSheetActive = $this->isSheetActive($sheetName, $this->currentSheetIndex, $this->activeSheetName);
 
         $sheetStyleName = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_TABLE_STYLE_NAME);
+        \assert(null !== $sheetStyleName);
         $isSheetVisible = $this->isSheetVisible($sheetStyleName);
 
-        return $this->entityFactory->createSheet(
-            $this->xmlReader,
+        return new Sheet(
+            new RowIterator(
+                $this->options,
+                new CellValueFormatter($this->options->SHOULD_FORMAT_DATES, new ODS()),
+                new XMLProcessor($this->xmlReader)
+            ),
             $this->currentSheetIndex,
             $sheetName,
             $isSheetActive,
-            $isSheetVisible,
-            $this->optionsManager
+            $isSheetVisible
         );
     }
 
@@ -159,44 +160,33 @@ class SheetIterator implements IteratorInterface
      * Return the key of the current element.
      *
      * @see http://php.net/manual/en/iterator.key.php
-     *
-     * @return int
      */
-    #[\ReturnTypeWillChange]
-    public function key()
+    public function key(): int
     {
         return $this->currentSheetIndex + 1;
     }
 
     /**
-     * Cleans up what was created to iterate over the object.
-     */
-    #[\ReturnTypeWillChange]
-    public function end()
-    {
-        $this->xmlReader->close();
-    }
-
-    /**
      * Extracts the visibility of the sheets.
      *
-     * @return array Associative array [STYLE_NAME] => [IS_SHEET_VISIBLE]
+     * @return array<string, bool> Associative array [STYLE_NAME] => [IS_SHEET_VISIBLE]
      */
-    private function readSheetsVisibility()
+    private function readSheetsVisibility(): array
     {
         $sheetsVisibility = [];
 
         $this->xmlReader->readUntilNodeFound(self::XML_NODE_AUTOMATIC_STYLES);
-        /** @var \DOMElement $automaticStylesNode */
+
         $automaticStylesNode = $this->xmlReader->expand();
+        \assert($automaticStylesNode instanceof DOMElement);
 
         $tableStyleNodes = $automaticStylesNode->getElementsByTagNameNS(self::XML_STYLE_NAMESPACE, self::XML_NODE_STYLE_TABLE_PROPERTIES);
 
-        /** @var \DOMElement $tableStyleNode */
         foreach ($tableStyleNodes as $tableStyleNode) {
             $isSheetVisible = ('false' !== $tableStyleNode->getAttribute(self::XML_ATTRIBUTE_TABLE_DISPLAY));
 
             $parentStyleNode = $tableStyleNode->parentNode;
+            \assert($parentStyleNode instanceof DOMElement);
             $styleName = $parentStyleNode->getAttribute(self::XML_ATTRIBUTE_STYLE_NAME);
 
             $sheetsVisibility[$styleName] = $isSheetVisible;
@@ -214,7 +204,7 @@ class SheetIterator implements IteratorInterface
      *
      * @return bool Whether the current sheet was defined as the active one
      */
-    private function isSheetActive($sheetName, $sheetIndex, $activeSheetName)
+    private function isSheetActive(string $sheetName, int $sheetIndex, ?string $activeSheetName): bool
     {
         // The given sheet is active if its name matches the defined active sheet's name
         // or if no information about the active sheet was found, it defaults to the first sheet.
@@ -231,7 +221,7 @@ class SheetIterator implements IteratorInterface
      *
      * @return bool Whether the current sheet is visible
      */
-    private function isSheetVisible($sheetStyleName)
+    private function isSheetVisible(string $sheetStyleName): bool
     {
         return $this->sheetsVisibility[$sheetStyleName] ??
             true;

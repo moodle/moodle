@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Writer\Common\Manager\Style;
 
 use OpenSpout\Common\Entity\Cell;
 use OpenSpout\Common\Entity\Style\Style;
 
 /**
- * Interface StyleHManagernterface.
+ * @internal
  */
 interface StyleManagerInterface
 {
@@ -18,7 +20,7 @@ interface StyleManagerInterface
      *
      * @return Style the registered style, updated with an internal ID
      */
-    public function registerStyle($style);
+    public function registerStyle(Style $style): Style;
 
     /**
      * Apply additional styles if the given row needs it.

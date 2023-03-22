@@ -1,17 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Writer\Common\Manager\Style;
 
 use OpenSpout\Common\Entity\Style\Style;
 
 /**
- * Indicates if style is updated.
- * It allow to know if style registration must be done.
+ * @internal
  */
-class PossiblyUpdatedStyle
+final class PossiblyUpdatedStyle
 {
-    private $style;
-    private $isUpdated;
+    private Style $style;
+    private bool $isUpdated;
 
     public function __construct(Style $style, bool $isUpdated)
     {

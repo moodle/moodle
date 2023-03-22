@@ -1,66 +1,67 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Reader\XLSX\Manager\SharedStringsCaching;
 
+use OpenSpout\Common\Helper\FileSystemHelper;
 use OpenSpout\Reader\Exception\SharedStringNotFoundException;
-use OpenSpout\Reader\XLSX\Creator\HelperFactory;
 
 /**
  * This class implements the file-based caching strategy for shared strings.
  * Shared strings are stored in small files (with a max number of strings per file).
  * This strategy is slower than an in-memory strategy but is used to avoid out of memory crashes.
+ *
+ * @internal
  */
-class FileBasedStrategy implements CachingStrategyInterface
+final class FileBasedStrategy implements CachingStrategyInterface
 {
-    /** Value to use to escape the line feed character ("\n") */
+    /**
+     * Value to use to escape the line feed character ("\n").
+     */
     public const ESCAPED_LINE_FEED_CHARACTER = '_x000A_';
 
-    /** @var \OpenSpout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
-    protected $globalFunctionsHelper;
-
-    /** @var \OpenSpout\Common\Helper\FileSystemHelper Helper to perform file system operations */
-    protected $fileSystemHelper;
+    /** @var FileSystemHelper Helper to perform file system operations */
+    private FileSystemHelper $fileSystemHelper;
 
     /** @var string Temporary folder where the temporary files will be created */
-    protected $tempFolder;
+    private string $tempFolder;
 
     /**
      * @var int Maximum number of strings that can be stored in one temp file
      *
      * @see CachingStrategyFactory::MAX_NUM_STRINGS_PER_TEMP_FILE
      */
-    protected $maxNumStringsPerTempFile;
+    private int $maxNumStringsPerTempFile;
 
     /** @var null|resource Pointer to the last temp file a shared string was written to */
-    protected $tempFilePointer;
+    private $tempFilePointer;
 
     /**
      * @var string Path of the temporary file whose contents is currently stored in memory
      *
      * @see CachingStrategyFactory::MAX_NUM_STRINGS_PER_TEMP_FILE
      */
-    protected $inMemoryTempFilePath;
+    private string $inMemoryTempFilePath = '';
 
     /**
-     * @var array Contents of the temporary file that was last read
-     *
      * @see CachingStrategyFactory::MAX_NUM_STRINGS_PER_TEMP_FILE
+     *
+     * @var string[] Contents of the temporary file that was last read
      */
-    protected $inMemoryTempFileContents;
+    private array $inMemoryTempFileContents;
 
     /**
-     * @param string        $tempFolder               Temporary folder where the temporary files to store shared strings will be stored
-     * @param int           $maxNumStringsPerTempFile Maximum number of strings that can be stored in one temp file
-     * @param HelperFactory $helperFactory            Factory to create helpers
+     * @param string $tempFolder               Temporary folder where the temporary files to store shared strings will be stored
+     * @param int    $maxNumStringsPerTempFile Maximum number of strings that can be stored in one temp file
      */
-    public function __construct($tempFolder, $maxNumStringsPerTempFile, $helperFactory)
+    public function __construct(string $tempFolder, int $maxNumStringsPerTempFile)
     {
-        $this->fileSystemHelper = $helperFactory->createFileSystemHelper($tempFolder);
+        $this->fileSystemHelper = new FileSystemHelper($tempFolder);
         $this->tempFolder = $this->fileSystemHelper->createFolder($tempFolder, uniqid('sharedstrings'));
 
         $this->maxNumStringsPerTempFile = $maxNumStringsPerTempFile;
 
-        $this->globalFunctionsHelper = $helperFactory->createGlobalFunctionsHelper();
         $this->tempFilePointer = null;
     }
 
@@ -70,33 +71,35 @@ class FileBasedStrategy implements CachingStrategyInterface
      * @param string $sharedString      The string to be added to the cache
      * @param int    $sharedStringIndex Index of the shared string in the sharedStrings.xml file
      */
-    public function addStringForIndex($sharedString, $sharedStringIndex)
+    public function addStringForIndex(string $sharedString, int $sharedStringIndex): void
     {
         $tempFilePath = $this->getSharedStringTempFilePath($sharedStringIndex);
 
-        if (!$this->globalFunctionsHelper->file_exists($tempFilePath)) {
-            if ($this->tempFilePointer) {
-                $this->globalFunctionsHelper->fclose($this->tempFilePointer);
+        if (!file_exists($tempFilePath)) {
+            if (null !== $this->tempFilePointer) {
+                fclose($this->tempFilePointer);
             }
-            $this->tempFilePointer = $this->globalFunctionsHelper->fopen($tempFilePath, 'w');
+            $resource = fopen($tempFilePath, 'w');
+            \assert(false !== $resource);
+            $this->tempFilePointer = $resource;
         }
 
         // The shared string retrieval logic expects each cell data to be on one line only
         // Encoding the line feed character allows to preserve this assumption
         $lineFeedEncodedSharedString = $this->escapeLineFeed($sharedString);
 
-        $this->globalFunctionsHelper->fwrite($this->tempFilePointer, $lineFeedEncodedSharedString.PHP_EOL);
+        fwrite($this->tempFilePointer, $lineFeedEncodedSharedString.PHP_EOL);
     }
 
     /**
      * Closes the cache after the last shared string was added.
      * This prevents any additional string from being added to the cache.
      */
-    public function closeCache()
+    public function closeCache(): void
     {
         // close pointer to the last temp file that was written
-        if ($this->tempFilePointer) {
-            $this->globalFunctionsHelper->fclose($this->tempFilePointer);
+        if (null !== $this->tempFilePointer) {
+            fclose($this->tempFilePointer);
         }
     }
 
@@ -105,21 +108,25 @@ class FileBasedStrategy implements CachingStrategyInterface
      *
      * @param int $sharedStringIndex Index of the shared string in the sharedStrings.xml file
      *
-     * @throws \OpenSpout\Reader\Exception\SharedStringNotFoundException If no shared string found for the given index
-     *
      * @return string The shared string at the given index
+     *
+     * @throws \OpenSpout\Reader\Exception\SharedStringNotFoundException If no shared string found for the given index
      */
-    public function getStringAtIndex($sharedStringIndex)
+    public function getStringAtIndex(int $sharedStringIndex): string
     {
         $tempFilePath = $this->getSharedStringTempFilePath($sharedStringIndex);
         $indexInFile = $sharedStringIndex % $this->maxNumStringsPerTempFile;
 
-        if (!$this->globalFunctionsHelper->file_exists($tempFilePath)) {
+        if (!file_exists($tempFilePath)) {
             throw new SharedStringNotFoundException("Shared string temp file not found: {$tempFilePath} ; for index: {$sharedStringIndex}");
         }
 
         if ($this->inMemoryTempFilePath !== $tempFilePath) {
-            $this->inMemoryTempFileContents = explode(PHP_EOL, $this->globalFunctionsHelper->file_get_contents($tempFilePath));
+            $tempFilePath = realpath($tempFilePath);
+            \assert(false !== $tempFilePath);
+            $contents = file_get_contents($tempFilePath);
+            \assert(false !== $contents);
+            $this->inMemoryTempFileContents = explode(PHP_EOL, $contents);
             $this->inMemoryTempFilePath = $tempFilePath;
         }
 
@@ -141,11 +148,9 @@ class FileBasedStrategy implements CachingStrategyInterface
     /**
      * Destroys the cache, freeing memory and removing any created artifacts.
      */
-    public function clearCache()
+    public function clearCache(): void
     {
-        if ($this->tempFolder) {
-            $this->fileSystemHelper->deleteFolderRecursively($this->tempFolder);
-        }
+        $this->fileSystemHelper->deleteFolderRecursively($this->tempFolder);
     }
 
     /**
@@ -155,7 +160,7 @@ class FileBasedStrategy implements CachingStrategyInterface
      *
      * @return string The temp file path for the given index
      */
-    protected function getSharedStringTempFilePath($sharedStringIndex)
+    private function getSharedStringTempFilePath(int $sharedStringIndex): string
     {
         $numTempFile = (int) ($sharedStringIndex / $this->maxNumStringsPerTempFile);
 
@@ -164,24 +169,16 @@ class FileBasedStrategy implements CachingStrategyInterface
 
     /**
      * Escapes the line feed characters (\n).
-     *
-     * @param string $unescapedString
-     *
-     * @return string
      */
-    private function escapeLineFeed($unescapedString)
+    private function escapeLineFeed(string $unescapedString): string
     {
         return str_replace("\n", self::ESCAPED_LINE_FEED_CHARACTER, $unescapedString);
     }
 
     /**
      * Unescapes the line feed characters (\n).
-     *
-     * @param string $escapedString
-     *
-     * @return string
      */
-    private function unescapeLineFeed($escapedString)
+    private function unescapeLineFeed(string $escapedString): string
     {
         return str_replace(self::ESCAPED_LINE_FEED_CHARACTER, "\n", $escapedString);
     }

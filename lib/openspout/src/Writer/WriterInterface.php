@@ -1,13 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Writer;
 
 use OpenSpout\Common\Entity\Row;
-use OpenSpout\Common\Entity\Style\Style;
 
-/**
- * Interface WriterInterface.
- */
 interface WriterInterface
 {
     /**
@@ -17,10 +15,8 @@ interface WriterInterface
      * @param string $outputFilePath Path of the output file that will contain the data
      *
      * @throws \OpenSpout\Common\Exception\IOException If the writer cannot be opened or if the given path is not writable
-     *
-     * @return WriterInterface
      */
-    public function openToFile($outputFilePath);
+    public function openToFile(string $outputFilePath): void;
 
     /**
      * Initializes the writer and opens it to accept data.
@@ -29,20 +25,8 @@ interface WriterInterface
      * @param string $outputFileName Name of the output file that will contain the data. If a path is passed in, only the file name will be kept
      *
      * @throws \OpenSpout\Common\Exception\IOException If the writer cannot be opened
-     *
-     * @return WriterInterface
      */
-    public function openToBrowser($outputFileName);
-
-    /**
-     * Sets the default styles for all rows added with "addRow".
-     * Overriding the default style instead of using "addRowWithStyle" improves performance by 20%.
-     *
-     * @see https://github.com/box/spout/issues/272
-     *
-     * @return WriterInterface
-     */
-    public function setDefaultRowStyle(Style $defaultStyle);
+    public function openToBrowser(string $outputFileName): void;
 
     /**
      * Appends a row to the end of the stream.
@@ -51,10 +35,8 @@ interface WriterInterface
      *
      * @throws \OpenSpout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
      * @throws \OpenSpout\Common\Exception\IOException              If unable to write data
-     *
-     * @return WriterInterface
      */
-    public function addRow(Row $row);
+    public function addRow(Row $row): void;
 
     /**
      * Appends the rows to the end of the stream.
@@ -64,14 +46,17 @@ interface WriterInterface
      * @throws \OpenSpout\Common\Exception\InvalidArgumentException If the input param is not valid
      * @throws \OpenSpout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
      * @throws \OpenSpout\Common\Exception\IOException              If unable to write data
-     *
-     * @return WriterInterface
      */
-    public function addRows(array $rows);
+    public function addRows(array $rows): void;
+
+    /**
+     * @return 0|positive-int
+     */
+    public function getWrittenRowCount(): int;
 
     /**
      * Closes the writer. This will close the streamer as well, preventing new data
      * to be written to the file.
      */
-    public function close();
+    public function close(): void;
 }

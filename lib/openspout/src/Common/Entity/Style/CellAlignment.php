@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Common\Entity\Style;
 
 /**
  * This class provides constants to work with text alignment.
  */
-abstract class CellAlignment
+final class CellAlignment
 {
     public const LEFT = 'left';
     public const RIGHT = 'right';
     public const CENTER = 'center';
     public const JUSTIFY = 'justify';
 
-    private static $VALID_ALIGNMENTS = [
+    private const VALID_ALIGNMENTS = [
         self::LEFT => 1,
         self::RIGHT => 1,
         self::CENTER => 1,
@@ -20,12 +22,10 @@ abstract class CellAlignment
     ];
 
     /**
-     * @param string $cellAlignment
-     *
      * @return bool Whether the given cell alignment is valid
      */
-    public static function isValid($cellAlignment)
+    public static function isValid(string $cellAlignment): bool
     {
-        return isset(self::$VALID_ALIGNMENTS[$cellAlignment]);
+        return isset(self::VALID_ALIGNMENTS[$cellAlignment]);
     }
 }

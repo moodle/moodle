@@ -1,31 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Reader\Common\Creator;
 
-use OpenSpout\Common\Creator\HelperFactory;
+use OpenSpout\Common\Exception\IOException;
 use OpenSpout\Common\Exception\UnsupportedTypeException;
-use OpenSpout\Common\Type;
-use OpenSpout\Reader\CSV\Creator\InternalEntityFactory as CSVInternalEntityFactory;
-use OpenSpout\Reader\CSV\Manager\OptionsManager as CSVOptionsManager;
 use OpenSpout\Reader\CSV\Reader as CSVReader;
-use OpenSpout\Reader\ODS\Creator\HelperFactory as ODSHelperFactory;
-use OpenSpout\Reader\ODS\Creator\InternalEntityFactory as ODSInternalEntityFactory;
-use OpenSpout\Reader\ODS\Creator\ManagerFactory as ODSManagerFactory;
-use OpenSpout\Reader\ODS\Manager\OptionsManager as ODSOptionsManager;
 use OpenSpout\Reader\ODS\Reader as ODSReader;
 use OpenSpout\Reader\ReaderInterface;
-use OpenSpout\Reader\XLSX\Creator\HelperFactory as XLSXHelperFactory;
-use OpenSpout\Reader\XLSX\Creator\InternalEntityFactory as XLSXInternalEntityFactory;
-use OpenSpout\Reader\XLSX\Creator\ManagerFactory as XLSXManagerFactory;
-use OpenSpout\Reader\XLSX\Manager\OptionsManager as XLSXOptionsManager;
-use OpenSpout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory;
 use OpenSpout\Reader\XLSX\Reader as XLSXReader;
 
 /**
  * This factory is used to create readers, based on the type of the file to be read.
  * It supports CSV, XLSX and ODS formats.
  */
-class ReaderFactory
+final class ReaderFactory
 {
     /**
      * Creates a reader by file extension.
@@ -33,77 +23,40 @@ class ReaderFactory
      * @param string $path The path to the spreadsheet file. Supported extensions are .csv,.ods and .xlsx
      *
      * @throws \OpenSpout\Common\Exception\UnsupportedTypeException
-     *
-     * @return ReaderInterface
      */
-    public static function createFromFile(string $path)
+    public static function createFromFile(string $path): ReaderInterface
     {
         $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
-        return self::createFromType($extension);
+        return match ($extension) {
+            'csv' => new CSVReader(),
+            'xlsx' => new XLSXReader(),
+            'ods' => new ODSReader(),
+            default => throw new UnsupportedTypeException('No readers supporting the given type: '.$extension),
+        };
     }
 
     /**
-     * This creates an instance of the appropriate reader, given the type of the file to be read.
+     * Creates a reader by mime type.
      *
-     * @param string $readerType Type of the reader to instantiate
+     * @param string $path the path to the spreadsheet file
      *
      * @throws \OpenSpout\Common\Exception\UnsupportedTypeException
-     *
-     * @return ReaderInterface
+     * @throws \OpenSpout\Common\Exception\IOException
      */
-    public static function createFromType($readerType)
+    public static function createFromFileByMimeType(string $path): ReaderInterface
     {
-        switch ($readerType) {
-            case Type::CSV: return self::createCSVReader();
-
-            case Type::XLSX: return self::createXLSXReader();
-
-            case Type::ODS: return self::createODSReader();
-
-            default:
-                throw new UnsupportedTypeException('No readers supporting the given type: '.$readerType);
+        if (!file_exists($path)) {
+            throw new IOException("Could not open {$path} for reading! File does not exist.");
         }
-    }
 
-    /**
-     * @return CSVReader
-     */
-    private static function createCSVReader()
-    {
-        $optionsManager = new CSVOptionsManager();
-        $helperFactory = new HelperFactory();
-        $entityFactory = new CSVInternalEntityFactory($helperFactory);
-        $globalFunctionsHelper = $helperFactory->createGlobalFunctionsHelper();
+        $mime_type = mime_content_type($path);
 
-        return new CSVReader($optionsManager, $globalFunctionsHelper, $entityFactory);
-    }
-
-    /**
-     * @return XLSXReader
-     */
-    private static function createXLSXReader()
-    {
-        $optionsManager = new XLSXOptionsManager();
-        $helperFactory = new XLSXHelperFactory();
-        $managerFactory = new XLSXManagerFactory($helperFactory, new CachingStrategyFactory());
-        $entityFactory = new XLSXInternalEntityFactory($managerFactory, $helperFactory);
-        $globalFunctionsHelper = $helperFactory->createGlobalFunctionsHelper();
-
-        return new XLSXReader($optionsManager, $globalFunctionsHelper, $entityFactory, $managerFactory);
-    }
-
-    /**
-     * @return ODSReader
-     */
-    private static function createODSReader()
-    {
-        $optionsManager = new ODSOptionsManager();
-        $helperFactory = new ODSHelperFactory();
-        $managerFactory = new ODSManagerFactory();
-        $entityFactory = new ODSInternalEntityFactory($helperFactory, $managerFactory);
-        $globalFunctionsHelper = $helperFactory->createGlobalFunctionsHelper();
-
-        return new ODSReader($optionsManager, $globalFunctionsHelper, $entityFactory);
+        return match ($mime_type) {
+            'application/csv', 'text/csv', 'text/plain' => new CSVReader(),
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => new XLSXReader(),
+            'application/vnd.oasis.opendocument.spreadsheet' => new ODSReader(),
+            default => throw new UnsupportedTypeException('No readers supporting the given type: '.$mime_type),
+        };
     }
 }
