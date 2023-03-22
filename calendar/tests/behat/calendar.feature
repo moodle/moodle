@@ -391,7 +391,7 @@ Feature: Perform basic calendar functionality
     And I click on "type change test event" "link"
     Then I should see "Course event"
     # Reset to user event
-    And I click on "Edit" "button"
+    And I click on "Edit" "button" in the "type change test event" "dialogue"
     And I set the following fields to these values:
       | Event title   | type change test event |
       | Type of event | User                   |
@@ -414,7 +414,7 @@ Feature: Perform basic calendar functionality
     And I click on "type change test event" "link"
     And I should see "Group event"
     # Reset to user event
-    And I click on "Edit" "button"
+    And I click on "Edit" "button" in the "type change test event" "dialogue"
     And I set the following fields to these values:
       | Event title | type change test event |
       | Type of event | User |
@@ -422,7 +422,7 @@ Feature: Perform basic calendar functionality
     And I click on "type change test event" "link"
     And I should see "User event"
     # Now test changing from user to course event.
-    And I click on "Edit" "button"
+    And I click on "Edit" "button" in the "type change test event" "dialogue"
     And I set the following fields to these values:
       | Event title   | Course 1 event |
       | Type of event | Course         |
@@ -432,7 +432,7 @@ Feature: Perform basic calendar functionality
     And I click on "Course 1 event" "link"
     And I should see "Course event"
     # Reset to user event
-    And I click on "Edit" "button"
+    And I click on "Edit" "button" in the "Course 1 event" "dialogue"
     And I set the following fields to these values:
       | Event title   | type change test event |
       | Type of event | User                   |
@@ -440,7 +440,7 @@ Feature: Perform basic calendar functionality
     And I click on "type change test event" "link"
     And I should see "User event"
     # Now test changing from user to category event.
-    And I click on "Edit" "button"
+    And I click on "Edit" "button" in the "type change test event" "dialogue"
     And I set the following fields to these values:
       | Event title   | type change test event |
       | Type of event | Category               |
