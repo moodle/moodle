@@ -1893,6 +1893,10 @@ class grade_report_grader extends grade_report {
 
         switch ($action) {
             case 'switch_minus': // Add category to array of aggregatesonly
+                $key = array_search($targetid, $collapsed['gradesonly']);
+                if ($key !== false) {
+                    unset($collapsed['gradesonly'][$key]);
+                }
                 if (!in_array($targetid, $collapsed['aggregatesonly'])) {
                     $collapsed['aggregatesonly'][] = $targetid;
                     static::set_collapsed_preferences($courseid, $collapsed);
