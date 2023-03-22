@@ -137,6 +137,7 @@ Feature: Select content bank files using the content bank files repository
     When I click on "Browse repositories..." "button"
     Then I should not see "Content bank" in the ".fp-repo-area" "css_element"
 
+  @editor_atto
   Scenario: Student can not see the content bank repository
     Given I am on the Forum "Forum activity" page logged in as student
     And I click on "Add discussion topic" "link"
