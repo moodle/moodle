@@ -85,13 +85,11 @@ class bigbluebutton_proxy extends proxy_base {
     /**
      * Internal helper method to builds and returns a url for joining a BigBlueButton meeting.
      *
-     *
      * @param instance $instance
      * @param string|null $jointime = null
      * @param string|null $userfullname
      * @param bool $isguestjoin
      * @return string
-     * @throws \coding_exception
      */
     private static function internal_get_join_url(
         instance $instance,
@@ -133,10 +131,10 @@ class bigbluebutton_proxy extends proxy_base {
     /**
      * Get user avatar URL
      *
-     * @param object $user
+     * @param stdClass $user
      * @return moodle_url
      */
-    private static function get_avatar_url(object $user): moodle_url {
+    private static function get_avatar_url(stdClass $user): moodle_url {
         global $PAGE;
         $userpicture = new user_picture($user);
         $userpicture->includetoken = true;
