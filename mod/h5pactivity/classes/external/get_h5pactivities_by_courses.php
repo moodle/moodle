@@ -96,8 +96,16 @@ class get_h5pactivities_by_courses extends external_api {
             }
         }
 
+        $h5pglobalsettings = [
+            'enablesavestate' => get_config('mod_h5pactivity', 'enablesavestate'),
+        ];
+        if (!empty($h5pglobalsettings['enablesavestate'])) {
+            $h5pglobalsettings['savestatefreq'] = get_config('mod_h5pactivity', 'savestatefreq');
+        }
+
         $result = [
             'h5pactivities' => $returnedh5pactivities,
+            'h5pglobalsettings' => $h5pglobalsettings,
             'warnings' => $warnings
         ];
         return $result;
@@ -114,6 +122,14 @@ class get_h5pactivities_by_courses extends external_api {
             [
                 'h5pactivities' => new external_multiple_structure(
                     h5pactivity_summary_exporter::get_read_structure()
+                ),
+                'h5pglobalsettings' => new external_single_structure(
+                    [
+                        'enablesavestate' => new external_value(PARAM_BOOL, 'Whether saving state is enabled.'),
+                        'savestatefreq' => new external_value(PARAM_INT, 'How often (in seconds) state is saved.', VALUE_OPTIONAL),
+                    ],
+                    'H5P global settings',
+                    VALUE_OPTIONAL,
                 ),
                 'warnings' => new external_warnings(),
             ]
