@@ -92,6 +92,8 @@ if (SITE_MAIN_DOMAIN != $_SERVER['HTTP_HOST']) {
         echo $html;
         exit;
     }
+    $result->ismainsite = "no";
+    $CFG->cursitesettings = $result;
 }
 
 if (SITE_MAIN_DOMAIN == $_SERVER['HTTP_HOST']) {
