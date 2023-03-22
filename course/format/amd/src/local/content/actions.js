@@ -604,9 +604,10 @@ export default class extends BaseComponent {
         if (sectionIds.length == 0) {
             return;
         }
+        const title = (sectionIds.length == 1) ? 'sectionavailability_title' : 'sectionsavailability_title';
         // Show the availability modal to decide which action to trigger.
         const modalParams = {
-            title: getString('availability', 'core'),
+            title: this.reactive.getFormatString(title),
             body: Templates.render('core_courseformat/local/content/section/availabilitymodal', []),
             saveButtonText: getString('apply', 'core'),
             type: ModalFactory.types.SAVE_CANCEL,

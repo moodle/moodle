@@ -135,7 +135,8 @@ export default class Component extends BaseComponent {
      * @param {Object} param.element the affected element (bulk in this case).
      */
     async _refreshSelectCount({element: bulk}) {
-        const selectedCount = await getString('bulkselection', 'core_courseformat', bulk.selection.length);
+        const stringName = (bulk.selection.length > 1) ? 'bulkselection_plural' : 'bulkselection';
+        const selectedCount = await getString(stringName, 'core_courseformat', bulk.selection.length);
         const selectedElement = this.getElement(this.selectors.COUNT);
         if (selectedElement) {
             selectedElement.innerHTML = selectedCount;
@@ -176,6 +177,7 @@ export default class Component extends BaseComponent {
         const enabled = (bulk.selectedType !== '');
         this.getElements(this.selectors.ACTIONS).forEach(action => {
             action.classList.toggle(this.classes.DISABLED, !enabled);
+            action.tabIndex = (enabled) ? 0 : -1;
 
             const actionTool = action.closest(this.selectors.ACTIONTOOL);
             const isHidden = (action.dataset.bulk != displayType);
