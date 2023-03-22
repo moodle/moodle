@@ -83,6 +83,7 @@ class config {
             'recordingstatus_enabled' => false,
             'meetingevents_enabled' => false,
             'participant_moderator_default' => '0',
+            'profile_picture_enabled' => false,
             'scheduled_pre_opening' => '10',
             'recordings_enabled' => true,
             'recordings_deleted_default' => false,

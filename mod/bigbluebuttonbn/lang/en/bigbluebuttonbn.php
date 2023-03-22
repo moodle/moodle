@@ -137,6 +137,8 @@ $string['config_guestaccess_enabled_description'] = 'Allow users without an acco
 
 $string['config_general'] = 'General settings';
 $string['config_general_description'] = 'These settings are always used.';
+$string['config_profile_picture_enabled'] = 'Show profile pictures';
+$string['config_profile_picture_enabled_description'] = 'Should profile pictures of participants be shown in BigBlueButton sessions?';
 $string['config_server_url'] = 'BigBlueButton server URL';
 $string['config_server_url_description'] = 'The default credentials are for a <a href="https://bigbluebutton.org/free-bigbluebutton-service-for-moodle/" target="_blank">free BigBlueButton service for Moodle (opens in new window)</a> provided by Blindside Networks with restrictions as follows:
 <ol>
