@@ -59,6 +59,7 @@ class core_grades_renderer extends plugin_renderer_base {
             get_string('selectgroupsseparate');
 
         $data = [
+            'name' => 'group',
             'label' => $label,
             'courseid' => $course->id,
             'groupactionbaseurl' => $groupactionbaseurl
@@ -73,6 +74,7 @@ class core_grades_renderer extends plugin_renderer_base {
         }
 
         $activegroup = groups_get_course_group($course, true, $allowedgroups);
+        $data['group'] = $activegroup;
 
         if ($activegroup) {
             $group = groups_get_group($activegroup);

@@ -24,7 +24,6 @@ use core_external\external_single_structure;
 use core_external\external_value;
 use core_external\external_warnings;
 use core_external\restricted_context_exception;
-use moodle_url;
 use core_user;
 
 defined('MOODLE_INTERNAL') || die;
@@ -37,22 +36,19 @@ require_once($CFG->dirroot.'/grade/lib.php');
  * @package    core_grades
  * @copyright  2022 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 4.1
- * @deprecated
+ * @since      Moodle 4.2
  */
-class get_enrolled_users_for_search_widget extends external_api {
+class get_enrolled_users_for_selector extends external_api {
 
     /**
      * Returns description of method parameters.
      *
      * @return external_function_parameters
-     * @deprecated since 4.2
      */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters (
             [
                 'courseid' => new external_value(PARAM_INT, 'Course Id', VALUE_REQUIRED),
-                'actionbaseurl' => new external_value(PARAM_URL, 'The base URL for the user option', VALUE_REQUIRED),
                 'groupid' => new external_value(PARAM_INT, 'Group Id', VALUE_DEFAULT, 0)
             ]
         );
@@ -62,23 +58,20 @@ class get_enrolled_users_for_search_widget extends external_api {
      * Given a course ID find the enrolled users within and map some fields to the returned array of user objects.
      *
      * @param int $courseid
-     * @param string $actionbaseurl The base URL for the user option.
      * @param int|null $groupid
      * @return array Users and warnings to pass back to the calling widget.
      * @throws coding_exception
      * @throws invalid_parameter_exception
      * @throws moodle_exception
      * @throws restricted_context_exception
-     * @deprecated since 4.2
      */
-    public static function execute(int $courseid, string $actionbaseurl, ?int $groupid = 0): array {
+    public static function execute(int $courseid, ?int $groupid = 0): array {
         global $DB, $PAGE;
 
         $params = self::validate_parameters(
             self::execute_parameters(),
             [
                 'courseid' => $courseid,
-                'actionbaseurl' => $actionbaseurl,
                 'groupid' => $groupid
             ]
         );
@@ -106,12 +99,10 @@ class get_enrolled_users_for_search_widget extends external_api {
             $user = new \stdClass();
             $user->fullname = fullname($guiuser);
             $user->id = $guiuser->id;
-            $user->url = (new moodle_url($actionbaseurl, ['id' => $courseid, 'userid' => $guiuser->id]))->out(false);
             $userpicture = new \user_picture($guiuser);
             $userpicture->size = 1;
             $user->profileimage = $userpicture->get_url($PAGE)->out(false);
             $user->email = $guiuser->email;
-            $user->active = false;
 
             $users[] = $user;
         }
@@ -127,7 +118,6 @@ class get_enrolled_users_for_search_widget extends external_api {
      * Returns description of method result value.
      *
      * @return external_single_structure
-     * @deprecated since 4.2
      */
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
@@ -149,26 +139,12 @@ class get_enrolled_users_for_search_widget extends external_api {
                 'The location of the users larger image',
                 VALUE_OPTIONAL
             ),
-            'url' => new external_value(
-                PARAM_URL,
-                'The link to the user report',
-                VALUE_OPTIONAL
-            ),
             'fullname' => new external_value(PARAM_TEXT, 'The full name of the user', VALUE_OPTIONAL),
             'email' => new external_value(
                 core_user::get_property_type('email'),
                 'An email address - allow email as root@localhost',
-                VALUE_OPTIONAL),
-            'active' => new external_value(PARAM_BOOL, 'Are we currently on this item?', VALUE_REQUIRED)
+                VALUE_OPTIONAL)
         ];
         return new external_single_structure($userfields);
-    }
-
-    /**
-     * Mark the function as deprecated.
-     * @return bool
-     */
-    public static function execute_is_deprecated() {
-        return true;
     }
 }

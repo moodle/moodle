@@ -97,6 +97,10 @@ information provided here is intended especially for developers.
   - `createCsvDataSet`
   - `createArrayDataSet`
   - `loadDataSet`
+* The external function core_grades_get_enrolled_users_for_search_widget is now deprecated.
+  Please use the new core_grades_get_enrolled_users_for_selector external function instead.
+* The external function core_grades_get_groups_for_search_widget is now deprecated.
+  Please use the new core_grades_get_groups_for_selector external function instead.
 
 === 4.1 ===
 
