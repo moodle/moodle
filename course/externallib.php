@@ -2434,6 +2434,7 @@ class core_course_external extends external_api {
      * @since  Moodle 3.2
      */
     protected static function get_course_public_information(core_course_list_element $course, $coursecontext) {
+        global $OUTPUT;
 
         static $categoriescache = array();
 
@@ -2521,6 +2522,12 @@ class core_course_external extends external_api {
                 ];
             }
         }
+
+        $courseimage = \core_course\external\course_summary_exporter::get_course_image($course);
+        if (!$courseimage) {
+            $courseimage = $OUTPUT->get_generated_url_for_course($coursecontext);
+        }
+        $coursereturns['courseimage'] = $courseimage;
 
         return $coursereturns;
     }
@@ -2639,6 +2646,7 @@ class core_course_external extends external_api {
             'fullname' => new external_value(PARAM_RAW, 'course full name'),
             'displayname' => new external_value(PARAM_RAW, 'course display name'),
             'shortname' => new external_value(PARAM_RAW, 'course short name'),
+            'courseimage' => new external_value(PARAM_URL, 'Course image', VALUE_OPTIONAL),
             'categoryid' => new external_value(PARAM_INT, 'category id'),
             'categoryname' => new external_value(PARAM_RAW, 'category name'),
             'sortorder' => new external_value(PARAM_INT, 'Sort order in the category', VALUE_OPTIONAL),
