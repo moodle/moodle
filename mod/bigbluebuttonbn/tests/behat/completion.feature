@@ -3,7 +3,7 @@ Feature: As a user I can complete a BigblueButtonBN activity by usual or custom 
 
   Background:  Make sure that a course is created
     Given a BigBlueButton mock server is configured
-    And I enable "bigbluebuttonbn" "mod" plugin
+    And I accept dpa and enable bigbluebuttonbn plugin
     And the following "courses" exist:
       | fullname    | shortname | category | enablecompletion |
       | Test course | C1        | 0        | 1                |
