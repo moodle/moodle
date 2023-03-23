@@ -184,7 +184,20 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->resetAfterTest(true);
 
-        $course = self::getDataGenerator()->create_course();
+        $generator = self::getDataGenerator();
+
+        // Create complex user profile field supporting multi-lang.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        $statuses = 'UE\nSE\n<span lang="en" class="multilang">Other</span><span lang="es" class="multilang">Otro</span>';
+        $generator->create_custom_profile_field(
+            [
+                'datatype' => 'menu',
+                'shortname' => 'employmentstatus', 'name' => 'Employment status',
+                'param1' => $statuses
+            ]
+        );
+
+        $course = $generator->create_course();
         $user1 = array(
             'username' => 'usernametest1',
             'idnumber' => 'idnumbertest1',
@@ -200,14 +213,16 @@ class externallib_test extends externallib_advanced_testcase {
             'descriptionformat' => FORMAT_MOODLE,
             'city' => 'Perth',
             'country' => 'AU',
+            'profile_field_jobposition' => 'Manager',
+            'profile_field_employmentstatus' => explode('\n', $statuses)[2],
         );
-        $user1 = self::getDataGenerator()->create_user($user1);
+        $user1 = $generator->create_user($user1);
         if (!empty($CFG->usetags)) {
             require_once($CFG->dirroot . '/user/editlib.php');
             $user1->interests = array('Cinema', 'Tennis', 'Dance', 'Guitar', 'Cooking');
             useredit_update_interests($user1, $user1->interests);
         }
-        $user2 = self::getDataGenerator()->create_user(
+        $user2 = $generator->create_user(
                 array('username' => 'usernametest2', 'idnumber' => 'idnumbertest2'));
 
         $generatedusers = array();
@@ -218,9 +233,9 @@ class externallib_test extends externallib_advanced_testcase {
         $roleid = $this->assignUserCapability('moodle/user:viewdetails', $context->id);
 
         // Enrol the users in the course.
-        $this->getDataGenerator()->enrol_user($user1->id, $course->id, $roleid, 'manual');
-        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $roleid, 'manual');
-        $this->getDataGenerator()->enrol_user($USER->id, $course->id, $roleid, 'manual');
+        $generator->enrol_user($user1->id, $course->id, $roleid, 'manual');
+        $generator->enrol_user($user2->id, $course->id, $roleid, 'manual');
+        $generator->enrol_user($USER->id, $course->id, $roleid, 'manual');
 
         // call as admin and receive all possible fields.
         $this->setAdminUser();
@@ -290,6 +305,13 @@ class externallib_test extends externallib_advanced_testcase {
                 // Default language and no theme were used for the user.
                 $this->assertEquals($CFG->lang, $returneduser['lang']);
                 $this->assertEmpty($returneduser['theme']);
+
+                if ($returneduser['id'] == $user1->id) {
+                    $this->assertCount(1, $returneduser['customfields']);
+                    $dbvalue = explode('\n', $statuses)[2];
+                    $this->assertEquals($dbvalue, $returneduser['customfields'][0]['value']);
+                    $this->assertEquals('Other', $returneduser['customfields'][0]['displayvalue']);
+                }
             }
         }
 

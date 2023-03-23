@@ -361,19 +361,13 @@ function user_get_user_details($user, $course = null, array $userfields = array(
             foreach ($fields as $formfield) {
                 if ($formfield->is_visible() and !$formfield->is_empty()) {
 
-                    // TODO: Part of MDL-50728, this conditional coding must be moved to
-                    // proper profile fields API so they are self-contained.
-                    // We only use display_data in fields that require text formatting.
-                    if ($formfield->field->datatype == 'text' or $formfield->field->datatype == 'textarea') {
-                        $fieldvalue = $formfield->display_data();
-                    } else {
-                        // Cases: datetime, checkbox and menu.
-                        $fieldvalue = $formfield->data;
-                    }
-
-                    $userdetails['customfields'][] =
-                        array('name' => $formfield->field->name, 'value' => $fieldvalue,
-                            'type' => $formfield->field->datatype, 'shortname' => $formfield->field->shortname);
+                    $userdetails['customfields'][] = [
+                        'name' => $formfield->field->name,
+                        'value' => $formfield->data,
+                        'displayvalue' => $formfield->display_data(),
+                        'type' => $formfield->field->datatype,
+                        'shortname' => $formfield->field->shortname
+                    ];
                 }
             }
         }
