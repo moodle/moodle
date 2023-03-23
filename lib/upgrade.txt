@@ -3,6 +3,8 @@ information provided here is intended especially for developers.
 
 === 4.2 ===
 
+* Travis CI integration has been removed from core (MDLSITE-7135). Please, use GitHub Actions (GHA) instead. For
+  more information visit https://moodledev.io/general/development/tools/gha
 * A new constant COMPLETION_COMPLETE_FAIL_HIDDEN is introduced to mark that user has received a failing grade
   for a hidden grade item. This state returned by internal_get_grade_state() and is only used by get_core_completion_state()
   for processing the passgrade completion data.
