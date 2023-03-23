@@ -97,7 +97,7 @@ Feature: As a teacher I need to see an accurate list of subscribed users
     And I am on the "Forced Forum 2" "forum activity editing" page
     And I set the following fields to these values:
       | Subscription mode | Forced subscription |
-      | Availability      | Hide from students |
+      | Availability      | Hide on course page |
     And I press "Save and return to course"
     And I am on the "Forced Forum 2" "forum activity" page
     And I navigate to "Subscriptions" in current page administration

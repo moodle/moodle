@@ -1,5 +1,15 @@
 This files describes API changes for the core question engine.
 
+=== 4.1.2 ===
+
+* A `$questionidentifier` property has been added to `\question_display_options` to enable question type plugins to associate the
+question number to the question that is being rendered. This can be used to improve the accessibility of rendered
+questions and can be especially be helpful for screen reader users as adding the question number on the answer field(s) labels
+will allow them to distinguish between answer fields as they navigate through a quiz.
+* Question type plugins can use \question_display_options::add_question_identifier_to_label() to add the question number to the
+label of the answer field(s) of the question that is being rendered. The question number may be redundant when displayed, so the
+function allows for it to be enclosed within an sr-only container.
+
 === 4.0 ===
 1) A new optional parameter $extraselect has been added as a part of load_questions_usages_where_question_in_state()
    method in question/engine/datalib.php, anything passed here will be added to the SELECT list, use this to return extra data.

@@ -69,7 +69,10 @@ class assignfeedback_file_zip_importer {
             $pathpart = array_shift($pathparts);
             $info = explode('_', $pathpart, 5);
 
-            if (count($info) < 5) {
+            // Expected format for the directory names in $pathpart is fullname_userid_plugintype_pluginname (as created by zip
+            // export in Moodle >= 4.1) resp. fullname_userid_plugintype_pluginname_ (as created by earlier versions). We ensure
+            // compatibility with both ways here.
+            if (count($info) < 4) {
                 continue;
             }
 
@@ -97,6 +100,10 @@ class assignfeedback_file_zip_importer {
                 continue;
             }
 
+            // To get clean path names, we need to have at least an empty entry for $info[4].
+            if (count($info) == 4) {
+                $info[4] = '';
+            }
             // Take any remaining text in this part and put it back in the path parts array.
             array_unshift($pathparts, $info[4]);
 

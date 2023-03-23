@@ -50,9 +50,11 @@
                 <img src="{{{icon}}}" class="activityicon " alt="{{{modname}}} icon">
             </div>
             <div class="media-body align-self-center">
+                {{#pluginname}}
                 <div class="text-uppercase small">
                     {{{pluginname}}}
                 </div>
+                {{/pluginname}}
                 <div class="activityname">
                     {{#activityname}}
                         {{$ core/inplace_editable }}

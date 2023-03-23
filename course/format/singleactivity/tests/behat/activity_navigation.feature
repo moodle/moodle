@@ -76,3 +76,13 @@ Feature: Activity navigation in a single activity course
     Given I log in as "student2"
     When I am on "Course 1" course homepage
     Then I should see "You cannot enrol yourself in this course"
+
+  Scenario: The single activity course format supports multilang course names
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    When I am on the "Course 1" "course editing" page logged in as "teacher1"
+    And I expand all fieldsets
+    And I set the field "Course full name" in the "General" "fieldset" to "<span lang=\"de\" class=\"multilang\">Kurs</span><span lang=\"en\" class=\"multilang\">Course</span> 1"
+    And I click on "Save and display" "button"
+    Then I should see "Course 1" in the ".page-header-headings" "css_element"
+    And I should not see "KursCourse 1" in the ".page-header-headings" "css_element"

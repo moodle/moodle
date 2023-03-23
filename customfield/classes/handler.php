@@ -117,7 +117,7 @@ abstract class handler {
             return $classname::create($itemid);
         }
         $a = ['component' => s($component), 'area' => s($area)];
-        throw new \moodle_exception('unknownhandler', 'core_customfield', (object)$a);
+        throw new \moodle_exception('unknownhandler', 'core_customfield', '', $a);
     }
 
     /**

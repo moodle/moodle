@@ -383,6 +383,9 @@ export default class {
      */
     async sectionIndexCollapsed(stateManager, sectionIds, collapsed) {
         const collapsedIds = this._updateStateSectionPreference(stateManager, 'indexcollapsed', sectionIds, collapsed);
+        if (!collapsedIds) {
+            return;
+        }
         const course = stateManager.get('course');
         await this._callEditWebservice('section_index_collapsed', course.id, collapsedIds);
     }
@@ -396,6 +399,9 @@ export default class {
      */
     async sectionContentCollapsed(stateManager, sectionIds, collapsed) {
         const collapsedIds = this._updateStateSectionPreference(stateManager, 'contentcollapsed', sectionIds, collapsed);
+        if (!collapsedIds) {
+            return;
+        }
         const course = stateManager.get('course');
         await this._callEditWebservice('section_content_collapsed', course.id, collapsedIds);
     }
@@ -407,7 +413,7 @@ export default class {
      * @param {string} preferenceName the preference name
      * @param {array} sectionIds the affected section ids
      * @param {boolean} preferenceValue the new preferenceValue value
-     * @return {array} the list of all sections with that preference set to true
+     * @return {Number[]|null} sections ids with the preference value true or null if no update is required
      */
     _updateStateSectionPreference(stateManager, preferenceName, sectionIds, preferenceValue) {
         stateManager.setReadOnly(false);
@@ -416,7 +422,7 @@ export default class {
         sectionIds.forEach(sectionId => {
             const section = stateManager.get('section', sectionId);
             if (section === undefined) {
-                return;
+                return null;
             }
             const newValue = preferenceValue ?? section[preferenceName];
             if (section[preferenceName] != newValue) {
@@ -426,7 +432,7 @@ export default class {
         });
         stateManager.setReadOnly(true);
         if (affectedSections.size == 0) {
-            return [];
+            return null;
         }
         // Get all collapsed section ids.
         const collapsedSectionIds = [];

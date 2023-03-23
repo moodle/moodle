@@ -158,7 +158,7 @@ class core_renderer extends \core_renderer {
         $prefix = null;
         if ($context->contextlevel == CONTEXT_MODULE) {
             if ($this->page->course->format === 'singleactivity') {
-                $heading = $this->page->course->fullname;
+                $heading = format_string($this->page->course->fullname, true, ['context' => $context]);
             } else {
                 $heading = $this->page->cm->get_formatted_name();
                 $imagedata = html_writer::img($this->page->cm->get_icon_url()->out(false), '',
@@ -167,7 +167,9 @@ class core_renderer extends \core_renderer {
                 $purposeclass .= ' activityiconcontainer';
                 $purposeclass .= ' modicon_' . $this->page->activityname;
                 $imagedata = html_writer::tag('div', $imagedata, ['class' => $purposeclass]);
-                $prefix = get_string('modulename', $this->page->activityname);
+                if (!empty($USER->editing)) {
+                    $prefix = get_string('modulename', $this->page->activityname);
+                }
             }
         }
 
