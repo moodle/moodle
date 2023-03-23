@@ -144,9 +144,7 @@ Feature: Manage plan workflow
       | name | user | description | status | reviewer |
       | Test-Plan3 | user1 | Description of plan 3 for user 1 | active | manager1 |
       | Test-Plan4 | user1 | Description of plan 4 for user 1 | active | manager1 |
-    And I log in as "manager1"
-    And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I follow "User 1"
+    And I am on the "user1" "user > profile" page logged in as "manager1"
     And I follow "Learning plans"
     And I should see "List of learning plans"
     And I follow "Learning plans"
@@ -163,9 +161,7 @@ Feature: Manage plan workflow
       | name | user | description | status | reviewer |
       | Test-Plan3 | user1 | Description of plan 3 for user 1 | active | manager1 |
       | Test-Plan4 | user1 | Description of plan 4 for user 1 | active | manager1 |
-    And I log in as "manager1"
-    And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I follow "User 1"
+    And I am on the "user1" "user > profile" page logged in as "manager1"
     And I follow "Learning plans"
     And I should see "List of learning plans"
     And I follow "Learning plans"
@@ -185,9 +181,7 @@ Feature: Manage plan workflow
       | name | user | description | status | reviewer |
       | Test-Plan3 | user1 | Description of plan 3 for user 1 | complete | manager1 |
       | Test-Plan4 | user1 | Description of plan 4 for user 1 | complete | manager1 |
-    And I log in as "manager1"
-    And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I follow "User 1"
+    And I am on the "user1" "user > profile" page logged in as "manager1"
     And I follow "Learning plans"
     And I should see "List of learning plans"
     And I follow "Learning plans"
