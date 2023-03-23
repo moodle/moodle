@@ -379,4 +379,75 @@ class quiz_question_restore_test extends \advanced_testcase {
         }
 
     }
+
+    /**
+     * Ensure that question slots are correctly backed up and restored with all properties.
+     *
+     * @covers \backup_quiz_activity_structure_step::define_structure()
+     * @return void
+     */
+    public function test_backup_restore_question_slots(): void {
+        $this->resetAfterTest(true);
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
+        $user1 = $this->getDataGenerator()->create_and_enrol($course1, 'editingteacher');
+        $this->getDataGenerator()->enrol_user($user1->id, $course2->id, 'editingteacher');
+
+        // Make a quiz.
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+
+        $quiz = $quizgenerator->create_instance(['course' => $course1->id, 'questionsperpage' => 0, 'grade' => 100.0,
+                'sumgrades' => 3]);
+
+        // Create some fixed and random questions.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        $cat = $questiongenerator->create_question_category();
+        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        $numq = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
+        $matchq = $questiongenerator->create_question('match', null, ['category' => $cat->id]);
+        $randomcat = $questiongenerator->create_question_category();
+        $questiongenerator->create_question('shortanswer', null, ['category' => $randomcat->id]);
+        $questiongenerator->create_question('numerical', null, ['category' => $randomcat->id]);
+        $questiongenerator->create_question('match', null, ['category' => $randomcat->id]);
+
+        // Add them to the quiz.
+        quiz_add_quiz_question($saq->id, $quiz, 1, 3);
+        quiz_add_quiz_question($numq->id, $quiz, 2, 2);
+        quiz_add_quiz_question($matchq->id, $quiz, 3, 1);
+        quiz_add_random_questions($quiz, 3, $randomcat->id, 2, false);
+
+        $quizobj = \quiz::create($quiz->id, $user1->id);
+        $originalstructure = \mod_quiz\structure::create_for_quiz($quizobj);
+        $originalslots = $originalstructure->get_slots();
+
+        // Set one slot to requireprevious.
+        $lastslot = end($originalslots);
+        $originalstructure->update_question_dependency($lastslot->id, true);
+
+        // Backup and restore the quiz.
+        $backupid = $this->backup_quiz($quiz, $user1);
+        $this->restore_quiz($backupid, $course2, $user1);
+
+        // Ensure the restored slots match the original slots.
+        $modinfo = get_fast_modinfo($course2);
+        $quizzes = $modinfo->get_instances_of('quiz');
+        $restoredquiz = reset($quizzes);
+        $restoredquizobj = \quiz::create($restoredquiz->instance, $user1->id);
+        $restoredstructure = \mod_quiz\structure::create_for_quiz($restoredquizobj);
+        $restoredslots = array_values($restoredstructure->get_slots());
+        $originalstructure = \mod_quiz\structure::create_for_quiz($quizobj);
+        $originalslots = array_values($originalstructure->get_slots());
+        foreach ($restoredslots as $key => $restoredslot) {
+            $originalslot = $originalslots[$key];
+            $this->assertEquals($originalslot->quizid, $quiz->id);
+            $this->assertEquals($restoredslot->quizid, $restoredquiz->instance);
+            $this->assertEquals($originalslot->slot, $restoredslot->slot);
+            $this->assertEquals($originalslot->page, $restoredslot->page);
+            $this->assertEquals($originalslot->requireprevious, $restoredslot->requireprevious);
+            $this->assertEquals($originalslot->maxmark, $restoredslot->maxmark);
+        }
+    }
 }

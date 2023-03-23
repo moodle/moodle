@@ -63,7 +63,7 @@ $heading = get_string('outcomeitemsedit', 'grades');
 if ($grade_item = grade_item::fetch(array('id'=>$id, 'courseid'=>$courseid))) {
     // redirect if outcomeid present
     if (empty($grade_item->outcomeid)) {
-        $url = $CFG->wwwroot.'/grade/edit/tree/item.php?id='.$id.'&amp;courseid='.$courseid;
+        $url = new moodle_url('/grade/edit/tree/item.php', ['id' => $id, 'courseid' => $courseid]);
         redirect($gpr->add_url_params($url));
     }
     $item = $grade_item->get_record_data();

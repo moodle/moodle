@@ -462,7 +462,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I am on site homepage
     And I change window size to "large"
     And I follow "Log in"
-    When I press "Log in as a guest"
+    When I press "Access as a guest"
     Then I should see "If you continue browsing this website, you agree to our policies"
     # Confirm when navigating, the pop-up policies are displayed.
     When I am on the "My courses" page
@@ -626,7 +626,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I am on site homepage
     And I follow "Log in"
     # First log in as a guest
-    And I press "Log in as a guest"
+    And I press "Access as a guest"
     # Now sign up
     And I follow "Log in"
     When I click on "Create new account" "link"
