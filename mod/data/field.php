@@ -332,8 +332,11 @@ if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
     $fieldactionbar = $actionbar->get_fields_action_bar(true);
     data_print_header($course, $cm, $data, 'fields', $fieldactionbar);
 
-    echo $OUTPUT->box_start('mb-4');
+    echo $OUTPUT->box_start();
     echo get_string('fieldshelp', 'data');
+    echo $OUTPUT->box_end();
+    echo $OUTPUT->box_start('d-flex flex-row-reverse');
+    echo $OUTPUT->render($actionbar->get_create_fields(true));
     echo $OUTPUT->box_end();
     $table = new html_table();
     $table->head = [

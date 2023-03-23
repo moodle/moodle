@@ -159,10 +159,7 @@ class mod_data_renderer extends plugin_renderer_base {
      */
     public function render_fields_action_bar(\mod_data\output\fields_action_bar $actionbar): string {
         $data = $actionbar->export_for_template($this);
-        $data['title'] = get_string('nofields', 'mod_data');
-        $data['intro'] = get_string('createfields', 'mod_data');
-        $data['noitemsimgurl'] = $this->output->image_url('fields_zero_state', 'mod_data')->out();
-        return $this->render_from_template('mod_data/fields_action_bar', $data);
+        return $this->render_from_template('mod_data/action_bar', $data);
     }
 
     /**
