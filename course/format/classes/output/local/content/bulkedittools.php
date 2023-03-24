@@ -106,6 +106,7 @@ class bulkedittools implements named_templatable, renderable {
                 'icon' => 't/copy',
                 'action' => 'cmDuplicate',
                 'name' => get_string('duplicate'),
+                'title' => get_string('cmsduplicate', 'core_courseformat'),
                 'bulk' => 'cm',
             ];
         }
