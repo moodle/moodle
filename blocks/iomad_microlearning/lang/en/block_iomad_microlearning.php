@@ -118,6 +118,7 @@ $string['scheduletype'] = 'Schedule type';
 $string['scheduletype_help'] = 'This controls what start date the user being assigned will get.  Standard means they are added according to the defined schedule. Start today means that they will be scheduled to start the thread today.  Start on next scheduled will start the user on the next scheduled date defined by the current thread.';
 $string['sectionid'] = 'Course section ID';
 $string['sectionid_help'] = 'Input the course section ID number into this field for the unique course section.  You must define either this or the CMID value.';
+$string['sectionidalreadyinuse'] = 'Section ID is already in use';
 $string['selectthread'] = 'Select microlearning thread';
 $string['send_message'] = 'Send message';
 $string['send_message_help'] = 'Set to true if you want emails to be sent to users for nuggets being scheduled or reminders to complete.';
