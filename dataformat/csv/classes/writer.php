@@ -41,8 +41,6 @@ class writer extends \core\dataformat\spout_base {
     /** @var $extension */
     protected $extension = ".csv";
 
-    /** @var $spouttype */
-    protected $spouttype = \OpenSpout\Common\Type::CSV;
 
 }
 

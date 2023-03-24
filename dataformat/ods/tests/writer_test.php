@@ -55,10 +55,11 @@ class writer_test extends \advanced_testcase {
      * @throws \OpenSpout\Reader\Exception\ReaderNotOpenedException
      */
     private function get_ods_rows_content($content) {
-        $reader = \OpenSpout\Reader\Common\Creator\ReaderFactory::createFromType(\OpenSpout\Common\Type::ODS);
         $file = tempnam(sys_get_temp_dir(), 'ods_');
         $handle = fopen($file, "w");
         fwrite($handle, $content);
+        /** @var \OpenSpout\Reader\ODS\Reader $reader */
+        $reader = \OpenSpout\Reader\Common\Creator\ReaderFactory::createFromFileByMimeType($file);
         $reader->open($file);
         /** @var \OpenSpout\Reader\ODS\Sheet[] $sheets */
         $sheets = $reader->getSheetIterator();
