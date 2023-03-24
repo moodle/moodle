@@ -48,15 +48,20 @@ $params = array();
 $params['userid'] = $userid;
 $params['validonly'] = $validonly;
 
-// Deal with edit buttons.
-if ($edit != -1) {
-    $USER->editing = $edit;
-}
-
 // Check permissions.
 require_login();
 $context = context_system::instance();
 iomad::require_capability('local/report_users:view', $context);
+
+// Deal with edit buttons.
+if ($edit != -1) {
+    $USER->editing = $edit;
+}
+if (!iomad::has_capability('local/report_users:redocertificates', $context) ||
+    !iomad::has_capability('local/report_users:deleteentriesfull', $context) ||
+    !iomad::has_capability('local/report_users:updateentries', $context)) {
+    $USER->editing = false;
+}
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);

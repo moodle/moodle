@@ -159,6 +159,12 @@ $params['userid'] = $userid;
 if ($edit != -1) {
     $USER->editing = $edit;
 }
+if (!iomad::has_capability('local/report_users:redocertificates', $context) ||
+    !iomad::has_capability('local/report_users:deleteentriesfull', $context) ||
+    !iomad::has_capability('local/report_users:updateentries', $context)) {
+    $USER->editing = false;
+}
+
 $buttons = "";
 
 // Url stuff.
