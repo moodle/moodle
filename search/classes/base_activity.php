@@ -54,6 +54,9 @@ abstract class base_activity extends base_mod {
      */
     protected static $levels = [CONTEXT_MODULE];
 
+    /** @var array activity data instance. */
+    public $activitiesdata = [];
+
     /**
      * Returns recordset containing all activities within the given context.
      *

@@ -40,6 +40,9 @@ class engine extends \core_search\engine {
     /** @var array Schema updates applied */
     protected $schemaupdates = [];
 
+    /** @var array delete of course index. */
+    protected $deletes = [];
+
     public function is_installed() {
         return true;
     }
