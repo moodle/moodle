@@ -142,9 +142,8 @@ class core_webservice_external extends \core_external\external_api {
                         $version = $componentversions[$function->component];
                     }
                 } else {
-                    // Function component should always have a version.php,
-                    // otherwise the function should have been described with component => 'moodle'.
-                    throw new moodle_exception('missingversionfile', 'webservice', '', $function->component);
+                    // Ignore this component or plugin, it was probably incorrectly uninstalled.
+                    continue;
                 }
             }
             $functioninfo['version'] = $version;

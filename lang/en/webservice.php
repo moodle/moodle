@@ -126,7 +126,6 @@ $string['missingcaps_help'] = 'List of capabilities declared by the service whic
 $string['missingpassword'] = 'Missing password';
 $string['missingrequiredcapability'] = 'The capability {$a} is required.';
 $string['missingusername'] = 'Missing username';
-$string['missingversionfile'] = 'Coding error: version.php file is missing for the component {$a}';
 $string['nameexists'] = 'This name is already in use by another service';
 $string['nocapabilitytouseparameter'] = 'The user does not have the required capability to use the parameter {$a}';
 $string['nofunctions'] = 'This service has no functions.';
@@ -235,3 +234,5 @@ $string['wsusername'] = 'Web service username';
 // Deprecated since Moodle 3.11.
 $string['usernameoridnousererror'] = 'No users were found with this username/user id.';
 $string['usernameoridoccurenceerror'] = 'More than one user was found with this username. Please enter the user id.';
+// Deprecated since Moodle 4.2.
+$string['missingversionfile'] = 'Coding error: version.php file is missing for the component {$a}';
