@@ -28,7 +28,7 @@ Feature: Preview Essay questions
     When I am on the "essay-001" "core_question > preview" page logged in as teacher
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
     And I should see "Please write a story about a frog."
 
   @javascript @_switch_window
@@ -36,7 +36,7 @@ Feature: Preview Essay questions
     When I am on the "essay-002" "core_question > preview" page logged in as teacher
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
     And I should see "Please write a story about a frog."
     And I should see "You can drag and drop files here to add them."
 
@@ -45,5 +45,5 @@ Feature: Preview Essay questions
     When I am on the "essay-003" "core_question > preview" page logged in as teacher
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
     And I should see "Please write a story about a frog."

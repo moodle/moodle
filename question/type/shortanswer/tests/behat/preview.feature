@@ -28,7 +28,7 @@ Feature: Preview a Short answer question
     # Set behaviour options
     And I set the following fields to these values:
       | behaviour | immediatefeedback |
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
     And I set the field with xpath "//div[@class='qtext']//input[contains(@id, '1_answer')]" to "frog"
     And I press "Check"
     Then I should see "Frog is a very good answer."
@@ -42,7 +42,7 @@ Feature: Preview a Short answer question
     # Set behaviour options
     And I set the following fields to these values:
       | behaviour | immediatefeedback |
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
     And I set the field with xpath "//div[@class='qtext']//input[contains(@id, '1_answer')]" to "toad"
     And I press "Check"
     Then I should see "Toad is an OK good answer."
@@ -56,7 +56,7 @@ Feature: Preview a Short answer question
     # Set behaviour options
     And I set the following fields to these values:
       | behaviour | immediatefeedback |
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
     And I set the field with xpath "//div[@class='qtext']//input[contains(@id, '1_answer')]" to "cat"
     And I press "Check"
     Then I should see "That is a bad answer."

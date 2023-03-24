@@ -26,7 +26,7 @@ Feature: Preview a Matching question
     When I am on the "matching-001" "core_question > preview" page logged in as teacher
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
     And I set the field "Answer 1" to "amphibian"
     And I set the field "Answer 2" to "mammal"
     And I set the field "Answer 3" to "amphibian"
@@ -39,7 +39,7 @@ Feature: Preview a Matching question
     When I am on the "matching-001" "core_question > preview" page logged in as teacher
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
     And I set the field "Answer 1" to "amphibian"
     And I set the field "Answer 2" to "insect"
     And I set the field "Answer 3" to "amphibian"
@@ -52,7 +52,7 @@ Feature: Preview a Matching question
     When I am on the "matching-001" "core_question > preview" page logged in as teacher
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
     And I set the field "Answer 1" to "mammal"
     And I set the field "Answer 2" to "insect"
     And I set the field "Answer 3" to "insect"

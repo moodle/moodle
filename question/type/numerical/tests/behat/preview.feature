@@ -31,7 +31,7 @@ Feature: Preview a Numerical question
     And I should see "What is pi to two d.p.?"
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
     And I set the field with xpath "//span[@class='answer']//input[contains(@id, '1_answer')]" to "3.14"
     And I press "Check"
     Then I should see "Very good."
