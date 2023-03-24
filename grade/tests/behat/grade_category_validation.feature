@@ -130,6 +130,7 @@ Feature: Editing a grade item
     And I set the field "Maximum grade" to "87#50"
     When I press "Save changes"
     And I navigate to "View > Grader report" in the course gradebook
-    And I follow "Single view for Student 1"
+    And I click on user menu "Student 1"
+    And I choose "Single view for this user" in the open action menu
     Then I should see "Student 1"
     And the field "Grade for Category total" matches value "17#50"

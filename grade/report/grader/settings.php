@@ -46,10 +46,6 @@ if ($ADMIN->fulltree) {
                                               array(GRADE_REPORT_MEAN_ALL => get_string('meanall', 'grades'),
                                                     GRADE_REPORT_MEAN_GRADED => get_string('meangraded', 'grades'))));
 
-    $settings->add(new admin_setting_configcheckbox('grade_report_showcalculations',
-                                                    get_string('showcalculations', 'grades'),
-                                                    get_string('showcalculations_help', 'grades'), 1));
-
     $settings->add(new admin_setting_configcheckbox('grade_report_showaverages', get_string('showaverages', 'grades'),
                                                 get_string('showaverages_help', 'grades'), 1));
 
@@ -58,9 +54,6 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox('grade_report_showuserimage', get_string('showuserimage', 'grades'),
                                                 get_string('showuserimage_help', 'grades'), 1));
-
-    $settings->add(new admin_setting_configcheckbox('grade_report_showactivityicons', get_string('showactivityicons', 'grades'),
-                                                get_string('showactivityicons_help', 'grades'), 1));
 
     $settings->add(new admin_setting_configcheckbox('grade_report_shownumberofgrades', get_string('shownumberofgrades', 'grades'),
                                                 get_string('shownumberofgrades_help', 'grades'), 0));

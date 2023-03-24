@@ -44,8 +44,11 @@ Feature: Control the aggregation of the scales
     When I give the grade "10" to the user "Student 1" for the grade item "Grade me"
     And I give the grade "B" to the user "Student 1" for the grade item "Scale me"
     And I press "Save changes"
-    And I set the following settings for grade item "Course 1":
+    When I click on course grade category menu "Course 1"
+    And I choose "Edit category" in the open action menu
+    And I set the following fields to these values:
       | Aggregation | <aggregation> |
+    And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
     Then the following should exist in the "user-grade" table:
@@ -85,8 +88,11 @@ Feature: Control the aggregation of the scales
     And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
-    When I set the following settings for grade item "Course 1":
+    When I click on course grade category menu "Course 1"
+    And I choose "Edit category" in the open action menu
+    And I set the following fields to these values:
       | Aggregation | Natural |
+    And I press "Save changes"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the field "Override weight of Grade me" to "1"
     Then the field "Override weight of Grade me" matches value "100.00"

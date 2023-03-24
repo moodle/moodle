@@ -520,7 +520,6 @@
         tr.lastrow {
             position: sticky;
             bottom: 0;
-            z-index: 1;
 
             td,
             th {
@@ -531,6 +530,7 @@
         th.header {
             position: sticky;
             left: -3rem;
+            z-index: 1;
         }
 
         td.noborder {

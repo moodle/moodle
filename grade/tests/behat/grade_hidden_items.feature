@@ -50,7 +50,9 @@ Feature: Student and teacher's view of aggregated grade items is consistent when
     And I give the grade "50.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "50.00" to the user "Student 1" for the grade item "Test assignment three"
     And I press "Save changes"
-    And I set the following settings for grade item "Test assignment four":
+    And I click on grade item menu "Test assignment four"
+    And I choose "Edit grade item" in the open action menu
+    And I set the following fields to these values:
       | Hidden | 1 |
     And I press "Save changes"
     And I am on "Course 1" course homepage

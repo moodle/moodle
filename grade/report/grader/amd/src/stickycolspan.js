@@ -25,7 +25,8 @@ const SELECTORS = {
     GRADEPARENT: '.gradeparent',
     STUDENTHEADER: '#studentheader',
     TABLEHEADER: 'th.header',
-    BEHAT: 'body.behat-site'
+    BEHAT: 'body.behat-site',
+    AVERAGEROW: 'tr.lastrow',
 };
 
 /**
@@ -40,14 +41,19 @@ export const init = () => {
     const leftOffset = getComputedStyle(studentHeader).getPropertyValue('left');
     const rightOffset = getComputedStyle(studentHeader).getPropertyValue('right');
 
-    grader.querySelectorAll(SELECTORS.TABLEHEADER).forEach((tableHeader) => {
-        if (tableHeader.colSpan > 1) {
-            const addOffset = (tableHeader.offsetWidth - studentHeader.offsetWidth);
+    const tableHeaders = grader.querySelectorAll(SELECTORS.TABLEHEADER);
+
+    for (let i = 0; i < tableHeaders.length; i++) {
+        if (tableHeaders[i].colSpan > 1) {
+            const addOffset = (tableHeaders[i].offsetWidth - studentHeader.offsetWidth);
             if (window.right_to_left()) {
-                tableHeader.style.right = 'calc(' + rightOffset + ' - ' + addOffset + 'px )';
+                tableHeaders[i].style.right = 'calc(' + rightOffset + ' - ' + addOffset + 'px )';
             } else {
-                tableHeader.style.left = 'calc(' + leftOffset + ' - ' + addOffset + 'px )';
+                tableHeaders[i].style.left = 'calc(' + leftOffset + ' - ' + addOffset + 'px )';
             }
+        } else {
+            tableHeaders[i].style.zIndex = tableHeaders.length - i;
         }
-    });
+    }
+
 };

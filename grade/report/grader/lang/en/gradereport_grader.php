@@ -36,9 +36,7 @@ $string['privacy:metadata:preference:grade_report_meanselection'] = 'Whether cel
 $string['privacy:metadata:preference:grade_report_quickgrading'] = 'Whether to display a text input box for each grade, allowing many grades to be edited at the same time';
 $string['privacy:metadata:preference:grade_report_rangesdecimalpoints'] = 'The number of decimal places to display for each range or whether the overall decimal places setting for the category or grade item is used (inherit)';
 $string['privacy:metadata:preference:grade_report_rangesdisplaytype'] = 'Whether the range is displayed as real grades, percentages or letters, or whether the display type for the category or grade item is used (inherit)';
-$string['privacy:metadata:preference:grade_report_showactivityicons'] = 'Whether to show the activity icons next to activity names';
 $string['privacy:metadata:preference:grade_report_showaverages'] = 'Whether to display an additional row with the average (mean) for each category and grade item';
-$string['privacy:metadata:preference:grade_report_showcalculations'] = 'Whether a calculator icon for each grade item and category with a visual indicator that a grade item is calculated is displayed or not when editing is turned on';
 $string['privacy:metadata:preference:grade_report_shownumberofgrades'] = 'Whether to display in brackets after each average the number of grades used when calculating the average';
 $string['privacy:metadata:preference:grade_report_showonlyactiveenrol'] = 'Whether to display only active enrolled users (not suspended) in gradebook report or all the enrolled users';
 $string['privacy:metadata:preference:grade_report_showranges'] = 'Whether to display an additional row with the range for each category and grade item';
@@ -48,6 +46,7 @@ $string['privacy:request:preference:grade_report_grader_collapsed_categories'] =
 $string['summarygrader'] = 'A table with the names of students in the first column, with assessable activities grouped by course and category across the top.';
 $string['useractivitygrade'] = '{$a} grade';
 $string['overriddengrade'] = 'Overridden grade';
+$string['advancedgrading'] = 'View {$a} results';
 $string['cellactions'] = 'Cell actions';
 
 // Deprecated since Moodle 4.2.
@@ -62,3 +61,5 @@ $string['ajaxerror'] = 'Error';
 $string['ajaxfailedupdate'] = 'Unable to update [1] for [2]';
 $string['ajaxfieldchanged'] = 'The field you are currently editing has changed, would you like to use the updated value?';
 $string['ajaxchoosescale'] = 'Choose';
+$string['privacy:metadata:preference:grade_report_showactivityicons'] = 'Whether to show the activity icons next to activity names';
+$string['privacy:metadata:preference:grade_report_showcalculations'] = 'Whether a calculator icon for each grade item and category with a visual indicator that a grade item is calculated is displayed or not when editing is turned on';

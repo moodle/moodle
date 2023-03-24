@@ -52,10 +52,8 @@ class provider implements
     public static function get_metadata(collection $items) : collection {
         // There are several user preferences (shared between different courses).
         // Show/hide toggles preferences.
-        $items->add_user_preference('grade_report_showcalculations', 'privacy:metadata:preference:grade_report_showcalculations');
         $items->add_user_preference('grade_report_showaverages', 'privacy:metadata:preference:grade_report_showaverages');
         $items->add_user_preference('grade_report_showuserimage', 'privacy:metadata:preference:grade_report_showuserimage');
-        $items->add_user_preference('grade_report_showactivityicons', 'privacy:metadata:preference:grade_report_showactivityicons');
         $items->add_user_preference('grade_report_showranges', 'privacy:metadata:preference:grade_report_showranges');
         // Special rows preferences.
         $items->add_user_preference('grade_report_rangesdisplaytype', 'privacy:metadata:preference:grade_report_rangesdisplaytype');
@@ -88,10 +86,8 @@ class provider implements
             $prefdescription = null;
             $transformedvalue = null;
             switch ($name) {
-                case 'grade_report_showcalculations':
                 case 'grade_report_showaverages':
                 case 'grade_report_showuserimage':
-                case 'grade_report_showactivityicons':
                 case 'grade_report_showranges':
                 case 'grade_report_shownumberofgrades':
                 case 'grade_report_quickgrading':

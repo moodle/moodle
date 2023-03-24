@@ -65,6 +65,10 @@
     color: #ca3120;
 }
 
+.path-grade-report-grader .grade_icons {
+    text-align: center;
+}
+
 /**
  * All the floating divs.
  */
@@ -91,11 +95,19 @@
  * The user cells.
  */
 .path-grade-report-grader .gradeparent .user.cell {
-    min-width: 200px;
-    width: 200px;
+    min-width: 250px;
+    width: 250px;
     white-space: normal;
-    vertical-align: top;
+    vertical-align: middle;
     height: 100px;
+}
+
+.path-grade-report-grader .gradeparent .highlightable.cell {
+    height: 80px;
+    text-align: center;
+    vertical-align: top;
+    padding-top: 20px;
+    min-width: 150px;
 }
 
 .path-grade-report-grader .gradeparent .gradecell {
@@ -117,7 +129,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 200px;
-    vertical-align: bottom;
+    vertical-align: middle;
 }
 
 /**

@@ -19,8 +19,11 @@ namespace gradereport_user\report;
 use context_course;
 use course_modinfo;
 use grade_grade;
+use grade_helper;
 use grade_report;
 use grade_tree;
+use html_writer;
+use moodle_url;
 
 defined('MOODLE_INTERNAL') || die;
 

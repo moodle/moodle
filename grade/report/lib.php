@@ -271,6 +271,30 @@ abstract class grade_report {
     abstract public function process_action($target, $action);
 
     /**
+     * Returns an array of links to appropriate report pages for the current element
+     * @param context_course $context Course context
+     * @param int $courseid Course ID
+     * @param array  $element An array representing an element in the grade_tree
+     * @param grade_plugin_return $gpr A grade_plugin_return object
+     * @param string $mode Mode - gradeitem or user
+     * @return array Link to appropriate report
+     */
+    public function get_report_links(context_course $context, int $courseid, array $element,
+            grade_plugin_return $gpr, string $mode): array {
+
+        $reports = [];
+        foreach (core_component::get_plugin_list('gradereport') as $plugin => $plugindir) {
+            $params = [$context, $courseid, $element, $gpr, $mode];
+            $component = 'gradereport_' . $plugin;
+            if ($reportlink = component_callback($component, 'get_report_link', $params)) {
+                $reports[] = $reportlink;
+            }
+
+        }
+        return $reports;
+    }
+
+    /**
      * First checks the cached language strings, then returns match if found, or uses get_string()
      * to get it from the DB, caches it then returns it.
      * @param string $strcode
@@ -412,13 +436,13 @@ abstract class grade_report {
     /**
      * Returns an arrow icon inside an <a> tag, for the purpose of sorting a column.
      * @param string $direction
-     * @param moodle_url $sortlink
+     * @param moodle_url|null $sortlink
      */
-    protected function get_sort_arrow($direction='move', $sortlink=null) {
+    protected function get_sort_arrow(string $direction = 'down', ?moodle_url $sortlink = null) {
         global $OUTPUT;
-        $pix = array('up' => 't/sort_desc', 'down' => 't/sort_asc', 'move' => 't/sort');
-        $matrix = array('up' => 'desc', 'down' => 'asc', 'move' => 'asc');
-        $strsort = $this->get_lang_string('sort' . $matrix[$direction]);
+        $pix = ['up' => 't/sort_desc', 'down' => 't/sort_asc'];
+        $matrix = ['up' => 'desc', 'down' => 'asc'];
+        $strsort = $this->get_lang_string($matrix[$direction], 'moodle');
 
         $arrow = $OUTPUT->pix_icon($pix[$direction], '', '', ['class' => 'sorticon']);
         return html_writer::link($sortlink, $arrow, ['title' => $strsort, 'aria-label' => $strsort]);
