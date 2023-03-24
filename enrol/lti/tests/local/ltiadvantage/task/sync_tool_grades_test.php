@@ -149,6 +149,91 @@ class sync_tool_grades_test extends \lti_advantage_testcase {
     }
 
     /**
+     * Test the sync grades task works correct when platform responses with 200 status code.
+     *
+     * @covers ::execute
+     */
+    public function test_grade_sync_positive_case_200() {
+        $this->test_grade_sync_positive_case('200');
+    }
+
+    /**
+     * Test the sync grades task works correct when platform responses with 201 status code.
+     *
+     * @covers ::execute
+     */
+    public function test_grade_sync_positive_case_201() {
+        $this->test_grade_sync_positive_case('201');
+    }
+
+    /**
+     * Test the sync grades task works correct when platform responses with 202 status code.
+     *
+     * @covers ::execute
+     */
+    public function test_grade_sync_positive_case_202() {
+        $this->test_grade_sync_positive_case('202');
+    }
+
+    /**
+     * Test the sync grades task works correct when platform responses with 204 status code.
+     *
+     * @covers ::execute
+     */
+    public function test_grade_sync_positive_case_204() {
+        $this->test_grade_sync_positive_case('204');
+    }
+
+    /**
+     * Test the sync grades task works correct when platform responses with given status code.
+     *
+     * @covers ::execute
+     * @param string $statuscode the response status code with which the job should work correct
+     */
+    protected function test_grade_sync_positive_case($statuscode) {
+        $this->resetAfterTest();
+
+        [$course, $resource] = $this->create_test_environment();
+        $launchservice = $this->get_tool_launch_service();
+        $task = $this->get_task_with_mocked_grade_service($statuscode);
+
+        // Launch the resource for an instructor which will create the domain objects needed for service calls.
+        $teachermocklaunch = $this->get_mock_launch($resource, $this->get_mock_launch_users_with_ids(['1'], false)[0]);
+        $instructoruser = $this->getDataGenerator()->create_user();
+        [$teacherid, $resource] = $launchservice->user_launches_tool($instructoruser, $teachermocklaunch);
+
+        // Launch the resource for a few more users, creating those enrolments and allowing grading to take place.
+        $studentusers = $this->get_mock_launch_users_with_ids(['2'], false,
+            'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner');
+
+        $student1mocklaunch = $this->get_mock_launch($resource, $studentusers[0]);
+        $student1user = $this->getDataGenerator()->create_user();
+        [$student1id] = $launchservice->user_launches_tool($student1user, $student1mocklaunch);
+
+        // Grade student1.
+        $expectedstudent1grade = $this->set_user_grade_for_resource($student1id, 65, $resource);
+
+        // Sync and verify that only student1's grade is sent.
+        ob_start();
+        $task->set_custom_data($resource);
+        $task->execute();
+        $ob = ob_get_contents();
+        ob_end_clean();
+        $expectedtraces = [
+            "Starting - LTI Advantage grade sync for shared resource '$resource->id' in course '$course->id'.",
+            "Skipping - Invalid grade for the user '$teacherid', for the resource '$resource->id' and the course ".
+                "'$course->id'.",
+            "Success - The grade '$expectedstudent1grade' for the user '$student1id', for the resource ".
+                "'$resource->id' and the course '$course->id' was sent.",
+            "Completed - Synced grades for tool '$resource->id' in the course '$course->id'. ".
+                "Processed 2 users; sent 1 grades."
+        ];
+        foreach ($expectedtraces as $expectedtrace) {
+            $this->assertStringContainsString($expectedtrace, $ob);
+        }
+    }
+
+    /**
      * Test the sync grades task during several runs and for a series of grade changes.
      *
      * @covers ::execute
