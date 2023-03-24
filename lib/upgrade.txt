@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.0.8 ===
+* Added 'extrainfo' in the DB options config. Its extra information for the DB driver, e.g. SQL Server,
+  has additional configuration according to its environment, which the administrator can specify to alter and
+  override any connection options.
+
 === 4.0.7 ===
 
 * The method `flexible_table::set_columnsattributes` now can be used with 'class' key to add custom classes to the DOM.
