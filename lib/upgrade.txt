@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+===3.9.21===
+* Added 'extrainfo' in the DB options config. Its extra information for the DB driver, e.g. SQL Server,
+  has additional configuration according to its environment, which the administrator can specify to alter and
+  override any connection options.
+
 ===3.9.12===
 * Two new helper functions have been added to lib/datalib.php, for safely preparing SQL ORDER BY statements where user
   interactions define sort parameters (see the respective docblocks for full details and examples):
