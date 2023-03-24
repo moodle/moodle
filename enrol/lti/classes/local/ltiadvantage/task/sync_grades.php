@@ -195,7 +195,8 @@ class sync_grades extends scheduled_task {
                         continue;
                     }
 
-                    if ($response['status'] == 200) {
+                    $successresponses = [200, 201, 202, 204];
+                    if (in_array($response['status'], $successresponses)) {
                         $user->set_lastgrade(grade_floatval($grade));
                         $syncedusergrades[$user->get_id()] = $user;
                         mtrace("Success - The grade '$floatgrade' $mtracecontent was sent.");
