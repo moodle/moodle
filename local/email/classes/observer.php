@@ -45,10 +45,10 @@ class observer {
         $templates = array_keys(local_email::get_templates());
 
         foreach ($langs as $lang) {
-            if ($DB->count_records('email_template', ['companyid' => $company->id, 'lang' => $lang]) != count($templates)) {
+            if ($DB->count_records('email_template', ['companyid' => $companyid, 'lang' => $lang]) != count($templates)) {
                 foreach ($templates as $template) {
                     $templaterec = (object) [];
-                    $templaterec->companyid = $company->id;
+                    $templaterec->companyid = $companyid;
                     $templaterec->name = $template;
                     $templaterec->lang = $lang;
                     $DB->execute("INSERT INTO {email_template} (companyid,name,lang)
