@@ -39,6 +39,7 @@ list($options, $unrecognized) = cli_get_params(
         'fixeddataset' => false,
         'filesizelimit' => false,
         'bypasscheck' => false,
+        'additionalmodules' => "",
         'quiet' => false
     ),
     array(
@@ -62,6 +63,8 @@ Options:
 --fixeddataset   Use a fixed data set instead of randomly generated data
 --filesizelimit  Limits the size of the generated files to the specified bytes
 --bypasscheck    Bypasses the developer-mode check (be careful!)
+--additionalmodules Additional modules to be created when creating a course: a comma separated modules names without the mod_prefix
+                    (like quiz, forum...)
 --quiet          Do not show any output
 
 -h, --help     Print out this help
@@ -100,7 +103,10 @@ if ($error = tool_generator_course_backend::check_shortname_available($shortname
 
 // Switch to admin user account.
 \core\session\manager::set_user(get_admin());
-
+$additionalmodulesarray = [];
+if (!empty($options['additionalmodules'])) {
+    $additionalmodulesarray = explode(',', trim($options['additionalmodules']));
+}
 // Do backend code to generate course.
 $backend = new tool_generator_course_backend(
     $shortname,
@@ -110,7 +116,8 @@ $backend = new tool_generator_course_backend(
     empty($options['quiet']),
     $fullname,
     $summary,
-    FORMAT_HTML
+    FORMAT_HTML,
+    $additionalmodulesarray
 );
 $id = $backend->make();
 

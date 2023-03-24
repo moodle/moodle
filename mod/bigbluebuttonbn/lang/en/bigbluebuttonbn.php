@@ -422,6 +422,7 @@ $string['mod_form_locksettings'] = 'Lock settings';
 $string['report_join_info']  = '{$a} meeting(s)';
 $string['report_play_recording_info']  = '{$a} recording(s) played';
 $string['report_room_view']  = 'viewed';
+$string['progress_createbigbluebuttonbn'] = 'Creating BigBlueButton activity ({$a})';
 $string['starts_at'] = 'Starts';
 $string['started_at'] = 'Started';
 $string['ends_at'] = 'Ends';
