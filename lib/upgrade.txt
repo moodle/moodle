@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.11.14 ===
+* Added 'extrainfo' in the DB options config. Its extra information for the DB driver, e.g. SQL Server,
+  has additional configuration according to its environment, which the administrator can specify to alter and
+  override any connection options.
+
 === 3.11.11 ===
 * New DML driver methods `$DB->sql_regex_get_word_beginning_boundary_marker` and `$DB->sql_regex_get_word_end_boundary_marker`
   for managing word boundary markers in a database driver supporting regex syntax when searching.
