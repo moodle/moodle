@@ -83,7 +83,6 @@ if (empty($templatesetid)) {
     }
 }
 
-echo "RECORD = <pre>";print_r($templaterecord);echo "</pre>";
 if (empty($templaterecord->subject)) {
     $templaterecord->subject = get_string($templatename . '_subject', 'local_email', $lang);
 }
