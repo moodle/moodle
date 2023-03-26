@@ -92,7 +92,7 @@ module.exports = grunt => {
      * @returns {Object} Reference to the spawned task
      */
     const cssBuild = () => spawnNodeCall([
-        'node_modules/.bin/sass',
+        'node_modules/sass/sass.js',
         '--style', 'expanded',
         '--source-map',
         '--embed-sources',
