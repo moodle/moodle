@@ -62,6 +62,18 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         )
     );
 
+    // Delete courses settings page.
+    $temp = new admin_settingpage('coursedeletionsettings', get_string('coursedeletionsettings', 'course'));
+    $temp->add(
+        new admin_setting_configcheckbox(
+            'moodlecourse/enablecourseasyncdeletion',
+            get_string('enablecourseasyncdeletion', 'course'),
+            get_string('enablecourseasyncdeletion_help', 'course'),
+            0
+        )
+    );
+    $ADMIN->add('courses', $temp);
+
     // Download course content.
     $downloadcoursedefaulturl = new moodle_url('/admin/settings.php', ['section' => 'coursesettings']);
     $temp = new admin_settingpage('downloadcoursecontent', new lang_string('downloadcoursecontent', 'course'));

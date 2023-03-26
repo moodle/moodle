@@ -2106,6 +2106,40 @@ class courselib_test extends advanced_testcase {
     }
 
     /**
+     * Test deleting a course asynchronously
+     * @covers \core_course delte_course()
+     */
+    public function test_delete_course_asynchronously() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Enable asynchroneous course deletion.
+        set_config('enablecourseasyncdeletion', 1, 'moodlecourse');
+
+        // Create a course to be deleted.
+        $dg = $this->getDataGenerator();
+        $c1 = $dg->create_course();
+
+        delete_course($c1->id);
+
+        // Check that the course is still present, but the course has to be marked as to be deleted.
+        $course = $DB->get_record('course', ['id' => $c1->id]);
+        $this->assertEquals(1, $course->tobedeleted);
+
+        // Run adhoc tasks.
+        // The task calls delete_course() which will trigger the course_deleted event and the course_content_deleted
+        // event. This function prints out data to the screen, which we do not want during a PHPUnit test,
+        // so use ob_start and ob_end_clean to prevent this.
+        ob_start();
+        $this->runAdhocTasks();
+        ob_end_clean();
+
+        // Checks if course is deleted.
+        $this->assertFalse($DB->get_record('course', ['id' => $c1->id]));
+    }
+
+    /**
      * Test that triggering a course_content_deleted event works as expected.
      */
     public function test_course_content_deleted_event(): void {

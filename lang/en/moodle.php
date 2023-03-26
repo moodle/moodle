@@ -532,6 +532,7 @@ $string['deletecoursecheck'] = 'Are you absolutely sure you want to completely d
 $string['deleted'] = 'Deleted';
 $string['deletedactivity'] = 'Deleted {$a}';
 $string['deletedcourse'] = '{$a} has been completely deleted';
+$string['deletedcourseasynchronous'] = 'The course {$a} will be deletd asynchronously';
 $string['deletednot'] = 'Could not delete {$a} !';
 $string['deletecheck'] = 'Delete {$a} ?';
 $string['deletechecktype'] = 'Are you sure that you want to delete this {$a->type}?';

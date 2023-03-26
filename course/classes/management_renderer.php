@@ -591,6 +591,9 @@ class core_course_management_renderer extends plugin_renderer_base {
     public function course_listitem(core_course_category $category, core_course_list_element $course, $selectedcourse) {
 
         $text = $course->get_formatted_name();
+        if ($course->tobedeleted == 1) {
+            $text = get_string('coursetobedeleted', 'course') . $text;
+        }
         $attributes = array(
                 'class' => 'listitem listitem-course list-group-item list-group-item-action',
                 'data-id' => $course->id,
@@ -1179,6 +1182,9 @@ class core_course_management_renderer extends plugin_renderer_base {
     public function search_listitem(core_course_list_element $course, $selectedcourse) {
 
         $text = $course->get_formatted_name();
+        if ($course->tobedeleted == 1) {
+            $text = get_string('coursetobedeleted', 'course') . $text;
+        }
         $attributes = array(
                 'class' => 'listitem listitem-course list-group-item list-group-item-action',
                 'data-id' => $course->id,
@@ -1235,6 +1241,12 @@ class core_course_management_renderer extends plugin_renderer_base {
             array('courseid' => $course->id, 'categoryid' => $course->category, 'sesskey' => sesskey())
         );
         $actions = array();
+
+        // If the course is marked for deletion. No more actions should be possible.
+        if ($course->tobedeleted) {
+            return '';
+        }
+
         // Edit.
         if ($course->can_access()) {
             if ($course->can_edit()) {

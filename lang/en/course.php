@@ -73,6 +73,9 @@ $string['coursecontentnotifupdate'] = '{$a->coursename} content change';
 $string['coursecontentnotifupdatebody'] = '<p>{$a->moduletypename} <a href="{$a->link}">{$a->modulename}</a> has been changed in the course <a href="{$a->courselink}">{$a->coursename}</a>.</p><p><a href="{$a->notificationpreferenceslink}">Change your notification preferences</a></p>';
 $string['coursecontentnotification_help'] = 'Tick the box to notify course participants about this new or changed activity or resource. Only users who can access the activity or resource will receive the notification.';
 $string['coursecount'] = 'Course count';
+$string['coursedeletionasynctask'] = "Task for asynchronous course deletion";
+$string['coursedeletionsettings'] = 'Delete Course';
+$string['coursetobedeleted'] = '<b>To be deleted ... </b>';
 $string['coursenotyetstarted'] = 'The course has not yet started';
 $string['coursenotyetfinished'] = 'The course has not yet finished';
 $string['courseparticipants'] = 'Course participants';
@@ -93,6 +96,8 @@ $string['downloadcontent'] = 'Include in course content download';
 $string['downloadcontent_help'] = 'Should this activity or resource be included in the zip file of course content available for download? File, Folder, Page and Label can be fully downloaded. For all other activities and resources, only the name and description are downloaded. This option requires download course content to be enabled in the course settings.
 
 The setting has no effect on mobile app content download for offline usage.';
+$string['enablecourseasyncdeletion'] = 'Delete courses asynchronously';
+$string['enablecourseasyncdeletion_help'] = 'Courses are deleted in the background. An adhoc task is triggered for this purpose. During the deletion process, the course is disabled and marked with "... will be deleted".';
 $string['enabledownloadcoursecontent'] = 'Enable download course content';
 $string['errorendbeforestart'] = 'The end date ({$a}) is before the course start date.';
 $string['favourite'] = 'Starred course';

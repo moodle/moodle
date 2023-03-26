@@ -4642,11 +4642,12 @@ function set_login_session_preferences() {
  *
  * @param mixed $courseorid The id of the course or course object to delete.
  * @param bool $showfeedback Whether to display notifications of each action the function performs.
+ * @param bool $forcedeletion Wheter the course deletion shoud be forced.
  * @return bool true if all the removals succeeded. false if there were any failures. If this
  *             method returns false, some of the removals will probably have succeeded, and others
  *             failed, but you have no way of knowing which.
  */
-function delete_course($courseorid, $showfeedback = true) {
+function delete_course($courseorid, $showfeedback = true, $forcedeletion = false) {
     global $DB, $CFG;
 
     if (is_object($courseorid)) {
@@ -4658,6 +4659,20 @@ function delete_course($courseorid, $showfeedback = true) {
             return false;
         }
     }
+
+    if (!empty(get_config('moodlecourse', 'enablecourseasyncdeletion')) && !$forcedeletion) {
+        // Marks a course as to be deleted.
+        \core_course\management\helper::action_course_mark_as_tobedeleted($course);
+
+        // Trigger an adhoc task to delete the course asynchronously .
+        $task = new \core_course\task\course_delete_asycn();
+        $task->set_custom_data(['courseid' => $courseid]);
+        \core\task\manager::queue_adhoc_task($task, true);
+
+        // Early exit, because the course will be deleted later.
+        return true;
+    }
+
     $context = context_course::instance($courseid);
 
     // Frontpage course can not be deleted!!

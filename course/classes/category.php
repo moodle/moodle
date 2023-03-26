@@ -1174,7 +1174,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
         $fields = array('c.id', 'c.category', 'c.sortorder',
                         'c.shortname', 'c.fullname', 'c.idnumber',
-                        'c.startdate', 'c.enddate', 'c.visible', 'c.cacherev');
+                        'c.startdate', 'c.enddate', 'c.visible', 'c.cacherev', 'c.tobedeleted');
         if (!empty($options['summary'])) {
             $fields[] = 'c.summary';
             $fields[] = 'c.summaryformat';

@@ -93,7 +93,7 @@ function xmldb_main_upgrade($oldversion) {
     // allowed version to upgrade from (v4.1.2 right now).
     if ($oldversion < 2022112802) {
         // Just in case somebody hacks upgrade scripts or env, we really can not continue.
-        echo("You need to upgrade to 4.1.2 or higher first!\n");
+        echo ("You need to upgrade to 4.1.2 or higher first!\n");
         exit(1);
         // Note this savepoint is 100% unreachable, but needed to pass the upgrade checks.
         upgrade_main_savepoint(true, 2022112802);
@@ -485,10 +485,10 @@ function xmldb_main_upgrade($oldversion) {
         // Update the old external tokens.
         $sql = 'UPDATE {external_tokens}
                    SET name = ' . $DB->sql_concat(
-                       // We only need the prefix, so leave the third param with an empty string.
-                        "'" . get_string('tokennameprefix', 'webservice', '') . "'",
-                        "id"
-                    );
+            // We only need the prefix, so leave the third param with an empty string.
+            "'" . get_string('tokennameprefix', 'webservice', '') . "'",
+            "id"
+        );
         $DB->execute($sql);
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2023062700.01);
@@ -565,7 +565,7 @@ function xmldb_main_upgrade($oldversion) {
         if (!empty($CFG->customfiletypes)) {
             if (array_key_exists('customfiletypes', $CFG->config_php_settings)) {
                 // It's set in config.php, so the MIME icons can't be upgraded automatically.
-                echo("\nYou need to manually check customfiletypes in config.php because some MIME icons have been removed!\n");
+                echo ("\nYou need to manually check customfiletypes in config.php because some MIME icons have been removed!\n");
             } else {
                 // It's a JSON string in the config table.
                 $custom = json_decode($CFG->customfiletypes);
@@ -606,7 +606,7 @@ function xmldb_main_upgrade($oldversion) {
         if (!empty($CFG->customfiletypes)) {
             if (array_key_exists('customfiletypes', $CFG->config_php_settings)) {
                 // It's set in config.php, so the MIME icons can't be upgraded automatically.
-                echo("\nYou need to manually check customfiletypes in config.php because some MIME icons have been removed!\n");
+                echo ("\nYou need to manually check customfiletypes in config.php because some MIME icons have been removed!\n");
             } else {
                 // It's a JSON string in the config table.
                 $custom = json_decode($CFG->customfiletypes);
@@ -825,7 +825,7 @@ function xmldb_main_upgrade($oldversion) {
             name: 'contextid',
             type: XMLDB_TYPE_INTEGER,
             precision: '10',
-            notnull:  XMLDB_NOTNULL,
+            notnull: XMLDB_NOTNULL,
         );
         $dbman->change_field_notnull($table, $field);
 
@@ -1105,7 +1105,6 @@ function xmldb_main_upgrade($oldversion) {
             // Main savepoint reached.
             upgrade_main_savepoint(true, 2024030500.01);
         }
-
     }
 
     if ($oldversion < 2024030500.02) {
@@ -1248,6 +1247,29 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         upgrade_main_savepoint(true, 2024082900.01);
+    }
+
+    if ($oldversion < 2024082900.02) {
+
+        // Define field tobedeleted to be added to course.
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('tobedeleted', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'pdfexportfont');
+
+        // Conditionally launch add field tobedeleted.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define index tobedeleted (not unique) to be added to course.
+        $index = new xmldb_index('tobedeleted', XMLDB_INDEX_NOTUNIQUE, ['tobedeleted']);
+
+        // Conditionally launch add index tobedeleted.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024082900.02);
     }
 
     return true;

@@ -51,6 +51,11 @@ class helper {
     protected static $expandedcategories = null;
 
     /**
+     * Course deletion state - to be deleted.
+     */
+    const COURSESTATETOBEDELETED = 1;
+
+    /**
      * Returns course details in an array ready to be printed.
      *
      * @global \moodle_database $DB
@@ -366,6 +371,12 @@ class helper {
             array('courseid' => $course->id, 'categoryid' => $course->category, 'sesskey' => \sesskey())
         );
         $actions = array();
+
+        // If the course is marked for deletion. No more actions should be possible.
+        if ($course->tobedeleted) {
+            return $actions;
+        }
+
         // Edit.
         if ($course->can_edit()) {
             $actions[] = array(
@@ -626,6 +637,21 @@ class helper {
         }
         $course = new \core_course_list_element($courserecordorid);
         return self::action_course_hide($course);
+    }
+
+    /**
+     * Marks a course as 'to be deleted' with an adhoc task and set him invisible.
+     * @param int|\stdClass $courserecordorid
+     */
+    public static function action_course_mark_as_tobedeleted($courserecordorid) {
+        global $DB;
+        if (is_int($courserecordorid)) {
+            $courserecordorid = get_course($courserecordorid);
+        }
+
+        $courserecordorid->visible = 0;
+        $courserecordorid->tobedeleted = self::COURSESTATETOBEDELETED;
+        return $DB->update_record('course', $courserecordorid);
     }
 
     /**
