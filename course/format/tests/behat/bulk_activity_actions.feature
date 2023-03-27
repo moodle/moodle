@@ -102,7 +102,7 @@ Feature: Bulk course activity actions.
     Given I click on "Select activity Activity sample 1" "checkbox"
     And I click on "Select activity Activity sample 3" "checkbox"
     And I should see "2 selected" in the "sticky-footer" "region"
-    When I click on "Duplicate" "button" in the "sticky-footer" "region"
+    When I click on "Duplicate activities" "button" in the "sticky-footer" "region"
     Then I should see "Activity sample 1" in the "Topic 1" "section"
     And I should see "Activity sample 1 (copy)" in the "Topic 1" "section"
     And "Activity sample 1 (copy)" "activity" should appear after "Activity sample 1" "activity"

@@ -38,6 +38,7 @@ $string['cmdelete_title'] = 'Delete activity?';
 $string['cmsdelete'] = 'Delete activities';
 $string['cmsdelete_info'] = 'This will delete {$a->count} activities and any user data they contain';
 $string['cmsdelete_title'] = 'Delete selected activities?';
+$string['cmsduplicate'] = 'Duplicate activities';
 $string['cmsmove'] = 'Move activities';
 $string['cmmove_title'] = 'Move activity';
 $string['cmmove_info'] = 'Move "{$a}" activity after';
