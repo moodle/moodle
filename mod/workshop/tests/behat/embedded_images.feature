@@ -24,9 +24,9 @@ Feature: Teachers can embed images into instructions and conclusion fields
       | workshop | C1     | Workshop with embedded images |
     And I am on the "Workshop with embedded images" "workshop activity editing" page logged in as admin
     And I set the following fields to these values:
-      | instructauthorseditor[format]   | 1 |
-      | instructreviewerseditor[format] | 1 |
-      | conclusioneditor[format]        | 1 |
+      | Instructions for submission format  | 1 |
+      | Instructions for assessment format  | 1 |
+      | Conclusion format                   | 1 |
     And I press "Save and display"
     And I log out
     And I log in as "teacher1"
