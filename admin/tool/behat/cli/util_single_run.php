@@ -52,7 +52,8 @@ list($options, $unrecognized) = cli_get_params(
         'updatesteps' => false,
         'optimize-runs' => '',
         'add-core-features-to-theme' => false,
-        'axe'         => false,
+        'axe'      => '',
+        'no-axe'      => false,
     ),
     array(
         'h' => 'help',
@@ -79,7 +80,7 @@ Options:
 --disable        Disables test environment
 --diag           Get behat test environment status code
 --updatesteps    Update feature step file.
---axe            Include axe accessibility tests
+--no-axe         Disable axe accessibility tests.
 
 -o, --optimize-runs Split features with specified tags in all parallel runs.
 -a, --add-core-features-to-theme Add all core features to specified theme's
@@ -186,8 +187,11 @@ if ($options['install']) {
         behat_config_manager::set_behat_run_config_value('behatsiteenabled', 1);
     }
 
-    // Define whether to run Behat with axe tests.
-    behat_config_manager::set_behat_run_config_value('axe', $options['axe']);
+    // Always run Behat with axe tests.
+    if (!$options['no-axe']) {
+        behat_config_manager::set_behat_run_config_value('axe', true);
+    }
+
 
     // Enable test mode.
     $timestart = microtime(true);
