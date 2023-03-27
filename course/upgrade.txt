@@ -10,6 +10,7 @@ information provided here is intended especially for developers.
 * The method `make_categories_options`, deprecated since 3.10, has been removed
 * External function core_course_external::get_courses_by_field and core_course_external::search_courses now return a field
 called "courseimage" containing a URL pointing to the course image.
+* External function core_course_external::get_course_contents() does not throw exceptions for invalid course formats anymore.
 
 === 4.1 ===
 * The function course_modchooser() has been finally deprecated and can not be used anymore. Please use

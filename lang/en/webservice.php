@@ -42,7 +42,6 @@ $string['arguments'] = 'Arguments';
 $string['authmethod'] = 'Authentication method';
 $string['callablefromajax'] = 'Callable from AJAX';
 $string['cannotcreatetoken'] = 'No permission to create web service token for the service {$a}.';
-$string['cannotgetcoursecontents'] = 'Cannot get course contents';
 $string['configwebserviceplugins'] = 'For security reasons, only protocols that are in use should be enabled.';
 $string['context'] = 'Context';
 $string['createservicedescription'] = 'A service is a set of web service functions. You will allow the user to access to a new service. On the <strong>Add service</strong> page check \'Enable\' and \'Authorised users\' options. Select \'No required capability\'.';
@@ -236,3 +235,4 @@ $string['usernameoridnousererror'] = 'No users were found with this username/use
 $string['usernameoridoccurenceerror'] = 'More than one user was found with this username. Please enter the user id.';
 // Deprecated since Moodle 4.2.
 $string['missingversionfile'] = 'Coding error: version.php file is missing for the component {$a}';
+$string['cannotgetcoursecontents'] = 'Cannot get course contents';

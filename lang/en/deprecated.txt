@@ -89,3 +89,4 @@ showcalculations_help,core_grades
 studentsperpage,core_grades
 studentsperpage_help,core_grades
 missingversionfile,core_webservice
+cannotgetcoursecontents,core_webservice

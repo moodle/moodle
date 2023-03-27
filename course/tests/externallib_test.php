@@ -1716,6 +1716,23 @@ class externallib_test extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_course_contents for courses with invalid course format.
+     */
+    public function test_get_course_contents_invalid_format() {
+        global $DB;
+        $this->resetAfterTest();
+
+        list($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm) = $this->prepare_get_course_contents_test();
+
+        $DB->set_field('course', 'format', 'fakeformat', ['id' => $course->id]);
+
+        // WS should falback to default course format (topics) and avoid exceptions (but debugging will happen).
+        $result = core_course_external::get_course_contents($course->id);
+        $this->assertDebuggingCalled();
+        $result = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $result);
+    }
+
+    /**
      * Test duplicate_course
      */
     public function test_duplicate_course() {
