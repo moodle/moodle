@@ -258,7 +258,7 @@ class quiz_attempt {
                     if (!empty($this->slots[$slot]->displaynumber) && !is_null($this->slots[$slot]->displaynumber)) {
                         $this->questionnumbers[$slot] = $this->slots[$slot]->displaynumber;
                     } else {
-                        $this->questionnumbers[$slot] = $number;
+                        $this->questionnumbers[$slot] = (string) $number;
                     }
                     $number += $length;
                 } else {
@@ -909,7 +909,7 @@ class quiz_attempt {
      * @return string the displayed question number for the question in this slot.
      *      For example '1', '2', '3' or 'i'.
      */
-    public function get_question_number($slot) {
+    public function get_question_number($slot): string {
         return $this->questionnumbers[$slot];
     }
 
