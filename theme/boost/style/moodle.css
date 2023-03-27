@@ -34989,8 +34989,17 @@ p.arrow_button {
 }
 .path-grade-report-grader .gradeparent th.header {
   position: sticky;
-  left: -3rem;
   z-index: 1;
+}
+@media (max-width: 767.98px) {
+  .path-grade-report-grader .gradeparent th.header {
+    left: 0;
+  }
+}
+@media (min-width: 768px) {
+  .path-grade-report-grader .gradeparent th.header {
+    left: -3rem;
+  }
 }
 .path-grade-report-grader .gradeparent td.noborder {
   border-right: transparent;

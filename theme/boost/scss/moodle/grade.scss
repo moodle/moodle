@@ -537,8 +537,13 @@
         }
 
         th.header {
+            @include media-breakpoint-down(sm) {
+                left: 0;
+            }
+            @include media-breakpoint-up(md) {
+                left: -3rem;
+            }
             position: sticky;
-            left: -3rem;
             z-index: 1;
         }
 
