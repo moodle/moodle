@@ -82,6 +82,7 @@ abstract class navigation_panel_base {
 
             $button = new navigation_question_button();
             $button->id          = 'quiznavbutton' . $slot;
+            $button->isrealquestion = $this->attemptobj->is_real_question($slot);
             $button->number      = $this->attemptobj->get_question_number($slot);
             $button->stateclass  = $qa->get_state_class($showcorrectness);
             $button->navmethod   = $this->attemptobj->get_navigation_method();

@@ -67,6 +67,24 @@ Feature: Editing question numbering of the existing questions already in a quiz
     And I should see "Question 3"
     And I should see "Question 4"
 
+  Scenario: Customised numbers are not used in shuffled sections, even if they exist in the database
+    Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
+    And I set the field "Shuffle" to "1"
+    When I am on the "Quiz 1" "mod_quiz > View" page
+    And I press "Preview quiz"
+    Then I should see "Section 1" in the "Quiz navigation" "block"
+    And I should see question "1" in section "Section 1" in the quiz navigation
+    And I should see question "2" in section "Section 1" in the quiz navigation
+    And I should see "Section 2" in the "Quiz navigation" "block"
+    And I should see question "3" in section "Section 2" in the quiz navigation
+    And I should see question "4" in section "Section 2" in the quiz navigation
+
+    And I should see "Question 1"
+    And I should see "Question 2"
+    And I press "Next page"
+    And I should see "Question 3"
+    And I should see "Question 4"
+
   Scenario: Showing long customised question numbers on quiz editing page and parcially hidden on question info and navigation.
     Given quiz "Quiz 2" contains the following questions:
       | question    | page | displaynumber    |

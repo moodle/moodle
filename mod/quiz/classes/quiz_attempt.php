@@ -255,7 +255,8 @@ class quiz_attempt {
             foreach ($slots as $slot) {
                 if ($length = $this->is_real_question($slot)) {
                     // Whether question numbering is customised or is numeric and automatically incremented.
-                    if (!empty($this->slots[$slot]->displaynumber) && !is_null($this->slots[$slot]->displaynumber)) {
+                    if ($this->slots[$slot]->displaynumber !== null && $this->slots[$slot]->displaynumber !== '' &&
+                            !$this->slots[$slot]->section->shufflequestions) {
                         $this->questionnumbers[$slot] = $this->slots[$slot]->displaynumber;
                     } else {
                         $this->questionnumbers[$slot] = (string) $number;
