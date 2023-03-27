@@ -1191,6 +1191,7 @@ class core_user_external extends external_api {
      * Copy files from a draft area to users private files area.
      *
      * @throws invalid_parameter_exception
+     * @throws moodle_exception
      * @param int $draftid Id of a draft area containing files.
      * @return array An array of warnings
      * @since Moodle 2.6
@@ -1213,6 +1214,15 @@ class core_user_external extends external_api {
         if (has_capability('moodle/user:ignoreuserquota', $context)) {
             $maxbytes = USER_CAN_IGNORE_FILE_SIZE_LIMITS;
             $maxareabytes = FILE_AREA_MAX_BYTES_UNLIMITED;
+        } else {
+            // Get current used space for this user.
+            $usedspace = file_get_user_used_space();
+            // Get the total size of the new files we want to add to private files.
+            $newfilesinfo = file_get_draft_area_info($params['draftid']);
+
+            if (($newfilesinfo['filesize_without_references'] + $usedspace) > $maxareabytes) {
+                throw new moodle_exception('maxareabytes');
+            }
         }
 
         $options = array('subdirs' => 1,

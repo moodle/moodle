@@ -1,5 +1,9 @@
 This files describes API changes for code that uses the user API.
 
+=== 4.0.8 ===
+
+* External function core_user_external::add_user_private_files() now returns moodle_exception when the user quota is exceeded
+
 === 4.0.7 ===
 
 * New method `core_user::is_current_user`, useful for components implementing permission callbacks for their preferences
