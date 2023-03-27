@@ -155,6 +155,24 @@ abstract class grade_report {
     protected $userwheresql_params = array();
 
     /**
+     * To store user data
+     * @var stdClass $user
+     */
+    public $user;
+
+    /**
+     * show course/category totals if they contain hidden items
+     * @var array $showtotalsifcontainhidden
+     */
+    public $showtotalsifcontainhidden = [];
+
+    /**
+     * To store a link to preferences page
+     * @var string $preferences_page
+     */
+    protected $preferences_page;
+
+    /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
      * @param object $gpr grade plugin return tracking object

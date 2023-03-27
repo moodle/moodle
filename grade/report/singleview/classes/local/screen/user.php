@@ -52,6 +52,9 @@ class user extends tablelike implements selectable_items {
     /** @var int $requirespaging Do we have more items than the paging limit? */
     private $requirespaging = true;
 
+    /** @var array get a valid user.  */
+    public $item = [];
+
     /**
      * Get the label for the select box that chooses items for this page.
      * @return string

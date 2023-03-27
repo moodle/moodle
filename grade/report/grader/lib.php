@@ -108,6 +108,9 @@ class grade_report_grader extends grade_report {
      */
     protected $overridecat;
 
+    /** @var array of objects, or empty array if no records were found. */
+    protected $users = [];
+
     /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
@@ -446,11 +449,11 @@ class grade_report_grader extends grade_report {
         if (empty($this->users)) {
             $this->userselect = '';
             $this->users = array();
-            $this->userselect_params = array();
+            $this->userselectparams = array();
         } else {
             list($usql, $uparams) = $DB->get_in_or_equal(array_keys($this->users), SQL_PARAMS_NAMED, 'usid0');
             $this->userselect = "AND g.userid $usql";
-            $this->userselect_params = $uparams;
+            $this->userselectparams = $uparams;
 
             // First flag everyone as not suspended.
             foreach ($this->users as $user) {
@@ -514,7 +517,7 @@ class grade_report_grader extends grade_report {
         }
 
         // please note that we must fetch all grade_grades fields if we want to construct grade_grade object from it!
-        $params = array_merge(array('courseid'=>$this->courseid), $this->userselect_params);
+        $params = array_merge(array('courseid'=>$this->courseid), $this->userselectparams);
         $sql = "SELECT g.*
                   FROM {grade_items} gi,
                        {grade_grades} g

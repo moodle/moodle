@@ -33,12 +33,6 @@ require_once($CFG->libdir.'/tablelib.php');
 class grade_report_overview extends grade_report {
 
     /**
-     * The user.
-     * @var object $user
-     */
-    public $user;
-
-    /**
      * The user's courses
      * @var array $courses
      */
@@ -55,11 +49,6 @@ class grade_report_overview extends grade_report {
      * @var array $showrank
      */
     public $showrank;
-
-    /**
-     * show course/category totals if they contain hidden items
-     */
-    var $showtotalsifcontainhidden;
 
     /**
      * An array of course ids that the user is a student in.
