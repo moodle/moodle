@@ -568,7 +568,7 @@ function scorm_parse_scorm(&$scorm, $manifest) {
     $scoes = scorm_get_manifest($manifests, $scoes);
     $newscoes = array();
     $sortorder = 0;
-    if (count($scoes->elements) > 0) {
+    if (!empty($scoes->elements) && is_iterable($scoes->elements)) {
         $olditems = $DB->get_records('scorm_scoes', array('scorm' => $scorm->id));
         foreach ($scoes->elements as $manifest => $organizations) {
             foreach ($organizations as $organization => $items) {
