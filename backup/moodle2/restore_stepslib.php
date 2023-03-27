@@ -6169,6 +6169,9 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     use restore_question_reference_data_trait;
     use restore_question_set_reference_data_trait;
 
+    /** @var \question_engine_attempt_upgrader manages upgrading all the question attempts. */
+    private $attemptupgrader;
+
     /**
      * Attach below $element (usually attempts) the needed restore_path_elements
      * to restore question attempt data from Moodle 2.0.

@@ -144,7 +144,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
         $fordb->status = BADGE_STATUS_INACTIVE;
         $fordb->nextcron = time();
 
-        $this->badgeid = $DB->insert_record('badge', $fordb, true);
+        $DB->insert_record('badge', $fordb, true);
         // Do a backup and restore.
         $newcourseid = $this->backup_and_restore($course);
         $newcourse = get_course($newcourseid);
