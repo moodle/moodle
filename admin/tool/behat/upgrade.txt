@@ -1,5 +1,7 @@
 This files describes API changes in the tool_behat code.
 
+=== 4.2.1 ===
+* Behat is initialised with Axe accessibility tests enabled by default, if you want to disable them please use the --no-axe option.
 === 3.7 ===
 * Behat will now look for behat step definitions in the current
   theme and any parents the theme may have.
