@@ -53,6 +53,16 @@ class behat_mod_bigbluebuttonbn extends behat_base {
     }
 
     /**
+     * Accept dpa and enable bigbluebuttonbn plugin.
+     *
+     * @When /^I accept dpa and enable bigbluebuttonbn plugin$/
+     */
+    public function i_accept_dpa_and_enable_bigbluebuttonbn_plugin(): void {
+        set_config('bigbluebuttonbn_default_dpa_accepted', true);
+        $this->execute('behat_general::i_enable_plugin', ['bigbluebuttonbn', 'mod']);
+    }
+
+    /**
      * Check that the TEST_MOD_BIGBLUEBUTTONBN_MOCK_SERVER is defined, so we can connect to the mock server.
      *
      * @Given /^a BigBlueButton mock server is configured$/
