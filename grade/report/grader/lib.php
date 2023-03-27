@@ -1679,6 +1679,8 @@ class grade_report_grader extends grade_report {
                 ($element['type'] == 'courseitem') ||
                 ($element['type'] == 'userfield')) {
 
+                $context->datatype = 'item';
+
                 if ($element['type'] == 'item') {
                     foreach ($this->get_report_links($this->context, $this->courseid, $element, $this->gpr, $mode)
                             as $count => $reportlink) {
@@ -1717,6 +1719,7 @@ class grade_report_grader extends grade_report {
                 if (isset($element['object']->id)) {
                     $sortlink->param('sortitemid', $element['object']->id);
                 } else if ($element['type'] == 'userfield') {
+                    $context->datatype = $element['name'];
                     $sortlink->param('sortitemid', $element['name']);
                 }
 
@@ -1734,6 +1737,8 @@ class grade_report_grader extends grade_report {
                 }
 
             } else if ($element['type'] == 'category') {
+                $context->datatype = 'category';
+
                 $categoryid = $element['object']->id;
 
                 // Load language strings.
@@ -1776,6 +1781,7 @@ class grade_report_grader extends grade_report {
                 $context->dataid = $element['name'];
             }
         } else if ($mode == 'user') {
+            $context->datatype = 'user';
             foreach ($this->get_report_links($this->context, $this->courseid, $element, $this->gpr, $mode)
                     as $count => $reportlink) {
                 $temp = 'reporturl' . $count;
