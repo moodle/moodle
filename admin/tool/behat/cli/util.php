@@ -57,7 +57,8 @@ list($options, $unrecognized) = cli_get_params(
         'torun'       => 0,
         'optimize-runs' => '',
         'add-core-features-to-theme' => false,
-        'axe'         => false,
+        'axe'      => '',
+        'no-axe'      => false,
     ),
     array(
         'h' => 'help',
@@ -73,7 +74,7 @@ $help = "
 Behat utilities to manage the test environment
 
 Usage:
-  php util.php [--install|--drop|--enable|--disable|--diag|--updatesteps|--axe|--help] [--parallel=value [--maxruns=value]]
+  php util.php [--install|--drop|--enable|--disable|--diag|--updatesteps|--no-axe|--help] [--parallel=value [--maxruns=value]]
 
 Options:
 --install      Installs the test environment for acceptance tests
@@ -82,7 +83,7 @@ Options:
 --disable      Disables test environment
 --diag         Get behat test environment status code
 --updatesteps  Update feature step file.
---axe          Include axe accessibility tests
+--no-axe       Disable axe accessibility tests.
 
 -j, --parallel Number of parallel behat run operation
 -m, --maxruns Max parallel processes to be executed at one time.
