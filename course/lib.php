@@ -2214,7 +2214,7 @@ function create_course($data, $editoroptions = NULL) {
     if ($editoroptions) {
         // summary text is updated later, we need context to store the files first
         $data->summary = '';
-        $data->summary_format = FORMAT_HTML;
+        $data->summary_format = $data->summary_editor['format'];
     }
 
     // Get default completion settings as a fallback in case the enablecompletion field is not set.
