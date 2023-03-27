@@ -241,9 +241,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I set the field "I agree to the This site policy" to "1"
     And I press "Next"
     And I log out
-    And I log in as "admin"
-    And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I follow "Manager"
+    And I am on the "manager" "user > profile" page logged in as "admin"
     And I follow "Log in as"
     And I press "Continue"
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
