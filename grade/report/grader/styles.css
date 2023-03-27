@@ -6,22 +6,6 @@
 }
 
 /**
- * Tooltip and overlay.
- */
-.path-grade-report-grader .gradeparent .grader-information-tooltip {
-    min-width: 200px;
-}
-
-.path-grade-report-grader .gradeparent .graderreportoverlay {
-    background-color: white;
-    width: auto;
-    padding: 10px;
-    font-size: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-/**
  * The table.
  */
 .path-grade-report-grader .gradeparent table {
@@ -218,22 +202,6 @@
 
 .path-grade-report-grader .dropdown-menu {
     width: max-content;
-}
-
-.path-grade-report-grader .yui3-overlay {
-    border: 0;
-    background: none;
-    background-color: inherit;
-    min-width: 200px;
-}
-
-.path-grade-report-grader .yui3-overlay {
-    background-color: white;
-    width: auto;
-    padding: 10px;
-    font-size: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
 }
 
 .path-grade-report-grader .initialsdropdown {
