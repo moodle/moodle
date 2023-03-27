@@ -93,8 +93,8 @@ Feature: Editing question numbering of the existing questions already in a quiz
     And I should see question "abcdefghijklmnop" in section "Section 2" in the quiz navigation
 
   Scenario: Shuffling questions within a section with customised question numbers.
-    Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
-    And I should see "Section 1"
+    When I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
+    Then I should see "Section 1"
     And I should see "i" on quiz page "1"
     And I should see "1.a" on quiz page "1"
     And I should see "1.b" on quiz page "1"
@@ -102,8 +102,7 @@ Feature: Editing question numbering of the existing questions already in a quiz
     And I should see "3" on quiz page "2"
     And I should see "4" on quiz page "2"
 
-    When I set the field "Shuffle" to "1"
-    And I reload the page
+    And I set the field "Shuffle" to "1"
     And I should see "Section 1"
     And I should see "i" on quiz page "1"
     And I should see "1" on quiz page "1"
@@ -111,9 +110,9 @@ Feature: Editing question numbering of the existing questions already in a quiz
     And I should see "Section 2"
     And I should see "3" on quiz page "2"
     And I should see "4" on quiz page "2"
-
-    When I set the field "Shuffle" to "0"
     And I reload the page
+
+    And I set the field "Shuffle" to "0"
     And I should see "Section 1"
     And I should see "i" on quiz page "1"
     And I should see "1.a" on quiz page "1"
