@@ -17,6 +17,7 @@
 namespace mod_quiz;
 
 use context_module;
+use core\output\inplace_editable;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\qubaids_for_quiz;
 use stdClass;
@@ -179,22 +180,18 @@ class structure {
      * @return \core\output\inplace_editable
      */
     public function make_slot_display_number_in_place_editable(int $slotid, \context $context): \core\output\inplace_editable {
-        // Check permission of the user to update this item (customise question number).
+        $slot = $this->get_slot_by_id($slotid);
         $editable = has_capability('mod/quiz:manage', $context);
 
-        $this->populate_structure();
-        $slot = $this->get_slot_by_id($slotid);
-
-        // Whether the displaynumber field in quiz_slots table is set and it is not empty or null.
+        // Get the current value.
         if ($this->is_display_number_customised($slotid)) {
-            $displayvalue = format_string($slot->displaynumber);
             $value = $slot->displaynumber;
         } else {
-            $displayednumber = $this->get_displayed_number_for_slot($slot->slot);
-            $displayvalue = format_string($displayednumber);
-            $value = $displayednumber;
+            $value = $this->get_displayed_number_for_slot($slot->slot);
         }
-        return new \core\output\inplace_editable('mod_quiz', 'slotdisplaynumber', $slotid,
+        $displayvalue = s($value);
+
+        return new inplace_editable('mod_quiz', 'slotdisplaynumber', $slotid,
                 $editable, $displayvalue, $value,
                 get_string('edit_slotdisplaynumber_hint', 'mod_quiz'),
                 get_string('edit_slotdisplaynumber_label', 'mod_quiz', $displayvalue));
