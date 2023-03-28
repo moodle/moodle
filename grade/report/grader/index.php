@@ -43,6 +43,8 @@ $toggle_type   = optional_param('toggle_type', 0, PARAM_ALPHANUM);
 $graderreportsifirst  = optional_param('sifirst', null, PARAM_NOTAGS);
 $graderreportsilast   = optional_param('silast', null, PARAM_NOTAGS);
 
+$studentsperpage = optional_param('perpage', null, PARAM_INT);
+
 $PAGE->set_url(new moodle_url('/grade/report/grader/index.php', array('id'=>$courseid)));
 $PAGE->set_pagelayout('report');
 $PAGE->requires->js_call_amd('gradereport_grader/stickycolspan', 'init');
@@ -60,6 +62,10 @@ if (isset($graderreportsifirst)) {
 }
 if (isset($graderreportsilast)) {
     $SESSION->gradereport["filtersurname-{$context->id}"] = $graderreportsilast;
+}
+
+if (isset($studentsperpage) && $studentsperpage >= 0) {
+    set_user_preference('grade_report_studentsperpage', $studentsperpage);
 }
 
 require_capability('gradereport/grader:view', $context);
@@ -144,18 +150,52 @@ foreach ($warnings as $warning) {
     echo $OUTPUT->notification($warning);
 }
 
-$studentsperpage = $report->get_students_per_page();
-// Don't use paging if studentsperpage is empty or 0 at course AND site levels
-if (!empty($studentsperpage)) {
-    echo $OUTPUT->paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
-}
-
 $displayaverages = true;
 if ($numusers == 0) {
     $displayaverages = false;
 }
 
 $reporthtml = $report->get_grade_table($displayaverages);
+
+$studentsperpage = $report->get_students_per_page();
+
+// Print per-page dropdown.
+$pagingoptions = grade_report_grader::PAGINATION_OPTIONS;
+if ($studentsperpage) {
+    $pagingoptions[] = $studentsperpage; // To make sure the current preference is within the options.
+}
+$pagingoptions = array_unique($pagingoptions);
+sort($pagingoptions);
+$pagingoptions = array_combine($pagingoptions, $pagingoptions);
+if ($numusers > grade_report_grader::MAX_STUDENTS_PER_PAGE) {
+    $pagingoptions['0'] = grade_report_grader::MAX_STUDENTS_PER_PAGE;
+} else {
+    $pagingoptions['0'] = get_string('all');
+}
+
+$perpagedata = [
+    'baseurl' => new moodle_url('/grade/report/grader/index.php', ['id' => s($courseid), 'report' => 'grader']),
+    'options' => []
+];
+foreach ($pagingoptions as $key => $name) {
+    $perpagedata['options'][] = [
+        'name' => $name,
+        'value' => $key,
+        'selected' => $key == $studentsperpage,
+    ];
+}
+
+$footercontent = html_writer::div(
+    $OUTPUT->render_from_template('gradereport_grader/perpage', $perpagedata)
+    , 'col-auto'
+);
+
+// The number of students per page is always limited even if it is claimed to be unlimited.
+$studentsperpage = $studentsperpage ?: grade_report_grader::MAX_STUDENTS_PER_PAGE;
+$footercontent .= html_writer::div(
+    $OUTPUT->paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl),
+    'col'
+);
 
 // print submit button
 if (!empty($USER->editing) && $report->get_pref('quickgrading')) {
@@ -168,16 +208,21 @@ if (!empty($USER->editing) && $report->get_pref('quickgrading')) {
     echo '<input type="hidden" value="'.$page.'" name="page"/>';
     echo $gpr->get_form_fields();
     echo $reporthtml;
-    echo '<div class="submit"><input type="submit" id="gradersubmit" class="btn btn-primary"
-        value="'.s(get_string('savechanges')).'" /></div>';
+
+    $footercontent .= html_writer::div(
+        '<input type="submit" id="gradersubmit" class="btn btn-primary" value="'.s(get_string('savechanges')).'" />',
+        'col-auto'
+    );
+
+    $stickyfooter = new core\output\sticky_footer($footercontent);
+    echo $OUTPUT->render($stickyfooter);
+
     echo '</div></form>';
 } else {
     echo $reporthtml;
-}
 
-// prints paging bar at bottom for large pages
-if (!empty($studentsperpage) && $studentsperpage >= 20) {
-    echo $OUTPUT->paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
+    $stickyfooter = new core\output\sticky_footer($footercontent);
+    echo $OUTPUT->render($stickyfooter);
 }
 
 $event = \gradereport_grader\event\grade_report_viewed::create(
