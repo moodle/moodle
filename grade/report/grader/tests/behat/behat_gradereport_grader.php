@@ -242,4 +242,16 @@ class behat_gradereport_grader extends behat_base {
         return "//table[@id='user-grades']//*[@data-id='" . $userid . "']";
     }
 
+    /**
+     * Clicks on given user profile field menu.
+     *
+     * @Given /^I click on user profile field menu "([^"]*)"$/
+     * @param string $field
+     */
+    public function i_click_on_user_profile_field_menu(string $field) {
+
+        $xpath = "//table[@id='user-grades']//*[@data-id='" . $field . "']";
+        $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
+    }
+
 }

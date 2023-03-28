@@ -2215,7 +2215,7 @@ class grade_structure {
      */
     public function get_locking_link(array $element, object $gpr, array $langstrings): ?string {
 
-        if (has_capability('moodle/grade:manage', $this->context)) {
+        if (has_capability('moodle/grade:manage', $this->context) && isset($element['object'])) {
             $title = '';
             $url = new moodle_url('/grade/edit/tree/action.php',
                 ['id' => $this->courseid, 'sesskey' => sesskey(), 'eid' => $element['eid']]);
@@ -2311,7 +2311,7 @@ class grade_structure {
     public function get_edit_calculation_link(array $element, object $gpr,
             string $editcalculationstrings): ?string {
 
-        if (has_capability('moodle/grade:manage', $this->context)) {
+        if (has_capability('moodle/grade:manage', $this->context) && isset($element['object'])) {
             $object = $element['object'];
             $isscale = $object->gradetype == GRADE_TYPE_SCALE;
             $isvalue = $object->gradetype == GRADE_TYPE_VALUE;
@@ -2345,6 +2345,24 @@ class grade_structure {
         return html_writer::link($urlnew, $title,
             ['class' => 'dropdown-item', 'aria-label' => $title, 'aria-current' => $active, 'role' => 'menuitem']);
     }
+
+    /**
+     * Returns link to sort grade item column
+     *
+     * @param moodle_url $sortlink A base link for sorting
+     * @param object $gpr A grade_plugin_return object
+     * @param string $title Language string
+     * @param string $direction Direction od sorting
+     * @return string
+     */
+    public function get_sorting_link(moodle_url $sortlink, object $gpr, string $title, string $direction = 'asc'): string {
+
+        $sortlink->param('sort', $direction);
+        $gpr->add_url_params($sortlink);
+        return html_writer::link($sortlink, $title,
+            ['class' => 'dropdown-item', 'aria-label' => $title, 'role' => 'menuitem']);
+    }
+
 }
 
 /**

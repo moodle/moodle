@@ -27,6 +27,7 @@ const SELECTORS = {
     TABLEHEADER: 'th.header',
     BEHAT: 'body.behat-site',
     AVERAGEROW: 'tr.lastrow',
+    TABLEHEADING: 'tr.heading',
 };
 
 /**
@@ -42,18 +43,23 @@ export const init = () => {
     const rightOffset = getComputedStyle(studentHeader).getPropertyValue('right');
 
     const tableHeaders = grader.querySelectorAll(SELECTORS.TABLEHEADER);
-
-    for (let i = 0; i < tableHeaders.length; i++) {
-        if (tableHeaders[i].colSpan > 1) {
-            const addOffset = (tableHeaders[i].offsetWidth - studentHeader.offsetWidth);
+    let i = 0;
+    tableHeaders.forEach((tableHeader) => {
+        if (tableHeader.colSpan > 1) {
+            const addOffset = (tableHeader.offsetWidth - studentHeader.offsetWidth);
             if (window.right_to_left()) {
-                tableHeaders[i].style.right = 'calc(' + rightOffset + ' - ' + addOffset + 'px )';
+                tableHeader.style.right = 'calc(' + rightOffset + ' - ' + addOffset + 'px )';
             } else {
-                tableHeaders[i].style.left = 'calc(' + leftOffset + ' - ' + addOffset + 'px )';
+                tableHeader.style.left = 'calc(' + leftOffset + ' - ' + addOffset + 'px )';
             }
         } else {
-            tableHeaders[i].style.zIndex = tableHeaders.length - i;
+            tableHeader.style.zIndex = tableHeaders.length - i;
         }
-    }
+        i++;
+    });
+
+    let tableHeader = grader.querySelector(SELECTORS.TABLEHEADING);
+    tableHeader.style.zIndex = tableHeaders.length + 1;
+
 
 };

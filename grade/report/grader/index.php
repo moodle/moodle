@@ -33,6 +33,7 @@ $page          = optional_param('page', 0, PARAM_INT);   // active page
 $edit          = optional_param('edit', -1, PARAM_BOOL); // sticky editting mode
 
 $sortitemid    = optional_param('sortitemid', 0, PARAM_ALPHANUMEXT);
+$sort          = optional_param('sort', '', PARAM_TEXT);
 $action        = optional_param('action', 0, PARAM_ALPHAEXT);
 $move          = optional_param('move', 0, PARAM_INT);
 $type          = optional_param('type', 0, PARAM_ALPHA);
@@ -120,7 +121,10 @@ grade_regrade_final_grades_if_required($course);
 
 //Initialise the grader report object that produces the table
 //the class grade_report_grader_ajax was removed as part of MDL-21562
-$report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
+if ($sort) {
+    $sort = strtoupper($sort);
+}
+$report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid, $sort);
 $numusers = $report->get_numusers(true, true);
 
 $actionbar = new \gradereport_grader\output\action_bar($context, $report, $numusers);
