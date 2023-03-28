@@ -796,9 +796,8 @@ class edit_renderer extends \plugin_renderer_base {
         $questionslot = $structure->get_displayed_number_for_slot($slot);
         $checkbox = new \core\output\checkbox_toggleall($this->togglegroup, false,
             [
-                'id' => 'selectquestion-' . $questionslot,
+                'id' => 'selectquestion-' . $slot,
                 'name' => 'selectquestion[]',
-                'value' => $questionslot,
                 'classes' => 'select-multiple-checkbox',
                 'label' => get_string('selectquestionslot', 'quiz', $questionslot),
                 'labelclasses' => 'sr-only',
