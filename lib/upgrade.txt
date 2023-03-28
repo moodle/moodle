@@ -5,6 +5,17 @@ information provided here is intended especially for developers.
 * Added 'extrainfo' in the DB options config. Its extra information for the DB driver, e.g. SQL Server,
   has additional configuration according to its environment, which the administrator can specify to alter and
   override any connection options.
+* New \core_component::has_monologo_icon() that determines whether a plugin has monologo icons. This can be used to
+  determine whether to apply CSS filtering to the plugin's icon when rendering it.
+* \cm_info::get_icon_url() resolves the icon's file type and adds a `filtericon` parameter in the URL when rendering the monologo
+  version of the course module icon or when the plugin declares, via its `filtericon` custom data, that the icon needs to be
+  filtered. This additional information can be used by plugins when rendering the module icon to determine whether to apply
+  CSS filtering to the icon.
+* Activity plugins displaying activity module icons using \cm_info::get_icon_url() can declare the `filtericon` custom data in their
+  `get_coursemodule_info()` callback. If set, this will be used by \cm_info::get_icon_url() to set the icon URL's `filtericon`
+  parameter. This information can be used by the plugins when enclosing the icons in `.activityiconcontainer .icon` or
+  `.activityiconcontainer .activityicon` containers to determine whether CSS filtering should be applied to the icon. If the icon
+  needs to be rendered as is and not whitened out, the `.nofilter` CSS class needs to be applied to the icon.
 
 === 4.1.2 ===
 

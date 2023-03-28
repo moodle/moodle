@@ -151,7 +151,9 @@ $iconsizes: map-merge((
         background-color: $value;
         .activityicon,
         .icon {
-            filter: brightness(0) invert(1);
+            &:not(.nofilter) {
+                filter: brightness(0) invert(1);
+            }
         }
     }
 }
