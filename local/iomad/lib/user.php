@@ -442,7 +442,7 @@ class company_user {
         } else {
             foreach ($courseids as $courseid) {
                 // Skip if course is licensed.
-                if ($DB->get_record('iomad_courses', array('courseid' => $user->courseid, 'licensed' => true))) {
+                if ($DB->get_record('iomad_courses', array('courseid' => $courseid, 'licensed' => true))) {
                     continue;
                 }
                 $roles = get_user_roles(context_course::instance($courseid), $user->id, false);
