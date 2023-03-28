@@ -221,7 +221,7 @@ class cron_task extends \core\task\scheduled_task {
         global $DB;
 
         if (empty($discussionids)) {
-            $this->discussion = [];
+            $this->discussions = [];
         } else {
 
             $requiredfields = [
