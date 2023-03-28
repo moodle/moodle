@@ -161,8 +161,13 @@ class core_renderer extends \core_renderer {
                 $heading = format_string($this->page->course->fullname, true, ['context' => $context]);
             } else {
                 $heading = $this->page->cm->get_formatted_name();
-                $imagedata = html_writer::img($this->page->cm->get_icon_url()->out(false), '',
-                    ['class' => 'icon activityicon', 'aria-hidden' => 'true']);
+                $iconurl = $this->page->cm->get_icon_url();
+                $iconclass = $iconurl->get_param('filtericon') ? '' : 'nofilter';
+                $iconattrs = [
+                    'class' => "icon activityicon $iconclass",
+                    'aria-hidden' => 'true'
+                ];
+                $imagedata = html_writer::img($iconurl->out(false), '', $iconattrs);
                 $purposeclass = plugin_supports('mod', $this->page->activityname, FEATURE_MOD_PURPOSE);
                 $purposeclass .= ' activityiconcontainer';
                 $purposeclass .= ' modicon_' . $this->page->activityname;
