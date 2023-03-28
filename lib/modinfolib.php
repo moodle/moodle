@@ -1830,7 +1830,8 @@ class cm_info implements IteratorAggregate {
         // Determine whether the icon will be filtered in the CSS.
         // This can be controlled by the module by declaring a 'filtericon' custom data.
         // If the 'filtericon' custom data is not set, icon filtering will be determined whether the module has a `monologo` icon.
-        $filtericon = $this->customdata['filtericon'] ?? $ismonologo;
+        // Additionally, we need to cast custom data to array as some modules may treat it as an object.
+        $filtericon = ((array)$this->customdata)['filtericon'] ?? $ismonologo;
         if ($filtericon) {
             $icon->param('filtericon', 1);
         }
