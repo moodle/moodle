@@ -1704,9 +1704,13 @@ class grade_structure {
      *
      * @param grade_grade $grade
      * @return string
+     * @deprecated since Moodle 4.2 - The row is not shown anymore - we have actions menu.
+     * @todo MDL-77307 This will be deleted in Moodle 4.6.
      */
     public function get_grade_analysis_icon(grade_grade $grade) {
         global $OUTPUT;
+        debugging('The function get_grade_analysis_icon() is deprecated, please do not use it anymore.',
+            DEBUG_DEVELOPER);
 
         $url = $this->get_grade_analysis_url($grade);
         if (is_null($url)) {
@@ -1831,9 +1835,13 @@ class grade_structure {
      * @param object $gpr A grade_plugin_return object
      * @param bool $returnactionmenulink return the instance of action_menu_link instead of string
      * @return string|action_menu_link
+     * @deprecated since Moodle 4.2 - The row is not shown anymore - we have actions menu.
+     * @todo MDL-77307 This will be deleted in Moodle 4.6.
      */
     public function get_reset_icon($element, $gpr, $returnactionmenulink = false) {
         global $CFG, $OUTPUT;
+        debugging('The function get_reset_icon() is deprecated, please do not use it anymore.',
+            DEBUG_DEVELOPER);
 
         // Limit to category items set to use the natural weights aggregation method, and users
         // with the capability to manage grades.
@@ -1940,9 +1948,14 @@ class grade_structure {
      * @param object $gpr A grade_plugin_return object
      * @param bool $returnactionmenulink return the instance of action_menu_link instead of string
      * @return string|action_menu_link
+     * @deprecated since Moodle 4.2 - The row is not shown anymore - we have actions menu.
+     * @todo MDL-77307 This will be deleted in Moodle 4.6.
      */
     public function get_edit_icon($element, $gpr, $returnactionmenulink = false) {
         global $CFG, $OUTPUT;
+
+        debugging('The function get_edit_icon() is deprecated, please do not use it anymore.',
+            DEBUG_DEVELOPER);
 
         if (!has_capability('moodle/grade:manage', $this->context)) {
             if ($element['type'] == 'grade' and has_capability('moodle/grade:edit', $this->context)) {
@@ -2127,9 +2140,13 @@ class grade_structure {
      * @param object $gpr A grade_plugin_return object
      * @param bool $returnactionmenulink return the instance of action_menu_link instead of string
      * @return string|action_menu_link
+     * @deprecated since Moodle 4.2 - The row is not shown anymore - we have actions menu.
+     * @todo MDL-77307 This will be deleted in Moodle 4.6.
      */
     public function get_hiding_icon($element, $gpr, $returnactionmenulink = false) {
         global $CFG, $OUTPUT;
+        debugging('The function get_hiding_icon() is deprecated, please do not use it anymore.',
+            DEBUG_DEVELOPER);
 
         if (!$element['object']->can_control_visibility()) {
             return $returnactionmenulink ? null : '';
@@ -2227,9 +2244,13 @@ class grade_structure {
      * @param object $gpr A grade_plugin_return object
      *
      * @return string
+     * @deprecated since Moodle 4.2 - The row is not shown anymore - we have actions menu.
+     * @todo MDL-77307 This will be deleted in Moodle 4.6.
      */
     public function get_locking_icon($element, $gpr) {
         global $CFG, $OUTPUT;
+        debugging('The function get_locking_icon() is deprecated, please do not use it anymore.',
+            DEBUG_DEVELOPER);
 
         $strparams = $this->get_params_for_iconstr($element);
         $strunlock = get_string('unlockverbose', 'grades', $strparams);
@@ -2331,9 +2352,14 @@ class grade_structure {
      * @param object $gpr A grade_plugin_return object
      * @param bool $returnactionmenulink return the instance of action_menu_link instead of string
      * @return string|action_menu_link
+     * @deprecated since Moodle 4.2 - The row is not shown anymore - we have actions menu.
+     * @todo MDL-77307 This will be deleted in Moodle 4.6.
      */
     public function get_calculation_icon($element, $gpr, $returnactionmenulink = false) {
         global $CFG, $OUTPUT;
+        debugging('The function get_calculation_icon() is deprecated, please do not use it anymore.',
+            DEBUG_DEVELOPER);
+
         if (!has_capability('moodle/grade:manage', $this->context)) {
             return $returnactionmenulink ? null : '';
         }
