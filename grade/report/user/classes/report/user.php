@@ -37,12 +37,6 @@ require_once($CFG->dirroot.'/grade/report/lib.php');
 class user extends grade_report {
 
     /**
-     * The user.
-     * @var object $user
-     */
-    public $user;
-
-    /**
      * A flexitable to hold the data.
      * @var object $table
      */
@@ -174,10 +168,6 @@ class user extends grade_report {
      * @var void
      */
     public $showhiddenitems;
-    /**
-     * @var array
-     */
-    public $showtotalsifcontainhidden;
 
     /**
      * @var string

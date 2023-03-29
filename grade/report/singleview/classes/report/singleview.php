@@ -40,6 +40,9 @@ class singleview extends grade_report {
     /** @var string|null $itemselector The raw HTML of the item selector based on the selected single view item type. */
     public ?string $itemselector = null;
 
+    /** @var \gradereport_singleview\local\screen\screen screen type. */
+    public $screen;
+
     /**
      * Return the list of valid screens, used to validate the input.
      *

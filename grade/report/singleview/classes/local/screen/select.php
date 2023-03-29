@@ -38,6 +38,9 @@ defined('MOODLE_INTERNAL') || die;
  */
 class select extends screen {
 
+    /** @var \stdClass course data. */
+    public $item;
+
     /**
      * Initialise this screen
      *
