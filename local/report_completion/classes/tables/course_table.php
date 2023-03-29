@@ -243,8 +243,7 @@ class course_table extends table_sql {
                                                       AND lit.licenseallocated IS NOT NULL
                                                       AND lit.timeenrolled IS NULL
                                                       $datesql
-                                                      $suspendedsql
-                                                      $departmentsql",
+                                                      $suspendedsql",
                                                       $sqlparams);
 
             // Count the used licenses.
@@ -1466,7 +1465,7 @@ class course_table extends table_sql {
 
             // Deal with any search dates.
             $datesql = "";
-            $sqlparams = array('companyid' => $company->id, 'courseid' => $row->id);
+            $sqlparams = array('courseid' => $row->id);
             if (!empty($params['from'])) {
                 $datesql = " AND (lit.timeenrolled > :enrolledfrom OR lit.timecompleted > :completedfrom ) ";
                 $sqlparams['enrolledfrom'] = $params['from'];
