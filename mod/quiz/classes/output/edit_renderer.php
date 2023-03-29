@@ -25,6 +25,7 @@
 namespace mod_quiz\output;
 defined('MOODLE_INTERNAL') || die();
 
+use core_question\local\bank\question_version_status;
 use mod_quiz\question\bank\qbank_helper;
 use \mod_quiz\structure;
 use \html_writer;
@@ -758,7 +759,8 @@ class edit_renderer extends \plugin_renderer_base {
             'questionname' => $this->get_question_name_for_slot($structure, $slot, $pageurl),
             'questionicons' => $this->get_action_icon($structure, $slot, $pageurl),
             'questiondependencyicon' => ($structure->can_be_edited() ? $this->question_dependency_icon($structure, $slot) : ''),
-            'versionselection' => false
+            'versionselection' => false,
+            'draftversion' => $structure->get_question_in_slot($slot)->status == question_version_status::QUESTION_STATUS_DRAFT,
         ];
 
         $data['versionoptions'] = [];

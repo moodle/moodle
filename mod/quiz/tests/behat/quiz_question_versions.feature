@@ -111,3 +111,13 @@ Feature: Quiz question versioning
     And I press "Add selected questions to the quiz"
     Then I should see "Other question" on quiz page "1"
     And the field "version" in the "Other question" "list_item" matches value "Always latest"
+
+  @javascript
+  Scenario: Adding a question where all available versions are drafts should display a helpful message.
+    Given quiz "Quiz 1" contains the following questions:
+      | question       | page |
+      | First question | 1    |
+    And I am on the "Quiz 1" "mod_quiz > Question bank" page logged in as teacher
+    And I set the field "question_status_dropdown" in the "First question" "table_row" to "Draft"
+    When I am on the "Quiz 1" "mod_quiz > Edit" page
+    Then I should see "This question has all versions in Draft status. The quiz will not work with this question in place."
