@@ -59,12 +59,18 @@ function xmldb_gradereport_grader_upgrade(int $oldversion): bool {
         unset_config('grade_report_showcalculations');
 
         // Main savepoint reached.
-        upgrade_plugin_savepoint(true, 2023032100, 'grade', 'gradereport_grader');
+        upgrade_plugin_savepoint(true, 2023032100, 'gradereport', 'grader');
     }
 
     if ($oldversion < 2023032700) {
         unset_config('grade_report_studentsperpage');
         upgrade_plugin_savepoint(true, 2023032700, 'gradereport', 'grader');
+    }
+
+    if ($oldversion < 2023032800) {
+        // Remove plugin entry created by previously incorrect 2023032100 savepoint.
+        $DB->delete_records('config_plugins', ['plugin' => 'grade_gradereport_grader']);
+        upgrade_plugin_savepoint(true, 2023032800, 'gradereport', 'grader');
     }
 
     return true;
