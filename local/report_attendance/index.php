@@ -181,7 +181,7 @@ if (!empty($courseid)) {
         $locationinfo = "$location->name, $location->address, $location->city,";
         $locationinfo .= " $location->country, $location->postcode";
         echo "\"$event->name, $locationinfo\"\n";
-        echo "\"".get_string('fullname')."\",\"". get_string('email')."\"\n";
+        echo "\"".get_string('fullname')."\",\"".get_string('department', 'block_iomad_company_admin')."\",\"". get_string('email')."\"\n";
         if ($users = $DB->get_records_sql('SELECT userid AS id FROM {trainingevent_users}
                                            WHERE trainingeventid='.$event->id.'
                                            AND userid IN ('.$allowedlist.') AND waitlisted=0')) {
