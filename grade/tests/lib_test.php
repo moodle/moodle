@@ -711,4 +711,67 @@ class lib_test extends \advanced_testcase {
         $this->assertArrayHasKey('assign', $gradeitems2);
         $this->assertArrayHasKey('manual', $gradeitems2);
     }
+
+    /**
+     * Test get_gradable_users() function.
+     *
+     * @covers ::get_gradable_users
+     */
+    public function test_get_gradable_users() {
+        global $DB;
+
+        $this->setAdminUser();
+        $this->resetAfterTest(true);
+
+        $roleteacher = $DB->get_record('role', ['shortname' => 'teacher'], '*', MUST_EXIST);
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = \context_course::instance($course->id);
+        // Create groups.
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        // Create and enrol a teacher and some students into the course.
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student3 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        // Add student1 and student2 to group1.
+        $this->getDataGenerator()->create_group_member(['groupid' => $group1->id, 'userid' => $student1->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group1->id, 'userid' => $student2->id]);
+        // Add student3 to group2.
+        $this->getDataGenerator()->create_group_member(['groupid' => $group2->id, 'userid' => $student3->id]);
+
+        // Perform a regrade before creating the report.
+        grade_regrade_final_grades($course->id);
+        // Should return all gradable users (only students).
+        $gradableusers = get_gradable_users($course->id);
+        $this->assertEqualsCanonicalizing([$student1->id, $student2->id, $student3->id], array_keys($gradableusers));
+
+        // Now, let's suspend the enrolment of student2.
+        $this->getDataGenerator()->enrol_user($student2->id, $course->id, 'student', 'manual', 0, 0, ENROL_USER_SUSPENDED);
+        // Should return only the active gradable users (student1 and student3).
+        $gradableusers = get_gradable_users($course->id);
+        $this->assertEqualsCanonicalizing([$student1->id, $student3->id], array_keys($gradableusers));
+
+        // Give teacher 'viewsuspendedusers' capability and set a preference to display suspended users.
+        assign_capability('moodle/course:viewsuspendedusers', CAP_ALLOW, $roleteacher->id, $coursecontext, true);
+        set_user_preference('grade_report_showonlyactiveenrol', false, $teacher);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->setUser($teacher);
+        // Should return all gradable users (including suspended enrolments).
+        $gradableusers = get_gradable_users($course->id);
+        $this->assertEqualsCanonicalizing([$student1->id, $student2->id, $student3->id], array_keys($gradableusers));
+
+        // Reactivate the course enrolment of student2.
+        $this->getDataGenerator()->enrol_user($student2->id, $course->id, 'student', 'manual', 0, 0, ENROL_USER_ACTIVE);
+        $this->setAdminUser();
+        // Should return all gradable users from group1 (student1 and student2).
+        $gradableusers = get_gradable_users($course->id, $group1->id);
+        $this->assertEqualsCanonicalizing([$student1->id, $student2->id], array_keys($gradableusers));
+        // Should return all gradable users from group2 (student3).
+        $gradableusers = get_gradable_users($course->id, $group2->id);
+        $this->assertEqualsCanonicalizing([$student3->id], array_keys($gradableusers));
+    }
 }
