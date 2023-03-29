@@ -5,10 +5,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-#region-main, #page-content, #region-main-box {
-    height: 100%;
-}
-
 .iomad_company_admin_table {
    width: 95%;
    margin: auto;
