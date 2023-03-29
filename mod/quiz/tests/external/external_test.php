@@ -27,6 +27,7 @@
 namespace mod_quiz\external;
 
 use core_external\external_api;
+use core_question\local\bank\question_version_status;
 use externallib_advanced_testcase;
 use mod_quiz\question\display_options;
 use mod_quiz\quiz_attempt;
@@ -1972,6 +1973,10 @@ class external_test extends externallib_advanced_testcase {
         quiz_add_quiz_question($question->id, $quiz);
 
         $question = $questiongenerator->create_question('essay', null, ['category' => $cat->id]);
+        quiz_add_quiz_question($question->id, $quiz);
+
+        $question = $questiongenerator->create_question('multichoice', null,
+                ['category' => $cat->id, 'status' => question_version_status::QUESTION_STATUS_DRAFT]);
         quiz_add_quiz_question($question->id, $quiz);
 
         $this->setUser($this->student);

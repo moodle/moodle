@@ -16,6 +16,7 @@
 
 namespace mod_quiz;
 
+use core_question\local\bank\question_version_status;
 use mod_quiz\external\submit_question_version;
 use mod_quiz\question\bank\qbank_helper;
 
@@ -142,5 +143,64 @@ class qbank_helper_test extends \advanced_testcase {
         $slots = $structure->get_slots();
         $slot = reset($slots);
         $this->assertEquals($finalq->id, $slot->questionid);
+    }
+
+    /**
+     * When a question only has draft versions, we should get those and not a dummy question.
+     *
+     * @return void
+     * @covers ::get_question_structure
+     */
+    public function test_get_question_structure_with_drafts(): void {
+        $this->resetAfterTest();
+
+        // Create a quiz.
+        $quiz = $this->create_test_quiz($this->course);
+        $quizcontext = \context_module::instance(get_coursemodule_from_instance("quiz", $quiz->id, $this->course->id)->id);
+
+        // Create some questions with drafts in the quiz question bank.
+        /** @var \core_question_generator $questiongenerator */
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category(['contextid' => $quizcontext->id]);
+        $q1 = $questiongenerator->create_question('essay', null,
+                ['category' => $cat->id, 'name' => 'This is q1 the first version']);
+        $q2 = $questiongenerator->create_question('essay', null,
+                ['category' => $cat->id, 'name' => 'This is q2 the first version',
+                        'status' => question_version_status::QUESTION_STATUS_DRAFT]);
+        $q3 = $questiongenerator->create_question('essay', null,
+                ['category' => $cat->id, 'name' => 'This is q3 the first version',
+                        'status' => question_version_status::QUESTION_STATUS_DRAFT]);
+
+        // Create a new draft version of a question.
+        $q1final = $questiongenerator->update_question(clone $q1, null,
+                ['name' => 'This is q1 the second version', 'status' => question_version_status::QUESTION_STATUS_DRAFT]);
+        $q3final = $questiongenerator->update_question(clone $q3, null,
+                ['name' => 'This is q3 the second version', 'status' => question_version_status::QUESTION_STATUS_DRAFT]);
+
+        // Add the questions to the quiz.
+        quiz_add_quiz_question($q1->id, $quiz);
+        quiz_add_quiz_question($q2->id, $quiz);
+        quiz_add_quiz_question($q3->id, $quiz);
+
+        // Load the quiz object and check.
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->id);
+        $quizobj->preload_questions();
+        $quizobj->load_questions();
+        $questions = $quizobj->get_questions();
+        $this->assertCount(3, $questions);
+        // When a question has a Ready version, we should get that and not he draft.
+        $this->assertTrue(array_key_exists($q1->id, $questions));
+        $this->assertFalse(array_key_exists($q1final->id, $questions));
+        $this->assertEquals(question_version_status::QUESTION_STATUS_READY, $questions[$q1->id]->status);
+        $this->assertEquals('essay', $questions[$q1->id]->qtype);
+        // When a question only has a draft, we should get that.
+        $this->assertTrue(array_key_exists($q2->id, $questions));
+        $this->assertEquals(question_version_status::QUESTION_STATUS_DRAFT, $questions[$q2->id]->status);
+        $this->assertEquals('essay', $questions[$q2->id]->qtype);
+        // When a question has several versions but all draft, we should get the latest draft.
+        $this->assertFalse(array_key_exists($q3->id, $questions));
+        $this->assertTrue(array_key_exists($q3final->id, $questions));
+        $this->assertEquals(question_version_status::QUESTION_STATUS_DRAFT, $questions[$q3final->id]->status);
+        $this->assertEquals('essay', $questions[$q3final->id]->qtype);
     }
 }
