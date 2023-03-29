@@ -23,6 +23,7 @@
  */
 
 import {BaseComponent} from 'core/reactive';
+import {debounce} from 'core/utils';
 import {getCurrentCourseEditor} from 'core_courseformat/courseeditor';
 import Config from 'core/config';
 import inplaceeditable from 'core/inplace_editable';
@@ -77,6 +78,7 @@ export default class Component extends BaseComponent {
         this.cms = {};
         // The page section return.
         this.sectionReturn = descriptor.sectionReturn ?? 0;
+        this.debouncedReloads = new Map();
     }
 
     /**
@@ -506,15 +508,37 @@ export default class Component extends BaseComponent {
      * @param {object} param0.element the state object
      */
     _reloadCm({element}) {
-        const pendingReload = new Pending(`courseformat/content:reloadCm_${element.id}`);
-        const cmitem = this.getElement(this.selectors.CM, element.id);
-        if (cmitem) {
+        if (!this.getElement(this.selectors.CM, element.id)) {
+            return;
+        }
+        const debouncedReload = this._getDebouncedReloadCm(element.id);
+        debouncedReload();
+    }
+
+    /**
+     * Generate or get a reload CM debounced function.
+     * @param {Number} cmId
+     * @returns {Function} the debounced reload function
+     */
+    _getDebouncedReloadCm(cmId) {
+        const pendingKey = `courseformat/content:reloadCm_${cmId}`;
+        let debouncedReload = this.debouncedReloads.get(pendingKey);
+        if (debouncedReload) {
+            return debouncedReload;
+        }
+        const pendingReload = new Pending(pendingKey);
+        const reload = () => {
+            this.debouncedReloads.delete(pendingKey);
+            const cmitem = this.getElement(this.selectors.CM, cmId);
+            if (!cmitem) {
+                return;
+            }
             const promise = Fragment.loadFragment(
                 'core_courseformat',
                 'cmitem',
                 Config.courseContextId,
                 {
-                    id: element.id,
+                    id: cmId,
                     courseid: Config.courseId,
                     sr: this.reactive.sectionReturn ?? 0,
                 }
@@ -525,7 +549,10 @@ export default class Component extends BaseComponent {
                 pendingReload.resolve();
                 return;
             }).catch();
-        }
+        };
+        debouncedReload = debounce(reload, 200);
+        this.debouncedReloads.set(pendingKey, debouncedReload);
+        return debouncedReload;
     }
 
     /**
