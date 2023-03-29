@@ -142,6 +142,7 @@ class gradereport_user_renderer extends plugin_renderer_base {
 
         $navigationdata = [];
 
+        $users = [];
         while ($userdata = $gui->next_user()) {
             $users[$userdata->user->id] = $userdata->user;
         }
@@ -149,6 +150,11 @@ class gradereport_user_renderer extends plugin_renderer_base {
 
         $arraykeys = array_keys($users);
         $keynumber = array_search($userid, $arraykeys);
+
+        // Without a valid user or users list, there's nothing to render.
+        if ($keynumber === false) {
+            return '';
+        }
 
         // Determine directionality so that icons can be modified to suit language.
         $previousarrow = right_to_left() ? 'right' : 'left';
