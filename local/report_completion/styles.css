@@ -29,7 +29,7 @@
     overflow: unset !important;
 }
 
-#page-local-report_completion-index .chart-area, #page-local-report_completion-index .chart-image{
+#page-local-report_completion-index .chart-image{
     max-width: 200px;
     max-height: 200px;
 }
