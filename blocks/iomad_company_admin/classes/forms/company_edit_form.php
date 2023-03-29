@@ -166,7 +166,11 @@ class company_edit_form extends \company_moodleform {
         if (iomad::has_capability('local/email:edit', $context)) {
             // Add in the company email template selector.
             $emailtemplates = \company::get_email_templates($this->companyid);
-            $mform->addElement('select', 'emailtemplate', get_string('applyemailtemplate', 'block_iomad_company_admin', $emailtemplates[$this->previousemailtemplateid]), $emailtemplates);
+            if (!empty($emailtemplates[$this->previousemailtemplateid])) {
+                $mform->addElement('select', 'emailtemplate', get_string('applyemailtemplate', 'block_iomad_company_admin', $emailtemplates[$this->previousemailtemplateid]), $emailtemplates);
+            } else {
+                $mform->addElement('select', 'emailtemplate', get_string('applyemailtemplate', 'block_iomad_company_admin', get_string('none')), $emailtemplates);
+            }
             $mform->addHelpButton('emailtemplate', 'applyemailtemplate', 'block_iomad_company_admin');
         }
 
