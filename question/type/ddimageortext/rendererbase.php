@@ -112,7 +112,7 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
             [$fieldname, $html] = $this->hidden_field_for_qt_var($qa, $varname, null,
                     ['placeinput', 'place' . $placeno, 'group' . $place->group]);
             $output .= $html;
-            $placeinfo = (object) $place;
+            $placeinfo = (object) (array) $place;
             $placeinfo->fieldname = $fieldname;
             $placeinfoforjsandmobileapp[$placeno] = $placeinfo;
         }
