@@ -32,6 +32,7 @@ import Templates from 'core/templates';
 import {prefetchStrings} from 'core/prefetch';
 import {get_string as getString} from 'core/str';
 import {getFirst} from 'core/normalise';
+import {toggleBulkSelectionAction} from 'core_courseformat/local/content/actions/bulkselection';
 import * as CourseEvents from 'core_course/events';
 import Pending from 'core/pending';
 import ContentTree from 'core_courseformat/local/courseeditor/contenttree';
@@ -456,30 +457,20 @@ export default class extends BaseComponent {
      * Handle a toggle cm selection.
      *
      * @param {Element} target the dispatch action element
+     * @param {Event} event the triggered event
      */
-    async _requestToggleSelectionCm(target) {
-        const cmId = target.dataset.id;
-        if (!cmId) {
-            return;
-        }
-        const value = target.checked ?? false;
-        const mutation = (value) ? 'cmSelect' : 'cmUnselect';
-        this.reactive.dispatch(mutation, [cmId]);
+    async _requestToggleSelectionCm(target, event) {
+        toggleBulkSelectionAction(this.reactive, target, event, 'cm');
     }
 
     /**
      * Handle a toggle section selection.
      *
      * @param {Element} target the dispatch action element
+     * @param {Event} event the triggered event
      */
-    async _requestToggleSelectionSection(target) {
-        const sectionId = target.dataset.id;
-        if (!sectionId) {
-            return;
-        }
-        const value = target.checked ?? false;
-        const mutation = (value) ? 'sectionSelect' : 'sectionUnselect';
-        this.reactive.dispatch(mutation, [sectionId]);
+    async _requestToggleSelectionSection(target, event) {
+        toggleBulkSelectionAction(this.reactive, target, event, 'section');
     }
 
     /**

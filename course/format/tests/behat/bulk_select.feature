@@ -9,7 +9,7 @@ Feature: Bulk activity and section selection.
       | fullname    | Course 1 |
       | shortname   | C1       |
       | category    | 0        |
-      | numsections | 2        |
+      | numsections | 4        |
     And the following "activities" exist:
       | activity | name              | intro                       | course | idnumber | section |
       | assign   | Activity sample 1 | Test assignment description | C1     | sample1  | 1       |
@@ -52,9 +52,17 @@ Feature: Bulk activity and section selection.
     And I click on "Select activity Activity sample 1" "checkbox"
     And I click on "Select activity Activity sample 2" "checkbox"
     And I should see "2 selected" in the "sticky-footer" "region"
+    And the field "Activity sample 1" matches value "1"
+    And the field "Activity sample 2" matches value "1"
+    And the field "Activity sample 3" matches value ""
+    And the field "Activity sample 4" matches value ""
     When I click on "Close bulk edit" "button" in the "sticky-footer" "region"
     And I click on "Bulk edit" "button"
     Then I should see "0 selected" in the "sticky-footer" "region"
+    And the field "Activity sample 1" matches value ""
+    And the field "Activity sample 2" matches value ""
+    And the field "Activity sample 3" matches value ""
+    And the field "Activity sample 4" matches value ""
 
   Scenario: Select all is disabled until an activity is selected
     Given I click on "Bulk edit" "button"
@@ -74,27 +82,49 @@ Feature: Bulk activity and section selection.
     Given I click on "Bulk edit" "button"
     And I click on "Select activity Activity sample 1" "checkbox"
     And I should see "1 selected" in the "sticky-footer" "region"
+    And the field "Activity sample 1" matches value "1"
+    And the field "Activity sample 2" matches value ""
+    And the field "Activity sample 3" matches value ""
+    And the field "Activity sample 4" matches value ""
     And the "Select all" "checkbox" should be enabled
     When I click on "Select all" "checkbox" in the "sticky-footer" "region"
     Then I should see "4 selected" in the "sticky-footer" "region"
+    And the field "Activity sample 1" matches value "1"
+    And the field "Activity sample 2" matches value "1"
+    And the field "Activity sample 3" matches value "1"
+    And the field "Activity sample 4" matches value "1"
 
   Scenario: Select all when a section is selected will select all sections
     Given I click on "Bulk edit" "button"
     And I click on "Select topic Topic 1" "checkbox"
     And I should see "1 selected" in the "sticky-footer" "region"
+    And the field "Select topic Topic 1" matches value "1"
+    And the field "Select topic Topic 2" matches value ""
+    And the field "Select topic Topic 3" matches value ""
+    And the field "Select topic Topic 4" matches value ""
     And the "Select all" "checkbox" should be enabled
     When I click on "Select all" "checkbox" in the "sticky-footer" "region"
-    Then I should see "2 selected" in the "sticky-footer" "region"
+    Then I should see "4 selected" in the "sticky-footer" "region"
+    And the field "Select topic Topic 1" matches value "1"
+    And the field "Select topic Topic 2" matches value "1"
+    And the field "Select topic Topic 3" matches value "1"
+    And the field "Select topic Topic 4" matches value "1"
 
   Scenario: Click on a select all with all sections selected unselects all sections
     Given I click on "Bulk edit" "button"
     And I click on "Select topic Topic 1" "checkbox"
     And I click on "Select topic Topic 2" "checkbox"
-    And I should see "2 selected" in the "sticky-footer" "region"
+    And I click on "Select topic Topic 3" "checkbox"
+    And I click on "Select topic Topic 4" "checkbox"
+    And I should see "4 selected" in the "sticky-footer" "region"
     And the "Select all" "checkbox" should be enabled
     When I click on "Select all" "checkbox" in the "sticky-footer" "region"
     Then I should see "0 selected" in the "sticky-footer" "region"
     And the focused element is "Select topic Topic 1" "checkbox"
+    And the field "Select topic Topic 1" matches value ""
+    And the field "Select topic Topic 2" matches value ""
+    And the field "Select topic Topic 3" matches value ""
+    And the field "Select topic Topic 4" matches value ""
 
   Scenario: Click on a select all with all activity selected unselects all activities
     Given I click on "Bulk edit" "button"
@@ -107,12 +137,82 @@ Feature: Bulk activity and section selection.
     When I click on "Select all" "checkbox" in the "sticky-footer" "region"
     Then I should see "0 selected" in the "sticky-footer" "region"
     And the focused element is "Select topic Topic 1" "checkbox"
+    And the field "Activity sample 1" matches value ""
+    And the field "Activity sample 2" matches value ""
+    And the field "Activity sample 3" matches value ""
+    And the field "Activity sample 4" matches value ""
 
   Scenario: Click an activity name in bulk mode select and unselects the activity
     Given I click on "Bulk edit" "button"
     And I should see "0 selected" in the "sticky-footer" "region"
     When I click on "Activity sample 1" "link" in the "Topic 1" "section"
+    And the field "Activity sample 1" matches value "1"
+    And the field "Activity sample 2" matches value ""
+    And the field "Activity sample 3" matches value ""
+    And the field "Activity sample 4" matches value ""
     And I click on "Activity sample 2" "link" in the "Topic 1" "section"
+    And the field "Activity sample 1" matches value "1"
+    And the field "Activity sample 2" matches value "1"
+    And the field "Activity sample 3" matches value ""
+    And the field "Activity sample 4" matches value ""
     And I should see "2 selected" in the "sticky-footer" "region"
     Then I click on "Activity sample 1" "link" in the "Topic 1" "section"
     And I should see "1 selected" in the "sticky-footer" "region"
+    And the field "Activity sample 1" matches value ""
+    And the field "Activity sample 2" matches value "1"
+    And the field "Activity sample 3" matches value ""
+    And the field "Activity sample 4" matches value ""
+
+  Scenario: Select a range of activities using shift
+    Given I click on "Bulk edit" "button"
+    And I should see "0 selected" in the "sticky-footer" "region"
+    When I click on "Activity sample 1" "link" in the "Topic 1" "section"
+    And the field "Activity sample 1" matches value "1"
+    And the field "Activity sample 2" matches value ""
+    And the field "Activity sample 3" matches value ""
+    And the field "Activity sample 4" matches value ""
+    And I shift click on "Activity sample 3" "link" in the "Topic 2" "section"
+    Then I should see "3 selected" in the "sticky-footer" "region"
+    And the field "Activity sample 1" matches value "1"
+    And the field "Activity sample 2" matches value "1"
+    And the field "Activity sample 3" matches value "1"
+    And the field "Activity sample 4" matches value ""
+
+  Scenario: Select all activities in a section using alt
+    Given I click on "Bulk edit" "button"
+    And I should see "0 selected" in the "sticky-footer" "region"
+    When I alt click on "Activity sample 3" "link" in the "Topic 2" "section"
+    Then I should see "2 selected" in the "sticky-footer" "region"
+    And the field "Activity sample 1" matches value ""
+    And the field "Activity sample 2" matches value ""
+    And the field "Activity sample 3" matches value "1"
+    And the field "Activity sample 4" matches value "1"
+
+  Scenario: Select a range of sections using shift
+    Given I click on "Bulk edit" "button"
+    And I should see "0 selected" in the "sticky-footer" "region"
+    When I click on "Select topic Topic 1" "checkbox"
+    And the field "Select topic Topic 1" matches value "1"
+    And the field "Select topic Topic 2" matches value ""
+    And the field "Select topic Topic 3" matches value ""
+    And the field "Select topic Topic 4" matches value ""
+    And I shift click on "Select topic Topic 3" "checkbox" in the "page" "region"
+    Then I should see "3 selected" in the "sticky-footer" "region"
+    And the field "Select topic Topic 1" matches value "1"
+    And the field "Select topic Topic 2" matches value "1"
+    And the field "Select topic Topic 3" matches value "1"
+    And the field "Select topic Topic 4" matches value ""
+
+  Scenario: Select all section with alt click
+    Given I click on "Bulk edit" "button"
+    And I should see "0 selected" in the "sticky-footer" "region"
+    And the field "Select topic Topic 1" matches value ""
+    And the field "Select topic Topic 2" matches value ""
+    And the field "Select topic Topic 3" matches value ""
+    And the field "Select topic Topic 4" matches value ""
+    When I alt click on "Select topic Topic 3" "checkbox" in the "page" "region"
+    And I should see "4 selected" in the "sticky-footer" "region"
+    And the field "Select topic Topic 1" matches value "1"
+    And the field "Select topic Topic 2" matches value "1"
+    And the field "Select topic Topic 3" matches value "1"
+    And the field "Select topic Topic 4" matches value "1"

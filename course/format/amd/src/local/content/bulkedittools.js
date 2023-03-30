@@ -28,6 +28,11 @@ import {getCurrentCourseEditor} from 'core_courseformat/courseeditor';
 import {get_string as getString} from 'core/str';
 import Pending from 'core/pending';
 import {prefetchStrings} from 'core/prefetch';
+import {
+    selectAllBulk,
+    switchBulkSelection,
+    checkAllBulkSelected
+} from 'core_courseformat/local/content/actions/bulkselection';
 
 // Load global strings.
 prefetchStrings(
@@ -85,7 +90,7 @@ export default class Component extends BaseComponent {
         }
         const selectAll = this.getElement(this.selectors.SELECTALL);
         if (selectAll) {
-            this.addEventListener(selectAll, 'change', this._selectAllClick);
+            this.addEventListener(selectAll, 'click', this._selectAllClick);
         }
     }
 
@@ -154,15 +159,17 @@ export default class Component extends BaseComponent {
         if (!selectall) {
             return;
         }
-        if (bulk.selectedType === '') {
-            selectall.checked = false;
-            selectall.disabled = true;
-            return;
-        }
-
-        selectall.disabled = false;
-        const maxSelection = document.querySelectorAll(this.selectors.SELECTABLE).length;
-        selectall.checked = (bulk.selection.length == maxSelection);
+        selectall.disabled = (bulk.selectedType === '');
+        // The changechecker module can prevent the checkbox form changing it's value.
+        // To avoid that we leave the sniffer to act before changing the value.
+        const pending = new Pending(`courseformat/bulktools:refreshSelectAll`);
+        setTimeout(
+            () => {
+                selectall.checked = checkAllBulkSelected(this.reactive);
+                pending.resolve();
+            },
+            100
+        );
     }
 
     /**
@@ -199,20 +206,20 @@ export default class Component extends BaseComponent {
     }
 
     /**
-     * Select all elements click handler.
+     * Handle special select all cases.
      * @param {Event} event
      */
     _selectAllClick(event) {
-        const target = event.target;
-        const bulk = this.reactive.get('bulk');
-        if (bulk.selectedType === '') {
+        event.preventDefault();
+        if (event.altKey) {
+            switchBulkSelection(this.reactive);
             return;
         }
-        if (!target.checked) {
+        if (checkAllBulkSelected(this.reactive)) {
             this._handleUnselectAll();
             return;
         }
-        this._handleSelectAll(bulk);
+        selectAllBulk(this.reactive, true);
     }
 
     /**
@@ -220,30 +227,11 @@ export default class Component extends BaseComponent {
      */
     _handleUnselectAll() {
         const pending = new Pending(`courseformat/content:bulktUnselectAll`);
-        // Re-enable bulk will clean the selection and the selection type.
-        this.reactive.dispatch('bulkEnable', true);
+        selectAllBulk(this.reactive, false);
         // Wait for a while and focus on the first checkbox.
         setTimeout(() => {
             document.querySelector(this.selectors.SELECTABLE)?.focus();
             pending.resolve();
         }, 150);
-    }
-
-    /**
-     * Process a select all selectable elements.
-     * @param {Object} bulk the state bulk data
-     * @param {String} bulk.selectedType the current selected type (section/cm)
-     */
-    _handleSelectAll(bulk) {
-        const selectableIds = [];
-        const selectables = document.querySelectorAll(this.selectors.SELECTABLE);
-        if (selectables.length == 0) {
-            return;
-        }
-        selectables.forEach(selectable => {
-            selectableIds.push(selectable.dataset.id);
-        });
-        const mutation = (bulk.selectedType === 'cm') ? 'cmSelect' : 'sectionSelect';
-        this.reactive.dispatch(mutation, selectableIds);
     }
 }
