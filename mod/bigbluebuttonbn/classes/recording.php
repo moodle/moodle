@@ -81,6 +81,9 @@ class recording extends persistent {
     /** @var instance A cached copy of the instance */
     protected $instance;
 
+    /** @var bool imported recording status */
+    public $imported;
+
     /**
      * Create an instance of this class.
      *
