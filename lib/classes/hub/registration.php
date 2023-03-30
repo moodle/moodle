@@ -185,9 +185,10 @@ class registration {
         $siteinfo['dbtype'] = $CFG->dbtype;
         $siteinfo['coursesnodates'] = $DB->count_records_select('course', 'startdate = ? AND enddate = ?', [0, 0]) - 1;
         $siteinfo['sitetheme'] = get_config('core', 'theme');
-        $siteinfo['primaryauthtype'] = $DB->get_field_sql(
-                'SELECT auth, count(auth) as tc FROM {user} GROUP BY auth ORDER BY tc DESC LIMIT 1'
-        );
+
+        // Primary auth type.
+        $primaryauthsql = 'SELECT auth, count(auth) as tc FROM {user} GROUP BY auth ORDER BY tc DESC';
+        $siteinfo['primaryauthtype'] = $DB->get_field_sql($primaryauthsql, null, IGNORE_MULTIPLE);
 
         // Version and url.
         $siteinfo['moodlerelease'] = $CFG->release;
