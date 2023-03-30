@@ -88,7 +88,7 @@ redirect(new moodle_url($CFG->wwwroot . '/blocks/iomad_commerce/basket.php'));
                        'data-paymentarea' => 'invoice',
                        'data-itemid' => $basketid,
                        'data-cost' => \block_iomad_commerce\helper::get_basket_total(),
-                       'data-description' => '',
+                       'data-description' => format_string($SITE->fullname),
                        'data-successurl' => \block_iomad_commerce\payment\service_provider::get_success_url('invoice', $basketid)->out(false),
                        'class' => 'btn btn-primary'];
 
