@@ -216,3 +216,14 @@ Feature: Bulk activity and section selection.
     And the field "Select topic Topic 2" matches value "1"
     And the field "Select topic Topic 3" matches value "1"
     And the field "Select topic Topic 4" matches value "1"
+
+  Scenario: Bulk section selection is available also in one section per page
+    Given I navigate to "Settings" in current page administration
+    And I expand all fieldsets
+    And I set the field "Course layout" to "Show one section per page"
+    And I click on "Save and display" "button"
+    And I click on "Bulk edit" "button"
+    And I should see "0 selected" in the "sticky-footer" "region"
+    When I click on "Select topic Topic 1" "checkbox"
+    And I click on "Select topic Topic 2" "checkbox"
+    Then I should see "2 selected" in the "sticky-footer" "region"

@@ -172,7 +172,7 @@ class bulkedittools implements named_templatable, renderable {
         }
 
         $deletecapabilities = ['moodle/course:movesections', 'moodle/course:update'];
-        if (has_all_capabilities($deletecapabilities, $context, $user)) {
+        if (!$sectionreturn && has_all_capabilities($deletecapabilities, $context, $user)) {
             $controls['delete'] = [
                 'icon' => 'i/delete',
                 'action' => 'deleteSection',
