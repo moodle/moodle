@@ -32,12 +32,16 @@
         "descendinglastnameurl": "<a class='dropdown-item' aria-label='Descending' role='menuitem' href='index.php?id=13&amp;sortitemid=lastname&amp;sort=desc&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Descending</a>",
         "divider1": "true",
         "divider2": "true"
+        "datatype": item,
+        "dataid": "123"
     }
 }}
 <div class="action-menu mb-1 moodle-actionmenu grader">
     <div class="dropdown">
         <button class="btn btn-link btn-icon icon-size-3 cellmenubtn"
-            type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-id={{dataid}}>
+            type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                {{#datatype}}data-type="{{datatype}}"{{/datatype}}
+                {{#dataid}}data-id="{{dataid}}"{{/dataid}}>
             <i class="icon fa fa-ellipsis-h fa-fw m-0" title="{{#str}} cellactions, gradereport_grader {{/str}}" aria-hidden="true"></i>
             <span class="sr-only">{{#str}} cellactions, gradereport_grader {{/str}}</span>
         </button>
