@@ -29,6 +29,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotcreatedboninstall'] = '<p>Tietokantaa ei voi luoda.</p>
+<p>Määritettyä tietokantaa ei ole olemassa, eikä kyseisellä käyttäjällä ole oikeutta luoda tietokantaa.</p>
+<p>Sivuston järjestelmänvalvojan tulee tarkistaa tietokannan määritykset.</p>';
 $string['cannotcreatelangdir'] = 'Kielihakemistoa ei voida luoda';
 $string['cannotcreatetempdir'] = 'Temp-hakemistoa ei voitu luoda';
 $string['cannotdownloadcomponents'] = 'Komponentteja ei voitu ladata';
@@ -38,6 +41,7 @@ $string['cannotsavemd5file'] = 'MD5-tiedostoa ei voitu tallentaa';
 $string['cannotsavezipfile'] = 'Zip-tiedostoa ei voitu tallentaa';
 $string['cannotunzipfile'] = 'Zip-tiedostoa ei voitu purkaa';
 $string['componentisuptodate'] = 'Komponentti on ajan tasalla';
+$string['dmlexceptiononinstall'] = '<p>Tapahtui tietokantavirhe [{$a->errorcode}].<br />{$a->debuginfo}</p>';
 $string['downloadedfilecheckfailed'] = 'Ladatun tiedoston tarkistus epäonnistui';
 $string['invalidmd5'] = 'Tarkistusmuuttuja oli väärin - yritä uudelleen';
 $string['missingrequiredfield'] = 'Joitakin vaadituista kentistä puuttuu';
