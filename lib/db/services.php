@@ -2794,6 +2794,13 @@ $functions = array(
         'capabilities' => '',
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+    'core_xapi_get_states' => [
+        'classname' => 'core_xapi\external\get_states',
+        'description' => 'Get all state ID from an activityId.',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_xapi_delete_state' => [
         'classname' => 'core_xapi\external\delete_state',
         'classpath' => '',

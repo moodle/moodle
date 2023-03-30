@@ -438,4 +438,120 @@ class state_store_test extends advanced_testcase {
         $this->assertEquals(1, $DB->count_records('xapi_states', ['component' => $component]));
         $this->assertEquals(2, $DB->count_records('xapi_states', ['component' => 'my_component']));
     }
+
+    /**
+     * Testing get_state_ids method.
+     *
+     * @dataProvider get_state_ids_provider
+     * @param string $component
+     * @param string|null $itemid
+     * @param string|null $registration
+     * @param bool|null $since
+     * @param array $expected the expected result
+     * @return void
+     */
+    public function test_get_state_ids(
+        string $component,
+        ?string $itemid,
+        ?string $registration,
+        ?bool $since,
+        array $expected,
+    ): void {
+        global $DB, $USER;
+
+        $this->resetAfterTest();
+
+        // Scenario.
+        $this->setAdminUser();
+        $other = $this->getDataGenerator()->create_user();
+
+        // Add a few xAPI state records to database.
+        $states = [
+            ['activity' => item_activity::create_from_id('1'), 'stateid' => 'aa'],
+            ['activity' => item_activity::create_from_id('1'), 'registration' => 'reg', 'stateid' => 'bb'],
+            ['activity' => item_activity::create_from_id('1'), 'registration' => 'reg2', 'stateid' => 'cc'],
+            ['activity' => item_activity::create_from_id('2'), 'registration' => 'reg', 'stateid' => 'dd'],
+            ['activity' => item_activity::create_from_id('3'), 'stateid' => 'ee'],
+            ['activity' => item_activity::create_from_id('4'), 'component' => 'other', 'stateid' => 'ff'],
+        ];
+        foreach ($states as $state) {
+            test_helper::create_state($state, true);
+        }
+
+        // Make all existing state entries older except form two.
+        $currenttime = time();
+        $timepast = $currenttime - 5;
+        $DB->set_field('xapi_states', 'timecreated', $timepast);
+        $DB->set_field('xapi_states', 'timemodified', $timepast);
+        $DB->set_field('xapi_states', 'timemodified', $currenttime, ['stateid' => 'aa']);
+        $DB->set_field('xapi_states', 'timemodified', $currenttime, ['stateid' => 'bb']);
+        $DB->set_field('xapi_states', 'timemodified', $currenttime, ['stateid' => 'dd']);
+
+        // Perform test.
+        $sincetime = ($since) ? $currenttime - 1 : null;
+        $store = new state_store($component);
+        $stateids = $store->get_state_ids($itemid, $USER->id, $registration, $sincetime);
+        sort($stateids);
+
+        $this->assertEquals($expected, $stateids);
+    }
+
+    /**
+     * Data provider for the test_get_state_ids.
+     *
+     * @return array
+     */
+    public function get_state_ids_provider(): array {
+        return [
+            'empty_component' => [
+                'component' => 'empty_component',
+                'itemid' => null,
+                'registration' => null,
+                'since' => null,
+                'expected' => [],
+            ],
+            'filter_by_itemid' => [
+                'component' => 'fake_component',
+                'itemid' => '1',
+                'registration' => null,
+                'since' => null,
+                'expected' => ['aa', 'bb', 'cc'],
+            ],
+            'filter_by_registration' => [
+                'component' => 'fake_component',
+                'itemid' => null,
+                'registration' => 'reg',
+                'since' => null,
+                'expected' => ['bb', 'dd'],
+            ],
+            'filter_by_since' => [
+                'component' => 'fake_component',
+                'itemid' => null,
+                'registration' => null,
+                'since' => true,
+                'expected' => ['aa', 'bb', 'dd'],
+            ],
+            'filter_by_itemid_and_registration' => [
+                'component' => 'fake_component',
+                'itemid' => '1',
+                'registration' => 'reg',
+                'since' => null,
+                'expected' => ['bb'],
+            ],
+            'filter_by_itemid_registration_since' => [
+                'component' => 'fake_component',
+                'itemid' => '1',
+                'registration' => 'reg',
+                'since' => true,
+                'expected' => ['bb'],
+            ],
+            'filter_by_registration_since' => [
+                'component' => 'fake_component',
+                'itemid' => null,
+                'registration' => 'reg',
+                'since' => true,
+                'expected' => ['bb', 'dd'],
+            ],
+        ];
+    }
 }

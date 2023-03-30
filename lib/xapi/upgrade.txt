@@ -1,0 +1,15 @@
+This files describes API changes in core_xapi libraries and APIs,
+information provided here is intended especially for developers.
+
+=== 4.2 ===
+
+* A new state store has been introduced. Now plugins can store state data
+  by overriding the PLUGINNAME\xapi\handler::validate_state method.
+* New core_xapi\state_store class to handle the state data storing. Plugins
+  can provide alternative state store implementations by overriding the
+  PLUGINNAME\xapi\handler::get_state_store method.
+* New xAPI state webservices:
+   - core_xapi_post_state: store a user state data
+   - core_xapi_get_state: gets a user state data
+   - core_xapi_get_states: get the list of user states
+   - core_xapi_delete_state: delete a user state data
