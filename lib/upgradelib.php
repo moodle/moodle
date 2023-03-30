@@ -1161,7 +1161,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
 /**
  * Log_display description function used during install and upgrade.
  *
- * @param string $component name of component (moodle, mod_assignment, etc.)
+ * @param string $component name of component (moodle, etc.)
  * @return void
  */
 function log_update_descriptions($component) {
@@ -1218,7 +1218,7 @@ function log_update_descriptions($component) {
 
 /**
  * Web service discovery function used during install and upgrade.
- * @param string $component name of component (moodle, mod_assignment, etc.)
+ * @param string $component name of component (moodle, etc.)
  * @return void
  */
 function external_update_descriptions($component) {
@@ -2792,6 +2792,26 @@ function check_xmlrpc_usage(environment_results $result): ?environment_results {
             $result->setFeedbackStr('xmlrpcwebserviceenabled');
             return $result;
         }
+    }
+
+    return null;
+}
+
+/**
+ * Check whether the mod_assignment is currently being used.
+ *
+ * @param environment_results $result
+ * @return environment_results|null
+ */
+function check_mod_assignment(environment_results $result): ?environment_results {
+    global $CFG, $DB;
+
+    // Check the number of records.
+    if (!file_exists("{$CFG->dirroot}/mod/assignment/version.php") && $DB->get_manager()->table_exists('assignment')
+            && $DB->count_records('assignment') > 0) {
+        $result->setInfo('Assignment 2.2 is in use');
+        $result->setFeedbackStr('modassignmentinuse');
+        return $result;
     }
 
     return null;

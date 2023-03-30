@@ -3201,5 +3201,19 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023031400.02);
     }
 
+    if ($oldversion < 2023032800.01) {
+        // If mod_assignment is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/mod/assignment/version.php')) {
+            uninstall_plugin('assignment', 'offline');
+            uninstall_plugin('assignment', 'online');
+            uninstall_plugin('assignment', 'upload');
+            uninstall_plugin('assignment', 'uploadsingle');
+            uninstall_plugin('mod', 'assignment');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023032800.01);
+    }
+
     return true;
 }

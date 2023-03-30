@@ -1721,6 +1721,7 @@ class core_plugin_manager {
         // Moodle 2.3 supports upgrades from 2.2.x only.
         $plugins = array(
             'qformat' => array('blackboard', 'learnwise', 'examview'),
+            'assignment' => array('offline', 'online', 'upload', 'uploadsingle'),
             'auth' => array('radius', 'fc', 'nntp', 'pam', 'pop3', 'imap'),
             'block' => array('course_overview', 'messages', 'community', 'participants', 'quiz_results'),
             'cachestore' => array('memcache', 'memcached', 'mongodb'),
@@ -1731,6 +1732,7 @@ class core_plugin_manager {
             'portfolio' => array('picasa', 'boxnet'),
             'qformat' => array('webct'),
             'message' => array('jabber'),
+            'mod' => array('assignment'),
             'quizaccess' => array('safebrowser'),
             'report' => array('search'),
             'repository' => array('alfresco', 'picasa', 'skydrive', 'boxnet'),
@@ -1774,10 +1776,6 @@ class core_plugin_manager {
                 'link', 'managefiles', 'media', 'noautolink', 'orderedlist',
                 'recordrtc', 'rtl', 'strike', 'subscript', 'superscript', 'table',
                 'title', 'underline', 'undo', 'unorderedlist', 'h5p', 'emojipicker',
-            ),
-
-            'assignment' => array(
-                'offline', 'online', 'upload', 'uploadsingle'
             ),
 
             'assignsubmission' => array(
@@ -1931,7 +1929,7 @@ class core_plugin_manager {
             ),
 
             'mod' => array(
-                'assign', 'assignment', 'bigbluebuttonbn', 'book', 'chat', 'choice', 'data', 'feedback', 'folder',
+                'assign', 'bigbluebuttonbn', 'book', 'chat', 'choice', 'data', 'feedback', 'folder',
                 'forum', 'glossary', 'h5pactivity', 'imscp', 'label', 'lesson', 'lti', 'page',
                 'quiz', 'resource', 'scorm', 'survey', 'url', 'wiki', 'workshop'
             ),

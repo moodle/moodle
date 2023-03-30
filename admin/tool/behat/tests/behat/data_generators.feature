@@ -160,7 +160,6 @@ Feature: Set up contextual data for tests
     And the following "activities" exist:
       | activity   | name                   | intro                         | course | idnumber    |
       | assign     | Test assignment name   | Test assignment description   | C1     | assign1     |
-      | assignment | Test assignment22 name | Test assignment22 description | C1     | assignment1 |
       | book       | Test book name         | Test book description         | C1     | book1       |
       | chat       | Test chat name         | Test chat description         | C1     | chat1       |
       | choice     | Test choice name       | Test choice description       | C1     | choice1     |

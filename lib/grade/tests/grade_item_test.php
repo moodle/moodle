@@ -602,7 +602,7 @@ class grade_item_test extends \grade_base_testcase {
     }
 
     protected function sub_test_refresh_grades() {
-        // Testing with the grade item for a mod_assignment instance.
+        // Testing with the grade item for a mod_assign instance.
         $grade_item = new \grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'refresh_grades'));
         $this->assertTrue($grade_item->refresh_grades());
