@@ -77,8 +77,6 @@ class mod_resource_generator extends testing_module_generator {
             }
             $usercontext = context_user::instance($USER->id);
             $filename = $record->defaultfilename ?? 'resource' . ($this->instancecount + 1) . '.txt';
-            // Set filepath depending on filename.
-            $filepath = (isset($record->defaultfilename)) ? $CFG->dirroot . '/' : '/';
 
             // Pick a random context id for specified user.
             $record->files = file_get_unused_draft_itemid();
@@ -86,11 +84,22 @@ class mod_resource_generator extends testing_module_generator {
             // Add actual file there.
             $filerecord = ['component' => 'user', 'filearea' => 'draft',
                     'contextid' => $usercontext->id, 'itemid' => $record->files,
-                    'filename' => basename($filename), 'filepath' => $filepath];
+                    'filename' => basename($filename), 'filepath' => '/'];
             $fs = get_file_storage();
             if ($record->uploaded == 1) {
+                // For uploading a file, it's required to specify a file, how not!
+                if (!isset($record->defaultfilename)) {
+                    throw new coding_exception(
+                        'The $record->defaultfilename option is required in order to upload a file');
+                }
+                // We require the full file path to exist when uploading a real file (fixture or whatever).
+                $fullfilepath = $CFG->dirroot . '/' . $record->defaultfilename;
+                if (!is_readable($fullfilepath)) {
+                    throw new coding_exception(
+                        'The $record->defaultfilename option must point to an existing file within dirroot');
+                }
                 // Create file using pathname (defaultfilename) set.
-                $fs->create_file_from_pathname($filerecord, $filepath . $filename);
+                $fs->create_file_from_pathname($filerecord, $fullfilepath);
             } else {
                 // If defaultfilename is not set, create file from string "resource 1.txt".
                 $fs->create_file_from_string($filerecord, 'Test resource ' . $filename . ' file');
@@ -98,6 +107,6 @@ class mod_resource_generator extends testing_module_generator {
         }
 
         // Do work to actually add the instance.
-        return parent::create_instance($record, (array)$options);
+        return parent::create_instance($record, $options);
     }
 }
