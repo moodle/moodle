@@ -1,4 +1,9 @@
 <?php
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+
+require_once("$CFG->dirroot/cohort/lib.php");
 
 function local_qubits_site_render_list($search, $page, $perpage, $sortcolumn, $sortdir){
     global $PAGE, $CFG, $DB, $OUTPUT;
@@ -152,9 +157,11 @@ function local_qubitssite_publish_site($siteid) {
 function local_qubitssite_create_site($data, $editoroptions = NULL){
     global $DB, $CFG;
 
+    $data->hostname = local_qubitssite_parse_url($data->hostname);
     // Check if timecreated is given.
     $data->timecreated  = !empty($data->timecreated) ? $data->timecreated : time();
     $data->timemodified = $data->timecreated;
+    $data->cohortid = local_qubitssite_upsert_cohort($data->name, $data->hostname, "");
 
     if (!isset($data->status)) {
         // data not from form, add missing visibility info
@@ -168,7 +175,9 @@ function local_qubitssite_create_site($data, $editoroptions = NULL){
 function local_qubitssite_update_site($data, $editoroptions = NULL){
     global $DB, $CFG;
 
+    $data->hostname = local_qubitssite_parse_url($data->hostname);
     $data->timemodified = time();
+    local_qubitssite_upsert_cohort($data->name, $data->hostname, $data->cohortid);
 
     if (!isset($data->status)) {
         // data not from form, add missing visibility info
@@ -177,4 +186,31 @@ function local_qubitssite_update_site($data, $editoroptions = NULL){
     $newqubitssiteid = $DB->update_record('local_qubits_sites', $data);
     $qubitssite = $DB->get_record("local_qubits_sites", array('id' => $newqubitssiteid));
     return $qubitssite;
+}
+
+// Remove Http or Https from URL.
+function local_qubitssite_parse_url($url){
+    if (!preg_match('#^http(s)?://#', $url)) {
+        $url = 'http://' . $url;
+    }
+    return parse_url($url, PHP_URL_HOST);
+}
+
+function local_qubitssite_upsert_cohort($name, $cohortidnumber, $cohortid){
+    $cohort = new \stdClass();
+    $cohort->contextid = \context_system::instance()->id;
+    $cohort->name = $name;
+    $cohort->idnumber = $cohortidnumber;
+    $cohort->description = 'Cohort - '.$name;
+    $cohort->descriptionformat = FORMAT_HTML;
+    if(empty($cohortid)){
+        $cohortid = cohort_add_cohort($cohort);
+    } else {
+        $cohort = $DB->get_record('cohort', array('id'=>$cohortid));
+        $cohort->name = $name;
+        $cohort->idnumber = $cohortidnumber;
+        $cohort->description = 'Cohort - '.$name;
+        cohort_update_cohort($cohort);
+    }
+    return $cohortid;
 }

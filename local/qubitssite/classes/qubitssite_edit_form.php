@@ -83,6 +83,9 @@ class qubitssite_edit_form extends moodleform {
         $mform->addElement('hidden', 'id', null);
         $mform->setType('id', PARAM_INT);
 
+        $mform->addElement('hidden', 'cohortid', null);
+        $mform->setType('cohortid', PARAM_INT);
+
         $this->set_data($qubitssite);
     }
 
