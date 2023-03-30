@@ -87,7 +87,7 @@ class attempt {
         // Remove any xAPI State associated to this attempt.
         $context = \context_module::instance($cm->id);
         $xapihandler = handler::create('mod_h5pactivity');
-        $xapihandler->wipe_states($context->id);
+        $xapihandler->wipe_states($context->id, $user->id);
 
         return new attempt($record);
     }
