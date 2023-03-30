@@ -54,31 +54,28 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
     }
 }}
 {{#heading}}<h2>{{heading}}</h2>{{/heading}}
-{{#usercanedit}}
 <div class="cb-toolbar-container container-fluid my-2">
     <div class="row">
-        <div class="d-flex">
+    {{#usercanedit}}
+        <div class="d-flex mr-3">
             <a href="{{editcontenturl}}" class="btn btn-primary" data-action="edit-content">
                 {{#str}}edit{{/str}}
             </a>
         </div>
+    {{/usercanedit}}
 
-        {{#actionmenu}}
-            <div class="ml-3">
-                {{> core_contentbank/contentbankmenu }}
-            </div>
-        {{/actionmenu}}
+    {{#actionmenu}}
+        <div>
+            {{> core_contentbank/contentbankmenu }}
+        </div>
+    {{/actionmenu}}
 
+    {{#closeurl}}
         <div class="ml-auto">
             <a href="{{closeurl}}" class="btn btn-secondary" data-action="close-content">
                 {{#str}}exit, core_contentbank{{/str}}
             </a>
         </div>
+    {{/closeurl}}
     </div>
 </div>
-{{/usercanedit}}
-{{^usercanedit}}
-    {{#actionmenu}}
-        {{> core_contentbank/contentbankmenu }}
-    {{/actionmenu}}
-{{/usercanedit}}
