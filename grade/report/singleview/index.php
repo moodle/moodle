@@ -33,32 +33,15 @@ $groupid  = optional_param('group', null, PARAM_INT);
 
 // Making this work with profile reports.
 $userid   = optional_param('userid', null, PARAM_INT);
-
-$defaulttype = $userid ? 'user' : 'select';
-
 $itemid = optional_param('itemid', null, PARAM_INT);
-$itemtype = optional_param('item', $defaulttype, PARAM_TEXT);
+$itemtype = optional_param('item', null, PARAM_TEXT);
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', 100, PARAM_INT);
 
 $edit = optional_param('edit', -1, PARAM_BOOL); // Sticky editing mode.
 
-if (empty($itemid) && ($itemtype !== 'user_select' && $itemtype !== 'grade_select')) {
-    $itemid = $userid;
-    $itemtype = $defaulttype;
-}
-
 $courseparams = ['id' => $courseid];
-$pageparams = [
-    'id'        => $courseid,
-    'group'     => $groupid,
-    'userid'    => $userid,
-    'itemid'    => $itemid,
-    'item'      => $itemtype,
-    'page'      => $page,
-    'perpage'   => $perpage,
-];
-$PAGE->set_url(new moodle_url('/grade/report/singleview/index.php', $pageparams));
+
 $PAGE->set_pagelayout('report');
 $PAGE->set_other_editing_capability('moodle/grade:edit');
 
@@ -67,10 +50,6 @@ if (!$course = $DB->get_record('course', $courseparams)) {
 }
 
 require_login($course);
-
-if (!in_array($itemtype, gradereport_singleview\report\singleview::valid_screens())) {
-    throw new \moodle_exception('notvalid', 'gradereport_singleview', '', $itemtype);
-}
 
 $context = context_course::instance($course->id);
 
@@ -85,6 +64,90 @@ $gpr = new grade_plugin_return([
     'courseid' => $courseid
 ]);
 
+// Last selected report session tracking.
+if (!isset($USER->grade_last_report)) {
+    $USER->grade_last_report = [];
+}
+$USER->grade_last_report[$course->id] = 'singleview';
+// If the item type is not explicitly defined or not valid, try to use the last viewed one (obtain in from the session)
+// or fallback to the user select (zero) state.
+if (!$itemtype || !in_array($itemtype, \gradereport_singleview\report\singleview::valid_screens())) {
+    $itemtype = isset($SESSION->gradereport_singleview["itemtype-{$context->id}"]) ?
+        $SESSION->gradereport_singleview["itemtype-{$context->id}"] : 'user_select';
+}
+
+$currentgroup = $gpr->groupid;
+// To make some other functions work better later.
+if (!$currentgroup) {
+    $currentgroup = null;
+}
+
+$lastvieweduseritemid = $SESSION->gradereport_singleview["useritem-{$context->id}"] ?? null;
+$lastviewedgradeitemid = $SESSION->gradereport_singleview["gradeitem-{$context->id}"] ?? null;
+
+switch ($itemtype) {
+    case 'user_select':
+        // If there is a stored user item (last viewed) in a session variable, bypass the user select zero state
+        // and display this user item. Also, make sure that the stored last viewed user is part of the current
+        // list of gradable users in this course.
+        if ($lastvieweduseritemid && array_key_exists($lastvieweduseritemid, get_gradable_users($courseid, $currentgroup))) {
+            $itemtype = 'user';
+            $itemid = $lastvieweduseritemid;
+        } else {
+            $itemid = null;
+        }
+        break;
+    case 'user':
+        if (is_null($itemid)) {
+            $itemid = $userid ?? $lastvieweduseritemid;
+        }
+        // If the item id (user id) cannot be defined or the user id is not part of the list of gradable users,
+        // display the user select zero state.
+        if (is_null($itemid) || !array_key_exists($itemid, get_gradable_users($courseid, $currentgroup))) {
+            $itemtype = 'user_select';
+        }
+        break;
+    case 'grade_select':
+        // If there is a stored grade item (last viewed) in a session variable, bypass the grade item select zero state
+        // and display this grade item.
+        if ($lastviewedgradeitemid) {
+            $itemtype = 'grade';
+            $itemid = $lastviewedgradeitemid;
+        } else {
+            $itemid = null;
+        }
+        break;
+    case 'grade':
+        // If there is a stored grade item (last viewed) in a session variable, use it.
+        if (is_null($itemid) && $lastviewedgradeitemid) {
+            $itemid = $lastviewedgradeitemid;
+        }
+        $gtree = new grade_tree($courseid, false, false, null, !$CFG->enableoutcomes);
+        $gradeableitems = $gtree->get_items();
+        // The item id (grade item id) cannot be defined, display the grade select zero state.
+        if (is_null($itemid) || !array_key_exists($itemid, $gtree->get_items())) {
+            $itemtype = 'grade_select';
+        }
+        break;
+}
+
+$report = new gradereport_singleview\report\singleview($courseid, $gpr, $context, $itemtype, $itemid);
+
+$pageparams = [
+    'id'        => $courseid,
+    'userid'    => $userid,
+    'itemid'    => $itemid,
+    'item'      => $itemtype,
+    'page'      => $page,
+    'perpage'   => $perpage,
+];
+
+if (!is_null($groupid)) {
+    $pageparams['group'] = $groupid;
+}
+
+$PAGE->set_url(new moodle_url('/grade/report/singleview/index.php', $pageparams));
+
 // Build editing on/off button for themes that need it.
 $button = '';
 if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
@@ -96,14 +159,6 @@ if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
     $options = $gpr->get_options();
     $button = $OUTPUT->edit_button(new moodle_url($PAGE->url, $options), 'get');
 }
-
-// Last selected report session tracking.
-if (!isset($USER->grade_last_report)) {
-    $USER->grade_last_report = [];
-}
-$USER->grade_last_report[$course->id] = 'singleview';
-
-$report = new gradereport_singleview\report\singleview($courseid, $gpr, $context, $itemtype, $itemid);
 
 $reportname = $report->screen->heading();
 
@@ -149,6 +204,11 @@ if ($data = data_submitted()) {
 grade_regrade_final_grades_if_required($course);
 
 echo $report->output();
+// Save the screen state in a session variable as last viewed state.
+$SESSION->gradereport_singleview["itemtype-{$context->id}"] = $itemtype;
+if ($itemid) {
+    $SESSION->gradereport_singleview["{$itemtype}item-{$context->id}"] = $itemid;
+}
 
 if (($itemtype !== 'select') && ($itemtype !== 'grade_select') &&($itemtype !== 'user_select')) {
     $item = (isset($userid)) ? $userid : $itemid;
@@ -157,12 +217,6 @@ if (($itemtype !== 'select') && ($itemtype !== 'grade_select') &&($itemtype !== 
     $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
     $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $context);
 
-    $currentgroup = $gpr->groupid;
-
-    // To make some other functions work better later.
-    if (!$currentgroup) {
-        $currentgroup = null;
-    }
     $gui = new graded_users_iterator($course, null, $currentgroup);
     $gui->require_active_enrolment($showonlyactiveenrol);
     $gui->init();
