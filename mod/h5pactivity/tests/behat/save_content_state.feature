@@ -8,6 +8,7 @@ Feature: Users can save the current state of an H5P activity
     Given the following "users" exist:
       | username | firstname | lastname | email                |
       | student1 | Student   | 1        | student1@example.com |
+      | student2 | Student   | 2        | student2@example.com |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
     And the following "course" exists:
       | fullname  | Course 1 |
@@ -15,6 +16,7 @@ Feature: Users can save the current state of an H5P activity
     And the following "course enrolments" exist:
       | user     | course | role           |
       | student1 | C1     | student        |
+      | student2 | C1     | student        |
       | teacher1 | C1     | editingteacher |
     And the following "permission overrides" exist:
       | capability                 | permission | role           | contextlevel | reference |
@@ -126,10 +128,14 @@ Feature: Users can save the current state of an H5P activity
   Scenario: Content state is removed when an attempt is created
     Given the following config values are set as admin:
       | enablesavestate | 1 | mod_h5pactivity|
+    # Save state content for student2, to check this data is not removed when student1 finishes their attempt.
+    And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student2
+    When I switch to "h5p-player" class iframe
+    And I switch to "h5p-iframe" class iframe
+    And I set the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" to "Vallhonesta"
+    # Create an attempt for student1.
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
-    # Check there are no attempts.
     And I should not see "Attempts report"
-    # Create an attempt.
     When I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" to "Narnia"
@@ -141,3 +147,9 @@ Feature: Users can save the current state of an H5P activity
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
     And the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" does not match value "Narnia"
+    And I switch to the main frame
+    # Check the state content for student2 is still there.
+    And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student2
+    And I switch to "h5p-player" class iframe
+    And I switch to "h5p-iframe" class iframe
+    And the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" matches value "Vallhonesta"

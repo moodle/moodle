@@ -68,22 +68,31 @@ class attempt_test extends \advanced_testcase {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/lib/xapi/tests/helper.php');
 
-        list($cm, $student) = $this->generate_testing_scenario();
+        [$cm, $student, $course] = $this->generate_testing_scenario();
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
 
-        // Save the current state for this activity (before creating the first attempt).
+        // Save the current state for this activity for student1 and student2 (before creating the first attempt).
         $manager = manager::create_from_coursemodule($cm);
+        $this->setUser($student2);
         test_helper::create_state([
             'activity' => item_activity::create_from_id($manager->get_context()->id),
             'component' => 'mod_h5pactivity',
         ], true);
-        $this->assertEquals(1, $DB->count_records('xapi_states'));
+        $this->setUser($student);
+        test_helper::create_state([
+            'activity' => item_activity::create_from_id($manager->get_context()->id),
+            'component' => 'mod_h5pactivity',
+        ], true);
+
+        $this->assertEquals(2, $DB->count_records('xapi_states'));
 
         // Create first attempt.
         $attempt = attempt::new_attempt($student, $cm);
         $this->assertEquals($student->id, $attempt->get_userid());
         $this->assertEquals($cm->instance, $attempt->get_h5pactivityid());
         $this->assertEquals(1, $attempt->get_attempt());
-        $this->assertEquals(0, $DB->count_records('xapi_states'));
+        $this->assertEquals(1, $DB->count_records('xapi_states'));
+        $this->assertEquals(0, $DB->count_records('xapi_states', ['userid' => $student->id]));
 
         // Create a second attempt.
         $attempt = attempt::new_attempt($student, $cm);
