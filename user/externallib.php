@@ -1149,7 +1149,9 @@ class core_user_external extends \core_external\external_api {
                 new external_single_structure(
                     array(
                         'type'  => new external_value(PARAM_ALPHANUMEXT, 'The type of the custom field - text field, checkbox...'),
-                        'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
+                        'value' => new external_value(PARAM_RAW, 'The value of the custom field (as stored in the database)'),
+                        'displayvalue' => new external_value(PARAM_RAW, 'The value of the custom field for display',
+                            VALUE_OPTIONAL),
                         'name' => new external_value(PARAM_RAW, 'The name of the custom field'),
                         'shortname' => new external_value(PARAM_RAW, 'The shortname of the custom field - to be able to build the field class in the code'),
                     )

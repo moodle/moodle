@@ -15,6 +15,10 @@ This files describes API changes for code that uses the user API.
 * New `profile_get_user_field` method for returning profile field instance of given type
 * The `profile_field_base::is_visible` method now accepts an optional `$context` argument
 * External function core_user_external::add_user_private_files() now returns moodle_exception when the user quota is exceeded
+* The `customfields` structure used for returning user profile fields information has been updated to:
+   * Return in the field `value` the value of the custom field (as stored in the database)
+   * Return in the field `displayvalue` the value of the custom field for display
+   External systems displaying user information should always use `displayvalue`.
 
 === 4.1 ===
 
