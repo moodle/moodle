@@ -15,15 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details for the grader report
+ * Grader grade report external functions and service definitions.
  *
  * @package    gradereport_grader
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @copyright  2022 Mathew May <Mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2023033000;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2022111800;        // Requires this Moodle version.
-$plugin->component = 'gradereport_grader'; // Full name of the plugin (used for diagnostics)
+$functions = [
+    'gradereport_grader_get_users_in_report' => [
+        'classname' => 'gradereport_grader\\external\\get_users_in_report',
+        'methodname' => 'execute',
+        'description' => 'Returns the dataset of users within the report',
+        'type' => 'read',
+        'ajax' => true,
+        'capabilities' => 'gradereport/grader:view',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+];

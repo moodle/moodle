@@ -39,7 +39,7 @@
     <small>{{.}}</small>
 {{/buttonheader}}
 <div class="{{#parentclasses}}{{.}}{{/parentclasses}}">
-    <div class="{{#buttonclasses}}{{.}}{{/buttonclasses}} btn dropdown-toggle keep-open d-flex text-left align-items-center p-0 font-weight-bold" data-toggle="dropdown" tabindex="0" aria-haspopup="true" role="button" aria-label="{{#str}} aria-toggledropdown, core_grades {{/str}}" aria-expanded="false">
+    <div class="{{#buttonclasses}}{{.}}{{/buttonclasses}} btn dropdown-toggle keep-open d-flex text-left align-items-center p-0 font-weight-bold" data-toggle="dropdown" aria-haspopup="true" {{#usebutton}}role="button" aria-expanded="false" tabindex="0"{{/usebutton}} {{^usebutton}}tabindex="-1"{{/usebutton}} aria-label="{{#str}} aria-toggledropdown, core_grades {{/str}}" >
         {{{buttoncontent}}}
     </div>
     <div class="{{#dropdownclasses}}{{.}}{{/dropdownclasses}} dropdown-menu {{#rtl}}dropdown-menu-right{{/rtl}}">
