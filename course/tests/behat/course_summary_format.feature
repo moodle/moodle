@@ -11,7 +11,7 @@ Feature: Summary text format should be preserved on edit and set by preferred ed
     And I log in as "admin"
     And I go to the courses management page
     When I click on "Create new course" "link"
-    Then I should see "Moodle auto-format" in the "#menusummary_editorformat > option[selected]" "css_element"
+    Then the field "Course summary format" matches value "0"
 
   Scenario: Summary format must be preserved on course edit
     Given the following "user preferences" exist:
@@ -28,4 +28,4 @@ Feature: Summary text format should be preserved on edit and set by preferred ed
     And I set the field with xpath "//select[@name='summary_editor[format]']" to "4"
     And I press "Save and display"
     When I click on "Settings" "link"
-    Then I should see "Markdown format" in the "#menusummary_editorformat > option[selected]" "css_element"
+    Then the field "Course summary format" matches value "4"
