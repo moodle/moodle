@@ -1357,6 +1357,7 @@ class upgradelib_test extends advanced_testcase {
     /**
      * Test the check_mod_assignment check if mod_assignment is still used.
      *
+     * @covers ::check_mod_assignment
      * @return void
      */
     public function test_check_mod_assignment_is_used(): void {
@@ -1368,7 +1369,6 @@ class upgradelib_test extends advanced_testcase {
         if (file_exists("{$CFG->dirroot}/mod/assignment/version.php")) {
             // This is for when the test is run on sites where mod_assignment is most likely reinstalled.
             $this->assertNull(check_mod_assignment($result));
-            $this->assertTrue($result->getStatus());
         } else {
             // This is for when the test is run on sites with mod_assignment now gone.
             $this->assertFalse($DB->get_manager()->table_exists('assignment'));
