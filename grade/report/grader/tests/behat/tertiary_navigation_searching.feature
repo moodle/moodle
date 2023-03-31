@@ -49,7 +49,7 @@ Feature: Within the grader report, test that we can search for users
       | -1-                |
       | Teacher 1          |
     When I set the field "Search users" to "Turtle"
-    And I wait until "View all results for \"Turtle\"" "link" exists
+    And I wait until "View all results for \"Turtle\"" "button" exists
     And "Turtle Manatee" "list_item" should exist in the ".user-search" "css_element"
     And "User Example" "list_item" should not exist in the ".user-search" "css_element"
     And I click on "Turtle Manatee" "list_item"
@@ -66,13 +66,14 @@ Feature: Within the grader report, test that we can search for users
       | User Test          |
       | Dummy User         |
     And I set the field "Search users" to "Turt"
-    And "Clear search input" "button" should exist in the ".user-search" "css_element"
+    And I wait until "View all results for \"Turt\"" "button" exists
     And I click on "Clear search input" "button" in the ".user-search" "css_element"
-    And "View all results for \"Turt\"" "link" should not be visible
+    And "View all results for \"Turt\"" "button" should not be visible
 
   Scenario: A teacher can search the grader report to find specified users
     # Case: Standard search.
     Given I set the field "Search users" to "Dummy"
+    And I wait until "View all results for \"Dummy\"" "button" exists
     And I click on "Dummy User" "option_role"
     And I wait until the page is ready
     And the following should exist in the "user-grades" table:
@@ -103,6 +104,7 @@ Feature: Within the grader report, test that we can search for users
 
     # Case: Multiple users found and select only one result.
     Then I set the field "Search users" to "User"
+    And I wait until "View all results for \"User\"" "button" exists
     And "Dummy User" "list_item" should exist in the ".user-search" "css_element"
     And "User Example" "list_item" should exist in the ".user-search" "css_element"
     And "User Test" "list_item" should exist in the ".user-search" "css_element"
@@ -124,9 +126,10 @@ Feature: Within the grader report, test that we can search for users
     # Business case cont. When pressing enter with multiple partial matches, behave like when you select the "View all results for (Bob)"
     # Case: Multiple users found and select all partial matches.
     And I set the field "Search users" to "User"
+    And I wait until "View all results for \"User\"" "button" exists
     # Dont need to check if all users are in the dropdown, we checked that earlier in this test.
-    And "View all results for \"User\"" "link" should exist
-    And I click on "View all results for \"User\"" "link"
+    And "View all results for \"User\"" "button" should exist
+    And I click on "View all results for \"User\"" "button"
     And I wait until the page is ready
     And the following should exist in the "user-grades" table:
       | -1-                |
@@ -141,6 +144,7 @@ Feature: Within the grader report, test that we can search for users
 
   Scenario: A teacher can quickly tell that a search is active on the current table
     Given I set the field "Search users" to "Turtle"
+    And I wait until "View all results for \"Turtle\"" "button" exists
     And I click on "Turtle Manatee" "list_item"
     And I wait until the page is ready
     # The search input remains in the field on reload this is in keeping with other search implementations.
@@ -153,8 +157,10 @@ Feature: Within the grader report, test that we can search for users
 
   Scenario: A teacher can search for values besides the users' name
     Given I set the field "Search users" to "student5@example.com"
+    And I wait until "View all results for \"student5@example.com\"" "button" exists
     And "Turtle Manatee" "list_item" should exist
     And I set the field "Search users" to "@example.com"
+    And I wait until "View all results for \"@example.com\"" "button" exists
     # Note: All learners match this email & showing emails is current default.
     And "Dummy User" "list_item" should exist in the ".user-search" "css_element"
     And "User Example" "list_item" should exist in the ".user-search" "css_element"
@@ -277,7 +283,7 @@ Feature: Within the grader report, test that we can search for users
     And the focused element is "Clear search input" "button"
     And I press the enter key
     And I wait until the page is ready
-    And I should not see "Turtle Manatee"
+    And I should not see "Turtle Manatee" in the ".user-search" "css_element"
 
   Scenario: Once a teacher searches, it'll apply the currently set filters and inform the teacher as such
     # Set up a basic filtering case.
