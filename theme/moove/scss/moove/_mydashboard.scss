@@ -1,0 +1,45 @@
+.pagelayout-mydashboard {
+    .card {
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        border-radius: .5rem;
+    }
+
+    #block-region-content {
+        .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
+            width: calc(33.33% - 2rem);
+            margin: 1rem;
+        }
+    }
+
+    &#page-message-index {
+        #topofscroll {
+            margin-top: 2rem !important;
+        }
+    }
+}
+
+#page-my-index.page-mycourses {
+    .header-actions-container .header-action .btn-group > .btn:not(:last-child):not(.dropdown-toggle) {
+        background-color: $brand-primary;
+
+        &:hover {
+            background-color: darken($brand-primary, 10%);
+        }
+
+        .text-dark {
+            color: #fff !important;
+        }
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .pagelayout-mydashboard {
+        #block-region-content {
+            .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
+                width: calc(100%);
+                margin: 1rem 0;
+            }
+        }
+    }
+}

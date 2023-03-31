@@ -1,0 +1,787 @@
+@font-face { /* where FontName and fontname represents the name of the font you want to add */
+    font-family: 'Segoe UI';
+    src: url([[font:theme|segoeui.ttf]]) format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face { /* where FontName and fontname represents the name of the font you want to add */
+    font-family: 'Segoe UIB';
+    src: url([[font:theme|segoeuib.ttf]]) format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face { /* where FontName and fontname represents the name of the font you want to add */
+    font-family: 'Segoe UIL';
+    src: url([[font:theme|segoeuil.ttf]]) format('truetype');
+    font-weight: 100;
+    font-style: normal;
+}
+
+@font-face { /* where FontName and fontname represents the name of the font you want to add */
+    font-family: 'Segoe UISL';
+    src: url([[font:theme|segoeuisl.ttf]]) format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face { /* where FontName and fontname represents the name of the font you want to add */
+    font-family: 'Segoe UISB';
+    src: url([[font:theme|seguisb.ttf]]) format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+body {
+    font-family: "Segoe UI","Helvetica Neue","Apple Color Emoji","Segoe UI Emoji",Helvetica,Arial,sans-serif;
+}
+div.felement select option {
+    font-family: "Segoe UI","Helvetica Neue","Apple Color Emoji","Segoe UI Emoji",Helvetica,Arial,sans-serif;
+}
+form .felement input {
+    font-family: "Segoe UI","Helvetica Neue","Apple Color Emoji","Segoe UI Emoji",Helvetica,Arial,sans-serif;
+}
+/* topics format START */
+.format-topics.path-course-view .completionprogress {
+    float: left;
+}
+.format-topics .section .activity {
+    background-color: #fff;
+    padding: 10px;
+    padding-left: 20px;
+    margin-top: 2px;
+}
+.theme_dark.format-topics .section .activity {
+    background-color: #2d2c2c;
+}
+.theme_contrast.format-topics .section .activity {
+    background-color: #000;
+}
+.format-topics .sectionname {
+    font-size: 1em;
+}
+.format-topics #completionprogressid {
+    display: none;
+}
+.format-topics .section_availability .ishidden {
+    padding-left: 32px;
+}
+.format-topics .availabilityinfo.ishidden {
+    display: none;
+}
+/*topics format END */
+/* weeks format START */
+.format-weeks.path-course-view .completionprogress {
+    float: left;
+}
+.format-weeks .weeks .section .activity {
+    background-color: #fff;
+    padding: 10px;
+    padding-left: 20px;
+    margin-top: 2px;
+}
+.theme_dark.format-weeks .weeks .section .activity {
+    background-color: #2d2c2c;
+}
+.theme_contrast.format-weeks .weeks .section .activity {
+    background-color: #000;
+}
+.format-weeks .weeks .sectionname {
+    font-size: 1em;
+}
+.format-weeks .course-content .current::before {
+    border: 0px;
+}
+.format-weeks .section_availability .ishidden {
+    padding-left: 32px;
+}
+.format-weeks .availabilityinfo.ishidden {
+    display: none;
+}
+/* weeks format END */
+/* collapsable topics format START */
+.format-collapsibletopics.path-course-view .completionprogress {
+    float: left;
+}
+.course-content ul.collapsibletopics li.section ul.section {
+    padding-left: 0px;
+}
+.format-collapsibletopics .section .activity {
+    background-color: #fff;
+    padding: 10px;
+    padding-left: 20px;
+    margin-top: 2px;
+}
+.theme_dark.format-collapsibletopics .section .activity {
+    background-color: #2d2c2c;
+}
+.theme_contrast .format-collapsibletopics .section .activity {
+    background-color: #000;
+}
+.format-collapsibletopics .course-content ul.collapsibletopics li.section .sectionname {
+    font-size: 15px;
+    color: #000;
+}
+.theme_default .course-content ul.collapsibletopics li.section .sectionname {
+    color: #000;
+}
+.theme_dark .course-content ul.collapsibletopics li.section .sectionname {
+    color: #fff;
+}
+.theme_contrast .course-content ul.collapsibletopics li.section .sectionname {
+    color: #fff;
+}
+.format-collapsibletopics .course-content ul.collapsibletopics a.sectiontoggle[aria-expanded="true"],
+.course-content ul.collapsibletopics a.sectiontoggle[aria-expanded="false"] {
+    background-size: 13px 13px;
+    font-size: 0.8rem;
+}
+.format-collapsibletopics .course-content ul.collapsibletopics .sectiontoggle ~ .section-summary-activities,
+.format-collapsibletopics .course-content ul.collapsibletopics .sectiontoggle.collapsed ~ .section-summary-activities {
+    padding-left: 20px;
+}
+/*.format-collapsibletopics .course-content ul.collapsibletopics .sectiontoggle ~ .section-summary-activities,*/
+/*.format-collapsibletopics .course-content ul.collapsibletopics .sectiontoggle.collapsed ~ .section-summary-activities{*/
+    /*display: none;*/
+/*}*/
+.format-collapsibletopics .availabilityinfo.ishidden {
+    display: none;
+}
+/*.format-collapsibletopics .expandall {*/
+    /*display: none;*/
+/*}*/
+/*.format-collapsibletopics #completionprogressid {*/
+    /*display: none;*/
+/*}*/
+/* collapsable topics format END */
+/* collapsable weeks format START */
+.format-collapsibleweeks.path-course-view .completionprogress {
+    float: left;
+}
+.course-content ul.collapsibleweeks li.section ul.section {
+    padding-left: 0px;
+}
+.format-collapsibleweeks .section .activity {
+    background-color: #fff;
+    padding: 10px;
+    padding-left: 20px;
+    margin-top: 2px;
+}
+.theme_dark.format-collapsibleweeks .section .activity {
+    background-color: #2d2c2c;
+}
+.theme_contrast.format-collapsibleweeks .section .activity {
+    background-color: #000;
+}
+
+.format-collapsibleweeks .course-content ul.collapsibleweeks a.sectiontoggle[aria-expanded="true"],
+.format-collapsibleweeks .course-content ul.collapsibleweeks a.sectiontoggle[aria-expanded="false"] {
+    background-size: 13px 13px;
+    font-size: 0.8rem;
+}
+.format-collapsibleweeks .course-content ul.collapsibleweeks li.section .sectionname {
+    font-size: 15px;
+    color: #000;
+}
+.theme_default .course-content ul.collapsibleweeks li.section .sectionname {
+    color: #000;
+}
+.theme_dark .course-content ul.collapsibleweeks li.section .sectionname {
+    color: #fff;
+}
+.theme_contrast .course-content ul.collapsibleweeks li.section .sectionname {
+    color: #fff;
+}
+.format-collapsibleweeks .section_availability .ishidden {
+    padding-left: 32px;
+}
+.format-collapsibleweeks .course-content ul.collapsibleweeks .sectiontoggle ~ .section-summary-activities,
+.format-collapsibleweeks .course-content ul.collapsibleweeks .sectiontoggle.collapsed ~ .section-summary-activities {
+    padding-left: 20px;
+}
+/*.format-collapsibleweeks .course-content ul.collapsibleweeks .sectiontoggle ~ .section-summary-activities,*/
+/*.format-collapsibleweeks .course-content ul.collapsibleweeks .sectiontoggle.collapsed ~ .section-summary-activities{*/
+/*display: none;*/
+/*}*/
+/*.format-collapsibleweeks .expandall {*/
+/*display: none;*/
+/*}*/
+/*.format-collapsibleweeks #completionprogressid {*/
+/*display: none;*/
+/*}*/
+.format-collapsibleweeks .availabilityinfo.ishidden {
+    display: none;
+}
+/* collapsable weeks format END */
+/* multi-page topics format START */
+/* main page */
+.format-topics .course-content .section-summary {
+    border: 0;
+}
+.format-topics .course-content .topics .section-summary .section-title {
+    margin: 0;
+}
+/*.format-topics .course-content ul.topics .section-summary-activities {*/
+    /*display: none;*/
+/*}*/
+/* section page */
+.format-topics .single-section h3.sectionname {
+    text-align: unset;
+    font-size: 1em;
+}
+.format-topics .course-content .single-section .section-navigation .mdl-right,
+.format-topics .course-content .single-section .section-navigation .mdl-left {
+    display: none;
+}
+.format-topics #sectionmenu {
+    display: none;
+}
+/*!* multi-page topics format END *!*/
+/*!* multi-page weeks format START *!*/
+.format-weeks .course-content .section-summary {
+    border: 0;
+}
+.format-weeks .course-content .weeks .section-summary .section-title {
+    margin: 0;
+}
+/*.format-weeks .course-content ul.weeks .section-summary-activities {*/
+/*display: none;*/
+/*}*/
+/* section page */
+.format-weeks .single-section h3.sectionname {
+    text-align: unset;
+    font-size: 1em;
+}
+.course-content .single-section .section-navigation {
+    margin-bottom: 0;
+}
+.section-navigation .jumpmenu {
+    width: unset;
+}
+#page-course-view-weeks .navigationtitle .mdl-left,
+#page-course-view-weeks .navigationtitle .mdl-right {
+    display: none;
+}
+/*.format-weeks .course-content .single-section .section-navigation .mdl-right,*/
+/*.format-weeks .course-content .single-section .section-navigation .mdl-left {*/
+/*display:none;*/
+/*}*/
+/*.format-weeks #sectionmenu {*/
+/*display: none;*/
+/*}*/
+.format-weeks .availabilityinfo.ishidden {
+    display: none;
+}
+.format-weeks .availabilityinfo.ishidden span {
+    display: none;
+}
+/*!* multi-page weeks format END *!*/
+
+/* header START */
+#course_page_title {
+    position: relative;
+    background-color: #fff;
+    border-left: 8px #fc852c solid;
+    font-size: 28px;
+    padding-left: 40px;
+}
+.theme_dark #course_page_title {
+    background-color: #2d2c2c;
+}
+.theme_contrast #course_page_title {
+    background-color: #000;
+}
+body .back_course_main {
+    position: relative;
+    display: block;
+    font-size: 16px;
+    padding-left: 6px;
+    padding-top: 18px;
+}
+.back #course_page_title .page_title a {
+    padding-right: 33px;
+}
+#course_page_title .page_title {
+    padding-bottom: 20px;
+    padding-top: 28px;
+}
+.page_title a:active,
+.page_title a:hover {
+    text-decoration: none;
+}
+
+@media (max-width:800px) {
+    body #course_page_title {
+        font-size: 21px;
+    }
+}
+
+@media (max-width:640px) {
+    body #course_page_title {
+        font-size: 17px;
+    }
+}
+
+@media (max-width:550px) {
+    body #course_page_title {
+        font-size: 16px;
+    }
+}
+/* header END */
+
+
+/* Section page START */
+.section-summary-activities {
+    text-align: left;
+    padding-left: 10px;
+}
+/* Section page END */
+
+
+/*!* all course formats START *!*/
+.card-body {
+    background-color: #f3f2f1;
+    padding: 0;
+}
+.theme_dark .card-body {
+    background-color: #201f1f;
+}
+.theme_contrast .card-body {
+    background-color: #000;
+}
+.container-fluid {
+    padding-right: 0;
+    padding-left: 0;
+}
+body,
+body.theme_default {
+    background-color: #f3f2f1;
+    font-size: 0.875rem;
+    color: #484644;
+}
+body.theme_dark {
+    background-color: #201f1f;
+    color: #fff;
+}
+body.theme_contrast {
+    background-color: #000;
+    color: #fff;
+}
+.theme_dark #region-main {
+    background-color: #201f1f;
+}
+.theme_contrast #region-main {
+    background-color: #000;
+}
+#region-main-box {
+    padding-right: 0;
+    padding-left: 0;
+}
+/* course body START */
+.pagelayout-incourse .card-body {
+    background-color: #fff;
+}
+.theme_dark.pagelayout-incourse .card-body {
+    background-color: #201f1f;
+}
+.theme_contrast.pagelayout-incourse .card-body {
+    background-color: #000;
+}
+.pagelayout-incourse .card-body div[role="main"] {
+    border-top: solid 2px #f3f2f1;
+    padding-right: 15px;
+}
+.theme_dark.pagelayout-incourse .card-body div[role="main"] {
+    border-top: solid 2px #201f1f;
+    padding-right: 15px;
+}
+.theme_contrast.pagelayout-incourse .card-body div[role="main"] {
+    border-top: solid 2px #000;
+    padding-right: 15px;
+}
+.form-group div[data-fieldtype="filemanager"] {
+    padding-right: 0px;
+}
+
+.course-content ul li.section.main {
+    border-bottom: 0;
+}
+#region-main .card {
+    border: 0;
+}
+
+.row {
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+a,
+.theme_default a {
+    color: #484644;
+}
+.theme_dark a {
+    color: #6264a7;
+}
+.theme_contrast a {
+    color: #ffff00;
+}
+/* course body END */
+
+/* activity list START */
+.sectionname {
+    font-family: 'Segoe UISB';
+}
+.section .activity .actions {
+    float: left;
+    position: static;
+}
+.section .activity .actions {
+    margin-right: 4px;
+}
+.section .activity .activityinstance,
+.section .activity .activityinstance > a {
+    float: left;
+}
+.section .activity .contentwithoutlink,
+.section .activity .activityinstance {
+    min-width: 15%;
+}
+.section .activity .availabilityinfo,
+.section .activity .contentafterlink {
+    float: left;
+    width: 99%;
+}
+.section .activity .mod-indent-outer {
+    width: 100%;
+}
+.section .label .mod-indent-outer {
+    padding-left: 0;
+}
+.section .activity.modtype_label.label {
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+}
+
+/* activity list END */
+/* footer START */
+.footerlogo {
+    width: 100%;
+    color: gold;
+    height: 60px;
+    position: fixed;
+    bottom: 0px;
+    background-color: #f3f2f1;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.theme_dark .footerlogo {
+    background-color: #201f1f;
+}
+.theme_contrast .footerlogo {
+    background-color: #000;
+}
+.footerlogo .stamp img {
+    float: right;
+}
+.user_details {
+    color: black;
+}
+div.footerleft {
+    display: inline;
+    float: left;
+}
+div.footerright {
+    display: inline;
+    float: right;
+}
+a.feedbacklink {
+    margin-right: 20px;
+    color: #6264a7;
+    display: inline-block;
+    padding-top: 10px;
+    font-size: 0.9375rem;
+}
+.theme_default a.feedbacklink {
+    color: #6264a7;
+}
+.theme_dark a.feedbacklink {
+    color: #c8c6c4;
+}
+.theme_contrast a.feedbacklink {
+    color: #ffff00;
+}
+.fa-lightbulb-o {
+    font-family: "FontAwesome" !important;
+    font-size: 15px !important;
+    border-radius: 5px !important;
+}
+.fa-lightbulb-o:before {
+    padding: 5px;
+}
+/* footer END */
+/* popup icon START */
+
+.modtype_assign .popupicon,
+.modtype_quiz .popupicon {
+    display: none;
+}
+.popupicon {
+    margin-left: 4px;
+    display: inline;
+}
+/* popup icon END */
+
+/* ALL BUTTONS */
+button {
+    text-rendering: auto;
+    color: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+    margin: 0em;
+    font: 400 13.3333px Arial;
+}
+
+/* ENABLED SECONDARY BUTTON */
+/* secondary button */
+.btn-secondary {
+    background: #fff;
+    border: 0.125rem solid;
+    border-color: #bdbdbd;
+    border-radius: 0.1875rem;
+    box-sizing: border-box;
+    color: #5c5b5b;
+    cursor: pointer;
+    font-family: "Segoe UI", Tahoma, Helvetica, sans-serif;
+    height: 2rem;
+    min-width: 6rem;
+    padding: 0.25rem;
+    white-space: nowrap;
+    -webkit-box-shadow: unset !important;
+    box-shadow: unset !important;
+}
+/* secondary button :active*/
+.btn-secondary:not(:disabled):not(.disabled):active {
+    background: #414040;
+    border-color: transparent;
+    color: #fff;
+}
+/* secondary button :hover*/
+.btn-secondary:hover,
+.btn-secondary:focus:enabled {
+    background: rgb(200,200,200);
+    border-color: transparent;
+    color: #000;
+}
+/* secondary button :focus*/
+.btn-secondary:focus,
+.btn-secondary:focus:enabled {
+    background: #636262;
+    border-color: transparent;
+    color: #fff;
+    outline: 0.125rem solid #fff;
+    outline-offset: -0.25rem;
+}
+/* secondary button (checked)*/
+.fp-viewbar:not(.disabled) a.checked:not(:disabled):not(.disabled) {
+    color: #fff;
+    background-color: #1f2021;
+    border-color: #191a1b;
+}
+
+/* DISABLED SECONDARY BUTTON */
+/* secondary button */
+div.disabled .btn-secondary {
+    background: #2d2c2c;
+    border-color: #2b2a2a;
+    color: #636262;
+    cursor: default;
+}
+
+/* ENABLED PRIMARY BUTTON */
+/* primary button */
+.btn-primary,
+.btn-default {
+    background: #6264a7;
+    border: 0.125rem solid;
+    border-color: transparent;
+    border-radius: 0.1875rem;
+    box-sizing: border-box;
+    cursor: pointer;
+    font: inherit;
+    height: 2rem;
+    min-width: 6rem;
+    padding: 0.25rem;
+    white-space: nowrap;
+    -webkit-box-shadow: unset !important;
+    box-shadow: unset !important;
+    color: #fff;
+}
+/* primary button :active*/
+.btn-primary:not(:disabled):not(.disabled):active,
+.btn-default:not(:disabled):not(.disabled):active {
+    background: #a6a7dc;
+    border-color: transparent;
+    color: #201f1f;
+}
+/* primary button :hover*/
+.btn-primary:hover, .btn-primary:focus:enabled,
+.btn-default:hover, .btn-default:focus:enabled {
+    background: #464775;
+    border-color: transparent;
+    color: #fff;
+}
+/* primary button :focus*/
+.btn-primary:focus, .btn-primary:focus:enabled,
+.btn-default:focus, .btn-default:focus:enabled {
+}
+
+body {
+    display: none;
+}
+body#page-login-index {
+    display: block;
+}
+nav.navbar {
+    display: none;
+}
+div#nav-drawer {
+    display: none;
+}
+section[data-region="blocks-column"] {
+    display: none;
+}
+footer#page-footer {
+    display: none;
+}
+#page-mod-assign-grader {
+    display: unset;
+}
+
+header#page-header {
+    clear: both;
+}
+
+.btn {
+    font-size: 0.875rem;
+    height: unset;
+}
+.course-content ul.section {
+    margin: 0;
+}
+.path-course-view .completionprogress {
+    margin-left: 0;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-family: "Segoe UISB";
+    font-size: 15px;
+}
+ul {
+    padding-left: 0;
+}
+#page-wrapper::after {
+    content: none;
+}
+#page-wrapper {
+    margin-bottom: 50px !important;
+}
+
+/*!* modules START *!*/
+.path-mod .card-body div[role="main"] {
+    padding-right: 15px;
+    padding-left: 48px;
+}
+
+#prev-activity-link {
+    margin-left: 33px;
+}
+/*.editsubmissionform .col-md-3 {*/
+/*display: none;*/
+/*}*/
+.editsubmissionform .form-group {
+    margin-left: -15px;
+}
+.editsubmissionform .felement {
+    flex: unset;
+    max-width: unset;
+}
+.table-striped tbody tr:nth-of-type(odd),
+table.collection tbody tr:nth-of-type(odd),
+table#explaincaps tbody tr:nth-of-type(odd),
+table#defineroletable tbody tr:nth-of-type(odd),
+table.grading-report tbody tr:nth-of-type(odd),
+table#listdirectories tbody tr:nth-of-type(odd),
+table.rolecaps tbody tr:nth-of-type(odd),
+table.userenrolment tbody tr:nth-of-type(odd),
+form#movecourses table tbody tr:nth-of-type(odd),
+#page-admin-course-index .editcourse tbody tr:nth-of-type(odd),
+.forumheaderlist tbody tr:nth-of-type(odd),
+table.flexible tbody tr:nth-of-type(odd),
+.generaltable tbody tr:nth-of-type(odd) {
+    background-color: #f2f2f2;
+}
+/* Assignment Module START */
+.path-mod-assign td.submissionstatussubmitted,
+.path-mod-assign div.submissionstatussubmitted,
+.path-mod-assign a:link.submissionstatussubmitted,
+.path-mod-assign td.submissionnotgraded,
+.path-mod-assign div.submissionnotgraded,
+.path-mod-assign td.latesubmission,
+.path-mod-assign a:link.latesubmission,
+.path-mod-assign div.latesubmission,
+.path-mod-assign td.submissiongraded,
+.path-mod-assign div.submissiongraded {
+    color: inherit;
+    background-color: inherit;
+}
+.table-hover tbody tr:hover,
+table.grading-report tbody tr:hover,
+.forumheaderlist tbody tr:hover,
+.generaltable tbody tr:hover,
+table.flexible tbody tr:hover,
+.category_subcategories tbody tr:hover,
+table#modules tbody tr:hover,
+table#permissions tbody tr:hover {
+    background-color: #f2f2f2;
+}
+/* Assignment Module END */
+
+
+/* Quiz Module START */
+#page-mod-quiz-attempt .card div[role="main"],
+#page-mod-quiz-view .card div[role="main"] {
+    padding-top: 10px;
+}
+.card .quizattempt .continuebutton {
+    display: inline-block;
+    margin-left: 3px;
+}
+/* Quiz Module END */
+/*!* modules END *!*/
+
+
+.m-t-2, .m-b-1 {
+    padding-top: 25px;
+}
+
+.section .activity .availabilityinfo, .section .activity .contentafterlink {
+    padding-right: 30px;
+}
+
+.submitbtns_with_return {
+    text-align: center !important;
+}
+
+.mod_quiz-prev-nav {
+    float: left;
+}
+
+.mod_quiz-return-nav {
+    margin: 0 auto;
+}

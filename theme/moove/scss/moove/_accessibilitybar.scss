@@ -1,0 +1,111 @@
+#accessibilitybar {
+    display: none;
+    padding: .2rem;
+    height: 30px;
+    background-color: $gray-100;
+
+    .container-fluid {
+        max-width: 100%;
+        padding: 0 1rem;
+    }
+
+    .bars {
+        display: -ms-flexbox;
+        display: flex;
+        margin-left: auto;
+        margin-right: .5rem;
+
+        .fontsize,
+        .sitecolor {
+            display: flex;
+        }
+
+        .fontsize {
+            margin-left: auto;
+            margin-right: .5rem;
+        }
+
+        ul {
+            padding-left: 0;
+            margin-bottom: 0;
+            list-style: none;
+            display: flex;
+
+            li {
+                display: list-item;
+                text-align: -webkit-match-parent;
+                margin-left: .5rem;
+
+                .btn {
+                    padding: 0 .5rem;
+                    border-radius: 4px;
+                    color: #212529;
+                    cursor: pointer;
+                }
+            }
+        }
+
+        #sitecolor_color2 {
+            background-color: #ffffcc;
+        }
+
+        #sitecolor_color3 {
+            background-color: #99ccff;
+        }
+
+        #sitecolor_color4 {
+            color: #ffff00;
+            background-color: #000000;
+        }
+    }
+}
+
+body.hasaccessibilitybar {
+    #page, #page.drawers {
+        margin-top: 100px;
+    }
+
+    .navbar.fixed-top {
+        top: 30px;
+    }
+
+    #accessibilitybar {
+        display: block;
+    }
+
+    .secondary-navigation.moove {
+        margin-top: 30px;
+    }
+}
+
+@include media-breakpoint-up(md) {
+    body.hasaccessibilitybar:not(.notloggedin) {
+        .drawer-toggles .drawer-toggler {
+            top: 110px;
+            position: fixed;
+        }
+
+        .drawer-left,
+        .drawer-right {
+            top: calc(100px + 1px);
+            height: calc(100vh - 100px);
+        }
+    }
+
+    body.has-secondarynavigation.hasaccessibilitybar:not(.notloggedin) {
+        #page,
+        #page.drawers {
+            margin-top: 160px;
+        }
+
+        .drawer-toggles .drawer-toggler {
+            top: 170px;
+        }
+
+        .drawer-left,
+        .drawer-right {
+            top: calc(160px + 1px);
+            height: calc(100vh - 160px);
+        }
+    }
+}

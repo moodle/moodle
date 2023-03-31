@@ -1,0 +1,215 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_moove/drawers
+
+    Boost drawer template.
+
+    Context variables required for this template:
+    * sitename - The name of the site
+    * output - The core renderer for the page
+    * bodyattributes - attributes for the body tag as a string of html attributes
+    * sidepreblocks - HTML for the blocks
+    * hasblocks - true if there are blocks on this page
+    * courseindexopen - true if the nav drawer should be open on page load
+    * regionmainsettingsmenu - HTML for the region main settings menu
+    * hasregionmainsettingsmenu - There is a region main settings menu on this page.
+
+    Example context (json):
+    {
+        "sitename": "Moodle",
+        "output": {
+            "doctype": "<!DOCTYPE html>",
+            "page_title": "Test page",
+            "favicon": "favicon.ico",
+            "main_content": "<h1>Headings make html validators happier</h1>"
+         },
+        "bodyattributes":"",
+        "sidepreblocks": "<h2>Blocks html goes here</h2>",
+        "hasblocks":true,
+        "courseindexopen": true,
+        "navdraweropen": false,
+        "blockdraweropen": true,
+        "regionmainsettingsmenu": "",
+        "hasregionmainsettingsmenu": false,
+        "addblockbutton": ""
+    }
+}}
+{{> theme_moove/head }}
+
+<body {{{ bodyattributes }}}>
+{{> core/local/toast/wrapper}}
+<div id="page-wrapper" class="d-print-block">
+
+    {{{ output.standard_top_of_body_html }}}
+
+    {{> theme_moove/navbar }}
+
+    <div id="page" data-region="mainpage" data-usertour="scroller" class="drawers drag-container bg-white">
+        {{#slidercount}}
+            <div id="mooveslideshow" class="container-fluid">
+                <div id="carousel-indicators" class="carousel slide carousel-fade" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        {{#slides}}
+                            <li data-target="#carousel-indicators" data-slide-to="{{{ key }}}" {{#active}}class="active"{{/active}}></li>
+                        {{/slides}}
+                    </ol>
+                    <div class="carousel-inner">
+                        {{#slides}}
+                            <div class="carousel-item {{#active}}active{{/active}}">
+                                <img src="{{image}}" alt="{{slidertitle}}" class="w-100">
+                                <div class="carousel-caption d-none d-md-block">
+                                    <h5 class="title">{{{title}}}</h5>
+                                    <div class="caption">
+                                        {{{caption}}}
+                                    </div>
+                                </div>
+                            </div>
+                        {{/slides}}
+                    </div>
+                    <a class="carousel-control-prev" href="#carousel-indicators" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">{{#str}}previous{{/str}}</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carousel-indicators" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">{{#str}}next{{/str}}</span>
+                    </a>
+                </div>
+            </div>
+        {{/slidercount}}
+
+        {{#displaymarketingbox}}
+            <section id="feature">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-4 my-3">
+                            <h3 class="h1 mt-3 mb-3">{{{marketingheading}}}</h3>
+                            <div class="marketing-content">{{{marketingcontent}}}</div>
+                        </div>
+                        <div class="col-lg-8 ps-xl-8">
+                            <div class="row">
+                                {{#marketingboxes}}
+                                    <div class="col-sm-6 mt-4">
+                                        <div class="card card-body shadow">
+                                            <div class="d-flex">
+                                                <div class="icon-lg text-white rounded-circle">
+                                                    <img src="{{{icon}}}">
+                                                </div>
+                                                <div class="col ps-3">
+                                                    <h5>{{{heading}}}</h5>
+                                                    <div class="box-content">{{{content}}}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {{/marketingboxes}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        {{/displaymarketingbox}}
+
+        {{#numbersfrontpage}}
+            <section id="numbers">
+                <div class="moove-container-fluid">
+                    <div class="row customer-area-l1 justify-content-center align-items-center ">
+                        <div class="col-xl-5 col-lg-5 col-md-10">
+                            <div class="sectionheading">
+                                {{{numberscontent}}}
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-7 col-md-10 offset-xl-1">
+                            <div class="row user-rating-box-area">
+                                <div class="col-sm-6 col-xs-8">
+                                    <div class="h-100 rate-box bg-primary">
+                                        <h3>
+                                            {{{numbersusers}}}
+                                        </h3>
+                                        <p>{{#str}}numbersusers, theme_moove{{/str}}</p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-xs-8">
+                                    <div class="h-100 rate-box rate-box-2 bg-cloudburst">
+                                        <h3>
+                                            {{{numberscourses}}}
+                                        </h3>
+                                        <p>{{#str}}numberscourses, theme_moove{{/str}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        {{/numbersfrontpage}}
+
+        <div id="topofscroll">
+            <div id="page-content" class="d-print-block main-inner">
+                <div id="region-main-box">
+                    <section id="region-main" aria-label="{{#str}}content{{/str}}">
+                        {{{ output.course_content_header }}}
+                        {{{ output.main_content }}}
+                        {{{ output.course_content_footer }}}
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        {{#faqenabled}}
+            <section id="faq" class="scale-up scale-up-show">
+                <div class="moove-container-fluid">
+                    <h2>{{#str}}faq, theme_moove{{/str}}</h2>
+
+                    <div class="accordion" id="accordionFaq">
+                        {{#faq}}
+                            <div class="card shadow">
+                                <div class="card-header" id="heading-{{{id}}}">
+                                    <h2 class="mb-0">
+                                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse-{{{id}}}" aria-expanded="false" aria-controls="collapse-{{{id}}}">
+                                            {{{question}}}
+                                        </button>
+                                    </h2>
+                                </div>
+
+                                <div id="collapse-{{{id}}}" class="collapse" aria-labelledby="heading-{{{id}}}" data-parent="#accordionFaq">
+                                    <div class="card-body">
+                                        {{{answer}}}
+                                    </div>
+                                </div>
+                            </div>
+                        {{/faq}}
+                    </div>
+                </div>
+            </section>
+        {{/faqenabled}}
+
+        {{> theme_moove/footer }}
+    </div>
+    {{{ output.standard_after_main_region_html }}}
+</div>
+
+</body>
+</html>
+{{#js}}
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader', 'theme_boost/drawer'], function(Loader, Drawer) {
+    Drawer.init();
+    M.util.js_complete('theme_boost/loader');
+});
+{{/js}}

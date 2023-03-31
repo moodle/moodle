@@ -1,0 +1,49 @@
+@font-face {
+    font-family: clfallback;
+    src: url('[[font:theme|OpenDyslexic.otf]]') format('opentype');
+}
+
+@font-face {
+    font-family: 'oda';
+    src: url('[[font:theme|OpenDyslexic-Regular.otf]]') format('opentype'),
+    url('[[font:theme|OpenDyslexic-Regular.eot]]') format('eot'),
+    url('[[font:theme|OpenDyslexic-Regular.woff]]') format('woff'),
+    url('[[font:theme|OpenDyslexic-Regular.woff2]]') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'oda';
+    src: url('[[font:theme|OpenDyslexic-Italic.otf]]') format('opentype'),
+    url('[[font:theme|OpenDyslexic-Italic.eot]]') format('eot'),
+    url('[[font:theme|OpenDyslexic-Italic.woff]]') format('woff'),
+    url('[[font:theme|OpenDyslexic-Italic.woff2]]') format('woff2');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'oda';
+    src: url('[[font:theme|OpenDyslexic-Bold.otf]]') format('opentype'),
+    url('[[font:theme|OpenDyslexic-Bold.eot]]') format('eot'),
+    url('[[font:theme|OpenDyslexic-Bold.woff]]') format('woff'),
+    url('[[font:theme|OpenDyslexic-Bold.woff2]]') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'oda';
+    src: url('[[font:theme|OpenDyslexic-Bold-Italic.otf]]') format('opentype')
+    url('[[font:theme|OpenDyslexic-Bold-Italic.eot]]') format('eot'),
+    url('[[font:theme|OpenDyslexic-Bold-Italic.woff]]') format('woff'),
+    url('[[font:theme|OpenDyslexic-Bold-Italic.woff2]]') format('woff2');
+
+    font-weight: bold;
+    font-style: italic;
+}
+
+.odafont {
+    font-family: oda, comic sans ms, clfallback, Verdana;
+}

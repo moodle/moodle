@@ -1,0 +1,31 @@
+#page-enrol-index #region-main {
+    .generalbox:first-of-type {
+        width: 33.33%;
+        float: left;
+    }
+
+    .generalbox:not(:first-of-type) {
+        float: right;
+        width: calc(66.66% - 1rem);
+        padding: 1rem;
+        margin-top: 1rem;
+        margin-left: 1rem;
+        border-radius: .5rem;
+        -webkit-box-shadow: 0 0 35px 0 rgba(154,161,171,.15);
+        box-shadow: 0 0 35px 0 rgba(154,161,171,.15);
+    }
+}
+
+@include media-breakpoint-down(md) {
+    #page-enrol-index #region-main {
+        .generalbox {
+            width: 100% !important;
+            float: none !important;
+            margin: .5rem 0 .5rem 0 !important;
+        }
+
+        .generalbox:first-of-type {
+            padding: 0 !important;
+        }
+    }
+}
