@@ -50,8 +50,6 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
             $lateximage = $latex->render($texexp, $image, 12, $density, $background);
             if ($lateximage) {
                 copy($lateximage, $pathname);
-                $latex->clean_up($md5);
-
             } else {
                 // failing that, use mimetex
                 $texexp = $texcache->rawtext;
