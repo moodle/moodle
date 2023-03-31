@@ -18,7 +18,6 @@ declare(strict_types=1);
 
 namespace core_badges\reportbuilder\datasource;
 
-use award_criteria;
 use core_badges_generator;
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
@@ -100,13 +99,9 @@ class users_test extends core_reportbuilder_testcase {
         ($badgecourse = $generator->create_badge(['name' => 'Badge 2', 'type' => BADGE_TYPE_COURSE, 'courseid' => $course->id]))
             ->issue($user->id, true);
 
-        // Overall, plus specific criteria for manually awarding by role.
-        award_criteria::build(['badgeid' => $badgesite->id, 'criteriatype' => BADGE_CRITERIA_TYPE_OVERALL])
-            ->save(['agg' => BADGE_CRITERIA_AGGREGATION_ALL]);
-
+        // Create criteria for manually awarding by role.
         $managerrole = $DB->get_field('role', 'id', ['shortname' => 'manager']);
-        award_criteria::build(['badgeid' => $badgesite->id, 'criteriatype' => BADGE_CRITERIA_TYPE_MANUAL])
-            ->save(["role_{$managerrole}" => $managerrole]);
+        $generator->create_criteria(['badgeid' => $badgesite->id, 'roleid' => $managerrole]);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
