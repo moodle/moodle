@@ -554,7 +554,18 @@ $cache = '.var_export($cache, true).';
         $types = array();
         $subplugins = array();
         if (file_exists("$ownerdir/db/subplugins.json")) {
-            $subplugins = (array) json_decode(file_get_contents("$ownerdir/db/subplugins.json"))->plugintypes;
+            $subplugins = [];
+            $subpluginsjson = json_decode(file_get_contents("$ownerdir/db/subplugins.json"));
+            if (json_last_error() === JSON_ERROR_NONE) {
+                if (!empty($subpluginsjson->plugintypes)) {
+                    $subplugins = (array) $subpluginsjson->plugintypes;
+                } else {
+                    error_log("No plugintypes defined in $ownerdir/db/subplugins.json");
+                }
+            } else {
+                $jsonerror = json_last_error_msg();
+                error_log("$ownerdir/db/subplugins.json is invalid ($jsonerror)");
+            }
         } else if (file_exists("$ownerdir/db/subplugins.php")) {
             error_log('Use of subplugins.php has been deprecated. ' .
                 "Please update your '$ownerdir' plugin to provide a subplugins.json file instead.");
