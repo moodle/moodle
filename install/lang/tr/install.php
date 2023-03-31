@@ -92,14 +92,14 @@ $string['pathsunsecuredataroot'] = 'Veri yolu güvenli değil';
 $string['pathswrongadmindir'] = 'Yönetici klasörü yok';
 $string['phpextension'] = '{$a} PHP eklentisi';
 $string['phpversion'] = 'PHP sürümü';
-$string['phpversionhelp'] = '<p>Moodle, PHP sürümünün en az 4.3.0 veya 5.1.0 olmasını gerektirir (5.0.x sürümünde çok fazla hata var).</p>
-<p>Şu anda çalışan sürüm: {$a}</p>
-<p>PHP\'yi güncellemeli veya PHP\'nin yeni sürümünü kullananan bir hostinge taşınmalısınız!</p>';
+$string['phpversionhelp'] = '<p>Moodle en az 5.6.5 veya 7.1 PHP sürümü gerektirir (7.0.x bazı motor sınırlamalarına sahiptir).</p>
+<p>Şu anda {$a} sürümünü çalıştırıyorsunuz.</p>
+<p>PHP\'yi yükseltmeli veya daha yeni bir PHP sürümüne sahip bir ana bilgisayara geçmelisiniz.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Bilgisayarınıza <strong>{$a->packname} {$a->packversion}</strong> paketini başarıyla kurdunuz. Tebrikler!';
-$string['welcomep30'] = '<strong>{$a->installername}</strong>\'nin bu sürümü <strong>Moodle</strong>\'da bir ortam oluşturmak için uygulamaları içerir:';
+$string['welcomep30'] = '<strong> {$a-> installername} </strong>\'in bu sürümü, <strong> Moodle </strong>\'ın çalışacağı bir ortam oluşturmak için uygulamaları içerir:';
 $string['welcomep40'] = 'Bu paket <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong> sürümünü de içerir.';
 $string['welcomep50'] = 'Bu paketteki tüm uygulamaların kullanımı ilgili lisanslarına tabidir.  Eksiksiz <strong>{$a->installername}</strong> paketi <a href="https://www.opensource.org/docs/definition_plain.html">açık kaynak</a>\'tır ve altında dağıtılır <a href="https://www.gnu.org/copyleft/gpl.html">GPL</a> lisansı.';
-$string['welcomep60'] = 'Aşağıdaki sayfalar <strong>Moodle</strong>ın kurulumu ve yapılandırılması için size basitçe yol gösterecektir. Varsayılan ayarları kabul edebilir veya ihtiyaçlarınıza göre bunları değiştirebilirsiniz.';
+$string['welcomep60'] = 'Aşağıdaki sayfalar, bilgisayarınızda <strong> Moodle </strong>\'ı yapılandırmak ve kurmak için izlemeniz gereken bazı kolay adımlarla sizi yönlendirecektir. Varsayılan ayarları kabul edebilir veya isteğe bağlı olarak kendi ihtiyacınıza göre değiştirebilirsiniz';
 $string['welcomep70'] = '<strong>Moodle</strong> kurulumu için aşağıdaki "İleri" tuşuna basın.';
 $string['wwwroot'] = 'Web adresi';
