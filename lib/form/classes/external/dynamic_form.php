@@ -60,6 +60,8 @@ class dynamic_form extends external_api {
         $formclass = $params['form'];
         parse_str($params['formdata'], $formdata);
 
+        self::autoload_block_edit_form($formclass);
+
         if (!class_exists($formclass) || !is_subclass_of($formclass, \core_form\dynamic_form::class)) {
             // For security reason we don't throw exception "class does not exist" but rather an access exception.
             throw new \moodle_exception('nopermissionform', 'core_form');
@@ -83,6 +85,22 @@ class dynamic_form extends external_api {
         $jsfooter = $PAGE->requires->get_end_code();
         $output = ['submitted' => false, 'html' => $data, 'javascript' => $jsfooter];
         return $output;
+    }
+
+    /**
+     * Special autoloading for block forms.
+     *
+     * @param string $formclass
+     * @return void
+     */
+    protected static function autoload_block_edit_form(string $formclass): void {
+        global $CFG;
+        if (preg_match('/^block_([\w_]+)_edit_form$/', $formclass, $matches)) {
+            \block_manager::get_block_edit_form_class($matches[1]);
+        }
+        if ($formclass === 'block_edit_form') {
+            require_once($CFG->dirroot . '/blocks/edit_form.php');
+        }
     }
 
     /**

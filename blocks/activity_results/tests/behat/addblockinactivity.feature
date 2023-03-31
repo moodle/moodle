@@ -47,15 +47,12 @@ Feature: The activity results block displays student scores
 
   Scenario: Configure the block on a non-graded activity to show 3 high scores
     Given I am on the "Test page name" "page activity" page
-    And I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    And I add the "Activity results" block to the default region with:
       | config_activitygradeitemid | Test assignment 1 |
       | config_showbest | 3 |
       | config_showworst | 0 |
       | config_gradeformat | Absolute numbers |
       | config_nameformat | Display full names |
-    And I press "Save changes"
     Then I should see "Student 1" in the "Activity results" "block"
     And I should see "90.00" in the "Activity results" "block"
     And I should see "Student 2" in the "Activity results" "block"
@@ -63,26 +60,24 @@ Feature: The activity results block displays student scores
     And I should see "Student 3" in the "Activity results" "block"
     And I should see "70.00" in the "Activity results" "block"
 
+  @javascript @addablocklink
   Scenario: Block should select current activity by default
-    Given I am on the "Test assignment 1" "assign activity" page
-    When I add the "Activity results" block
-    And I configure the "Activity results" block
-    Then the field "config_activitygradeitemid" matches value "Test assignment 1"
-    And I press "Cancel"
+    Given I click on "Test assignment 1" "link" in the "region-main" "region"
+    When I add the "Activity results..." block
+    Then the field "config_activitygradeitemid" in the "Add Activity results block" "dialogue" matches value "Test assignment 1"
+    And I click on "Save changes" "button" in the "Add Activity results block" "dialogue"
     And I am on "Course 1" course homepage
-    And I am on the "Test assignment 2" "assign activity" page
-    And I add the "Activity results" block
-    And I configure the "Activity results" block
-    And the field "config_activitygradeitemid" matches value "Test assignment 2"
-    And I press "Cancel"
+    And I click on "Test assignment 2" "link" in the "region-main" "region"
+    And I add the "Activity results..." block
+    And the field "config_activitygradeitemid" in the "Add Activity results block" "dialogue" matches value "Test assignment 2"
+    And I click on "Save changes" "button" in the "Add Activity results block" "dialogue"
     And I am on "Course 1" course homepage
-    And I am on the "Test assignment 3" "assign activity" page
-    And I add the "Activity results" block
-    And I configure the "Activity results" block
-    And the field "config_activitygradeitemid" matches value "Test assignment 3"
-    And I press "Cancel"
+    And I click on "Test assignment 3" "link" in the "region-main" "region"
+    And I add the "Activity results..." block
+    And the field "config_activitygradeitemid" in the "Add Activity results block" "dialogue" matches value "Test assignment 3"
+    And I click on "Save changes" "button" in the "Add Activity results block" "dialogue"
     And I am on "Course 1" course homepage
-    And I am on the "Test page name" "page activity" page
-    And I add the "Activity results" block
-    And I configure the "Activity results" block
-    And the field "config_activitygradeitemid" does not match value "Test page name"
+    And I click on "Test page name" "link" in the "region-main" "region"
+    And I add the "Activity results..." block
+    And the field "config_activitygradeitemid" in the "Add Activity results block" "dialogue" does not match value "Test page name"
+    And I click on "Save changes" "button" in the "Add Activity results block" "dialogue"

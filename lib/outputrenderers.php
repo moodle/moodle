@@ -5088,6 +5088,10 @@ EOD;
                 [
                     'link' => $url->out(false),
                     'escapedlink' => "?{$url->get_query_string(false)}",
+                    'pagehash' => $this->page->get_edited_page_hash(),
+                    'blockregion' => $region,
+                    // The following parameters are not used since Moodle 4.2 but are
+                    // still passed for backward-compatibility.
                     'pageType' => $this->page->pagetype,
                     'pageLayout' => $this->page->pagelayout,
                     'subPage' => $this->page->subpage,
