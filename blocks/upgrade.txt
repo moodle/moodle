@@ -1,7 +1,8 @@
 This files describes API changes in /blocks/* - activity modules,
 information provided here is intended especially for developers.
 
-=== 4.1 ===
+=== 4.2 ===
+
 * Block configuration form is now displayed in a modal. Class 'block_edit_form' now extends
   '\core_form\dynamic_form' and properties $block and $page are read-only. Normally
   no changes should be necessary to keep the old behavior of configuration form.
