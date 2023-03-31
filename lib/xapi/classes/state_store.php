@@ -41,6 +41,20 @@ class state_store {
     }
 
     /**
+     * Convert the xAPI activity ID into an item ID integer.
+     *
+     * @throws xapi_exception if the activity id is not numeric.
+     * @param string $activityid the provided activity ID
+     * @return int
+     */
+    protected function activity_id_to_item_id(string $activityid): int {
+        if (!is_numeric($activityid)) {
+            throw new xapi_exception('The state store can only store numeric activity IDs.');
+        }
+        return intval($activityid);
+    }
+
+    /**
      * Delete any extra state data stored in the database.
      *
      * This method will be called only if the state is accepted by validate_state.
@@ -55,7 +69,7 @@ class state_store {
         $data = [
             'component' => $this->component,
             'userid' => $state->get_user()->id,
-            'itemid' => $state->get_activity_id(),
+            'itemid' => $this->activity_id_to_item_id($state->get_activity_id()),
             'stateid' => $state->get_state_id(),
             'registration' => $state->get_registration(),
         ];
@@ -77,7 +91,7 @@ class state_store {
         $data = [
             'component' => $this->component,
             'userid' => $state->get_user()->id,
-            'itemid' => $state->get_activity_id(),
+            'itemid' => $this->activity_id_to_item_id($state->get_activity_id()),
             'stateid' => $state->get_state_id(),
             'registration' => $state->get_registration(),
         ];
@@ -109,7 +123,7 @@ class state_store {
         $data = [
             'component' => $this->component,
             'userid' => $state->get_user()->id,
-            'itemid' => $state->get_activity_id(),
+            'itemid' => $this->activity_id_to_item_id($state->get_activity_id()),
             'stateid' => $state->get_state_id(),
             'registration' => $state->get_registration(),
         ];
@@ -151,7 +165,7 @@ class state_store {
             'component' => $this->component,
         ];
         if ($itemid) {
-            $data['itemid'] = $itemid;
+            $data['itemid'] = $this->activity_id_to_item_id($itemid);
         }
         if ($userid) {
             $data['userid'] = $userid;
@@ -188,7 +202,7 @@ class state_store {
             'component' => $this->component,
         ];
         if ($itemid) {
-            $data['itemid'] = $itemid;
+            $data['itemid'] = $this->activity_id_to_item_id($itemid);
         }
         if ($userid) {
             $data['userid'] = $userid;
@@ -226,7 +240,7 @@ class state_store {
         ];
         if ($itemid) {
             $select .= ' AND itemid = :itemid';
-            $params['itemid'] = $itemid;
+            $params['itemid'] = $this->activity_id_to_item_id($itemid);
         }
         if ($userid) {
             $select .= ' AND userid = :userid';
