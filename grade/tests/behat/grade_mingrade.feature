@@ -72,13 +72,13 @@ Feature: We can use a minimum grade different than zero
   @javascript
   Scenario: Natural aggregation with negative and positive grade
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I set the following settings for grade item "Sub category 1":
+    And I set the following settings for grade item "Sub category 1" of type "category" on "setup" page:
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |
-    And I set the following settings for grade item "Sub category 2":
+    And I set the following settings for grade item "Sub category 2" of type "category" on "setup" page:
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |
-    And I set the following settings for grade item "Course 1":
+    And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |
     And I log out

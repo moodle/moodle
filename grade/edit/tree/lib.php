@@ -66,6 +66,7 @@ class grade_edit_tree {
         }
 
         $this->columns[] = grade_edit_tree_column::factory('range'); // This is not a setting... How do we deal with it?
+        $this->columns[] = grade_edit_tree_column::factory('status');
         $this->columns[] = grade_edit_tree_column::factory('actions');
 
         if ($this->deepest_level > 1) {
@@ -104,7 +105,7 @@ class grade_edit_tree {
 
         $object = $element['object'];
         $eid    = $element['eid'];
-        $object->name = $this->gtree->get_element_header($element, true, false, true, true, true);
+        $object->name = $this->gtree->get_element_header($element, true, false, true, false, true);
         $object->icon = $this->gtree->get_element_icon($element);
         $object->type = $this->gtree->get_element_type_string($element);
         $object->stripped_name = $this->gtree->get_element_header($element, false, false, false);
@@ -119,53 +120,12 @@ class grade_edit_tree {
         }
 
         $moveaction = '';
-        $actionsmenu = new action_menu();
-        $actionsmenu->set_menu_trigger($OUTPUT->pix_icon('i/moremenu', get_string('actions')), 'actions');
-        $actionsmenu->set_owner_selector('grade-item-' . $eid);
-
-        if (!$is_category_item && ($icon = $this->gtree->get_edit_icon($element, $this->gpr, true))) {
-            $actionsmenu->add($icon);
-        }
-        // MDL-49281 if grade_item already has calculation, it should be editable even if global setting is off.
-        $type = $element['type'];
-        $iscalculated = ($type == 'item' or $type == 'courseitem' or $type == 'categoryitem') && $object->is_calculated();
-        $icon = $this->gtree->get_calculation_icon($element, $this->gpr, true);
-        if ($iscalculated || $icon) {
-            $actionsmenu->add($icon);
-        }
+        $actions = $this->gtree->get_cell_action_menu($element, 'setup', $this->gpr);
 
         if ($element['type'] == 'item' or ($element['type'] == 'category' and $element['depth'] > 1)) {
-            if ($this->element_deletable($element)) {
-                $aurl = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'delete', 'eid' => $eid, 'sesskey' => sesskey()));
-                $icon = new action_menu_link_secondary($aurl, new pix_icon('t/delete', get_string('delete')), get_string('delete'));
-                $actionsmenu->add($icon);
-            }
-
-            if ($this->element_duplicatable($element)) {
-                $duplicateparams = array();
-                $duplicateparams['id'] = $COURSE->id;
-                $duplicateparams['action'] = 'duplicate';
-                $duplicateparams['eid'] = $eid;
-                $duplicateparams['sesskey'] = sesskey();
-                $aurl = new moodle_url('index.php', $duplicateparams);
-                $duplicateicon = new pix_icon('t/copy', get_string('duplicate'));
-                $icon = new action_menu_link_secondary($aurl, $duplicateicon, get_string('duplicate'));
-                $actionsmenu->add($icon);
-            }
-
             $aurl = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'moveselect', 'eid' => $eid, 'sesskey' => sesskey()));
             $moveaction .= $OUTPUT->action_icon($aurl, new pix_icon('t/move', get_string('move')));
         }
-
-        if ($icon = $this->gtree->get_hiding_icon($element, $this->gpr, true)) {
-            $actionsmenu->add($icon);
-        }
-
-        if ($icon = $this->gtree->get_reset_icon($element, $this->gpr, true)) {
-            $actionsmenu->add($icon);
-        }
-
-        $actions = $OUTPUT->render($actionsmenu);
 
         $returnrows = array();
         $root = false;
@@ -205,8 +165,6 @@ class grade_edit_tree {
             $item = $category->get_grade_item();
 
             // Add aggregation coef input if not a course item and if parent category has correct aggregation type
-            $dimmed = ($item->is_hidden()) ? 'dimmed_text' : '';
-
             // Before we print the category's row, we must find out how many rows will appear below it (for the filler cell's rowspan)
             $aggregation_position = grade_get_setting($COURSE->id, 'aggregationposition', $CFG->grade_aggregationposition);
             $category_total_data = null; // Used if aggregationposition is set to "last", so we can print it last
@@ -315,7 +273,7 @@ class grade_edit_tree {
 
             $categoryrow = new html_table_row();
             $categoryrow->id = 'grade-item-' . $eid;
-            $categoryrow->attributes['class'] = $courseclass . ' category ' . $dimmed;
+            $categoryrow->attributes['class'] = $courseclass . ' category ';
             $categoryrow->attributes['data-category'] = $eid;
             $categoryrow->attributes['data-itemid'] = $category->get_grade_item()->id;
             $categoryrow->attributes['data-hidden'] = 'false';
@@ -373,10 +331,9 @@ class grade_edit_tree {
                 $categoryitemclass = 'courseitem';
             }
 
-            $dimmed = ($item->is_hidden()) ? "dimmed_text" : "";
             $gradeitemrow = new html_table_row();
             $gradeitemrow->id = 'grade-item-' . $eid;
-            $gradeitemrow->attributes['class'] = $categoryitemclass . ' item ' . $dimmed;
+            $gradeitemrow->attributes['class'] = $categoryitemclass . ' item ';
             $gradeitemrow->attributes['data-itemid'] = $object->id;
             $gradeitemrow->attributes['data-hidden'] = 'false';
             // If this item is a course or category aggregation, add a data attribute that stores the identifier of
@@ -486,7 +443,7 @@ class grade_edit_tree {
      * @param array $element
      * @return bool
      */
-    function element_deletable($element) {
+    public static function element_deletable($element) {
         global $COURSE;
 
         if ($element['type'] != 'item') {
@@ -514,7 +471,7 @@ class grade_edit_tree {
      * @param array $element
      * @return bool
      */
-    public function element_duplicatable($element) {
+    public static function element_duplicatable($element) {
         if ($element['type'] != 'item') {
             return false;
         }
@@ -1006,6 +963,86 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
 
         $itemcell = parent::get_item_cell($item, $params);
         $itemcell->text = $grademax;
+        return $itemcell;
+    }
+}
+
+/**
+ * Class grade_edit_tree_column_status
+ *
+ * @package   core_grades
+ * @copyright 2023 Ilya Tregubov <ilya@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class grade_edit_tree_column_status extends grade_edit_tree_column {
+
+    /**
+     * Get status column header cell
+     * @return html_table_cell status column header cell
+     */
+    public function get_header_cell() {
+        $headercell = clone($this->headercell);
+        $headercell->text = get_string('status');
+        return $headercell;
+    }
+
+    /**
+     * Get category cell in status column
+     *
+     * @param grade_category $category grade category
+     * @param string $levelclass Category level info
+     * @param array $params Params (category id, action performed etc)
+     * @return html_table_cell category cell in status columns
+     */
+    public function get_category_cell($category, $levelclass, $params) {
+        global $OUTPUT, $gtree;
+        $categorycell = parent::get_category_cell($category, $levelclass, $params);
+        $element = [];
+        $element['object'] = $category;
+        $categorycell->text = $gtree->set_grade_status_icons($element);
+
+        // Aggregation type.
+        $aggrstrings = grade_helper::get_aggregation_strings();
+        $context = new stdClass();
+        $context->aggregation = $aggrstrings[$category->aggregation];
+
+        // Include/exclude empty grades.
+        if ($category->aggregateonlygraded) {
+            $context->aggregateonlygraded = $category->aggregateonlygraded;
+        }
+
+        // Aggregate outcomes.
+        if ($category->aggregateoutcomes) {
+            $context->aggregateoutcomes = $category->aggregateoutcomes;
+        }
+
+        // Drop the lowest.
+        if ($category->droplow) {
+            $context->droplow = $category->droplow;
+        }
+
+        // Keep the highest.
+        if ($category->keephigh) {
+            $context->keephigh = $category->keephigh;
+        }
+        $categorycell->text .= $OUTPUT->render_from_template('core_grades/category_settings', $context);
+        return $categorycell;
+    }
+
+    /**
+     * Get category cell in status column
+     *
+     * @param grade_item $item grade item
+     * @param array $params Params
+     * @return html_table_cell item cell in status columns
+     */
+    public function get_item_cell($item, $params) {
+        global $gtree;
+
+        $element = [];
+        $element['object'] = $item;
+        $itemcell = parent::get_item_cell($item, $params);
+        $itemcell->text = $gtree->set_grade_status_icons($element);
         return $itemcell;
     }
 }

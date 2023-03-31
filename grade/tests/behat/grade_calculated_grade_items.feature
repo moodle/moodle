@@ -35,7 +35,7 @@ Feature: Calculated grade items can be used in the gradebook
     And I press "Save changes"
     And I set "=[[gi1]]/2" calculation for grade category "Calc cat" with idnumbers:
       | grade item 1 | gi1 |
-    And I set the following settings for grade item "Calc cat":
+    And I set the following settings for grade item "Calc cat" of type "category" on "setup" page:
       | Maximum grade | 50 |
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
@@ -62,7 +62,7 @@ Feature: Calculated grade items can be used in the gradebook
     And I press "Save changes"
     And I set "=[[gi1]]/2" calculation for grade category "Calc cat" with idnumbers:
       | grade item 1 | gi1 |
-    And I set the following settings for grade item "Calc cat":
+    And I set the following settings for grade item "Calc cat" of type "category" on "setup" page:
       | Maximum grade | 50 |
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
@@ -76,7 +76,7 @@ Feature: Calculated grade items can be used in the gradebook
       | Calc cat totalInclude empty grades. | 100.00 %          | 37.50  | 0–50  | 75.00 %    | -                            |
       | Course total                        | -                 | 37.50  | 0–50  | 75.00 %    | -                            |
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I set the following settings for grade item "Calc cat":
+    And I set the following settings for grade item "Calc cat" of type "category" on "setup" page:
       | Maximum grade | 40 |
     And I navigate to "View > Grader report" in the course gradebook
     And I give the grade "65.00" to the user "Student 2" for the grade item "grade item 1"
@@ -124,7 +124,7 @@ Feature: Calculated grade items can be used in the gradebook
     And I press "Save changes"
     And I set "=[[gi1]]/2" calculation for grade item "calc item" with idnumbers:
       | grade item 1 | gi1 |
-    And I set the following settings for grade item "calc item":
+    And I set the following settings for grade item "calc item" of type "gradeitem" on "setup" page:
       | Maximum grade | 50 |
     And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the following fields to these values:
@@ -142,7 +142,7 @@ Feature: Calculated grade items can be used in the gradebook
       | calc item    | 33.33 %           | 37.50  | 0–50  | 75.00 %    | 25.00 %                      |
       | Course total | -                 | 112.50 | 0–150 | 75.00 %    | -                            |
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I set the following settings for grade item "calc item":
+    And I set the following settings for grade item "calc item" of type "gradeitem" on "setup" page:
       | Rescale existing grades | No |
       | Maximum grade | 40 |
     And I navigate to "View > Grader report" in the course gradebook

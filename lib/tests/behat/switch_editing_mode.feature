@@ -27,10 +27,10 @@ Feature: Turn editing mode on
     And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
-    And I click on grade item menu "Test Assignment 1"
+    And I click on grade item menu "Test Assignment 1" of type "gradeitem" on "grader" page
     And "Edit grade item" "link" should exist
     And I turn editing mode off
-    And I click on grade item menu "Test Assignment 1"
+    And I click on grade item menu "Test Assignment 1" of type "gradeitem" on "grader" page
     Then "Edit grade item" "link" should not exist
 
   Scenario: Edit mode on page Homepage

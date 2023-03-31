@@ -106,7 +106,7 @@ Feature: We can use Single view
     And the "Override for Test assignment one" "checkbox" should be enabled
 
   Scenario: Single view links work on grade report.
-    Given I click on grade item menu "Test assignment one"
+    Given I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
     And I choose "Single view for this item" in the open action menu
     And I should see "Test assignment one"
     When I navigate to "View > Grader report" in the course gradebook

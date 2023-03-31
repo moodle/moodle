@@ -37,7 +37,7 @@ Feature: Gradebook calculations for natural weights normalisation before the fix
 
   @javascript
   Scenario: Grade items weights are normalised when all grade item weights are overridden (sum exactly 100). Extra credit is set to zero (before the fix 20150619).
-    When I set the following settings for grade item "Test assignment seven":
+    When I set the following settings for grade item "Test assignment seven" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     And the field "Weight of Test assignment five" matches value "66.667"
     And the field "Weight of Test assignment six" matches value "33.333"
@@ -60,7 +60,7 @@ Feature: Gradebook calculations for natural weights normalisation before the fix
 
   @javascript
   Scenario: Grade items weights are normalised when all grade item weights are overridden (sum over 100). Extra credit is set to zero (before the fix 20150619).
-    When I set the following settings for grade item "Test assignment seven":
+    When I set the following settings for grade item "Test assignment seven" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     And I set the field "Override weight of Test assignment five" to "1"
     And I set the field "Override weight of Test assignment six" to "1"
@@ -80,7 +80,7 @@ Feature: Gradebook calculations for natural weights normalisation before the fix
 
   @javascript
   Scenario: Grade items weights are normalised when all grade item weights are overridden (sum under 100). Extra credit is set to zero (before the fix 20150619).
-    When I set the following settings for grade item "Test assignment seven":
+    When I set the following settings for grade item "Test assignment seven" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     And I set the field "Override weight of Test assignment five" to "1"
     And I set the field "Override weight of Test assignment six" to "1"
@@ -100,7 +100,7 @@ Feature: Gradebook calculations for natural weights normalisation before the fix
 
   @javascript
   Scenario: Grade items weights are normalised when not all grade item weights are overridden. Extra credit is set respectful to non-overridden items (before the fix 20150619).
-    When I set the following settings for grade item "Test assignment seven":
+    When I set the following settings for grade item "Test assignment seven" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     And I set the field "Override weight of Test assignment five" to "1"
     And I set the field "Weight of Test assignment five" to "40"

@@ -24,7 +24,7 @@ Feature: Site settings can be used to hide parts of the gradebook UI
 
   @javascript
   Scenario: Hide minimum grade
-    Given I click on grade item menu "Assignment1"
+    Given I click on grade item menu "Assignment1" of type "gradeitem" on "grader" page
     When I choose "Edit grade item" in the open action menu
     And I should see "Minimum grade"
     Then I navigate to "Grades > General settings" in site administration
@@ -32,7 +32,7 @@ Feature: Site settings can be used to hide parts of the gradebook UI
     And I press "Save changes"
     And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
-    And I click on grade item menu "Assignment1"
+    And I click on grade item menu "Assignment1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I should not see "Minimum grade"
 

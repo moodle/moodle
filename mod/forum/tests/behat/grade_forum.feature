@@ -66,7 +66,7 @@ Feature: I can grade a students interaction across a forum
     But I should not see "Test Forum 1 rating"
 
     # The values saved should be reflected here.
-    And I click on grade item menu "Test Forum 1 whole forum"
+    And I click on grade item menu "Test Forum 1 whole forum" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     When I expand all fieldsets
     Then the field "Maximum grade" matches value "10"
@@ -122,7 +122,7 @@ Feature: I can grade a students interaction across a forum
     But I should not see "Test Forum 1 whole forum"
 
     # The values saved should be reflected here.
-    And I click on grade item menu "Test Forum 1 rating"
+    And I click on grade item menu "Test Forum 1 rating" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     When I expand all fieldsets
     Then the field "Maximum grade" matches value "10"
@@ -159,7 +159,7 @@ Feature: I can grade a students interaction across a forum
     And I should see "Test Forum 1 whole forum"
 
     # The values saved should be reflected here.
-    And I click on grade item menu "Test Forum 1 rating"
+    And I click on grade item menu "Test Forum 1 rating" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     When I expand all fieldsets
     Then the field "Maximum grade" matches value "100"
@@ -167,7 +167,7 @@ Feature: I can grade a students interaction across a forum
     And I should see "Peers" in the "Parent category" "fieldset"
     And I press "cancel"
 
-    And I click on grade item menu "Test Forum 1 whole forum"
+    And I click on grade item menu "Test Forum 1 whole forum" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     When I expand all fieldsets
     Then the field "Maximum grade" matches value "10"

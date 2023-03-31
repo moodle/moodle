@@ -50,7 +50,7 @@ Feature: We can change what we are viewing on the grader report
     And the following should exist in the "user-grades" table:
       | -1-                | -1-                  | -3-       | -4-       | -5-       | -6-       |
       | Student 1          | student1@example.com | 80        | 90        | 30        | 170       |
-    And I click on course grade category menu "Course 1"
+    And I click on grade item menu "Course 1" of type "course" on "grader" page
     And I choose "Show totals only" in the open action menu
     And I should not see "Test assignment name 1"
     And I should not see "Test assignment name 2"
@@ -59,7 +59,7 @@ Feature: We can change what we are viewing on the grader report
     And the following should exist in the "user-grades" table:
       | -1-                | -1-                  | -3-       |
       | Student 1          | student1@example.com | 170       |
-    And I click on course grade category menu "Course 1"
+    And I click on grade item menu "Course 1" of type "course" on "grader" page
     And I click on "Show grades only" "link"
     And I should see "Test assignment name 1"
     And I should see "Test assignment name 2"
@@ -90,7 +90,7 @@ Feature: We can change what we are viewing on the grader report
     And the following should exist in the "user-grades" table:
       | -1-                | -1-                  | -3-       | -4-       | -5-       | -6-       |
       | Student 1          | student1@example.com | 80        | -         | 30        | 105.71    |
-    And I click on course grade category menu "Course 1"
+    And I click on grade item menu "Course 1" of type "course" on "grader" page
     And I choose "Show totals only" in the open action menu
     And I should not see "Test assignment name 1"
     And I should not see "Test assignment name 2"
@@ -99,7 +99,7 @@ Feature: We can change what we are viewing on the grader report
     And the following should exist in the "user-grades" table:
       | -1-                | -1-                  | -3-       |
       | Student 1          | student1@example.com | 105.71    |
-    And I click on course grade category menu "Course 1"
+    And I click on grade item menu "Course 1" of type "course" on "grader" page
     And I click on "Show grades only" "link"
     And I should see "Test assignment name 1"
     And I should see "Test assignment name 2"

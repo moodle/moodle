@@ -58,6 +58,8 @@ class behat_gradereport_grader extends behat_base {
     /**
      * Gets the grade item id from its name.
      *
+     * @deprecated since 4.2
+     * @todo MDL-77107 This will be deleted in Moodle 4.6.
      * @throws Exception
      * @param string $itemname
      * @return int
@@ -65,6 +67,9 @@ class behat_gradereport_grader extends behat_base {
     protected function get_grade_item_id($itemname) {
 
         global $DB;
+
+        debugging('behat_gradereport_grader::get_grade_item_id() is deprecated, please use' .
+            ' behat_grades::get_grade_item_id() instead.', DEBUG_DEVELOPER);
 
         if ($id = $DB->get_field('grade_items', 'id', array('itemname' => $itemname))) {
             return $id;
@@ -86,134 +91,6 @@ class behat_gradereport_grader extends behat_base {
         }
 
         throw new Exception('The specified grade_item with name "' . $itemname . '" does not exist');
-    }
-
-    /**
-     * Gets course grade category id from coursename.
-     *
-     * @throws Exception
-     * @param string $coursename
-     * @return int
-     */
-    protected function get_course_grade_category_id(string $coursename) : int {
-
-        global $DB;
-
-        $sql = "SELECT gc.id
-                  FROM {grade_categories} gc
-             LEFT JOIN {course} c
-                    ON c.id = gc.courseid
-                 WHERE c.fullname = ?
-                   AND gc.depth = 1";
-
-        if ($id = $DB->get_field_sql($sql, [$coursename])) {
-            return $id;
-        }
-
-        throw new Exception('The specified course grade category with course name "' . $coursename . '" does not exist');
-    }
-
-    /**
-     * Gets grade category id from its name.
-     *
-     * @throws Exception
-     * @param string $categoryname
-     * @return int
-     */
-    protected function get_grade_category_id(string $categoryname) : int {
-
-        global $DB;
-
-        $sql = "SELECT gc.id
-                  FROM {grade_categories} gc
-             LEFT JOIN {course} c
-                    ON c.id = gc.courseid
-                 WHERE gc.fullname = ?";
-
-        if ($id = $DB->get_field_sql($sql, [$categoryname])) {
-            return $id;
-        }
-
-        throw new Exception('The specified grade category with name "' . $categoryname . '" does not exist');
-    }
-
-    /**
-     * Clicks on given grade item menu.
-     *
-     * @Given /^I click on grade item menu "([^"]*)"$/
-     * @param string $itemname
-     */
-    public function i_click_on_grade_item_menu(string $itemname) {
-
-        $xpath = $this->get_gradeitem_selector($itemname);
-
-        $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
-    }
-
-    /**
-     * Clicks on course grade category menu.
-     *
-     * @Given /^I click on course grade category menu "([^"]*)"$/
-     * @param string $coursename
-     */
-    public function i_click_on_course_category_menu(string $coursename) {
-
-        $xpath = $this->get_course_grade_category_selector($coursename);
-
-        $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
-    }
-
-    /**
-     * Clicks on given grade category menu.
-     *
-     * @Given /^I click on grade category menu "([^"]*)"$/
-     * @param string $categoryname
-     */
-    public function i_click_on_category_menu(string $categoryname) {
-
-        $xpath = $this->get_grade_category_selector($categoryname);
-
-        $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
-    }
-
-
-    /**
-     * Gets unique xpath selector for a grade item.
-     *
-     * @throws Exception
-     * @param string $itemname
-     * @return string
-     */
-    protected function get_gradeitem_selector(string $itemname) : string {
-
-        $itemid = $this->get_grade_item_id($itemname);
-        return "//table[@id='user-grades']//*[@data-type='item'][@data-id='" . $itemid . "']";
-    }
-
-    /**
-     * Gets unique xpath selector for a course category.
-     *
-     * @throws Exception
-     * @param string $coursename
-     * @return string
-     */
-    protected function get_course_grade_category_selector(string $coursename) {
-
-        $itemid = $this->get_course_grade_category_id($coursename);
-        return "//table[@id='user-grades']//*[@data-type='category'][@data-id='" . $itemid . "']";
-    }
-
-    /**
-     * Gets unique xpath selector for a grade category.
-     *
-     * @throws Exception
-     * @param string $categoryname
-     * @return string
-     */
-    protected function get_grade_category_selector(string $categoryname) : string {
-
-        $itemid = $this->get_grade_category_id($categoryname);
-        return "//table[@id='user-grades']//*[@data-type='category'][@data-id='" . $itemid . "']";
     }
 
     /**

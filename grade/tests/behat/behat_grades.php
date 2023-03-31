@@ -55,4 +55,127 @@ class behat_grades extends behat_base {
         $node = $this->find('xpath', './/input[@value="' . $value . '"]', false, $container);
         $node->click();
     }
+
+    /**
+     * Gets the grade item id from its name.
+     *
+     * @throws Exception
+     * @param string $itemname Item name
+     * @return int
+     */
+    protected function get_grade_item_id(string $itemname): int {
+
+        global $DB;
+
+        if ($id = $DB->get_field('grade_items', 'id', ['itemname' => $itemname])) {
+            return $id;
+        }
+
+        // The course total is a special case.
+        if ($itemname === "Course total") {
+            if (!$id = $DB->get_field('grade_items', 'id', ['itemtype' => 'course'])) {
+                throw new Exception('The specified grade_item with name "' . $itemname . '" does not exist');
+            }
+            return $id;
+        }
+
+        // Find a category with the name.
+        if ($catid = $DB->get_field('grade_categories', 'id', ['fullname' => $itemname])) {
+            if ($id = $DB->get_field('grade_items', 'id', ['iteminstance' => $catid])) {
+                return $id;
+            }
+        }
+
+        throw new Exception('The specified grade_item with name "' . $itemname . '" does not exist');
+    }
+
+    /**
+     * Gets course grade category id from coursename.
+     *
+     * @throws Exception
+     * @param string $coursename
+     * @return int
+     */
+    protected function get_course_grade_category_id(string $coursename): int {
+
+        global $DB;
+
+        $sql = "SELECT gc.id
+                  FROM {grade_categories} gc
+             LEFT JOIN {course} c
+                    ON c.id = gc.courseid
+                 WHERE c.fullname = ?
+                   AND gc.depth = 1";
+
+        if ($id = $DB->get_field_sql($sql, [$coursename])) {
+            return $id;
+        }
+
+        throw new Exception('The specified course grade category with course name "' . $coursename . '" does not exist');
+    }
+
+    /**
+     * Gets grade category id from its name.
+     *
+     * @throws Exception
+     * @param string $categoryname
+     * @return int
+     */
+    protected function get_grade_category_id(string $categoryname): int {
+
+        global $DB;
+
+        $sql = "SELECT gc.id
+                  FROM {grade_categories} gc
+             LEFT JOIN {course} c
+                    ON c.id = gc.courseid
+                 WHERE gc.fullname = ?";
+
+        if ($id = $DB->get_field_sql($sql, [$categoryname])) {
+            return $id;
+        }
+
+        throw new Exception('The specified grade category with name "' . $categoryname . '" does not exist');
+    }
+
+    /**
+     * Clicks on given grade item menu.
+     *
+     * @Given /^I click on grade item menu "([^"]*)" of type "([^"]*)" on "([^"]*)" page$/
+     * @param string $itemname Item name
+     * @param string $itemtype Item type - grade item, category or course
+     * @param string $page Page - setup or grader
+     * @throws Exception
+     */
+    public function i_click_on_grade_item_menu(string $itemname, string $itemtype, string $page) {
+
+        if ($itemtype == 'gradeitem') {
+            $itemid = $this->get_grade_item_id($itemname);
+        } else if ($itemtype == 'category') {
+            $itemid = $this->get_grade_category_id($itemname);
+        } else if ($itemtype == 'course') {
+            $itemid = $this->get_course_grade_category_id($itemname);
+        } else {
+            throw new Exception('Unknown item type: ' . $itemtype);
+        }
+
+        $xpath = "//table[@id='grade_edit_tree_table']";
+
+        if (($page == 'grader') || ($page == 'setup')) {
+            if ($page == 'grader') {
+                $xpath = "//table[@id='user-grades']";
+            }
+
+            if ($itemtype == 'gradeitem') {
+                $xpath .= "//*[@data-type='item'][@data-id='" . $itemid . "']";
+            } else if (($itemtype == 'category') || ($itemtype == 'course')) {
+                $xpath .= "//*[@data-type='category'][@data-id='" . $itemid . "']";
+            } else {
+                throw new Exception('Unknown item type: ' . $itemtype);
+            }
+        } else {
+            throw new Exception('Unknown page: ' . $page);
+        }
+        $this->execute("behat_general::i_click_on", [$this->escape($xpath), "xpath_element"]);
+    }
 }

@@ -55,13 +55,13 @@ Feature: Extra credit contributions are normalised when going out of bounds
 
   Scenario Outline: The contribution of extra credit items is normalised
     Given I navigate to "Setup > Gradebook setup" in the course gradebook
-    When I set the following settings for grade item "Course 1":
+    When I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | <aggregation> |
-    And I set the following settings for grade item "Manual item 2":
+    And I set the following settings for grade item "Manual item 2" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
-    And I set the following settings for grade item "Manual item 3":
+    And I set the following settings for grade item "Manual item 3" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
-    And I set the following settings for grade item "Manual item 4":
+    And I set the following settings for grade item "Manual item 4" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget

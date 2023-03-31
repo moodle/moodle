@@ -34,8 +34,8 @@ Feature: View the user report as the student will see it
     And the "multilang" filter applies to "content and headings"
     When I am on the "C1" "Course" page logged in as "teacher1"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I hide the grade item "Test assignment six"
-    And I hide the grade item "Sub category 2"
+    And I hide the grade item "Test assignment six" of type "gradeitem" on "setup" page
+    And I hide the grade item "Sub category 2" of type "category" on "setup" page
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I change window size to "large"

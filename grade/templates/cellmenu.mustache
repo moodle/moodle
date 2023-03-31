@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template gradereport_grader/cellmenu
+    @template core_grades/cellmenu
 
     This template renders action menu for a given cell.
     Example context (json):
@@ -31,8 +31,8 @@
         "ascendinglastnameurl": "<a class='dropdown-item' aria-label='Ascending' role='menuitem' href='index.php?id=13&amp;sortitemid=lastname&amp;sort=asc&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Ascending</a>",
         "descendinglastnameurl": "<a class='dropdown-item' aria-label='Descending' role='menuitem' href='index.php?id=13&amp;sortitemid=lastname&amp;sort=desc&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Descending</a>",
         "divider1": "true",
-        "divider2": "true"
-        "datatype": item,
+        "divider2": "true",
+        "datatype": "item",
         "dataid": "123"
     }
 }}
@@ -48,14 +48,15 @@
 
         <div role="menu" class="dropdown-menu">
             {{#editurl}}{{{editurl}}}{{/editurl}}
-            {{#gradeanalysisurl}}{{{gradeanalysisurl}}}{{/gradeanalysisurl}}
             {{#editcalculationurl}}{{{editcalculationurl}}}{{/editcalculationurl}}
             {{#reporturl0}}{{{reporturl0}}}{{/reporturl0}}
             {{#reporturl1}}{{{reporturl1}}}{{/reporturl1}}
             {{#gradesonlyurl}}{{{gradesonlyurl}}}{{/gradesonlyurl}}
             {{#aggregatesonlyurl}}{{{aggregatesonlyurl}}}{{/aggregatesonlyurl}}
             {{#fullmodeurl}}{{{fullmodeurl}}}{{/fullmodeurl}}
-            {{#advancedgradingurl}}{{{advancedgradingurl}}}{{/advancedgradingurl}}
+            {{#deleteurl}}{{{deleteurl}}}{{/deleteurl}}
+            {{#duplicateurl}}{{{duplicateurl}}}{{/duplicateurl}}
+            {{#gradeanalysisurl}}{{{gradeanalysisurl}}}{{/gradeanalysisurl}}
             {{#divider1}}
                 <div class="dropdown-divider" role="separator"></div>
             {{/divider1}}
@@ -76,6 +77,7 @@
             {{/divider2}}
             {{#hideurl}}{{{hideurl}}}{{/hideurl}}
             {{#lockurl}}{{{lockurl}}}{{/lockurl}}
+            {{#resetweightsurl}}{{{resetweightsurl}}}{{/resetweightsurl}}
         </div>
     </div>
 </div>

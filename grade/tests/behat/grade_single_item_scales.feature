@@ -86,17 +86,11 @@ Feature: View gradebook when single item scales are used
       | Course total              | 1.00      |
 
   Scenario Outline: Test displaying single item scales in gradebook in all other aggregation methods
-    Given I click on course grade category menu "Course 1"
-    And I choose "Edit category" in the open action menu
-    And I set the following fields to these values:
+    Given I set the following settings for grade item "Course 1" of type "course" on "grader" page:
       | Aggregation | <aggregation> |
-    And I press "Save changes"
-    And I click on grade category menu "<span lang='en' class='multilang'>EN</span><span lang='fr' class='multilang'>FR</span> Sub category 1"
-    And I choose "Edit category" in the open action menu
-    And I set the following fields to these values:
+    And I set the following settings for grade item "<span lang='en' class='multilang'>EN</span><span lang='fr' class='multilang'>FR</span> Sub category 1" of type "category" on "grader" page:
       | Aggregation     | <aggregation> |
       | Category name   | Sub category (<aggregation>) |
-    And I press "Save changes"
     And I turn editing mode off
     Then the following should exist in the "user-grades" table:
       | -1-                | -1-                  | -3-       | -4-            | -5-            |
@@ -117,8 +111,8 @@ Feature: View gradebook when single item scales are used
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                                             | Max grade |
       | Test assignment one                              | Ace! (1)  |
-      | Sub category (<aggregation>) total<aggregation>. | 100.00    |
-      | Course total<aggregation>.                       | 100.00    |
+      | Sub category (<aggregation>) total               | 100.00    |
+      | Course total                                     | 100.00    |
 
     Examples:
       | aggregation                         | contrib1 | cattotal1 | coursetotal1 | catavg | overallavg |

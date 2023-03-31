@@ -90,7 +90,7 @@ Feature: We can enter in grades and view reports from the gradebook
 
   Scenario: We can add a weighting to a grade item and it is displayed properly in the user report
     When I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I set the following settings for grade item "Course 1":
+    And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Weighted mean of grades |
     And I set the field "Extra credit value for Test assignment name" to "0.72"
     And I press "Save changes"
