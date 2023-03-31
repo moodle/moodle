@@ -92,9 +92,9 @@ $string['pathsunsecuredataroot'] = 'Veri yolu güvenli değil';
 $string['pathswrongadmindir'] = 'Yönetici klasörü yok';
 $string['phpextension'] = '{$a} PHP eklentisi';
 $string['phpversion'] = 'PHP sürümü';
-$string['phpversionhelp'] = '<p>Moodle, PHP sürümünün en az 4.3.0 veya 5.1.0 olmasını gerektirir (5.0.x sürümünde çok fazla hata var).</p>
-<p>Şu anda çalışan sürüm: {$a}</p>
-<p>PHP\'yi güncellemeli veya PHP\'nin yeni sürümünü kullananan bir hostinge taşınmalısınız!</p>';
+$string['phpversionhelp'] = '<p>Moodle en az 5.6.5 veya 7.1 PHP sürümü gerektirir (7.0.x bazı motor sınırlamalarına sahiptir).</p>
+<p>Şu anda {$a} sürümünü çalıştırıyorsunuz.</p>
+<p>PHP\'yi yükseltmeli veya daha yeni bir PHP sürümüne sahip bir ana bilgisayara geçmelisiniz.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Bilgisayarınıza <strong>{$a->packname} {$a->packversion}</strong> paketini başarıyla kurdunuz. Tebrikler!';
 $string['welcomep30'] = '<strong> {$a-> installername} </strong>\'in bu sürümü, <strong> Moodle </strong>\'ın çalışacağı bir ortam oluşturmak için uygulamaları içerir:';
