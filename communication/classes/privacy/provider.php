@@ -16,7 +16,11 @@
 
 namespace core_communication\privacy;
 
-use core_privacy\local\metadata\null_provider;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\userlist;
 
 /**
  * Privacy Subsystem for core_communication implementing null_provider.
@@ -25,15 +29,42 @@ use core_privacy\local\metadata\null_provider;
  * @copyright  2023 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements null_provider {
+class provider implements \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\subsystem\provider,
+    \core_privacy\local\request\core_userlist_provider {
 
-    /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
-     *
-     * @return  string
-     */
-    public static function get_reason(): string {
-        return 'privacy:metadata';
+    public static function get_metadata(collection $collection): collection {
+
+        $collection->add_database_table('communication_user', [
+            'commid' => 'privacy:metadata:communication_user:commid',
+            'userid' => 'privacy:metadata:communication_user:userid',
+            'synced' => 'privacy:metadata:communication_user:synced',
+        ], 'privacy:metadata:communication_user');
+
+        return $collection;
+    }
+
+    public static function get_contexts_for_userid(int $userid): contextlist {
+        return new contextlist();
+    }
+
+    public static function export_user_data(approved_contextlist $contextlist) {
+        // None of the core communication tables should be exported.
+    }
+
+    public static function delete_data_for_all_users_in_context(\context $context) {
+        // None of the data from these tables should be deleted.
+    }
+
+    public static function delete_data_for_user(approved_contextlist $contextlist) {
+        // None of the data from these tables should be deleted.
+    }
+
+    public static function get_users_in_context(userlist $userlist) {
+        // Don't add any users.
+    }
+
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        // None of the data from these tables should be deleted.
     }
 }
