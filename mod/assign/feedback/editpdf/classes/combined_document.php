@@ -304,6 +304,11 @@ class combined_document {
         // Store the newly created file as a stored_file.
         $this->store_combined_file($tmpfile, $contextid, $itemid, ($currentstatus == self::STATUS_READY_PARTIAL));
 
+	unlink($tmpfile);
+        foreach ($compatiblepdfs as $compatiblepdf) {
+            unlink($compatiblepdf);
+        }
+
         // Note the verified page count.
         $this->pagecount = $verifypagecount;
 
@@ -407,7 +412,7 @@ class combined_document {
             // Something went wrong. Return an empty page count again.
             return 0;
         }
-
+        unlink($tempsrc);
         $this->pagecount = $pagecount;
         return $this->pagecount;
     }
