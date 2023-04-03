@@ -3118,16 +3118,6 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023030300.03);
     }
 
-    if ($oldversion < 2023031000.01) {
-        // If logstore_legacy is no longer present, remove it.
-        if (!file_exists($CFG->dirroot . '/admin/tool/log/store/legacy/version.php')) {
-            unset_all_config_for_plugin('logstore_legacy');
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2023031000.01);
-    }
-
     if ($oldversion < 2023031000.02) {
         // If editor_tinymce is no longer present, remove it's sub-plugins too.
         if (!file_exists($CFG->dirroot . '/lib/editor/tinymce/version.php')) {
@@ -3213,6 +3203,16 @@ privatefiles,moodle|/user/files.php';
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2023032800.01);
+    }
+
+    if ($oldversion < 2023040600.01) {
+        // If logstore_legacy is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/admin/tool/log/store/legacy/version.php')) {
+            uninstall_plugin('logstore', 'legacy');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023040600.01);
     }
 
     return true;
