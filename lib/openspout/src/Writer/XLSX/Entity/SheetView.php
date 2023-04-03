@@ -1,62 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Writer\XLSX\Entity;
 
 use OpenSpout\Common\Exception\InvalidArgumentException;
 use OpenSpout\Reader\XLSX\Helper\CellHelper;
 
-class SheetView
+final class SheetView
 {
-    /** @var bool */
-    protected $showFormulas = false;
-
-    /** @var bool */
-    protected $showGridLines = true;
-
-    /** @var bool */
-    protected $showRowColHeaders = true;
-
-    /** @var bool */
-    protected $showZeroes = true;
-
-    /** @var bool */
-    protected $rightToLeft = false;
-
-    /** @var bool */
-    protected $tabSelected = false;
-
-    /** @var bool */
-    protected $showOutlineSymbols = true;
-
-    /** @var bool */
-    protected $defaultGridColor = true;
-
-    /** @var string */
-    protected $view = 'normal';
-
-    /** @var string */
-    protected $topLeftCell = 'A1';
-
-    /** @var int */
-    protected $colorId = 64;
-
-    /** @var int */
-    protected $zoomScale = 100;
-
-    /** @var int */
-    protected $zoomScaleNormal = 100;
-
-    /** @var int */
-    protected $zoomScalePageLayoutView = 100;
-
-    /** @var int */
-    protected $workbookViewId = 0;
-
-    /** @var int */
-    protected $freezeRow = 0;
-
-    /** @var string */
-    protected $freezeColumn = 'A';
+    private bool $showFormulas = false;
+    private bool $showGridLines = true;
+    private bool $showRowColHeaders = true;
+    private bool $showZeroes = true;
+    private bool $rightToLeft = false;
+    private bool $tabSelected = false;
+    private bool $showOutlineSymbols = true;
+    private bool $defaultGridColor = true;
+    private string $view = 'normal';
+    private string $topLeftCell = 'A1';
+    private int $colorId = 64;
+    private int $zoomScale = 100;
+    private int $zoomScaleNormal = 100;
+    private int $zoomScalePageLayoutView = 100;
+    private int $workbookViewId = 0;
+    private int $freezeRow = 0;
+    private string $freezeColumn = 'A';
 
     /**
      * @return $this
@@ -209,14 +178,14 @@ class SheetView
     }
 
     /**
-     * @param int $freezeRow Set to 2 to fix the first row
+     * @param positive-int $freezeRow Set to 2 to fix the first row
      *
      * @return $this
      */
     public function setFreezeRow(int $freezeRow): self
     {
         if ($freezeRow < 1) {
-            throw new InvalidArgumentException('Freeze row must be a positive integer', 1589543073);
+            throw new InvalidArgumentException('Freeze row must be a positive integer');
         }
 
         $this->freezeRow = $freezeRow;
@@ -243,16 +212,28 @@ class SheetView
         '</sheetView>';
     }
 
-    protected function getSheetViewAttributes(): string
+    private function getSheetViewAttributes(): string
     {
-        // Get class properties
-        $propertyValues = get_object_vars($this);
-        unset($propertyValues['freezeRow'], $propertyValues['freezeColumn']);
-
-        return $this->generateAttributes($propertyValues);
+        return $this->generateAttributes([
+            'showFormulas' => $this->showFormulas,
+            'showGridLines' => $this->showGridLines,
+            'showRowColHeaders' => $this->showRowColHeaders,
+            'showZeroes' => $this->showZeroes,
+            'rightToLeft' => $this->rightToLeft,
+            'tabSelected' => $this->tabSelected,
+            'showOutlineSymbols' => $this->showOutlineSymbols,
+            'defaultGridColor' => $this->defaultGridColor,
+            'view' => $this->view,
+            'topLeftCell' => $this->topLeftCell,
+            'colorId' => $this->colorId,
+            'zoomScale' => $this->zoomScale,
+            'zoomScaleNormal' => $this->zoomScaleNormal,
+            'zoomScalePageLayoutView' => $this->zoomScalePageLayoutView,
+            'workbookViewId' => $this->workbookViewId,
+        ]);
     }
 
-    protected function getFreezeCellPaneXml(): string
+    private function getFreezeCellPaneXml(): string
     {
         if ($this->freezeRow < 2 && 'A' === $this->freezeColumn) {
             return '';
@@ -270,12 +251,12 @@ class SheetView
     }
 
     /**
-     * @param array $data with key containing the attribute name and value containing the attribute value
+     * @param array<string, bool|int|string> $data with key containing the attribute name and value containing the attribute value
      */
-    protected function generateAttributes(array $data): string
+    private function generateAttributes(array $data): string
     {
         // Create attribute for each key
-        $attributes = array_map(function ($key, $value) {
+        $attributes = array_map(static function (string $key, bool|string|int $value): string {
             if (\is_bool($value)) {
                 $value = $value ? 'true' : 'false';
             }

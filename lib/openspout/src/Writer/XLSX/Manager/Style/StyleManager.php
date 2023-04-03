@@ -1,19 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Writer\XLSX\Manager\Style;
 
 use OpenSpout\Common\Entity\Style\BorderPart;
 use OpenSpout\Common\Entity\Style\Color;
 use OpenSpout\Common\Entity\Style\Style;
+use OpenSpout\Writer\Common\Manager\Style\AbstractStyleManager as CommonStyleManager;
 use OpenSpout\Writer\XLSX\Helper\BorderHelper;
 
 /**
- * Manages styles to be applied to a cell.
+ * @internal
+ *
+ * @property StyleRegistry $styleRegistry
  */
-class StyleManager extends \OpenSpout\Writer\Common\Manager\Style\StyleManager
+final class StyleManager extends CommonStyleManager
 {
-    /** @var StyleRegistry */
-    protected $styleRegistry;
+    public function __construct(StyleRegistry $styleRegistry)
+    {
+        parent::__construct($styleRegistry);
+    }
 
     /**
      * For empty cells, we can specify a style or not. If no style are specified,
@@ -22,12 +29,13 @@ class StyleManager extends \OpenSpout\Writer\Common\Manager\Style\StyleManager
      * background color different than the default one or some borders
      * (fonts property don't really matter here).
      *
-     * @param int $styleId
-     *
      * @return bool Whether the cell should define a custom style
      */
-    public function shouldApplyStyleOnEmptyCell($styleId)
+    public function shouldApplyStyleOnEmptyCell(?int $styleId): bool
     {
+        if (null === $styleId) {
+            return false;
+        }
         $associatedFillId = $this->styleRegistry->getFillIdForStyleId($styleId);
         $hasStyleCustomFill = (null !== $associatedFillId && 0 !== $associatedFillId);
 
@@ -42,10 +50,8 @@ class StyleManager extends \OpenSpout\Writer\Common\Manager\Style\StyleManager
 
     /**
      * Returns the content of the "styles.xml" file, given a list of styles.
-     *
-     * @return string
      */
-    public function getStylesXMLFileContent()
+    public function getStylesXMLFileContent(): string
     {
         $content = <<<'EOD'
             <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -69,17 +75,15 @@ class StyleManager extends \OpenSpout\Writer\Common\Manager\Style\StyleManager
 
     /**
      * Returns the content of the "<numFmts>" section.
-     *
-     * @return string
      */
-    protected function getFormatsSectionContent()
+    private function getFormatsSectionContent(): string
     {
         $tags = [];
         $registeredFormats = $this->styleRegistry->getRegisteredFormats();
         foreach ($registeredFormats as $styleId) {
             $numFmtId = $this->styleRegistry->getFormatIdForStyleId($styleId);
 
-            //Built-in formats do not need to be declared, skip them
+            // Built-in formats do not need to be declared, skip them
             if ($numFmtId < 164) {
                 continue;
             }
@@ -98,10 +102,8 @@ class StyleManager extends \OpenSpout\Writer\Common\Manager\Style\StyleManager
 
     /**
      * Returns the content of the "<fonts>" section.
-     *
-     * @return string
      */
-    protected function getFontsSectionContent()
+    private function getFontsSectionContent(): string
     {
         $registeredStyles = $this->styleRegistry->getRegisteredStyles();
 
@@ -138,10 +140,8 @@ class StyleManager extends \OpenSpout\Writer\Common\Manager\Style\StyleManager
 
     /**
      * Returns the content of the "<fills>" section.
-     *
-     * @return string
      */
-    protected function getFillsSectionContent()
+    private function getFillsSectionContent(): string
     {
         $registeredFills = $this->styleRegistry->getRegisteredFills();
 
@@ -171,10 +171,8 @@ class StyleManager extends \OpenSpout\Writer\Common\Manager\Style\StyleManager
 
     /**
      * Returns the content of the "<borders>" section.
-     *
-     * @return string
      */
-    protected function getBordersSectionContent()
+    private function getBordersSectionContent(): string
     {
         $registeredBorders = $this->styleRegistry->getRegisteredBorders();
 
@@ -187,20 +185,14 @@ class StyleManager extends \OpenSpout\Writer\Common\Manager\Style\StyleManager
         $content .= '<border><left/><right/><top/><bottom/></border>';
 
         foreach ($registeredBorders as $styleId) {
-            /** @var Style $style */
             $style = $this->styleRegistry->getStyleFromStyleId($styleId);
             $border = $style->getBorder();
+            \assert(null !== $border);
             $content .= '<border>';
 
-            /** @see https://github.com/box/spout/issues/271 */
-            $sortOrder = ['left', 'right', 'top', 'bottom'];
-
-            foreach ($sortOrder as $partName) {
-                if ($border->hasPart($partName)) {
-                    /** @var BorderPart $part */
-                    $part = $border->getPart($partName);
-                    $content .= BorderHelper::serializeBorderPart($part);
-                }
+            // @see https://github.com/box/spout/issues/271
+            foreach (BorderPart::allowedNames as $partName) {
+                $content .= BorderHelper::serializeBorderPart($border->getPart($partName));
             }
 
             $content .= '</border>';
@@ -213,10 +205,8 @@ class StyleManager extends \OpenSpout\Writer\Common\Manager\Style\StyleManager
 
     /**
      * Returns the content of the "<cellStyleXfs>" section.
-     *
-     * @return string
      */
-    protected function getCellStyleXfsSectionContent()
+    private function getCellStyleXfsSectionContent(): string
     {
         return <<<'EOD'
             <cellStyleXfs count="1">
@@ -227,10 +217,8 @@ class StyleManager extends \OpenSpout\Writer\Common\Manager\Style\StyleManager
 
     /**
      * Returns the content of the "<cellXfs>" section.
-     *
-     * @return string
      */
-    protected function getCellXfsSectionContent()
+    private function getCellXfsSectionContent(): string
     {
         $registeredStyles = $this->styleRegistry->getRegisteredStyles();
 
@@ -248,16 +236,19 @@ class StyleManager extends \OpenSpout\Writer\Common\Manager\Style\StyleManager
                 $content .= ' applyFont="1"';
             }
 
-            $content .= sprintf(' applyBorder="%d"', $style->shouldApplyBorder() ? 1 : 0);
+            $content .= sprintf(' applyBorder="%d"', (bool) $style->getBorder());
 
-            if ($style->shouldApplyCellAlignment() || $style->shouldWrapText() || $style->shouldShrinkToFit()) {
+            if ($style->shouldApplyCellAlignment() || $style->shouldApplyCellVerticalAlignment() || $style->hasSetWrapText() || $style->shouldShrinkToFit()) {
                 $content .= ' applyAlignment="1">';
                 $content .= '<alignment';
                 if ($style->shouldApplyCellAlignment()) {
                     $content .= sprintf(' horizontal="%s"', $style->getCellAlignment());
                 }
-                if ($style->shouldWrapText()) {
-                    $content .= ' wrapText="1"';
+                if ($style->shouldApplyCellVerticalAlignment()) {
+                    $content .= sprintf(' vertical="%s"', $style->getCellVerticalAlignment());
+                }
+                if ($style->hasSetWrapText()) {
+                    $content .= ' wrapText="'.($style->shouldWrapText() ? '1' : '0').'"';
                 }
                 if ($style->shouldShrinkToFit()) {
                     $content .= ' shrinkToFit="true"';
@@ -277,10 +268,8 @@ class StyleManager extends \OpenSpout\Writer\Common\Manager\Style\StyleManager
 
     /**
      * Returns the content of the "<cellStyles>" section.
-     *
-     * @return string
      */
-    protected function getCellStylesSectionContent()
+    private function getCellStylesSectionContent(): string
     {
         return <<<'EOD'
             <cellStyles count="1">
@@ -292,51 +281,39 @@ class StyleManager extends \OpenSpout\Writer\Common\Manager\Style\StyleManager
     /**
      * Returns the fill ID associated to the given style ID.
      * For the default style, we don't a fill.
-     *
-     * @param int $styleId
-     *
-     * @return int
      */
-    private function getFillIdForStyleId($styleId)
+    private function getFillIdForStyleId(int $styleId): int
     {
         // For the default style (ID = 0), we don't want to override the fill.
         // Otherwise all cells of the spreadsheet will have a background color.
         $isDefaultStyle = (0 === $styleId);
 
-        return $isDefaultStyle ? 0 : ($this->styleRegistry->getFillIdForStyleId($styleId) ?: 0);
+        return $isDefaultStyle ? 0 : ($this->styleRegistry->getFillIdForStyleId($styleId) ?? 0);
     }
 
     /**
      * Returns the fill ID associated to the given style ID.
      * For the default style, we don't a border.
-     *
-     * @param int $styleId
-     *
-     * @return int
      */
-    private function getBorderIdForStyleId($styleId)
+    private function getBorderIdForStyleId(int $styleId): int
     {
         // For the default style (ID = 0), we don't want to override the border.
         // Otherwise all cells of the spreadsheet will have a border.
         $isDefaultStyle = (0 === $styleId);
 
-        return $isDefaultStyle ? 0 : ($this->styleRegistry->getBorderIdForStyleId($styleId) ?: 0);
+        return $isDefaultStyle ? 0 : ($this->styleRegistry->getBorderIdForStyleId($styleId) ?? 0);
     }
 
     /**
      * Returns the format ID associated to the given style ID.
      * For the default style use general format.
-     *
-     * @param int $styleId
-     *
-     * @return int
      */
-    private function getFormatIdForStyleId($styleId)
+    private function getFormatIdForStyleId(int $styleId): int
     {
         // For the default style (ID = 0), we don't want to override the format.
         // Otherwise all cells of the spreadsheet will have a format.
         $isDefaultStyle = (0 === $styleId);
 
-        return $isDefaultStyle ? 0 : ($this->styleRegistry->getFormatIdForStyleId($styleId) ?: 0);
+        return $isDefaultStyle ? 0 : ($this->styleRegistry->getFormatIdForStyleId($styleId) ?? 0);
     }
 }

@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Common\Entity\Style;
 
-class Border
+final class Border
 {
     public const LEFT = 'left';
     public const RIGHT = 'right';
@@ -19,62 +21,26 @@ class Border
     public const WIDTH_MEDIUM = 'medium';
     public const WIDTH_THICK = 'thick';
 
-    /** @var array A list of BorderPart objects for this border. */
-    private $parts = [];
+    /** @var array<string, BorderPart> */
+    private array $parts;
 
-    public function __construct(array $borderParts = [])
+    public function __construct(BorderPart ...$borderParts)
     {
-        $this->setParts($borderParts);
-    }
-
-    /**
-     * @param string $name The name of the border part
-     *
-     * @return null|BorderPart
-     */
-    public function getPart($name)
-    {
-        return $this->hasPart($name) ? $this->parts[$name] : null;
-    }
-
-    /**
-     * @param string $name The name of the border part
-     *
-     * @return bool
-     */
-    public function hasPart($name)
-    {
-        return isset($this->parts[$name]);
-    }
-
-    /**
-     * @return array
-     */
-    public function getParts()
-    {
-        return $this->parts;
-    }
-
-    /**
-     * Set BorderParts.
-     *
-     * @param array $parts
-     */
-    public function setParts($parts)
-    {
-        $this->parts = [];
-        foreach ($parts as $part) {
-            $this->addPart($part);
+        foreach ($borderParts as $borderPart) {
+            $this->parts[$borderPart->getName()] = $borderPart;
         }
     }
 
-    /**
-     * @return Border
-     */
-    public function addPart(BorderPart $borderPart)
+    public function getPart(string $name): ?BorderPart
     {
-        $this->parts[$borderPart->getName()] = $borderPart;
+        return $this->parts[$name] ?? null;
+    }
 
-        return $this;
+    /**
+     * @return array<string, BorderPart>
+     */
+    public function getParts(): array
+    {
+        return $this->parts;
     }
 }

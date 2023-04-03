@@ -1,72 +1,76 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Writer\XLSX;
 
-use OpenSpout\Writer\Common\Entity\Options;
-use OpenSpout\Writer\WriterMultiSheetsAbstract;
+use OpenSpout\Common\Helper\Escaper\XLSX;
+use OpenSpout\Common\Helper\StringHelper;
+use OpenSpout\Writer\AbstractWriterMultiSheets;
+use OpenSpout\Writer\Common\Entity\Workbook;
+use OpenSpout\Writer\Common\Helper\ZipHelper;
+use OpenSpout\Writer\Common\Manager\Style\StyleMerger;
+use OpenSpout\Writer\XLSX\Helper\FileSystemHelper;
+use OpenSpout\Writer\XLSX\Manager\CommentsManager;
+use OpenSpout\Writer\XLSX\Manager\SharedStringsManager;
+use OpenSpout\Writer\XLSX\Manager\Style\StyleManager;
+use OpenSpout\Writer\XLSX\Manager\Style\StyleRegistry;
+use OpenSpout\Writer\XLSX\Manager\WorkbookManager;
+use OpenSpout\Writer\XLSX\Manager\WorksheetManager;
 
-/**
- * This class provides base support to write data to XLSX files.
- */
-class Writer extends WriterMultiSheetsAbstract
+final class Writer extends AbstractWriterMultiSheets
 {
     /** @var string Content-Type value for the header */
-    protected static $headerContentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    protected static string $headerContentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
-    /**
-     * Sets a custom temporary folder for creating intermediate files/folders.
-     * This must be set before opening the writer.
-     *
-     * @param string $tempFolder Temporary folder where the files to create the XLSX will be stored
-     *
-     * @throws \OpenSpout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened
-     *
-     * @return Writer
-     */
-    public function setTempFolder($tempFolder)
+    private Options $options;
+
+    public function __construct(?Options $options = null)
     {
-        $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
-
-        $this->optionsManager->setOption(Options::TEMP_FOLDER, $tempFolder);
-
-        return $this;
+        $this->options = $options ?? new Options();
     }
 
-    /**
-     * Use inline string to be more memory efficient. If set to false, it will use shared strings.
-     * This must be set before opening the writer.
-     *
-     * @param bool $shouldUseInlineStrings Whether inline or shared strings should be used
-     *
-     * @throws \OpenSpout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened
-     *
-     * @return Writer
-     */
-    public function setShouldUseInlineStrings($shouldUseInlineStrings)
+    public function getOptions(): Options
     {
-        $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
-
-        $this->optionsManager->setOption(Options::SHOULD_USE_INLINE_STRINGS, $shouldUseInlineStrings);
-
-        return $this;
+        return $this->options;
     }
 
-    /**
-     * Merge cells.
-     * Row coordinates are indexed from 1, columns from 0 (A = 0),
-     * so a merge B2:G2 looks like $writer->mergeCells([1,2], [6, 2]);.
-     *
-     * You may use CellHelper::getColumnLettersFromColumnIndex() to convert from "B2" to "[1,2]"
-     *
-     * @param int[] $range1 - top left cell's coordinate [column, row]
-     * @param int[] $range2 - bottom right cell's coordinate [column, row]
-     *
-     * @return $this
-     */
-    public function mergeCells(array $range1, array $range2)
+    protected function createWorkbookManager(): WorkbookManager
     {
-        $this->optionsManager->addOption(Options::MERGE_CELLS, [$range1, $range2]);
+        $workbook = new Workbook();
 
-        return $this;
+        $fileSystemHelper = new FileSystemHelper(
+            $this->options->getTempFolder(),
+            new ZipHelper(),
+            new XLSX()
+        );
+        $fileSystemHelper->createBaseFilesAndFolders();
+
+        $xlFolder = $fileSystemHelper->getXlFolder();
+        $sharedStringsManager = new SharedStringsManager($xlFolder, new XLSX());
+
+        $styleMerger = new StyleMerger();
+        $styleManager = new StyleManager(new StyleRegistry($this->options->DEFAULT_ROW_STYLE));
+
+        $commentsManager = new CommentsManager($xlFolder, new XLSX());
+
+        $worksheetManager = new WorksheetManager(
+            $this->options,
+            $styleManager,
+            $styleMerger,
+            $commentsManager,
+            $sharedStringsManager,
+            new XLSX(),
+            StringHelper::factory()
+        );
+
+        return new WorkbookManager(
+            $workbook,
+            $this->options,
+            $worksheetManager,
+            $styleManager,
+            $styleMerger,
+            $fileSystemHelper
+        );
     }
 }

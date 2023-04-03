@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Writer\ODS\Helper;
 
+use DateTimeImmutable;
+use OpenSpout\Common\Helper\FileSystemHelper as CommonFileSystemHelper;
 use OpenSpout\Writer\Common\Entity\Worksheet;
 use OpenSpout\Writer\Common\Helper\FileSystemWithRootFolderHelperInterface;
 use OpenSpout\Writer\Common\Helper\ZipHelper;
@@ -9,16 +13,14 @@ use OpenSpout\Writer\ODS\Manager\Style\StyleManager;
 use OpenSpout\Writer\ODS\Manager\WorksheetManager;
 
 /**
- * This class provides helper functions to help with the file system operations
- * like files/folders creation & deletion for ODS files.
+ * @internal
  */
-class FileSystemHelper extends \OpenSpout\Common\Helper\FileSystemHelper implements FileSystemWithRootFolderHelperInterface
+final class FileSystemHelper implements FileSystemWithRootFolderHelperInterface
 {
-    public const APP_NAME = 'Spout';
+    public const APP_NAME = 'OpenSpout';
     public const MIMETYPE = 'application/vnd.oasis.opendocument.spreadsheet';
 
     public const META_INF_FOLDER_NAME = 'META-INF';
-    public const SHEETS_CONTENT_TEMP_FOLDER_NAME = 'worksheets-temp';
 
     public const MANIFEST_XML_FILE_NAME = 'manifest.xml';
     public const CONTENT_XML_FILE_NAME = 'content.xml';
@@ -26,40 +28,58 @@ class FileSystemHelper extends \OpenSpout\Common\Helper\FileSystemHelper impleme
     public const MIMETYPE_FILE_NAME = 'mimetype';
     public const STYLES_XML_FILE_NAME = 'styles.xml';
 
+    private string $baseFolderRealPath;
+    private CommonFileSystemHelper $baseFileSystemHelper;
+
     /** @var string Path to the root folder inside the temp folder where the files to create the ODS will be stored */
-    protected $rootFolder;
+    private string $rootFolder;
 
     /** @var string Path to the "META-INF" folder inside the root folder */
-    protected $metaInfFolder;
+    private string $metaInfFolder;
 
     /** @var string Path to the temp folder, inside the root folder, where specific sheets content will be written to */
-    protected $sheetsContentTempFolder;
+    private string $sheetsContentTempFolder;
 
     /** @var ZipHelper Helper to perform tasks with Zip archive */
-    private $zipHelper;
+    private ZipHelper $zipHelper;
 
     /**
      * @param string    $baseFolderPath The path of the base folder where all the I/O can occur
      * @param ZipHelper $zipHelper      Helper to perform tasks with Zip archive
      */
-    public function __construct($baseFolderPath, $zipHelper)
+    public function __construct(string $baseFolderPath, ZipHelper $zipHelper)
     {
-        parent::__construct($baseFolderPath);
+        $this->baseFileSystemHelper = new CommonFileSystemHelper($baseFolderPath);
+        $this->baseFolderRealPath = $this->baseFileSystemHelper->getBaseFolderRealPath();
         $this->zipHelper = $zipHelper;
     }
 
-    /**
-     * @return string
-     */
-    public function getRootFolder()
+    public function createFolder(string $parentFolderPath, string $folderName): string
+    {
+        return $this->baseFileSystemHelper->createFolder($parentFolderPath, $folderName);
+    }
+
+    public function createFileWithContents(string $parentFolderPath, string $fileName, string $fileContents): string
+    {
+        return $this->baseFileSystemHelper->createFileWithContents($parentFolderPath, $fileName, $fileContents);
+    }
+
+    public function deleteFile(string $filePath): void
+    {
+        $this->baseFileSystemHelper->deleteFile($filePath);
+    }
+
+    public function deleteFolderRecursively(string $folderPath): void
+    {
+        $this->baseFileSystemHelper->deleteFolderRecursively($folderPath);
+    }
+
+    public function getRootFolder(): string
     {
         return $this->rootFolder;
     }
 
-    /**
-     * @return string
-     */
-    public function getSheetsContentTempFolder()
+    public function getSheetsContentTempFolder(): string
     {
         return $this->sheetsContentTempFolder;
     }
@@ -69,7 +89,7 @@ class FileSystemHelper extends \OpenSpout\Common\Helper\FileSystemHelper impleme
      *
      * @throws \OpenSpout\Common\Exception\IOException If unable to create at least one of the base folders
      */
-    public function createBaseFilesAndFolders()
+    public function createBaseFilesAndFolders(): void
     {
         $this
             ->createRootFolder()
@@ -83,13 +103,9 @@ class FileSystemHelper extends \OpenSpout\Common\Helper\FileSystemHelper impleme
     /**
      * Creates the "content.xml" file under the root folder.
      *
-     * @param WorksheetManager $worksheetManager
-     * @param StyleManager     $styleManager
-     * @param Worksheet[]      $worksheets
-     *
-     * @return FileSystemHelper
+     * @param Worksheet[] $worksheets
      */
-    public function createContentFile($worksheetManager, $styleManager, $worksheets)
+    public function createContentFile(WorksheetManager $worksheetManager, StyleManager $styleManager, array $worksheets): self
     {
         $contentXmlFileContents = <<<'EOD'
             <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -101,11 +117,20 @@ class FileSystemHelper extends \OpenSpout\Common\Helper\FileSystemHelper impleme
 
         $contentXmlFileContents .= '<office:body><office:spreadsheet>';
 
-        $this->createFileWithContents($this->rootFolder, self::CONTENT_XML_FILE_NAME, $contentXmlFileContents);
+        $topContentTempFile = uniqid(self::CONTENT_XML_FILE_NAME);
+        $this->createFileWithContents($this->rootFolder, $topContentTempFile, $contentXmlFileContents);
 
         // Append sheets content to "content.xml"
-        $contentXmlFilePath = $this->rootFolder.'/'.self::CONTENT_XML_FILE_NAME;
-        $contentXmlHandle = fopen($contentXmlFilePath, 'a');
+        $contentXmlFilePath = $this->rootFolder.\DIRECTORY_SEPARATOR.self::CONTENT_XML_FILE_NAME;
+        $contentXmlHandle = fopen($contentXmlFilePath, 'w');
+        \assert(false !== $contentXmlHandle);
+
+        $topContentTempPathname = $this->rootFolder.\DIRECTORY_SEPARATOR.$topContentTempFile;
+        $topContentTempHandle = fopen($topContentTempPathname, 'r');
+        \assert(false !== $topContentTempHandle);
+        stream_copy_to_stream($topContentTempHandle, $contentXmlHandle);
+        fclose($topContentTempHandle);
+        unlink($topContentTempPathname);
 
         foreach ($worksheets as $worksheet) {
             // write the "<table:table>" node, with the final sheet's name
@@ -115,6 +140,17 @@ class FileSystemHelper extends \OpenSpout\Common\Helper\FileSystemHelper impleme
             $this->copyFileContentsToTarget($worksheetFilePath, $contentXmlHandle);
 
             fwrite($contentXmlHandle, '</table:table>');
+        }
+
+        // add AutoFilter
+        $databaseRanges = '';
+        foreach ($worksheets as $worksheet) {
+            $databaseRanges .= $worksheetManager->getTableDatabaseRangeElementAsString($worksheet);
+        }
+        if ('' !== $databaseRanges) {
+            fwrite($contentXmlHandle, '<table:database-ranges>');
+            fwrite($contentXmlHandle, $databaseRanges);
+            fwrite($contentXmlHandle, '</table:database-ranges>');
         }
 
         $contentXmlFileContents = '</office:spreadsheet></office:body></office:document-content>';
@@ -127,10 +163,8 @@ class FileSystemHelper extends \OpenSpout\Common\Helper\FileSystemHelper impleme
 
     /**
      * Deletes the temporary folder where sheets content was stored.
-     *
-     * @return FileSystemHelper
      */
-    public function deleteWorksheetTempFolder()
+    public function deleteWorksheetTempFolder(): self
     {
         $this->deleteFolderRecursively($this->sheetsContentTempFolder);
 
@@ -140,12 +174,9 @@ class FileSystemHelper extends \OpenSpout\Common\Helper\FileSystemHelper impleme
     /**
      * Creates the "styles.xml" file under the root folder.
      *
-     * @param StyleManager $styleManager
-     * @param int          $numWorksheets Number of created worksheets
-     *
-     * @return FileSystemHelper
+     * @param int $numWorksheets Number of created worksheets
      */
-    public function createStylesFile($styleManager, $numWorksheets)
+    public function createStylesFile(StyleManager $styleManager, int $numWorksheets): self
     {
         $stylesXmlFileContents = $styleManager->getStylesXMLFileContent($numWorksheets);
         $this->createFileWithContents($this->rootFolder, self::STYLES_XML_FILE_NAME, $stylesXmlFileContents);
@@ -158,7 +189,7 @@ class FileSystemHelper extends \OpenSpout\Common\Helper\FileSystemHelper impleme
      *
      * @param resource $streamPointer Pointer to the stream to copy the zip
      */
-    public function zipRootFolderAndCopyToStream($streamPointer)
+    public function zipRootFolderAndCopyToStream($streamPointer): void
     {
         $zip = $this->zipHelper->createZip($this->rootFolder);
 
@@ -180,10 +211,8 @@ class FileSystemHelper extends \OpenSpout\Common\Helper\FileSystemHelper impleme
      * Creates the folder that will be used as root.
      *
      * @throws \OpenSpout\Common\Exception\IOException If unable to create the folder
-     *
-     * @return FileSystemHelper
      */
-    protected function createRootFolder()
+    private function createRootFolder(): self
     {
         $this->rootFolder = $this->createFolder($this->baseFolderRealPath, uniqid('ods'));
 
@@ -194,10 +223,8 @@ class FileSystemHelper extends \OpenSpout\Common\Helper\FileSystemHelper impleme
      * Creates the "META-INF" folder under the root folder as well as the "manifest.xml" file in it.
      *
      * @throws \OpenSpout\Common\Exception\IOException If unable to create the folder or the "manifest.xml" file
-     *
-     * @return FileSystemHelper
      */
-    protected function createMetaInfoFolderAndFile()
+    private function createMetaInfoFolderAndFile(): self
     {
         $this->metaInfFolder = $this->createFolder($this->rootFolder, self::META_INF_FOLDER_NAME);
 
@@ -210,10 +237,8 @@ class FileSystemHelper extends \OpenSpout\Common\Helper\FileSystemHelper impleme
      * Creates the "manifest.xml" file under the "META-INF" folder (under root).
      *
      * @throws \OpenSpout\Common\Exception\IOException If unable to create the file
-     *
-     * @return FileSystemHelper
      */
-    protected function createManifestFile()
+    private function createManifestFile(): self
     {
         $manifestXmlFileContents = <<<'EOD'
             <?xml version="1.0" encoding="UTF-8"?>
@@ -235,12 +260,10 @@ class FileSystemHelper extends \OpenSpout\Common\Helper\FileSystemHelper impleme
      * This folder is not part of the final ODS file and is only used to be able to jump between sheets.
      *
      * @throws \OpenSpout\Common\Exception\IOException If unable to create the folder
-     *
-     * @return FileSystemHelper
      */
-    protected function createSheetsContentTempFolder()
+    private function createSheetsContentTempFolder(): self
     {
-        $this->sheetsContentTempFolder = $this->createFolder($this->rootFolder, self::SHEETS_CONTENT_TEMP_FOLDER_NAME);
+        $this->sheetsContentTempFolder = $this->createFolder($this->rootFolder, 'worksheets-temp');
 
         return $this;
     }
@@ -249,13 +272,11 @@ class FileSystemHelper extends \OpenSpout\Common\Helper\FileSystemHelper impleme
      * Creates the "meta.xml" file under the root folder.
      *
      * @throws \OpenSpout\Common\Exception\IOException If unable to create the file
-     *
-     * @return FileSystemHelper
      */
-    protected function createMetaFile()
+    private function createMetaFile(): self
     {
         $appName = self::APP_NAME;
-        $createdDate = (new \DateTime())->format(\DateTime::W3C);
+        $createdDate = (new DateTimeImmutable())->format(DateTimeImmutable::W3C);
 
         $metaXmlFileContents = <<<EOD
             <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -277,10 +298,8 @@ class FileSystemHelper extends \OpenSpout\Common\Helper\FileSystemHelper impleme
      * Creates the "mimetype" file under the root folder.
      *
      * @throws \OpenSpout\Common\Exception\IOException If unable to create the file
-     *
-     * @return FileSystemHelper
      */
-    protected function createMimetypeFile()
+    private function createMimetypeFile(): self
     {
         $this->createFileWithContents($this->rootFolder, self::MIMETYPE_FILE_NAME, self::MIMETYPE);
 
@@ -295,9 +314,10 @@ class FileSystemHelper extends \OpenSpout\Common\Helper\FileSystemHelper impleme
      * @param string   $sourceFilePath Path of the file whose content will be copied
      * @param resource $targetResource Target resource that will receive the content
      */
-    protected function copyFileContentsToTarget($sourceFilePath, $targetResource)
+    private function copyFileContentsToTarget(string $sourceFilePath, $targetResource): void
     {
         $sourceHandle = fopen($sourceFilePath, 'r');
+        \assert(false !== $sourceHandle);
         stream_copy_to_stream($sourceHandle, $targetResource);
         fclose($sourceHandle);
     }

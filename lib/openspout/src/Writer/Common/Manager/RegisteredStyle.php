@@ -1,23 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Writer\Common\Manager;
 
 use OpenSpout\Common\Entity\Style\Style;
 
 /**
  * Allow to know if this style must replace actual row style.
+ *
+ * @internal
  */
-class RegisteredStyle
+final class RegisteredStyle
 {
-    /**
-     * @var Style
-     */
-    private $style;
+    private Style $style;
 
-    /**
-     * @var bool
-     */
-    private $isMatchingRowStyle;
+    private bool $isMatchingRowStyle;
 
     public function __construct(Style $style, bool $isMatchingRowStyle)
     {
