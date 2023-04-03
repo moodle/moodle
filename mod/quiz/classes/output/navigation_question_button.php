@@ -30,6 +30,8 @@ use renderable;
 class navigation_question_button implements renderable {
     /** @var string id="..." to add to the HTML for this button. */
     public $id;
+    /** @var bool, if this is a real question, not an info item. */
+    public $isrealquestion;
     /** @var string number to display in this button. Either the question number of 'i'. */
     public $number;
     /** @var string class to add to the class="" attribute to represnt the question state. */

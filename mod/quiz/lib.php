@@ -1176,26 +1176,18 @@ function mod_quiz_inplace_editable(string $itemtype, int $itemid, string $newval
     global $DB;
 
     if ($itemtype === 'slotdisplaynumber') {
-        $record = $DB->get_record('quiz_slots', ['id' => $itemid], '*', MUST_EXIST);
-        $quizobj = quiz_settings::create($record->quizid);
+        // Work out which quiz and slot this is.
+        $slot = $DB->get_record('quiz_slots', ['id' => $itemid], '*', MUST_EXIST);
+        $quizobj = quiz_settings::create($slot->quizid);
 
-        // Call validate_context for course module to check access and set current context.
+        // Validate the context, and check the required capability.
         $context = $quizobj->get_context();
         \core_external\external_api::validate_context($context);
-
-        // Check permission of the user to update this item (customise question number).
         require_capability('mod/quiz:manage', $context);
 
+        // Update the value - truncating the size of the DB column.
         $structure = $quizobj->get_structure();
-        $warning = false;
-        // Clean input and update the record.
-        $record->displaynumber = s(clean_param($newvalue, PARAM_RAW));
-
-        // Truncate the string if the input string exceeds the size of the displaynumber field (16 chars) in the database.
-        if (strlen($record->displaynumber) > 16) {
-            $record->displaynumber = substr($record->displaynumber, 0, 16);
-        }
-        $structure->update_slot_display_number($itemid, $record->displaynumber);
+        $structure->update_slot_display_number($itemid, core_text::substr($newvalue, 0, 16));
 
         // Prepare the element for the output.
         return $structure->make_slot_display_number_in_place_editable($itemid, $context);

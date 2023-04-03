@@ -391,7 +391,10 @@ class edit_renderer extends \plugin_renderer_base {
 
         $sectionstyle = '';
         if ($structure->is_only_one_slot_in_section($section)) {
-            $sectionstyle = ' only-has-one-slot';
+            $sectionstyle .= ' only-has-one-slot';
+        }
+        if ($section->shufflequestions) {
+            $sectionstyle .= ' shuffled';
         }
 
         if ($section->heading) {
@@ -751,9 +754,8 @@ class edit_renderer extends \plugin_renderer_base {
         }
 
         if ($structure->can_display_number_be_customised($slot)) {
-            $questionnumbercustomised = $this->output->render($structure->make_slot_display_number_in_place_editable(
+            $questionnumber = $this->output->render($structure->make_slot_display_number_in_place_editable(
                     $slotid, $structure->get_context()));
-            $questionnumber = $questionnumbercustomised;
         } else {
             $questionnumber = $structure->get_displayed_number_for_slot($slot);
         }
@@ -762,7 +764,7 @@ class edit_renderer extends \plugin_renderer_base {
             'slotid' => $slotid,
             'canbeedited' => $structure->can_be_edited(),
             'checkbox' => $this->get_checkbox_render($structure, $slot),
-            'questionnumber' => $this->question_number($questionnumber),
+            'questionnumber' => $this->question_number($questionnumber, $structure->get_slot_by_number($slot)->defaultnumber),
             'questionname' => $this->get_question_name_for_slot($structure, $slot, $pageurl),
             'questionicons' => $this->get_action_icon($structure, $slot, $pageurl),
             'questiondependencyicon' => ($structure->can_be_edited() ? $this->question_dependency_icon($structure, $slot) : ''),
@@ -796,9 +798,8 @@ class edit_renderer extends \plugin_renderer_base {
         $questionslot = $structure->get_displayed_number_for_slot($slot);
         $checkbox = new \core\output\checkbox_toggleall($this->togglegroup, false,
             [
-                'id' => 'selectquestion-' . $questionslot,
+                'id' => 'selectquestion-' . $slot,
                 'name' => 'selectquestion[]',
-                'value' => $questionslot,
                 'classes' => 'select-multiple-checkbox',
                 'label' => get_string('selectquestionslot', 'quiz', $questionslot),
                 'labelclasses' => 'sr-only',
@@ -867,14 +868,18 @@ class edit_renderer extends \plugin_renderer_base {
 
     /**
      * Output the question number.
-     * @param string $number The number, or 'i'.
+     *
+     * @param string $editablenumber The, which may be an in-place editable.
+     * @param string $uncustomisednumber The un-customised number number, or 'i'.
      * @return string HTML to output.
      */
-    public function question_number($number) {
-        if ($number !== get_string('infoshort', 'quiz')) {
-            $number = html_writer::span(get_string('question'), 'accesshide') . ' ' . $number;
+    public function question_number(string $editablenumber, string $uncustomisednumber) {
+        if ($editablenumber !== get_string('infoshort', 'quiz')) {
+            $editablenumber = html_writer::span(get_string('question'), 'accesshide') . ' ' . $editablenumber;
+            $uncustomisednumber = html_writer::span(get_string('question'), 'accesshide') . ' ' . $uncustomisednumber;
         }
-        return html_writer::tag('span', $number, ['class' => 'slotnumber']);
+        return html_writer::tag('span', $editablenumber, ['class' => 'slotnumber unshuffled']) .
+                html_writer::tag('span', $uncustomisednumber, ['class' => 'slotnumber shuffled']);
     }
 
     /**

@@ -2,6 +2,12 @@ This files describes API changes in the quiz code.
 
 === 4.2 ===
 
+* For the three quiz web services: mod_quiz_get_attempt_data, mod_quiz_get_attempt_summary and
+  mod_quiz_get_attempt_review, the ->number property of each question is now deprecated
+  (It had the wrong time and was documented wrongly.) In the future, please use the new property
+  ->questionnumber. Note, this question 'number' can include any string (e.g. 'Qs 1 & 2') so it is
+  important to applying htmlspecialchars, or equivalent, to the value if you are outputting to HTML.
+
 * The methods in the quiz_settings class which return a URL now all return a moodle_url. Previously
   some returns a moodle_url and others aa string.
 

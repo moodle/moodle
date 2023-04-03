@@ -17,6 +17,7 @@
 namespace mod_quiz;
 
 use context_module;
+use core\output\inplace_editable;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\qubaids_for_quiz;
 use stdClass;
@@ -138,37 +139,32 @@ class structure {
      * @return string the question number ot display for this slot.
      */
     public function get_displayed_number_for_slot($slotnumber) {
-        return $this->slotsinorder[$slotnumber]->displayednumber;
+        $slot = $this->slotsinorder[$slotnumber];
+        return $slot->displaynumber ?? $slot->defaultnumber;
     }
 
     /**
-     * Check whether the question number can be customised.
+     * Check the question has a number that could be customised.
      *
      * @param int $slotnumber
      * @return bool
      */
     public function can_display_number_be_customised(int $slotnumber): bool {
-        if (!$this->is_real_question($slotnumber)) {
-            return false;
-        }
-        $slot = $this->get_slot_by_number($slotnumber);
-        if ($slot->section->shufflequestions) {
-            return false;
-        }
-        if (quiz_has_attempts($this->quizobj->get_quizid())) {
-            return false;
-        }
-        return true;
+        return $this->is_real_question($slotnumber) && !quiz_has_attempts($this->quizobj->get_quizid());
     }
 
     /**
      * Check whether the question number is customised.
+     *
      * @param int $slotid
      * @return bool
+     * @todo MDL-76612 Final deprecation in Moodle 4.6
+     * @deprecated since 4.2. $slot->displayednumber is no longer used. If you need this,
+     *      use isset(...->displaynumber), but this method was not used.
      */
     public function is_display_number_customised(int $slotid): bool {
         $slotobj = $this->get_slot_by_id($slotid);
-        return $slotobj->displayednumber === $slotobj->displaynumber;
+        return isset($slotobj->displaynumber);
     }
 
     /**
@@ -179,22 +175,14 @@ class structure {
      * @return \core\output\inplace_editable
      */
     public function make_slot_display_number_in_place_editable(int $slotid, \context $context): \core\output\inplace_editable {
-        // Check permission of the user to update this item (customise question number).
+        $slot = $this->get_slot_by_id($slotid);
         $editable = has_capability('mod/quiz:manage', $context);
 
-        $this->populate_structure();
-        $slot = $this->get_slot_by_id($slotid);
+        // Get the current value.
+        $value = $slot->displaynumber ?? $slot->defaultnumber;
+        $displayvalue = s($value);
 
-        // Whether the displaynumber field in quiz_slots table is set and it is not empty or null.
-        if ($this->is_display_number_customised($slotid)) {
-            $displayvalue = format_string($slot->displaynumber);
-            $value = $slot->displaynumber;
-        } else {
-            $displayednumber = $this->get_displayed_number_for_slot($slot->slot);
-            $displayvalue = format_string($displayednumber);
-            $value = $displayednumber;
-        }
-        return new \core\output\inplace_editable('mod_quiz', 'slotdisplaynumber', $slotid,
+        return new inplace_editable('mod_quiz', 'slotdisplaynumber', $slotid,
                 $editable, $displayvalue, $value,
                 get_string('edit_slotdisplaynumber_hint', 'mod_quiz'),
                 get_string('edit_slotdisplaynumber_label', 'mod_quiz', $displayvalue));
@@ -732,7 +720,6 @@ class structure {
         global $DB;
 
         $slots = qbank_helper::get_question_structure($this->quizobj->get_quizid(), $this->quizobj->get_context());
-
         $this->questions = [];
         $this->slotsinorder = [];
         foreach ($slots as $slotdata) {
@@ -762,10 +749,6 @@ class structure {
             }
             for ($slot = $section->firstslot; $slot <= $section->lastslot; $slot += 1) {
                 $this->slotsinorder[$slot]->section = $section;
-                if ($section->shufflequestions) {
-                    // Hide customised value and disable editing while shuffle checkbox is enabled.
-                    $this->slotsinorder[$slot]->displaynumber = null;
-                }
             }
         }
     }
@@ -776,17 +759,17 @@ class structure {
     protected function populate_question_numbers() {
         $number = 1;
         foreach ($this->slotsinorder as $slot) {
-            if ($this->questions[$slot->questionid]->length == 0) {
-                $slot->displayednumber = get_string('infoshort', 'quiz');
+            $question = $this->questions[$slot->questionid];
+            if ($question->length == 0) {
+                $slot->displaynumber = null;
+                $slot->defaultnumber = get_string('infoshort', 'quiz');
             } else {
-                // Whether question numbering is customised or is numeric and automatically incremented.
-                if (!empty($slot->displaynumber)) {
-                    $slot->displayednumber = $slot->displaynumber;
-                } else {
-                    $slot->displayednumber = $number;
-                }
-                $number += 1;
+                $slot->defaultnumber = $number;
             }
+            if ($slot->displaynumber === '') {
+                $slot->displaynumber = null;
+            }
+            $number += $question->length;
         }
     }
 

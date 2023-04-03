@@ -560,6 +560,18 @@ table.quizreviewsummary td.cell {
     min-width: 2em;
     display: inline-block;
 }
+#page-mod-quiz-edit li.section .slotnumber.unshuffled {
+    display: inline-block;
+}
+#page-mod-quiz-edit li.section .slotnumber.shuffled {
+    display: none;
+}
+#page-mod-quiz-edit li.section.shuffled .slotnumber.unshuffled {
+    display: none;
+}
+#page-mod-quiz-edit li.section.shuffled .slotnumber.shuffled {
+    display: inline-block;
+}
 
 #page-mod-quiz-edit .section-heading {
     margin-left: 20px;

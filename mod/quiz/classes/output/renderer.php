@@ -380,7 +380,7 @@ class renderer extends plugin_renderer_base {
         }
         $extrainfo[] = html_writer::tag('span', $flaglabel, ['class' => 'flagstate']);
 
-        if (is_numeric($button->number)) {
+        if ($button->isrealquestion) {
             $qnostring = 'questionnonav';
         } else {
             $qnostring = 'questionnonavinfo';
