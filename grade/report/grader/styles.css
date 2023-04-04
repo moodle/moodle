@@ -24,14 +24,8 @@
     border: 1px solid #ccc;
     border-top-width: 0;
     border-left-width: 0;
-    padding: 4px 5px;
-    vertical-align: middle;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.path-grade-report-grader .action-menu {
-    display: inline-block;
+    padding: 10px;
+    vertical-align: top;
 }
 
 .path-grade-report-grader .overriddengrade {
@@ -47,6 +41,14 @@
 
 .path-grade-report-grader .gradefail {
     color: #ca3120;
+}
+
+.path-grade-report-grader .gradecell {
+    white-space: nowrap;
+}
+
+.path-grade-report-grader .gradecell > * {
+    white-space: normal;
 }
 
 .path-grade-report-grader .grade_icons {
@@ -72,35 +74,24 @@
 .path-grade-report-grader .gradeparent .user.cell {
     font-size: 14px;
     font-weight: normal;
-    text-align: left;
+}
+
+.path-grade-report-grader .gradeparent .heading .header,
+.path-grade-report-grader .gradeparent .heading .userfield {
+    white-space: nowrap;
 }
 
 /**
  * The user cells.
  */
 .path-grade-report-grader .gradeparent .user.cell {
-    min-width: 250px;
-    width: 250px;
-    white-space: normal;
-    vertical-align: middle;
+    white-space: nowrap;
     height: 100px;
 }
 
 .path-grade-report-grader .gradeparent .highlightable.cell {
     height: 80px;
-    text-align: center;
-    vertical-align: top;
-    padding-top: 20px;
     min-width: 150px;
-}
-
-.path-grade-report-grader .gradeparent .gradecell {
-    vertical-align: top;
-    padding-top: 20px;
-}
-
-.path-grade-report-grader .gradeparent .locked {
-    padding-top: 27px;
 }
 
 .path-grade-report-grader .gradeparent .user.cell .userpicture {
@@ -117,19 +108,13 @@
 }
 
 /**
- * The additional user fields.
- */
-.path-grade-report-grader .gradeparent .userfield {
-    font-weight: normal;
-    text-align: left;
-}
-
-/**
  * The footer's header.
  */
 .path-grade-report-grader .gradeparent .range .header,
-.path-grade-report-grader .gradeparent .avg .header {
+.path-grade-report-grader .gradeparent .avg .header,
+.path-grade-report-grader .gradeparent .groupavg .header {
     font-weight: bold;
+    text-align: right;
 }
 
 /**
@@ -139,15 +124,6 @@
     border-top-width: 1px;
 }
 
-/**
- * The footer's cells.
- */
-.path-grade-report-grader .gradeparent .avg .cell {
-    text-align: right;
-    max-width: 200px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
 /**
  * Content styling.
  */
@@ -198,6 +174,11 @@
     margin: 0;
     padding: 0;
     text-align: center;
+}
+
+.path-grade-report-grader .action-menu {
+    display: inline-block;
+    padding-left: 10px;
 }
 
 .path-grade-report-grader .dropdown-menu {
