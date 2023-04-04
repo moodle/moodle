@@ -960,7 +960,9 @@ class framework implements H5PFrameworkInterface {
         // Reset user data.
         try {
             $xapihandler = handler::create($file->get_component());
-            $xapihandler->reset_states($file->get_contextid());
+            // Reset only entries with 'state' as stateid (the ones restored shouldn't be restored, because the H5P
+            // content hasn't been created yet).
+            $xapihandler->reset_states($file->get_contextid(), null, 'state');
         } catch (xapi_exception $exception) {
             // This component doesn't support xAPI State, so no content needs to be reset.
             return;

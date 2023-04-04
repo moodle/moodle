@@ -357,6 +357,12 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         new lang_string('configgeneralcontentbankcontent', 'backup'),
         ['value' => 1, 'locked' => 0])
     );
+    $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_xapistate',
+        new lang_string('generalxapistate', 'backup'),
+        new lang_string('configgeneralxapistate', 'backup'),
+        ['value' => 1, 'locked' => 0])
+    );
+
 
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_legacyfiles',
         new lang_string('generallegacyfiles', 'backup'),
@@ -521,6 +527,12 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         new lang_string('configgeneralcontentbankcontent', 'backup'),
         1)
     );
+    $temp->add(new admin_setting_configcheckbox(
+        'backup/backup_auto_xapistate',
+        new lang_string('generalxapistate', 'backup'),
+        new lang_string('configgeneralxapistate', 'backup'),
+        1)
+    );
 
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_legacyfiles',
         new lang_string('generallegacyfiles', 'backup'),
@@ -591,6 +603,9 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_contentbankcontent',
         new lang_string('generalcontentbankcontent', 'backup'),
         new lang_string('configrestorecontentbankcontent', 'backup'), array('value' => 1, 'locked' => 0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_xapistate',
+        new lang_string('generalxapistate', 'backup'),
+        new lang_string('configrestorexapistate', 'backup'), array('value' => 1, 'locked' => 0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_legacyfiles',
         new lang_string('generallegacyfiles', 'backup'),
         new lang_string('configlegacyfiles', 'backup'), array('value' => 1, 'locked' => 0)));

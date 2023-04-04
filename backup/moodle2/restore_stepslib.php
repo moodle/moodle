@@ -4227,6 +4227,61 @@ class restore_contentbankcontent_structure_step extends restore_structure_step {
 }
 
 /**
+ * This structure steps restores the xAPI states.
+ */
+class restore_xapistate_structure_step extends restore_structure_step {
+
+    /**
+     * Define structure for xAPI state step
+     */
+    protected function define_structure() {
+        return [new restore_path_element('xapistate', '/states/state')];
+    }
+
+    /**
+     * Define data processed for xAPI state.
+     *
+     * @param array|stdClass $data
+     */
+    public function process_xapistate($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+        $exists = false;
+
+        $params = [
+            'component' => $data->component,
+            'itemid' => $this->task->get_contextid(),
+            // Set stateid to 'restored', to let plugins identify the origin of this state is a backup.
+            'stateid' => 'restored',
+            'statedata' => $data->statedata,
+            'registration' => $data->registration,
+            'timecreated' => $data->timecreated,
+            'timemodified' => time(),
+        ];
+
+        // Trying to map users. Users cannot always be mapped, for instance, when copying.
+        $params['userid'] = $this->get_mappingid('user', $data->userid);
+        if (!$params['userid']) {
+            // Leave the userid unchanged when we are restoring the same site.
+            if ($this->task->is_samesite()) {
+                $params['userid'] = $data->userid;
+            }
+            $filter = $params;
+            unset($filter['statedata']);
+            $exists = $DB->record_exists('xapi_states', $filter);
+        }
+
+        if (!$exists && $params['userid']) {
+            // Only insert the record if the user exists or can be mapped.
+            $newitemid = $DB->insert_record('xapi_states', $params);
+            $this->set_mapping('xapi_states', $oldid, $newitemid, true);
+        }
+    }
+}
+
+/**
  * This structure steps restores one instance + positions of one block
  * Note: Positions corresponding to one existing context are restored
  * here, but all the ones having unknown contexts are sent to backup_ids

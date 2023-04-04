@@ -72,7 +72,7 @@ class state implements JsonSerializable {
     /**
      * Return the data to serialize in case JSON state when needed.
      *
-     * @return stdClass The state data structure
+     * @return stdClass The state data structure. If statedata is null, this method will return an empty class.
      */
     public function jsonSerialize(): stdClass {
         if ($this->statedata) {

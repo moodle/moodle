@@ -2987,3 +2987,35 @@ class backup_contentbankcontent_structure_step extends backup_structure_step {
         return $contents;
     }
 }
+
+/**
+ * Structure step in charge of constructing the xapistate.xml file for all the xAPI states found in a given context.
+ */
+class backup_xapistate_structure_step extends backup_structure_step {
+
+    /**
+     * Define structure for content bank step
+     */
+    protected function define_structure() {
+
+        // Define each element separated.
+        $states = new backup_nested_element('states');
+        $state = new backup_nested_element(
+            'state',
+            ['id'],
+            ['component', 'userid', 'itemid', 'stateid', 'statedata', 'registration', 'timecreated', 'timemodified']
+        );
+
+        // Build the tree.
+        $states->add_child($state);
+
+        // Define sources.
+        $state->set_source_table('xapi_states', ['itemid' => backup::VAR_CONTEXTID]);
+
+        // Define annotations.
+        $state->annotate_ids('user', 'userid');
+
+        // Return the root element (contents).
+        return $states;
+    }
+}
