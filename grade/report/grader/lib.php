@@ -847,9 +847,16 @@ class grade_report_grader extends grade_report {
                     }
 
                     $itemcell->colspan = $colspan;
-                    $itemcell->text = $headerlink . $arrow . $singleview . $statusicons;
                     $itemcell->header = true;
                     $itemcell->scope = 'col';
+
+                    $context = new stdClass();
+                    $context->headerlink = $headerlink;
+                    $context->arrow = $arrow;
+                    $context->singleview = $singleview;
+                    $context->statusicons = $statusicons;
+
+                    $itemcell->text = $OUTPUT->render_from_template('gradereport_grader/headercell', $context);
 
                     $headingrow->cells[] = $itemcell;
                 }
