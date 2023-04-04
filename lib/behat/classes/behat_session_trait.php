@@ -1148,53 +1148,12 @@ EOF;
      * @return context
      */
     public static function get_context(string $levelname, string $contextref): context {
-        global $DB;
-
-        // Getting context levels and names (we will be using the English ones as it is the test site language).
-        $contextlevels = context_helper::get_all_levels();
-        $contextnames = array();
-        foreach ($contextlevels as $level => $classname) {
-            $contextnames[context_helper::get_level_name($level)] = $level;
+        $context = \core\context_helper::resolve_behat_reference($levelname, $contextref);
+        if ($context) {
+            return $context;
         }
 
-        if (empty($contextnames[$levelname])) {
-            throw new Exception('The specified "' . $levelname . '" context level does not exist');
-        }
-        $contextlevel = $contextnames[$levelname];
-
-        // Return it, we don't need to look for other internal ids.
-        if ($contextlevel == CONTEXT_SYSTEM) {
-            return context_system::instance();
-        }
-
-        switch ($contextlevel) {
-
-            case CONTEXT_USER:
-                $instanceid = $DB->get_field('user', 'id', array('username' => $contextref));
-                break;
-
-            case CONTEXT_COURSECAT:
-                $instanceid = $DB->get_field('course_categories', 'id', array('idnumber' => $contextref));
-                break;
-
-            case CONTEXT_COURSE:
-                $instanceid = $DB->get_field('course', 'id', array('shortname' => $contextref));
-                break;
-
-            case CONTEXT_MODULE:
-                $instanceid = $DB->get_field('course_modules', 'id', array('idnumber' => $contextref));
-                break;
-
-            default:
-                break;
-        }
-
-        $contextclass = $contextlevels[$contextlevel];
-        if (!$context = $contextclass::instance($instanceid, IGNORE_MISSING)) {
-            throw new Exception('The specified "' . $contextref . '" context reference does not exist');
-        }
-
-        return $context;
+        throw new Exception("The specified context \"$levelname, $contextref\" does not exist");
     }
 
     /**

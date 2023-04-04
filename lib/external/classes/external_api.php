@@ -519,7 +519,9 @@ class external_api {
      * The passed array must either contain a contextid or a combination of context level and instance id to fetch the context.
      * For example, the context level can be "course" and instanceid can be courseid.
      *
-     * See context_helper::get_all_levels() for a list of valid context levels.
+     * See context_helper::get_all_levels() for a list of valid numeric context levels,
+     * legacy short names such as 'system', 'user', 'course' are not supported in new
+     * plugin capabilities.
      *
      * @param array $param
      * @since Moodle 2.6
@@ -527,15 +529,15 @@ class external_api {
      * @return context
      */
     protected static function get_context_from_params($param) {
-        $levels = context_helper::get_all_levels();
         if (!empty($param['contextid'])) {
             return context::instance_by_id($param['contextid'], IGNORE_MISSING);
         } else if (!empty($param['contextlevel']) && isset($param['instanceid'])) {
-            $contextlevel = "context_{$param['contextlevel']}";
-            if (!array_search($contextlevel, $levels)) {
-                throw new invalid_parameter_exception("Invalid context level = {$param['contextlevel']}");
+            // Numbers and short names are supported since Moodle 4.2.
+            $classname = \core\context_helper::parse_external_level($param['contextlevel']);
+            if (!$classname) {
+                throw new invalid_parameter_exception('Invalid context level = '.$param['contextlevel']);
             }
-            return $contextlevel::instance($param['instanceid'], IGNORE_MISSING);
+            return $classname::instance($param['instanceid'], IGNORE_MISSING);
         } else {
             // No valid context info was found.
             throw new invalid_parameter_exception(
@@ -556,7 +558,7 @@ class external_api {
             0
         );
         $level = new external_value(
-            PARAM_ALPHA,
+            PARAM_ALPHANUM, // Since Moodle 4.2 numeric context level values are supported too.
             'Context level. To be used with instanceid.',
             VALUE_DEFAULT,
             ''
