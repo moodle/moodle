@@ -29,5 +29,4 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['parentlanguage'] = 'fr_ca';
-$string['thislanguage'] = 'Francais Canada – Épicène';
+$string['thislanguage'] = 'Kichwa - Cañar Highland';
