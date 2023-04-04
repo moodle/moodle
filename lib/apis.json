@@ -64,6 +64,11 @@
         "allowedlevel2": true,
         "allowedspread": true
     },
+    "context": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": false
+    },
     "core": {
         "component": null,
         "allowedlevel2": false,
