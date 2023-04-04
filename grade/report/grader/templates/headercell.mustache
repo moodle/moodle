@@ -27,7 +27,17 @@
         "statusicons": "<div class='grade_icons'><i class='icon fa fa-lock fa-fw text-muted' title='Locked' role='img' aria-label='Locked'></i></div>"
     }
 }}
-{{{headerlink}}}
-{{{arrow}}}
-{{{singleview}}}
-{{{statusicons}}}
+<div class="d-flex flex-column h-100">
+    <div>
+        <div class="d-flex flex-grow-1">
+            {{{headerlink}}}
+            {{{arrow}}}
+        </div>
+        <div>
+            {{{singleview}}}
+        </div>
+    </div>
+    <div class="d-flex flex-grow-1 align-items-end">
+        {{{statusicons}}}
+    </div>
+</div>

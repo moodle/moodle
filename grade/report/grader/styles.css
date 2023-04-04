@@ -26,6 +26,7 @@
     border-left-width: 0;
     padding: 10px;
     vertical-align: top;
+    height: 1em;
 }
 
 .path-grade-report-grader .overriddengrade {
@@ -43,12 +44,19 @@
     color: #ca3120;
 }
 
-.path-grade-report-grader .gradecell {
+.path-grade-report-grader .grade_icons,
+.path-grade-report-grader .category_grade_icons {
     white-space: nowrap;
+    margin-top: 10px;
+    margin-right: 10px;
 }
 
-.path-grade-report-grader .gradecell > * {
-    white-space: normal;
+.path-grade-report-grader .grade_icons .icon {
+    margin-right: 20px;
+}
+
+.path-grade-report-grader .grade_icons .icon:last-child {
+    margin-right: 0;
 }
 
 .path-grade-report-grader .grade_icons {
@@ -86,7 +94,6 @@
  */
 .path-grade-report-grader .gradeparent .user.cell {
     white-space: nowrap;
-    height: 100px;
 }
 
 .path-grade-report-grader .gradeparent .highlightable.cell {
