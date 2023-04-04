@@ -51,6 +51,10 @@
     margin-right: 10px;
 }
 
+.path-grade-report-grader .grade_type_value .grade_icons {
+    margin-left: auto;
+}
+
 .path-grade-report-grader .grade_icons .icon {
     margin-right: 20px;
 }
@@ -149,6 +153,12 @@
     margin-left: 5px;
     vertical-align: middle;
     margin-right: 1px;
+}
+
+.path-grade-report-grader .gradeparent td.grade_type_value,
+.path-grade-report-grader .gradeparent td.grade_type_value input {
+    text-align: right;
+    margin-left: auto;
 }
 
 .path-grade-report-grader .gradeparent .gradevalue {
