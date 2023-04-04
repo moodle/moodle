@@ -59,10 +59,6 @@
     margin-right: 0;
 }
 
-.path-grade-report-grader .grade_icons {
-    text-align: center;
-}
-
 /**
  * All the floating divs.
  */
@@ -89,6 +85,15 @@
     white-space: nowrap;
 }
 
+.path-grade-report-grader .heading .gradeitemheader {
+    text-indent: -24px;
+    padding-left: 22px;
+}
+
+.path-grade-report-grader .heading .gradeitemheader .itemicon {
+    text-align: right;
+}
+
 /**
  * The user cells.
  */
@@ -98,7 +103,7 @@
 
 .path-grade-report-grader .gradeparent .highlightable.cell {
     height: 80px;
-    min-width: 150px;
+    min-width: 200px;
 }
 
 .path-grade-report-grader .gradeparent .user.cell .userpicture {
@@ -186,6 +191,10 @@
 .path-grade-report-grader .action-menu {
     display: inline-block;
     padding-left: 10px;
+}
+
+.path-grade-report-grader .heading .action-menu {
+    padding-left: 0;
 }
 
 .path-grade-report-grader .dropdown-menu {
