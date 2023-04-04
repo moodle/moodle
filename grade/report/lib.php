@@ -479,7 +479,7 @@ abstract class grade_report {
         // When a user wants to view a particular user rather than a set of users.
         // By omission when selecting one user, also allow passing the search value around.
         if ($this->userid !== -1) {
-            $this->userwheresql .= ' AND '.$DB->sql_equal('u.id', ':uid');
+            $this->userwheresql .= " AND u.id = :uid";
             $this->userwheresql_params['uid'] = $this->userid;
         }
 
@@ -493,7 +493,7 @@ abstract class grade_report {
                 'where' => $keywordswhere,
                 'params' => $keywordsparams,
             ] = $this->get_users_search_sql($mappings, (array)$userfields);
-            $this->userwheresql = " AND $keywordswhere";
+            $this->userwheresql .= " AND $keywordswhere";
             $this->userwheresql_params = array_merge($this->userwheresql_params, $keywordsparams);
         }
     }
