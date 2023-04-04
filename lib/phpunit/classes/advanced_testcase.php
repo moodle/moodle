@@ -696,7 +696,7 @@ abstract class advanced_testcase extends base_testcase {
             }
 
             \core\cron::prepare_core_renderer();
-            $this->setUser($user);
+            \core\cron::setup_user($user);
 
             $task->execute();
             \core\task\manager::adhoc_task_complete($task);
