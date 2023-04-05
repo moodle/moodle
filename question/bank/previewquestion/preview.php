@@ -49,6 +49,7 @@ define('QUESTION_PREVIEW_MAX_VARIANTS', 100);
 // Get and validate question id.
 $id = required_param('id', PARAM_INT);
 $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
+$restartversion = optional_param('restartversion', question_preview_options::ALWAYS_LATEST, PARAM_INT);
 
 $question = question_bank::load_question($id);
 
@@ -83,7 +84,7 @@ $options = new question_preview_options($question);
 $options->load_user_defaults();
 $options->set_from_request();
 $PAGE->set_url(helper::question_preview_url($id, $options->behaviour, $options->maxmark,
-        $options, $options->variant, $context));
+        $options, $options->variant, $context, null, $restartversion));
 
 // Get and validate existing preview, or start a new one.
 $previewid = optional_param('previewid', 0, PARAM_INT);
@@ -97,7 +98,7 @@ if ($previewid) {
         // actually from the user point of view, it makes sense.
         throw new moodle_exception('submissionoutofsequencefriendlymessage', 'question',
                 helper::question_preview_url($question->id, $options->behaviour,
-                        $options->maxmark, $options, $options->variant, $context), null, $e);
+                        $options->maxmark, $options, $options->variant, $context, null, $restartversion), null, $e);
     }
 
     if ($quba->get_owning_context()->instanceid != $USER->id) {
@@ -133,11 +134,15 @@ if ($previewid) {
 $options->behaviour = $quba->get_preferred_behaviour();
 $options->maxmark = $quba->get_question_max_mark($slot);
 
-// Create the settings form, and initialise the fields.
 $versionids = helper::load_versions($question->questionbankentryid);
-$optionsform = new preview_options_form(helper::
-question_preview_form_url($question->id, $context, $previewid, $returnurl),
-        ['quba' => $quba, 'maxvariant' => $maxvariant, 'versions' => $versionids, 'questionversion' => $id]);
+// Create the settings form, and initialise the fields.
+$optionsform = new preview_options_form(helper::question_preview_form_url($question->id, $context, $previewid, $returnurl),
+        [
+            'quba' => $quba,
+            'maxvariant' => $maxvariant,
+            'versions' => array_combine(array_values($versionids), array_values($versionids)),
+            'restartversion' => $restartversion,
+        ]);
 $optionsform->set_data($options);
 
 // Process change of settings, if that was requested.
@@ -147,13 +152,14 @@ if ($newoptions = $optionsform->get_submitted_data()) {
     if (!isset($newoptions->variant)) {
         $newoptions->variant = $options->variant;
     }
+    $questionid = helper::get_restart_id($versionids, $restartversion);
     if (isset($newoptions->saverestart)) {
-        helper::restart_preview($previewid, $question->id, $newoptions, $context, $returnurl, $newoptions->version);
+        helper::restart_preview($previewid, $questionid, $newoptions, $context, $returnurl, $newoptions->restartversion);
     }
 }
 
 // Prepare a URL that is used in various places.
-$actionurl = helper::question_preview_action_url($question->id, $quba->get_id(), $options, $context, $returnurl);
+$actionurl = helper::question_preview_action_url($question->id, $quba->get_id(), $options, $context, $returnurl, $restartversion);
 
 // Process any actions from the buttons at the bottom of the form.
 if (data_submitted() && confirm_sesskey()) {
@@ -161,7 +167,8 @@ if (data_submitted() && confirm_sesskey()) {
     try {
 
         if (optional_param('restart', false, PARAM_BOOL)) {
-            helper::restart_preview($previewid, $question->id, $options, $context, $returnurl);
+            $questionid = helper::get_restart_id($versionids, $restartversion);
+            helper::restart_preview($previewid, $questionid, $options, $context, $returnurl, $restartversion);
 
         } else if (optional_param('fill', null, PARAM_BOOL)) {
             $correctresponse = $quba->get_correct_response($slot);
@@ -262,6 +269,17 @@ if ($islatestversion) {
     $previewdata['versiontitle'] = get_string('versiontitlelatest', 'qbank_previewquestion', $question->version);
 } else {
     $previewdata['versiontitle'] = get_string('versiontitle', 'qbank_previewquestion', $question->version);
+    if ($restartversion == question_preview_options::ALWAYS_LATEST) {
+        $newerversionparams = (object) [
+            'currentversion' => $question->version,
+            'latestversion' => max($versionids),
+            'restartbutton' => $OUTPUT->render_from_template('qbank_previewquestion/restartbutton', []),
+        ];
+        $newversionurl = clone $actionurl;
+        $newversionurl->param('restart', 1);
+        $previewdata['newerversionurl'] = $newversionurl;
+        $previewdata['newerversion'] = get_string('newerversion', 'qbank_previewquestion', $newerversionparams);
+    }
 }
 
 $previewdata['actionurl'] = $actionurl;
