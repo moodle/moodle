@@ -34,32 +34,34 @@ const SELECTORS = {
  * Initialize module
  */
 export const init = () => {
-    if (document.querySelector(SELECTORS.BEHAT)) {
-        return;
-    }
     const grader = document.querySelector(SELECTORS.GRADEPARENT);
-    const studentHeader = grader.querySelector(SELECTORS.STUDENTHEADER);
-    const leftOffset = getComputedStyle(studentHeader).getPropertyValue('left');
-    const rightOffset = getComputedStyle(studentHeader).getPropertyValue('right');
-
     const tableHeaders = grader.querySelectorAll(SELECTORS.TABLEHEADER);
+
     let i = 0;
     tableHeaders.forEach((tableHeader) => {
-        if (tableHeader.colSpan > 1) {
-            const addOffset = (tableHeader.offsetWidth - studentHeader.offsetWidth);
-            if (window.right_to_left()) {
-                tableHeader.style.right = 'calc(' + rightOffset + ' - ' + addOffset + 'px )';
-            } else {
-                tableHeader.style.left = 'calc(' + leftOffset + ' - ' + addOffset + 'px )';
-            }
-        } else {
+        if (tableHeader.colSpan <= 1) {
             tableHeader.style.zIndex = tableHeaders.length - i;
         }
         i++;
     });
 
-    let tableHeader = grader.querySelector(SELECTORS.TABLEHEADING);
+    const tableHeader = grader.querySelector(SELECTORS.TABLEHEADING);
     tableHeader.style.zIndex = tableHeaders.length + 1;
 
+    if (!document.querySelector(SELECTORS.BEHAT)) {
+        const studentHeader = grader.querySelector(SELECTORS.STUDENTHEADER);
+        const leftOffset = getComputedStyle(studentHeader).getPropertyValue('left');
+        const rightOffset = getComputedStyle(studentHeader).getPropertyValue('right');
 
+        tableHeaders.forEach((tableHeader) => {
+            if (tableHeader.colSpan > 1) {
+                const addOffset = (tableHeader.offsetWidth - studentHeader.offsetWidth);
+                if (window.right_to_left()) {
+                    tableHeader.style.right = 'calc(' + rightOffset + ' - ' + addOffset + 'px )';
+                } else {
+                    tableHeader.style.left = 'calc(' + leftOffset + ' - ' + addOffset + 'px )';
+                }
+            }
+        });
+    }
 };
