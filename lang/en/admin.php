@@ -1460,6 +1460,7 @@ $string['xmlrpcmnetenabled'] = 'It has been detected that the Moodle Networking 
 $string['xmlrpcwebserviceenabled'] = 'It has been detected that the XML-RPC Web Service protocol is enabled on your site. This feature relies on the PHP XML-RPC extension which is no longer maintained by PHP.';
 $string['yuicomboloading'] = 'YUI combo loading';
 $string['ziprequired'] = 'The Zip PHP extension is now required by Moodle, info-ZIP binaries or PclZip library are not used anymore.';
+$string['modassignmentinuse'] = 'It has been detected that your site is still using the Assignment 2.2 plugin. You may resolve this before upgrading by 1) Backing up your Assignment 2.2 activities and restoring them as new Assignment activities; or 2) Deleting the data from the assignment tables in the database.';
 
 
 $string['caching'] = 'Caching';
