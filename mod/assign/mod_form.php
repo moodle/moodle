@@ -127,6 +127,9 @@ class mod_assign_mod_form extends moodleform_mod {
         $name = get_string('submissiondrafts', 'assign');
         $mform->addElement('selectyesno', 'submissiondrafts', $name);
         $mform->addHelpButton('submissiondrafts', 'submissiondrafts', 'assign');
+        if ($assignment->has_submissions_or_grades()) {
+            $mform->freeze('submissiondrafts');
+        }
 
         $name = get_string('requiresubmissionstatement', 'assign');
         $mform->addElement('selectyesno', 'requiresubmissionstatement', $name);
