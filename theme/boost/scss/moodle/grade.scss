@@ -508,8 +508,6 @@
             border-color: $table-border-color;
         }
 
-        .userrow.odd .cell,
-        .floater .cell.odd,
         .heading .cell,
         .cell.category,
         .avg .cell {
@@ -537,8 +535,13 @@
         }
 
         th.header {
+            @include media-breakpoint-down(sm) {
+                left: 0;
+            }
+            @include media-breakpoint-up(md) {
+                left: -3rem;
+            }
             position: sticky;
-            left: -3rem;
             z-index: 1;
         }
 

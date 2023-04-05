@@ -34964,8 +34964,6 @@ p.arrow_button {
 .path-grade-report-grader .gradeparent .cell {
   border-color: #dee2e6;
 }
-.path-grade-report-grader .gradeparent .userrow.odd .cell,
-.path-grade-report-grader .gradeparent .floater .cell.odd,
 .path-grade-report-grader .gradeparent .heading .cell,
 .path-grade-report-grader .gradeparent .cell.category,
 .path-grade-report-grader .gradeparent .avg .cell {
@@ -34989,8 +34987,17 @@ p.arrow_button {
 }
 .path-grade-report-grader .gradeparent th.header {
   position: sticky;
-  left: -3rem;
   z-index: 1;
+}
+@media (max-width: 767.98px) {
+  .path-grade-report-grader .gradeparent th.header {
+    left: 0;
+  }
+}
+@media (min-width: 768px) {
+  .path-grade-report-grader .gradeparent th.header {
+    left: -3rem;
+  }
 }
 .path-grade-report-grader .gradeparent td.noborder {
   border-right: transparent;

@@ -33,16 +33,26 @@
         "name": "grade[313][624]"
     }
 }}
-{{#iseditable}}
-    {{#scale}}
-        {{>core_grades/grades/grader/scale}}
-    {{/scale}}
-    {{^scale}}
-        {{>core_grades/grades/grader/input}}
-    {{/scale}}
-{{/iseditable}}
-{{^iseditable}}
-    {{>core_grades/grades/grader/text}}
-{{/iseditable}}
-{{{actionmenu}}}
-{{{statusicons}}}
+<div class="d-flex flex-column h-100">
+    <div class="d-flex">
+        <div class="d-flex flex-grow-1">
+            {{#iseditable}}
+                {{#scale}}
+                    {{>core_grades/grades/grader/scale}}
+                {{/scale}}
+                {{^scale}}
+                    {{>core_grades/grades/grader/input}}
+                {{/scale}}
+            {{/iseditable}}
+            {{^iseditable}}
+                {{>core_grades/grades/grader/text}}
+            {{/iseditable}}
+        </div>
+        <div>
+            {{{actionmenu}}}
+        </div>
+    </div>
+    <div class="d-flex flex-grow-1 align-items-end">
+        {{{statusicons}}}
+    </div>
+</div>
