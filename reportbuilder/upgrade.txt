@@ -7,6 +7,10 @@ Information provided here is intended especially for developers.
 * Column callbacks are now passed a fourth argument to indicate the aggregation type currently being applied, which allows
   for columns to define how the aggregated data is displayed
 * New methods `[add|get]_attributes` added to report base class, for including custom attributes in report container HTML
+* New database helper method `sql_replace_parameter_names` to help ensure uniqueness of parameters within an expression (where
+  that expression can be used multiple times as part of a larger query)
+* The local report filter class has a new `get_field_sql_and_params` method which should be used by filter types that re-use
+  the filter field SQL within their generated expression, to ensure SQL containing parameters works correctly
 * The following attributes can be added to custom reports in order to control card view display (via the `add_attributes` method):
   - `data-force-card` to force cards view
   - `data-force-table` to force table view
