@@ -42,7 +42,7 @@ Feature: We can sort grades/user fields on the grader report
     And I log in as "teacher1"
 
   @javascript
-  Scenario: Sort grades or user fields on grader report
+  Scenario: Sort grades or user fields on grader report by using cell action menu
     When I am on "Course 1" course homepage with editing mode on
     And I navigate to "View > Grader report" in the course gradebook
     # Default sorting is lastname ascending.
@@ -73,6 +73,39 @@ Feature: We can sort grades/user fields on the grader report
     And I click on user profile field menu "email"
     # Sort by email in descending order.
     And I choose "Descending" in the open action menu
+    And I wait until the page is ready
+    Then "StudentA 2" "table_row" should appear before "StudentC 3" "table_row"
+    And "StudentC 3" "table_row" should appear before "StudentD 1" "table_row"
+    And "StudentD 1" "table_row" should appear before "StudentB 4" "table_row"
+
+  @javascript
+  Scenario: Sort grades or user fields on grader report by using element header
+    When I am on "Course 1" course homepage with editing mode on
+    And I navigate to "View > Grader report" in the course gradebook
+    # Default sorting is lastname ascending.
+    And "StudentD 1" "table_row" should appear before "StudentA 2" "table_row"
+    And "StudentA 2" "table_row" should appear before "StudentC 3" "table_row"
+    And "StudentC 3" "table_row" should appear before "StudentB 4" "table_row"
+    # Sort by grades in ascending order.
+    And I click on "Test assignment name 1" "link" in the "region-main" "region"
+    And I wait until the page is ready
+    Then "StudentD 1" "table_row" should appear before "StudentB 4" "table_row"
+    And "StudentB 4" "table_row" should appear before "StudentC 3" "table_row"
+    And "StudentC 3" "table_row" should appear before "StudentA 2" "table_row"
+    # Sort by grades in descending order.
+    And I click on "Test assignment name 1" "link" in the "region-main" "region"
+    And I wait until the page is ready
+    Then "StudentA 2" "table_row" should appear before "StudentC 3" "table_row"
+    And "StudentC 3" "table_row" should appear before "StudentB 4" "table_row"
+    And "StudentB 4" "table_row" should appear before "StudentD 1" "table_row"
+    # Sort by email in ascending order.
+    And I click on "Email address" "link" in the "region-main" "region"
+    And I wait until the page is ready
+    Then "StudentB 4" "table_row" should appear before "StudentD 1" "table_row"
+    And "StudentD 1" "table_row" should appear before "StudentC 3" "table_row"
+    And "StudentC 3" "table_row" should appear before "StudentA 2" "table_row"
+    # Sort by email in descending order.
+    And I click on "Email address" "link" in the "region-main" "region"
     And I wait until the page is ready
     Then "StudentA 2" "table_row" should appear before "StudentC 3" "table_row"
     And "StudentC 3" "table_row" should appear before "StudentD 1" "table_row"
