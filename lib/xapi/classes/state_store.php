@@ -203,6 +203,47 @@ class state_store {
     }
 
     /**
+     * Get all state ids from a specific activity and agent.
+     *
+     * Plugins may override this method if they store some data in different tables.
+     *
+     * @param string|null $itemid
+     * @param int|null $userid
+     * @param string|null $registration
+     * @param int|null $since filter ids updated since a specific timestamp
+     * @return string[] the state ids values
+     */
+    public function get_state_ids(
+        ?string $itemid = null,
+        ?int $userid = null,
+        ?string $registration = null,
+        ?int $since = null,
+    ): array {
+        global $DB;
+        $select = 'component = :component';
+        $params = [
+            'component' => $this->component,
+        ];
+        if ($itemid) {
+            $select .= ' AND itemid = :itemid';
+            $params['itemid'] = $itemid;
+        }
+        if ($userid) {
+            $select .= ' AND userid = :userid';
+            $params['userid'] = $userid;
+        }
+        if ($registration) {
+            $select .= ' AND registration = :registration';
+            $params['registration'] = $registration;
+        }
+        if ($since) {
+            $select .= ' AND timemodified > :since';
+            $params['since'] = $since;
+        }
+        return $DB->get_fieldset_select('xapi_states', 'stateid', $select, $params, '');
+    }
+
+    /**
      * Execute a state store clean up.
      *
      * Plugins can override this methos to provide an alternative clean up logic.
