@@ -173,19 +173,31 @@ class column_test extends advanced_testcase {
      * Test adding params to field, and retrieving them
      */
     public function test_add_field_with_params(): void {
-        $param = database::generate_param_name();
+        [$param0, $param1] = database::generate_param_names(2);
 
         $column = $this->create_column('test')
             ->set_index(1)
-            ->add_field(":{$param}", 'foo', [$param => 'bar']);
+            ->add_field(":{$param0}", 'foo', [$param0 => 'foo'])
+            ->add_field(":{$param1}", 'bar', [$param1 => 'bar']);
 
         // Select will look like the following: "p<index>_rbparam<counter>", where index is the column index and counter is
         // a static value of the report helper class.
-        $select = $column->get_fields();
-        preg_match('/:(?<paramname>p1_rbparam[\d]+) AS c1_foo/', $select[0], $matches);
+        $fields = $column->get_fields();
+        $this->assertCount(2, $fields);
 
+        preg_match('/:(?<paramname>p1_rbparam[\d]+) AS c1_foo/', $fields[0], $matches);
         $this->assertArrayHasKey('paramname', $matches);
-        $this->assertEquals([$matches['paramname'] => 'bar'], $column->get_params());
+        $fieldparam0 = $matches['paramname'];
+
+        preg_match('/:(?<paramname>p1_rbparam[\d]+) AS c1_bar/', $fields[1], $matches);
+        $this->assertArrayHasKey('paramname', $matches);
+        $fieldparam1 = $matches['paramname'];
+
+        // Ensure column parameters have been renamed appropriately.
+        $this->assertEquals([
+            $fieldparam0 => 'foo',
+            $fieldparam1 => 'bar',
+        ], $column->get_params());
     }
 
     /**

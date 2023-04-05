@@ -139,4 +139,31 @@ class database_test extends advanced_testcase {
         $record = $DB->get_record_sql($sql, $params);
         $this->assertEquals($admin->id, $record->{$userfieldalias});
     }
+
+    /**
+     * Test replacement of parameter names within SQL statements
+     */
+    public function test_sql_replace_parameter_names(): void {
+        global $DB;
+
+        // Predefine parameter names, to ensure they don't overwrite each other.
+        [$param0, $param1, $param10] = ['rbparam0', 'rbparam1', 'rbparam10'];
+
+        $sql = "SELECT :{$param0} AS field0, :{$param1} AS field1, :{$param10} AS field10" . $DB->sql_null_from_clause();
+        $sql = database::sql_replace_parameter_names($sql, [$param0, $param1, $param10], static function(string $param): string {
+            return "prefix_{$param}";
+        });
+
+        $record = $DB->get_record_sql($sql, [
+            "prefix_{$param0}" => 'Zero',
+            "prefix_{$param1}" => 'One',
+            "prefix_{$param10}" => 'Ten',
+        ]);
+
+        $this->assertEquals((object) [
+            'field0' => 'Zero',
+            'field1' => 'One',
+            'field10' => 'Ten',
+        ], $record);
+    }
 }
