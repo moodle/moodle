@@ -367,12 +367,12 @@ final class column {
         $fields = [];
 
         foreach ($this->fields as $alias => $sql) {
-            // Ensure params within SQL are prefixed with column index.
-            foreach ($this->params as $name => $value) {
-                $sql = preg_replace_callback('/:(?<param>' . preg_quote($name, '\b/') . ')/', function(array $matches): string {
-                    return ':' . $this->unique_param_name($matches['param']);
-                }, $sql);
-            }
+
+            // Ensure parameter names within SQL are prefixed with column index.
+            $params = array_keys($this->params);
+            $sql = database::sql_replace_parameter_names($sql, $params, function(string $param): string {
+                return $this->unique_param_name($param);
+            });
 
             $fields[$alias] = [
                 'sql' => $sql,

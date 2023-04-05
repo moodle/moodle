@@ -21,6 +21,7 @@ namespace core_reportbuilder\local\report;
 use lang_string;
 use moodle_exception;
 use core_reportbuilder\local\filters\base;
+use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\models\filter as filter_model;
 
 /**
@@ -210,6 +211,38 @@ final class filter {
      */
     public function get_field_params(): array {
         return $this->fieldparams;
+    }
+
+    /**
+     * Retrieve SQL expression and parameters for the field
+     *
+     * @param int $index
+     * @return array [$sql, [...$params]]
+     */
+    public function get_field_sql_and_params(int $index = 0): array {
+        $fieldsql = $this->get_field_sql();
+        $fieldparams = $this->get_field_params();
+
+        // Shortcut if there aren't any parameters.
+        if (empty($fieldparams)) {
+            return [$fieldsql, $fieldparams];
+        }
+
+        // Simple callback for replacement of parameter names within filter SQL.
+        $transform = function(string $param) use ($index): string {
+            return "{$param}_{$index}";
+        };
+
+        $paramnames = array_keys($fieldparams);
+        $sql = database::sql_replace_parameter_names($fieldsql, $paramnames, $transform);
+
+        $params = [];
+        foreach ($paramnames as $paramname) {
+            $paramnametransform = $transform($paramname);
+            $params[$paramnametransform] = $fieldparams[$paramname];
+        }
+
+        return [$sql, $params];
     }
 
     /**
