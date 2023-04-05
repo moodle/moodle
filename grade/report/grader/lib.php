@@ -808,15 +808,19 @@ class grade_report_grader extends grade_report {
                         $categorycell = new html_table_cell();
                         $categorycell->attributes['class'] = 'category ' . $catlevel;
                         $categorycell->colspan = $colspan;
-                        $categorycell->text = $this->get_course_header($element);
                         $categorycell->header = true;
                         $categorycell->scope = 'col';
 
                         $statusicons = $this->gtree->set_grade_status_icons($element);
                         if ($statusicons) {
-                            $categorycell->text .= $statusicons;
                             $categorycell->attributes['class'] .= ' statusicons';
                         }
+
+                        $context = new stdClass();
+                        $context->courseheader = $this->get_course_header($element);
+                        $context->actionmenu = $this->gtree->get_cell_action_menu($element, 'gradeitem', $this->gpr);
+                        $context->statusicons = $statusicons;
+                        $categorycell->text = $OUTPUT->render_from_template('gradereport_grader/categorycell', $context);
 
                         $headingrow->cells[] = $categorycell;
                     }
@@ -1541,8 +1545,6 @@ class grade_report_grader extends grade_report {
      * @return string HTML
      */
     protected function get_course_header($element) {
-        $actionmenu = $this->gtree->get_cell_action_menu($element, 'gradeitem', $this->gpr);
-
         if (in_array($element['object']->id, $this->collapsed['aggregatesonly'])) {
             $showing = get_string('showingaggregatesonly', 'grades');
         } else if (in_array($element['object']->id, $this->collapsed['gradesonly'])) {
@@ -1562,7 +1564,6 @@ class grade_report_grader extends grade_report {
         $courseheader .= html_writer::div($showing, 'sr-only', [
             'id' => $describedbyid
         ]);
-        $courseheader .= $actionmenu;
 
         return $courseheader;
     }
