@@ -138,12 +138,24 @@ $string['clitypevaluedefault'] = 'type value, press Enter to use default value (
 $string['cliunknowoption'] = 'Unrecognised options:
   {$a}
 Please use --help option.';
+$string['cliupgradecompletenomaintenanceupgrade'] = 'To purge remaining caches after user traffic cutover to new code:
+
+  php admin/cli/purge_caches.php --muc
+  php admin/cli/purge_caches.php --js
+  php admin/cli/purge_caches.php --filter
+  php admin/cli/purge_caches.php --other
+
+It is recommended to perform these purges in isolation, with a gap between commands, to reduce load spikes on the web server.';
 $string['cliupgradedefault'] = 'New setting: {$a}';
 $string['cliupgradedefaultheading'] = 'Setting new default values';
 $string['cliupgradedefaultverbose'] = 'New setting: {$a->name}, Default value: {$a->defaultsetting}';
 $string['cliupgradefinished'] = 'Command line upgrade from {$a->oldversion} to {$a->newversion} completed successfully.';
+$string['cliupgrademaintenancenotrequired'] = 'This upgrade WILL NOT result in maintenance mode for users.';
+$string['cliupgrademaintenancerequired'] = 'This upgrade WILL result in maintenance mode for users.';
 $string['cliupgradenoneed'] = 'No upgrade needed for the installed version {$a}. Thanks for coming anyway!';
 $string['cliupgradepending'] = 'An upgrade is pending';
+$string['cliupgradesetlock'] = 'Upgrade has been locked to CLI execution only.';
+$string['cliupgradeunsetlock'] = 'Existing CLI execution upgrade lock has been removed.';
 $string['cliyesnoprompt'] = 'type y (means yes) or n (means no)';
 $string['close'] = 'Close';
 $string['cohort_customfield'] = 'Cohort custom fields';

@@ -946,4 +946,35 @@ class component_test extends advanced_testcase {
         // The function will return false for a non-existent component.
         $this->assertFalse(core_component::has_monologo_icon('randomcomponent', 'h5p'));
     }
+
+    /*
+     * Tests the getter for the db directory summary hash.
+     *
+     * @covers \core_component::get_all_directory_hashes
+     */
+    public function test_get_db_directories_hash() {
+        $initial = \core_component::get_all_component_hash();
+
+        $dir = make_request_directory();
+        $hashes = \core_component::get_all_directory_hashes([$dir]);
+        $emptydirhash = \core_component::get_all_component_hash([$hashes]);
+
+        // Confirm that a single empty directory is a different hash to the core hash.
+        $this->assertNotEquals($initial, $emptydirhash);
+
+        // Now lets add something to the dir, and check the hash is different.
+        $file = fopen($dir . '/test.php', 'w');
+        fwrite($file, 'sometestdata');
+        fclose($file);
+
+        $hashes = \core_component::get_all_directory_hashes([$dir]);
+        $onefiledirhash = \core_component::get_all_component_hash([$hashes]);
+        $this->assertNotEquals($emptydirhash, $onefiledirhash);
+
+        // Now add a subdirectory inside the request dir. This should not affect the hash.
+        mkdir($dir . '/subdir');
+        $hashes = \core_component::get_all_directory_hashes([$dir]);
+        $finalhash = \core_component::get_all_component_hash([$hashes]);
+        $this->assertEquals($onefiledirhash, $finalhash);
+    }
 }
