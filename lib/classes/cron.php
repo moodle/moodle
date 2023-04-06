@@ -573,7 +573,12 @@ class cron {
 
     /**
      * Sets up a user and course environment in cron.
-     * Do not use outside of cron script!
+     *
+     * Note: This function is intended only for use in:
+     * - the cron runner scripts
+     * - individual tasks which extend the adhoc_task and scheduled_task classes
+     * - unit tests related to tasks
+     * - other parts of the cron/task system
      *
      * Please note that this function stores cache data statically.
      * @see reset_user_cache() to reset this cache.
