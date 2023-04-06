@@ -25,6 +25,7 @@
 $string['browserepositories'] = 'Browse repositories...';
 $string['createlink'] = 'Create link';
 $string['enterurl'] = 'Enter a URL';
+$string['helplinktext'] = 'Link';
 $string['openinnewwindow'] = 'Open in new window';
 $string['pluginname'] = 'Tiny link';
 $string['link'] = 'Link';
