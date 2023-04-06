@@ -1254,6 +1254,9 @@ $cache = '.var_export($cache, true).';
             }
 
             $scan = scandir($directory);
+            if ($scan) {
+                sort($scan);
+            }
             $scanhashes = [];
             foreach ($scan as $file) {
                 $file = $directory . '/' . $file;
