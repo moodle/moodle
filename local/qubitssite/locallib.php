@@ -120,6 +120,9 @@ function local_qubits_render_site_data($sites, $filters) {
         $tenantcourses = new moodle_url($CFG->wwwroot . '/local/qubitscourse/index.php', array('siteid' => $site->id, 'returnto' => 'sitelisting'));
         $buttons[] = html_writer::link($tenantcourses, $OUTPUT->pix_icon('i/course', 'Site Courses'));
 
+        $tenantusers = new moodle_url($CFG->wwwroot . '/local/qubitsuser/index.php', array('siteid' => $site->id, 'returnto' => 'sitelisting'));
+        $buttons[] = html_writer::link($tenantusers, $OUTPUT->pix_icon('i/users', 'Site Users'));
+
         if(has_capability('local/qubitssite:deletetenantsite', context_system::instance())){
             $deletesite = new moodle_url($CFG->wwwroot . '/local/qubitssite/delete.php', array('id' => $site->id, 'returnto' => 'sitelisting'));
             $buttons[] = html_writer::link($deletesite, $OUTPUT->pix_icon('t/delete', 'Delete Site'));
