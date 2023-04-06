@@ -31,6 +31,7 @@ class local_qubitsuser_renderer extends plugin_renderer_base {
         $templatecontext = new Stdclass;
         $params = array("siteid" => $siteid, "returnto" => "userslisting");
         $templatecontext->adduser_url = new moodle_url("/local/qubitsuser/adduser.php", $params);
+        $templatecontext->existuser_url = new moodle_url("/local/qubitsuser/assignexistinguser.php", $params);
         return $this->output->render_from_template('local_qubitsuser/manage_users', $templatecontext);
     }
 

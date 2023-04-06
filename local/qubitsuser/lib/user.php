@@ -95,4 +95,16 @@ class qubits_user {
         cohort_add_member($cohortid, $user->id);
         return $user->id;
     }
+
+    public static function assign( $data ){
+        global $DB, $CFG;
+
+        $cohortid = $data->cohortid;
+        $user = $DB->get_record('user', array('email'=> $data->email, 'mnethostid'=>$CFG->mnet_localhost_id));
+        $user->auth = "qubitsmanual";
+        $DB->update_record('user', $user);
+        cohort_add_member($cohortid, $user->id);
+        return $user->id;
+    }
+
 }

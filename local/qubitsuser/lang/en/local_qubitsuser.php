@@ -32,3 +32,6 @@ $string['createuseragain'] = 'Submit and create another user';
 $string['createuserandback'] = 'Submit and back to dashboard';
 $string['leavepasswordemptytogenerate'] = 'Leave empty to have a password generated.</br>If you are manually setting a password, for</br>security reasons, only select to send by email</br>if the force change password option is selected!';
 $string['usercreated'] = 'User created successfully';
+$string['userassigned'] = 'User assigned this domain successfully';
+$string['assignexistinguser'] = 'Assign Existing user in this domain';
+$string['emailnotexists'] = 'Given email doesn\'t exist';
