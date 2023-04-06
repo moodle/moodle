@@ -1484,7 +1484,7 @@ function quiz_question_preview_button($quiz, $question, $label = false, $variant
     if (!question_has_capability_on($question, 'use')) {
         return '';
     }
-    $slotinfo = quiz_settings::create($quiz->id)->get_structure()->get_slot_by_number($question->slot);
+    $slotinfo = quiz::create($quiz->id)->get_structure()->get_slot_by_number($question->slot);
     return $PAGE->get_renderer('mod_quiz', 'edit')
         ->question_preview_icon($quiz, $question, $label, $variant,
                 $slotinfo->requestedversion ?: \qbank_previewquestion\question_preview_options::ALWAYS_LATEST);
