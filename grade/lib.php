@@ -1728,8 +1728,8 @@ class grade_structure {
 
         if ($menuitems) {
             $menu = new action_menu($menuitems);
-            $icon = $OUTPUT->pix_icon('i/dropdown', get_string('actions'));
-            $extraclasses = 'btn btn-icon icon-size-2 bg-secondary d-flex align-items-center justify-content-center';
+            $icon = $OUTPUT->pix_icon('i/moremenu', get_string('actions'));
+            $extraclasses = 'btn btn-link btn-icon icon-size-3 d-flex align-items-center justify-content-center';
             $menu->set_menu_trigger($icon, $extraclasses);
             $menu->set_menu_left();
 
