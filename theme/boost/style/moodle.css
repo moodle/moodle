@@ -23641,7 +23641,7 @@ img.user-image {
   font-weight: bold;
   line-height: 20px;
   color: #999;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
   text-transform: uppercase;
   word-wrap: break-word;
   border-bottom: solid 1px #e3e3e3;
@@ -23893,7 +23893,7 @@ tr.flagged-tag a {
 */
 #webservice-doc-generator td {
   text-align: left;
-  border: 0 solid black;
+  border: 0 solid #000;
 }
 
 /**
@@ -24329,7 +24329,7 @@ audio.mediaplugin_html5audio {
   height: 100%;
   top: 0;
   left: 0;
-  background-color: white;
+  background-color: #fff;
   text-align: center;
   padding: 10% 0;
 }
@@ -24653,7 +24653,7 @@ audio.mediaplugin_html5audio {
   position: relative;
   margin: 15px 0;
   padding: 1px 19px 14px;
-  background-color: white;
+  background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
@@ -32858,7 +32858,7 @@ fieldset.coursesearchbox label {
 
 .form-autocomplete-suggestions {
   position: absolute;
-  background-color: white;
+  background-color: #fff;
   border: 1px solid #8f959e;
   min-width: 206px;
   max-height: 20em;
@@ -34719,9 +34719,9 @@ img.userpicture {
 .path-backup .wibbler {
   width: 500px;
   margin: 0 auto 10px;
-  border-bottom: 1px solid black;
-  border-right: 1px solid black;
-  border-left: 1px solid black;
+  border-bottom: 1px solid #000;
+  border-right: 1px solid #000;
+  border-left: 1px solid #000;
   position: relative;
   min-height: 4px;
 }
@@ -34799,7 +34799,7 @@ img.userpicture {
   background-color: #fff;
 }
 .generaltable tbody tr:nth-of-type(odd) .sticky-column {
-  background-color: #f7f7f7;
+  background-color: rgba(0, 0, 0, 0.03);
 }
 .generaltable.table-sm th,
 .generaltable.table-sm td {
@@ -34813,7 +34813,7 @@ img.userpicture {
   color: #1d2125;
 }
 .generaltable tbody tr:hover td.sticky-column {
-  background-color: #ececec;
+  background-color: rgba(0, 0, 0, 0.075);
 }
 
 table caption {
@@ -35315,7 +35315,7 @@ p.arrow_button {
   border-top: 2px dashed #0f6cbf;
 }
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td {
-  background-color: white;
+  background-color: #fff;
   border-top: 1px solid #dee2e6;
   border-bottom: 1px solid #dee2e6;
 }
@@ -35352,7 +35352,7 @@ p.arrow_button {
   margin: 0;
 }
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item td {
-  background-color: white;
+  background-color: #fff;
   border-top: 3px solid #f8f9fa;
 }
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item.categoryitem td, .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.item.courseitem td {
@@ -35980,7 +35980,7 @@ body {
   padding: 2px;
   border-radius: 2px;
   background-color: #ca3120;
-  color: white;
+  color: #fff;
   font-size: 11px;
   line-height: 11px;
   position: absolute;
@@ -36087,7 +36087,7 @@ body {
   padding: 2px;
   border-radius: 2px;
   background-color: #ca3120;
-  color: white;
+  color: #fff;
   font-size: 11px;
   line-height: 11px;
   position: absolute;
@@ -36121,7 +36121,7 @@ body {
 }
 .content-item-container.unread {
   margin: 0;
-  background-color: #f4f4f4;
+  background-color: #f8f9fa;
 }
 .content-item-container.unread:hover {
   color: #fff;
@@ -36771,7 +36771,7 @@ input[type=month].form-control {
 }
 
 .editor_atto_content_wrap {
-  background-color: white;
+  background-color: #fff;
   color: #333;
 }
 
@@ -36918,7 +36918,7 @@ div.editor_atto_toolbar .atto_toolbar_row div.atto_group {
 }
 
 .atto_control .icon {
-  background-color: white;
+  background-color: #fff;
 }
 
 div.editor_atto_content:focus .atto_control,
@@ -36961,21 +36961,17 @@ div.editor_atto_content:hover .atto_control {
   direction: ltr;
 }
 
-.editor_atto_notification .atto_info,
-.editor_atto_notification .atto_warning {
+.editor_atto_notification {
   display: inline-block;
-  background-color: #f2f2f2;
   padding: 0.5em;
   padding-left: 1em;
   padding-right: 1em;
   border-bottom-left-radius: 1em;
   border-bottom-right-radius: 1em;
 }
-
 .editor_atto_notification .atto_info {
   background-color: #f2f2f2;
 }
-
 .editor_atto_notification .atto_warning {
   background-color: #ffd700;
 }

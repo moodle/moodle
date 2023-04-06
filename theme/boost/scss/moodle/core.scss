@@ -1,9 +1,6 @@
 /* core.less */
 
-// When we upgrade boostrap to v4 release, we will need to change this to be used by the text-white class.
-// Because a primary colour that is both AA accessible on grey (footer) and white is not possible, we always
-// want white default colour.
-$bg-inverse-link-color: #fff !default;
+$bg-inverse-link-color: $white !default;
 
 $dropzone-border: $gray-900 !default;
 
@@ -328,10 +325,10 @@ a.autolink {
 }
 
 .yui-overlay .yui-widget-bd {
-    background-color: #ffee69;
-    border: 1px solid #a6982b;
-    border-top-color: #d4c237;
-    color: #000;
+    background-color: $yui-overlay-bg;
+    border: 1px solid $yui-overlay-border-color;
+    border-top-color: $yui-overlay-border-top-color;
+    color: $yui-overlay-color;
     left: 0;
     padding: 2px 5px;
     position: relative;
@@ -639,7 +636,7 @@ table.mod_index {
 }
 
 .comment-meta span {
-    color: gray;
+    color: $comment-meta-color;
 }
 
 .comment-link img {
@@ -676,7 +673,7 @@ table.mod_index {
 }
 
 .comment-paging .curpage {
-    border: 1px solid #ccc;
+    border: 1px solid $comment-paging-current-border-color;
 }
 
 .comment-message .picture {
@@ -758,7 +755,7 @@ img.user-image {
 }
 
 .path-tag .tag-index-items .tagarea {
-    border: 1px solid #e3e3e3;
+    border: 1px solid $tags-tagarea-border-color;
     border-radius: 4px;
     padding: 10px;
     margin-top: 10px;
@@ -771,11 +768,11 @@ img.user-image {
     font-size: 1.1em;
     font-weight: bold;
     line-height: 20px;
-    color: #999;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    color: $tags-tagarea-title-color;
+    text-shadow: 0 1px 0 $tags-tagarea-title-text-shadow-color;
     text-transform: uppercase;
     word-wrap: break-word;
-    border-bottom: solid 1px #e3e3e3;
+    border-bottom: solid 1px $tags-tagarea-title-border-color;
     margin-bottom: 10px;
 }
 
@@ -1023,7 +1020,7 @@ tr.flagged-tag a {
 */
 #webservice-doc-generator td {
     text-align: left;
-    border: 0 solid black;
+    border: 0 solid $webservice-doc-td-border-color;
 }
 
 /**
@@ -1096,7 +1093,7 @@ tr.flagged-tag a {
     margin: 3px;
 
     > a:hover {
-        border-bottom: 1px solid #666;
+        border-bottom: 1px solid $userenrolment-link-hover-border-color;
     }
 }
 
@@ -1129,7 +1126,7 @@ tr.flagged-tag a {
 }
 
 .corelightbox {
-    background-color: #ccc;
+    background-color: $corelightbox-bg;
     position: absolute;
     top: 0;
     left: 0;
@@ -1259,8 +1256,8 @@ audio.mediaplugin_html5audio {
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap {
-    background-color: #fff;
-    border: 1px solid #ccc;
+    background-color: $dialogue-base-bg;
+    border: 1px solid $dialogue-base-border-color;
 }
 
 // Show is a bootstrap 2 class - but we use it for modals. We don't want to enable it everywhere because they removed
@@ -1272,7 +1269,7 @@ audio.mediaplugin_html5audio {
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd {
     display: flex;
     padding: 1rem 1rem;
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid $dialogue-base-hd-border-color;
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
@@ -1342,18 +1339,18 @@ audio.mediaplugin_html5audio {
 }
 
 .moodle-dialogue-exception .param-stacktrace label {
-    background-color: #eee;
-    border: 1px solid #ccc;
+    background-color: $dialogue-exception-label-bg;
+    border: 1px solid $dialogue-exception-label-border-color;
     border-bottom-width: 0;
 }
 
 .moodle-dialogue-exception .param-stacktrace pre {
-    border: 1px solid #ccc;
-    background-color: #fff;
+    border: 1px solid $dialogue-exception-pre-border-color;
+    background-color: $dialogue-exception-pre-bg;
 }
 
 .moodle-dialogue-exception .param-stacktrace .stacktrace-file {
-    color: navy;
+    color: $dialogue-exception-file-color;
     font-size: $font-size-sm;
 }
 
@@ -1363,9 +1360,9 @@ audio.mediaplugin_html5audio {
 }
 
 .moodle-dialogue-exception .param-stacktrace .stacktrace-call {
-    color: #333;
+    color: $dialogue-exception-call-color;
     font-size: 90%;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid $dialogue-exception-call-border-color;
 }
 
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft:empty {
@@ -1432,7 +1429,7 @@ audio.mediaplugin_html5audio {
     height: 100%;
     top: 0;
     left: 0;
-    background-color: white;
+    background-color: $dialogue-lightbox-bg;
     text-align: center;
     padding: 10% 0;
 }
@@ -1467,7 +1464,7 @@ audio.mediaplugin_html5audio {
 
 .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-bd {
     padding: 0;
-    background: #f2f2f2;
+    background: $chooserdialogue-bg;
 
     @include border-bottom-radius(10px);
 }
@@ -1491,7 +1488,7 @@ audio.mediaplugin_html5audio {
 /* Various settings for the options area */
 .choosercontainer #chooseform .options {
     position: relative;
-    border-bottom: 1px solid #bbb;
+    border-bottom: 1px solid $chooserdialogue-options-border-color;
 }
 /* Only set these options if we're showing the js container */
 .jschooser .choosercontainer #chooseform .alloptions {
@@ -1544,7 +1541,7 @@ audio.mediaplugin_html5audio {
     display: block;
     margin: 0;
     padding: ($spacer * 0.5) 0;
-    border-bottom: 1px solid #fff;
+    border-bottom: 1px solid $choosercontainer-label-border-color;
 }
 
 .choosercontainer #chooseform .option .icon {
@@ -1577,7 +1574,7 @@ audio.mediaplugin_html5audio {
     left: 240px;
     margin: 0;
     padding: 1.6em;
-    background-color: #fff;
+    background-color: $choosercontainer-instruction-bg;
     overflow-x: hidden;
     overflow-y: auto;
     line-height: 2em;
@@ -1589,7 +1586,7 @@ audio.mediaplugin_html5audio {
 }
 
 .choosercontainer #chooseform .selected {
-    background-color: #fff;
+    background-color: $choosercontainer-chooseform-selected-bg;
     margin-top: -1px;
     padding-top: 1px;
 }
@@ -1772,8 +1769,8 @@ audio.mediaplugin_html5audio {
     position: relative;
     margin: 15px 0;
     padding: 1px 19px 14px;
-    background-color: white;
-    border: 1px solid #ddd;
+    background-color: $formlisting-bg;
+    border: 1px solid $formlisting-border-color;
 
     @include border-radius(4px);
 }
@@ -1786,9 +1783,9 @@ audio.mediaplugin_html5audio {
     padding: 3px 7px;
     font-size: 12px;
     font-weight: bold;
-    background-color: whitesmoke;
-    border: 1px solid #ddd;
-    color: #9da0a4;
+    background-color: $formlistingmore-bg;
+    border: 1px solid $formlistingmore-border-color;
+    color: $formlistingmore-color;
 
     @include border-radius(4px 0 4px 0);
 }
@@ -1803,10 +1800,10 @@ audio.mediaplugin_html5audio {
 .formlistingrow {
     cursor: pointer;
     border-bottom: 1px solid;
-    border-color: #e1e1e8;
-    border-left: 1px solid #e1e1e8;
-    border-right: 1px solid #e1e1e8;
-    background-color: #f7f7f9;
+    border-color: $formlistingrow-border-color;
+    border-left: 1px solid $formlistingrow-border-color;
+    border-right: 1px solid $formlistingrow-border-color;
+    background-color: $formlistingrow-bg;
 
     @include border-radius(0 0 4px 4px);
     padding: 6px;
@@ -1833,8 +1830,8 @@ a.criteria-action {
 div.criteria-description {
     padding: 10px 15px;
     margin: 5px 0;
-    background: none repeat scroll 0 0 #f9f9f9;
-    border: 1px solid #eee;
+    background: none repeat scroll 0 0 $criteria-desc-bg;
+    border: 1px solid $criteria-desc-border-color;
 }
 
 ul.badges {
@@ -2258,8 +2255,8 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
         left: 50%;
         top: calc(-50% - 5px);
         transform: translate(-50%, -50%);
-        background-color: #fff;
-        border: 1px solid rgba(0, 0, 0, .2);
+        background-color: $hover-tooltip-bg;
+        border: 1px solid $hover-tooltip-border-color;
         border-radius: .3rem;
         box-sizing: border-box;
         padding: 5px;
@@ -2272,7 +2269,7 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
             display: inline-block;
             border-left: 8px solid transparent;
             border-right: 8px solid transparent;
-            border-top: 8px solid rgba(0, 0, 0, .2);
+            border-top: 8px solid $hover-tooltip-border-color;
             position: absolute;
             bottom: -8px;
             left: calc(50% - 8px);
@@ -2283,7 +2280,7 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
             display: inline-block;
             border-left: 7px solid transparent;
             border-right: 7px solid transparent;
-            border-top: 7px solid #fff;
+            border-top: 7px solid $hover-tooltip-border-top-color;
             position: absolute;
             bottom: -6px;
             left: calc(50% - 7px);
@@ -2451,7 +2448,7 @@ $footer-link-color: $bg-inverse-link-color !default;
     &:focus {
         z-index: 1031;
         position: fixed;
-        background: #fff;
+        background: $sr-only-active-bg;
         padding: 7px;
         left: 0;
         top: 0;
@@ -2473,7 +2470,7 @@ $footer-link-color: $bg-inverse-link-color !default;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: $overlay-icon-bg;
 
     .loading-icon {
         position: absolute;
@@ -2980,7 +2977,7 @@ body.dragging {
 // Generic classes reactive components can use.
 
 .overlay-preview {
-    background-color: rgba($white, .8);
+    background-color: $overlay-preview-bg;
     border: 2px dashed $primary;
     position: absolute;
     top: 0;

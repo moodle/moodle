@@ -137,7 +137,7 @@ input#id_externalurl {
     font-size: $font-size-lg;
     line-height: $line-height-base * 2;
     border: 0;
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid $forms-adminsettings-border-bottom-color;
 }
 
 // I think this could be avoided (or at least tidied up) ifr
@@ -279,7 +279,7 @@ fieldset.coursesearchbox label {
 
 .form-autocomplete-suggestions {
     position: absolute;
-    background-color: white;
+    background-color: $forms-autocomplete-bg;
     border: $border-width solid $input-border-color;
     min-width: 206px;
     max-height: 20em;

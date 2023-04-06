@@ -974,7 +974,7 @@ span.editinstructions {
             }
 
             .without-actions {
-                color: #333;
+                color: $course-cat-without-actions-color;
             }
 
             .idnumber {
@@ -1018,7 +1018,7 @@ span.editinstructions {
             .categoryname {
                 display: inline-block;
                 margin-left: 1em;
-                color: #a1a1a8;
+                color: $course-listing-color;
             }
 
             .coursename {
@@ -1050,7 +1050,7 @@ span.editinstructions {
         }
 
         .course-count {
-            color: #a1a1a8;
+            color: $course-listing-color;
             margin-right: 2rem;
             min-width: 3.5em;
             display: inline-block;
