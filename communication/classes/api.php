@@ -399,4 +399,36 @@ class api {
             );
         }
     }
+
+    /**
+     * Display the communication room status notification.
+     */
+    public function show_communication_room_status_notification(): void {
+        // No communication, no room.
+        if (!$this->communication) {
+            return;
+        }
+
+        $roomstatus = $this->get_communication_room_url() ? 'ready' : 'pending';
+        $pluginname = get_string('pluginname', $this->get_provider());
+        $message = get_string('communicationroom' . $roomstatus, 'communication', $pluginname);
+
+        switch ($roomstatus) {
+            case 'pending':
+
+                \core\notification::add($message, \core\notification::INFO);
+                break;
+
+            case 'ready':
+                // We only show the ready notification once per user.
+                // We check this with a custom user preference.
+                $roomreadypreference = "{$this->component}_{$this->instancetype}_{$this->instanceid}_room_ready";
+
+                if (empty(get_user_preferences($roomreadypreference))) {
+                    \core\notification::add($message, \core\notification::SUCCESS);
+                    set_user_preference($roomreadypreference, true);
+                }
+                break;
+        }
+    }
 }
