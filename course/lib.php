@@ -1642,7 +1642,8 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     $coursecontext = context_course::instance($mod->course);
     $modcontext = context_module::instance($mod->id);
     $courseformat = course_get_format($mod->get_course());
-
+    $usecomponents = $courseformat->supports_components();
+    
     $editcaps = array('moodle/course:manageactivities', 'moodle/course:activityvisibility', 'moodle/role:assign');
     $dupecaps = array('moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport');
 

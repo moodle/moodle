@@ -180,7 +180,6 @@ class stateactions_test extends \advanced_testcase {
      * @param array $params the ids, targetsection and targetcm to use as params
      * @param array $expectedresults List of the course module names expected after calling the method.
      * @param bool $expectedexception If this call will raise an exception.
-
      */
     public function test_get_state(
         string $format,
@@ -574,6 +573,124 @@ class stateactions_test extends \advanced_testcase {
                     'ids' => ['invalidcm'], 'targetsectionid' => null, 'targetcmid' => null
                 ],
                 'expectedresults' => [],
+                'expectedexception' => true,
+            ],
+        ];
+    }
+
+    /**
+     * Internal method for testing a specific state action.
+     *
+     * @param string $method the method to test
+     * @param string $role the user role
+     * @param string[] $idrefs the sections or cms id references to be used as method params
+     * @param bool $expectedexception whether the call should throw an exception
+     * @param int $expectedtotal the expected total number of state puts
+     * @param string|null $coursefield the course field to check
+     * @param int|string|null $coursevalue the section field value
+     * @param string|null $sectionfield the section field to check
+     * @param int|string|null $sectionvalue the section field value
+     * @param string|null $cmfield the cm field to check
+     * @param int|string|null $cmvalue the cm field value
+     * @return array the state update summary
+     */
+    protected function basic_state_text(
+        string  $method = 'section_hide',
+        string  $role = 'editingteacher',
+        array   $idrefs = [],
+        bool    $expectedexception = false,
+        int     $expectedtotal = 0,
+        ?string $coursefield = null,
+                $coursevalue = 0,
+        ?string $sectionfield = null,
+                $sectionvalue = 0,
+        ?string $cmfield = null,
+                $cmvalue = 0
+    ): array {
+        $this->resetAfterTest();
+
+        // Create a course with 3 sections, 1 of them hidden.
+        $course = $this->create_course('topics', 3, [2]);
+
+        $references = $this->course_references($course);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $role);
+        $this->setUser($user);
+
+        // Add some activities to the course. One visible and one hidden in both sections 1 and 2.
+        $references["cm0"] = $this->create_activity($course->id, 'assign', 1, true);
+        $references["cm1"] = $this->create_activity($course->id, 'book', 1, false);
+        $references["cm2"] = $this->create_activity($course->id, 'glossary', 2, true);
+        $references["cm3"] = $this->create_activity($course->id, 'page', 2, false);
+
+        if ($expectedexception) {
+            $this->expectException(moodle_exception::class);
+        }
+
+        // Initialise stateupdates.
+        $courseformat = course_get_format($course->id);
+        $updates = new stateupdates($courseformat);
+
+        // Execute the method.
+        $actions = new stateactions();
+        $actions->$method(
+            $updates,
+            $course,
+            $this->translate_references($references, $idrefs),
+        );
+
+        // Format results in a way we can compare easily.
+        $results = $this->summarize_updates($updates);
+
+        // Most state actions does not use create or remove actions because they are designed
+        // to refresh parts of the state.
+        $this->assertEquals(0, $results['create']['count']);
+        $this->assertEquals(0, $results['remove']['count']);
+
+        // Validate we have all the expected entries.
+        $this->assertEquals($expectedtotal, $results['put']['count']);
+
+        // Validate course, section and cm.
+        if (!empty($coursefield)) {
+            foreach ($results['put']['course'] as $courseid) {
+                $this->assertEquals($coursevalue, $results['put']['course'][$courseid][$coursefield]);
+            }
+        }
+        if (!empty($sectionfield)) {
+            foreach ($results['put']['section'] as $section) {
+                $this->assertEquals($sectionvalue, $section->$sectionfield);
+            }
+        }
+        if (!empty($cmfield)) {
+            foreach ($results['put']['cm'] as $cm) {
+                $this->assertEquals($cmvalue, $cm->$cmfield);
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Data provider for basic role tests.
+     *
+     * @return array the testing scenarios
+     */
+    public function basic_role_provider() {
+        return [
+            'editingteacher' => [
+                'role' => 'editingteacher',
+                'expectedexception' => false,
+            ],
+            'teacher' => [
+                'role' => 'teacher',
+                'expectedexception' => true,
+            ],
+            'student' => [
+                'role' => 'student',
+                'expectedexception' => true,
+            ],
+            'guest' => [
+                'role' => 'guest',
                 'expectedexception' => true,
             ],
         ];
