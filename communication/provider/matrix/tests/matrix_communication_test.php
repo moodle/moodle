@@ -880,4 +880,43 @@ class matrix_communication_test extends \advanced_testcase {
 
         $this->assertEmpty($communicationuserrecord);
     }
+
+    /**
+     * Test status notifications of a communication room are generated correctly.
+     *
+     * @covers ::show_communication_room_status_notification
+     */
+    public function test_show_communication_room_status_notification(): void {
+        $course = $this->get_course();
+
+        // Get communication api object.
+        $communication = \core_communication\api::load_by_instance(
+            'core_course',
+            'coursecommunication',
+            $course->id
+        );
+
+        // Room should be in 'pending' state before the task is run and show a notification.
+        $communication->show_communication_room_status_notification();
+
+        // Run the task.
+        $this->runAdhocTasks('\core_communication\task\create_and_configure_room_task');
+
+        // Get updated communication api after room configuration.
+        $communication = \core_communication\api::load_by_instance(
+            'core_course',
+            'coursecommunication',
+            $course->id
+        );
+
+        // Check the room is now in 'ready' state and show a notification.
+        $communication->show_communication_room_status_notification();
+
+        // Get our notifications stack.
+        // There should be one for 'pending' status, and one for 'ready' status.
+        $notifications = \core\notification::fetch();
+        $this->assertCount(2, $notifications);
+        $this->assertStringContainsString('Your Matrix room will be ready soon.', $notifications[0]->get_message());
+        $this->assertStringContainsString('Your Matrix room is ready!', $notifications[1]->get_message());
+    }
 }

@@ -409,6 +409,10 @@ class api {
             return;
         }
 
+        if ($this->communication->get_provider() === processor::PROVIDER_NONE) {
+            return;
+        }
+
         $roomstatus = $this->get_communication_room_url() ? 'ready' : 'pending';
         $pluginname = get_string('pluginname', $this->get_provider());
         $message = get_string('communicationroom' . $roomstatus, 'communication', $pluginname);
