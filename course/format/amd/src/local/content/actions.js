@@ -44,7 +44,10 @@ prefetchStrings('core', ['movecoursesection', 'movecoursemodule', 'confirm', 'de
 // Mutations are dispatched by the course content actions.
 // Formats can use this module addActions static method to add custom actions.
 // Direct mutations can be simple strings (mutation) name or functions.
-const directMutations = {};
+const directMutations = {
+    cmMoveRight: 'cmMoveRight',
+    cmMoveLeft: 'cmMoveLeft',
+};
 
 export default class extends BaseComponent {
 

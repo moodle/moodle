@@ -106,6 +106,7 @@ class cmitem implements named_templatable, renderable {
             'extraclasses' => $mod->extraclasses,
             'cmformat' => $item->export_for_template($output),
             'hasinfo' => $hasinfo,
+            'indent' => $mod->indent,
         ];
     }
 }

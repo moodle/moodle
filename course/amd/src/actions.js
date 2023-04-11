@@ -58,7 +58,7 @@ define(
         // Eventually, core_courseformat/local/content/actions will handle all actions for
         // component compatible formats and the default actions.js won't be necessary anymore.
         // Meanwhile, we filter the migrated actions.
-        const componentActions = ['moveSection', 'moveCm', 'addSection', 'deleteSection'];
+        const componentActions = ['moveSection', 'moveCm', 'addSection', 'deleteSection', 'cmMoveRight', 'cmMoveLeft'];
 
         // The course reactive instance.
         const courseeditor = editor.getCurrentCourseEditor();

@@ -18,6 +18,8 @@ information provided here is intended especially for developers.
   needs to be rendered as is and not whitened out, the `.nofilter` CSS class needs to be applied to the icon.
 * New moodle_url::export_params_for_template() returns the params as an array of key => value pairs. You should use this when
   you want to pass URL params to a template. An example can be found in single button.
+* Course module indentation has been recovered for course format using components via Move right/left feature.
+  Course formats using components will be allowed to use one level indentation only.
 
 === 4.0.7 ===
 

@@ -233,6 +233,7 @@ export default class Component extends BaseComponent {
             // State changes thaty require to reload course modules.
             {watch: `cm.visible:updated`, handler: this._reloadCm},
             {watch: `cm.sectionid:updated`, handler: this._reloadCm},
+            {watch: `cm.indent:updated`, handler: this._reloadCm},
         ];
     }
 

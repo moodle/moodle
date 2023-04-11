@@ -1643,7 +1643,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     $modcontext = context_module::instance($mod->id);
     $courseformat = course_get_format($mod->get_course());
     $usecomponents = $courseformat->supports_components();
-    
+
     $editcaps = array('moodle/course:manageactivities', 'moodle/course:activityvisibility', 'moodle/role:assign');
     $dupecaps = array('moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport');
 
@@ -1701,7 +1701,9 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     if ($hasmanageactivities && $indent >= 0) {
         $indentlimits = new stdClass();
         $indentlimits->min = 0;
-        $indentlimits->max = 16;
+        // Legacy indentation could continue using a limit of 16,
+        // but components based formats will be forced to use one level indentation only.
+        $indentlimits->max = ($usecomponents) ? 1 : 16;
         if (right_to_left()) {   // Exchange arrows on RTL
             $rightarrow = 't/left';
             $leftarrow  = 't/right';
@@ -1716,11 +1718,16 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             $enabledclass = '';
         }
         $actions['moveright'] = new action_menu_link_secondary(
-            new moodle_url($baseurl, array('id' => $mod->id, 'indent' => '1')),
-            new pix_icon($rightarrow, '', 'moodle', array('class' => 'iconsmall')),
+            new moodle_url($baseurl, ['id' => $mod->id, 'indent' => '1']),
+            new pix_icon($rightarrow, '', 'moodle', ['class' => 'iconsmall']),
             $str->moveright,
-            array('class' => 'editing_moveright ' . $enabledclass, 'data-action' => 'moveright',
-                'data-keepopen' => true, 'data-sectionreturn' => $sr)
+            [
+                'class' => 'editing_moveright ' . $enabledclass,
+                'data-action' => ($usecomponents) ? 'cmMoveRight' : 'moveright',
+                'data-keepopen' => true,
+                'data-sectionreturn' => $sr,
+                'data-id' => $mod->id,
+            ]
         );
 
         if ($indent <= $indentlimits->min) {
@@ -1729,11 +1736,16 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             $enabledclass = '';
         }
         $actions['moveleft'] = new action_menu_link_secondary(
-            new moodle_url($baseurl, array('id' => $mod->id, 'indent' => '-1')),
-            new pix_icon($leftarrow, '', 'moodle', array('class' => 'iconsmall')),
+            new moodle_url($baseurl, ['id' => $mod->id, 'indent' => '0']),
+            new pix_icon($leftarrow, '', 'moodle', ['class' => 'iconsmall']),
             $str->moveleft,
-            array('class' => 'editing_moveleft ' . $enabledclass, 'data-action' => 'moveleft',
-                'data-keepopen' => true, 'data-sectionreturn' => $sr)
+            [
+                'class' => 'editing_moveleft ' . $enabledclass,
+                'data-action' => ($usecomponents) ? 'cmMoveLeft' : 'moveleft',
+                'data-keepopen' => true,
+                'data-sectionreturn' => $sr,
+                'data-id' => $mod->id,
+            ]
         );
 
     }
