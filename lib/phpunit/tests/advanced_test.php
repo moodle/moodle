@@ -33,8 +33,13 @@ defined('MOODLE_INTERNAL') || die();
  * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \advanced_testcase
  */
 class core_phpunit_advanced_testcase extends advanced_testcase {
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+        require_once(__DIR__ . '/fixtures/adhoc_test_task.php');
+    }
 
     public function test_debugging() {
         global $CFG;
@@ -679,5 +684,54 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         // Reset test data and ansure the useragent was cleaned.
         self::resetAllData(false);
         self::assertFalse(core_useragent::get_user_agent_string(), 'It should not be set again, data was reset.');
+    }
+
+    /**
+     * @covers ::runAdhocTasks
+     */
+    public function test_runadhoctasks_no_tasks_queued(): void {
+        $this->runAdhocTasks();
+        $this->expectOutputRegex('/^$/');
+    }
+
+    /**
+     * @covers ::runAdhocTasks
+     */
+    public function test_runadhoctasks_tasks_queued(): void {
+        $this->resetAfterTest(true);
+        $admin = get_admin();
+        \core\task\manager::queue_adhoc_task(new \core_phpunit\adhoc_test_task());
+        $this->runAdhocTasks();
+        $this->expectOutputRegex("/Task was run as {$admin->id}/");
+    }
+
+    /**
+     * @covers ::runAdhocTasks
+     */
+    public function test_runadhoctasks_with_existing_user_change(): void {
+        $this->resetAfterTest(true);
+        $admin = get_admin();
+
+        $this->setGuestUser();
+        \core\task\manager::queue_adhoc_task(new \core_phpunit\adhoc_test_task());
+        $this->runAdhocTasks();
+        $this->expectOutputRegex("/Task was run as {$admin->id}/");
+    }
+
+    /**
+     * @covers ::runAdhocTasks
+     */
+    public function test_runadhoctasks_with_existing_user_change_and_specified(): void {
+        global $USER;
+
+        $this->resetAfterTest(true);
+        $user = $this->getDataGenerator()->create_user();
+
+        $this->setGuestUser();
+        $task = new \core_phpunit\adhoc_test_task();
+        $task->set_userid($user->id);
+        \core\task\manager::queue_adhoc_task($task);
+        $this->runAdhocTasks();
+        $this->expectOutputRegex("/Task was run as {$user->id}/");
     }
 }
