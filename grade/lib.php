@@ -2464,6 +2464,12 @@ class grade_structure {
         if (isset($element['type']) && ($element['type'] == 'category')) {
             $class = 'category_grade_icons';
         }
+
+        if (!empty($grade->feedback) && $grade->load_grade_item()->gradetype != GRADE_TYPE_TEXT) {
+            $statusicons .= $OUTPUT->pix_icon('i/asterisk', grade_helper::get_lang_string('feedbackprovided', 'grades'),
+                'moodle', $attributes);
+        }
+
         if ($statusicons) {
             $statusicons = $OUTPUT->container($statusicons, $class);
         }
@@ -2489,6 +2495,8 @@ class grade_structure {
             $editable = true;
 
             if ($element['type'] == 'grade') {
+                $context->datatype = 'grade';
+
                 $item = $element['object']->grade_item;
                 if ($item->is_course_item() || $item->is_category_item()) {
                     $editable = (bool)get_config('moodle', 'grade_overridecat');;
@@ -2595,6 +2603,13 @@ class grade_structure {
             } else if ($element['type'] == 'userfield') {
                 $context->dataid = $element['name'];
             }
+
+            if ($element['type'] != 'text' && !empty($element['object']->feedback)) {
+                $viewfeedbackstring = grade_helper::get_lang_string('viewfeedback', 'grades');
+                $context->viewfeedbackurl = html_writer::link('#', $viewfeedbackstring, ['class' => 'dropdown-item',
+                    'aria-label' => $viewfeedbackstring, 'role' => 'menuitem', 'data-action' => 'feedback',
+                    'data-courseid' => $this->courseid]);
+            }
         } else if ($mode == 'user') {
             $context->datatype = 'user';
             $context = grade_report::get_additional_context($this->context, $this->courseid, $element, $gpr, $mode, $context, true);
@@ -2603,7 +2618,8 @@ class grade_structure {
 
         if (!empty($USER->editing) || isset($context->gradeanalysisurl) || isset($context->gradesonlyurl)
                 || isset($context->aggregatesonlyurl) || isset($context->fullmodeurl) || isset($context->reporturl0)
-                || isset($context->ascendingfirstnameurl) || isset($context->ascendingurl) || ($mode == 'setup')) {
+                || isset($context->ascendingfirstnameurl) || isset($context->ascendingurl)
+                || isset($context->viewfeedbackurl) || ($mode == 'setup')) {
             return $OUTPUT->render_from_template('core_grades/cellmenu', $context);
         }
         return '';
