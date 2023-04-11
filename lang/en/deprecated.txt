@@ -90,3 +90,5 @@ studentsperpage,core_grades
 studentsperpage_help,core_grades
 type_contentbank,core_plugin
 type_contentbank_plural,core_plugin
+missingversionfile,core_webservice
+cannotgetcoursecontents,core_webservice
