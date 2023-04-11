@@ -167,29 +167,3 @@ function get_moodle_cookie() {
         return $username;
     }
 }
-
-/**
- * Sets up current user and course environment (lang, etc.) in cron.
- * Do not use outside of cron script!
- *
- * @param stdClass $user full user object, null means default cron user (admin),
- *                 value 'reset' means reset internal static caches.
- * @param stdClass $course full course record, null means $SITE
- * @param bool $leavepagealone If specified, stops it messing with global page object
- * @deprecated since 4.2. Use \core\core::setup_user() instead.
- * @return void
- */
-function cron_setup_user($user = null, $course = null, $leavepagealone = false) {
-    debugging(
-        'The cron_setup_user() function is deprecated. ' .
-        'Please use \core\cron::setup_user() and reset_user_cache() as appropriate instead.',
-        DEBUG_DEVELOPER
-    );
-
-    if ($user === 'reset') {
-        \core\cron::reset_user_cache();
-        return;
-    }
-
-    \core\cron::setup_user($user, $course, $leavepagealone);
-}
