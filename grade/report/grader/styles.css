@@ -15,6 +15,7 @@
     border-bottom-width: 0;
     border-right-width: 0;
     margin-bottom: 2em;
+    height: 100%;
 }
 
 /**
@@ -26,7 +27,7 @@
     border-left-width: 0;
     padding: 10px;
     vertical-align: top;
-    height: 1em;
+    height: 100%;
 }
 
 .path-grade-report-grader .overriddengrade {
@@ -106,7 +107,6 @@
 }
 
 .path-grade-report-grader .gradeparent .highlightable.cell {
-    height: 80px;
     min-width: 200px;
 }
 
