@@ -870,4 +870,58 @@ class stateactions_test extends \advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test for cm_moveright
+     *
+     * @covers ::cm_moveright
+     * @dataProvider basic_role_provider
+     * @param string $role the user role
+     * @param bool $expectedexception if it will expect an exception.
+     */
+    public function test_cm_moveright(
+        string $role = 'editingteacher',
+        bool $expectedexception = false
+    ): void {
+        $this->basic_state_text(
+            'cm_moveright',
+            $role,
+            ['cm0', 'cm1', 'cm2', 'cm3'],
+            $expectedexception,
+            4,
+            null,
+            null,
+            null,
+            null,
+            'indent',
+            1
+        );
+    }
+
+    /**
+     * Test for cm_moveleft
+     *
+     * @covers ::cm_moveleft
+     * @dataProvider basic_role_provider
+     * @param string $role the user role
+     * @param bool $expectedexception if it will expect an exception.
+     */
+    public function test_cm_moveleft(
+        string $role = 'editingteacher',
+        bool $expectedexception = false
+    ): void {
+        $this->basic_state_text(
+            'cm_moveleft',
+            $role,
+            ['cm0', 'cm1', 'cm2', 'cm3'],
+            $expectedexception,
+            4,
+            null,
+            null,
+            null,
+            null,
+            'indent',
+            0
+        );
+    }
 }
