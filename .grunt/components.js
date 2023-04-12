@@ -156,7 +156,7 @@ const getThirdPartyLibsList = relativeTo => {
  * @returns {array}
  */
 const getThirdPartyPaths = () => {
-    const DOMParser = require('xmldom').DOMParser;
+    const DOMParser = require('@xmldom/xmldom').DOMParser;
     const fs = require('fs');
     const path = require('path');
     const xpath = require('xpath');
@@ -350,7 +350,7 @@ const getThirdPartyLibsUpgradable = async() => {
  * @returns {Array}
  */
 const getThirdPartyLibsData = () => {
-    const DOMParser = require('xmldom').DOMParser;
+    const DOMParser = require('@xmldom/xmldom').DOMParser;
     const fs = require('fs');
     const xpath = require('xpath');
     const path = require('path');
