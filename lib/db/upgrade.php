@@ -3054,7 +3054,7 @@ privatefiles,moodle|/user/files.php';
     if ($oldversion < 2022112803.03) {
         // Add public key field to user_devices table.
         $table = new xmldb_table('user_devices');
-        $field = new xmldb_field('publickey', XMLDB_TYPE_TEXT, null, null, null, null, null, 'enable');
+        $field = new xmldb_field('publickey', XMLDB_TYPE_TEXT, null, null, null, null, null, 'uuid');
 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
