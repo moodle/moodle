@@ -487,7 +487,7 @@ abstract class grade_report {
         if ($this->usersearch !== '' && $this->userid === -1) {
             // Get the fields for all contexts because there is a special case later where it allows
             // matches of fields you can't access if they are on your own account.
-            $userfields = fields::for_identity(null)->with_userpic();
+            $userfields = fields::for_identity(null, false)->with_userpic();
             ['mappings' => $mappings]  = (array)$userfields->get_sql('u', true);
             [
                 'where' => $keywordswhere,
@@ -555,7 +555,7 @@ abstract class grade_report {
         $conditions[] = $idnumber;
 
         // Search all user identify fields.
-        $extrasearchfields = fields::get_identity_fields(null);
+        $extrasearchfields = fields::get_identity_fields(null, false);
         foreach ($extrasearchfields as $fieldindex => $extrasearchfield) {
             if (in_array($extrasearchfield, ['email', 'idnumber', 'country'])) {
                 // Already covered above.
