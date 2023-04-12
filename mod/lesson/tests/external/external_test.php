@@ -74,6 +74,36 @@ class testable_mod_lesson_external extends mod_lesson_external {
  */
 class external_test extends externallib_advanced_testcase {
 
+    /** @var \stdClass course record. */
+    protected \stdClass $course;
+
+    /** @var \stdClass */
+    protected \stdClass $lesson;
+
+    /** @var \stdClass a fieldset object, false or exception if error not found. */
+    protected \stdClass $page1;
+
+    /** @var \stdClass a fieldset object false or exception if error not found. */
+    protected $page2;
+
+    /** @var \core\context\module context instance. */
+    protected \core\context\module $context;
+
+    /** @var \stdClass */
+    protected \stdClass $cm;
+
+    /** @var \stdClass user record. */
+    protected \stdClass $student;
+
+    /** @var \stdClass user record. */
+    protected \stdClass $teacher;
+
+    /** @var \stdClass a fieldset object, false or exception if error not found. */
+    protected \stdClass $studentrole;
+
+    /** @var \stdClass a fieldset object, false or exception if error not found. */
+    protected \stdClass $teacherrole;
+
     /**
      * Set up for every test
      */
