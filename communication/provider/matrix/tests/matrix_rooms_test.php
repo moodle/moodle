@@ -54,6 +54,7 @@ class matrix_rooms_test extends \advanced_testcase {
         $course = $this->get_course();
 
         $sampleroomid = 'samplematrixroomid';
+        $sampleroomtopic = 'samplematrixroomtopic';
 
         // Communication internal api call.
         $communicationprocessor = processor::load_by_instance(
@@ -64,9 +65,9 @@ class matrix_rooms_test extends \advanced_testcase {
 
         // Call matrix room object to create the matrix data.
         $matrixroom = new \communication_matrix\matrix_rooms($communicationprocessor->get_id());
-        $matrixroom->create_matrix_room_record(
-            $communicationprocessor->get_id(),
+        $matrixroom->update_matrix_room_record(
             $sampleroomid,
+            $sampleroomtopic
         );
 
         // Test the object.
@@ -92,6 +93,7 @@ class matrix_rooms_test extends \advanced_testcase {
         $course = $this->get_course();
 
         $sampleroomid = 'samplematrixroomid';
+        $sampleroomtopic = 'samplematrixroomtopic';
 
         // Communication internal api call.
         $communicationprocessor = processor::load_by_instance(
@@ -102,9 +104,9 @@ class matrix_rooms_test extends \advanced_testcase {
 
         // Call matrix room object to create the matrix data.
         $matrixroom = new \communication_matrix\matrix_rooms($communicationprocessor->get_id());
-        $matrixroom->create_matrix_room_record(
-            $communicationprocessor->get_id(),
+        $matrixroom->update_matrix_room_record(
             $sampleroomid,
+            $sampleroomtopic
         );
 
         // Get the record from db.
@@ -118,6 +120,7 @@ class matrix_rooms_test extends \advanced_testcase {
 
         $matrixroom->update_matrix_room_record(
             $sampleroomidupdated,
+            $sampleroomtopic
         );
 
         // Test the object.
@@ -144,6 +147,7 @@ class matrix_rooms_test extends \advanced_testcase {
         $course = $this->get_course();
 
         $sampleroomid = 'samplematrixroomid';
+        $sampleroomtopic = 'samplematrixroomtopic';
 
         // Communication internal api call.
         $communicationprocessor = processor::load_by_instance(
@@ -154,9 +158,9 @@ class matrix_rooms_test extends \advanced_testcase {
 
         // Call matrix room object to create the matrix data.
         $matrixroom = new \communication_matrix\matrix_rooms($communicationprocessor->get_id());
-        $matrixroom->create_matrix_room_record(
-            $communicationprocessor->get_id(),
+        $matrixroom->update_matrix_room_record(
             $sampleroomid,
+            $sampleroomtopic
         );
 
         // Get the record from db.

@@ -29,8 +29,8 @@ class communication_feature implements
     \core_communication\communication_provider,
     \core_communication\user_provider,
     \core_communication\room_chat_provider,
-    \core_communication\room_user_provider {
-
+    \core_communication\room_user_provider,
+    \core_communication\form_provider {
 
     /** @var matrix_events_manager $eventmanager The event manager object to get the endpoints */
     private matrix_events_manager $eventmanager;
@@ -234,7 +234,7 @@ class communication_feature implements
     }
 
     public function create_chat_room(): bool {
-        if ($this->matrixrooms->room_record_exists()) {
+        if ($this->matrixrooms->room_record_exists() && $this->matrixrooms->get_matrix_room_id()) {
             return $this->update_chat_room();
         }
         // Create a new room.
@@ -245,12 +245,21 @@ class communication_feature implements
             'initial_state' => [],
         ];
 
+        // Set the room topic if set.
+        if (!empty($matrixroomtopic = $this->matrixrooms->get_matrix_room_topic())) {
+            $json['topic'] = $matrixroomtopic;
+        }
+
         $response = $this->eventmanager->request($json)->post($this->eventmanager->get_create_room_endpoint());
         $response = json_decode($response->getBody(), false, 512, JSON_THROW_ON_ERROR);
 
         // Check if room was created.
         if (!empty($roomid = $response->room_id)) {
-            $this->matrixrooms->create_matrix_room_record($this->communication->get_id(), $roomid);
+            if ($this->matrixrooms->room_record_exists()) {
+                $this->matrixrooms->update_matrix_room_record($roomid, $matrixroomtopic);
+            } else {
+                $this->matrixrooms->create_matrix_room_record($this->communication->get_id(), $roomid, $matrixroomtopic);
+            }
             $this->eventmanager->roomid = $roomid;
             $this->update_room_avatar();
             return true;
@@ -272,6 +281,13 @@ class communication_feature implements
         if ($matrixroomdata->name !== $this->communication->get_room_name()) {
             $json = ['name' => $this->communication->get_room_name()];
             $this->eventmanager->request($json)->put($this->eventmanager->get_update_room_name_endpoint());
+        }
+
+        // Update the room topic if set.
+        if (!empty($matrixroomtopic = $this->matrixrooms->get_matrix_room_topic())) {
+            $json = ['topic' => $matrixroomtopic];
+            $this->eventmanager->request($json)->put($this->eventmanager->get_update_room_topic_endpoint());
+            $this->matrixrooms->update_matrix_room_record($this->matrixrooms->get_matrix_room_id(), $matrixroomtopic);
         }
 
         // Update room avatar.
@@ -312,5 +328,34 @@ class communication_feature implements
         }
 
         return $this->eventmanager->matrixwebclienturl . '#/room/' . $this->matrixrooms->get_matrix_room_id();
+    }
+
+    public function save_form_data(\stdClass $instance): void {
+        $matrixroomtopic = $instance->matrixroomtopic ?? null;
+        if ($this->matrixrooms->room_record_exists()) {
+            $this->matrixrooms->update_matrix_room_record($this->matrixrooms->get_matrix_room_id(), $matrixroomtopic);
+        } else {
+            // Create the record with empty room id as we don't have it yet.
+            $this->matrixrooms->create_matrix_room_record(
+                $this->communication->get_id(),
+                $this->matrixrooms->get_matrix_room_id(),
+                $matrixroomtopic,
+            );
+        }
+    }
+
+    public function set_form_data(\stdClass $instance): void {
+        if (!empty($instance->id) && !empty($this->communication->get_id())) {
+            $instance->matrixroomtopic = $this->matrixrooms->get_matrix_room_topic();
+        }
+    }
+
+    public static function set_form_definition(\MoodleQuickForm $mform): void {
+        // Room description for the communication provider.
+        $mform->insertElementBefore($mform->createElement('text', 'matrixroomtopic',
+            get_string('matrixroomtopic', 'communication_matrix'),
+            'maxlength="255" size="20"'), 'addcommunicationoptionshere');
+        $mform->addHelpButton('matrixroomtopic', 'matrixroomtopic', 'communication_matrix');
+        $mform->setType('matrixroomtopic', PARAM_TEXT);
     }
 }

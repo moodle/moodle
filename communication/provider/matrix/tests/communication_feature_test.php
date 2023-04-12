@@ -321,4 +321,27 @@ class communication_feature_test extends \advanced_testcase {
         $this->assertFalse($communicationprocessor->get_room_provider()->check_room_membership($matrixuserid));
     }
 
+    /**
+     * Test save form data options.
+     *
+     * @covers ::save_form_data
+     */
+    public function test_save_form_data(): void {
+        $this->resetAfterTest();
+        $course = $this->get_course();
+
+        $communicationprocessor = processor::load_by_instance(
+            'core_course',
+            'coursecommunication',
+            $course->id
+        );
+
+        $course->matrixroomtopic = 'Sampletopicupdated';
+        $communicationprocessor->get_form_provider()->save_form_data($course);
+
+        // Test the updated topic.
+        $matrixroomdata = new matrix_rooms($communicationprocessor->get_id());
+        $this->assertEquals('Sampletopicupdated', $matrixroomdata->get_matrix_room_topic());
+    }
+
 }

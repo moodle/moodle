@@ -56,13 +56,19 @@ class matrix_rooms {
      * Create matrix room data.
      *
      * @param int $commid The id of the communication record
-     * @param string $roomid The id of the room from matrix
+     * @param string|null $roomid The id of the room from matrix
+     * @param string|null $roomtopic The topic of the room for matrix
      */
-    public function create_matrix_room_record(int $commid, string $roomid): void {
+    public function create_matrix_room_record(
+        int $commid,
+        ?string $roomid,
+        ?string $roomtopic
+    ): void {
         global $DB;
         $roomrecord = new \stdClass();
         $roomrecord->commid = $commid;
         $roomrecord->roomid = $roomid;
+        $roomrecord->topic = $roomtopic;
         $roomrecord->id = $DB->insert_record('matrix_rooms', $roomrecord);
         $this->matrixroomrecord = $roomrecord;
     }
@@ -70,12 +76,14 @@ class matrix_rooms {
     /**
      * Update matrix room data.
      *
-     * @param string $roomid The id of the room from matrix
+     * @param string|null $roomid The id of the room from matrix
+     * @param string|null $roomtopic The topic of the room for matrix
      */
-    public function update_matrix_room_record(string $roomid): void {
+    public function update_matrix_room_record(?string $roomid, ?string $roomtopic): void {
         global $DB;
         if ($this->room_record_exists()) {
             $this->matrixroomrecord->roomid = $roomid;
+            $this->matrixroomrecord->topic = $roomtopic;
             $DB->update_record('matrix_rooms', $this->matrixroomrecord);
         }
     }
@@ -101,6 +109,18 @@ class matrix_rooms {
     public function get_matrix_room_id(): ?string {
         if ($this->room_record_exists()) {
             return $this->matrixroomrecord->roomid;
+        }
+        return null;
+    }
+
+    /**
+     * Get the matrix room topic.
+     *
+     * @return string|null
+     */
+    public function get_matrix_room_topic(): ?string {
+        if ($this->room_record_exists()) {
+            return $this->matrixroomrecord->topic;
         }
         return null;
     }

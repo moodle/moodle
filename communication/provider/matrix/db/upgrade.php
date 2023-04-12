@@ -15,16 +15,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for communication_matrix.
+ * Install steps for communication_matrix.
  *
  * @package    communication_matrix
  * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * Upgrade procedures for the matrix plugin.
+ *
+ * @return bool
+ */
+function xmldb_communication_matrix_upgrade($oldversion) {
+    global $DB;
 
-$plugin->component = 'communication_matrix';
-$plugin->version = 2023060100;
-$plugin->requires = 2023011300;
-$plugin->maturity = MATURITY_ALPHA;
+    $dbman = $DB->get_manager();
+    if ($oldversion < 2023041100) {
+        $table = new xmldb_table('matrix_rooms');
+        $field = new xmldb_field('topic', XMLDB_TYPE_CHAR, '255', null, false, false, null, 'roomid');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+    }
+
+    return true;
+
+}

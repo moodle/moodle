@@ -916,4 +916,30 @@ class matrix_communication_test extends \advanced_testcase {
         $notifications = \core\notification::fetch();
         $this->assertStringContainsString('Your Matrix room is ready!', $notifications[0]->get_message());
     }
+
+    /**
+     * Test set provider data from handler.
+     *
+     * @covers ::set_data
+     */
+    public function test_set_provider_data(): void {
+        $this->resetAfterTest();
+        $course = $this->get_course();
+        $communication = \core_communication\api::load_by_instance(
+            'core_course',
+            'coursecommunication',
+            $course->id
+        );
+
+        // Sample data.
+        $roomname = 'Sampleroom';
+        $provider = 'communication_matrix';
+
+        // Set the data.
+        $communication->set_data($course);
+
+        // Test the set data.
+        $this->assertEquals($roomname, $course->communicationroomname);
+        $this->assertEquals($provider, $course->selectedcommunication);
+    }
 }
