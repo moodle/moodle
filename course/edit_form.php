@@ -482,6 +482,16 @@ class course_edit_form extends moodleform {
         // Tweak the form with values provided by custom fields in use.
         $handler  = core_course\customfield\course_handler::create();
         $handler->instance_form_definition_after_data($mform, empty($courseid) ? 0 : $courseid);
+
+        // Add communication plugins to the form.
+        if (core_communication\api::is_available()) {
+            $communication = \core_communication\api::load_by_instance(
+                'core_course',
+                'coursecommunication',
+                empty($course->id) ? 0 : $course->id
+            );
+            $communication->form_definition_for_provider($mform);
+        }
     }
 
     /**

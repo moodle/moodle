@@ -2323,7 +2323,7 @@ function create_course($data, $editoroptions = NULL) {
 
         // Communication api call.
         $communication = \core_communication\api::load_by_instance('core_course', 'coursecommunication', $course->id);
-        $communication->create_and_configure_room($selectedcommunication, $communicationroomname, $courseimage);
+        $communication->create_and_configure_room($selectedcommunication, $communicationroomname, $courseimage, $data);
     }
 
     // Save custom fields if there are any of them in the form.
@@ -2506,7 +2506,7 @@ function update_course($data, $editoroptions = NULL) {
             }
         }
 
-        $communication->update_room($provider, $communicationroomname, $courseimage);
+        $communication->update_room($provider, $communicationroomname, $courseimage, $data);
         if ($addafterupdate) {
             $communication->add_members_to_room($enrolledusers, false);
         }
