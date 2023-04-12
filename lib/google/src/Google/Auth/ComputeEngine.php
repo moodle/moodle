@@ -25,6 +25,7 @@ if (!class_exists('Google_Client')) {
  * and the appropriate scopes.
  * @author Jonathan Parrott <jon.wayne.parrott@gmail.com>
  */
+#[AllowDynamicProperties]
 class Google_Auth_ComputeEngine extends Google_Auth_Abstract
 {
   const METADATA_AUTH_URL =

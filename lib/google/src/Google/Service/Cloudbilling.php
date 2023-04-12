@@ -29,6 +29,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Cloudbilling extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -156,6 +157,7 @@ class Google_Service_Cloudbilling extends Google_Service
  *   $billingAccounts = $cloudbillingService->billingAccounts;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Cloudbilling_BillingAccounts_Resource extends Google_Service_Resource
 {
 
@@ -208,6 +210,7 @@ class Google_Service_Cloudbilling_BillingAccounts_Resource extends Google_Servic
  *   $projects = $cloudbillingService->projects;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Cloudbilling_BillingAccountsProjects_Resource extends Google_Service_Resource
 {
 
@@ -246,6 +249,7 @@ class Google_Service_Cloudbilling_BillingAccountsProjects_Resource extends Googl
  *   $projects = $cloudbillingService->projects;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Cloudbilling_Projects_Resource extends Google_Service_Resource
 {
 
@@ -310,6 +314,7 @@ class Google_Service_Cloudbilling_Projects_Resource extends Google_Service_Resou
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Cloudbilling_BillingAccount extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -345,6 +350,7 @@ class Google_Service_Cloudbilling_BillingAccount extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Cloudbilling_ListBillingAccountsResponse extends Google_Collection
 {
   protected $collection_key = 'billingAccounts';
@@ -373,6 +379,7 @@ class Google_Service_Cloudbilling_ListBillingAccountsResponse extends Google_Col
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Cloudbilling_ListProjectBillingInfoResponse extends Google_Collection
 {
   protected $collection_key = 'projectBillingInfo';
@@ -401,6 +408,7 @@ class Google_Service_Cloudbilling_ListProjectBillingInfoResponse extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Cloudbilling_ProjectBillingInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(

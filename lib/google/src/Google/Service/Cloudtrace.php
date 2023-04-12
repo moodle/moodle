@@ -29,6 +29,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Cloudtrace extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -181,6 +182,7 @@ class Google_Service_Cloudtrace extends Google_Service
  *   $projects = $cloudtraceService->projects;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Cloudtrace_Projects_Resource extends Google_Service_Resource
 {
 
@@ -211,6 +213,7 @@ class Google_Service_Cloudtrace_Projects_Resource extends Google_Service_Resourc
  *   $traces = $cloudtraceService->traces;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Cloudtrace_ProjectsTraces_Resource extends Google_Service_Resource
 {
 
@@ -269,6 +272,7 @@ class Google_Service_Cloudtrace_ProjectsTraces_Resource extends Google_Service_R
  *   $v1 = $cloudtraceService->v1;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Cloudtrace_V1_Resource extends Google_Service_Resource
 {
 
@@ -296,10 +300,12 @@ class Google_Service_Cloudtrace_V1_Resource extends Google_Service_Resource
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Cloudtrace_Empty extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Cloudtrace_ListTracesResponse extends Google_Collection
 {
   protected $collection_key = 'traces';
@@ -328,6 +334,7 @@ class Google_Service_Cloudtrace_ListTracesResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Cloudtrace_Trace extends Google_Collection
 {
   protected $collection_key = 'spans';
@@ -365,6 +372,7 @@ class Google_Service_Cloudtrace_Trace extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Cloudtrace_TraceSpan extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -436,10 +444,12 @@ class Google_Service_Cloudtrace_TraceSpan extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Cloudtrace_TraceSpanLabels extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Cloudtrace_Traces extends Google_Collection
 {
   protected $collection_key = 'traces';
