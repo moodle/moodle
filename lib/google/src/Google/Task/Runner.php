@@ -24,6 +24,7 @@ if (!class_exists('Google_Client')) {
  *
  * @see https://developers.google.com/drive/web/handle-errors#implementing_exponential_backoff
  */
+#[AllowDynamicProperties]
 class Google_Task_Runner
 {
   /**

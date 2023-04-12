@@ -29,6 +29,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Logging extends Google_Service
 {
 
@@ -56,6 +57,7 @@ class Google_Service_Logging extends Google_Service
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Logging_LogLine extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -101,6 +103,7 @@ class Google_Service_Logging_LogLine extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Logging_RequestLog extends Google_Collection
 {
   protected $collection_key = 'sourceReference';
@@ -391,6 +394,7 @@ class Google_Service_Logging_RequestLog extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Logging_SourceLocation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -426,6 +430,7 @@ class Google_Service_Logging_SourceLocation extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Logging_SourceReference extends Google_Model
 {
   protected $internal_gapi_mappings = array(

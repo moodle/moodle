@@ -23,6 +23,7 @@ if (!class_exists('Google_Client')) {
  * The Google API Client
  * https://github.com/google/google-api-php-client
  */
+#[AllowDynamicProperties]
 class Google_Client
 {
   const LIBVER = "1.1.5";

@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Books extends Google_Service
 {
   /** Manage your books. */
@@ -1450,6 +1451,7 @@ class Google_Service_Books extends Google_Service
  *   $bookshelves = $booksService->bookshelves;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_Bookshelves_Resource extends Google_Service_Resource
 {
 
@@ -1497,6 +1499,7 @@ class Google_Service_Books_Bookshelves_Resource extends Google_Service_Resource
  *   $volumes = $booksService->volumes;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_BookshelvesVolumes_Resource extends Google_Service_Resource
 {
 
@@ -1532,6 +1535,7 @@ class Google_Service_Books_BookshelvesVolumes_Resource extends Google_Service_Re
  *   $cloudloading = $booksService->cloudloading;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_Cloudloading_Resource extends Google_Service_Resource
 {
 
@@ -1592,6 +1596,7 @@ class Google_Service_Books_Cloudloading_Resource extends Google_Service_Resource
  *   $dictionary = $booksService->dictionary;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_Dictionary_Resource extends Google_Service_Resource
 {
 
@@ -1619,6 +1624,7 @@ class Google_Service_Books_Dictionary_Resource extends Google_Service_Resource
  *   $layers = $booksService->layers;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_Layers_Resource extends Google_Service_Resource
 {
 
@@ -1671,6 +1677,7 @@ class Google_Service_Books_Layers_Resource extends Google_Service_Resource
  *   $annotationData = $booksService->annotationData;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_LayersAnnotationData_Resource extends Google_Service_Resource
 {
 
@@ -1746,6 +1753,7 @@ class Google_Service_Books_LayersAnnotationData_Resource extends Google_Service_
  *   $volumeAnnotations = $booksService->volumeAnnotations;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_LayersVolumeAnnotations_Resource extends Google_Service_Resource
 {
 
@@ -1815,6 +1823,7 @@ class Google_Service_Books_LayersVolumeAnnotations_Resource extends Google_Servi
  *   $myconfig = $booksService->myconfig;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_Myconfig_Resource extends Google_Service_Resource
 {
 
@@ -1928,6 +1937,7 @@ class Google_Service_Books_Myconfig_Resource extends Google_Service_Resource
  *   $mylibrary = $booksService->mylibrary;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_Mylibrary_Resource extends Google_Service_Resource
 {
 }
@@ -1940,6 +1950,7 @@ class Google_Service_Books_Mylibrary_Resource extends Google_Service_Resource
  *   $annotations = $booksService->annotations;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_MylibraryAnnotations_Resource extends Google_Service_Resource
 {
 
@@ -2047,6 +2058,7 @@ class Google_Service_Books_MylibraryAnnotations_Resource extends Google_Service_
  *   $bookshelves = $booksService->bookshelves;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_MylibraryBookshelves_Resource extends Google_Service_Resource
 {
 
@@ -2162,6 +2174,7 @@ class Google_Service_Books_MylibraryBookshelves_Resource extends Google_Service_
  *   $volumes = $booksService->volumes;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_MylibraryBookshelvesVolumes_Resource extends Google_Service_Resource
 {
 
@@ -2199,6 +2212,7 @@ class Google_Service_Books_MylibraryBookshelvesVolumes_Resource extends Google_S
  *   $readingpositions = $booksService->readingpositions;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_MylibraryReadingpositions_Resource extends Google_Service_Resource
 {
 
@@ -2256,6 +2270,7 @@ class Google_Service_Books_MylibraryReadingpositions_Resource extends Google_Ser
  *   $notification = $booksService->notification;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_Notification_Resource extends Google_Service_Resource
 {
 
@@ -2286,6 +2301,7 @@ class Google_Service_Books_Notification_Resource extends Google_Service_Resource
  *   $onboarding = $booksService->onboarding;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_Onboarding_Resource extends Google_Service_Resource
 {
 
@@ -2339,6 +2355,7 @@ class Google_Service_Books_Onboarding_Resource extends Google_Service_Resource
  *   $personalizedstream = $booksService->personalizedstream;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_Personalizedstream_Resource extends Google_Service_Resource
 {
 
@@ -2371,6 +2388,7 @@ class Google_Service_Books_Personalizedstream_Resource extends Google_Service_Re
  *   $promooffer = $booksService->promooffer;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_Promooffer_Resource extends Google_Service_Resource
 {
 
@@ -2444,6 +2462,7 @@ class Google_Service_Books_Promooffer_Resource extends Google_Service_Resource
  *   $volumes = $booksService->volumes;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_Volumes_Resource extends Google_Service_Resource
 {
 
@@ -2508,6 +2527,7 @@ class Google_Service_Books_Volumes_Resource extends Google_Service_Resource
  *   $associated = $booksService->associated;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumesAssociated_Resource extends Google_Service_Resource
 {
 
@@ -2541,6 +2561,7 @@ class Google_Service_Books_VolumesAssociated_Resource extends Google_Service_Res
  *   $mybooks = $booksService->mybooks;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumesMybooks_Resource extends Google_Service_Resource
 {
 
@@ -2576,6 +2597,7 @@ class Google_Service_Books_VolumesMybooks_Resource extends Google_Service_Resour
  *   $recommended = $booksService->recommended;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumesRecommended_Resource extends Google_Service_Resource
 {
 
@@ -2627,6 +2649,7 @@ class Google_Service_Books_VolumesRecommended_Resource extends Google_Service_Re
  *   $useruploaded = $booksService->useruploaded;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumesUseruploaded_Resource extends Google_Service_Resource
 {
 
@@ -2659,6 +2682,7 @@ class Google_Service_Books_VolumesUseruploaded_Resource extends Google_Service_R
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Annotation extends Google_Collection
 {
   protected $collection_key = 'pageIds';
@@ -2824,6 +2848,7 @@ class Google_Service_Books_Annotation extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_AnnotationClientVersionRanges extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2881,6 +2906,7 @@ class Google_Service_Books_AnnotationClientVersionRanges extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_AnnotationCurrentVersionRanges extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2938,6 +2964,7 @@ class Google_Service_Books_AnnotationCurrentVersionRanges extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_AnnotationLayerSummary extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2973,6 +3000,7 @@ class Google_Service_Books_AnnotationLayerSummary extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Annotationdata extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3063,6 +3091,7 @@ class Google_Service_Books_Annotationdata extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Annotations extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3109,6 +3138,7 @@ class Google_Service_Books_Annotations extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_AnnotationsSummary extends Google_Collection
 {
   protected $collection_key = 'layers';
@@ -3137,6 +3167,7 @@ class Google_Service_Books_AnnotationsSummary extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_AnnotationsSummaryLayers extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3190,6 +3221,7 @@ class Google_Service_Books_AnnotationsSummaryLayers extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Annotationsdata extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3236,6 +3268,7 @@ class Google_Service_Books_Annotationsdata extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_BooksAnnotationsRange extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3280,6 +3313,7 @@ class Google_Service_Books_BooksAnnotationsRange extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_BooksCloudloadingResource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3324,6 +3358,7 @@ class Google_Service_Books_BooksCloudloadingResource extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_BooksVolumesRecommendedRateResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3342,6 +3377,7 @@ class Google_Service_Books_BooksVolumesRecommendedRateResponse extends Google_Mo
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Bookshelf extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3440,6 +3476,7 @@ class Google_Service_Books_Bookshelf extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Bookshelves extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3468,6 +3505,7 @@ class Google_Service_Books_Bookshelves extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Category extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3496,6 +3534,7 @@ class Google_Service_Books_Category extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_CategoryItems extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3531,6 +3570,7 @@ class Google_Service_Books_CategoryItems extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_ConcurrentAccessRestriction extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3638,6 +3678,7 @@ class Google_Service_Books_ConcurrentAccessRestriction extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Dictlayerdata extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3675,6 +3716,7 @@ class Google_Service_Books_Dictlayerdata extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DictlayerdataCommon extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3692,6 +3734,7 @@ class Google_Service_Books_DictlayerdataCommon extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DictlayerdataDict extends Google_Collection
 {
   protected $collection_key = 'words';
@@ -3721,6 +3764,7 @@ class Google_Service_Books_DictlayerdataDict extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DictlayerdataDictSource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3747,6 +3791,7 @@ class Google_Service_Books_DictlayerdataDictSource extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DictlayerdataDictWords extends Google_Collection
 {
   protected $collection_key = 'senses';
@@ -3796,6 +3841,7 @@ class Google_Service_Books_DictlayerdataDictWords extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DictlayerdataDictWordsDerivatives extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3823,6 +3869,7 @@ class Google_Service_Books_DictlayerdataDictWordsDerivatives extends Google_Mode
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DictlayerdataDictWordsDerivativesSource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3849,6 +3896,7 @@ class Google_Service_Books_DictlayerdataDictWordsDerivativesSource extends Googl
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DictlayerdataDictWordsExamples extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3876,6 +3924,7 @@ class Google_Service_Books_DictlayerdataDictWordsExamples extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DictlayerdataDictWordsExamplesSource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3902,6 +3951,7 @@ class Google_Service_Books_DictlayerdataDictWordsExamplesSource extends Google_M
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DictlayerdataDictWordsSenses extends Google_Collection
 {
   protected $collection_key = 'synonyms';
@@ -3987,6 +4037,7 @@ class Google_Service_Books_DictlayerdataDictWordsSenses extends Google_Collectio
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DictlayerdataDictWordsSensesConjugations extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4013,6 +4064,7 @@ class Google_Service_Books_DictlayerdataDictWordsSensesConjugations extends Goog
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DictlayerdataDictWordsSensesDefinitions extends Google_Collection
 {
   protected $collection_key = 'examples';
@@ -4041,6 +4093,7 @@ class Google_Service_Books_DictlayerdataDictWordsSensesDefinitions extends Googl
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DictlayerdataDictWordsSensesDefinitionsExamples extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4068,6 +4121,7 @@ class Google_Service_Books_DictlayerdataDictWordsSensesDefinitionsExamples exten
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DictlayerdataDictWordsSensesDefinitionsExamplesSource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4094,6 +4148,7 @@ class Google_Service_Books_DictlayerdataDictWordsSensesDefinitionsExamplesSource
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DictlayerdataDictWordsSensesSource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4120,6 +4175,7 @@ class Google_Service_Books_DictlayerdataDictWordsSensesSource extends Google_Mod
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DictlayerdataDictWordsSensesSynonyms extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4147,6 +4203,7 @@ class Google_Service_Books_DictlayerdataDictWordsSensesSynonyms extends Google_M
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DictlayerdataDictWordsSensesSynonymsSource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4173,6 +4230,7 @@ class Google_Service_Books_DictlayerdataDictWordsSensesSynonymsSource extends Go
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DictlayerdataDictWordsSource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4199,6 +4257,7 @@ class Google_Service_Books_DictlayerdataDictWordsSource extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Discoveryclusters extends Google_Collection
 {
   protected $collection_key = 'clusters';
@@ -4236,6 +4295,7 @@ class Google_Service_Books_Discoveryclusters extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DiscoveryclustersClusters extends Google_Collection
 {
   protected $collection_key = 'volumes';
@@ -4302,6 +4362,7 @@ class Google_Service_Books_DiscoveryclustersClusters extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DiscoveryclustersClustersBannerWithContentContainer extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4364,6 +4425,7 @@ class Google_Service_Books_DiscoveryclustersClustersBannerWithContentContainer e
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DownloadAccessRestriction extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4480,6 +4542,7 @@ class Google_Service_Books_DownloadAccessRestriction extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_DownloadAccesses extends Google_Collection
 {
   protected $collection_key = 'downloadAccessList';
@@ -4508,6 +4571,7 @@ class Google_Service_Books_DownloadAccesses extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Geolayerdata extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4545,6 +4609,7 @@ class Google_Service_Books_Geolayerdata extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_GeolayerdataCommon extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4598,6 +4663,7 @@ class Google_Service_Books_GeolayerdataCommon extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_GeolayerdataGeo extends Google_Collection
 {
   protected $collection_key = 'boundary';
@@ -4681,6 +4747,7 @@ class Google_Service_Books_GeolayerdataGeo extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_GeolayerdataGeoBoundary extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4707,6 +4774,7 @@ class Google_Service_Books_GeolayerdataGeoBoundary extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_GeolayerdataGeoViewport extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4735,6 +4803,7 @@ class Google_Service_Books_GeolayerdataGeoViewport extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_GeolayerdataGeoViewportHi extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4761,6 +4830,7 @@ class Google_Service_Books_GeolayerdataGeoViewportHi extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_GeolayerdataGeoViewportLo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4787,6 +4857,7 @@ class Google_Service_Books_GeolayerdataGeoViewportLo extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Layersummaries extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -4824,6 +4895,7 @@ class Google_Service_Books_Layersummaries extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Layersummary extends Google_Collection
 {
   protected $collection_key = 'annotationTypes';
@@ -4950,6 +5022,7 @@ class Google_Service_Books_Layersummary extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Metadata extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -4978,6 +5051,7 @@ class Google_Service_Books_Metadata extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_MetadataItems extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5033,6 +5107,7 @@ class Google_Service_Books_MetadataItems extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Notification extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5086,6 +5161,7 @@ class Google_Service_Books_Notification extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Offers extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5114,6 +5190,7 @@ class Google_Service_Books_Offers extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_OffersItems extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5160,6 +5237,7 @@ class Google_Service_Books_OffersItems extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_OffersItemsItems extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5222,6 +5300,7 @@ class Google_Service_Books_OffersItemsItems extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_ReadingPosition extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5293,6 +5372,7 @@ class Google_Service_Books_ReadingPosition extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_RequestAccess extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5330,6 +5410,7 @@ class Google_Service_Books_RequestAccess extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Review extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5430,6 +5511,7 @@ class Google_Service_Books_Review extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_ReviewAuthor extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5447,6 +5529,7 @@ class Google_Service_Books_ReviewAuthor extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_ReviewSource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5482,6 +5565,7 @@ class Google_Service_Books_ReviewSource extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Usersettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5519,6 +5603,7 @@ class Google_Service_Books_Usersettings extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_UsersettingsNotesExport extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5545,6 +5630,7 @@ class Google_Service_Books_UsersettingsNotesExport extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_UsersettingsNotification extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5563,6 +5649,7 @@ class Google_Service_Books_UsersettingsNotification extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_UsersettingsNotificationMoreFromAuthors extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5581,6 +5668,7 @@ class Google_Service_Books_UsersettingsNotificationMoreFromAuthors extends Googl
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Volume extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5695,6 +5783,7 @@ class Google_Service_Books_Volume extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Volume2 extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5732,6 +5821,7 @@ class Google_Service_Books_Volume2 extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeAccessInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5869,6 +5959,7 @@ class Google_Service_Books_VolumeAccessInfo extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeAccessInfoEpub extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5904,6 +5995,7 @@ class Google_Service_Books_VolumeAccessInfoEpub extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeAccessInfoPdf extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5939,6 +6031,7 @@ class Google_Service_Books_VolumeAccessInfoPdf extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeLayerInfo extends Google_Collection
 {
   protected $collection_key = 'layers';
@@ -5958,6 +6051,7 @@ class Google_Service_Books_VolumeLayerInfo extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeLayerInfoLayers extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5984,6 +6078,7 @@ class Google_Service_Books_VolumeLayerInfoLayers extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeRecommendedInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6001,6 +6096,7 @@ class Google_Service_Books_VolumeRecommendedInfo extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeSaleInfo extends Google_Collection
 {
   protected $collection_key = 'offers';
@@ -6085,6 +6181,7 @@ class Google_Service_Books_VolumeSaleInfo extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeSaleInfoListPrice extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6111,6 +6208,7 @@ class Google_Service_Books_VolumeSaleInfoListPrice extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeSaleInfoOffers extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6158,6 +6256,7 @@ class Google_Service_Books_VolumeSaleInfoOffers extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeSaleInfoOffersListPrice extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6184,6 +6283,7 @@ class Google_Service_Books_VolumeSaleInfoOffersListPrice extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeSaleInfoOffersRentalDuration extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6210,6 +6310,7 @@ class Google_Service_Books_VolumeSaleInfoOffersRentalDuration extends Google_Mod
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeSaleInfoOffersRetailPrice extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6236,6 +6337,7 @@ class Google_Service_Books_VolumeSaleInfoOffersRetailPrice extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeSaleInfoRetailPrice extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6262,6 +6364,7 @@ class Google_Service_Books_VolumeSaleInfoRetailPrice extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeSearchInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6279,6 +6382,7 @@ class Google_Service_Books_VolumeSearchInfo extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeUserInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6409,6 +6513,7 @@ class Google_Service_Books_VolumeUserInfo extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeUserInfoCopy extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6453,6 +6558,7 @@ class Google_Service_Books_VolumeUserInfoCopy extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeUserInfoRentalPeriod extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6479,6 +6585,7 @@ class Google_Service_Books_VolumeUserInfoRentalPeriod extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeUserInfoUserUploadedVolumeInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6496,6 +6603,7 @@ class Google_Service_Books_VolumeUserInfoUserUploadedVolumeInfo extends Google_M
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeVolumeInfo extends Google_Collection
 {
   protected $collection_key = 'industryIdentifiers';
@@ -6733,6 +6841,7 @@ class Google_Service_Books_VolumeVolumeInfo extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeVolumeInfoDimensions extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6768,6 +6877,7 @@ class Google_Service_Books_VolumeVolumeInfoDimensions extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeVolumeInfoImageLinks extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6830,6 +6940,7 @@ class Google_Service_Books_VolumeVolumeInfoImageLinks extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeVolumeInfoIndustryIdentifiers extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6856,6 +6967,7 @@ class Google_Service_Books_VolumeVolumeInfoIndustryIdentifiers extends Google_Mo
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Volumeannotation extends Google_Collection
 {
   protected $collection_key = 'pageIds';
@@ -6992,6 +7104,7 @@ class Google_Service_Books_Volumeannotation extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_VolumeannotationContentRanges extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7039,6 +7152,7 @@ class Google_Service_Books_VolumeannotationContentRanges extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Volumeannotations extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -7094,6 +7208,7 @@ class Google_Service_Books_Volumeannotations extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Books_Volumes extends Google_Collection
 {
   protected $collection_key = 'items';
