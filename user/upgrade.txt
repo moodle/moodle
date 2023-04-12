@@ -19,6 +19,8 @@ This files describes API changes for code that uses the user API.
    * Return in the field `value` the value of the custom field (as stored in the database)
    * Return in the field `displayvalue` the value of the custom field for display
    External systems displaying user information should always use `displayvalue`.
+* New method `user_update_device_public_key()`` and accompanying external function core_user_external::update_device_public_key to
+  update a user's app generated public key by device uuid and app id.
 
 === 4.1 ===
 
