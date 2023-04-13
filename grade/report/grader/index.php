@@ -127,6 +127,14 @@ if ($sort) {
     $sort = strtoupper($sort);
 }
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid, $sort);
+
+// We call this a little later since we need some info from the grader report.
+$PAGE->requires->js_call_amd('gradereport_grader/collapse', 'init', [
+    'userID' => $USER->id,
+    'courseID' => $courseid,
+    'defaultSort' => $report->get_default_sortable()
+]);
+
 $numusers = $report->get_numusers(true, true);
 
 $actionbar = new \gradereport_grader\output\action_bar($context, $report, $numusers);

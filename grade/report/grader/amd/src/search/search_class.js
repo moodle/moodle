@@ -76,11 +76,15 @@ export default class {
     $component = $(this.component);
 
     constructor() {
-        this.setSearchTerms(this.searchInput.value ?? '');
+        // If we have a search input, try to get the value otherwise fallback.
+        this.setSearchTerms(this.searchInput?.value ?? '');
         // Begin handling the base search component.
         this.registerClickHandlers();
         this.registerKeyHandlers();
-        this.registerInputHandlers();
+        // Conditionally set up the input handler since we don't know exactly how we were called.
+        if (this.searchInput !== null) {
+            this.registerInputHandlers();
+        }
     }
 
     /**
@@ -252,6 +256,9 @@ export default class {
         this.resultNodes = [...this.component.querySelectorAll(this.selectors.resultitems)];
         this.currentNode = this.resultNodes.find(r => r.id === document.activeElement.id);
         this.currentViewAll = this.component.querySelector(this.selectors.viewall);
+        this.clearSearchButton = this.component.querySelector(this.selectors.clearSearch);
+        this.searchInput = this.component.querySelector(this.selectors.input);
+        this.searchDropdown = this.component.querySelector(this.selectors.dropdown);
     }
 
     /**

@@ -34,10 +34,11 @@
         "divider1": "true",
         "divider2": "true",
         "datatype": "item",
-        "dataid": "123"
+        "dataid": "123",
+        "columncollapse": "<a class='dropdown-item' data-hider='hide' aria-label='Collapse' role='menuitem' href='#'>Collapse</a>"
     }
 }}
-<div class="action-menu mb-1 moodle-actionmenu grader">
+<div class="action-menu mb-1 moodle-actionmenu grader" data-collapse="menu">
     <div class="dropdown">
         <button class="btn btn-link btn-icon icon-size-3 cellmenubtn"
             type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
@@ -52,6 +53,7 @@
             {{#editcalculationurl}}{{{editcalculationurl}}}{{/editcalculationurl}}
             {{#reporturl0}}{{{reporturl0}}}{{/reporturl0}}
             {{#reporturl1}}{{{reporturl1}}}{{/reporturl1}}
+            {{#advancedgradingurl}}{{{advancedgradingurl}}}{{/advancedgradingurl}}
             {{#gradesonlyurl}}{{{gradesonlyurl}}}{{/gradesonlyurl}}
             {{#aggregatesonlyurl}}{{{aggregatesonlyurl}}}{{/aggregatesonlyurl}}
             {{#fullmodeurl}}{{{fullmodeurl}}}{{/fullmodeurl}}
@@ -78,6 +80,7 @@
             {{/divider2}}
             {{#hideurl}}{{{hideurl}}}{{/hideurl}}
             {{#lockurl}}{{{lockurl}}}{{/lockurl}}
+            {{#columncollapse}}{{{columncollapse}}}{{/columncollapse}}
             {{#resetweightsurl}}{{{resetweightsurl}}}{{/resetweightsurl}}
             {{#viewfeedbackurl}}{{{viewfeedbackurl}}}{{/viewfeedbackurl}}
         </div>

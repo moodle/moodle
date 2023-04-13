@@ -110,6 +110,10 @@
     min-width: 200px;
 }
 
+.path-grade-report-grader .gradeparent .highlightable.cell.collapsed {
+    min-width: unset;
+}
+
 .path-grade-report-grader .gradeparent .user.cell .userpicture {
     border: none;
     vertical-align: middle;
@@ -248,4 +252,9 @@
 .path-grade-report-grader .usersearchdropdown .footer {
     border-top: 1px solid #dee2e6;
     font-size: 90%;
+}
+
+.collapsecolumndropdown.show {
+    width: 275px;
+    max-height: 300px;
 }

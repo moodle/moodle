@@ -666,11 +666,19 @@ class grade_report_grader extends grade_report {
         foreach ($extrafields as $field) {
             $fieldheader = new html_table_cell();
             $fieldheader->attributes['class'] = 'userfield user' . $field;
+            $fieldheader->attributes['data-col'] = $field;
             $fieldheader->scope = 'col';
             $fieldheader->header = true;
+
+            $collapsecontext = ['field' => $field, 'name' => $field];
+
+            $collapsedicon = $OUTPUT->render_from_template('gradereport_grader/collapse/icon', $collapsecontext);
+            // Need to wrap the button into a div with our hooking element for user items, gradeitems already have this.
+            $collapsedicon = html_writer::div($collapsedicon, 'd-none', ['data-collapse' => 'expandbutton']);
+
             $element = ['type' => 'userfield', 'name' => $field];
             $fieldheader->text = $arrows[$field] .
-                $this->gtree->get_cell_action_menu($element, 'gradeitem', $this->gpr, $this->baseurl);
+                $this->gtree->get_cell_action_menu($element, 'gradeitem', $this->gpr, $this->baseurl) . $collapsedicon;
             $headerrow->cells[] = $fieldheader;
         }
 
@@ -723,8 +731,12 @@ class grade_report_grader extends grade_report {
             foreach ($extrafields as $field) {
                 $fieldcell = new html_table_cell();
                 $fieldcell->attributes['class'] = 'userfield user' . $field;
+                $fieldcell->attributes['data-col'] = $field;
                 $fieldcell->header = false;
-                $fieldcell->text = s($user->{$field});
+                $fieldcell->text = html_writer::tag('div', s($user->{$field}), [
+                    'data-collapse' => 'content'
+                ]);
+
                 $userrow->cells[] = $fieldcell;
             }
 
@@ -836,6 +848,15 @@ class grade_report_grader extends grade_report {
                         }
                     }
 
+                    $collapsecontext = [
+                        'field' => $element['object']->id,
+                        'name' => $element['object']->get_name(),
+                    ];
+                    $collapsedicon = '';
+                    // We do not want grade category total items to be hidden away as it is controlled by something else.
+                    if (!$element['object']->is_aggregate_item()) {
+                        $collapsedicon = $OUTPUT->render_from_template('gradereport_grader/collapse/icon', $collapsecontext);
+                    }
                     $headerlink = $this->gtree->get_element_header($element, true,
                         true, false, false, true, $sortlink);
 
@@ -871,6 +892,7 @@ class grade_report_grader extends grade_report {
                     $context->arrow = $arrow;
                     $context->singleview = $singleview;
                     $context->statusicons = $statusicons;
+                    $context->collapsedicon = $collapsedicon;
 
                     $itemcell->text = $OUTPUT->render_from_template('gradereport_grader/headercell', $context);
 
@@ -1166,7 +1188,7 @@ class grade_report_grader extends grade_report {
         $html = '';
 
         $fulltable = new html_table();
-        $fulltable->attributes['class'] = 'gradereport-grader-table';
+        $fulltable->attributes['class'] = 'gradereport-grader-table d-none';
         $fulltable->id = 'user-grades';
         $fulltable->caption = get_string('summarygrader', 'gradereport_grader');
         $fulltable->captionhide = true;
@@ -1370,7 +1392,6 @@ class grade_report_grader extends grade_report {
      */
     public function get_right_avg_row($rows=array(), $grouponly=false) {
         global $USER, $DB, $OUTPUT, $CFG;
-
         if (!$this->canviewhidden) {
             // Totals might be affected by hiding, if user can not see hidden grades the aggregations might be altered
             // better not show them at all if user can not see all hidden grades.
@@ -1518,9 +1539,9 @@ class grade_report_grader extends grade_report {
                 if (!isset($sumarray[$item->id]) || $meancount == 0) {
                     $avgcell = new html_table_cell();
                     $avgcell->attributes['class'] = $gradetypeclass . ' i'. $itemid;
-                    $avgcell->text = '-';
+                    $avgcell->attributes['data-itemid'] = $itemid;
+                    $avgcell->text = html_writer::div('-', '', ['data-collapse' => 'avgrowcell']);
                     $avgrow->cells[] = $avgcell;
-
                 } else {
                     $sum = $sumarray[$item->id];
                     $avgradeval = $sum/$meancount;
@@ -1533,7 +1554,8 @@ class grade_report_grader extends grade_report {
 
                     $avgcell = new html_table_cell();
                     $avgcell->attributes['class'] = $gradetypeclass . ' i'. $itemid;
-                    $avgcell->text = $gradehtml.$numberofgrades;
+                    $avgcell->attributes['data-itemid'] = $itemid;
+                    $avgcell->text = html_writer::div($gradehtml.$numberofgrades, '', ['data-collapse' => 'avgrowcell']);
                     $avgrow->cells[] = $avgcell;
                 }
             }
@@ -1839,7 +1861,7 @@ class grade_report_grader extends grade_report {
      *   user idnumber
      * @return array An associative array of HTML sorting links+arrows
      */
-    public function get_sort_arrows(array $extrafields = array()) {
+    public function get_sort_arrows(array $extrafields = []) {
         global $CFG;
         $arrows = array();
         $sortlink = clone($this->baseurl);
@@ -1879,8 +1901,15 @@ class grade_report_grader extends grade_report {
         }
 
         foreach ($extrafields as $field) {
-            $fieldlink = html_writer::link(new moodle_url($this->baseurl,
-                    array('sortitemid' => $field)), \core_user\fields::get_display_name($field));
+            $attributes = [
+                'data-collapse' => 'content'
+            ];
+            // With additional user profile fields, we can't grab the name via WS, so conditionally add it to rip out of the DOM.
+            if (preg_match(\core_user\fields::PROFILE_FIELD_REGEX, $field)) {
+                $attributes['data-collapse-name'] = \core_user\fields::get_display_name($field);
+            }
+            $fieldlink = html_writer::link(new moodle_url($this->baseurl, ['sortitemid' => $field]),
+                \core_user\fields::get_display_name($field), $attributes);
             $arrows[$field] = $fieldlink;
 
             if ($field == $this->sortitemid) {
@@ -1925,6 +1954,38 @@ class grade_report_grader extends grade_report {
         return html_writer::link($urlnew, $title,
             ['class' => 'dropdown-item', 'aria-label' => $title, 'aria-current' => $active, 'role' => 'menuitem']);
     }
+
+    /**
+     * Return the link to allow the field to collapse from the users view.
+     *
+     * @return string Dropdown menu link that'll trigger the collapsing functionality.
+     * @throws coding_exception
+     * @throws moodle_exception
+     */
+    public function get_hide_show_link(): string {
+        $link = new moodle_url('#', []);
+        return html_writer::link(
+            $link->out(false),
+            get_string('collapse'),
+            ['class' => 'dropdown-item', 'data-hider' => 'hide', 'aria-label' => get_string('collapse'), 'role' => 'menuitem'],
+        );
+    }
+
+    /**
+     * Return the base report link with some default sorting applied.
+     *
+     * @return string
+     * @throws moodle_exception
+     */
+    public function get_default_sortable(): string {
+        $sortlink = new moodle_url('/grade/report/grader/index.php', [
+            'id' => $this->courseid,
+            'sortitemid' => 'firstname',
+            'sort' => 'asc'
+        ]);
+        $this->gpr->add_url_params($sortlink);
+        return $sortlink->out(false);
+    }
 }
 
 /**
@@ -1941,12 +2002,12 @@ class grade_report_grader extends grade_report {
 function gradereport_grader_get_report_link(context_course $context, int $courseid,
         array $element, grade_plugin_return $gpr, string $mode, ?stdClass $templatecontext): ?stdClass {
 
-    if ($mode == 'category') {
-        static $report = null;
-        if (!$report) {
-            $report = new grade_report_grader($courseid, $gpr, $context);
-        }
+    static $report = null;
+    if (!$report) {
+        $report = new grade_report_grader($courseid, $gpr, $context);
+    }
 
+    if ($mode == 'category') {
         if (!isset($templatecontext)) {
             $templatecontext = new stdClass();
         }
@@ -1976,6 +2037,17 @@ function gradereport_grader_get_report_link(context_course $context, int $course
             $report->get_category_view_mode_link($url, $strswitchminus, 'switch_minus', $aggregatesonly);
         $templatecontext->fullmodeurl =
             $report->get_category_view_mode_link($url, $strswitchwhole, 'switch_whole', $fullmode);
+        return $templatecontext;
+    } else if ($mode == 'gradeitem') {
+        if (($element['type'] == 'userfield') && ($element['name'] !== 'fullname')) {
+            $templatecontext->columncollapse = $report->get_hide_show_link();
+            $templatecontext->dataid = $element['name'];
+        }
+
+        // We do not want grade category total items to be hidden away as it is controlled by something else.
+        if (isset($element['object']->id) && !$element['object']->is_aggregate_item()) {
+            $templatecontext->columncollapse = $report->get_hide_show_link();
+        }
         return $templatecontext;
     }
     return null;

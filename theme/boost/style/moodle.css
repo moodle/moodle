@@ -34869,7 +34869,7 @@ p.arrow_button {
   height: 18px;
 }
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-weight {
-  min-width: 10em;
+  min-width: 15em;
 }
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-weight .weightoverride {
   margin-right: 5px;

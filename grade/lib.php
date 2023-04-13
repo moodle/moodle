@@ -1539,7 +1539,7 @@ class grade_structure {
      * @param bool  $withdescription Show description if defined by this item.
      * @param bool  $fulltotal If the item is a category total, returns $categoryname."total"
      *                         instead of "Category total" or "Course total"
-     * @param moodle_url|null  $sortlink Link to sort column.
+     * @param moodle_url|null $sortlink Link to sort column.
      *
      * @return string header
      */
@@ -1563,19 +1563,25 @@ class grade_structure {
 
         if ($sortlink) {
             $url = $sortlink;
-            $header = html_writer::link($url, $header,
-                ['title' => $titleunescaped, 'class' => 'gradeitemheader']);
-        }
-
-        if (!$sortlink) {
+            $header = html_writer::link($url, $header, [
+                'title' => $titleunescaped,
+                'class' => 'gradeitemheader '
+            ]);
+        } else {
             if ($withlink && $url = $this->get_activity_link($element)) {
                 $a = new stdClass();
                 $a->name = get_string('modulename', $element['object']->itemmodule);
                 $a->title = $titleunescaped;
                 $title = get_string('linktoactivity', 'grades', $a);
-                $header = html_writer::link($url, $header, ['title' => $title, 'class' => 'gradeitemheader']);
+                $header = html_writer::link($url, $header, [
+                    'title' => $title,
+                    'class' => 'gradeitemheader ',
+                ]);
             } else {
-                $header = html_writer::span($header, 'gradeitemheader', ['title' => $titleunescaped, 'tabindex' => '0']);
+                $header = html_writer::span($header, 'gradeitemheader ', [
+                    'title' => $titleunescaped,
+                    'tabindex' => '0'
+                ]);
             }
         }
 
@@ -2460,7 +2466,7 @@ class grade_structure {
             }
         }
 
-        $class = 'grade_icons';
+        $class = 'grade_icons data-collapse_gradeicons';
         if (isset($element['type']) && ($element['type'] == 'category')) {
             $class = 'category_grade_icons';
         }
@@ -2526,14 +2532,18 @@ class grade_structure {
                                 $element, $gpr, $mode, $context, true);
                         $context->advancedgradingurl = $this->get_advanced_grading_link($element, $gpr);
                     }
-                }
-
-                if ($element['type'] == 'item') {
                     $context->divider1 = true;
                 }
 
+                if (($element['type'] == 'item') ||
+                    (($element['type'] == 'userfield') && ($element['name'] !== 'fullname'))) {
+                    $context->divider2 = true;
+                }
+
                 if (!empty($USER->editing) || $mode == 'setup') {
-                    if (($element['type'] !== 'userfield') && ($mode !== 'setup')) {
+                    if (($element['type'] == 'userfield') && ($element['name'] !== 'fullname')) {
+                        $context->divider2 = true;
+                    } else if (($mode !== 'setup') && ($element['type'] !== 'userfield')) {
                         $context->divider1 = true;
                         $context->divider2 = true;
                     }
@@ -2556,7 +2566,7 @@ class grade_structure {
 
                 // Sorting item.
                 if ($baseurl) {
-                    $sortlink = $baseurl;
+                    $sortlink = clone($baseurl);
                     if (isset($element['object']->id)) {
                         $sortlink->param('sortitemid', $element['object']->id);
                     } else if ($element['type'] == 'userfield') {
@@ -2576,6 +2586,10 @@ class grade_structure {
                         $context->ascendingurl = $this->get_sorting_link($sortlink, $gpr);
                         $context->descendingurl = $this->get_sorting_link($sortlink, $gpr, 'desc');
                     }
+                }
+                if ($mode !== 'setup') {
+                    $context = grade_report::get_additional_context($this->context, $this->courseid,
+                        $element, $gpr, $mode, $context);
                 }
             } else if ($element['type'] == 'category') {
                 $context->datatype = 'category';

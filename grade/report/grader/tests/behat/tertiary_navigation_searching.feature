@@ -125,6 +125,7 @@ Feature: Within the grader report, test that we can search for users
     # Business case: When searching with multiple partial matches, show the matches in the dropdown + a "View all results for (Bob)"
     # Business case cont. When pressing enter with multiple partial matches, behave like when you select the "View all results for (Bob)"
     # Case: Multiple users found and select all partial matches.
+    # TODO: Need to look at maybe adding the users email or something in the case multiple matches exist?
     And I set the field "Search users" to "User"
     And I wait until "View all results for \"User\"" "button" exists
     # Dont need to check if all users are in the dropdown, we checked that earlier in this test.

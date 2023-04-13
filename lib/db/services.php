@@ -1000,6 +1000,13 @@ $functions = array(
         'description' => 'Get the feedback data for a grade item',
         'type' => 'read',
         'ajax' => true,
+        ],
+    'core_grades_get_gradeitems' => [
+        'classname' => 'core_grades\external\get_gradeitems',
+        'description' => 'Get the gradeitems for a course',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
     'core_grading_get_definitions' => array(
         'classname' => 'core_grading_external',
