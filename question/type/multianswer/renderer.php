@@ -88,13 +88,6 @@ class qtype_multianswer_renderer extends qtype_renderer {
                     array('class' => 'validationerror'));
         }
 
-        $this->page->requires->js_init_call('M.qtype_multianswer.init',
-                array('#' . $qa->get_outer_question_div_unique_id()), false, array(
-                    'name'     => 'qtype_multianswer',
-                    'fullpath' => '/question/type/multianswer/module.js',
-                    'requires' => array('base', 'node', 'event', 'overlay'),
-                ));
-
         return $output;
     }
 
@@ -202,8 +195,33 @@ abstract class qtype_multianswer_subq_renderer_base extends qtype_renderer {
             return '';
         }
 
-        return html_writer::tag('span', implode('<br />', $feedback),
-                array('class' => 'feedbackspan accesshide'));
+        return html_writer::tag('span', implode('<br />', $feedback), [
+            'class' => 'feedbackspan',
+        ]);
+    }
+
+    /**
+     * Render the feedback icon for a sub-question which is also the trigger for the feedback popover.
+     *
+     * @param string $icon The feedback icon
+     * @param string $feedbackcontents The feedback contents to be shown on the popover.
+     * @return string
+     */
+    protected function get_feedback_image(string $icon, string $feedbackcontents): string {
+        if ($icon === '') {
+            return '';
+        }
+
+        return html_writer::tag('button', $icon, [
+            'type' => 'button',
+            'class' => 'btn btn-link p-0',
+            'data-toggle' => 'popover',
+            'data-container' => 'body',
+            'data-content' => $feedbackcontents,
+            'data-placement' => 'right',
+            'data-trigger' => 'focus',
+            'data-html' => 'true',
+        ]);
     }
 
     /**
@@ -315,8 +333,7 @@ class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_render
         $output .= html_writer::tag('label', $this->get_answer_label(),
                 array('class' => 'subq accesshide', 'for' => $inputattributes['id']));
         $output .= html_writer::empty_tag('input', $inputattributes);
-        $output .= $feedbackimg;
-        $output .= $feedbackpopup;
+        $output .= $this->get_feedback_image($feedbackimg, $feedbackpopup);
         $output .= html_writer::end_tag('span');
 
         return $output;
@@ -385,8 +402,7 @@ class qtype_multianswer_multichoice_inline_renderer
         $output .= html_writer::tag('label', $this->get_answer_label(),
                 array('class' => 'subq accesshide', 'for' => $inputattributes['id']));
         $output .= $select;
-        $output .= $feedbackimg;
-        $output .= $feedbackpopup;
+        $output .= $this->get_feedback_image($feedbackimg, $feedbackpopup);
         $output .= html_writer::end_tag('span');
 
         return $output;
