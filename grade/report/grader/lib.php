@@ -467,7 +467,8 @@ class grade_report_grader extends grade_report {
                    $this->groupwheresql
               ORDER BY $sort";
         // We never work with unlimited result. Limit the number of records by MAX_STUDENTS_PER_PAGE if no other limit is specified.
-        $studentsperpage = ($this->get_students_per_page() && !$allusers) ? $this->get_students_per_page() : static::MAX_STUDENTS_PER_PAGE;
+        $studentsperpage = ($this->get_students_per_page() && !$allusers) ?
+            $this->get_students_per_page() : static::MAX_STUDENTS_PER_PAGE;
         $this->users = $DB->get_records_sql($sql, $params, $studentsperpage * $this->page, $studentsperpage);
 
         if (empty($this->users)) {

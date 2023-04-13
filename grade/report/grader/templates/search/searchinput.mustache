@@ -23,7 +23,8 @@
     Example context (json):
     {
         "currentvalue": "bar",
-        "courseid": 2
+        "courseid": 2,
+        "resetlink": "grade/report/grader/index.php?id=2"
     }
 }}
 <span class="d-none" data-region="courseid" data-courseid="{{courseid}}" aria-hidden="true"></span>
@@ -34,6 +35,9 @@
         {{/str}}{{/label}}
         {{$value}}{{{currentvalue}}}{{/value}}
     {{/ core/search_input_auto }}
+    <a class="ml-2 btn btn-link border-0" href="{{resetlink}}" data-action="resetpage" role="link" aria-label="{{#str}}clearsearch, gradereport_grader{{/str}}">
+        {{#str}}clear{{/str}}
+    </a>
 {{/currentvalue}}
 {{^currentvalue}}
     {{< core/search_input_auto }}
