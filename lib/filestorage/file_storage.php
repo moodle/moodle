@@ -982,7 +982,7 @@ class file_storage {
      * @param int $itemid item ID
      * @param string $filepath file path
      * @param int $userid the user ID
-     * @return bool success
+     * @return stored_file|false success
      */
     public function create_directory($contextid, $component, $filearea, $itemid, $filepath, $userid = null) {
         global $DB;

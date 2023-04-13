@@ -242,7 +242,7 @@ function h5pactivity_rescale_activity_grades(stdClass $course, stdClass $cm, flo
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the H5P activity.
  *
- * @param object $mform form passed by reference
+ * @param MoodleQuickForm $mform form passed by reference
  */
 function h5pactivity_reset_course_form_definition(&$mform): void {
     $mform->addElement('header', 'h5pactivityheader', get_string('modulenameplural', 'mod_h5pactivity'));

@@ -705,7 +705,7 @@ class pdf extends TcpdfFpdi {
     /**
      * Check to see if PDF is version 1.4 (or below); if not: use ghostscript to convert it
      *
-     * @param stored_file $file
+     * @param \stored_file $file
      * @return string path to copy or converted pdf (false == fail)
      */
     public static function ensure_pdf_compatible(\stored_file $file) {

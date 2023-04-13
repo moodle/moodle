@@ -1045,7 +1045,7 @@ class core_enrol_external extends external_api {
     /**
      * Returns description of submit_user_enrolment_form parameters.
      *
-     * @return external_function_parameters.
+     * @return external_function_parameters
      */
     public static function submit_user_enrolment_form_parameters() {
         return new external_function_parameters([

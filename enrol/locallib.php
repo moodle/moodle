@@ -590,7 +590,7 @@ class course_enrolment_manager {
      * that SQL, and the filter that was used in constructing the sql.
      *
      * @global moodle_database $DB
-     * @return string
+     * @return array
      */
     protected function get_instance_sql() {
         global $DB;

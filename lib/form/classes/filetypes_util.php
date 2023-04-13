@@ -259,7 +259,7 @@ class filetypes_util {
      * @param string|array $onlytypes Allow selection from these file types only; for example 'web_image'.
      * @param bool $allowall Allow to select 'All file types'. Does not apply with onlytypes are set.
      * @param string|array $current Current values that should be selected.
-     * @return object
+     * @return array
      */
     public function data_for_browser($onlytypes=null, $allowall=true, $current=null) {
 

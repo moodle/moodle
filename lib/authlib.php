@@ -1197,7 +1197,7 @@ function signup_is_enabled() {
 
 /**
  * Helper function used to print locking for auth plugins on admin pages.
- * @param stdclass $settings Moodle admin settings instance
+ * @param admin_settingpage $settings Moodle admin settings instance
  * @param string $auth authentication plugin shortname
  * @param array $userfields user profile fields
  * @param string $helptext help text to be displayed at top of form

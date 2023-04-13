@@ -475,7 +475,7 @@ class logging_test extends \advanced_testcase {
     /**
      * Create and configure a mocked task logger.
      *
-     * @return  task_logger
+     * @return  logging_test_mocked_logger
      */
     protected function get_mocked_logger() {
         global $CFG;

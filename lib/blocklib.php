@@ -345,7 +345,7 @@ class block_manager {
      * @param string $region region name
      * @param float $weight weight. May be fractional, since you may want to move a block
      * between ones with weight 2 and 3, say ($weight would be 2.5).
-     * @return string URL for moving block $this->movingblock to this position.
+     * @return moodle_url URL for moving block $this->movingblock to this position.
      */
     protected function get_move_target_url($region, $weight) {
         return new moodle_url($this->page->url, array('bui_moveid' => $this->movingblock,
@@ -1534,6 +1534,7 @@ class block_manager {
             // At this point we are going to display the block selector, overwrite global $PAGE ready for this.
             $PAGE = $addpage;
             // Some functions use $OUTPUT so we need to replace that too.
+            /** @var core_renderer $OUTPUT */
             $OUTPUT = $addpage->get_renderer('core');
 
             $site = get_site();
@@ -1611,6 +1612,7 @@ class block_manager {
             // overwrite global $PAGE ready for this. (Formslib refers to it.)
             $PAGE = $deletepage;
             //some functions like MoodleQuickForm::addHelpButton use $OUTPUT so we need to replace that too
+            /** @var core_renderer $output */
             $output = $deletepage->get_renderer('core');
             $OUTPUT = $output;
 

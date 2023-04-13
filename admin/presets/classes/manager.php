@@ -183,7 +183,8 @@ class manager {
      * @param boolean $sitedbvalues Indicates if $dbsettings comes from the site db or not
      * @param array $settings Array format $array['plugin']['settingname'] = settings_types child class
      * @param array|false $children Array of admin_category children or false
-     * @return    array Array format $array['plugin']['settingname'] = settings_types child class
+     * @return \core_adminpresets\local\setting\adminpresets_setting[][] Array format
+     *    $array['plugin']['settingname'] = adminpresets_setting child class
      */
     public function get_settings(array $dbsettings, bool $sitedbvalues = false, array $settings = [], $children = false): array {
         global $DB;

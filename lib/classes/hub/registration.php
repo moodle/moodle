@@ -46,7 +46,7 @@ class registration {
         'contactemail', 'contactable', 'emailalert', 'emailalertemail', 'commnews', 'commnewsemail',
         'contactname', 'name', 'description', 'imageurl', 'contactphone', 'regioncode', 'geolocation', 'street'];
 
-    /** @var List of new FORM_FIELDS or siteinfo fields added indexed by the version when they were added.
+    /** @var array List of new FORM_FIELDS or siteinfo fields added indexed by the version when they were added.
      * If site was already registered, admin will be promted to confirm new registration data manually. Until registration is manually confirmed,
      * the scheduled task updating registration will be paused.
      * Keys of this array are not important as long as they increment, use current date to avoid confusions.
@@ -64,13 +64,13 @@ class registration {
         2023021700 => ['dbtype', 'coursesnodates', 'sitetheme', 'primaryauthtype'],
     ];
 
-    /** @var Site privacy: not displayed */
+    /** @var string Site privacy: not displayed */
     const HUB_SITENOTPUBLISHED = 'notdisplayed';
 
-    /** @var Site privacy: public */
+    /** @var string Site privacy: public */
     const HUB_SITENAMEPUBLISHED = 'named';
 
-    /** @var Site privacy: public and global */
+    /** @var string Site privacy: public and global */
     const HUB_SITELINKPUBLISHED = 'linked';
 
     /** @var stdClass cached site registration information */

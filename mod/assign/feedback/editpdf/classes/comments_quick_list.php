@@ -52,7 +52,7 @@ class comments_quick_list {
      * @param string $commenttext
      * @param int $width
      * @param string $colour
-     * @return stdClass - the comment record (with new id set)
+     * @return \stdClass - the comment record (with new id set)
      */
     public static function add_comment($commenttext, $width, $colour) {
         global $DB, $USER;

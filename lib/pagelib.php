@@ -523,7 +523,7 @@ class moodle_page {
 
     /**
      * Please do not call this method directly, use the ->category syntax. {@link moodle_page::__get()}.
-     * @return stdClass the category that the page course belongs to. If there isn't one
+     * @return stdClass|null the category that the page course belongs to. If there isn't one
      * (that is, if this is the front page course) returns null.
      */
     protected function magic_get_category() {
@@ -906,7 +906,7 @@ class moodle_page {
 
     /**
      * Returns the primary navigation object
-     * @return primary
+     * @return primaryoutput
      */
     protected function magic_get_primarynavcombined() {
         if ($this->_primarynavcombined === null) {

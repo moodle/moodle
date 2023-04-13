@@ -63,7 +63,7 @@ define('MUST_EXIST', 2);
 class dml_exception extends moodle_exception {
     /**
      * @param string $errorcode The name of the string from error.php to print.
-     * @param string $a Extra words and phrases that might be required in the error string.
+     * @param mixed  $a Extra words and phrases that might be required in the error string.
      * @param string $debuginfo Optional debugging information.
      */
     function __construct($errorcode, $a=NULL, $debuginfo=null) {

@@ -16,7 +16,7 @@
 /**
  * A small modal to search grade items within the gradebook.
  *
- * @module    gradereport_singleview
+ * @module    gradereport_singleview/grade
  * @copyright 2022 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

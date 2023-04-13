@@ -201,7 +201,7 @@ class server_test extends \advanced_testcase {
 
     /**
      * @dataProvider xmlize_provider
-     * @param external_description $description The data structure.
+     * @param \core_external\external_description $description The data structure.
      * @param mixed $value The value to xmlise.
      * @param mixed $expected The expected output.
      */

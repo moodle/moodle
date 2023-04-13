@@ -75,7 +75,7 @@ function url_fix_submitted_url($url) {
  *
  * This function does not include any XSS protection.
  *
- * @param string $url
+ * @param stdClass $url
  * @param object $cm
  * @param object $course
  * @param object $config

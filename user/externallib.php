@@ -1112,7 +1112,7 @@ class core_user_external extends \core_external\external_api {
      * Create user return value description.
      *
      * @param array $additionalfields some additional field
-     * @return single_structure_description
+     * @return external_description
      */
     public static function user_description($additionalfields = array()) {
         $userfields = array(

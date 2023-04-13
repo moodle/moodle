@@ -3112,7 +3112,7 @@ function get_moodle_proxy_url() {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 class curl {
-    /** @var bool Caches http request contents */
+    /** @var curl_cache|false Caches http request contents */
     public  $cache    = false;
     /** @var bool Uses proxy, null means automatic based on URL */
     public  $proxy    = null;
@@ -3458,7 +3458,7 @@ class curl {
     /**
      * Set options for individual curl instance
      *
-     * @param resource $curl A curl handle
+     * @param resource|CurlHandle $curl A curl handle
      * @param array $options
      * @return resource The curl handle
      */

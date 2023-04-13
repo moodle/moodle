@@ -182,7 +182,7 @@ define('CALENDAR_EVENT_TYPE_ACTION', 1);
  */
 class calendar_event {
 
-    /** @var array An object containing the event properties can be accessed via the magic __get/set methods */
+    /** @var stdClass An object containing the event properties can be accessed via the magic __get/set methods */
     protected $properties = null;
 
     /** @var string The converted event discription with file paths resolved.
@@ -3180,7 +3180,7 @@ function calendar_import_events_from_ical(iCalendar $ical, int $subscriptionid =
  * Fetch a calendar subscription and update the events in the calendar.
  *
  * @param int $subscriptionid The course ID for the calendar.
- * @return string A log of the import progress, including errors.
+ * @return array A log of the import progress, including errors.
  */
 function calendar_update_subscription_events($subscriptionid) {
     $sub = calendar_get_subscription($subscriptionid);

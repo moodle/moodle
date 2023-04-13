@@ -53,6 +53,7 @@ $requiredtables = array('context', 'filter_active', 'filter_config');
 $realdb = $DB;
 $testdb = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
 $testdb->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->unittestprefix);
+/** @var moodle_database $DB */
 $DB = $testdb;
 $dbman = $testdb->get_manager();
 $issetup = 0;

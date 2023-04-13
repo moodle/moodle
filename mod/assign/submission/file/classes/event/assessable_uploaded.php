@@ -74,7 +74,7 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
     /**
      * Sets the legacy event data.
      *
-     * @param stdClass $legacyfiles legacy event data.
+     * @param \stdClass $legacyfiles legacy event data.
      * @return void
      */
     public function set_legacy_files($legacyfiles) {

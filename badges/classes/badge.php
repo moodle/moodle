@@ -164,7 +164,7 @@ class badge {
     /**
      * Use to get context instance of a badge.
      *
-     * @return context instance.
+     * @return \context|void instance.
      */
     public function get_context() {
         if ($this->type == BADGE_TYPE_SITE) {

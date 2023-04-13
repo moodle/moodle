@@ -39,7 +39,7 @@ final class util {
      * Alerts site admin of potential problems.
      *
      * @param string   $subject email subject
-     * @param stdClass $data    PayPal IPN data
+     * @param \stdClass $data    PayPal IPN data
      */
     public static function message_paypal_error_to_admin($subject, $data) {
         $admin = get_admin();

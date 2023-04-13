@@ -1315,7 +1315,7 @@ class moodlelib_test extends \advanced_testcase {
      *
      * @dataProvider shorten_filenames_provider
      *
-     * @param string $filenames
+     * @param array $filenames
      * @param int $length
      * @param string $expected
      * @param boolean $includehash

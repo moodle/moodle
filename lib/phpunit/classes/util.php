@@ -952,8 +952,8 @@ class phpunit_util extends testing_util {
     /**
      * Get the coverage config for the supplied includelist and excludelist configuration.
      *
-     * @param   array[] $includelists The list of files/folders in the includelist.
-     * @param   array[] $excludelists The list of files/folders in the excludelist.
+     * @param   string[] $includelists The list of files/folders in the includelist.
+     * @param   string[] $excludelists The list of files/folders in the excludelist.
      * @return  string
      */
     protected static function get_coverage_config(array $includelists, array $excludelists) : string {

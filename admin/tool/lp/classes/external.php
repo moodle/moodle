@@ -42,6 +42,7 @@ use core_competency\external\user_competency_plan_exporter;
 use core_course\external\course_module_summary_exporter;
 use core_course\external\course_summary_exporter;
 use core_external\external_api;
+use core_external\external_description;
 use core_external\external_function_parameters;
 use core_external\external_multiple_structure;
 use core_external\external_single_structure;
@@ -109,7 +110,7 @@ class external extends external_api {
     /**
      * Loads the data required to render the competency_frameworks_manage_page template.
      *
-     * @param context $pagecontext The page context
+     * @param \context $pagecontext The page context
      * @return \stdClass
      */
     public static function data_for_competency_frameworks_manage_page($pagecontext) {

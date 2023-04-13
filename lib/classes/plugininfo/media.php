@@ -58,6 +58,7 @@ class media extends base {
      */
     public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
+        /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
         $plugininfo = $this; // Also can be used inside settings.php
         $availability = $this; // Also to be used inside settings.php.
@@ -113,6 +114,7 @@ class media extends base {
         if ($enabled && !in_array($pluginname, $plugins)) {
             // Enable media plugin.
 
+            /** @var \core\plugininfo\media[] $pluginsbytype */
             $pluginsbytype = \core_plugin_manager::instance()->get_plugins_of_type('media');
             if (!array_key_exists($pluginname, $pluginsbytype)) {
                 // Can not be enabled.

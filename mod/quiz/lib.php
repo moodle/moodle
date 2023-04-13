@@ -417,7 +417,7 @@ function quiz_delete_all_attempts($quiz) {
 /**
  * Delete all the attempts belonging to a user in a particular quiz.
  *
- * @param stdClass $quiz The quiz object.
+ * @param \mod_quiz\quiz_settings $quiz The quiz object.
  * @param stdClass $user The user object.
  */
 function quiz_delete_user_attempts($quiz, $user) {
@@ -1492,7 +1492,7 @@ function quiz_questions_in_use($questionids) {
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the quiz.
  *
- * @param $mform the course reset form that is being built.
+ * @param MoodleQuickForm $mform the course reset form that is being built.
  */
 function quiz_reset_course_form_definition($mform) {
     $mform->addElement('header', 'quizheader', get_string('modulenameplural', 'quiz'));

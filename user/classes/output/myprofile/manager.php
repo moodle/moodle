@@ -37,7 +37,7 @@ class manager {
     /**
      * Parse all callbacks and builds the tree.
      *
-     * @param integer   $user ID of the user for which the profile is displayed.
+     * @param \stdClass $user user for which the profile is displayed.
      * @param bool      $iscurrentuser true if the profile being viewed is of current user, else false.
      * @param \stdClass $course Course object
      *

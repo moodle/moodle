@@ -241,7 +241,8 @@ function groups_remove_member($grouporid, $userorid) {
  * @param stdClass $data group properties
  * @param stdClass $editform
  * @param array $editoroptions
- * @return id of group or false if error
+ * @return int id of group or throws an exception on error
+ * @throws moodle_exception
  */
 function groups_create_group($data, $editform = false, $editoroptions = false) {
     global $CFG, $DB, $USER;
@@ -327,7 +328,8 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
  *
  * @param stdClass $data grouping properties
  * @param array $editoroptions
- * @return id of grouping or false if error
+ * @return int id of grouping or throws an exception on error
+ * @throws moodle_exception
  */
 function groups_create_grouping($data, $editoroptions=null) {
     global $DB;

@@ -208,7 +208,7 @@ class recording extends persistent {
      * Get select for given group mode and context
      *
      * @param int $groupmode
-     * @param context $context
+     * @param \context $context
      * @param int $courseid
      * @param int $groupid
      * @param int $groupingid

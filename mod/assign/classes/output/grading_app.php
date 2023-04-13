@@ -66,7 +66,7 @@ class grading_app implements templatable, renderable {
      *
      * @param int $userid The user we will open the grading app too.
      * @param int $groupid If groups are enabled this is the current course group.
-     * @param assign $assignment The assignment class
+     * @param \assign $assignment The assignment class
      */
     public function __construct($userid, $groupid, $assignment) {
         $this->userid = $userid;

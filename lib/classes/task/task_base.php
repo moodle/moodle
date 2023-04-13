@@ -42,7 +42,7 @@ abstract class task_base {
     /** @var \core\lock\lock $cronlock - The lock controlling the entire cron process. */
     private $cronlock = null;
 
-    /** @var $string $component - The component this task belongs to. */
+    /** @var string $component - The component this task belongs to. */
     private $component = '';
 
     /** @var bool $blocking - Does this task block the entire cron process. */
