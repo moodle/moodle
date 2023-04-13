@@ -14,29 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Testing the H5P helper.
- *
- * @package    core_h5p
- * @category   test
- * @copyright  2019 Sara Arjona <sara@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 declare(strict_types = 1);
 
 namespace core_h5p;
 
-use advanced_testcase;
+use core_h5p\local\library\autoloader;
 
 /**
  * Test class covering the H5P helper.
  *
  * @package    core_h5p
+ * @category   test
  * @copyright  2019 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \core_h5p\helper
  */
 class helper_test extends \advanced_testcase {
+
+    /**
+     * Register the H5P autoloader
+     */
+    protected function setUp(): void {
+        autoloader::register();
+    }
 
     /**
      * Test the behaviour of get_display_options().
