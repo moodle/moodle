@@ -81,7 +81,8 @@ class lang {
             $lang = min_optional_param('lang', 'standard', 'SAFEDIR');
         }
 
-        $this->lang = $lang;
+        // Retrieve the correct language by converting to Moodle's language code format.
+        $this->lang = str_replace('-', '_', $lang);
         $this->rev = $rev;
         $this->candidatefile = "{$CFG->localcachedir}/editor_tiny/{$this->rev}/lang/{$this->lang}/lang.json";
     }
