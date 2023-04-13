@@ -92,6 +92,11 @@
 .path-grade-report-grader .heading .gradeitemheader {
     text-indent: -1.5rem;
     padding-left: 1.5rem;
+    padding-top: 6px;
+}
+
+.path-grade-report-grader .dropdown-item {
+    text-align: left;
 }
 
 .path-grade-report-grader .heading .gradeitemheader .itemicon {
@@ -167,6 +172,10 @@
 
 .path-grade-report-grader .gradeparent .gradevalue {
     display: inline-block;
+}
+
+.path-grade-report-grader .header {
+    padding-top: 6px;
 }
 
 .path-grade-report-grader .gradeparent tr:nth-child(n) td.ajaxoverridden:nth-child(n) {
