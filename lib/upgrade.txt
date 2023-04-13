@@ -129,6 +129,15 @@ information provided here is intended especially for developers.
   needs to be rendered as is and not whitened out, the `.nofilter` CSS class needs to be applied to the icon.
 * New moodle_url::export_params_for_template() returns the params as an array of key => value pairs. You should use this when
   you want to pass URL params to a template. An example can be found in single button.
+* Functions get_next_adhoc_task() and cron::run_adhoc_tasks() have additional parameter $classname to filter by the specified class.
+* Function cron::run_adhoc_tasks() has additional parameter $number to limit the number of the tasks to run.
+* Function get_adhoc_tasks() has additional parameter $failedonly to return only failed tasks.
+* admin/cli/adhoc_task.php has additional parameters:
+  - id - to run individual tasks by id
+  - classname - to run tasks by classname
+  - taskslimit - to limit the number of tasks in one run
+  - failed - to limit the run to only the tasks that failed in their previous run
+  Can be mixed, apart from 'id' of course.
 
 === 4.1 ===
 
