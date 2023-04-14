@@ -29,16 +29,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['clianswerno'] = 'n';
-$string['cliansweryes'] = 't';
-$string['cliincorrectvalueerror'] = 'Błōnd, niynŏleżny wert "{$a->value}" dlŏ "{$a->option}"';
-$string['cliincorrectvalueretry'] = 'Niynŏleżny wert, sprōbuj zaś';
-$string['clitypevalue'] = 'wert zorty';
-$string['clitypevaluedefault'] = 'Zorta wertu, naciś Ynter, coby użyć wertu wychodnyj ({$a})';
-$string['cliunknowoption'] = 'Niyznōme ôpcyje:
-  {$a}
-Proszã użyć ôpcyje --help.';
-$string['cliyesnoprompt'] = 'wpisz y (to znaczy tak) abo n (to znaczy niy)';
-$string['environmentrequireinstall'] = 'je zdatne, coby było zainstalowane i włōnczōne';
-$string['environmentrequireversion'] = 'wymŏganŏ je wersyjŏ {$a->needed}, a ty używŏsz wersyje {$a->current}';
-$string['upgradekeyset'] = 'Zaktualizuj klucz (ôstŏw prōzne jeźli niy ma to skōnfigurowane)';
+$string['cliincorrectvalueerror'] = 'خرابی، "{$a->option}" کے لیے غلط قدر "{$a->value}"';
+$string['cliincorrectvalueretry'] = 'غلط قدر، براہ کرم دوبارہ کوشش کریں';
+$string['clitypevalue'] = 'قسم کی قدر';
+$string['clitypevaluedefault'] = 'قدر ٹائپ کریں، طے شدہ قدر استعمال کرنے کے لیے داخل دبائیں ({$a})';
+$string['cliunknowoption'] = 'غیر تسلیم شدہ اختیارات: {$a} براہ کرم --help آپشن استعمال کریں۔';
+$string['cliyesnoprompt'] = 'ٹائپ کریں y (یعنی ہاں) یا n (یعنی نہیں)';
+$string['environmentrequireinstall'] = 'انسٹال اور فعال ہونا ضروری ہے';
+$string['environmentrequireversion'] = 'ورژن {$a->needed} درکار ہے اور آپ {$a->current} چلا رہے ہیں';
+$string['upgradekeyset'] = 'اپ گریڈ کلید (اسے سیٹ نہ کرنے کے لیے خالی چھوڑ دیں)';
