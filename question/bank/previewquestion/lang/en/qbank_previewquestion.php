@@ -24,8 +24,7 @@
  */
 
 $string['alwayslatest'] = 'Always latest';
-$string['newerversion'] = 'This preview is using version {$a->currentversion} of this question. '
-    . 'The latest version is {$a->latestversion}. {$a->restartbutton}?';
+$string['newerversion'] = 'This preview is using an older version of the question. {$a->restartbutton}';
 $string['pluginname'] = 'Preview question';
 $string['privacy:metadata'] = 'The Preview question question bank plugin does not store any personal data.';
 // Tag related errors.
@@ -35,7 +34,7 @@ $string['tagsnotfound'] = 'Tags not found';
 // Form string(s).
 $string['previewoptions'] = 'Preview options';
 $string['questionversion'] = 'Question version';
-$string['restartnow'] = 'Restart now';
+$string['restartnow'] = 'Use latest version';
 // Preview title.
 $string['versiontitle'] = 'Version {$a}';
 $string['versiontitlelatest'] = 'Version {$a} (latest)';

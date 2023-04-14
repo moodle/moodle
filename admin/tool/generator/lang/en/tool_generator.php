@@ -47,9 +47,8 @@ $string['coursesize_2'] = 'M (~100MB; create in ~2 minutes)';
 $string['coursesize_3'] = 'L (~1GB; create in ~30 minutes)';
 $string['coursesize_4'] = 'XL (~10GB; create in ~2 hours)';
 $string['coursesize_5'] = 'XXL (~20GB; create in ~4 hours)';
-$string['additionalmodules'] = 'Additional modules';
-$string['additionalmodules_help'] = 'We normally create standard modules in the course (like forum, page or label),
- but you can select any other module that implements the course_backend_generator_create_activity function.';
+$string['additionalmodules'] = 'Additional activities';
+$string['additionalmodules_help'] = 'Select more activities that implement the course_backend_generator_create_activity function to include in the test course.';
 $string['coursewithoutusers'] = 'The selected course has no users';
 $string['createcourse'] = 'Create course';
 $string['createtestplan'] = 'Create test plan';
