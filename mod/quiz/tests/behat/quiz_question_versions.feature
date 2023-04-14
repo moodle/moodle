@@ -120,7 +120,7 @@ Feature: Quiz question versioning
     And I am on the "Quiz 1" "mod_quiz > Question bank" page logged in as teacher
     And I set the field "question_status_dropdown" in the "First question" "table_row" to "Draft"
     When I am on the "Quiz 1" "mod_quiz > Edit" page
-    Then I should see "This question has all versions in Draft status. The quiz will not work with this question in place."
+    Then I should see "This question is in draft status. To use it in the quiz, go to the question bank and change the status to ready."
 
   @javascript
   Scenario: Previewing a question set to use always latest version will set the preview to always latest version

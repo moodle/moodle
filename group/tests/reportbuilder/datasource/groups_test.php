@@ -180,7 +180,7 @@ class groups_test extends core_reportbuilder_testcase {
         $this->assertEquals('G101', $groupidnumber);
         $this->assertEquals(format_text($group->description), $groupdescription);
         $this->assertEquals('S', $groupenrolmentkey);
-        $this->assertEquals('Visible to all', $groupvisibility);
+        $this->assertEquals('Visible to everyone', $groupvisibility);
         $this->assertEquals('Yes', $groupparticipation);
         $this->assertEmpty($grouppicture);
         $this->assertNotEmpty($grouptimecreated);
@@ -231,7 +231,7 @@ class groups_test extends core_reportbuilder_testcase {
             ], false],
             'Filter group visibility' => ['group:visibility', [
                 'group:visibility_operator' => select::EQUAL_TO,
-                'group:visibility_value' => 0, // Visible to all.
+                'group:visibility_value' => 0, // Visible to everyone.
             ], true],
             'Filter group visibility (no match)' => ['group:visibility', [
                 'group:visibility_operator' => select::EQUAL_TO,

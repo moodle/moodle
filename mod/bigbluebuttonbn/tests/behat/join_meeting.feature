@@ -58,8 +58,8 @@ Feature: Test the ability to run the full meeting lifecycle (start to end)
     And I log out
     Then I am on the "Room recordings" Activity page logged in as vraverst
     Then "Join session" "link" should not exist
-    And I should see "The number of users allowed in a session has been reached"
+    And I should see "The limit of how many users allowed in a session has been reached"
     And I log out
     Then I am on the "Room recordings" Activity page logged in as admin
     Then "Join session" "link" should not exist
-    And I should see "The number of users allowed in a session has been reached"
+    And I should see "The limit of how many users allowed in a session has been reached"

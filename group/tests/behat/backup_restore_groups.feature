@@ -15,13 +15,13 @@ Feature: Backup and restore a course containing groups
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
     And the following "groups" exist:
-      | name                                 | course | idnumber | visibility | participation |
-      | Visible to all/Participation         | C1     | VP       | 0          | 1             |
-      | Visible to members/Participation     | C1     | MP       | 1          | 1             |
-      | See own membership                   | C1     | O        | 2          | 0             |
-      | Not visible                          | C1     | N        | 3          | 0             |
-      | Visible to all/Non-Participation     | C1     | VN       | 0          | 0             |
-      | Visible to members/Non-Participation | C1     | MN       | 1          | 0             |
+      | name                                      | course | idnumber | visibility | participation |
+      | Visible to everyone/Participation         | C1     | VP       | 0          | 1             |
+      | Only visible to members/Participation     | C1     | MP       | 1          | 1             |
+      | Only see own membership                   | C1     | O        | 2          | 0             |
+      | Not visible                               | C1     | N        | 3          | 0             |
+      | Visible to everyone/Non-Participation     | C1     | VN       | 0          | 0             |
+      | Only visible to members/Non-Participation | C1     | MN       | 1          | 0             |
     And I log in as "admin"
     And I backup "Course 1" course using this options:
       | Confirmation | Filename | test_backup.mbz |
@@ -35,14 +35,14 @@ Feature: Backup and restore a course containing groups
     And I press "Edit group settings"
     Then the following fields match these values:
       | Group ID number              | <idnumber>      |
-      | Group visibility             | <visibility>    |
-      | Allow activity participation | <participation> |
+      | Group membership visibility             | <visibility>    |
+      | Show group in dropdown menu for activities in group mode | <participation> |
 
     Examples:
-      | group                                | idnumber | visibility | participation |
-      | Visible to all/Participation         | VP       | 0          | 1             |
-      | Visible to members/Participation     | MP       | 1          | 1             |
-      | See own membership                   | O        | 2          | 0             |
-      | Not visible                          | N        | 3          | 0             |
-      | Visible to all/Non-Participation     | VN       | 0          | 0             |
-      | Visible to members/Non-Participation | MN       | 1          | 0             |
+      | group                                     | idnumber | visibility | participation |
+      | Visible to everyone/Participation         | VP       | 0          | 1             |
+      | Only visible to members/Participation     | MP       | 1          | 1             |
+      | Only see own membership                   | O        | 2          | 0             |
+      | Not visible                               | N        | 3          | 0             |
+      | Visible to everyone/Non-Participation     | VN       | 0          | 0             |
+      | Only visible to members/Non-Participation | MN       | 1          | 0             |

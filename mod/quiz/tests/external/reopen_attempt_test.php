@@ -64,7 +64,7 @@ class reopen_attempt_test extends externallib_advanced_testcase {
     public function test_reopen_attempt_service_checks_attempt_state() {
         [$attemptid] = $this->create_attempt_at_quiz_with_one_shortanswer_question(quiz_attempt::IN_PROGRESS);
 
-        $this->expectExceptionMessage("Attempt $attemptid is in the wrong state (In progress) to be re-openend.");
+        $this->expectExceptionMessage("Attempt $attemptid is in the wrong state (In progress) to be reopened.");
         reopen_attempt::execute($attemptid);
     }
 
@@ -75,8 +75,8 @@ class reopen_attempt_test extends externallib_advanced_testcase {
 
         $message = get_reopen_attempt_confirmation::execute($attemptid);
 
-        $this->assertEquals('<p>Are you sure you wish to re-open quiz attempt 1 by ' . fullname($this->student) .
-                '?</p><p>The re-opened attempt will remain open so that it can be continued.</p>',
+        $this->assertEquals('<p>This will reopen attempt 1 by ' . fullname($this->student) .
+                '.</p><p>The attempt will remain open and can be continued.</p>',
                 $message);
     }
 
@@ -88,8 +88,8 @@ class reopen_attempt_test extends externallib_advanced_testcase {
 
         $message = get_reopen_attempt_confirmation::execute($attemptid);
 
-        $this->assertEquals('<p>Are you sure you wish to re-open quiz attempt 1 by ' . fullname($this->student) .
-                '?</p><p>The re-opened attempt will remain open so that it can be continued. It will be due for submission by ' .
+        $this->assertEquals('<p>This will reopen attempt 1 by ' . fullname($this->student) .
+                '.</p><p>The attempt will remain open and can be continued until the quiz closes on ' .
                 userdate($timeclose) . '.</p>',
                 $message);
     }
@@ -102,8 +102,8 @@ class reopen_attempt_test extends externallib_advanced_testcase {
 
         $message = get_reopen_attempt_confirmation::execute($attemptid);
 
-        $this->assertEquals('<p>Are you sure you wish to re-open quiz attempt 1 by ' . fullname($this->student) .
-                '?</p><p>The re-opened attempt will be immediately submitted for grading.</p>',
+        $this->assertEquals('<p>This will reopen attempt 1 by ' . fullname($this->student) .
+                '.</p><p>The attempt will be immediately submitted for grading.</p>',
                 $message);
     }
 
@@ -120,7 +120,7 @@ class reopen_attempt_test extends externallib_advanced_testcase {
     public function test_get_reopen_attempt_confirmation_service_checks_attempt_state() {
         [$attemptid] = $this->create_attempt_at_quiz_with_one_shortanswer_question(quiz_attempt::IN_PROGRESS);
 
-        $this->expectExceptionMessage("Attempt $attemptid is in the wrong state (In progress) to be re-openend.");
+        $this->expectExceptionMessage("Attempt $attemptid is in the wrong state (In progress) to be reopened.");
         get_reopen_attempt_confirmation::execute($attemptid);
     }
 

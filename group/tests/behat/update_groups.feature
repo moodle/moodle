@@ -148,14 +148,14 @@ Feature: Automatic updating of groups and groupings
     Given I set the field "groups" to "Group (with ID)"
     And I press "Edit group settings"
     And "visibility" "select" should exist
-    And the field "Group visibility" matches value "Visible to all"
+    And the field "Group membership visibility" matches value "Visible to everyone"
     And the "participation" "checkbox" should be enabled
-    And the field "Allow activity participation" matches value "1"
+    And the field "Show group in dropdown menu for activities in group mode" matches value "1"
     When the following "group members" exist:
       | user     | group |
       | teacher1 | An ID |
     And I reload the page
     Then "visibility" "select" should not exist
-    And "Visible to all" "text" should exist
+    And "Visible to everyone" "text" should exist
     And the "participation" "checkbox" should be disabled
-    And the field "Allow activity participation" matches value "1"
+    And the field "Show group in dropdown menu for activities in group mode" matches value "1"
