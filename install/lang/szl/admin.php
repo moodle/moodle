@@ -41,3 +41,4 @@ Proszã użyć ôpcyje --help.';
 $string['cliyesnoprompt'] = 'wpisz y (to znaczy tak) abo n (to znaczy niy)';
 $string['environmentrequireinstall'] = 'je zdatne, coby było zainstalowane i włōnczōne';
 $string['environmentrequireversion'] = 'wymŏganŏ je wersyjŏ {$a->needed}, a ty używŏsz wersyje {$a->current}';
+$string['upgradekeyset'] = 'Zaktualizuj klucz (ôstŏw prōzne jeźli niy ma to skōnfigurowane)';
