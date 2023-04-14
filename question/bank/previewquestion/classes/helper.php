@@ -311,7 +311,8 @@ class helper {
         $questionids = [];
         $sql = 'SELECT version, questionid
                   FROM {question_versions}
-                 WHERE questionbankentryid = ?';
+                 WHERE questionbankentryid = ?
+              ORDER BY version';
 
         $versions = $DB->get_records_sql($sql, [$questionbankentryid]);
         foreach ($versions as $key => $version) {
