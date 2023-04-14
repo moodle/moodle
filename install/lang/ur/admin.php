@@ -29,8 +29,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'زبان';
-$string['moodlelogo'] = 'موڈل لوگو';
-$string['next'] = 'اگلے';
-$string['previous'] = 'پچھلا';
-$string['reload'] = 'دوبارہ لوڈ کریں';
+$string['cliincorrectvalueerror'] = 'خرابی، "{$a->option}" کے لیے غلط قدر "{$a->value}"';
+$string['cliincorrectvalueretry'] = 'غلط قدر، براہ کرم دوبارہ کوشش کریں';
+$string['clitypevalue'] = 'قسم کی قدر';
+$string['clitypevaluedefault'] = 'قدر ٹائپ کریں، طے شدہ قدر استعمال کرنے کے لیے داخل دبائیں ({$a})';
+$string['cliunknowoption'] = 'غیر تسلیم شدہ اختیارات: {$a} براہ کرم --help آپشن استعمال کریں۔';
+$string['cliyesnoprompt'] = 'ٹائپ کریں y (یعنی ہاں) یا n (یعنی نہیں)';
+$string['environmentrequireinstall'] = 'انسٹال اور فعال ہونا ضروری ہے';
+$string['environmentrequireversion'] = 'ورژن {$a->needed} درکار ہے اور آپ {$a->current} چلا رہے ہیں';
+$string['upgradekeyset'] = 'اپ گریڈ کلید (اسے سیٹ نہ کرنے کے لیے خالی چھوڑ دیں)';
