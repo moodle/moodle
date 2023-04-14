@@ -782,6 +782,23 @@ class grade_report_grader extends grade_report {
         $strpass = get_string('pass', 'grades');
         $viewfullnames = has_capability('moodle/site:viewfullnames', $this->context);
 
+        // Preload scale objects for items with a scaleid and initialize tab indices.
+        $scaleslist = [];
+        $tabindices = [];
+
+        foreach ($this->gtree->get_items() as $itemid => $item) {
+            if (!empty($item->scaleid)) {
+                $scaleslist[] = $item->scaleid;
+            }
+            $tabindices[$item->id]['grade'] = $gradetabindex;
+            $gradetabindex += $numusers * 2;
+        }
+        $scalesarray = [];
+
+        if (!empty($scaleslist)) {
+            $scalesarray = $DB->get_records_list('scale', 'id', $scaleslist);
+        }
+
         foreach ($this->gtree->get_levels() as $row) {
             $headingrow = new html_table_row();
             $headingrow->attributes['class'] = 'heading_name_row';
@@ -874,16 +891,43 @@ class grade_report_grader extends grade_report {
                         $itemcell->attributes['class'] .= ' statusicons';
                     }
 
-                    switch ($element['object']->gradetype) {
-                        case GRADE_TYPE_SCALE:
-                            $itemcell->attributes['class'] .= ' grade_type_scale';
-                            break;
-                        case GRADE_TYPE_VALUE:
-                            $itemcell->attributes['class'] .= ' grade_type_value';
-                            break;
-                        case GRADE_TYPE_TEXT:
+                    if (!empty($USER->editing)) {
+                        switch ($element['object']->gradetype) {
+                            case GRADE_TYPE_SCALE:
+                                $itemcell->attributes['class'] .= ' grade_type_scale';
+                                break;
+                            case GRADE_TYPE_VALUE:
+                                $itemcell->attributes['class'] .= ' grade_type_value';
+                                break;
+                            case GRADE_TYPE_TEXT:
+                                $itemcell->attributes['class'] .= ' grade_type_text';
+                                break;
+                        }
+                    } else {
+                        $gradedisplaytype = $element['object']->get_displaytype();
+
+                        // Letter grades, scales and text grades are left aligned.
+                        $textgrade = false;
+                        $textgrades = [GRADE_DISPLAY_TYPE_LETTER,
+                            GRADE_DISPLAY_TYPE_REAL_LETTER,
+                            GRADE_DISPLAY_TYPE_LETTER_REAL,
+                            GRADE_DISPLAY_TYPE_LETTER_PERCENTAGE,
+                            GRADE_DISPLAY_TYPE_PERCENTAGE_LETTER];
+                        if (in_array($gradedisplaytype, $textgrades)) {
+                            $textgrade = true;
+                        }
+
+                        if ($textgrade || ($element['object']->gradetype == GRADE_TYPE_TEXT)) {
                             $itemcell->attributes['class'] .= ' grade_type_text';
-                            break;
+                        } else if ($element['object']->scaleid && !empty($scalesarray[$element['object']->scaleid])) {
+                            if ($gradedisplaytype == GRADE_DISPLAY_TYPE_PERCENTAGE) {
+                                $itemcell->attributes['class'] .= ' grade_type_value';
+                            } else {
+                                $itemcell->attributes['class'] .= ' grade_type_scale';
+                            }
+                        } else {
+                            $itemcell->attributes['class'] .= ' grade_type_value';
+                        }
                     }
 
                     $itemcell->colspan = $colspan;
@@ -903,23 +947,6 @@ class grade_report_grader extends grade_report {
                 }
             }
             $rows[] = $headingrow;
-        }
-
-        // Preload scale objects for items with a scaleid and initialize tab indices.
-        $scaleslist = [];
-        $tabindices = [];
-
-        foreach ($this->gtree->get_items() as $itemid => $item) {
-            if (!empty($item->scaleid)) {
-                $scaleslist[] = $item->scaleid;
-            }
-            $tabindices[$item->id]['grade'] = $gradetabindex;
-            $gradetabindex += $numusers * 2;
-        }
-        $scalesarray = [];
-
-        if (!empty($scaleslist)) {
-            $scalesarray = $DB->get_records_list('scale', 'id', $scaleslist);
         }
 
         // Get all the grade items if the user can not view hidden grade items.
@@ -1118,12 +1145,27 @@ class grade_report_grader extends grade_report {
                     // Not editing.
                     $gradedisplaytype = $item->get_displaytype();
 
-                    if ($item->scaleid && !empty($scalesarray[$item->scaleid])) {
-                        $itemcell->attributes['class'] .= ' grade_type_scale';
-                    } else if ($item->gradetype == GRADE_TYPE_VALUE) {
-                        $itemcell->attributes['class'] .= ' grade_type_value';
-                    } else if ($item->gradetype == GRADE_TYPE_TEXT) {
+                    // Letter grades, scales and text grades are left aligned.
+                    $textgrade = false;
+                    $textgrades = [GRADE_DISPLAY_TYPE_LETTER,
+                        GRADE_DISPLAY_TYPE_REAL_LETTER,
+                        GRADE_DISPLAY_TYPE_LETTER_REAL,
+                        GRADE_DISPLAY_TYPE_LETTER_PERCENTAGE,
+                        GRADE_DISPLAY_TYPE_PERCENTAGE_LETTER];
+                    if (in_array($gradedisplaytype, $textgrades)) {
+                        $textgrade = true;
+                    }
+
+                    if ($textgrade || ($item->gradetype == GRADE_TYPE_TEXT)) {
                         $itemcell->attributes['class'] .= ' grade_type_text';
+                    } else if ($item->scaleid && !empty($scalesarray[$item->scaleid])) {
+                        if ($gradedisplaytype == GRADE_DISPLAY_TYPE_PERCENTAGE) {
+                            $itemcell->attributes['class'] .= ' grade_type_value';
+                        } else {
+                            $itemcell->attributes['class'] .= ' grade_type_scale';
+                        }
+                    } else {
+                        $itemcell->attributes['class'] .= ' grade_type_value';
                     }
 
                     if ($item->needsupdate) {
