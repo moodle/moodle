@@ -356,6 +356,12 @@ class externallib_test extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($return->user2->id, $return->course->id, $return->roleid, 'manual');
         $this->getDataGenerator()->enrol_user($USER->id, $return->course->id, $return->roleid, 'manual');
 
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $return->course->id, 'name' => 'G1']);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $return->course->id, 'name' => 'G2']);
+
+        groups_add_member($group1->id, $return->user1->id);
+        groups_add_member($group2->id, $return->user2->id);
+
         return $return;
     }
 
@@ -399,6 +405,9 @@ class externallib_test extends externallib_advanced_testcase {
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $enrolledusers = \external_api::clean_returnvalue(core_user_external::get_course_user_profiles_returns(), $enrolledusers);
+        // Check we get the requested user and that is in a group.
+        $this->assertCount(1, $enrolledusers);
+        $this->assertCount(1, $enrolledusers[0]['groups']);
 
         foreach($enrolledusers as $enrolleduser) {
             if ($enrolleduser['username'] == $data->user1->username) {
@@ -1011,6 +1020,54 @@ class externallib_test extends externallib_advanced_testcase {
         // Make sure the file was added to the user private files.
         $file = $browser->get_file_info($context, $component, 'private', 0, $filepath, $filename);
         $this->assertNotEmpty($file);
+    }
+
+
+    /**
+     * Test add_user_private_files quota
+     */
+    public function test_add_user_private_files_quota() {
+        global $USER, $CFG, $DB;
+
+        $this->resetAfterTest(true);
+
+        $context = \context_system::instance();
+        $roleid = $this->assignUserCapability('moodle/user:manageownfiles', $context->id);
+
+        $context = \context_user::instance($USER->id);
+        $contextid = $context->id;
+        $component = "user";
+        $filearea = "draft";
+        $itemid = 0;
+        $filepath = "/";
+        $filename = "Simple.txt";
+        $filecontent = base64_encode("Let us create a nice simple file");
+        $contextlevel = null;
+        $instanceid = null;
+        $browser = get_file_browser();
+
+        // Call the files api to create a file.
+        $draftfile = core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath,
+            $filename, $filecontent, $contextlevel, $instanceid);
+        $draftfile = \external_api::clean_returnvalue(core_files_external::upload_returns(), $draftfile);
+        $draftid = $draftfile['itemid'];
+
+        // Call the external function to add the file to private files.
+        core_user_external::add_user_private_files($draftid);
+
+        // Force the quota so we are sure it won't be space to add the new file.
+        $CFG->userquota = file_get_user_used_space() + 1;
+
+        // Generate a new draftitemid for the same testfile.
+        $draftfile = core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath,
+            $filename, $filecontent, $contextlevel, $instanceid);
+        $draftid = $draftfile['itemid'];
+
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('maxareabytes', 'error'));
+
+        // Call the external function to include the new file.
+        core_user_external::add_user_private_files($draftid);
     }
 
     /**

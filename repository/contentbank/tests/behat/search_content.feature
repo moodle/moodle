@@ -23,7 +23,7 @@ Feature: Search content bank files using the content bank files repository
       | Course       | C2        | contenttype_h5p | admin | coursecontent2.h5p   | /h5p/tests/fixtures/find-the-words.h5p      |
       | Category     | CAT1      | contenttype_h5p | admin | categorycontent1.h5p | /h5p/tests/fixtures/ipsums.h5p              |
       | Category     | CAT2      | contenttype_h5p | admin | categorycontent2.h5p | /h5p/tests/fixtures/multiple-choice-2-6.h5p |
-      | System       |           | contenttype_h5p | admin | systemcontent.h5p    | /h5p/tests/fixtures/greeting-card-887.h5p   |
+      | System       |           | contenttype_h5p | admin | systemcontent.h5p    | /h5p/tests/fixtures/greeting-card.h5p   |
     And the following "activities" exist:
       | activity | name       | intro      | introformat | course | idnumber |
       | folder   | Folder     | FolderDesc | 1           | C1     | folder   |

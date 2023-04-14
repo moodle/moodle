@@ -85,8 +85,12 @@ export default class Component extends DndCmItem {
             state,
             element: cm,
         });
+        const url = new URL(window.location.href);
+        const anchor = url.hash.replace('#', '');
         // Check if the current url is the cm url.
-        if (window.location.href == cm.url || window.location.href == `${course.baseurl}#${cm.anchor}`) {
+        if (window.location.href == cm.url
+            || (window.location.href.includes(course.baseurl) && anchor == cm.anchor)
+        ) {
             this.reactive.dispatch('setPageItem', 'cm', this.id);
             this.element.scrollIntoView({block: "center"});
         }

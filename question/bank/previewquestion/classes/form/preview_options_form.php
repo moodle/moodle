@@ -23,6 +23,7 @@ require_once($CFG->libdir . '/formslib.php');
 use moodleform;
 use question_display_options;
 use question_engine;
+use qbank_previewquestion\question_preview_options;
 
 /**
  * Settings form for the preview options.
@@ -45,8 +46,9 @@ class preview_options_form extends moodleform {
         $mform->addElement('header', 'attemptoptionsheader', get_string('previewoptions', 'qbank_previewquestion'));
         $mform->setExpanded('attemptoptionsheader', false);
         $versions = $this->_customdata['versions'];
-        $currentversion = $this->_customdata['questionversion'];
-        $select = $mform->addElement('select', 'version', get_string('questionversion', 'qbank_previewquestion'), $versions);
+        $versions[question_preview_options::ALWAYS_LATEST] = get_string('alwayslatest', 'qbank_previewquestion');
+        $currentversion = $this->_customdata['restartversion'];
+        $select = $mform->addElement('select', 'restartversion', get_string('questionversion', 'qbank_previewquestion'), $versions);
         $select->setSelected($currentversion);
         $behaviours = question_engine::get_behaviour_options(
                 $this->_customdata['quba']->get_preferred_behaviour());

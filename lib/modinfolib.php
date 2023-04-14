@@ -1763,7 +1763,15 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
-     * @param moodle_core_renderer $output Output render to use, or null for default (global)
+     * Fetch the module's icon URL.
+     *
+     * This function fetches the course module instance's icon URL.
+     * This method adds a `filtericon` parameter in the URL when rendering the monologo version of the course module icon or when
+     * the plugin declares, via its `filtericon` custom data, that the icon needs to be filtered.
+     * This additional information can be used by plugins when rendering the module icon to determine whether to apply
+     * CSS filtering to the icon.
+     *
+     * @param core_renderer $output Output render to use, or null for default (global)
      * @return moodle_url Icon URL for a suitable icon to put beside this cm
      */
     public function get_icon_url($output = null) {
@@ -1773,6 +1781,7 @@ class cm_info implements IteratorAggregate {
             $output = $OUTPUT;
         }
 
+        $ismonologo = false;
         if (!empty($this->iconurl)) {
             // Support modules setting their own, external, icon image.
             $icon = $this->iconurl;
@@ -1792,6 +1801,18 @@ class cm_info implements IteratorAggregate {
             }
         } else {
             $icon = $output->image_url('monologo', $this->modname);
+            // Activity modules may only have an `icon` icon instead of a `monologo` icon.
+            // So we need to determine if the module really has a `monologo` icon.
+            $ismonologo = core_component::has_monologo_icon('mod', $this->modname);
+        }
+
+        // Determine whether the icon will be filtered in the CSS.
+        // This can be controlled by the module by declaring a 'filtericon' custom data.
+        // If the 'filtericon' custom data is not set, icon filtering will be determined whether the module has a `monologo` icon.
+        // Additionally, we need to cast custom data to array as some modules may treat it as an object.
+        $filtericon = ((array)$this->customdata)['filtericon'] ?? $ismonologo;
+        if ($filtericon) {
+            $icon->param('filtericon', 1);
         }
         return $icon;
     }

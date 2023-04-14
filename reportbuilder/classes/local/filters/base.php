@@ -102,6 +102,9 @@ abstract class base {
     /**
      * Returns the filter clauses to be used with SQL where
      *
+     * Ideally the field SQL should be included only once in the returned expression, however if that is unavoidable then
+     * use the {@see filter::get_field_sql_and_params} helper to ensure uniqueness of any parameters included within
+     *
      * @param array $values
      * @return array [$sql, [...$params]]
      */

@@ -179,6 +179,9 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
         $slot += 1;
         $maxmark[$slot] = $questiondata->maxmark;
         $page[$slot] = $questiondata->page;
+        if ($questiondata->status == \core_question\local\bank\question_version_status::QUESTION_STATUS_DRAFT) {
+            throw new moodle_exception('questiondraftonly', 'mod_quiz', '', $questiondata->name);
+        }
         if ($questiondata->qtype == 'random') {
             $randomfound = true;
             continue;
@@ -317,7 +320,11 @@ function quiz_start_attempt_built_on_last($quba, $attempt, $lastattempt) {
 
     $oldnumberstonew = array();
     foreach ($oldquba->get_attempt_iterator() as $oldslot => $oldqa) {
-        $newslot = $quba->add_question($oldqa->get_question(false), $oldqa->get_max_mark());
+        $question = $oldqa->get_question(false);
+        if ($question->status == \core_question\local\bank\question_version_status::QUESTION_STATUS_DRAFT) {
+            throw new moodle_exception('questiondraftonly', 'mod_quiz', '', $question->name);
+        }
+        $newslot = $quba->add_question($question, $oldqa->get_max_mark());
 
         $quba->start_question_based_on($newslot, $oldqa);
 
@@ -1446,9 +1453,10 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
  * @param object $quiz the quiz settings
  * @param object $question the question
  * @param int $variant which question variant to preview (optional).
+ * @param int $restartversion version of the question to use when restarting the preview.
  * @return moodle_url to preview this question with the options from this quiz.
  */
-function quiz_question_preview_url($quiz, $question, $variant = null) {
+function quiz_question_preview_url($quiz, $question, $variant = null, $restartversion = null) {
     // Get the appropriate display options.
     $displayoptions = mod_quiz_display_options::make_from_quiz($quiz,
             mod_quiz_display_options::DURING);
@@ -1460,7 +1468,7 @@ function quiz_question_preview_url($quiz, $question, $variant = null) {
 
     // Work out the correcte preview URL.
     return \qbank_previewquestion\helper::question_preview_url($question->id, $quiz->preferredbehaviour,
-            $maxmark, $displayoptions, $variant);
+            $maxmark, $displayoptions, $variant, null, null, $restartversion);
 }
 
 /**
@@ -1476,7 +1484,10 @@ function quiz_question_preview_button($quiz, $question, $label = false, $variant
     if (!question_has_capability_on($question, 'use')) {
         return '';
     }
-    return $PAGE->get_renderer('mod_quiz', 'edit')->question_preview_icon($quiz, $question, $label, $variant, null);
+    $slotinfo = quiz::create($quiz->id)->get_structure()->get_slot_by_number($question->slot);
+    return $PAGE->get_renderer('mod_quiz', 'edit')
+        ->question_preview_icon($quiz, $question, $label, $variant,
+                $slotinfo->requestedversion ?: \qbank_previewquestion\question_preview_options::ALWAYS_LATEST);
 }
 
 /**

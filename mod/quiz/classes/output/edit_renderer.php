@@ -25,9 +25,11 @@
 namespace mod_quiz\output;
 defined('MOODLE_INTERNAL') || die();
 
+use core_question\local\bank\question_version_status;
 use mod_quiz\question\bank\qbank_helper;
 use \mod_quiz\structure;
 use \html_writer;
+use qbank_previewquestion\question_preview_options;
 use renderable;
 
 /**
@@ -758,7 +760,8 @@ class edit_renderer extends \plugin_renderer_base {
             'questionname' => $this->get_question_name_for_slot($structure, $slot, $pageurl),
             'questionicons' => $this->get_action_icon($structure, $slot, $pageurl),
             'questiondependencyicon' => ($structure->can_be_edited() ? $this->question_dependency_icon($structure, $slot) : ''),
-            'versionselection' => false
+            'versionselection' => false,
+            'draftversion' => $structure->get_question_in_slot($slot)->status == question_version_status::QUESTION_STATUS_DRAFT,
         ];
 
         $data['versionoptions'] = [];
@@ -828,11 +831,12 @@ class edit_renderer extends \plugin_renderer_base {
     public function get_action_icon(structure $structure, int $slot, \moodle_url $pageurl) : string {
         // Action icons.
         $qtype = $structure->get_question_type_for_slot($slot);
+        $slotinfo = $structure->get_slot_by_number($slot);
         $questionicons = '';
         if ($qtype !== 'random') {
             $questionicons .= $this->question_preview_icon($structure->get_quiz(),
                     $structure->get_question_in_slot($slot),
-                    null, null, $qtype);
+                    null, null, $slotinfo->requestedversion ?: question_preview_options::ALWAYS_LATEST);
         }
         if ($structure->can_be_edited() && $structure->has_use_capability($slot)) {
             $questionicons .= $this->question_remove_icon($structure, $slot, $pageurl);
@@ -876,16 +880,17 @@ class edit_renderer extends \plugin_renderer_base {
      *      If ->questionid is set, that is used instead of ->id.
      * @param bool $label if true, show the preview question label after the icon
      * @param int $variant which question variant to preview (optional).
+     * @param int $restartversion version to use when restarting the preview
      * @return string HTML to output.
      */
-    public function question_preview_icon($quiz, $questiondata, $label = null, $variant = null) {
+    public function question_preview_icon($quiz, $questiondata, $label = null, $variant = null, $restartversion = null) {
         $question = clone($questiondata);
         if (isset($question->questionid)) {
 
             $question->id = $question->questionid;
         }
 
-        $url = quiz_question_preview_url($quiz, $question, $variant);
+        $url = quiz_question_preview_url($quiz, $question, $variant, $restartversion);
 
         // Do we want a label?
         $strpreviewlabel = '';

@@ -6,7 +6,7 @@ Feature: bigbluebuttonbn instance
 
   Background:  Make sure that a course is created
     Given a BigBlueButton mock server is configured
-    And I enable "bigbluebuttonbn" "mod" plugin
+    And I accept dpa and enable bigbluebuttonbn plugin
     And the following "courses" exist:
       | fullname    | shortname   | category |
       | Test course | Test course | 0        |

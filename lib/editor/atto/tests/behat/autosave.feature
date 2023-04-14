@@ -24,7 +24,7 @@ Feature: Atto Autosave
     And I click on "Save changes" "button"
     And I am on "Course 1" course homepage
     And I navigate to "Settings" in current page administration
-    And I set the field with xpath "//select[@name='summary_editor[format]']" to "1"
+    And I set the field "Course summary format" to "1"
     And I click on "Save and display" "button"
     And I log out
 
