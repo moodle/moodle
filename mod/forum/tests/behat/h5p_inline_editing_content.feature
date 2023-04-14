@@ -20,7 +20,7 @@ Feature: Inline editing H5P content in mod_forum
       | student1 | C1 | student        |
     And the following "contentbank content" exist:
       | contextlevel | reference | contenttype     | user     | contentname        | filepath                                  |
-      | Course       | C1        | contenttype_h5p | admin    | Greeting card      | /h5p/tests/fixtures/greeting-card-887.h5p |
+      | Course       | C1        | contenttype_h5p | admin    | Greeting card      | /h5p/tests/fixtures/greeting-card.h5p     |
     And the following "activities" exist:
       | activity | name       | intro      | introformat | course | content  | contentformat | idnumber |
       | forum    | ForumName1 | PageDesc1  | 1           | C1     | H5Ptest  | 1             | 1        |

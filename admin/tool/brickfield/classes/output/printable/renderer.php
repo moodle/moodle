@@ -254,19 +254,16 @@ class renderer extends \tool_brickfield\output\renderer {
                 <tr>
                     <td>
                         <img src="' . $this->image_path() . 'tachometer-alt-solid.svg" width="15" height="15">' .
-                        ' <td style="line-height: 10px;"> ' .
                         get_string('totalactivitiescount', manager::PLUGINNAME, $data->combodata['total']) .
-                        '</td></td>
+                    '</td>
                     <td>
                         <img src="' . $this->image_path() . 'check-square-regular.svg" width="15" height="15">' .
-                        ' <td style="line-height: 10px;"> ' .
                         get_string('passedcount', manager::PLUGINNAME, $data->combodata['passed']) .
-                        '</td></td>
+                    '</td>
                     <td>
                         <img src="' . $this->image_path() . 'times-circle-regular.svg" width="15" height="15">' .
-                        ' <td style="line-height: 10px;"> ' .
                         get_string('failedcount', manager::PLUGINNAME, $data->combodata['failed']) .
-                        '</td></td>
+                    '</td>
                 </tr>
             </table>';
 
@@ -396,8 +393,8 @@ class renderer extends \tool_brickfield\output\renderer {
         foreach ($data->groupdata as $key => $group) {
             $checkgroup = area_base::checkgroup_name($key);
             $icon = $icons[$key];
-            $tabledata[] = ['<img src="'.$icon.'" width="15" height="15">' . ' ' .' <td style="line-height: 10px;">  '.
-                get_string('checktype:' . $checkgroup, manager::PLUGINNAME).'</td>', $group->errorinstances];
+            $tabledata[] = ['<img src="'.$icon.'" width="15" height="15">' . ' ' .
+                get_string('checktype:' . $checkgroup, manager::PLUGINNAME), $group->errorinstances];
         }
 
         return $this->render_table(

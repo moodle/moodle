@@ -147,12 +147,12 @@ class meeting {
     }
 
     /**
-     * Number of participants
+     * Total number of moderators and viewers.
      *
      * @return int
      */
     public function get_participant_count() {
-        return $this->get_meeting_info()->participantcount;
+        return $this->get_meeting_info()->totalusercount;
     }
 
     /**
@@ -253,7 +253,7 @@ class meeting {
         $activitystatus = bigbluebutton_proxy::view_get_activity_status($instance);
         // This might raise an exception if info cannot be retrieved.
         // But this might be totally fine as the meeting is maybe not yet created on BBB side.
-        $participantcount = 0;
+        $totalusercount = 0;
         // This is the default value for any meeting that has not been created.
         $meetinginfo->statusrunning = false;
         $meetinginfo->createtime = null;
@@ -262,19 +262,16 @@ class meeting {
         if (!empty($info)) {
             $meetinginfo->statusrunning = $info['running'] === 'true';
             $meetinginfo->createtime = $info['createTime'] ?? null;
-            $participantcount = isset($info['participantCount']) ? $info['participantCount'] : 0;
+            $totalusercount = isset($info['participantCount']) ? $info['participantCount'] : 0;
         }
 
         $meetinginfo->statusclosed = $activitystatus === 'ended';
         $meetinginfo->statusopen = !$meetinginfo->statusrunning && $activitystatus === 'open';
-        $meetinginfo->participantcount = $participantcount;
+        $meetinginfo->totalusercount = $totalusercount;
 
         $canjoin = !$instance->user_must_wait_to_join() || $meetinginfo->statusrunning;
-        // Limit has not been reached or user does not count toward limit.
-        $canjoin = $canjoin && (
-            !$instance->has_user_limit_been_reached($participantcount)
-            || !$instance->does_current_user_count_towards_user_limit()
-            );
+        // Limit has not been reached.
+        $canjoin = $canjoin && (!$instance->has_user_limit_been_reached($totalusercount));
         // User should only join during scheduled session start and end time, if defined.
         $canjoin = $canjoin && ($instance->is_currently_open());
         // Double check that the user has the capabilities to join.
@@ -286,7 +283,7 @@ class meeting {
             $meetinginfo->startedat = floor(intval($info['startTime']) / 1000); // Milliseconds.
             $meetinginfo->moderatorcount = $info['moderatorCount'];
             $meetinginfo->moderatorplural = $info['moderatorCount'] > 1;
-            $meetinginfo->participantcount = $participantcount - $meetinginfo->moderatorcount;
+            $meetinginfo->participantcount = $totalusercount - $meetinginfo->moderatorcount;
             $meetinginfo->participantplural = $meetinginfo->participantcount > 1;
         }
         $meetinginfo->statusmessage = $this->get_status_message($meetinginfo, $instance);
@@ -322,6 +319,9 @@ class meeting {
      * @return string
      */
     protected function get_status_message(object $meetinginfo, instance $instance): string {
+        if ($instance->has_user_limit_been_reached($meetinginfo->totalusercount)) {
+            return get_string('view_message_conference_user_limit_reached', 'bigbluebuttonbn');
+        }
         if ($meetinginfo->statusrunning) {
             return get_string('view_message_conference_in_progress', 'bigbluebuttonbn');
         }
@@ -551,10 +551,7 @@ class meeting {
     protected function prepare_meeting_join_action(int $origin) {
         $this->do_get_meeting_info(true);
         if ($this->is_running()) {
-            if (
-                    $this->instance->has_user_limit_been_reached($this->get_participant_count())
-                    && $this->instance->does_current_user_count_towards_user_limit()
-            ) {
+            if ($this->instance->has_user_limit_been_reached($this->get_participant_count())) {
                 throw new meeting_join_exception('userlimitreached');
             }
         } else if ($this->instance->user_must_wait_to_join()) {

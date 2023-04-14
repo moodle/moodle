@@ -912,4 +912,143 @@ class userlib_test extends \advanced_testcase {
         self::assertSame('5', $got['timezone']);
         self::assertSame('0', $got['mailformat']);
     }
+
+    /**
+     * Test user_get_user_details_permissions.
+     * @covers ::user_get_user_details
+     */
+    public function test_user_get_user_details_permissions() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        // Create user and modify user profile.
+        $teacher = $this->getDataGenerator()->create_user();
+        $student1 = $this->getDataGenerator()->create_user(['idnumber' => 'user1id', 'city' => 'Barcelona', 'address' => 'BCN 1B']);
+        $student2 = $this->getDataGenerator()->create_user();
+        $student1fullname = fullname($student1);
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = \context_course::instance($course->id);
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id);
+        $this->getDataGenerator()->enrol_user($student1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($student2->id, $course->id);
+        $this->getDataGenerator()->role_assign('teacher', $teacher->id, $coursecontext->id);
+        $this->getDataGenerator()->role_assign('student', $student1->id, $coursecontext->id);
+        $this->getDataGenerator()->role_assign('student', $student2->id, $coursecontext->id);
+
+        accesslib_clear_all_caches_for_unit_testing();
+
+        // Get student details as a user with super system capabilities.
+        $result = user_get_user_details($student1, $course);
+        $this->assertEquals($student1->id, $result['id']);
+        $this->assertEquals($student1fullname, $result['fullname']);
+        $this->assertEquals($course->id, $result['enrolledcourses'][0]['id']);
+
+        $this->setUser($student2);
+
+        // Get student details with required fields.
+        $result = user_get_user_details($student1, $course, array('id', 'fullname', 'timezone', 'city', 'address', 'idnumber'));
+        $this->assertCount(4, $result); // Ensure address (never returned), idnumber (identity field) are not returned here.
+        $this->assertEquals($student1->id, $result['id']);
+        $this->assertEquals($student1fullname, $result['fullname']);
+        $this->assertEquals($student1->timezone, $result['timezone']);
+        $this->assertEquals($student1->city, $result['city']);
+
+        // Set new identity fields and hidden fields and try to retrieve them without permission.
+        $CFG->showuseridentity = $CFG->showuseridentity . ',idnumber';
+        $CFG->hiddenuserfields = 'city';
+        $result = user_get_user_details($student1, $course, array('id', 'fullname', 'timezone', 'city', 'address', 'idnumber'));
+        $this->assertCount(3, $result); // Ensure address, city and idnumber are not returned here.
+        $this->assertEquals($student1->id, $result['id']);
+        $this->assertEquals($student1fullname, $result['fullname']);
+        $this->assertEquals($student1->timezone, $result['timezone']);
+
+        // Now, teacher should have permission to see the idnumber and city fields.
+        $this->setUser($teacher);
+        $result = user_get_user_details($student1, $course, array('id', 'fullname', 'timezone', 'city', 'address', 'idnumber'));
+        $this->assertCount(5, $result); // Ensure address is not returned here.
+        $this->assertEquals($student1->id, $result['id']);
+        $this->assertEquals($student1fullname, $result['fullname']);
+        $this->assertEquals($student1->timezone, $result['timezone']);
+        $this->assertEquals($student1->idnumber, $result['idnumber']);
+        $this->assertEquals($student1->city, $result['city']);
+
+        // And admins can see anything.
+        $this->setAdminUser();
+        $result = user_get_user_details($student1, $course, array('id', 'fullname', 'timezone', 'city', 'address', 'idnumber'));
+        $this->assertCount(6, $result);
+        $this->assertEquals($student1->id, $result['id']);
+        $this->assertEquals($student1fullname, $result['fullname']);
+        $this->assertEquals($student1->timezone, $result['timezone']);
+        $this->assertEquals($student1->idnumber, $result['idnumber']);
+        $this->assertEquals($student1->city, $result['city']);
+        $this->assertEquals($student1->address, $result['address']);
+    }
+
+    /**
+     * Test user_get_user_details_groups.
+     * @covers ::user_get_user_details
+     */
+    public function test_user_get_user_details_groups() {
+        $this->resetAfterTest();
+
+        // Create user and modify user profile.
+        $teacher = $this->getDataGenerator()->create_user();
+        $student1 = $this->getDataGenerator()->create_user(['idnumber' => 'user1id', 'city' => 'Barcelona', 'address' => 'BCN 1B']);
+        $student2 = $this->getDataGenerator()->create_user();
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = \context_course::instance($course->id);
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id);
+        $this->getDataGenerator()->enrol_user($student1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($student2->id, $course->id);
+        $this->getDataGenerator()->role_assign('teacher', $teacher->id, $coursecontext->id);
+        $this->getDataGenerator()->role_assign('student', $student1->id, $coursecontext->id);
+        $this->getDataGenerator()->role_assign('student', $student2->id, $coursecontext->id);
+
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id, 'name' => 'G1']);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id, 'name' => 'G2']);
+
+        // Each student in one group but teacher in two.
+        groups_add_member($group1->id, $student1->id);
+        groups_add_member($group1->id, $teacher->id);
+        groups_add_member($group2->id, $student2->id);
+        groups_add_member($group2->id, $teacher->id);
+
+        accesslib_clear_all_caches_for_unit_testing();
+
+        // A student can see other users groups when separate groups are not forced.
+        $this->setUser($student2);
+
+        // Get student details with groups.
+        $result = user_get_user_details($student1, $course, array('id', 'fullname', 'groups'));
+        $this->assertCount(3, $result);
+        $this->assertEquals($group1->id, $result['groups'][0]['id']);
+
+        // Teacher is in two different groups.
+        $result = user_get_user_details($teacher, $course, array('id', 'fullname', 'groups'));
+
+        // Order by group id.
+        usort($result['groups'], function($a, $b) {
+            return $a['id'] - $b['id'];
+        });
+
+        $this->assertCount(3, $result);
+        $this->assertCount(2, $result['groups']);
+        $this->assertEquals($group1->id, $result['groups'][0]['id']);
+        $this->assertEquals($group2->id, $result['groups'][1]['id']);
+
+        // Change to separate groups.
+        $course->groupmode = SEPARATEGROUPS;
+        $course->groupmodeforce = true;
+        update_course($course);
+
+        // Teacher is in two groups but I can only see the one shared with me.
+        $result = user_get_user_details($teacher, $course, array('id', 'fullname', 'groups'));
+
+        $this->assertCount(3, $result);
+        $this->assertCount(1, $result['groups']);
+        $this->assertEquals($group2->id, $result['groups'][0]['id']);
+    }
 }

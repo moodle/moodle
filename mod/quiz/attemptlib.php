@@ -27,6 +27,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_question\local\bank\question_version_status;
 use mod_quiz\question\bank\qbank_helper;
 
 
@@ -543,6 +544,10 @@ class quiz {
         $qcategories = array();
 
         foreach ($this->get_questions() as $questiondata) {
+            if ($questiondata->status == question_version_status::QUESTION_STATUS_DRAFT) {
+                // Skip questions where all versions are draft.
+                continue;
+            }
             if ($questiondata->qtype === 'random' && $includepotential) {
                 if (!isset($qcategories[$questiondata->category])) {
                     $qcategories[$questiondata->category] = false;

@@ -156,7 +156,7 @@ const getThirdPartyLibsList = relativeTo => {
  * @returns {array}
  */
 const getThirdPartyPaths = () => {
-    const DOMParser = require('xmldom').DOMParser;
+    const DOMParser = require('@xmldom/xmldom').DOMParser;
     const fs = require('fs');
     const path = require('path');
     const xpath = require('xpath');

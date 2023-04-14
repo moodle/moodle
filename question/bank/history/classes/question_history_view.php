@@ -196,4 +196,8 @@ class question_history_view extends view {
         echo $PAGE->get_renderer('qbank_history')->render_history_header($historydata);
     }
 
+    public function is_listing_specific_versions(): bool {
+        return true;
+    }
+
 }
