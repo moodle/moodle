@@ -555,13 +555,13 @@ class main implements renderable, templatable {
                     return $this->generate_zero_state_data(
                         $nocoursesimg,
                         array_reverse($buttons),
-                        ['title' => 'zero_default_title', 'intro' => 'zero_createcourses_intro']
+                        ['title' => 'zero_default_title', 'intro' => 'zero_default_intro']
                     );
                 }
                 return $this->generate_zero_state_data(
                     $nocoursesimg,
                     $buttons,
-                    ['title' => 'zero_default_title', 'intro' => 'zero_nomanagecourses_intro']
+                    ['title' => 'zero_default_title', 'intro' => 'zero_default_intro']
                 );
             }
         }
@@ -569,7 +569,7 @@ class main implements renderable, templatable {
         return $this->generate_zero_state_data(
             $nocoursesimg,
             [],
-            ['title' => 'zero_default_title', 'intro' => 'zero_nopermission_intro']
+            ['title' => 'zero_default_title', 'intro' => 'zero_default_intro']
         );
     }
 

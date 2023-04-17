@@ -41,7 +41,7 @@ Feature: Zero state on my overview block
     And I click on "Create course" "button"
     And I should see "Add a new course"
 
-  Scenario: Users with permissions to create a course but is not enroled in any existing course
+  Scenario: Users with permissions to create a course but is not enrolled in any existing course
     Given the following "course" exists:
       | fullname         | Course 1 |
       | shortname        | C1       |
@@ -56,7 +56,7 @@ Feature: Zero state on my overview block
     And I click on "Manage courses" "button"
     And I should see "Course 1"
 
-  Scenario: Users with permissions to create but not to manage courses and is not enroled in any existing course
+  Scenario: Users with permissions to create but not to manage courses and is not enrolled in any existing course
     Given the following "permission overrides" exist:
       | capability             | permission | role     | contextlevel | reference |
       | moodle/category:manage | Prohibit   | manager  | System       |           |
