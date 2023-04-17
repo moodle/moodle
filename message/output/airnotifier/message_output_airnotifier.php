@@ -85,7 +85,8 @@ class message_output_airnotifier extends message_output {
         $extra->site            = $siteid;
         $extra->date            = (!empty($eventdata->timecreated)) ? $eventdata->timecreated : time();
         $extra->notification    = (!empty($eventdata->notification)) ? 1 : 0;
-        $extra->encrypted = get_config('message_airnotifier', 'encryptnotifications') == 1;
+        $encryptnotifications = get_config('message_airnotifier', 'encryptnotifications') == 1;
+        $encryptprocessing = get_config('message_airnotifier', 'encryptprocessing');
 
         // Site name.
         $site = get_site();
@@ -114,6 +115,13 @@ class message_output_airnotifier extends message_output {
                 continue;
             }
 
+            // Check if we should skip sending the notification.
+            if ($encryptnotifications && empty($devicetoken->publickey) &&
+                    $encryptprocessing == message_airnotifier_manager::ENCRYPT_UNSUPPORTED_NOT_SEND) {
+
+                continue;   // Avoid sending notifications to devices not supporting encryption.
+            }
+
             // Sending the message to the device.
             $serverurl = $CFG->airnotifierurl . ':' . $CFG->airnotifierport . '/api/v2/push/';
             $header = array('Accept: application/json', 'X-AN-APP-NAME: ' . $CFG->airnotifierappname,
@@ -123,6 +131,7 @@ class message_output_airnotifier extends message_output {
             $curl->setopt(array('CURLOPT_TIMEOUT' => 2, 'CURLOPT_CONNECTTIMEOUT' => 2));
             $curl->setHeader($header);
 
+            $extra->encrypted = $encryptnotifications;
             $extra = $this->encrypt_payload($extra, $devicetoken);
             $params = array(
                 'device'    => $devicetoken->platform,
