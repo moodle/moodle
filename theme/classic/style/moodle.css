@@ -37609,7 +37609,7 @@ div.editor_atto_toolbar button .icon {
   margin-bottom: 25px;
 }
 .tertiary-navigation .row {
-  column-gap: 20px;
+  column-gap: 10px;
 }
 .tertiary-navigation .tertiary-navigation-selector .dropdown-toggle {
   padding: 0;
@@ -37620,10 +37620,18 @@ div.editor_atto_toolbar button .icon {
 .tertiary-navigation .navitem-divider:not(:last-child) {
   margin-right: 20px;
 }
+.tertiary-navigation .btn > div {
+  max-width: 200px;
+}
 
 @media (max-width: 767.98px) {
   .tertiary-navigation .mform {
     padding-left: initial;
+  }
+}
+@media (max-width: 575.98px) {
+  .tertiary-navigation .page-toggler > p {
+    font-size: 80%;
   }
 }
 @media print {
