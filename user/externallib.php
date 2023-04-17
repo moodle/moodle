@@ -1257,7 +1257,8 @@ class core_user_external extends \core_external\external_api {
                 'platform'  => new external_value(PARAM_NOTAGS, 'the device platform \'iOS\' or \'Android\' etc.'),
                 'version'   => new external_value(PARAM_NOTAGS, 'the device version \'6.1.2\' or \'4.2.2\' etc.'),
                 'pushid'    => new external_value(PARAM_RAW, 'the device PUSH token/key/identifier/registration id'),
-                'uuid'      => new external_value(PARAM_RAW, 'the device UUID')
+                'uuid'      => new external_value(PARAM_RAW, 'the device UUID'),
+                'publickey' => new external_value(PARAM_RAW, 'the app generated public key', VALUE_DEFAULT, null),
             )
         );
     }
@@ -1273,10 +1274,11 @@ class core_user_external extends \core_external\external_api {
      * @param string $version The device version 6.1.2 or 4.2.2 etc.
      * @param string $pushid The device PUSH token/key/identifier/registration id.
      * @param string $uuid The device UUID.
+     * @param string $publickey The app generated public key
      * @return array List of possible warnings.
      * @since Moodle 2.6
      */
-    public static function add_user_device($appid, $name, $model, $platform, $version, $pushid, $uuid) {
+    public static function add_user_device($appid, $name, $model, $platform, $version, $pushid, $uuid, $publickey = null) {
         global $CFG, $USER, $DB;
         require_once($CFG->dirroot . "/user/lib.php");
 
@@ -1287,7 +1289,8 @@ class core_user_external extends \core_external\external_api {
                       'platform' => $platform,
                       'version' => $version,
                       'pushid' => $pushid,
-                      'uuid' => $uuid
+                      'uuid' => $uuid,
+                      'publickey' => $publickey,
                       ));
 
         $warnings = array();
@@ -1310,6 +1313,7 @@ class core_user_external extends \core_external\external_api {
             foreach ($userdevices as $userdevice) {
                 $userdevice->version    = $params['version'];   // Maybe the user upgraded the device.
                 $userdevice->pushid     = $params['pushid'];
+                $userdevice->publickey  = $params['publickey'];
                 $userdevice->timemodified  = time();
                 $DB->update_record('user_devices', $userdevice);
             }
@@ -1324,6 +1328,7 @@ class core_user_external extends \core_external\external_api {
             $userdevice->version    = $params['version'];
             $userdevice->pushid     = $params['pushid'];
             $userdevice->uuid       = $params['uuid'];
+            $userdevice->publickey  = $params['publickey'];
             $userdevice->timecreated  = time();
             $userdevice->timemodified = $userdevice->timecreated;
 
