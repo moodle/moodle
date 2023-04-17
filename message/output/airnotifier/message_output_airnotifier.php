@@ -92,16 +92,15 @@ class message_output_airnotifier extends message_output {
         $extra->sitefullname = clean_param(format_string($site->fullname), PARAM_NOTAGS);
         $extra->siteshortname = clean_param(format_string($site->shortname), PARAM_NOTAGS);
 
-        // Clean HTML, push notifications must arrive clean.
-        if (!empty($extra->smallmessage)) {
-            $extra->smallmessage = clean_param($extra->smallmessage, PARAM_NOTAGS);
+        // Clean HTML and ony allow data not to be ignored by Airnotifier to reduce the payload size.
+        if (empty($extra->smallmessage)) {
+            $extra->smallmessage = $extra->fullmessage;
         }
-        if (!empty($extra->fullmessage)) {
-            $extra->fullmessage = clean_param($extra->fullmessage, PARAM_NOTAGS);
-        }
-        if (!empty($extra->fullmessagehtml)) {
-            $extra->fullmessagehtml = clean_param($extra->fullmessagehtml, PARAM_NOTAGS);
-        }
+        $extra->smallmessage = clean_param($extra->smallmessage, PARAM_NOTAGS);
+        unset($extra->fullmessage);
+        unset($extra->fullmessagehtml);
+        unset($extra->fullmessageformat);
+        unset($extra->fullmessagetrust);
 
         // Send wwwroot to airnotifier.
         $extra->wwwroot = $CFG->wwwroot;
@@ -169,8 +168,6 @@ class message_output_airnotifier extends message_output {
             'userfromid',
             'sitefullname',
             'smallmessage',
-            'fullmessage',
-            'fullmessagehtml',
             'subject',
             'contexturl',
         ];
@@ -196,16 +193,12 @@ class message_output_airnotifier extends message_output {
         unset($payload->replytoname);
         unset($payload->attachment);
         unset($payload->attachname);
-        unset($payload->fullmessageformat);
-        unset($payload->fullmessagetrust);
 
         // We use Firebase to deliver all Push Notifications, and for all device types.
         // Firebase has a 4KB payload limit.
         // https://firebase.google.com/docs/cloud-messaging/concept-options#notifications_and_data_messages
         // If the message is over that limit we remove unneeded fields and replace the title with a simple message.
         if (\core_text::strlen(json_encode($payload), '8bit') > 4000) {
-            unset($payload->fullmessage);
-            unset($payload->fullmessagehtml);
             $payload->smallmessage = get_string('view_notification', 'message_airnotifier');
         }
 
