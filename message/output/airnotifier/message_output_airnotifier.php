@@ -133,6 +133,15 @@ class message_output_airnotifier extends message_output {
 
             $extra->encrypted = $encryptnotifications;
             $extra = $this->encrypt_payload($extra, $devicetoken);
+
+            // We use Firebase to deliver all Push Notifications, and for all device types.
+            // Firebase has a 4KB payload limit.
+            // https://firebase.google.com/docs/cloud-messaging/concept-options#notifications_and_data_messages
+            // If the message is over that limit we remove unneeded fields and replace the title with a simple message.
+            if (\core_text::strlen(json_encode($extra), '8bit') > 4000) {
+                $extra->smallmessage = get_string('view_notification', 'message_airnotifier');
+            }
+
             $params = array(
                 'device'    => $devicetoken->platform,
                 'token'     => $devicetoken->pushid,
@@ -202,14 +211,6 @@ class message_output_airnotifier extends message_output {
         unset($payload->replytoname);
         unset($payload->attachment);
         unset($payload->attachname);
-
-        // We use Firebase to deliver all Push Notifications, and for all device types.
-        // Firebase has a 4KB payload limit.
-        // https://firebase.google.com/docs/cloud-messaging/concept-options#notifications_and_data_messages
-        // If the message is over that limit we remove unneeded fields and replace the title with a simple message.
-        if (\core_text::strlen(json_encode($payload), '8bit') > 4000) {
-            $payload->smallmessage = get_string('view_notification', 'message_airnotifier');
-        }
 
         return $payload;
     }
