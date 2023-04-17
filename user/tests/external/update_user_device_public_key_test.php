@@ -16,7 +16,12 @@
 
 namespace core_user\external;
 
-use core_external\external_api;
+global $CFG;
+
+defined('MOODLE_INTERNAL') || die();
+require_once("{$CFG->libdir}/externallib.php");
+
+use external_api;
 use stdClass;
 
 /**
