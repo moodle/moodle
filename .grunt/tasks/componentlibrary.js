@@ -45,6 +45,7 @@ module.exports = grunt => {
         grunt.log.write(result);
 
         if (error) {
+            grunt.log.error(result.stdout);
             process.exit(code);
         }
         done();
@@ -56,7 +57,7 @@ module.exports = grunt => {
      * @param   {array} args
      * @returns {object}
      */
-    const spawnNodeCall = args => grunt.util.spawn({
+    const spawnNodeCall = (args) => grunt.util.spawn({
         cmd: 'node',
         args,
     }, getSpawnHandler(grunt.task.current.async()));
@@ -91,13 +92,14 @@ module.exports = grunt => {
      * @returns {Object} Reference to the spawned task
      */
     const cssBuild = () => spawnNodeCall([
-        'node_modules/node-sass/bin/node-sass',
-        '--output-style', 'expanded',
-        '--source-map', true,
-        '--source-map-contents', true,
+        'node_modules/sass/sass.js',
+        '--style', 'expanded',
+        '--source-map',
+        '--embed-sources',
         '--precision', 6,
+        '--load-path', process.cwd(),
         getCLPath('hugo/scss/docs.scss'),
-        '-o', getCLPath('hugo/dist/css/'),
+        getCLPath('hugo/dist/css/docs.css'),
     ]);
 
     // Register the various component library tasks.

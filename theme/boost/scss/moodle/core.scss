@@ -1520,7 +1520,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .choosercontainer #chooseform .option label {
     display: block;
     margin: 0;
-    padding: ($spacer / 2) 0;
+    padding: ($spacer * 0.5) 0;
     border-bottom: 1px solid #fff;
 }
 
@@ -2287,7 +2287,7 @@ ul {
     padding-right: 0;
     padding-left: 0;
     .nav {
-        margin-right: $grid-gutter-width / 2;
+        margin-right: $grid-gutter-width * 0.5;
         background-color: $card-bg;
     }
     @include media-breakpoint-down(sm) {
@@ -2624,7 +2624,7 @@ $picker-emojis-per-row: 7 !default;
     .category-button {
         padding: .375rem 0;
         height: 100%;
-        width: $picker-width / $picker-emoji-category-count;
+        width: divide($picker-width, $picker-emoji-category-count);
         border-top: none;
         border-left: none;
         border-right: none;
@@ -2668,7 +2668,7 @@ $picker-emojis-per-row: 7 !default;
     }
 
     .emoji-short-name {
-        line-height: $picker-row-height / 2;
+        line-height: $picker-row-height * 0.5;
     }
 
     @include media-breakpoint-down(xs) {
@@ -2730,10 +2730,10 @@ $picker-emojis-per-row: 7 !default;
     .breadcrumb:not(:empty) {
         width: 100%;
         flex-wrap: nowrap;
-        margin-bottom: $spacer / 2;
+        margin-bottom: $spacer * 0.5;
         .breadcrumb-item {
-            padding-top: $spacer / 3;
-            padding-bottom: $spacer / 3;
+            padding-top: $spacer * 0.33333;
+            padding-bottom: $spacer * 0.33333;
             display: inline-flex;
             overflow: hidden;
         }
@@ -2758,7 +2758,7 @@ $picker-emojis-per-row: 7 !default;
         max-width: 100%;
     }
     .card .card-body {
-        padding: $card-spacer-x / 2;
+        padding: $card-spacer-x * 0.5;
     }
     #page-header {
         .card {
@@ -2772,7 +2772,7 @@ $picker-emojis-per-row: 7 !default;
     .nav-pills {
         margin: 0;
         border: 0;
-        padding: $spacer / 8;
+        padding: $spacer * 0.125;
         background-color: $gray-200;
         .nav-item {
             flex: 1 1 auto;
@@ -2781,7 +2781,7 @@ $picker-emojis-per-row: 7 !default;
         .nav-link {
             background: $white;
             border: 0;
-            margin: $spacer / 8;
+            margin: $spacer * 0.125;
             &.active {
                 @include button-outline-variant($gray-600);
                 border-color: $gray-600;
