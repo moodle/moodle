@@ -25,10 +25,12 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
+    $url = new moodle_url('/admin/course/resetindentation.php', ['format' => 'weeks']);
+    $link = html_writer::link($url, get_string('resetindentation', 'admin'));
     $settings->add(new admin_setting_configcheckbox(
         'format_weeks/indentation',
         new lang_string('indentation', 'format_weeks'),
-        new lang_string('indentation_help', 'format_weeks'),
+        new lang_string('indentation_help', 'format_weeks').'<br />'.$link,
         1
     ));
 }
