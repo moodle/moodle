@@ -136,8 +136,8 @@ Feature: A teacher can preview questions in the question bank
     And I should see "Version 1 (latest)"
     And I set the field "Answer:" to "3.14"
     When I press "Submit and finish"
-    And I should see "This preview is using version 1 of this question. The latest version is 2."
-    And I press "Restart now"
+    And I should see "This preview is using an older version of the question."
+    And I press "Use latest version"
     Then I should not see "Version 1"
     And I should see "Version 2 (latest)"
 
