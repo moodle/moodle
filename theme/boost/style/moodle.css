@@ -27100,6 +27100,9 @@ div.editor_atto_toolbar button .icon {
 .courseindex .courseindex-item .completioninfo.completion_fail {
   color: #ca3120;
 }
+.courseindex .courseindex-item.indented {
+  margin-left: 1rem;
+}
 .courseindex .courseindex-section {
   border-left: solid 3px transparent;
 }
