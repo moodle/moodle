@@ -31,13 +31,13 @@ Feature: Private groups
       | student7 | C1     | student        |
       | student8 | C1     | student        |
     And the following "groups" exist:
-      | name                                 | course | idnumber | visibility | participation |
-      | Visible to all/Participation         | C1     | VP       | 0          | 1             |
-      | Visible to members/Participation     | C1     | MP       | 1          | 1             |
-      | See own membership                   | C1     | O        | 2          | 0             |
-      | Not visible                          | C1     | N        | 3          | 0             |
-      | Visible to all/Non-Participation     | C1     | VN       | 0          | 0             |
-      | Visible to members/Non-Participation | C1     | MN       | 1          | 0             |
+      | name                                      | course | idnumber | visibility | participation |
+      | Visible to everyone/Participation         | C1     | VP       | 0          | 1             |
+      | Only visible to members/Participation     | C1     | MP       | 1          | 1             |
+      | Only see own membership                   | C1     | O        | 2          | 0             |
+      | Not visible                               | C1     | N        | 3          | 0             |
+      | Visible to everyone/Non-Participation     | C1     | VN       | 0          | 0             |
+      | Only visible to members/Non-Participation | C1     | MN       | 1          | 0             |
     And the following "group members" exist:
       | user     | group |
       | student1 | VP    |
@@ -53,62 +53,62 @@ Feature: Private groups
       | student7 | O     |
       | student8 | N     |
 
-  Scenario: Participants in "Visible to all" groups see their membership and other members:
+  Scenario: Participants in "Visible to everyone" groups see their membership and other members:
     Given I log in as "student1"
     And I am on "Course 1" course homepage
     When I follow "Participants"
     Then the following should exist in the "participants" table:
       | First name / Surname | Groups                                                         |
-      | Student 1            | Visible to all/Non-Participation, Visible to all/Participation |
+      | Student 1            | Visible to everyone/Non-Participation, Visible to everyone/Participation |
       | Student 2            | No groups                                                      |
       | Student 3            | No groups                                                      |
       | Student 4            | No groups                                                      |
-      | Student 5            | Visible to all/Non-Participation, Visible to all/Participation |
+      | Student 5            | Visible to everyone/Non-Participation, Visible to everyone/Participation |
       | Student 6            | No groups                                                      |
       | Student 7            | No groups                                                      |
       | Student 8            | No groups                                                      |
 
-  Scenario: Participants in "Visible to members" groups see their membership and other members, plus "Visible to all"
+  Scenario: Participants in "Only visible to members" groups see their membership and other members, plus "Visible to everyone"
     Given I log in as "student2"
     And I am on "Course 1" course homepage
     When I follow "Participants"
     Then the following should exist in the "participants" table:
       | First name / Surname | Groups                                                                 |
-      | Student 1            | Visible to all/Non-Participation, Visible to all/Participation         |
-      | Student 2            | Visible to members/Non-Participation, Visible to members/Participation |
+      | Student 1            | Visible to everyone/Non-Participation, Visible to everyone/Participation         |
+      | Student 2            | Only visible to members/Non-Participation, Only visible to members/Participation |
       | Student 3            | No groups                                                              |
       | Student 4            | No groups                                                              |
-      | Student 5            | Visible to all/Non-Participation, Visible to all/Participation         |
-      | Student 6            | Visible to members/Non-Participation, Visible to members/Participation |
+      | Student 5            | Visible to everyone/Non-Participation, Visible to everyone/Participation         |
+      | Student 6            | Only visible to members/Non-Participation, Only visible to members/Participation |
       | Student 7            | No groups                                                              |
       | Student 8            | No groups                                                              |
 
-  Scenario: Participants in "See own membership" groups see their membership but not other members, plus "Visible to all"
+  Scenario: Participants in "Only see own membership" groups see their membership but not other members, plus "Visible to everyone"
     Given I log in as "student3"
     And I am on "Course 1" course homepage
     When I follow "Participants"
     Then the following should exist in the "participants" table:
       | First name / Surname | Groups                                                                 |
-      | Student 1            | Visible to all/Non-Participation, Visible to all/Participation         |
+      | Student 1            | Visible to everyone/Non-Participation, Visible to everyone/Participation         |
       | Student 2            | No groups                                                              |
-      | Student 3            | See own membership                                                     |
+      | Student 3            | Only see own membership                                                     |
       | Student 4            | No groups                                                              |
-      | Student 5            | Visible to all/Non-Participation, Visible to all/Participation         |
+      | Student 5            | Visible to everyone/Non-Participation, Visible to everyone/Participation         |
       | Student 6            | No groups                                                              |
       | Student 7            | No groups                                                              |
       | Student 8            | No groups                                                              |
 
-  Scenario: Participants in "Not visible" groups do not see that group, do see "Visible to all"
+  Scenario: Participants in "Not visible" groups do not see that group, do see "Visible to everyone"
     Given I log in as "student4"
     And I am on "Course 1" course homepage
     When I follow "Participants"
     Then the following should exist in the "participants" table:
       | First name / Surname | Groups                                                                 |
-      | Student 1            | Visible to all/Non-Participation, Visible to all/Participation         |
+      | Student 1            | Visible to everyone/Non-Participation, Visible to everyone/Participation         |
       | Student 2            | No groups                                                              |
       | Student 3            | No groups                                                              |
       | Student 4            | No groups                                                              |
-      | Student 5            | Visible to all/Non-Participation, Visible to all/Participation         |
+      | Student 5            | Visible to everyone/Non-Participation, Visible to everyone/Participation         |
       | Student 6            | No groups                                                              |
       | Student 7            | No groups                                                              |
       | Student 8            | No groups                                                              |
@@ -119,11 +119,11 @@ Feature: Private groups
     When I follow "Participants"
     Then the following should exist in the "participants" table:
       | First name / Surname | Groups                                                                 |
-      | Student 1            | Visible to all/Non-Participation, Visible to all/Participation         |
-      | Student 2            | Visible to members/Non-Participation, Visible to members/Participation |
-      | Student 3            | See own membership                                                     |
+      | Student 1            | Visible to everyone/Non-Participation, Visible to everyone/Participation         |
+      | Student 2            | Only visible to members/Non-Participation, Only visible to members/Participation |
+      | Student 3            | Only see own membership                                                     |
       | Student 4            | Not visible                                                            |
-      | Student 5            | Visible to all/Non-Participation, Visible to all/Participation         |
-      | Student 6            | Visible to members/Non-Participation, Visible to members/Participation |
-      | Student 7            | See own membership                                                     |
+      | Student 5            | Visible to everyone/Non-Participation, Visible to everyone/Participation         |
+      | Student 6            | Only visible to members/Non-Participation, Only visible to members/Participation |
+      | Student 7            | Only see own membership                                                     |
       | Student 8            | Not visible                                                            |

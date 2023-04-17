@@ -15,7 +15,7 @@ Feature: Add the glossary random block when main feature is disabled
     And I add the "Random glossary entry" block to the default region with:
       | Title | Random glossary entry |
     When I navigate to "Plugins > Activity modules > Manage activities" in site administration
-    And I click on "Disable the Glossary plugin" "icon" in the "Glossary" "table_row"
+    And I click on "Disable Glossary" "icon" in the "Glossary" "table_row"
     And I am on "Course 1" course homepage with editing mode on
     Then I should see "Random glossary entry"
 
@@ -29,7 +29,7 @@ Feature: Add the glossary random block when main feature is disabled
     And I click on "Cancel" "button" in the "Delete block?" "dialogue"
     And I should see "Random glossary entry"
     When I navigate to "Plugins > Activity modules > Manage activities" in site administration
-    And I click on "Disable the Glossary plugin" "icon" in the "Glossary" "table_row"
+    And I click on "Disable Glossary" "icon" in the "Glossary" "table_row"
     And I am on "Course 1" course homepage with editing mode on
     And I open the "Random glossary entry" blocks action menu
     And I click on "Delete Random glossary entry block" "link" in the "Random glossary entry" "block"

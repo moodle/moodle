@@ -769,7 +769,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_draggable_marker_home_expectation(3, false),
                 $this->get_does_not_contain_submit_button_expectation(),
                 new question_pattern_expectation('~' . preg_quote(
-                        '<div class="wrongparts">The following markers have been placed in the wrong area: ' .
+                        '<div class="wrongparts">Markers placed in the wrong area: ' .
                         '<span class="wrongpart">quick</span>, <span class="wrongpart">fox</span>, ' .
                         '<span class="wrongpart">lazy</span>',
                     '~') . '~'),

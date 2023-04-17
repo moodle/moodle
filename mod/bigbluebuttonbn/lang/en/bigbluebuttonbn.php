@@ -150,9 +150,8 @@ $string['config_server_url_description'] = 'The default credentials are for a <a
 </ol>';
 $string['config_shared_secret'] = 'BigBlueButton shared secret';
 $string['config_shared_secret_description'] = 'The security secret of your BigBlueButton server. The default secret is for a free BigBlueButton service provided by Blindside Networks.';
-$string['config_checksum_algorithm'] = 'BigBlueButton Checksum Algorithm';
-$string['config_checksum_algorithm_description'] = 'The checksum algorithm of your BigBlueButton server.
- (SHA1 guarantees compatibility with older server versions but is less secure whereas SHA512 is FIPS 140-2 compliant.)';
+$string['config_checksum_algorithm'] = 'BigBlueButton server checksum algorithm';
+$string['config_checksum_algorithm_description'] = 'SHA1 is compatible with older servers. SHA256 and SHA512 are more secure. SHA512 is FIPS 140-2 compliant.';
 
 $string['config_recording'] = 'Recording';
 $string['config_recording_description'] = 'These settings are feature specific';
@@ -443,7 +442,7 @@ $string['view_error_unable_join'] = 'Unable to enter the room. Please check the 
 $string['view_error_bigbluebutton'] = 'BigBlueButton responded with errors. {$a}';
 $string['view_error_create'] = 'The BigBlueButton server responded with an error message. The room could not be created.';
 $string['view_error_max_concurrent'] = 'The number of concurrent sessions allowed has been reached.';
-$string['view_error_userlimit_reached'] = 'The number of users allowed in a session has been reached.';
+$string['view_error_userlimit_reached'] = 'The limit of how many users allowed in a session has been reached.';
 $string['view_error_url_missing_parameters'] = 'There are parameters missing in this URL';
 $string['view_error_import_no_courses'] = 'There are no courses to look up for recordings.';
 $string['view_error_import_no_recordings'] = 'There are no recordings in this course for importing.';
@@ -525,7 +524,7 @@ $string['view_message_conference_not_started'] = 'The session has not started ye
 $string['view_message_conference_wait_for_moderator'] = 'Waiting for a moderator to join.';
 $string['view_message_conference_in_progress'] = 'The session is in progress.';
 $string['view_message_conference_has_ended'] = 'The session has ended.';
-$string['view_message_conference_user_limit_reached'] = 'The number of users allowed in a session has been reached';
+$string['view_message_conference_user_limit_reached'] = 'The limit of how many users allowed in a session has been reached.';
 $string['view_message_tab_close'] = 'This tab/window must be closed manually';
 $string['view_message_recordings_disabled'] = 'Recordings are disabled on the server. BigBlueButton activities of type \'Recordings only\' cannot be used.';
 $string['view_message_cron_disabled'] = 'The list of recordings may not be up to date. Please contact the site administrator with the following information: {$a}';
