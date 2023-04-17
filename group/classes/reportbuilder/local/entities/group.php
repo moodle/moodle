@@ -178,7 +178,7 @@ class group extends base {
         // Visibility column.
         $columns[] = (new column(
             'visibility',
-            new lang_string('visibility', 'core_group'),
+            new lang_string('visibilityshort', 'core_group'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
@@ -205,7 +205,7 @@ class group extends base {
         // Participation column.
         $columns[] = (new column(
             'participation',
-            new lang_string('participation', 'core_group'),
+            new lang_string('participationshort', 'core_group'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
@@ -296,7 +296,7 @@ class group extends base {
         $filters[] = (new filter(
             select::class,
             'visibility',
-            new lang_string('visibility', 'core_group'),
+            new lang_string('visibilityshort', 'core_group'),
             $this->get_entity_name(),
             "{$groupsalias}.visibility"
         ))
@@ -312,7 +312,7 @@ class group extends base {
         $filters[] = (new filter(
             boolean_select::class,
             'participation',
-            new lang_string('participation', 'core_group'),
+            new lang_string('participationshort', 'core_group'),
             $this->get_entity_name(),
             "{$groupsalias}.participation"
         ))
