@@ -28,3 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 $string['pluginname'] = 'Qubits - Multitenancy - Course Management';
 $string['accessdenied'] = 'Access denied. Please contact site administrator!';
 $string['viewsitecourses'] = 'Qubits - Tenant ({$a}) - Courses';
+$string['enrolusers'] = 'Enrol Users';
+$string['aria:enrolusers'] = 'Choose Users for course enrolment';
+$string['viewenrolledusers'] = 'View Enrolled Users';
+$string['aria:viewenrolledusers'] = 'See for course enrolled Users';
+$string['aria:qubitscourseactions'] = 'Actions for current Qubits course';

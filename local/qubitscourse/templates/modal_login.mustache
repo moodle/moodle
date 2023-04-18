@@ -1,0 +1,25 @@
+{{< core/modal }}
+    {{$title}}{{#str}} login {{/str}}{{/title}}
+    {{$body}}
+        <div class="container">
+            <form>
+                <div class="form-group row">
+                    <label for="inputEmail" class="col-sm-2 col-form-label">{{#str}} email {{/str}}</label>
+                    <div class="col-sm-10">
+                        <input type="email" class="form-control" id="inputEmail" placeholder="{{#str}} email {{/str}}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputPassword" class="col-sm-2 col-form-label">{{#str}} password {{/str}}</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" id="inputPassword" placeholder="{{#str}} password {{/str}}">
+                    </div>
+                </div>
+            </form>
+        </div>
+    {{/body}}
+    {{$footer}}
+        <button type="button" class="btn btn-primary" data-action="login">{{#str}} login {{/str}}</button>
+        <button type="button" class="btn btn-secondary" data-action="cancel">{{#str}} cancel {{/str}}</button>
+    {{/footer}}
+{{/ core/modal }}

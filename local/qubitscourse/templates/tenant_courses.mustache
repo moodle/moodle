@@ -85,11 +85,46 @@
             <a href="{{viewlink}}">{{fullname}}</a>
             </div>
     </div>
+    <div class="card-footer dashboard-card-footer menu border-0 bg-white ml-auto">
+        {{> local_qubitscourse/course-action-menu }}
+    </div>
 </div>
 {{/tenantcourses}}
 </div>
 
 {{{pagebar}}}
+
+{{#js}}
+require(['jquery', 'core/templates', 'core/modal_factory','core/modal_events', 'core/fragment'], 
+function($, Templates, ModalFactory, ModalEvents, Fragment) {
+    
+    $("a.qbitsenrlusr").on('click', function(e) {
+      var clickedLink = $(e.currentTarget);
+      let contextId = clickedLink.data('context-id');
+      let enfrgHtml = Fragment.loadFragment('local_qubitscourse', 'enrol_users_form', contextId, {});
+        ModalFactory.create({
+            type: ModalFactory.types.SAVE_CANCEL,
+            title: 'Enrol Users',
+            body: enfrgHtml,
+            large: true
+        })
+        .then(function(modal) {
+            //modal.setSaveButtonText('Enrol Selected Users');
+            var root = modal.getRoot();
+            root.on(ModalEvents.save, function() {
+                var elementid = clickedLink.data('context-id');
+                console.log("Course Context ID >> ", elementid);
+            });
+
+            modal.getRoot().on(ModalEvents.hidden, () => {
+                modal.destroy();
+            });
+            modal.show();
+       });
+    });
+
+});
+{{/js}}
 
 {{#js}}
 require(['jquery'], function($) {

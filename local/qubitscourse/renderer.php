@@ -30,13 +30,14 @@ class local_qubitscourse_renderer extends plugin_renderer_base {
                 if (!$courseimage) {
                     $courseimage = $OUTPUT->get_generated_image_for_id($onecourse->id);
                 }
-
+                $course_context = context_course::instance($onecourse->id);
                 $tenantcourses[] = array(
                     "id" => $onecourse->id,
                     "fullname" => $onecourse->fullname,
                     "shortname" => $onecourse->shortname,
                     'viewlink' => new moodle_url("/course/view.php", array("id" => $onecourse->id )),
-                    "courseimage" => $courseimage
+                    "courseimage" => $courseimage,
+                    "contextid" => $course_context->id
                 );
             }
         }
@@ -57,7 +58,7 @@ class local_qubitscourse_renderer extends plugin_renderer_base {
             "sortdir" => $filters["sortdir"],
             "search" => $filters["search"],
         ];
-        //echo "<pre>"; print_r($allcourses); echo "</pre>"; exit;
+        //echo "<pre>"; print_r($curpagetenantcourses); echo "</pre>"; exit;
         return $this->output->render_from_template('local_qubitscourse/tenant_courses', $templatecontext);
     }
 
