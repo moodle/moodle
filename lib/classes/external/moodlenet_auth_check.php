@@ -88,7 +88,7 @@ class moodlenet_auth_check extends external_api {
         $returnurl->param('sesskey', sesskey());
 
         // Get the OAuth Client.
-        if (!$oauthclient = api::get_user_oauth_client($issuer, $returnurl, moodlenet_client::API_SCOPE_CREATE, true)) {
+        if (!$oauthclient = api::get_user_oauth_client($issuer, $returnurl, moodlenet_client::API_SCOPE_CREATE_RESOURCE, true)) {
             return self::return_errors($issuerid, 'erroroauthclient', get_string('invalidparameter', 'debug'));
         }
 

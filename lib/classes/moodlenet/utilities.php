@@ -30,7 +30,7 @@ class utilities {
     /**
      * Check whether the specified issuer is configured as a MoodleNet instance that can be shared to.
      *
-     * @param \core\oauth2\issuer $issuer The OAuth 2 issuer being validated.
+     * @param issuer $issuer The OAuth 2 issuer being validated.
      * @return bool true if the issuer is enabled and available to share to.
      */
     public static function is_valid_instance(issuer $issuer): bool {
@@ -46,7 +46,7 @@ class utilities {
     /**
      * Check whether a user has the capabilities required to share activities from a given course to MoodleNet.
      *
-     * @param \context_course $coursecontext Course context where the activity would be shared from.
+     * @param context_course $coursecontext Course context where the activity would be shared from.
      * @param int $userid The user ID being checked.
      * @return boolean
      */

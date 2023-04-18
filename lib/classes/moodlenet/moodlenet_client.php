@@ -30,45 +30,43 @@ class moodlenet_client {
     /**
      * @var string MoodleNet resource creation endpoint URI.
      */
-    protected const API_CREATE_URI = '/.pkg/@moodlenet/ed-resource/basic/v1/create';
+    protected const API_CREATE_RESOURCE_URI = '/.pkg/@moodlenet/ed-resource/basic/v1/create';
 
     /**
      * @var string MoodleNet scope for creating resources.
      */
-    public const API_SCOPE_CREATE = '@moodlenet/ed-resource:write.own';
+    public const API_SCOPE_CREATE_RESOURCE = '@moodlenet/ed-resource:write.own';
 
 
     /**
      * Constructor.
      *
-     * @param \core\http_client $httpclient The httpclient object being used to perform the share.
-     * @param \core\oauth2\client $oauthclient The OAuth 2 client for the MoodleNet site being shared to.
-     * @param string $resourcename The name of the resource being shared.
-     * @param string $resourcedescription A description of the resource being shared.
+     * @param http_client $httpclient The httpclient object being used to perform the share.
+     * @param client $oauthclient The OAuth 2 client for the MoodleNet site being shared to.
      */
     public function __construct(
         protected http_client $httpclient,
         protected client $oauthclient,
-        protected string $resourcename,
-        protected string $resourcedescription
     ) {
-        // All properties promoted, nothing furthe required.
+        // All properties promoted, nothing further required.
     }
 
     /**
      * Create a resource on MoodleNet which includes a file.
      *
      * @param array $filedata The file data in the format [storedfile => stored_file object, filecontents => raw file].
-     * @return TODO - what is this type and what is the format?
+     * @param string $resourcename The name of the resource being shared.
+     * @param string $resourcedescription A description of the resource being shared.
+     * @return Psr\Http\Message\ResponseInterface The HTTP client response from MoodleNet.
      */
-    public function create_resource_from_file(array $filedata) {
+    public function create_resource_from_file(array $filedata, string $resourcename, $resourcedescription) {
         // This may take a long time if a lot of data is being shared.
         \core_php_time_limit::raise();
 
         $moodleneturl = $this->oauthclient->get_issuer()->get('baseurl');
-        $apiurl = rtrim($moodleneturl, '/') . self::API_CREATE_URI;
+        $apiurl = rtrim($moodleneturl, '/') . self::API_CREATE_RESOURCE_URI;
 
-        $requestdata = $this->prepare_file_share_request_data($filedata);
+        $requestdata = $this->prepare_file_share_request_data($filedata, $resourcename, $resourcedescription);
 
         return $this->httpclient->request('POST', $apiurl, $requestdata);
 
@@ -79,13 +77,11 @@ class moodlenet_client {
      * This creates an array in the format used by \core\httpclient options to send a multipart request.
      *
      * @param array $filedata An array of data relating to the file being shared (as prepared by ::prepare_share_contents).
+     * @param string $resourcename The name of the resource being shared.
+     * @param string $resourcedescription A description of the resource being shared.
      * @return array Data in the format required to send a file to MoodleNet using \core\httpclient.
      */
-    protected function prepare_file_share_request_data(
-        array $filedata,
-    ): array {
-        global $DB;
-
+    protected function prepare_file_share_request_data(array $filedata, string $resourcename, $resourcedescription): array {
         return [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->oauthclient->get_accesstoken()->token,
@@ -94,8 +90,8 @@ class moodlenet_client {
                 [
                     'name' => 'metadata',
                     'contents' => json_encode([
-                        'name' => $this->resourcename,
-                        'description' => $this->resourcedescription,
+                        'name' => $resourcename,
+                        'description' => $resourcedescription,
                     ]),
                     'headers' => [
                         'Content-Disposition' => 'form-data; name="."',

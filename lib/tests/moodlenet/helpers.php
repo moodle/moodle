@@ -30,7 +30,7 @@ class helpers {
      * Create and return a mock MoodleNet issuer.
      *
      * @param int $enabled Whether the issuer is enabled.
-     * @return core\oauth2\issuer The issuer that has been created.
+     * @return issuer The issuer that has been created.
      */
     public static function get_mock_issuer(int $enabled): issuer {
         $record = (object) [

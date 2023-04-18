@@ -59,7 +59,7 @@ class moodlenet_send_activity_test extends externallib_advanced_testcase {
         $issuer = \core\moodlenet\helpers::get_mock_issuer(0);
 
         // Test with the experimental flag off.
-        $result = moodlenet_send_activity::execute($issuer->get('id'), $course->id, $moduleinstance->cmid, 0);
+        $result = moodlenet_send_activity::execute($issuer->get('id'), $moduleinstance->cmid, 0);
         $result = external_api::clean_returnvalue(moodlenet_send_activity::execute_returns(), $result);
         $this->assertFalse($result['status']);
         $this->assertNotEmpty($result['warnings']);
@@ -68,7 +68,7 @@ class moodlenet_send_activity_test extends externallib_advanced_testcase {
         $CFG->enablesharingtomoodlenet = true;
 
         // Test with invalid format.
-        $result = moodlenet_send_activity::execute($issuer->get('id'), $course->id, $moduleinstance->cmid, 5);
+        $result = moodlenet_send_activity::execute($issuer->get('id'), $moduleinstance->cmid, 5);
         $result = external_api::clean_returnvalue(moodlenet_send_activity::execute_returns(), $result);
         $this->assertFalse($result['status']);
         $this->assertNotEmpty($result['warnings']);
@@ -76,7 +76,7 @@ class moodlenet_send_activity_test extends externallib_advanced_testcase {
 
         // Test with the user does not have permission.
         $this->setUser($user);
-        $result = moodlenet_send_activity::execute($issuer->get('id'), $course->id, $moduleinstance->cmid, 0);
+        $result = moodlenet_send_activity::execute($issuer->get('id'), $moduleinstance->cmid, 0);
         $result = external_api::clean_returnvalue(moodlenet_send_activity::execute_returns(), $result);
         $this->assertFalse($result['status']);
         $this->assertNotEmpty($result['warnings']);
@@ -85,7 +85,7 @@ class moodlenet_send_activity_test extends externallib_advanced_testcase {
         $this->setAdminUser();
 
         // Test with the issuer is not enabled.
-        $result = moodlenet_send_activity::execute($issuer->get('id'), $course->id, $moduleinstance->cmid, 0);
+        $result = moodlenet_send_activity::execute($issuer->get('id'), $moduleinstance->cmid, 0);
         $result = external_api::clean_returnvalue(moodlenet_send_activity::execute_returns(), $result);
         $this->assertFalse($result['status']);
         $this->assertNotEmpty($result['warnings']);
@@ -95,7 +95,7 @@ class moodlenet_send_activity_test extends externallib_advanced_testcase {
         $issuer->set('enabled', 1);
         $irecord = $issuer->to_record();
         api::update_issuer($irecord);
-        $result = moodlenet_send_activity::execute($issuer->get('id'), $course->id, $moduleinstance->cmid, 0);
+        $result = moodlenet_send_activity::execute($issuer->get('id'), $moduleinstance->cmid, 0);
         $result = external_api::clean_returnvalue(moodlenet_send_activity::execute_returns(), $result);
         $this->assertFalse($result['status']);
         $this->assertNotEmpty($result['warnings']);
@@ -103,7 +103,7 @@ class moodlenet_send_activity_test extends externallib_advanced_testcase {
 
         set_config('oauthservice', $issuer->get('id'), 'moodlenet');
         // Test with the issuer not yet authorized.
-        $result = moodlenet_send_activity::execute($issuer->get('id'), $course->id, $moduleinstance->cmid, 0);
+        $result = moodlenet_send_activity::execute($issuer->get('id'), $moduleinstance->cmid, 0);
         $result = external_api::clean_returnvalue(moodlenet_send_activity::execute_returns(), $result);
         $this->assertFalse($result['status']);
         $this->assertNotEmpty($result['warnings']);

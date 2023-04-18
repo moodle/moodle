@@ -49,7 +49,7 @@ $returnurl = new moodle_url('/admin/moodlenet_oauth2_callback.php');
 $returnurl->param('issuerid', $issuerid);
 $returnurl->param('callback', 'yes');
 $returnurl->param('sesskey', sesskey());
-$oauthclient = api::get_user_oauth_client($issuer, $returnurl, moodlenet_client::API_SCOPE_CREATE, true);
+$oauthclient = api::get_user_oauth_client($issuer, $returnurl, moodlenet_client::API_SCOPE_CREATE_RESOURCE, true);
 $oauthclient->is_logged_in(); // Will upgrade the auth code to a token.
 
 echo $OUTPUT->header();

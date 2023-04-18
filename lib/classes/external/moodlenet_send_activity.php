@@ -47,7 +47,6 @@ class moodlenet_send_activity extends external_api {
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
             'issuerid' => new external_value(PARAM_INT, 'OAuth 2 issuer ID', VALUE_REQUIRED),
-            'courseid' => new external_value(PARAM_INT, 'Course ID', VALUE_REQUIRED),
             'cmid' => new external_value(PARAM_INT, 'Course module ID', VALUE_REQUIRED),
             'shareformat' => new external_value(PARAM_INT, 'Share format', VALUE_REQUIRED),
         ]);
@@ -57,29 +56,27 @@ class moodlenet_send_activity extends external_api {
      * External function to send the activity to MoodleNet.
      *
      * @param int $issuerid The MoodleNet OAuth 2 issuer ID
-     * @param int $courseid The course ID that contains the activity which being shared
      * @param int $cmid The course module ID of the activity that being shared
      * @param int $shareformat The share format being used, as defined by \core\moodlenet\activity_sender
      * @return array
      * @since Moodle 4.2
      */
-    public static function execute(int $issuerid, int $courseid, int $cmid, int $shareformat): array {
+    public static function execute(int $issuerid, int $cmid, int $shareformat): array {
         global $CFG, $USER;
 
         [
             'issuerid' => $issuerid,
-            'courseid' => $courseid,
             'cmid' => $cmid,
             'shareformat' => $shareformat,
         ] = self::validate_parameters(self::execute_parameters(), [
             'issuerid' => $issuerid,
-            'courseid' => $courseid,
             'cmid' => $cmid,
             'shareformat' => $shareformat,
         ]);
 
         // Check capability.
-        $coursecontext = context_course::instance($courseid);
+        [$course] = get_course_and_cm_from_cmid($cmid);
+        $coursecontext = context_course::instance($course->id);
         $usercanshare = utilities::can_user_share($coursecontext, $USER->id);
         if (!$usercanshare) {
             return self::return_errors($cmid, 'errorpermission',
@@ -102,7 +99,7 @@ class moodlenet_send_activity extends external_api {
         if (!$oauthclient = api::get_user_oauth_client(
             $issuer,
             new moodle_url($CFG->wwwroot),
-            moodlenet_client::API_SCOPE_CREATE
+            moodlenet_client::API_SCOPE_CREATE_RESOURCE
         )) {
             return self::return_errors($issuerid, 'erroroauthclient', get_string('invalidparameter', 'debug'));
         }
@@ -116,9 +113,9 @@ class moodlenet_send_activity extends external_api {
         $client = new http_client();
 
         // Share activity.
-        $activitysender = new activity_sender($courseid, $cmid, $USER->id, $client, $oauthclient, $shareformat);
-
         try {
+            $moodlenetclient = new moodlenet_client($client, $oauthclient);
+            $activitysender = new activity_sender($cmid, $USER->id, $moodlenetclient, $oauthclient, $shareformat);
             $result = $activitysender->share_activity();
             if (empty($result['drafturl'])) {
                 return self::return_errors($result['responsecode'], 'errorsendingactivity',

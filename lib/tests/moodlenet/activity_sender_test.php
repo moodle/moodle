@@ -31,8 +31,6 @@ use testing_data_generator;
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-
 require_once('helpers.php');
 
 /**
@@ -72,7 +70,7 @@ class activity_sender_test extends \advanced_testcase {
         $this->moduleinstance = $this->generator->create_module('assign', ['course' => $this->course->id]);
         $this->coursecontext = context_course::instance($this->course->id);
         // Create mock issuer.
-        $this->issuer = \core\moodlenet\helpers::get_mock_issuer(1);
+        $this->issuer = helpers::get_mock_issuer(1);
         // Create mock builder for OAuth2 client.
         $mockbuilder = $this->getMockBuilder('core\oauth2\client');
         $mockbuilder->onlyMethods(['get_issuer', 'is_logged_in', 'get_accesstoken']);
@@ -91,50 +89,39 @@ class activity_sender_test extends \advanced_testcase {
         global $USER;
         $this->setAdminUser();
 
+        $httpclient = new http_client();
+        $moodlenetclient = new moodlenet_client($httpclient, $this->mockoauthclient);
+
         // Set get_file method accessibility.
         $method = new ReflectionMethod(activity_sender::class, 'prepare_share_contents');
         $method->setAccessible(true);
 
         // Test with invalid share format.
+        $this->expectException(\moodle_exception::class);
+        $this->expectExceptionMessage(get_string('moodlenet:invalidshareformat', 'error'));
         $package = $method->invoke(new activity_sender(
-            $this->course->id,
             $this->moduleinstance->cmid,
             $USER->id,
-            new http_client(),
+            $moodlenetclient,
             $this->mockoauthclient,
             random_int(5, 30)
         ));
-        $this->assertEmpty($package);
 
-        // Test with valid share format and invalid course.
-        $this->expectException('dml_missing_record_exception');
+        // Test with valid share format and invalid course module.
         $package = $method->invoke(new activity_sender(
-            random_int(1, 30),
-            $this->moduleinstance->cmid,
-            $USER->id,
-            new http_client(),
-            $this->mockoauthclient,
-            activity_sender::SHARE_FORMAT_BACKUP
-        ));
-        $this->assertEmpty($package);
-
-        // Test with valid share format, valid course and invalid course module.
-        $package = $method->invoke(new activity_sender(
-            $this->course->id,
             random_int(5, 30),
             $USER->id,
-            new http_client(),
+            $moodlenetclient,
             $this->mockoauthclient,
             activity_sender::SHARE_FORMAT_BACKUP
         ));
         $this->assertEmpty($package);
 
-        // Test with valid share format, valid course and valid course module.
+        // Test with valid share format and valid course module.
         $package = $method->invoke(new activity_sender(
-            $this->course->id,
             $this->moduleinstance->cmid,
             $USER->id,
-            new http_client(),
+            $moodlenetclient,
             $this->mockoauthclient,
             activity_sender::SHARE_FORMAT_BACKUP
         ));
@@ -188,11 +175,11 @@ class activity_sender_test extends \advanced_testcase {
         $sink = $this->redirectEvents();
 
         // Create activity sender.
+        $moodlenetclient = new moodlenet_client($httpclient, $this->mockoauthclient);
         $activitysender = new activity_sender(
-            $this->course->id,
             $this->moduleinstance->cmid,
             $USER->id,
-            $httpclient,
+            $moodlenetclient,
             $this->mockoauthclient,
             activity_sender::SHARE_FORMAT_BACKUP
         );
