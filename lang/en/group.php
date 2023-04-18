@@ -176,6 +176,7 @@ $string['othergroups'] = 'Other groups';
 $string['overview'] = 'Overview';
 $string['participation'] = 'Show group in dropdown menu for activities in group mode';
 $string['participation_help'] = 'Should group members be able to select this group for activities in separate or visible groups mode? (Only applicable if group membership is visible to everyone or only visible to members.)';
+$string['participationshort'] = 'Participation';
 $string['potentialmembers'] = 'Potential members: {$a}';
 $string['potentialmembs'] = 'Potential members';
 $string['printerfriendly'] = 'Printer-friendly display';
@@ -209,6 +210,7 @@ $string['visibility_help'] = '* Visible to everyone - all course participants ca
 Users with the view hidden groups capability can always view group membership.
 
 Note that you can\'t change this setting if the group has members.';
+$string['visibilityshort'] = 'Visibility';
 $string['visibilityall'] = 'Visible to everyone';
 $string['visibilitymembers'] = 'Only visible to members';
 $string['visibilityown'] = 'Only see own membership';
