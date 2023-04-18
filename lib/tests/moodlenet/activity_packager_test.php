@@ -16,6 +16,8 @@
 
 namespace core\moodlenet;
 
+use core\context\user;
+
 /**
  * Unit tests for {@see activity_packager}.
  *
@@ -107,7 +109,6 @@ class activity_packager_test extends \advanced_testcase {
         $currenttime = time();
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
-        $coursecontext = \context_course::instance($course->id);
 
         $assigndata = [
             'course' => $course->id,
@@ -131,9 +132,9 @@ class activity_packager_test extends \advanced_testcase {
 
         // Check some known values in the returned stored_file object to confirm they match the file we have packaged.
         $this->assertNotEmpty($package['storedfile']->get_contenthash());
-        $this->assertEquals($coursecontext->id, $package['storedfile']->get_contextid());
-        $this->assertEquals('core', $package['storedfile']->get_component());
-        $this->assertEquals('moodlenet_resource', $package['storedfile']->get_filearea());
+        $this->assertEquals(user::instance($USER->id)->id, $package['storedfile']->get_contextid());
+        $this->assertEquals('user', $package['storedfile']->get_component());
+        $this->assertEquals('draft', $package['storedfile']->get_filearea());
         $this->assertEquals('assign_backup.mbz', $package['storedfile']->get_filename());
         $this->assertGreaterThan(0, $package['storedfile']->get_filesize());
         $timecreated = $package['storedfile']->get_timecreated();
