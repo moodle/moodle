@@ -37,6 +37,12 @@ class message_airnotifier_manager {
     /** @var string The Airnotifier public instance URL */
     const AIRNOTIFIER_PUBLICURL = 'https://messages.moodle.net';
 
+    /** @var int Avoid sending notifications to devices not supporting encryption */
+    const ENCRYPT_UNSUPPORTED_NOT_SEND = 0;
+
+    /** @var int Send notifications to devices not supporting encryption */
+    const ENCRYPT_UNSUPPORTED_SEND = 1;
+
     /**
      * Include the relevant javascript and language strings for the device
      * toolbox YUI module

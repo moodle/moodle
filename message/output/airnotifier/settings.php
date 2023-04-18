@@ -55,6 +55,19 @@ if ($ADMIN->fulltree) {
         false
     ));
 
+    $options = [
+        message_airnotifier_manager::ENCRYPT_UNSUPPORTED_NOT_SEND => new lang_string('donotsendnotification', 'message_airnotifier'),
+        message_airnotifier_manager::ENCRYPT_UNSUPPORTED_SEND => new lang_string('sendnotificationnotenc', 'message_airnotifier'),
+    ];
+    $settings->add(new admin_setting_configselect('message_airnotifier/encryptprocessing',
+        new lang_string('encryptprocessing', 'message_airnotifier'),
+        new lang_string('encryptprocessing_desc', 'message_airnotifier'),
+        message_airnotifier_manager::ENCRYPT_UNSUPPORTED_NOT_SEND,
+        $options
+    ));
+    $settings->hide_if('message_airnotifier/encryptprocessing', 'message_airnotifier/encryptnotifications',
+        'neq', 1);
+
     $url = new moodle_url('/message/output/airnotifier/requestaccesskey.php', array('sesskey' => sesskey()));
     $link = html_writer::link($url, get_string('requestaccesskey', 'message_airnotifier'));
     $settings->add(new admin_setting_heading('requestaccesskey', '', $link));
