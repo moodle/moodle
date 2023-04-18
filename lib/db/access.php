@@ -2681,4 +2681,14 @@ $capabilities = array(
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [],
     ],
+
+    // Allow users to share activities to MoodleNet.
+    'moodle/moodlenet:shareactivity' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ]
+    ],
 );

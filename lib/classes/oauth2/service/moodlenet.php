@@ -76,7 +76,11 @@ class moodlenet implements issuer_interface {
         }
 
         $endpointscreated = 0;
-        $configreader = new auth_server_config_reader(new http_client());
+        $config = [];
+        if (defined('BEHAT_SITE_RUNNING')) {
+            $config['verify'] = false;
+        }
+        $configreader = new auth_server_config_reader(new http_client($config));
         try {
             $config = $configreader->read_configuration(new \moodle_url($baseurl));
 
@@ -150,7 +154,11 @@ class moodlenet implements issuer_interface {
                     'scope' => $scopes
                 ];
 
-                $client = new http_client();
+                $config = [];
+                if (defined('BEHAT_SITE_RUNNING')) {
+                    $config['verify'] = false;
+                }
+                $client = new http_client($config);
                 $request = new Request(
                     'POST',
                     $url,

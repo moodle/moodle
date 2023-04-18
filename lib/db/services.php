@@ -3042,6 +3042,24 @@ $functions = array(
         'type' => 'write',
         'ajax' => true,
     ],
+    'core_moodlenet_send_activity' => [
+        'classname'   => 'core\external\moodlenet_send_activity',
+        'description' => 'Send activity to MoodleNet',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
+    'core_moodlenet_get_share_info_activity' => [
+        'classname'   => 'core\external\moodlenet_get_share_info_activity',
+        'description' => 'Get information about an activity being shared',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
+    'core_moodlenet_auth_check' => [
+        'classname'   => 'core\external\moodlenet_auth_check',
+        'description' => 'Check a user has authorized for a given MoodleNet site',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
 );
 
 $services = array(
