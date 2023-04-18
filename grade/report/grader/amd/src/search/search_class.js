@@ -222,14 +222,18 @@ export default class {
 
     /**
      * When called, close the dropdown and reset the input field attributes.
+     *
+     * @param {Boolean} clear Conditionality clear the input box.
      */
-    closeSearch() {
+    closeSearch(clear = false) {
         this.toggleDropdown();
         // Hide the "clear" search button search bar.
         this.clearSearchButton.classList.add('d-none');
-        // Clear the entered search query in the search bar and hide the search results container.
-        this.setSearchTerms('');
-        this.searchInput.value = "";
+        if (clear) {
+            // Clear the entered search query in the search bar and hide the search results container.
+            this.setSearchTerms('');
+            this.searchInput.value = "";
+        }
     }
 
     /**
@@ -379,7 +383,7 @@ export default class {
         }
         // The "clear search" button is triggered.
         if (e.target.closest(this.selectors.clearSearch) && e.button === 0) {
-            this.closeSearch();
+            this.closeSearch(true);
             this.searchInput.focus({preventScroll: true});
         }
         // User may have accidentally clicked off the dropdown and wants to reopen it.
@@ -418,7 +422,7 @@ export default class {
             case 'Tab':
                 // If the current focus is on clear search, then check if viewall exists then around tab to it.
                 if (e.target.closest(this.selectors.clearSearch)) {
-                    if (this.currentViewAll) {
+                    if (this.currentViewAll && !e.shiftKey) {
                         e.preventDefault();
                         this.currentViewAll.focus({preventScroll: true});
                     } else {

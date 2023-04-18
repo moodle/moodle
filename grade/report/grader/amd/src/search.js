@@ -31,6 +31,7 @@ import {renderForPromise, replaceNodeContents} from 'core/templates';
 const selectors = {
     component: '.user-search',
     courseid: '[data-region="courseid"]',
+    resetPageButton: '[data-action="resetpage"]',
 };
 const component = document.querySelector(selectors.component);
 const courseID = component.querySelector(selectors.courseid).dataset.courseid;
@@ -81,10 +82,10 @@ export default class UserSearch extends GradebookSearchClass {
      */
     async renderDropdown() {
         const {html, js} = await renderForPromise('gradereport_grader/search/resultset', {
-            users: this.getMatchedResults(),
+            users: this.getMatchedResults().slice(0, 5),
             hasusers: this.getMatchedResults().length > 0,
-            total: this.getDatasetSize(),
-            found: this.getMatchedResults().length,
+            matches: this.getMatchedResults().length,
+            showing: this.getMatchedResults().slice(0, 5).length,
             searchterm: this.getSearchTerm(),
             selectall: this.selectAllResultsLink(),
         });
@@ -135,6 +136,7 @@ export default class UserSearch extends GradebookSearchClass {
                         this.getPreppedSearchTerm(),
                         `<span class="font-weight-bold">${this.getSearchTerm()}</span>`
                     );
+                    user.matchingField = `${user.matchingField} (${user.email})`;
                     user.link = this.selectOneLink(user.id);
                     break;
                 }
@@ -152,6 +154,9 @@ export default class UserSearch extends GradebookSearchClass {
         super.clickHandler(e);
         if (e.target === this.getHTMLElements().currentViewAll && e.button === 0) {
             window.location = this.selectAllResultsLink();
+        }
+        if (e.target.closest(selectors.resetPageButton)) {
+            window.location = e.target.closest(selectors.resetPageButton).href;
         }
     }
 
@@ -180,11 +185,18 @@ export default class UserSearch extends GradebookSearchClass {
                     }
                 }
                 if (document.activeElement === this.getHTMLElements().clearSearchButton) {
-                    this.closeSearch();
+                    this.closeSearch(true);
                     break;
                 }
-                e.preventDefault();
-                window.location = e.target.closest('.dropdown-item').href;
+                if (e.target.closest(selectors.resetPageButton)) {
+                    window.location = e.target.closest(selectors.resetPageButton).href;
+                    break;
+                }
+                if (e.target.closest('.dropdown-item')) {
+                    e.preventDefault();
+                    window.location = e.target.closest('.dropdown-item').href;
+                    break;
+                }
                 break;
         }
     }

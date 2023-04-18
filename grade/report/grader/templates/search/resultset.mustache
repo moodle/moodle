@@ -44,8 +44,7 @@
                 "link": "http://foo.bar/grade/report/grader/index.php?id=42&userid=3"
             }
         ],
-        "found": 2,
-        "total": 20,
+        "matches": 20,
         "selectall": "https://foo.bar/grade/report/grader/index.php?id=2&searchvalue=abe",
         "searchterm": "Foo",
         "hasusers": true
@@ -53,17 +52,16 @@
 }}
 <div class="d-flex flex-column mh-100 h-100">
     {{#hasusers}}
-        <span class="small d-block px-4 my-2">{{#str}}showingxofy, gradereport_grader, {"found": "{{found}}", "total": "{{total}}"}{{/str}}</span>
         <ul class="searchresultitemscontainer d-flex flex-column mw-100 position-relative py-2 list-group h-100 mh-100 mx-0" role="listbox" data-region="search-result-items-container" tabindex="-1">
             {{#users}}
                 {{>gradereport_grader/search/resultitem}}
             {{/users}}
+            <li class="w-100 result-row p-1 border-top bottom-0 position-sticky" role="none" id="result-row-{{id}}">
+                <a role="option" class="dropdown-item d-flex small p-3" id="select-all" href="{{{selectall}}}" tabindex="-1">
+                    {{#str}}viewallresults, gradereport_grader, {{matches}}{{/str}}
+                </a>
+            </li>
         </ul>
-        <div class="unsearchablecontentcontainer p-1">
-            <a role="button" id="select-all" href="{{{selectall}}}" class="small d-block p-4" tabindex="-1">
-                {{#str}}viewallresults, gradereport_grader, {{searchterm}}{{/str}}
-            </a>
-        </div>
     {{/hasusers}}
     {{^hasusers}}
         <span class="small d-block px-4 my-4">{{#str}} noresultsfor, core_grades, {{searchterm}}{{/str}}</span>

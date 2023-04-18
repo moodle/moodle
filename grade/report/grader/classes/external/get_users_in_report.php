@@ -101,7 +101,7 @@ class get_users_in_report extends external_api {
             $userpicture->size = 0; // Size f2.
             $user->profileimageurlsmall = $userpicture->get_url($PAGE)->out(false);
             return $user;
-        }, $report->load_users());
+        }, $report->load_users(true));
         sort($users);
 
         return [

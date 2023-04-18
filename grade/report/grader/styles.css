@@ -234,7 +234,8 @@
     pointer-events: initial;
     z-index: 1;
 }
-.path-grade-report-grader .usersearchwidget button {
+.path-grade-report-grader .usersearchwidget button,
+.path-grade-report-grader .usersearchwidget a {
     pointer-events: initial;
 }
 .path-grade-report-grader .usersearchdropdown {

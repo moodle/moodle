@@ -92,9 +92,11 @@ class action_bar extends \core_grades\output\action_bar {
             $data['initialselector'] = $initialselector->export_for_template($output);
             $data['groupselector'] = $gradesrenderer->group_selector($course);
 
+            $resetlink = new moodle_url('/grade/report/grader/index.php', ['id' => $courseid]);
             $searchinput = $OUTPUT->render_from_template('gradereport_grader/search/searchinput', [
                 'currentvalue' => $this->usersearch,
                 'courseid' => $courseid,
+                'resetlink' => $resetlink->out(false),
             ]);
             $searchdropdown = new gradebook_dropdown(
                 true,

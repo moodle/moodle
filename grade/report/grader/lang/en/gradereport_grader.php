@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clearsearch'] = 'Clear searched users';
 $string['collapsedcolumns'] = 'Collapsed columns <span class="badge badge-pill badge-primary ml-1" data-collapse="count">{$a}</span>';
 $string['eventgradereportviewed'] = 'Grader report viewed';
 $string['grader:manage'] = 'Manage the grader report';
@@ -46,12 +47,11 @@ $string['privacy:metadata:preference:grade_report_studentsperpage'] = 'The numbe
 $string['privacy:request:preference:grade_report_grader_collapsed_categories'] = 'You have some gradebook categories collapsed in the "{$a->name}" course';
 $string['reopencolumn'] = 'Reopen {$a} column';
 $string['summarygrader'] = 'A table with the names of students in the first column, with assessable activities grouped by course and category across the top.';
-$string['showingxofy'] = 'Showing {$a->found} of {$a->total}';
 $string['useractivitygrade'] = '{$a} grade';
 $string['overriddengrade'] = 'Overridden grade';
 $string['advancedgrading'] = 'View {$a} results';
 $string['cellactions'] = 'Cell actions';
-$string['viewallresults'] = 'View all results for "{$a}"';
+$string['viewallresults'] = 'View all results ({$a})';
 $string['viewresultsuser'] = 'View results for {$a}';
 
 // Deprecated since Moodle 4.2.
