@@ -614,7 +614,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
 
         // Throw exception if plugin is incompatible with moodle version.
         if (!empty($plugin->incompatible)) {
-            if ($CFG->branch <= $plugin->incompatible) {
+            if ($CFG->branch >= $plugin->incompatible) {
                 throw new plugin_incompatible_exception($component, $plugin->version);
             }
         }
