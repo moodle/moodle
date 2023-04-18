@@ -666,7 +666,7 @@ class behat_config_util {
                 [
                     'capabilities' => [
                         'extra_capabilities' => [
-                            'chromeOptions' => [
+                            'goog:chromeOptions' => [
                                 'args' => [
                                     'unlimited-storage',
                                     'disable-web-security',
@@ -678,6 +678,16 @@ class behat_config_util {
                 $values
             );
 
+            // Selenium no longer supports non-w3c browser control.
+            // Rename chromeOptions to goog:chromeOptions, which is the W3C variant of this.
+            if (array_key_exists('chromeOptions', $values['capabilities']['extra_capabilities'])) {
+                $values['capabilities']['extra_capabilities']['goog:chromeOptions'] = array_merge_recursive(
+                    $values['capabilities']['extra_capabilities']['goog:chromeOptions'],
+                    $values['capabilities']['extra_capabilities']['chromeOptions'],
+                );
+                unset($values['capabilities']['extra_capabilities']['chromeOptions']);
+            }
+
             // If the mobile app is enabled, check its version and add appropriate tags.
             if ($mobiletags = $this->get_mobile_version_tags()) {
                 if (!empty($values['tags'])) {
@@ -687,13 +697,13 @@ class behat_config_util {
                 }
             }
 
-            $values['capabilities']['extra_capabilities']['chromeOptions']['args'] = array_map(function($arg): string {
+            $values['capabilities']['extra_capabilities']['goog:chromeOptions']['args'] = array_map(function($arg): string {
                 if (substr($arg, 0, 2) === '--') {
                     return substr($arg, 2);
                 }
                 return $arg;
-            }, $values['capabilities']['extra_capabilities']['chromeOptions']['args']);
-            sort($values['capabilities']['extra_capabilities']['chromeOptions']['args']);
+            }, $values['capabilities']['extra_capabilities']['goog:chromeOptions']['args']);
+            sort($values['capabilities']['extra_capabilities']['goog:chromeOptions']['args']);
         }
 
         // Fill tags information.
