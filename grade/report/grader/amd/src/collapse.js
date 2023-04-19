@@ -48,6 +48,7 @@ const selectors = {
     content: '[data-collapse="content"]',
     sort: '[data-collapse="sort"]',
     expandbutton: '[data-collapse="expandbutton"]',
+    rangerowcell: '[data-collapse="rangerowcell"]',
     avgrowcell: '[data-collapse="avgrowcell"]',
     menu: '[data-collapse="menu"]',
     icons: '.data-collapse_gradeicons',
@@ -375,6 +376,7 @@ export default class ColumnSearch extends GradebookSearchClass {
             const content = element.querySelector(selectors.content);
             const sort = element.querySelector(selectors.sort);
             const expandButton = element.querySelector(selectors.expandbutton);
+            const rangeRowCell = element.querySelector(selectors.rangerowcell);
             const avgRowCell = element.querySelector(selectors.avgrowcell);
             const nodeSet = [
                 element.querySelector(selectors.menu),
@@ -389,12 +391,15 @@ export default class ColumnSearch extends GradebookSearchClass {
                     window.location = this.defaultSort;
                 }
                 if (content === null) {
-                    if (avgRowCell.classList.contains('d-none')) {
-                        avgRowCell?.classList.remove('d-none');
-                        avgRowCell?.setAttribute('aria-hidden', 'false');
+                    // If it's not a content cell, it must be an overall average or a range cell.
+                    const rowCell = avgRowCell ?? rangeRowCell;
+
+                    if (rowCell.classList.contains('d-none')) {
+                        rowCell?.classList.remove('d-none');
+                        rowCell?.setAttribute('aria-hidden', 'false');
                     } else {
-                        avgRowCell?.classList.add('d-none');
-                        avgRowCell?.setAttribute('aria-hidden', 'true');
+                        rowCell?.classList.add('d-none');
+                        rowCell?.setAttribute('aria-hidden', 'true');
                     }
                 } else if (content.classList.contains('d-none')) {
                     // We should always have content but some cells do not contain menus or other actions.

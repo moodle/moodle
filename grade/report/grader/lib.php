@@ -1379,7 +1379,9 @@ class grade_report_grader extends grade_report {
 
                 $formattedrange = $item->get_formatted_range($rangesdisplaytype, $rangesdecimalpoints);
 
-                $itemcell->text = $OUTPUT->container($formattedrange, 'rangevalues'.$hidden);
+                $itemcell->attributes['data-itemid'] = $itemid;
+                $itemcell->text = html_writer::div($formattedrange, 'rangevalues' . $hidden,
+                    ['data-collapse' => 'rangerowcell']);
                 $rangerow->cells[] = $itemcell;
             }
             $rows[] = $rangerow;
