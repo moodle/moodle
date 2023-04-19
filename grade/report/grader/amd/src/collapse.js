@@ -394,13 +394,9 @@ export default class ColumnSearch extends GradebookSearchClass {
                     // If it's not a content cell, it must be an overall average or a range cell.
                     const rowCell = avgRowCell ?? rangeRowCell;
 
-                    if (rowCell.classList.contains('d-none')) {
-                        rowCell?.classList.remove('d-none');
-                        rowCell?.setAttribute('aria-hidden', 'false');
-                    } else {
-                        rowCell?.classList.add('d-none');
-                        rowCell?.setAttribute('aria-hidden', 'true');
-                    }
+                    rowCell?.classList.toggle('d-none');
+                    rowCell?.setAttribute('aria-hidden',
+                        rowCell?.classList.contains('d-none') ? 'true' : 'false');
                 } else if (content.classList.contains('d-none')) {
                     // We should always have content but some cells do not contain menus or other actions.
                     element.classList.remove('collapsed');
