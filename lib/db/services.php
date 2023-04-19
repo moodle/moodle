@@ -1713,6 +1713,13 @@ $functions = array(
         'capabilities' => 'moodle/search:query',
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ),
+    'core_search_view_results' => array(
+        'classname' => '\core_search\external\view_results',
+        'description' => 'Trigger view search results event.',
+        'type' => 'write',
+        'capabilities' => 'moodle/search:query',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ),
     'core_tag_get_tagindex' => array(
         'classname' => 'core_tag_external',
         'methodname' => 'get_tagindex',
