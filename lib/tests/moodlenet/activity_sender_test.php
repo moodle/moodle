@@ -29,10 +29,6 @@ use ReflectionMethod;
 use stdClass;
 use testing_data_generator;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once('helpers.php');
-
 /**
  * Unit tests for {@see activity_sender}.
  *
@@ -55,6 +51,12 @@ class activity_sender_test extends \advanced_testcase {
     private issuer $issuer;
     /** @var MockObject $mockoauthclient Mock OAuth client. */
     private MockObject $mockoauthclient;
+
+    public static function setUpBeforeClass(): void {
+        parent::setUpBeforeClass();
+
+        require_once(__DIR__ . '/helpers.php');
+    }
 
     /**
      * Set up function for tests.
@@ -83,9 +85,8 @@ class activity_sender_test extends \advanced_testcase {
      * Test prepare_share_contents method.
      *
      * @covers ::prepare_share_contents
-     * @return void
      */
-    public function test_prepare_share_contents() {
+    public function test_prepare_share_contents(): void {
         global $USER;
         $this->setAdminUser();
 
@@ -126,13 +127,9 @@ class activity_sender_test extends \advanced_testcase {
             activity_sender::SHARE_FORMAT_BACKUP
         ));
         $this->assertNotEmpty($package);
-        // Confirm there are backup file contents returned.
-        $this->assertTrue(array_key_exists('filecontents', $package));
-        $this->assertNotEmpty($package['filecontents']);
 
         // Confirm the expected stored_file object is returned.
-        $this->assertTrue(array_key_exists('storedfile', $package));
-        $this->assertInstanceOf(\stored_file::class, $package['storedfile']);
+        $this->assertInstanceOf(\stored_file::class, $package);
     }
 
     /**
@@ -141,13 +138,12 @@ class activity_sender_test extends \advanced_testcase {
      * @dataProvider share_activity_provider
      * @covers ::share_activity
      * @covers ::log_event
-     * @covers \core\moodlenet\moodlenet_client::create_resource_from_file
+     * @covers \core\moodlenet\moodlenet_client::create_resource_from_stored_file
      * @covers \core\moodlenet\moodlenet_client::prepare_file_share_request_data
      * @param ResponseInterface $httpresponse
      * @param array $expected
-     * @return void
      */
-    public function test_share_activity(ResponseInterface $httpresponse, array $expected) {
+    public function test_share_activity(ResponseInterface $httpresponse, array $expected): void {
         global $CFG, $USER;
         $this->setAdminUser();
 

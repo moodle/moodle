@@ -1078,6 +1078,24 @@ class file_system_test extends \advanced_testcase {
     }
 
     /**
+     * Ensure that get_content_file_handle returns a valid file handle.
+     *
+     * @covers ::get_psr_stream
+     */
+    public function test_get_psr_stream(): void {
+        $file = $this->get_stored_file('');
+
+        $fs = $this->get_testable_mock(['get_remote_path_from_storedfile']);
+        $fs->method('get_remote_path_from_storedfile')
+            ->willReturn(__FILE__);
+
+        $stream = $fs->get_psr_stream($file);
+        $this->assertInstanceOf(\Psr\Http\Message\StreamInterface::class, $stream);
+        $this->assertEquals(file_get_contents(__FILE__), $stream->getContents());
+        $this->assertFalse($stream->isWritable());
+    }
+
+    /**
      * Test that mimetype_from_hash returns the correct mimetype with
      * a file whose filename suggests mimetype.
      *
@@ -1248,4 +1266,3 @@ class file_system_test extends \advanced_testcase {
         ];
     }
 }
-

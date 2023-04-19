@@ -18,6 +18,9 @@ namespace core\moodlenet;
 
 use core\http_client;
 use core\oauth2\client;
+use stored_file;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * MoodleNet client which handles direct outbound communication with MoodleNet instances.
@@ -54,22 +57,31 @@ class moodlenet_client {
     /**
      * Create a resource on MoodleNet which includes a file.
      *
-     * @param array $filedata The file data in the format [storedfile => stored_file object, filecontents => raw file].
+     * @param stored_file $file The file data to send to MoodleNet.
      * @param string $resourcename The name of the resource being shared.
      * @param string $resourcedescription A description of the resource being shared.
-     * @return Psr\Http\Message\ResponseInterface The HTTP client response from MoodleNet.
+     * @return \Psr\Http\Message\ResponseInterface The HTTP client response from MoodleNet.
      */
-    public function create_resource_from_file(array $filedata, string $resourcename, $resourcedescription) {
+    public function create_resource_from_stored_file(
+        stored_file $file,
+        string $resourcename,
+        string $resourcedescription,
+    ): ResponseInterface {
         // This may take a long time if a lot of data is being shared.
         \core_php_time_limit::raise();
 
         $moodleneturl = $this->oauthclient->get_issuer()->get('baseurl');
         $apiurl = rtrim($moodleneturl, '/') . self::API_CREATE_RESOURCE_URI;
 
-        $requestdata = $this->prepare_file_share_request_data($filedata, $resourcename, $resourcedescription);
+        $requestdata = $this->prepare_file_share_request_data(
+            $file->get_filename(),
+            $file->get_mimetype(),
+            $file->get_psr_stream(),
+            $resourcename,
+            $resourcedescription,
+        );
 
         return $this->httpclient->request('POST', $apiurl, $requestdata);
-
     }
 
     /**
@@ -81,7 +93,13 @@ class moodlenet_client {
      * @param string $resourcedescription A description of the resource being shared.
      * @return array Data in the format required to send a file to MoodleNet using \core\httpclient.
      */
-    protected function prepare_file_share_request_data(array $filedata, string $resourcename, $resourcedescription): array {
+    protected function prepare_file_share_request_data(
+        string $filename,
+        string $mimetype,
+        StreamInterface $stream,
+        string $resourcename,
+        $resourcedescription,
+    ): array {
         return [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->oauthclient->get_accesstoken()->token,
@@ -99,11 +117,10 @@ class moodlenet_client {
                 ],
                 [
                     'name' => 'filecontents',
-                    'contents' => $filedata['filecontents'],
+                    'contents' => $stream,
                     'headers' => [
-                        'Content-Disposition' => 'form-data; name=".resource"; filename="' .
-                            $filedata['storedfile']->get_filename() . '"',
-                        'Content-Type' => $filedata['storedfile']->get_mimetype(),
+                        'Content-Disposition' => 'form-data; name=".resource"; filename="' . $filename . '"',
+                        'Content-Type' => $mimetype,
                         'Content-Transfer-Encoding' => 'binary',
                     ],
                 ],

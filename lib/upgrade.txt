@@ -138,6 +138,8 @@ information provided here is intended especially for developers.
   - taskslimit - to limit the number of tasks in one run
   - failed - to limit the run to only the tasks that failed in their previous run
   Can be mixed, apart from 'id' of course.
+* The file_system class now declares a new, optional, `get_psr_stream` function which allows a Stream implementing `\Psr\Http\Message\StreamInterface` to be returned.
+  A default implementation which uses the existing file handle resource is used by default, but this should be extended by file_system implementations where relevant.
 
 === 4.1 ===
 

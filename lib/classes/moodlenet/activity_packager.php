@@ -21,6 +21,7 @@ use backup_controller;
 use backup_root_task;
 use cm_info;
 use core\context\user;
+use stored_file;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -46,14 +47,14 @@ class activity_packager {
      */
     public function __construct(
         protected cm_info $cminfo,
-        protected int $userid
+        protected int $userid,
     ) {
         // Check backup/restore support.
         if (!plugin_supports('mod', $cminfo->modname , FEATURE_BACKUP_MOODLE2)) {
             throw new \coding_exception("Cannot backup module $cminfo->modname. This module doesn't support the backup feature.");
         }
 
-        $this->controller = new backup_controller (
+        $this->controller = new backup_controller(
             backup::TYPE_1ACTIVITY,
             $cminfo->id,
             backup::FORMAT_MOODLE,
@@ -66,10 +67,9 @@ class activity_packager {
     /**
      * Prepare the backup file using appropriate setting overrides and return relevant information.
      *
-     * @return array Array containing packaged file and stored_file object describing it.
-     *               Array in the format [storedfile => stored_file object, filecontents => raw file].
+     * @return stored_file
      */
-    public function get_package(): array {
+    public function get_package(): stored_file {
         $alltasksettings = $this->get_all_task_settings();
 
         // Override relevant settings to remove user data when packaging to share to MoodleNet.
@@ -106,7 +106,6 @@ class activity_packager {
      * @param array $alltasksettings All task settings.
      * @param string $settingname The name of the setting to be overridden (task class name format).
      * @param int $settingvalue Value to be given to the setting.
-     * @return void
      */
     protected function override_task_setting(array $alltasksettings, string $settingname, int $settingvalue): void {
         if (empty($rootsettings = $alltasksettings[backup_root_task::class])) {
@@ -123,13 +122,12 @@ class activity_packager {
     }
 
     /**
-     * Package the activity identified by CMID.
+     * Package the activity identified by CMID into a new stored_file.
      *
-     * @return array Array containing packaged file and stored_file object describing it.
-     *               Array in the format [storedfile => stored_file object, filecontents => raw file].
-     * @throws \moodle_exception.
+     * @return stored_file
+     * @throws \moodle_exception
      */
-    protected function package(): array {
+    protected function package(): stored_file {
         // Execute the backup and fetch the result.
         $this->controller->execute_plan();
         $result = $this->controller->get_results();
@@ -147,7 +145,7 @@ class activity_packager {
         }
 
         // Create the location we want to copy this file to.
-        $fr = [
+        $filerecord = [
             'contextid' => user::instance($this->userid)->id,
             'userid' => $this->userid,
             'component' => 'user',
@@ -159,19 +157,11 @@ class activity_packager {
 
         // Create the local file based on the backup.
         $fs = get_file_storage();
-        $packagedfiledata = [
-            'storedfile' => $fs->create_file_from_storedfile($fr, $backupfile),
-        ];
+        $file = $fs->create_file_from_storedfile($filerecord, $backupfile);
 
         // Delete the backup now it has been created in the file area.
         $backupfile->delete();
 
-        // Ensure we can handle files at the upper end of the limit supported by MoodleNet.
-        raise_memory_limit(activity_sender::MAX_FILESIZE);
-
-        // Get the actual file content.
-        $packagedfiledata['filecontents'] = $packagedfiledata['storedfile']->get_content();
-
-        return $packagedfiledata;
+        return $file;
     }
 }
