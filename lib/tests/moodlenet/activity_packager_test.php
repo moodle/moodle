@@ -120,25 +120,18 @@ class activity_packager_test extends \advanced_testcase {
         $packager = new activity_packager($cminfo, $USER->id);
         $package = $packager->get_package();
 
-        $this->assertEquals(2, count($package));
-
-        // Confirm there are backup file contents returned.
-        $this->assertTrue(array_key_exists('filecontents', $package));
-        $this->assertNotEmpty($package['filecontents']);
-
         // Confirm the expected stored_file object is returned.
-        $this->assertTrue(array_key_exists('storedfile', $package));
-        $this->assertInstanceOf(\stored_file::class, $package['storedfile']);
+        $this->assertInstanceOf(\stored_file::class, $package);
 
         // Check some known values in the returned stored_file object to confirm they match the file we have packaged.
-        $this->assertNotEmpty($package['storedfile']->get_contenthash());
-        $this->assertEquals(user::instance($USER->id)->id, $package['storedfile']->get_contextid());
-        $this->assertEquals('user', $package['storedfile']->get_component());
-        $this->assertEquals('draft', $package['storedfile']->get_filearea());
-        $this->assertEquals('assign_backup.mbz', $package['storedfile']->get_filename());
-        $this->assertGreaterThan(0, $package['storedfile']->get_filesize());
-        $timecreated = $package['storedfile']->get_timecreated();
+        $this->assertNotEmpty($package->get_contenthash());
+        $this->assertEquals(user::instance($USER->id)->id, $package->get_contextid());
+        $this->assertEquals('user', $package->get_component());
+        $this->assertEquals('draft', $package->get_filearea());
+        $this->assertEquals('assign_backup.mbz', $package->get_filename());
+        $this->assertGreaterThan(0, $package->get_filesize());
+        $timecreated = $package->get_timecreated();
         $this->assertGreaterThanOrEqual($currenttime, $timecreated);
-        $this->assertEquals($timecreated, $package['storedfile']->get_timemodified());
+        $this->assertEquals($timecreated, $package->get_timemodified());
     }
 }

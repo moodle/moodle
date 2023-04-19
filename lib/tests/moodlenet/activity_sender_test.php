@@ -126,13 +126,9 @@ class activity_sender_test extends \advanced_testcase {
             activity_sender::SHARE_FORMAT_BACKUP
         ));
         $this->assertNotEmpty($package);
-        // Confirm there are backup file contents returned.
-        $this->assertTrue(array_key_exists('filecontents', $package));
-        $this->assertNotEmpty($package['filecontents']);
 
         // Confirm the expected stored_file object is returned.
-        $this->assertTrue(array_key_exists('storedfile', $package));
-        $this->assertInstanceOf(\stored_file::class, $package['storedfile']);
+        $this->assertInstanceOf(\stored_file::class, $package);
     }
 
     /**
@@ -141,7 +137,7 @@ class activity_sender_test extends \advanced_testcase {
      * @dataProvider share_activity_provider
      * @covers ::share_activity
      * @covers ::log_event
-     * @covers \core\moodlenet\moodlenet_client::create_resource_from_file
+     * @covers \core\moodlenet\moodlenet_client::create_resource_from_stored_file
      * @covers \core\moodlenet\moodlenet_client::prepare_file_share_request_data
      * @param ResponseInterface $httpresponse
      * @param array $expected

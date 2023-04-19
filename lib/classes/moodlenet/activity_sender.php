@@ -21,6 +21,7 @@ use core\event\moodlenet_resource_exported;
 use core\oauth2\client;
 use moodle_exception;
 use stdClass;
+use stored_file;
 
 /**
  * API for sharing Moodle LMS activities to MoodleNet instances.
@@ -108,17 +109,15 @@ class activity_sender {
         $filedata = $this->prepare_share_contents();
 
         // If we have successfully prepared a file to share of permitted size, share it to MoodleNet.
-        if (!empty($filedata['storedfile'])) {
-
+        if (!empty($filedata)) {
             // Avoid sending a file larger than the defined limit.
-            $filesize = $filedata['storedfile']->get_filesize();
+            $filesize = $filedata->get_filesize();
             if ($filesize > self::MAX_FILESIZE) {
-                $filedata['storedfile']->delete();
-                throw new moodle_exception('moodlenet:sharefilesizelimitexceeded', 'core', '',
-                    [
-                        'filesize' => $filesize,
-                        'filesizelimit' => self::MAX_FILESIZE,
-                    ]);
+                $filedata->delete();
+                throw new moodle_exception('moodlenet:sharefilesizelimitexceeded', 'core', '', [
+                    'filesize' => $filesize,
+                    'filesizelimit' => self::MAX_FILESIZE,
+                ]);
             }
 
             // MoodleNet only accept plaintext descriptions.
@@ -130,7 +129,11 @@ class activity_sender {
                 ['context' => $coursecontext]
             );
 
-            $response = $this->moodlenetclient->create_resource_from_file($filedata, $this->cminfo->name, $resourcedescription);
+            $response = $this->moodlenetclient->create_resource_from_stored_file(
+                $filedata,
+                $this->cminfo->name,
+                $resourcedescription,
+            );
             $responsecode = $response->getStatusCode();
 
             $responsebody = json_decode($response->getBody());
@@ -140,7 +143,7 @@ class activity_sender {
 
             // Delete the generated file now it is no longer required.
             // (It has either been sent, or failed - retries not currently supported).
-            $filedata['storedfile']->delete();
+            $filedata->delete();
         }
 
         // Log every attempt to share (and whether or not it was successful).
@@ -155,20 +158,17 @@ class activity_sender {
     /**
      * Prepare the data for sharing, in the format specified.
      *
-     * @return array Array of metadata about the file, as well as a stored_file object for the file.
+     * @return stored_file
      */
-    protected function prepare_share_contents(): array {
-
+    protected function prepare_share_contents(): stored_file {
         switch ($this->shareformat) {
             case self::SHARE_FORMAT_BACKUP:
-            default:
                 // If sharing the activity as a backup, prepare the packaged backup.
                 $packager = new activity_packager($this->cminfo, $this->userid);
-                $filedata = $packager->get_package();
-                break;
+                return $packager->get_package();
+            default:
+                throw new \coding_exception("Unknown share format: {$this->shareformat}'");
         };
-
-        return $filedata;
     }
 
     /**
