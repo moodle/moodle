@@ -1707,12 +1707,11 @@ $functions = array(
         'ajax' => true
     ),
     'core_search_get_results' => array(
-        'classname' => 'core_search_external',
-        'methodname' => 'get_results',
-        'classpath' => 'search/classes/external.php',
-        'description' => 'Search contents.',
+        'classname' => '\core_search\external\get_results',
+        'description' => 'Get search results.',
         'type' => 'read',
-        'capabilities' => 'moodle/search:query'
+        'capabilities' => 'moodle/search:query',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ),
     'core_tag_get_tagindex' => array(
         'classname' => 'core_tag_external',

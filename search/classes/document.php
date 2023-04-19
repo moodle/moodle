@@ -393,18 +393,6 @@ class document implements \renderable, \templatable {
     }
 
     /**
-     * Returns whether a field is required or not.
-     *
-     * Considers engine fields to be optional.
-     *
-     * @param string $fieldname
-     * @return bool
-     */
-    public static function field_is_required(string $fieldname): bool {
-        return (!empty(static::$requiredfields[$fieldname]));
-    }
-
-    /**
      * Formats the timestamp preparing the time fields to be inserted into the search engine.
      *
      * By default it just returns a timestamp so any search engine could just store integers
@@ -618,10 +606,10 @@ class document implements \renderable, \templatable {
      * Just delegates all the processing to export_doc_info, also used by external functions.
      * Adding more info than the required one as people might be interested in extending the template.
      *
-     * @param renderer_base $output The renderer.
+     * @param \renderer_base $output The renderer.
      * @return array
      */
-    public function export_for_template(\renderer_base $output) {
+    public function export_for_template(\renderer_base $output): array {
         $docdata = $this->export_doc($output);
         return $docdata;
     }
@@ -637,10 +625,12 @@ class document implements \renderable, \templatable {
      * SECURITY NOTE: It is the responsibility of the document to properly escape any text to be displayed.
      * The renderer will output the content without any further cleaning.
      *
+     * @param \renderer_base $output The renderer.
      * @return array
      */
-    public function export_doc(\renderer_base $output) {
-        global $USER;
+    public function export_doc(\renderer_base $output): array {
+        global $USER, $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
 
         list($componentname, $areaname) = \core_search\manager::extract_areaid_parts($this->get('areaid'));
         $context = context::instance_by_id($this->get('contextid'));
@@ -684,10 +674,10 @@ class document implements \renderable, \templatable {
             if ($this->get('userid') == $USER->id ||
                     (has_capability('moodle/user:viewdetails', $context) &&
                     has_capability('moodle/course:viewparticipants', $context))) {
-                $data['userurl'] = new \moodle_url(
+                $data['userurl'] = (new \moodle_url(
                     '/user/view.php',
                     ['id' => $this->get('userid'), 'course' => $this->get('courseid')]
-                );
+                ))->out(false);
                 $data['userfullname'] = format_string($this->get('userfullname'), true, ['context' => $context->id]);
                 $data['userid'] = $this->get('userid');
             }
@@ -695,17 +685,10 @@ class document implements \renderable, \templatable {
 
         if ($docicon = $this->get_doc_icon()) {
             $data['icon'] = $output->image_url($docicon->get_name(), $docicon->get_component());
+            $data['iconurl'] = $data['icon']->out(false);
         }
+        $data['textformat'] = $this->get_text_format();
 
-        // We need to return the text formatting used for ws stuff.
-        $settings = \core_external\external_settings::get_instance();
-        if ($settings->get_raw()) {
-            // If this is called by a ws client and requests raw text we return the format specified by the search engine.
-            $data['textformat'] = $this->get_text_format();
-        } else {
-            // We convert texts to HTML by default.
-            $data['textformat'] = FORMAT_HTML;
-        }
         return $data;
     }
 
