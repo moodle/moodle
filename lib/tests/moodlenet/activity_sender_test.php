@@ -133,6 +133,52 @@ class activity_sender_test extends \advanced_testcase {
     }
 
     /**
+     * Test get_resource_description method.
+     *
+     * @covers ::get_resource_description
+     * @return void
+     */
+    public function test_get_resource_description() {
+        global $USER;
+        $this->setAdminUser();
+
+        $activity = $this->generator->create_module('assign', [
+            'course' => $this->course->id,
+            'intro' => '<p>This is an example Moodle activity description.</p>
+<p>&nbsp;</p>
+<p>This is a formatted intro</p>
+<p>&nbsp;</p>
+<p>This thing has many lines.</p>
+<p>&nbsp;</p>
+<p>The last word of this sentence is in <strong>bold</strong></p>'
+        ]);
+
+        $httpclient = new http_client();
+        $moodlenetclient = new moodlenet_client($httpclient, $this->mockoauthclient);
+
+        // Set get_resource_description method accessibility.
+        $method = new ReflectionMethod(activity_sender::class, 'get_resource_description');
+        $method->setAccessible(true);
+
+        // Test the processed description.
+        $processeddescription = $method->invoke(new activity_sender(
+            $activity->cmid,
+            $USER->id,
+            $moodlenetclient,
+            $this->mockoauthclient,
+            activity_sender::SHARE_FORMAT_BACKUP
+        ), $this->coursecontext);
+
+        $this->assertEquals('This is an example Moodle activity description.
+ 
+This is a formatted intro
+ 
+This thing has many lines.
+ 
+The last word of this sentence is in bold', $processeddescription);
+    }
+
+    /**
      * Test share_activity() method.
      *
      * @dataProvider share_activity_provider
