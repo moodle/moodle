@@ -220,7 +220,8 @@ XPATH
 .//*[@role='menuitem'][%titleMatch% or %ariaLabelMatch% or text()[contains(., %locator%)]]
 XPATH
     , 'option_role' => <<<XPATH
-.//*[@role='option'][%titleMatch% or %ariaLabelMatch% or text()[contains(., %locator%)]]
+.//*[@role='option'][%titleMatch% or %ariaLabelMatch% or text()[contains(., %locator%)]] |
+.//*[@role='option']/following-sibling::label[contains(., %locator%)]/preceding-sibling::input
 XPATH
         , 'question' => <<<XPATH
 .//div[contains(concat(' ', normalize-space(@class), ' '), ' que ')]

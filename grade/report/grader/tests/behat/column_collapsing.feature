@@ -112,9 +112,9 @@ Feature: Within the grader report, test that we can collapse columns
     And I click on "Collapsed columns" "button"
     # This is checking that the column name search dropdown exists.
     When I wait until "Search collapsed columns" "field" exists
-    And I set the field "Test assignment one" in the "form" "gradereport_grader > collapse search" to "1"
-    And I set the field "Test assignment three" in the "form" "gradereport_grader > collapse search" to "1"
-    And I set the field "Phone" in the "form" "gradereport_grader > collapse search" to "1"
+    And I click on "Test assignment one" "option_role" in the "form" "gradereport_grader > collapse search"
+    And I click on "Test assignment three" "option_role" in the "form" "gradereport_grader > collapse search"
+    And I click on "Phone" "option_role" in the "form" "gradereport_grader > collapse search"
     And I click on "Expand" "button" in the "form" "gradereport_grader > collapse search"
     Then I should see "Test assignment one" in the "First name / Last name" "table_row"
     And I should see "Test assignment three" in the "First name / Last name" "table_row"
@@ -173,10 +173,68 @@ Feature: Within the grader report, test that we can collapse columns
 
   @accessibility
   Scenario: A teacher can manipulate the report display in an accessible way
+    # Hide a bunch of columns.
+    Given I click on user profile field menu "Email"
+    And I choose "Collapse" in the open action menu
+    And I click on user profile field menu "Phone1"
+    And I choose "Collapse" in the open action menu
+    And I click on user profile field menu "Phone2"
+    And I choose "Collapse" in the open action menu
+    And I click on user profile field menu "Country"
+    And I choose "Collapse" in the open action menu
     # Basic tests for the page.
-    Given the page should meet accessibility standards
-    When the page should meet "wcag131, wcag141, wcag412" accessibility standards
-    Then the page should meet accessibility standards with "wcag131, wcag141, wcag412" extra tests
+    When the page should meet accessibility standards
+    And the page should meet "wcag131, wcag141, wcag412" accessibility standards
+    And the page should meet accessibility standards with "wcag131, wcag141, wcag412" extra tests
+    # Move onto general keyboard navigation testing.
+    Then I click on "Collapsed columns" "button"
+    And the focused element is "Search collapsed columns" "field"
+    And I press the down key
+    And the focused element is "Email address" "option_role"
+    And I press the end key
+    And the focused element is "Country" "option_role"
+    And I press the home key
+    And the focused element is "Email address" "option_role"
+    And I press the up key
+    And the focused element is "Country" "option_role"
+    And I press the down key
+    And the focused element is "Email address" "option_role"
+    And I press the escape key
+    And the focused element is "Collapsed columns" "button"
+    And I click on "Collapsed columns" "button"
+    Then I set the field "Search collapsed columns" to "Goodmeme"
+    And I wait until "No results for \"Goodmeme\"" "text" exists
+    And I press the down key
+    And the focused element is "Search collapsed columns" "field"
+    # Lets check the tabbing order.
+    And I set the field "Search collapsed columns" to "phone"
+    And I wait until "Mobile phone" "option_role" exists
+    And I press the tab key
+    And the focused element is "Clear search input" "button" in the ".dropdown-menu.show" "css_element"
+    And I press the tab key
+    And I press the tab key
+    And I press the tab key
+    And the focused element is "Close" "button" in the ".dropdown-menu.show" "css_element"
+    And I press the tab key
+    # The course grade category menu.
+    And the focused element is "Cell actions" "button"
+    # Tab over to the collapsed columns.
+    And I click on user profile field menu "city"
+    And I press the escape key
+    And I press the tab key
+    And the focused element is "Reopen country column" "button"
+    And I press the enter key
+    And I press the tab key
+    And the focused element is "Reopen phone1 column" "button"
+    And I press the enter key
+    And I should not see "Email" in the "First name / Last name" "table_row"
+    And I should see "Phone" in the "First name / Last name" "table_row"
+    And I should not see "Mobile phone" in the "First name / Last name" "table_row"
+    And I should see "Country" in the "First name / Last name" "table_row"
+    # Ensure that things did not start failing after we did some manipulation.
+    And the page should meet accessibility standards
+    And the page should meet "wcag131, wcag141, wcag412" accessibility standards
+    And the page should meet accessibility standards with "wcag131, wcag141, wcag412" extra tests
 
   Scenario: Collapsed columns persist across paginated pages
     # Hide a bunch of columns.
