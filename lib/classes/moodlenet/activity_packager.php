@@ -20,6 +20,7 @@ use backup;
 use backup_controller;
 use backup_root_task;
 use cm_info;
+use core\context\user;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -52,7 +53,6 @@ class activity_packager {
             throw new \coding_exception("Cannot backup module $cminfo->modname. This module doesn't support the backup feature.");
         }
 
-        $this->cminfo = $cminfo;
         $this->controller = new backup_controller (
             backup::TYPE_1ACTIVITY,
             $cminfo->id,
@@ -147,15 +147,14 @@ class activity_packager {
         }
 
         // Create the location we want to copy this file to.
-        $time = time();
         $fr = [
-            'contextid' => \context_course::instance($this->cminfo->course)->id,
-            'component' => 'core',
-            'filearea' => 'moodlenet_resource',
+            'contextid' => user::instance($this->userid)->id,
+            'userid' => $this->userid,
+            'component' => 'user',
+            'filearea' => 'draft',
+            'itemid' => file_get_unused_draft_itemid(),
+            'filepath' => '/',
             'filename' => $this->cminfo->modname . '_backup.mbz',
-            // Add timestamp to itemid to make it unique, to avoid any collisions.
-            'itemid' => $this->cminfo->id . $time,
-            'timemodified' => $time,
         ];
 
         // Create the local file based on the backup.
@@ -166,10 +165,6 @@ class activity_packager {
 
         // Delete the backup now it has been created in the file area.
         $backupfile->delete();
-
-        if (!$packagedfiledata['storedfile']) {
-            throw new \moodle_exception("Failed to copy backup file to moodlenet_activity area.");
-        }
 
         // Ensure we can handle files at the upper end of the limit supported by MoodleNet.
         raise_memory_limit(activity_sender::MAX_FILESIZE);
