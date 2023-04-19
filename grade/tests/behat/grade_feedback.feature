@@ -44,8 +44,8 @@ Feature: Display feedback on the Grader report
   Scenario: View the feedback icon on the Grader report
     Given I am on "Course 1" course homepage
     When I navigate to "View > Grader report" in the course gradebook
-    Then I should see "Test assignment name 1"
-    And I should see "Test assignment name 2"
+    Then I should see "Test assignment name 1" in the "user-grades" "table"
+    And I should see "Test assignment name 2" in the "user-grades" "table"
     And "Feedback provided" "icon" should exist in the "Student 1" "table_row"
     And "Feedback provided" "icon" should not exist in the "Student 2" "table_row"
 
