@@ -16,7 +16,6 @@
 
 namespace core\moodlenet;
 
-use context_course;
 use core\oauth2\issuer;
 
 /**
@@ -46,11 +45,11 @@ class utilities {
     /**
      * Check whether a user has the capabilities required to share activities from a given course to MoodleNet.
      *
-     * @param context_course $coursecontext Course context where the activity would be shared from.
+     * @param \core\context\course $coursecontext Course context where the activity would be shared from.
      * @param int $userid The user ID being checked.
      * @return boolean
      */
-    public static function can_user_share(context_course $coursecontext, int $userid): bool {
+    public static function can_user_share(\core\context\course $coursecontext, int $userid): bool {
         return (has_capability('moodle/moodlenet:shareactivity', $coursecontext, $userid) &&
             has_capability('moodle/backup:backupactivity', $coursecontext, $userid));
     }

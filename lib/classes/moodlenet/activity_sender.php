@@ -66,9 +66,8 @@ class activity_sender {
         protected int $userid,
         protected moodlenet_client $moodlenetclient,
         protected client $oauthclient,
-        protected int $shareformat = self::SHARE_FORMAT_BACKUP
+        protected int $shareformat = self::SHARE_FORMAT_BACKUP,
     ) {
-
         [$this->course, $this->cminfo] = get_course_and_cm_from_cmid($cmid);
 
         if (!in_array($shareformat, $this->get_allowed_share_formats())) {
@@ -91,7 +90,7 @@ class activity_sender {
         $issuer = $this->oauthclient->get_issuer();
 
         // Check user can share to the requested MoodleNet instance.
-        $coursecontext = \context_course::instance($this->course->id);
+        $coursecontext = \core\context\course::instance($this->course->id);
         $usercanshare = utilities::can_user_share($coursecontext, $this->userid);
 
         if ($usercanshare && utilities::is_valid_instance($issuer) && $this->oauthclient->is_logged_in()) {
@@ -181,10 +180,10 @@ class activity_sender {
      * @return void
      */
     protected function log_event(
-        \context $coursecontext,
+        \core\context $coursecontext,
         int $cmid,
         string $resourceurl,
-        int $responsecode
+        int $responsecode,
     ): void {
         $event = moodlenet_resource_exported::create([
             'context' => $coursecontext,
@@ -203,7 +202,6 @@ class activity_sender {
      * @return array Array of supported share format values.
      */
     protected function get_allowed_share_formats(): array {
-
         return [
             self::SHARE_FORMAT_BACKUP,
         ];

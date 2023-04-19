@@ -47,14 +47,14 @@ class activity_packager {
      */
     public function __construct(
         protected cm_info $cminfo,
-        protected int $userid
+        protected int $userid,
     ) {
         // Check backup/restore support.
         if (!plugin_supports('mod', $cminfo->modname , FEATURE_BACKUP_MOODLE2)) {
             throw new \coding_exception("Cannot backup module $cminfo->modname. This module doesn't support the backup feature.");
         }
 
-        $this->controller = new backup_controller (
+        $this->controller = new backup_controller(
             backup::TYPE_1ACTIVITY,
             $cminfo->id,
             backup::FORMAT_MOODLE,
@@ -106,7 +106,6 @@ class activity_packager {
      * @param array $alltasksettings All task settings.
      * @param string $settingname The name of the setting to be overridden (task class name format).
      * @param int $settingvalue Value to be given to the setting.
-     * @return void
      */
     protected function override_task_setting(array $alltasksettings, string $settingname, int $settingvalue): void {
         if (empty($rootsettings = $alltasksettings[backup_root_task::class])) {
