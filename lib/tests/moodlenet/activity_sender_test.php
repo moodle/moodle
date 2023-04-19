@@ -136,9 +136,8 @@ class activity_sender_test extends \advanced_testcase {
      * Test get_resource_description method.
      *
      * @covers ::get_resource_description
-     * @return void
      */
-    public function test_get_resource_description() {
+    public function test_get_resource_description(): void {
         global $USER;
         $this->setAdminUser();
 
