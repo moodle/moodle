@@ -122,13 +122,7 @@ class activity_sender {
             }
 
             // MoodleNet only accept plaintext descriptions.
-            $resourcedescription = $DB->get_field($this->cminfo->modname, 'intro', ['id' => $this->cminfo->instance]);
-            $resourcedescription = strip_tags($resourcedescription);
-            $resourcedescription = format_text(
-                $resourcedescription,
-                FORMAT_PLAIN,
-                ['context' => $coursecontext]
-            );
+            $resourcedescription = $this->get_resource_description($coursecontext);
 
             $response = $this->moodlenetclient->create_resource_from_file($filedata, $this->cminfo->name, $resourcedescription);
             $responsecode = $response->getStatusCode();
@@ -207,5 +201,28 @@ class activity_sender {
         return [
             self::SHARE_FORMAT_BACKUP,
         ];
+    }
+
+    /**
+     * Fetch the description for the resource being created, in a supported text format.
+     *
+     * @param \context $coursecontext The course context being shared from.
+     * @return string Converted activity description.
+     */
+    protected function get_resource_description(
+        \context $coursecontext,
+    ): string {
+        global $PAGE, $DB;
+        // We need to set the page context here because content_to_text and format_text will need the page context to work.
+        $PAGE->set_context($coursecontext);
+
+        $intro = $DB->get_record($this->cminfo->modname, ['id' => $this->cminfo->instance], 'intro, introformat', MUST_EXIST);
+        $processeddescription = strip_tags($intro->intro);
+        $processeddescription = content_to_text(format_text(
+            $processeddescription,
+            $intro->introformat,
+        ), $intro->introformat);
+
+        return $processeddescription;
     }
 }
