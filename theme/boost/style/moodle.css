@@ -34956,6 +34956,9 @@ p.arrow_button {
 /**
  * Grader report.
  */
+.path-grade-report-grader .gradeparent {
+  z-index: 5;
+}
 .path-grade-report-grader .gradeparent tr .cell,
 .path-grade-report-grader .gradeparent .floater .cell {
   background-color: #fff;

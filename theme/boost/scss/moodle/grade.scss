@@ -498,6 +498,7 @@
  */
 .path-grade-report-grader {
     .gradeparent {
+        z-index: 5;
         tr .cell,
         .floater .cell {
             background-color: $pagination-bg;
