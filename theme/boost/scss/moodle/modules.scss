@@ -1248,7 +1248,8 @@ img.userpicture {
         width: 30px;
         border-radius: 3px;
         border: 0;
-        overflow: visible;
+        overflow: hidden;
+        white-space: nowrap;
         margin: 0 6px 6px 0;
     }
 

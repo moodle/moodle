@@ -31371,6 +31371,7 @@ body.path-question-type .form-group .col-form-label.sr-only:not(legend):not([for
 .que span.qno {
   font-size: 1.5em;
   font-weight: bold;
+  word-break: break-word;
 }
 
 .que .info > div {
@@ -33735,7 +33736,8 @@ img.userpicture {
   width: 30px;
   border-radius: 3px;
   border: 0;
-  overflow: visible;
+  overflow: hidden;
+  white-space: nowrap;
   margin: 0 6px 6px 0;
 }
 .path-mod-quiz #mod_quiz_navblock span.qnbutton {

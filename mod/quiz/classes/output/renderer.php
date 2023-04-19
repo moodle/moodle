@@ -386,14 +386,16 @@ class renderer extends plugin_renderer_base {
             $qnostring = 'questionnonavinfo';
         }
 
+        $tooltip = get_string('questionx', 'question', s($button->number)) . ' - ' . $button->statestring;
+
         $a = new stdClass();
-        $a->number = $button->number;
+        $a->number = s($button->number);
         $a->attributes = implode(' ', $extrainfo);
         $tagcontents = html_writer::tag('span', '', ['class' => 'thispageholder']) .
                 html_writer::tag('span', '', ['class' => 'trafficlight']) .
                 get_string($qnostring, 'quiz', $a);
         $tagattributes = ['class' => implode(' ', $classes), 'id' => $button->id,
-                'title' => $button->statestring, 'data-quiz-page' => $button->page];
+                'title' => $tooltip, 'data-quiz-page' => $button->page];
 
         if ($button->url) {
             return html_writer::link($button->url, $tagcontents, $tagattributes);
