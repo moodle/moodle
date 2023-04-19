@@ -65,6 +65,13 @@ class activity_packager {
     }
 
     /**
+     * Destructor
+     */
+    public function __destruct() {
+        $this->controller->destroy();
+    }
+
+    /**
      * Prepare the backup file using appropriate setting overrides and return relevant information.
      *
      * @return stored_file
@@ -131,8 +138,6 @@ class activity_packager {
         // Execute the backup and fetch the result.
         $this->controller->execute_plan();
         $result = $this->controller->get_results();
-        // Controller no longer required.
-        $this->controller->destroy();
 
         if (!isset($result['backup_destination'])) {
             throw new \moodle_exception('Failed to package activity.');
