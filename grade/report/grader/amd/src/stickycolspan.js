@@ -28,6 +28,7 @@ const SELECTORS = {
     BEHAT: 'body.behat-site',
     AVERAGEROW: 'tr.lastrow',
     TABLEHEADING: 'tr.heading',
+    GRADERDROPDOWN: 'tr th.category .dropdown-menu',
 };
 
 /**
@@ -43,6 +44,12 @@ export const init = () => {
             tableHeader.style.zIndex = tableHeaders.length - i;
         }
         i++;
+    });
+
+    const categoryDropdowns = grader.querySelectorAll(SELECTORS.GRADERDROPDOWN);
+    categoryDropdowns.forEach(dropdown => {
+        // Ensure we take all the displayed users + any & all categories and add a bit extra for safe measure.
+        dropdown.style.zIndex = (tableHeaders.length + categoryDropdowns.length) + 1;
     });
 
     const tableHeader = grader.querySelector(SELECTORS.TABLEHEADING);
