@@ -184,7 +184,7 @@ class editusers_table extends table_sql {
         global $CFG;
 
         if (!empty($row->currentlogin)) {
-            return date($CFG->iomad_date_format, $row->currentlogin);;
+            return date($CFG->iomad_date_format, $row->currentlogin);
         } else {
             return get_string('never');
         }
