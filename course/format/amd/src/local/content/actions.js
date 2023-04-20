@@ -188,6 +188,8 @@ export default class extends BaseComponent {
 
         event.preventDefault();
 
+        const pendingModalReady = new Pending(`courseformat/actions:prepareMoveSectionModal`);
+
         // The section edit menu to refocus on end.
         const editTools = this._getClosestActionMenuToogler(target);
 
@@ -240,6 +242,8 @@ export default class extends BaseComponent {
             this.reactive.dispatch('sectionMove', [sectionId], target.dataset.id);
             this._destroyModal(modal, editTools);
         });
+
+        pendingModalReady.resolve();
     }
 
     /**
