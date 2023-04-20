@@ -2383,28 +2383,40 @@ class backup_annotate_all_question_files extends backup_execution_step {
                                          AND bi.itemname = 'question_categoryfinal'", array($this->get_backupid()));
         // To know about qtype specific components/fileareas
         $components = backup_qtype_plugin::get_components_and_fileareas();
+        $progress = $this->task->get_progress();
+        $progress->start_progress($this->get_name());
         // Let's loop
         foreach($rs as $record) {
             // Backup all the file areas the are managed by the core question component.
             // That is, by the question_type base class. In particular, we don't want
             // to include files belonging to responses here.
-            backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, 'question', 'questiontext', null);
-            backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, 'question', 'generalfeedback', null);
-            backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, 'question', 'answer', null);
-            backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, 'question', 'answerfeedback', null);
-            backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, 'question', 'hint', null);
-            backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, 'question', 'correctfeedback', null);
-            backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, 'question', 'partiallycorrectfeedback', null);
-            backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, 'question', 'incorrectfeedback', null);
+            backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, 'question', 'questiontext', null,
+                                        $progress);
+            backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, 'question', 'generalfeedback', null,
+                                        $progress);
+            backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, 'question', 'answer', null,
+                                        $progress);
+            backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, 'question', 'answerfeedback', null,
+                                        $progress);
+            backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, 'question', 'hint', null,
+                                        $progress);
+            backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, 'question', 'correctfeedback', null,
+                                        $progress);
+            backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, 'question',
+                                        'partiallycorrectfeedback', null, $progress);
+            backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, 'question', 'incorrectfeedback', null,
+                                        $progress);
 
             // For files belonging to question types, we make the leap of faith that
             // all the files belonging to the question type are part of the question definition,
             // so we can just backup all the files in bulk, without specifying each
             // file area name separately.
             foreach ($components as $component => $fileareas) {
-                backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, $component, null, null);
+                backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, $component, null, null,
+                                            $progress);
             }
         }
+        $progress->end_progress();
         $rs->close();
     }
 }
