@@ -3237,6 +3237,17 @@ privatefiles,moodle|/user/files.php';
             uninstall_plugin('assignment', 'upload');
             uninstall_plugin('assignment', 'uploadsingle');
 
+            // Delete other mod_assignment subplugins.
+            $pluginnamelike = $DB->sql_like('plugin', ':pluginname');
+            $subplugins = $DB->get_fieldset_select('config_plugins', 'plugin', "$pluginnamelike AND name = :name", [
+                'pluginname' => $DB->sql_like_escape('assignment_') . '%',
+                'name' => 'version',
+            ]);
+            foreach ($subplugins as $subplugin) {
+                [$plugin, $subpluginname] = explode('_', $subplugin, 2);
+                uninstall_plugin($plugin, $subpluginname);
+            }
+
             // Delete mod_assignment.
             uninstall_plugin('mod', 'assignment');
         }
