@@ -4884,17 +4884,22 @@ class settings_navigation extends navigation_node {
         // Send to MoodleNet.
         $usercanshare = utilities::can_user_share($this->context->get_course_context(), $USER->id);
         $issuerid = get_config('moodlenet', 'oauthservice');
-        $issuer = \core\oauth2\api::get_issuer($issuerid);
-        $isvalidinstance = utilities::is_valid_instance($issuer);
-        if ($usercanshare && $isvalidinstance) {
-            $this->page->requires->js_call_amd('core/moodlenet/send_resource', 'init');
-            $action = new action_link(new moodle_url(''), '', null, [
-                'data-action' => 'sendtomoodlenet',
-                'data-type' => 'activity',
-                'data-sharetype' => 'resource',
-            ]);
-            $modulenode->add(get_string('moodlenet:sharetomoodlenet', 'moodle'),
-                $action, self::TYPE_SETTING, null, 'exportmoodlenet')->set_force_into_more_menu(true);
+        try {
+            $issuer = \core\oauth2\api::get_issuer($issuerid);
+            $isvalidinstance = utilities::is_valid_instance($issuer);
+            if ($usercanshare && $isvalidinstance) {
+                $this->page->requires->js_call_amd('core/moodlenet/send_resource', 'init');
+                $action = new action_link(new moodle_url(''), '', null, [
+                    'data-action' => 'sendtomoodlenet',
+                    'data-type' => 'activity',
+                    'data-sharetype' => 'resource',
+                ]);
+                $modulenode->add(get_string('moodlenet:sharetomoodlenet', 'moodle'),
+                    $action, self::TYPE_SETTING, null, 'exportmoodlenet')->set_force_into_more_menu(true);
+            }
+        } catch (dml_missing_record_exception $e) {
+            debugging("Invalid MoodleNet OAuth 2 service set in site administration: 'moodlenet | oauthservice'. " .
+                "This must be a valid issuer.");
         }
 
         // Remove the module node if there are no children.
