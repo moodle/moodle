@@ -1804,7 +1804,7 @@ class iomad {
 }
 
 /**
- * User Filter form used on the Iomad pages.
+ * Company Filter form used on the Iomad pages.
  *
  */
 class iomad_company_filter_form extends moodleform {

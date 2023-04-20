@@ -73,8 +73,11 @@ function local_iomad_signup_user_created($user) {
             // Get company.
             $company = new company($domaininfo->companyid);
 
+            // Do we have a company departmet profile field?
+            $autodepartmentid = $company->get_auto_department($user);
+
             // assign the user to the company.
-            $company->assign_user_to_company($user->id);
+            $company->assign_user_to_company($user->id, $autodepartmentid);
 
             // Deal with company defaults
             $defaults = $company->get_user_defaults();
@@ -88,8 +91,11 @@ function local_iomad_signup_user_created($user) {
             // Get company.
             $company = new company($CFG->local_iomad_signup_company);
 
+            // Do we have a company departmet profile field?
+            $autodepartmentid = $company->get_auto_department($user);
+
             // assign the user to the company.
-            $company->assign_user_to_company($user->id);
+            $company->assign_user_to_company($user->id, $autodepartmentid);
 
             // Deal with company defaults
             $defaults = $company->get_user_defaults();

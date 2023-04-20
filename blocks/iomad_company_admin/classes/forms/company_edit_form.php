@@ -325,6 +325,28 @@ class company_edit_form extends \company_moodleform {
                             'maxlength="255" size="50"');
         $mform->setType('custom3', PARAM_NOTAGS);
 
+        // Add in the auto department signup profile field.
+        if (!empty($this->companyid)) {
+            // Get the company profile choices.
+            $globalmenufields = $DB->get_records_sql_menu("SELECT id,name from {user_info_field} WHERE
+                                                           datatype = :datatype                                                       
+                                                           AND categoryid NOT IN (
+                                                           SELECT profileid from {company}
+                                                           )",
+                                                           ['datatype' => 'menu']);
+            $companymenufields = $DB->get_records_sql_menu("SELECT id,name from {user_info_field} WHERE
+                                                            datatype = :datatype                                                       
+                                                            AND categoryid = (
+                                                              SELECT profileid from {company}
+                                                              WHERE id = :companyid
+                                                            )",
+                                                            ['companyid' => $this->companyid, 'datatype' => 'menu']);
+    
+            $allmenufields = array_merge(['0' => get_string('none')], $companymenufields, $globalmenufields);
+            $mform->addElement('select', 'departmentprofileid', get_string('departmentprofileid', 'block_iomad_company_admin'), $allmenufields, ['optional' => true]);
+            $mform->addHelpButton('departmentprofileid', 'departmentprofileid', 'block_iomad_company_admin');
+        }
+
         /* === User defaults === */
         $mform->addElement('header', 'userdefaults',
                             get_string('userdefaults', 'block_iomad_company_admin'));

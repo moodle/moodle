@@ -3580,6 +3580,38 @@ class company {
     }
 
     /**
+     * Gets the department ID on user creation.
+     *
+     * Parameters -
+     *              $user = object;
+     *
+     * Returns int.
+     *
+     **/
+    public function get_auto_department($user) {
+        global $DB;
+
+        $topdepartment = self::get_company_parentnode($this->id);
+        $departmentid = $topdepartment->id;
+
+        // check if there is a different match.
+        if (!empty($this->companyrecord['departmentprofileid'])) {
+            // get the profile field;
+            if ($field = $DB->get_record('user_info_field', ['id' => $this->companyrecord['departmentprofileid']])) {
+                $fieldname = 'profile_field_' . $field->shortname;
+                if (!empty($user->$fieldname)) {
+                    if ($department = $DB->get_record('department', ['name' => $user->$fieldname, 'company' => $this->id])) {
+                        $departmentid = $department->id;
+                    }
+                }
+            }
+        }
+
+        // Return departmentid.
+        return $departmentid;
+    }
+
+    /**
      * Automatically enrols a users on un-licensed courses if its set in the config.
      *
      * Parameters -
