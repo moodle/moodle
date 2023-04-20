@@ -1553,8 +1553,8 @@ $string['xmlrpcwebserviceenabled'] = 'It has been detected that the XML-RPC Web 
 $string['yuicomboloading'] = 'YUI combo loading';
 $string['ziprequired'] = 'The Zip PHP extension is now required by Moodle, info-ZIP binaries or PclZip library are not used anymore.';
 $string['manageqbanks'] = 'Manage question bank plugins';
-$string['modassignmentinuse'] = 'It has been detected that your site is still using the Assignment 2.2 plugin. You may resolve this before upgrading by 1) Backing up your Assignment 2.2 activities and restoring them as new Assignment activities; or 2) Deleting the data from the assignment tables in the database.';
-
+$string['modassignmentinuse'] = 'Your site is still using the Assignment 2.2 plugin. Before upgrading you must 1) backup any Assignment 2.2 activities that you want to keep and restore them as Assignment activities, and 2) delete all Assignment 2.2 data from the database.';
+$string['modassignmentsubpluginsexist'] = 'Assignment 2.2. subplugins may be present. The mod/assignment folder and all of its subplugins need to be removed before upgrading.';
 
 $string['caching'] = 'Caching';
 $string['cachesettings'] = 'Cache settings';
