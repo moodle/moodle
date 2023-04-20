@@ -174,7 +174,8 @@
     display: inline-block;
 }
 
-.path-grade-report-grader .header {
+.path-grade-report-grader .header,
+.path-grade-report-grader td.userfield div {
     padding-top: 6px;
 }
 
