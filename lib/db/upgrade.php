@@ -3191,49 +3191,6 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023031400.02);
     }
 
-    if ($oldversion < 2023032800.00) {
-        // Set to true if this process was ran.
-        $isgradecleaned2023032800 = true;
-
-        // Delete all mod_assginment files orphaned data.
-        $fs = new file_storage();
-        $fs->delete_component_files('mod_assignment');
-
-        // Delete all mod_assignment grade_grades orphaned data.
-        $DB->delete_records_select(
-            'grade_grades', "itemid IN (SELECT id FROM {grade_items} WHERE itemtype = 'mod' AND itemmodule = 'assignment')"
-        );
-
-        // Delete all grade_grades whose itemids do not exist in grade_items table.
-        $DB->delete_records_select('grade_grades', "itemid NOT IN (SELECT id FROM {grade_items})");
-
-        // Delete all mod_assignment grade_grades_history orphaned data.
-        $DB->delete_records('grade_grades_history', ['source' => 'mod/assignment']);
-
-        // Delete all mod_assignment grade_items orphaned data.
-        $DB->delete_records('grade_items', ['itemtype' => 'mod', 'itemmodule' => 'assignment']);
-
-        // Delete all mod_assignment grade_items_history orphaned data.
-        $DB->delete_records('grade_items_history', ['itemtype' => 'mod', 'itemmodule' => 'assignment']);
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2023032800.00);
-    }
-
-    if ($oldversion < 2023032800.01) {
-        // If mod_assignment is no longer present, remove it.
-        if (!file_exists($CFG->dirroot . '/mod/assignment/version.php')) {
-            uninstall_plugin('assignment', 'offline');
-            uninstall_plugin('assignment', 'online');
-            uninstall_plugin('assignment', 'upload');
-            uninstall_plugin('assignment', 'uploadsingle');
-            uninstall_plugin('mod', 'assignment');
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2023032800.01);
-    }
-
     if ($oldversion < 2023040600.01) {
         // If logstore_legacy is no longer present, remove it.
         if (!file_exists($CFG->dirroot . '/admin/tool/log/store/legacy/version.php')) {
@@ -3257,13 +3214,9 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023041100.00);
     }
 
-    // Only reserved for the sites that have been upgraded but with error in the assignment.
-    if ($oldversion < 2023041800.01) {
-        if (!isset($isgradecleaned2023032800)) {
-            // Delete all mod_assginment files orphaned data.
-            $fs = new file_storage();
-            $fs->delete_component_files('mod_assignment');
-
+    if ($oldversion < 2023042000.00) {
+        // If mod_assignment is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/mod/assignment/version.php')) {
             // Delete all mod_assignment grade_grades orphaned data.
             $DB->delete_records_select(
                 'grade_grades', "itemid IN (SELECT id FROM {grade_items} WHERE itemtype = 'mod' AND itemmodule = 'assignment')"
@@ -3277,10 +3230,19 @@ privatefiles,moodle|/user/files.php';
 
             // Delete all mod_assignment grade_items_history orphaned data.
             $DB->delete_records('grade_items_history', ['itemtype' => 'mod', 'itemmodule' => 'assignment']);
+
+            // Delete core mod_assignment subplugins.
+            uninstall_plugin('assignment', 'offline');
+            uninstall_plugin('assignment', 'online');
+            uninstall_plugin('assignment', 'upload');
+            uninstall_plugin('assignment', 'uploadsingle');
+
+            // Delete mod_assignment.
+            uninstall_plugin('mod', 'assignment');
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2023041800.01);
+        upgrade_main_savepoint(true, 2023042000.00);
     }
 
     return true;
