@@ -468,149 +468,19 @@ function detect_munged_arguments() {
 
 
 /**
- * Unzip one zip file to a destination dir
- * Both parameters must be FULL paths
- * If destination isn't specified, it will be the
- * SAME directory where the zip file resides.
- *
- * @global object
- * @param string $zipfile The zip file to unzip
- * @param string $destination The location to unzip to
- * @param bool $showstatus_ignored Unused
  * @deprecated since 2.0 MDL-15919
  */
-function unzip_file($zipfile, $destination = '', $showstatus_ignored = true) {
-    debugging(__FUNCTION__ . '() is deprecated. '
-            . 'Please use the application/zip file_packer implementation instead.', DEBUG_DEVELOPER);
-
-    // Extract everything from zipfile.
-    $path_parts = pathinfo(cleardoubleslashes($zipfile));
-    $zippath = $path_parts["dirname"];       //The path of the zip file
-    $zipfilename = $path_parts["basename"];  //The name of the zip file
-    $extension = $path_parts["extension"];    //The extension of the file
-
-    //If no file, error
-    if (empty($zipfilename)) {
-        return false;
-    }
-
-    //If no extension, error
-    if (empty($extension)) {
-        return false;
-    }
-
-    //Clear $zipfile
-    $zipfile = cleardoubleslashes($zipfile);
-
-    //Check zipfile exists
-    if (!file_exists($zipfile)) {
-        return false;
-    }
-
-    //If no destination, passed let's go with the same directory
-    if (empty($destination)) {
-        $destination = $zippath;
-    }
-
-    //Clear $destination
-    $destpath = rtrim(cleardoubleslashes($destination), "/");
-
-    //Check destination path exists
-    if (!is_dir($destpath)) {
-        return false;
-    }
-
-    $packer = get_file_packer('application/zip');
-
-    $result = $packer->extract_to_pathname($zipfile, $destpath);
-
-    if ($result === false) {
-        return false;
-    }
-
-    foreach ($result as $status) {
-        if ($status !== true) {
-            return false;
-        }
-    }
-
-    return true;
+function unzip_file() {
+    throw new coding_exception(__FUNCTION__ . '() is deprecated. '
+        . 'Please use the application/zip file_packer implementation instead.');
 }
 
 /**
- * Zip an array of files/dirs to a destination zip file
- * Both parameters must be FULL paths to the files/dirs
- *
- * @global object
- * @param array $originalfiles Files to zip
- * @param string $destination The destination path
- * @return bool Outcome
- *
  * @deprecated since 2.0 MDL-15919
  */
-function zip_files($originalfiles, $destination) {
-    debugging(__FUNCTION__ . '() is deprecated. '
-            . 'Please use the application/zip file_packer implementation instead.', DEBUG_DEVELOPER);
-
-    // Extract everything from destination.
-    $path_parts = pathinfo(cleardoubleslashes($destination));
-    $destpath = $path_parts["dirname"];       //The path of the zip file
-    $destfilename = $path_parts["basename"];  //The name of the zip file
-    $extension = $path_parts["extension"];    //The extension of the file
-
-    //If no file, error
-    if (empty($destfilename)) {
-        return false;
-    }
-
-    //If no extension, add it
-    if (empty($extension)) {
-        $extension = 'zip';
-        $destfilename = $destfilename.'.'.$extension;
-    }
-
-    //Check destination path exists
-    if (!is_dir($destpath)) {
-        return false;
-    }
-
-    //Check destination path is writable. TODO!!
-
-    //Clean destination filename
-    $destfilename = clean_filename($destfilename);
-
-    //Now check and prepare every file
-    $files = array();
-    $origpath = NULL;
-
-    foreach ($originalfiles as $file) {  //Iterate over each file
-        //Check for every file
-        $tempfile = cleardoubleslashes($file); // no doubleslashes!
-        //Calculate the base path for all files if it isn't set
-        if ($origpath === NULL) {
-            $origpath = rtrim(cleardoubleslashes(dirname($tempfile)), "/");
-        }
-        //See if the file is readable
-        if (!is_readable($tempfile)) {  //Is readable
-            continue;
-        }
-        //See if the file/dir is in the same directory than the rest
-        if (rtrim(cleardoubleslashes(dirname($tempfile)), "/") != $origpath) {
-            continue;
-        }
-        //Add the file to the array
-        $files[] = $tempfile;
-    }
-
-    $zipfiles = array();
-    $start = strlen($origpath)+1;
-    foreach($files as $file) {
-        $zipfiles[substr($file, $start)] = $file;
-    }
-
-    $packer = get_file_packer('application/zip');
-
-    return $packer->archive_to_pathname($zipfiles, $destpath . '/' . $destfilename);
+function zip_files() {
+    throw new coding_exception(__FUNCTION__ . '() is deprecated. '
+        . 'Please use the application/zip file_packer implementation instead.');
 }
 
 /**
@@ -2921,270 +2791,30 @@ function cron_bc_hack_plugin_functions($plugintype, $plugins) {
 }
 
 /**
- * Returns the SQL used by the participants table.
- *
  * @deprecated since Moodle 3.9 MDL-68612 - See \core_user\table\participants_search for an improved way to fetch participants.
- * @param int $courseid The course id
- * @param int $groupid The groupid, 0 means all groups and USERSWITHOUTGROUP no group
- * @param int $accesssince The time since last access, 0 means any time
- * @param int $roleid The role id, 0 means all roles and -1 no roles
- * @param int $enrolid The enrolment id, 0 means all enrolment methods will be returned.
- * @param int $statusid The user enrolment status, -1 means all enrolments regardless of the status will be returned, if allowed.
- * @param string|array $search The search that was performed, empty means perform no search
- * @param string $additionalwhere Any additional SQL to add to where
- * @param array $additionalparams The additional params
- * @return array
  */
-function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $roleid = 0, $enrolid = 0, $statusid = -1,
-                                   $search = '', $additionalwhere = '', $additionalparams = array()) {
-    global $DB, $USER, $CFG;
-
-    $deprecatedtext = __FUNCTION__ . '() is deprecated. ' .
+function user_get_participants_sql() {
+    $deprecatedtext = __FUNCTION__ . '() has been removed. ' .
                  'Please use \core\table\participants_search::class with table filtersets instead.';
-    debugging($deprecatedtext, DEBUG_DEVELOPER);
-
-    // Get the context.
-    $context = \context_course::instance($courseid, MUST_EXIST);
-
-    $isfrontpage = ($courseid == SITEID);
-
-    // Default filter settings. We only show active by default, especially if the user has no capability to review enrolments.
-    $onlyactive = true;
-    $onlysuspended = false;
-    if (has_capability('moodle/course:enrolreview', $context) && (has_capability('moodle/course:viewsuspendedusers', $context))) {
-        switch ($statusid) {
-            case ENROL_USER_ACTIVE:
-                // Nothing to do here.
-                break;
-            case ENROL_USER_SUSPENDED:
-                $onlyactive = false;
-                $onlysuspended = true;
-                break;
-            default:
-                // If the user has capability to review user enrolments, but statusid is set to -1, set $onlyactive to false.
-                $onlyactive = false;
-                break;
-        }
-    }
-
-    list($esql, $params) = get_enrolled_sql($context, null, $groupid, $onlyactive, $onlysuspended, $enrolid);
-
-    $joins = array('FROM {user} u');
-    $wheres = array();
-
-    // TODO Does not support custom user profile fields (MDL-70456).
-    $userfields = \core_user\fields::get_identity_fields($context, false);
-    $userfieldsapi = \core_user\fields::for_userpic()->including(...$userfields);
-    $userfieldssql = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
-
-    if ($isfrontpage) {
-        $select = "SELECT $userfieldssql, u.lastaccess";
-        $joins[] = "JOIN ($esql) e ON e.id = u.id"; // Everybody on the frontpage usually.
-        if ($accesssince) {
-            $wheres[] = user_get_user_lastaccess_sql($accesssince);
-        }
-    } else {
-        $select = "SELECT $userfieldssql, COALESCE(ul.timeaccess, 0) AS lastaccess";
-        $joins[] = "JOIN ($esql) e ON e.id = u.id"; // Course enrolled users only.
-        // Not everybody has accessed the course yet.
-        $joins[] = 'LEFT JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = :courseid)';
-        $params['courseid'] = $courseid;
-        if ($accesssince) {
-            $wheres[] = user_get_course_lastaccess_sql($accesssince);
-        }
-    }
-
-    // Performance hacks - we preload user contexts together with accounts.
-    $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
-    $ccjoin = 'LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)';
-    $params['contextlevel'] = CONTEXT_USER;
-    $select .= $ccselect;
-    $joins[] = $ccjoin;
-
-    // Limit list to users with some role only.
-    if ($roleid) {
-        // We want to query both the current context and parent contexts.
-        list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true),
-            SQL_PARAMS_NAMED, 'relatedctx');
-
-        // Get users without any role.
-        if ($roleid == -1) {
-            $wheres[] = "u.id NOT IN (SELECT userid FROM {role_assignments} WHERE contextid $relatedctxsql)";
-            $params = array_merge($params, $relatedctxparams);
-        } else {
-            $wheres[] = "u.id IN (SELECT userid FROM {role_assignments} WHERE roleid = :roleid AND contextid $relatedctxsql)";
-            $params = array_merge($params, array('roleid' => $roleid), $relatedctxparams);
-        }
-    }
-
-    if (!empty($search)) {
-        if (!is_array($search)) {
-            $search = [$search];
-        }
-        foreach ($search as $index => $keyword) {
-            $searchkey1 = 'search' . $index . '1';
-            $searchkey2 = 'search' . $index . '2';
-            $searchkey3 = 'search' . $index . '3';
-            $searchkey4 = 'search' . $index . '4';
-            $searchkey5 = 'search' . $index . '5';
-            $searchkey6 = 'search' . $index . '6';
-            $searchkey7 = 'search' . $index . '7';
-
-            $conditions = array();
-            // Search by fullname.
-            $fullname = $DB->sql_fullname('u.firstname', 'u.lastname');
-            $conditions[] = $DB->sql_like($fullname, ':' . $searchkey1, false, false);
-
-            // Search by email.
-            $email = $DB->sql_like('email', ':' . $searchkey2, false, false);
-            if (!in_array('email', $userfields)) {
-                $maildisplay = 'maildisplay' . $index;
-                $userid1 = 'userid' . $index . '1';
-                // Prevent users who hide their email address from being found by others
-                // who aren't allowed to see hidden email addresses.
-                $email = "(". $email ." AND (" .
-                        "u.maildisplay <> :$maildisplay " .
-                        "OR u.id = :$userid1". // User can always find himself.
-                        "))";
-                $params[$maildisplay] = core_user::MAILDISPLAY_HIDE;
-                $params[$userid1] = $USER->id;
-            }
-            $conditions[] = $email;
-
-            // Search by idnumber.
-            $idnumber = $DB->sql_like('idnumber', ':' . $searchkey3, false, false);
-            if (!in_array('idnumber', $userfields)) {
-                $userid2 = 'userid' . $index . '2';
-                // Users who aren't allowed to see idnumbers should at most find themselves
-                // when searching for an idnumber.
-                $idnumber = "(". $idnumber . " AND u.id = :$userid2)";
-                $params[$userid2] = $USER->id;
-            }
-            $conditions[] = $idnumber;
-
-            // TODO Does not support custom user profile fields (MDL-70456).
-            $extrasearchfields = \core_user\fields::get_identity_fields($context, false);
-            if (!empty($extrasearchfields)) {
-                // Search all user identify fields.
-                foreach ($extrasearchfields as $extrasearchfield) {
-                    if (in_array($extrasearchfield, ['email', 'idnumber', 'country'])) {
-                        // Already covered above. Search by country not supported.
-                        continue;
-                    }
-                    $param = $searchkey3 . $extrasearchfield;
-                    $condition = $DB->sql_like($extrasearchfield, ':' . $param, false, false);
-                    $params[$param] = "%$keyword%";
-                    if (!in_array($extrasearchfield, $userfields)) {
-                        // User cannot see this field, but allow match if their own account.
-                        $userid3 = 'userid' . $index . '3' . $extrasearchfield;
-                        $condition = "(". $condition . " AND u.id = :$userid3)";
-                        $params[$userid3] = $USER->id;
-                    }
-                    $conditions[] = $condition;
-                }
-            }
-
-            // Search by middlename.
-            $middlename = $DB->sql_like('middlename', ':' . $searchkey4, false, false);
-            $conditions[] = $middlename;
-
-            // Search by alternatename.
-            $alternatename = $DB->sql_like('alternatename', ':' . $searchkey5, false, false);
-            $conditions[] = $alternatename;
-
-            // Search by firstnamephonetic.
-            $firstnamephonetic = $DB->sql_like('firstnamephonetic', ':' . $searchkey6, false, false);
-            $conditions[] = $firstnamephonetic;
-
-            // Search by lastnamephonetic.
-            $lastnamephonetic = $DB->sql_like('lastnamephonetic', ':' . $searchkey7, false, false);
-            $conditions[] = $lastnamephonetic;
-
-            $wheres[] = "(". implode(" OR ", $conditions) .") ";
-            $params[$searchkey1] = "%$keyword%";
-            $params[$searchkey2] = "%$keyword%";
-            $params[$searchkey3] = "%$keyword%";
-            $params[$searchkey4] = "%$keyword%";
-            $params[$searchkey5] = "%$keyword%";
-            $params[$searchkey6] = "%$keyword%";
-            $params[$searchkey7] = "%$keyword%";
-        }
-    }
-
-    if (!empty($additionalwhere)) {
-        $wheres[] = $additionalwhere;
-        $params = array_merge($params, $additionalparams);
-    }
-
-    $from = implode("\n", $joins);
-    if ($wheres) {
-        $where = 'WHERE ' . implode(' AND ', $wheres);
-    } else {
-        $where = '';
-    }
-
-    return array($select, $from, $where, $params);
+    throw new coding_exception($deprecatedtext);
 }
 
 /**
- * Returns the total number of participants for a given course.
- *
  * @deprecated since Moodle 3.9 MDL-68612 - See \core_user\table\participants_search for an improved way to fetch participants.
- * @param int $courseid The course id
- * @param int $groupid The groupid, 0 means all groups and USERSWITHOUTGROUP no group
- * @param int $accesssince The time since last access, 0 means any time
- * @param int $roleid The role id, 0 means all roles
- * @param int $enrolid The applied filter for the user enrolment ID.
- * @param int $status The applied filter for the user's enrolment status.
- * @param string|array $search The search that was performed, empty means perform no search
- * @param string $additionalwhere Any additional SQL to add to where
- * @param array $additionalparams The additional params
- * @return int
  */
-function user_get_total_participants($courseid, $groupid = 0, $accesssince = 0, $roleid = 0, $enrolid = 0, $statusid = -1,
-                                     $search = '', $additionalwhere = '', $additionalparams = array()) {
-    global $DB;
-
-    $deprecatedtext = __FUNCTION__ . '() is deprecated. ' .
+function user_get_total_participants() {
+    $deprecatedtext = __FUNCTION__ . '() has been removed. ' .
                       'Please use \core\table\participants_search::class with table filtersets instead.';
-    debugging($deprecatedtext, DEBUG_DEVELOPER);
-
-    list($select, $from, $where, $params) = user_get_participants_sql($courseid, $groupid, $accesssince, $roleid, $enrolid,
-        $statusid, $search, $additionalwhere, $additionalparams);
-
-    return $DB->count_records_sql("SELECT COUNT(u.id) $from $where", $params);
+    throw new coding_exception($deprecatedtext);
 }
 
 /**
- * Returns the participants for a given course.
- *
  * @deprecated since Moodle 3.9 MDL-68612 - See \core_user\table\participants_search for an improved way to fetch participants.
- * @param int $courseid The course id
- * @param int $groupid The groupid, 0 means all groups and USERSWITHOUTGROUP no group
- * @param int $accesssince The time since last access
- * @param int $roleid The role id
- * @param int $enrolid The applied filter for the user enrolment ID.
- * @param int $status The applied filter for the user's enrolment status.
- * @param string $search The search that was performed
- * @param string $additionalwhere Any additional SQL to add to where
- * @param array $additionalparams The additional params
- * @param string $sort The SQL sort
- * @param int $limitfrom return a subset of records, starting at this point (optional).
- * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
- * @return moodle_recordset
  */
-function user_get_participants($courseid, $groupid, $accesssince, $roleid, $enrolid, $statusid, $search,
-                               $additionalwhere = '', $additionalparams = array(), $sort = '', $limitfrom = 0, $limitnum = 0) {
-    global $DB;
-
-    $deprecatedtext = __FUNCTION__ . '() is deprecated. ' .
+function user_get_participants() {
+    $deprecatedtext = __FUNCTION__ . '() has been removed. ' .
                       'Please use \core\table\participants_search::class with table filtersets instead.';
-    debugging($deprecatedtext, DEBUG_DEVELOPER);
-
-    list($select, $from, $where, $params) = user_get_participants_sql($courseid, $groupid, $accesssince, $roleid, $enrolid,
-        $statusid, $search, $additionalwhere, $additionalparams);
-
-    return $DB->get_recordset_sql("$select $from $where $sort", $params, $limitfrom, $limitnum);
+    throw new coding_exception($deprecatedtext);
 }
 
 /**
@@ -3252,124 +2882,31 @@ function badges_local_backpack_js() {
 }
 
 /**
- * Checks if current user is shown any extra fields when listing users.
- *
- * Does not include any custom profile fields.
- *
- * @param object $context Context
- * @param array $already Array of fields that we're going to show anyway
- *   so don't bother listing them
- * @return array Array of field names from user table, not including anything
- *   listed in $already
  * @deprecated since Moodle 3.11 MDL-45242
- * @see \core_user\fields
  */
-function get_extra_user_fields($context, $already = array()) {
-    debugging('get_extra_user_fields() is deprecated. Please use the \core_user\fields API instead.', DEBUG_DEVELOPER);
-
-    $fields = \core_user\fields::for_identity($context, false)->excluding(...$already);
-    return $fields->get_required_fields();
+function get_extra_user_fields() {
+    throw new coding_exception('get_extra_user_fields() has been removed. Please use the \core_user\fields API instead.');
 }
 
 /**
- * If the current user is to be shown extra user fields when listing or
- * selecting users, returns a string suitable for including in an SQL select
- * clause to retrieve those fields.
- *
- * Does not include any custom profile fields.
- *
- * @param context $context Context
- * @param string $alias Alias of user table, e.g. 'u' (default none)
- * @param string $prefix Prefix for field names using AS, e.g. 'u_' (default none)
- * @param array $already Array of fields that we're going to include anyway so don't list them (default none)
- * @return string Partial SQL select clause, beginning with comma, for example ',u.idnumber,u.department' unless it is blank
  * @deprecated since Moodle 3.11 MDL-45242
- * @see \core_user\fields
  */
-function get_extra_user_fields_sql($context, $alias='', $prefix='', $already = array()) {
-    debugging('get_extra_user_fields_sql() is deprecated. Please use the \core_user\fields API instead.', DEBUG_DEVELOPER);
-
-    $fields = \core_user\fields::for_identity($context, false)->excluding(...$already);
-    // Note: There will never be any joins or join params because we turned off profile fields.
-    $selects = $fields->get_sql($alias, false, $prefix)->selects;
-
-    return $selects;
+function get_extra_user_fields_sql() {
+    throw new coding_exception('get_extra_user_fields_sql() has been removed. Please use the \core_user\fields API instead.');
 }
 
 /**
- * Returns the display name of a field in the user table. Works for most fields that are commonly displayed to users.
- *
- * Also works for custom fields.
- *
- * @param string $field Field name, e.g. 'phone1'
- * @return string Text description taken from language file, e.g. 'Phone number'
  * @deprecated since Moodle 3.11 MDL-45242
- * @see \core_user\fields
  */
-function get_user_field_name($field) {
-    debugging('get_user_field_name() is deprecated. Please use \core_user\fields::get_display_name() instead', DEBUG_DEVELOPER);
-
-    return \core_user\fields::get_display_name($field);
+function get_user_field_name() {
+    throw new coding_exception('get_user_field_name() has been removed. Please use \core_user\fields::get_display_name() instead');
 }
 
 /**
- * A centralised location for the all name fields. Returns an array / sql string snippet.
- *
- * @param bool $returnsql True for an sql select field snippet.
- * @param string $tableprefix table query prefix to use in front of each field.
- * @param string $prefix prefix added to the name fields e.g. authorfirstname.
- * @param string $fieldprefix sql field prefix e.g. id AS userid.
- * @param bool $order moves firstname and lastname to the top of the array / start of the string.
- * @return array|string All name fields.
  * @deprecated since Moodle 3.11 MDL-45242
- * @see \core_user\fields
  */
-function get_all_user_name_fields($returnsql = false, $tableprefix = null, $prefix = null, $fieldprefix = null, $order = false) {
-    debugging('get_all_user_name_fields() is deprecated. Please use the \core_user\fields API instead', DEBUG_DEVELOPER);
-
-    // This array is provided in this order because when called by fullname() (above) if firstname is before
-    // firstnamephonetic str_replace() will change the wrong placeholder.
-    $alternatenames = [];
-    foreach (\core_user\fields::get_name_fields() as $field) {
-        $alternatenames[$field] = $field;
-    }
-
-    // Let's add a prefix to the array of user name fields if provided.
-    if ($prefix) {
-        foreach ($alternatenames as $key => $altname) {
-            $alternatenames[$key] = $prefix . $altname;
-        }
-    }
-
-    // If we want the end result to have firstname and lastname at the front / top of the result.
-    if ($order) {
-        // Move the last two elements (firstname, lastname) off the array and put them at the top.
-        for ($i = 0; $i < 2; $i++) {
-            // Get the last element.
-            $lastelement = end($alternatenames);
-            // Remove it from the array.
-            unset($alternatenames[$lastelement]);
-            // Put the element back on the top of the array.
-            $alternatenames = array_merge(array($lastelement => $lastelement), $alternatenames);
-        }
-    }
-
-    // Create an sql field snippet if requested.
-    if ($returnsql) {
-        if ($tableprefix) {
-            if ($fieldprefix) {
-                foreach ($alternatenames as $key => $altname) {
-                    $alternatenames[$key] = $tableprefix . '.' . $altname . ' AS ' . $fieldprefix . $altname;
-                }
-            } else {
-                foreach ($alternatenames as $key => $altname) {
-                    $alternatenames[$key] = $tableprefix . '.' . $altname;
-                }
-            }
-        }
-        $alternatenames = implode(',', $alternatenames);
-    }
-    return $alternatenames;
+function get_all_user_name_fields() {
+    throw new coding_exception('get_all_user_name_fields() is deprecated. Please use the \core_user\fields API instead');
 }
 
 /**
