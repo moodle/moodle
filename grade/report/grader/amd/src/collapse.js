@@ -218,6 +218,25 @@ export default class ColumnSearch extends GradebookSearchClass {
     }
 
     /**
+     * The handler for when a user presses a key within the component.
+     *
+     * @param {KeyboardEvent} e The triggering event that we are working with.
+     */
+    async keyHandler(e) {
+        super.keyHandler(e);
+
+        // Switch the key presses to handle keyboard nav.
+        switch (e.key) {
+            case 'Tab':
+                if (e.target.closest(this.selectors.input)) {
+                    e.preventDefault();
+                    this.clearSearchButton.focus({preventScroll: true});
+                }
+                break;
+        }
+    }
+
+    /**
      * Handle any keyboard inputs.
      */
     registerInputEvents() {
@@ -400,7 +419,10 @@ export default class ColumnSearch extends GradebookSearchClass {
                 } else if (content.classList.contains('d-none')) {
                     // We should always have content but some cells do not contain menus or other actions.
                     element.classList.remove('collapsed');
-                    content.classList.add('d-flex');
+                    // If there are many nodes, apply the following.
+                    if (content.childNodes.length > 1) {
+                        content.classList.add('d-flex');
+                    }
                     nodeSet.forEach(node => {
                         node?.classList.remove('d-none');
                         node?.setAttribute('aria-hidden', 'false');
@@ -454,6 +476,11 @@ export default class ColumnSearch extends GradebookSearchClass {
         // Given we now have the body, we can set up more triggers.
         this.registerFormEvents();
         this.registerInputEvents();
+
+        // Add a small BS listener so that we can set the focus correctly on open.
+        this.$component.on('shown.bs.dropdown', () => {
+            this.searchInput.focus({preventScroll: true});
+        });
     }
 
     /**

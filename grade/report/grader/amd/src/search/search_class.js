@@ -366,6 +366,12 @@ export default class {
                     this.moveToNode(index + 1);
                 }
             }
+        } else {
+            if (direction === UP) {
+                this.moveToLastNode();
+            } else {
+                this.moveToFirstNode();
+            }
         }
     }
 
@@ -415,20 +421,7 @@ export default class {
                 e.preventDefault();
                 this.moveToLastNode();
                 break;
-            case 'Escape':
-                this.toggleDropdown();
-                this.searchInput.focus({preventScroll: true});
-                break;
             case 'Tab':
-                // If the current focus is on clear search, then check if viewall exists then around tab to it.
-                if (e.target.closest(this.selectors.clearSearch)) {
-                    if (this.currentViewAll && !e.shiftKey) {
-                        e.preventDefault();
-                        this.currentViewAll.focus({preventScroll: true});
-                    } else {
-                        this.closeSearch();
-                    }
-                }
                 // If the current focus is on the view all link, then close the widget then set focus on the next tertiary nav item.
                 if (e.target.closest(this.selectors.viewall)) {
                     this.closeSearch();

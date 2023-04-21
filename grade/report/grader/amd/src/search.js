@@ -198,6 +198,21 @@ export default class UserSearch extends GradebookSearchClass {
                     break;
                 }
                 break;
+            case 'Escape':
+                this.toggleDropdown();
+                this.searchInput.focus({preventScroll: true});
+                break;
+            case 'Tab':
+                // If the current focus is on clear search, then check if viewall exists then around tab to it.
+                if (e.target.closest(this.selectors.clearSearch)) {
+                    if (this.currentViewAll && !e.shiftKey) {
+                        e.preventDefault();
+                        this.currentViewAll.focus({preventScroll: true});
+                    } else {
+                        this.closeSearch();
+                    }
+                }
+                break;
         }
     }
 
