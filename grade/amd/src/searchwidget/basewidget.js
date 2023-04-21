@@ -224,12 +224,14 @@ const renderSearchResults = async(searchResultsContainer, searchResultsData) => 
     await Templates.replaceNodeContents(searchResultsContainer, html, js);
 
     // Backward compatibility.
-    const deprecatedOptions = searchResultsContainer.querySelectorAll(
-        'a.dropdown-item[role="menuitem"][href=""], .dropdown-item[role="option"]:not([href])'
-    );
-    for (const option of deprecatedOptions) {
-        option.tabIndex = 0;
-        option.removeAttribute('href');
+    if (searchResultsContainer.getAttribute('role') !== 'listbox') {
+        const deprecatedOptions = searchResultsContainer.querySelectorAll(
+            'a.dropdown-item[role="menuitem"][href=""], .dropdown-item[role="option"]:not([href])'
+        );
+        for (const option of deprecatedOptions) {
+            option.tabIndex = 0;
+            option.removeAttribute('href');
+        }
     }
 };
 
