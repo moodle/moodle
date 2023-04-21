@@ -2183,3 +2183,26 @@ function proxy_log_callback($code) {
         error_log($error . format_backtrace($trace, true)); // phpcs:ignore
     }
 }
+
+/**
+ * A helper function for deprecated files to use to ensure that, when they are included for unit tests,
+ * they are run in an isolated process.
+ *
+ * @throws \coding_exception The exception thrown when the process is not isolated.
+ */
+function require_phpunit_isolation(): void {
+    if (!defined('PHPUNIT_TEST') || !PHPUNIT_TEST) {
+        // Not a test.
+        return;
+    }
+
+    if (defined('PHPUNIT_ISOLATED_TEST')) {
+        // Already isolated.
+        return;
+    }
+
+    throw new \coding_exception(
+        'When including this file for a unit test, the test must be run in an isolated process. ' .
+            'See the PHPUnit @runInSeparateProcess and @runTestsInSeparateProcesses annotations.'
+    );
+}
