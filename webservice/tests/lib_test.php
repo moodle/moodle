@@ -148,7 +148,7 @@ class lib_test extends \advanced_testcase {
      * Tests update_token_lastaccess() function.
      */
     public function test_update_token_lastaccess() {
-        global $DB;
+        global $DB, $USER;
 
         $this->resetAfterTest(true);
 
@@ -167,7 +167,12 @@ class lib_test extends \advanced_testcase {
         $DB->insert_record('external_services', $webservice);
 
         // Add token.
-        $tokenstr = external_create_service_token($webservice->name, \context_system::instance()->id);
+        $tokenstr = \core_external\util::generate_token(
+            EXTERNAL_TOKEN_EMBEDDED,
+            \core_external\util::get_service_by_name($webservice->name),
+            $USER->id,
+            \core\context\system::instance()
+        );
         $token = $DB->get_record('external_tokens', ['token' => $tokenstr]);
 
         // Trigger last access once (at current time).
