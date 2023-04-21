@@ -1,5 +1,12 @@
 This files describes API changes for code that uses the user API.
 
+=== 4.3 ===
+
+* The following previously deprecated methods have been removed and can no longer be used:
+  - `profile_display_fields`
+  - `profile_edit_category`
+  - `profile_edit_field`
+
 === 4.2 ===
 
 * Added get_internalfield_list() and get_internalfields() in the user_field_mapping class.

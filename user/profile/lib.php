@@ -745,29 +745,6 @@ function profile_save_data(stdClass $usernew): void {
 }
 
 /**
- * Display profile fields.
- *
- * @deprecated since Moodle 3.11 MDL-71051 - please do not use this function any more.
- * @todo MDL-71413 This will be deleted in Moodle 4.3.
- *
- * @param int $userid
- */
-function profile_display_fields($userid) {
-    debugging('Function profile_display_fields() is deprecated because it is no longer used and will be '.
-        'removed in future versions of Moodle', DEBUG_DEVELOPER);
-
-    $categories = profile_get_user_fields_with_data_by_category($userid);
-    foreach ($categories as $categoryid => $fields) {
-        foreach ($fields as $formfield) {
-            if ($formfield->is_visible() and !$formfield->is_empty()) {
-                echo html_writer::tag('dt', format_string($formfield->field->name));
-                echo html_writer::tag('dd', $formfield->display_data());
-            }
-        }
-    }
-}
-
-/**
  * Retrieves a list of profile fields that must be displayed in the sign-up form.
  *
  * @return array list of profile fields info
