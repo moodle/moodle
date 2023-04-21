@@ -216,6 +216,3 @@ $string['visibilitymembers'] = 'Only visible to members';
 $string['visibilityown'] = 'Only see own membership';
 $string['visibilitynone'] = 'Hidden';
 $string['memberofgroup'] = 'Group member of: {$a}';
-
-// Deprecated since Moodle 3.11.
-$string['hidepicture'] = 'Hide picture';

@@ -230,9 +230,6 @@ $string['wsdocumentationlogin'] = 'or enter your web service username and passwo
 $string['wspassword'] = 'Web service password';
 $string['wsusername'] = 'Web service username';
 
-// Deprecated since Moodle 3.11.
-$string['usernameoridnousererror'] = 'No users were found with this username/user id.';
-$string['usernameoridoccurenceerror'] = 'More than one user was found with this username. Please enter the user id.';
 // Deprecated since Moodle 4.2.
 $string['missingversionfile'] = 'Coding error: version.php file is missing for the component {$a}';
 $string['cannotgetcoursecontents'] = 'Cannot get course contents';

@@ -1597,12 +1597,6 @@ $string['cachesessionhelp'] = 'User specific cache that expires when the user\'s
 $string['cacheapplication'] = 'Application cache';
 $string['cacheapplicationhelp'] = 'Cached items are shared among all users and expire by a determined time to live (ttl).';
 
-// Deprecated since Moodle 3.11.
-$string['configenableactivitychooser'] = 'The activity chooser is a dialog box with a short description of each activity and resource. If disabled, separate resource and activity drop-down menus are provided instead.';
-$string['enableactivitychooser'] = 'Enable activity chooser';
-$string['configmodchooserdefault'] = 'Should the activity chooser be presented to users by default?';
-$string['modchooserdefault'] = 'Activity chooser default';
-
 // Deprecated since Moodle 4.0.
 $string['coursepage'] = 'Course page';
 $string['mediapluginswf'] = 'Enable .swf filter';

@@ -661,9 +661,3 @@ $string['viewsubmissiongradingtable'] = 'View submission grading table.';
 $string['viewrevealidentitiesconfirm'] = 'View reveal student identities confirmation page.';
 $string['workflowfilter'] = 'Workflow filter';
 $string['xofy'] = '{$a->x} of {$a->y}';
-
-// Deprecated since Moodle 3.11.
-$string['allowsubmissionsfromdatesummary'] = 'This assignment will accept submissions from <strong>{$a}</strong>';
-$string['allowsubmissionsanddescriptionfromdatesummary'] = 'The assignment details and submission form will be available from <strong>{$a}</strong>';
-$string['relativedatessubmissionduedateafter'] = '{$a->datediffstr} after course start';
-$string['relativedatessubmissionduedatebefore'] = '{$a->datediffstr} before course start';

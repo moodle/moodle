@@ -151,6 +151,3 @@ $string['privacy:metadata:core_userkey'] = 'User\'s keys used to create auto-log
 $string['responsivemainmenuitems'] = 'Responsive menu items';
 $string['switchaccount'] = 'Switch account';
 $string['viewqrcode'] = 'View QR code';
-
-// Deprecated since Moodle 3.11.
-$string['openusingembeddedbrowser'] = 'Open using embedded browser';

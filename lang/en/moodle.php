@@ -2420,17 +2420,6 @@ $string['yourwordforx'] = 'Your word for \'{$a}\'';
 $string['zippingbackup'] = 'Zipping backup';
 $string['deprecatedeventname'] = '{$a} (no longer in use)';
 
-// Deprecated since Moodle 3.11.
-$string['hidepicture'] = 'Hide picture';
-$string['grade'] = 'Grade';
-$string['aimid'] = 'AIM ID';
-$string['yahooid'] = 'Yahoo ID';
-$string['skypeid'] = 'Skype ID';
-$string['icqnumber'] = 'ICQ number';
-$string['msnid'] = 'MSN ID';
-$string['coursepreferences'] = 'Course preferences';
-$string['registrationno'] = 'No, I do not wish to receive any emails';
-
 // Deprecated since Moodle 4.0.
 $string['createuserandpass'] = 'Choose your username and password';
 $string['descriptiona'] = 'Description: {$a}';

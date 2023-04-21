@@ -176,8 +176,5 @@ $string['usingchat_help'] = 'The chat module contains some features to make chat
 * HTML - If you know some HTML code, you can use it in your text to do things like insert images, play sounds or create different coloured text';
 $string['viewreport'] = 'Past sessions';
 
-// Deprecated since Moodle 3.11.
-$string['sessionstart'] = 'The next chat session will start on {$a->date}, ({$a->fromnow} from now)';
-
 // Deprecated since Moodle 4.0.
 $string['nextsession'] = 'Next scheduled session';
