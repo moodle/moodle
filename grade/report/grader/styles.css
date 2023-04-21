@@ -25,7 +25,7 @@
     border: 1px solid #ccc;
     border-top-width: 0;
     border-left-width: 0;
-    padding: 10px;
+    padding: 0.5rem 1rem;
     vertical-align: top;
     height: 100%;
 }
@@ -48,8 +48,7 @@
 .path-grade-report-grader .grade_icons,
 .path-grade-report-grader .category_grade_icons {
     white-space: nowrap;
-    margin-top: 10px;
-    margin-right: 10px;
+    margin-top: 0.5rem;
 }
 
 .path-grade-report-grader .grade_type_value .grade_icons {
@@ -57,7 +56,7 @@
 }
 
 .path-grade-report-grader .grade_icons .icon {
-    margin-right: 20px;
+    margin-right: 1rem;
 }
 
 .path-grade-report-grader .grade_icons .icon:last-child {
@@ -91,8 +90,13 @@
 }
 
 .path-grade-report-grader .heading .gradeitemheader {
-    text-indent: -24px;
-    padding-left: 22px;
+    text-indent: -1.5rem;
+    padding-left: 1.5rem;
+    padding-top: 6px;
+}
+
+.path-grade-report-grader .dropdown-item {
+    text-align: left;
 }
 
 .path-grade-report-grader .heading .gradeitemheader .itemicon {
@@ -160,13 +164,19 @@
 }
 
 .path-grade-report-grader .gradeparent td.grade_type_value,
-.path-grade-report-grader .gradeparent td.grade_type_value input {
+.path-grade-report-grader .gradeparent td.grade_type_value input,
+.path-grade-report-grader .gradeparent td.grade_type_value div {
     text-align: right;
     margin-left: auto;
 }
 
 .path-grade-report-grader .gradeparent .gradevalue {
     display: inline-block;
+}
+
+.path-grade-report-grader .header,
+.path-grade-report-grader td.userfield div {
+    padding-top: 6px;
 }
 
 .path-grade-report-grader .gradeparent tr:nth-child(n) td.ajaxoverridden:nth-child(n) {
@@ -204,7 +214,8 @@
 
 .path-grade-report-grader .action-menu {
     display: inline-block;
-    padding-left: 10px;
+    margin-right: -0.5rem;
+    padding-left: 0.5rem;
 }
 
 .path-grade-report-grader .heading .action-menu {
