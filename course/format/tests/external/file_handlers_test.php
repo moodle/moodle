@@ -16,12 +16,13 @@
 
 namespace core_courseformat\external;
 
+use core_external\external_api;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
-use external_api;
 use dndupload_handler;
 
 /**

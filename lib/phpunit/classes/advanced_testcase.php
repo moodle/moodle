@@ -57,6 +57,20 @@ abstract class advanced_testcase extends base_testcase {
         $this->setBackupGlobals(false);
         $this->setBackupStaticAttributes(false);
         $this->setPreserveGlobalState(false);
+
+    }
+
+    /**
+     * Hook into the setInIsolation method to define an optional constant.
+     *
+     * @param bool $inisolation
+     */
+    public function setInIsolation(bool $inisolation): void {
+        parent::setInIsolation($inisolation);
+        if ($inisolation) {
+            // Note: This is safe to do because it will only be set once per test run.
+            define('PHPUNIT_ISOLATED_TEST', true);
+        }
     }
 
     /**
