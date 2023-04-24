@@ -46,6 +46,7 @@ use core_competency\privacy\provider;
  * @copyright  2018 Frédéric Massart
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \core_competency\privacy\provider
  */
 class provider_test extends provider_testcase {
 
@@ -2598,7 +2599,7 @@ class provider_test extends provider_testcase {
         $expectedids = array_unique(array_map(function($item) {
             return $item instanceof \context ? $item->id : $id;
         }, $expectedcontextsorids));
-        $this->assert_array_match($contextids, $expectedids);
+        $this->assert_array_match($expectedids, $contextids);
     }
 
     /**
