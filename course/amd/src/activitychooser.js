@@ -44,6 +44,8 @@ const ACTIVITIESRESOURCESREC = 5;
 const ACTIVITY = 0;
 const RESOURCE = 1;
 
+let initialized = false;
+
 /**
  * Set up the activity chooser.
  *
@@ -67,6 +69,12 @@ export const init = (courseId, chooserConfig) => {
  * @param {Object} chooserConfig Any PHP config settings that we may need to reference
  */
 const registerListenerEvents = (courseId, chooserConfig) => {
+
+    // Ensure we only add our listeners once.
+    if (initialized) {
+        return;
+    }
+
     const events = [
         'click',
         CustomEvents.events.activate,
@@ -170,6 +178,8 @@ const registerListenerEvents = (courseId, chooserConfig) => {
             }
         });
     });
+
+    initialized = true;
 };
 
 /**
