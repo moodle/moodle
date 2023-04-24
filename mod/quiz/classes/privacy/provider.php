@@ -480,31 +480,60 @@ class provider implements
 
         $userid = $contextlist->get_user()->id;
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
-        $qubaid = \core_question\privacy\provider::get_related_question_usages_for_user('rel', 'mod_quiz', 'qa.uniqueid', $userid);
+        $qubaid1 = \core_question\privacy\provider::get_related_question_usages_for_user(
+            'rel1',
+            'mod_quiz',
+            'qa.uniqueid',
+            $userid
+        );
+        $qubaid2 = \core_question\privacy\provider::get_related_question_usages_for_user(
+            'rel2',
+            'mod_quiz',
+            'qa.uniqueid',
+            $userid
+        );
+
+        // The layout column causes the union in the following query to fail on Oracle, it also appears to not be used.
+        // So we can filter the return values to be only those used to generate the data, this will have the benefit
+        // improving performance on all databases as we will no longer be returning a text field for each row.
+        $attemptfields = 'qa.id, qa.quiz, qa.userid, qa.attempt, qa.uniqueid, qa.preview, qa.state, qa.timestart, ' .
+            'qa.timefinish, qa.timemodified, qa.timemodifiedoffline, qa.timecheckstate, qa.sumgrades, ' .
+            'qa.gradednotificationsenttime';
 
         $sql = "SELECT
                     c.id AS contextid,
                     cm.id AS cmid,
-                    qa.*
+                    $attemptfields
                   FROM {context} c
-                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel1
                   JOIN {modules} m ON m.id = cm.module AND m.name = 'quiz'
                   JOIN {quiz} q ON q.id = cm.instance
                   JOIN {quiz_attempts} qa ON qa.quiz = q.id
-            " . $qubaid->from. "
-            WHERE (
-                qa.userid = :qauserid OR
-                " . $qubaid->where() . "
-            ) AND qa.preview = 0
+            " . $qubaid1->from. "
+                 WHERE qa.userid = :qauserid AND qa.preview = 0
+                 UNION
+                SELECT
+                    c.id AS contextid,
+                    cm.id AS cmid,
+                    $attemptfields
+                  FROM {context} c
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel2
+                  JOIN {modules} m ON m.id = cm.module AND m.name = 'quiz'
+                  JOIN {quiz} q ON q.id = cm.instance
+                  JOIN {quiz_attempts} qa ON qa.quiz = q.id
+            " . $qubaid2->from. "
+                 WHERE " . $qubaid2->where() . " AND qa.preview = 0
         ";
 
         $params = array_merge(
-                [
-                    'contextlevel'      => CONTEXT_MODULE,
-                    'qauserid'          => $userid,
-                ],
-                $qubaid->from_where_params()
-            );
+            [
+                'contextlevel1'      => CONTEXT_MODULE,
+                'contextlevel2'      => CONTEXT_MODULE,
+                'qauserid'          => $userid,
+            ],
+            $qubaid1->from_where_params(),
+            $qubaid2->from_where_params(),
+        );
 
         $attempts = $DB->get_recordset_sql($sql, $params);
         foreach ($attempts as $attempt) {
