@@ -667,6 +667,7 @@ class provider_test extends provider_testcase {
         $u2 = $dg->create_user();
         $u3 = $dg->create_user();
         $u4 = $dg->create_user();
+        $u5 = $dg->create_user();
 
         $c1ctx = \context_course::instance($c1->id);
         $u1ctx = \context_user::instance($u1->id);
@@ -682,30 +683,45 @@ class provider_test extends provider_testcase {
         $this->assert_contextlist(provider::get_contexts_for_userid($u2->id), []);
         $this->assert_contextlist(provider::get_contexts_for_userid($u3->id), []);
         $this->assert_contextlist(provider::get_contexts_for_userid($u4->id), []);
+        $this->assert_contextlist(provider::get_contexts_for_userid($u5->id), []);
 
         $ccg->create_plan(['userid' => $u1->id]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u1->id), [$u1ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u2->id), []);
         $this->assert_contextlist(provider::get_contexts_for_userid($u3->id), []);
         $this->assert_contextlist(provider::get_contexts_for_userid($u4->id), []);
+        $this->assert_contextlist(provider::get_contexts_for_userid($u5->id), []);
 
         $ccg->create_user_competency(['userid' => $u2->id, 'competencyid' => $comp1->get('id')]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u1->id), [$u1ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u2->id), [$u2ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u3->id), []);
         $this->assert_contextlist(provider::get_contexts_for_userid($u4->id), []);
+        $this->assert_contextlist(provider::get_contexts_for_userid($u5->id), []);
 
         $ccg->create_user_competency_course(['userid' => $u3->id, 'competencyid' => $comp1->get('id'), 'courseid' => $c1->id]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u1->id), [$u1ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u2->id), [$u2ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u3->id), [$c1ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u4->id), []);
+        $this->assert_contextlist(provider::get_contexts_for_userid($u5->id), []);
 
-        $ccg->create_user_evidence(['userid' => $u4->id]);
+        $ue = $ccg->create_user_evidence(['userid' => $u4->id]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u1->id), [$u1ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u2->id), [$u2ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u3->id), [$c1ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u4->id), [$u4ctx]);
+        $this->assert_contextlist(provider::get_contexts_for_userid($u5->id), []);
+
+        // A user editing a context relationship.
+        $this->setUser($u5);
+        $ccg->create_user_evidence_competency(['userevidenceid' => $ue->get('id'), 'competencyid' => $comp1->get('id')]);
+        $this->setAdminUser();
+        $this->assert_contextlist(provider::get_contexts_for_userid($u1->id), [$u1ctx]);
+        $this->assert_contextlist(provider::get_contexts_for_userid($u2->id), [$u2ctx]);
+        $this->assert_contextlist(provider::get_contexts_for_userid($u3->id), [$c1ctx]);
+        $this->assert_contextlist(provider::get_contexts_for_userid($u4->id), [$u4ctx]);
+        $this->assert_contextlist(provider::get_contexts_for_userid($u5->id), [$u4ctx]);
     }
 
     public function test_get_users_in_context_with_actual_data_and_actual_data_is_goooood() {
