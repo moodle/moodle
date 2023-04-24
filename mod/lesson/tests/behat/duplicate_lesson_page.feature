@@ -1,5 +1,4 @@
-# This feature has Atto-specific steps. See MDL-75913 for further details.
-@mod @mod_lesson @editor_atto
+@mod @mod_lesson @javascript @editor_tiny
 Feature: In a lesson activity, a teacher can duplicate a lesson page
   In order to duplicate a lesson page
   As a teacher
@@ -24,14 +23,13 @@ Feature: In a lesson activity, a teacher can duplicate a lesson page
     And the following "blocks" exist:
       | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
       | private_files | System       | 1         | my-index        | side-post     |
+    And the following "user private files" exist:
+      | user     | filepath                                  | filename        |
+      | teacher1 | mod/lesson/tests/fixtures/moodle_logo.jpg | moodle_logo.jpg |
     And I log in as "teacher1"
-    And I follow "Manage private files"
-    And I upload "mod/lesson/tests/fixtures/moodle_logo.jpg" file to "Files" filemanager
-    And I click on "Save changes" "button"
 
-  @javascript @_file_upload
   Scenario: Duplicate content page with an image.
-    Given I am on the "Test lesson name" "lesson activity" page
+    When I am on the "Test lesson name" "lesson activity" page
     And I follow "Add a content page"
     And I set the following fields to these values:
       | Page title | First page name |
@@ -40,9 +38,7 @@ Feature: In a lesson activity, a teacher can duplicate a lesson page
       | id_jumpto_0 | Next page |
       | id_answer_editor_1 | Previous page |
       | id_jumpto_1 | Previous page |
-    # Atto needs focus to add image, select empty p tag to do so.
-    And I select the text in the "id_contents_editor" Atto editor
-    And I click on "Insert or edit image" "button" in the "[data-fieldtype=editor]" "css_element"
+    And I click on "Image" "button" in the "Page contents" "form_row"
     And I click on "Browse repositories..." "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle_logo.jpg" "link"
@@ -51,24 +47,24 @@ Feature: In a lesson activity, a teacher can duplicate a lesson page
     And I click on "Save image" "button"
     And I press "Save page"
     And I follow "Duplicate page: First page name"
-    And I should see "Inserted page: First page name"
+    Then I should see "Inserted page: First page name"
     And I follow "Update page: First page name"
     And I set the field "Page title" to "Introduction page"
     And I press "Save page"
-    When I follow "Update page: First page name"
-    And I should see "First page name"
-    Then "//*[contains(@id, 'id_contents_editor')]//img[contains(@src, 'moodle_logo.jpg')]" "xpath_element" should exist
+    And I follow "Update page: First page name"
+    Then I should see "First page name"
+    And I switch to the "Page contents" TinyMCE editor iframe
+    Then "//*[contains(@data-id, 'id_contents_editor')]//img[contains(@src, 'moodle_logo.jpg')]" "xpath_element" should exist
 
-  @javascript @_file_upload
   Scenario: Duplicate question page with image in answer.
-    Given I am on the "Test lesson name" "lesson activity" page
+    When I am on the "Test lesson name" "lesson activity" page
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
     And I set the following fields to these values:
       | Page title | True false with an image in the answer |
       | Page contents | Select the picture |
-      | id_answer_editor_0 | To be replaced |
+      | id_answer_editor_0 | Answer text |
       | id_response_editor_0 | Correct answer |
       | id_jumpto_0 | End of lesson |
       | id_score_0 | 1 |
@@ -76,9 +72,7 @@ Feature: In a lesson activity, a teacher can duplicate a lesson page
       | id_response_editor_1 | Incorrect answer |
       | id_jumpto_1 | This page |
       | id_score_1 | 0 |
-    # Atto needs focus to add image, select empty p tag to do so.
-    And I select the text in the "id_answer_editor_0" Atto editor
-    And I click on "Insert or edit image" "button" in the "//*[@id='id_answer_editor_0']/ancestor::*[@data-fieldtype='editor']" "xpath_element"
+    And I click on "Image" "button" in the "//*[@id='id_answer_editor_0']/ancestor::*[@data-fieldtype='editor']" "xpath_element"
     And I click on "Browse repositories..." "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle_logo.jpg" "link"
@@ -87,25 +81,27 @@ Feature: In a lesson activity, a teacher can duplicate a lesson page
     And I click on "Save image" "button"
     And I press "Save page"
     And I follow "Duplicate page: True false with an image in the answer"
-    And I should see "Inserted page: True false with an image in the answer"
+    Then I should see "Inserted page: True false with an image in the answer"
     And I follow "Update page: True false with an image in the answer"
     And I set the field "Page title" to "First true false"
     And I press "Save page"
-    When I follow "Update page: True false with an image in the answer"
-    And I should see "True false with an image in the answer"
-    And I should see "Select the picture"
-    Then "//*[contains(@id, 'id_answer_editor_0')]//img[contains(@src, 'moodle_logo.jpg')]" "xpath_element" should exist
+    And I follow "Update page: True false with an image in the answer"
+    Then I should see "True false with an image in the answer"
+    And I switch to the "Page contents" TinyMCE editor iframe
+    Then I should see "Select the picture"
+    And I switch to the main frame
+    And I switch to the "Answer" TinyMCE editor iframe
+    Then "//*[contains(@data-id, 'id_answer_editor_0')]//img[contains(@src, 'moodle_logo.jpg')]" "xpath_element" should exist
 
-  @javascript @_file_upload
   Scenario: Duplicate question page with image in feedback.
-    Given I am on the "Test lesson name" "lesson activity" page
+    When I am on the "Test lesson name" "lesson activity" page
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
     And I set the following fields to these values:
       | Page title | True false with an image in the feedback |
       | Page contents | Select the picture |
-      | id_answer_editor_0 | To be replaced |
+      | id_answer_editor_0 | Answer text |
       | id_response_editor_0 | Correct answer |
       | id_jumpto_0 | End of lesson |
       | id_score_0 | 1 |
@@ -113,9 +109,7 @@ Feature: In a lesson activity, a teacher can duplicate a lesson page
       | id_response_editor_1 | Incorrect answer |
       | id_jumpto_1 | This page |
       | id_score_1 | 0 |
-    # Atto needs focus to add image, select empty p tag to do so.
-    And I select the text in the "id_response_editor_0" Atto editor
-    And I click on "Insert or edit image" "button" in the "//*[@id='id_response_editor_0']/ancestor::*[@data-fieldtype='editor']" "xpath_element"
+    And I click on "Image" "button" in the "//*[@id='id_response_editor_0']/ancestor::*[@data-fieldtype='editor']" "xpath_element"
     And I click on "Browse repositories..." "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle_logo.jpg" "link"
@@ -124,11 +118,14 @@ Feature: In a lesson activity, a teacher can duplicate a lesson page
     And I click on "Save image" "button"
     And I press "Save page"
     And I follow "Duplicate page: True false with an image in the feedback"
-    And I should see "Inserted page: True false with an image in the feedback"
+    Then I should see "Inserted page: True false with an image in the feedback"
     And I follow "Update page: True false with an image in the feedback"
     And I set the field "Page title" to "First true false"
     And I press "Save page"
-    When I follow "Update page: True false with an image in the feedback"
-    And I should see "True false with an image in the feedback"
-    And I should see "Select the picture"
-    Then "//*[contains(@id, 'id_response_editor_0')]//img[contains(@src, 'moodle_logo.jpg')]" "xpath_element" should exist
+    And I follow "Update page: True false with an image in the feedback"
+    Then I should see "True false with an image in the feedback"
+    And I switch to the "Page contents" TinyMCE editor iframe
+    Then I should see "Select the picture"
+    And I switch to the main frame
+    And I switch to the "Response" TinyMCE editor iframe
+    Then "//*[contains(@data-id, 'id_response_editor_0')]//img[contains(@src, 'moodle_logo.jpg')]" "xpath_element" should exist

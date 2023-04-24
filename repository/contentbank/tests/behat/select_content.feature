@@ -128,20 +128,18 @@ Feature: Select content bank files using the content bank files repository
     Then I should see "1" elements in "Files" filemanager
     And I should see "filltheblanks.h5p" in the ".fp-content .fp-file" "css_element"
 
-  # This scenario has Atto-specific steps. See MDL-75913 for further details.
-  @editor_atto
   Scenario: Non-editing teacher can not see the content bank repository
     Given I am on the Forum "Forum activity" page logged in as teacher2
     And I click on "Add discussion topic" "link"
-    And I click on "Link" "button"
-    When I click on "Browse repositories..." "button"
+    And I click on "Advanced" "button"
+    When I click on "Add..." "button"
     Then I should not see "Content bank" in the ".fp-repo-area" "css_element"
 
   Scenario: Student can not see the content bank repository
     Given I am on the Forum "Forum activity" page logged in as student
     And I click on "Add discussion topic" "link"
-    And I click on "Link" "button"
-    When I click on "Browse repositories..." "button"
+    And I click on "Advanced" "button"
+    When I click on "Add..." "button"
     Then I should not see "Content bank" in the ".fp-repo-area" "css_element"
 
   Scenario: Both content name and file name are shown when a content is selected

@@ -31,6 +31,9 @@ Feature: Teachers can override the grade for any question
     And the following "blocks" exist:
       | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
       | private_files | System       | 1         | my-index        | side-post     |
+    And the following "user private files" exist:
+      | user     | filepath                                | filename        |
+      | teacher1 | mod/quiz/tests/fixtures/moodle_logo.jpg | moodle_logo.jpg |
     And I am on the "Quiz 1" "mod_quiz > View" page logged in as "student1"
     And I press "Attempt quiz"
     And I follow "Finish attempt ..."
@@ -59,9 +62,6 @@ Feature: Teachers can override the grade for any question
   @javascript @_switch_window @_file_upload @_bug_phantomjs @editor_tiny
   Scenario: Comment on a response to an essay question attempt.
     When I log in as "teacher1"
-    And I follow "Manage private files"
-    And I upload "mod/quiz/tests/fixtures/moodle_logo.jpg" file to "Files" filemanager
-    And I click on "Save changes" "button"
     And I am on the "Quiz 1 > student1 > Attempt 1" "mod_quiz > Attempt review" page
     And I follow "Make comment or override mark"
     And I switch to "commentquestion" window
