@@ -29,6 +29,7 @@
  */
 
 use core_question\local\bank\question_version_status;
+use core_question\question_reference_manager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -120,6 +121,10 @@ function questions_in_use($questionids): bool {
 
     // Are they used by the core question system?
     if (question_engine::questions_in_use($questionids)) {
+        return true;
+    }
+
+    if (question_reference_manager::questions_with_references($questionids)) {
         return true;
     }
 
