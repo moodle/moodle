@@ -88,21 +88,27 @@ class local_qubitscourse_enrol_users_form extends moodleform {
 
         $mform->addElement('header','qubitsmain', 'Qubits Course Enrol user');
         $mform->addElement('header', 'main', get_string('enrolmentoptions', 'enrol'));
+        
+        $roles = get_assignable_roles($context, ROLENAME_BOTH);
+        $roles = array_filter($roles,  array($this, 'filter_roles'), ARRAY_FILTER_USE_BOTH);
+        $mform->addElement('select', 'roletoassign', get_string('assignrole', 'enrol_manual'), $roles);
+        $mform->setDefault('roletoassign', $instance->roleid);
+
+        $mform->addElement('select', 'coursegrade', get_string('grade'), $CFG->coursegrades);
+
+        $mform->addElement('select', 'coursesections', get_string('sections'), $CFG->coursesections);
+
         $options = array(
-            'ajax' => 'enrol_manual/form-potential-user-selector',
+            'ajax' => 'local_qubitsuser/form-potential-user-selector',
             'multiple' => true,
             'courseid' => $course->id,
+            'siteid' => $this->_customdata->siteId,
             'enrolid' => $instance->id,
             'perpage' => $CFG->maxusersperpage,
             'userfields' => implode(',', \core_user\fields::get_identity_fields($context, true))
         );
         $mform->addElement('autocomplete', 'userlist', get_string('selectusers', 'enrol_manual'), array(), $options);
 
-
-        $roles = get_assignable_roles($context, ROLENAME_BOTH);
-        $roles = array_filter($roles,  array($this, 'filter_roles'), ARRAY_FILTER_USE_BOTH);
-        $mform->addElement('select', 'roletoassign', get_string('assignrole', 'enrol_manual'), $roles);
-        $mform->setDefault('roletoassign', $instance->roleid);
 
         $mform->addElement('hidden', 'id', $course->id);
         $mform->setType('id', PARAM_INT);

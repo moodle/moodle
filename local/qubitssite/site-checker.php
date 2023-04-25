@@ -104,6 +104,7 @@ if (SITE_MAIN_DOMAIN == $_SERVER['HTTP_HOST']) {
     $defaultrow->color1 = "#5b3f36";
     $defaultrow->color2 = "#ced4da";
     $defaultrow->ismainsite = "yes";
-    $defaultrow->cohortid = "maincohort";
+    $cohort = $DB->get_record('cohort', array('idnumber'=>'maincohort'));
+    $defaultrow->cohortid = !empty($cohort->id) ? $cohort->id : 0;
     $CFG->cursitesettings = $defaultrow;
 }

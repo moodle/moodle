@@ -19,6 +19,7 @@ class local_qubitscourse_renderer extends plugin_renderer_base {
     public function tenant_courses($data, $filters){
         global $OUTPUT;
         $courseids = empty($data->course_id) ? array() : $data->course_id;
+        $siteid = optional_param('siteid', 0, PARAM_INT);
         $asearch = array("recursive" => true, "search" => $filters["search"]);
         $aoptions = $this->process_filters($filters);
         $allcourses = core_course_category::get(0)->search_courses($asearch, $aoptions);
@@ -37,7 +38,8 @@ class local_qubitscourse_renderer extends plugin_renderer_base {
                     "shortname" => $onecourse->shortname,
                     'viewlink' => new moodle_url("/course/view.php", array("id" => $onecourse->id )),
                     "courseimage" => $courseimage,
-                    "contextid" => $course_context->id
+                    "contextid" => $course_context->id,
+                    "siteid" =>  $siteid
                 );
             }
         }

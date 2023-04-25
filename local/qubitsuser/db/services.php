@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,9 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Local plugin "QubitsUser"
+ * Web service function declarations for the plugintype_pluginname plugin.
  *
  * @package   local_qubitsuser
  * @author    Qubits Dev Team
@@ -25,10 +23,14 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'local_qubitsuser';
-$plugin->version = 2023042000;
-$plugin->release = 'v1.0';
-$plugin->requires = 2020061500;
-$plugin->maturity = MATURITY_ALPHA;
+$functions = [
+    'local_qubitsuser_get_potential_users' => [
+        'classname' => 'local_qubitsuser_external',
+        'methodname' => 'get_potential_users',
+        'classpath' => 'local/qubitsuser/externallib.php',
+        'description' => 'Get the list of potential users to enrol',
+        'ajax' => true,
+        'type' => 'read',
+        'capabilities' => 'moodle/course:enrolreview'
+    ]
+];

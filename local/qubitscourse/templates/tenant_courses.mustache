@@ -101,7 +101,8 @@ function($, Templates, ModalFactory, ModalEvents, Fragment) {
     $("a.qbitsenrlusr").on('click', function(e) {
       var clickedLink = $(e.currentTarget);
       let contextId = clickedLink.data('context-id');
-      let enfrgHtml = Fragment.loadFragment('local_qubitscourse', 'enrol_users_form', contextId, {});
+      let siteId = clickedLink.data("site-id");
+      let enfrgHtml = Fragment.loadFragment('local_qubitscourse', 'enrol_users_form', contextId, {"siteId" : siteId});
         ModalFactory.create({
             type: ModalFactory.types.SAVE_CANCEL,
             title: 'Enrol Users',

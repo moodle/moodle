@@ -28,6 +28,7 @@ require_once('../../config.php');
 require_once($CFG->libdir.'/gdlib.php');
 require_once($CFG->dirroot.'/local/qubitscourse/locallib.php');
 require_once($CFG->dirroot . '/local/qubitscourse/renderer.php');
+require_once($CFG->dirroot . '/cohort/externallib.php');
 require_login();
 $context = context_system::instance();
 $qbitcourserenderer = $PAGE->get_renderer('local_qubitscourse');
@@ -90,6 +91,10 @@ $filters["perpage"] = optional_param('perpage', 10, PARAM_INT);
 $filters["sortcolumn"] = optional_param('sortcolumn', "", PARAM_TEXT);
 $filters["sortdir"] = optional_param('sortdir', "asc", PARAM_TEXT);
 
+$acohortmembers = core_cohort_external::get_cohort_members(array($qubitssite->cohortid));
+$cohortmembers = reset($acohortmembers);
+$cohortusers = $cohortmembers["userids"];
+
 $PAGE->set_url('/local/qubitscourse/index.php', $pageparams);
 $PAGE->set_context($context);
 // TODO: Have to site based course list
@@ -103,5 +108,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($pagedesc);
 
 echo $content;
+
+echo "<pre>"; print_r($cohortusers); echo "</pre>";
 
 echo $OUTPUT->footer();
