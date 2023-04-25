@@ -32,6 +32,7 @@ use mod_quiz\access_manager;
 use mod_quiz\form\add_random_form;
 use mod_quiz\grade_calculator;
 use mod_quiz\question\bank\custom_view;
+use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
 use mod_quiz\question\qubaids_for_quiz;
 use mod_quiz\question\qubaids_for_users_attempts;
@@ -1467,25 +1468,15 @@ function quiz_get_post_actions() {
 }
 
 /**
+ * Standard callback used by questions_in_use.
+ *
  * @param array $questionids of question ids.
  * @return bool whether any of these questions are used by any instance of this module.
  */
 function quiz_questions_in_use($questionids) {
-    global $DB;
-    list($test, $params) = $DB->get_in_or_equal($questionids);
-    $params['component'] = 'mod_quiz';
-    $params['questionarea'] = 'slot';
-    $sql = "SELECT qs.id
-              FROM {quiz_slots} qs
-              JOIN {question_references} qr ON qr.itemid = qs.id
-              JOIN {question_bank_entries} qbe ON qbe.id = qr.questionbankentryid
-              JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
-             WHERE qv.questionid $test
-               AND qr.component = ?
-               AND qr.questionarea = ?";
-    return $DB->record_exists_sql($sql, $params) || question_engine::questions_in_use(
-            $questionids, new qubaid_join('{quiz_attempts} quiza',
-            'quiza.uniqueid', 'quiza.preview = 0'));
+    return question_engine::questions_in_use($questionids,
+            new qubaid_join('{quiz_attempts} quiza', 'quiza.uniqueid',
+                'quiza.preview = 0'));
 }
 
 /**
