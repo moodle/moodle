@@ -185,7 +185,7 @@ if ($departmentid == 0 ) {
 $coursesform = new local_iomad\forms\course_select_form($linkurl, $params);
 
 // Deal with company courses and search.
-$allcompanycourses = $company->get_menu_courses(true, false, false, false, true);
+$allcompanycourses = $company->get_menu_courses(true, false, false, false, false);
 if (empty($courses)) {
     $courses = array_keys($allcompanycourses);
 } 
@@ -479,13 +479,13 @@ foreach ($userlist as $user) {
             if (!empty($usercourse->timeenrolled) && empty($usercourse->timecompleted)) {
                 $rowclass = "notcompleted";
             }
-            if (!empty($usercourse->timeenrolled) && !empty($usercourse->timecompleted) && $usercourse->timecompleted > $runtime) {
+            if (!empty($usercourse->timeenrolled) && !empty($usercourse->timecompleted) && $usercourse->timeexpires > $runtime) {
                 $rowclass = "indate";
             }
-            if (!empty($usercourse->timeenrolled) && !empty($usercourse->timecompleted) && $usercourse->timecompleted < $runtime + get_config('local_report_completion_overview', 'warningduration')) {
+            if (!empty($usercourse->timeenrolled) && !empty($usercourse->timecompleted) && $usercourse->timeexpires < $runtime + get_config('local_report_completion_overview', 'warningduration')) {
                 $rowclass = "expiring";
             }
-            if (!empty($usercourse->timeenrolled) && !empty($usercourse->timecompleted) && $usercourse->timecompleted < $runtime) {
+            if (!empty($usercourse->timeenrolled) && !empty($usercourse->timecompleted) && $usercourse->timeexpires < $runtime) {
                 $rowclass = "expired";
             }
         }
