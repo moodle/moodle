@@ -26,6 +26,7 @@
 namespace mod_bigbluebuttonbn\test;
 
 use core_component;
+use core_plugin_manager;
 use mod_bigbluebuttonbn\extension;
 use ReflectionClass;
 
@@ -75,5 +76,36 @@ trait subplugins_test_helper_trait {
         $this->resetDebugging(); // We might have debugging messages here that we need to get rid of.
         // End of the component loader mock.
     }
+    /**
+     * Uninstall a fake extension plugin
+     *
+     * This is intended to behave in most case like a real subplugina and will
+     * allow most functionalities to be tested.
+     *
+     * @param string $pluginname plugin name
+     * @return void
+     */
+    protected function uninstall_fake_plugin(string $pluginname): void {
+        // We just need access to fill_all_caches so everything goes back to normal.
+        // If we don't do this, there are some side effects that will make other test fails
+        // (such as mod_bigbluebuttonbn\task\upgrade_recordings_task_test::test_upgrade_recordings_imported_basic).
+        $mockedcomponent = new ReflectionClass(core_component::class);
+        // Here we reset the plugin caches.
+        $fillclassmap = $mockedcomponent->getMethod('fill_all_caches');
+        $fillclassmap->setAccessible(true);
+        $fillclassmap->invoke(null);
 
+        // Now uninstall the plugin and clean everything up for other tests.
+        $pluginman = core_plugin_manager::instance();
+        $plugininfo = $pluginman->get_plugins();
+        foreach ($plugininfo as $type => $plugins) {
+            foreach ($plugins as $name => $plugin) {
+                if ($name === $pluginname) {
+                    ob_start();
+                    uninstall_plugin($type, $name);
+                    ob_end_clean();
+                }
+            }
+        }
+    }
 }
