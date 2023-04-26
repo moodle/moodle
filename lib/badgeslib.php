@@ -798,6 +798,40 @@ function badges_delete_site_backpack($id) {
  */
 function badges_save_external_backpack(stdClass $data) {
     global $DB;
+    if ($data->apiversion == OPEN_BADGES_V2P1) {
+        // Check if there is an existing issuer for the given backpackapiurl.
+        foreach (core\oauth2\api::get_all_issuers() as $tmpissuer) {
+            if ($data->backpackweburl == $tmpissuer->get('baseurl')) {
+                $issuer = $tmpissuer;
+                break;
+            }
+        }
+
+        // Create the issuer if it doesn't exist yet.
+        if (empty($issuer)) {
+            $issuer = new \core\oauth2\issuer(0, (object) [
+                'name' => $data->backpackweburl,
+                'baseurl' => $data->backpackweburl,
+                // Note: This is required because the DB schema is broken and does not accept a null value when it should.
+                'image' => '',
+            ]);
+            $issuer->save();
+        }
+
+        // This can't be run from PHPUNIT because testing platforms need real URLs.
+        // In the future, this request can be moved to the moodle-exttests repository.
+        if (!PHPUNIT_TEST) {
+            // Create/update the endpoints for the issuer.
+            \core\oauth2\discovery\imsbadgeconnect::create_endpoints($issuer);
+            $data->oauth2_issuerid = $issuer->get('id');
+
+            $apibase = \core\oauth2\endpoint::get_record([
+                'issuerid' => $data->oauth2_issuerid,
+                'name' => 'apiBase',
+            ]);
+            $data->backpackapiurl = $apibase->get('url');
+        }
+    }
     $backpack = new stdClass();
 
     $backpack->apiversion = $data->apiversion;
