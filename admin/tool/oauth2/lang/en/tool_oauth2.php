@@ -56,7 +56,6 @@ $string['endpointurl_help'] = 'URL for this endpoint. Must use https:// protocol
 $string['endpointurl'] = 'URL';
 $string['facebook_service'] = 'Facebook';
 $string['google_service'] = 'Google';
-$string['imsobv2p1_service'] = 'Open Badges';
 $string['issuersetup'] = 'Detailed instructions on configuring the common OAuth 2 services';
 $string['issuersetuptype'] = 'Detailed instructions on setting up the {$a} OAuth 2 provider';
 $string['issueralloweddomains_help'] = 'If set, this setting is a comma separated list of domains that logins will be restricted to when using this provider.';
@@ -125,3 +124,6 @@ $string['userfieldinternalfield'] = 'Internal field name';
 $string['userfieldmappingdeleted'] = 'User field mapping deleted';
 $string['userfieldmappingsforissuer'] = 'User field mappings for issuer: {$a}';
 $string['privacy:metadata'] = 'The OAuth 2 services plugin does not store any personal data.';
+
+// Deprecated since Moodle 4.3.
+$string['imsobv2p1_service'] = 'Open Badges';

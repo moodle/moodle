@@ -1367,24 +1367,6 @@ function badges_verify_backpack(int $backpackid) {
 }
 
 /**
- * Get OAuth2 services for the external backpack.
- *
- * @return array
- * @throws coding_exception
- */
-function badges_get_oauth2_service_options() {
-    global $DB;
-
-    $issuers = core\oauth2\api::get_all_issuers();
-    $options = ['' => 'None'];
-    foreach ($issuers as $issuer) {
-        $options[$issuer->get('id')] = $issuer->get('name');
-    }
-
-    return $options;
-}
-
-/**
  * Generate a public badgr URL that conforms to OBv2. This is done because badgr responses do not currently conform to
  * the spec.
  *

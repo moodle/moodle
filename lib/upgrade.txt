@@ -5,6 +5,8 @@ information provided here is intended especially for developers.
 
 * Admin settings for passwords (admin_setting_configpasswordunmask) can now be a required field using the following class:
     - admin_setting_requiredpasswordunmask
+* The badges_get_oauth2_service_options() method has been deprecated, because it's not required anymore. It should no longer
+  be used.
 
 === 4.2 ===
 
