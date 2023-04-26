@@ -314,7 +314,7 @@ EOF;
             return get_string('allparticipants');
         }
 
-        return groups_get_group_name($groupid);
+        return format_string(groups_get_group_name($groupid), true, ['context' => $this->get_context()]);
     }
 
     /**
