@@ -28,6 +28,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_question\local\bank\question_version_status;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -360,8 +361,10 @@ function question_delete_question($questionid): void {
         $questionstocheck[] = $question->parent;
     }
 
-    // Do not delete a question if it is used by an activity module
+    // Do not delete a question if it is used by an activity module. Just mark the version hidden.
     if (questions_in_use($questionstocheck)) {
+        $DB->set_field('question_versions', 'status',
+                question_version_status::QUESTION_STATUS_HIDDEN, ['questionid' => $questionid]);
         return;
     }
 
