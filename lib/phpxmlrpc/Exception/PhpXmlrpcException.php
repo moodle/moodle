@@ -1,7 +1,4 @@
 <?php
 
-namespace PhpXmlRpc\Exception;
-
-class PhpXmlrpcException extends \Exception
-{
-}
+// deprecated. Kept around for BC
+class_alias('PhpXmlRpc\Exception', 'PhpXmlRpc\Exception\PhpXmlRpcException');
