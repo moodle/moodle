@@ -16,7 +16,7 @@ To update:
 - Edit this file and update the release and commit details below.
 - Edit lib/thirdpartylibs.xml and update the information details too.
 
-Current version imported: 4.8.1 (c74cc31)
+Current version imported: 4.10.1 (ac18e31)
 
 Local changes:
   * 2023/01/26 - Server.php and Value.php files have minor changes for PHP 8.2 compatibility. See MDL-76415 for more details.
