@@ -131,23 +131,26 @@ class message_output_airnotifier extends message_output {
             $curl->setopt(array('CURLOPT_TIMEOUT' => 2, 'CURLOPT_CONNECTTIMEOUT' => 2));
             $curl->setHeader($header);
 
-            $extra->encrypted = $encryptnotifications;
-            $extra = $this->encrypt_payload($extra, $devicetoken);
+            // Clone the data to avoid modifying the original.
+            $deviceextra = clone $extra;
+
+            $deviceextra->encrypted = $encryptnotifications;
+            $deviceextra = $this->encrypt_payload($deviceextra, $devicetoken);
 
             // We use Firebase to deliver all Push Notifications, and for all device types.
             // Firebase has a 4KB payload limit.
             // https://firebase.google.com/docs/cloud-messaging/concept-options#notifications_and_data_messages
             // If the message is over that limit we remove unneeded fields and replace the title with a simple message.
-            if (\core_text::strlen(json_encode($extra), '8bit') > 4000) {
-                $extra->smallmessage = get_string('view_notification', 'message_airnotifier');
+            if (\core_text::strlen(json_encode($deviceextra), '8bit') > 4000) {
+                $deviceextra->smallmessage = get_string('view_notification', 'message_airnotifier');
             }
 
             $params = array(
                 'device'    => $devicetoken->platform,
                 'token'     => $devicetoken->pushid,
-                'extra'     => $extra
+                'extra'     => $deviceextra
             );
-            if ($extra->encrypted) {
+            if ($deviceextra->encrypted) {
                 // Setting alert to null makes air notifier send the notification as a data payload,
                 // this forces Android phones to call the app onMessageReceived function to decrypt the notification.
                 // Otherwise notifications are created by the Android system and will not be decrypted.
@@ -178,8 +181,6 @@ class message_output_airnotifier extends message_output {
             return $payload;
         }
 
-        // Clone the data to avoid modifying the original.
-        $payload = clone $payload;
         $publickey = sodium_base642bin($devicetoken->publickey, SODIUM_BASE64_VARIANT_ORIGINAL);
         $fields = [
             'userfromfullname',
