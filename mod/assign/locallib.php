@@ -665,12 +665,14 @@ class assign {
         } else if ($action == 'downloadall') {
             $o .= $this->download_submissions();
         } else if ($action == 'submit') {
+            $PAGE->add_body_class('limitedwidth');
             $o .= $this->check_submit_for_grading($mform);
         } else if ($action == 'grantextension') {
             $o .= $this->view_grant_extension($mform);
         } else if ($action == 'revealidentities') {
             $o .= $this->view_reveal_identities_confirm($mform);
         } else if ($action == 'removesubmissionconfirm') {
+            $PAGE->add_body_class('limitedwidth');
             $o .= $this->view_remove_submission_confirm();
         } else if ($action == 'plugingradingbatchoperation') {
             $o .= $this->view_plugin_grading_batch_operation($mform);
