@@ -25984,6 +25984,26 @@ blockquote {
   margin: 0;
 }
 
+/* Combobox search dropdowns */
+.usersearchdropdown,
+.gradesearchdropdown,
+.groupsearchdropdown {
+  max-width: 350px;
+}
+.usersearchdropdown .searchresultitemscontainer,
+.gradesearchdropdown .searchresultitemscontainer,
+.groupsearchdropdown .searchresultitemscontainer {
+  max-height: 170px;
+  overflow: auto;
+  /* stylelint-disable declaration-no-important */
+}
+.usersearchdropdown .searchresultitemscontainer img,
+.gradesearchdropdown .searchresultitemscontainer img,
+.groupsearchdropdown .searchresultitemscontainer img {
+  height: 48px !important;
+  width: 48px !important;
+}
+
 .icon {
   font-size: 16px;
   width: 16px;

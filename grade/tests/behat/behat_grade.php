@@ -379,6 +379,46 @@ class behat_grade extends behat_base {
     }
 
     /**
+     * We tend to use this series of steps a bit so define em once.
+     *
+     * @param string $haystack What are we searching within?
+     * @param string $needle What are we looking for?
+     * @param bool $fieldset Do we want to set the search field at the same time?
+     * @return string
+     * @throws coding_exception
+     */
+    private function get_dropdown_selector(string $haystack, string $needle, bool $fieldset = true): string {
+        $this->execute("behat_general::wait_until_the_page_is_ready");
+
+        // Set the default field to search and handle any special preamble.
+        $string = get_string('searchusers', 'core');
+        $selector = '.usersearchdropdown';
+        if (strtolower($haystack) === 'group') {
+            $string = get_string('searchgroups', 'core');
+            $selector = '.groupsearchdropdown';
+            $trigger = ".groupsearchwidget";
+            $node = $this->find("css_element", $selector);
+            if (!$node->isVisible()) {
+                $this->execute("behat_general::i_click_on", [$trigger, "css_element"]);
+            }
+        } else if (strtolower($haystack) === 'grade') {
+            $string = get_string('searchitems', 'core');
+            $selector = '.gradesearchdropdown';
+            $trigger = ".gradesearchwidget";
+            $node = $this->find("css_element", $selector);
+            if (!$node->isVisible()) {
+                $this->execute("behat_general::i_click_on", [$trigger, "css_element"]);
+            }
+        }
+
+        if ($fieldset) {
+            $this->execute("behat_forms::set_field_value", [$string, $needle]);
+            $this->execute("behat_general::wait_until_exists", [$needle, "list_item"]);
+        }
+        return $selector;
+    }
+
+    /**
      * Confirm if a value is within the search widget within the gradebook.
      *
      * Examples:
@@ -391,17 +431,8 @@ class behat_grade extends behat_base {
      * @param string $haystack The type of the search widget.
      */
     public function i_confirm_in_search_within_the_gradebook_widget_exists($needle, $haystack) {
-        $triggercssselector = ".search-widget[data-searchtype='{$haystack}']";
-
-        // Make sure that the dropdown menu is visible.
-        $node = $this->find("css_element", "{$triggercssselector} .dropdown-menu");
-        if (!$node->isVisible()) {
-            $this->execute("behat_general::i_click_on", [$triggercssselector, "css_element"]);
-        }
-
-        $this->execute("behat_general::wait_until_the_page_is_ready");
         $this->execute("behat_general::assert_element_contains_text",
-            [$needle, "{$triggercssselector} .dropdown-menu", "css_element"]);
+            [$needle, $this->get_dropdown_selector($haystack, $needle, false), "css_element"]);
     }
 
     /**
@@ -417,17 +448,8 @@ class behat_grade extends behat_base {
      * @param string $haystack The type of the search widget.
      */
     public function i_confirm_in_search_within_the_gradebook_widget_does_not_exist($needle, $haystack) {
-        $triggercssselector = ".search-widget[data-searchtype='{$haystack}']";
-
-        // Make sure that the dropdown menu is visible.
-        $node = $this->find("css_element", "{$triggercssselector} .dropdown-menu");
-        if (!$node->isVisible()) {
-            $this->execute("behat_general::i_click_on", [$triggercssselector, "css_element"]);
-        }
-
-        $this->execute("behat_general::wait_until_the_page_is_ready");
         $this->execute("behat_general::assert_element_not_contains_text",
-            [$needle, "{$triggercssselector} .dropdown-menu", "css_element"]);
+            [$needle, $this->get_dropdown_selector($haystack, $needle, false), "css_element"]);
     }
 
     /**
@@ -443,17 +465,11 @@ class behat_grade extends behat_base {
      * @param string $haystack The type of the search widget.
      */
     public function i_click_on_in_search_widget(string $needle, string $haystack) {
-        $this->execute("behat_general::wait_until_the_page_is_ready");
-
-        $triggercssselector = ".search-widget[data-searchtype='{$haystack}']";
-
-        $this->execute("behat_general::i_click_on", [$triggercssselector, "css_element"]);
-        $this->execute("behat_general::wait_until_the_page_is_ready");
+        $selector = $this->get_dropdown_selector($haystack, $needle);
         $this->execute('behat_general::i_click_on_in_the', [
-            "//li[@role='option'][contains(., '" . $needle . "')] | //a[contains(., '" . $needle . "')]",
-            "xpath_element",
-            "{$triggercssselector} .dropdown-menu",
-            "css_element"
+            $needle, "list_item",
+            $selector, "css_element"
         ]);
+        $this->execute("behat_general::i_wait_to_be_redirected");
     }
 }

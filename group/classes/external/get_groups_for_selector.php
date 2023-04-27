@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core_grades\external;
+namespace core_group\external;
 
 use context_course;
 use core_external\external_api;
@@ -24,11 +24,16 @@ use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
 use core_external\external_warnings;
+use core_grades\external\coding_exception;
+use core_grades\external\invalid_parameter_exception;
+use core_grades\external\moodle_exception;
+use core_grades\external\restricted_context_exception;
+use moodle_url;
 
 /**
- * External group report API implementation
+ * External group name and image API implementation
  *
- * @package    core_grades
+ * @package    core_group
  * @copyright  2022 Mathew May <mathew.solutions>
  * @category   external
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -59,7 +64,7 @@ class get_groups_for_selector extends external_api {
      * @throws restricted_context_exception
      */
     protected static function execute(int $courseid): array {
-        global $DB, $USER;
+        global $DB, $USER, $OUTPUT;
 
         $params = self::validate_parameters(
             self::execute_parameters(),
@@ -99,10 +104,18 @@ class get_groups_for_selector extends external_api {
                 ]);
             }
 
-            $mappedgroups = array_map(function($group) use ($context) {
+            $mappedgroups = array_map(function($group) use ($context, $OUTPUT) {
+                if ($group->id) { // Particular group. Get the group picture if it exists, otherwise return a generic image.
+                    $picture = get_group_picture_url($group, $group->courseid, true) ??
+                        moodle_url::make_pluginfile_url($context->id, 'group', 'generated', $group->id, '/', 'group.svg');
+                } else { // All participants.
+                    $picture = $OUTPUT->image_url('g/g1');
+                }
+
                 return (object) [
                     'id' => $group->id,
-                    'name' => format_string($group->name, true, ['context' => $context])
+                    'name' => format_string($group->name, true, ['context' => $context]),
+                    'groupimageurl' => $picture->out(false),
                 ];
             }, $groupsmenu);
         }
@@ -133,7 +146,8 @@ class get_groups_for_selector extends external_api {
     public static function group_description(): external_description {
         $groupfields = [
             'id' => new external_value(PARAM_ALPHANUM, 'An ID for the group', VALUE_REQUIRED),
-            'name' => new external_value(PARAM_TEXT, 'The full name of the group', VALUE_REQUIRED)
+            'name' => new external_value(PARAM_TEXT, 'The full name of the group', VALUE_REQUIRED),
+            'groupimageurl' => new external_value(PARAM_URL, 'Group image URL', VALUE_OPTIONAL),
         ];
         return new external_single_structure($groupfields);
     }

@@ -91,6 +91,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'block' => 'block',
         'button' => 'button',
         'checkbox' => 'checkbox',
+        'combobox' => 'combobox',
         'css_element' => 'css_element',
         'dialogue' => 'dialogue',
         'field' => 'field',
@@ -159,6 +160,9 @@ XPATH
 .//*[@data-block][contains(concat(' ', normalize-space(@class), ' '), concat(' ', %locator%, ' ')) or
      descendant::*[self::h2|self::h3|self::h4|self::h5][normalize-space(.) = %locator%]  or
      @aria-label = %locator%]
+XPATH
+        , 'combobox' => <<<XPATH
+.//*[@role='combobox'][%titleMatch% or %ariaLabelMatch% or text()[contains(., %locator%)]]
 XPATH
         , 'dialogue' => <<<XPATH
 .//div[contains(concat(' ', normalize-space(@class), ' '), ' moodle-dialogue ') and

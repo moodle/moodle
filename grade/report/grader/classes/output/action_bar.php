@@ -16,9 +16,9 @@
 
 namespace gradereport_grader\output;
 
-use moodle_url;
+use core\output\tertiary_dropdown;
 use core_grades\output\general_action_bar;
-use core_grades\output\gradebook_dropdown;
+use moodle_url;
 
 /**
  * Renderable class for the action bar elements in the grader report.
@@ -80,7 +80,7 @@ class action_bar extends \core_grades\output\action_bar {
                 $this->context,
                 '/grade/report/grader/index.php'
             );
-            $initialselector = new gradebook_dropdown(
+            $initialselector = new tertiary_dropdown(
                 false,
                 $initialscontent->buttoncontent,
                 $initialscontent->dropdowncontent,
@@ -98,7 +98,7 @@ class action_bar extends \core_grades\output\action_bar {
                 'courseid' => $courseid,
                 'resetlink' => $resetlink->out(false),
             ]);
-            $searchdropdown = new gradebook_dropdown(
+            $searchdropdown = new tertiary_dropdown(
                 true,
                 $searchinput,
                 null,
@@ -110,7 +110,7 @@ class action_bar extends \core_grades\output\action_bar {
             );
             $data['searchdropdown'] = $searchdropdown->export_for_template($output);
 
-            $collapse = new gradebook_dropdown(
+            $collapse = new tertiary_dropdown(
                 true,
                 get_string('collapsedcolumns', 'gradereport_grader', 0),
                 null,

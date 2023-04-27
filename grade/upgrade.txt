@@ -5,7 +5,18 @@ Information provided here is intended especially for developers.
 * The $showtitle parameter in the print_grade_page_head function located inside grade/lib.php has been deprecated and is not used anymore.
 * The deprecated `core_grades_create_gradecategory` external method has been removed, in addition to the accompanying
   `core_grades_external::create_gradecategory` methods
-* The grade_edit_tree_column_select class has been deprecated.
+* User, Group & Grade item JS classes have been added to easily enable the creation of combobox search components.
+  Refer to the dev docs on details of how to implement this feature if desired.
+* basewidget.js has been deprecated and its uses replaced with the new JS classes mentioned above.
+* With the basewidget being deprecated all usages of it in core have now been migrated and the files that used it removed.
+  The basewidget itself will go through the proper deprecation process and be removed in a future version.
+* The following webservices have had some optional parameters changed:
+  - grade/classes/external/get_enrolled_users_for_selector
+    - profileimage -> profileimageurl & profileimageurlsmall
+    - return changed to use the core_user_external::user_description() method instead of a custom baked one.
+  - grade/classes/external/get_groups_for_selector
+    - Has been relocated to core_group_external::get_groups_for_selector()
+    - groupimageurl is now available as an optional parameter to give the user an image either set or generated for the group.
 
 === 4.1 ===
 * The $importactiveurl parameter in the constructor of the core_grades\output\import_action_bar class has been deprecated and is not used anymore.

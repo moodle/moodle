@@ -56,11 +56,13 @@
             {{#users}}
                 {{>gradereport_grader/search/resultitem}}
             {{/users}}
-            <li class="w-100 result-row p-1 border-top bottom-0 position-sticky" role="none" id="result-row-{{id}}">
-                <a role="option" class="dropdown-item d-flex small p-3" id="select-all" href="{{{selectall}}}" tabindex="-1">
-                    {{#str}}viewallresults, gradereport_grader, {{matches}}{{/str}}
-                </a>
-            </li>
+            {{#selectall}}
+                <li class="w-100 result-row p-1 border-top bottom-0 position-sticky" role="none" id="result-row-{{id}}">
+                    <a role="option" class="dropdown-item d-flex small p-3" id="select-all" href="{{{selectall}}}" tabindex="-1">
+                        {{#str}}viewallresults, gradereport_grader, {{matches}}{{/str}}
+                    </a>
+                </li>
+            {{/selectall}}
         </ul>
     {{/hasusers}}
     {{^hasusers}}

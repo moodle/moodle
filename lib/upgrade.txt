@@ -54,6 +54,8 @@ information provided here is intended especially for developers.
 * New method moodleform::filter_shown_headers() is created to show some expanded headers only and hide the rest.
 * count_words() and count_letters() have a new optional parameter called $format to format the text before doing the counting.
 * New core_renderer::sr_text method to generate screen reader only inline texts without using html_writter.
+* The external function core_grades_get_groups_for_selector is now relocated.
+  Please use it at core_group_get_groups_for_selector instead.
 
 === 4.2 ===
 

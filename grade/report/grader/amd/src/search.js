@@ -21,7 +21,7 @@
  * @copyright 2023 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import GradebookSearchClass from 'gradereport_grader/search/search_class';
+import GradebookSearchClass from 'core/tertiary_search_class';
 import * as Repository from 'gradereport_grader/search/repository';
 import {get_strings as getStrings} from 'core/str';
 import Url from 'core/url';

@@ -2,12 +2,17 @@ This files describes API changes in /grade/report/*,
 information provided here is intended especially for developers.
 
 === 4.3 ===
-
 * The load_users() method in the gradereport_singleview\local\screen class has been deprecated. Please use
   get_gradable_users() instead.
 * The \gradereport_singleview\local\screen\select has been deprecated. This class generates the output for the initial
   view to select the single view item type (user or grade item) which is no longer actively used as we do not provide
   direct links to it.
+* The following reports now use the combobox search PHP & JS rather than defining their own:
+  - gradereport_grader
+  - gradereport_singleview
+  - gradereport_user
+  Each of these reports extend the base user, grade or group JS class in either core or core_grades so that they can define how their clickable links are generated.
+  Any special handling of the search dropdowns should be done in the JS class "closest" to your plugin rather than in core_grades or the base search class itself.
 
 === 4.2 ===
 * 'Show calculations' setting has been removed from grader report (link is moved to grade action menu)
