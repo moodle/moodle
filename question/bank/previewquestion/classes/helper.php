@@ -262,13 +262,12 @@ class helper {
      * @return array
      */
     public static function get_preview_extra_elements(question_definition $question, int $courseid): array {
-        $plugintype = 'qbank';
-        $functionname = 'preview_display';
-        $extrahtml = [];
+        $plugins = get_plugin_list_with_function('qbank', 'preview_display');
+
         $comment = '';
-        $plugins = get_plugin_list_with_function($plugintype, $functionname);
+        $extrahtml = [];
         foreach ($plugins as $componentname => $plugin) {
-            $pluginhtml = component_callback($componentname, $functionname, [$question, $courseid]);
+            $pluginhtml = component_callback($componentname, 'preview_display', [$question, $courseid]);
             if ($componentname === 'qbank_comment') {
                 $comment = $pluginhtml;
                 continue;
