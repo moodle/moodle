@@ -16,7 +16,7 @@ Font Awesome comes in 2 parts relating to Moodle:
 
 CHANGES
 --------
-1. The fonts need to be provided using the [[font:core|xxxx]] method. Edit fontawesome/brands.scss, fontawesome/regular.scss, fontawesome/solid.scss and fontawesome/v4-shims.scss and replace:
+1. The fonts need to be provided using the [[font:core|xxxx]] method. Edit fontawesome/brands.scss, fontawesome/regular.scss and fontawesome/solid.scss to replace:
 
     url('#{$fa-font-path}/fa-xxxxx-400.zzzzz') format('zzzzz')
 
