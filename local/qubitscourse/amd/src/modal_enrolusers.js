@@ -1,5 +1,5 @@
-define(['jquery', 'core/modal_factory','core/modal_events', 'core/fragment', 'core/config', 'core/str', 'core/toast'], 
-function($, ModalFactory, ModalEvents, Fragment, Config, Str, Toast) {
+define(['jquery', 'core/modal_factory','core/modal_events', 'core/fragment', 'core/config', 'core/str', 'core/toast', 'core/notification'], 
+function($, ModalFactory, ModalEvents, Fragment, Config, Str, Toast, Notification) {
     
     $("a.qbitsenrlusr").on('click', function(e) {
       var clickedLink = $(e.currentTarget);

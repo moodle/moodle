@@ -33,12 +33,30 @@ require_once($CFG->dirroot.'/group/lib.php');
 require_once($CFG->dirroot.'/enrol/manual/locallib.php');
 require_once($CFG->dirroot.'/cohort/lib.php');
 require_once($CFG->dirroot . '/enrol/manual/classes/enrol_users_form.php');
+require_once($CFG->dirroot . '/group/lib.php');
 
 $id      = required_param('id', PARAM_INT); // Course id.
 $action  = required_param('action', PARAM_ALPHANUMEXT);
 $siteid = required_param('siteid', PARAM_INT); // Site id.
 $coursegrade = required_param('coursegrade', PARAM_ALPHANUMEXT); // Course Grade.
 $coursesections = required_param('coursesections', PARAM_ALPHANUMEXT); // Course Sections.
+
+// Course Group created or updated
+$groupidnumber = "site-{$siteid}-course-{$id}-cg-{$coursegrade}-cs-{$coursesections}";
+$groupid = 0;
+if (!$group = $DB->get_record('groups', array('idnumber'=>$groupidnumber))) {
+    $groupdata = new stdClass;
+    $groupdata->courseid = $id;
+    $groupdata->name = $groupidnumber;
+    $groupdata->idnumber = $groupidnumber;
+    $groupdata->description = "Group $groupidnumber";
+    $groupdata->descriptionformat = 1;
+    $groupid = groups_create_group($groupdata);
+}else{
+    $groupid = $group->id;
+}
+
+
 
 $PAGE->set_url(new moodle_url('/enrol/ajax.php', array('id'=>$id, 'action'=>$action)));
 
