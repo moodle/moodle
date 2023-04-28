@@ -101,14 +101,12 @@ $PAGE->set_context($context);
 $PAGE->set_title($title);
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_heading($heading);
-$PAGE->requires->js_call_amd('local_qubitscourse/modal_login');
+//$PAGE->requires->js_call_amd('local_qubitscourse/modal_login');
 $PAGE->requires->js_call_amd('local_qubitscourse/modal_enrolusers');
 $content = $qbitcourserenderer->tenant_courses($qubitssite_courses, $filters);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($pagedesc);
 
 echo $content;
-
-echo "<pre>"; print_r($cohortusers); echo "</pre>";
 
 echo $OUTPUT->footer();

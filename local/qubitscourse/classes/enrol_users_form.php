@@ -116,6 +116,8 @@ class local_qubitscourse_enrol_users_form extends moodleform {
         $mform->setType('action', PARAM_ALPHA);
         $mform->addElement('hidden', 'enrolid', $instance->id);
         $mform->setType('enrolid', PARAM_INT);
+        $mform->addElement('hidden', 'siteid', $this->_customdata->siteId);
+        $mform->setType('siteid', PARAM_INT);
     }
 
     private function filter_roles($v, $k){

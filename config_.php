@@ -53,6 +53,13 @@ $CFG->cachedir = $CFG->dataroot . ($tenantdomain ? '/' . $tenantdomain : '') . '
 $CFG->localcachedir = $CFG->dataroot . ($tenantdomain ? '/' . $tenantdomain : '') . '/localcachedir';
 $CFG->tenantdir = $CFG->dataroot . ($tenantdomain ? '/' . $tenantdomain : '');
 
+// Grades and Sections
+$CFG->coursegrades = array("grade1" => "Grade 1", "grade2" => "Grade 2", "grade3" => "Grade 3", "grade4" => "Grade 4", "grade5" => "Grade 5", 
+"grade6" => "Grade 6", "grade7" => "Grade 7", "grade8" => "Grade 8", "grade9" => "Grade 9", "grade10" => "Grade 10", 
+"grade11" => "Grade 11", "grade12" => "Grade 12");
+$CFG->coursesections = array("sectiona" => "Section A", "sectionb" => "Section B", "sectionc" => "Section C", "sectiond" => "Section D",
+"sectione" => "Section E", "sectionf" => "Section F", "sectiong" => "Section G");
+
 $CFG->admin     = 'admin';
 $CFG->directorypermissions = 0777;
 

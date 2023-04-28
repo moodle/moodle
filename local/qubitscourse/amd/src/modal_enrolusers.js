@@ -1,55 +1,79 @@
-define(['jquery', 'core/notification', 'core/custom_interaction_events', 'core/modal', 'core/modal_registry'],
-        function($, Notification, CustomEvents, Modal, ModalRegistry) {
-    var registered = false;
-    var SELECTORS = {
-        SAVE_BUTTON: '[data-action="save"]',
+define(['jquery', 'core/modal_factory','core/modal_events', 'core/fragment', 'core/config', 'core/str', 'core/toast'], 
+function($, ModalFactory, ModalEvents, Fragment, Config, Str, Toast) {
+    
+    $("a.qbitsenrlusr").on('click', function(e) {
+      var clickedLink = $(e.currentTarget);
+      let contextId = clickedLink.data('context-id');
+      let siteId = clickedLink.data("site-id");
+      let enfrgHtml = Fragment.loadFragment('local_qubitscourse', 'enrol_users_form', contextId, {"siteId" : siteId});
+        ModalFactory.create({
+            type: ModalFactory.types.SAVE_CANCEL,
+            title: 'Enrol Users',
+            body: enfrgHtml,
+            large: true
+        })
+        .then(function(modal) {
+            var root = modal.getRoot();
+            root.on(ModalEvents.save, function(e) {
+                var elementid = clickedLink.data('context-id');
+                e.preventDefault();
+                modal.getRoot().find('form').submit();
+            });
+
+            modal.getRoot().on('submit', 'form', e => {
+                e.preventDefault();
+                submitFormAjax(modal);
+            });
+
+            modal.getRoot().on(ModalEvents.hidden, () => {
+                modal.destroy();
+            });
+            modal.show();
+       });
+    });
+
+    const Selectors = {
+        cohortSelector: "#id_cohortlist",
+        triggerButtons: ".enrolusersbutton.enrol_manual_plugin [type='submit']",
+        unwantedHiddenFields: "input[value='_qf__force_multiselect_submission']",
+        buttonWrapper: '[data-region="wrapper"]',
+    };
+    
+    const submitFormAjax = (modal) => {
+        const form = modal.getRoot().find('form');
+        form.get(0).querySelectorAll(Selectors.unwantedHiddenFields).forEach(hiddenField => hiddenField.remove());
+        modal.hide();
+        modal.destroy();
+    
+        $.ajax(
+            `${Config.wwwroot}/local/qubitsuser/enrol_manual_ajax.php?${form.serialize()}`,
+            {
+                type: 'GET',
+                processData: false,
+                contentType: "application/json",
+            }
+        )
+        .then(response => {
+            if (response.error) {
+                throw new Error(response.error);
+            }
+    
+            return response.count;
+        })
+        .then(count => {
+            return Promise.all([
+                Str.get_string('totalenrolledusers', 'enrol', count)
+            ]);
+        })
+        .then(([notificationBody]) => notificationBody)
+        .then(notificationBody => Toast.add(notificationBody))
+        .catch(error => {
+            Notification.addNotification({
+                message: error.message,
+                type: 'error',
+            });
+        });
     };
 
-    /**
-     * Constructor for the Modal.
-     *
-     * @param {object} root The root jQuery element for the modal
-     */
-    var ModalEnrolUsers = function(root) {
-        Modal.call(this, root);
-
-        if (!this.getFooter().find(SELECTORS.SAVE_BUTTON).length) {
-            Notification.exception({message: 'No save button found'});
-        }
-
-    };
-
-    ModalEnrolUsers.TYPE = 'local_qubitscourse-enrolusers';
-    ModalEnrolUsers.prototype = Object.create(Modal.prototype);
-    ModalEnrolUsers.prototype.constructor = ModalEnrolUsers;
-
-    /**
-     * Set up all of the event handling for the modal.
-     *
-     * @method registerEventListeners
-     */
-    ModalEnrolUsers.prototype.registerEventListeners = function() {
-        // Apply parent event listeners.
-        Modal.prototype.registerEventListeners.call(this);
-        this.getModal().on(CustomEvents.events.activate, SELECTORS.SAVE_BUTTON, function(e, data) {
-            console.log("Enrol users - Save button Kamesh Clicked >>>");
-            // Add your logic for when the login button is clicked. This could include the form validation,
-            // loading animations, error handling etc.
-        }.bind(this));
-        
-    };
-
-    ModalEnrolUsers.prototype.setLarge = function() {
-        Modal.prototype.setLarge.call(this);
-        this.getModal().addClass('modal-lg');
-    };
-
-    // Automatically register with the modal registry the first time this module is imported so that you can create modals
-    // of this type using the modal factory.
-    if (!registered) {
-        ModalRegistry.register(ModalEnrolUsers.TYPE, ModalEnrolUsers, 'local_qubitscourse/modal_enrolusers');
-        registered = true;
-    }
-
-    return ModalEnrolUsers;
 });
+

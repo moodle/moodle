@@ -95,39 +95,6 @@
 {{{pagebar}}}
 
 {{#js}}
-require(['jquery', 'core/templates', 'core/modal_factory','core/modal_events', 'core/fragment'], 
-function($, Templates, ModalFactory, ModalEvents, Fragment) {
-    
-    $("a.qbitsenrlusr").on('click', function(e) {
-      var clickedLink = $(e.currentTarget);
-      let contextId = clickedLink.data('context-id');
-      let siteId = clickedLink.data("site-id");
-      let enfrgHtml = Fragment.loadFragment('local_qubitscourse', 'enrol_users_form', contextId, {"siteId" : siteId});
-        ModalFactory.create({
-            type: ModalFactory.types.SAVE_CANCEL,
-            title: 'Enrol Users',
-            body: enfrgHtml,
-            large: true
-        })
-        .then(function(modal) {
-            //modal.setSaveButtonText('Enrol Selected Users');
-            var root = modal.getRoot();
-            root.on(ModalEvents.save, function() {
-                var elementid = clickedLink.data('context-id');
-                console.log("Course Context ID >> ", elementid);
-            });
-
-            modal.getRoot().on(ModalEvents.hidden, () => {
-                modal.destroy();
-            });
-            modal.show();
-       });
-    });
-
-});
-{{/js}}
-
-{{#js}}
 require(['jquery'], function($) {
    let columnjson = {
        "any" : "Any",
