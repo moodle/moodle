@@ -81,7 +81,7 @@ Feature: Within the grader report, test that we can collapse columns
     And I click on user profile field menu "idnumber"
     And I choose "Collapse" in the open action menu
     # Opens the tertiary trigger button.
-    And I click on "Collapsed columns" "button"
+    And I click on "Collapsed columns" "combobox"
     # This is checking that the column name search dropdown exists.
     And I wait until "Search collapsed columns" "field" exists
     # Default state contains the collapsed column names.
@@ -109,7 +109,7 @@ Feature: Within the grader report, test that we can collapse columns
     And I choose "Collapse" in the open action menu
     And I click on user profile field menu "Phone1"
     And I choose "Collapse" in the open action menu
-    And I click on "Collapsed columns" "button"
+    And I click on "Collapsed columns" "combobox"
     # This is checking that the column name search dropdown exists.
     When I wait until "Search collapsed columns" "field" exists
     And I click on "Test assignment one" "option_role" in the "form" "gradereport_grader > collapse search"
@@ -143,7 +143,7 @@ Feature: Within the grader report, test that we can collapse columns
     And I should not see "Test assignment two</a>" in the "First name / Last name" "table_row"
     And I should not see "Email" in the "First name / Last name" "table_row"
     # Opens the tertiary trigger button.
-    When I click on "Collapsed columns" "button"
+    When I click on "Collapsed columns" "combobox"
     # This is checking that the column name search dropdown exists.
     And I wait until "Search collapsed columns" "field" exists
     # Add ordering test as well.
@@ -183,12 +183,12 @@ Feature: Within the grader report, test that we can collapse columns
     And I click on user profile field menu "Country"
     And I choose "Collapse" in the open action menu
     # Basic tests for the page.
-    When the page should meet accessibility standards
+    When I click on "Collapsed columns" "combobox"
+    And the page should meet accessibility standards
     And the page should meet "wcag131, wcag141, wcag412" accessibility standards
     And the page should meet accessibility standards with "wcag131, wcag141, wcag412" extra tests
     # Move onto general keyboard navigation testing.
-    Then I click on "Collapsed columns" "button"
-    And the focused element is "Search collapsed columns" "field"
+    Then the focused element is "Search collapsed columns" "field"
     And I press the down key
     And the focused element is "Email address" "option_role"
     And I press the end key
@@ -200,8 +200,8 @@ Feature: Within the grader report, test that we can collapse columns
     And I press the down key
     And the focused element is "Email address" "option_role"
     And I press the escape key
-    And the focused element is "Collapsed columns" "button"
-    And I click on "Collapsed columns" "button"
+    And the focused element is "Collapsed columns" "combobox"
+    And I click on "Collapsed columns" "combobox"
     Then I set the field "Search collapsed columns" to "Goodmeme"
     And I wait until "No results for \"Goodmeme\"" "text" exists
     And I press the down key
@@ -247,7 +247,7 @@ Feature: Within the grader report, test that we can collapse columns
     And I click on user profile field menu "Country"
     And I choose "Collapse" in the open action menu
     # Ensure we are ready to move onto the next step.
-    When I wait until "Collapsed columns 4" "button" exists
+    When I should see "Collapsed columns 4"
     # Confirm our columns are hidden.
     And I should not see "Email" in the "First name / Last name" "table_row"
     And I should not see "Phone" in the "First name / Last name" "table_row"

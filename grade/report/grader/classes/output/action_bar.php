@@ -16,7 +16,7 @@
 
 namespace gradereport_grader\output;
 
-use core\output\tertiary_dropdown;
+use core\output\comboboxsearch;
 use core_grades\output\general_action_bar;
 use moodle_url;
 
@@ -80,7 +80,7 @@ class action_bar extends \core_grades\output\action_bar {
                 $this->context,
                 '/grade/report/grader/index.php'
             );
-            $initialselector = new tertiary_dropdown(
+            $initialselector = new comboboxsearch(
                 false,
                 $initialscontent->buttoncontent,
                 $initialscontent->dropdowncontent,
@@ -93,24 +93,25 @@ class action_bar extends \core_grades\output\action_bar {
             $data['groupselector'] = $gradesrenderer->group_selector($course);
 
             $resetlink = new moodle_url('/grade/report/grader/index.php', ['id' => $courseid]);
-            $searchinput = $OUTPUT->render_from_template('gradereport_grader/search/searchinput', [
+            $searchinput = $OUTPUT->render_from_template('core_user/comboboxsearch/user_selector', [
                 'currentvalue' => $this->usersearch,
                 'courseid' => $courseid,
                 'resetlink' => $resetlink->out(false),
+                'group' => 0,
             ]);
-            $searchdropdown = new tertiary_dropdown(
+            $searchdropdown = new comboboxsearch(
                 true,
                 $searchinput,
                 null,
-                'user-search',
-                'usersearchwidget',
+                'user-search dropdown d-flex',
+                null,
                 'usersearchdropdown overflow-auto',
                 null,
                 false,
             );
             $data['searchdropdown'] = $searchdropdown->export_for_template($output);
 
-            $collapse = new tertiary_dropdown(
+            $collapse = new comboboxsearch(
                 true,
                 get_string('collapsedcolumns', 'gradereport_grader', 0),
                 null,

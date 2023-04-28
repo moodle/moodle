@@ -3,7 +3,6 @@ Feature: Within the grader report, test that we can open our generic filter drop
   In order to filter down the users on the page
   As a teacher
   I need to be able to see the filter and select a combination of parameters
-
   Background:
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
@@ -33,14 +32,14 @@ Feature: Within the grader report, test that we can open our generic filter drop
 
   Scenario: A teacher can open the filter component
     Given I should see "Filter by name"
-    When I press "Filter by name"
+    When I click on "Filter by name" "combobox"
     Then I should see "27" node occurrences of type "input" in the "First name" "core_grades > initials bar"
     And I should see "27" node occurrences of type "input" in the "Last name" "core_grades > initials bar"
     And "input[data-action=cancel]" "css_element" should exist
     And "input[data-action=save]" "css_element" should exist
 
   Scenario: A teacher can filter the grader report to limit users reported
-    Given I press "Filter by name"
+    Given I click on "Filter by name" "combobox"
     And I wait until "input[data-action=save]" "css_element" exists
     When I select "D" in the "First name" "core_grades > initials bar"
     And I press "Apply"
@@ -59,7 +58,7 @@ Feature: Within the grader report, test that we can open our generic filter drop
 
     # Test filtering on last name
     # Business logic: If all is selected, we will not show it i.e. First (D) and NOT First (D) Last (All)
-    And I press "First (D)"
+    And I click on "First (D)" "combobox"
     And I select "All" in the "First name" "core_grades > initials bar"
     And I select "M" in the "Last name" "core_grades > initials bar"
     And I press "Apply"
@@ -77,7 +76,7 @@ Feature: Within the grader report, test that we can open our generic filter drop
       | Dummy User         |
 
     # Test filtering on first && last name
-    And I press "Last (M)"
+    And I click on "Last (M)" "combobox"
     And I select "U" in the "First name" "core_grades > initials bar"
     And I select "T" in the "Last name" "core_grades > initials bar"
     And I press "Apply"
@@ -94,10 +93,10 @@ Feature: Within the grader report, test that we can open our generic filter drop
       | Dummy User         |
       | Turtle Manatee     |
     # Final cheeky check to ensure our button matches.
-    And I press "First (U) Last (T)"
+    And I click on "First (U) Last (T)" "combobox"
 
   Scenario: A teacher can quickly tell that a filter is applied to the current table
-    Given I press "Filter by name"
+    Given I click on "Filter by name" "combobox"
     And I wait until "input[data-action=save]" "css_element" exists
     When I select "T" in the "First name" "core_grades > initials bar"
     And I press "Apply"
@@ -105,7 +104,7 @@ Feature: Within the grader report, test that we can open our generic filter drop
     Then I should see "First (T)"
 
     # Check if removing the filter, removes the highlight and user notice of applied filters
-    And I press "First (T)"
+    And I click on "First (T)" "combobox"
     And I wait until "input[data-action=save]" "css_element" exists
     And I select "All" in the "First name" "core_grades > initials bar"
     And I press "Apply"
@@ -115,13 +114,13 @@ Feature: Within the grader report, test that we can open our generic filter drop
     And I should not see "First (T)"
 
   Scenario: A teacher can close the filter either by clicking close or clicking off the dropdown
-    Given I press "Filter by name"
+    Given I click on "Filter by name" "combobox"
     And "input[data-action=save]" "css_element" should be visible
     When I click on "input[data-action=cancel]" "css_element"
     Then "input[data-action=save]" "css_element" should not be visible
 
     # Click off the drop down
-    And I press "Filter by name"
+    And I click on "Filter by name" "combobox"
     And "input[data-action=save]" "css_element" should be visible
     And I click on "First name" "link" in the "gradereport-grader-table" "table"
     And "input[data-action=save]" "css_element" should not be visible
@@ -130,12 +129,12 @@ Feature: Within the grader report, test that we can open our generic filter drop
     Given the following "language customisations" exist:
       | component | stringid | value  |
       | core      | all      | すべて  |
-    And I press "Filter by name"
+    And I click on "Filter by name" "combobox"
     And "input[data-action=save]" "css_element" should be visible
     And I select "T" in the "First name" "core_grades > initials bar"
     And I press "Apply"
     And I wait to be redirected
-    And I press "First (T)"
+    And I click on "First (T)" "combobox"
     And I wait until "input[data-action=save]" "css_element" exists
 
     When I select "すべて" in the "First name" "core_grades > initials bar"
@@ -156,7 +155,7 @@ Feature: Within the grader report, test that we can open our generic filter drop
     Given the page should meet accessibility standards
     And the page should meet "wcag131, wcag141, wcag412" accessibility standards
     And the page should meet accessibility standards with "wcag131, wcag141, wcag412" extra tests
-    And I press "Filter by name"
+    And I click on "Filter by name" "combobox"
     And "input[data-action=save]" "css_element" should be visible
     And the focused element is "All" "button" in the "First name" "core_grades > initials bar"
     When I press the tab key

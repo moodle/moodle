@@ -16,7 +16,7 @@
 /**
  * A repo for the search partial in the grader report.
  *
- * @module    gradereport_grader/search/repository
+ * @module    gradereport_grader/local/user/repository
  * @copyright 2022 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

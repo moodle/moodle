@@ -21,7 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import * as Repository from 'gradereport_grader/collapse/repository';
-import GradebookSearchClass from 'core/tertiary_search_class';
+import search_combobox from 'core/comboboxsearch/search_combobox';
 import {renderForPromise, replaceNodeContents, replaceNode} from 'core/templates';
 import {debounce} from 'core/utils';
 import $ from 'jquery';
@@ -59,7 +59,7 @@ const selectors = {
 
 const countIndicator = document.querySelector(selectors.count);
 
-export default class ColumnSearch extends GradebookSearchClass {
+export default class ColumnSearch extends search_combobox {
 
     userID = -1;
     courseID = null;
@@ -104,7 +104,7 @@ export default class ColumnSearch extends GradebookSearchClass {
      *
      * @returns {string}
      */
-    setComponentSelector() {
+    componentSelector() {
         return '.collapse-columns';
     }
 
@@ -113,7 +113,7 @@ export default class ColumnSearch extends GradebookSearchClass {
      *
      * @returns {string}
      */
-    setDropdownSelector() {
+    dropdownSelector() {
         return '.searchresultitemscontainer';
     }
 
@@ -122,7 +122,7 @@ export default class ColumnSearch extends GradebookSearchClass {
      *
      * @returns {string}
      */
-    setTriggerSelector() {
+    triggerSelector() {
         return '.collapsecolumn';
     }
 
@@ -373,18 +373,6 @@ export default class ColumnSearch extends GradebookSearchClass {
                 };
             })
         );
-    }
-
-    /**
-     * Update any changeable nodes, filter and then render the result.
-     *
-     * @returns {Promise<void>}
-     */
-    async filterrenderpipe() {
-        this.updateNodes();
-        this.setMatchedResults(await this.filterDataset(this.getDataset()));
-        this.filterMatchDataset();
-        await this.renderDropdown();
     }
 
     /**
