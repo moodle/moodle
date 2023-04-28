@@ -187,7 +187,8 @@ class core_group_external extends external_api {
             }
             require_capability('moodle/course:managegroups', $context);
 
-            list($group->description, $group->descriptionformat) =
+            $group->name = external_format_string($group->name, $context);
+            [$group->description, $group->descriptionformat] =
                 external_format_text($group->description, $group->descriptionformat,
                         $context->id, 'group', 'description', $group->id);
 
@@ -209,7 +210,7 @@ class core_group_external extends external_api {
                 array(
                     'id' => new external_value(PARAM_INT, 'group record id'),
                     'courseid' => new external_value(PARAM_INT, 'id of course'),
-                    'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
+                    'name' => new external_value(PARAM_TEXT, 'group name'),
                     'description' => new external_value(PARAM_RAW, 'group description text'),
                     'descriptionformat' => new external_format_value('description'),
                     'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase'),
@@ -260,7 +261,8 @@ class core_group_external extends external_api {
 
         $groups = array();
         foreach ($gs as $group) {
-            list($group->description, $group->descriptionformat) =
+            $group->name = external_format_string($group->name, $context);
+            [$group->description, $group->descriptionformat] =
                 external_format_text($group->description, $group->descriptionformat,
                         $context->id, 'group', 'description', $group->id);
             $groups[] = (array)$group;
@@ -281,7 +283,7 @@ class core_group_external extends external_api {
                 array(
                     'id' => new external_value(PARAM_INT, 'group record id'),
                     'courseid' => new external_value(PARAM_INT, 'id of course'),
-                    'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
+                    'name' => new external_value(PARAM_TEXT, 'group name'),
                     'description' => new external_value(PARAM_RAW, 'group description text'),
                     'descriptionformat' => new external_format_value('description'),
                     'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase'),
@@ -1264,7 +1266,8 @@ class core_group_external extends external_api {
                 'g.id, g.name, g.description, g.descriptionformat, g.idnumber');
 
             foreach ($groups as $group) {
-                list($group->description, $group->descriptionformat) =
+                $group->name = external_format_string($group->name, $course->context);
+                [$group->description, $group->descriptionformat] =
                     external_format_text($group->description, $group->descriptionformat,
                             $course->context->id, 'group', 'description', $group->id);
                 $group->courseid = $course->id;
@@ -1303,7 +1306,7 @@ class core_group_external extends external_api {
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'group record id'),
-                'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
+                'name' => new external_value(PARAM_TEXT, 'group name'),
                 'description' => new external_value(PARAM_RAW, 'group description text'),
                 'descriptionformat' => new external_format_value('description'),
                 'idnumber' => new external_value(PARAM_RAW, 'id number'),
@@ -1388,7 +1391,8 @@ class core_group_external extends external_api {
             $groups = groups_get_activity_allowed_groups($cm, $user->id);
 
             foreach ($groups as $group) {
-                list($group->description, $group->descriptionformat) =
+                $group->name = external_format_string($group->name, $coursecontext);
+                [$group->description, $group->descriptionformat] =
                     external_format_text($group->description, $group->descriptionformat,
                             $coursecontext->id, 'group', 'description', $group->id);
                 $group->courseid = $cm->course;
