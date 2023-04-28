@@ -567,6 +567,7 @@ class local_qubitsuser_external extends external_api {
                                                $params['perpage'], null, null,
                                                $cohortusers
                                               );
+       // echo "<pre>"; print_r($users); echo "</pre>";
 
         $results = array();
         // Add also extra user fields.

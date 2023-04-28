@@ -56,8 +56,6 @@ if (!$group = $DB->get_record('groups', array('idnumber'=>$groupidnumber))) {
     $groupid = $group->id;
 }
 
-
-
 $PAGE->set_url(new moodle_url('/enrol/ajax.php', array('id'=>$id, 'action'=>$action)));
 
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
@@ -187,6 +185,7 @@ switch ($action) {
         if ($plugin->allow_enrol($instance) && has_capability('enrol/'.$plugin->get_name().':enrol', $context)) {
             foreach ($users as $user) {
                 $plugin->enrol_user($instance, $user->id, $roleid, $timestart, $timeend, null, $recovergrades);
+                groups_add_member($groupid, $user->id);
             }
             $outcome->count += count($users);
             foreach ($cohorts as $cohort) {
