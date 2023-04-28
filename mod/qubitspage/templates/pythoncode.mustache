@@ -1,0 +1,108 @@
+<style>
+:root {
+  --sidebar-width: 300px;
+  --page-padding: 15px;
+  --content-max-width: 800px;
+  --menu-bar-height: 50px;
+  --mono-font: "Source Code Pro", Consolas, "Ubuntu Mono", Menlo, "DejaVu Sans Mono", monospace, monospace;
+  --code-font-size: 0.875em
+}
+#qubitspage {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: var(--content-max-width);
+  background: #FEF6DB;
+  padding: 20px;
+  border-radius: 36px;
+  overflow-wrap: break-word;
+}
+#qubitspage h4, #qubitspage h1{
+    background-color: #47BBB6;
+    border-radius: 30px;
+    position: relative;
+    padding-left: 80px;
+    color: #fff;
+    font-size: 2em;
+    font-weight: bold;
+}
+#qubitspage h4:before, #qubitspage h1:before {
+  content: '';
+  background: url('{{tickimgurl}}') no-repeat;
+  background-size: contain;
+  width: 118px;
+  height: 79px;
+  display: inline-block;
+  position: absolute;
+  left: -40px;
+  top: -23px;
+}
+#qubitspage .no-overflow {
+    overflow: inherit;
+}
+
+#qubitspage h1 .header:not(.menu-title):link,
+#qubitspage h1 .header:not(.menu-title):visited {
+  color: white;
+  text-transform: uppercase;
+  font-weight: normal;
+  font-size: 1.4rem;
+  position: relative;
+  top: -0.4rem;
+}
+
+#qubitspage h1 .header:not(.menu-title):link .sub-header,
+#qubitspage h1 .header:not(.menu-title):visited .sub-header {
+  color: #FCCA1E;
+  font-weight: bold;
+}
+
+
+</style>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js"></script>
+<script type="text/javascript">
+    const runPydide = async (scriptText) => {
+        const pyodide = await window.loadPyodide({
+        indexURL: "{{ PYODIDE_INDEX_URL }}"
+        });
+        const out = await pyodide.runPythonAsync(scriptText);
+        return (out);
+    };
+
+    async function runpythn(curcode, rcname){
+        const out = await runPydide(curcode);
+        document.getElementById(rcname).innerHTML = out;
+    }
+
+</script>
+
+{{#js}}
+
+require(['jquery'], function($) {
+    $("pythoncode").each(function(i, e){
+        let txt = $(e).text();
+        let htmlelt = `<pre id="p-${i}">${txt}</pre>
+        <br/>
+        <button class="btnrunpython" data-c-name="p-${i}" data-rc-name="rncns-${i}">Run</button>
+        <br/> <br/>
+        <div class="runconsole" id="rncns-${i}">&nbsp;</div>
+        `;
+        $(htmlelt).insertAfter(e);
+        $("pre").css("color", "#e83e8c");
+        $(".runconsole").css({
+            "color" : "#fff",
+            "background-color" : "#000",
+            "min-height" : "200px",
+            "min-width"  : "500px"
+        });
+        $(e).hide();
+    });
+    $(document).on("click", ".btnrunpython", function(){
+        let pretagcode = $(this).attr("data-c-name");
+        let pagecode = $("#"+pretagcode).html();
+        let rcname = $(this).attr("data-rc-name");
+        runpythn(pagecode, rcname);
+       
+    });
+});
+{{/js}}
