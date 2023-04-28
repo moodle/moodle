@@ -33,4 +33,11 @@ $functions = array(
         'type'        => 'read',
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+
+    'enrol_guest_validate_password' => [
+        'classname' => 'enrol_guest\external\validate_password',
+        'description' => 'Perform password validation.',
+        'type' => 'write',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
 );
