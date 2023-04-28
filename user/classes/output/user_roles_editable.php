@@ -18,7 +18,7 @@ namespace core_user\output;
 
 use context_course;
 use core_user;
-use core_external;
+use core_external\external_api;
 use coding_exception;
 
 /**
@@ -152,7 +152,7 @@ class user_roles_editable extends \core\output\inplace_editable {
 
         // Check user is enrolled in the course.
         $context = context_course::instance($courseid);
-        core_external::validate_context($context);
+        external_api::validate_context($context);
 
         // Check permissions.
         require_capability('moodle/role:assign', $context);
