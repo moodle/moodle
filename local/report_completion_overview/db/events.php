@@ -23,15 +23,4 @@
 
 $observers = array(
 
-    array(
-        'eventname' => '\block_iomad_company_admin\event\user_license_assigned',
-        'callback' => '\local_report_completion_overview\observer::user_license_assigned',
-        'internal' => false,
-    ),
-
-    array(
-        'eventname' => '\block_iomad_company_admin\event\user_license_unassigned',
-        'callback' => '\local_report_completion_overview\observer::user_license_unassigned',
-        'internal' => false,
-    ),
 );

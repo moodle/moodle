@@ -25,40 +25,4 @@ namespace local_report_completion_overview;
 
 class observer {
 
-    /**
-     * Consume user_license_assigned event
-     * @param object $event the event object
-     */
-    public static function user_license_assigned($event) {
-        global $DB;
-
-        // Add the event.
-        $DB->insert_record('local_report_user_lic_allocs', array('userid' => $event->userid,
-                                                                 'licenseid' => $event->other['licenseid'],
-                                                                 'issuedate' => $event->other['issuedate'],
-                                                                 'courseid' => $event->courseid,
-                                                                 'action' => 1,
-                                                                 'modifiedtime' => time()));
-
-        return true;
-    }
-
-    /**
-     * Consume user_license_unassigned event
-     * @param object $event the event object
-     */
-    public static function user_license_unassigned($event) {
-        global $DB;
-
-        // Add the event.
-        $user = $DB->get_record('user', array('id' => $event->userid));
-        $DB->insert_record('local_report_user_lic_allocs', array('userid' => $event->userid,
-                                                                 'licenseid' => $event->other['licenseid'],
-                                                                 'issuedate' => $event->timecreated,
-                                                                 'courseid' => $event->courseid,
-                                                                 'action' => 0,
-                                                                 'modifiedtime' => time()));
-
-        return true;
-    }
 }
