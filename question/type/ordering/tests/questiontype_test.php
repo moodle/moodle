@@ -22,6 +22,16 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace qtype_ordering;
+
+use qtype_ordering;
+use test_question_maker;
+use qtype_ordering_edit_form;
+use qtype_ordering_test_helper;
+use question_bank;
+use question_possible_response;
+use qtype_ordering_question;
+use core_question_generator;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,8 +46,9 @@ require_once($CFG->dirroot . '/question/type/ordering/edit_ordering_form.php');
  *
  * @copyright 20018 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \qtype_ordering
  */
-class qtype_ordering_test extends advanced_testcase {
+class questiontype_test extends \advanced_testcase {
     /** @var qtype_ordering instance of the question type class to test. */
     protected $qtype;
 

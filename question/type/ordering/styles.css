@@ -6,28 +6,28 @@
 }
 
 .que.ordering .sortablelist {
-    float            : left;
-    list-style-type  : none;
-    margin           : 0 0 0 8px;
+    float: left;
+    list-style-type: none;
+    margin: 0 0 0 8px;
 }
 .que.ordering .sortablelist.active {
-    border           : 1px dotted #333;
-    border-radius    : 4px;
+    border: 1px dotted #333;
+    border-radius: 4px;
 }
 
 .que.ordering .sortablelist li {
-    background-color : #ffffff;
-    border           : 1px solid #000;
-    border-radius    : 4px;
-    list-style-type  : none;
-    margin           : 4px;
-    padding          : 6px 12px;
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 4px;
+    list-style-type: none;
+    margin: 4px;
+    padding: 6px 12px;
 }
 
 .que.ordering .sortablelist li.sortableitem {
-    position         : relative;
-    cursor           : move;
-    margin-left      : 26px; /* The margin is needed for the list-style-type in numberingxxx classes */
+    position: relative;
+    cursor: move;
+    margin-left: 26px; /* The margin is needed for the list-style-type in numberingxxx classes */
 }
 .que.ordering .sortablelist li.sortableitem:focus {
     border-color: #0a0;
@@ -43,30 +43,39 @@
 }
 
 .que.ordering .sortablelist.numberingnone li {
-    list-style-type  : none;
-    margin-left: 0px;
+    list-style-type: none;
+    margin-left: 0;
 }
 .que.ordering .sortablelist.numbering123 li {
-    list-style-type  : decimal;
+    list-style-type: decimal;
 }
 .que.ordering .sortablelist.numberingabc li {
-    list-style-type  : lower-alpha;
+    list-style-type: lower-alpha;
 }
 .que.ordering .sortablelist.numberingABCD li {
-    list-style-type  : upper-alpha;
+    list-style-type: upper-alpha;
 }
 .que.ordering .sortablelist.numberingiii li {
-    list-style-type  : lower-roman;
+    list-style-type: lower-roman;
 }
 .que.ordering .sortablelist.numberingIIII li {
-    list-style-type  : upper-roman;
+    list-style-type: upper-roman;
 }
 
-.que.ordering .sortablelist.horizontal li {
-    float            : left;
+.que.ordering .sortablelist.horizontal {
+    display: flex;
+    flex-wrap: wrap;
 }
+
+/* Better define 'row' of item for horizontal list. */
+.que.ordering .sortablelist.horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
 .que.ordering .sortablelist.vertical li {
-    min-height       : 18px;
+    min-height: 18px;
 }
 
 /* Styles for when things are being dragged. */
@@ -98,24 +107,24 @@
 
 /* Styles for feedback. */
 .que.ordering .sortablelist.notactive li.correct {
-    background-color : #dff4d8; /* light green */
-    border-color     : #99ff66; /* gentle green */
+    background-color: #dff4d8; /* light green */
+    border-color: #9f6; /* gentle green */
 }
 .que.ordering .sortablelist.notactive li.partial66 {
-    background-color : #dff4d8; /* light green */
-    border-color     : #ff9900; /* dark  orange */
+    background-color: #dff4d8; /* light green */
+    border-color: #f90; /* dark  orange */
 }
 .que.ordering .sortablelist.notactive li.partial33 {
-    background-color : #ffebcc; /* light orange */
-    border-color     : #ff9900; /* dark orange */
+    background-color: #ffebcc; /* light orange */
+    border-color: #f90; /* dark orange */
 }
 .que.ordering .sortablelist.notactive li.partial00 {
-    background-color : #ffdddd; /* light red */
-    border-color     : #ff9900; /* dark orange */
+    background-color: #fdd; /* light red */
+    border-color: #f90; /* dark orange */
 }
 .que.ordering .sortablelist.notactive li.incorrect {
-    background-color : #ffdddd; /* light red */
-    border-color     : #ff7373; /* gentle red */
+    background-color: #fdd; /* light red */
+    border-color: #ff7373; /* gentle red */
 }
 /*
     Force containing DIV to cover the floating LI elements
@@ -125,15 +134,20 @@
 .que.ordering div.rightanswer {
     overflow: auto;
 }
-.que.ordering div.rightanswer ol.correctorder li.horizontal {
-    float            : left;
-    margin-left      : 24px;
-    margin-right     : 24px;
+.que.ordering div.rightanswer ol.correctorder {
+    padding-inline-start: 16px;
 }
-.que.ordering div.rightanswer ol.correctorder li.horizontal:first-child {
-    margin-left      : 0;
+.que.ordering div.rightanswer ol.correctorder.horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+}
+.que.ordering div.rightanswer ol.correctorder li.horizontal {
+    margin-left: 24px;
+    margin-right: 24px;
 }
 .que.ordering div.rightanswer ol.correctorder li.vertical {
+    margin-left: 24px;
 }
 
 /* the width restriction can be limited to editors for draggable items

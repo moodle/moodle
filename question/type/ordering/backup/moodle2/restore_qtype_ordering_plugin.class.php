@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Restore plugin class that provides the necessary information needed to restore one ordering qtype plugin
  *
@@ -71,6 +69,9 @@ class restore_qtype_ordering_plugin extends restore_qtype_plugin {
         // and create a mapping from the $oldid to the $newid.
         if ($this->get_mappingid('question_created', $oldquestionid)) {
             $data->questionid = $newquestionid;
+            if (!isset($data->shownumcorrect)) {
+                $data->shownumcorrect = 1;
+            }
             $newid = $DB->insert_record('qtype_ordering_options', $data);
             $this->set_mapping('qtype_ordering_options', $oldid, $newid);
         }

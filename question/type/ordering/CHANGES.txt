@@ -2,6 +2,11 @@
 Change log for qtype_ordering
 ========================================
 
+2022-09-27 (07)
+ - This version works with Moodle 4.0, 4.1 and 4.2.
+ - New option to tell students how many choices were right, as part of the automatic feedback.
+ - Fixed some bugs with the layout of horizontal ordering questions.
+
 2022-07-08 (06)
  - optimize code to ensure that recorded responses are no longer than 100 bytes.
 

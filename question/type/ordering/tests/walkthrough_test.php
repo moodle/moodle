@@ -22,6 +22,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace qtype_ordering;
+
+use qtype_ordering\question_hint_ordering;
+use test_question_maker;
+use question_state;
+use question_pattern_expectation;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -36,8 +43,9 @@ require_once($CFG->dirroot . '/question/type/ddwtos/tests/helper.php');
  *
  * @copyright 2018 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \qtype_ordering
  */
-class qtype_ordering_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     /**
      * Get the array of post data that will .
@@ -107,8 +115,8 @@ class qtype_ordering_walkthrough_test extends qbehaviour_walkthrough_test_base {
         // Create a drag-and-drop question.
         $question = test_question_maker::make_question('ordering');
         $question->hints = array(
-            new question_hint(13, 'This is the first hint.', FORMAT_HTML),
-            new question_hint(14, 'This is the second hint.', FORMAT_HTML),
+            new question_hint_ordering(13, 'This is the first hint.', FORMAT_HTML, true, false, true),
+            new question_hint_ordering(14, 'This is the second hint.', FORMAT_HTML, false, false, false),
         );
         $this->start_attempt_at_question($question, 'interactive', 3);
 
@@ -121,6 +129,7 @@ class qtype_ordering_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_contains_submit_button_expectation(true),
                 $this->get_does_not_contain_feedback_expectation(),
                 $this->get_tries_remaining_expectation(3),
+                $this->get_does_not_contain_num_parts_correct(),
                 $this->get_no_hint_visible_expectation());
 
         // Submit the wrong answer.
@@ -134,6 +143,7 @@ class qtype_ordering_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
+                $this->get_contains_num_parts_correct_ordering(0, 5, 1),
                 $this->get_contains_hint_expectation('This is the first hint'));
 
         // Do try again.
@@ -161,6 +171,7 @@ class qtype_ordering_walkthrough_test extends qbehaviour_walkthrough_test_base {
         $this->check_current_output(
                 $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_correct_expectation(),
+                $this->get_does_not_contain_num_parts_correct(),
                 $this->get_no_hint_visible_expectation());
 
         // Check regrading does not mess anything up.
@@ -169,5 +180,40 @@ class qtype_ordering_walkthrough_test extends qbehaviour_walkthrough_test_base {
         // Verify.
         $this->check_current_state(question_state::$gradedright);
         $this->check_current_mark(2);
+    }
+
+    /**
+     * Return question pattern expectation.
+     *
+     * @param int $numright The number of item correct.
+     * @param int $numpartial The number of partial correct item.
+     * @param int $numincorrect The number of incorrect item.
+     * @return question_pattern_expectation
+     */
+    protected function get_contains_num_parts_correct_ordering($numright, $numpartial, $numincorrect) {
+        $a = new stdClass();
+        $a->numright = $numright;
+        $a->numpartial = $numpartial;
+        $a->numincorrect = $numincorrect;
+
+        $output = '';
+        if ($a->numright) {
+            $a->numrightplural = get_string($a->numright > 1 ? 'itemplural' : 'itemsingular', 'qtype_ordering');
+            $output .= '<div>' . get_string('yougotnright', 'qtype_ordering', $a) . '</div>';
+        }
+
+        if ($a->numpartial) {
+            $a->numpartialplural = get_string($a->numpartial > 1 ? 'itemplural' : 'itemsingular', 'qtype_ordering');
+            $output .= '<div>' . get_string('yougotnpartial', 'qtype_ordering', $a) . '</div>';
+        }
+
+        if ($a->numincorrect) {
+            $a->numincorrectplural = get_string($a->numincorrect > 1 ? 'itemplural' : 'itemsingular', 'qtype_ordering');
+            $output .= '<div>' . get_string('yougotnincorrect', 'qtype_ordering', $a) . '</div>';
+        }
+
+        $pattern = '/<div class="numpartscorrect">' . preg_quote($output, '/');
+
+        return new question_pattern_expectation($pattern . '/');
     }
 }

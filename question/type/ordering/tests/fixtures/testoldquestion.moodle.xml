@@ -11,7 +11,7 @@
   <!-- question: 1357  -->
   <question type="ordering">
     <name>
-      <text>dd-ordering 1</text>
+      <text>dd-ordering old question</text>
     </name>
     <questiontext format="html">
       <text>Put these words in order.</text>
@@ -37,7 +37,6 @@
     <incorrectfeedback format="html">
       <text>Your answer is incorrect.</text>
     </incorrectfeedback>
-    <shownumcorrect>1</shownumcorrect>
     <answer fraction="1.0000000" format="moodle_auto_format">
       <text>Modular</text>
     </answer>
@@ -57,12 +56,14 @@
       <text>Environment</text>
     </answer>
     <hint format="html">
-      <text/>
-      <shownumcorrect/>
+      <text>
+        <![CDATA[ <p dir="ltr" style="text-align: left;">Hint 1</p> ]]>
+      </text>
     </hint>
     <hint format="html">
-      <text/>
-      <options>1</options>
+      <text>
+        <![CDATA[ <p dir="ltr" style="text-align: left;">Hint 2</p> ]]>
+      </text>
     </hint>
   </question>
 </quiz>

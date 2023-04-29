@@ -25,8 +25,6 @@
 
 namespace qtype_ordering\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy Subsystem for qtype_numerical implementing null_provider.
  *
@@ -47,7 +45,7 @@ class provider implements \core_privacy\local\metadata\null_provider {
      *
      * @return  string
      */
-    public static function _get_reason() {
+    public static function _get_reason() { // phpcs:ignore
         return 'privacy:metadata';
     }
 }

@@ -70,6 +70,8 @@ class qtype_ordering_test_helper extends question_test_helper {
         $q->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT;
         $q->options->showgrading = true;
         $q->options->numberingstyle = qtype_ordering_question::NUMBERING_STYLE_DEFAULT;
+        $q->options->shownumcorrect = 1;
+
         return $q;
     }
 
@@ -83,7 +85,7 @@ class qtype_ordering_test_helper extends question_test_helper {
      * @param bool $addmd5 whether to add the md5key property.
      * @return stdClass the answer.
      */
-    protected function make_answer($id, $text, $textformat, $order, $addmd5 = false) {
+    public function make_answer($id, $text, $textformat, $order, $addmd5 = false) {
         global $CFG;
 
         $answer = new stdClass();
@@ -168,7 +170,6 @@ class qtype_ordering_test_helper extends question_test_helper {
 
         $questiondata->options = new stdClass();
         test_question_maker::set_standard_combined_feedback_fields($questiondata->options);
-        unset($questiondata->options->shownumcorrect);
         $questiondata->options->layouttype = qtype_ordering_question::LAYOUT_HORIZONTAL;
         $questiondata->options->selecttype = qtype_ordering_question::SELECT_ALL;
         $questiondata->options->selectcount = 0;

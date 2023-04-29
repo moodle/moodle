@@ -56,6 +56,12 @@ class behat_qtype_ordering extends behat_base {
     /**
      * Drag the drag item with the given text to the given space.
      *
+     * Warning, only works if the question is using a behaviour like Immediate
+     * feedback that has a check button.
+     *
+     * Also, do not use this to drag an item to the last place. Just drag all
+     * the other non-last items to their place.
+     *
      * @param string $label the text of the item to drag.
      * @param int $position the number of the position to drop it at.
      *
@@ -63,6 +69,11 @@ class behat_qtype_ordering extends behat_base {
      */
     public function i_drag_to_space_in_the_drag_and_drop_into_text_question($label, $position) {
         $generalcontext = behat_context_helper::get('behat_general');
+        // There was a weird issue where drag-drop was not reliable if an item was being
+        // dragged to the same place it already was. So, first drag below the bottom to reliably
+        // move it to the last place.
+        $generalcontext->i_drag_and_i_drop_it_in($this->item_xpath_by_lable($label),
+                'xpath_element', get_string('check', 'question'), 'button');
         $generalcontext->i_drag_and_i_drop_it_in($this->item_xpath_by_lable($label),
                 'xpath_element', $this->item_xpath_by_position($position), 'xpath_element');
     }

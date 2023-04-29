@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Provides the information to backup ordering questions
  *
@@ -55,7 +53,7 @@ class backup_qtype_ordering_plugin extends backup_qtype_plugin {
                         'gradingtype', 'showgrading', 'numberingstyle',
                         'correctfeedback', 'correctfeedbackformat',
                         'incorrectfeedback', 'incorrectfeedbackformat',
-                        'partiallycorrectfeedback', 'partiallycorrectfeedbackformat');
+                        'partiallycorrectfeedback', 'partiallycorrectfeedbackformat', 'shownumcorrect');
         $ordering = new backup_nested_element('ordering', array('id'), $fields);
 
         // Now the own qtype tree.

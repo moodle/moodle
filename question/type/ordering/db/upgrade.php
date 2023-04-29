@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Upgrade code for the ordering question type.
  *
@@ -275,9 +273,22 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
                     case 'III':
                         $DB->set_field($table, $field, 'IIII', array('id' => $option->id));
                         break;
+                    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
                     // Ignore "abc", "iii", and anything else.
                 }
             }
+        }
+        upgrade_plugin_savepoint(true, $newversion, 'qtype', 'ordering');
+    }
+
+    $newversion = '2022092000';
+    if ($oldversion < $newversion) {
+        $table = new xmldb_table('qtype_ordering_options');
+        $field = new xmldb_field('shownumcorrect', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, 0);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->change_field_type($table, $field);
+        } else {
+            $dbman->add_field($table, $field);
         }
         upgrade_plugin_savepoint(true, $newversion, 'qtype', 'ordering');
     }

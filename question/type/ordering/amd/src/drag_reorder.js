@@ -13,15 +13,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
+/*
  * Generic library to allow things in a vertical list to be re-ordered using drag and drop.
  *
  * To make a set of things draggable, create a new instance of this object passing the
  * necessary config, as explained in the comment on the constructor.
  *
- * @package qtype_ordering
+ * @package   qtype_ordering
  * @copyright 2018 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -102,15 +102,15 @@ define([
      * See how block_userlinks does it, if this seems like it might be useful. nameGetter should return
      * the container name for these items.
      *
-     * @param config As above.
+     * @param {Object} config As above.
      */
     return function(config) {
-        var dragStart = null,       // Information about when and where the drag started.
-            originalOrder = null,   // Array of ids.
-            itemDragging = null,    // Item being moved by dragging (jQuery object).
-            itemMoving = null,      // Item being moved using the accessible modal (jQuery object).
-            proxy = null,           // Drag proxy (jQuery object).
-            orderList = null;       // Order list (jQuery object).
+        var dragStart = null, // Information about when and where the drag started.
+            originalOrder = null, // Array of ids.
+            itemDragging = null, // Item being moved by dragging (jQuery object).
+            itemMoving = null, // Item being moved using the accessible modal (jQuery object).
+            proxy = null, // Drag proxy (jQuery object).
+            orderList = null; // Order list (jQuery object).
 
         var startDrag = function(event, details) {
             orderList = $(config.list);
@@ -149,7 +149,7 @@ define([
             var list = itemDragging.closest(config.list);
             var closestItem = null;
             var closestDistance = null;
-            list.find(config.item).each(function (index, element) {
+            list.find(config.item).each(function(index, element) {
                 var distance = distanceBetweenElements(element, proxy);
                 if (closestItem === null || distance < closestDistance) {
                     closestItem = $(element);
@@ -160,7 +160,16 @@ define([
             if (closestItem[0] === itemDragging[0]) {
                 return;
             }
+            var offsetValue = 0;
+            // Set offset depending on if item is being dragged downwards/upwards.
             if (midY(proxy) < midY(closestItem)) {
+                offsetValue = 20;
+                window.console.log("For midY(proxy) < midY(closestItem) offset is: " + offsetValue);
+            } else {
+                offsetValue = -20;
+                window.console.log("For midY(proxy) < midY(closestItem) offset is: " + offsetValue);
+            }
+           if (midY(proxy) + offsetValue < midY(closestItem)) {
                 itemDragging.insertBefore(closestItem);
             } else {
                 itemDragging.insertAfter(closestItem);
@@ -170,14 +179,13 @@ define([
 
         /**
          * Update proxy's position.
-         * @param itemDragging
+         * @param {jQuery} itemDragging
          */
         var updateProxy = function(itemDragging) {
             var list = itemDragging.closest('ol, ul');
             var items = list.find('li');
             var count = items.length;
             for (var i = 0; i < count; ++i) {
-                //proxy.css('margin-left', '20p');
                 if (itemDragging[0] === items[i]) {
                     proxy.find('li').attr('value', i + 1);
                     break;
@@ -189,8 +197,8 @@ define([
          * It outer and inner are two CSS selectors, which may contain commas,
          * then combine them safely. So combineSelectors('a, b', 'c, d')
          * gives 'a c, a d, b c, b d'.
-         * @param outer
-         * @param inner
+         * @param {Selector} outer
+         * @param {Selector} inner
          * @returns {string}
          */
         var combineSelectors = function(outer, inner) {
@@ -230,10 +238,10 @@ define([
          * Tab for tabbing though and choose the item to be moved
          * space, arrow-right arrow-down for moving current element forewards.
          * arrow-right arrow-down for moving the current element backwards.
-         * @param e, the event
-         * @param item, the current moving item
+         * @param {Object} e the event
+         * @param {jQuery} current the current moving item
          */
-        var itemMovedByKeyboard = function (e, current) {
+        var itemMovedByKeyboard = function(e, current) {
             switch (e.keyCode) {
                 case keys.space:
                 case keys.arrowRight:
@@ -260,8 +268,8 @@ define([
 
         /**
          * Get the x-position of the middle of the DOM node represented by the given jQuery object.
-         * @param jQuery wrapping a DOM node.
-         * @returns Number the x-coordinate of the middle (left plus half outerWidth).
+         * @param {jQuery} jQuery wrapping a DOM node.
+         * @returns {number} Number the x-coordinate of the middle (left plus half outerWidth).
          */
         var midX = function(jQuery) {
             return jQuery.offset().left + jQuery.outerWidth() / 2;
@@ -269,8 +277,8 @@ define([
 
         /**
          * Get the y-position of the middle of the DOM node represented by the given jQuery object.
-         * @param jQuery wrapping a DOM node.
-         * @returns Number the y-coordinate of the middle (top plus half outerHeight).
+         * @param {jQuery} jQuery wrapping a DOM node.
+         * @returns {number} Number the y-coordinate of the middle (top plus half outerHeight).
          */
         var midY = function(jQuery) {
             return jQuery.offset().top + jQuery.outerHeight() / 2;
@@ -278,12 +286,13 @@ define([
 
         /**
          * Calculate the distance between the centres of two elements.
-         * @param element1 selector, element or jQuery.
-         * @param element2 selector, element or jQuery.
-         * @return number the distance in pixels.
+         * @param {Selector|Element|jQuery} element1 selector, element or jQuery.
+         * @param {Selector|Element|jQuery} element2 selector, element or jQuery.
+         * @return {number} number the distance in pixels.
          */
         var distanceBetweenElements = function(element1, element2) {
-            var e1 = $(element1), e2 = $(element2);
+            var e1 = $(element1);
+            var e2 = $(element2);
             var dx = midX(e1) - midX(e2);
             var dy = midY(e1) - midY(e2);
             return Math.sqrt(dx * dx + dy * dy);
@@ -291,23 +300,27 @@ define([
 
         /**
          * Get the current order of the list containing itemDragging.
-         * @returns Array of strings, the id of each element in order.
+         * @returns {Array} Array of strings, the id of each element in order.
          */
         var getCurrentOrder = function() {
             return (itemDragging || itemMoving).closest(config.list).find(config.item).map(
-                    function(index, item) { return config.idGetter(item); }).get();
+                    function(index, item) {
+                        return config.idGetter(item);
+                    }).get();
         };
 
         /**
          * Compare two arrays, which just contain simple values like ints or strings,
          * to see if they are equal.
-         * @param a1 first array.
-         * @param a2 second array.
-         * @return boolean true if they both contain the same elements in the same order, else false.
+         * @param {Array} a1 first array.
+         * @param {Array} a2 second array.
+         * @return {Boolean} boolean true if they both contain the same elements in the same order, else false.
          */
         var arrayEquals = function(a1, a2) {
             return a1.length === a2.length &&
-                a1.every(function(v, i) { return v === a2[i]; });
+                a1.every(function(v, i) {
+                    return v === a2[i];
+                });
         };
         config.itemInPage = combineSelectors(config.list, config.item);
 

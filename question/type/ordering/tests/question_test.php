@@ -23,6 +23,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace qtype_ordering;
+
+use test_question_maker;
+use question_attempt_pending_step;
+use question_state;
+use qtype_ordering_question;
+use question_attempt_step;
+use question_classified_response;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,8 +42,9 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  *
  * @copyright 2018 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers  \qtype_ordering_question
  */
-class qtype_ordering_question_test extends advanced_testcase {
+class question_test extends \advanced_testcase {
     /**
      * Array of draggable items in correct order.
      */
@@ -66,6 +75,7 @@ class qtype_ordering_question_test extends advanced_testcase {
 
     public function test_grading_all_or_nothing () {
         // Create an Ordering question.
+        /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         // Zero grade on any error (no partial scroe at all, it is either 1 or 0).
         $question->options->gradingtype = qtype_ordering_question::GRADING_ALL_OR_NOTHING;
@@ -83,6 +93,7 @@ class qtype_ordering_question_test extends advanced_testcase {
     }
     public function test_grading_absolute_position () {
         // Create an Ordering question.
+        /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         // Counts items, placed into right absolute place.
         $question->options->gradingtype = qtype_ordering_question::GRADING_ABSOLUTE_POSITION;
@@ -112,6 +123,7 @@ class qtype_ordering_question_test extends advanced_testcase {
     }
     public function test_grading_relative_next_exclude_last () {
         // Create an Ordering question.
+        /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         // Every sequential pair in right order is graded (last pair is excluded).
         $question->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_NEXT_EXCLUDE_LAST;
@@ -137,6 +149,7 @@ class qtype_ordering_question_test extends advanced_testcase {
     }
     public function test_grading_relative_next_include_last () {
         // Create an Ordering question.
+        /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         // Every sequential pair in right order is graded (last pair is included).
         $question->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_NEXT_INCLUDE_LAST;
@@ -157,6 +170,7 @@ class qtype_ordering_question_test extends advanced_testcase {
     }
     public function test_grading_relative_one_previous_and_next () {
         // Create an Ordering question.
+        /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         // Single answers that are placed before and after each answer is graded if in right order.
         $question->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT;
@@ -179,6 +193,7 @@ class qtype_ordering_question_test extends advanced_testcase {
     }
     public function test_grading_relative_all_previous_and_next () {
         // Create an Ordering question.
+        /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         // All answers that are placed before and after each answer is graded if in right order.
         $question->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT;
@@ -205,6 +220,7 @@ class qtype_ordering_question_test extends advanced_testcase {
     }
     public function test_grading_longest_ordered_subset () {
         // Create an Ordering question.
+        /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         // Only longest ordered subset is graded.
         $question->options->gradingtype = qtype_ordering_question::GRADING_LONGEST_ORDERED_SUBSET;
@@ -227,6 +243,7 @@ class qtype_ordering_question_test extends advanced_testcase {
     }
     public function test_grading_longest_contiguous_subset () {
         // Create an Ordering question.
+        /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         // Only longest ordered and contiguous subset is graded.
         $question->options->gradingtype = qtype_ordering_question::GRADING_LONGEST_CONTIGUOUS_SUBSET;
@@ -249,6 +266,7 @@ class qtype_ordering_question_test extends advanced_testcase {
     }
     public function test_grading_relative_to_correct () {
         // Create an Ordering question.
+        /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         // Items are graded relative to their position in the correct answer.
         $question->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_TO_CORRECT;
@@ -273,12 +291,14 @@ class qtype_ordering_question_test extends advanced_testcase {
 
     public function test_get_expected_data() {
         // Create an Ordering question.
+        /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         $this->assertArrayHasKey('response_' . $question->id, $question->get_expected_data());
     }
 
     public function test_get_correct_response() {
         // Create an Ordering question.
+        /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         $question->start_attempt(new question_attempt_pending_step(), 1);
 
@@ -289,6 +309,7 @@ class qtype_ordering_question_test extends advanced_testcase {
     }
     public function test_is_same_response() {
         // Create an Ordering question.
+        /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         $question->start_attempt(new question_attempt_pending_step(), 1);
 
@@ -302,6 +323,7 @@ class qtype_ordering_question_test extends advanced_testcase {
 
     public function test_summarise_response() {
         // Create an Ordering question.
+        /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         $question->start_attempt(new question_attempt_pending_step(), 1);
 
@@ -316,14 +338,17 @@ class qtype_ordering_question_test extends advanced_testcase {
         $this->assertEquals($expected, $actual);
     }
 
-    public function test_get_ordering_answers() {
+    public function test_initialise_question_instance() {
         // Create an Ordering question.
-        $question = test_question_maker::make_question('ordering');
-        $this->assertEquals($question->answers, $question->get_ordering_answers());
+        $questiondata = test_question_maker::get_question_data('ordering');
+        /** @var qtype_ordering_question $question */
+        $question = \question_bank::make_question($questiondata);
+        $this->assertStringContainsString('ordering_item_', reset($question->answers)->md5key);
     }
 
     public function test_get_ordering_layoutclass() {
         // Create an Ordering question.
+        /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
 
         if ($question->options->layouttype === 0) {
@@ -335,6 +360,7 @@ class qtype_ordering_question_test extends advanced_testcase {
 
     public function test_get_next_answerids() {
         // Create an Ordering question.
+        /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         $answerids = array_keys($question->answers);
 
@@ -363,6 +389,7 @@ class qtype_ordering_question_test extends advanced_testcase {
 
     public function test_get_previous_and_next_answerids() {
         // Create an Ordering question.
+        /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         $answerids = array_keys($question->answers);
 
@@ -385,6 +412,7 @@ class qtype_ordering_question_test extends advanced_testcase {
     }
 
     public function test_classify_response_correct() {
+        /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         $question->start_attempt(new question_attempt_step(), 1);
 
@@ -400,10 +428,11 @@ class qtype_ordering_question_test extends advanced_testcase {
                 'Environment' => new question_classified_response(6, 'Position 6', 0.1666667),
         ];
 
-        $this->assertEqualsWithDelta($expected, $classifiedresponse, 0.0000005, '');
+        $this->assertEqualsWithDelta($expected, $classifiedresponse, 0.0000005);
     }
 
     public function test_classify_response_partially_correct() {
+        /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         $question->start_attempt(new question_attempt_step(), 1);
 
@@ -419,6 +448,119 @@ class qtype_ordering_question_test extends advanced_testcase {
                 'Environment' => new question_classified_response(6, 'Position 6', 0.1666667),
         ];
 
-        $this->assertEqualsWithDelta($expected, $classifiedresponse, 0.0000005, '');
+        $this->assertEqualsWithDelta($expected, $classifiedresponse, 0.0000005);
+    }
+
+    /**
+     * Test get number of correct|partial|incorrect on response.
+     */
+    public function test_get_num_parts_right() {
+        // Create a Ordering question.
+        /** @var qtype_ordering_question $question */
+        $question = test_question_maker::make_question('ordering');
+
+        $question->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_TO_CORRECT;
+        $question->start_attempt(new question_attempt_pending_step(), 1);
+
+        $response = $this->get_response($question, ['Dynamic', 'Modular', 'Object', 'Oriented', 'Learning', 'Environment']);
+        $numparts = $question->get_num_parts_right($response);
+
+        $this->assertEquals([2, 4, 0], $numparts);
+    }
+
+    public function test_validate_can_regrade_with_other_version_bad() {
+        if (!method_exists('question_definition', 'validate_can_regrade_with_other_version')) {
+            $this->markTestSkipped('This test only applies to Moodle 4.x');
+        }
+
+        /** @var qtype_ordering_question $question */
+        $question = test_question_maker::make_question('ordering');
+
+        $newq = clone($question);
+        $helper = new \qtype_ordering_test_helper();
+        $newq->answers = [
+            23 => $helper->make_answer(23, 'Modular', FORMAT_HTML, 1, true),
+            24 => $helper->make_answer(24, 'Object', FORMAT_HTML, 2, true),
+            25 => $helper->make_answer(25, 'Oriented', FORMAT_HTML, 3, true),
+            26 => $helper->make_answer(26, 'Dynamic', FORMAT_HTML, 4, true),
+            27 => $helper->make_answer(27, 'Learning', FORMAT_HTML, 5, true),
+        ];
+
+        $this->assertEquals(get_string('regradeissuenumitemschanged', 'qtype_ordering'),
+                $newq->validate_can_regrade_with_other_version($question));
+    }
+
+    public function test_validate_can_regrade_with_other_version_ok() {
+        if (!method_exists('question_definition', 'validate_can_regrade_with_other_version')) {
+            $this->markTestSkipped('This test only applies to Moodle 4.x');
+        }
+
+        /** @var qtype_ordering_question $question */
+        $question = test_question_maker::make_question('ordering');
+
+        $newq = clone($question);
+        $helper = new \qtype_ordering_test_helper();
+        $newq->answers = [
+            23 => $helper->make_answer(23, 'Modular', FORMAT_HTML, 1, true),
+            24 => $helper->make_answer(24, 'Object', FORMAT_HTML, 2, true),
+            25 => $helper->make_answer(25, 'Oriented', FORMAT_HTML, 3, true),
+            26 => $helper->make_answer(26, 'Dynamic', FORMAT_HTML, 4, true),
+            27 => $helper->make_answer(27, 'Learning', FORMAT_HTML, 5, true),
+            28 => $helper->make_answer(28, 'Environment', FORMAT_HTML, 6, true),
+        ];
+
+        $this->assertNull($newq->validate_can_regrade_with_other_version($question));
+    }
+
+    public function test_update_attempt_state_date_from_old_version_bad() {
+        if (!method_exists('question_definition', 'update_attempt_state_data_for_new_version')) {
+            $this->markTestSkipped('This test only applies to Moodle 4.x');
+        }
+
+        /** @var qtype_ordering_question $question */
+        $question = test_question_maker::make_question('ordering');
+
+        $newq = clone($question);
+        $helper = new \qtype_ordering_test_helper();
+        $newq->answers = [
+            23 => $helper->make_answer(23, 'Modular', FORMAT_HTML, 1, true),
+            24 => $helper->make_answer(24, 'Object', FORMAT_HTML, 2, true),
+            25 => $helper->make_answer(25, 'Oriented', FORMAT_HTML, 3, true),
+            26 => $helper->make_answer(26, 'Dynamic', FORMAT_HTML, 4, true),
+            27 => $helper->make_answer(27, 'Learning', FORMAT_HTML, 5, true),
+        ];
+
+        $oldstep = new question_attempt_step();
+        $oldstep->set_qt_var('_currentresponse', '15,13,17,16,18,14');
+        $oldstep->set_qt_var('_correctresponse', '13,14,15,16,17,18');
+        $this->expectExceptionMessage(get_string('regradeissuenumitemschanged', 'qtype_ordering'));
+        $newq->update_attempt_state_data_for_new_version($oldstep, $question);
+    }
+
+    public function test_update_attempt_state_date_from_old_version_ok() {
+        if (!method_exists('question_definition', 'update_attempt_state_data_for_new_version')) {
+            $this->markTestSkipped('This test only applies to Moodle 4.x');
+        }
+
+        /** @var qtype_ordering_question $question */
+        $question = test_question_maker::make_question('ordering');
+
+        $newq = clone($question);
+        $helper = new \qtype_ordering_test_helper();
+        $newq->answers = [
+            23 => $helper->make_answer(23, 'Modular', FORMAT_HTML, 1, true),
+            24 => $helper->make_answer(24, 'Object', FORMAT_HTML, 2, true),
+            25 => $helper->make_answer(25, 'Oriented', FORMAT_HTML, 3, true),
+            26 => $helper->make_answer(26, 'Dynamic', FORMAT_HTML, 4, true),
+            27 => $helper->make_answer(27, 'Learning', FORMAT_HTML, 5, true),
+            28 => $helper->make_answer(28, 'Environment', FORMAT_HTML, 6, true),
+        ];
+
+        $oldstep = new question_attempt_step();
+        $oldstep->set_qt_var('_currentresponse', '15,13,17,16,18,14');
+        $oldstep->set_qt_var('_correctresponse', '13,14,15,16,17,18');
+
+        $this->assertEquals(['_currentresponse' => '25,23,27,26,28,24', '_correctresponse' => '23,24,25,26,27,28'],
+                $newq->update_attempt_state_data_for_new_version($oldstep, $question));
     }
 }

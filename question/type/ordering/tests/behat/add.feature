@@ -14,9 +14,7 @@ Feature: Test creating an Ordering question
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
 
   @javascript
   Scenario: Create an Ordering question with 6 draggable items
@@ -35,4 +33,7 @@ Feature: Test creating an Ordering question
       | For any incorrect response         | Your answer is incorrect         |
       | Hint 1                             | This is your first hint          |
       | Hint 2                             | This is your second hint         |
+      | hintoptions[0]                     | 1                                |
+      | hintshownumcorrect[1]              | 1                                |
+      | shownumcorrect                     | 1                                |
     Then I should see "Ordering-001"

@@ -1,6 +1,6 @@
-============================================
-The Ordering question type for Moodle >= 2.9
-============================================
+=============================================
+The Ordering question type for Moodle >= 3.11
+=============================================
 
 The ordering question type displays several items in a random order
 which the user then drags into the correct sequential order.

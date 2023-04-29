@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
+/*
  * A list of human readable names for the keycodes.
  *
  * This is a copy of a library that was added to Moodle core in Moodle 3.2,
