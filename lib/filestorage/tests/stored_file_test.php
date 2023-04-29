@@ -118,6 +118,7 @@ class stored_file_test extends advanced_testcase {
         $this->assertInstanceOf(\Psr\Http\Message\StreamInterface::class, $stream);
         $this->assertEquals(file_get_contents($filepath), $stream->getContents());
         $this->assertFalse($stream->isWritable());
+        $stream->close();
     }
 
 }
