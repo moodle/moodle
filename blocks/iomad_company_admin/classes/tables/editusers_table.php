@@ -143,7 +143,7 @@ class editusers_table extends table_sql {
 
             // Set up the current value for the inplace form and display it.
             if (empty($CFG->iomad_autoenrol_managers)) {
-                $currentvalue = $row->managertype + 10 * $row->educator;
+                $currentvalue = ($row->managertype + 10) * $row->educator;
             } else {
                 $currentvalue = $row->managertype;
             }
