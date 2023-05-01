@@ -4042,7 +4042,7 @@ class company {
 
         $complete = false;
         if(!empty($trackinfo->licenseid) && $DB->get_record('companylicense', array('id' => $trackinfo->licenseid, 'program' => 1))) {
-            $licenses = $DB->get_records('companylicense_users', array('licenseid' => $track->licenseid));
+            $licenses = $DB->get_records('companylicense_users', array('licenseid' => $trackinfo->licenseid));
             foreach ($licenses as $license) {
                 if ($license->isusing && $DB->get_record_sql("SELECT id FROM {course_completions}
                                                               WHERE userid = :userid
