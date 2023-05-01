@@ -74,6 +74,7 @@ redirect(new moodle_url($CFG->wwwroot . '/blocks/iomad_commerce/basket.php'));
 } else if ($data = $mform->get_data()) {
 
     $data->id = $basketid;
+    $data->companyid = $companyid;
 
     $DB->update_record('invoice', $data, array('id' => $data->id));
 
