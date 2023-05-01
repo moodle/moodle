@@ -81,13 +81,15 @@ class helper {
 
     public static function get_license_block($itemid, $nlicenses) {
         global $DB;
-        return $DB->get_record_sql('SELECT *
-                                    FROM {course_shopblockprice}
-                                    WHERE itemid = :itemid
-                                    AND price_bracket_start <= :nlicenses
-                                    ORDER BY price_bracket_start DESC
-                                    LIMIT 0, 1
-                                   ', array('nlicenses' => $nlicenses, 'itemid' => $itemid));
+
+        $record =  $DB->get_records_sql("SELECT *
+                                         FROM {course_shopblockprice}
+                                         WHERE itemid = :itemid
+                                         AND price_bracket_start <= :nlicenses
+                                         ORDER BY price_bracket_start DESC",
+                                         ['nlicenses' => $nlicenses, 'itemid' => $itemid],
+                                         0, 1);
+        return array_shift($record);
 
     }
 
