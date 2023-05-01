@@ -289,9 +289,15 @@ class company {
                                                  WHERE id IN (
                                                    SELECT companyid FROM {company_users}
                                                    WHERE userid = :userid )
-                                                 AND parentid = 0
+                                                 AND parentid NOT IN (
+                                                   SELECT companyid FROM {company_users}
+                                                   WHERE userid = :userid2 )
+                                                 )
                                                  $suspendedsql
-                                                 ORDER BY name", array('userid' => $USER->id, 'suspended' => $showsuspended));
+                                                 ORDER BY name",
+                                                 ['userid' => $USER->id,
+                                                  'userid2' => $USER->id,
+                                                  'suspended' => $showsuspended]);
         }
         $companyselect = array();
         foreach ($companies as $company) {
