@@ -451,6 +451,7 @@ $chart->add_series($allocatedseries);
 $chart->add_series($unallocatedseries);
 $chart->add_series($netseries);
 $chart->add_series($totalseries);
+$chart->set_labels([get_string('licenseuseage', 'block_iomad_company_admin')]);
 echo $output->render($chart);
 
 echo $output->footer();
