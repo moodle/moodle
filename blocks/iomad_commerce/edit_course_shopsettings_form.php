@@ -151,6 +151,8 @@ if ($mform->is_cancelled()) {
             $priceblock->currency = $CFG->commerce_admin_currency;
             $priceblock->price_bracket_start = $itemblock;
             $priceblock->price = $data->item_block_price[$blockid];
+            $priceblock->validlength = $data->single_purchase_validlength;
+            $priceblock->shelflife = $data->single_purchase_shelflife;
 
             $DB->insert_record('course_shopblockprice', $priceblock, false, false);
         }
