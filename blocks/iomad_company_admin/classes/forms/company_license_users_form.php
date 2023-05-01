@@ -146,6 +146,9 @@ class company_license_users_form extends \moodleform {
 
         $mform =& $this->_form;
 
+        // Disable on change notifications.
+        $mform->disable_form_change_checker();
+
         if (!empty($this->course->id)) {
             $this->_form->addElement('hidden', 'courseid', $this->course->id);
         }
