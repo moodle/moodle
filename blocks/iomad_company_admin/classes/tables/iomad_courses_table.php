@@ -120,6 +120,37 @@ class iomad_courses_table extends table_sql {
      * @param object $user the table row being output.
      * @return string HTML content to go inside the td.
      */
+    public function col_autoenrol($row) {
+        global $USER, $systemcontext, $company, $OUTPUT, $DB;
+
+        $options = [get_string('no'), get_string('yes')];
+
+        if (empty($row->autoenrol)) {
+            $value = 0;
+        } else {
+            $value = $row->autoenrol;
+        }
+
+        if (!empty($USER->editing) &&
+        iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+
+            $editable = new \block_iomad_company_admin\output\courses_autoenrol_editable($company,
+                                                          $systemcontext,
+                                                          $row,
+                                                          $value);
+
+            return $OUTPUT->render_from_template('core/inplace_editable', $editable->export_for_template($OUTPUT));
+
+        } else {
+            return $options[$value];
+        }
+    }
+
+    /**
+     * Generate the display of the user's license allocated timestamp
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
     public function col_shared($row) {
         global $USER, $systemcontext, $company, $OUTPUT, $DB;
 

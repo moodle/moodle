@@ -218,6 +218,8 @@ if ($companyid == 'all') {
 
 $companysql = " 1 = 1";
 $searchsql = "";
+$autoselect = "";
+$autofrom = "";
 if (!empty($companyid)) {
     if ($companyid == "none") {
         $companysql = " c.id NOT IN (SELECT courseid FROM {company_course}) ";
@@ -226,6 +228,8 @@ if (!empty($companyid)) {
                           SELECT courseid FROM {company_course}
                           WHERE companyid = :companyid)
                          OR ic.shared = 1) ";
+        $autoselect = ", cca.autoenrol AS autoenrol";
+        $autofrom = " LEFT JOIN {company_course_autoenrol} cca ON (ic.courseid = cca.courseid AND cca.companyid = " . $companyid . ")";
     }
 }
 
@@ -239,67 +243,60 @@ if (!empty($coursesearch)) {
 }
 
 // Set up the SQL for the table.
-$selectsql = "ic.id, c.id AS courseid, c.fullname AS coursename, ic.licensed, ic.shared, ic.validlength, ic.warnexpire, ic.warncompletion, ic.notifyperiod, ic.expireafter, ic.warnnotstarted, ic.hasgrade, '$companyid' AS companyid";
-$fromsql = "{iomad_courses} ic JOIN {course} c ON (ic.courseid = c.id)";
+$selectsql = "ic.id,
+              c.id AS courseid,
+              c.fullname AS coursename,
+              ic.licensed,
+              ic.shared,
+              ic.validlength,
+              ic.warnexpire,
+              ic.warncompletion,
+              ic.notifyperiod,
+              ic.expireafter,
+              ic.warnnotstarted,
+              ic.hasgrade,
+              '$companyid' AS companyid
+              $autoselect";
+$fromsql = "{iomad_courses} ic JOIN {course} c ON (ic.courseid = c.id) $autofrom ";
 $wheresql = "$companysql $searchsql";
 $sqlparams = $params;
 
-// Can we manage the courses or just see them?
-if ($canedit) {
-    // Set up the headers for the table.
-    $tableheaders = [
-        get_string('company', 'block_iomad_company_admin'),
-        get_string('course'),
-        get_string('licensed', 'block_iomad_company_admin') . $OUTPUT->help_icon('licensed', 'block_iomad_company_admin'),
-        get_string('shared', 'block_iomad_company_admin')  . $OUTPUT->help_icon('shared', 'block_iomad_company_admin'),
-        get_string('validfor', 'block_iomad_company_admin') . $OUTPUT->help_icon('validfor', 'block_iomad_company_admin'),
-        get_string('expireafter', 'block_iomad_company_admin') . $OUTPUT->help_icon('expireafter', 'block_iomad_company_admin'),
-        get_string('warnexpire', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnexpire', 'block_iomad_company_admin'),
-        get_string('warnnotstarted', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnnotstarted', 'block_iomad_company_admin'),
-        get_string('warncompletion', 'block_iomad_company_admin') . $OUTPUT->help_icon('warncompletion', 'block_iomad_company_admin'),
-        get_string('notifyperiod', 'block_iomad_company_admin') . $OUTPUT->help_icon('notifyperiod', 'block_iomad_company_admin'),
-        get_string('hasgrade', 'block_iomad_company_admin') . $OUTPUT->help_icon('hasgrade', 'block_iomad_company_admin')];
-    $tablecolumns = ['company',
-                          'coursename',
-                          'licensed',
-                          'shared',
-                          'validlength',
-                          'expireafter',
-                          'warnexpire',
-                          'warnnotstarted',
-                          'warncompletion',
-                          'notifyperiod',
-                          'hasgrade'];
-
-    // Do we show the action columns?
-    if (!empty($USER->editing)) {    
-        $tableheaders[] = '';
-        $tablecolumns[] = 'actions';
-    }
-
-} else {
 // Set up the headers for the table.
-$tableheaders = array(
+$tableheaders = [
+    get_string('company', 'block_iomad_company_admin'),
     get_string('course'),
     get_string('licensed', 'block_iomad_company_admin') . $OUTPUT->help_icon('licensed', 'block_iomad_company_admin'),
+    get_string('shared', 'block_iomad_company_admin')  . $OUTPUT->help_icon('shared', 'block_iomad_company_admin'),
     get_string('validfor', 'block_iomad_company_admin') . $OUTPUT->help_icon('validfor', 'block_iomad_company_admin'),
     get_string('expireafter', 'block_iomad_company_admin') . $OUTPUT->help_icon('expireafter', 'block_iomad_company_admin'),
     get_string('warnexpire', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnexpire', 'block_iomad_company_admin'),
     get_string('warnnotstarted', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnnotstarted', 'block_iomad_company_admin'),
     get_string('warncompletion', 'block_iomad_company_admin') . $OUTPUT->help_icon('warncompletion', 'block_iomad_company_admin'),
     get_string('notifyperiod', 'block_iomad_company_admin') . $OUTPUT->help_icon('notifyperiod', 'block_iomad_company_admin'),
-    get_string('hasgrade', 'block_iomad_company_admin') . $OUTPUT->help_icon('hasgrade', 'block_iomad_company_admin'),
-        get_string('actions'));
-$tablecolumns = array('coursename',
-                      'licensed',
-                      'validlength',
-                      'expireafter',
-                      'warnexpire',
-                      'warnnotstarted',
-                      'warncompletion',
-                      'notifyperiod',
-                      'hasgrade',
-                      'actions');
+    get_string('hasgrade', 'block_iomad_company_admin') . $OUTPUT->help_icon('hasgrade', 'block_iomad_company_admin')];
+$tablecolumns = ['company',
+                 'coursename',
+                 'licensed',
+                 'shared',
+                 'validlength',
+                 'expireafter',
+                 'warnexpire',
+                 'warnnotstarted',
+                 'warncompletion',
+                 'notifyperiod',
+                 'hasgrade'];
+if (!empty($companyid) && $companyid != "none") {
+    $tableheaders[] = get_string('autocourses', 'block_iomad_company_admin');
+    $tablecolumns[] = 'autoenrol';
+}
+
+// Can we manage the courses or just see them?
+if ($canedit) {
+    // Do we show the action columns?
+    if (!empty($USER->editing)) {    
+        $tableheaders[] = '';
+        $tablecolumns[] = 'actions';
+    }
 }
 $table->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
 $table->define_baseurl($baseurl);

@@ -302,13 +302,6 @@ if ($domains = $DB->get_records('company_domains', array('companyid' => $company
         $companyrecord->companydomains .= $domain->domain ."\n";
     }
 }
-if ($currentcourses = $DB->get_records('company_course',
-                                        array('autoenrol' => true,
-                                              'companyid' => $companyid), null, 'courseid')) {
-    foreach ($currentcourses as $currentcourse) {
-        $companyrecord->autocourses[] = $currentcourse->courseid;
-    }
-}
 
 // Set up the form.
 $mform = new block_iomad_company_admin\forms\company_edit_form($PAGE->url, $isadding, $companyid, $companyrecord, $firstcompany, $parentid, $child);
@@ -646,14 +639,6 @@ if ($mform->is_cancelled()) {
             if (!empty($domain)) {
                 $DB->insert_record('company_domains', array('companyid' => $companyid, 'domain' => $domain));
             }
-        }
-    }
-
-    // Deal with autoenrol courses.
-    $DB->set_field('company_course', 'autoenrol', false, array('companyid' => $companyid));
-    if (!empty($data->autocourses)) {
-        foreach ($data->autocourses as $autoid) {
-            $DB->set_field('company_course', 'autoenrol', true, array('companyid' => $companyid, 'courseid' => $autoid));
         }
     }
 

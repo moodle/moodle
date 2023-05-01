@@ -943,27 +943,14 @@ class company_user {
                             $event->trigger();
                         } else {
                             // Can we get a newer license?
-                            if ($latestlicenses = $DB->get_records_sql("SELECT cl.* FROM {companylicense} cl
-                                                                        JOIN {companylicense_courses} clc ON (cl.id = clc.licenseid)
-                                                                        WHERE clc.courseid = :courseid
-                                                                        AND cl.companyid = :companyid
-                                                                        AND cl.expirydate > :date
-                                                                        AND cl.allocation > cl.used
-                                                                        ORDER BY cl.expirydate DESC
-                                                                        LIMIT 1",
-                                                                        array('courseid' => $courseid,
-                                                                              'companyid' => $licenserecord->companyid,
-                                                                              'date' => time()))) {
-                                $latestlicense = array_pop($latestlicenses);
-                                $newlicense->licenseid = $latestlicense->id;
-                                $newlicenseid = $DB->insert_record('companylicense_users', (array) $newlicense);
+                            if ($newlicense = self::auto_allocate_license($userid, $licenserecord->companyid, $courseid)) {
 
                                 // Create an event.
-                                $eventother = array('licenseid' => $latestlicense->id,
+                                $eventother = array('licenseid' => $newlicense->licenseid,
                                                     'issuedate' => time(),
                                                     'duedate' => 0);
                                 $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($courseid),
-                                                                                                              'objectid' => $newlicenseid,
+                                                                                                              'objectid' => $newlicense->id,
                                                                                                               'courseid' => $courseid,
                                                                                                               'userid' => $userid,
                                                                                                               'other' => $eventother));
@@ -986,6 +973,41 @@ class company_user {
             $transaction->allow_commit();
         } catch(Exception $e) {
             $transaction->rollback($e);
+        }
+    }
+
+    public static function auto_allocate_license($userid, $companyid, $courseid) {
+        global $DB;
+
+error_log("In auto_allocate_license");
+
+        // Can we get a newer license?
+        if ($latestlicenses = $DB->get_records_sql("SELECT cl.* FROM {companylicense} cl
+                                                    JOIN {companylicense_courses} clc ON (cl.id = clc.licenseid)
+                                                    WHERE clc.courseid = :courseid
+                                                    AND cl.companyid = :companyid
+                                                    AND cl.program = 0
+                                                    AND cl.expirydate > :date
+                                                    AND cl.allocation > cl.used
+                                                    ORDER BY cl.expirydate DESC
+                                                    LIMIT 1",
+                                                    array('courseid' => $courseid,
+                                                          'companyid' => $companyid,
+                                                          'date' => time()))) {
+            $latestlicense = array_pop($latestlicenses);
+error_log("got a license id $latestlicense->id");
+            $newlicense = (object) ['userid' => $userid,
+                                    'isusing' => 0,
+                                    'issuedate' => time(),
+                                    'timecompleted' => null,
+                                    'licensecourseid' => $courseid,
+                                    'licenseid' => $latestlicense->id];
+            $newlicense->id = $DB->insert_record('companylicense_users', (array) $newlicense);
+
+            return $newlicense;
+        } else {
+error_log("we didn't get a license");
+            return false;
         }
     }
 

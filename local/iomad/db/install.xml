@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/iomad/db" VERSION="20230416" COMMENT="XMLDB file for Moodle local/iomad"
+<XMLDB PATH="local/iomad/db" VERSION="20230427" COMMENT="XMLDB file for Moodle local/iomad"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -69,7 +69,6 @@
         <FIELD NAME="companyid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="departmentid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="autoenrol" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -363,6 +362,17 @@
         <FIELD NAME="userid" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="expires" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="token" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="company_course_autoenrol" COMMENT="Swing table for company courses which are auto enrolment courses">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="companyid" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="autoenrol" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

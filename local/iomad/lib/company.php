@@ -3619,12 +3619,30 @@ class company {
      *
      **/
     public function autoenrol($user) {
-        global $DB, $CFG, $SITE;
+        global $DB, $CFG, $SESSION, $SITE, $OUTPUT;
+
+        // Did we get passed a user id?
+        if (!is_object($user)) {
+            $userrec = $DB->get_record('user', array('id' => $user));
+            $user = $userrec;
+        }
+
+        // Get all of the courses the company can see.
+        $companycoursesql = "";
+        if ($companycourses = $this->get_menu_courses(true, false, false, false, false)) {
+            $companycoursesql = " AND courseid IN (" . join(',', array_keys($companycourses)) . ")";
+        }
 
         // Get the courses which are assigned to the company which are not licensed.
-        $courses = $DB->get_records_sql("SELECT courseid FROM {company_course} WHERE companyid = :companyid
-                                         AND autoenrol = 1",
+        $courses = $DB->get_records_sql("SELECT DISTINCT courseid
+                                         FROM {company_course_autoenrol}
+                                         WHERE companyid = :companyid
+                                         AND autoenrol = 1
+                                         $companycoursesql",
                                          array('companyid' => $this->id));
+
+        // Get all of the licensed courses.
+        $licensecourses = $DB->get_records_sql("SELECT courseid FROM {iomad_courses} WHERE licensed = 1");
 
         // Are we also enrolling to unattached courses?
         if (!empty($CFG->local_iomad_signup_autoenrol_unassigned)) {
@@ -3638,10 +3656,40 @@ class company {
         }
 
         // Enrol the user onto them.
+        $errors = '';
         foreach ($courses as $addcourse) {
-            if ($course = $DB->get_record_sql("SELECT id FROM {course} WHERE id = :courseid AND visible = 1",
+            if ($course = $DB->get_record_sql("SELECT id,fullname FROM {course} WHERE id = :courseid AND visible = 1",
                                                array('courseid' => $addcourse->courseid))) {
-                company_user::enrol($user, array($course->id));
+
+                // Check if this is a licensed course.
+                if (!empty($licensecourses[$course->id])) {
+                    if ($newlicense = company_user::auto_allocate_license($user->id, $this->id, $course->id)) {
+
+                        // Create an event.
+                        $eventother = array('licenseid' => $newlicense->licenseid,
+                                            'issuedate' => time(),
+                                            'duedate' => 0);
+                        $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($course->id),
+                                                                                                      'objectid' => $newlicense->id,
+                                                                                                      'courseid' => $course->id,
+                                                                                                      'userid' => $user->id,
+                                                                                                      'other' => $eventother));
+                        $event->trigger();
+                    } else {
+                        $errors .= format_string($course->fullname) . " ";
+                    }
+                } else {
+                    company_user::enrol($user, array($course->id));
+                }
+            }
+        }
+        if (!empty($errors)) {
+            //We only want to be notified of this once as sometimes this gets run multiple times.
+            if (empty($SESSION->autoenrolonuser) || $SESSION->autoenrolonuser != $user->id) {
+                $notify = new \core\output\notification(get_string('autoenrolmentfailed', 'block_iomad_company_admin', $errors),
+                                                        \core\output\notification::NOTIFY_WARNING);
+                echo $OUTPUT->render($notify);
+                $SESSION->autoenrolonuser = $user->id;
             }
         }
     }

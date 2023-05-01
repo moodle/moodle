@@ -2369,5 +2369,47 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2023041600, 'local', 'iomad');
     }
 
+    if ($oldversion < 2023042700) {
+
+        // Define table company_course_autoenrol to be created.
+        $table = new xmldb_table('company_course_autoenrol');
+
+        // Adding fields to table company_course_autoenrol.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('companyid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('autoenrol', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table company_course_autoenrol.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Conditionally launch create table for company_course_autoenrol.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Copy over all of the data in the old table to this new table.
+        if ($companycourserecs = $DB->get_records('company_course')) {
+            foreach ($companycourserecs as $companycourserec) {
+                $newrec = (object) ['companyid' => $companycourserec->companyid,
+                                    'courseid' => $companycourserec->courseid,
+                                    'autoenrol' => $companycourserec->autoenrol];
+                $DB->insert_record('company_course_autoenrol', $newrec);
+            }
+        }
+
+        // Define field autoenrol to be dropped from company_course.
+        $table = new xmldb_table('company_course');
+        $field = new xmldb_field('autoenrol');
+
+        // Conditionally launch drop field autoenrol.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2023042700, 'local', 'iomad');
+    }
+
     return $result;
 }

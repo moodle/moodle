@@ -206,6 +206,9 @@ function company_admin_fix_breadcrumb(&$PAGE, $linktext, $linkurl) {
  * @return \core\output\inplace_editable
  */
 function block_iomad_company_admin_inplace_editable($itemtype, $itemid, $newvalue) {
+    if ($itemtype === 'courses_autoenrol') {
+        return \block_iomad_company_admin\output\courses_autoenrol_editable::update($itemid, $newvalue);
+    }
     if ($itemtype === 'courses_license') {
         return \block_iomad_company_admin\output\courses_license_editable::update($itemid, $newvalue);
     }

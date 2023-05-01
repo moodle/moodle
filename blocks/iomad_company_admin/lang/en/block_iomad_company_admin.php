@@ -45,6 +45,7 @@ $string['assignlicenses'] = 'Assign licenses';
 $string['assignmanagers'] = 'Department users & managers';
 $string['assigntocompany'] = 'Assign to company';
 $string['assignusers'] = 'Assign users';
+$string['autoenrolmentfailed'] = 'Please contact your manager as there was an issue during automatic enrollment to the following courses - {$a}';
 $string['availabletemplates'] = 'Available role templates';
 $string['availabletemplates_help'] = 'These are the list of role templates which are available to company managers when creating a child company';
 $string['backtocompanytemplate'] = 'Back to company template';

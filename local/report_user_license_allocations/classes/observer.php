@@ -32,13 +32,22 @@ class observer {
     public static function user_license_assigned($event) {
         global $DB;
 
+error_log("Event triggered " .$event->other['issuedate']);
         // Add the event.
-        $DB->insert_record('local_report_user_lic_allocs', array('userid' => $event->userid,
-                                                                 'licenseid' => $event->other['licenseid'],
-                                                                 'issuedate' => $event->other['issuedate'],
-                                                                 'courseid' => $event->courseid,
-                                                                 'action' => 1,
-                                                                 'modifiedtime' => time()));
+        if (!$DB->get_record('local_report_user_lic_allocs', ['userid' => $event->userid,
+                                                              'licenseid' => $event->other['licenseid'],
+                                                              'issuedate' => $event->other['issuedate'],
+                                                              'courseid' => $event->courseid])) {
+error_log("writing an entry for the license allocation");
+            $DB->insert_record('local_report_user_lic_allocs', ['userid' => $event->userid,
+                                                                'licenseid' => $event->other['licenseid'],
+                                                                'issuedate' => $event->other['issuedate'],
+                                                                'courseid' => $event->courseid,
+                                                                'action' => 1,
+                                                                'modifiedtime' => time()]);
+        } else {
+error_log("license allocation already been done");
+        }
 
         return true;
     }
