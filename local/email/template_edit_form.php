@@ -87,7 +87,7 @@ if (empty($templaterecord->subject)) {
     $templaterecord->subject = get_string($templatename . '_subject', 'local_email', $lang);
 }
 if (empty($templaterecord->body)) {
-    $templaterecord->body = get_string($templatename . '_subject', 'local_email', $lang);
+    $templaterecord->body = get_string($templatename . '_body', 'local_email', $lang);
 }
 if (empty($templaterecord->emailfromothername)) {
     $templaterecord->emailfromothername = '{Company_Name}';
