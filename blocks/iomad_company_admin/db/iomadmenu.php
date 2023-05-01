@@ -115,7 +115,7 @@ function block_iomad_company_admin_menu() {
                 'iconsmall' => 'fa-gear',
             ),
             'assignmanagers' => array(
-                'category' => 'CompanyAdmin',
+                'category' => 'UserAdmin',
                 'tab' => 2,
                 'name' => get_string('assignmanagers', 'block_iomad_company_admin'),
                 'url' => 'company_managers_form.php',
