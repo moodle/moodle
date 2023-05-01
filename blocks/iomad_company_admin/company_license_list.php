@@ -189,7 +189,7 @@ if ($childcompanies = $company->get_child_companies_recursive()) {
 }
 
 // Get the licenses.
-$table->set_sql("cl.*,c.name AS companyname", "{companylicense} cl JOIN {company} c ON (cl.companyid = c.id)", "cl.companyid = :companyid $childsql $expiredsql", array('companyid' => $companyid, 'time' => time()));
+$table->set_sql("cl.*,c.name AS companyname", "{companylicense} cl JOIN {company} c ON (cl.companyid = c.id)", "(cl.companyid = :companyid $childsql) $expiredsql", array('companyid' => $companyid, 'time' => time()));
 
 $table->define_baseurl($baseurl);
 $table->define_columns($tablecolumns);
