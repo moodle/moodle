@@ -1202,7 +1202,7 @@ class course_table extends table_sql {
                                                       $userfilter
                                                       $suspendedsql",
                                                       ['companyid' => $company->id,
-                                                       'courseid' => $row->coursid]);
+                                                       'courseid' => $row->id]);
             }
 
             // Deal with any search dates.
@@ -1351,7 +1351,6 @@ class course_table extends table_sql {
             if ($params['showpercentage'] == 1) {
                 $totalusers = $DB->count_records_sql("SELECT count(cu.id)
                                                       FROM {company_users} cu
-                                                      JOIN {company_users} cu ON (lit.userid = cu.userid AND lit.companyid = cu.companyid)
                                                       JOIN {user} u ON (cu.userid = u.id AND cu.userid = u.id)
                                                       WHERE cu.companyid = :companyid
                                                       $departmentsql
@@ -1369,7 +1368,7 @@ class course_table extends table_sql {
                                                       $userfilter
                                                       $suspendedsql",
                                                       ['companyid' => $company->id,
-                                                       'courseid' => $row->coursid]);
+                                                       'courseid' => $row->id]);
             }
 
             // Deal with any search dates.
