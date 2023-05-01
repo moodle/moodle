@@ -87,7 +87,9 @@ function theme_iomad_pluginfile($course, $cm, $context, $filearea, $args, $force
     $relativepath = implode('/', $args);
     $filename = array_pop($args);
     $itemid = array_pop($args);
-    if ($filearea == 'logo') {
+    if ($filearea == 'logo' ||
+        $filearea == 'backgroundimage' ||
+        $filearea == 'loginbackgroundimage') {
         $itemid = 0;
     }
 

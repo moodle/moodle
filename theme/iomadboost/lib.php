@@ -87,7 +87,9 @@ function theme_iomadboost_pluginfile($course, $cm, $context, $filearea, $args, $
     $relativepath = implode('/', $args);
     $filename = array_pop($args);
     $itemid = array_pop($args);
-    if ($filearea == 'logo') {
+    if ($filearea == 'logo' ||
+        $filearea == 'backgroundimage' ||
+        $filearea == 'loginbackgroundimage') {
         $itemid = 0;
     }
 
