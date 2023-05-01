@@ -171,11 +171,20 @@ class company_user {
         if (empty($data->managertype)) {
             $data->managertype = 0;
         }
-        // Create the user association.
-        $DB->insert_record('company_users', array('userid' => $user->id,
-                                                  'companyid' => $company->id,
-                                                  'managertype' => $data->managertype,
-                                                  'departmentid' => $data->departmentid));
+
+        // Check if this hasn't already been called elsewhere.
+        if (!$DB->get_record('company_users',
+                             ['userid' => $user->id,
+                              'companyid' => $company->id,
+                              'managertype' => $data->managertype,
+                              'departmentid' => $data->departmentid])) {
+
+            // Create the user association.
+            $DB->insert_record('company_users', array('userid' => $user->id,
+                                                      'companyid' => $company->id,
+                                                      'managertype' => $data->managertype,
+                                                      'departmentid' => $data->departmentid));
+        }
 
         if ( isset($data->selectedcourses) ) {
             self::enrol($user, array_keys($data->selectedcourses));
