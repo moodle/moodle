@@ -28,6 +28,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_question\local\bank\question_version_status;
+use core_question\question_reference_manager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -119,6 +121,10 @@ function questions_in_use($questionids): bool {
 
     // Are they used by the core question system?
     if (question_engine::questions_in_use($questionids)) {
+        return true;
+    }
+
+    if (question_reference_manager::questions_with_references($questionids)) {
         return true;
     }
 
@@ -360,8 +366,10 @@ function question_delete_question($questionid): void {
         $questionstocheck[] = $question->parent;
     }
 
-    // Do not delete a question if it is used by an activity module
+    // Do not delete a question if it is used by an activity module. Just mark the version hidden.
     if (questions_in_use($questionstocheck)) {
+        $DB->set_field('question_versions', 'status',
+                question_version_status::QUESTION_STATUS_HIDDEN, ['questionid' => $questionid]);
         return;
     }
 
@@ -1486,9 +1494,10 @@ function question_has_capability_on($questionorid, $cap, $notused = -1): bool {
 /**
  * Require capability on question.
  *
- * @param object $question
- * @param string $cap
- * @return bool
+ * @param int|stdClass|question_definition $question object or id.
+ *      If an object is passed, it should include ->contextid and ->createdby.
+ * @param string $cap 'add', 'edit', 'view', 'use', 'move' or 'tag'.
+ * @return bool true if the user has the capability. Throws exception if not.
  */
 function question_require_capability_on($question, $cap): bool {
     if (!question_has_capability_on($question, $cap)) {
