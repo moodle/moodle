@@ -1,0 +1,38 @@
+/* =========================================================== *
+Authentication buttons
+============================================================== */
+.login-header .potentialidps {
+    text-align: right;
+}
+.potentialidps .btn.btn-oauth2, .potentialidp > .btn.btn-secondary.btn-block {
+    background-color: #f2f2f2 !important;
+    color: #555 !important;
+    border: 1px solid #e0e0e0;
+    box-shadow: none;
+}
+.potentialidps .btn.btn-oauth2:hover, .potentialidp > .btn.btn-secondary.btn-block:hover {
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    background-color: #f8f8f8 !important;
+    border: 1px solid #ddd;
+}
+.path-login .potentialidplist {
+    text-align: center;
+}
+.potentialidplist .potentialidp, .path-login .potentialidplist .potentialidp > .btn.btn-secondary.btn-block {
+    display: inline;
+}
+.login-header .potentialidps .btn.btn-oauth2 {
+    margin: 0 0 2px 4px;
+}
+.path-login .potentialidplist .potentialidp > .btn.btn-secondary.btn-block {
+    margin: 4px 8px;
+}
+.potentialidp > a > img {
+    vertical-align: bottom;
+}
+.potentialidp > a {
+    padding: 6px 18px;
+}
+.path-login .potentialidp > a {
+    padding: 10px 18px;
+}

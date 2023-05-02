@@ -1,0 +1,590 @@
+@font-face {
+    font-family: 'FontAwesome';
+    src: url('[[font:core|fontawesome-webfont.eot]]?v=#{$fa-version}');
+    src:
+        url('[[font:core|fontawesome-webfont.eot]]?#iefix&v=#{$fa-version}') format('embedded-opentype'),
+        url('[[font:core|fontawesome-webfont.woff2]]?v=#{$fa-version}') format('woff2'),
+        url('[[font:core|fontawesome-webfont.woff]]?v=#{$fa-version}') format('woff'),
+        url('[[font:core|fontawesome-webfont.ttf]]?v=#{$fa-version}') format('truetype'),
+        url('[[font:core|fontawesome-webfont.svg]]?v=#{$fa-version}#fontawesomeregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+a.back-to-top:before {
+    content: "\f139";
+    font-family: FontAwesome;
+    font-size: 13px;
+    font-weight: 900;
+	font-size: 3rem;
+    color: [[setting:maincolor]];
+}
+
+/* =========================================================== *
+Header
+============================================================== */
+#block-login div#user .fa, #block-login div#pass .fa {
+    margin-top:8px;
+}
+#block-login div, #submit {
+    font-size: 1.25em;
+}
+.profileblock .usermenu .caret {
+    display: none;
+}
+.profileblock .usermenu .userbutton::after {
+    content: "\f0d7";
+    font-family: FontAwesome;
+    font-size: 13px;
+    font-weight: 900;
+    color: #999;
+}
+
+/* =========================================================== *
+Navbar
+============================================================== */
+ul.breadcrumb li:after, .breadcrumb-button > a::before, #page-admin-search .adminpagepath li + li::before {
+	content: "\f105";
+	font-family: FontAwesome;
+	font-weight: 900;
+	font-size: 1.1em;
+	margin: 0px 6px 0px 3px;
+	color: #bbb;
+}
+
+/* =========================================================== *
+Moodle gear menus and admin tabs
+============================================================== */
+.jsenabled .breadcrumb-button .moodle-actionmenu[data-enhance] a.dropdown-toggle:before {
+    content: "\f013";
+    font-family: FontAwesome;
+    font-size: 19.5px;
+    color: #fff;
+    padding-right: 5px;
+}
+
+/*================================================== * 
+course formats
+=====================================================*/
+.single-section .section-navigation .mdl-right a:after {
+    color: #FFF;
+    display: inline;
+    font-family: FontAwesome;
+    font-size: 1.5em;
+    margin-left: 10px;
+    text-align: center;
+    background-color: [[setting:maincolor]];
+    content: "\f105";
+    padding: 6px 12px;
+    transition: all 0.3s ease 0.1s;
+}
+.single-section .section-navigation .mdl-left a:before {
+    color: #FFF;
+    display: inline;
+    font-family: FontAwesome;
+    font-size: 1.5em;
+    margin-right: 10px;
+    text-align: center;
+    background-color: [[setting:maincolor]];
+    content: "\f104";
+    padding: 6px 12px;
+    transition: all 0.3s ease 0.1s;
+}
+.dir-rtl .single-section .section-navigation .mdl-right a:after {
+	content: "\f104";
+	margin-right: 0;
+	margin-left: 10px;
+}
+.dir-rtl .single-section .section-navigation .mdl-left a:before {
+	content: "\f105";
+	margin-left: 0;
+	margin-right: 10px;
+}
+.course-content .section-summary .section-title::before {
+    color: [[setting:maincolor]];
+    content: "\f0da";
+    font-family: FontAwesome;
+    margin-right: 6px;
+}
+
+/*================================================== * 
+course category
+=====================================================*/
+.course_category_tree .collapsible-actions::before {
+    border-radius: 50%;
+    color: [[setting:category_banner_font_color]];
+    content: "\f063";
+    float: left;
+    font-family: FontAwesome;
+    font-size: 3.5em;
+    height: 75px;
+    line-height: 75px;
+    text-align: center;
+    width: 75px;
+    border: 3px solid [[setting:category_banner_font_color]];
+}
+.coursebox > .info > .coursename a::before, .coursebox > .info > .name a::before {
+    background-color: #f2f2f2;
+    border-radius: 50%;
+    color: #555;
+    content: "\f090";
+    display: block;
+    float: left;
+    font-family: FontAwesome;
+    height: 1.35em;
+    line-height: 1.35em;
+    margin-right: 0.5em;
+    padding-top: 0.1em;
+    text-align: center;
+    width: 1.5em;
+}
+
+/*================================================== * 
+book module
+=====================================================*/
+.navtext.navtop a.booknext:after, .navtext.navbottom a.booknext:after {
+    content: "\f105";
+    font-family: FontAwesome;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #fff;
+    margin: 0 10px;
+    background: [[setting:maincolor]];
+    padding: 6px 12px;
+}
+.navtext.navtop a.bookprev:before, .navtext.navbottom a.bookprev:before {
+    content: "\f104";
+    font-family: FontAwesome;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #fff;
+    margin: 0 10px;
+    background: [[setting:maincolor]];
+    padding: 6px 12px;
+}
+.dir-rtl .navtext.navtop a.booknext:after, .dir-rtl .navtext.navbottom a.booknext:after {
+    content: "\f104";
+}
+.dir-rtl .navtext.navtop a.bookprev:before, .dir-rtl .navtext.navbottom a.bookprev:before {
+    content: "\f105";
+}
+
+/* =========================================================== *
+Frontpage & Dashboard
+============================================================== */
+#region-main .block.block_course_overview .content h2.title:before {
+    content: "\f054";
+    display: inline-block;
+    font-family: FontAwesome;
+	color: [[setting:maincolor]];
+    padding-right: 6px;
+}
+
+/* =========================================================== *
+Forum
+============================================================== */
+.forumpost .author::before {
+    color: [[setting:maincolor]];
+    content: "\f0a9";
+    display: block;
+    float: left;
+    font-family: FontAwesome;
+    width: 1.5em;
+}
+
+/* =========================================================== *
+Blockicons by Shaun Daubney (theme_aardvark)
+============================================================== */
+.block .card-title::before {
+    border-radius: 3px;
+    color: #FFFFFF;
+    display: block;
+    float: left;
+    font-family: FontAwesome;
+    font-size: 20px;
+	font-weight: 900;
+    line-height: 25px;
+    margin-left: -0.25em;
+    margin-right: 0.5em;
+    margin-top: -0.25em;
+    padding: 3px;
+    text-align: center;
+    width: 1.5em;
+	background-color: [[setting:maincolor]];
+	content: "\f069";
+}
+.block_html .card-title::before {
+    background-color: #8EC63F;
+	content: "\f05a";
+}
+.block_news_items .card-title::before {
+    background-color: #29A294;
+	content:"\f0a1";
+}
+.block_navigation .card-title::before {
+    background-color: #EB3D00;
+    content:"\f0e8";
+}
+.block_calendar_upcoming .card-title::before,
+.block_calendar_month .card-title::before {
+    background-color: #008ecd;
+	content:"\f073";
+}
+.block_course_list .card-title::before {
+    background-color: #ffce00;
+	content:"\f108";
+}
+.block_completionstatus .card-title::before,
+.block_selfcompletion .card-title::before {
+    background-color: #76b900;
+	content:"\f0e4";
+}
+.block_rss_client .card-title::before {
+    background-color: #008ecd;
+	content:"\f09e";
+}
+.block_rss_plus .card-title::before {
+    background-color: #ff9500;
+	content:"\f09e";
+}
+.block_blog_menu .card-title::before {
+    background-color: #ff9500;
+	content:"\f02d";
+}
+.block_quiz_results .card-title::before {
+    background-color: #008ecd;    
+	content:"\f080";
+}
+.block_quiz_navblock .card-title::before {
+    background-color: #76b900;
+    content:"\f126";
+}
+.block_glossary_random .card-title::before {
+    background-color: #008ecd;
+    content:"\f0eb";
+}
+.block_book_toc .card-title::before {
+    background-color: #76b900;
+    content: "\f097";
+}
+.block_participants .card-title::before,
+.block_online_users .card-title::before {
+    background-color: #92499e;
+    content:"\f0c0";
+}
+.block_section_links .card-title::before {
+    background-color: #EB3D00;
+    content:"\f02e";
+}
+.block_activity_modules .card-title::before {
+    background-color: #EB3D00;
+    content:"\f12e";
+}
+.block_comments .card-title::before {
+    background-color: #ffce00;
+    content:"\f075";
+}
+.block_settings .card-title::before,
+.block_admin_bookmarks .card-title::before{
+    background-color: #BD1A8D;
+    content:"\f085";
+}
+.block_blog_tags .card-title::before,
+.block_tags .card-title::before {
+    background-color: #ff9f00;
+    content:"\f02c";
+}
+.block_private_files .card-title::before {
+    background-color: #38B9EC;
+    content:"\f114";
+}
+.block_block_mentees .card-title::before {
+    background-color: #76B900;
+    content:"\f0c0";
+}
+.block_messages .card-title::before {
+    background-color: #ffce00;
+    content:"\f0e0";
+}
+.block_community .card-title::before {
+    background-color: #ffce00;
+    content:"\f0ac";
+}
+.block_login .card-title::before {
+    background-color: #ffce00;
+    content:"\f007";
+}
+.block_recent_activity .card-title::before {
+    background-color: #38B9EC;
+    content:"\f017";
+
+}
+.block_search_forums .card-title::before {
+    background-color: #ffce00;
+    content:"\f0e6";
+}
+.block_myprofile .card-title::before {
+    background-color: #EB3D00;
+    content:"\f007";
+}
+.block_adminblock .card-title::before {
+    background-color: #76B900;
+    content:"\f0fe";
+}
+.block_feedback .card-title::before {
+    background-color: #ffce00;
+    content:"\f087";
+}
+.block_flickr .card-title::before {
+    background-color: #ff3096;
+    content:"\f03e";
+}
+.block_youtube .card-title::before {
+    background-color: #EB3D00;
+    content:"\f145";
+}
+.block_course_badges .card-title::before {
+    background-color: #29a294;
+    content:"\f091";
+}
+.block_twitter_search .card-title::before {
+    background-color: #008ecd;
+    content:"\f099";
+}
+.block_heritage .card-title::before {
+    background-color: #3e647e;
+    content:"\f02d";
+}
+.block_graph_stats .card-title::before {
+    background-color: #38B9EC;
+    content:"\f012";
+}
+.block_wikipedia .card-title::before {
+    background-color: #29A294;
+    content:"\f002";
+}
+.block_site_main_menu .card-title::before {
+    background-color: [[setting:maincolor]];
+    content:"\f14e";
+}
+.block_badges .card-title::before {
+    background-color: #a11d21;
+    content:"\f0a3";
+}
+
+/*================================================== * 
+HTML-Elements
+=====================================================*/
+a.readmore:before {
+	font-family: FontAwesome;
+	content:"\f101";
+	padding-right:2px;
+}
+blockquote:before {
+    color: #bbb;
+    content: "\f10e";
+    float: left;
+    font-family: FontAwesome;
+    font-size: 1.5em;
+    margin-right: 8px;
+}
+
+/* =========================================================== *
+Lists
+============================================================== */
+ul.list-style-1 li:before {
+    font-family: FontAwesome;
+	content: "\f061";
+    display: inline-block;
+    margin: 0 0 0 -18px;
+    padding-right: 6px;
+}
+ul.list-style-2 li:before {
+    font-family: FontAwesome;
+	content: "\f00c";
+    display: inline-block;
+    margin: 0 0 0 -18px;
+    padding-right: 6px;
+}
+ul.list-style-3 li:before {
+    font-family: FontAwesome;
+	content: "\f138";
+    display: inline-block;
+    margin: 0 0 0 -18px;
+    padding-right: 6px;
+}
+
+/* =========================================================== *
+iconbox 
+============================================================== */
+.iconbox .iconcircle .fa {
+	color: [[setting:maincolor]];
+	font-size: 42px;
+	transition: all 0.7s;
+	display: contents;
+}
+.iconbox:hover > .iconcircle > .fa {
+	color: #fff;
+	transition: all 0.7s;
+}
+
+/* =========================================================== *
+Headlines
+============================================================== */
+.headline .fa {
+    font-size: 16px;
+    margin: -8px 8px 0 -8px;
+    padding: 10px;
+}
+.headline-v1 .fa {
+    background: none repeat scroll 0 0 [[setting:maincolor]];
+    color: #fff;
+}
+.headline-v2 .fa {
+    background: none repeat scroll 0 0 [[setting:mainhovercolor]];
+    color: #fff;
+}
+.headline-v3 .fa {
+    background: none repeat scroll 0 0 [[setting:maincolor]];
+    color: #fff;
+}
+
+/* =========================================================== *
+social media
+============================================================== */
+.socials-header .socials .social_contact i {
+	color:[[setting:socials_color]];
+    font-size: 1.35em;
+    line-height: 35px;
+}
+#page-footer .socials .social_contact i {
+	font-size: 1.25em;
+    padding: 0 0 0 20px;
+}
+a.social.fa-facebook:hover {
+	color:#fff !important;
+    background:#3B5998 !important;
+}
+a.social.fa-twitter:hover {
+	color:#fff !important;
+    background:#00ACED !important;
+}
+a.social.fa-youtube:hover {
+	color:#fff !important;
+    background:#CB3429 !important;
+}
+a.social.fa-google-plus:hover {
+	color:#fff !important;
+    background:#DD4B39 !important;
+}
+a.social.fa-instagram:hover {
+	color:#fff !important;
+    background:#517FA4 !important;
+}
+a.social.fa-flickr:hover {
+	color:#fff !important;
+    background:#FF0084 !important;
+}
+a.social.fa-pinterest:hover {
+	color:#fff !important;
+    background:#CB2027 !important;
+}
+a.social.fa-linkedin:hover {
+	color:#fff !important;
+    background:#007BB6 !important;
+}
+
+/*================================================== * 
+Bootstrap
+=====================================================*/
+.panel .panel-heading a:before {
+    background: [[setting:maincolor]];
+	color: [[setting:menufirstlevel_linkcolor]];
+    content: "\f107";
+    float: left;
+    font-family: 'FontAwesome';
+    font-size: 1.2em;
+    margin: -1px 5px 0 -8px;
+    padding: 1px;
+    text-align: center;
+    width: 33px;
+}
+.panel .panel-heading a.collapsed:before {
+    content: "\f105";
+}
+
+/*================================================== * 
+Moodle 3.7
+=====================================================*/
+.message-app .container-fluid .header-container [data-region="favourite-icon-container"]:after {
+    display: inline;
+    font-family: "FontAwesome";
+	font-size: 1em;
+	font-weight: 900;
+	color: [[setting:maincolor]];
+	content: "\f005";
+	padding-left: 5px;
+}
+
+/*================================================== * 
+Moodle 3.8
+=====================================================*/
+.grader-grading-panel .fa-bell-o::before {
+    content: "\f0a2";
+}
+.grader-grading-panel .grader-grading-panel-display > h4:before {
+    display: inline;
+    font-family: "FontAwesome";
+	font-size: 1em;
+	font-weight: 900;
+	content: "\f046";
+	padding-left: 5px;
+}
+.grader-grading-panel .grader-grading-panel-display > h4#send-student-notifications-setting::before {
+    content: "\f0a2";
+}
+.grader-grading-panel .grader-grading-panel-display > h4 > img {
+	display: none;
+}
+.path-mod-forum .unified-grader .grader-module-content-display .no-post-container > h2::before {
+	display: block;
+	font-family: "FontAwesome";
+	font-size: 3rem;
+	font-weight: 400;
+	content: "\f115";
+	color: #fff;
+	padding: 1.5rem;
+	border-radius: 50%;
+	width: 3.25rem;
+	height: 3.25rem;
+	line-height: 3.25rem;
+	margin: 20px auto;
+	background: [[setting:maincolor]];
+}
+
+/*================================================== * 
+Moodle 3.9
+=====================================================*/
+.modchooser .optionactions .btn.btn-icon[data-favourited="true"]::before {
+    content: "\f005";
+    font-family: "FontAwesome";
+    font-size: 16px;
+    font-weight: 900;
+    color: #999;
+}
+
+/*================================================== * 
+Moodle 3.10
+=====================================================*/
+.movehere a.movehere::before {
+    display: inline;
+    font-family: "FontAwesome";
+    font-size: 1.15em;
+    content: "\f178";
+    font-weight: 700;
+    margin-left: 5px;
+    line-height: 2rem;
+}
+#quiz-timer-wrapper #quiz-timer::before {
+    font-family: "FontAwesome";
+    content: "\f017";
+}

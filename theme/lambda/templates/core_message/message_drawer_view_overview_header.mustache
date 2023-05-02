@@ -1,0 +1,76 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_message/message_drawer_view_overview_header
+
+    This template will render the header for the overview page of the message drawer.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * All data attributes are required
+
+    Context variables required for this template:
+    * userid The logged in user id
+    * urls The URLs for the popover
+
+    This is an overridden template
+    changing "div.input-group" to "div.input-prepend"
+    changing the "div.input-group-prepend > span" to "span.add-on"
+    addint ".searchinput" to "input.form-control"
+
+    Example context (json):
+    {}
+
+}}
+<div class="border-bottom px-2 py-3" aria-hidden="false" {{^isdrawer}}data-in-panel="true"{{/isdrawer}} data-region="view-overview">
+    <div class="d-flex align-items-center">
+        <div class="input-prepend d-flex flex-grow m-0">
+            <span class="add-on bg-white pr-0">
+                {{#pix}} a/search, core {{/pix}}
+            </span>
+            <input
+                type="text"
+                class="form-control border-left-0 searchinput"
+                placeholder="{{#str}} search, core_search {{/str}}"
+                aria-label="{{#str}} search, core_search {{/str}}"
+                data-region="view-overview-search-input"
+            >
+        </div>
+        <div class="ml-2">
+            <a
+                href="#"
+                data-route="view-settings"
+                data-route-param="{{loggedinuser.id}}"
+            >
+                {{#pix}} t/edit, core {{/pix}}
+            </a>
+        </div>
+    </div>
+    <div class="text-right mt-3">
+        <a href="#" data-route="view-contacts" role="button">
+            {{#pix}} i/user, core {{/pix}}
+            {{#str}} contacts, core_message {{/str}}
+            <span class="badge bg-primary ml-2 {{^contactrequestcount}}hidden{{/contactrequestcount}}"
+            data-region="contact-request-count"
+            aria-label="{{#str}} pendingcontactrequests, core_message, {{contactrequestcount}} {{/str}}">
+                {{contactrequestcount}}
+            </span>
+        </a>
+    </div>
+</div>
