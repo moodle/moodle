@@ -1,0 +1,100 @@
+.filter_oembed_docsdotcom {
+    iframe {
+        width: 100%;
+        height: 400px;
+    }
+}
+
+.oembed-card {
+    position: relative;
+    min-height: 10em;
+    background-size: cover;
+    transition: all 0.4s ease-in-out;
+}
+
+.oembed-card-title {
+    position: absolute;
+    top: 0;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 0.5em 0.5em;
+}
+
+.oembed-content {
+    > *:first-child {
+        width: 100%;
+    }
+    video {
+        // Responsive video for HTML5 only
+        height: auto;
+    }
+}
+
+.btn.btn-link.oembed-card-play {
+    background-image: url([[pix:filter_oembed|play]]);
+    background-repeat: no-repeat;
+    position: absolute;
+    width: 15%;
+    // Center play button 50% - width / 2;
+    top: 42.5%;
+    left: 42.5%;
+    padding-top: 15%;
+    margin: 0;
+    background-position: 0;
+    opacity: 0.9;
+    transition: all 0.4s ease-in-out;
+    filter: drop-shadow(1px 1px 1px #666);
+}
+
+.btn.btn-link.oembed-card-play:hover {
+    background-position: 0;
+    filter: drop-shadow(0 0 0 #666);
+    opacity: 1;
+}
+
+.oembed-responsive {
+    width: 100%;
+    display: block;
+    position: relative;
+    > *:not(video):first-child {
+        position: absolute !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        right: 0 !important;
+        left: 0 !important;
+        height: 100% !important;
+        width: 100% !important;
+    }
+}
+
+.oembed-responsive-pad {
+    display: block;
+}
+
+.oembed-provider-details {
+    font-size: 0.9em;
+    margin-top: 1em;
+    display: none;
+}
+
+tr.oembed-provider-editing {
+    .oembed-provider-details {
+        display: block;
+    }
+    .oembed-provider-actions {
+        display: none;
+    }
+}
+
+.oembed-provider-actions {
+    float: right;
+    margin-right: 1em;
+}
+
+#oembedproviders td.provider div.alert {
+    margin-top: 1em;
+}
+
+.oembed-providersource {
+    font-size: 90%;
+}

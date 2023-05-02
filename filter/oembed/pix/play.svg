@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" viewBox="0 0 100 100">
+  <style>
+    .st0{fill:#FFFFFF;}
+    .st1{stroke-width:5; stroke:#FFFFFF; fill:none}
+  </style>
+  <circle cx="50" cy="50" r="45" class="st1" />
+  <path d="M85 50l-55 30V20z" class="st0"/>
+</svg>

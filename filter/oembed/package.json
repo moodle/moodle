@@ -1,0 +1,15 @@
+{
+  "description": "Grunt tasks for sass.",
+  "private": true,
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-autoprefixer": "^3.0.3",
+    "grunt-contrib-csslint": "^0.5.0",
+    "grunt-contrib-jshint": "^0.12.0",
+    "grunt-sass": "^1.2.1",
+    "grunt-cssbeautifier": "^0.1.2",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-exec": "~0.4.2",
+    "grunt-load-gruntfile" : "^0.0.2"
+  }
+}

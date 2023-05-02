@@ -1,0 +1,28 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+@package   filter_oembed
+@copyright Stuart Lamour / Guy Thomas 2016
+@license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+<div class="oembed-card-container{{#aspectratio}} oembed-responsive{{/aspectratio}}">
+    <div class="oembed-card{{#aspectratio}} oembed-processed{{/aspectratio}}" style="background-image:url({{thumbnail_url}});" data-embed="{{embedhtml}}" {{#jshtml}}{{{jshtml}}}{{/jshtml}} >
+        <div class="oembed-card-title">{{title}}</div>
+        <button class="btn btn-link oembed-card-play" aria-label="{{#str}}playoembed, filter_oembed{{/str}}"></button>
+    </div>
+    {{#aspectratio}}<div class="oembed-responsive-pad" style="padding-top:{{aspectratio}}%"></div>{{/aspectratio}}
+</div>

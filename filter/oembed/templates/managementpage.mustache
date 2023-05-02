@@ -1,0 +1,84 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template filter_oembed/managementpage
+
+    Template which defines an oembed filter management page.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * headings - array: An array of table headings.
+    * rows - array: An array of content rows for the table.
+
+    Example context (json):
+    {
+        "rows": [
+            {
+                "pid": "1",
+                "providername": "23HQ",
+                "providerurl": "http://www.23hq.com/",
+                "enableaction": "http://localhost/moodlehq.git/filter/oembed/manageproviders.php?action=disable&pid=1&sesskey=dvBXP9rX1G",
+                "editaction": "http://localhost/moodlehq.git/filter/oembed/manageproviders.php?action=edit&pid=1&sesskey=dvBXP9rX1G",
+                "deleteaction": "http://localhost/moodlehq.git/filter/oembed/manageproviders.php?action=delete&pid=1&sesskey=dvBXP9rX1G",
+                "extraclass": "dimmed_text"
+            }
+        ]
+    }
+    }}
+{{#x}}
+Displayed if x was true.
+{{/x}}
+<div id="providermanagement">
+    <table id="oembedproviders" class="flexible generaltable generalbox" cellspacing="0">
+          <thead>
+            <tr>
+              <th class="header c0 provider" scope="col"><input class="search" placeholder="{{#str}}provider, filter_oembed{{/str}}" /></th>
+            </tr>
+          </thead>
+          <tbody class="list">
+            <tr id="oembed-local-providers-head-row" class="oembed-local-providers">
+                <th id="oembed-local-providers-head">
+                  {{#str}}localproviders, filter_oembed{{/str}}
+                </th>
+            </tr>
+          {{#localrows}}
+              {{> filter_oembed/managementpagerow}}
+          {{/localrows}}
+            <tr id="oembed-plugin-providers-head-row" class="oembed-plugin-providers">
+                <th id="oembed-plugin-providers-head">
+                  {{#str}}pluginproviders, filter_oembed{{/str}}
+                </th>
+            </tr>
+          {{#pluginrows}}
+              {{> filter_oembed/managementpagerow}}
+          {{/pluginrows}}
+            <tr id="oembed-download-providers-head-row" class="oembed-download-providers">
+                <th id="oembed-download-providers-head">
+                  {{#str}}downloadproviders, filter_oembed{{/str}}
+                </th>
+            </tr>
+          {{#downloadrows}}
+              {{> filter_oembed/managementpagerow}}
+          {{/downloadrows}}
+          </tbody>
+    </table>
+</div>

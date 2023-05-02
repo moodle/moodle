@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="filter/oembed/db" VERSION="20160826" COMMENT="XMLDB file for Moodle filter/oembed"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="filter_oembed" COMMENT="Default comment for filter_oembed, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="providername" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="providerurl" TYPE="char" LENGTH="1333" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="endpoints" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON encoded endpoints structure."/>
+        <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Original source of provider. This may include a category code."/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="providernameix" UNIQUE="false" FIELDS="providername"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
