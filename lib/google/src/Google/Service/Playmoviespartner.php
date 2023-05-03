@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Playmoviespartner extends Google_Service
 {
   /** View the digital assets you publish on Google Play Movies and TV. */
@@ -348,6 +349,7 @@ class Google_Service_Playmoviespartner extends Google_Service
  *   $accounts = $playmoviespartnerService->accounts;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Playmoviespartner_Accounts_Resource extends Google_Service_Resource
 {
 }
@@ -360,6 +362,7 @@ class Google_Service_Playmoviespartner_Accounts_Resource extends Google_Service_
  *   $avails = $playmoviespartnerService->avails;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Playmoviespartner_AccountsAvails_Resource extends Google_Service_Resource
 {
 
@@ -405,6 +408,7 @@ class Google_Service_Playmoviespartner_AccountsAvails_Resource extends Google_Se
  *   $experienceLocales = $playmoviespartnerService->experienceLocales;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Playmoviespartner_AccountsExperienceLocales_Resource extends Google_Service_Resource
 {
 
@@ -469,6 +473,7 @@ class Google_Service_Playmoviespartner_AccountsExperienceLocales_Resource extend
  *   $orders = $playmoviespartnerService->orders;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Playmoviespartner_AccountsOrders_Resource extends Google_Service_Resource
 {
 
@@ -527,6 +532,7 @@ class Google_Service_Playmoviespartner_AccountsOrders_Resource extends Google_Se
  *   $storeInfos = $playmoviespartnerService->storeInfos;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Playmoviespartner_AccountsStoreInfos_Resource extends Google_Service_Resource
 {
 
@@ -574,6 +580,7 @@ class Google_Service_Playmoviespartner_AccountsStoreInfos_Resource extends Googl
  *   $country = $playmoviespartnerService->country;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Playmoviespartner_AccountsStoreInfosCountry_Resource extends Google_Service_Resource
 {
 
@@ -600,6 +607,7 @@ class Google_Service_Playmoviespartner_AccountsStoreInfosCountry_Resource extend
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Playmoviespartner_Avail extends Google_Collection
 {
   protected $collection_key = 'pphNames';
@@ -897,6 +905,7 @@ class Google_Service_Playmoviespartner_Avail extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Playmoviespartner_ExperienceLocale extends Google_Collection
 {
   protected $collection_key = 'pphNames';
@@ -1113,6 +1122,7 @@ class Google_Service_Playmoviespartner_ExperienceLocale extends Google_Collectio
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Playmoviespartner_ListAvailsResponse extends Google_Collection
 {
   protected $collection_key = 'avails';
@@ -1141,6 +1151,7 @@ class Google_Service_Playmoviespartner_ListAvailsResponse extends Google_Collect
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Playmoviespartner_ListExperienceLocalesResponse extends Google_Collection
 {
   protected $collection_key = 'experienceLocales';
@@ -1169,6 +1180,7 @@ class Google_Service_Playmoviespartner_ListExperienceLocalesResponse extends Goo
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Playmoviespartner_ListOrdersResponse extends Google_Collection
 {
   protected $collection_key = 'orders';
@@ -1197,6 +1209,7 @@ class Google_Service_Playmoviespartner_ListOrdersResponse extends Google_Collect
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Playmoviespartner_ListStoreInfosResponse extends Google_Collection
 {
   protected $collection_key = 'storeInfos';
@@ -1225,6 +1238,7 @@ class Google_Service_Playmoviespartner_ListStoreInfosResponse extends Google_Col
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Playmoviespartner_Order extends Google_Collection
 {
   protected $collection_key = 'countries';
@@ -1441,6 +1455,7 @@ class Google_Service_Playmoviespartner_Order extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Playmoviespartner_StoreInfo extends Google_Collection
 {
   protected $collection_key = 'subtitles';

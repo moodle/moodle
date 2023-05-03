@@ -25,29 +25,50 @@ const SELECTORS = {
     GRADEPARENT: '.gradeparent',
     STUDENTHEADER: '#studentheader',
     TABLEHEADER: 'th.header',
-    BEHAT: 'body.behat-site'
+    BEHAT: 'body.behat-site',
+    AVERAGEROW: 'tr.lastrow',
+    TABLEHEADING: 'tr.heading',
+    GRADERDROPDOWN: 'tr th.category .dropdown-menu',
 };
 
 /**
  * Initialize module
  */
 export const init = () => {
-    if (document.querySelector(SELECTORS.BEHAT)) {
-        return;
-    }
     const grader = document.querySelector(SELECTORS.GRADEPARENT);
-    const studentHeader = grader.querySelector(SELECTORS.STUDENTHEADER);
-    const leftOffset = getComputedStyle(studentHeader).getPropertyValue('left');
-    const rightOffset = getComputedStyle(studentHeader).getPropertyValue('right');
+    const tableHeaders = grader.querySelectorAll(SELECTORS.TABLEHEADER);
 
-    grader.querySelectorAll(SELECTORS.TABLEHEADER).forEach((tableHeader) => {
-        if (tableHeader.colSpan > 1) {
-            const addOffset = (tableHeader.offsetWidth - studentHeader.offsetWidth);
-            if (window.right_to_left()) {
-                tableHeader.style.right = 'calc(' + rightOffset + ' - ' + addOffset + 'px )';
-            } else {
-                tableHeader.style.left = 'calc(' + leftOffset + ' - ' + addOffset + 'px )';
-            }
+    let i = 0;
+    tableHeaders.forEach((tableHeader) => {
+        if (tableHeader.colSpan <= 1) {
+            tableHeader.style.zIndex = tableHeaders.length - i;
         }
+        i++;
     });
+
+    const categoryDropdowns = grader.querySelectorAll(SELECTORS.GRADERDROPDOWN);
+    categoryDropdowns.forEach(dropdown => {
+        // Ensure we take all the displayed users + any & all categories and add a bit extra for safe measure.
+        dropdown.style.zIndex = (tableHeaders.length + categoryDropdowns.length) + 1;
+    });
+
+    const tableHeader = grader.querySelector(SELECTORS.TABLEHEADING);
+    tableHeader.style.zIndex = tableHeaders.length + 1;
+
+    if (!document.querySelector(SELECTORS.BEHAT)) {
+        const studentHeader = grader.querySelector(SELECTORS.STUDENTHEADER);
+        const leftOffset = getComputedStyle(studentHeader).getPropertyValue('left');
+        const rightOffset = getComputedStyle(studentHeader).getPropertyValue('right');
+
+        tableHeaders.forEach((tableHeader) => {
+            if (tableHeader.colSpan > 1) {
+                const addOffset = (tableHeader.offsetWidth - studentHeader.offsetWidth);
+                if (window.right_to_left()) {
+                    tableHeader.style.right = 'calc(' + rightOffset + ' - ' + addOffset + 'px )';
+                } else {
+                    tableHeader.style.left = 'calc(' + leftOffset + ' - ' + addOffset + 'px )';
+                }
+            }
+        });
+    }
 };

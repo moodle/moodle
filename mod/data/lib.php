@@ -434,12 +434,12 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
             'type' => 'submit',
             'name' => 'cancel',
             'value' => get_string('cancel'),
-            'class' => 'btn btn-secondary mr-2'
+            'class' => 'btn btn-secondary mx-1'
         ]);
         $actionbuttons .= html_writer::tag('input', null, [
             'type' => 'submit',
             'value' => get_string('save'),
-            'class' => 'btn btn-primary'
+            'class' => 'btn btn-primary mx-1'
         ]);
         $actionbuttons .= html_writer::end_div();
 
@@ -826,34 +826,35 @@ function data_generate_tag_form($recordid = false, $selected = []) {
 function data_replace_field_in_templates($data, $searchfieldname, $newfieldname) {
     global $DB;
 
-    if (!empty($newfieldname)) {
-        $prestring = '[[';
-        $poststring = ']]';
-        $idpart = '#id';
-
-    } else {
-        $prestring = '';
-        $poststring = '';
-        $idpart = '';
+    $newdata = (object)['id' => $data->id];
+    $update = false;
+    $templates = ['listtemplate', 'singletemplate', 'asearchtemplate', 'addtemplate', 'rsstemplate'];
+    foreach ($templates as $templatename) {
+        if (empty($data->$templatename)) {
+            continue;
+        }
+        $search = [
+            '[[' . $searchfieldname . ']]',
+            '[[' . $searchfieldname . '#id]]',
+            '[[' . $searchfieldname . '#name]]',
+            '[[' . $searchfieldname . '#description]]',
+        ];
+        if (empty($newfieldname)) {
+            $replace = ['', '', '', ''];
+        } else {
+            $replace = [
+                '[[' . $newfieldname . ']]',
+                '[[' . $newfieldname . '#id]]',
+                '[[' . $newfieldname . '#name]]',
+                '[[' . $newfieldname . '#description]]',
+            ];
+        }
+        $newdata->{$templatename} = str_ireplace($search, $replace, $data->{$templatename} ?? '');
+        $update = true;
     }
-
-    $newdata = new stdClass();
-    $newdata->id = $data->id;
-    $newdata->singletemplate = str_ireplace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->singletemplate ?? '');
-
-    $newdata->listtemplate = str_ireplace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->listtemplate ?? '');
-
-    $newdata->addtemplate = str_ireplace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->addtemplate ?? '');
-
-    $newdata->addtemplate = str_ireplace('[['.$searchfieldname.'#id]]',
-            $prestring.$newfieldname.$idpart.$poststring, $data->addtemplate ?? '');
-
-    $newdata->rsstemplate = str_ireplace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->rsstemplate ?? '');
-
+    if (!$update) {
+        return true;
+    }
     return $DB->update_record('data', $newdata);
 }
 
@@ -864,29 +865,36 @@ function data_replace_field_in_templates($data, $searchfieldname, $newfieldname)
  * @global object
  * @param object $data
  * @param string $newfieldname
+ * @return bool if the field has been added or not
  */
-function data_append_new_field_to_templates($data, $newfieldname) {
-    global $DB;
+function data_append_new_field_to_templates($data, $newfieldname): bool {
+    global $DB, $OUTPUT;
 
-    $newdata = new stdClass();
-    $newdata->id = $data->id;
-    $change = false;
-
-    if (!empty($data->singletemplate)) {
-        $newdata->singletemplate = $data->singletemplate.' [[' . $newfieldname .']]';
-        $change = true;
+    $newdata = (object)['id' => $data->id];
+    $update = false;
+    $templates = ['singletemplate', 'addtemplate', 'rsstemplate'];
+    foreach ($templates as $templatename) {
+        if (empty($data->$templatename)
+            || strpos($data->$templatename, "[[$newfieldname]]") !== false
+            || strpos($data->$templatename, "##otherfields##") !== false
+        ) {
+            continue;
+        }
+        $newdata->$templatename = $data->$templatename;
+        $fields = [[
+            'fieldname' => '[[' . $newfieldname . '#name]]',
+            'fieldcontent' => '[[' . $newfieldname . ']]',
+        ]];
+        $newdata->$templatename .= $OUTPUT->render_from_template(
+            'mod_data/fields_otherfields',
+            ['fields' => $fields, 'classes' => 'added_field']
+        );
+        $update = true;
     }
-    if (!empty($data->addtemplate)) {
-        $newdata->addtemplate = $data->addtemplate.' [[' . $newfieldname . ']]';
-        $change = true;
+    if (!$update) {
+        return false;
     }
-    if (!empty($data->rsstemplate)) {
-        $newdata->rsstemplate = $data->singletemplate.' [[' . $newfieldname . ']]';
-        $change = true;
-    }
-    if ($change) {
-        $DB->update_record('data', $newdata);
-    }
+    return $DB->update_record('data', $newdata);
 }
 
 
@@ -1663,7 +1671,7 @@ function mod_data_rating_can_see_item_ratings($params) {
  * @return void
  */
 function data_print_preference_form($data, $perpage, $search, $sort='', $order='ASC', $search_array = '', $advanced = 0, $mode= ''){
-    global $CFG, $DB, $PAGE, $OUTPUT;
+    global $DB, $PAGE, $OUTPUT;
 
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = context_module::instance($cm->id);
@@ -1792,21 +1800,45 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     $replacement = array();
 
     // Then we generate strings to replace for normal tags
+    $otherfields = [];
     foreach ($fields as $field) {
         $fieldname = $field->field->name;
         $fieldname = preg_quote($fieldname, '/');
-        $patterns[] = "/\[\[$fieldname\]\]/i";
         $searchfield = data_get_field_from_id($field->field->id, $data);
 
         if ($searchfield->type === 'unknown') {
             continue;
         }
         if (!empty($search_array[$field->field->id]->data)) {
-            $replacement[] = $searchfield->display_search_field($search_array[$field->field->id]->data);
+            $searchinput = $searchfield->display_search_field($search_array[$field->field->id]->data);
         } else {
-            $replacement[] = $searchfield->display_search_field();
+            $searchinput = $searchfield->display_search_field();
+        }
+        $patterns[] = "/\[\[$fieldname\]\]/i";
+        $replacement[] = $searchinput;
+        // Extra field information.
+        $patterns[] = "/\[\[$fieldname#name\]\]/i";
+        $replacement[] = $field->field->name;
+        $patterns[] = "/\[\[$fieldname#description\]\]/i";
+        $replacement[] = $field->field->description;
+        // Other fields.
+        if (strpos($asearchtemplate, "[[" . $field->field->name . "]]") === false) {
+            $otherfields[] = [
+                'fieldname' => $searchfield->field->name,
+                'fieldcontent' => $searchinput,
+            ];
         }
     }
+    $patterns[] = "/##otherfields##/";
+    if (!empty($otherfields)) {
+        $replacement[] = $OUTPUT->render_from_template(
+            'mod_data/fields_otherfields',
+            ['fields' => $otherfields]
+        );
+    } else {
+        $replacement[] = '';
+    }
+
     $fn = !empty($search_array[DATA_FIRSTNAME]->data) ? $search_array[DATA_FIRSTNAME]->data : '';
     $ln = !empty($search_array[DATA_LASTNAME]->data) ? $search_array[DATA_LASTNAME]->data : '';
     $patterns[]    = '/##firstname##/';
@@ -2694,7 +2726,7 @@ function data_preset_path($course, $userid, $shortname) {
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the data.
  *
- * @param $mform form passed by reference
+ * @param MoodleQuickForm $mform form passed by reference
  */
 function data_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'dataheader', get_string('modulenameplural', 'data'));

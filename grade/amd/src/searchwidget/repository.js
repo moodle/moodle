@@ -28,16 +28,14 @@ import ajax from 'core/ajax';
  *
  * @method userFetch
  * @param {int} courseid ID of the course to fetch the users of.
- * @param {string} actionBaseUrl The base URL for the user option.
  * @param {int} groupId ID of the group to fetch the users of.
  * @return {object} jQuery promise
  */
-export const userFetch = (courseid, actionBaseUrl, groupId) => {
+export const userFetch = (courseid, groupId) => {
     const request = {
-        methodname: 'core_grades_get_enrolled_users_for_search_widget',
+        methodname: 'core_grades_get_enrolled_users_for_selector',
         args: {
             courseid: courseid,
-            actionbaseurl: actionBaseUrl,
             groupid: groupId,
         },
     };
@@ -49,15 +47,13 @@ export const userFetch = (courseid, actionBaseUrl, groupId) => {
  *
  * @method groupFetch
  * @param {int} courseid ID of the course to fetch the users of.
- * @param {string} actionBaseUrl The base URL for the group action.
  * @return {object} jQuery promise
  */
-export const groupFetch = (courseid, actionBaseUrl) => {
+export const groupFetch = (courseid) => {
     const request = {
-        methodname: 'core_grades_get_groups_for_search_widget',
+        methodname: 'core_grades_get_groups_for_selector',
         args: {
             courseid: courseid,
-            actionbaseurl: actionBaseUrl,
         },
     };
     return ajax.call([request])[0];

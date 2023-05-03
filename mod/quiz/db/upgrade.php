@@ -22,7 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Quiz module upgrade function.
@@ -161,6 +160,23 @@ function xmldb_quiz_upgrade($oldversion) {
     // Put any upgrade step following this.
 
     // Automatically generated Moodle v4.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2022120500) {
+        // Define field displaynumber to be added to quiz_slots.
+        $table = new xmldb_table('quiz_slots');
+        $field = new xmldb_field('displaynumber', XMLDB_TYPE_CHAR, '16', null, null, null, null, 'page');
+
+        // Conditionally launch add field displaynumber.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2022120500, 'quiz');
+    }
+
+    // Automatically generated Moodle v4.2.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

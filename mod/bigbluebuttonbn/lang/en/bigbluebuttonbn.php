@@ -43,6 +43,7 @@ $string['bigbluebuttonbn:protectrecordings'] = 'Protect recordings';
 $string['bigbluebuttonbn:unprotectrecordings'] = 'Unprotect recordings';
 $string['bigbluebuttonbn:deleterecordings'] = 'Delete recordings';
 $string['bigbluebuttonbn:importrecordings'] = 'Import recordings';
+$string['bigbluebuttonbn:viewallrecordingformats'] = 'View all recording formats';
 $string['bigbluebuttonbn'] = 'BigBlueButton';
 $string['bigbluebuttondisablednotification_subject'] = 'BigBlueButton activity module disabled.';
 $string['bigbluebuttondisablednotification'] = 'The BigBlueButton activity module has been disabled and any existing BigBlueButton course activities are currently not accessible. Prior to re-enabling this plugin, please ensure that you have read and accepted the <a href="{$a}" target="_blank">data processing agreement</a> with Blindside Networks Inc.';
@@ -137,6 +138,8 @@ $string['config_guestaccess_enabled_description'] = 'Allow users without an acco
 
 $string['config_general'] = 'General settings';
 $string['config_general_description'] = 'These settings are always used.';
+$string['config_profile_picture_enabled'] = 'Show profile pictures';
+$string['config_profile_picture_enabled_description'] = 'Should profile pictures of participants be shown in BigBlueButton sessions?';
 $string['config_server_url'] = 'BigBlueButton server URL';
 $string['config_server_url_description'] = 'The default credentials are for a <a href="https://bigbluebutton.org/free-bigbluebutton-service-for-moodle/" target="_blank">free BigBlueButton service for Moodle (opens in new window)</a> provided by Blindside Networks with restrictions as follows:
 <ol>
@@ -147,6 +150,8 @@ $string['config_server_url_description'] = 'The default credentials are for a <a
 </ol>';
 $string['config_shared_secret'] = 'BigBlueButton shared secret';
 $string['config_shared_secret_description'] = 'The security secret of your BigBlueButton server. The default secret is for a free BigBlueButton service provided by Blindside Networks.';
+$string['config_checksum_algorithm'] = 'BigBlueButton server checksum algorithm';
+$string['config_checksum_algorithm_description'] = 'SHA1 is compatible with older servers. SHA256 and SHA512 are more secure. SHA512 is FIPS 140-2 compliant.';
 
 $string['config_recording'] = 'Recording';
 $string['config_recording_description'] = 'These settings are feature specific';
@@ -184,6 +189,11 @@ $string['config_recordings_preview_editable'] = 'Preview feature can be edited';
 $string['config_recordings_preview_editable_description'] = 'Preview feature can be edited when the instance is added or updated.';
 $string['config_recordings_asc_sort'] = 'List recordings in chronological order';
 $string['config_recordings_asc_sort_description'] = 'Recordings are ordered by date, either chronological or reverse chronological order (most recent recording first).';
+
+$string['config_recording_safe_formats'] = 'Recording formats viewable by everyone';
+$string['config_recording_safe_formats_description'] = 'Select the formats which are viewable by everyone.
+All other formats are only viewable by teachers and other users with the mod/bigbluebuttonbn:viewallrecordingformats and
+ mod/bigbluebuttonbn:managerecordings capabilities.';
 
 $string['config_importrecordings'] = 'Import recordings';
 $string['config_importrecordings_description'] = 'These settings are feature specific.';
@@ -417,6 +427,7 @@ $string['mod_form_locksettings'] = 'Lock settings';
 $string['report_join_info']  = '{$a} meeting(s)';
 $string['report_play_recording_info']  = '{$a} recording(s) played';
 $string['report_room_view']  = 'viewed';
+$string['progress_createbigbluebuttonbn'] = 'Creating BigBlueButton activity ({$a})';
 $string['starts_at'] = 'Starts';
 $string['started_at'] = 'Started';
 $string['ends_at'] = 'Ends';
@@ -431,7 +442,7 @@ $string['view_error_unable_join'] = 'Unable to enter the room. Please check the 
 $string['view_error_bigbluebutton'] = 'BigBlueButton responded with errors. {$a}';
 $string['view_error_create'] = 'The BigBlueButton server responded with an error message. The room could not be created.';
 $string['view_error_max_concurrent'] = 'The number of concurrent sessions allowed has been reached.';
-$string['view_error_userlimit_reached'] = 'The number of users allowed in a session has been reached.';
+$string['view_error_userlimit_reached'] = 'The limit of how many users allowed in a session has been reached.';
 $string['view_error_url_missing_parameters'] = 'There are parameters missing in this URL';
 $string['view_error_import_no_courses'] = 'There are no courses to look up for recordings.';
 $string['view_error_import_no_recordings'] = 'There are no recordings in this course for importing.';
@@ -513,7 +524,7 @@ $string['view_message_conference_not_started'] = 'The session has not started ye
 $string['view_message_conference_wait_for_moderator'] = 'Waiting for a moderator to join.';
 $string['view_message_conference_in_progress'] = 'The session is in progress.';
 $string['view_message_conference_has_ended'] = 'The session has ended.';
-$string['view_message_conference_user_limit_reached'] = 'The number of users allowed in a session has been reached';
+$string['view_message_conference_user_limit_reached'] = 'The limit of how many users allowed in a session has been reached.';
 $string['view_message_tab_close'] = 'This tab/window must be closed manually';
 $string['view_message_recordings_disabled'] = 'Recordings are disabled on the server. BigBlueButton activities of type \'Recordings only\' cannot be used.';
 $string['view_message_cron_disabled'] = 'The list of recordings may not be up to date. Please contact the site administrator with the following information: {$a}';

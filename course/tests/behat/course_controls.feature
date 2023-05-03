@@ -145,3 +145,62 @@ Feature: Course activity controls works as expected
       | weeks        | 0             | "General"               | should                    | should                                                   | "8 January - 14 January" |
       | weeks        | 1             | "1 January - 7 January" | should not                | should not                                               | "8 January - 14 January" |
       | weeks        | 1             | "General"               | should                    | should not                                               | "8 January - 14 January" |
+
+  @javascript
+  Scenario Outline: Indentation should allow one level only
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+    And the following "courses" exist:
+      | fullname | shortname | format         | coursedisplay   | numsections | startdate |
+      | Course 1 | C1        | <courseformat> | <coursedisplay> | 5           | 0         |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity | name               | intro                     | course | idnumber |
+      | forum    | Test forum name    | Test forum description    | C1     | forum1   |
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    And I open "Test forum name" actions menu
+    Then "Move right" "link" should be visible
+    And "Move left" "link" should not be visible
+    And I click on "Move right" "link" in the "Test forum name" activity
+    And I open "Test forum name" actions menu
+    And "Move right" "link" should not be visible
+    And "Move left" "link" should be visible
+    And I click on "Move left" "link" in the "Test forum name" activity
+    And I open "Test forum name" actions menu
+    And "Move right" "link" should be visible
+    And "Move left" "link" should not be visible
+
+    Examples:
+      | courseformat |
+      | topics       |
+      | weeks        |
+
+  @javascript
+  Scenario Outline: Admins could disable indentation
+    Given the following "courses" exist:
+      | fullname | shortname | format | coursedisplay | numsections | startdate |
+      | Course 1 | C1 | <courseformat> | <coursedisplay> | 5 | 0 |
+    And the following "activities" exist:
+      | activity | name               | intro                     | course | idnumber |
+      | forum    | Test forum name    | Test forum description    | C1     | forum1   |
+    And I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
+    And I open "Test forum name" actions menu
+    And "Move right" "link" should be visible
+    And "Move left" "link" should not be visible
+    And I click on "Move right" "link" in the "Test forum name" activity
+    When the following config values are set as admin:
+      | indentation | 0 | format_<courseformat> |
+    And I am on "Course 1" course homepage with editing mode on
+    And I open "Test forum name" actions menu
+    Then "Move right" "link" should not exist
+    And "Move left" "link" should not exist
+
+    Examples:
+      | courseformat |
+      | topics       |
+      | weeks        |

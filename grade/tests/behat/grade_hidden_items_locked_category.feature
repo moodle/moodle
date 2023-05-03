@@ -38,9 +38,8 @@ Feature: Hidden grade items should be hidden when grade category is locked, but 
     And I give the grade "50.00" to the user "Student 1" for the grade item "Hidden item"
     And I press "Save changes"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I set the following settings for grade item "Test locked category":
+    And I set the following settings for grade item "Test locked category" of type "category" on "setup" page:
       | Locked | 1 |
-    And I press "Save changes"
     And I log out
 
   Scenario: Hidden grade items in locked category is hidden for teacher

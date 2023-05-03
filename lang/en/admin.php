@@ -95,10 +95,13 @@ $string['blockediplist'] = 'Blocked IP List';
 $string['blockinstances'] = 'Instances';
 $string['blockmultiple'] = 'Multiple';
 $string['blockprotect'] = 'Protect instances';
+$string['blockprotectblock'] = 'Protect instances of {$a}';
+$string['blockprotected'] = '{$a} block instances are protected.';
 $string['blockprotect_help'] = 'If you lock a particular type of block, then no-one will be able to add or delete instances. (You can, of course, unlock again if you need to edit instances.)
 
 This is intended to protect blocks like the navigation and settings which are very hard to get back if accidentally deleted.';
-$string['blockunprotect'] = 'Unprotect';
+$string['blockunprotectblock'] = 'Unprotect instances of {$a}';
+$string['blockunprotected'] = '{$a} block instances are unprotected.';
 $string['blocksettings'] = 'Manage blocks';
 $string['bloglevel'] = 'Blog visibility';
 $string['bookmarkadded'] = 'Bookmark added.';
@@ -135,14 +138,27 @@ $string['clitypevaluedefault'] = 'type value, press Enter to use default value (
 $string['cliunknowoption'] = 'Unrecognised options:
   {$a}
 Please use --help option.';
+$string['cliupgradecompletenomaintenanceupgrade'] = 'To purge remaining caches after user traffic cutover to new code:
+
+  php admin/cli/purge_caches.php --muc
+  php admin/cli/purge_caches.php --js
+  php admin/cli/purge_caches.php --filter
+  php admin/cli/purge_caches.php --other
+
+You should perform these purges in isolation, with a gap between commands, to reduce load spikes on the web server.';
 $string['cliupgradedefault'] = 'New setting: {$a}';
 $string['cliupgradedefaultheading'] = 'Setting new default values';
 $string['cliupgradedefaultverbose'] = 'New setting: {$a->name}, Default value: {$a->defaultsetting}';
 $string['cliupgradefinished'] = 'Command line upgrade from {$a->oldversion} to {$a->newversion} completed successfully.';
+$string['cliupgrademaintenancenotrequired'] = 'This upgrade WILL NOT result in maintenance mode for users.';
+$string['cliupgrademaintenancerequired'] = 'This upgrade WILL result in maintenance mode for users.';
 $string['cliupgradenoneed'] = 'No upgrade needed for the installed version {$a}. Thanks for coming anyway!';
 $string['cliupgradepending'] = 'An upgrade is pending';
+$string['cliupgradesetlock'] = 'Upgrade has been locked to CLI execution only.';
+$string['cliupgradeunsetlock'] = 'Existing CLI execution upgrade lock has been removed.';
 $string['cliyesnoprompt'] = 'type y (means yes) or n (means no)';
 $string['close'] = 'Close';
+$string['cohort_customfield'] = 'Cohort custom fields';
 $string['commentsperpage'] = 'Comments displayed per page';
 $string['commonactivitysettings'] = 'Common activity settings';
 $string['commonfiltersettings'] = 'Common filter settings';
@@ -227,6 +243,8 @@ $string['configdndallowtextandlinks'] = 'Enable or disable the dragging and drop
 $string['configdoclang'] = 'This language will be used in links for the documentation pages.';
 $string['configdocroot'] = 'Defines the path to Moodle Docs for providing context-specific documentation via \'Help and documentation\' links in the footer of each page. If the field is left blank, links will not be displayed.';
 $string['configdoctonewwindow'] = 'If enabled, then links to Moodle Docs will be shown in a new window.';
+$string['configduration_low'] = 'This value is too low. The minimum value is {$a}.';
+$string['configduration_high'] = 'This value is too high. The maximum value is {$a}.';
 $string['configeditordictionary'] = 'This value will be used if aspell doesn\'t have dictionary for users own language.';
 $string['configeditorfontlist'] = 'Select the fonts that should appear in the editor\'s drop-down list.';
 $string['configemailchangeconfirmation'] = 'Require an email confirmation step when users change their email address in their profile.';
@@ -348,6 +366,7 @@ $string['configsectionsecurity'] = 'Security';
 $string['configsectionstats'] = 'Statistics';
 $string['configsectionuser'] = 'User';
 $string['configsecureforms'] = 'Moodle can use an additional level of security when accepting data from web forms. If this is enabled, then the browser\'s HTTP_REFERER variable is checked against the current form address.  In a very few cases this can cause problems if the user is using a firewall (eg Zonealarm) configured to strip HTTP_REFERER from their web traffic.  Symptoms are getting \'stuck\' on a form. If your users are having problems with the login page (for example) you might want to disable this setting, although it might leave your site more open to brute-force password attacks.  If in doubt, leave this set to \'Yes\'.';
+$string['configservicespage'] = 'Enter the URL of a services and support page or leave empty to link to Moodle services on moodle.com.';
 $string['configsessioncookie'] = 'This setting customises the name of the cookie used for Moodle sessions.  This is optional, and only useful to avoid cookies being confused when there is more than one copy of Moodle running within the same web site.';
 $string['configsessioncookiedomain'] = 'This allows you to change the domain that the Moodle cookies are available from. This is useful for Moodle customisations (e.g. authentication or enrolment plugins) that need to share Moodle session information with a web application on another subdomain. <strong>WARNING: it is strongly recommended to leave this setting at the default (empty) - an incorrect value will prevent all logins to the site.</strong>';
 $string['configsessioncookiepath'] = 'If you need to change where browsers send the Moodle cookies, you can change this setting to specify a subdirectory of your web site.  Otherwise the default \'/\' should be fine.';
@@ -383,14 +402,13 @@ $string['configstripalltitletags'] = 'Uncheck this setting to allow HTML tags in
 $string['configsupportavailability'] = 'Determines who has access to contact site support from the footer.';
 $string['configsupportemail'] = 'If SMTP is configured on this site and a support page is not set, this email address will receive messages submitted through the support form. If sending fails, the email address will be displayed to logged-in users.';
 $string['configsupportname'] = 'The name of the person or other entity providing support via the support form or support page.';
-$string['configsupportpage'] = 'A link to this page will be provided for users to contact the site support. If the field is left blank then a link to a support form will be provided instead.';
+$string['configsupportpage'] = 'Enter the URL of a support page or leave empty to link to a contact form.';
 $string['configtempdatafoldercleanup'] = 'Remove temporary data files from the data folder that are older than the selected time.';
 $string['configthemedesignermode'] = 'Normally all theme images and style sheets are cached in browsers and on the server for a very long time, for performance. If you are designing themes or developing code then you probably want to turn this mode on so that you are not served cached versions.  Warning: this will make your site slower for all users!  Alternatively, you can also reset the theme caches manually from the Theme selection page.';
 $string['configthemelist'] = 'Leave this blank to allow any valid theme to be used.  If you want to shorten the theme menu, you can specify a comma-separated list of names here (Don\'t use spaces!).
 For example:  standard,orangewhite.';
 $string['configtimezone'] = 'This is the default timezone for displaying dates - each user can override this setting in their profile. Cron tasks and other server settings are specified in this timezone. You should change the setting if it shows as "Invalid timezone"';
 $string['configuseblogassociations'] = 'Should users be able to organize their blog by associating entries with courses and course modules?';
-$string['configuseexternalyui'] = 'Instead of using local files, use online files available on Yahoo&#145;s servers. WARNING: This requires an internet connection, or no AJAX will work on your site. This setting is not compatible with sites using https.';
 $string['configusesitenameforsitepages'] = 'If enabled the site\'s short name will be used for the site pages node in the navigation rather than the string \'Site pages\'.';
 $string['configusetags'] = 'Should tags functionality across the site be enabled?';
 $string['configvariables'] = 'Variables';
@@ -401,7 +419,7 @@ $string['configyuicomboloading'] = 'This options enables combined file loading o
 $string['confirmation'] = 'Confirmation';
 $string['confirmcontextlock'] = '{$a->contextname} is currently unfrozen. Freezing it will make it read-only and prevent users from making changes. Are you sure you wish to continue?';
 $string['confirmcontextunlock'] = '{$a->contextname} is currently frozen. Unfreezing it will allow users to make changes. Are you sure you wish to continue?';
-$string['confirmdeletecomments'] = 'You are about to delete comments, are you sure?';
+$string['confirmdeletecomments'] = 'Are you sure you want to delete the selected comment(s)?';
 $string['confirmed'] = 'Confirmed';
 $string['contactsitesupport'] = 'Contact site support';
 $string['contextlocking'] = 'Context freezing';
@@ -439,6 +457,8 @@ $string['cron'] = 'Cron';
 $string['cron_enabled'] = 'Enable cron';
 $string['cron_enabled_desc'] = 'Cron should normally be enabled, however this setting allows it to be disabled temporarily, for example before a server restart. If disabled, the system is prevented from starting new background tasks. Note that the cron should not be disabled for a long time, as this will prevent important functionality from working.';
 $string['cron_help'] = 'The cron.php script runs a number of tasks at different scheduled intervals, such as sending forum post notification emails. The script should be run regularly - ideally every minute.';
+$string['cron_keepalive'] = 'Keep alive';
+$string['cron_keepalive_desc'] = 'The length of time to keep polling for additional tasks. This setting is for ensuring that cron is always running. If you use dedicated task runners, set it to 0. Otherwise, set it to a value similar to the adhoc task concurrency limit. Avoid longer times. The maximum time is 15 minutes.';
 $string['cron_link'] = 'admin/cron';
 $string['cronclionly'] = 'Cron execution via command line only';
 $string['cronerrorclionly'] = 'Sorry, internet access to this page has been disabled by the administrator.';
@@ -484,6 +504,8 @@ $string['debugsqltrace100'] = 'Show full stack trace';
 $string['debugsqltrace_desc'] = 'If enabled, a partial or full PHP stack trace is added into the SQL as a comment.';
 $string['debugstringids'] = 'Show origin of languages strings';
 $string['debugstringids_desc'] = 'If enabled, language string components and identifiers are displayed when ?strings=1 or &strings=1 is appended to the page URL.';
+$string['debugtemplateinfo'] = 'Show template information';
+$string['debugtemplateinfo_desc'] = 'If enabled, templates used for rendering are shown as comments in the page HTML. Use for temporary debugging only, as it produces HTML validation errors and could break some page scripts.';
 $string['debugvalidators'] = 'Show validator links';
 $string['defaultcity'] = 'Default city';
 $string['defaultcity_help'] = 'A city entered here will be the default city when creating new user accounts.';
@@ -506,6 +528,7 @@ $string['devicedetectregexexpression'] = 'Regular expression';
 $string['devicedetectregexvalue'] = 'Return value';
 $string['devicetype'] = 'Device type';
 $string['disabled'] = 'Disabled';
+$string['disableplugin'] = 'Disable {$a}';
 $string['disableuserimages'] = 'Disable user profile images';
 $string['displayerrorswarning'] = 'Enabling the PHP setting <em>display_errors</em> is not recommended on production sites because some error messages may reveal sensitive information about your server.';
 $string['displayloginfailures'] = 'Display login failures';
@@ -520,6 +543,8 @@ $string['divertallemailsto'] = 'Divert all emails';
 $string['divertallemailsto_desc'] = 'If set then all emails will be diverted to this single email address instead.';
 $string['dndallowtextandlinks'] = 'Drag and drop upload of text/links';
 $string['doclang'] = 'Language for docs';
+$string['coursecreationguide'] = 'Moodle course creation guide URL';
+$string['coursecreationguide_help'] = 'Defines the path to a Quickstart guide with short videos and general tips to create courses. A link to the guide is displayed on the My courses page when there are no courses to show. Only users with the capability to create courses will see the link.';
 $string['docroot'] = 'Moodle Docs document root';
 $string['doctonewwindow'] = 'Open in new window';
 $string['doesnotfit'] = 'Email display settings';
@@ -576,9 +601,14 @@ $string['enableglobalsearch_desc'] = 'If enabled, data will be indexed and synch
 $string['enablegravatar'] = 'Enable Gravatar';
 $string['enablegravatar_help'] = 'When enabled Moodle will attempt to fetch a user profile picture from Gravatar if the user has not uploaded an image.';
 $string['enablemobilewebservice'] = 'Enable web services for mobile devices';
+$string['enablepdfexportfont'] = 'Enable PDF fonts';
+$string['enablepdfexportfont_desc'] = 'If your site has courses in different languages which need other fonts in generated PDF files, you can provide the option to set the font in the course settings. You need to specify available fonts in $CFG->pdfexportfont in config.php.';
+$string['enableplugin'] = 'Enable {$a}';
 $string['enablerecordcache'] = 'Enable record cache';
 $string['enablerssfeeds'] = 'Enable RSS feeds';
 $string['enablesearchareas'] = 'Enable search areas';
+$string['enablesharingtomoodlenet'] = 'Enable sharing to MoodleNet (outbound)';
+$string['enablesharingtomoodlenet_desc'] = 'Enable users to share course content to a configured MoodleNet instance if they have the relevant capability.';
 $string['enablestats'] = 'Enable statistics';
 $string['enabletrusttext'] = 'Enable trusted content';
 $string['enableuserfeedback'] = 'Enable feedback about this software';
@@ -986,6 +1016,8 @@ $string['pleaserefreshregistration'] = 'Your site is registered. Registration la
 $string['pleaserefreshregistrationunknown'] = 'Your site has been registered but the registration date is unknown. Please update your registration using the \'Update registration\' button or ensure that the \'Site registration\' scheduled task is enabled so your registration is automatically updated.';
 $string['pleaserefreshregistrationnewdata'] = 'Registration information has been changed. Please confirm it using the \'Update registration\' button.';
 $string['plugin'] = 'Plugin';
+$string['plugin_disabled'] = '{$a} disabled.';
+$string['plugin_enabled'] = '{$a} enabled.';
 $string['plugins'] = 'Plugins';
 $string['pluginscheck'] = 'Plugin dependencies check';
 $string['pluginscheckfailed'] = 'Dependencies check failed for {$a->pluginslist}';
@@ -1129,6 +1161,10 @@ $string['purgethemecache'] = 'Themes';
 $string['referrernone'] = 'Browser default';
 $string['referrerpolicy'] = 'Referrer policy';
 $string['referrerpolicydesc'] = 'Set the referrer policy header to be included with responses from your site.';
+$string['resetindentation_title'] = 'Reset indentation on course page?';
+$string['resetindentation_help'] = 'This will remove any indentation previously set for courses in {$a->format}.';
+$string['resetindentation'] = 'Reset indentation';
+$string['resetindentationsuccess'] = 'Indentation reset';
 $string['restorecourse'] = 'Restore course';
 $string['restorernewroleid'] = 'Restorers\' role in courses';
 $string['restorernewroleid_help'] = 'If the user does not already have the permission to manage the newly restored course, the user is automatically assigned this role and enrolled if necessary. Select "None" if you do not want restorers to be able to manage every restored course.';
@@ -1216,6 +1252,7 @@ $string['selecttheme'] = 'Select theme for {$a} device';
 $string['server'] = 'Server';
 $string['serverchecks'] = 'Server checks';
 $string['serverlimit'] = 'Server limit';
+$string['servicespage'] = 'Services and support link';
 $string['sessionautostartwarning'] = '<p>Serious configuration error detected, please notify server administrator.</p><p> To operate properly, Moodle requires that administrator changes PHP settings.</p><p><code>session.auto_start</code> must be set to <code>off</code>.</p><p>This setting is controlled by editing <code>php.ini</code>, Apache/IIS <br />configuration or <code>.htaccess</code> file on the server.</p>';
 $string['sessioncookie'] = 'Cookie prefix';
 $string['sessioncookiedomain'] = 'Cookie domain';
@@ -1297,7 +1334,7 @@ $string['supportemail'] = 'Support email';
 $string['supportemailsubject'] = 'Site support request - {$a}';
 $string['supportavailability'] = 'Support availability';
 $string['supportname'] = 'Support name';
-$string['supportpage'] = 'Support page';
+$string['supportpage'] = 'Contact site support link';
 $string['suspenduser'] = 'Suspend user account';
 $string['switchlang'] = 'Switch lang directory';
 $string['systempaths'] = 'System paths';
@@ -1510,7 +1547,6 @@ $string['upgradinglogs'] = 'Upgrading logs';
 $string['upgradingversion'] = 'Upgrading to new version';
 $string['upwards'] = 'upwards';
 $string['useblogassociations'] = 'Enable associations';
-$string['useexternalyui'] = 'Use online YUI libraries';
 $string['user'] = 'User';
 $string['userbulk'] = 'Bulk user actions';
 $string['userbulkdownload'] = 'Export users as';
@@ -1549,7 +1585,8 @@ $string['xmlrpcwebserviceenabled'] = 'It has been detected that the XML-RPC Web 
 $string['yuicomboloading'] = 'YUI combo loading';
 $string['ziprequired'] = 'The Zip PHP extension is now required by Moodle, info-ZIP binaries or PclZip library are not used anymore.';
 $string['manageqbanks'] = 'Manage question bank plugins';
-
+$string['modassignmentinuse'] = 'Your site is still using the Assignment 2.2 plugin. Before upgrading you must 1) backup any Assignment 2.2 activities that you want to keep and restore them as Assignment activities, and 2) delete all Assignment 2.2 data from the database.';
+$string['modassignmentsubpluginsexist'] = 'Assignment 2.2. subplugins may be present. The mod/assignment folder and all of its subplugins need to be removed before upgrading.';
 
 $string['caching'] = 'Caching';
 $string['cachesettings'] = 'Cache settings';
@@ -1573,3 +1610,6 @@ $string['mediapluginswfnote'] = 'As a default security measure, normal users sho
 
 // Deprecated since Moodle 4.1.
 $string['multilangforceold'] = 'Force old multilang syntax: &lt;span&gt; without the class="multilang" and &lt;lang&gt;';
+
+// Deprecated since Moodle 4.2.
+$string['blockunprotect'] = 'Unprotect';

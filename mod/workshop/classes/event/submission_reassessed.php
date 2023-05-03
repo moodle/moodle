@@ -65,16 +65,6 @@ class submission_reassessed extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'workshop', 'update assessment', 'assessment.php?asid=' . $this->objectid,
-            $this->other['submissionid'], $this->contextinstanceid);
-    }
-
-    /**
      * Return localised event name.
      *
      * @return string

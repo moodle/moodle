@@ -81,16 +81,6 @@ class template_viewed extends \core\event\base {
     }
 
     /**
-     * Get the legacy event log data.
-     *
-     * @return array
-     */
-    public function get_legacy_logdata() {
-        return array($this->courseid, 'data', 'templates view', 'templates.php?id=' . $this->contextinstanceid .
-            '&amp;d=' . $this->other['dataid'], $this->other['dataid'], $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception when validation does not pass.

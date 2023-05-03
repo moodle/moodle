@@ -35,7 +35,10 @@ class tag_condition extends condition {
     /** @var string SQL fragment to add to the where clause. */
     protected $where;
 
-    /** @var string SQL fragment to add to the where clause. */
+    /** @var array Named SQL params to be used with the SQL WHERE snippet. */
+    protected $params;
+
+    /** @var array List of contexts to show tags from. */
     protected $contexts;
 
     /** @var array List of IDs for tags that have been selected in the form. */

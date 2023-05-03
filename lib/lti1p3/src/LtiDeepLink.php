@@ -29,7 +29,9 @@ class LtiDeepLink
             LtiConstants::DEPLOYMENT_ID => $this->deployment_id,
             LtiConstants::MESSAGE_TYPE => 'LtiDeepLinkingResponse',
             LtiConstants::VERSION => LtiConstants::V1_3,
-            LtiConstants::DL_CONTENT_ITEMS => array_map(function ($resource) { return $resource->toArray(); }, $resources),
+            LtiConstants::DL_CONTENT_ITEMS => array_map(function ($resource) {
+                return $resource->toArray();
+            }, $resources),
         ];
 
         // https://www.imsglobal.org/spec/lti-dl/v2p0/#deep-linking-request-message

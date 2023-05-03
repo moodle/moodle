@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Reseller extends Google_Service
 {
   /** Manage users on your domain. */
@@ -289,6 +290,7 @@ class Google_Service_Reseller extends Google_Service
  *   $customers = $resellerService->customers;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Reseller_Customers_Resource extends Google_Service_Resource
 {
 
@@ -366,6 +368,7 @@ class Google_Service_Reseller_Customers_Resource extends Google_Service_Resource
  *   $subscriptions = $resellerService->subscriptions;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Reseller_Subscriptions_Resource extends Google_Service_Resource
 {
 
@@ -549,6 +552,7 @@ class Google_Service_Reseller_Subscriptions_Resource extends Google_Service_Reso
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Reseller_Address extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -647,6 +651,7 @@ class Google_Service_Reseller_Address extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Reseller_ChangePlanRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -692,6 +697,7 @@ class Google_Service_Reseller_ChangePlanRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Reseller_Customer extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -773,6 +779,7 @@ class Google_Service_Reseller_Customer extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Reseller_RenewalSettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -799,6 +806,7 @@ class Google_Service_Reseller_RenewalSettings extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Reseller_Seats extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -843,6 +851,7 @@ class Google_Service_Reseller_Seats extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Reseller_Subscription extends Google_Collection
 {
   protected $collection_key = 'suspensionReasons';
@@ -992,6 +1001,7 @@ class Google_Service_Reseller_Subscription extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Reseller_SubscriptionPlan extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1028,6 +1038,7 @@ class Google_Service_Reseller_SubscriptionPlan extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Reseller_SubscriptionPlanCommitmentInterval extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1054,6 +1065,7 @@ class Google_Service_Reseller_SubscriptionPlanCommitmentInterval extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Reseller_SubscriptionTransferInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1080,6 +1092,7 @@ class Google_Service_Reseller_SubscriptionTransferInfo extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Reseller_SubscriptionTrialSettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1106,6 +1119,7 @@ class Google_Service_Reseller_SubscriptionTrialSettings extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Reseller_Subscriptions extends Google_Collection
 {
   protected $collection_key = 'subscriptions';

@@ -199,7 +199,7 @@ class cache implements cache_loader {
      *   - simpledata : Set to true if the type of the data you are going to store is scalar, or an array of scalar vars
      *   - staticacceleration : If set to true the cache will hold onto data passing through it.
      *   - staticaccelerationsize : The max size for the static acceleration array.
-     * @return cache_application|cache_session|cache_store
+     * @return cache_application|cache_session|cache_request
      */
     public static function make_from_params($mode, $component, $area, array $identifiers = array(), array $options = array()) {
         $factory = cache_factory::instance();

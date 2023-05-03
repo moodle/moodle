@@ -123,7 +123,8 @@ Feature: Users can edit the database templates
     And I should not see "Some content 1"
     When I navigate to "Templates" in current page administration
     And I set the field "Templates tertiary navigation" to "List view template"
-    And I click on "Reset" "button" in the "sticky-footer" "region"
+    And I click on "Actions" "button"
+    And I choose "Reset current template" in the open action menu
     And I should see "This will permanently remove the List view template for your current preset."
     And I click on "Reset" "button" in the "Reset template?" "dialogue"
     Then I should see "Template reset"
@@ -194,7 +195,8 @@ Feature: Users can edit the database templates
     And I click on "Add entry" "button"
     And I should see "Initial add"
     When I navigate to "Templates" in current page administration
-    And I click on "Reset" "button" in the "sticky-footer" "region"
+    And I click on "Actions" "button"
+    And I choose "Reset current template" in the open action menu
     And I should see "This will permanently remove the Add entry template for your current preset."
     And I click on "Reset all templates" "checkbox"
     And I click on "Reset" "button" in the "Reset template?" "dialogue"

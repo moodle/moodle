@@ -38,8 +38,7 @@ Feature: Teacher can unhide grades on the edit page allowing students to view th
 
   @javascript
   Scenario: Hiding the activity using the drop-down hide link and then unhiding the activity using the edit settings form page
-    Given I click on "Edit" "link" in the "Test assignment name" "table_row"
-    And I click on "Hide" "link" in the "Test assignment name" "table_row"
+    Given I hide the grade item "Test assignment name" of type "gradeitem" on "setup" page
     And I log out
     And I am on the "Test assignment name" "assign activity" page logged in as student1
     And I should not see "50.00"
@@ -48,8 +47,8 @@ Feature: Teacher can unhide grades on the edit page allowing students to view th
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I click on "Edit" "link" in the "Test assignment name" "table_row"
-    And I click on "Edit settings" "link" in the "Test assignment name" "table_row"
+    And I click on grade item menu "Test assignment name" of type "gradeitem" on "setup" page
+    And I choose "Edit grade item" in the open action menu
     And the field "Hidden" matches value "1"
     And I set the field "Hidden" to "0"
     And I press "Save changes"
@@ -60,8 +59,8 @@ Feature: Teacher can unhide grades on the edit page allowing students to view th
 
   @javascript
   Scenario: Hiding the activity using the edit settings form page and then unhiding the activity using the drop-down show link
-    Given I click on "Edit" "link" in the "Test assignment name" "table_row"
-    And I click on "Edit settings" "link" in the "Test assignment name" "table_row"
+    Given I click on grade item menu "Test assignment name" of type "gradeitem" on "setup" page
+    And I choose "Edit grade item" in the open action menu
     And I set the field "Hidden" to "1"
     And I press "Save changes"
     And I log out
@@ -72,8 +71,8 @@ Feature: Teacher can unhide grades on the edit page allowing students to view th
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I click on "Edit" "link" in the "Test assignment name" "table_row"
-    And I click on "Show" "link" in the "Test assignment name" "table_row"
+    And I click on grade item menu "Test assignment name" of type "gradeitem" on "setup" page
+    And I choose "Show" in the open action menu
     And I log out
     And I am on the "Test assignment name" "assign activity" page logged in as student1
     Then I should see "50.00"
@@ -81,8 +80,7 @@ Feature: Teacher can unhide grades on the edit page allowing students to view th
 
   @javascript
   Scenario: Hiding the category using the drop-down hide link and then unhiding the category using the edit settings form page
-    Given I click on "Edit" "link" in the "Course 1" "table_row"
-    And I click on "Hide" "link" in the "Course 1" "table_row"
+    Given I hide the grade item "Course 1" of type "course" on "setup" page
     And I log out
     And I am on the "Test assignment name" "assign activity" page logged in as student1
     And I should not see "50.00"
@@ -91,8 +89,8 @@ Feature: Teacher can unhide grades on the edit page allowing students to view th
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I click on "Edit" "link" in the "Course 1" "table_row"
-    And I click on "Edit settings" "link" in the "Course 1" "table_row"
+    And I click on grade item menu "Course 1" of type "course" on "setup" page
+    And I choose "Edit category" in the open action menu
     And the field "Hidden" matches value "1"
     And I set the field "Hidden" to "0"
     And I press "Save changes"
@@ -103,10 +101,8 @@ Feature: Teacher can unhide grades on the edit page allowing students to view th
 
   @javascript
   Scenario: Hiding the category using the edit settings form page and then unhiding the category using the drop-down show link
-    Given I click on "Edit" "link" in the "Course 1" "table_row"
-    And I click on "Edit settings" "link" in the "Course 1" "table_row"
-    And I set the field "Hidden" to "1"
-    And I press "Save changes"
+    Given I set the following settings for grade item "Course 1" of type "course" on "setup" page:
+      | Hidden | 1 |
     And I log out
     And I am on the "Test assignment name" "assign activity" page logged in as student1
     And I should not see "50.00"
@@ -115,8 +111,8 @@ Feature: Teacher can unhide grades on the edit page allowing students to view th
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I click on "Edit" "link" in the "Course 1" "table_row"
-    And I click on "Show" "link" in the "Course 1" "table_row"
+    And I click on grade item menu "Course 1" of type "course" on "setup" page
+    And I choose "Show" in the open action menu
     And I log out
     And I am on the "Test assignment name" "assign activity" page logged in as student1
     Then I should see "50.00"

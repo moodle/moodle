@@ -6,16 +6,14 @@ Feature: View gradebook when scales are used
 
   Background:
     Given I log in as "admin"
-    And the "multilang" filter is "on"
-    And the "multilang" filter applies to "content and headings"
     And I set the following administration settings values:
       | grade_report_showranges    | 1 |
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
     And I navigate to "Grades > Scales" in site administration
     And I press "Add a new scale"
     And I set the following fields to these values:
-      | Name  | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Letterscale |
-      | Scale | F,D,C,B,A                                                                                          |
+      | Name  | Letterscale |
+      | Scale | F,D,C,B,A   |
     And I press "Save changes"
     And I log out
     And the following "courses" exist:
@@ -46,7 +44,7 @@ Feature: View gradebook when scales are used
     And I am on the "Test assignment one" "assign activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the field "grade[modgrade_type]" to "Scale"
-    And I set the field "grade[modgrade_scale]" to "EN Letterscale"
+    And I set the field "grade[modgrade_scale]" to "Letterscale"
     And I press "Save and display"
     And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
@@ -75,12 +73,12 @@ Feature: View gradebook when scales are used
   Scenario: Test displaying scales in gradebook in aggregation method Natural
     When I turn editing mode off
     Then the following should exist in the "user-grades" table:
-      | -1-                | -4-      | -5-            | -6-          |
-      | Student 1          | A        | 5.00           | 5.00         |
-      | Student 2          | B        | 4.00           | 4.00         |
-      | Student 3          | C        | 3.00           | 3.00         |
-      | Student 4          | D        | 2.00           | 2.00         |
-      | Student 5          | F        | 1.00           | 1.00         |
+      | -1-                | -1-                  | -3-      | -4-            | -5-          |
+      | Student 1          | student1@example.com | A        | 5.00           | 5.00         |
+      | Student 2          | student2@example.com | B        | 4.00           | 4.00         |
+      | Student 3          | student3@example.com | C        | 3.00           | 3.00         |
+      | Student 4          | student4@example.com | D        | 2.00           | 2.00         |
+      | Student 5          | student5@example.com | F        | 1.00           | 1.00         |
     And the following should exist in the "user-grades" table:
       | -1-                | -2-      | -3-            | -4-          |
       | Range              | F–A      | 0.00–5.00      | 0.00–5.00    |
@@ -109,24 +107,21 @@ Feature: View gradebook when scales are used
       | Course total        | 4.00  | 0–5   | 80.00 %    | -                            |
 
   Scenario Outline: Test displaying scales in gradebook in all other aggregation methods
-    When I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "<aggregation>"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I expand all fieldsets
-    And I set the field "Aggregation" to "<aggregation>"
-    And I set the field "Category name" to "Sub category (<aggregation>)"
-    And I set the field "Maximum grade" to "5"
-    And I set the field "Minimum grade" to "1"
-    And I press "Save changes"
+    Given I set the following settings for grade item "Course 1" of type "course" on "grader" page:
+      | Aggregation | <aggregation> |
+    And I set the following settings for grade item "Sub category 1" of type "category" on "grader" page:
+      | Aggregation   | <aggregation>                |
+      | Category name | Sub category (<aggregation>) |
+      | Maximum grade | 5                            |
+      | Minimum grade | 1                            |
     And I turn editing mode off
     Then the following should exist in the "user-grades" table:
-      | -1-                | -4-      | -5-            | -6-            |
-      | Student 1          | A        | 5.00           | <coursetotal1> |
-      | Student 2          | B        | 4.00           | <coursetotal2> |
-      | Student 3          | C        | 3.00           | <coursetotal3> |
-      | Student 4          | D        | 2.00           | <coursetotal4> |
-      | Student 5          | F        | 1.00           | <coursetotal5> |
+      | -1-                | -1-                  | -3-      | -4-            | -5-            |
+      | Student 1          | student1@example.com | A        | 5.00           | <coursetotal1> |
+      | Student 2          | student2@example.com | B        | 4.00           | <coursetotal2> |
+      | Student 3          | student3@example.com | C        | 3.00           | <coursetotal3> |
+      | Student 4          | student4@example.com | D        | 2.00           | <coursetotal4> |
+      | Student 5          | student5@example.com | F        | 1.00           | <coursetotal5> |
     And the following should exist in the "user-grades" table:
       | -1-                | -2-      | -3-            | -4-            |
       | Range              | F–A      | 1.00–5.00      | 0.00–100.00    |
@@ -142,8 +137,8 @@ Feature: View gradebook when scales are used
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                | Max grade |
       | Test assignment one | A (5)     |
-      | Sub category (<aggregation>) total<aggregation>. |           |
-      | Course total<aggregation>.   |           |
+      | Sub category (<aggregation>) total |           |
+      | Course total   |           |
     And I log out
     And I log in as "student2"
     And I follow "Grades" in the user menu

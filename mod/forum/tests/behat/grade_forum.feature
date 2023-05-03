@@ -66,7 +66,8 @@ Feature: I can grade a students interaction across a forum
     But I should not see "Test Forum 1 rating"
 
     # The values saved should be reflected here.
-    Given I click on "Edit  forum Test Forum 1 whole forum" "link"
+    And I click on grade item menu "Test Forum 1 whole forum" of type "gradeitem" on "grader" page
+    And I choose "Edit grade item" in the open action menu
     When I expand all fieldsets
     Then the field "Maximum grade" matches value "10"
     Then the field "Grade to pass" matches value "4"
@@ -121,7 +122,8 @@ Feature: I can grade a students interaction across a forum
     But I should not see "Test Forum 1 whole forum"
 
     # The values saved should be reflected here.
-    Given I click on "Edit  forum Test Forum 1 rating" "link"
+    And I click on grade item menu "Test Forum 1 rating" of type "gradeitem" on "grader" page
+    And I choose "Edit grade item" in the open action menu
     When I expand all fieldsets
     Then the field "Maximum grade" matches value "10"
     Then the field "Grade to pass" matches value "4"
@@ -157,14 +159,16 @@ Feature: I can grade a students interaction across a forum
     And I should see "Test Forum 1 whole forum"
 
     # The values saved should be reflected here.
-    Given I click on "Edit  forum Test Forum 1 rating" "link"
+    And I click on grade item menu "Test Forum 1 rating" of type "gradeitem" on "grader" page
+    And I choose "Edit grade item" in the open action menu
     When I expand all fieldsets
     Then the field "Maximum grade" matches value "100"
     Then the field "Grade to pass" matches value "40"
     And I should see "Peers" in the "Parent category" "fieldset"
     And I press "cancel"
 
-    Given I click on "Edit  forum Test Forum 1 whole forum" "link"
+    And I click on grade item menu "Test Forum 1 whole forum" of type "gradeitem" on "grader" page
+    And I choose "Edit grade item" in the open action menu
     When I expand all fieldsets
     Then the field "Maximum grade" matches value "10"
     Then the field "Grade to pass" matches value "4"

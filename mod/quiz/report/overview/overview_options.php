@@ -14,19 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Class to store the options for a {@link quiz_overview_report}.
- *
- * @package   quiz_overview
- * @copyright 2012 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport_options.php');
-
+use mod_quiz\local\reports\attempts_report;
+use mod_quiz\local\reports\attempts_report_options;
 
 /**
  * Class to store the options for a {@link quiz_overview_report}.
@@ -34,7 +23,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport_options.php');
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_overview_options extends mod_quiz_attempts_report_options {
+class quiz_overview_options extends attempts_report_options {
 
     /** @var bool whether to show only attempt that need regrading. */
     public $onlyregraded = false;
@@ -88,7 +77,7 @@ class quiz_overview_options extends mod_quiz_attempts_report_options {
     public function resolve_dependencies() {
         parent::resolve_dependencies();
 
-        if ($this->attempts == quiz_attempts_report::ENROLLED_WITHOUT) {
+        if ($this->attempts == attempts_report::ENROLLED_WITHOUT) {
             $this->onlyregraded = false;
         }
 
@@ -99,7 +88,7 @@ class quiz_overview_options extends mod_quiz_attempts_report_options {
         // We only want to show the checkbox to delete attempts
         // if the user has permissions and if the report mode is showing attempts.
         $this->checkboxcolumn = has_any_capability(
-                array('mod/quiz:regrade', 'mod/quiz:deleteattempts'), context_module::instance($this->cm->id))
-                && ($this->attempts != quiz_attempts_report::ENROLLED_WITHOUT);
+                ['mod/quiz:regrade', 'mod/quiz:deleteattempts'], context_module::instance($this->cm->id))
+                && ($this->attempts != attempts_report::ENROLLED_WITHOUT);
     }
 }

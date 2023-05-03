@@ -184,7 +184,7 @@ if ($options['restorefile'] && !file_exists($options['restorefile'])) {
 $processoroptions['restorefile'] = $options['restorefile'];
 
 // Emulate normal session.
-cron_setup_user();
+\core\cron::setup_user();
 
 // Let's get started!
 $content = file_get_contents($options['file']);

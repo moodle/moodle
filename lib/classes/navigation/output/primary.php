@@ -33,7 +33,7 @@ use custom_menu;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class primary implements renderable, templatable {
-    /** @var moodle_page $page the moodle page that the navigation belongs to */
+    /** @var \moodle_page $page the moodle page that the navigation belongs to */
     private $page = null;
 
     /**

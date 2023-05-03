@@ -346,7 +346,7 @@ trait behat_session_trait {
      * an exception.
      *
      * @throws Exception If it timeouts without receiving something != false from the closure
-     * @param Function|array|string $lambda The function to execute or an array passed to call_user_func (maps to a class method)
+     * @param callable $lambda The function to execute or an array passed to call_user_func (maps to a class method)
      * @param mixed $args Arguments to pass to the closure
      * @param int $timeout Timeout in seconds
      * @param Exception $exception The exception to throw in case it time outs.
@@ -1041,7 +1041,7 @@ EOF;
      * Helper function to execute api in a given context.
      *
      * @param string $contextapi context in which api is defined.
-     * @param array $params list of params to pass.
+     * @param array|mixed $params list of params to pass or a single parameter
      * @throws Exception
      */
     protected function execute($contextapi, $params = array()) {
@@ -1148,53 +1148,12 @@ EOF;
      * @return context
      */
     public static function get_context(string $levelname, string $contextref): context {
-        global $DB;
-
-        // Getting context levels and names (we will be using the English ones as it is the test site language).
-        $contextlevels = context_helper::get_all_levels();
-        $contextnames = array();
-        foreach ($contextlevels as $level => $classname) {
-            $contextnames[context_helper::get_level_name($level)] = $level;
+        $context = \core\context_helper::resolve_behat_reference($levelname, $contextref);
+        if ($context) {
+            return $context;
         }
 
-        if (empty($contextnames[$levelname])) {
-            throw new Exception('The specified "' . $levelname . '" context level does not exist');
-        }
-        $contextlevel = $contextnames[$levelname];
-
-        // Return it, we don't need to look for other internal ids.
-        if ($contextlevel == CONTEXT_SYSTEM) {
-            return context_system::instance();
-        }
-
-        switch ($contextlevel) {
-
-            case CONTEXT_USER:
-                $instanceid = $DB->get_field('user', 'id', array('username' => $contextref));
-                break;
-
-            case CONTEXT_COURSECAT:
-                $instanceid = $DB->get_field('course_categories', 'id', array('idnumber' => $contextref));
-                break;
-
-            case CONTEXT_COURSE:
-                $instanceid = $DB->get_field('course', 'id', array('shortname' => $contextref));
-                break;
-
-            case CONTEXT_MODULE:
-                $instanceid = $DB->get_field('course_modules', 'id', array('idnumber' => $contextref));
-                break;
-
-            default:
-                break;
-        }
-
-        $contextclass = $contextlevels[$contextlevel];
-        if (!$context = $contextclass::instance($instanceid, IGNORE_MISSING)) {
-            throw new Exception('The specified "' . $contextref . '" context reference does not exist');
-        }
-
-        return $context;
+        throw new Exception("The specified context \"$levelname, $contextref\" does not exist");
     }
 
     /**

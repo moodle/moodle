@@ -33,12 +33,6 @@ require_once($CFG->libdir.'/tablelib.php');
 class grade_report_overview extends grade_report {
 
     /**
-     * The user.
-     * @var object $user
-     */
-    public $user;
-
-    /**
      * The user's courses
      * @var array $courses
      */
@@ -55,11 +49,6 @@ class grade_report_overview extends grade_report {
      * @var array $showrank
      */
     public $showrank;
-
-    /**
-     * show course/category totals if they contain hidden items
-     */
-    var $showtotalsifcontainhidden;
 
     /**
      * An array of course ids that the user is a student in.
@@ -132,6 +121,25 @@ class grade_report_overview extends grade_report {
     }
 
     /**
+     * Regrades all courses if needed.
+     *
+     * If $frontend is true, this may show a progress bar and redirect back to the page (possibly
+     * several times if multiple courses need it). Otherwise, it will not return until all the
+     * courses have been updated.
+     *
+     * @param bool $frontend True if we are running front-end code and can safely redirect back
+     */
+    public function regrade_all_courses_if_needed(bool $frontend = false): void {
+        foreach ($this->courses as $course) {
+            if ($frontend) {
+                grade_regrade_final_grades_if_required($course);
+            } else {
+                grade_regrade_final_grades($course->id);
+            }
+        }
+    }
+
+    /**
      * Prepares the headers and attributes of the flexitable.
      */
     public function setup_table() {
@@ -143,13 +151,13 @@ class grade_report_overview extends grade_report {
         // setting up table headers
         if ($this->showrank['any']) {
             $tablecolumns = array('coursename', 'grade', 'rank');
-            $tableheaders = array($this->get_lang_string('coursename', 'grades'),
-                                  $this->get_lang_string('gradenoun'),
-                                  $this->get_lang_string('rank', 'grades'));
+            $tableheaders = array(grade_helper::get_lang_string('coursename', 'grades'),
+                grade_helper::get_lang_string('gradenoun'),
+                grade_helper::get_lang_string('rank', 'grades'));
         } else {
             $tablecolumns = array('coursename', 'grade');
-            $tableheaders = array($this->get_lang_string('coursename', 'grades'),
-                                  $this->get_lang_string('gradenoun'));
+            $tableheaders = array(grade_helper::get_lang_string('coursename', 'grades'),
+                grade_helper::get_lang_string('gradenoun'));
         }
         $this->table = new flexible_table('grade-report-overview-'.$this->user->id);
 

@@ -1,9 +1,10 @@
 This files describes API changes in the lti code.
 
-=== 4.1.2 ===
+=== 4.2 ===
 
 * get_jwt_claim_mappings() function has been added to service_base class. It allows a service subplugin to be
   compatible with LTI 1.3 by exposing its 1.1 custom parameters to LTI 1.3 claim mapping.
+* The `serialise_tool_proxy` method, deprecated since 3.10, has been removed and can no longer be used
 
 === 4.1 ===
 

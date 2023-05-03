@@ -98,6 +98,8 @@ class assign_submission_status implements \renderable {
     public $usergroups = array();
     /** @var int The time limit for the assignment */
     public $timelimit = 0;
+    /** @var bool */
+    public $caneditowner;
 
     /**
      * Constructor

@@ -20,7 +20,7 @@ namespace core_group\reportbuilder\datasource;
 
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
-use core_reportbuilder\local\filters\{date, text};
+use core_reportbuilder\local\filters\{boolean_select, date, select, text};
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -133,6 +133,8 @@ class groups_test extends core_reportbuilder_testcase {
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'group:idnumber']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'group:description']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'group:enrolmentkey']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'group:visibility']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'group:participation']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'group:picture']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'group:timecreated']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'group:timemodified']);
@@ -159,6 +161,8 @@ class groups_test extends core_reportbuilder_testcase {
             $groupidnumber,
             $groupdescription,
             $groupenrolmentkey,
+            $groupvisibility,
+            $groupparticipation,
             $grouppicture,
             $grouptimecreated,
             $grouptimemodified,
@@ -176,6 +180,8 @@ class groups_test extends core_reportbuilder_testcase {
         $this->assertEquals('G101', $groupidnumber);
         $this->assertEquals(format_text($group->description), $groupdescription);
         $this->assertEquals('S', $groupenrolmentkey);
+        $this->assertEquals('Visible to everyone', $groupvisibility);
+        $this->assertEquals('Yes', $groupparticipation);
         $this->assertEmpty($grouppicture);
         $this->assertNotEmpty($grouptimecreated);
         $this->assertNotEmpty($grouptimemodified);
@@ -222,6 +228,20 @@ class groups_test extends core_reportbuilder_testcase {
             'Filter group idnumber (no match)' => ['group:idnumber', [
                 'group:idnumber_operator' => text::IS_NOT_EQUAL_TO,
                 'group:idnumber_value' => 'G101',
+            ], false],
+            'Filter group visibility' => ['group:visibility', [
+                'group:visibility_operator' => select::EQUAL_TO,
+                'group:visibility_value' => 0, // Visible to everyone.
+            ], true],
+            'Filter group visibility (no match)' => ['group:visibility', [
+                'group:visibility_operator' => select::EQUAL_TO,
+                'group:visibility_value' => 1, // Visible to members only.
+            ], false],
+            'Filter group participation' => ['group:participation', [
+                'group:participation_operator' => boolean_select::CHECKED,
+            ], true],
+            'Filter group participation (no match)' => ['group:participation', [
+                'group:participation_operator' => boolean_select::NOT_CHECKED,
             ], false],
             'Filter group time created' => ['group:timecreated', [
                 'group:timecreated_operator' => date::DATE_RANGE,

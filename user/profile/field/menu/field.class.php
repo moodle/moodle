@@ -168,6 +168,24 @@ class profile_field_menu extends profile_field_base {
     public function get_field_properties() {
         return array(PARAM_TEXT, NULL_NOT_ALLOWED);
     }
+
+    /**
+     * Return the field settings suitable to be exported via an external function.
+     *
+     * @return array all the settings
+     */
+    public function get_field_config_for_external() {
+
+        if (isset($this->field->param1) && !empty($this->options)) {
+            // Remove "Choose" option to make it consisten with the rest of the data.
+            if (!empty($this->field->required)) {
+                unset($this->options['']);
+            }
+            $this->field->param2 = implode("\n", array_values($this->options));
+        }
+
+        return (array) $this->field;
+    }
 }
 
 

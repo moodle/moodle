@@ -4,7 +4,7 @@
     <location>yui/src/codemirror</location>
     <name>codemirror</name>
     <description>CodeMirror is a versatile text editor implemented in JavaScript for the browser.</description>
-    <version>5.65.9</version>
+    <version>5.65.12</version>
     <license>MIT</license>
     <repository>https://github.com/codemirror/codemirror5</repository>
   </library>
@@ -12,7 +12,7 @@
     <location>yui/src/beautify</location>
     <name>jsbeautify</name>
     <description>Beautify HTML code in Atto.</description>
-    <version>1.14.6</version>
+    <version>1.14.7</version>
     <license>MIT</license>
     <repository>https://github.com/beautify-web/js-beautify</repository>
     <copyrights>

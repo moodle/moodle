@@ -63,6 +63,7 @@ class auth extends \auth_plugin_base {
     public function __construct() {
         $this->authtype = 'oauth2';
         $this->config = get_config('auth_oauth2');
+        $this->customfields = $this->get_custom_user_profile_fields();
     }
 
     /**
@@ -309,23 +310,35 @@ class auth extends \auth_plugin_base {
             return $userdata;
         }
 
+        $allfields = array_merge($this->userfields, $this->customfields);
+
         // Go through each field from the external data.
         foreach ($externaldata as $fieldname => $value) {
-            if (!in_array($fieldname, $this->userfields)) {
+            if (!in_array($fieldname, $allfields)) {
                 // Skip if this field doesn't belong to the list of fields that can be synced with the OAuth2 issuer.
                 continue;
             }
 
-            if (!property_exists($userdata, $fieldname)) {
-                // Just in case this field is on the list, but not part of the user data. This shouldn't happen though.
+            $userhasfield = property_exists($userdata, $fieldname);
+            // Find out if it is a profile field.
+            $isprofilefield = strpos($fieldname, 'profile_field_') === 0;
+            $profilefieldname = str_replace('profile_field_', '', $fieldname);
+            $userhasprofilefield = $isprofilefield && array_key_exists($profilefieldname, $userdata->profile);
+
+            // Just in case this field is on the list, but not part of the user data. This shouldn't happen though.
+            if (!($userhasfield || $userhasprofilefield)) {
                 continue;
             }
 
             // Get the old value.
-            $oldvalue = (string)$userdata->$fieldname;
+            $oldvalue = $isprofilefield ? (string) $userdata->profile[$profilefieldname] : (string) $userdata->$fieldname;
 
             // Get the lock configuration of the field.
-            $lockvalue = $this->config->{'field_lock_' . $fieldname};
+            if (!empty($this->config->{'field_lock_' . $fieldname})) {
+                $lockvalue = $this->config->{'field_lock_' . $fieldname};
+            } else {
+                $lockvalue = 'unlocked';
+            }
 
             // We should update fields that meet the following criteria:
             // - Lock value set to 'unlocked'; or 'unlockedifempty', given the current value is empty.
@@ -525,6 +538,9 @@ class auth extends \auth_plugin_base {
                     exit();
                 } else {
                     \auth_oauth2\api::link_login($userinfo, $issuer, $moodleuser->id, true);
+                    // We dont have profile loaded on $moodleuser, so load it.
+                    require_once($CFG->dirroot.'/user/profile/lib.php');
+                    profile_load_custom_fields($moodleuser);
                     $userinfo = $this->update_user($userinfo, $moodleuser);
                     // No redirect, we will complete this login.
                 }

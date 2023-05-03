@@ -235,6 +235,26 @@ class base_test extends advanced_testcase {
         $CFG->linkcoursesections = 1;
         $this->assertNotEmpty($format->get_view_url(1, ['navigation' => 1]));
         $this->assertNotEmpty($format->get_view_url(0, ['navigation' => 1]));
+
+        // Expand section.
+        // The current course format $format uses the format 'testformat' which does not use sections.
+        // Thus, the 'expanded' parameter does not do anything.
+        $viewurl = $format->get_view_url(1);
+        $this->assertNull($viewurl->get_param('expandsection'));
+        $viewurl = $format->get_view_url(1, ['expanded' => 1]);
+        $this->assertNull($viewurl->get_param('expandsection'));
+        $viewurl = $format->get_view_url(1, ['expanded' => 0]);
+        $this->assertNull($viewurl->get_param('expandsection'));
+        // We now use a course format which uses sections.
+        $course2 = $generator->create_course(['format' => 'testformatsections']);
+        course_create_sections_if_missing($course1, [0, 2]);
+        $formatwithsections = course_get_format($course2);
+        $viewurl = $formatwithsections->get_view_url(2);
+        $this->assertEquals(2, $viewurl->get_param('expandsection'));
+        $viewurl = $formatwithsections->get_view_url(2, ['expanded' => 1]);
+        $this->assertEquals(2, $viewurl->get_param('expandsection'));
+        $viewurl = $formatwithsections->get_view_url(2, ['expanded' => 0]);
+        $this->assertNull($viewurl->get_param('expandsection'));
     }
 
     /**
@@ -416,6 +436,232 @@ class base_test extends advanced_testcase {
             ]
         ];
     }
+
+    /**
+     * Test duplicate_section()
+     * @covers ::duplicate_section
+     */
+    public function test_duplicate_section() {
+        global $DB;
+
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $format = course_get_format($course);
+
+        $originalsection = $DB->get_record('course_sections', ['course' => $course->id, 'section' => 1], '*', MUST_EXIST);
+        $generator->create_module('page', ['course' => $course, 'section' => $originalsection->section]);
+        $generator->create_module('page', ['course' => $course, 'section' => $originalsection->section]);
+        $generator->create_module('page', ['course' => $course, 'section' => $originalsection->section]);
+
+        $originalmodcount = $DB->count_records('course_modules', ['course' => $course->id, 'section' => $originalsection->id]);
+        $this->assertEquals(3, $originalmodcount);
+
+        $modinfo = get_fast_modinfo($course);
+        $sectioninfo = $modinfo->get_section_info($originalsection->section, MUST_EXIST);
+
+        $newsection = $format->duplicate_section($sectioninfo);
+
+        // Verify properties are the same.
+        foreach ($originalsection as $prop => $value) {
+            if ($prop == 'id' || $prop == 'sequence' || $prop == 'section' || $prop == 'timemodified') {
+                continue;
+            }
+            $this->assertEquals($value, $newsection->$prop);
+        }
+
+        $newmodcount = $DB->count_records('course_modules', ['course' => $course->id, 'section' => $newsection->id]);
+        $this->assertEquals($originalmodcount, $newmodcount);
+    }
+
+    /**
+     * Test for the default delete format data behaviour.
+     *
+     * @covers ::get_format_string
+     * @dataProvider get_format_string_provider
+     * @param string $key the string key
+     * @param string|null $data any string data
+     * @param array|null $expectedstring the expected string (null for exception)
+     */
+    public function test_get_format_string(string $key, ?string $data, ?array $expectedstring) {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['format' => 'topics']);
+
+        if ($expectedstring) {
+            $expected = get_string($expectedstring[0], $expectedstring[1], $expectedstring[2]);
+        } else {
+            $this->expectException(\coding_exception::class);
+        }
+        $format = course_get_format($course);
+        $result = $format->get_format_string($key, $data);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Data provider for test_get_format_string.
+     *
+     * @return array the testing scenarios
+     */
+    public function get_format_string_provider(): array {
+        return [
+            'Existing in format lang' => [
+                'key' => 'sectionsdelete',
+                'data' => null,
+                'expectedstring' => ['sectionsdelete', 'format_topics', null],
+            ],
+            'Not existing in format lang' => [
+                'key' => 'bulkedit',
+                'data' => null,
+                'expectedstring' => ['bulkedit', 'core_courseformat', null],
+            ],
+            'Existing in format lang with data' => [
+                'key' => 'selectsection',
+                'data' => 'Example',
+                'expectedstring' => ['selectsection', 'format_topics', 'Example'],
+            ],
+            'Not existing in format lang with data' => [
+                'key' => 'bulkselection',
+                'data' => 'X',
+                'expectedstring' => ['bulkselection', 'core_courseformat', 'X'],
+            ],
+            'Non existing string' => [
+                'key' => '%&non_existing_string_in_lang_files$%@#',
+                'data' => null,
+                'expectedstring' => null,
+            ],
+        ];
+    }
+
+    /**
+     * Test for the move_section_after method.
+     *
+     * @covers ::move_section_after
+     * @dataProvider move_section_after_provider
+     * @param string $movesection the reference of the section to move
+     * @param string $destination the reference of the destination section
+     * @param string[] $order the references of the final section order
+     */
+    public function test_move_section_after(string $movesection, string $destination, array $order) {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        course_create_sections_if_missing($course, [0, 1, 2, 3, 4, 5]);
+
+        $format = course_get_format($course);
+        $modinfo = $format->get_modinfo();
+        $sectionsinfo = $modinfo->get_section_info_all();
+
+        $references = [];
+        foreach ($sectionsinfo as $section) {
+            $references["section{$section->section}"] = $section;
+        }
+
+        $result = $format->move_section_after(
+            $references[$movesection],
+            $references[$destination]
+        );
+        $this->assertEquals(true, $result);
+        // Check the updated course section list.
+        $modinfo = $format->get_modinfo();
+        $sectionsinfo = $modinfo->get_section_info_all();
+        $this->assertCount(count($order), $sectionsinfo);
+        foreach ($sectionsinfo as $key => $section) {
+            $sectionreference = $order[$key];
+            $oldinfo = $references[$sectionreference];
+            $this->assertEquals($oldinfo->id, $section->id);
+        }
+    }
+
+    /**
+     * Data provider for test_move_section_after.
+     *
+     * @return array the testing scenarios
+     */
+    public function move_section_after_provider(): array {
+        return [
+            'Move top' => [
+                'movesection' => 'section3',
+                'destination' => 'section0',
+                'order' => [
+                    'section0',
+                    'section3',
+                    'section1',
+                    'section2',
+                    'section4',
+                    'section5',
+                ],
+            ],
+            'Move up' => [
+                'movesection' => 'section3',
+                'destination' => 'section1',
+                'order' => [
+                    'section0',
+                    'section1',
+                    'section3',
+                    'section2',
+                    'section4',
+                    'section5',
+                ],
+            ],
+            'Do not move' => [
+                'movesection' => 'section3',
+                'destination' => 'section2',
+                'order' => [
+                    'section0',
+                    'section1',
+                    'section2',
+                    'section3',
+                    'section4',
+                    'section5',
+                ],
+            ],
+            'Same position' => [
+                'movesection' => 'section3',
+                'destination' => 'section3',
+                'order' => [
+                    'section0',
+                    'section1',
+                    'section2',
+                    'section3',
+                    'section4',
+                    'section5',
+                ],
+            ],
+            'Move down' => [
+                'movesection' => 'section3',
+                'destination' => 'section4',
+                'order' => [
+                    'section0',
+                    'section1',
+                    'section2',
+                    'section4',
+                    'section3',
+                    'section5',
+                ],
+            ],
+            'Move bottom' => [
+                'movesection' => 'section3',
+                'destination' => 'section5',
+                'order' => [
+                    'section0',
+                    'section1',
+                    'section2',
+                    'section4',
+                    'section5',
+                    'section3',
+                ],
+            ],
+        ];
+    }
 }
 
 /**
@@ -437,6 +683,27 @@ class format_testformat extends core_courseformat\base {
             BLOCK_POS_RIGHT => [],
             BLOCK_POS_LEFT => []
         ];
+    }
+}
+
+/**
+ * Class format_testformatsections.
+ *
+ * A test class that simulates a course format with sections.
+ *
+ * @package   core_courseformat
+ * @copyright 2023 ISB Bayern
+ * @author    Philipp Memmel
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class format_testformatsections extends core_courseformat\base {
+    /**
+     * Returns if this course format uses sections.
+     *
+     * @return true
+     */
+    public function uses_sections() {
+        return true;
     }
 }
 

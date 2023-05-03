@@ -42,4 +42,10 @@
       "theme": "classic"
     }
 }}
-{{> tool_lp/form-cohort-selector-suggestion }}
+<span>
+    <span>{{name}}</span>
+    {{#idnumber}}
+    <span><small>{{idnumber}}</small></span>
+    {{/idnumber}}
+    <span><small>( {{contextname}} )</small></span>
+</span>

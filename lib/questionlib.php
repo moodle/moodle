@@ -841,7 +841,7 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
 /**
  * Given a list of ids, load the basic information about a set of questions from
  * the questions table. The $join and $extrafields arguments can be used together
- * to pull in extra data. See, for example, the usage in mod/quiz/attemptlib.php, and
+ * to pull in extra data. See, for example, the usage in {@see \mod_quiz\quiz_attempt}, and
  * read the code below to see how the SQL is assembled. Throws exceptions on error.
  *
  * @param array $questionids array of question ids to load. If null, then all
@@ -936,7 +936,7 @@ function question_load_questions($questionids, $extrafields = '', $join = '') {
  *
  * @param object $question the question to tidy.
  * @param stdClass $category The question_categories record for the given $question.
- * @param stdClass[]|null $tagobjects The tags for the given $question.
+ * @param \core_tag_tag[]|null $tagobjects The tags for the given $question.
  * @param stdClass[]|null $filtercourses The courses to filter the course tags by.
  */
 function _tidy_question($question, $category, array $tagobjects = null, array $filtercourses = null): void {
@@ -1037,7 +1037,7 @@ function get_question_options(&$questions, $loadtags = false, $filtercourses = n
  * This function also search tag instances that may have a context id that don't match either a course or
  * question context and fix the data setting the correct context id.
  *
- * @param stdClass[] $tagobjects The tags for the given $question.
+ * @param \core_tag_tag[] $tagobjects The tags for the given $question.
  * @param stdClass $categorycontext The question categories context.
  * @param stdClass[]|null $filtercourses The courses to filter the course tags by.
  * @return stdClass $sortedtagobjects Sorted tag objects.

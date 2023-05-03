@@ -193,35 +193,17 @@ class meeting {
      * @return string
      */
     public function get_join_url(): string {
-        return bigbluebutton_proxy::get_join_url(
-            $this->instance->get_meeting_id(),
-            $this->instance->get_user_fullname(),
-            $this->instance->get_current_user_password(),
-            $this->instance->get_logout_url()->out(false),
-            $this->instance->get_current_user_role(),
-            null,
-            $this->instance->get_user_id(),
-            $this->get_meeting_info()->createtime
-        );
+        return bigbluebutton_proxy::get_join_url($this->instance, $this->get_meeting_info()->createtime);
     }
 
     /**
      * Get meeting join URL for guest
      *
-     * @param string $fullname
+     * @param string $userfullname
      * @return string
      */
-    public function get_guest_join_url(string $fullname): string {
-        return bigbluebutton_proxy::get_join_url(
-            $this->instance->get_meeting_id(),
-            $fullname,
-            $this->instance->get_current_user_password(),
-            $this->instance->get_guest_access_url()->out(false),
-            $this->instance->get_current_user_role(),
-            null,
-            0,
-            $this->get_meeting_info()->createtime
-        );
+    public function get_guest_join_url(string $userfullname): string {
+        return bigbluebutton_proxy::get_guest_join_url($this->instance, $this->get_meeting_info()->createtime, $userfullname);
     }
 
 

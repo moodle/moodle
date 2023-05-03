@@ -78,18 +78,8 @@ class report_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/quiz/report.php', array('id' => $this->contextinstanceid,
-            'mode' => $this->other['reportname']));
-    }
-
-    /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'quiz', 'report', 'report.php?id=' . $this->contextinstanceid . '&mode=' .
-            $this->other['reportname'], $this->other['quizid'], $this->contextinstanceid);
+        return new \moodle_url('/mod/quiz/report.php', ['id' => $this->contextinstanceid,
+            'mode' => $this->other['reportname']]);
     }
 
     /**
@@ -111,8 +101,8 @@ class report_viewed extends \core\event\base {
     }
 
     public static function get_other_mapping() {
-        $othermapped = array();
-        $othermapped['quizid'] = array('db' => 'quiz', 'restore' => 'quiz');
+        $othermapped = [];
+        $othermapped['quizid'] = ['db' => 'quiz', 'restore' => 'quiz'];
 
         return $othermapped;
     }

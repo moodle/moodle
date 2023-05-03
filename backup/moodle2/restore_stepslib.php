@@ -1143,7 +1143,7 @@ class restore_create_included_users extends restore_execution_step {
     protected function define_execution() {
 
         restore_dbops::create_included_users($this->get_basepath(), $this->get_restoreid(),
-                $this->task->get_userid(), $this->task->get_progress());
+                $this->task->get_userid(), $this->task->get_progress(), $this->task->get_courseid());
     }
 }
 
@@ -1933,6 +1933,9 @@ class restore_course_structure_step extends restore_structure_step {
 
         $showactivitydatesdefault = ($courseconfig->showactivitydates ?? null);
         $data->showactivitydates = $data->showactivitydates ?? $showactivitydatesdefault;
+
+        $pdffontdefault = ($courseconfig->pdfexportfont ?? null);
+        $data->pdfexportfont = $data->pdfexportfont ?? $pdffontdefault;
 
         $languages = get_string_manager()->get_list_of_translations(); // Get languages for quick search
         if (isset($data->lang) && !array_key_exists($data->lang, $languages)) {
@@ -4224,6 +4227,61 @@ class restore_contentbankcontent_structure_step extends restore_structure_step {
 }
 
 /**
+ * This structure steps restores the xAPI states.
+ */
+class restore_xapistate_structure_step extends restore_structure_step {
+
+    /**
+     * Define structure for xAPI state step
+     */
+    protected function define_structure() {
+        return [new restore_path_element('xapistate', '/states/state')];
+    }
+
+    /**
+     * Define data processed for xAPI state.
+     *
+     * @param array|stdClass $data
+     */
+    public function process_xapistate($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+        $exists = false;
+
+        $params = [
+            'component' => $data->component,
+            'itemid' => $this->task->get_contextid(),
+            // Set stateid to 'restored', to let plugins identify the origin of this state is a backup.
+            'stateid' => 'restored',
+            'statedata' => $data->statedata,
+            'registration' => $data->registration,
+            'timecreated' => $data->timecreated,
+            'timemodified' => time(),
+        ];
+
+        // Trying to map users. Users cannot always be mapped, for instance, when copying.
+        $params['userid'] = $this->get_mappingid('user', $data->userid);
+        if (!$params['userid']) {
+            // Leave the userid unchanged when we are restoring the same site.
+            if ($this->task->is_samesite()) {
+                $params['userid'] = $data->userid;
+            }
+            $filter = $params;
+            unset($filter['statedata']);
+            $exists = $DB->record_exists('xapi_states', $filter);
+        }
+
+        if (!$exists && $params['userid']) {
+            // Only insert the record if the user exists or can be mapped.
+            $newitemid = $DB->insert_record('xapi_states', $params);
+            $this->set_mapping('xapi_states', $oldid, $newitemid, true);
+        }
+    }
+}
+
+/**
  * This structure steps restores one instance + positions of one block
  * Note: Positions corresponding to one existing context are restored
  * here, but all the ones having unknown contexts are sent to backup_ids
@@ -5429,7 +5487,7 @@ class restore_create_question_files extends restore_execution_step {
      *
      * @param int             $oldctxid Old context id.
      * @param int             $newctxid New context id.
-     * @param \core\progress  $progress Progress object to use.
+     * @param \core\progress\base  $progress Progress object to use.
      */
     private function send_common_files($oldctxid, $newctxid, $progress) {
         // Add common question files (question and question_answer ones).
@@ -5457,7 +5515,7 @@ class restore_create_question_files extends restore_execution_step {
      * @param text            $qtype The qtype name to send.
      * @param int             $oldctxid Old context id.
      * @param int             $newctxid New context id.
-     * @param \core\progress  $progress Progress object to use.
+     * @param \core\progress\base  $progress Progress object to use.
      */
     private function send_qtype_files($qtype, $oldctxid, $newctxid, $progress) {
         if (!isset($this->qtypecomponentscache[$qtype])) {
@@ -6165,6 +6223,9 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     use restore_questions_attempt_data_trait;
     use restore_question_reference_data_trait;
     use restore_question_set_reference_data_trait;
+
+    /** @var \question_engine_attempt_upgrader manages upgrading all the question attempts. */
+    private $attemptupgrader;
 
     /**
      * Attach below $element (usually attempts) the needed restore_path_elements

@@ -112,9 +112,6 @@ class mod_helper {
         if (!isset($bigbluebuttonbn->hideuserlist)) {
             $bigbluebuttonbn->hideuserlist = 0;
         }
-        if (!isset($bigbluebuttonbn->lockedlayout)) {
-            $bigbluebuttonbn->lockedlayout = 0;
-        }
     }
 
     /**

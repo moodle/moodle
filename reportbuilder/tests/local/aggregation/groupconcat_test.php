@@ -22,7 +22,9 @@ use core_badges_generator;
 use core_badges\reportbuilder\datasource\badges;
 use core_reportbuilder_testcase;
 use core_reportbuilder_generator;
+use core_reportbuilder\manager;
 use core_user\reportbuilder\datasource\users;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -132,16 +134,24 @@ class groupconcat_test extends core_reportbuilder_testcase {
             'aggregation' => groupconcat::get_class_name(),
         ]);
 
+        // Add callback to format the column.
+        $instance = manager::get_report_from_persistent($report);
+        $instance->get_column('user:confirmed')
+            ->add_callback(static function(string $value, stdClass $row, $arguments, ?string $aggregation): string {
+                // Simple callback to return the given value, and append aggregation type.
+                return "{$value} ({$aggregation})";
+            });
+
         // Assert confirmed column was aggregated, and sorted predictably with callback applied.
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertEquals([
             [
                 'c0_firstname' => 'Admin',
-                'c1_confirmed' => 'Yes',
+                'c1_confirmed' => 'Yes (groupconcat)',
             ],
             [
                 'c0_firstname' => 'Bob',
-                'c1_confirmed' => 'No, Yes, Yes',
+                'c1_confirmed' => 'No (groupconcat), Yes (groupconcat), Yes (groupconcat)',
             ],
         ], $content);
     }

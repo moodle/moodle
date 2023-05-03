@@ -437,7 +437,7 @@ EOD;
      * Create course section if does not exist yet
      * @param array|stdClass $record must contain 'course' and 'section' attributes
      * @param array|null $options
-     * @return stdClass
+     * @return section_info
      * @throws coding_exception
      */
     public function create_course_section($record = null, array $options = null) {
@@ -539,6 +539,14 @@ EOD;
 
         if (!isset($record['descriptionformat'])) {
             $record['descriptionformat'] = FORMAT_MOODLE;
+        }
+
+        if (!isset($record['visibility'])) {
+            $record['visibility'] = GROUPS_VISIBILITY_ALL;
+        }
+
+        if (!isset($record['participation'])) {
+            $record['participation'] = true;
         }
 
         $id = groups_create_group((object)$record);
@@ -951,7 +959,7 @@ EOD;
      *
      * @param int|string $role either an int role id or a string role shortname.
      * @param int $userid
-     * @param int $contextid Defaults to the system context
+     * @param int|context $contextid Defaults to the system context
      * @return int new/existing id of the assignment
      */
     public function role_assign($role, $userid, $contextid = false) {
@@ -1132,7 +1140,7 @@ EOD;
     /**
      * Helper function used to create an LTI tool.
      *
-     * @param array $data
+     * @param stdClass $data
      * @return stdClass the tool
      */
     public function create_lti_tool($data = array()) {
@@ -1385,7 +1393,7 @@ EOD;
      *
      * @param   \stdClass   $course The course to enrol in
      * @param   string      $role The role to give within the course
-     * @param   \stdClass   $userparams User parameters
+     * @param   \stdClass|array   $userparams User parameters
      * @return  \stdClass   The created user
      */
     public function create_and_enrol($course, $role = 'student', $userparams = null, $enrol = 'manual',

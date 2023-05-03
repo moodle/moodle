@@ -74,10 +74,10 @@ class loader {
             }
 
             [$rev, $filepath] = explode('/', $slashargument, 2);
-            $this->rev  = min_clean_param($rev, 'RAW');
+            $this->rev  = min_clean_param($rev, 'INT');
             $this->filepath = min_clean_param($filepath, 'SAFEPATH');
         } else {
-            $this->rev  = min_optional_param('rev', 0, 'RAW');
+            $this->rev  = min_optional_param('rev', 0, 'INT');
             $this->filepath = min_optional_param('filepath', 'standard', 'SAFEPATH');
         }
 

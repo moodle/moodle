@@ -16,6 +16,7 @@
 
 namespace gradereport_overview;
 
+use core_external\external_api;
 use externallib_advanced_testcase;
 use gradereport_overview_external;
 
@@ -34,6 +35,30 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class externallib_test extends externallib_advanced_testcase {
+
+    /** @var \stdClass Course 1 record. */
+    protected $course1;
+
+    /** @var \stdClass Course 2 record. */
+    protected $course2;
+
+    /** @var \stdClass To store student user record. */
+    protected $student1;
+
+    /** @var \stdClass To store student user record. */
+    protected $student2;
+
+    /** @var \stdClass To store Teacher user record. */
+    protected $teacher;
+
+    /** @var array To store student 1 and the rawgrade 1. */
+    protected $student1grade1 = [];
+
+    /** @var array To store student 1 and the rawgrade 2. */
+    protected $student1grade2 = [];
+
+    /** @var array To store student 2 and the rawgrade. */
+    protected $student2grade = [];
 
     /**
      * Set up for every test
@@ -87,7 +112,7 @@ class externallib_test extends externallib_advanced_testcase {
         // A user can see his own grades in both courses.
         $this->setUser($this->student1);
         $studentgrades = gradereport_overview_external::get_course_grades();
-        $studentgrades = \external_api::clean_returnvalue(gradereport_overview_external::get_course_grades_returns(), $studentgrades);
+        $studentgrades = external_api::clean_returnvalue(gradereport_overview_external::get_course_grades_returns(), $studentgrades);
 
         $this->assertCount(0, $studentgrades['warnings']);
         $this->assertCount(2, $studentgrades['grades']);
@@ -106,7 +131,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Second student, no grade in one course.
         $this->setUser($this->student2);
         $studentgrades = gradereport_overview_external::get_course_grades();
-        $studentgrades = \external_api::clean_returnvalue(gradereport_overview_external::get_course_grades_returns(), $studentgrades);
+        $studentgrades = external_api::clean_returnvalue(gradereport_overview_external::get_course_grades_returns(), $studentgrades);
 
         $this->assertCount(0, $studentgrades['warnings']);
         $this->assertCount(2, $studentgrades['grades']);
@@ -132,7 +157,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setAdminUser();
 
         $studentgrades = gradereport_overview_external::get_course_grades($this->student1->id);
-        $studentgrades = \external_api::clean_returnvalue(gradereport_overview_external::get_course_grades_returns(), $studentgrades);
+        $studentgrades = external_api::clean_returnvalue(gradereport_overview_external::get_course_grades_returns(), $studentgrades);
         $this->assertCount(0, $studentgrades['warnings']);
         $this->assertCount(2, $studentgrades['grades']);
         foreach ($studentgrades['grades'] as $grade) {
@@ -146,13 +171,13 @@ class externallib_test extends externallib_advanced_testcase {
         }
 
         $studentgrades = gradereport_overview_external::get_course_grades($this->student2->id);
-        $studentgrades = \external_api::clean_returnvalue(gradereport_overview_external::get_course_grades_returns(), $studentgrades);
+        $studentgrades = external_api::clean_returnvalue(gradereport_overview_external::get_course_grades_returns(), $studentgrades);
         $this->assertCount(0, $studentgrades['warnings']);
         $this->assertCount(2, $studentgrades['grades']);
 
         // Admins don't see grades.
         $studentgrades = gradereport_overview_external::get_course_grades();
-        $studentgrades = \external_api::clean_returnvalue(gradereport_overview_external::get_course_grades_returns(), $studentgrades);
+        $studentgrades = external_api::clean_returnvalue(gradereport_overview_external::get_course_grades_returns(), $studentgrades);
         $this->assertCount(0, $studentgrades['warnings']);
         $this->assertCount(0, $studentgrades['grades']);
     }
@@ -165,7 +190,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($this->teacher);
 
         $studentgrades = gradereport_overview_external::get_course_grades();
-        $studentgrades = \external_api::clean_returnvalue(gradereport_overview_external::get_course_grades_returns(), $studentgrades);
+        $studentgrades = external_api::clean_returnvalue(gradereport_overview_external::get_course_grades_returns(), $studentgrades);
         $this->assertCount(0, $studentgrades['warnings']);
         $this->assertCount(0, $studentgrades['grades']);
     }
@@ -192,7 +217,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($this->student1);
         $result = gradereport_overview_external::view_grade_report($this->course1->id);
-        $result = \external_api::clean_returnvalue(gradereport_overview_external::view_grade_report_returns(), $result);
+        $result = external_api::clean_returnvalue(gradereport_overview_external::view_grade_report_returns(), $result);
         $events = $sink->get_events();
         $this->assertCount(1, $events);
         $event = reset($events);
@@ -204,7 +229,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($this->teacher);
         $result = gradereport_overview_external::view_grade_report($this->course1->id, $this->student1->id);
-        $result = \external_api::clean_returnvalue(gradereport_overview_external::view_grade_report_returns(), $result);
+        $result = external_api::clean_returnvalue(gradereport_overview_external::view_grade_report_returns(), $result);
         $events = $sink->get_events();
         $event = reset($events);
         $sink->close();

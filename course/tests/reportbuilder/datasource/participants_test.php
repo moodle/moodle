@@ -210,6 +210,27 @@ class participants_test extends core_reportbuilder_testcase {
                 ],
                 'Lionel'
             ],
+            [
+                'completion:timeenrolled',
+                [
+                    'completion:timeenrolled_operator' => date::DATE_NOT_EMPTY,
+                ],
+                'Lionel'
+            ],
+            [
+                'completion:timestarted',
+                [
+                    'completion:timestarted_operator' => date::DATE_NOT_EMPTY,
+                ],
+                'Lionel'
+            ],
+            [
+                'completion:reaggregate',
+                [
+                    'completion:reaggregate_operator' => date::DATE_NOT_EMPTY,
+                ],
+                'Lionel'
+            ],
         ];
     }
 
@@ -254,6 +275,7 @@ class participants_test extends core_reportbuilder_testcase {
         // Mark course as completed for the user.
         $ccompletion = new completion_completion(array('course' => $course->id, 'userid' => $user1->id));
         $ccompletion->mark_enrolled($timestart);
+        $ccompletion->mark_inprogress($timestart);
         $ccompletion->mark_complete($timecompleted);
 
         // Set some last access value for the user in the course.

@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['addblock'] = 'Add {$a} block';
 $string['anypagematchingtheabove'] = 'Any page matching the above';
 $string['appearsinsubcontexts'] = 'Appears in sub-contexts';
 $string['assignrolesinblock'] = 'Assign roles in {$a} block';
@@ -41,7 +42,7 @@ $string['defaultweight_help'] = 'The default weight allows you to choose roughly
 $string['deletecheck'] = 'Delete {$a} block?';
 $string['deletecheck_modal'] = 'Delete block?';
 $string['deleteblock'] = 'Delete {$a} block';
-$string['deleteblockcheck'] = 'Are you sure that you want to delete this block titled {$a}?';
+$string['deleteblockcheck'] = 'This will delete the block {$a}.';
 $string['deleteblockinprogress'] = 'Block {$a} removal in progress...';
 $string['deleteblockwarning'] = '<p>You are about to delete a block that appears elsewhere.</p><p>Original block location: {$a->location}<br />Display on page types: {$a->pagetype}</p><p>Are you sure you want to continue?</p>';
 $string['hideblock'] = 'Hide {$a} block';

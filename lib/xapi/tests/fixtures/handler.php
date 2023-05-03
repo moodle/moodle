@@ -30,6 +30,7 @@ use core_xapi\handler as handler_base;
 use core_xapi\event\xapi_test_statement_post;
 use context_system;
 use core\event\base;
+use core_xapi\local\state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -112,4 +113,24 @@ class handler extends handler_base {
         }
         return parent::supports_group_actors();
     }
+
+    /**
+     * Validate a xAPI state.
+     *
+     * Check if the state is valid for this handler.
+     *
+     * This method is used also for the state get requests so the validation
+     * cannot rely on having state data.
+     *
+     * @param state $state
+     * @return bool if the state is valid or not
+     */
+    protected function validate_state(state $state): bool {
+        // For testing purposes, the state will be considered NOT valid when stateid is set to 'paella'.
+        if ($state->get_state_id() === 'paella') {
+            return false;
+        }
+        return true;
+    }
+
 }

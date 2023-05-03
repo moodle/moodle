@@ -149,14 +149,15 @@ class bankcontent implements renderable, templatable {
             $allowedcontexts['courses'] = [get_string('courses') => $options];
         }
         if (!empty($allowedcontexts)) {
-            $url = new \moodle_url('/contentbank/index.php');
+            $strchoosecontext = get_string('choosecontext', 'core_contentbank');
             $singleselect = new \single_select(
-                $url,
+                new \moodle_url('/contentbank/index.php'),
                 'contextid',
                 $allowedcontexts,
                 $this->context->id,
-                get_string('choosecontext', 'core_contentbank')
+                $strchoosecontext
             );
+            $singleselect->set_label($strchoosecontext, ['class' => 'sr-only']);
             $data->allowedcontexts = $singleselect->export_for_template($output);
         }
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20221017" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20230307" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -105,6 +105,7 @@
         <FIELD NAME="originalcourseid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the id of the source course when a new course originates from a restore of another course on the same site."/>
         <FIELD NAME="showactivitydates" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether to display activity dates to user. 0 = do not display, 1 = display activity dates"/>
         <FIELD NAME="showcompletionconditions" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Whether to display completion conditions to user. 0 = do not display, 1 = display conditions"/>
+        <FIELD NAME="pdfexportfont" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -2321,6 +2322,8 @@
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="enrolmentkey" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="picture" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="visibility" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Visibility of group membership"/>
+        <FIELD NAME="participation" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Can this group be selected when participating in activities?"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
@@ -2747,6 +2750,7 @@
       <INDEXES>
         <INDEX NAME="parentcontextid-showinsubcontexts-pagetypepattern-subpagepattern" UNIQUE="false" FIELDS="parentcontextid, showinsubcontexts, pagetypepattern, subpagepattern"/>
         <INDEX NAME="timemodified" UNIQUE="false" FIELDS="timemodified"/>
+        <INDEX NAME="blocknameindex" UNIQUE="false" FIELDS="blockname"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="block_positions" COMMENT="Stores the position of a sticky block_instance on a another page than the one where it was added.">
@@ -3385,6 +3389,7 @@
         <FIELD NAME="version" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="The device version, 6.1.2, 4.2.2 etc.."/>
         <FIELD NAME="pushid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="the device PUSH token/key/identifier/registration id"/>
         <FIELD NAME="uuid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The device vendor UUID"/>
+        <FIELD NAME="publickey" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The app generated public key"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
@@ -4758,6 +4763,27 @@
       <INDEXES>
         <INDEX NAME="coursemoduleid" UNIQUE="false" FIELDS="coursemoduleid" COMMENT="For quick access via course-module (e.g. when displaying course module settings page and we need to determine whether anyone has completed it)."/>
         <INDEX NAME="userid-coursemoduleid" UNIQUE="true" FIELDS="userid, coursemoduleid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="xapi_states" COMMENT="The stored xAPI states">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The component name"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The Agent Id (usually the plugin instance)"/>
+        <FIELD NAME="stateid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Component identified for the state data"/>
+        <FIELD NAME="statedata" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON state data"/>
+        <FIELD NAME="registration" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Optional registration identifier"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="component-itemid" UNIQUE="false" FIELDS="component, itemid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="timemodified" UNIQUE="false" FIELDS="timemodified"/>
       </INDEXES>
     </TABLE>
   </TABLES>

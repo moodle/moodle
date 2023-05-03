@@ -1676,6 +1676,30 @@ class core_renderer extends renderer_base {
     }
 
     /**
+     * Get the course pattern image URL.
+     *
+     * @param context_course $context course context object
+     * @return string URL of the course pattern image in SVG format
+     */
+    public function get_generated_url_for_course(context_course $context): string {
+        return moodle_url::make_pluginfile_url($context->id, 'course', 'generated', null, '/', 'course.svg')->out();
+    }
+
+    /**
+     * Get the course pattern in SVG format to show on a course card.
+     *
+     * @param int $id id to use when generating the pattern
+     * @return string SVG file contents
+     */
+    public function get_generated_svg_for_id(int $id): string {
+        $color = $this->get_generated_color_for_id($id);
+        $pattern = new \core_geopattern();
+        $pattern->setColor($color);
+        $pattern->patternbyid($id);
+        return $pattern->toSVG();
+    }
+
+    /**
      * Get the course color to show on a course card.
      *
      * @param int $id Id to use when generating the color.
@@ -1782,7 +1806,7 @@ class core_renderer extends renderer_base {
     /**
      * Renders a Check API result
      *
-     * @param result $result
+     * @param core\check\result $result
      * @return string HTML fragment
      */
     protected function render_check_result(core\check\result $result) {
@@ -1792,7 +1816,7 @@ class core_renderer extends renderer_base {
     /**
      * Renders a Check API result
      *
-     * @param result $result
+     * @param core\check\result $result
      * @return string HTML fragment
      */
     public function check_result(core\check\result $result) {
@@ -2055,12 +2079,16 @@ class core_renderer extends renderer_base {
         $displayoptions['cancelstr'] = $displayoptions['cancelstr'] ?? get_string('cancel');
 
         if ($continue instanceof single_button) {
-            // ok
-            $continue->primary = true;
+            // Continue button should be primary if set to secondary type as it is the fefault.
+            if ($continue->type === single_button::BUTTON_SECONDARY) {
+                $continue->type = single_button::BUTTON_PRIMARY;
+            }
         } else if (is_string($continue)) {
-            $continue = new single_button(new moodle_url($continue), $displayoptions['continuestr'], 'post', true);
+            $continue = new single_button(new moodle_url($continue), $displayoptions['continuestr'], 'post',
+                $displayoptions['type'] ?? single_button::BUTTON_PRIMARY);
         } else if ($continue instanceof moodle_url) {
-            $continue = new single_button($continue, $displayoptions['continuestr'], 'post', true);
+            $continue = new single_button($continue, $displayoptions['continuestr'], 'post',
+                $displayoptions['type'] ?? single_button::BUTTON_PRIMARY);
         } else {
             throw new coding_exception('The continue param to $OUTPUT->confirm() must be either a URL (string/moodle_url) or a single_button instance.');
         }
@@ -2736,7 +2764,7 @@ class core_renderer extends renderer_base {
      * Theme developers: DO NOT OVERRIDE! Please override function
      * {@link core_renderer::render_file_picker()} instead.
      *
-     * @param array $options associative array with file manager options
+     * @param stdClass $options file manager options
      *   options are:
      *       maxbytes=>-1,
      *       itemid=>0,
@@ -3124,7 +3152,7 @@ EOD;
         if (!($url instanceof moodle_url)) {
             $url = new moodle_url($url);
         }
-        $button = new single_button($url, get_string('continue'), 'get', true);
+        $button = new single_button($url, get_string('continue'), 'get', single_button::BUTTON_PRIMARY);
         $button->class = 'continuebutton';
 
         return $this->render($button);
@@ -3169,10 +3197,11 @@ EOD;
      * @param string $urlvar URL parameter name for this initial.
      * @param string $url URL object.
      * @param array $alpha of letters in the alphabet.
+     * @param bool $minirender Return a trimmed down view of the initials bar.
      * @return string the HTML to output.
      */
-    public function initials_bar($current, $class, $title, $urlvar, $url, $alpha = null) {
-        $ib = new initials_bar($current, $class, $title, $urlvar, $url, $alpha);
+    public function initials_bar($current, $class, $title, $urlvar, $url, $alpha = null, bool $minirender = false) {
+        $ib = new initials_bar($current, $class, $title, $urlvar, $url, $alpha, $minirender);
         return $this->render($ib);
     }
 
@@ -4239,7 +4268,9 @@ EOD;
 
         $liferingicon = $this->pix_icon('t/life-ring', '', 'moodle', ['class' => 'fa fa-life-ring']);
         $newwindowicon = $this->pix_icon('i/externallink', get_string('opensinnewwindow'), 'moodle', ['class' => 'ml-1']);
-        $link = 'https://moodle.com/help/?utm_source=CTA-banner&utm_medium=platform&utm_campaign=name~Moodle4+cat~lms+mp~no';
+        $link = !empty($CFG->servicespage)
+            ? $CFG->servicespage
+            : 'https://moodle.com/help/?utm_source=CTA-banner&utm_medium=platform&utm_campaign=name~Moodle4+cat~lms+mp~no';
         $content = $liferingicon . get_string('moodleservicesandsupport') . $newwindowicon;
 
         return html_writer::tag('a', $content, ['target' => '_blank', 'href' => $link]);
@@ -4788,7 +4819,7 @@ EOD;
      * Renders a bar chart.
      *
      * @param \core\chart_bar $chart The chart.
-     * @return string.
+     * @return string
      */
     public function render_chart_bar(\core\chart_bar $chart) {
         return $this->render_chart($chart);
@@ -4798,7 +4829,7 @@ EOD;
      * Renders a line chart.
      *
      * @param \core\chart_line $chart The chart.
-     * @return string.
+     * @return string
      */
     public function render_chart_line(\core\chart_line $chart) {
         return $this->render_chart($chart);
@@ -4808,7 +4839,7 @@ EOD;
      * Renders a pie chart.
      *
      * @param \core\chart_pie $chart The chart.
-     * @return string.
+     * @return string
      */
     public function render_chart_pie(\core\chart_pie $chart) {
         return $this->render_chart($chart);
@@ -4819,7 +4850,7 @@ EOD;
      *
      * @param \core\chart_base $chart The chart.
      * @param bool $withtable Whether to include a data table with the chart.
-     * @return string.
+     * @return string
      */
     public function render_chart(\core\chart_base $chart, $withtable = true) {
         $chartdata = json_encode($chart);
@@ -5057,6 +5088,10 @@ EOD;
                 [
                     'link' => $url->out(false),
                     'escapedlink' => "?{$url->get_query_string(false)}",
+                    'pagehash' => $this->page->get_edited_page_hash(),
+                    'blockregion' => $region,
+                    // The following parameters are not used since Moodle 4.2 but are
+                    // still passed for backward-compatibility.
                     'pageType' => $this->page->pagetype,
                     'pageLayout' => $this->page->pagelayout,
                     'subPage' => $this->page->subpage,
@@ -5570,11 +5605,13 @@ class core_renderer_maintenance extends core_renderer {
         // We need plain styling of confirm boxes on upgrade because we don't know which stylesheet we have (it could be
         // from any previous version of Moodle).
         if ($continue instanceof single_button) {
-            $continue->primary = true;
+            $continue->type = single_button::BUTTON_PRIMARY;
         } else if (is_string($continue)) {
-            $continue = new single_button(new moodle_url($continue), get_string('continue'), 'post', true);
+            $continue = new single_button(new moodle_url($continue), get_string('continue'), 'post',
+                $displayoptions['type'] ?? single_button::BUTTON_PRIMARY);
         } else if ($continue instanceof moodle_url) {
-            $continue = new single_button($continue, get_string('continue'), 'post', true);
+            $continue = new single_button($continue, get_string('continue'), 'post',
+                $displayoptions['type'] ?? single_button::BUTTON_PRIMARY);
         } else {
             throw new coding_exception('The continue param to $OUTPUT->confirm() must be either a URL' .
                                        ' (string/moodle_url) or a single_button instance.');

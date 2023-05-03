@@ -485,6 +485,37 @@ function xmldb_bigbluebuttonbn_upgrade($oldversion = 0) {
     }
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
+    if ($oldversion < 2023011800) {
+
+        // Define index course_bbbid_ix (not unique) to be added to bigbluebuttonbn_logs.
+        $table = new xmldb_table('bigbluebuttonbn_logs');
+        $index = new xmldb_index('course_bbbid_ix', XMLDB_INDEX_NOTUNIQUE, ['courseid', 'bigbluebuttonbnid']);
+
+        // Conditionally launch add index course_bbbid_ix.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Bigbluebuttonbn savepoint reached.
+        upgrade_mod_savepoint(true, 2023011800, 'bigbluebuttonbn');
+    }
+    if ($oldversion < 2023021300) {
+
+        // Define field lockedlayout to be dropped from bigbluebuttonbn.
+        $table = new xmldb_table('bigbluebuttonbn');
+        $field = new xmldb_field('lockedlayout');
+
+        // Conditionally launch drop field lockedlayout.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Bigbluebuttonbn savepoint reached.
+        upgrade_mod_savepoint(true, 2023021300, 'bigbluebuttonbn');
+    }
+
+    // Automatically generated Moodle v4.2.0 release upgrade line.
+    // Put any upgrade step following this.
 
     return true;
 }

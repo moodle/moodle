@@ -1716,7 +1716,7 @@ EOD;
             if (iconv('UTF-8', 'UTF-8', $parts[$i]) == $parts[$i]) {
                 $parts[$i] = rawurlencode($parts[$i]);
             } else {
-                $parts[$i] = rawurlencode(utf8_encode($parts[$i]));
+                $parts[$i] = rawurlencode(\core_text::convert($parts[$i], 'ISO-8859-1', 'UTF-8'));
             }
         }
         return implode('/', $parts);
@@ -1733,7 +1733,7 @@ EOD;
         $fullpath = $path;
         if (iconv('UTF-8', 'UTF-8', $fullpath) == $fullpath) {
             $this->_error_log("filename is utf-8. Needs conversion...");
-            $fullpath = utf8_decode($fullpath);
+            $fullpath = \core_text::convert($fullpath, 'UTF-8', 'ISO-8859-1');
         }
         return $fullpath;
     }

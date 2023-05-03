@@ -43,7 +43,10 @@ class user_field_mapping extends persistent {
      * @return array
      */
     private static function get_user_fields() {
-        return array_merge(\core_user::AUTHSYNCFIELDS, ['picture', 'username']);
+        global $CFG;
+        require_once($CFG->dirroot . '/user/profile/lib.php');
+
+        return array_merge(\core_user::AUTHSYNCFIELDS, ['picture', 'username'], get_profile_field_names());
     }
 
     /**
@@ -72,7 +75,28 @@ class user_field_mapping extends persistent {
      * @return array
      */
     public function get_internalfield_list() {
-        return array_combine(self::get_user_fields(), self::get_user_fields());
+        $userfields = array_merge(\core_user::AUTHSYNCFIELDS, ['picture', 'username']);
+        $internalfields = array_combine($userfields, $userfields);
+        return array_merge(['' => $internalfields], get_profile_field_list());
+    }
+
+    /**
+     * Return the list of internal fields with flat array
+     *
+     * Profile fields element has its array based on profile category.
+     * These elements need to be turned flat to make it easier to read.
+     *
+     * @return array
+     */
+    public function get_internalfields() {
+        $userfieldlist = $this->get_internalfield_list();
+        $userfields = [];
+        array_walk_recursive($userfieldlist,
+            function($value, $key) use (&$userfields) {
+                $userfields[] = $key;
+            }
+        );
+        return $userfields;
     }
 
     /**
@@ -87,4 +111,5 @@ class user_field_mapping extends persistent {
         }
         return true;
     }
+
 }

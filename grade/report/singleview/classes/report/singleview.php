@@ -17,7 +17,9 @@
 namespace gradereport_singleview\report;
 
 use context_course;
+use grade_helper;
 use grade_report;
+use html_writer;
 use moodle_url;
 use renderer_base;
 use stdClass;
@@ -37,6 +39,9 @@ class singleview extends grade_report {
 
     /** @var string|null $itemselector The raw HTML of the item selector based on the selected single view item type. */
     public ?string $itemselector = null;
+
+    /** @var \gradereport_singleview\local\screen\screen screen type. */
+    public $screen;
 
     /**
      * Return the list of valid screens, used to validate the input.
@@ -109,7 +114,7 @@ class singleview extends grade_report {
 
         $this->setup_item_selector($itemtype, $itemid);
 
-        $screenclass = "\\gradereport_singleview\\local\\screen\\${itemtype}";
+        $screenclass = "\\gradereport_singleview\\local\\screen\\{$itemtype}";
 
         $this->screen = new $screenclass($courseid, $itemid, $this->currentgroup);
 
@@ -196,5 +201,4 @@ class singleview extends grade_report {
 
         return $output->render($menu);
     }
-
 }

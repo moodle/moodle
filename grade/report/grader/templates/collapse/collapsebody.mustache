@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template gradereport_grader/collapse/collapsebody
+
+    The body of the column collapsing dropdown that contains the form and subsequent results from the search.
+
+    Example context (json):
+    {
+        "results": [
+            {
+                "name": "42",
+                "displayName": "The meaning of life",
+                "category": "Hitchhikers grade category"
+            }
+        ],
+        "searchTerm": "Meaning of",
+        "userid": "42"
+    }
+}}
+<div class="flex-column h-100 w-100">
+    <span class="d-none" data-region="userid" data-userid="{{userid}}" aria-hidden="true"></span>
+
+    {{< core/search_input_auto }}
+        {{$label}}{{#str}}
+            searchcollapsedcolumns, core_grades
+        {{/str}}{{/label}}
+        {{$placeholder}}{{#str}}
+            searchcollapsedcolumns, core_grades
+        {{/str}}{{/placeholder}}
+    {{/ core/search_input_auto }}
+
+    <form class="columnsdropdownform flex-column h-100">
+        <ul class="searchresultitemscontainer overflow-auto py-2 px-1 list-group mx-0 text-truncate" role="listbox" data-region="search-result-items-container" tabindex="-1">
+            {{>gradereport_grader/collapse/collapseresults}}
+        </ul>
+        <div class="d-flex flex-row justify-content-end mt-2">
+            <input class="btn btn-outline-secondary pull-right mx-2" data-action="cancel" type="submit" value="{{#str}}closebuttontitle{{/str}}">
+            <input disabled class="btn btn-primary pull-right" data-action="save" type="submit" value="{{#str}}expand{{/str}}">
+        </div>
+    </form>
+</div>

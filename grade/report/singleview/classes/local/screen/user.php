@@ -52,6 +52,9 @@ class user extends tablelike implements selectable_items {
     /** @var int $requirespaging Do we have more items than the paging limit? */
     private $requirespaging = true;
 
+    /** @var array get a valid user.  */
+    public $item = [];
+
     /**
      * Get the label for the select box that chooses items for this page.
      * @return string
@@ -258,7 +261,8 @@ class user extends tablelike implements selectable_items {
         $menuitems[] = new \action_menu_link_secondary($url, null, $title);
         $menu = new \action_menu($menuitems);
         $icon = $OUTPUT->pix_icon('i/moremenu', get_string('actions'));
-        $menu->set_menu_trigger($icon);
+        $extraclasses = 'btn btn-link btn-icon icon-size-3 d-flex align-items-center justify-content-center';
+        $menu->set_menu_trigger($icon, $extraclasses);
         $menu->set_menu_left();
 
         return $OUTPUT->render($menu);

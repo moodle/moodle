@@ -116,6 +116,9 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     } else {
         $newcm->showdescription = 0;
     }
+    if (empty($moduleinfo->beforemod)) {
+        $moduleinfo->beforemod = null;
+    }
 
     // From this point we make database changes, so start transaction.
     $transaction = $DB->start_delegated_transaction();
@@ -177,7 +180,7 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
 
     // Course_modules and course_sections each contain a reference to each other.
     // So we have to update one of them twice.
-    $sectionid = course_add_cm_to_section($course, $moduleinfo->coursemodule, $moduleinfo->section);
+    $sectionid = course_add_cm_to_section($course, $moduleinfo->coursemodule, $moduleinfo->section, $moduleinfo->beforemod);
 
     // Trigger event based on the action we did.
     // Api create_from_cm expects modname and id property, and we don't want to modify $moduleinfo since we are returning it.
@@ -385,13 +388,22 @@ function edit_module_post_actions($moduleinfo, $course) {
 
     \course_modinfo::purge_course_module_cache($course->id, $moduleinfo->coursemodule);
     rebuild_course_cache($course->id, true, true);
-    if ($hasgrades) {
-        grade_regrade_final_grades($course->id);
-    }
 
-    // To be removed (deprecated) with MDL-67526 (both lines).
-    require_once($CFG->libdir.'/plagiarismlib.php');
-    plagiarism_save_form_elements($moduleinfo);
+    if ($hasgrades) {
+        // If regrading will be slow, and this is happening in response to front-end UI...
+        if (!empty($moduleinfo->frontend) && grade_needs_regrade_progress_bar($course->id)) {
+            // And if it actually needs regrading...
+            $courseitem = grade_item::fetch_course_item($course->id);
+            if ($courseitem->needsupdate) {
+                // Then don't do it as part of this form save, do it on an extra web request with a
+                // progress bar.
+                $moduleinfo->needsfrontendregrade = true;
+            }
+        } else {
+            // Regrade now.
+            grade_regrade_final_grades($course->id);
+        }
+    }
 
     // Allow plugins to extend the course module form.
     $moduleinfo = plugin_extend_coursemodule_edit_post_actions($moduleinfo, $course);

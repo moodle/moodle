@@ -35,6 +35,9 @@ defined('MOODLE_INTERNAL') || die;
  */
 class empty_element extends element {
 
+    /** @var string message text. */
+    private $text;
+
     /**
      * Constructor
      *

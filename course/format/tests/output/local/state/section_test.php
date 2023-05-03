@@ -18,7 +18,6 @@ namespace core_courseformat\output\local\state;
 
 use availability_date\condition;
 use core_availability\tree;
-use context_course;
 use stdClass;
 
 /**
@@ -39,7 +38,6 @@ class section_test extends \advanced_testcase {
         require_once($CFG->dirroot . '/course/lib.php');
         require_once($CFG->dirroot . '/course/format/tests/fixtures/format_theunittest.php');
         require_once($CFG->dirroot . '/course/format/tests/fixtures/format_theunittest_output_course_format_state.php');
-        require_once($CFG->libdir . '/externallib.php');
     }
 
     /**

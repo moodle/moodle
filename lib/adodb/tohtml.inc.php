@@ -139,11 +139,14 @@ GLOBAL $gSQLMaxRows,$gSQLBlockRows,$ADODB_ROUND;
 			*/
 
 			default:
-				if ($htmlspecialchars) $v = htmlspecialchars(trim($v));
-				$v = trim($v);
-				if (strlen($v) == 0) $v = '&nbsp;';
-				$s .= "	<TD>". str_replace("\n",'<br>',stripslashes($v)) ."</TD>\n";
-
+				if ($v) {
+					$v = htmlspecialchars(stripslashes(trim($v)));
+				} elseif ($v === null) {
+					$v = '(NULL)';
+				} else {
+					$v = '&nbsp;';
+				}
+				$s .= "	<TD>" . str_replace("\n", '<br>', $v) . "</TD>\n";
 			}
 		} // for
 		$s .= "</TR>\n\n";

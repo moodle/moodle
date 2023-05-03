@@ -17,12 +17,16 @@
     The grade item selector trigger element.
 
     Context variables required for this template:
+    * name - The name of the grade item selector element
+    * itemid - The value of the grade item selector element (id of the preselected grade item)
     * courseid - The course ID.
     * selectedoption - (optional) Object containing information about the selected option.
         * text - The text of the selected option.
 
     Example context (json):
     {
+        "name": "itemid",
+        "itemid": "21",
         "courseid": "2",
         "selectedoption": {
             "text": "Grade item 1"
@@ -30,10 +34,21 @@
     }
 }}
 <div class="search-widget dropdown d-flex" data-searchtype="grade">
-    <button aria-expanded="false" data-toggle="dropdown" class="btn dropdown-toggle d-flex text-left align-items-center p-0" data-courseid="{{courseid}}" aria-label="{{#str}} selectagrade, gradereport_singleview {{/str}}">
+    <div
+        tabindex="0"
+        aria-expanded="false"
+        role="combobox"
+        aria-haspopup="dialog"
+        aria-controls="dialog-{{uniqid}}"
+        data-toggle="dropdown"
+        class="btn dropdown-toggle d-flex text-left align-items-center p-0"
+        data-courseid="{{courseid}}"
+        aria-label="{{#cleanstr}} selectagrade, gradereport_singleview {{/cleanstr}}"
+        data-input-element="input-{{uniqid}}"
+    >
         <div class="align-items-center d-flex">
             {{#selectedoption}}
-                <div class="d-block pr-3">
+                <div class="d-block pr-3 text-truncate">
                     <span class="d-block small">
                         {{#str}} selectagrade, gradereport_singleview {{/str}}
                     </span>
@@ -48,7 +63,8 @@
                 </div>
             {{/selectedoption}}
         </div>
-    </button>
-    <div class="dropdown-menu wide">
     </div>
+    <div class="dropdown-menu wide" id="dialog-{{uniqid}}" role="dialog" aria-modal="true" aria-label="{{#cleanstr}} selectagrade, gradereport_singleview {{/cleanstr}}">
+    </div>
+    <input type="hidden" name="{{name}}" value="{{itemid}}" id="input-{{uniqid}}" />
 </div>

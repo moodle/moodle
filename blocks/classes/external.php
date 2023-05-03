@@ -24,9 +24,17 @@
  * @since      Moodle 3.3
  */
 
+use core_external\external_api;
+use core_external\external_files;
+use core_external\external_format_value;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
+
 defined('MOODLE_INTERNAL') || die;
 
-require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->dirroot/my/lib.php");
 
 /**
@@ -281,34 +289,6 @@ class core_block_external extends external_api {
         // Load the block instances in the current $PAGE for all the regions.
         $returninvisible = has_capability('moodle/my:manageblocks', $context) ? true : false;
         $allblocks = self::get_all_current_page_blocks($returninvisible, $params['returncontents']);
-
-        // Temporary hack to be removed in 4.1.
-        // Return always the course overview block so old versions of the app can list the user courses.
-        if ($mypage == MY_PAGE_DEFAULT && core_useragent::is_moodle_app()) {
-            $myoverviewfound = false;
-
-            foreach ($allblocks as $block) {
-                if ($block['name'] == 'myoverview' && $block['visible']) {
-                    $myoverviewfound = true;
-                    break;
-                }
-            }
-
-            if (!$myoverviewfound) {
-                // Include a course overview fake block.
-                $allblocks[] = [
-                    'instanceid' => 0,
-                    'name' => 'myoverview',
-                    'region' => 'forced',
-                    'positionid' => null,
-                    'collapsible' => true,
-                    'dockable' => false,
-                    'weight' => 0,
-                    'visible' => true,
-                ];
-            }
-        }
-        // End of the hack to be removed in 4.1 see MDL-73670.
 
         return array(
             'blocks' => $allblocks,

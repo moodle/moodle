@@ -21,6 +21,7 @@ Feature: Rename external tools via inline editing
     And I am on "Course 1" course homepage with editing mode on
     And I add a "External tool" to section "1" and I fill the form with:
       | Activity name | Test tool activity 1 |
+      | Accept grades from the tool | 1 |
     And I set the field "Edit title" in the "li#section-1" "css_element" to "Test tool activity renamed"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     Then I should not see "Test tool activity 1"

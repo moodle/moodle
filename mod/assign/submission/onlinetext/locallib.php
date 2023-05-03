@@ -24,6 +24,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_external\external_single_structure;
+use core_external\external_value;
+
 defined('MOODLE_INTERNAL') || die();
 // File area for online text submission assignment.
 define('ASSIGNSUBMISSION_ONLINETEXT_FILEAREA', 'submissions_onlinetext');
@@ -678,7 +681,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
     /**
      * Return a description of external params suitable for uploading an onlinetext submission from a webservice.
      *
-     * @return external_description|null
+     * @return \core_external\external_description|null
      */
     public function get_external_parameters() {
         $editorparams = array('text' => new external_value(PARAM_RAW, 'The text for this submission.'),
@@ -725,5 +728,3 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         return (array) $this->get_config();
     }
 }
-
-

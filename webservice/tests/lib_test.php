@@ -24,6 +24,10 @@
  */
 namespace core_webservice;
 
+use core_external\external_api;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 use webservice;
 
 defined('MOODLE_INTERNAL') || die();
@@ -125,7 +129,7 @@ class lib_test extends \advanced_testcase {
         // Check the contents of service methods.
         foreach ($servicemethods as $method) {
             // Get the external function info.
-            $function = \external_api::external_function_info($method->name);
+            $function = external_api::external_function_info($method->name);
 
             // Check input params.
             foreach ($function->parameters_desc->keys as $name => $keydesc) {
@@ -142,11 +146,9 @@ class lib_test extends \advanced_testcase {
 
     /**
      * Tests update_token_lastaccess() function.
-     *
-     * @throws dml_exception
      */
     public function test_update_token_lastaccess() {
-        global $DB;
+        global $DB, $USER;
 
         $this->resetAfterTest(true);
 
@@ -165,7 +167,12 @@ class lib_test extends \advanced_testcase {
         $DB->insert_record('external_services', $webservice);
 
         // Add token.
-        $tokenstr = external_create_service_token($webservice->name, \context_system::instance()->id);
+        $tokenstr = \core_external\util::generate_token(
+            EXTERNAL_TOKEN_EMBEDDED,
+            \core_external\util::get_service_by_name($webservice->name),
+            $USER->id,
+            \core\context\system::instance()
+        );
         $token = $DB->get_record('external_tokens', ['token' => $tokenstr]);
 
         // Trigger last access once (at current time).
@@ -282,7 +289,7 @@ class lib_test extends \advanced_testcase {
 
         $user = $this->getDataGenerator()->create_user();
 
-        /** @var core_webservice_generator $generator */
+        /** @var \core_webservice_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_webservice');
 
         $service = $generator->create_service(['name' => 'My test service', 'shortname' => 'mytestservice']);
@@ -412,7 +419,7 @@ class webservice_dummy extends \webservice_base_server {
     /**
      * Send the error information to the WS client.
      *
-     * @param exception $ex
+     * @param \Exception $ex
      */
     protected function send_error($ex = null) {
         // Just a method stub. No need to implement at the moment since it's not really being used for this test case for now.

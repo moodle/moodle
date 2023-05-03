@@ -1787,7 +1787,7 @@ abstract class moodle_database {
     /**
      * Insert new record into database, as fast as possible, no safety checks, lobs not supported.
      * @param string $table name
-     * @param mixed $params data record as object or array
+     * @param stdClass|array $params data record as object or array
      * @param bool $returnid Returns id of inserted record.
      * @param bool $bulk true means repeated inserts expected
      * @param bool $customsequence true if 'id' included in $params, disables $returnid
@@ -1864,7 +1864,7 @@ abstract class moodle_database {
     /**
      * Update record in database, as fast as possible, no safety checks, lobs not supported.
      * @param string $table name
-     * @param mixed $params data record as object or array
+     * @param stdClass|array $params data record as object or array
      * @param bool $bulk True means repeated updates expected.
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
@@ -1879,7 +1879,8 @@ abstract class moodle_database {
      * specify the record to update
      *
      * @param string $table The database table to be checked against.
-     * @param object $dataobject An object with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
+     * @param stdClass|array $dataobject An object with contents equal to fieldname=>fieldvalue.
+     *        Must have an entry for 'id' to map to the table specified.
      * @param bool $bulk True means repeated updates expected.
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
@@ -1891,7 +1892,7 @@ abstract class moodle_database {
      *
      * @param string $table The database table to be checked against.
      * @param string $newfield the field to set.
-     * @param string $newvalue the value to set the field to.
+     * @param mixed $newvalue the value to set the field to.
      * @param array $conditions optional array $fieldname=>requestedvalue with AND in between
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
@@ -1906,7 +1907,7 @@ abstract class moodle_database {
      *
      * @param string $table The database table to be checked against.
      * @param string $newfield the field to set.
-     * @param string $newvalue the value to set the field to.
+     * @param mixed $newvalue the value to set the field to.
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
      * @param array $params array of sql parameters
      * @return bool true
@@ -2098,8 +2099,8 @@ abstract class moodle_database {
      * NOTE: The SQL result is a number and can not be used directly in
      *       SQL condition, please compare it to some number to get a bool!!
      *
-     * @param int $int1 First integer in the operation.
-     * @param int $int2 Second integer in the operation.
+     * @param string $int1 SQL for the first integer in the operation.
+     * @param string $int2 SQL for the second integer in the operation.
      * @return string The piece of SQL code to be used in your statement.
      */
     public function sql_bitand($int1, $int2) {

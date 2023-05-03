@@ -308,3 +308,24 @@ Feature: Course index depending on role
     And I follow "Switch role to..." in the user menu
     And I press "Student"
     Then I should not see "Topic 1" in the "courseindex-content" "region"
+
+  @javascript
+  Scenario: Course index behaviour for activities without url
+    # Add a label to the course (labels doesn't have URL, because they can't be displayed in a separate page).
+    Given the following "activities" exist:
+      | activity | name                | intro       | course | idnumber | section |
+      | label    | Activity sample 4   | Test label  | C1     | sample4  | 2       |
+    # Check resources without URL, as labels, are displayed in the CI and the link goes to the main page when it is clicked.
+    When I am on the "sample1" "Activity" page logged in as "student1"
+    Then I should see "Test label" in the "#courseindex" "css_element"
+    And I click on "Test label" "link" in the "#courseindex" "css_element"
+    And I should see "Test label" in the "region-main" "region"
+    And I should see "Activity sample 2" in the "region-main" "region"
+    # Check resources without URL, as labels, are displayed for teachers too, and the link is working even when edit mode is on.
+    And I am on the "sample1" "Activity" page logged in as "teacher1"
+    And I should see "Test label" in the "#courseindex" "css_element"
+    And I turn editing mode on
+    And I should see "Test label" in the "#courseindex" "css_element"
+    And I click on "Test label" "link" in the "#courseindex" "css_element"
+    And I should see "Test label" in the "region-main" "region"
+    And I should see "Activity sample 2" in the "region-main" "region"

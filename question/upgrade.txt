@@ -1,5 +1,32 @@
 This files describes API changes for code that uses the question API.
 
+=== 4.2 ===
+
+1) The question/qengine.js has been deprecated. We create core_question/question_engine
+   and core/scroll_manager to replace it.
+
+2) For properties that were previously only declared dynamically, a few classes now include property declarations to support PHP 8.2.
+   The affected classes are:
+   * restore_qbank_customfields_plugin
+   * category_condition
+   * tag_condition
+   * question_behaviour_attempt_updater
+   * question_engine_attempt_upgrader
+   * qformat_blackboard_six
+   * qtype_multianswer_edit_form
+   * qtype_ddimageortext_drop_zone
+   * qtype_randomsamatch_qe2_attempt_updater
+   * qformat_default
+
+   Some existing code and variables must be removed while working on this issue, including:
+   * Removed $replace in class qtype_calculated_variable_substituter
+   * Removed $wizarddisplay qtype_calculatedsimple_edit_form::definition_inner()
+   * Removed '$question->places[$placeno]->fieldname = $fieldname' in qtype_ddtoimage_renderer_base::formulation_and_controls()
+   * Removed $mc->single in qtype_multianswer_test_helper::make_multianswer_question_multiple()
+
+3) display_move_form() in qbank_managecategories\question_category_object class is deprecated and moved the logic to
+   the question/bank/managecategories/category.php.
+
 === 4.1 ===
 
 1) get_bulk_action_key() in core_question\local\bank\bulk_action_base class is deprecated and renamed to get_key().

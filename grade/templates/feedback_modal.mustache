@@ -1,0 +1,64 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_grades/feedback_modal
+
+    The body of the modal displayed when viewing feedback for a grade item.
+
+    Context variables required for this template:
+    * feedbacktext - The full text of the feedback.
+    * user - Object containing information about the student.
+        * picture - The image corresponding to the user.
+        * fullname - The users full name.
+        * additionalfield - Additional text displayed below the users full name (e.g. the users email address)
+
+    Example context (json):
+    {
+        "feedbacktext": "<p>Example feedback text</p>",
+        "user": {
+            "picture": "<img src=\"http://example.com/pluginfile.php/14/user/icon/boost/f2\" class=\"userpicture\" width=\"40\" alt=\"\">",
+            "fullname": "John Doe",
+            "additionalfield": "johndoe@example.com"
+        }
+    }
+}}
+
+{{#user}}
+    <div class="d-flex p-3">
+        <div class="d-block pr-3">
+            {{#picture}}
+                {{{picture}}}
+            {{/picture}}
+            {{^picture}}
+                <span class="userinitials"></span>
+            {{/picture}}
+        </div>
+        <div class="d-block">
+            <span class="p-0">
+                {{fullname}}
+            </span>
+            {{#additionalfield}}
+                <span class="d-block small">
+                    {{additionalfield}}
+                </span>
+            {{/additionalfield}}
+        </div>
+    </div>
+{{/user}}
+<div class="box p-3">
+    {{{feedbacktext}}}
+</div>

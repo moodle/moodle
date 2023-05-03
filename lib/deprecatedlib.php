@@ -2838,7 +2838,7 @@ function cron_execute_plugin_type($plugintype, $description = null) {
 
         mtrace('Processing cron function for ' . $component . '...');
         debugging("Use of legacy cron is deprecated ($cronfunction). Please use scheduled tasks.", DEBUG_DEVELOPER);
-        cron_trace_time_and_memory();
+        \core\cron::trace_time_and_memory();
         $pre_dbqueries = $DB->perf_get_queries();
         $pre_time = microtime(true);
 
@@ -3188,19 +3188,46 @@ function user_get_participants($courseid, $groupid, $accesssince, $roleid, $enro
 }
 
 /**
- * Returns the list of full course categories to be used in html_writer::select()
- *
- * Calls {@see core_course_category::make_categories_list()} to build the list.
- *
+ * @deprecated Since Moodle 3.9. MDL-65835
+ */
+function plagiarism_save_form_elements() {
+    throw new coding_exception(
+        'Function plagiarism_save_form_elements() has been removed. ' .
+        'Please use {plugin name}_coursemodule_edit_post_actions() instead.'
+    );
+}
+
+/**
+ * @deprecated Since Moodle 3.9. MDL-65835
+ */
+function plagiarism_get_form_elements_module() {
+    throw new coding_exception(
+        'Function plagiarism_get_form_elements_module() has been removed. ' .
+        'Please use {plugin name}_coursemodule_standard_elements() instead.'
+    );
+}
+
+
+/**
  * @deprecated since Moodle 3.10
- * @todo This will be finally removed for Moodle 4.2 as part of MDL-69124.
- * @return array array mapping course category id to the display name
  */
 function make_categories_options() {
-    $deprecatedtext = __FUNCTION__ . '() is deprecated. Please use \core_course_category::make_categories_list() instead.';
-    debugging($deprecatedtext, DEBUG_DEVELOPER);
+    throw new coding_exception(__FUNCTION__ . '() has been removed. ' .
+        'Please use \core_course_category::make_categories_list() instead.');
+}
 
-    return core_course_category::make_categories_list('', 0, ' / ');
+/**
+ * @deprecated since 3.10
+ */
+function message_count_unread_messages() {
+    throw new coding_exception('message_count_unread_messages has been removed.');
+}
+
+/**
+ * @deprecated since 3.10
+ */
+function serialise_tool_proxy() {
+    throw new coding_exception('serialise_tool_proxy has been removed.');
 }
 
 /**
@@ -3663,4 +3690,153 @@ function print_error($errorcode, $module = 'error', $link = '', $a = null, $debu
     debugging("The function print_error() is deprecated. " .
             "Please throw a new moodle_exception instance instead.", DEBUG_DEVELOPER);
     throw new \moodle_exception($errorcode, $module, $link, $a, $debuginfo);
+}
+
+/**
+ * Execute cron tasks
+ *
+ * @param int|null $keepalive The keepalive time for this cron run.
+ * @deprecated since 4.2 Use \core\cron::run_main_process() instead.
+ */
+function cron_run(?int $keepalive = null): void {
+    debugging(
+        'The cron_run() function is deprecated. Please use \core\cron::run_main_process() instead.',
+        DEBUG_DEVELOPER
+    );
+    \core\cron::run_main_process($keepalive);
+}
+
+/**
+ * Execute all queued scheduled tasks, applying necessary concurrency limits and time limits.
+ *
+ * @param   int     $timenow The time this process started.
+ * @deprecated since 4.2 Use \core\cron::run_scheduled_tasks() instead.
+ */
+function cron_run_scheduled_tasks(int $timenow) {
+    debugging(
+        'The cron_run_scheduled_tasks() function is deprecated. Please use \core\cron::run_scheduled_tasks() instead.',
+        DEBUG_DEVELOPER
+    );
+    \core\cron::run_scheduled_tasks($timenow);
+}
+
+/**
+ * Execute all queued adhoc tasks, applying necessary concurrency limits and time limits.
+ *
+ * @param   int     $timenow The time this process started.
+ * @param   int     $keepalive Keep this function alive for N seconds and poll for new adhoc tasks.
+ * @param   bool    $checklimits Should we check limits?
+ * @deprecated since 4.2 Use \core\cron::run_adhoc_tasks() instead.
+ */
+function cron_run_adhoc_tasks(int $timenow, $keepalive = 0, $checklimits = true) {
+    debugging(
+        'The cron_run_adhoc_tasks() function is deprecated. Please use \core\cron::run_adhoc_tasks() instead.',
+        DEBUG_DEVELOPER
+    );
+    \core\cron::run_adhoc_tasks($timenow, $keepalive, $checklimits);
+}
+
+/**
+ * Shared code that handles running of a single scheduled task within the cron.
+ *
+ * Not intended for calling directly outside of this library!
+ *
+ * @param \core\task\task_base $task
+ * @deprecated since 4.2 Use \core\cron::run_inner_scheduled_task() instead.
+ */
+function cron_run_inner_scheduled_task(\core\task\task_base $task) {
+    debugging(
+        'The cron_run_inner_scheduled_task() function is deprecated. Please use \core\cron::run_inner_scheduled_task() instead.',
+        DEBUG_DEVELOPER
+    );
+    \core\cron::run_inner_scheduled_task($task);
+}
+
+/**
+ * Shared code that handles running of a single adhoc task within the cron.
+ *
+ * @param \core\task\adhoc_task $task
+ * @deprecated since 4.2 Use \core\cron::run_inner_adhoc_task() instead.
+ */
+function cron_run_inner_adhoc_task(\core\task\adhoc_task $task) {
+    debugging(
+        'The cron_run_inner_adhoc_task() function is deprecated. Please use \core\cron::run_inner_adhoc_task() instead.',
+        DEBUG_DEVELOPER
+    );
+    \core\cron::run_inner_adhoc_task($task);
+}
+
+/**
+ * Sets the process title
+ *
+ * This makes it very easy for a sysadmin to immediately see what task
+ * a cron process is running at any given moment.
+ *
+ * @param string $title process status title
+ * @deprecated since 4.2 Use \core\cron::set_process_title() instead.
+ */
+function cron_set_process_title(string $title) {
+    debugging(
+        'The cron_set_process_title() function is deprecated. Please use \core\cron::set_process_title() instead.',
+        DEBUG_DEVELOPER
+    );
+    \core\cron::set_process_title($title);
+}
+
+/**
+ * Output some standard information during cron runs. Specifically current time
+ * and memory usage. This method also does gc_collect_cycles() (before displaying
+ * memory usage) to try to help PHP manage memory better.
+ *
+ * @deprecated since 4.2 Use \core\cron::trace_time_and_memory() instead.
+ */
+function cron_trace_time_and_memory() {
+    debugging(
+        'The cron_trace_time_and_memory() function is deprecated. Please use \core\cron::trace_time_and_memory() instead.',
+        DEBUG_DEVELOPER
+    );
+    \core\cron::trace_time_and_memory();
+}
+
+/**
+ * Prepare the output renderer for the cron run.
+ *
+ * This involves creating a new $PAGE, and $OUTPUT fresh for each task and prevents any one task from influencing
+ * any other.
+ *
+ * @param   bool    $restore Whether to restore the original PAGE and OUTPUT
+ * @deprecated since 4.2 Use \core\cron::prepare_core_renderer() instead.
+ */
+function cron_prepare_core_renderer($restore = false) {
+    debugging(
+        'The cron_prepare_core_renderer() function is deprecated. Please use \core\cron::prepare_core_renderer() instead.',
+        DEBUG_DEVELOPER
+    );
+    \core\cron::prepare_core_renderer($restore);
+}
+
+/**
+ * Sets up current user and course environment (lang, etc.) in cron.
+ * Do not use outside of cron script!
+ *
+ * @param stdClass $user full user object, null means default cron user (admin),
+ *                 value 'reset' means reset internal static caches.
+ * @param stdClass $course full course record, null means $SITE
+ * @param bool $leavepagealone If specified, stops it messing with global page object
+ * @deprecated since 4.2. Use \core\core::setup_user() instead.
+ * @return void
+ */
+function cron_setup_user($user = null, $course = null, $leavepagealone = false) {
+    debugging(
+        'The cron_setup_user() function is deprecated. ' .
+            'Please use \core\cron::setup_user() and reset_user_cache() as appropriate instead.',
+        DEBUG_DEVELOPER
+    );
+
+    if ($user === 'reset') {
+        \core\cron::reset_user_cache();
+        return;
+    }
+
+    \core\cron::setup_user($user, $course, $leavepagealone);
 }

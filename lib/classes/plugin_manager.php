@@ -25,12 +25,6 @@
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Singleton class providing general plugins management functionality.
- */
 class core_plugin_manager {
 
     /** the plugin is shipped with standard Moodle distribution */
@@ -112,7 +106,7 @@ class core_plugin_manager {
     /**
      * Factory method for this class
      *
-     * @return core_plugin_manager the singleton instance
+     * @return static the singleton instance
      */
     public static function instance() {
         if (is_null(static::$singletoninstance)) {
@@ -1727,24 +1721,31 @@ class core_plugin_manager {
         // Moodle 2.3 supports upgrades from 2.2.x only.
         $plugins = array(
             'qformat' => array('blackboard', 'learnwise', 'examview'),
+            'assignment' => array('offline', 'online', 'upload', 'uploadsingle'),
             'auth' => array('radius', 'fc', 'nntp', 'pam', 'pop3', 'imap'),
             'block' => array('course_overview', 'messages', 'community', 'participants', 'quiz_results'),
-            'cachestore' => array('memcache'),
+            'cachestore' => array('memcache', 'memcached', 'mongodb'),
+            'editor' => array('tinymce'),
             'enrol' => array('authorize'),
             'filter' => array('censor'),
             'media' => array('swf'),
             'portfolio' => array('picasa', 'boxnet'),
             'qformat' => array('webct'),
             'message' => array('jabber'),
+            'mod' => array('assignment'),
             'quizaccess' => array('safebrowser'),
             'report' => array('search'),
             'repository' => array('alfresco', 'picasa', 'skydrive', 'boxnet'),
-            'tinymce' => array('dragmath'),
+            'tinymce' => array('dragmath', 'ctrlhelp', 'managefiles', 'moodleemoticon', 'moodleimage',
+                'moodlemedia', 'moodlenolink', 'pdw', 'spellchecker', 'wrap'
+            ),
+
             'tool' => array('bloglevelupgrade', 'qeupgradehelper', 'timezoneimport', 'assignmentupgrade', 'health'),
             'theme' => array('bootstrapbase', 'clean', 'more', 'afterburner', 'anomaly', 'arialist', 'base',
                 'binarius', 'boxxie', 'brick', 'canvas', 'formal_white', 'formfactor', 'fusion', 'leatherbound',
                 'magazine', 'mymobile', 'nimble', 'nonzero', 'overlay', 'serenity', 'sky_high', 'splash',
                 'standard', 'standardold'),
+            'logstore' => ['legacy'],
             'webservice' => array('amf', 'xmlrpc'),
         );
 
@@ -1775,10 +1776,6 @@ class core_plugin_manager {
                 'link', 'managefiles', 'media', 'noautolink', 'orderedlist',
                 'recordrtc', 'rtl', 'strike', 'subscript', 'superscript', 'table',
                 'title', 'underline', 'undo', 'unorderedlist', 'h5p', 'emojipicker',
-            ),
-
-            'assignment' => array(
-                'offline', 'online', 'upload', 'uploadsingle'
             ),
 
             'assignsubmission' => array(
@@ -1821,7 +1818,7 @@ class core_plugin_manager {
             ),
 
             'cachestore' => array(
-                'file', 'memcached', 'mongodb', 'session', 'static', 'apcu', 'redis'
+                'file', 'session', 'static', 'apcu', 'redis'
             ),
 
             'calendartype' => array(
@@ -1861,7 +1858,7 @@ class core_plugin_manager {
             ),
 
             'editor' => array(
-                'atto', 'textarea', 'tiny', 'tinymce'
+                'atto', 'textarea', 'tiny',
             ),
 
             'enrol' => array(
@@ -1908,7 +1905,7 @@ class core_plugin_manager {
             ),
 
             'logstore' => array(
-                'database', 'legacy', 'standard',
+                'database', 'standard',
             ),
 
             'ltiservice' => array(
@@ -1932,7 +1929,7 @@ class core_plugin_manager {
             ),
 
             'mod' => array(
-                'assign', 'assignment', 'bigbluebuttonbn', 'book', 'chat', 'choice', 'data', 'feedback', 'folder',
+                'assign', 'bigbluebuttonbn', 'book', 'chat', 'choice', 'data', 'feedback', 'folder',
                 'forum', 'glossary', 'h5pactivity', 'imscp', 'label', 'lesson', 'lti', 'page',
                 'quiz', 'resource', 'scorm', 'survey', 'url', 'wiki', 'workshop'
             ),
@@ -2035,12 +2032,8 @@ class core_plugin_manager {
                 'h5p',
                 'media',
                 'recordrtc',
+                'link'
             ],
-
-            'tinymce' => array(
-                'ctrlhelp', 'managefiles', 'moodleemoticon', 'moodleimage',
-                'moodlemedia', 'moodlenolink', 'pdw', 'spellchecker', 'wrap'
-            ),
 
             'theme' => array(
                 'boost', 'classic'

@@ -20,6 +20,8 @@
     The user selector trigger element.
 
     Context variables required for this template:
+    * name - The name of the user selector element
+    * userid - The value of the user selector element (id of the preselected user)
     * courseid - The course ID.
     * groupid - The group ID.
     * selectedoption - (optional) Object containing information about the selected option.
@@ -29,6 +31,8 @@
 
     Example context (json):
     {
+        "name": "userid",
+        "userid": "21",
         "courseid": "2",
         "groupid": "2",
         "selectedoption": {
@@ -39,10 +43,22 @@
     }
 }}
 <div class="search-widget dropdown d-flex" data-searchtype="user">
-    <button aria-expanded="false" data-toggle="dropdown" class="btn dropdown-toggle d-flex text-left align-items-center p-0" data-courseid="{{courseid}}" data-groupid="{{groupid}}" aria-label="{{#str}} selectauser, core_grades {{/str}}">
+    <div
+        tabindex="0"
+        aria-expanded="false"
+        role="combobox"
+        aria-haspopup="dialog"
+        aria-controls="dialog-{{uniqid}}"
+        data-toggle="dropdown"
+        class="btn dropdown-toggle d-flex text-left align-items-center p-0"
+        data-courseid="{{courseid}}"
+        data-groupid="{{groupid}}"
+        aria-label="{{#cleanstr}} selectauser, core_grades {{/cleanstr}}"
+        data-input-element="input-{{uniqid}}"
+    >
         <div class="align-items-center d-flex">
             {{#selectedoption}}
-                <div class="selected-option-img d-block pr-2">
+                <div class="selected-option-img d-block pr-2" aria-hidden="true">
                     {{#image}}
                         {{{image}}}
                     {{/image}}
@@ -50,7 +66,7 @@
                         <span class="userinitials"></span>
                     {{/image}}
                 </div>
-                <div class="selected-option-info d-block pr-3">
+                <div class="selected-option-info d-block pr-3 text-truncate">
                     <span class="selected-option-text p-0 font-weight-bold">
                         {{text}}
                     </span>
@@ -70,7 +86,8 @@
                 </div>
             {{/selectedoption}}
         </div>
-    </button>
-    <div class="dropdown-menu wide">
     </div>
+    <div class="dropdown-menu wide" id="dialog-{{uniqid}}" role="dialog" aria-modal="true" aria-label="{{#cleanstr}} selectauser, core_grades {{/cleanstr}}">
+    </div>
+    <input type="hidden" name="{{name}}" value="{{userid}}" id="input-{{uniqid}}" />
 </div>

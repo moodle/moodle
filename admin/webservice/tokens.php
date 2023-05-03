@@ -25,7 +25,6 @@
 
 require(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
 
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
@@ -69,8 +68,14 @@ if ($action === 'create') {
 
         // Generate the token.
         if (empty($errormsg)) {
-            external_generate_token(EXTERNAL_TOKEN_PERMANENT, $data->service, $data->user, context_system::instance(),
-                $data->validuntil, $data->iprestriction);
+            \core_external\util::generate_token(
+                EXTERNAL_TOKEN_PERMANENT,
+                \core_external\util::get_service_by_id($data->service),
+                $data->user,
+                context_system::instance(),
+                $data->validuntil,
+                $data->iprestriction
+            );
             redirect($PAGE->url);
         }
     }
@@ -143,7 +148,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('managetokens', 'core_webservice'));
 
 echo html_writer::div($OUTPUT->render(new single_button(new moodle_url($PAGE->url, ['action' => 'create']),
-    get_string('createtoken', 'core_webservice'), 'get', true)), 'my-3');
+    get_string('createtoken', 'core_webservice'), 'get', single_button::BUTTON_PRIMARY)), 'my-3');
 
 $filter->display();
 

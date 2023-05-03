@@ -26,6 +26,7 @@ use mod_bigbluebuttonbn\local\exceptions\bigbluebutton_exception;
 use mod_bigbluebuttonbn\local\exceptions\server_not_available_exception;
 use moodle_url;
 use stdClass;
+use user_picture;
 
 /**
  * The bigbluebutton proxy class.
@@ -51,56 +52,94 @@ class bigbluebutton_proxy extends proxy_base {
     const DEFAULT_POLL_INTERVAL = 5;
 
     /**
-     * Builds and returns a url for joining a bigbluebutton meeting.
+     * Builds and returns a url for joining a BigBlueButton meeting.
      *
-     * @param string $meetingid
-     * @param string $username
-     * @param string $pw
-     * @param string $logouturl
-     * @param string $role
-     * @param string|null $configtoken
-     * @param int $userid
+     * @param instance $instance
      * @param string|null $createtime
      *
      * @return string
      */
     public static function get_join_url(
-        string $meetingid,
-        string $username,
-        string $pw,
-        string $logouturl,
-        string $role,
-        string $configtoken = null,
-        int $userid = 0,
-        string $createtime = null
+        instance $instance,
+        ?string $createtime
+    ): string {
+        return self::internal_get_join_url($instance, $createtime);
+    }
+
+    /**
+     * Builds and returns a url for joining a BigBlueButton meeting.
+     *
+     * @param instance $instance
+     * @param string|null $createtime
+     * @param string $username
+     * @return string
+     */
+    public static function get_guest_join_url(
+        instance $instance,
+        ?string $createtime,
+        string $username
+    ): string {
+        return self::internal_get_join_url($instance, $createtime, $username, true);
+    }
+
+    /**
+     * Internal helper method to builds and returns a url for joining a BigBlueButton meeting.
+     *
+     * @param instance $instance
+     * @param string|null $jointime = null
+     * @param string|null $userfullname
+     * @param bool $isguestjoin
+     * @return string
+     */
+    private static function internal_get_join_url(
+        instance $instance,
+        ?string $jointime,
+        string $userfullname = null,
+        bool $isguestjoin = false
     ): string {
         $data = [
-            'meetingID' => $meetingid,
-            'fullName' => $username,
-            'password' => $pw,
-            'logoutURL' => $logouturl,
-            'role' => $role
+            'meetingID' => $instance->get_meeting_id(),
+            'fullName' => $userfullname ?? $instance->get_user_fullname(),
+            'password' => $instance->get_current_user_password(),
+            'logoutURL' => $isguestjoin ? $instance->get_guest_access_url()->out(false) : $instance->get_logout_url()->out(false),
+            'role' => $instance->get_current_user_role()
         ];
 
-        if (!is_null($configtoken)) {
-            $data['configToken'] = $configtoken;
-        }
-
-        if (!empty($userid)) {
-            $data['userID'] = $userid;
+        if (!$isguestjoin) {
+            $data['userID'] = $instance->get_user_id();
             $data['guest'] = "false";
         } else {
             $data['guest'] = "true";
         }
 
-        if (!is_null($createtime)) {
-            $data['createTime'] = $createtime;
+        if (!is_null($jointime)) {
+            $data['createTime'] = $jointime;
         }
         $currentlang = current_language();
         if (!empty(trim($currentlang))) {
             $data['userdata-bbb_override_default_locale'] = $currentlang;
         }
+        if ($instance->is_profile_picture_enabled()) {
+            $user = $instance->get_user();
+            if (!empty($user->picture)) {
+                $data['avatarURL'] = self::get_avatar_url($user)->out(false);
+            }
+        }
         return self::action_url('join', $data);
+    }
+
+    /**
+     * Get user avatar URL
+     *
+     * @param stdClass $user
+     * @return moodle_url
+     */
+    private static function get_avatar_url(stdClass $user): moodle_url {
+        global $PAGE;
+        $userpicture = new user_picture($user);
+        $userpicture->includetoken = true;
+        $userpicture->size = 3; // Size f3.
+        return $userpicture->get_url($PAGE);
     }
 
     /**

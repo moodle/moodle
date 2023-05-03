@@ -52,6 +52,7 @@ export default class Component extends DndCmItem {
             LOCKED: 'editinprogress',
             RESTRICTIONS: 'restrictions',
             PAGEITEM: 'pageitem',
+            INDENTED: 'indented',
         };
         // We need our id to watch specific events.
         this.id = this.element.dataset.id;
@@ -65,7 +66,7 @@ export default class Component extends DndCmItem {
      * @return {Component}
      */
     static init(target, selectors) {
-        return new Component({
+        return new this({
             element: document.getElementById(target),
             selectors,
         });
@@ -85,8 +86,12 @@ export default class Component extends DndCmItem {
             state,
             element: cm,
         });
+        const url = new URL(window.location.href);
+        const anchor = url.hash.replace('#', '');
         // Check if the current url is the cm url.
-        if (window.location.href == cm.url || window.location.href == `${course.baseurl}#${cm.anchor}`) {
+        if (window.location.href == cm.url
+            || (window.location.href.includes(course.baseurl) && anchor == cm.anchor)
+        ) {
             this.reactive.dispatch('setPageItem', 'cm', this.id);
             this.element.scrollIntoView({block: "center"});
         }
@@ -95,8 +100,8 @@ export default class Component extends DndCmItem {
             this.reactive.dispatch('setPageItem', 'cm', this.id, true);
             this.element.scrollIntoView({block: "center"});
         }
-        // Add anchor logic if the element is not user visible.
-        if (!cm.uservisible) {
+        // Add anchor logic if the element is not user visible or the element hasn't URL.
+        if (!cm.uservisible || !cm.url) {
             this.addEventListener(
                 this.getElement(this.selectors.CM_NAME),
                 'click',
@@ -132,6 +137,7 @@ export default class Component extends DndCmItem {
         this.element.classList.toggle(this.classes.DRAGGING, element.dragging ?? false);
         this.element.classList.toggle(this.classes.LOCKED, element.locked ?? false);
         this.element.classList.toggle(this.classes.RESTRICTIONS, element.hascmrestrictions ?? false);
+        this.element.classList.toggle(this.classes.INDENTED, element.indent);
         this.locked = element.locked;
     }
 

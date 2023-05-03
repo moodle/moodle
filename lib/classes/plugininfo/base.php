@@ -23,10 +23,10 @@
  */
 namespace core\plugininfo;
 
-use core_component, core_plugin_manager, moodle_url, coding_exception;
-
-defined('MOODLE_INTERNAL') || die();
-
+use coding_exception;
+use core_component;
+use core_plugin_manager;
+use moodle_url;
 
 /**
  * Base class providing access to the information about a plugin
@@ -70,6 +70,21 @@ abstract class base {
 
     /** @var array|null array of {@link \core\update\info} for this plugin */
     protected $availableupdates;
+
+    /** @var int Move a plugin up in the plugin order */
+    public const MOVE_UP = -1;
+
+    /** @var int Move a plugin down in the plugin order */
+    public const MOVE_DOWN = 1;
+
+    /**
+     * Whether this plugintype supports its plugins being disabled.
+     *
+     * @return bool
+     */
+    public static function plugintype_supports_disabling(): bool {
+        return false;
+    }
 
     /**
      * Finds all enabled plugins, the result may include missing plugins.
@@ -655,5 +670,40 @@ abstract class base {
             'confirm' => 0,
             'return' => $return,
         ));
+    }
+
+    /**
+     * Whether this plugintype supports ordering of plugins using native functionality.
+     *
+     * Please note that plugintypes which pre-date this native functionality may still support ordering
+     * but will not use the built-in functionality.
+     *
+     * @return bool
+     */
+    public static function plugintype_supports_ordering(): bool {
+        return false;
+    }
+
+    /**
+     * Finds all enabled plugins, the result may include missing plugins.
+     *
+     * @param bool $enabledonly Show all plugins, or only those which are enabled
+     * @return array|null of sorted plugins $pluginname => $pluginname, null means unknown
+     */
+    public static function get_sorted_plugins(bool $enabledonly = false): ?array {
+        return null;
+    }
+
+    /**
+     * Change the order of the plugin relative to other plugins in the plugintype.
+     *
+     * When possible, the change will be stored into the config_log table, to let admins check when/who has modified it.
+     *
+     * @param string $pluginname The plugin name to enable/disable.
+     * @param int $direction The direction to move the plugin. Negative numbers mean up, Positive mean down.
+     * @return bool Whether $pluginname has been updated or not.
+     */
+    public static function change_plugin_order(string $pluginname, int $direction): bool {
+        return false;
     }
 }

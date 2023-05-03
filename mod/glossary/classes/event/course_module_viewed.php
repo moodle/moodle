@@ -63,18 +63,6 @@ class course_module_viewed extends \core\event\course_module_viewed {
         return new \moodle_url("/mod/$this->objecttable/view.php", $params);
     }
 
-    /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    public function get_legacy_logdata() {
-        // In moodle 2.6 and below the url was logged incorrectly, always having tab=-1 .
-        return array($this->courseid, $this->objecttable, 'view',
-            'view.php?id=' . $this->contextinstanceid . '&amp;tab=-1',
-            $this->objectid, $this->contextinstanceid);
-    }
-
     public static function get_objectid_mapping() {
         return array('db' => 'glossary', 'restore' => 'glossary');
     }

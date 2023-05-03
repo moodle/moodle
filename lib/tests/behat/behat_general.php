@@ -465,6 +465,55 @@ class behat_general extends behat_base {
     }
 
     /**
+     * Click on the element with some modifier key pressed (alt, shift, meta or control).
+     *
+     * It is important to note that not all HTML elements are compatible with this step because
+     * the webdriver limitations. For example, alt click on checkboxes with a visible label will
+     * produce a normal checkbox click without the modifier.
+     *
+     * @When I :modifier click on :element :selectortype in the :nodeelement :nodeselectortype
+     * @param string $modifier the extra modifier to press (for example, alt+shift or shift)
+     * @param string $element Element we look for
+     * @param string $selectortype The type of what we look for
+     * @param string $nodeelement Element we look in
+     * @param string $nodeselectortype The type of selector where we look in
+     */
+    public function i_key_click_on_in_the($modifier, $element, $selectortype, $nodeelement, $nodeselectortype) {
+        behat_base::require_javascript_in_session($this->getSession());
+
+        $key = null;
+        switch (strtoupper(trim($modifier))) {
+            case '':
+                break;
+            case 'SHIFT':
+                $key = behat_keys::SHIFT;
+                break;
+            case 'CTRL':
+                $key = behat_keys::CONTROL;
+                break;
+            case 'ALT':
+                $key = behat_keys::ALT;
+                break;
+            case 'META':
+                $key = behat_keys::META;
+                break;
+            default:
+                throw new \coding_exception("Unknown modifier key '$modifier'}");
+        }
+
+        $node = $this->get_node_in_container($selectortype, $element, $nodeselectortype, $nodeelement);
+        $this->ensure_node_is_visible($node);
+
+        // KeyUP and KeyDown require the element to be displayed in the current window.
+        $this->execute_js_on_node($node, '{{ELEMENT}}.scrollIntoView();');
+        $node->keyDown($key);
+        $node->click();
+        // Any click action can move the scroll. Ensure the element is still displayed.
+        $this->execute_js_on_node($node, '{{ELEMENT}}.scrollIntoView();');
+        $node->keyUp($key);
+    }
+
+    /**
      * Drags and drops the specified element to the specified container. This step does not work in all the browsers, consider it experimental.
      *
      * The steps definitions calling this step as part of them should
@@ -1108,9 +1157,6 @@ EOF;
      * @param string $taskname Name of task e.g. 'mod_whatever\task\do_something'
      */
     public function i_run_the_scheduled_task($taskname) {
-        global $CFG;
-        require_once("{$CFG->libdir}/cronlib.php");
-
         $task = \core\task\manager::get_scheduled_task($taskname);
         if (!$task) {
             throw new DriverException('The "' . $taskname . '" scheduled task does not exist');
@@ -1118,7 +1164,7 @@ EOF;
 
         // Do setup for cron task.
         raise_memory_limit(MEMORY_EXTRA);
-        cron_setup_user();
+        \core\cron::setup_user();
 
         // Get lock.
         $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
@@ -1138,7 +1184,7 @@ EOF;
 
         try {
             // Prepare the renderer.
-            cron_prepare_core_renderer();
+            \core\cron::prepare_core_renderer();
 
             // Discard task output as not appropriate for Behat output!
             ob_start();
@@ -1146,13 +1192,13 @@ EOF;
             ob_end_clean();
 
             // Restore the previous renderer.
-            cron_prepare_core_renderer(true);
+            \core\cron::prepare_core_renderer(true);
 
             // Mark task complete.
             \core\task\manager::scheduled_task_complete($task);
         } catch (Exception $e) {
             // Restore the previous renderer.
-            cron_prepare_core_renderer(true);
+            \core\cron::prepare_core_renderer(true);
 
             // Mark task failed and throw exception.
             \core\task\manager::scheduled_task_failed($task);
@@ -1175,11 +1221,10 @@ EOF;
      * @throws DriverException
      */
     public function i_run_all_adhoc_tasks() {
-        global $CFG, $DB;
-        require_once("{$CFG->libdir}/cronlib.php");
+        global $DB;
 
         // Do setup for cron task.
-        cron_setup_user();
+        \core\cron::setup_user();
 
         // Discard task output as not appropriate for Behat output!
         ob_start();
@@ -1193,7 +1238,7 @@ EOF;
             ob_clean();
 
             // Run the task.
-            cron_run_inner_adhoc_task($task);
+            \core\cron::run_inner_adhoc_task($task);
 
             // Check whether the task record still exists.
             // If a task was successful it will be removed.
@@ -2156,6 +2201,39 @@ EOF;
     }
 
     /**
+     * Checks, that the specified element contains the specified node type a certain amount of times.
+     * When running Javascript tests it also considers that texts may be hidden.
+     *
+     * @Then /^I should see "(?P<elementscount_number>\d+)" node occurrences of type "(?P<node_type>(?:[^"]|\\")*)" in the "(?P<element_string>(?:[^"]|\\")*)" "(?P<text_selector_string>[^"]*)"$/
+     * @throws ElementNotFoundException
+     * @throws ExpectationException
+     * @param int    $elementscount How many occurrences of the element we look for.
+     * @param string $nodetype
+     * @param string $element Element we look in.
+     * @param string $selectortype The type of element where we are looking in.
+     */
+    public function i_should_see_node_occurrences_of_type_in_element(int $elementscount, string $nodetype, string $element, string $selectortype) {
+
+        // Getting the container where the text should be found.
+        $container = $this->get_selected_node($selectortype, $element);
+
+        $xpath = "/descendant-or-self::$nodetype [count(descendant::$nodetype) = 0]";
+
+        $nodes = $this->find_all('xpath', $xpath, false, $container);
+
+        if ($this->running_javascript()) {
+            $nodes = array_filter($nodes, function($node) {
+                return $node->isVisible();
+            });
+        }
+
+        if ($elementscount != count($nodes)) {
+            throw new ExpectationException('Found '.count($nodes).' elements in column. Expected '.$elementscount,
+                $this->getSession());
+        }
+    }
+
+    /**
      * Manually press enter key.
      *
      * @When /^I press enter/
@@ -2233,7 +2311,7 @@ EOF;
         }
 
         // Make the provided editor the default one in $CFG->texteditors by
-        // moving it to the first [editor],atto,tiny,tinymce,textarea on the list.
+        // moving it to the first [editor],atto,tiny,textarea on the list.
         $list = explode(',', $CFG->texteditors);
         array_unshift($list, $editor);
         $list = array_unique($list);

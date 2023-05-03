@@ -34,6 +34,7 @@ MDL-71126 - Quiz: Manual grading page size preference can get stuck at 0
              - New positiveint regex rule to check if the value is a positive integer
 MDL-76102 / MDL-77081
             PHP 8.1 passing null to a non-nullable argument of a built-in function is deprecated
+MDL-77164 - PHPdocs corrections
 
 Pear
 ====

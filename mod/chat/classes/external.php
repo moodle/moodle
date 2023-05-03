@@ -26,10 +26,16 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/mod/chat/lib.php');
 
 use core_course\external\helper_for_get_mods_by_courses;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
+use core_external\util;
 use mod_chat\external\chat_message_exporter;
 
 /**
@@ -121,7 +127,7 @@ class mod_chat_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.0
      */
     public static function login_user_returns() {
@@ -204,7 +210,7 @@ class mod_chat_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.0
      */
     public static function get_chat_users_returns() {
@@ -300,7 +306,7 @@ class mod_chat_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.0
      */
     public static function send_chat_message_returns() {
@@ -378,10 +384,15 @@ class mod_chat_external extends external_api {
         $returnedmessages = array();
 
         foreach ($messages as $message) {
-
             // FORMAT_MOODLE is mandatory in the chat plugin.
-            list($messageformatted, $format) = external_format_text($message->message, FORMAT_MOODLE, $context->id, 'mod_chat',
-                                                                    '', 0);
+            [$messageformatted] = \core_external\util::format_text(
+                $message->message,
+                FORMAT_MOODLE,
+                $context->id,
+                'mod_chat',
+                '',
+                0
+            );
 
             $returnedmessages[] = array(
                 'id' => $message->id,
@@ -405,7 +416,7 @@ class mod_chat_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.0
      */
     public static function get_chat_latest_messages_returns() {
@@ -481,7 +492,7 @@ class mod_chat_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.0
      */
     public static function view_chat_returns() {
@@ -535,7 +546,7 @@ class mod_chat_external extends external_api {
         // Ensure there are courseids to loop through.
         if (!empty($params['courseids'])) {
 
-            list($courses, $warnings) = external_util::validate_courses($params['courseids'], $courses);
+            list($courses, $warnings) = util::validate_courses($params['courseids'], $courses);
 
             // Get the chats in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
@@ -687,7 +698,7 @@ class mod_chat_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.4
      */
     public static function get_sessions_returns() {
@@ -806,7 +817,7 @@ class mod_chat_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.4
      */
     public static function get_session_messages_returns() {

@@ -62,7 +62,8 @@ if ($data = $mform->get_data()) {
         true,
         $data->fullname,
         $data->summary['text'],
-        $data->summary['format']
+        $data->summary['format'],
+        $data->additionalmodules
     );
     $id = $backend->make();
 

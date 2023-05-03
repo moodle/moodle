@@ -23,14 +23,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define('NO_OUTPUT_BUFFERING', true);
-
 require_once('../config.php');
-require_once($CFG->libdir.'/adminlib.php');
+require_once("{$CFG->libdir}/adminlib.php");
 
-$action  = required_param('action', PARAM_ALPHANUMEXT);
-$media   = required_param('media', PARAM_PLUGIN);
-$confirm = optional_param('confirm', 0, PARAM_BOOL);
+$action = required_param('action', PARAM_ALPHANUMEXT);
+$plugin = required_param('plugin', PARAM_PLUGIN);
 
 $PAGE->set_url('/admin/media.php');
 $PAGE->set_context(context_system::instance());
@@ -38,42 +35,38 @@ $PAGE->set_context(context_system::instance());
 require_admin();
 require_sesskey();
 
-$plugins = core_plugin_manager::instance()->get_plugins_of_type('media');
-$sortorder = array_values(\core\plugininfo\media::get_enabled_plugins());
+$return = new moodle_url('/admin/settings.php', [
+    'section' => 'managemediaplayers',
+]);
 
-$return = new moodle_url('/admin/settings.php', array('section' => 'managemediaplayers'));
-
-if (!array_key_exists($media, $plugins)) {
-    redirect($return);
-}
-
+$displayname = get_string('pluginname', "media_{$plugin}");
 switch ($action) {
     case 'disable':
         $class = \core_plugin_manager::resolve_plugininfo_class('media');
-        $class::enable_plugin($media, false);
+        if ($class::enable_plugin($plugin, false)) {
+            \core\notification::add(
+                get_string('plugin_disabled', 'core_admin', $displayname),
+                \core\notification::SUCCESS
+            );
+        }
         break;
 
     case 'enable':
         $class = \core_plugin_manager::resolve_plugininfo_class('media');
-        $class::enable_plugin($media, true);
+        if ($class::enable_plugin($plugin, true)) {
+            \core\notification::add(
+                get_string('plugin_enabled', 'core_admin', $displayname),
+                \core\notification::SUCCESS
+            );
+        }
         break;
 
     case 'up':
-        if (($pos = array_search($media, $sortorder)) > 0) {
-            $tmp = $sortorder[$pos - 1];
-            $sortorder[$pos - 1] = $sortorder[$pos];
-            $sortorder[$pos] = $tmp;
-            \core\plugininfo\media::set_enabled_plugins($sortorder);
-        }
+        $class::change_plugin_order($plugin, $class::MOVE_UP);
         break;
 
     case 'down':
-        if ((($pos = array_search($media, $sortorder)) !== false) && ($pos < count($sortorder) - 1)) {
-            $tmp = $sortorder[$pos + 1];
-            $sortorder[$pos + 1] = $sortorder[$pos];
-            $sortorder[$pos] = $tmp;
-            \core\plugininfo\media::set_enabled_plugins($sortorder);
-        }
+        $class::change_plugin_order($plugin, $class::MOVE_DOWN);
         break;
 }
 

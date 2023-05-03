@@ -47,7 +47,7 @@ require_login($course);
 $context = context_course::instance($course->id);
 require_capability('moodle/grade:manage', $context);
 
-$PAGE->requires->js_call_amd('core_grades/edittree_index', 'enhance');
+$PAGE->requires->js_call_amd('core_grades/edittree_index', 'init', [$courseid, $USER->id]);
 
 /// return tracking object
 $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'tree', 'courseid'=>$courseid));
@@ -247,7 +247,7 @@ if (grade_regrade_final_grades_if_required($course, $grade_edit_tree_index_check
 
 $actionbar = new \core_grades\output\gradebook_setup_action_bar($context);
 print_grade_page_head($courseid, 'settings', 'setup', get_string('gradebooksetup', 'grades'),
-    false, false, true, null, null, null, $actionbar);
+    false, false, true, null, null, null, $actionbar, false);
 
 // Print Table of categories and items
 echo $OUTPUT->box_start('gradetreebox generalbox');
@@ -279,22 +279,16 @@ if ($weightsadjusted) {
 
 $tpldata->table = html_writer::table($grade_edit_tree->table);
 
+if ($moving) {
+    $tpldata->cancelmovingbutton = $OUTPUT->single_button(
+        new moodle_url('index.php', ['id' => $course->id]), get_string('cancel'), 'get');
+}
+
 echo $OUTPUT->render_from_template('core_grades/edit_tree', $tpldata);
 
 echo $OUTPUT->box_end();
-
-// Print action buttons
-echo $OUTPUT->container_start('buttons mdl-align');
-
-if ($moving) {
-    echo $OUTPUT->single_button(new moodle_url('index.php', array('id'=>$course->id)), get_string('cancel'), 'get');
-}
-
-echo $OUTPUT->container_end();
 
 $PAGE->requires->js_call_amd('core_form/changechecker', 'watchFormById', ['gradetreeform']);
 
 echo $OUTPUT->footer();
 die;
-
-

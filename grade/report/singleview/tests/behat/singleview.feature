@@ -106,14 +106,17 @@ Feature: We can use Single view
     And the "Override for Test assignment one" "checkbox" should be enabled
 
   Scenario: Single view links work on grade report.
-    Given I follow "Single view for Test assignment one"
-    Then I should see "Test assignment one"
-    Then I navigate to "View > Grader report" in the course gradebook
-    And I follow "Single view for Ann, Jill, Grainne, Beauchamp"
+    Given I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
+    And I choose "Single view for this item" in the open action menu
+    And I should see "Test assignment one"
+    When I navigate to "View > Grader report" in the course gradebook
+    And I click on user menu "Grainne Beauchamp"
+    And I choose "Single view for this user" in the open action menu
     Then I should see "Gronya,Beecham"
 
   Scenario: I can bulk update grades.
-    Given I follow "Single view for Ann, Jill, Grainne, Beauchamp"
+    Given I click on user menu "Grainne Beauchamp"
+    And I choose "Single view for this user" in the open action menu
     And I should see "Gronya,Beecham"
     When I turn editing mode on
     And I click on "Actions" "link"
@@ -128,7 +131,8 @@ Feature: We can use Single view
     Given the following "language customisations" exist:
       | component       | stringid | value |
       | core_langconfig | decsep   | #     |
-    And I follow "Single view for Ann, Jill, Grainne, Beauchamp"
+    And I click on user menu "Grainne Beauchamp"
+    And I choose "Single view for this user" in the open action menu
     And I should see "Gronya,Beecham"
     When I turn editing mode on
     And I click on "Actions" "link"
@@ -146,7 +150,8 @@ Feature: We can use Single view
     And the field "Grade for Test grade item" matches value "1#00"
 
   Scenario: Navigation works in the Single view.
-    Given I follow "Single view for Ann, Jill, Grainne, Beauchamp"
+    Given I click on user menu "Grainne Beauchamp"
+    And I choose "Single view for this user" in the open action menu
     Then I should see "Gronya,Beecham"
     And I follow "Nee,Chumlee"
     Then I should see "Nee,Chumlee"
@@ -161,7 +166,8 @@ Feature: We can use Single view
     Then I should see "Test assignment four"
 
   Scenario: Activities are clickable only when it has a valid activity page.
-    Given I follow "Single view for Ann, Jill, Grainne, Beauchamp"
+    Given I click on user menu "Grainne Beauchamp"
+    And I choose "Single view for this user" in the open action menu
     And "new grade item 1" "link" should not exist in the "//tbody//tr[position()=1]//td[position()=2]" "xpath_element"
     Then "Category total" "link" should not exist in the "//tbody//tr[position()=2]//td[position()=2]" "xpath_element"
     And "Course total" "link" should not exist in the "//tbody//tr[position()=last()]//td[position()=2]" "xpath_element"

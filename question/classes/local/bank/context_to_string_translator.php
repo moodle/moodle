@@ -68,6 +68,7 @@ class context_to_string_translator {
     protected function generate_context_to_string_array($contexts) {
         if (!$this->contexttostringarray) {
             $catno = 1;
+            /** @var \context $context */
             foreach ($contexts as $context) {
                 switch ($context->contextlevel) {
                     case CONTEXT_MODULE :
@@ -83,6 +84,11 @@ class context_to_string_translator {
                     case CONTEXT_SYSTEM :
                         $contextstring = 'system';
                         break;
+                    default:
+                        throw new \coding_exception('Unexpected context level ' .
+                                \context_helper::get_level_name($context->contextlevel) . ' for context ' .
+                                $context->id . ' in generate_context_to_string_array. ' .
+                                'Questions can never exist in this type of context.');
                 }
                 $this->contexttostringarray[$context->id] = $contextstring;
             }

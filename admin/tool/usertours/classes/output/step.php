@@ -73,13 +73,13 @@ class step implements \renderable {
 
         $result = (object) [
             'stepid'    => $step->get_id(),
-            'title'     => external_format_text(
+            'title'     => \core_external\util::format_text(
                     helper::get_string_from_input($step->get_title()),
                     FORMAT_HTML,
                     $PAGE->context->id,
                     'tool_usertours'
                 )[0],
-            'content'   => external_format_text(
+            'content'   => \core_external\util::format_text(
                     $content,
                     $step->get_contentformat(),
                     $PAGE->context->id,

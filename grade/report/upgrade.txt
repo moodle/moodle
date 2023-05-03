@@ -1,6 +1,26 @@
 This files describes API changes in /grade/report/*,
 information provided here is intended especially for developers.
 
+=== 4.2 ===
+* 'Show calculations' setting has been removed from grader report (link is moved to grade action menu)
+* 'Show activity icons' setting has been removed from grader report
+* The grade_report_grader:get_icons(), grade_report_grader:get_left_icons_row()
+  and grade_report_grader:get_right_icons_row() functions have been deprecated and are not used anymore.
+* 'Show grade analysis icon' setting has been removed from grader report (link is moved to grade action menu)
+* 'Show locks' setting has been removed from grader report (link is moved to grade action menu)
+* 'Show show/hide icons' setting has been removed from grader report (link is moved to grade action menu)
+* 'Enable AJAX' interface has been deprecated for grader report
+* 'Quick feedback' interface has been deprecated for grader report
+* A new method grade_report::get_additional_context() is created to obtain links to other grade plugins report pages.
+ It loops through all installed grade report plugins and checks if callback function gradereport_*_get_report_link
+ is implemented in for given grade report plugin in the corresponding lib.php
+* The setting $CFG->grade_report_studentsperpage has been completely removed because it's not required anymore. This setting
+  was used to set the default number of students displayed per page in the grader report. Now the default is set to
+  20.
+* The get_grade_item_id() function in behat_gradereport_grader.php has been deprecated. Please use
+  behat_grades::get_grade_item_id() instead.
+* The grade_report::get_lang_string() has been deprecated. Please use grade_helper::get_lang_string() instead.
+
 === 3.6 ===
 * External function gradereport_user_external::get_grade_items now return the following information (only for course managers).
   - locked: Whether the grade item is locked.

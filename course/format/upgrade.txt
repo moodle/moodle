@@ -2,6 +2,35 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 4.2 ===
+* New core_courseformat\base::get_context() to get the course context directly from the format instance.
+* New core_courseformat\base::delete_module() method. Now format plugins can extend the activity deletion logic
+  by overriding this method.
+* The reactive course editor now uses the standard fragment library to refresh an individual section or activity card
+  in the course content. Instead of using adhoc YUI methods and webservice, the new fragment methods are:
+    - core_courseformat_output_fragment_cmitem
+    - core_courseformat_output_fragment_section
+* New methods and outputs added for bulk editing (only available for formats compatible with reactive components):
+    - Mutations for editing the bulk data: bulkEnable, bulkReset, cmSelect, cmUnselect, sectionSelect and sectionUnselect.
+    - Output classes overridable by the plugins: content\bulkedittools, content\bulkedittoggler
+    - Renderer method: core_courseformat\output\section_renderer::bulk_editing_button
+    - New overridable checkboxes: content/cm/bulkselect.mustache and content/section/bulkselect.mustache
+* Plugins can use the CSS class "bulk-hidden" to hide elements when the bulk editing is enabled.
+* New core_courseformat\base::duplicate_section method to duplicate course sections and their modules within a course.
+* The section renderer will now respect the new course view parameter 'expandsection'. If the course's view page
+  is being called with this parameter set to a section number, this section will be shown expanded.
+* core_courseformat\base::get_view_url() now by default returns a url for the *expanded* section. This can be
+  changed by adding ['expanded' => false] to the options parameter of get_view_url().
+* The newly introduced protected method core_courseformat\output\local\content\section::is_section_collapsed() now
+  should be used by format plugins to determine if a section should be rendered collapsed or expanded at first.
+  This method can also be overwritten by course formats, but should respect the new 'expandsection' parameter when
+  doing so.
+* New core_courseformat\base::get_editor_custom_strings() method to customize course editor strings.
+  The returned string array is used to override section related strings in the frontend.
+* New core_courseformat\base::get_format_string() to get strings that can be overridden by the format plugin.
+  The method will check first the string in the format_PLUGINNAME.php lang file and, if not, it will return the
+  core_courseformat string instead.
+
 === 4.1 ===
 * New \core_courseformat\stateupdates methods add_section_remove() and add_cm_remove() have been added to replace
   the deprecated methods add_section_delete() and add_cm_delete().

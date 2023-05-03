@@ -51,6 +51,9 @@ class page_viewalldoc implements renderable, templatable {
     /** @var string Return url */
     private $returnurl;
 
+    /** @var array List current (active) policy versions. */
+    private array $policies = [];
+
     /**
      * Prepare the page for rendering.
      *

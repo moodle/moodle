@@ -23,8 +23,6 @@
  */
 namespace core\plugininfo;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class for document converter plugins
  *
@@ -33,6 +31,10 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class fileconverter extends base {
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
 
     /**
      * Should there be a way to uninstall the plugin via the administration UI.
@@ -63,6 +65,7 @@ class fileconverter extends base {
      */
     public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
+        /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
         $plugininfo = $this; // Also can be used inside settings.php.
 

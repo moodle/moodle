@@ -50,7 +50,7 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
     protected function execute_javascript_for_editor(string $editorid, string $code): void {
         $js = <<<EOF
         require(['editor_tiny/editor'], (editor) => {
-            const instance = editor.getInstanceForElementId('${editorid}');
+            const instance = editor.getInstanceForElementId('{$editorid}');
             {$code}
         });
         EOF;
@@ -72,9 +72,9 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
         $js = <<<EOF
         return new Promise((resolve, reject) => {
             require(['editor_tiny/editor'], (editor) => {
-                const instance = editor.getInstanceForElementId('${editorid}');
+                const instance = editor.getInstanceForElementId('{$editorid}');
                 if (!instance) {
-                    reject("Instance '${editorid}' not found");
+                    reject("Instance '{$editorid}' not found");
                 }
 
                 {$code}
@@ -101,7 +101,7 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
         }
 
         $this->execute_javascript_for_editor($editorid, <<<EOF
-            instance.setContent('${value}');
+            instance.setContent('{$value}');
             instance.undoManager.add();
             EOF);
     }
@@ -189,7 +189,7 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
         $js = <<<EOF
             const container = instance.getContainer();
             if (!container.id) {
-                container.id = '${targetid}';
+                container.id = '{$targetid}';
             }
             resolve(container.id);
         EOF;
@@ -228,7 +228,7 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
         // Ensure that a name is set on the iframe relating to the editorid.
         $js = <<<EOF
             if (!instance.iframeElement.name) {
-                instance.iframeElement.name = '${editorid}';
+                instance.iframeElement.name = '{$editorid}';
             }
             resolve(instance.iframeElement.name);
         EOF;
@@ -327,7 +327,7 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
 
         // Ensure that a name is set on the iframe relating to the editorid.
         $js = <<<EOF
-            const element = instance.dom.select("${textlocator}")[${position}];
+            const element = instance.dom.select("{$textlocator}")[{$position}];
             instance.selection.select(element);
         EOF;
 
@@ -427,7 +427,7 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
         $js = <<<EOF
             const editorDocument = instance.getDoc();
             const element = editorDocument.evaluate(
-                "${xpath}",
+                "{$xpath}",
                 editorDocument,
                 null,
                 XPathResult.FIRST_ORDERED_NODE_TYPE,

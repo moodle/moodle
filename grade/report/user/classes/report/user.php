@@ -19,12 +19,17 @@ namespace gradereport_user\report;
 use context_course;
 use course_modinfo;
 use grade_grade;
+use grade_helper;
 use grade_report;
 use grade_tree;
+use html_writer;
+use moodle_url;
 
 defined('MOODLE_INTERNAL') || die;
 
+global $CFG;
 require_once($CFG->dirroot.'/grade/report/lib.php');
+require_once($CFG->dirroot.'/grade/lib.php');
 
 /**
  * Class providing an API for the user report building and displaying.
@@ -32,12 +37,6 @@ require_once($CFG->dirroot.'/grade/report/lib.php');
  * @package gradereport_user
  */
 class user extends grade_report {
-
-    /**
-     * The user.
-     * @var object $user
-     */
-    public $user;
 
     /**
      * A flexitable to hold the data.
@@ -171,10 +170,6 @@ class user extends grade_report {
      * @var void
      */
     public $showhiddenitems;
-    /**
-     * @var array
-     */
-    public $showtotalsifcontainhidden;
 
     /**
      * @var string
@@ -380,51 +375,51 @@ class user extends grade_report {
         // Setting up table headers.
 
         $this->tablecolumns = ['itemname'];
-        $this->tableheaders = [$this->get_lang_string('gradeitem', 'grades')];
+        $this->tableheaders = [\grade_helper::get_lang_string('gradeitem', 'grades')];
 
         if ($this->showweight) {
             $this->tablecolumns[] = 'weight';
-            $this->tableheaders[] = $this->get_lang_string('weightuc', 'grades');
+            $this->tableheaders[] = \grade_helper::get_lang_string('weightuc', 'grades');
         }
 
         if ($this->showgrade) {
             $this->tablecolumns[] = 'grade';
-            $this->tableheaders[] = $this->get_lang_string('grade', 'grades');
+            $this->tableheaders[] = \grade_helper::get_lang_string('grade', 'grades');
         }
 
         if ($this->showrange) {
             $this->tablecolumns[] = 'range';
-            $this->tableheaders[] = $this->get_lang_string('range', 'grades');
+            $this->tableheaders[] = \grade_helper::get_lang_string('range', 'grades');
         }
 
         if ($this->showpercentage) {
             $this->tablecolumns[] = 'percentage';
-            $this->tableheaders[] = $this->get_lang_string('percentage', 'grades');
+            $this->tableheaders[] = \grade_helper::get_lang_string('percentage', 'grades');
         }
 
         if ($this->showlettergrade) {
             $this->tablecolumns[] = 'lettergrade';
-            $this->tableheaders[] = $this->get_lang_string('lettergrade', 'grades');
+            $this->tableheaders[] = \grade_helper::get_lang_string('lettergrade', 'grades');
         }
 
         if ($this->showrank) {
             $this->tablecolumns[] = 'rank';
-            $this->tableheaders[] = $this->get_lang_string('rank', 'grades');
+            $this->tableheaders[] = \grade_helper::get_lang_string('rank', 'grades');
         }
 
         if ($this->showaverage) {
             $this->tablecolumns[] = 'average';
-            $this->tableheaders[] = $this->get_lang_string('average', 'grades');
+            $this->tableheaders[] = \grade_helper::get_lang_string('average', 'grades');
         }
 
         if ($this->showfeedback) {
             $this->tablecolumns[] = 'feedback';
-            $this->tableheaders[] = $this->get_lang_string('feedback', 'grades');
+            $this->tableheaders[] = \grade_helper::get_lang_string('feedback', 'grades');
         }
 
         if ($this->showcontributiontocoursetotal) {
             $this->tablecolumns[] = 'contributiontocoursetotal';
-            $this->tableheaders[] = $this->get_lang_string('contributiontocoursetotal', 'grades');
+            $this->tableheaders[] = \grade_helper::get_lang_string('contributiontocoursetotal', 'grades');
         }
     }
 
@@ -845,15 +840,17 @@ class user extends grade_report {
                 }
                 $this->gradeitemsdata[] = $gradeitemdata;
             }
+
+            $parent = $gradeobject->load_parent_category();
+            if ($gradeobject->is_category_item()) {
+                $parent = $parent->load_parent_category();
+            }
+
             // We collect the aggregation hints whether they are hidden or not.
             if ($this->showcontributiontocoursetotal) {
                 $hint['grademax'] = $gradegrade->grade_item->grademax;
                 $hint['grademin'] = $gradegrade->grade_item->grademin;
                 $hint['grade'] = $gradeval;
-                $parent = $gradeobject->load_parent_category();
-                if ($gradeobject->is_category_item()) {
-                    $parent = $parent->load_parent_category();
-                }
                 $hint['parent'] = $parent->load_grade_item()->id;
                 $this->aggregationhints[$gradegrade->itemid] = $hint;
             }
@@ -1015,7 +1012,7 @@ class user extends grade_report {
 
         $table = new \html_table();
         $table->attributes = [
-            'summary' => s($this->get_lang_string('tablesummary', 'gradereport_user')),
+            'summary' => s(\grade_helper::get_lang_string('tablesummary', 'gradereport_user')),
             'class' => 'generaltable boxaligncenter user-grade',
         ];
 

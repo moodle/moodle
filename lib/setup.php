@@ -154,6 +154,16 @@ if (defined('BEHAT_SITE_RUNNING')) {
     }
 }
 
+// Set default warn runtime.
+if (!isset($CFG->taskruntimewarn)) {
+    $CFG->taskruntimewarn = 12 * 60 * 60;
+}
+
+// Set default error runtime.
+if (!isset($CFG->taskruntimeerror)) {
+    $CFG->taskruntimeerror = 24 * 60 * 60;
+}
+
 // Normalise dataroot - we do not want any symbolic links, trailing / or any other weirdness there
 if (!isset($CFG->dataroot)) {
     if (isset($_SERVER['REMOTE_ADDR'])) {
@@ -378,7 +388,7 @@ if (!defined('AJAX_SCRIPT')) {
 
 // Exact version of currently used yui2 and 3 library.
 $CFG->yui2version = '2.9.0';
-$CFG->yui3version = '3.17.2';
+$CFG->yui3version = '3.18.1';
 
 // Patching the upstream YUI release.
 // For important information on patching YUI modules, please see http://docs.moodle.org/dev/YUI/Patching.
