@@ -640,7 +640,10 @@ class course_modinfo {
 
         $cachecoursemodinfo = cache::make('core', 'coursemodinfo');
         $cachekey = $course->id;
-        $cachecoursemodinfo->acquire_lock($cachekey);
+        if (!$cachecoursemodinfo->acquire_lock($cachekey)) {
+            throw new moodle_exception('ex_unabletolock', 'cache', '', null,
+                'Unable to lock modinfo cache for course ' . $cachekey);
+        }
         try {
             // Only actually do the build if it's still needed after getting the lock (not if
             // somebody else, who might have been holding the lock, built it already).
