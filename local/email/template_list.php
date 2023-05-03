@@ -499,9 +499,7 @@ if ($manage) {
     $table->column_style('enableuser', 'text-align', 'right');
     $table->column_style('enablemanager', 'text-align', 'right');
     $table->column_style('enablesupervisor', 'text-align', 'right');
-$DB->set_debug(true);
     $table->out($perpage, true);
-$DB->set_debug(false);
 
 }
 
