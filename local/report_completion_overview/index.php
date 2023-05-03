@@ -46,6 +46,7 @@ $download  = optional_param('download', false, PARAM_BOOL);
 $showtext = optional_param('showtext', false, PARAM_BOOL);
 $ifirst = optional_param('firstinitial', '', PARAM_ALPHA);
 $ilast = optional_param('lastinitial', '', PARAM_ALPHA);
+$showexpiryonly = optional_param('showexpiryonly', get_config('local_report_completion_overview', 'showexpiryonly'), PARAM_BOOL);
 
 $params = array();
 
@@ -84,6 +85,7 @@ if ($courses) {
 }
 $params['fistinitial'] = $ifirst;
 $params['lastinitial'] = $ilast;
+$params['showexpiryonly'] = $showexpiryonly;
 if ($showsuspended) {
     $params['showsuspended'] = $showsuspended;
 }
@@ -148,6 +150,15 @@ if (iomad::has_capability('local/report_completion:view', $systemcontext)) {
     $textparams['showtext'] = !$showtext;
     $displaylink = new moodle_url('/local/report_completion_overview/index.php', $textparams);
     $buttons = $OUTPUT->single_button($displaylink, $displaycaption, 'get');
+    if ($showexpiryonly) {
+        $displaycaption = get_string('showexpiry', 'local_report_completion_overview');
+    } else {
+        $displaycaption = get_string('hideexpiry', 'local_report_completion_overview');
+    }
+    $showexpiryparams = $params;
+    $showexpiryparams['showexpiryonly'] = !$showexpiryonly;
+    $displaylink = new moodle_url('/local/report_completion_overview/index.php', $showexpiryparams);
+    $buttons .= $OUTPUT->single_button($displaylink, $displaycaption, 'get');
     $buttoncaption = get_string('pluginname', 'local_report_completion');
     $buttonlink = new moodle_url($CFG->wwwroot . "/local/report_completion/index.php");
     $buttons .= $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
@@ -188,8 +199,16 @@ $coursesform = new local_iomad\forms\course_select_form($linkurl, $params);
 $allcompanycourses = $company->get_menu_courses(true, false, false, false, false);
 if (empty($courses)) {
     $courses = array_keys($allcompanycourses);
-} 
-$expirecourses = $DB->get_records_sql("SELECT courseid FROM {iomad_courses} WHERE validlength > 0");
+}
+
+// Are we also showing detail on all courses?
+if ($showexpiryonly) {
+    $expirecourses = $DB->get_records_sql("SELECT courseid FROM {iomad_courses} WHERE validlength > 0");
+} else {
+    $expirecourses = $DB->get_records_sql("SELECT courseid FROM {iomad_courses} WHERE validlength IS NOT NULL");
+}
+
+// Get courses where we don't show the grade.
 $gradelesscourses = $DB->get_records_sql("SELECT courseid FROM {iomad_courses} WHERE hasgrade = 0");
 
 // Setup the user search form.

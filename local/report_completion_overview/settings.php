@@ -42,5 +42,12 @@ if ($hassiteconfig && !empty($USER->id)) {
         get_string('warningduration_help', 'local_report_completion_overview'),
         30*24*60*60)
     );
+
+    $settings->add(new admin_setting_configcheckbox(
+        'local_report_completion_overview/showexpiryonly',
+        get_string('showexpiryonly', 'local_report_completion_overview'),
+        get_string('showexpiryonly_help', 'local_report_completion_overview'),
+        false)
+    );
 }
 
