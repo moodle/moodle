@@ -143,4 +143,36 @@ class orders_table extends table_sql {
         }
         return $editbutton;
     }
+
+    /**
+     * @return string sql to add to where statement.
+     */
+    function get_sql_where() {
+        global $DB, $SESSION;
+
+        $uniqueid = 'block_iomad_commerce_orders_table';
+
+        if (isset($SESSION->flextable[$uniqueid])) {
+            $prefs = $SESSION->flextable[$uniqueid];
+        } else if (!$prefs = json_decode(get_user_preferences("flextable_{$uniqueid}", ''), true)) {
+            return '';
+        }
+
+        $conditions = array();
+        $params = array();
+
+        static $i = 0;
+        $i++;
+
+        if (!empty($prefs['i_first'])) {
+            $conditions[] = $DB->sql_like('u.firstname', ':ifirstc'.$i, false, false);
+            $params['ifirstc'.$i] = $prefs['i_first'].'%';
+        }
+        if (!empty($prefs['i_last'])) {
+            $conditions[] = $DB->sql_like('u.lastname', ':ilastc'.$i, false, false);
+            $params['ilastc'.$i] = $prefs['i_last'].'%';
+        }
+
+        return array(implode(" AND ", $conditions), $params);
+    }
 }
