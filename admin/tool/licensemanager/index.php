@@ -28,14 +28,8 @@ require_once($CFG->libdir . '/licenselib.php');
 
 require_admin();
 
-$returnurl = \tool_licensemanager\helper::get_licensemanager_url();
-
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $license = optional_param('license', '', PARAM_SAFEDIR);
-
-if (!confirm_sesskey()) {
-    redirect($returnurl);
-}
 
 // Route via the manager.
 $licensemanager = new \tool_licensemanager\manager();
