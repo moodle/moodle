@@ -5444,10 +5444,11 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     $fs->delete_area_files($coursecontext->id, 'backup');
 
     // Cleanup course record - remove links to deleted stuff.
+    // Do not wipe cacherev, as this course might be reused and we need to ensure that it keeps
+    // increasing.
     $oldcourse = new stdClass();
     $oldcourse->id               = $course->id;
     $oldcourse->summary          = '';
-    $oldcourse->cacherev         = 0;
     $oldcourse->legacyfiles      = 0;
     if (!empty($options['keep_groups_and_groupings'])) {
         $oldcourse->defaultgroupingid = 0;
