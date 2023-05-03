@@ -157,7 +157,8 @@ class grade_items extends base {
                     $html = \html_writer::start_div('page-context-header' . $dimmed);
                     // Image data.
                     $html .= \html_writer::div($imagedata, 'page-header-image mr-2');
-                    $prefix = \html_writer::div($row->itemmodule, 'text-muted text-uppercase small line-height-3');
+                    $prefix = \html_writer::div(get_string('pluginname', "mod_{$row->itemmodule}"),
+                        'text-muted text-uppercase small line-height-3');
                     $name = $prefix . \html_writer::link($url, format_string($cm->name, true));
                     $html .= \html_writer::tag('div', $name, ['class' => 'page-header-headings']);
                 } else {
