@@ -25,6 +25,7 @@
 
 namespace core_notes;
 
+use core_external\external_api;
 use core_notes_external;
 use externallib_advanced_testcase;
 
@@ -64,7 +65,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $creatednotes = core_notes_external::create_notes($notes);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $creatednotes = \external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes);
+        $creatednotes = external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes);
 
         $thenote = $DB->get_record('post', array('id' => $creatednotes[0]['noteid']));
 
@@ -103,11 +104,11 @@ class externallib_test extends externallib_advanced_testcase {
         $cnote['clientnoteid'] = 4;
         $cnotes = array($cnote);
         $creatednotes = core_notes_external::create_notes($cnotes);
-        $creatednotes = \external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes);
+        $creatednotes = external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes);
 
         $dnotes1 = array($creatednotes[0]['noteid']);
         $deletednotes1 = core_notes_external::delete_notes($dnotes1);
-        $deletednotes1 = \external_api::clean_returnvalue(core_notes_external::delete_notes_returns(), $deletednotes1);
+        $deletednotes1 = external_api::clean_returnvalue(core_notes_external::delete_notes_returns(), $deletednotes1);
 
         // Confirm that base note data was deleted correctly.
         $notdeletedcount = $DB->count_records_select('post', 'id = ' . $creatednotes[0]['noteid']);
@@ -115,7 +116,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $dnotes2 = array(33); // This note does not exist.
         $deletednotes2 = core_notes_external::delete_notes($dnotes2);
-        $deletednotes2 = \external_api::clean_returnvalue(core_notes_external::delete_notes_returns(), $deletednotes2);
+        $deletednotes2 = external_api::clean_returnvalue(core_notes_external::delete_notes_returns(), $deletednotes2);
 
         $this->assertEquals("note", $deletednotes2[0]["item"]);
         $this->assertEquals(33, $deletednotes2[0]["itemid"]);
@@ -124,13 +125,13 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call without required capability.
         $creatednotes = core_notes_external::create_notes($cnotes);
-        $creatednotes = \external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes);
+        $creatednotes = external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes);
         $dnotes3 = array($creatednotes[0]['noteid']);
 
         $this->unassignUserCapability('moodle/notes:manage', $contextid, $roleid);
         $this->expectException('\required_capability_exception');
         $deletednotes = core_notes_external::delete_notes($dnotes3);
-        $deletednotes = \external_api::clean_returnvalue(core_notes_external::delete_notes_returns(), $deletednotes);
+        $deletednotes = external_api::clean_returnvalue(core_notes_external::delete_notes_returns(), $deletednotes);
     }
 
     public function test_get_notes() {
@@ -159,14 +160,14 @@ class externallib_test extends externallib_advanced_testcase {
         $creatednotes2 = core_notes_external::create_notes($cnotes);
         $creatednotes3 = core_notes_external::create_notes($cnotes);
 
-        $creatednotes1 = \external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes1);
-        $creatednotes2 = \external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes2);
-        $creatednotes3 = \external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes3);
+        $creatednotes1 = external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes1);
+        $creatednotes2 = external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes2);
+        $creatednotes3 = external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes3);
 
         // Note 33 does not exist.
         $gnotes = array($creatednotes1[0]['noteid'], $creatednotes2[0]['noteid'], $creatednotes3[0]['noteid'], 33);
         $getnotes = core_notes_external::get_notes($gnotes);
-        $getnotes = \external_api::clean_returnvalue(core_notes_external::get_notes_returns(), $getnotes);
+        $getnotes = external_api::clean_returnvalue(core_notes_external::get_notes_returns(), $getnotes);
 
         $this->unassignUserCapability('moodle/notes:manage', $contextid, $roleid);
         // Confirm that base note data was retrieved correctly.
@@ -217,7 +218,7 @@ class externallib_test extends externallib_advanced_testcase {
         $notes1 = array($note1, $note2, $note3);
 
         $creatednotes = core_notes_external::create_notes($notes1);
-        $creatednotes = \external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes);
+        $creatednotes = external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes);
 
         $note2 = array();
         $note2["id"] = $creatednotes[0]['noteid'];
@@ -228,7 +229,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $updatednotes = core_notes_external::update_notes($notes2);
 
-        $updatednotes = \external_api::clean_returnvalue(core_notes_external::update_notes_returns(), $updatednotes);
+        $updatednotes = external_api::clean_returnvalue(core_notes_external::update_notes_returns(), $updatednotes);
         $thenote = $DB->get_record('post', array('id' => $creatednotes[0]['noteid']));
 
         // Confirm that base note data was updated correctly.
@@ -237,7 +238,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call without required capability.
         $creatednotes = core_notes_external::create_notes($notes1);
-        $creatednotes = \external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes);
+        $creatednotes = external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes);
         $this->unassignUserCapability('moodle/notes:manage', $contextid, $roleid);
         $this->expectException('\required_capability_exception');
         $note2 = array();
@@ -247,7 +248,7 @@ class externallib_test extends externallib_advanced_testcase {
         $note2['format'] = FORMAT_HTML;
         $notes2 = array($note2);
         $updatednotes = core_notes_external::update_notes($notes2);
-        $updatednotes = \external_api::clean_returnvalue(core_notes_external::update_notes_returns(), $updatednotes);
+        $updatednotes = external_api::clean_returnvalue(core_notes_external::update_notes_returns(), $updatednotes);
     }
 
     /**
@@ -310,7 +311,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Retrieve notes, normal case.
         $result = core_notes_external::get_course_notes($course1->id, $student1->id);
-        $result = \external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
+        $result = external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
         $this->assertEquals($notes1->id, $result['sitenotes'][0]['id']);
         $this->assertCount(2, $result['coursenotes']);
         // Teacher can manage only the course notes.
@@ -334,7 +335,7 @@ class externallib_test extends externallib_advanced_testcase {
         }
 
         $result = core_notes_external::get_course_notes(0, $student1->id);
-        $result = \external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
+        $result = external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
         $this->assertEmpty($result['sitenotes']);
         // Teacher can't manage system notes.
         $this->assertFalse($result['canmanagesystemnotes']);
@@ -350,7 +351,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setAdminUser();
         $result = core_notes_external::get_course_notes(0, $student1->id);
-        $result = \external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
+        $result = external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
         $this->assertEquals($notes1->id, $result['sitenotes'][0]['id']);
         $this->assertCount(1, $result['sitenotes']);
         // Admin user can manage both system and course notes.
@@ -359,7 +360,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($teacher1);
         $result = core_notes_external::get_course_notes(0, 0);
-        $result = \external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
+        $result = external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
         $this->assertEmpty($result['sitenotes']);
         $this->assertEmpty($result['coursenotes']);
         $this->assertEmpty($result['personalnotes']);
@@ -369,7 +370,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($teacher2);
         $result = core_notes_external::get_course_notes($course1->id, $student1->id);
-        $result = \external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
+        $result = external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
         $this->assertEquals($notes1->id, $result['sitenotes'][0]['id']);
 
         foreach ($result['coursenotes'] as $coursenote) {
@@ -385,7 +386,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertTrue($result['canmanagecoursenotes']);
 
         $result = core_notes_external::get_course_notes($course1->id, 0);
-        $result = \external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
+        $result = external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
         $this->assertEquals($notes1->id, $result['sitenotes'][0]['id']);
 
         foreach ($result['coursenotes'] as $coursenote) {
@@ -399,7 +400,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($teacher1);
         $result = core_notes_external::get_course_notes($course1->id, 0);
-        $result = \external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
+        $result = external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
         $this->assertEquals($notep1->id, $result['personalnotes'][0]['id']);
         $this->assertCount(1, $result['personalnotes']);
         // Teacher can manage only the course notes.
@@ -443,10 +444,10 @@ class externallib_test extends externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = core_notes_external::view_notes($course->id, $student->id);
-        $result = \external_api::clean_returnvalue(core_notes_external::view_notes_returns(), $result);
+        $result = external_api::clean_returnvalue(core_notes_external::view_notes_returns(), $result);
 
         $result = core_notes_external::view_notes($course->id);
-        $result = \external_api::clean_returnvalue(core_notes_external::view_notes_returns(), $result);
+        $result = external_api::clean_returnvalue(core_notes_external::view_notes_returns(), $result);
 
         $events = $sink->get_events();
 

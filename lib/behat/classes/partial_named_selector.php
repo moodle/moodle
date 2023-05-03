@@ -112,6 +112,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'menuitem' => 'menuitem',
         'optgroup' => 'optgroup',
         'option' => 'option',
+        'option_role' => 'option_role',
         'question' => 'question',
         'radio' => 'radio',
         'region' => 'region',
@@ -217,6 +218,10 @@ XPATH
 XPATH
         , 'menuitem' => <<<XPATH
 .//*[@role='menuitem'][%titleMatch% or %ariaLabelMatch% or text()[contains(., %locator%)]]
+XPATH
+    , 'option_role' => <<<XPATH
+.//*[@role='option'][%titleMatch% or %ariaLabelMatch% or text()[contains(., %locator%)]] |
+.//*[@role='option']/following-sibling::label[contains(., %locator%)]/preceding-sibling::input
 XPATH
         , 'question' => <<<XPATH
 .//div[contains(concat(' ', normalize-space(@class), ' '), ' que ')]

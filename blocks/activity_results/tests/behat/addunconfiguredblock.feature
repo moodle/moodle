@@ -17,8 +17,14 @@ Feature: The activity results block doesn't displays student scores for unconfig
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
 
-  Scenario: Add the block to a the course
+  Scenario: Add the block to a the course with Javascript disabled
     Given I add the "Activity results" block
+    Then I should see "Please configure this block and select which activity it should display results from." in the "Activity results" "block"
+
+  @javascript
+  Scenario: Add the block to a the course with Javascript enabled
+    Given I add the "Activity results" block to the default region with:
+      | config_showbest | 3 |
     Then I should see "Please configure this block and select which activity it should display results from." in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page in a course without activities

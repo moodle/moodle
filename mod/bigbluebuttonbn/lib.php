@@ -273,9 +273,9 @@ function bigbluebuttonbn_get_extra_capabilities() {
 /**
  * Called by course/reset.php
  *
- * @param object $mform
+ * @param MoodleQuickForm $mform
  */
-function bigbluebuttonbn_reset_course_form_definition(object &$mform) {
+function bigbluebuttonbn_reset_course_form_definition(&$mform) {
     $items = reset::reset_course_items();
     $mform->addElement('header', 'bigbluebuttonbnheader', get_string('modulenameplural', 'bigbluebuttonbn'));
     foreach ($items as $item => $default) {
@@ -388,7 +388,7 @@ function bigbluebuttonbn_get_coursemodule_info($coursemodule) {
  * Serves the bigbluebuttonbn attachments. Implements needed access control ;-).
  *
  * @param stdClass $course course object
- * @param cm_info $cm course module object
+ * @param stdClass $cm course module object
  * @param context $context context object
  * @param string $filearea file area
  * @param array $args extra arguments
@@ -739,4 +739,32 @@ function bigbluebuttonbn_pre_enable_plugin_actions(): bool {
     }
     // Otherwise, continue and enable the plugin.
     return true;
+}
+
+/**
+ * Creates a number of BigblueButtonBN activities.
+ *
+ * @param tool_generator_course_backend $backend
+ * @param testing_data_generator $generator
+ * @param int $courseid
+ * @param int $number
+ * @return void
+ */
+function bigbluebuttonbn_course_backend_generator_create_activity(tool_generator_course_backend $backend,
+    testing_data_generator $generator,
+    int $courseid,
+    int $number
+) {
+    // Set up generator.
+    $bbbgenerator = $generator->get_plugin_generator('mod_bigbluebuttonbn');
+
+    // Create assignments.
+    $backend->log('createbigbluebuttonbn', $number, true, 'mod_bigbluebuttonbn');
+    for ($i = 0; $i < $number; $i++) {
+        $record = array('course' => $courseid);
+        $options = array('section' => $backend->get_target_section());
+        $bbbgenerator->create_instance($record, $options);
+        $backend->dot($i, $number);
+    }
+    $backend->end_log();
 }

@@ -39,6 +39,8 @@ class Location extends AbstractRecord
 {
     /**
      * @ignore
+     *
+     * @var array<string>
      */
     protected $validAttributes = [
         'averageIncome',

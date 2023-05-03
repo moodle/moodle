@@ -210,7 +210,6 @@ class cc_validate_type {
      * @return boolean
      */
     public function validate($element) {
-        $this->last_error = null;
         $celement   = realpath($element);
         $cvalidator = realpath($this->location.DIRECTORY_SEPARATOR.$this->type);
         $result = (empty($celement) || empty($cvalidator));

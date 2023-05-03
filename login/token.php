@@ -26,7 +26,6 @@ define('REQUIRE_CORRECT_ACCESS', true);
 define('NO_MOODLE_COOKIES', true);
 
 require_once(__DIR__ . '/../config.php');
-require_once($CFG->libdir . '/externallib.php');
 
 // Allow CORS requests.
 header('Access-Control-Allow-Origin: *');
@@ -94,9 +93,9 @@ if (!empty($user)) {
     }
 
     // Get an existing token or create a new one.
-    $token = external_generate_token_for_current_user($service);
+    $token = \core_external\util::generate_token_for_current_user($service);
     $privatetoken = $token->privatetoken;
-    external_log_token_request($token);
+    \core_external\util::log_token_request($token);
 
     $siteadmin = has_capability('moodle/site:config', $systemcontext, $USER->id);
 

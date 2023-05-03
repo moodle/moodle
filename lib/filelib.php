@@ -928,7 +928,7 @@ function file_remove_editor_orphaned_files($editor) {
     // Find those draft files included in the text, and generate their hashes.
     $context = context_user::instance($USER->id);
     $baseurl = $CFG->wwwroot . '/draftfile.php/' . $context->id . '/user/draft/' . $editor['itemid'] . '/';
-    $pattern = "/" . preg_quote($baseurl, '/') . "(.+?)[\?\"']/";
+    $pattern = "/" . preg_quote($baseurl, '/') . "(.+?)[\?\"'<>\s:\\\\]/";
     preg_match_all($pattern, $editor['text'], $matches);
     $usedfilehashes = [];
     foreach ($matches[1] as $matchedfilename) {
@@ -3112,7 +3112,7 @@ function get_moodle_proxy_url() {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 class curl {
-    /** @var bool Caches http request contents */
+    /** @var curl_cache|false Caches http request contents */
     public  $cache    = false;
     /** @var bool Uses proxy, null means automatic based on URL */
     public  $proxy    = null;
@@ -3458,7 +3458,7 @@ class curl {
     /**
      * Set options for individual curl instance
      *
-     * @param resource $curl A curl handle
+     * @param resource|CurlHandle $curl A curl handle
      * @param array $options
      * @return resource The curl handle
      */
@@ -4364,7 +4364,7 @@ class curl_cache {
  * @todo MDL-31088 file serving improments
  */
 function file_pluginfile($relativepath, $forcedownload, $preview = null, $offline = false, $embed = false) {
-    global $DB, $CFG, $USER;
+    global $DB, $CFG, $USER, $OUTPUT;
     // relative path must start with '/'
     if (!$relativepath) {
         throw new \moodle_exception('invalidargorconf');
@@ -4916,6 +4916,18 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
 
             \core\session\manager::write_close(); // Unlock session during file serving.
             send_stored_file($file, 60*60, 0, $forcedownload, $sendfileoptions);
+
+        } else if ($filearea === 'generated') {
+            if ($CFG->forcelogin) {
+                require_login($course);
+            } else if ($course->id != SITEID) {
+                require_login($course);
+            }
+
+            $svg = $OUTPUT->get_generated_svg_for_id($course->id);
+
+            \core\session\manager::write_close(); // Unlock session during file serving.
+            send_file($svg, 'course.svg', 60 * 60, 0, true, $forcedownload);
 
         } else {
             send_file_not_found();

@@ -21,6 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import * as FocusLockManager from 'core/local/aria/focuslock';
 import Pending from 'core/pending';
 import * as Templates from 'core/templates';
 import * as Repository from 'core_grades/searchwidget/repository';
@@ -50,17 +51,18 @@ export const init = () => {
 const registerListenerEvents = () => {
     let {bodyPromiseResolver, bodyPromise} = WidgetBase.promisesAndResolvers();
     const dropdownMenuContainer = document.querySelector(Selectors.elements.getSearchWidgetDropdownSelector('user'));
+    const menuContainer = document.querySelector(Selectors.elements.getSearchWidgetSelector('user'));
+    const inputElement = menuContainer.querySelector('input[name="userid"]');
 
     // Handle the 'shown.bs.dropdown' event (Fired when the dropdown menu is fully displayed).
-    $(Selectors.elements.getSearchWidgetSelector('user')).on('show.bs.dropdown', async(e) => {
+    $(menuContainer).on('show.bs.dropdown', async(e) => {
         const courseID = e.relatedTarget.dataset.courseid;
         const groupId = e.relatedTarget.dataset.groupid;
-        const actionBaseUrl = Url.relativeUrl('/grade/report/user/index.php', {}, false);
         // Display a loading icon in the dropdown menu container until the body promise is resolved.
         await WidgetBase.showLoader(dropdownMenuContainer);
 
         // If an error occurs while fetching the data, display the error within the dropdown menu.
-        const data = await Repository.userFetch(courseID, actionBaseUrl, groupId).catch(async(e) => {
+        const data = await Repository.userFetch(courseID, groupId).catch(async(e) => {
             const errorTemplateData = {
                 'errormessage': e.message
             };
@@ -87,26 +89,38 @@ const registerListenerEvents = () => {
             bodyPromise,
             data.users,
             searchUsers(),
-            allUsersOption
+            allUsersOption,
+            afterSelect
         );
 
         // Resolvers for passed functions in the dropdown menu creation.
         bodyPromiseResolver(Templates.render(
             'core_grades/searchwidget/user/usersearch_body', {displayunsearchablecontent: true}
         ));
+
+        // Lock tab control. It has to be locked because the dropdown's role is dialog.
+        FocusLockManager.trapFocus(dropdownMenuContainer);
     });
 
     // Handle the 'hide.bs.dropdown' event (Fired when the dropdown menu is being closed).
-    $(Selectors.elements.getSearchWidgetSelector('user')).on('hide.bs.dropdown', () => {
-        // Reset the state once the user menu dropdown is closed.
-        dropdownMenuContainer.innerHTML = '';
+    $(menuContainer).on('hide.bs.dropdown', () => {
+        FocusLockManager.untrapFocus();
+    });
+
+    inputElement.addEventListener('change', e => {
+        const toggle = menuContainer.querySelector('.dropdown-toggle');
+        const courseID = toggle.dataset.courseid;
+        const actionUrl = Url.relativeUrl('/grade/report/user/index.php', {id: courseID, userid: e.target.value}, false);
+        location.href = actionUrl;
+
+        e.stopPropagation();
     });
 };
 
 /**
  * Define how we want to search and filter users when the user decides to input a search value.
  *
- * @method registerListenerEvents
+ * @method searchUsers
  * @returns {function(): function(*, *): (*)}
  */
 const searchUsers = () => {
@@ -126,4 +140,21 @@ const searchUsers = () => {
             return searchResults;
         };
     };
+};
+
+/**
+ * Define the action to be performed when an item is selected by the search widget.
+ *
+ * @param {String} selected The selected item's value.
+ */
+const afterSelect = (selected) => {
+    const menuContainer = document.querySelector(Selectors.elements.getSearchWidgetSelector('user'));
+    const inputElement = menuContainer.querySelector('input[name="userid"]');
+
+    $(menuContainer).dropdown('hide'); // Otherwise the dropdown stays open when user choose an option using keyboard.
+
+    if (inputElement.value != selected) {
+        inputElement.value = selected;
+        inputElement.dispatchEvent(new Event('change', {bubbles: true}));
+    }
 };

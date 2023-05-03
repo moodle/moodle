@@ -73,33 +73,6 @@ class user_updated extends base {
     }
 
     /**
-     * Return name of the legacy event, which is replaced by this event.
-     *
-     * @return string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return 'user_updated';
-    }
-
-    /**
-     * Return user_updated legacy event data.
-     *
-     * @return \stdClass user data.
-     */
-    protected function get_legacy_eventdata () {
-        return $this->get_record_snapshot('user', $this->objectid);
-    }
-
-    /**
-     * Returns array of parameters to be passed to legacy add_to_log() function.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array(SITEID, 'user', 'update', 'view.php?id='.$this->objectid, '');
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

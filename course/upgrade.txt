@@ -1,6 +1,17 @@
 This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
+=== 4.2 ===
+* course/mod.php now accepts parameter beforemod for adding course modules. It contains the course module id
+  of an existing course module. The new module is inserted before this module.
+* The function duplicate_module() now has two new optional parameters:
+  - $sectionid to specify section the duplicated course module is placed in
+  - $changename to disable changing the name of the course module using the 'duplicatedmodule' lang string
+* The method `make_categories_options`, deprecated since 3.10, has been removed
+* External function core_course_external::get_courses_by_field and core_course_external::search_courses now return a field
+called "courseimage" containing a URL pointing to the course image.
+* External function core_course_external::get_course_contents() does not throw exceptions for invalid course formats anymore.
+
 === 4.1 ===
 * The function course_modchooser() has been finally deprecated and can not be used anymore. Please use
   course_activitychooser() instead.

@@ -1464,6 +1464,9 @@ class page_wiki_map extends page_wiki {
      */
     private $view;
 
+    /** @var renderer_base */
+    protected $output;
+
     function print_header() {
         parent::print_header();
         $this->print_pagetitle();
@@ -1994,9 +1997,7 @@ class page_wiki_deletecomment extends page_wiki {
     }
 
     public function set_action($action, $commentid, $content) {
-        $this->action = $action;
         $this->commentid = $commentid;
-        $this->content = $content;
     }
 
     protected function create_navbar() {

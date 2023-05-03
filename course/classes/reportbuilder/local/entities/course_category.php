@@ -100,11 +100,19 @@ class course_category extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
+            ->add_join($this->get_context_join())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.name, {$tablealias}.id")
+            ->add_fields(context_helper::get_preload_record_columns_sql($tablealiascontext))
             ->add_callback(static function(?string $name, stdClass $category): string {
-                return empty($category->id) ? '' :
-                    core_course_category::get($category->id, MUST_EXIST, true)->get_formatted_name();
+                if (empty($category->id)) {
+                    return '';
+                }
+
+                context_helper::preload_from_record($category);
+                $context = context_coursecat::instance($category->id);
+
+                return format_string($category->name, true, ['context' => $context]);
             })
             ->set_is_sortable(true);
 

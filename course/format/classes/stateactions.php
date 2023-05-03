@@ -62,41 +62,42 @@ class stateactions {
             throw new moodle_exception("Action cm_move requires targetsectionid or targetcmid");
         }
 
-        $this->validate_cms($course, $ids, __FUNCTION__);
-
-        // Check capabilities on every activity context.
-        foreach ($ids as $cmid) {
-            $modcontext = context_module::instance($cmid);
-            require_capability('moodle/course:manageactivities', $modcontext);
-        }
-
-        $modinfo = get_fast_modinfo($course);
+        $this->validate_cms($course, $ids, __FUNCTION__, ['moodle/course:manageactivities']);
+        // The moveto_module function move elements before a specific target.
+        // To keep the order the movements must be done in descending order (last activity first).
+        $ids = $this->sort_cm_ids_by_course_position($course, $ids, true);
 
         // Target cm has more priority than target section.
         if (!empty($targetcmid)) {
             $this->validate_cms($course, [$targetcmid], __FUNCTION__);
-            $targetcm = $modinfo->get_cm($targetcmid);
-            $targetsection = $modinfo->get_section_info_by_id($targetcm->section, MUST_EXIST);
+            $targetcm = get_fast_modinfo($course)->get_cm($targetcmid);
+            $targetsectionid = $targetcm->section;
         } else {
             $this->validate_sections($course, [$targetsectionid], __FUNCTION__);
-            $targetcm = null;
-            $targetsection = $modinfo->get_section_info_by_id($targetsectionid, MUST_EXIST);
         }
 
         // The origin sections must be updated as well.
         $originalsections = [];
 
-        $cms = $this->get_cm_info($modinfo, $ids);
-        foreach ($cms as $cm) {
-            $currentsection = $modinfo->get_section_info_by_id($cm->section, MUST_EXIST);
-            moveto_module($cm, $targetsection, $targetcm);
+        $beforecmdid = $targetcmid;
+        foreach ($ids as $cmid) {
+            // An updated $modinfo is needed on every loop as activities list change.
+            $modinfo = get_fast_modinfo($course);
+            $cm = $modinfo->get_cm($cmid);
+            $currentsectionid = $cm->section;
+            $targetsection = $modinfo->get_section_info_by_id($targetsectionid, MUST_EXIST);
+            $beforecm = (!empty($beforecmdid)) ? $modinfo->get_cm($beforecmdid) : null;
+            if ($beforecm === null || $beforecm->id != $cmid) {
+                moveto_module($cm, $targetsection, $beforecm);
+            }
+            $beforecmdid = $cm->id;
             $updates->add_cm_put($cm->id);
-            if ($currentsection->id != $targetsection->id) {
-                $originalsections[$currentsection->id] = true;
+            if ($currentsectionid != $targetsectionid) {
+                $originalsections[$currentsectionid] = true;
             }
             // If some of the original sections are also target sections, we don't need to update them.
-            if (array_key_exists($targetsection->id, $originalsections)) {
-                unset($originalsections[$targetsection->id]);
+            if (array_key_exists($targetsectionid, $originalsections)) {
+                unset($originalsections[$targetsectionid]);
             }
         }
 
@@ -106,6 +107,35 @@ class stateactions {
         foreach (array_keys($originalsections) as $sectionid) {
             $updates->add_section_put($sectionid);
         }
+    }
+
+    /**
+     * Sort the cm ids list depending on the course position.
+     *
+     * Some actions like move should be done in an specific order.
+     *
+     * @param stdClass $course the course object
+     * @param int[] $cmids the array of section $ids
+     * @param bool $descending if the sort order must be descending instead of ascending
+     * @return int[] the array of section ids sorted by section number
+     */
+    protected function sort_cm_ids_by_course_position(
+        stdClass $course,
+        array $cmids,
+        bool $descending = false
+    ): array {
+        $modinfo = get_fast_modinfo($course);
+        $cmlist = array_keys($modinfo->get_cms());
+        $cmposition = [];
+        foreach ($cmids as $cmid) {
+            $cmposition[$cmid] = array_search($cmid, $cmlist);
+        }
+        $sorting = ($descending) ? -1 : 1;
+        $sortfunction = function ($acmid, $bcmid) use ($sorting, $cmposition) {
+            return ($cmposition[$acmid] <=> $cmposition[$bcmid]) * $sorting;
+        };
+        usort($cmids, $sortfunction);
+        return $cmids;
     }
 
     /**
@@ -162,6 +192,91 @@ class stateactions {
         }
         // The section order is at a course level.
         $updates->add_course_put();
+    }
+
+    /**
+     * Move course sections after to another location in the same course.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids the list of affected course module ids
+     * @param int $targetsectionid optional target section id
+     * @param int $targetcmid optional target cm id
+     */
+    public function section_move_after(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids,
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+        // Validate target elements.
+        if (!$targetsectionid) {
+            throw new moodle_exception("Action section_move_after requires targetsectionid");
+        }
+
+        $this->validate_sections($course, $ids, __FUNCTION__);
+
+        $coursecontext = context_course::instance($course->id);
+        require_capability('moodle/course:movesections', $coursecontext);
+
+        // Section will move after the target section. This means it should be processed in
+        // descending order to keep the relative course order.
+        $this->validate_sections($course, [$targetsectionid], __FUNCTION__);
+        $ids = $this->sort_section_ids_by_section_number($course, $ids, true);
+
+        $format = course_get_format($course->id);
+        $affectedsections = [$targetsectionid => true];
+
+        foreach ($ids as $id) {
+            // An update section_info is needed as section numbers can change on every section movement.
+            $modinfo = get_fast_modinfo($course);
+            $section = $modinfo->get_section_info_by_id($id, MUST_EXIST);
+            $targetsection = $modinfo->get_section_info_by_id($targetsectionid, MUST_EXIST);
+            $affectedsections[$section->id] = true;
+            $format->move_section_after($section, $targetsection);
+        }
+
+        // Use section_state to return the section and activities updated state.
+        $this->section_state($updates, $course, $ids, $targetsectionid);
+
+        // All course sections can be renamed because of the resort.
+        $modinfo = get_fast_modinfo($course);
+        $allsections = $modinfo->get_section_info_all();
+        foreach ($allsections as $section) {
+            // Ignore the affected sections because they are already in the updates.
+            if (isset($affectedsections[$section->id])) {
+                continue;
+            }
+            $updates->add_section_put($section->id);
+        }
+        // The section order is at a course level.
+        $updates->add_course_put();
+    }
+
+    /**
+     * Sort the sections ids depending on the section number.
+     *
+     * Some actions like move should be done in an specific order.
+     *
+     * @param stdClass $course the course object
+     * @param int[] $sectionids the array of section $ids
+     * @param bool $descending if the sort order must be descending instead of ascending
+     * @return int[] the array of section ids sorted by section number
+     */
+    protected function sort_section_ids_by_section_number(
+        stdClass $course,
+        array $sectionids,
+        bool $descending = false
+    ): array {
+        $sorting = ($descending) ? -1 : 1;
+        $sortfunction = function ($asection, $bsection) use ($sorting) {
+            return ($asection->section <=> $bsection->section) * $sorting;
+        };
+        $modinfo = get_fast_modinfo($course);
+        $sections = $this->get_section_info($modinfo, $sectionids);
+        uasort($sections, $sortfunction);
+        return array_keys($sections);
     }
 
     /**
@@ -238,9 +353,9 @@ class stateactions {
         require_capability('moodle/course:update', $coursecontext);
         require_capability('moodle/course:movesections', $coursecontext);
 
-        $modinfo = get_fast_modinfo($course);
-
         foreach ($ids as $sectionid) {
+            // We need to get the latest modinfo on each iteration because the section numbers change.
+            $modinfo = get_fast_modinfo($course);
             $section = $modinfo->get_section_info_by_id($sectionid, MUST_EXIST);
             // Send all activity deletions.
             if (!empty($modinfo->sections[$section->section])) {
@@ -397,13 +512,12 @@ class stateactions {
     ): void {
         global $CFG;
 
-        $this->validate_cms($course, $ids, __FUNCTION__);
-
-        // Check capabilities on every activity context.
-        foreach ($ids as $cmid) {
-            $modcontext = context_module::instance($cmid);
-            require_all_capabilities(['moodle/course:manageactivities', 'moodle/course:activityvisibility'], $modcontext);
-        }
+        $this->validate_cms(
+            $course,
+            $ids,
+            __FUNCTION__,
+            ['moodle/course:manageactivities', 'moodle/course:activityvisibility']
+        );
 
         $format = course_get_format($course->id);
         $modinfo = get_fast_modinfo($course);
@@ -417,6 +531,175 @@ class stateactions {
                 $coursevisible = ($allowstealth) ? 0 : 1;
             }
             set_coursemodule_visible($cm->id, $visible, $coursevisible);
+            $modcontext = context_module::instance($cm->id);
+            course_module_updated::create_from_cm($cm, $modcontext)->trigger();
+            $updates->add_cm_put($cm->id);
+        }
+    }
+
+    /**
+     * Duplicate a course modules instances into the same course.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids course modules ids to duplicate
+     * @param int|null $targetsectionid optional target section id destination
+     * @param int|null $targetcmid optional target before cm id destination
+     */
+    public function cm_duplicate(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+        $this->validate_cms(
+            $course,
+            $ids,
+            __FUNCTION__,
+            ['moodle/course:manageactivities', 'moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport']
+        );
+
+        $modinfo = get_fast_modinfo($course);
+        $cms = $this->get_cm_info($modinfo, $ids);
+
+        // Check capabilities on every activity context.
+        foreach ($cms as $cm) {
+            if (!course_allowed_module($course, $cm->modname)) {
+                throw new moodle_exception('No permission to create that activity');
+            }
+        }
+
+        $targetsection = null;
+        if (!empty($targetsectionid)) {
+            $this->validate_sections($course, [$targetsectionid], __FUNCTION__);
+            $targetsection = $modinfo->get_section_info_by_id($targetsectionid, MUST_EXIST);
+        }
+
+        $beforecm = null;
+        if (!empty($targetcmid)) {
+            $this->validate_cms($course, [$targetcmid], __FUNCTION__);
+            $beforecm = $modinfo->get_cm($targetcmid);
+            $targetsection = $modinfo->get_section_info_by_id($beforecm->section, MUST_EXIST);
+        }
+
+        // Duplicate course modules.
+        $affectedcmids = [];
+        foreach ($cms as $cm) {
+            if ($newcm = duplicate_module($course, $cm)) {
+                if ($targetsection) {
+                    moveto_module($newcm, $targetsection, $beforecm);
+                } else {
+                    $affectedcmids[] = $newcm->id;
+                }
+            }
+        }
+
+        if ($targetsection) {
+            $this->section_state($updates, $course, [$targetsection->id]);
+        } else {
+            $this->cm_state($updates, $course, $affectedcmids);
+        }
+    }
+
+    /**
+     * Delete course cms.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids section ids
+     * @param int $targetsectionid not used
+     * @param int $targetcmid not used
+     */
+    public function cm_delete(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+
+        $this->validate_cms($course, $ids, __FUNCTION__, ['moodle/course:manageactivities']);
+
+        $format = course_get_format($course->id);
+        $modinfo = get_fast_modinfo($course);
+        $affectedsections = [];
+
+        $cms = $this->get_cm_info($modinfo, $ids);
+        foreach ($cms as $cm) {
+            $section = $cm->get_section_info();
+            $affectedsections[$section->id] = $section;
+            $format->delete_module($cm, true);
+            $updates->add_cm_remove($cm->id);
+        }
+
+        foreach ($affectedsections as $sectionid => $section) {
+            $updates->add_section_put($sectionid);
+        }
+    }
+
+    /**
+     * Move course cms to the right. Indent = 1.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids cm ids
+     * @param int $targetsectionid not used
+     * @param int $targetcmid not used
+     */
+    public function cm_moveright(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+        $this->set_cm_indentation($updates, $course, $ids, 1);
+    }
+
+    /**
+     * Move course cms to the left. Indent = 0.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids cm ids
+     * @param int $targetsectionid not used
+     * @param int $targetcmid not used
+     */
+    public function cm_moveleft(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+        $this->set_cm_indentation($updates, $course, $ids, 0);
+    }
+
+    /**
+     * Internal method to define the cm indentation level.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids cm ids
+     * @param int $indent new value for indentation
+     */
+    protected function set_cm_indentation(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids,
+        int $indent
+    ): void {
+        global $DB;
+
+        $this->validate_cms($course, $ids, __FUNCTION__, ['moodle/course:manageactivities']);
+        $modinfo = get_fast_modinfo($course);
+        $cms = $this->get_cm_info($modinfo, $ids);
+        list($insql, $inparams) = $DB->get_in_or_equal(array_keys($cms), SQL_PARAMS_NAMED);
+        $DB->set_field_select('course_modules', 'indent', $indent, "id $insql", $inparams);
+        rebuild_course_cache($course->id, false, true);
+        foreach ($cms as $cm) {
+            $modcontext = context_module::instance($cm->id);
             course_module_updated::create_from_cm($cm, $modcontext)->trigger();
             $updates->add_cm_put($cm->id);
         }
@@ -677,14 +960,15 @@ class stateactions {
     }
 
     /**
-     * Checks related to course modules: all given cm exist.
+     * Checks related to course modules: all given cm exist and the user has the required capabilities.
      *
      * @param stdClass $course The course where given $cmids belong.
      * @param array $cmids List of course module ids to validate.
      * @param string $info additional information in case of error.
+     * @param array $capabilities optional capabilities checks per each cm context.
      * @throws moodle_exception if any id is not valid
      */
-    protected function validate_cms(stdClass $course, array $cmids, ?string $info = null): void {
+    protected function validate_cms(stdClass $course, array $cmids, ?string $info = null, array $capabilities = []): void {
 
         if (empty($cmids)) {
             throw new moodle_exception('emptycmids', 'core', null, $info);
@@ -694,6 +978,12 @@ class stateactions {
         $intersect = array_intersect($cmids, array_keys($moduleinfo->get_cms()));
         if (count($cmids) != count($intersect)) {
             throw new moodle_exception('unexistingcmid', 'core', null, $info);
+        }
+        if (!empty($capabilities)) {
+            foreach ($cmids as $cmid) {
+                $modcontext = context_module::instance($cmid);
+                require_all_capabilities($capabilities, $modcontext);
+            }
         }
     }
 }

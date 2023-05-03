@@ -1,6 +1,10 @@
 This files describes API changes in /customfield/*,
 Information provided here is intended especially for developers.
 
+=== 4.2 ===
+* The `\customfield_select\field_controller::get_options_array` method, deprecated since 3.10, has been removed, use
+  the field instance `get_options` method instead
+
 === 3.11 ===
 * Methods \core_customfield\handler::get_field_config_form() and \core_customfield\handler::setup_edit_page() are no
   longer used. Components that define custom fields areas do not need to implement them. Field edit form opens in

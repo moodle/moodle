@@ -63,29 +63,23 @@ Feature: The activity results block displays student in visible groups low score
     And I am on "Course 1" course homepage
 
   Scenario: Configure the block on the course page to show 1 low score
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 1 |
       | config_gradeformat | Percentages |
       | config_nameformat | Display full names |
       | config_decimalpoints | 0 |
       | config_usegroups | Yes |
-    And I press "Save changes"
     Then I should see "Group 3" in the "Activity results" "block"
     And I should see "75%" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show 1 low score as a fraction
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 1 |
       | config_gradeformat | Fractions |
       | config_nameformat | Display full names |
       | config_usegroups | Yes |
-    And I press "Save changes"
     And I log out
     Then I log in as "student1"
     And I am on "Course 1" course homepage
@@ -93,15 +87,12 @@ Feature: The activity results block displays student in visible groups low score
     And I should see "75.00/100.00" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show 1 low score as a absolute numbers
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 1 |
       | config_gradeformat | Absolute numbers |
       | config_nameformat | Display full names |
       | config_usegroups | Yes |
-    And I press "Save changes"
     And I log out
     Then I log in as "student1"
     And I am on "Course 1" course homepage
@@ -109,16 +100,13 @@ Feature: The activity results block displays student in visible groups low score
     And I should see "75.00" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple low scores as percentages
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 2 |
       | config_gradeformat | Percentages |
       | config_nameformat | Display full names |
       | config_decimalpoints | 0 |
       | config_usegroups | Yes |
-    And I press "Save changes"
     Then I should see "Group 2" in the "Activity results" "block"
     And I should see "85%" in the "Activity results" "block"
     And I should see "Group 3" in the "Activity results" "block"
@@ -132,15 +120,12 @@ Feature: The activity results block displays student in visible groups low score
     And I should see "75%" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple low scores as fractions
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 2 |
       | config_gradeformat | Fractions |
       | config_nameformat | Display full names |
       | config_usegroups | Yes |
-    And I press "Save changes"
     And I log out
     Then I log in as "student1"
     And I am on "Course 1" course homepage
@@ -150,15 +135,12 @@ Feature: The activity results block displays student in visible groups low score
     And I should see "75.00/100.00" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple low scores as absolute numbers
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 2 |
       | config_gradeformat | Absolute numbers |
       | config_nameformat | Display full names |
       | config_usegroups | Yes |
-    And I press "Save changes"
     And I log out
     Then I log in as "student1"
     And I am on "Course 1" course homepage
@@ -170,15 +152,12 @@ Feature: The activity results block displays student in visible groups low score
   Scenario: Try to configure the block on the course page to show multiple low scores using ID numbers
     Given the following config values are set as admin:
       | showuseridentity | idnumber,email |
-    And I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    And I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 2 |
       | config_gradeformat | Percentages |
       | config_nameformat | Display only ID numbers |
       | config_usegroups | Yes |
-    And I press "Save changes"
     And I log out
     Then I log in as "student1"
     And I am on "Course 1" course homepage
@@ -187,15 +166,12 @@ Feature: The activity results block displays student in visible groups low score
     And I should see "75.00%" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple low scores using anonymous names
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 2 |
       | config_gradeformat | Percentages |
       | config_nameformat | Anonymous results |
       | config_usegroups | Yes |
-    And I press "Save changes"
     And I log out
     Then I log in as "student1"
     And I am on "Course 1" course homepage

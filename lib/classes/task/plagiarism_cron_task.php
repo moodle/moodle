@@ -53,7 +53,7 @@ class plagiarism_cron_task extends scheduled_task {
                 $plagiarismplugin = new $plagiarismclass;
                 if (method_exists($plagiarismplugin, 'cron')) {
                     mtrace('Processing cron function for plagiarism_plugin_' . $plugin . '...', '');
-                    cron_trace_time_and_memory();
+                    \core\cron::trace_time_and_memory();
                     mtrace('It has been detected the class ' . $plagiarismclass . ' has a legacy cron method
                             implemented. Plagiarism plugins should implement their own schedule tasks.', '');
                     $plagiarismplugin->cron();

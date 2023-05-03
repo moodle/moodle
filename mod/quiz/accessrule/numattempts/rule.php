@@ -14,30 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Implementaton of the quizaccess_numattempts plugin.
- *
- * @package    quizaccess
- * @subpackage numattempts
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
-
+use mod_quiz\local\access_rule_base;
+use mod_quiz\quiz_settings;
 
 /**
  * A rule controlling the number of attempts allowed.
  *
- * @copyright  2009 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quizaccess_numattempts
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_numattempts extends quiz_access_rule_base {
+class quizaccess_numattempts extends access_rule_base {
 
-    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
+    public static function make(quiz_settings $quizobj, $timenow, $canignoretimelimits) {
 
         if ($quizobj->get_num_attempts_allowed() == 0) {
             return null;

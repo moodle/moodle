@@ -246,4 +246,3 @@ function cache_font($font, $fontfile, $candidatelocation) {
     }
     return $cachefont;
 }
-

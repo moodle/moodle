@@ -87,7 +87,7 @@ class portfolio_exporter {
     private $alreadystolen;
 
     /**
-     * @var stored_file files that the exporter has written to this temp area keep track of
+     * @var stored_file[] files that the exporter has written to this temp area keep track of
      *                  this in case of duplicates within one export see MDL-16390
      */
     private $newfilehashes;

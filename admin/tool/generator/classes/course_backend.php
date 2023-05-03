@@ -79,6 +79,10 @@ class tool_generator_course_backend extends tool_generator_backend {
     private static $paramforumposts = array(2, 2, 5, 10, 10, 10);
 
     /**
+     * @var array Number of assignments in course
+     */
+    private static $paramactivities = array(1, 10, 100, 500, 1000, 2000);
+    /**
      * @var string Course shortname
      */
     private $shortname;
@@ -114,6 +118,10 @@ class tool_generator_course_backend extends tool_generator_backend {
     private $userids;
 
     /**
+     * @var array $additionalmodules
+     */
+    private $additionalmodules;
+    /**
      * Constructs object ready to create course.
      *
      * @param string $shortname Course shortname
@@ -121,6 +129,7 @@ class tool_generator_course_backend extends tool_generator_backend {
      * @param bool $fixeddataset To use fixed or random data
      * @param int|bool $filesizelimit The max number of bytes for a generated file
      * @param bool $progress True if progress information should be displayed
+     * @param array $additionalmodules potential additional modules to be added (quiz, bigbluebutton...)
      */
     public function __construct(
         $shortname,
@@ -130,7 +139,9 @@ class tool_generator_course_backend extends tool_generator_backend {
         $progress = true,
         $fullname = null,
         $summary = null,
-        $summaryformat = FORMAT_HTML) {
+        $summaryformat = FORMAT_HTML,
+        $additionalmodules = []
+    ) {
 
         // Set parameters.
         $this->shortname = $shortname;
@@ -153,7 +164,7 @@ class tool_generator_course_backend extends tool_generator_backend {
             $this->summary = $summary;
             $this->summaryformat = $summaryformat;
         }
-
+        $this->additionalmodules = $additionalmodules;
         parent::__construct($size, $fixeddataset, $filesizelimit, $progress);
     }
 
@@ -230,6 +241,16 @@ class tool_generator_course_backend extends tool_generator_backend {
         // Create users as late as possible to reduce regarding in the gradebook.
         $this->create_users();
         $this->create_forum();
+
+        // Let plugins hook into user settings navigation.
+        $pluginsfunction = get_plugins_with_function('course_backend_generator_create_activity');
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginname => $pluginfunction) {
+                if (in_array($pluginname, $this->additionalmodules)) {
+                    $pluginfunction($this, $this->generator, $this->course->id, self::$paramactivities[$this->size]);
+                }
+            }
+        }
 
         // Log total time.
         $this->log('coursecompleted', round(microtime(true) - $entirestart, 1));
@@ -537,7 +558,7 @@ class tool_generator_course_backend extends tool_generator_backend {
      *
      * @return int A section number from 1 to the number of sections
      */
-    private function get_target_section() {
+    public function get_target_section() {
 
         if (!$this->fixeddataset) {
             $key = rand(1, self::$paramsections[$this->size]);
@@ -586,5 +607,4 @@ class tool_generator_course_backend extends tool_generator_backend {
 
         return $length;
     }
-
 }

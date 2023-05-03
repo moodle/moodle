@@ -16,6 +16,7 @@
 
 namespace core_webservice;
 
+use core_external\external_api;
 use externallib_advanced_testcase;
 
 defined('MOODLE_INTERNAL') || die();
@@ -90,7 +91,7 @@ class externallib_test extends externallib_advanced_testcase {
         $siteinfo = \core_webservice_external::get_site_info();
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $siteinfo = \external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $siteinfo);
+        $siteinfo = external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $siteinfo);
 
         $this->assertEquals('johnd', $siteinfo['username']);
         $this->assertEquals('John', $siteinfo['firstname']);
@@ -162,7 +163,7 @@ class externallib_test extends externallib_advanced_testcase {
         $siteinfo = \core_webservice_external::get_site_info();
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $siteinfo = \external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $siteinfo);
+        $siteinfo = external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $siteinfo);
 
         $this->assertEquals(0, $siteinfo['userquota']);
         $this->assertEquals(USER_CAN_IGNORE_FILE_SIZE_LIMITS, $siteinfo['usermaxuploadfilesize']);
@@ -185,7 +186,7 @@ class externallib_test extends externallib_advanced_testcase {
         $DB->insert_record('sessions', $record);
 
         $siteinfo = \core_webservice_external::get_site_info();
-        $siteinfo = \external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $siteinfo);
+        $siteinfo = external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $siteinfo);
         $this->assertEquals($CFG->limitconcurrentlogins, $siteinfo['limitconcurrentlogins']);
         $this->assertEquals(1, $siteinfo['usersessionscount']);
     }
@@ -203,8 +204,70 @@ class externallib_test extends externallib_advanced_testcase {
         set_config('userquota', $userquota);
 
         $result = \core_webservice_external::get_site_info();
-        $result = \external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $result);
+        $result = external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $result);
         $this->assertEquals(PHP_INT_MAX, $result['userquota']);
+    }
+
+    /**
+     * Test get_site_info with missing components.
+     */
+    public function test_get_site_missing_components() {
+        global $USER, $DB;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Add a web service and token.
+        $webservice = new \stdClass();
+        $webservice->name = 'Test web service';
+        $webservice->enabled = true;
+        $webservice->restrictedusers = false;
+        $webservice->component = 'moodle';
+        $webservice->timecreated = time();
+        $webservice->downloadfiles = true;
+        $webservice->uploadfiles = true;
+        $externalserviceid = $DB->insert_record('external_services', $webservice);
+
+        // Add a function to the service (missing plugin).
+        $DB->insert_record('external_functions',
+            [
+                'component' => 'mod_random',
+                'name' => 'mod_random_get_info'
+            ]
+        );
+
+        // Insert one from missing component.
+        $DB->insert_record('external_services_functions',
+            [
+                'externalserviceid' => $externalserviceid,
+                'functionname' => 'mod_random_get_info'
+            ]
+        );
+        // Insert a core one.
+        $DB->insert_record('external_services_functions',
+            [
+                'externalserviceid' => $externalserviceid,
+                'functionname' => 'core_user_get_users'
+            ]
+        );
+
+        $_POST['wstoken'] = 'testtoken';
+        $externaltoken = new \stdClass();
+        $externaltoken->token = 'testtoken';
+        $externaltoken->tokentype = 0;
+        $externaltoken->userid = $USER->id;
+        $externaltoken->externalserviceid = $externalserviceid;
+        $externaltoken->contextid = 1;
+        $externaltoken->creatorid = $USER->id;
+        $externaltoken->timecreated = time();
+        $DB->insert_record('external_tokens', $externaltoken);
+
+        // Execution should complete.
+        $result = \core_webservice_external::get_site_info();
+        $result = external_api::clean_returnvalue(\core_webservice_external::get_site_info_returns(), $result);
+        // Check we ignore the missing component function.
+        $this->assertCount(1, $result['functions']);
+        $this->assertEquals('core_user_get_users', $result['functions'][0]['name']);
     }
 
 }

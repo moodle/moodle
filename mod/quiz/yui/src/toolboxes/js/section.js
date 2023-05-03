@@ -317,16 +317,20 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
      * @param {EventFacade} ev The event that was fired.
      * @param {Node} button The button that triggered this action.
      * @param {Node} activity The activity node that this action will be performed on.
-     * @param {String} action The action that has been requested.
      * @return Boolean
      */
     edit_shuffle_questions: function(ev, button, activity) {
         var newvalue;
         if (activity.one(SELECTOR.EDITSHUFFLEQUESTIONSACTION).get('checked')) {
             newvalue = 1;
+            activity.addClass('shuffled');
         } else {
             newvalue = 0;
+            activity.removeClass('shuffled');
         }
+
+        // Prevent the default actions.
+        ev.preventDefault();
 
         // Get the element we're working on
         var data = {
@@ -335,9 +339,6 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
             'id': activity.get('id').replace('section-', ''),
             'newshuffle': newvalue
         };
-
-        // Prevent the default actions.
-        ev.preventDefault();
 
         // Send request.
         var spinner = M.util.add_spinner(Y, activity.one(SELECTOR.EDITSHUFFLEAREA));

@@ -50,7 +50,7 @@ class pgsql_native_moodle_database extends moodle_database {
     /** @var array $dbhcursor keep track of open cursors */
     private $dbhcursor = [];
 
-    /** @var resource $pgsql database resource */
+    /** @var resource|PgSql\Connection|null $pgsql database resource */
     protected $pgsql     = null;
 
     protected $last_error_reporting; // To handle pgsql driver default verbosity
@@ -972,7 +972,7 @@ class pgsql_native_moodle_database extends moodle_database {
      * to get the list of field types which it statically caches only for a single request.
      * This wraps it in a cache keyed by oid to avoid these DB calls on every request.
      *
-     * @param resource $result
+     * @param resource|PgSql\Result $result
      * @param int $fieldnumber
      * @return string Field type
      */
@@ -1305,7 +1305,7 @@ class pgsql_native_moodle_database extends moodle_database {
     /**
      * Update record in database, as fast as possible, no safety checks, lobs not supported.
      * @param string $table name
-     * @param mixed $params data record as object or array
+     * @param stdClass|array $params data record as object or array
      * @param bool true means repeated updates expected
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
@@ -1352,7 +1352,8 @@ class pgsql_native_moodle_database extends moodle_database {
      * specify the record to update
      *
      * @param string $table The database table to be checked against.
-     * @param object $dataobject An object with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
+     * @param stdClass|array $dataobject An object with contents equal to fieldname=>fieldvalue.
+     *        Must have an entry for 'id' to map to the table specified.
      * @param bool true means repeated updates expected
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.

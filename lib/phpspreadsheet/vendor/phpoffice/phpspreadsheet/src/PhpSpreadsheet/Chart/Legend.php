@@ -52,6 +52,7 @@ class Legend
      * Create a new Legend.
      *
      * @param string $position
+     * @param ?Layout $layout
      * @param bool $overlay
      */
     public function __construct($position = self::POSITION_RIGHT, ?Layout $layout = null, $overlay = false)
@@ -96,6 +97,7 @@ class Legend
      */
     public function getPositionXL()
     {
+        // Scrutinizer thinks the following could return string. It is wrong.
         return array_search($this->position, self::POSITION_XLREF);
     }
 

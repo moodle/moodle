@@ -22,6 +22,7 @@ use core_plugin_manager;
 use MoodleQuickForm;
 use stdClass;
 use core\output\notification;
+use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\models\audience;
 use core_reportbuilder\report_access_exception;
 
@@ -90,10 +91,26 @@ abstract class base {
     }
 
     /**
+     * Return display name of the component the audience belongs to
+     *
+     * @return string
+     */
+    final public function get_component_displayname(): string {
+        [$component] = explode('\\', get_class($this));
+
+        if ($plugininfo = core_plugin_manager::instance()->get_plugin_info($component)) {
+            return $plugininfo->displayname;
+        }
+
+        // Return generic site text for those audiences belonging to core subsystems.
+        return get_string('site');
+    }
+
+    /**
      * Helps to build SQL to retrieve users that matches the current audience
      *
-     * Implementations must use api::generate_alias() for table/column aliases
-     * and api::generate_param_name() for named parameters
+     * Implementations must use {@see database::generate_alias} and {@see database::generate_param_name} for table/column
+     * aliases and parameter names
      *
      * @param string $usertablealias
      * @return array array of three elements [$join, $where, $params]
@@ -104,15 +121,14 @@ abstract class base {
      * Returns string for audience category.
      *
      * @return string
+     *
+     * @deprecated since Moodle 4.2 - please do not use this function any more, {@see get_component_displayname}
      */
     final public function get_category(): string {
-        [$component] = explode('\\', get_class($this));
+        debugging('The function ' . __FUNCTION__ . '() is deprecated, please do not use it any more. ' .
+            'See class \'get_component_displayname\' method for replacement', DEBUG_DEVELOPER);
 
-        if ($plugininfo = core_plugin_manager::instance()->get_plugin_info($component)) {
-            return $plugininfo->displayname;
-        }
-
-        return get_string('site');
+        return $this->get_component_displayname();
     }
 
     /**

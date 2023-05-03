@@ -73,36 +73,35 @@
 <div class="container-fluid tertiary-navigation full-width-bottom-border">
     <div class="row">
         {{#generalnavselector}}
-            <div class="navitem">
+            <div class="navitem order-1">
                 {{>core/tertiary_navigation_selector}}
             </div>
-            <div class="navitem-divider"></div>
+            <div class="navitem-divider d-none d-sm-flex order-1"></div>
         {{/generalnavselector}}
         {{#groupselector}}
-            <div class="navitem">
+            <div class="navitem order-2">
                 {{{.}}}
             </div>
-            <div class="navitem-divider"></div>
+            <div class="navitem-divider d-none d-sm-flex order-2"></div>
         {{/groupselector}}
         {{#itemselector}}
-            <div class="navitem">
+            <div class="navitem order-3">
                 {{{.}}}
             </div>
-            <div class="navitem-divider"></div>
+            <div class="navitem-divider d-none d-sm-flex order-3"></div>
         {{/itemselector}}
         {{#pagetoggler}}
-            <div class="d-flex ml-auto">
+            <div class="d-flex row ml-0 ml-sm-auto order-4 px-0">
                 {{#bulkactions}}
-                        <div class="navitem-divider"></div>
-                        <div class="navitem">{{{bulkactions}}}</div>
-                        {{#js}}
-                            require(['gradereport_singleview/bulkactions'], function(bulkactions) {
-                            bulkactions.init();
-                            });
-                        {{/js}}
+                    <div class="d-flex navitem ml-0 ml-sm-auto mr-3">{{{bulkactions}}}</div>
+                    {{#js}}
+                        require(['gradereport_singleview/bulkactions'], function(bulkactions) {
+                        bulkactions.init();
+                        });
+                    {{/js}}
+                    <div class="navitem-divider d-none d-sm-flex"></div>
                 {{/bulkactions}}
-                <div class="navitem-divider"></div>
-                <div class="navitem">
+                <div class="d-flex navitem ml-0 mr-auto mr-sm-0 ml-sm-auto">
                     {{>gradereport_singleview/page_toggler}}
                 </div>
             </div>

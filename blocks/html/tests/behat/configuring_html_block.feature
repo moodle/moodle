@@ -9,11 +9,9 @@ Feature: Adding and configuring Text blocks
     Given I log in as "admin"
     And I am on site homepage
     When I turn editing mode on
-    And I add the "Text" block
-    And I configure the "(new text block)" block
-    And I set the field "Content" to "Static text without a header"
-    Then I should see "Text block title"
-    And I press "Save changes"
+    And I add the "Text" block to the default region with:
+      | Text block title |                              |
+      | Content          | Static text without a header |
     Then I should not see "(new text block)"
     And I configure the "block_html" block
     And I set the field "Text block title" to "The Text block header"

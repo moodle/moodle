@@ -74,15 +74,6 @@ class report_viewed extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, "course", "report log", "report/log/index.php?id=$this->courseid", $this->courseid);
-    }
-
-    /**
      * Returns relevant URL.
      *
      * @return \moodle_url

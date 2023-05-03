@@ -26,7 +26,6 @@ Feature: Filter an outline report
 
   Scenario: Filter the outline report by start date
     Given I navigate to "Plugins > Logging > Manage log stores" in site administration
-    And "Enable" "link" should exist in the "Legacy log" "table_row"
     And "Disable" "link" should exist in the "Standard log" "table_row"
     And I am on the "Course 1" course page logged in as student1
     And I follow "Forum name"
@@ -52,7 +51,6 @@ Feature: Filter an outline report
 
   Scenario: Filter the outline report by end date
     Given I navigate to "Plugins > Logging > Manage log stores" in site administration
-    And "Enable" "link" should exist in the "Legacy log" "table_row"
     And "Disable" "link" should exist in the "Standard log" "table_row"
     And I am on the "Course 1" course page logged in as student1
     And I follow "Forum name"

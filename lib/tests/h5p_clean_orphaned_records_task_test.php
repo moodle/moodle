@@ -39,16 +39,17 @@ class h5p_clean_orphaned_records_task_test extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $params = [
             'course' => $course->id,
-            'packagefilepath' => $CFG->dirroot.'/h5p/tests/fixtures/greeting-card-887.h5p',
+            'packagefilepath' => $CFG->dirroot.'/h5p/tests/fixtures/greeting-card.h5p',
             'introformat' => 1
         ];
 
         // Create h5pactivity.
         $activity = $this->getDataGenerator()->create_module('h5pactivity', $params);
-        $activity->filename = 'greeting-card-887.h5p';
+        $activity->filename = 'greeting-card.h5p';
         $context = context_module::instance($activity->cmid);
 
         // Create a fake deploy H5P file.
+        /** @var \core_h5p_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
         $generator->create_export_file($activity->filename, $context->id,
             'mod_h5pactivity', 'package');
@@ -70,7 +71,7 @@ class h5p_clean_orphaned_records_task_test extends advanced_testcase {
                                 AND filearea = 'content'
                                 AND component = 'core_h5p'";
         $orphanedfiles = $DB->get_records_sql($orphanedfilessql, ['h5pid' => $h5pid]);
-        $this->assertEquals(3, count($orphanedfiles));
+        $this->assertEquals(2, count($orphanedfiles));
 
         // Execute task.
         $task = new \core\task\h5p_clean_orphaned_records_task();

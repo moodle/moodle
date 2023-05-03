@@ -69,6 +69,8 @@ class assign_gradingmessage implements renderable {
     public $coursemoduleid = 0;
     /** @var int $gradingerror should be set true if there was a problem grading */
     public $gradingerror = null;
+    /** @var int the grading page. */
+    public $page;
 
     /**
      * Constructor
@@ -293,6 +295,8 @@ class assign_feedback_status implements renderable {
     public $canviewfullnames = false;
     /** @var string gradingcontrollergrade The grade information rendered by a grade controller */
     public $gradingcontrollergrade;
+    /** @var array information for the given plugins. */
+    public $plugins = [];
 
     /**
      * Constructor
@@ -424,6 +428,8 @@ class assign_attempt_history_chooser implements renderable, templatable {
     public $coursemoduleid = 0;
     /** @var int userid - The current userid */
     public $userid = 0;
+    /** @var int submission count */
+    public $submissioncount;
 
     /**
      * Constructor

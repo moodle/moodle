@@ -102,7 +102,8 @@ function xmldb_tool_usertours_upgrade($oldversion) {
         } else {
             // Field was added by previous upgrade step with the default value is FORMAT_HTML.
             // Need to drop the field and re-create with the new structure to make sure all the existing tours use FORMAT_MOODLE.
-            // FORMAT_MOODLE will force the external_format_text method to use nl2br to convert the new line to line break tag.
+            // FORMAT_MOODLE will force the \core_external\util::format_text method to use nl2br to
+            // convert the new line to line break tag.
             $dbman->drop_field($table, $field);
             // Add the field again.
             $dbman->add_field($table, $field);
@@ -132,6 +133,9 @@ function xmldb_tool_usertours_upgrade($oldversion) {
     // Put any upgrade step following this.
 
     // Automatically generated Moodle v4.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.2.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

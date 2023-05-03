@@ -71,6 +71,9 @@ class data_requests_table extends table_sql {
     /** @var int[] The available options for the number of data request to be displayed per page. */
     protected $perpageoptions = [25, 50, 100, 250];
 
+    /** @var int[] The request creation method filters. */
+    protected array $creationmethods = [];
+
     /**
      * data_requests_table constructor.
      *

@@ -24,9 +24,16 @@
  * @since      Moodle 3.2
  */
 
+use core_external\external_api;
+use core_external\external_format_value;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
+
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->libdir . '/authlib.php');
 require_once($CFG->dirroot . '/user/editlib.php');
 require_once($CFG->dirroot . '/user/profile/lib.php');
@@ -106,10 +113,10 @@ class auth_email_external extends external_api {
             $result['profilefields'] = array();
             foreach ($fields as $field) {
                 $fielddata = $field->object->get_field_config_for_external();
-                $fielddata['categoryname'] = external_format_string($field->categoryname, $context->id);
-                $fielddata['name'] = external_format_string($fielddata['name'], $context->id);
+                $fielddata['categoryname'] = \core_external\util::format_string($field->categoryname, $context->id);
+                $fielddata['name'] = \core_external\util::format_string($fielddata['name'], $context->id);
                 list($fielddata['defaultdata'], $fielddata['defaultdataformat']) =
-                    external_format_text($fielddata['defaultdata'], $fielddata['defaultdataformat'], $context->id);
+                    \core_external\util::format_text($fielddata['defaultdata'], $fielddata['defaultdataformat'], $context->id);
 
                 $result['profilefields'][] = $fielddata;
             }

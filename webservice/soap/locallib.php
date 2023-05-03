@@ -139,9 +139,8 @@ class webservice_soap_server extends webservice_base_server {
                 'function' => 'unknown'
             )
         );
+        /** @var \core\event\webservice_function_called $event */
         $event = \core\event\webservice_function_called::create($params);
-        $logdataparams = array(SITEID, 'webservice_soap', '', '', $this->serviceclass . ' ' . getremoteaddr(), 0, $this->userid);
-        $event->set_legacy_logdata($logdataparams);
         $event->trigger();
 
         // Handle the SOAP request.

@@ -428,7 +428,6 @@ class qtype_multianswer_test_helper extends question_test_helper {
         $mc->shuffleanswers = 0;
         $mc->answernumbering = 'none';
         $mc->layout = qtype_multichoice_base::LAYOUT_VERTICAL;
-        $mc->single = 0;
 
         $mc->answers = array(
             16 => new question_answer(16, 'Apple', 0.3333333,
@@ -461,7 +460,6 @@ class qtype_multianswer_test_helper extends question_test_helper {
         $mc2->shuffleanswers = 0;
         $mc2->answernumbering = 'none';
         $mc2->layout = qtype_multichoice_base::LAYOUT_VERTICAL;
-        $mc2->single = 0;
 
         $mc2->answers = array(
             22 => new question_answer(22, 'Raddish', 0.5,

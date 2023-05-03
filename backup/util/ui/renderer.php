@@ -567,7 +567,7 @@ class core_backup_renderer extends plugin_renderer_base {
         if ($method != 'post') {
             $method = 'get';
         }
-        $button = new single_button($url, get_string('continue'), $method, true);
+        $button = new single_button($url, get_string('continue'), $method, single_button::BUTTON_PRIMARY);
         $button->class = 'continuebutton';
         return $this->render($button);
     }
@@ -786,6 +786,10 @@ class core_backup_renderer extends plugin_renderer_base {
             'extraclasses' => 'rcs-search mb-3 w-25',
             'inputname' => restore_course_search::$VAR_SEARCH,
             'searchstring' => get_string('searchcourses'),
+            'buttonattributes' => [
+                (object) ['key' => 'name', 'value' => 'searchcourses'],
+                (object) ['key' => 'value', 'value' => 1],
+            ],
             'query' => $component->get_search(),
         ];
         $output .= $this->output->render_from_template('core/search_input', $data);
@@ -955,6 +959,10 @@ class core_backup_renderer extends plugin_renderer_base {
             'extraclasses' => 'rcs-search mb-3 w-25',
             'inputname' => restore_category_search::$VAR_SEARCH,
             'searchstring' => get_string('searchcoursecategories'),
+            'buttonattributes' => [
+                (object) ['key' => 'name', 'value' => 'searchcourses'],
+                (object) ['key' => 'value', 'value' => 1],
+            ],
             'query' => $component->get_search(),
         ];
         $output .= $this->output->render_from_template('core/search_input', $data);

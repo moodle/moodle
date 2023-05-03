@@ -35,6 +35,19 @@ require_once($CFG->libdir.'/webdavlib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class repository_webdav extends repository {
+
+    /** @var string webdav type. */
+    protected $webdav_type;
+
+    /** @var mixed webdav port. */
+    protected $webdav_port;
+
+    /** @var string webdav host. */
+    protected $webdav_host;
+
+    /** @var webdav_client webdav client. */
+    protected $dav;
+
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         parent::__construct($repositoryid, $context, $options);
         // set up webdav client

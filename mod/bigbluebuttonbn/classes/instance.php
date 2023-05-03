@@ -1227,4 +1227,15 @@ EOF;
             \mod_bigbluebuttonbn\plugin::generate_guest_meeting_credentials();
         $DB->update_record('bigbluebuttonbn', $this->instancedata);
     }
+
+    /**
+     * Is this meeting configured to display avatars of the users ?
+     *
+     * Note: this is for now a global setting.
+     *
+     * @return bool
+     */
+    public function is_profile_picture_enabled(): bool {
+        return (bool) config::get('profile_picture_enabled');
+    }
 }

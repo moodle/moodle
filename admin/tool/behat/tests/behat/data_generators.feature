@@ -160,7 +160,6 @@ Feature: Set up contextual data for tests
     And the following "activities" exist:
       | activity   | name                   | intro                         | course | idnumber    |
       | assign     | Test assignment name   | Test assignment description   | C1     | assign1     |
-      | assignment | Test assignment22 name | Test assignment22 description | C1     | assignment1 |
       | book       | Test book name         | Test book description         | C1     | book1       |
       | chat       | Test chat name         | Test chat description         | C1     | chat1       |
       | choice     | Test choice name       | Test choice description       | C1     | choice1     |
@@ -331,22 +330,22 @@ Feature: Set up contextual data for tests
     And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     Then I should see "Test Grade Item 1"
-    And I open the action menu in "Test Grade Item 1" "table_row"
-    And I choose "Edit" in the open action menu
+    And I click on grade item menu "Test Grade Item 1" of type "gradeitem" on "setup" page
+    And I choose "Edit grade item" in the open action menu
     And I expand all fieldsets
     And I should see "Course 1"
     And I press "Cancel"
     And I should see "Grade category 1"
     And I should see "Test Grade Item 2"
-    And I open the action menu in "Test Grade Item 2" "table_row"
-    And I choose "Edit" in the open action menu
+    And I click on grade item menu "Test Grade Item 2" of type "gradeitem" on "setup" page
+    And I choose "Edit grade item" in the open action menu
     And I expand all fieldsets
     And I should see "Grade category 1"
     And I press "Cancel"
     And I should see "Grade sub category 2"
     And I should see "Test Grade Item 3"
-    And I open the action menu in "Test Grade Item 3" "table_row"
-    And I choose "Edit" in the open action menu
+    And I click on grade item menu "Test Grade Item 3" of type "gradeitem" on "setup" page
+    And I choose "Edit grade item" in the open action menu
     And I expand all fieldsets
     And I should see "Grade sub category 2"
     And I press "Cancel"
@@ -411,8 +410,8 @@ Feature: Set up contextual data for tests
     And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     Then I should see "Test Outcome Grade Item 1"
-    And I open the action menu in "Test Outcome Grade Item 1" "table_row"
-    And I choose "Edit" in the open action menu
+    And I click on grade item menu "Test Outcome Grade Item 1" of type "gradeitem" on "setup" page
+    And I choose "Edit grade item" in the open action menu
     And the field "Outcome" matches value "Grade outcome 1"
     And I expand all fieldsets
     And I should see "Grade category 1" in the "Grade category" "form_row"

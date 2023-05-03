@@ -30,6 +30,7 @@ define(
         'core/str',
         'core/url',
         'core/yui',
+        'core/modal_copy_to_clipboard',
         'core/modal_factory',
         'core/modal_events',
         'core/key_codes',
@@ -46,6 +47,7 @@ define(
         str,
         url,
         Y,
+        ModalCopyToClipboard,
         ModalFactory,
         ModalEvents,
         KeyCodes,
@@ -59,8 +61,8 @@ define(
         // component compatible formats and the default actions.js won't be necessary anymore.
         // Meanwhile, we filter the migrated actions.
         const componentActions = [
-            'moveSection', 'moveCm', 'addSection', 'deleteSection', 'sectionHide', 'sectionShow',
-            'cmHide', 'cmShow', 'cmStealth',
+            'moveSection', 'moveCm', 'addSection', 'deleteSection', 'cmDelete', 'cmDuplicate', 'sectionHide', 'sectionShow',
+            'cmHide', 'cmShow', 'cmStealth', 'sectionHighlight', 'sectionUnhighlight', 'cmMoveRight', 'cmMoveLeft',
         ];
 
         // The course reactive instance.
@@ -82,6 +84,7 @@ define(
             TOGGLE: '.toggle-display,.dropdown-toggle',
             SECTIONLI: 'li.section',
             SECTIONACTIONMENU: '.section_action_menu',
+            SECTIONITEM: '[data-for="section_title"]',
             ADDSECTIONS: '.changenumsections [data-add-sections]',
             SECTIONBADGES: '[data-region="sectionbadges"]',
         };
@@ -964,6 +967,15 @@ define(
                         sectionElement = actionItem.closest(SELECTOR.SECTIONLI),
                         sectionId = actionItem.closest(SELECTOR.SECTIONACTIONMENU).attr('data-sectionid');
 
+                    if (actionItem.attr('data-action') === 'permalink') {
+                        e.preventDefault();
+                        ModalCopyToClipboard.create({
+                            text: actionItem.attr('href'),
+                        }, str.get_string('sectionlink', 'course')
+                        );
+                        return;
+                    }
+
                     let isExecuted = true;
                     if (actionItem.attr('data-confirm')) {
                         // Action requires confirmation.
@@ -981,7 +993,7 @@ define(
 
                 // The section and activity names are edited using inplace editable.
                 // The "update" jQuery event must be captured in order to update the course state.
-                $('body').on('updated', `${SELECTOR.SECTIONLI} [data-inplaceeditable]`, function(e) {
+                $('body').on('updated', `${SELECTOR.SECTIONLI} ${SELECTOR.SECTIONITEM} [data-inplaceeditable]`, function(e) {
                     if (e.ajaxreturn && e.ajaxreturn.itemid) {
                         const state = courseeditor.state;
                         const section = state.section.get(e.ajaxreturn.itemid);

@@ -33,6 +33,7 @@ $page          = optional_param('page', 0, PARAM_INT);   // active page
 $edit          = optional_param('edit', -1, PARAM_BOOL); // sticky editting mode
 
 $sortitemid    = optional_param('sortitemid', 0, PARAM_ALPHANUMEXT);
+$sort          = optional_param('sort', '', PARAM_TEXT);
 $action        = optional_param('action', 0, PARAM_ALPHAEXT);
 $move          = optional_param('move', 0, PARAM_INT);
 $type          = optional_param('type', 0, PARAM_ALPHA);
@@ -43,9 +44,13 @@ $toggle_type   = optional_param('toggle_type', 0, PARAM_ALPHANUM);
 $graderreportsifirst  = optional_param('sifirst', null, PARAM_NOTAGS);
 $graderreportsilast   = optional_param('silast', null, PARAM_NOTAGS);
 
+$studentsperpage = optional_param('perpage', null, PARAM_INT);
+
 $PAGE->set_url(new moodle_url('/grade/report/grader/index.php', array('id'=>$courseid)));
 $PAGE->set_pagelayout('report');
 $PAGE->requires->js_call_amd('gradereport_grader/stickycolspan', 'init');
+$PAGE->requires->js_call_amd('gradereport_grader/search', 'init');
+$PAGE->requires->js_call_amd('gradereport_grader/feedback_modal', 'init');
 
 // basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
@@ -60,6 +65,10 @@ if (isset($graderreportsifirst)) {
 }
 if (isset($graderreportsilast)) {
     $SESSION->gradereport["filtersurname-{$context->id}"] = $graderreportsilast;
+}
+
+if (isset($studentsperpage) && $studentsperpage >= 0) {
+    set_user_preference('grade_report_studentsperpage', $studentsperpage);
 }
 
 require_capability('gradereport/grader:view', $context);
@@ -112,13 +121,25 @@ $reportname = get_string('pluginname', 'gradereport_grader');
 // Do this check just before printing the grade header (and only do it once).
 grade_regrade_final_grades_if_required($course);
 
-// Print header
-print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons);
-
 //Initialise the grader report object that produces the table
 //the class grade_report_grader_ajax was removed as part of MDL-21562
-$report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
+if ($sort) {
+    $sort = strtoupper($sort);
+}
+$report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid, $sort);
+
+// We call this a little later since we need some info from the grader report.
+$PAGE->requires->js_call_amd('gradereport_grader/collapse', 'init', [
+    'userID' => $USER->id,
+    'courseID' => $courseid,
+    'defaultSort' => $report->get_default_sortable()
+]);
+
 $numusers = $report->get_numusers(true, true);
+
+$actionbar = new \gradereport_grader\output\action_bar($context, $report, $numusers);
+print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons, true,
+    null, null, null, $actionbar, false);
 
 // make sure separate group does not prevent view
 if ($report->currentgroup == -2) {
@@ -130,32 +151,17 @@ if ($report->currentgroup == -2) {
 $warnings = [];
 $isediting = has_capability('moodle/grade:edit', $context) && isset($USER->editing) && $USER->editing;
 if ($isediting && ($data = data_submitted()) && confirm_sesskey()) {
-    // Processing posted grades & feedback here.
+    // Processing posted grades here.
     $warnings = $report->process_data($data);
 }
 
 // Final grades MUST be loaded after the processing.
 $report->load_users();
 $report->load_final_grades();
-echo $report->group_selector;
-
-// User search
-$url = new moodle_url('/grade/report/grader/index.php', array('id' => $course->id));
-$firstinitial = $SESSION->gradereport["filterfirstname-{$context->id}"] ?? '';
-$lastinitial  = $SESSION->gradereport["filtersurname-{$context->id}"] ?? '';
-$totalusers = $report->get_numusers(true, false);
-$renderer = $PAGE->get_renderer('core_user');
-echo $renderer->user_search($url, $firstinitial, $lastinitial, $numusers, $totalusers, $report->currentgroupname);
 
 //show warnings if any
 foreach ($warnings as $warning) {
     echo $OUTPUT->notification($warning);
-}
-
-$studentsperpage = $report->get_students_per_page();
-// Don't use paging if studentsperpage is empty or 0 at course AND site levels
-if (!empty($studentsperpage)) {
-    echo $OUTPUT->paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
 }
 
 $displayaverages = true;
@@ -165,8 +171,48 @@ if ($numusers == 0) {
 
 $reporthtml = $report->get_grade_table($displayaverages);
 
+$studentsperpage = $report->get_students_per_page();
+
+// Print per-page dropdown.
+$pagingoptions = grade_report_grader::PAGINATION_OPTIONS;
+if ($studentsperpage) {
+    $pagingoptions[] = $studentsperpage; // To make sure the current preference is within the options.
+}
+$pagingoptions = array_unique($pagingoptions);
+sort($pagingoptions);
+$pagingoptions = array_combine($pagingoptions, $pagingoptions);
+if ($numusers > grade_report_grader::MAX_STUDENTS_PER_PAGE) {
+    $pagingoptions['0'] = grade_report_grader::MAX_STUDENTS_PER_PAGE;
+} else {
+    $pagingoptions['0'] = get_string('all');
+}
+
+$perpagedata = [
+    'baseurl' => new moodle_url('/grade/report/grader/index.php', ['id' => s($courseid), 'report' => 'grader']),
+    'options' => []
+];
+foreach ($pagingoptions as $key => $name) {
+    $perpagedata['options'][] = [
+        'name' => $name,
+        'value' => $key,
+        'selected' => $key == $studentsperpage,
+    ];
+}
+
+$footercontent = html_writer::div(
+    $OUTPUT->render_from_template('gradereport_grader/perpage', $perpagedata)
+    , 'col-auto'
+);
+
+// The number of students per page is always limited even if it is claimed to be unlimited.
+$studentsperpage = $studentsperpage ?: grade_report_grader::MAX_STUDENTS_PER_PAGE;
+$footercontent .= html_writer::div(
+    $OUTPUT->paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl),
+    'col'
+);
+
 // print submit button
-if (!empty($USER->editing) && ($report->get_pref('showquickfeedback') || $report->get_pref('quickgrading'))) {
+if (!empty($USER->editing) && $report->get_pref('quickgrading')) {
     echo '<form action="index.php" enctype="application/x-www-form-urlencoded" method="post" id="gradereport_grader">'; // Enforce compatibility with our max_input_vars hack.
     echo '<div>';
     echo '<input type="hidden" value="'.s($courseid).'" name="id" />';
@@ -176,16 +222,21 @@ if (!empty($USER->editing) && ($report->get_pref('showquickfeedback') || $report
     echo '<input type="hidden" value="'.$page.'" name="page"/>';
     echo $gpr->get_form_fields();
     echo $reporthtml;
-    echo '<div class="submit"><input type="submit" id="gradersubmit" class="btn btn-primary"
-        value="'.s(get_string('savechanges')).'" /></div>';
+
+    $footercontent .= html_writer::div(
+        '<input type="submit" id="gradersubmit" class="btn btn-primary" value="'.s(get_string('savechanges')).'" />',
+        'col-auto'
+    );
+
+    $stickyfooter = new core\output\sticky_footer($footercontent);
+    echo $OUTPUT->render($stickyfooter);
+
     echo '</div></form>';
 } else {
     echo $reporthtml;
-}
 
-// prints paging bar at bottom for large pages
-if (!empty($studentsperpage) && $studentsperpage >= 20) {
-    echo $OUTPUT->paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
+    $stickyfooter = new core\output\sticky_footer($footercontent);
+    echo $OUTPUT->render($stickyfooter);
 }
 
 $event = \gradereport_grader\event\grade_report_viewed::create(

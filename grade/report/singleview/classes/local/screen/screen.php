@@ -92,6 +92,18 @@ abstract class screen {
     protected static $validperpage = [20, 50, 100, 200, 400, 1000, 5000];
 
     /**
+     * To store course data
+     * @var stdClass
+     */
+    protected $course;
+
+    /**
+     * General structure representing grade items in course
+     * @var grade_structure
+     */
+    protected $structure;
+
+    /**
      * Constructor
      *
      * @param int $courseid The course id

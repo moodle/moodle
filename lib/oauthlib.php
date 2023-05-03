@@ -726,11 +726,11 @@ abstract class oauth2_client extends curl {
     }
 
     /**
-     * Get access token.
+     * Get access token object.
      *
      * This is just a getter to read the private property.
      *
-     * @return string
+     * @return stdClass
      */
     public function get_accesstoken() {
         return $this->accesstoken;

@@ -2558,7 +2558,7 @@ class grade_category extends grade_object {
     /**
      * Overrides grade_object::set_properties() to add special handling for changes to category aggregation types
      *
-     * @param stdClass $instance the object to set the properties on
+     * @param grade_category $instance the object to set the properties on
      * @param array|stdClass $params Either an associative array or an object containing property name, property value pairs
      */
     public static function set_properties(&$instance, $params) {

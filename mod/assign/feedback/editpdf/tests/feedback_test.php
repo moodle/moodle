@@ -50,8 +50,8 @@ class feedback_test extends \advanced_testcase {
     /**
      * Helper method to add a file to a submission.
      *
-     * @param stdClass $student Student submitting.
-     * @param assign   $assign Assignment being submitted.
+     * @param \stdClass $student Student submitting.
+     * @param \assign   $assign Assignment being submitted.
      * @param bool     $textfile Use textfile fixture instead of pdf.
      */
     protected function add_file_submission($student, $assign, $textfile = false) {
@@ -344,7 +344,7 @@ class feedback_test extends \advanced_testcase {
     public function test_conversion_task() {
         $this->require_ghostscript();
         $this->resetAfterTest();
-        cron_setup_user();
+        \core\cron::setup_user();
 
         $course = $this->getDataGenerator()->create_course();
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');

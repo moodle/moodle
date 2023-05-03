@@ -52,16 +52,6 @@ class user_loggedin extends base {
     }
 
     /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array(SITEID, 'user', 'login', 'view.php?id=' . $this->data['objectid'] . '&course=' . SITEID,
-            $this->data['objectid'], 0, $this->data['objectid']);
-    }
-
-    /**
      * Return localised event name.
      *
      * @return string

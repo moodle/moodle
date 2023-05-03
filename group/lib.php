@@ -241,7 +241,8 @@ function groups_remove_member($grouporid, $userorid) {
  * @param stdClass $data group properties
  * @param stdClass $editform
  * @param array $editoroptions
- * @return id of group or false if error
+ * @return int id of group or throws an exception on error
+ * @throws moodle_exception
  */
 function groups_create_group($data, $editform = false, $editoroptions = false) {
     global $CFG, $DB, $USER;
@@ -258,6 +259,13 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
         if (groups_get_group_by_idnumber($course->id, $data->idnumber)) {
             throw new moodle_exception('idnumbertaken');
         }
+    }
+
+    $data->visibility ??= GROUPS_VISIBILITY_ALL;
+
+    if (!in_array($data->visibility, [GROUPS_VISIBILITY_ALL, GROUPS_VISIBILITY_MEMBERS])) {
+        $data->participation = false;
+        $data->enablemessaging = false;
     }
 
     if ($editform and $editoroptions) {
@@ -285,6 +293,8 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
 
     // Invalidate the grouping cache for the course
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($course->id));
+    // Rebuild the coursehiddengroups cache for the course.
+    \core_group\visibility::update_hiddengroups_cache($course->id);
 
     // Group conversation messaging.
     if (\core_message\api::can_create_group_conversation($USER->id, $context)) {
@@ -318,7 +328,8 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
  *
  * @param stdClass $data grouping properties
  * @param array $editoroptions
- * @return id of grouping or false if error
+ * @return int id of grouping or throws an exception on error
+ * @throws moodle_exception
  */
 function groups_create_grouping($data, $editoroptions=null) {
     global $DB;
@@ -423,6 +434,10 @@ function groups_update_group($data, $editform = false, $editoroptions = false) {
             throw new moodle_exception('idnumbertaken');
         }
     }
+    if (isset($data->visibility) && !in_array($data->visibility, [GROUPS_VISIBILITY_ALL, GROUPS_VISIBILITY_MEMBERS])) {
+        $data->participation = false;
+        $data->enablemessaging = false;
+    }
 
     if ($editform and $editoroptions) {
         $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $context, 'group', 'description', $data->id);
@@ -432,6 +447,8 @@ function groups_update_group($data, $editform = false, $editoroptions = false) {
 
     // Invalidate the group data.
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($data->courseid));
+    // Rebuild the coursehiddengroups cache for the course.
+    \core_group\visibility::update_hiddengroups_cache($data->courseid);
 
     $group = $DB->get_record('groups', array('id'=>$data->id));
 
@@ -575,6 +592,8 @@ function groups_delete_group($grouporid) {
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($group->courseid));
     // Purge the group and grouping cache for users.
     cache_helper::purge_by_definition('core', 'user_group_groupings');
+    // Rebuild the coursehiddengroups cache for the course.
+    \core_group\visibility::update_hiddengroups_cache($group->courseid);
 
     // Trigger group event.
     $params = array(
@@ -723,6 +742,8 @@ function groups_delete_groups($courseid, $showfeedback=false) {
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($courseid));
     // Purge the group and grouping cache for users.
     cache_helper::purge_by_definition('core', 'user_group_groupings');
+    // Rebuild the coursehiddengroups cache for the course.
+    \core_group\visibility::update_hiddengroups_cache($courseid);
 
     if ($showfeedback) {
         echo $OUTPUT->notification(get_string('deleted').' - '.get_string('groups', 'group'), 'notifysuccess');

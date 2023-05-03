@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\moodlenet\utilities;
 use core_contentbank\contentbank;
 
 defined('MOODLE_INTERNAL') || die();
@@ -93,7 +94,7 @@ class navigation_node implements renderable {
     public $id = null;
     /** @var string|int The identifier for the node, used to retrieve the node */
     public $key = null;
-    /** @var string The text to use for the node */
+    /** @var string|lang_string The text to use for the node */
     public $text = null;
     /** @var string Short text to use if requested [optional] */
     public $shorttext = null;
@@ -362,7 +363,7 @@ class navigation_node implements renderable {
      * Adds a navigation node as a child of this node.
      *
      * @param string $text
-     * @param moodle_url|action_link $action
+     * @param moodle_url|action_link|string $action
      * @param int $type
      * @param string $shorttext
      * @param string|int $key
@@ -1166,7 +1167,7 @@ class navigation_node_collection implements IteratorAggregate, Countable {
      *
      * @param string|int $key  The key of the node we want to find.
      * @param int $type  One of navigation_node::TYPE_*.
-     * @return navigation_node|null
+     * @return navigation_node|false
      */
     public function find($key, $type=null) {
         if ($type !== null && array_key_exists($type, $this->orderedcollection) && array_key_exists($key, $this->orderedcollection[$type])) {
@@ -2362,7 +2363,7 @@ class global_navigation extends navigation_node {
     /**
      * Loads a stealth module from unavailable section
      * @param navigation_node $coursenode
-     * @param stdClass $modinfo
+     * @param stdClass|course_modinfo $modinfo
      * @return navigation_node or null if not accessible
      */
     protected function load_stealth_activity(navigation_node $coursenode, $modinfo) {
@@ -4229,8 +4230,8 @@ class flat_navigation extends navigation_node_collection {
 
             $addblockurl = "?{$url->get_query_string(false)}";
 
-            $PAGE->requires->js_call_amd('core/addblockmodal', 'init',
-                [$PAGE->pagetype, $PAGE->pagelayout, $addblockurl]);
+            $PAGE->requires->js_call_amd('core_block/add_modal', 'init',
+                [$addblockurl, $this->page->get_edited_page_hash()]);
         }
     }
 
@@ -4267,7 +4268,7 @@ class flat_navigation extends navigation_node_collection {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class settings_navigation extends navigation_node {
-    /** @var stdClass the current context */
+    /** @var context the current context */
     protected $context;
     /** @var moodle_page the moodle page that the navigation belongs to */
     protected $page;
@@ -4799,7 +4800,7 @@ class settings_navigation extends navigation_node {
      * @return navigation_node|false
      */
     protected function load_module_settings() {
-        global $CFG;
+        global $CFG, $USER;
 
         if (!$this->page->cm && $this->context->contextlevel == CONTEXT_MODULE && $this->context->instanceid) {
             $cm = get_coursemodule_from_id(false, $this->context->instanceid, 0, false, MUST_EXIST);
@@ -4878,6 +4879,27 @@ class settings_navigation extends navigation_node {
         $function = $this->page->activityname.'_extend_settings_navigation';
         if (function_exists($function)) {
             $function($this, $modulenode);
+        }
+
+        // Send to MoodleNet.
+        $usercanshare = utilities::can_user_share($this->context->get_course_context(), $USER->id);
+        $issuerid = get_config('moodlenet', 'oauthservice');
+        try {
+            $issuer = \core\oauth2\api::get_issuer($issuerid);
+            $isvalidinstance = utilities::is_valid_instance($issuer);
+            if ($usercanshare && $isvalidinstance) {
+                $this->page->requires->js_call_amd('core/moodlenet/send_resource', 'init');
+                $action = new action_link(new moodle_url(''), '', null, [
+                    'data-action' => 'sendtomoodlenet',
+                    'data-type' => 'activity',
+                    'data-sharetype' => 'resource',
+                ]);
+                $modulenode->add(get_string('moodlenet:sharetomoodlenet', 'moodle'),
+                    $action, self::TYPE_SETTING, null, 'exportmoodlenet')->set_force_into_more_menu(true);
+            }
+        } catch (dml_missing_record_exception $e) {
+            debugging("Invalid MoodleNet OAuth 2 service set in site administration: 'moodlenet | oauthservice'. " .
+                "This must be a valid issuer.");
         }
 
         // Remove the module node if there are no children.
@@ -5749,8 +5771,6 @@ class settings_navigation_ajax extends settings_navigation {
 
     /**
      * Initialise the site admin navigation.
-     *
-     * @return array An array of the expandable nodes
      */
     public function initialise() {
         if ($this->initialised || during_initial_install()) {

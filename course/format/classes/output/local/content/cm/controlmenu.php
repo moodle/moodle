@@ -128,9 +128,7 @@ class controlmenu implements named_templatable, renderable {
 
         // Convert control array into an action_menu.
         $menu = new action_menu();
-        $icon = $output->pix_icon('i/menu', get_string('edit'));
-        $menu->set_menu_trigger($icon, 'btn btn-icon d-flex align-items-center justify-content-center');
-
+        $menu->set_kebab_trigger(get_string('edit'));
         $menu->attributes['class'] .= ' section-cm-edit-actions commands';
 
         // Prioritise the menu ahead of all other actions.

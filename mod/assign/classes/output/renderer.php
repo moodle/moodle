@@ -39,6 +39,9 @@ use \mod_assign\output\grading_app;
  */
 class renderer extends \plugin_renderer_base {
 
+    /** @var string a unique ID. */
+    public $htmlid;
+
     /**
      * Rendering assignment files
      *
@@ -46,8 +49,8 @@ class renderer extends \plugin_renderer_base {
      * @param int $userid
      * @param string $filearea
      * @param string $component
-     * @param stdClass $course
-     * @param stdClass $coursemodule
+     * @param \stdClass $course
+     * @param \stdClass $coursemodule
      * @return string
      */
     public function assign_files(\context $context, $userid, $filearea, $component, $course = null, $coursemodule = null) {

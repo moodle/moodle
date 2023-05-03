@@ -1166,20 +1166,9 @@ tr.flagged-tag a {
 audio.mediaplugin_html5audio {
     width: 300px;
 }
-/* TinyMCE moodle media preview frame should not have padding */
-.core_media_preview.pagelayout-embedded #content {
-    padding: 0;
-}
 
 .core_media_preview.pagelayout-embedded #maincontent {
     height: 0;
-}
-
-body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
-    padding: 0;
-    margin: 0;
-    min-width: 0;
-    background: none;
 }
 
 .path-rating .ratingtable {
@@ -1520,7 +1509,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .choosercontainer #chooseform .option label {
     display: block;
     margin: 0;
-    padding: ($spacer / 2) 0;
+    padding: ($spacer * 0.5) 0;
     border-bottom: 1px solid #fff;
 }
 
@@ -2287,7 +2276,7 @@ ul {
     padding-right: 0;
     padding-left: 0;
     .nav {
-        margin-right: $grid-gutter-width / 2;
+        margin-right: $grid-gutter-width * 0.5;
         background-color: $card-bg;
     }
     @include media-breakpoint-down(sm) {
@@ -2327,7 +2316,7 @@ $footer-link-color: $bg-inverse-link-color !default;
 }
 
 .hasstickyfooter .btn-footer-popover {
-    bottom: calc(2rem + #{$navbar-height});
+    bottom: calc(1rem + #{$stickyfooter-height});
 }
 
 .popover.footer {
@@ -2401,8 +2390,8 @@ $footer-link-color: $bg-inverse-link-color !default;
         display: flex;
         align-items: center;
         &:before {
-            @include fa-icon();
-            content: $fa-var-check;
+            @extend .fa-solid;
+            content: fa-content($fa-var-check);
             position: absolute;
             left: 0.4rem;
             font-size: 0.7rem;
@@ -2607,6 +2596,10 @@ input[disabled] {
     }
 }
 
+.v-hidden {
+    visibility: hidden;
+}
+
 // Emoji picker.
 $picker-width: 350px !default;
 $picker-width-xs: 320px !default;
@@ -2624,7 +2617,7 @@ $picker-emojis-per-row: 7 !default;
     .category-button {
         padding: .375rem 0;
         height: 100%;
-        width: $picker-width / $picker-emoji-category-count;
+        width: divide($picker-width, $picker-emoji-category-count);
         border-top: none;
         border-left: none;
         border-right: none;
@@ -2668,7 +2661,7 @@ $picker-emojis-per-row: 7 !default;
     }
 
     .emoji-short-name {
-        line-height: $picker-row-height / 2;
+        line-height: $picker-row-height * 0.5;
     }
 
     @include media-breakpoint-down(xs) {
@@ -2730,10 +2723,10 @@ $picker-emojis-per-row: 7 !default;
     .breadcrumb:not(:empty) {
         width: 100%;
         flex-wrap: nowrap;
-        margin-bottom: $spacer / 2;
+        margin-bottom: $spacer * 0.5;
         .breadcrumb-item {
-            padding-top: $spacer / 3;
-            padding-bottom: $spacer / 3;
+            padding-top: $spacer * 0.33333;
+            padding-bottom: $spacer * 0.33333;
             display: inline-flex;
             overflow: hidden;
         }
@@ -2758,7 +2751,7 @@ $picker-emojis-per-row: 7 !default;
         max-width: 100%;
     }
     .card .card-body {
-        padding: $card-spacer-x / 2;
+        padding: $card-spacer-x * 0.5;
     }
     #page-header {
         .card {
@@ -2772,7 +2765,7 @@ $picker-emojis-per-row: 7 !default;
     .nav-pills {
         margin: 0;
         border: 0;
-        padding: $spacer / 8;
+        padding: $spacer * 0.125;
         background-color: $gray-200;
         .nav-item {
             flex: 1 1 auto;
@@ -2781,7 +2774,7 @@ $picker-emojis-per-row: 7 !default;
         .nav-link {
             background: $white;
             border: 0;
-            margin: $spacer / 8;
+            margin: $spacer * 0.125;
             &.active {
                 @include button-outline-variant($gray-600);
                 border-color: $gray-600;
@@ -2909,6 +2902,41 @@ body.dragging {
 
 // Generic classes reactive components can use.
 
+.overlay-preview {
+    background-color: rgba($white, .8);
+    border: 2px dashed $primary;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    .overlay-preview-wrapper {
+        position: absolute;
+        top: 0;
+        padding: 2rem;
+        width: 100%;
+    }
+
+    .overlay-preview-content {
+        position: relative;
+        top: 0;
+        padding: $modal-inner-padding;
+        margin: 0 auto;
+        width: 100%;
+        max-width: 600px;
+        background-color: $primary;
+        color: $white;
+        text-align: center;
+        font-size: $font-size-lg;
+        @include border-radius();
+    }
+}
+
+.overlay-preview-borders {
+    outline: 2px dashed $primary;
+}
+
 .waitstate {
     display: none;
 }
@@ -2951,10 +2979,10 @@ body.dragging {
 }
 
 .dropdown-toggle::after {
-    content: $fa-var-chevron-down;
+    @extend .fa-solid;
+    content: fa-content($fa-var-chevron-down);
     margin-right: 0;
     margin-left: 4px;
-    @include fa-icon();
     font-size: 9px;
     width: 9px;
     border: 0;
@@ -2963,8 +2991,8 @@ body.dragging {
 
 .dropleft .dropdown-toggle::before {
     border: 0;
-    content: $fa-var-chevron-left;
-    @include fa-icon();
+    @extend .fa-solid;
+    content: fa-content($fa-var-chevron-left);
     font-size: 9px;
     margin-left: 0;
     margin-right: 4px;
@@ -2973,12 +3001,14 @@ body.dragging {
 
 .dropright .dropdown-toggle::after {
     border: 0;
-    content: $fa-var-chevron-right;
+    @extend .fa-solid;
+    content: fa-content($fa-var-chevron-right);
 }
 
 .dropup .dropdown-toggle::after {
     border: 0;
-    content: $fa-var-chevron-up;
+    @extend .fa-solid;
+    content: fa-content($fa-var-chevron-up);
 }
 
 .select-menu {
@@ -3001,12 +3031,16 @@ body.dragging {
             padding-left: 2.5rem;
         }
     }
-    .dropdown-item {
-        cursor: pointer;
+    .dropdown-item[aria-selected="true"] {
+        font-weight: bold;
+    }
+}
 
-        &[aria-selected="true"] {
-            font-weight: bold;
-        }
+[role="listbox"] [role="option"] {
+    cursor: pointer;
+
+    &[aria-selected="true"] {
+        font-weight: bold;
     }
 }
 
@@ -3064,5 +3098,4 @@ blockquote {
         overflow-wrap: anywhere;
         white-space: normal;
     }
-
 }

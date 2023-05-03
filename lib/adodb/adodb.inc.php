@@ -198,7 +198,7 @@ if (!defined('_ADODB_LAYER')) {
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'v5.22.2  2022-05-08';
+		$ADODB_vers = 'v5.22.4  2022-10-28';
 
 		/**
 		 * Determines whether recordset->RecordCount() is used.
@@ -1556,9 +1556,6 @@ if (!defined('_ADODB_LAYER')) {
 
 		// error handling if query fails
 		if ($this->_queryID === false) {
-			if ($this->debug == 99) {
-				adodb_backtrace(true,5);
-			}
 			$fn = $this->raiseErrorFn;
 			if ($fn) {
 				$fn($this->databaseType,'EXECUTE',$this->ErrorNo(),$this->ErrorMsg(),$sql,$inputarr,$this);
@@ -3875,6 +3872,10 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
  * means recordcount not known).
  */
 class ADORecordSet implements IteratorAggregate {
+	/**
+	 * Used for cases when a recordset object is not created by executing a query.
+	 */
+	const DUMMY_QUERY_ID = -1;
 
 	/**
 	 * public variables
@@ -3902,8 +3903,12 @@ class ADORecordSet implements IteratorAggregate {
 	 */
 	var $_numOfRows = -1;	/** number of rows, or -1 */
 	var $_numOfFields = -1;	/** number of fields in recordset */
-	/** @var resource result link identifier */
-	var $_queryID = -1;
+
+	/**
+	 * @var resource|int|false result link identifier
+	 */
+	var $_queryID = self::DUMMY_QUERY_ID;
+
 	var $_currentRow = -1;	/** This variable keeps the current row in the Recordset.	*/
 	var $_closed = false;	/** has recordset been closed */
 	var $_inited = false;	/** Init() should only be called once */

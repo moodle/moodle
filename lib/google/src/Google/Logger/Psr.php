@@ -25,6 +25,7 @@ if (!class_exists('Google_Client')) {
  * This logger will delegate all logging to a PSR-3 compatible logger specified
  * with the `Google_Logger_Psr::setLogger()` method.
  */
+#[AllowDynamicProperties]
 class Google_Logger_Psr extends Google_Logger_Abstract
 {
   /**

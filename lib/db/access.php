@@ -781,6 +781,13 @@ $capabilities = array(
         )
     ),
 
+    'moodle/cohort:configurecustomfields' => array(
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+
     'moodle/course:create' => array(
 
         'riskbitmask' => RISK_XSS,
@@ -1151,6 +1158,17 @@ $capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
+    'moodle/course:viewhiddengroups' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'READ',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         )
@@ -2662,5 +2680,15 @@ $capabilities = array(
         'riskbitmap' => RISK_PERSONAL,
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [],
+    ],
+
+    // Allow users to share activities to MoodleNet.
+    'moodle/moodlenet:shareactivity' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ]
     ],
 );

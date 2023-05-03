@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
 abstract class testing_module_generator extends component_generator_base {
 
     /**
-     * @var number of created instances
+     * @var int number of created instances
      */
     protected $instancecount = 0;
 

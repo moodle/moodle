@@ -2,6 +2,14 @@ This files describes API changes in /availability/*.
 
 The information here is intended only for developers.
 
+=== 4.2 ===
+
+* The form for editing availability conditions now supports "private" conditions, that should not be shown
+  to users. If a "private" condition is selected (as determined by the condition plugin), the whole ruleset
+  will be forcibly set to "Hidden entirely if student doesn't meet the conditions".
+* The group condition plugin will now treat any rule containing a group with a visibility setting other than
+  `visibility:ALL` as private.
+
 === 4.0 ===
 
 * Method render_core_availability_multiple_messages() is deprecated. Please use core_availability\\output\\multiple_messages

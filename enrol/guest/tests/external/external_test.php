@@ -25,6 +25,7 @@
 
 namespace enrol_guest\external;
 
+use core_external\external_api;
 use enrol_guest_external;
 use externallib_advanced_testcase;
 
@@ -74,7 +75,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setAdminUser();
         $result = enrol_guest_external::get_instance_info($instance);
-        $result = \external_api::clean_returnvalue(enrol_guest_external::get_instance_info_returns(), $result);
+        $result = external_api::clean_returnvalue(enrol_guest_external::get_instance_info_returns(), $result);
 
         $this->assertEquals($instance, $result['instanceinfo']['id']);
         $this->assertEquals($course->id, $result['instanceinfo']['courseid']);
@@ -86,7 +87,7 @@ class external_test extends externallib_advanced_testcase {
         $DB->set_field('enrol', 'status', ENROL_INSTANCE_DISABLED, array('id' => $instance));
 
         $result = enrol_guest_external::get_instance_info($instance);
-        $result = \external_api::clean_returnvalue(enrol_guest_external::get_instance_info_returns(), $result);
+        $result = external_api::clean_returnvalue(enrol_guest_external::get_instance_info_returns(), $result);
         $this->assertEquals($instance, $result['instanceinfo']['id']);
         $this->assertEquals($course->id, $result['instanceinfo']['courseid']);
         $this->assertEquals('guest', $result['instanceinfo']['type']);
@@ -109,7 +110,7 @@ class external_test extends externallib_advanced_testcase {
         $DB->set_field('course', 'visible', 1, array('id' => $course->id));
         $this->setUser($student);
         $result = enrol_guest_external::get_instance_info($instance);
-        $result = \external_api::clean_returnvalue(enrol_guest_external::get_instance_info_returns(), $result);
+        $result = external_api::clean_returnvalue(enrol_guest_external::get_instance_info_returns(), $result);
 
         $this->assertEquals($instance, $result['instanceinfo']['id']);
         $this->assertEquals($course->id, $result['instanceinfo']['courseid']);

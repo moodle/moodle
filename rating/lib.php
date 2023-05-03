@@ -46,7 +46,7 @@ define ('RATING_DEFAULT_SCALE', 5);
 class rating implements renderable {
 
     /**
-     * @var stdClass The context in which this rating exists
+     * @var context The context in which this rating exists
      */
     public $context;
 

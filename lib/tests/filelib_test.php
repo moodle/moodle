@@ -1725,25 +1725,30 @@ EOF;
         $filerecord['filename'] = 'file 3.png';
         self::create_draft_file($filerecord);
 
+        $filerecord['filename'] = 'file4.png';
+        self::create_draft_file($filerecord);
+
         // Confirm the user drafts area lists 3 files.
         $fs = get_file_storage();
         $usercontext = \context_user::instance($USER->id);
         $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'itemid', 0);
-        $this->assertCount(3, $draftfiles);
+        $this->assertCount(4, $draftfiles);
 
         // Now, spoof some editor text content, referencing 2 of the files; one requiring name encoding, one not.
         $editor = [
             'itemid' => $draftitemid,
-            'text' => '
-                <img src="'.$CFG->wwwroot.'/draftfile.php/'.$usercontext->id.'/user/draft/'.$draftitemid.'/file%203.png" alt="">
-                <img src="'.$CFG->wwwroot.'/draftfile.php/'.$usercontext->id.'/user/draft/'.$draftitemid.'/file1.png" alt="">'
+            'text' => "
+                <img src=\"{$CFG->wwwroot}/draftfile.php/{$usercontext->id}/user/draft/{$draftitemid}/file%203.png\" alt=\"\">
+                <img src=\"{$CFG->wwwroot}/draftfile.php/{$usercontext->id}/user/draft/{$draftitemid}/file1.png\" alt=\"\">
+                <span>{$CFG->wwwroot}/draftfile.php/{$usercontext->id}/user/draft/{$draftitemid}/file4.png</span>"
         ];
 
         // Run the remove orphaned drafts function and confirm that only the referenced files remain in the user drafts.
-        $expected = ['file1.png', 'file 3.png']; // The drafts we expect will not be removed (are referenced in the online text).
+        // The drafts we expect will not be removed (are referenced in the online text).
+        $expected = ['file1.png', 'file 3.png', 'file4.png'];
         file_remove_editor_orphaned_files($editor);
         $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'itemid', 0);
-        $this->assertCount(2, $draftfiles);
+        $this->assertCount(3, $draftfiles);
         foreach ($draftfiles as $file) {
             $this->assertContains($file->get_filename(), $expected);
         }

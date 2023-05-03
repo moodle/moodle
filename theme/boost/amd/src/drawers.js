@@ -47,6 +47,7 @@ const CLASSES = {
     SCROLLED: 'scrolled',
     SHOW: 'show',
     NOTINITIALISED: 'not-initialized',
+    TOGGLERIGHT: '.drawer-right-toggle',
 };
 
 /**
@@ -589,6 +590,11 @@ const scroller = () => {
     const body = document.querySelector('body');
     const drawerLayout = document.querySelector(SELECTORS.CONTAINER);
     if (drawerLayout) {
+        // If there is not visible scrollbar then remove extra margin from right drawer.
+        const drawerRight = document.querySelector(SELECTORS.CONTAINER + ' ' + CLASSES.TOGGLERIGHT);
+        if (!scrollbarVisible(drawerLayout) && drawerRight) {
+            drawerRight.style.marginRight = '0';
+        }
         drawerLayout.addEventListener("scroll", () => {
             if (drawerLayout.scrollTop >= window.innerHeight) {
                 body.classList.add(CLASSES.SCROLLED);
@@ -597,6 +603,16 @@ const scroller = () => {
             }
         });
     }
+};
+
+/**
+ * Check if there is a visible scrollbar in the given html element.
+ *
+ * @param {object} htmlNode The html element.
+ * @returns {boolean} true if the scroll height is greater than client height.
+ */
+const scrollbarVisible = (htmlNode) => {
+   return htmlNode.scrollHeight > htmlNode.clientHeight;
 };
 
 /**

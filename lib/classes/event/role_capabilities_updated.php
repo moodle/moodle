@@ -83,25 +83,6 @@ class role_capabilities_updated extends base {
         }
     }
 
-    /**
-     * Sets legacy log data.
-     *
-     * @param array $legacylogdata
-     * @return void
-     */
-    public function set_legacy_logdata($legacylogdata) {
-        $this->legacylogdata = $legacylogdata;
-    }
-
-    /**
-     * Returns array of parameters to be passed to legacy add_to_log() function.
-     *
-     * @return null|array
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
-    }
-
     public static function get_objectid_mapping() {
         return array('db' => 'role', 'restore' => 'role');
     }

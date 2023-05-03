@@ -42,11 +42,10 @@ Feature: Regrading grades does not unnecessarily mark some as overriden
     And I press "Save changes"
     And I navigate to "View > Grader report" in the course gradebook
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I click on "Edit" "link" in the ".coursecategory" "css_element"
-    And I click on "Edit settings" "link" in the ".coursecategory" "css_element"
-    And I set the field "Aggregation" to "Weighted mean of grades"
-    And I set the field "Rescale overridden grades" to "Yes"
-    And I set the field "Maximum grade" to "200"
+    And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
+      | Aggregation               | Weighted mean of grades |
+      | Rescale overridden grades | Yes                     |
+      | Maximum grade             | 200                     |
     And I press "Save changes"
 
   @javascript

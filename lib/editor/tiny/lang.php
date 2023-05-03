@@ -74,14 +74,15 @@ class lang {
             }
 
             [$rev, $lang] = explode('/', $slashargument, 2);
-            $rev  = min_clean_param($rev, 'RAW');
+            $rev  = min_clean_param($rev, 'INT');
             $lang = min_clean_param($lang, 'SAFEDIR');
         } else {
-            $rev  = min_optional_param('rev', 0, 'RAW');
+            $rev  = min_optional_param('rev', 0, 'INT');
             $lang = min_optional_param('lang', 'standard', 'SAFEDIR');
         }
 
-        $this->lang = $lang;
+        // Retrieve the correct language by converting to Moodle's language code format.
+        $this->lang = str_replace('-', '_', $lang);
         $this->rev = $rev;
         $this->candidatefile = "{$CFG->localcachedir}/editor_tiny/{$this->rev}/lang/{$this->lang}/lang.json";
     }

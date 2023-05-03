@@ -129,6 +129,7 @@ $string['backpackemailverifypending'] = 'A verification email has been sent to <
 $string['backpackemailverifysuccess'] = 'Thanks for verifying your email address. You are now connected to your backpack.';
 $string['backpackemailverifytokenmismatch'] = 'The token in the link you clicked does not match the stored token. Make sure you clicked the link in most recent email you received.';
 $string['backpackexporterror'] = 'Can\'t export the badge to backpack';
+$string['backpackexporterrorwithinfo'] = 'Can\'t export the badge "{$a->badgename}" to backpack. Error: {$a->error}';
 $string['backpackimport'] = 'Badge import settings';
 $string['backpackimport_help'] = 'After the backpack connection is successfully established, badges from your backpack can be displayed on your badges page and your profile page.
 
@@ -557,6 +558,7 @@ $string['targetcode_help'] = 'A unique string identifier for referencing the ext
 $string['testbackpack'] = 'Test backpack \'{$a}\'';
 $string['testsettings'] = 'Test settings';
 $string['type'] = 'Type';
+$string['userbadges'] = 'User badges';
 $string['variablesubstitution'] = 'Variable substitution in messages.';
 $string['variablesubstitution_help'] = 'In a badge message, certain variables can be inserted into the subject and/or body of a message so that they will be replaced with real values when the message is sent. The variables should be inserted into the text exactly as they are shown below. The following variables can be used:
 
@@ -575,9 +577,6 @@ $string['version_help'] = 'The version field may be used to keep track of the ba
 $string['warnexpired'] = ' (This badge has expired!)';
 $string['year'] = 'Year(s)';
 $string['includeauthdetails'] = "Include authentication details with the backpack";
-
-// Deprecated since Moodle 3.10.
-$string['backpackneedsupdate'] = 'The backpack connected to this profile does not match the backpack for the site. You need to disconnect and reconnect the backpack.';
 
 // Deprecated since Moodle 3.11.
 $string['addbackpack'] = 'Add backpack';

@@ -54,10 +54,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # MySQL builds always run with the lowest PHP supported version.
           - os: ubuntu-22.04
-            php: 7.4
+            php: 8.0
             extensions:
             db: mysqli
+          # PostgreSQL builds always run with the highest PHP supported version.
           - os: ubuntu-22.04
             php: 8.1
             db: pgsql
@@ -68,7 +70,7 @@ jobs:
         uses: moodlehq/mysql-action@v1
         with:
           collation server: utf8mb4_bin
-          mysql version: 5.7
+          mysql version: 8.0
           mysql database: test
           mysql user: test
           mysql password: test
@@ -80,7 +82,7 @@ jobs:
         if: ${{ matrix.db == 'pgsql' }}
         uses: m4nu56/postgresql-action@v1
         with:
-          postgresql version: 12
+          postgresql version: 13
           postgresql db: test
           postgresql user: test
           postgresql password: test

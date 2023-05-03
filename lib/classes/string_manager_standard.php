@@ -43,7 +43,7 @@ class core_string_manager_standard implements core_string_manager {
     protected $cache;
     /** @var int get_string() counter */
     protected $countgetstring = 0;
-    /** @var bool use disk cache */
+    /** @var array use disk cache */
     protected $translist;
     /** @var array language aliases to use in the language selector */
     protected $transaliases = [];

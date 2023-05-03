@@ -107,6 +107,9 @@ class forum_post implements \renderable, \templatable {
         'viewfullnames'    => true,
     );
 
+    /** @var \stdClass user record. */
+    protected $userfrom;
+
     /**
      * Builds a renderable forum post
      *
@@ -541,7 +544,7 @@ class forum_post implements \renderable, \templatable {
      * The date of the post, formatted according to the postto user's
      * preferences.
      *
-     * @return string.
+     * @return string
      */
     public function get_postdate() {
         global $CFG;

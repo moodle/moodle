@@ -42,9 +42,9 @@ prefetchStrings('core', [
  */
 const selectors = {
     toggleTemplateEditor: 'input[name="useeditor"]',
+    resetTemplateAction: '[data-action="resettemplate"]',
     resetTemplate: 'input[name="defaultform"]',
     resetAllTemplates: 'input[name="resetall"]',
-    resetButton: 'input[name="resetbutton"]',
     resetAllCheck: 'input[name="resetallcheck"]',
     editForm: '#edittemplateform',
 };
@@ -62,15 +62,17 @@ const registerEventListeners = (instanceId, mode) => {
 
 const registerResetButton = (mode) => {
     const editForm = document.querySelector(selectors.editForm);
-    const resetButton = document.querySelector(selectors.resetButton);
     const resetTemplate = document.querySelector(selectors.resetTemplate);
     const resetAllTemplates = document.querySelector(selectors.resetAllTemplates);
+    const resetTemplateAction = document.querySelector(selectors.resetTemplateAction);
 
-    if (!resetButton || !resetTemplate || !editForm) {
+    if (!resetTemplateAction || !resetTemplate || !editForm) {
         return;
     }
-
-    resetButton.addEventListener('click', async(event) => {
+    prefetchStrings('mod_data', [
+        mode
+    ]);
+    resetTemplateAction.addEventListener('click', async(event) => {
         event.preventDefault();
         const params = {
             resetallname: "resetallcheck",

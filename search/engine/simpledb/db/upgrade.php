@@ -66,5 +66,8 @@ function xmldb_search_simpledb_upgrade($oldversion = 0) {
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 
+    // Automatically generated Moodle v4.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

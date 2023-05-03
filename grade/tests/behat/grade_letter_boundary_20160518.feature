@@ -40,5 +40,5 @@ Feature: We can customise the letter boundary of a course in gradebook version 2
     And I am on "Course 1" course homepage with editing mode off
     And I navigate to "View > Grader report" in the course gradebook
     Then the following should exist in the "user-grades" table:
-      | -1-       | -4- | -5- |
-      | Student 1 | F   | F   |
+      | -1-       |  -1-                    | -3- | -4- |
+      | Student 1 |  student1@example.com   | F   | F   |

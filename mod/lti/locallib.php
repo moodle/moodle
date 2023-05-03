@@ -4300,39 +4300,6 @@ function serialise_tool_type(stdClass $type) {
 }
 
 /**
- * Serialises this tool proxy.
- *
- * @param stdClass $proxy The tool proxy
- *
- * @deprecated since Moodle 3.10
- * @todo This will be finally removed for Moodle 4.2 as part of MDL-69976.
- * @return array An array of values representing this type
- */
-function serialise_tool_proxy(stdClass $proxy) {
-    $deprecatedtext = __FUNCTION__ . '() is deprecated. Please remove all references to this method.';
-    debugging($deprecatedtext, DEBUG_DEVELOPER);
-
-    return array(
-        'id' => $proxy->id,
-        'name' => $proxy->name,
-        'description' => get_string('activatetoadddescription', 'mod_lti'),
-        'urls' => get_tool_proxy_urls($proxy),
-        'state' => array(
-            'text' => get_string('pending', 'mod_lti'),
-            'pending' => true,
-            'configured' => false,
-            'rejected' => false,
-            'unknown' => false
-        ),
-        'hascapabilitygroups' => true,
-        'capabilitygroups' => array(),
-        'courseid' => 0,
-        'instanceids' => array(),
-        'instancecount' => 0
-    );
-}
-
-/**
  * Loads the cartridge information into the tool type, if the launch url is for a cartridge file
  *
  * @param stdClass $type The tool type object to be filled in

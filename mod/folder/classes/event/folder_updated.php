@@ -72,16 +72,6 @@ class folder_updated extends \core\event\base {
         return new \moodle_url('/mod/folder/edit.php', array('id' => $this->contextinstanceid));
     }
 
-    /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'folder', 'edit', 'edit.php?id=' . $this->contextinstanceid, $this->objectid,
-            $this->contextinstanceid);
-    }
-
     public static function get_objectid_mapping() {
         return array('db' => 'folder', 'restore' => 'folder');
     }

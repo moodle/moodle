@@ -747,7 +747,7 @@ class summary_table extends table_sql {
         foreach ($readers as $reader) {
 
             // If reader is not a sql_internal_table_reader and not legacy store then return.
-            if (!($reader instanceof \core\log\sql_internal_table_reader) && !($reader instanceof logstore_legacy\log\store)) {
+            if (!($reader instanceof \core\log\sql_internal_table_reader)) {
                 continue;
             }
             $logreader = $reader;
@@ -770,14 +770,8 @@ class summary_table extends table_sql {
 
         $this->create_log_summary_temp_table();
 
-        if ($this->logreader instanceof logstore_legacy\log\store) {
-            $logtable = 'log';
-            // Anonymous actions are never logged in legacy log.
-            $nonanonymous = '';
-        } else {
-            $logtable = $this->logreader->get_internal_log_table_name();
-            $nonanonymous = 'AND anonymous = 0';
-        }
+        $logtable = $this->logreader->get_internal_log_table_name();
+        $nonanonymous = 'AND anonymous = 0';
 
         // Apply dates filter if applied.
         $datewhere = $this->sql->filterbase['dateslog'] ?? '';

@@ -57,10 +57,22 @@ class grade extends tablelike implements selectable_items, filterable_items {
     private $requiresextra = false;
 
     /**
-     *  True if there are more users than our limit.
+     * True if there are more users than our limit.
      * @var bool $requirepaging
      */
     private $requirespaging = true;
+
+    /**
+     * To store UI element that generates a grade_item min/max range.
+     * @var range;
+     */
+    protected $range;
+
+    /**
+     * Returns a grade_item instance or false if none found.
+     * @var grade_item|bool
+     */
+    public $item;
 
     /**
      * True if $CFG->grade_overridecat is true
@@ -185,7 +197,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
     /**
      * Format a row in the table
      *
-     * @param user $item
+     * @param stdClass $item
      * @return array
      */
     public function format_line($item): array {
@@ -396,7 +408,8 @@ class grade extends tablelike implements selectable_items, filterable_items {
         $menuitems[] = new \action_menu_link_secondary($url, null, $title);
         $menu = new \action_menu($menuitems);
         $icon = $OUTPUT->pix_icon('i/moremenu', get_string('actions'));
-        $menu->set_menu_trigger($icon);
+        $extraclasses = 'btn btn-link btn-icon icon-size-3 d-flex align-items-center justify-content-center';
+        $menu->set_menu_trigger($icon, $extraclasses);
         $menu->set_menu_left();
 
         return $OUTPUT->render($menu);

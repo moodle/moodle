@@ -33,10 +33,10 @@ Feature: View gradebook when single item scales are used
       | student2 | C1     | student        |
     And the following "grade categories" exist:
       | fullname       | course |
-      | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Sub category 1 | C1     |
+      | <span lang='en' class='multilang'>EN</span><span lang='fr' class='multilang'>FR</span> Sub category 1 | C1     |
     And the following "activities" exist:
       | activity | course | idnumber | name                | intro             | gradecategory  |
-      | assign   | C1     | a1       | Test assignment one | Submit something! | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Sub category 1 |
+      | assign   | C1     | a1       | Test assignment one | Submit something! | <span lang='en' class='multilang'>EN</span><span lang='fr' class='multilang'>FR</span> Sub category 1 |
     And the "multilang" filter is "on"
     And the "multilang" filter applies to "content and headings"
     And I am on the "Test assignment one" "assign activity editing" page logged in as teacher1
@@ -59,8 +59,8 @@ Feature: View gradebook when single item scales are used
   Scenario: Test displaying single item scales in gradebook in aggregation method Natural
     When I turn editing mode off
     Then the following should exist in the "user-grades" table:
-      | -1-                | -4-       | -5-            | -6-          |
-      | Student 1          | Ace!      | 1.00           | 1.00         |
+      | -1-                | -1-                  | -3-       | -4-            | -5-          |
+      | Student 1          | student1@example.com | Ace!      | 1.00           | 1.00         |
     And the following should exist in the "user-grades" table:
       | -1-                | -2-       | -3-            | -4-          |
       | Range              | Ace!–Ace! | 0.00–1.00      | 0.00–1.00    |
@@ -68,37 +68,34 @@ Feature: View gradebook when single item scales are used
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
     And the following should exist in the "user-grade" table:
-      | Grade item             | Grade | Range     | Contribution to course total |
-      | Test assignment one    | Ace!  | Ace!–Ace! | 100.00 %                     |
-      | EN Sub category 1 total| 1.00  | 0–1       | -                            |
-      | Course total           | 1.00  | 0–1       | -                            |
+      | Grade item                | Grade | Range     | Contribution to course total |
+      | Test assignment one       | Ace!  | Ace!–Ace! | 100.00 %                     |
+      | ENFR Sub category 1 total | 1.00  | 0–1       | -                            |
+      | Course total              | 1.00  | 0–1       | -                            |
     And I click on "Student 2" in the "user" search widget
     And the following should exist in the "user-grade" table:
-      | Grade item             | Grade | Range     | Contribution to course total |
-      | Test assignment one    | -     | Ace!–Ace! | -                            |
-      | EN Sub category 1 total| -     | 0–1       | -                            |
-      | Course total           | -     | 0–1       | -                            |
+      | Grade item                | Grade | Range     | Contribution to course total |
+      | Test assignment one       | -     | Ace!–Ace! | -                            |
+      | ENFR Sub category 1 total | -     | 0–1       | -                            |
+      | Course total              | -     | 0–1       | -                            |
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And the following should exist in the "grade_edit_tree_table" table:
-      | Name                   | Max grade |
-      | Test assignment one    | 1.00      |
-      | EN Sub category 1 total| 1.00      |
-      | Course total           | 1.00      |
+      | Name                      | Max grade |
+      | Test assignment one       | 1.00      |
+      | ENFR Sub category 1 total | 1.00      |
+      | Course total              | 1.00      |
 
   Scenario Outline: Test displaying single item scales in gradebook in all other aggregation methods
-    When I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "<aggregation>"
-    And I press "Save changes"
-    And I follow "Edit   EN Sub category 1"
-    And I set the following fields to these values:
+    Given I set the following settings for grade item "Course 1" of type "course" on "grader" page:
+      | Aggregation | <aggregation> |
+    And I set the following settings for grade item "<span lang='en' class='multilang'>EN</span><span lang='fr' class='multilang'>FR</span> Sub category 1" of type "category" on "grader" page:
       | Aggregation     | <aggregation> |
       | Category name   | Sub category (<aggregation>) |
-    And I press "Save changes"
     And I turn editing mode off
     Then the following should exist in the "user-grades" table:
-      | -1-                | -4-       | -5-            | -6-            |
-      | Student 1          | Ace!      | <cattotal1>    | <coursetotal1> |
-      | Student 2          | -         | -              | -              |
+      | -1-                | -1-                  | -3-       | -4-            | -5-            |
+      | Student 1          | student1@example.com | Ace!      | <cattotal1>    | <coursetotal1> |
+      | Student 2          | student2@example.com | -         | -              | -              |
     And the following should exist in the "user-grades" table:
       | -1-                | -2-       | -3-            | -4-            |
       | Range              | Ace!–Ace! | 0.00–100.0     | 0.00–100.00    |
@@ -114,8 +111,8 @@ Feature: View gradebook when single item scales are used
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                                             | Max grade |
       | Test assignment one                              | Ace! (1)  |
-      | Sub category (<aggregation>) total<aggregation>. | 100.00    |
-      | Course total<aggregation>.                       | 100.00    |
+      | Sub category (<aggregation>) total               | 100.00    |
+      | Course total                                     | 100.00    |
 
     Examples:
       | aggregation                         | contrib1 | cattotal1 | coursetotal1 | catavg | overallavg |

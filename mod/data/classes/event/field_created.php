@@ -84,16 +84,6 @@ class field_created extends \core\event\base {
     }
 
     /**
-     * Get the legacy event log data.
-     *
-     * @return array
-     */
-    public function get_legacy_logdata() {
-        return array($this->courseid, 'data', 'fields add', 'field.php?d=' . $this->other['dataid'] . '&amp;mode=display&amp;fid=' .
-            $this->objectid, $this->objectid, $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception when validation does not pass.

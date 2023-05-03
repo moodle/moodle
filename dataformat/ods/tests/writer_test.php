@@ -51,20 +51,21 @@ class writer_test extends \advanced_testcase {
      * Get ods rows from binary content
      * @param string $content
      * @return array
-     * @throws \Box\Spout\Common\Exception\IOException
-     * @throws \Box\Spout\Reader\Exception\ReaderNotOpenedException
+     * @throws \OpenSpout\Common\Exception\IOException
+     * @throws \OpenSpout\Reader\Exception\ReaderNotOpenedException
      */
     private function get_ods_rows_content($content) {
-        $reader = \Box\Spout\Reader\Common\Creator\ReaderFactory::createFromType(\Box\Spout\Common\Type::ODS);
         $file = tempnam(sys_get_temp_dir(), 'ods_');
         $handle = fopen($file, "w");
         fwrite($handle, $content);
+        /** @var \OpenSpout\Reader\ODS\Reader $reader */
+        $reader = \OpenSpout\Reader\Common\Creator\ReaderFactory::createFromFileByMimeType($file);
         $reader->open($file);
-        /** @var \Box\Spout\Reader\ODS\Sheet[] $sheets */
+        /** @var \OpenSpout\Reader\ODS\Sheet[] $sheets */
         $sheets = $reader->getSheetIterator();
         $rowscellsvalues = [];
         foreach ($sheets as $sheet) {
-            /** @var \Box\Spout\Common\Entity\Row[] $rows */
+            /** @var \OpenSpout\Common\Entity\Row[] $rows */
             $rows = $sheet->getRowIterator();
             foreach ($rows as $row) {
                 $thisvalues = [];

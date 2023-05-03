@@ -568,6 +568,9 @@ class files_tree_viewer implements renderable {
     public $path;
     public $context;
 
+    /** @var array file tree viewer options. */
+    protected array $options = [];
+
     /**
      * Constructor of moodle_file_tree_viewer class
      * @param file_info $file_info

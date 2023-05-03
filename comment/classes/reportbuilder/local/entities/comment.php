@@ -202,6 +202,7 @@ class comment extends base {
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$commentalias}.timecreated")
+            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         return $columns;

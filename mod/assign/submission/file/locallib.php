@@ -24,7 +24,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+use core_external\external_value;
 
 // File areas for file submission assignment.
 define('ASSIGNSUBMISSION_FILE_MAXSUMMARYFILES', 5);
@@ -595,7 +595,7 @@ class assign_submission_file extends assign_submission_plugin {
     /**
      * Return a description of external params suitable for uploading a file submission from a webservice.
      *
-     * @return external_description|null
+     * @return \core_external\external_description|null
      */
     public function get_external_parameters() {
         return array(

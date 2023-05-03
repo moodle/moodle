@@ -28,18 +28,6 @@ define('NO_OUTPUT_BUFFERING', true);
 
 require('../../../config.php');
 
-require_once($CFG->libdir.'/cronlib.php');
-
-/**
- * Function used to handle mtrace by outputting the text to normal browser window.
- *
- * @param string $message Message to output
- * @param string $eol End of line character
- */
-function tool_task_mtrace_wrapper($message, $eol) {
-    echo s($message . $eol);
-}
-
 // Allow execution of single task. This requires login and has different rules.
 $taskname = required_param('task', PARAM_RAW_TRIMMED);
 

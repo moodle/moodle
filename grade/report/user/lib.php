@@ -238,3 +238,43 @@ function gradereport_user_myprofile_navigation(tree $tree, stdClass $user, bool 
         }
     }
 }
+
+/**
+ * Returns link to user report for the current element
+ *
+ * @param context_course $context Course context
+ * @param int $courseid Course ID
+ * @param array  $element An array representing an element in the grade_tree
+ * @param grade_plugin_return $gpr A grade_plugin_return object
+ * @param string $mode Mode - gradeitem or user
+ * @param ?stdClass $templatecontext Template context
+ * @return stdClass|null
+ */
+function gradereport_user_get_report_link(context_course $context, int $courseid, array $element,
+        grade_plugin_return $gpr, string $mode, ?stdClass $templatecontext): ?stdClass {
+    global $CFG;
+
+    if ($mode == 'user') {
+        $reportstring = grade_helper::get_lang_string('userreport_' . $mode, 'gradereport_user');
+
+        if (!isset($templatecontext)) {
+            $templatecontext = new stdClass();
+        }
+
+        // FIXME: MDL-52678 This get_capability_info is hacky and we should have an API for inserting grade row links instead.
+        $canseeuserreport = false;
+        if (get_capability_info('gradereport/' . $CFG->grade_profilereport . ':view')) {
+            $canseeuserreport = has_capability('gradereport/' . $CFG->grade_profilereport . ':view', $context);
+        }
+
+        if ($canseeuserreport) {
+            $url = new moodle_url('/grade/report/' . $CFG->grade_profilereport . '/index.php',
+                ['userid' => $element['userid'], 'id' => $courseid]);
+            $gpr->add_url_params($url);
+            $templatecontext->reporturl1 = html_writer::link($url, $reportstring,
+                ['class' => 'dropdown-item', 'aria-label' => $reportstring, 'role' => 'menuitem']);
+            return $templatecontext;
+        }
+    }
+    return null;
+}

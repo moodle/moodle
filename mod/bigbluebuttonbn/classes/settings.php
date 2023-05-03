@@ -21,6 +21,7 @@ use admin_setting;
 use admin_setting_configcheckbox;
 use admin_setting_configmultiselect;
 use admin_setting_configpasswordunmask;
+use admin_setting_configselect;
 use admin_setting_configstoredfile;
 use admin_setting_configtext;
 use admin_setting_configtextarea;
@@ -42,7 +43,7 @@ use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
  */
 class settings {
 
-    /** @var admin_setting shared value */
+    /** @var admin_category shared value */
     private $admin;
 
     /** @var bool Module is enabled */
@@ -137,7 +138,6 @@ class settings {
      */
     protected function add_general_settings(): admin_settingpage {
         global $CFG;
-
         $settingsgeneral = new admin_settingpage(
             $this->section,
             get_string('config_general', 'bigbluebuttonbn'),
@@ -150,6 +150,7 @@ class settings {
                 '',
                 get_string('config_general_description', 'bigbluebuttonbn')
             );
+            $settingsgeneral->add($item);
 
             if (empty($CFG->bigbluebuttonbn_default_dpa_accepted)) {
                 $settingsgeneral->add(new admin_setting_configcheckbox(
@@ -160,7 +161,6 @@ class settings {
                 ));
             }
 
-            $settingsgeneral->add($item);
             $item = new admin_setting_configtext(
                 'bigbluebuttonbn_server_url',
                 get_string('config_server_url', 'bigbluebuttonbn'),
@@ -191,6 +191,20 @@ class settings {
                 $item,
                 $settingsgeneral
             );
+
+            $item = new admin_setting_configselect(
+                'bigbluebuttonbn_checksum_algorithm',
+                get_string('config_checksum_algorithm', 'bigbluebuttonbn'),
+                get_string('config_checksum_algorithm_description', 'bigbluebuttonbn'),
+                config::DEFAULT_CHECKSUM_ALGORITHM,
+                array_combine(config::CHECKSUM_ALGORITHMS, config::CHECKSUM_ALGORITHMS)
+            );
+            $this->add_conditional_element(
+                'checksum_algorithm',
+                $item,
+                $settingsgeneral
+            );
+
             $item = new \admin_setting_description(
                 'bigbluebuttonbn_dpa_info',
                 '',
@@ -357,6 +371,26 @@ class settings {
                 get_string('config_recording_hide_button_editable', 'bigbluebuttonbn'),
                 get_string('config_recording_hide_button_editable_description', 'bigbluebuttonbn'),
                 0
+            );
+            $this->add_conditional_element(
+                'recording_hide_button_editable',
+                $item,
+                $recordingsetting
+            );
+            $recordingsafeformat = [
+                'notes' => get_string('view_recording_format_notes', 'mod_bigbluebuttonbn'),
+                'podcast' => get_string('view_recording_format_podcast', 'mod_bigbluebuttonbn'),
+                'presentation' => get_string('view_recording_format_presentation', 'mod_bigbluebuttonbn'),
+                'screenshare' => get_string('view_recording_format_screenshare', 'mod_bigbluebuttonbn'),
+                'statistics' => get_string('view_recording_format_statistics', 'mod_bigbluebuttonbn'),
+                'video' => get_string('view_recording_format_video', 'mod_bigbluebuttonbn'),
+            ];
+            $item = new admin_setting_configmultiselect(
+                'bigbluebuttonbn_recording_safe_formats',
+                get_string('config_recording_safe_formats', 'mod_bigbluebuttonbn'),
+                get_string('config_recording_safe_formats_description', 'mod_bigbluebuttonbn'),
+                ['video', 'presentation'],
+                $recordingsafeformat
             );
             $this->add_conditional_element(
                 'recording_hide_button_editable',
@@ -897,6 +931,17 @@ class settings {
             );
             $this->add_conditional_element(
                 'recordingready_enabled',
+                $item,
+                $extendedcapabilitiessetting
+            );
+            $item = new admin_setting_configcheckbox(
+                'bigbluebuttonbn_profile_picture_enabled',
+                get_string('config_profile_picture_enabled', 'bigbluebuttonbn'),
+                get_string('config_profile_picture_enabled_description', 'bigbluebuttonbn'),
+                false
+            );
+            $this->add_conditional_element(
+                'profile_picture_enabled',
                 $item,
                 $extendedcapabilitiessetting
             );

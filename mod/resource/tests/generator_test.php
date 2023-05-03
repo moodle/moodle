@@ -21,10 +21,12 @@ namespace mod_resource;
  *
  * @package    mod_resource
  * @category phpunit
+ * @covers \mod_resource_generator
  * @copyright 2013 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class generator_test extends \advanced_testcase {
+
     public function test_generator() {
         global $DB, $SITE;
 
@@ -76,5 +78,46 @@ class generator_test extends \advanced_testcase {
         $this->assertCount(1, $files);
         $this->assertEquals('myfile.pdf', $file->get_filename());
         $this->assertEquals('Test resource myfile.pdf file', $file->get_content());
+
+        // Create a new resource uploading a file.
+        $resource = $generator->create_instance([
+            'course' => $SITE->id,
+            'uploaded' => true,
+            'defaultfilename' => 'mod/resource/tests/fixtures/samplefile.txt',
+        ]);
+
+        // Check that generated resource module contains the uploaded samplefile.txt.
+        $cm = get_coursemodule_from_instance('resource', $resource->id);
+        $context = \context_module::instance($cm->id);
+        $files = $fs->get_area_files($context->id, 'mod_resource', 'content', false, '', false);
+        $file = array_values($files)[0];
+        $this->assertCount(1, $files);
+        $this->assertEquals('samplefile.txt', $file->get_filename());
+        $this->assertEquals('Hello!', $file->get_content());
+
+        // Try to generate a resource with uploaded file without specifying the file.
+        try {
+            $resource = $generator->create_instance([
+                'course' => $SITE->id,
+                'uploaded' => true,
+            ]);
+            $this->assertTrue(false, 'coding_exception expected, defaultfilename is required');
+        } catch (\Exception $e) {
+            $this->assertInstanceOf(\coding_exception::class, $e);
+            $this->assertStringContainsString('defaultfilename option is required', $e->getMessage());
+        }
+
+        // Try to generate a resource with uploaded file pointing to non-existing file.
+        try {
+            $resource = $generator->create_instance([
+                'course' => $SITE->id,
+                'uploaded' => true,
+                'defaultfilename' => 'mod/resource/tests/fixtures/doesnotexist.txt',
+            ]);
+            $this->assertTrue(false, 'coding_exception expected, defaultfilename must point to an existing file');
+        } catch (\Exception $e) {
+            $this->assertInstanceOf(\coding_exception::class, $e);
+            $this->assertStringContainsString('defaultfilename option must point to an existing file', $e->getMessage());
+        }
     }
 }

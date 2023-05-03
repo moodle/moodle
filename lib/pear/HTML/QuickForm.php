@@ -722,7 +722,7 @@ class HTML_QuickForm extends HTML_Common {
      * @param    string     $name           (optional)group name
      * @param    string     $groupLabel     (optional)group label
      * @param    string     $separator      (optional)string to separate elements
-     * @param    string     $appendName     (optional)specify whether the group name should be
+     * @param    bool       $appendName     (optional)specify whether the group name should be
      *                                      used in the form element name ex: group[element]
      * @return   object     reference to added group of elements
      * @since    2.8

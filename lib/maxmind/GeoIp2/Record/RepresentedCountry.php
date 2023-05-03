@@ -17,6 +17,11 @@ namespace GeoIp2\Record;
  */
 class RepresentedCountry extends Country
 {
+    /**
+     * @ignore
+     *
+     * @var array<string>
+     */
     protected $validAttributes = [
         'confidence',
         'geonameId',
