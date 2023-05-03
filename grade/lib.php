@@ -2630,6 +2630,11 @@ class grade_structure {
             $context->dataid = $element['userid'];
         }
 
+        // Omit the second divider if there is nothing between it and the first divider.
+        if (!isset($context->ascendingfirstnameurl) && !isset($context->ascendingurl)) {
+            $context->divider2 = false;
+        }
+
         if (!empty($USER->editing) || isset($context->gradeanalysisurl) || isset($context->gradesonlyurl)
                 || isset($context->aggregatesonlyurl) || isset($context->fullmodeurl) || isset($context->reporturl0)
                 || isset($context->ascendingfirstnameurl) || isset($context->ascendingurl)
