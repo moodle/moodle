@@ -7,6 +7,10 @@ Information provided here is intended especially for developers.
   - `\core\lock\lock::extend`
   - `\core\lock\lock_factory::extend_lock`
   - `\core\lock\lock_factory::supports_recursion`
+* The automatic locking options 'requirelockingread' and 'requirelockingwrite' have been removed.
+  These features are not used in core, were recommended against in the documentation, had significant
+  bugs, and had no useful purpose. 'requirelockingbeforewrite' is still available to check that manual
+  locking has been applied.
 
 === 4.2 ===
 * The memcached cachestore has been removed.
