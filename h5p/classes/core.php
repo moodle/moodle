@@ -69,7 +69,7 @@ class core extends H5PCore {
     protected function getDependencyPath(array $dependency): string {
         $library = $this->find_library($dependency);
 
-        return "libraries/{$library->id}/" . H5PCore::libraryToFolderName($dependency);
+        return "libraries/{$library->id}/" . H5PCore::libraryToString($dependency);
     }
 
     /**
@@ -84,7 +84,7 @@ class core extends H5PCore {
         $context = \context_system::instance();
         foreach ($dependencies as $dependency) {
             $library = $this->find_library($dependency);
-            $roots[self::libraryToFolderName($dependency)] = (moodle_url::make_pluginfile_url(
+            $roots[self::libraryToString($dependency)] = (moodle_url::make_pluginfile_url(
                 $context->id,
                 'core_h5p',
                 'libraries',
@@ -408,7 +408,7 @@ class core extends H5PCore {
      */
     public static function record_to_string(stdClass $record, bool $foldername = false): string {
         if ($foldername) {
-            return static::libraryToFolderName([
+            return static::libraryToString([
                 'machineName' => $record->machinename,
                 'majorVersion' => $record->majorversion,
                 'minorVersion' => $record->minorversion,
