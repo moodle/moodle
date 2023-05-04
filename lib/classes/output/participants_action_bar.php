@@ -68,7 +68,8 @@ class participants_action_bar implements \renderable {
         return [
             'enrolments:enrol' => [
                 'review',
-                'manageinstances'
+                'manageinstances',
+                'renameroles',
             ],
             'groups:group' => [
                 'groups'
@@ -81,7 +82,7 @@ class participants_action_bar implements \renderable {
                 'roleoverride',
                 'rolecheck',
                 'roleassign',
-            ]
+            ],
         ];
     }
 
