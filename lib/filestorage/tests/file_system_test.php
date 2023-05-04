@@ -1093,6 +1093,7 @@ class file_system_test extends \advanced_testcase {
         $this->assertInstanceOf(\Psr\Http\Message\StreamInterface::class, $stream);
         $this->assertEquals(file_get_contents(__FILE__), $stream->getContents());
         $this->assertFalse($stream->isWritable());
+        $stream->close();
     }
 
     /**

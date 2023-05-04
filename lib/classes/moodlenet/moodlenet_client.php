@@ -72,16 +72,23 @@ class moodlenet_client {
 
         $moodleneturl = $this->oauthclient->get_issuer()->get('baseurl');
         $apiurl = rtrim($moodleneturl, '/') . self::API_CREATE_RESOURCE_URI;
+        $stream = $file->get_psr_stream();
 
         $requestdata = $this->prepare_file_share_request_data(
             $file->get_filename(),
             $file->get_mimetype(),
-            $file->get_psr_stream(),
+            $stream,
             $resourcename,
             $resourcedescription,
         );
 
-        return $this->httpclient->request('POST', $apiurl, $requestdata);
+        try {
+            $response = $this->httpclient->request('POST', $apiurl, $requestdata);
+        } finally {
+            $stream->close(); // Always close the request stream ASAP. Or it will remain open till shutdown/destruct.
+        }
+
+        return $response;
     }
 
     /**
