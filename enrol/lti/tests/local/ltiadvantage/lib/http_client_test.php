@@ -24,7 +24,7 @@ namespace enrol_lti\local\ltiadvantage\lib;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\lib\http_client
  */
-class http_client_test extends \basic_testcase {
+class http_client_test extends \advanced_testcase {
 
     /**
      * Verify the http_client delegates to curl during a "GET" request.
@@ -115,5 +115,18 @@ class http_client_test extends \basic_testcase {
             'put' => ['PUT'],
             'delete' => ['DELETE'],
         ];
+    }
+
+    /**
+     * Verify that the response headers are properly read from curl, and exclude things like redirect headers, or 100-continues.
+     * @covers ::request
+     */
+    public function test_header_parsing(): void {
+        $testurl = $this->getExternalTestFileUrl('/test_redir.php');
+        $client = new http_client(new \curl());
+        $response = $client->request('POST', "$testurl?redir=1",
+            ['headers' => ['Expect' => '100-continue'], 'body' => 'foo']);
+        $headers = $response->getHeaders();
+        $this->assertEquals('200 OK', reset($headers));
     }
 }
