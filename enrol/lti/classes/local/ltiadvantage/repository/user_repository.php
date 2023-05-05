@@ -218,7 +218,8 @@ class user_repository {
                       FROM {{$this->ltiuserstable}} lu
                       JOIN {user} u
                         ON (u.id = lu.userid)
-                     WHERE lu.id = :id";
+                     WHERE lu.id = :id
+                       AND lu.ltideploymentid IS NOT NULL";
 
             $record = $DB->get_record_sql($sql, ['id' => $id], MUST_EXIST);
             return $this->user_from_record($record);
@@ -245,7 +246,8 @@ class user_repository {
                       JOIN {user} u
                         ON (u.id = lu.userid)
                      WHERE lu.userid = :userid
-                       AND lu.toolid = :resourceid";
+                       AND lu.toolid = :resourceid
+                       AND lu.ltideploymentid IS NOT NULL";
 
             $params = ['userid' => $userid, 'resourceid' => $resourceid];
             $record = $DB->get_record_sql($sql, $params, MUST_EXIST);
@@ -270,6 +272,7 @@ class user_repository {
                   JOIN {user} u
                     ON (u.id = lu.userid)
                  WHERE lu.toolid = :resourceid
+                   AND lu.ltideploymentid IS NOT NULL
               ORDER BY lu.lastaccess DESC";
 
         $records = $DB->get_records_sql($sql, ['resourceid' => $resourceid]);
