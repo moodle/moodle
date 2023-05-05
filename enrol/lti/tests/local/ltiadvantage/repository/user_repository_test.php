@@ -455,4 +455,43 @@ class user_repository_test extends \advanced_testcase {
         $this->assertEquals($saveduser->get_localid(), $saveduser2->get_localid());
         $this->assertNotEquals($saveduser->get_id(), $saveduser2->get_id());
     }
+
+    /**
+     * Test confirming that any associated legacy lti user records are not returned by the repository.
+     *
+     * This test ensures that any enrolment methods (resources) updated in-place from legacy LTI to 1.3 only return LTI 1.3 users.
+     *
+     * @covers ::find
+     * @covers ::find_single_user_by_resource
+     * @covers ::find_by_resource
+     */
+    public function test_find_filters_legacy_lti_users(): void {
+        $this->resetAfterTest();
+        global $DB;
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $resource = $this->getDataGenerator()->create_lti_tool((object)['courseid' => $course->id]);
+        $ltiuserdata = [
+            'userid' => $user->id,
+            'toolid' => $resource->id,
+            'sourceid' => '1001',
+        ];
+        $ltiuserid = $DB->insert_record('enrol_lti_users', $ltiuserdata);
+        $userrepo = new user_repository();
+
+        $this->assertNull($userrepo->find($ltiuserid));
+        $this->assertNull($userrepo->find_single_user_by_resource($user->id, $resource->id));
+        $this->assertEmpty($userrepo->find_by_resource($resource->id));
+
+        // Set deploymentid, indicating the user originated from an LTI 1.3 launch and should now be returned.
+        $ltiuserdata['id'] = $ltiuserid;
+        $ltiuserdata['ltideploymentid'] = '234';
+        $DB->update_record('enrol_lti_users', $ltiuserdata);
+
+        $this->assertInstanceOf(user::class, $userrepo->find($ltiuserid));
+        $this->assertInstanceOf(user::class, $userrepo->find_single_user_by_resource($user->id, $resource->id));
+        $ltiusers = $userrepo->find_by_resource($resource->id);
+        $this->assertCount(1, $ltiusers);
+        $this->assertInstanceOf(user::class, reset($ltiusers));
+    }
 }
