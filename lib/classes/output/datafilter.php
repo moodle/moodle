@@ -81,7 +81,8 @@ abstract class datafilter implements renderable, templatable {
         bool $multiple,
         ?string $filterclass,
         array $values,
-        bool $allowempty = false
+        bool $allowempty = false,
+        ?stdClass $filteroptions = null
     ): ?stdClass {
 
         if (!$allowempty && empty($values)) {
@@ -96,6 +97,7 @@ abstract class datafilter implements renderable, templatable {
             'allowmultiple' => $multiple,
             'filtertypeclass' => $filterclass,
             'values' => $values,
+            'filteroptions' => $filteroptions,
         ];
     }
 }
