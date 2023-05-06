@@ -152,7 +152,7 @@ class manager_digest_task extends \core\task\scheduled_task {
                                                               WHERE c.visible = 1
                                                               AND cc.userid IN (" . $departmentids . ")
                                                               AND cc.timecompleted > :weekago",
-                                                              array('weekago' => $timenow - (60 * 60 * 24 * 7)))) {
+                                                              array('weekago' => $runtime - (60 * 60 * 24 * 7)))) {
                         foreach ($managerusers as $manageruser) {
                             $datestring = date($CFG->iomad_date_format, $manageruser->timecompleted) . "\n";
 
