@@ -52,7 +52,7 @@ class course_not_started_task extends \core\task\scheduled_task {
         // We only want the student role.
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
 
-        mtrace("Running email report course not started task at ".date('d M Y h:m:s', $runtime));
+        mtrace("Running email report course not started task at ".date('d M Y h:i:s', $runtime));
 
         // Deal with courses where users have not yet started.
         $warnnotstartedcourses = $DB->get_records_sql("SELECT * FROM {iomad_courses} ic
@@ -164,6 +164,6 @@ class course_not_started_task extends \core\task\scheduled_task {
             }
         }
 
-        mtrace("email reporting course not started warning task completed at " . date('d M Y h:m:s', time()));
+        mtrace("email reporting course not started warning task completed at " . date('d M Y h:i:s', time()));
     }
 }

@@ -52,7 +52,7 @@ class manager_digest_task extends \core\task\scheduled_task {
         // We only want the student role.
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
 
-        mtrace("Running email report manager completion digest task at ".date('d M Y h:m:s', $runtime));
+        mtrace("Running email report manager completion digest task at ".date('d M Y h:i:s', $runtime));
 
         // Deal with manager completion digests.
         // Get the companies from the list of users in the temp table.
@@ -177,7 +177,7 @@ class manager_digest_task extends \core\task\scheduled_task {
             }
         }
 
-        mtrace("email reporting manager digest task completed at " . date('d M Y h:m:s', time()));
+        mtrace("email reporting manager digest task completed at " . date('d M Y h:i:s', time()));
     }
 
 }

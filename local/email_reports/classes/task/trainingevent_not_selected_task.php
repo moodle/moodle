@@ -54,7 +54,7 @@ class trainingevent_not_selected_task extends \core\task\scheduled_task {
         // We only want the student role.
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
 
-        mtrace("Running email report training event not selected task at ".date('d M Y h:m:s', $runtime));
+        mtrace("Running email report training event not selected task at ".date('d M Y h:i:s', $runtime));
 
         // Get all of the upcoming training event courses.
         $courses = $DB->get_records_sql("SELECT DISTINCT c.*,ic.warnnotstarted, ic.notifyperiod FROM {trainingevent} t
@@ -140,7 +140,7 @@ class trainingevent_not_selected_task extends \core\task\scheduled_task {
             }
 
         }
-        mtrace("email reporting training event not selected completed at " . date('d M Y h:m:s', time()));
+        mtrace("email reporting training event not selected completed at " . date('d M Y h:i:s', time()));
     }
 
 }

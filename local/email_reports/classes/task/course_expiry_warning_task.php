@@ -52,7 +52,7 @@ class course_expiry_warning_task extends \core\task\scheduled_task {
         // We only want the student role.
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
 
-        mtrace("Running email report course expiry warning task at ".date('d M Y h:m:s', $runtime));
+        mtrace("Running email report course expiry warning task at ".date('d M Y h:i:s', $runtime));
 
         // Getting courses which have expiry settings.
         $expirycourses = $DB->get_records_sql("SELECT * FROM {iomad_courses}
@@ -384,7 +384,7 @@ class course_expiry_warning_task extends \core\task\scheduled_task {
             }
         }
 
-        mtrace("email reporting course expiry warning task completed at " . date('d M Y h:m:s', time()));
+        mtrace("email reporting course expiry warning task completed at " . date('d M Y h:i:s', time()));
     }
 
 }
