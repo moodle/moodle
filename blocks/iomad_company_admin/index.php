@@ -262,7 +262,9 @@ $companyselect = new \stdClass;
 // Only display if you have the correct capability, or you are not in more than one company.
 // Just display name of current company if no choice.
 if (!iomad::has_capability('block/iomad_company_admin:company_view_all', $systemcontext)) {
-    if ($DB->count_records('company_users', array('userid' => $USER->id)) <= 1 ) {
+    if ($DB->count_records_sql("SELECT COUNT(DISTINCT companyid) FROM {company_users} WHERE userid = :userid", ['userid' => $USER->id]) <= 1 ) {
+        $companyrecords = $DB->get_records('company_users', array('userid' => $USER->id));
+        $companyuser = array_pop($companyrecords);
         $companyuser = $DB->get_record('company_users', array('userid' => $USER->id), '*', MUST_EXIST);
         $company = $DB->get_record('company', array('id' => $companyuser->companyid), '*', MUST_EXIST);
         $companyselect->companyname = $company->name;
