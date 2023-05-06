@@ -51,7 +51,7 @@ class iomad_approve_access {
                                                     WHERE userid = :userid
                                                     AND companyid = :companyid
                                                     AND managertype != 0",
-+                                                   ['userid' => $USER->id, 'companyid' => $companyid])) {
+                                                    ['userid' => $USER->id, 'companyid' => $companyid])) {
                 if ($manageruser->managertype == 2) {
 
                     // Department manager.
