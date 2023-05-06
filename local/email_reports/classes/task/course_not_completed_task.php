@@ -52,7 +52,7 @@ class course_not_completed_task extends \core\task\scheduled_task {
         // We only want the student role.
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
 
-        mtrace("Running email report course not completed task at ".date('D M Y h:m:s', $runtime));
+        mtrace("Running email report course not completed task at ".date('d M Y h:m:s', $runtime));
 
         // Deal with courses which have completed by warnings
         $notcompletedsql = "SELECT lit.*, c.name AS companyname, ic.notifyperiod, u.firstname,u.lastname,u.username,u.email,u.lang
@@ -344,7 +344,7 @@ class course_not_completed_task extends \core\task\scheduled_task {
             }
         }
 
-        mtrace("email reporting course not completed warning task completed at " . date('D M Y h:m:s', time()));
+        mtrace("email reporting course not completed warning task completed at " . date('d M Y h:m:s', time()));
     }
 
 }
