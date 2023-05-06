@@ -46,7 +46,12 @@ class iomad_approve_access {
             $approvaltype = 'both';
         } else {
             // Work out what type of manager I am, if any?
-            if ($manageruser = $DB->get_record_select('company_users', 'userid = :userid AND companyid = :companyid AND managertype > 0', array('userid' => $USER->id, 'companyid' => $companyid))) {
+            if ($manageruser = $DB->get_record_sql("SELECT DISTINCT managertype
+                                                    FROM {company_users}
+                                                    WHERE userid = :userid
+                                                    AND companyid = :companyid
+                                                    AND managertype != 0",
++                                                   ['userid' => $USER->id, 'companyid' => $companyid])) {
                 if ($manageruser->managertype == 2) {
 
                     // Department manager.
