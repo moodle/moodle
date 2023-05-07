@@ -90,3 +90,4 @@ class playback_paused extends \core\event\base {
         return $logstring;
     }
 }
+

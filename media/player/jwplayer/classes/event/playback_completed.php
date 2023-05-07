@@ -83,3 +83,4 @@ class playback_completed extends \core\event\base {
         return $logstring;
     }
 }
+

@@ -4,10 +4,12 @@ moodle-media_jwplayer (JW Player 8)
 ==================================
 
 JW Player is the solution for seamless video playback across browsers and
-media types. This media player plugin is brigning JW Player 8 into Moodle.
+media types. This media player plugin is brigning [all power of JW Player 8](https://www.jwplayer.com/html5-video-player/) into Moodle.
 
-Using commercial version of JW Player requires paid subscription (free trial is
-available). Learn more at [https://www.jwplayer.com/pricing/](https://www.jwplayer.com/pricing/).
+Using commercial version of JW Player requires paid subscription. Free trial
+(non-commercial licensed) is available, which downgrades to limited functionality free edition after trial period is expired. Learn more at
+[https://www.jwplayer.com/pricing/](https://www.jwplayer.com/pricing/). Open
+source version of JW Player 8 is not supported yet.
 
 Installation and configuration
 ------------
@@ -48,7 +50,7 @@ plugin settings.
 
 ### Open source edition
 
-Non-commerical version of JWPlayer is [available on
+Open source version for non-commerical use of JWPlayer is [available on
 GitHub](https://github.com/jwplayer/jwplayer). This is not supported yet by
 this plugin, but code contributions are more than welcome
 ([#1](https://github.com/kabalin/moodle-media_jwplayer/issues/1)).

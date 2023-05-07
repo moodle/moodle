@@ -96,3 +96,4 @@ class media_jwplayer_license_setting extends admin_setting_configtext {
         return true;
     }
 }
+

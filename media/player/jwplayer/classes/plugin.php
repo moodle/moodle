@@ -73,7 +73,7 @@ class media_jwplayer_plugin extends core_media_player {
                 // This is <a> tag.
                 // Create attribute options if we don't already have them.
                 if (empty($options['htmlattributes'])) {
-                    $xml = new SimpleXMLElement($options[core_media_manager::OPTION_ORIGINAL_TEXT]);
+                    $xml = new SimpleXMLElement(html_entity_decode($options[core_media_manager::OPTION_ORIGINAL_TEXT]));
                     foreach ($xml->attributes() as $attrib => $atval) {
                         $attrib = clean_param($attrib, PARAM_ALPHAEXT);
                         $atval = clean_param(htmlspecialchars_decode($atval), PARAM_RAW);
@@ -573,7 +573,8 @@ class media_jwplayer_plugin extends core_media_player {
             $playbackrates = array_map(function($param) {
                 return (float) $param;
             }, explode(',', $playbackrates));
-            $playersetupdata['playbackRateControls'] = $playbackrates;
+            $playersetupdata['playbackRates'] = $playbackrates;
+            $playersetupdata['playbackRateControls'] = true;
         }
 
         // Google Analytics settings.

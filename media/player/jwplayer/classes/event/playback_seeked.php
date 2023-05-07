@@ -95,3 +95,4 @@ class playback_seeked extends \core\event\base {
         return $logstring;
     }
 }
+

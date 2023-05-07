@@ -97,3 +97,4 @@ class playback_failed extends \core\event\base {
         return $logstring;
     }
 }
+

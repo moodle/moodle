@@ -90,3 +90,4 @@ class playback_resumed extends \core\event\base {
         return $logstring;
     }
 }
+

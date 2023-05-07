@@ -83,3 +83,4 @@ class playback_started extends \core\event\base {
         return "The user with id {$this->userid} has started playback of the media '{$this->other['title']}'";
     }
 }
+

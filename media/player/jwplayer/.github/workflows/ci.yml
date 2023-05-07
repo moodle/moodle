@@ -36,11 +36,6 @@ jobs:
         with:
           path: plugin
 
-      - name: Install node
-        uses: actions/setup-node@v1
-        with:
-          node-version: '14.15.0'
-
       - name: Setup PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
         with:
@@ -53,6 +48,7 @@ jobs:
           echo $(cd ci/bin; pwd) >> $GITHUB_PATH
           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
           sudo locale-gen en_AU.UTF-8
+          echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
 
       - name: Install moodle-plugin-ci
         run: |
