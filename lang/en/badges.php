@@ -578,13 +578,6 @@ $string['warnexpired'] = ' (This badge has expired!)';
 $string['year'] = 'Year(s)';
 $string['includeauthdetails'] = "Include authentication details with the backpack";
 
-// Deprecated since Moodle 3.11.
-$string['addbackpack'] = 'Add backpack';
-$string['error:backpacknotavailable'] = 'Your site is not accessible from the Internet, so any badges issued from this site cannot be verified by external backpack services.';
-$string['error:backpackproblem'] = 'There was a problem connecting to your backpack service provider. Please try again later.';
-$string['sitebackpack'] = 'Active external backpack';
-$string['sitebackpack_help'] = 'The external backpack that users can connect to from this site. Note that changing this setting after users have connected their backpacks will require each user to go to their backpack settings page and disconnect then reconnect.';
-
 // Deprecated since Moodle 4.0.
 $string['evidence'] = 'Evidence';
 $string['recipientdetails'] = 'Recipient details';

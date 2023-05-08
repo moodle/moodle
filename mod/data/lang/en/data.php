@@ -475,9 +475,6 @@ $string['viewtodate'] = 'Read only to';
 $string['viewtodatevalidation'] = 'The read only to date cannot be before the read only from date.';
 $string['wrongdataid'] = 'Wrong data ID provided';
 
-// Deprecated since Moodle 3.11.
-$string['unsupportedexport'] = '({$a->fieldtype}) cannot be exported.';
-
 // Deprecated since Moodle 4.1.
 $string['buttons'] = 'Actions';
 $string['nolisttemplate'] = 'List view template is not yet defined';

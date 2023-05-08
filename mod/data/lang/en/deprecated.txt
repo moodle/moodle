@@ -1,4 +1,3 @@
-unsupportedexport,mod_data
 buttons,mod_data
 nosingletemplate,mod_data
 nolisttemplate,mod_data

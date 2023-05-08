@@ -1074,9 +1074,6 @@ $string['questionversionlatest'] = 'v{$a} (latest)';
 $string['alwayslatest'] = 'Always latest';
 $string['gobacktoquiz'] = 'Go back';
 
-// Deprecated since Moodle 3.11.
-$string['completionattemptsexhausteddesc'] = 'Complete if all available attempts are exhausted';
-
 // Deprecated since Moodle 4.0.
 $string['completionpass'] = 'Require passing grade';
 $string['completionpassdesc'] = 'Student must achieve a passing grade to complete this activity';
