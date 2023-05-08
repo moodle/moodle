@@ -504,9 +504,12 @@ class externallib_test extends externallib_advanced_testcase {
         $result = mod_scorm_external::insert_scorm_tracks($sco->id, 1, $tracks);
         $result = external_api::clean_returnvalue(mod_scorm_external::insert_scorm_tracks_returns(), $result);
         $this->assertCount(0, $result['warnings']);
-
-        $trackids = $DB->get_records('scorm_scoes_track', array('userid' => $student->id, 'scoid' => $sco->id,
-                                                                'scormid' => $scorm->id, 'attempt' => 1));
+        $sql = "SELECT v.id
+                  FROM {scorm_scoes_value} v
+                  JOIN {scorm_attempt} a ON a.id = v.attemptid
+                  WHERE a.userid = :userid AND a.attempt = :attempt AND a.scormid = :scormid AND v.scoid = :scoid";
+        $params = ['userid' => $student->id, 'scoid' => $sco->id, 'scormid' => $scorm->id, 'attempt' => 1];
+        $trackids = $DB->get_records_sql($sql, $params);
         // We use asort here to prevent problems with ids ordering.
         $expectedkeys = array_keys($trackids);
         $this->assertEquals(asort($expectedkeys), asort($result['trackids']));

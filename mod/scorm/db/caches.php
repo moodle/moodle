@@ -15,16 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * scorm version information.
+ * SCORM cache definition.
  *
  * @package    mod_scorm
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @copyright  2023 Catalyst IT Ltd
+ * @author     Dan Marsden <dan@danmarsden.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2023042403;    // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2023041800;    // Requires this Moodle version.
-$plugin->component = 'mod_scorm';   // Full name of the plugin (used for diagnostics).
-
+$definitions = [
+    'elements' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'datasource' => '\mod_scorm\cache\elements',
+    ]
+];

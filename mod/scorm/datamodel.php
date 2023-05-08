@@ -55,14 +55,20 @@ if (confirm_sesskey() && (!empty($scoid))) {
     $request = null;
     if (has_capability('mod/scorm:savetrack', context_module::instance($cm->id))) {
         // Preload all current tracking data.
-        $trackdata = $DB->get_records('scorm_scoes_track', array('userid' => $USER->id, 'scormid' => $scorm->id, 'scoid' => $scoid,
-                                                                 'attempt' => $attempt), '', 'element, id, value, timemodified');
+        $sql = "SELECT e.element, v.id, v.value, v.timemodified
+                  FROM {scorm_scoes_value} v
+                  JOIN {scorm_attempt} a ON a.id = v.attemptid
+                  JOIN {scorm_element} e on e.id = v.elementid
+                  WHERE a.scormid = :scormid AND a.userid = :userid AND v.scoid = :scoid AND a.attempt = :attempt";
+        $trackdata = $DB->get_records_sql($sql, ['userid' => $USER->id, 'scormid' => $scorm->id,
+                                                 'scoid' => $scoid, 'attempt' => $attempt]);
+        $attemptobject = scorm_get_attempt($USER->id, $scorm->id, $attempt);
         foreach (data_submitted() as $element => $value) {
             $element = str_replace('__', '.', $element);
             if (substr($element, 0, 3) == 'cmi') {
                 $netelement = preg_replace('/\.N(\d+)\./', "\.\$1\.", $element);
-                $result = scorm_insert_track($USER->id, $scorm->id, $scoid, $attempt, $element, $value, $scorm->forcecompleted,
-                                             $trackdata) && $result;
+                $result = scorm_insert_track($USER->id, $scorm->id, $scoid, $attemptobject, $element, $value,
+                                             $scorm->forcecompleted, $trackdata) && $result;
             }
             if (substr($element, 0, 15) == 'adl.nav.request') {
                 // SCORM 2004 Sequencing Request.
