@@ -12,6 +12,46 @@
  * Custom XML parser class for signed and/or encrypted XML Docs
  */
 class mnet_encxml_parser {
+
+    /** @var resource|false|XMLParser — a resource handle for the new XML parser. */
+    private $parser;
+
+    /** @var int unique ID for each tag. */
+    private $tag_number;
+
+    /** @var string digest string. */
+    private $digest;
+
+    /** @var string remote_timestamp string. */
+    public $remote_timestamp;
+
+    /** @var string remote_wwwroot string. */
+    public $remote_wwwroot;
+
+    /** @var string signature string. */
+    public $signature;
+
+    /** @var string data_object string. */
+    public $data_object;
+
+    /** @var string URI value inside the RETRIEVALMETHOD xml tag. */
+    private $key_URI;
+
+    /** @var bool true if $chiper has a value, otherwise false. */
+    public $payload_encrypted;
+
+    /** @var array the chiper string. */
+    public $cipher = [];
+
+    /** @var array error information with code and string keys. */
+    public $error = [];
+
+    /** @var string The remote error string, specified in the discard_data(). */
+    public $remoteerror;
+
+    /** @var stdClass error started status. */
+    private $errorstarted;
+
     /**
      * Constructor creates and initialises parser resource and calls initialise
      *
