@@ -124,7 +124,6 @@ class HTML_QuickForm_Renderer_Object extends HTML_QuickForm_Renderer
         if($this->_collectHidden) {
             $this->_obj->hidden = '';
         }
-        $this->_elementIdx = 1;
         $this->_currentSection = null;
         $this->_sectionCount = 0;
     } // end func startForm
