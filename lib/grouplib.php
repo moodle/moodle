@@ -489,6 +489,8 @@ function groups_get_user_groups($courseid, $userid=0) {
             $params = array_merge($params, $visibilityparams);
         }
 
+        $sql .= ' ORDER BY g.id'; // To make results deterministic.
+
         $rs = $DB->get_recordset_sql($sql, $params);
 
         $usergroups = array();
