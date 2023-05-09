@@ -1661,6 +1661,12 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      */
     const DEP_HIDE = 1;
 
+    /** @var string request class HTML. */
+    protected $_reqHTML;
+
+    /** @var string advanced class HTML. */
+    protected $_advancedHTML;
+
     /**
      * Class constructor - same parameters as HTML_QuickForm_DHTMLRulesTableless
      *
@@ -3061,6 +3067,12 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
      * @var string Contains the collapsible buttons to add to the form.
      */
     var $_collapseButtons = '';
+
+    /** @var string request class HTML. */
+    protected $_reqHTML;
+
+    /** @var string advanced class HTML. */
+    protected $_advancedHTML;
 
     /**
      * Constructor

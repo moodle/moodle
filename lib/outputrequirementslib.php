@@ -1851,6 +1851,12 @@ class YUI_config {
     public $insertBefore = 'firstthemesheet';
     public $groups = array();
     public $modules = array();
+    /** @var array The log sources that should be not be logged. */
+    public $logInclude = [];
+    /** @var array Tog sources that should be logged. */
+    public $logExclude = [];
+    /** @var string The minimum log level for YUI logging statements. */
+    public $logLevel;
 
     /**
      * @var array List of functions used by the YUI Loader group pattern recognition.

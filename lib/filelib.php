@@ -3154,6 +3154,8 @@ class curl {
     private $ignoresecurity;
     /** @var array $mockresponses For unit testing only - return the head of this list instead of making the next request. */
     private static $mockresponses = [];
+    /** @var array temporary params value if the value is not belongs to class stored_file. */
+    public $_tmp_file_post_params = [];
 
     /**
      * Curl constructor.
@@ -4241,6 +4243,9 @@ class curl {
 class curl_cache {
     /** @var string Path to cache directory */
     public $dir = '';
+
+    /** @var int the repositorycacheexpire config value. */
+    private $ttl;
 
     /**
      * Constructor

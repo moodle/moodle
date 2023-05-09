@@ -660,7 +660,7 @@ class page_wiki_comments extends page_wiki {
             $cell1 = new html_table_cell($OUTPUT->user_picture($user, array('popup' => true)));
             $cell2 = new html_table_cell(get_string('bynameondate', 'forum', $by));
             $cell3 = new html_table_cell();
-            $cell3->atributtes ['width'] = "80%";
+            $cell3->attributes['width'] = "80%";
             $cell4 = new html_table_cell();
             $cell5 = new html_table_cell();
 
