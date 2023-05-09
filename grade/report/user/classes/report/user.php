@@ -845,15 +845,17 @@ class user extends grade_report {
                 }
                 $this->gradeitemsdata[] = $gradeitemdata;
             }
+
+            $parent = $gradeobject->load_parent_category();
+            if ($gradeobject->is_category_item()) {
+                $parent = $parent->load_parent_category();
+            }
+
             // We collect the aggregation hints whether they are hidden or not.
             if ($this->showcontributiontocoursetotal) {
                 $hint['grademax'] = $gradegrade->grade_item->grademax;
                 $hint['grademin'] = $gradegrade->grade_item->grademin;
                 $hint['grade'] = $gradeval;
-                $parent = $gradeobject->load_parent_category();
-                if ($gradeobject->is_category_item()) {
-                    $parent = $parent->load_parent_category();
-                }
                 $hint['parent'] = $parent->load_grade_item()->id;
                 $this->aggregationhints[$gradegrade->itemid] = $hint;
             }

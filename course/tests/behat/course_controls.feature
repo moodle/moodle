@@ -178,3 +178,29 @@ Feature: Course activity controls works as expected
       | courseformat |
       | topics       |
       | weeks        |
+
+  @javascript
+  Scenario Outline: Admins could disable indentation
+    Given the following "courses" exist:
+      | fullname | shortname | format | coursedisplay | numsections | startdate |
+      | Course 1 | C1 | <courseformat> | <coursedisplay> | 5 | 0 |
+    And the following "activities" exist:
+      | activity | name               | intro                     | course | idnumber |
+      | forum    | Test forum name    | Test forum description    | C1     | forum1   |
+    And I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
+    And I open "Test forum name" actions menu
+    And "Move right" "link" should be visible
+    And "Move left" "link" should not be visible
+    And I click on "Move right" "link" in the "Test forum name" activity
+    When the following config values are set as admin:
+      | indentation | 0 | format_<courseformat> |
+    And I am on "Course 1" course homepage with editing mode on
+    And I open "Test forum name" actions menu
+    Then "Move right" "link" should not exist
+    And "Move left" "link" should not exist
+
+    Examples:
+      | courseformat |
+      | topics       |
+      | weeks        |

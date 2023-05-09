@@ -202,7 +202,7 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
         font-size: 11px;
         line-height: 11px;
         position: absolute;
-        top: $navbar-height / 4;
+        top: $navbar-height * 0.25;
         right: 0;
     }
 

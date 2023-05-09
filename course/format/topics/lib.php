@@ -50,6 +50,10 @@ class format_topics extends core_courseformat\base {
         return true;
     }
 
+    public function uses_indentation(): bool {
+        return (get_config('format_topics', 'indentation')) ? true : false;
+    }
+
     /**
      * Returns the display name of the given section that the course prefers.
      *
@@ -449,7 +453,9 @@ class format_topics extends core_courseformat\base {
      */
     public function get_config_for_external() {
         // Return everything (nothing to hide).
-        return $this->get_format_options();
+        $formatoptions = $this->get_format_options();
+        $formatoptions['indentation'] = get_config('format_topics', 'indentation');
+        return $formatoptions;
     }
 }
 

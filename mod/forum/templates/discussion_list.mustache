@@ -199,20 +199,20 @@
                             data-discussionid="{{id}}"
                             data-forumid="{{forumid}}">
                             <td class="p-0 text-center align-middle icon-no-margin" style="width: 1px;">
-                                {{#discussion.pinned}}
-                                    {{#pix}}i/pinned, mod_forum, {{#str}}discussionpinned, mod_forum{{/str}}{{/pix}}
-                                {{/discussion.pinned}}
-                                {{^discussion.pinned}}
-                                    {{#discussion}}
-                                        {{> mod_forum/forum_discussion_favourite_toggle}}
-                                    {{/discussion}}
-                                {{/discussion.pinned}}
+                                {{#discussion}}
+                                    {{> mod_forum/forum_discussion_favourite_toggle}}
+                                {{/discussion}}
                             </td>
                             <th scope="row" class="topic p-0 align-middle">
                                 <div class="p-3 pl-0">
-                                    <a class="w-100 h-100 d-block" href="{{discussion.urls.view}}" title="{{discussion.name}}" aria-label="{{discussion.name}}">
-                                        {{#shortentext}}100, {{{discussion.name}}}{{/shortentext}}
-                                    </a>
+                                    <div class="d-flex">
+                                        {{#discussion.pinned}}
+                                            {{#pix}}i/pinned, mod_forum, {{#str}}discussionpinned, mod_forum{{/str}}{{/pix}}
+                                        {{/discussion.pinned}}
+                                        <a class="w-100 h-100 d-block" href="{{discussion.urls.view}}" title="{{discussion.name}}" aria-label="{{discussion.name}}">
+                                            {{#shortentext}}100, {{{discussion.name}}}{{/shortentext}}
+                                        </a>
+                                    </div>
                                     <div>
                                         <span class="badge badge-danger rounded" data-region="locked-label" {{^discussion.locked}}hidden{{/discussion.locked}}>
                                             {{#str}}locked, forum{{/str}}

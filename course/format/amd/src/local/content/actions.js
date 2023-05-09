@@ -192,6 +192,8 @@ export default class extends BaseComponent {
 
         event.preventDefault();
 
+        const pendingModalReady = new Pending(`courseformat/actions:prepareMoveSectionModal`);
+
         // The section edit menu to refocus on end.
         const editTools = this._getClosestActionMenuToogler(target);
 
@@ -244,6 +246,8 @@ export default class extends BaseComponent {
             this.reactive.dispatch('sectionMove', [sectionId], target.dataset.id);
             this._destroyModal(modal, editTools);
         });
+
+        pendingModalReady.resolve();
     }
 
     /**
@@ -261,6 +265,8 @@ export default class extends BaseComponent {
         const cmInfo = this.reactive.get('cm', cmId);
 
         event.preventDefault();
+
+        const pendingModalReady = new Pending(`courseformat/actions:prepareMoveCmModal`);
 
         // The section edit menu to refocus on end.
         const editTools = this._getClosestActionMenuToogler(target);
@@ -337,6 +343,8 @@ export default class extends BaseComponent {
             this.reactive.dispatch('cmMove', [cmId], targetSectionId, targetCmId);
             this._destroyModal(modal, editTools);
         });
+
+        pendingModalReady.resolve();
     }
 
     /**

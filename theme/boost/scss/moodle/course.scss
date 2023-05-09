@@ -144,7 +144,7 @@ body:not(.editing)  .sitetopic ul.section {
         width: 16px;
         height: 16px;
         padding: 0;
-        margin: 0 ($spacer / 2);
+        margin: 0 ($spacer * 0.5);
         display: inline-block;
     }
 
@@ -616,8 +616,8 @@ body:not(.editing)  .sitetopic ul.section {
     &.editing {
         li.activity span.autocompletion img {
             /* Use the same spacing as the filler. */
-            margin-right: $spacer / 2;
-            margin-left: $spacer / 2;
+            margin-right: $spacer * 0.5;
+            margin-left: $spacer * 0.5;
         }
     }
 }
@@ -743,11 +743,11 @@ span.editinstructions {
 #frontpage-available-course-list,
 #frontpage-course-list,
 .course-search-result {
-    margin-top: $spacer / 2;
+    margin-top: $spacer * 0.5;
     .coursebox {
-        padding: $spacer / 2;
+        padding: $spacer * 0.5;
         border: $border-width solid $border-color;
-        margin-bottom: $spacer / 2;
+        margin-bottom: $spacer * 0.5;
 
         @include border-radius();
     }

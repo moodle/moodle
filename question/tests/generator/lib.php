@@ -118,11 +118,12 @@ class core_question_generator extends component_generator_base {
      * @param string $which as for the corresponding argument of
      *      {@link question_test_helper::get_question_form_data}. null for the default one.
      * @param array|stdClass $overrides any fields that should be different from the base example.
-     * @return stdClass the question data.
+     * @return stdClass the question data, including version info and questionbankentryid
      */
     public function update_question($question, $which = null, $overrides = null) {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+        $question = clone($question);
 
         $qtype = $question->qtype;
 
@@ -144,6 +145,11 @@ class core_question_generator extends component_generator_base {
             }
             $DB->update_record('question', $question);
         }
+        $questionversion = $DB->get_record('question_versions', ['questionid' => $question->id], '*', MUST_EXIST);
+        $question->versionid = $questionversion->id;
+        $question->questionbankentryid = $questionversion->questionbankentryid;
+        $question->version = $questionversion->version;
+        $question->status = $questionversion->status;
 
         return $question;
     }
