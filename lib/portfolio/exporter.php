@@ -167,7 +167,6 @@ class portfolio_exporter {
                 $this->instancefile = 'portfolio/' . $this->instance->get('plugin') . '/lib.php';
                 $this->instance->set('exporter', $this);
             }
-            $this->dirty = true;
             return true;
         }
         $a = (object)array('property' => $field, 'class' => get_class($this));
