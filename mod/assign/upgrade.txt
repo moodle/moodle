@@ -6,6 +6,12 @@ This files describes API changes in the assign code.
   - `assign::format_grade_for_log`
   - `assign::format_submission_for_log`
   - `assign_plugin::format_for_log`
+* The assign_files renderable no longer abuses the dynamic nature of PHP and puts random properties onto stored_file
+  instances.
+  If you were previously using these properties, please update to use the new method on the tree:
+  * $file->portfoliobutton      $renderer->get_portfolio_button($file)
+  * $file->timemodified         $tree->get_modified_time($file)
+  * $file->fileurl              $tree->get_file_url($file)
 
 === 4.2 ===
 * The upgradelib.php file has been removed from mod_assign as it was only being used by mod_assignment and mod_assignment has been removed from core.
