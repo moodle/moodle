@@ -3352,6 +3352,27 @@ function get_all_user_name_fields($returnsql = false, $tableprefix = null, $pref
 }
 
 /**
+ * @deprecated since Moodle 3.11 MDL-71051
+ */
+function profile_display_fields() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed.');
+}
+
+/**
+ * @deprecated since Moodle 3.11 MDL-71051
+ */
+function profile_edit_category() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed.');
+}
+
+/**
+ * @deprecated since Moodle 3.11 MDL-71051
+ */
+function profile_edit_field() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed.');
+}
+
+/**
  * Update a subscription from the form data in one of the rows in the existing subscriptions table.
  *
  * @param int $subscriptionid The ID of the subscription we are acting upon.
