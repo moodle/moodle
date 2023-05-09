@@ -386,6 +386,12 @@ if ($showactivity) {
             $requiredentries_allowed = false;
         }
 
+        if ($groupmode != NOGROUPS) {
+            $returnurl = new moodle_url('/mod/data/view.php', ['d' => $data->id, 'mode' => $mode, 'search' => s($search),
+                'sort' => s($sort), 'order' => s($order)]);
+            echo html_writer::div(groups_print_activity_menu($cm, $returnurl, true), 'mb-3');
+        }
+
         // Search for entries.
         list($records, $maxcount, $totalcount, $page, $nowperpage, $sort, $mode) =
             data_search_entries($data, $cm, $context, $mode, $currentgroup, $search, $sort, $order, $page, $perpage, $advanced, $search_array, $record);
@@ -401,12 +407,6 @@ if ($showactivity) {
 
         $actionbar = new \mod_data\output\action_bar($data->id, $pageurl);
         echo $actionbar->get_view_action_bar($hasrecords, $mode);
-
-        if ($groupmode) {
-            $returnurl = new moodle_url('/mod/data/view.php', ['d' => $data->id, 'mode' => $mode, 'search' => s($search),
-                'sort' => s($sort), 'order' => s($order)]);
-            echo html_writer::div(groups_print_activity_menu($cm, $returnurl, true), 'mb-3');
-        }
 
         // Advanced search form doesn't make sense for single (redirects list view).
         if ($maxcount && $mode != 'single') {
