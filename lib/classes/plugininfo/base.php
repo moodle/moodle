@@ -77,6 +77,9 @@ abstract class base {
     /** @var int Move a plugin down in the plugin order */
     public const MOVE_DOWN = 1;
 
+    /** @var string Name of the plugin */
+    public $component;
+
     /**
      * Whether this plugintype supports its plugins being disabled.
      *
@@ -153,6 +156,7 @@ abstract class base {
             $plugin->type        = $type;
             $plugin->typerootdir = $typerootdir;
             $plugin->name        = $name;
+            $plugin->component   = $plugin->type.'_'.$plugin->name;
             $plugin->rootdir     = null;
             $plugin->displayname = $name;
             $plugin->versiondb   = $version;
@@ -183,6 +187,7 @@ abstract class base {
         $plugin->name        = $name;
         $plugin->rootdir     = $namerootdir;
         $plugin->pluginman   = $pluginman;
+        $plugin->component   = $plugin->type.'_'.$plugin->name;
 
         $plugin->init_display_name();
         $plugin->load_disk_version();
