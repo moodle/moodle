@@ -1132,7 +1132,7 @@ const Tour = class {
                 if (!previousTarget.attr('tabindex')) {
                     previousTarget.attr('tabindex', '-1');
                 }
-                previousTarget.focus();
+                previousTarget.first().focus();
             }
         }
 
@@ -1642,9 +1642,9 @@ const Tour = class {
                 });
                 fader.attr('data-flexitour', 'step-background-fader');
 
-                if (targetNode.parents('[data-region="fixed-drawer"]').length) {
+                if (targetNode.parents('[data-region="fixed-drawer"]').length || !stepConfig.zIndex) {
                     let targetClone = targetNode.clone();
-                    background.append(targetClone);
+                    background.append(targetClone.first());
                 }
 
                 if (stepConfig.zIndex) {
@@ -1691,7 +1691,7 @@ const Tour = class {
             // This makes behavior of this function consistent across browsers
             // WebKit always returns auto if the element is positioned.
             let position = elem.css("position");
-            if (position === "absolute" || position === "relative" || position === "fixed") {
+            if (position === "absolute" || position === "fixed") {
                 // IE returns 0 when zIndex is not specified
                 // other browsers return a string
                 // we ignore the case of nested elements with an explicit value of 0

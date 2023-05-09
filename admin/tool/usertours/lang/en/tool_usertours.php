@@ -289,6 +289,15 @@ $string['tour_navigation_mycourses_title'] = 'Courses and categories';
 $string['tour_navigation_mycourses_tour_des'] = 'Course management options on the My courses page';
 $string['tour_navigation_mycourses_tour_name'] = 'Course management';
 
+// 4.2 New gradebook tour.
+$string['tour_gradebook_action_content'] = '<div class="text-center">@@PIXICON::tour/tour_grader_report_action_menu::tool_usertours@@</div>Sort columns and choose which ones to display. In Edit mode, use this shortcut to access frequent tasks related to viewing and editing grade items.';
+$string['tour_gradebook_action_title'] = 'Quick links to actions';
+$string['tour_gradebook_filter_content'] = '<div class="text-center">@@PIXICON::tour/tour_grader_report_initials::tool_usertours@@</div>Filter students by the initials of their first or last name.';
+$string['tour_gradebook_filter_title'] = 'Filter by name';
+$string['tour_gradebook_search_content'] = '<div class="text-center">@@PIXICON::tour/tour_grader_report_search::tool_usertours@@</div>Use the search box to quickly find specific students.';
+$string['tour_gradebook_search_title'] = 'Find students easily';
+$string['tour_gradebook_tour_description'] = 'Search and navigation features in Gradebook grader report';
+$string['tour_gradebook_tour_name'] = 'Gradebook Grader Report';
 $string['tour_final_step_title'] = 'End of tour';
 $string['tour_final_step_content'] = 'This is the end of your user tour. It won\'t show again unless you reset it using the link in the footer.';
 
