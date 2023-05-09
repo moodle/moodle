@@ -734,10 +734,7 @@ class assign_files implements renderable {
                 $button->reset_formats();
                 $this->portfolioform = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
             }
-
         }
-
-        $this->preprocess($this->dir, $filearea, $component);
     }
 
     /**
@@ -746,9 +743,11 @@ class assign_files implements renderable {
      * @param array $dir
      * @param string $filearea
      * @param string $component
+     * @deprecated since Moodle 4.3
      */
     public function preprocess($dir, $filearea, $component) {
         // Nothing to do here any more.
+        debugging('The preprocess method has been deprecated since Moodle 4.3.', DEBUG_DEVELOPER);
     }
 
     /**
