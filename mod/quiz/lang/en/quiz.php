@@ -532,6 +532,15 @@ $string['messageprovider:attempt_grading_complete'] = 'Notification that your at
 $string['messageprovider:submission'] = 'Notification of your students\' quiz submissions';
 $string['max'] = 'Max';
 $string['maxmark'] = 'Maximum mark';
+$string['maxmarks'] = 'Max Marks';
+$string['maxmarks_help'] = 'Max marks determines whether the grade information are hidden or how it is displayed:
+
+* To hide the grade information completely, do not tick this checkbox (Marks checkbox is disabled automatically).
+
+* To show Max marks only: tick this checkbox and not the Marks checkbox.
+
+* To show both Max marks and Marks, tick this checkbox as well as the Marks checkbox.';
+
 $string['min'] = 'Min';
 $string['minutes'] = 'Minutes';
 $string['missingcorrectanswer'] = 'Correct answer must be specified';

@@ -63,6 +63,7 @@ class review_setting extends \admin_setting {
         return [
             'attempt'          => get_string('theattempt', 'quiz'),
             'correctness'      => get_string('whethercorrect', 'question'),
+            'maxmarks'         => get_string('maxmarks', 'quiz'),
             'marks'            => get_string('marks', 'question'),
             'specificfeedback' => get_string('specificfeedback', 'question'),
             'generalfeedback'  => get_string('generalfeedback', 'question'),

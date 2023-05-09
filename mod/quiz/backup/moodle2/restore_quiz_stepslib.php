@@ -184,6 +184,14 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
                     ($oldreview & QUIZ_OLD_CLOSED & QUIZ_OLD_SCORES ?
                             display_options::AFTER_CLOSE : 0);
 
+            if (!isset($data->reviewmaxmarks)) {
+                $data->reviewmaxmarks =
+                        display_options::DURING |
+                        display_options::IMMEDIATELY_AFTER |
+                        display_options::LATER_WHILE_OPEN |
+                        display_options::AFTER_CLOSE;
+            }
+
             $data->reviewmarks =
                     display_options::DURING |
                     ($oldreview & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_SCORES ?

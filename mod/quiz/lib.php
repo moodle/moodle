@@ -1117,6 +1117,7 @@ function quiz_process_options($quiz) {
     // Combing the individual settings into the review columns.
     $quiz->reviewattempt = quiz_review_option_form_to_db($quiz, 'attempt');
     $quiz->reviewcorrectness = quiz_review_option_form_to_db($quiz, 'correctness');
+    $quiz->reviewmaxmarks = quiz_review_option_form_to_db($quiz, 'maxmarks');
     $quiz->reviewmarks = quiz_review_option_form_to_db($quiz, 'marks');
     $quiz->reviewspecificfeedback = quiz_review_option_form_to_db($quiz, 'specificfeedback');
     $quiz->reviewgeneralfeedback = quiz_review_option_form_to_db($quiz, 'generalfeedback');

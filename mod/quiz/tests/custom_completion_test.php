@@ -485,6 +485,7 @@ class custom_completion_test extends advanced_testcase {
         $moduleinfo->modulename = 'quiz';
         $moduleinfo->quizpassword = '';
         $moduleinfo->cmidnumber = '';
+        $moduleinfo->maxmarksopen = 1;
         $moduleinfo->marksopen = 1;
         $moduleinfo->visible = 1;
         $moduleinfo->visibleoncoursepage = 1;
