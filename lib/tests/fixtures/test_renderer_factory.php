@@ -43,7 +43,7 @@ class test_output_factory extends renderer_factory_base {
      *
      */
     public function __construct() {
-        $this->prefixes = array('theme_child', 'theme_parent');
+        // Leave the construct empty to override the parent.
     }
 
     /**
@@ -93,6 +93,7 @@ class test_output_factory extends renderer_factory_base {
      * @return string[] of classnames
      */
     public function get_theme_overridden_renderer_factory_search_paths($component, $subtype = null, $target = null) {
+        $themeprefixes = ['theme_child', 'theme_parent'];
         $searchtargets = array();
         $classnames = $this->standard_renderer_classnames($component, $subtype);
 
@@ -102,7 +103,7 @@ class test_output_factory extends renderer_factory_base {
         // when loading the theme configs.
 
         // First try the renderers with correct suffix.
-        foreach ($this->prefixes as $prefix) {
+        foreach ($themeprefixes as $prefix) {
             foreach ($classnames as $classnamedetails) {
                 if ($classnamedetails['validwithprefix']) {
                     if ($classnamedetails['autoloaded']) {
@@ -122,7 +123,7 @@ class test_output_factory extends renderer_factory_base {
         }
 
         // Then try general renderer.
-        foreach ($this->prefixes as $prefix) {
+        foreach ($themeprefixes as $prefix) {
             foreach ($classnames as $classnamedetails) {
                 if ($classnamedetails['validwithprefix']) {
                     if ($classnamedetails['autoloaded']) {
