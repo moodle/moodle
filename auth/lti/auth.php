@@ -199,7 +199,6 @@ class auth_plugin_lti extends \auth_plugin_base {
                 }
             }
             $user = $this->create_new_account($member, $iss);
-            $this->update_user_account($user, $member, $iss);
             return \core_user::get_user($user->id);
         }
     }
