@@ -130,13 +130,13 @@ if (has_capability('moodle/grade:viewall', $context)) {
 
         $actionbar = new \gradereport_user\output\action_bar($context, $userview, null, $currentgroup);
         // Print header.
-        print_grade_page_head($courseid, 'report', 'user', ' ', false, null, true,
+        print_grade_page_head($courseid, 'report', 'user', false, false, null, true,
             null, null, null, $actionbar);
 
         echo $report->output_report_zerostate();
     } else if ($userid == 0) { // Show all reports.
         $actionbar = new \gradereport_user\output\action_bar($context, $userview, 0, $currentgroup);
-        print_grade_page_head($courseid, 'report', 'user', ' ', false, null, true,
+        print_grade_page_head($courseid, 'report', 'user', false, false, null, true,
             null, null, null, $actionbar);
 
         while ($userdata = $gui->next_user()) {
@@ -177,7 +177,7 @@ if (has_capability('moodle/grade:viewall', $context)) {
     $userheading = $gradesrenderer->user_heading($report->user, $courseid, false);
 
     // Print the page.
-    print_grade_page_head($courseid, 'report', 'user', ' ');
+    print_grade_page_head($courseid, 'report', 'user');
 
     echo $OUTPUT->heading($userheading);
 

@@ -110,8 +110,7 @@ if ($table->is_downloading()) {
 // Print header.
 $actionbar = new \core_grades\output\general_action_bar($context,
     new moodle_url('/grade/report/history/index.php', ['id' => $courseid]), 'report', 'history');
-print_grade_page_head($COURSE->id, 'report', 'history', get_string('pluginname',
-    'gradereport_history'), false, false, true, null, null,
+print_grade_page_head($COURSE->id, 'report', 'history', false, false, false, true, null, null,
     null, $actionbar);
 $mform->display();
 
