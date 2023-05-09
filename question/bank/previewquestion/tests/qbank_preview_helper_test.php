@@ -221,21 +221,28 @@ class qbank_preview_helper_test extends \advanced_testcase {
      * @covers ::load_versions
      */
     public function test_load_versions() {
-        global $DB;
         $this->resetAfterTest();
+
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $qcat1 = $generator->create_question_category(['name' => 'My category', 'sortorder' => 1, 'idnumber' => 'myqcat']);
         $questiongenerated = $generator->create_question('description', null, ['name' => 'q1', 'category' => $qcat1->id]);
+
         $qtypeobj = question_bank::get_qtype($questiongenerated->qtype);
         $question = question_bank::load_question($questiongenerated->id);
         $versionids = helper::load_versions($question->questionbankentryid);
-        $this->assertCount(1, $versionids);
+        $this->assertEquals([
+            $question->id => 1,
+        ], $versionids);
+
         $fromform = new stdClass();
         $fromform->name = 'Name edited';
         $fromform->category = $qcat1->id;
-        $qtypeobj->save_question($questiongenerated, $fromform);
+        $questiontwo = $qtypeobj->save_question($questiongenerated, $fromform);
         $versionids = helper::load_versions($question->questionbankentryid);
-        $this->assertCount(2, $versionids);
+        $this->assertSame([
+            $question->id => 1,
+            $questiontwo->id => 2,
+        ], $versionids);
     }
 
     /**

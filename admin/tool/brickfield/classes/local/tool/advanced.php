@@ -16,6 +16,8 @@
 
 namespace tool_brickfield\local\tool;
 
+use tool_brickfield\manager;
+
 /**
  * Class advanced.
  *
@@ -52,11 +54,35 @@ class advanced extends tool {
     }
 
     /**
+     * Builds context data used to render a single grid item on the advanced page.
+     * @param string $icon
+     * @param string $heading
+     * @param string $content
+     * @return array
+     */
+    protected function get_grid_item_context(string $icon, string $heading, string $content): array {
+        return [
+            "icon" => "pix/i/$icon.png",
+            "iconalt" => get_string("icon:$icon", manager::PLUGINNAME),
+            "heading" => get_string($heading, manager::PLUGINNAME),
+            "content" => get_string($content, manager::PLUGINNAME)
+        ];
+    }
+
+    /**
      * Return the data for renderer / template display.
      * @return \stdClass
      */
     protected function fetch_data(): \stdClass {
         $data = (object)[
+            'griditems' => [
+                $this->get_grid_item_context("analytics-custom", "headingone", "contentone"),
+                $this->get_grid_item_context("tools-custom", "headingtwo", "contenttwo"),
+                $this->get_grid_item_context("file-edit-custom", "headingthree", "contentthree"),
+                $this->get_grid_item_context("search-plus-custom", "headingfour", "contentfour"),
+                $this->get_grid_item_context("wand-magic-custom", "headingfive", "contentfive"),
+                $this->get_grid_item_context("hands-helping-custom", "headingsix", "contentsix"),
+            ],
             'valid' => true,
             'error' => '',
         ];

@@ -2789,3 +2789,29 @@ function check_xmlrpc_usage(environment_results $result): ?environment_results {
 
     return null;
 }
+
+/**
+ * Check whether the mod_assignment is currently being used.
+ *
+ * @param environment_results $result
+ * @return environment_results|null
+ */
+function check_mod_assignment(environment_results $result): ?environment_results {
+    global $DB, $CFG;
+
+    // Check the number of records.
+    if ($DB->get_manager()->table_exists('assignment') && $DB->count_records('assignment') > 0) {
+        $result->setInfo('Assignment 2.2 is in use');
+        $result->setFeedbackStr('modassignmentinuse');
+        return $result;
+    }
+
+    // Check for mod_assignment subplugins.
+    if (is_dir($CFG->dirroot . '/mod/assignment/type')) {
+        $result->setInfo('Assignment 2.2 subplugins present');
+        $result->setFeedbackStr('modassignmentsubpluginsexist');
+        return $result;
+    }
+
+    return null;
+}

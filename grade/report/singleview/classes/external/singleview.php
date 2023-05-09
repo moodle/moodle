@@ -80,7 +80,7 @@ class singleview extends core_course_external {
         $coursecontext = context_course::instance($params['courseid']);
         parent::validate_context($coursecontext);
 
-        $gtree = new grade_tree($params['courseid'], false, false, null, !$CFG->enableoutcomes);
+        $gtree = new grade_tree($params['courseid'], false, true, null, !$CFG->enableoutcomes);
         $gradeableitems = $gtree->get_items();
 
         $gradeitems = array_map(function ($gradeitem) use ($PAGE, $USER, $params) {
@@ -98,7 +98,6 @@ class singleview extends core_course_external {
 
             return $item;
         }, $gradeableitems);
-        sort($gradeitems);
 
         return [
             'gradeitems' => $gradeitems,

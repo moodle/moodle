@@ -1873,7 +1873,7 @@ class moodle_page {
         }
 
         if (is_null($script)) {
-            $script = ltrim($SCRIPT, '/');
+            $script = ltrim($SCRIPT ?? '', '/');
             $len = strlen($CFG->admin);
             if (substr($script, 0, $len) == $CFG->admin) {
                 $script = 'admin' . substr($script, $len);

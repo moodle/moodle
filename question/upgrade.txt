@@ -1,5 +1,16 @@
 This files describes API changes for code that uses the question API.
 
+=== 4.1.4 ===
+
+1) The core_question_generator::update_question has been changed so that it no longer modifies the $question
+   object that was passed in. Instead, the update question is returned (which was already the case).
+   If you were relying on the old behavioru in your tests, you will need a change like
+       $questiongenerator->update_question($question, ...);
+   to
+       $question = $questiongenerator->update_question($question, ...);
+   Also, the $question object returned now has fields questionbankentryid, versionid, version and status.
+
+
 === 4.1 ===
 
 1) get_bulk_action_key() in core_question\local\bank\bulk_action_base class is deprecated and renamed to get_key().

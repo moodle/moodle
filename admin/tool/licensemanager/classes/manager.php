@@ -14,21 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * License manager.
- *
- * @package    tool_licensemanager
- * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_licensemanager;
 
 use tool_licensemanager\form\edit_license;
 use license_manager;
 use stdClass;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * License manager, main controller for tool_licensemanager.
@@ -95,18 +85,25 @@ class manager {
         }
 
         $viewmanager = true;
+        $redirect = helper::get_licensemanager_url();
 
         switch ($action) {
             case self::ACTION_DISABLE:
+                require_sesskey();
                 license_manager::disable($license);
+                redirect($redirect);
                 break;
 
             case self::ACTION_ENABLE:
+                require_sesskey();
                 license_manager::enable($license);
+                redirect($redirect);
                 break;
 
             case self::ACTION_DELETE:
+                require_sesskey();
                 license_manager::delete($license);
+                redirect($redirect);
                 break;
 
             case self::ACTION_CREATE:
@@ -116,7 +113,9 @@ class manager {
 
             case self::ACTION_MOVE_UP:
             case self::ACTION_MOVE_DOWN:
+                require_sesskey();
                 $this->change_license_order($action, $license);
+                redirect($redirect);
                 break;
 
             case self::ACTION_VIEW_LICENSE_MANAGER:
