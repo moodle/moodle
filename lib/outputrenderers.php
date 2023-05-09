@@ -2732,26 +2732,10 @@ class core_renderer extends renderer_base {
     }
 
     /**
-     * Internal implementation of file tree viewer items rendering.
-     *
-     * @param array $dir
-     * @return string
+     * @deprecated since Moodle 4.3
      */
-    public function htmllize_file_tree($dir) {
-        if (empty($dir['subdirs']) and empty($dir['files'])) {
-            return '';
-        }
-        $result = '<ul>';
-        foreach ($dir['subdirs'] as $subdir) {
-            $result .= '<li>'.s($subdir['dirname']).' '.$this->htmllize_file_tree($subdir).'</li>';
-        }
-        foreach ($dir['files'] as $file) {
-            $filename = $file->get_filename();
-            $result .= '<li><span>'.html_writer::link($file->fileurl, $filename).'</span></li>';
-        }
-        $result .= '</ul>';
-
-        return $result;
+    public function htmllize_file_tree() {
+        throw new coding_exception('This function is deprecated and no longer relevant.');
     }
 
     /**
@@ -5579,17 +5563,6 @@ class core_renderer_maintenance extends core_renderer {
      */
     public function file_picker($options) {
         return '';
-    }
-
-    /**
-     * Does nothing. The maintenance renderer cannot produce and HTML file tree.
-     *
-     * @param array $dir
-     * @return string
-     */
-    public function htmllize_file_tree($dir) {
-        return '';
-
     }
 
     /**
