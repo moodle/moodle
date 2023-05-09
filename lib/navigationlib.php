@@ -158,6 +158,12 @@ class navigation_node implements renderable {
     public $showinsecondarynavigation = true;
     /** @var bool If set to true the children of this node will be displayed within a submenu when applicable */
     public $showchildreninsubmenu = false;
+    /** @var string tab element ID. */
+    public $tab;
+    /** @var string unique identifier. */
+    public $moremenuid;
+    /** @var bool node that have children. */
+    public $haschildren;
 
     /**
      * Constructs a new navigation_node
@@ -2279,7 +2285,6 @@ class global_navigation extends navigation_node {
                 if ($this->includesectionnum !== false && $this->includesectionnum == $section->section) {
                     $this->load_section_activities($sectionnode, $section->section, $activities);
                 }
-                $section->sectionnode = $sectionnode;
                 $navigationsections[$sectionid] = $section;
             }
         }

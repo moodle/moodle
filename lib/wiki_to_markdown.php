@@ -323,7 +323,6 @@ class WikiToMarkdown {
     $this->list_state = LIST_NONE;
     $this->list_depth = 0;
     $this->list_backtrack = array();
-    $this->spelling_on = false;
     $this->courseid = $courseid;
 
     // split content into array of single lines

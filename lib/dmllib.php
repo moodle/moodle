@@ -178,7 +178,7 @@ class dml_multiple_records_exception extends dml_exception {
  */
 class dml_missing_record_exception extends dml_exception {
     /** @var string A table's name.*/
-    public $table;
+    public $tablename;
     /** @var string An SQL query.*/
     public $sql;
     /** @var array The SQL's parameters.*/
