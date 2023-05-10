@@ -181,7 +181,7 @@ class auth_plugin_lti extends \auth_plugin_base {
         unset($member['picture']);
 
         if ($binduser = $this->get_user_binding($iss, $member['user_id'])) {
-            $user = \core_user::get_user((int) $binduser);
+            $user = \core_user::get_user($binduser);
             $this->update_user_account($user, $member, $iss);
             return \core_user::get_user($user->id);
         } else {
@@ -223,7 +223,7 @@ class auth_plugin_lti extends \auth_plugin_base {
         }
 
         if ($binduser = $this->get_user_binding($launchdata['iss'], $launchdata['sub'])) {
-            $user = \core_user::get_user((int) $binduser);
+            $user = \core_user::get_user($binduser);
             $this->update_user_account($user, $launchdata, $launchdata['iss']);
             return \core_user::get_user($user->id);
         } else {
