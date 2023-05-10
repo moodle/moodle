@@ -3513,7 +3513,6 @@ class curl {
         if (empty($this->header)) {
             $this->setHeader(array(
                 'User-Agent: ' . $useragent,
-                'Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7',
                 'Connection: keep-alive'
                 ));
         } else if (!in_array('User-Agent: ' . $useragent, $this->header)) {
