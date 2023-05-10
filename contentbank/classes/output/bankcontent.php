@@ -132,8 +132,9 @@ class bankcontent implements renderable, templatable {
         }
         $options = [];
         foreach ($this->allowedcategories as $allowedcategory) {
-            $options[$allowedcategory->ctxid] = format_string($allowedcategory->name, true,
-                context_coursecat::instance($allowedcategory->ctxinstance));
+            $options[$allowedcategory->ctxid] = format_string($allowedcategory->name, true, [
+                'context' => context_coursecat::instance($allowedcategory->ctxinstance),
+            ]);
         }
         if (!empty($options)) {
             $allowedcontexts['categories'] = [get_string('coursecategories') => $options];
