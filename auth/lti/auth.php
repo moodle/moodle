@@ -380,7 +380,11 @@ class auth_plugin_lti extends \auth_plugin_base {
             'lastname' => $userdata['family_name'] ?? $iss,
             'email' => $email
         ];
-        user_update_user($update);
+        $userfieldstocompare = array_intersect_key((array) $user, $update);
+
+        if (!empty(array_diff($update, $userfieldstocompare))) {
+            user_update_user($update); // Only update if there's a change.
+        }
 
         if (!empty($userdata['picture'])) {
             try {
