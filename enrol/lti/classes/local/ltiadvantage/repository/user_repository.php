@@ -162,10 +162,18 @@ class user_repository {
                     "to user '{$ltiuser->userid}' and can't be associated with another user '{$userrecord->id}'.");
             }
 
-            $userrecord->timemodified = $timenow;
-            $ltiuserrecord->timemodified = $timenow;
-            \user_update_user($userrecord);
+            // Only update the Moodle user record if something has changed.
+            $rawuser = \core_user::get_user($userrecord->id);
+            $userfieldstocompare = array_intersect_key(
+                (array) $rawuser,
+                (array) $userrecord
+            );
+            if (!empty(array_diff((array) $userrecord, $userfieldstocompare))) {
+                \user_update_user($userrecord);
+            }
             unset($userrecord->id);
+
+            $ltiuserrecord->timemodified = $timenow;
             $DB->update_record($this->ltiuserstable, $ltiuserrecord);
         } else {
             // Validate uniqueness of the lti user, in the case of a stale object coming in to be saved.
@@ -173,8 +181,17 @@ class user_repository {
                 throw new \coding_exception("Cannot create duplicate LTI user '{$user->get_localid()}' for resource " .
                     "'{$user->get_resourceid()}'.");
             }
+
+            // Only update the Moodle user record if something has changed.
             $userid = $userrecord->id;
-            \user_update_user($userrecord);
+            $rawuser = \core_user::get_user($userid);
+            $userfieldstocompare = array_intersect_key(
+                (array) $rawuser,
+                (array) $userrecord
+            );
+            if (!empty(array_diff((array) $userrecord, $userfieldstocompare))) {
+                \user_update_user($userrecord);
+            }
             unset($userrecord->id);
 
             // Create the lti_user record, holding details that have a lifespan equal to that of the enrolment instance.
