@@ -3751,6 +3751,7 @@
       <VENDOR name="oracle" version="19" />
     </DATABASE>
     <PHP version="7.4.0" level="required">
+      <RESTRICT function="restrict_php_version_82" message="unsupportedphpversion82" />
     </PHP>
     <PCREUNICODE level="optional">
       <FEEDBACK>
