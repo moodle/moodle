@@ -292,8 +292,12 @@ abstract class base {
      * @throws coding_exception
      */
     final protected function annotate_entity(string $name, lang_string $title): void {
-        if (empty($name) || $name !== clean_param($name, PARAM_ALPHANUMEXT)) {
+        if ($name === '' || $name !== clean_param($name, PARAM_ALPHANUMEXT)) {
             throw new coding_exception('Entity name must be comprised of alphanumeric character, underscore or dash');
+        }
+
+        if (array_key_exists($name, $this->entitytitles)) {
+            throw new coding_exception('Duplicate entity name', $name);
         }
 
         $this->entitytitles[$name] = $title;

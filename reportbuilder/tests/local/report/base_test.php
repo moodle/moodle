@@ -19,9 +19,12 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\report;
 
 use advanced_testcase;
+use coding_exception;
 use context_system;
 use core_reportbuilder\system_report_available;
 use core_reportbuilder\system_report_factory;
+use lang_string;
+use ReflectionClass;
 
 /**
  * Unit tests for report base class
@@ -109,6 +112,56 @@ class base_test extends advanced_testcase {
         $contextcourse = \context_course::instance($course->id);
         $systemreport2 = system_report_factory::create(system_report_available::class, $contextcourse);
         $this->assertEquals($contextcourse, $systemreport2->get_context());
+    }
+
+    /**
+     * Test entity annotation
+     */
+    public function test_annotate_entity(): void {
+        $this->resetAfterTest();
+
+        $systemreport = system_report_factory::create(system_report_available::class, context_system::instance());
+
+        $method = (new ReflectionClass($systemreport))->getMethod('annotate_entity');
+        $method->setAccessible(true);
+
+        $method->invoke($systemreport, 'test', new lang_string('yes'));
+        $this->assertEquals(new lang_string('yes'), $systemreport->get_entity_title('test'));
+    }
+
+    /**
+     * Test entity annotation for invalid entity name
+     */
+    public function test_annotate_entity_invalid(): void {
+        $this->resetAfterTest();
+
+        $systemreport = system_report_factory::create(system_report_available::class, context_system::instance());
+
+        $method = (new ReflectionClass($systemreport))->getMethod('annotate_entity');
+        $method->setAccessible(true);
+
+        $this->expectException(coding_exception::class);
+        $this->expectExceptionMessage('Entity name must be comprised of alphanumeric character, underscore or dash');
+        $method->invoke($systemreport, '', new lang_string('yes'));
+    }
+
+    /**
+     * Test entity annotation for duplicated entity name
+     */
+    public function test_annotate_entity_duplicate(): void {
+        $this->resetAfterTest();
+
+        $systemreport = system_report_factory::create(system_report_available::class, context_system::instance());
+
+        $method = (new ReflectionClass($systemreport))->getMethod('annotate_entity');
+        $method->setAccessible(true);
+
+        $method->invoke($systemreport, 'test', new lang_string('yes'));
+
+        // Adding a second time with the same name should trigger exception.
+        $this->expectException(coding_exception::class);
+        $this->expectExceptionMessage('Duplicate entity name (test)');
+        $method->invoke($systemreport, 'test', new lang_string('no'));
     }
 
     /**
