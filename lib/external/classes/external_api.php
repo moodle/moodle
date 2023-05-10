@@ -312,6 +312,9 @@ class external_api {
      * @since Moodle 2.0
      */
     public static function validate_parameters(external_description $description, $params) {
+        if ($params === null && $description->allownull == NULL_ALLOWED) {
+            return null;
+        }
         if ($description instanceof external_value) {
             if (is_array($params) || is_object($params)) {
                 throw new invalid_parameter_exception('Scalar type expected, array or object received.');
@@ -398,6 +401,9 @@ class external_api {
      * @since Moodle 2.0
      */
     public static function clean_returnvalue(external_description $description, $response) {
+        if ($response === null && $description->allownull == NULL_ALLOWED) {
+            return null;
+        }
         if ($description instanceof external_value) {
             if (is_array($response) || is_object($response)) {
                 throw new invalid_response_exception('Scalar type expected, array or object received.');

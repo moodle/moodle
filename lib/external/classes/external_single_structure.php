@@ -35,14 +35,16 @@ class external_single_structure extends external_description {
      * @param string $desc
      * @param int $required
      * @param array $default
+     * @param bool $allownull
      */
     public function __construct(
         array $keys,
         $desc = '',
         $required = VALUE_REQUIRED,
-        $default = null
+        $default = null,
+        $allownull = NULL_NOT_ALLOWED
     ) {
-        parent::__construct($desc, $required, $default);
+        parent::__construct($desc, $required, $default, $allownull);
         $this->keys = $keys;
     }
 }
