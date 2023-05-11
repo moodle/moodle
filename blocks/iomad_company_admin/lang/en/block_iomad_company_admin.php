@@ -532,6 +532,7 @@ $string['nodepartments'] = 'There are no departments defined';
 $string['nolicensesleft'] = '0 licenses left to allocate';
 $string['nolocations'] = 'No teaching locations have been created yet';
 $string['noneselected'] = 'No company selected';
+$string['noroles'] = 'No roles';
 $string['notemplates'] = 'There are no saved templates';
 $string['numlogins'] = 'Total number of logins';
 $string['notallocated'] = 'Not allocated';
