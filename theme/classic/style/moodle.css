@@ -28438,7 +28438,10 @@ span.editinstructions .alert-link {
   font-weight: 700;
 }
 
-.coursebox .content .coursefile,
+.coursebox .content .coursefile {
+  max-width: 100px;
+}
+
 .coursebox .content .courseimage img {
   max-width: 100px;
   max-height: 100px;
