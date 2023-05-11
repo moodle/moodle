@@ -9,6 +9,7 @@ namespace IMSGlobal\LTI\OAuth;
  * @version 2008-08-04
  * @license https://opensource.org/licenses/MIT The MIT License
  */
+#[\AllowDynamicProperties]
 class OAuthConsumer {
 
     public $key;
