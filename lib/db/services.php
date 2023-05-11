@@ -2821,6 +2821,13 @@ $functions = array(
         'capabilities' => '',
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+    'core_xapi_delete_states' => [
+        'classname' => 'core_xapi\external\delete_states',
+        'description' => 'Delete all xAPI state data from an activityId.',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_contentbank_delete_content' => [
         'classname'     => 'core_contentbank\external\delete_content',
         'classpath'     => '',

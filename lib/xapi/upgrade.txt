@@ -6,6 +6,8 @@ information provided here is intended especially for developers.
   a numeric value. This is to avoid problems with the database when using
   the default state store. If a plugin requires a non numeric activity ID,
   it must implement its own state store.
+* New xAPI state webservices:
+   - core_xapi_delete_states: delete all user state data for an activity
 
 === 4.2 ===
 
