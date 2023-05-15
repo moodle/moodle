@@ -4286,6 +4286,54 @@ EOD;
     }
 
     /**
+     * Helper function to decide whether to show the communication link or not.
+     *
+     * @return bool
+     */
+    public function has_communication_links(): bool {
+        if (!core_communication\api::is_available()) {
+            return false;
+        }
+        return !empty($this->communication_link());
+    }
+
+    /**
+     * Returns the communication link, complete with html.
+     *
+     * @return string
+     */
+    public function communication_link(): string {
+
+        if (during_initial_install()) {
+            return '';
+        }
+
+        $link = $this->communication_url() ?? '';
+        $commicon = $this->pix_icon('t/messages-o', '', 'moodle', ['class' => 'fa fa-comments']);
+        $newwindowicon = $this->pix_icon('i/externallink', get_string('opensinnewwindow'), 'moodle', ['class' => 'ml-1']);
+        $content = $commicon . get_string('communicationroomlink', 'course') . $newwindowicon;
+        $html = html_writer::tag('a', $content, ['target' => '_blank', 'href' => $link]);
+
+        return !empty($link) ? $html : '';
+    }
+
+    /**
+     * Returns the communication url for a given instance if it exists.
+     *
+     * @return string
+     */
+    public function communication_url(): string {
+        global $COURSE;
+        $url = '';
+        if ($COURSE->id !== SITEID) {
+            $comm = \core_communication\api::load_by_instance('core_course', 'coursecommunication', $COURSE->id);
+            $url = $comm->get_communication_room_url();
+        }
+
+        return !empty($url) ? $url : '';
+    }
+
+    /**
      * Returns the page heading menu.
      *
      * @since Moodle 2.5.1 2.6

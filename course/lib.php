@@ -24,6 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+use core_course\external\course_summary_exporter;
 use core_courseformat\base as course_format;
 
 require_once($CFG->libdir.'/completionlib.php');
@@ -2313,6 +2314,18 @@ function create_course($data, $editoroptions = NULL) {
         core_tag_tag::set_item_tags('core', 'course', $course->id, context_course::instance($course->id), $data->tags);
     }
 
+    // Communication api implementation in course.
+    if (isset($data->selectedcommunication) && core_communication\api::is_available()) {
+        // Prepare the communication api date.
+        $courseimage = course_summary_exporter::get_course_image($course);
+        $communicationroomname = !empty($data->communicationroomname) ? $data->communicationroomname : $data->fullname;
+        $selectedcommunication = $data->selectedcommunication;
+
+        // Communication api call.
+        $communication = \core_communication\api::load_by_instance('core_course', 'coursecommunication', $course->id);
+        $communication->create_and_configure_room($selectedcommunication, $communicationroomname, $courseimage);
+    }
+
     // Save custom fields if there are any of them in the form.
     $handler = core_course\customfield\course_handler::create();
     // Make sure to set the handler's parent context first.
@@ -2432,6 +2445,71 @@ function update_course($data, $editoroptions = NULL) {
     // Set showcompletionconditions to null when completion tracking has been disabled for the course.
     if (isset($data->enablecompletion) && $data->enablecompletion == COMPLETION_DISABLED) {
         $data->showcompletionconditions = null;
+    }
+
+    // Check if provider is selected.
+    $provider = $data->selectedcommunication ?? null;
+    // If the course moved to hidden category, set provider to none.
+    if ($changesincoursecat && empty($data->visible)) {
+        $provider = 'none';
+    }
+
+    // Communication api call.
+    if (!empty($provider) && core_communication\api::is_available()) {
+        // Prepare the communication api data.
+        $courseimage = course_summary_exporter::get_course_image($data);
+        if (!$courseimage) {
+            $courseimage = null;
+        }
+
+        // This nasty logic is here because of hide course doesn't pass anything in the data object.
+        if (!empty($data->communicationroomname)) {
+            $communicationroomname = $data->communicationroomname;
+        } else {
+            $communicationroomname = $data->fullname ?? $oldcourse->fullname;
+        }
+
+        // Update communication room membership of enrolled users.
+        require_once($CFG->libdir . '/enrollib.php');
+        $courseusers = enrol_get_course_users($data->id);
+        $enrolledusers = [];
+
+        foreach ($courseusers as $user) {
+            $enrolledusers[] = $user->id;
+        }
+
+        $communication = \core_communication\api::load_by_instance(
+            'core_course',
+            'coursecommunication',
+            $data->id
+        );
+
+        $addafterupdate = false;
+        if ($provider !== $communication->get_provider()) {
+            // If provider set to none, remove all the members.
+            if ($provider === 'none') {
+                $communication->remove_members_from_room($enrolledusers);
+            } else if (
+                // If previous provider was not none and current provider is not none, but a different provider, remove members.
+                $communication->get_provider() !== '' &&
+                $communication->get_provider() !== 'none' &&
+                $provider !== $communication->get_provider()
+            ) {
+                $communication->remove_members_from_room($enrolledusers);
+                $addafterupdate = true;
+            } else if (
+                // If previous provider was none and current provider is not none, but a different provider, remove members.
+                ($communication->get_provider() === '' || $communication->get_provider() === 'none') &&
+                $provider !== $communication->get_provider()
+            ) {
+                $addafterupdate = true;
+            }
+        }
+
+        $communication->update_room($provider, $communicationroomname, $courseimage);
+        if ($addafterupdate) {
+            $communication->add_members_to_room($enrolledusers, false);
+        }
     }
 
     // Update custom fields if there are any of them in the form.

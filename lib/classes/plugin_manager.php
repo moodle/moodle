@@ -1825,6 +1825,10 @@ class core_plugin_manager {
                 'gregorian'
             ),
 
+            'communication' => [
+                'matrix',
+            ],
+
             'contenttype' => array(
                 'h5p'
             ),

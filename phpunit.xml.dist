@@ -217,6 +217,9 @@
     <testsuite name="core_admin_testsuite">
       <directory suffix="_test.php">admin/tests</directory>
     </testsuite>
+    <testsuite name="core_communication_testsuite">
+      <directory suffix="_test.php">communication/tests</directory>
+    </testsuite>
 
     <!--Plugin suites: use admin/tool/phpunit/cli/util.php to build phpunit.xml from
         phpunit.xml.dist with up-to-date list of plugins in current install-->

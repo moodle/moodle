@@ -25138,8 +25138,19 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
   right: 2rem;
 }
 
+.btn-footer-communication {
+  display: none;
+  position: fixed;
+  bottom: 5rem;
+  right: 2rem;
+}
+
 .hasstickyfooter .btn-footer-popover {
   bottom: calc(1rem + max(96px, 0.9375rem * 3));
+}
+
+.hasstickyfooter .btn-footer-communication {
+  bottom: calc(4rem + max(96px, 0.9375rem * 3));
 }
 
 .popover.footer .popover-body {
@@ -25164,7 +25175,8 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
   .jsenabled #page-footer .footer-content-popover {
     display: none;
   }
-  .jsenabled .btn-footer-popover {
+  .jsenabled .btn-footer-popover,
+  .jsenabled .btn-footer-communication {
     display: block;
     z-index: 1000;
   }
