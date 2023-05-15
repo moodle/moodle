@@ -283,3 +283,5 @@ $string['loggedoff_help'] = 'Configure how you would like to receive notificatio
 $string['loggedoffdescription'] = 'When you are not logged into Moodle';
 $string['sendingvia'] = 'Sending "{$a->provider}" via "{$a->processor}"';
 $string['sendingviawhen'] = 'Sending "{$a->provider}" via "{$a->processor}" when {$a->state}';
+// #TICKET 15905.
+$string['cant_send_msg_to_conversation'] = 'User {$a->userid} cannot send a message to conversation {$a->conversationid}';

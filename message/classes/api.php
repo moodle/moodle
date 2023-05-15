@@ -1696,7 +1696,7 @@ class api {
         global $DB, $PAGE;
 
         if (!self::can_send_message_to_conversation($userid, $conversationid)) {
-            throw new \moodle_exception("User $userid cannot send a message to conversation $conversationid");
+            throw new \moodle_exception('cant_send_msg_to_conversation', 'message', '', [$userid, $conversationid]);
         }
 
         $eventdata = new \core\message\message();
