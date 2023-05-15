@@ -146,7 +146,6 @@ class qtype_multianswer extends question_type {
             question_bank::get_qtype($wrapped->qtype)->get_question_options($wrapped);
             // For wrapped questions the maxgrade is always equal to the defaultmark,
             // there is no entry in the question_instances table for them.
-            $wrapped->maxmark = $wrapped->defaultmark;
             $wrapped->category = $question->categoryobject->id;
             $question->options->questions[$sequence[$wrapped->id]] = $wrapped;
         }
@@ -303,7 +302,7 @@ class qtype_multianswer extends question_type {
                 }
             }
             $question->subquestions[$key] = question_bank::make_question($subqdata);
-            $question->subquestions[$key]->maxmark = $subqdata->defaultmark;
+            $question->subquestions[$key]->defaultmark = $subqdata->defaultmark;
             if (isset($subqdata->options->layout)) {
                 $question->subquestions[$key]->layout = $subqdata->options->layout;
             }
