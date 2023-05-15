@@ -89,7 +89,6 @@ class mod_book_external extends external_api {
 
         $chapters = book_preload_chapters($book);
         $firstchapterid = 0;
-        $lastchapterid = 0;
 
         foreach ($chapters as $ch) {
             if ($ch->hidden) {
@@ -98,7 +97,6 @@ class mod_book_external extends external_api {
             if (!$firstchapterid) {
                 $firstchapterid = $ch->id;
             }
-            $lastchapterid = $ch->id;
         }
 
         if (!$chapterid) {
@@ -124,8 +122,7 @@ class mod_book_external extends external_api {
             }
 
             // Trigger the chapter viewed event.
-            $islastchapter = ($chapter->id == $lastchapterid) ? true : false;
-            book_view($book, $chapter, $islastchapter, $course, $cm, $context);
+            book_view($book, $chapter, \mod_book\helper::is_last_visible_chapter($chapterid, $chapters), $course, $cm, $context);
         }
 
         $result = array();
