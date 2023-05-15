@@ -181,7 +181,7 @@ Feature: View the user report as the student will see it
   Scenario: View the report as the student from both the teachers and students perspective when the student can view hidden
     Given the following "role capability" exists:
       | role                    | student |
-      | moodle/grade:viewhidden | Allow   |
+      | moodle/grade:viewhidden | allow   |
     And I am on the "C1" "Course" page logged in as "teacher1"
     And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the field with xpath "//select[@name='report_user_showtotalsifcontainhidden']" to "Show totals excluding hidden items"

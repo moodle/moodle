@@ -24,11 +24,10 @@ Feature: Users can edit tags to add description or rename
   @javascript
   Scenario: User with tag editing capability can change tag description
     Given the following "role capability" exists:
-      | role                         | Tag editor |
-      | moodle/tag:edit              | Allow      |
-      | moodle/site:viewparticipants | Allow      |
-      | moodle/user:viewdetails      | Allow      |
-    And I log out
+      | role                         | tageditor |
+      | moodle/tag:edit              | allow     |
+      | moodle/site:viewparticipants | allow     |
+      | moodle/user:viewdetails      | allow     |
     When I log in as "editor1"
     And I turn editing mode on
     And the following config values are set as admin:

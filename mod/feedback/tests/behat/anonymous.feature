@@ -59,8 +59,8 @@ Feature: Anonymous feedback
   @javascript
   Scenario: Complete anonymous feedback and view analysis on the front page as an authenticated user
     Given the following "role capability" exists:
-      | role                         | Authenticated user on frontpage |
-      | mod/feedback:viewanalysepage | Allow                           |
+      | role                         | frontpage |
+      | mod/feedback:viewanalysepage | allow     |
     And I log in as "user1"
     And I am on site homepage
     When I follow "Site feedback"
@@ -117,8 +117,8 @@ Feature: Anonymous feedback
     Given the following config values are set as admin:
       | feedback_allowfullanonymous | 1 |
     And the following "role capability" exists:
-      | role                         | Guest |
-      | mod/feedback:viewanalysepage | Allow |
+      | role                         | guest |
+      | mod/feedback:viewanalysepage | allow |
     When I follow "Site feedback"
     And I should not see "Preview questions"
     And I follow "Answer the questions"
