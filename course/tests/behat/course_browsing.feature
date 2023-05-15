@@ -25,7 +25,7 @@ Feature: Restricting access to course lists
     And the following "roles" exist:
       | name            | shortname    | description      | archetype      |
       | Category viewer | coursebrowse | My custom role 1 |                |
-    And the following "role capabilities" exist:
+    And the following "role capability" exist:
         | role         | moodle/category:viewcourselist |
         | user         | prevent                        |
         | guest        | prevent                        |
