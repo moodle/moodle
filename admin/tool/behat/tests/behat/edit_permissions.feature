@@ -21,7 +21,7 @@ Feature: Edit capabilities
 
   Scenario: Default system capabilities modification
     Given I log in as "admin"
-    When I navigate to "Users > Permissions > Define roles" in site administration
+    And I navigate to "Users > Permissions > Define roles" in site administration
     And I click on "Edit Teacher role" "link"
     And I fill the capabilities form with the following permissions:
       | capability | permission |

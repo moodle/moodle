@@ -71,7 +71,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
 
   @javascript
   Scenario: Agree on behalf of another user as a manager, single policy, javascript on
-    Given the following "role capabilities" exist:
+    Given the following "role capability" exists:
       | role                     | manager |
       | tool/policy:acceptbehalf | allow   |
     When I log in as "manager"
@@ -166,7 +166,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     Given the following "role capability" exists:
       | role                     | manager |
       | tool/policy:acceptbehalf | allow   |
-    Given I log in as "admin"
+    And I log in as "admin"
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I click on "Actions" "link_or_button" in the "This privacy policy" "table_row"
     And I click on "Set status to \"Active\"" "link" in the "This privacy policy" "table_row"
