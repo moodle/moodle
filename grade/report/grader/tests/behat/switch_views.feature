@@ -69,13 +69,13 @@ Feature: We can change what we are viewing on the grader report
 
   @javascript @skip_chrome_zerosize
   Scenario: Minimise the grader report containing hidden activities without the 'moodle/grade:viewhidden' capability
-    Given the following "role capability" exists:
-      | role                    | Teacher |
-      | moodle/grade:viewhidden | Prevent |
-    When I am on "Course 1" course homepage with editing mode on
+    Given I am on "Course 1" course homepage with editing mode on
     And I open "Test assignment name 2" actions menu
     And I click on "Hide" "link" in the "Test assignment name 2" activity
-    And I am on "Course 1" course homepage
+    And the following "role capability" exists:
+      | role                    | editingteacher |
+      | moodle/grade:viewhidden | prevent        |
+    And I am on the "C1" "course" page logged in as "teacher1"
     And I navigate to "View > Grader report" in the course gradebook
     Then I should see "Test assignment name 1" in the "user-grades" "table"
     And I should see "Test assignment name 2" in the "user-grades" "table"

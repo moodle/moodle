@@ -169,8 +169,8 @@ Feature: tool_monitor_subscriptions
 
   Scenario: No manage rules link when user does not have permission
     Given the following "role capability" exists:
-      | role                     | Non-editing teacher |
-      | tool/monitor:managerules | Prohibit            |
+      | role                     | teacher  |
+      | tool/monitor:managerules | prohibit |
     And I log in as "teacher1"
     And I follow "Preferences" in the user menu
     And I follow "Event monitoring"

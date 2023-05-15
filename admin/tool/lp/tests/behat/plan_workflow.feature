@@ -16,17 +16,16 @@ Feature: Manage plan workflow
       | usermanageownplan | User manage own plan role | user |
       | manageplan | Manager all plans role | manager |
     And the following "role capabilities" exist:
-      | role                   | moodle/competency:planmanageowndraft |
-      | usermanageowndraftplan | allow                                |
-      | usermanageownplan      | allow                                |
-      | manageplan             | allow                                |
-    And the following "role capabilities" exist:
-      | role              | moodle/competency:planmanageown |
-      | usermanageownplan | allow                           |
-      | manageplan        | allow                           |
-    And the following "role capabilities" exist:
-      | role       | moodle/competency:planmanage | moodle/competency:planview | moodle/competency:planreview | moodle/competency:planrequestreview |
-      | manageplan | allow                        | allow                      | allow                        | allow                               |
+      | role                   | moodle/competency:planmanageowndraft | moodle/competency:planmanageown |
+      | usermanageowndraftplan | allow                                |                                 |
+      | usermanageownplan      | allow                                | allow                           |
+      | manageplan             | allow                                | allow                           |
+    And the following "role capability" exists:
+      | role                                | manageplan |
+      | moodle/competency:planmanage        | allow      |
+      | moodle/competency:planview          | allow      |
+      | moodle/competency:planreview        | allow      |
+      | moodle/competency:planrequestreview | allow      |
     And the following "role assigns" exist:
       | user  | role | contextlevel | reference |
       | user1 | usermanageowndraftplan | System |  |

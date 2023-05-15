@@ -31,7 +31,7 @@ Feature: Restrict which blocks can be added to Dashboard
       | block/course_list:myaddinstance | prohibit |
       | block/html:myaddinstance        | prohibit |
     When I log in as "student1"
-    And I turn editing mode on
+    And I press "Customise this page"
     Then the add block selector should not contain "Comments" block
     And the add block selector should not contain "Courses" block
     And the add block selector should not contain "HTML" block

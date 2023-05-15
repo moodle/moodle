@@ -18,9 +18,9 @@ Feature: Users can flag tags and manager can reset flags
       | name         | isstandard |
       | Neverusedtag | 1          |
     And the following "role capability" exists:
-      | role                         | Authenticated user |
-      | moodle/site:viewparticipants | Allow              |
-      | moodle/user:viewdetails      | Allow              |
+      | role                         | user  |
+      | moodle/site:viewparticipants | allow |
+      | moodle/user:viewdetails      | allow |
     And I log in as "user2"
     And I press "Customise this page"
     # TODO MDL-57120 site "Tags" link not accessible without navigation block.

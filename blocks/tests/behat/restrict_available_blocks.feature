@@ -27,7 +27,7 @@ Feature: Allowed blocks controls
     Given the following "role capability" exists:
       | role                               | editingteacher  |
       | block/activity_modules:addinstance | prohibit        |
-    Given I log in as "admin"
+    And I log in as "admin"
     And I am on "Course 1" course homepage
     And I navigate to "Users > Permissions" in current page administration
     And I override the system permissions of "Teacher" role with:
