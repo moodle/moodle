@@ -1877,7 +1877,7 @@ function purify_html($text, $options = array()) {
         $config = HTMLPurifier_Config::createDefault();
 
         $config->set('HTML.DefinitionID', 'moodlehtml');
-        $config->set('HTML.DefinitionRev', 6);
+        $config->set('HTML.DefinitionRev', 7);
         $config->set('Cache.SerializerPath', $cachedir);
         $config->set('Cache.SerializerPermissions', $CFG->directorypermissions);
         $config->set('Core.NormalizeNewlines', false);
@@ -1919,7 +1919,7 @@ function purify_html($text, $options = array()) {
 
             // Media elements.
             // https://html.spec.whatwg.org/#the-video-element
-            $def->addElement('video', 'Block', 'Optional: #PCDATA | Flow | source | track', 'Common', [
+            $def->addElement('video', 'Inline', 'Optional: #PCDATA | Flow | source | track', 'Common', [
                 'src' => 'URI',
                 'crossorigin' => 'Enum#anonymous,use-credentials',
                 'poster' => 'URI',
@@ -1933,7 +1933,7 @@ function purify_html($text, $options = array()) {
                 'height' => 'Length',
             ]);
             // https://html.spec.whatwg.org/#the-audio-element
-            $def->addElement('audio', 'Block', 'Optional: #PCDATA | Flow | source | track', 'Common', [
+            $def->addElement('audio', 'Inline', 'Optional: #PCDATA | Flow | source | track', 'Common', [
                 'src' => 'URI',
                 'crossorigin' => 'Enum#anonymous,use-credentials',
                 'preload' => 'Enum#auto,metadata,none',
