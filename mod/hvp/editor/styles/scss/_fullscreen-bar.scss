@@ -1,0 +1,199 @@
+@font-face {
+  font-family: 'h5p-fullscreen-bar';
+  src:  url('fonts/h5p-fullscreen-bar.eot?p850ul');
+  src:  url('fonts/h5p-fullscreen-bar.eot?p850ul#iefix') format('embedded-opentype'),
+    url('fonts/h5p-fullscreen-bar.ttf?p850ul') format('truetype'),
+    url('fonts/h5p-fullscreen-bar.woff?p850ul') format('woff'),
+    url('fonts/h5p-fullscreen-bar.svg?p850ul#h5p') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.h5peditor-form-manager-head {
+  background: #f5f5f5;
+  color: #414141;
+  border-bottom: 1px solid #dfdfdf;
+  height: 41px;
+  line-height: 40px;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  z-index: 3;
+  justify-content: space-between;
+  align-items: flex-start;
+  box-shadow: 0px 2px 2px rgba(128,128,128,0.15);
+  padding: 0 1em 0 0.5em;
+}
+
+.h5peditor-form-manager-button {
+  background: transparent;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  color: #414141;
+  position: relative;
+  white-space: nowrap;
+  line-height: normal;
+}
+
+.h5peditor-form-manager-button-inner {
+  display: block;
+  outline: none;
+}
+
+.h5peditor-form-manager-breadcrumb {
+  display: flex;
+  min-width: 0;
+  flex-grow: 1;
+}
+
+.h5peditor-form-manager-proceed {
+  display: none;
+
+  background: #186df7;
+  color: #fff;
+
+  font-size: 14px;
+  font-weight: bold;
+  font-family: Open Sans, sans-serif;
+  border-radius: 2px;
+  margin-right: 5px;
+  margin-top: 5px;
+  padding: 5px 10px;
+
+  &:hover {
+    background: #20588f;
+  }
+}
+
+.h5peditor-form-manager-fullscreen {
+  width: 24px;
+  height: 24px;
+  font-size: 20px;
+  margin-top: 9px;
+  margin-left: 0.25em;
+
+  .h5peditor-form-manager-button-inner:before {
+    font-family: 'h5p-fullscreen-bar';
+    content: '\e929';
+  }
+
+  &:after {
+    visibility: hidden;
+    position: absolute;
+    top: 120%;
+    right: -10%;
+    z-index: 3;
+    padding: 0.25em 0.75em;
+    background: #212121;
+    color: #fff;
+    white-space: nowrap;
+    font-size: 14px;
+    box-shadow: 0 0 0.5em #858585;
+    text-indent: 0;
+    font-weight: normal;
+    pointer-events: none;
+    outline: none;
+    line-height: normal;
+    content: attr(aria-label);
+  }
+
+  &:hover:after,
+  &:focus:after {
+    visibility: visible;
+  }
+}
+
+.h5peditor-semi-fullscreen {
+  .h5peditor-form-manager-fullscreen .h5peditor-form-manager-button-inner:before {
+    content: "\e92a";
+  }
+  .h5peditor-form-manager-proceed {
+    display: block;
+  }
+  .h5peditor-form-manager-head {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+  }
+}
+
+.form-manager-exit.form-manager-fullscreen .h5peditor-form-manager-button-inner:before {
+  content: "\f066";
+}
+
+.h5peditor-form-manager-title {
+  position: relative;
+  min-width: 20px;
+  font-weight: bold;
+  font-size: 14px;
+
+  /* Icons for content types */
+  &:before {
+    font-family: 'h5p-fullscreen-bar';
+    content: "\e928";
+    font-size: 1.2em;
+    position: relative;
+    top: 0.1em;
+    margin-right: 0.25em;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  &.dragtext:before {
+    content: "\e600";
+  }
+  &.markthewords:before {
+    content: "\e601";
+  }
+  &.multichoice:before {
+    content: "\e603";
+  }
+  &.interactivevideo:before {
+    content: "\e900";
+  }
+  &.audio:before {
+    content: "\e901";
+  }
+  &.truefalse:before {
+    content: "\e902";
+  }
+  &.dialogcards:before {
+    content: "\e903";
+  }
+  &.questionnaire:before {
+    content: "\e904";
+  }
+  &.coursepresentation:before {
+    content: "\e923";
+  }
+  &.dragquestion:before {
+    content: "\e991";
+  }
+  &.summary:before {
+    content: "\e992";
+  }
+  &.singlechoiceset:before {
+    content: "\e993";
+  }
+  &.blanks:before {
+    content: "\e994";
+  }
+}
+
+/* Makes metadata popup behave good in fullscreen */
+.h5peditor-semi-fullscreen + .h5p-metadata-popup-overlay {
+  position: fixed;
+
+  .h5p-metadata-wrapper {
+    margin-top: 20px !important;
+  }
+}

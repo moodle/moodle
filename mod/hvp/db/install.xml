@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/hvp/db" VERSION="20190731" COMMENT="XMLDB file for Moodle mod/hvp"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="hvp" COMMENT="Activity data">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="json_content" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The content in json format"/>
+        <FIELD NAME="embed_type" TYPE="char" LENGTH="127" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="disable" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="main_library_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The library we first instanciate for this node"/>
+        <FIELD NAME="content_type" TYPE="char" LENGTH="127" NOTNULL="false" SEQUENCE="false" COMMENT="Content type as defined in h5p.json"/>
+        <FIELD NAME="authors" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="List of authors in json format"/>
+        <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Link to the source, could also be citation"/>
+        <FIELD NAME="year_from" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Start year for copyright"/>
+        <FIELD NAME="year_to" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="End year for copyright"/>
+        <FIELD NAME="license" TYPE="char" LENGTH="63" NOTNULL="false" SEQUENCE="false" COMMENT="License name of the content"/>
+        <FIELD NAME="license_version" TYPE="char" LENGTH="15" NOTNULL="false" SEQUENCE="false" COMMENT="Version of the license used for the content"/>
+        <FIELD NAME="changes" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="List of changes in json format"/>
+        <FIELD NAME="license_extras" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Extra licensing terms"/>
+        <FIELD NAME="author_comments" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Comments for the editor"/>
+        <FIELD NAME="default_language" TYPE="char" LENGTH="32" NOTNULL="false" SEQUENCE="false" COMMENT="Default language for common fields"/>
+        <FIELD NAME="filtered" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Filtered version of json_content"/>
+        <FIELD NAME="slug" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Human readable content identifier that is unique"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="completionpass" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="shared" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="synced" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="hub_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="a11y_title" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="hvp_xapi_results" COMMENT="Stored xAPI events">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="content_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="parent_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="interaction_type" TYPE="char" LENGTH="127" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="correct_responses_pattern" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="response" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="additionals" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="raw_score" TYPE="int" LENGTH="6" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="max_score" TYPE="int" LENGTH="6" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="results" UNIQUE="false" FIELDS="content_id, user_id"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="hvp_content_user_data" COMMENT="Stores user data about the content">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id for the user answering this H5P"/>
+        <FIELD NAME="hvp_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of hvp content in the 'hvp' table"/>
+        <FIELD NAME="sub_content_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Subcontent id of hvp content, 0 if this is not subcontent"/>
+        <FIELD NAME="data_id" TYPE="char" LENGTH="127" NOTNULL="false" SEQUENCE="false" COMMENT="The data type identifier"/>
+        <FIELD NAME="data" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The actual user data that was stored."/>
+        <FIELD NAME="preloaded" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="delete_on_content_change" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="hvp_libraries" COMMENT="Stores information about libraries.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Primary Key: The id of the library"/>
+        <FIELD NAME="machine_name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The library machine name"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The human readable name of this library"/>
+        <FIELD NAME="major_version" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="minor_version" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="patch_version" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="runnable" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="Can this library be started by the module? i.e. not a dependency."/>
+        <FIELD NAME="fullscreen" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Display fullscreen button"/>
+        <FIELD NAME="embed_types" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="preloaded_js" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Comma separated list of scripts to load."/>
+        <FIELD NAME="preloaded_css" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Comma separated list of stylesheets to load."/>
+        <FIELD NAME="drop_library_css" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="List of libraries that should not have CSS included if this library is used. Comma separated list."/>
+        <FIELD NAME="semantics" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The semantics definition in json format"/>
+        <FIELD NAME="restricted" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Restricts the ability to create new content using this library"/>
+        <FIELD NAME="tutorial_url" TYPE="char" LENGTH="1000" NOTNULL="false" SEQUENCE="false" COMMENT="URL to a tutorial for this library"/>
+        <FIELD NAME="has_icon" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not this library contains an icon.svg"/>
+        <FIELD NAME="add_to" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Plugin configuration data"/>
+        <FIELD NAME="metadata_settings" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Metadata settings"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="meta" UNIQUE="false" FIELDS="machine_name, major_version, minor_version, patch_version, runnable"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="hvp_libraries_hub_cache" COMMENT="Caches content types from the H5P hub.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Primary Key: The id of the library"/>
+        <FIELD NAME="machine_name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The library machine name"/>
+        <FIELD NAME="major_version" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="minor_version" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="patch_version" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="h5p_major_version" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="The major version required of H5P core"/>
+        <FIELD NAME="h5p_minor_version" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="The minor version required of H5P core"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The human readable name of this library"/>
+        <FIELD NAME="summary" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Short description of library"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Long description of library"/>
+        <FIELD NAME="icon" TYPE="char" LENGTH="511" NOTNULL="true" SEQUENCE="false" COMMENT="URL to icon"/>
+        <FIELD NAME="created_at" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="Time that the library was uploaded"/>
+        <FIELD NAME="updated_at" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="Time that the library has its latest update"/>
+        <FIELD NAME="is_recommended" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="Whether the library is recommended by the HUB moderators"/>
+        <FIELD NAME="popularity" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="How many times the library has been downloaded"/>
+        <FIELD NAME="screenshots" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Screenshot URLs json encoded"/>
+        <FIELD NAME="license" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Library license(s) json encoded"/>
+        <FIELD NAME="example" TYPE="char" LENGTH="511" NOTNULL="true" SEQUENCE="false" COMMENT="URL to example content for this library"/>
+        <FIELD NAME="tutorial" TYPE="char" LENGTH="511" NOTNULL="false" SEQUENCE="false" COMMENT="Tutorial URL"/>
+        <FIELD NAME="keywords" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Keywords for library json encoded"/>
+        <FIELD NAME="categories" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Categories for library json encoded"/>
+        <FIELD NAME="owner" TYPE="char" LENGTH="511" NOTNULL="false" SEQUENCE="false" COMMENT="Owner of the library"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="hvp_content_hub_cache" COMMENT="Caches content metadata options from the H5P OER Hub.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="language" TYPE="char" LENGTH="31" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="json" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="last_checked" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="language" UNIQUE="true" FIELDS="language"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="hvp_libraries_libraries" COMMENT="Library dependencies">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="library_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Primary Key: The id of a H5P library."/>
+        <FIELD NAME="required_library_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The dependency to load"/>
+        <FIELD NAME="dependency_type" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="'preloaded, dynamic, or editor'"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="hvp_libraries_languages" COMMENT="Translations for libraries">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="library_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="language_code" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="language_json" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The translations defined in json format"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="hvp_libraries_cachedassets" COMMENT="Use to know which caches to clear when a library is updated">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="library_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="hash" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="relation" UNIQUE="true" FIELDS="library_id, hash"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="hvp_contents_libraries" COMMENT="Store which library is used in which content.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="hvp_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Identifier for a content found from the 'hvp' table"/>
+        <FIELD NAME="library_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The identifier of a H5P library this content uses"/>
+        <FIELD NAME="dependency_type" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="dynamic, preloaded or editor"/>
+        <FIELD NAME="drop_css" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="1 if the preloaded css from the dependency is to be excluded"/>
+        <FIELD NAME="weight" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Determines the order in which the preloaded libraries will be loaded"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="meta" UNIQUE="false" FIELDS="drop_css"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="hvp_events" COMMENT="Keep track of logged H5P events">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="created_at" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="63" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="sub_type" TYPE="char" LENGTH="63" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="content_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="content_title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="library_name" TYPE="char" LENGTH="127" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="library_version" TYPE="char" LENGTH="31" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="hvp_tmpfiles" COMMENT="Keep track of files uploaded before content is saved">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="hvp_counters" COMMENT="A set of global counters to keep track of H5P usage">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="63" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="library_name" TYPE="char" LENGTH="127" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="library_version" TYPE="char" LENGTH="31" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="num" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="realkey" UNIQUE="false" FIELDS="type, library_name, library_version"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="hvp_auth" COMMENT="Stores tokens for authenticating users for different actions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of the user that created the token"/>
+        <FIELD NAME="created_at" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="Timestamp for when token was created"/>
+        <FIELD NAME="secret" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="Secret used to generate the authentication token"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="user_id" UNIQUE="true" FIELDS="user_id"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

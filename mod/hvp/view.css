@@ -1,0 +1,77 @@
+.content-hub-icon {
+    font-family: h5p!important;
+    speak: none;
+    font-style: normal;
+    font-weight: 400;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.content-hub-icon:before {
+    content: "\e93b";
+}
+.content-hub-options {
+    font-size: 14px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    color: #333333;
+    box-shadow: 0 4px 4px -4px #e0e0e0;
+    z-index: 1;
+    position: relative;
+    padding: 1em 0;
+}
+.content-hub-options > div {
+    margin-left: 2em;
+    white-space: nowrap;
+}
+.content-hub-options > div:first-child {
+    margin-left: 0;
+    font-weight: bold;
+}
+.content-hub-options > div.content-hub-share {
+    font-weight: normal;
+}
+.content-hub-options > div:first-child > i {
+    margin-right: 0.5em;
+    font-size: 1.25em;
+    vertical-align: middle;
+    display: inline-block;
+}
+.content-hub-options a {
+    color: #186df7;
+}
+.content-hub-options a span {
+    text-decoration: underline;
+}
+.content-hub-options form {
+    margin: 0;
+}
+.content-hub-options .content-hub-sharing {
+    font-size: 0.917em;
+    color: #186df7;
+}
+.content-hub-options .content-hub-sync a:before,
+.content-hub-options .content-hub-unshare a:before,
+.content-hub-options .content-hub-sharing:before {
+    font-family: "h5p";
+    margin-right: 0.5em;
+    font-size: 0.7em;
+    line-height: 1;
+    content: "\e917";
+}
+.content-hub-options .content-hub-unshare a:before {
+    content: "\e916";
+}
+.content-hub-options .content-hub-sharing:before {
+    content: "\e917";
+    display: inline-block;
+    animation: spin 2s linear infinite;
+}
+@keyframes spin {
+    from {transform:rotate(0deg);}
+    to {transform:rotate(360deg);}
+}

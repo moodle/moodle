@@ -1,0 +1,74 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_message/message_drawer_view_search_header
+
+    This template will render the header of the search page in the message drawer.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * All data attributes are required
+
+    Context variables required for this template:
+    * userid The logged in user id
+    * urls The URLs for the popover
+
+    This is an overridden template
+    changing  "div.input-group" to "div.input-append"
+    removing the "div.input-group-append"
+    changing "button.btn.btn-outline-secondary" to "button.btn.m0"
+
+    Example context (json):
+    {}
+
+}}
+
+<div class="hidden border-bottom px-2 py-3 view-search" {{^isdrawer}}data-in-panel="true"{{/isdrawer}} aria-hidden="true" data-region="view-search">
+    <div class="d-flex align-items-center">
+        <a
+            class="mr-2 align-self-stretch d-flex align-items-center"
+            href="#"
+            data-route-back
+            data-action="cancel-search"
+        >
+            {{> core_message/message_drawer_icon_back }}
+        </a>
+        <div class="input-append m-0 d-flex flex-grow">
+            <input
+                type="text"
+                class="form-control border-right-0 searchinput"
+                placeholder="{{#str}} search, core_search {{/str}}"
+                aria-label="{{#str}} search, core_search {{/str}}"
+                data-region="search-input"
+            >
+            <button
+                class="btn m-0"
+                type="button"
+                data-action="search"
+            >
+                <span data-region="search-icon-container">
+                    {{#pix}} a/search, core {{/pix}}
+                </span>
+                <span class="hidden" data-region="loading-icon-container">
+                    {{> core/loading }}
+                </span>
+            </button>
+        </div>
+    </div>
+</div>

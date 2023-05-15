@@ -1,0 +1,79 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/dynamic_tabs
+
+    Template for showing dynamic tabs
+
+    Example context (json):
+    {
+        "dataattributes": [ {"name": "programid", "value": "13"} ],
+        "showtabsnavigation": "1",
+        "tabs": [
+            {
+                "shortname": "tab1",
+                "displayname": "Tab 1",
+                "content": "Content of tab 1",
+                "enabled": "1"
+            },
+            {
+                "shortname": "tab2",
+                "displayname": "Tab 2",
+                "content": "Content of tab 2",
+                "enabled": "1"
+            }
+        ]
+    }
+}}
+{{! We must not use the JS helper otherwise this gets executed too late. Tell behat to wait. }}
+<script>
+    M.util.js_pending('core_dynamic_tabs_init');
+</script>
+
+<div class="dynamictabs">
+    {{#showtabsnavigation}}
+        <ul class="nav nav-tabs mb-4 moodle-has-zindex" id="dynamictabs-tabs" role="tablist">
+            {{#tabs}}
+                <li class="nav-item " role="presentation">
+                    <a class="nav-link {{#active}}active{{/active}} {{^enabled}}disabled{{/enabled}}" id="{{shortname}}-tab" data-toggle="tab" href="#{{shortname}}" role="tab" aria-controls="{{shortname}}">
+                        {{{displayname}}}
+                    </a>
+                </li>
+            {{/tabs}}
+        </ul>
+    {{/showtabsnavigation}}
+    <div class="tab-content" id="dynamictabs-content">
+        {{#tabs}}
+            <div class="tab-pane container-fluid {{#active}}active{{/active}}"
+                 id="{{shortname}}"
+                 role="tabpanel"
+                 aria-labelledby="{{shortname}}-tab"
+                 data-tab-content="{{shortname}}"
+                 data-tab-class="{{tabclass}}"
+                {{#dataattributes}}data-{{name}}="{{value}}"{{/dataattributes}}>
+                {{{content}}}
+            </div>
+        {{/tabs}}
+    </div>
+</div>
+
+{{#js}}
+    require(['core/dynamic_tabs'], function(Tabs) {
+        Tabs.init();
+        M.util.js_complete('core_dynamic_tabs_init');
+    });
+{{/js}}

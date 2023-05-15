@@ -1,0 +1,68 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_reportbuilder/local/dynamictabs/audience
+
+    Template for report audience
+
+    Example context (json):
+    {
+        "reportid": 1,
+        "contextid": 1,
+        "hasinstances": 1,
+        "instances": [{
+            "instanceid": 1,
+            "heading": "Title",
+            "headingeditable": "Title (edit me)",
+            "showormessage": 1,
+            "canedit": 1,
+            "candelete": 1,
+            "description": "description",
+            "form": "form"
+        }],
+        "sidebarmenucards": [{
+            "menucards": [{
+                "name": "General",
+                "items": [{
+                    "name": "Manually added users",
+                    "identifier": "core_reportbuilder:users"
+                }]
+            }]
+        }]
+    }
+}}
+<h2 class="sr-only">{{#str}} audience, core_reportbuilder {{/str}}</h2>
+<div class="audiences-wrapper d-flex flex-column flex-lg-row lambda">
+    <div id="audiences-menu">
+        {{! Sidebar }}
+        {{> core_reportbuilder/local/sidebar-menu/area}}
+    </div>
+    <div id="audiences-container" class="reportbuilder-audiences-container d-flex flex-column flex-fill" data-region="audiences">
+        {{! No audience container }}
+        <div class="justify-content-center {{#hasinstances}}hidden{{/hasinstances}}" data-region="no-instances-message">
+            <div class="alert alert-info mb-0">{{#str}} noaudiences, core_reportbuilder {{/str}}</div>
+        </div>
+        {{#instances}}
+            {{> core_reportbuilder/local/audience/form}}
+        {{/instances}}
+    </div>
+</div>
+{{#js}}
+    require(['core_reportbuilder/audience'], function(audience) {
+        audience.init({{reportid}}, {{contextid}});
+    });
+{{/js}}
