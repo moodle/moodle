@@ -4463,9 +4463,11 @@ class assign {
      * @return string
      */
     protected function view_remove_submission_confirm() {
-        global $USER;
+        global $USER, $PAGE;
 
         $userid = optional_param('userid', $USER->id, PARAM_INT);
+
+        $PAGE->set_pagelayout('standard');
 
         if (!$this->can_edit_submission($userid, $USER->id)) {
             print_error('nopermission');
@@ -5360,9 +5362,11 @@ class assign {
      * @return string
      */
     protected function check_submit_for_grading($mform) {
-        global $USER, $CFG;
+        global $USER, $CFG, $PAGE;
 
         require_once($CFG->dirroot . '/mod/assign/submissionconfirmform.php');
+
+        $PAGE->set_pagelayout('standard');
 
         // Check that all of the submission plugins are ready for this submission.
         // Also check whether there is something to be submitted as well against atleast one.
