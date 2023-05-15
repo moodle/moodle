@@ -36,8 +36,8 @@ Feature: Bulk remove submissions
       | Test assignment name  | student1  | I'm the student1 submission  |
       | Test assignment name  | student2  | I'm the student2 submission  |
     And the following "role capability" exists:
-      | role                           | Teacher |
-      | mod/assign:editothersubmission | Allow   |
+      | role                           | editingteacher |
+      | mod/assign:editothersubmission | allow          |
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I should see "I'm the student1 submission"
@@ -94,29 +94,8 @@ Feature: Bulk remove submissions
       | Test assignment name  | student1  | I'm the student1 submission  |
       | Test assignment name  | student2  | I'm the student2 submission  |
     And the following "role capability" exists:
-      | role                           | Teacher |
-      | mod/assign:editothersubmission | Allow   |
-    And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
-
-  @javascript
-  Scenario: Notification should be displayed when non-group users are selected for submission bulk removal
-            in separate group mode
-    Given the following "activity" exists:
-      | activity                            | assign                  |
-      | course                              | C1                      |
-      | name                                | Test assignment name    |
-      | assignsubmission_onlinetext_enabled | 1                       |
-      | assignsubmission_file_enabled       | 0                       |
-      | groupmode                           | 1                       |
-      | submissiondrafts                    | 0                       |
-    And the following "mod_assign > submissions" exist:
-      | assign                | user      | onlinetext                   |
-      | Test assignment name  | student1  | I'm the student1 submission  |
-      | Test assignment name  | student2  | I'm the student2 submission  |
-    Given the following "role capability" exists:
-      | role                           | Teacher |
-      | mod/assign:editothersubmission | Allow   |
+      | role                           | editingteacher |
+      | mod/assign:editothersubmission | allow          |
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I should see "I'm the student1 submission"
@@ -150,9 +129,8 @@ Feature: Bulk remove submissions
       | Test assignment name  | student1  | I'm the student1 submission  |
       | Test assignment name  | student2  | I'm the student2 submission  |
     And the following "role capability" exists:
-      | role                           | Teacher |
-      | mod/assign:editothersubmission | Allow   |
-
+      | role                           | editingteacher |
+      | mod/assign:editothersubmission | allow          |
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I should see "I'm the student1 submission"

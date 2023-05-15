@@ -67,8 +67,8 @@ Feature: Tagging courses
 
   Scenario: User can set course tags using separate form
     Given the following "role capability" exists:
-      | role              | Non-editing teacher |
-      | moodle/course:tag | Allow               |
+      | role              | teacher |
+      | moodle/course:tag | allow   |
     When I log in as "teacher2"
     And I am on "Course 1" course homepage
     And I navigate to "Course tags" in current page administration

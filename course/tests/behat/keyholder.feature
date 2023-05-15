@@ -3,9 +3,12 @@ Feature: Keyholder role is listed as course contact
   As a student I need to know who the keyholder is to enrol in a course
 
   Background:
-    Given the following "roles" exist:
-        | shortname | name      | archetype | context_coursecat | context_course | enrol/self:holdkey |
-        | keyholder | Keyholder |           | 1                 | 1              | allow              |
+    Given the following "role" exists:
+        | shortname          | keyholder |
+        | name               | Keyholder |
+        | context_coursecat  | 1         |
+        | context_course     | 1         |
+        | enrol/self:holdkey | allow     |
     And the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
@@ -16,11 +19,16 @@ Feature: Keyholder role is listed as course contact
       | student1   | Student   | 1        | teacher1@example.com   |
     And the following "courses" exist:
       | fullname | shortname | format | coursedisplay | numsections | category |
-      | Course 1 | C1 | topics | 0 | 5 | CAT1 |
+      | Course 1 | C1        | topics | 0             | 5           | CAT1     |
+    And I log in as "admin"
     And I am on "Course 1" course homepage
     And I add "Self enrolment" enrolment method with:
       | Custom instance name | Test student enrolment |
-      | Enrolment key        | letmein                |
+      | Enrolment key | letmein |
+    And I navigate to "Appearance > Courses" in site administration
+    And I set the following fields to these values:
+      | Keyholder | 1 |
+    And I press "Save changes"
     And I log out
 
   Scenario: Keyholder assigned to a course

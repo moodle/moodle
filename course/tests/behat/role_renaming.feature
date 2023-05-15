@@ -33,7 +33,7 @@ Feature: Rename roles in a course
   Scenario: Ability to rename roles can be prevented
     Given the following "role capability" exists:
       | role                      | editingteacher |
-      | moodle/course:renameroles | inherit |
+      | moodle/course:renameroles | inherit        |
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Edit settings" in current page administration
