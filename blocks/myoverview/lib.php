@@ -81,7 +81,7 @@ define('BLOCK_MYOVERVIEW_DISPLAY_CATEGORIES_OFF', 'off');
 function block_myoverview_user_preferences(): array {
     $preferences['block_myoverview_user_grouping_preference'] = array(
         'null' => NULL_NOT_ALLOWED,
-        'default' => BLOCK_MYOVERVIEW_GROUPING_ALL,
+        'default' => BLOCK_MYOVERVIEW_GROUPING_INPROGRESS,
         'type' => PARAM_ALPHA,
         'choices' => array(
             BLOCK_MYOVERVIEW_GROUPING_ALLINCLUDINGHIDDEN,

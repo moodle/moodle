@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/blocks/myoverview/lib.php');
+
 /**
  * My overview block class.
  *
@@ -50,6 +52,11 @@ class block_myoverview extends block_base {
             return $this->content;
         }
         $group = get_user_preferences('block_myoverview_user_grouping_preference');
+
+        if (empty($group) === true) {
+            $group = BLOCK_MYOVERVIEW_GROUPING_INPROGRESS;
+        }
+
         $sort = get_user_preferences('block_myoverview_user_sort_preference');
         $view = get_user_preferences('block_myoverview_user_view_preference');
         $paging = get_user_preferences('block_myoverview_user_paging_preference');
@@ -96,6 +103,11 @@ class block_myoverview extends block_base {
         // Get the customfield values (if any).
         if ($configs->displaygroupingcustomfield) {
             $group = get_user_preferences('block_myoverview_user_grouping_preference');
+
+            if (empty($group) === true) {
+                $group = BLOCK_MYOVERVIEW_GROUPING_INPROGRESS;
+            }
+
             $sort = get_user_preferences('block_myoverview_user_sort_preference');
             $view = get_user_preferences('block_myoverview_user_view_preference');
             $paging = get_user_preferences('block_myoverview_user_paging_preference');
