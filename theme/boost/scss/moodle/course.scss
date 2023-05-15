@@ -783,6 +783,10 @@ span.editinstructions {
     font-weight: $font-weight-bold;
 }
 
+.coursebox .content .coursefile {
+    max-width: 100px;
+}
+
 .coursebox .content .courseimage img {
     max-width: 100px;
     max-height: 100px;
