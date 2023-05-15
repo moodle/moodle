@@ -246,8 +246,8 @@ if (grade_regrade_final_grades_if_required($course, $grade_edit_tree_index_check
 }
 
 $actionbar = new \core_grades\output\gradebook_setup_action_bar($context);
-print_grade_page_head($courseid, 'settings', 'setup', get_string('gradebooksetup', 'grades'),
-    false, false, true, null, null, null, $actionbar, false);
+print_grade_page_head($courseid, 'settings', 'setup', false,
+    false, false, true, null, null, null, $actionbar);
 
 // Print Table of categories and items
 echo $OUTPUT->box_start('gradetreebox generalbox');
