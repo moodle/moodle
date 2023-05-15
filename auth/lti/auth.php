@@ -247,6 +247,10 @@ class auth_plugin_lti extends \auth_plugin_base {
                         "'{$launchdata['iss']}'. The migration claim could not be validated. A new account will be created.");
                 }
             }
+            // At the point of the creation, to ensure the user_created event correctly reflects the creating user of '0' (the user
+            // performing the action), ensure any active session is terminated and an empty session initialised.
+            $this->empty_session();
+
             $user = $this->create_new_account($launchdata, $launchdata['iss']);
             $this->update_user_account($user, $launchdata, $launchdata['iss']);
             return \core_user::get_user($user->id);
@@ -299,6 +303,17 @@ class auth_plugin_lti extends \auth_plugin_base {
             $binduser = null;
         }
         return $binduser;
+    }
+
+    /**
+     * If there's an existing session, inits an empty session.
+     *
+     * @return void
+     */
+    protected function empty_session(): void {
+        if (isloggedin()) {
+            \core\session\manager::init_empty_session();
+        }
     }
 
     /**
