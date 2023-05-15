@@ -6,8 +6,8 @@ Feature: Users can be defined as key holders in courses where self enrolment is 
 
   Background:
     Given the following "roles" exist:
-        | shortname | name       | archetype | context_course | enrol/self:holdkey |
-        | keyholder | Key holder |           | 1              | allow              |
+      | shortname | name       | context_course | enrol/self:holdkey |
+      | keyholder | Key holder | 1              | allow              |
     And the following "users" exist:
       | username | firstname | lastname | email |
       | manager1 | Manager | 1 | manager1@example.com |
@@ -32,13 +32,11 @@ Feature: Users can be defined as key holders in courses where self enrolment is 
       | Custom instance name | Test student enrolment |
       | Enrolment key | moodle_rules |
     And I log out
-
-  Scenario: The key holder name is displayed on site home page
-    Given I log in as "student1"
+    And I log in as "student1"
     And I am on "Course 1" course homepage
     And I should see "You should have received this enrolment key from:"
     And I should see "Manager 1"
-    When I set the following fields to these values:
+    And I set the following fields to these values:
       | Enrolment key | moodle_rules |
     And I press "Enrol me"
     Then I should see "Topic 1"

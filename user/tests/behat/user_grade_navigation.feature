@@ -59,9 +59,14 @@ Feature: The student can navigate to their grades page and user grade report.
     Then I should see "My badges from Acceptance test site web site"
 
   Scenario: Log in as a parent and view a childs grades.
-    Given the following "roles" exist:
-      | shortname | name   | archetype | context_user | moodle/user:editprofile | moodle/user:viewalldetails | moodle/user:viewuseractivitiesreport | moodle/user:viewdetails |
-      | Parent    | Parent |           | 1            | allow                   | allow                      | allow                                | allow                   |
+    Given the following "role" exists:
+      | shortname                            | Parent |
+      | name                                 | Parent |
+      | context_user                         | 1      |
+      | moodle/user:editprofile              | allow  |
+      | moodle/user:viewalldetails           | allow  |
+      | moodle/user:viewuseractivitiesreport | allow  |
+      | moodle/user:viewdetails              | allow  |
     When I log in as "admin"
     And I am on site homepage
     And I turn editing mode on

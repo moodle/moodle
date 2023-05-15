@@ -22,9 +22,9 @@ Feature: Viewing the list of cohorts to enrol in a course
       | idnumber    | 1337                    |
       | description | Test cohort description |
     And the following "role capability" exists:
-      | role                 | Teacher  |
-      | moodle/cohort:manage | Prohibit |
-      | moodle/cohort:view   | Prohibit |
+      | role                 | editingteacher |
+      | moodle/cohort:manage | prohibit       |
+      | moodle/cohort:view   | prohibit       |
     And I log out
     And I am on the "Course 1" course page logged in as teacher1
     And I navigate to course participants
