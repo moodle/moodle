@@ -4575,5 +4575,14 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022041905.07);
     }
 
+    if ($oldversion < 2022041908.02) {
+
+        // Remove any orphaned role assignment records (pointing to non-existing roles).
+        $DB->set_field('task_scheduled', 'disabled', 1, ['classname' => '\core\task\question_stats_cleanup_task']);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022041908.02);
+    }
+
     return true;
 }

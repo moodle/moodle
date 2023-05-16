@@ -228,7 +228,8 @@ $tasks = array(
         'hour' => '*',
         'day' => '*',
         'dayofweek' => '*',
-        'month' => '*'
+        'month' => '*',
+        'disabled' => true,
     ),
     array(
         'classname' => 'core\task\registration_cron_task',

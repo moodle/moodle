@@ -40,7 +40,7 @@ class helper {
     private const NEED_FOR_REVISION_UPPER_THRESHOLD = 50;
 
     /**
-     * For a list of questions find all the places (defined by (component, contextid) where there are attempts.
+     * For a list of questions find all the places, defined by (component, contextid) where there are attempts.
      *
      * @param int[] $questionids array of question ids that we are interested in.
      * @return \stdClass[] list of objects with fields ->component and ->contextid.
