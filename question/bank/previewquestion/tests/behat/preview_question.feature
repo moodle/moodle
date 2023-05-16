@@ -40,6 +40,7 @@ Feature: A teacher can preview questions in the question bank
     And "Numerical" "icon" should exist
     And I should see "Version"
     And I click on "Preview options" "link"
+    And I should see "These settings are for testing the question. The options you select only affect the preview."
     And I should see "Question version"
 
   Scenario: Preview lets the teacher see what happens when an answer is saved
@@ -68,7 +69,7 @@ Feature: A teacher can preview questions in the question bank
     When I press "Preview options"
     And I set the field "How questions behave" to "Immediate feedback"
     And I set the field "Marked out of" to "3"
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
     And I set the field "Answer:" to "3.1"
     And I press "Check"
     Then the state of "What is pi to two d.p.?" question is shown as "Incorrect"
@@ -88,7 +89,7 @@ Feature: A teacher can preview questions in the question bank
   Scenario: Preview a question with very small grade
     When I press "Preview options"
     And I set the field "Marked out of" to "0.00000123456789"
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
     Then the field "Marked out of" matches value "0.00000123456789"
 
   Scenario: Question version is updated when edited and teacher can change question version

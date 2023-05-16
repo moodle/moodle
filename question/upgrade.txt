@@ -23,6 +23,8 @@ This files describes API changes for code that uses the question API.
    and analysis_for_actual_response now take an optional $calculationtime, which is used the time
    stored in the database. If not given, time() is used.
 
+5) The "Start again with these options" text is changed "Save preview options and start again". If you use this text in behat test, please use the new text
+   or use the id of the button id_saverestart instead.
 
 === 4.2 ===
 
@@ -50,7 +52,6 @@ This files describes API changes for code that uses the question API.
 
 3) display_move_form() in qbank_managecategories\question_category_object class is deprecated and moved the logic to
    the question/bank/managecategories/category.php.
-
 
 === 4.1 ===
 
