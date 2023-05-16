@@ -17,6 +17,9 @@
 /**
  * Task to cleanup old question statistics cache.
  *
+ * This task is no longer required. It has been kept on stable branches for backwards-compatibility,
+ * and will be removed completely in Moodle 4.3.
+ *
  * @package    core
  * @copyright  2019 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,6 +30,9 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * A task to cleanup old question statistics cache.
+ *
+ * This task is no longer required. It has been kept on stable branches for backwards-compatibility,
+ * and will be removed completely in Moodle 4.3.
  *
  * @copyright  2019 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -46,20 +52,6 @@ class question_stats_cleanup_task extends scheduled_task {
      * Perform the cleanup task.
      */
     public function execute() {
-        global $DB;
-
-        mtrace("\n  Cleaning up old question statistics cache records...", '');
-
-        $expiretime = time() - 5 * HOURSECS;
-        $DB->delete_records_select('question_statistics', 'timemodified < ?', [$expiretime]);
-        $responseanlysisids = $DB->get_records_select_menu('question_response_analysis',
-            'timemodified < ?',
-            [$expiretime],
-            'id',
-            'id, id AS id2');
-        $DB->delete_records_list('question_response_analysis', 'id', $responseanlysisids);
-        $DB->delete_records_list('question_response_count', 'analysisid', $responseanlysisids);
-
-        mtrace('done.');
+        mtrace("\nThis task is no longer required. If it is still running, please disable. Will be removed in Moodle 4.3.", '');
     }
 }

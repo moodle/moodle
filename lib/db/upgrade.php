@@ -3259,5 +3259,14 @@ privatefiles,moodle|/user/files.php';
     // Automatically generated Moodle v4.2.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2023042400.03) {
+
+        // Remove any orphaned role assignment records (pointing to non-existing roles).
+        $DB->set_field('task_scheduled', 'disabled', 1, ['classname' => '\core\task\question_stats_cleanup_task']);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023042400.03);
+    }
+
     return true;
 }

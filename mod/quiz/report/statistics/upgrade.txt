@@ -1,6 +1,18 @@
 This files describes API changes in /mod/quiz/report/statistics/*,
 information provided here is intended especially for developers.
 
+=== 4.2.1 ===
+
+* The methods quiz_statistics_report::calculate_questions_stats_for_question_bank and get_all_stats_and_analysis
+  (which are really private to the quiz, and not part of any API you should be using) now have a new
+  optional argument $calculateifrequired.
+
+* In the past, the methods \quiz_statistics\calculator::get_last_calculated_time() and calculator::get_cached()
+  only returned the pre-computed statistics if they were computed less than 15 minutes ago. Now, they will
+  always return any computed statistics that exist. The constant calculator::TIME_TO_CACHE will be
+  deprecated in Moodle 4.3.
+
+
 === 3.2 ===
 
 * The function quiz_statistics_graph_get_new_colour() is deprecated in favour of the

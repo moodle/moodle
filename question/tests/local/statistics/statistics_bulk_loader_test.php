@@ -14,35 +14,45 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace qbank_statistics;
+namespace core_question\local\statistics;
 
+use advanced_testcase;
+use context;
+use context_module;
 use core_question\statistics\questions\all_calculated_for_qubaid_condition;
-use mod_quiz\quiz_attempt;
+use core_question_generator;
+use Generator;
 use mod_quiz\quiz_settings;
+use mod_quiz\quiz_attempt;
 use question_engine;
+use ReflectionMethod;
 
 /**
  * Tests for question statistics.
  *
- * @package    qbank_statistics
- * @copyright  2021 Catalyst IT Australia Pty Ltd
- * @author     Nathan Nguyen <nathannguyen@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_question
+ * @copyright 2021 Catalyst IT Australia Pty Ltd
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \core_question\local\statistics\statistics_bulk_loader
  */
-class helper_test extends \advanced_testcase {
+class statistics_bulk_loader_test extends advanced_testcase {
+
+    /** @var float Delta used when comparing statistics values out-of 1. */
+    protected const DELTA = 0.00005;
+
+    /** @var float Delta used when comparing statistics values out-of 100. */
+    protected const PERCENT_DELTA = 0.005;
 
     /**
      * Test quizzes that contain a specified question.
      *
      * @covers ::get_all_places_where_questions_were_attempted
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
     public function test_get_all_places_where_questions_were_attempted(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        $rcm = new \ReflectionMethod(helper::class, 'get_all_places_where_questions_were_attempted');
+        $rcm = new ReflectionMethod(statistics_bulk_loader::class, 'get_all_places_where_questions_were_attempted');
         $rcm->setAccessible(true);
 
         // Create a course.
@@ -55,28 +65,28 @@ class helper_test extends \advanced_testcase {
             'grade' => 100.0, 'sumgrades' => 2,
             'layout' => '1,2,0'
         ]);
-        $quiz1context = \context_module::instance($quiz1->cmid);
+        $quiz1context = context_module::instance($quiz1->cmid);
 
         $quiz2 = $quizgenerator->create_instance([
             'course' => $course->id,
             'grade' => 100.0, 'sumgrades' => 2,
             'layout' => '1,2,0'
         ]);
-        $quiz2context = \context_module::instance($quiz2->cmid);
+        $quiz2context = context_module::instance($quiz2->cmid);
 
         $quiz3 = $quizgenerator->create_instance([
             'course' => $course->id,
             'grade' => 100.0, 'sumgrades' => 2,
             'layout' => '1,2,0'
         ]);
-        $quiz3context = \context_module::instance($quiz3->cmid);
+        $quiz3context = context_module::instance($quiz3->cmid);
 
         // Create questions.
-        /** @var \core_question_generator $questiongenerator */
+        /** @var core_question_generator $questiongenerator */
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
-        $question1 = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
-        $question2 = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        $question1 = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        $question2 = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
 
         // Add question 1 to quiz 1 and make an attempt.
         quiz_add_quiz_question($question1->id, $quiz1);
@@ -118,7 +128,6 @@ class helper_test extends \advanced_testcase {
      * Create 2 quizzes.
      *
      * @return array return 2 quizzes
-     * @throws \coding_exception
      */
     private function prepare_quizzes(): array {
         // Create a course.
@@ -139,7 +148,7 @@ class helper_test extends \advanced_testcase {
             'layout' => $layout
         ]);
 
-        /** @var \core_question_generator $questiongenerator */
+        /** @var core_question_generator $questiongenerator */
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
 
@@ -165,7 +174,6 @@ class helper_test extends \advanced_testcase {
      *
      * @param object $quiz
      * @param array $answers
-     * @throws \moodle_exception
      */
     private function submit_quiz(object $quiz, array $answers): void {
         // Create user.
@@ -207,7 +215,6 @@ class helper_test extends \advanced_testcase {
     }
 
     /**
-     *
      * Generate quizzes and submit answers.
      *
      * @param array $quiz1attempts quiz 1 attempts
@@ -239,12 +246,12 @@ class helper_test extends \advanced_testcase {
      *
      * @param all_calculated_for_qubaid_condition $statistics the batch of statistics.
      * @param int $questionid a question id.
-     * @param string $item ane of the field names in all_calculated_for_qubaid_condition, e.g. 'facility'.
+     * @param string $item one of the field names in all_calculated_for_qubaid_condition, e.g. 'facility'.
      * @return float|null the required value.
      */
     private function extract_item_value(all_calculated_for_qubaid_condition $statistics,
                                         int $questionid, string $item): ?float {
-        $rcm = new \ReflectionMethod(helper::class, 'extract_item_value');
+        $rcm = new ReflectionMethod(statistics_bulk_loader::class, 'extract_item_value');
         $rcm->setAccessible(true);
         return $rcm->invoke(null, $statistics, $questionid, $item);
     }
@@ -252,11 +259,11 @@ class helper_test extends \advanced_testcase {
     /**
      * To use private helper::load_statistics_for_place function (with mod_quiz component).
      *
-     * @param \context $context the context to load the statistics for.
+     * @param context $context the context to load the statistics for.
      * @return all_calculated_for_qubaid_condition|null question statistics.
      */
-    private function load_quiz_statistics_for_place(\context $context): ?all_calculated_for_qubaid_condition {
-        $rcm = new \ReflectionMethod(helper::class, 'load_statistics_for_place');
+    private function load_quiz_statistics_for_place(context $context): ?all_calculated_for_qubaid_condition {
+        $rcm = new ReflectionMethod(statistics_bulk_loader::class, 'load_statistics_for_place');
         $rcm->setAccessible(true);
         return $rcm->invoke(null, 'mod_quiz', $context);
     }
@@ -264,20 +271,20 @@ class helper_test extends \advanced_testcase {
     /**
      * Data provider for {@see test_load_question_facility()}.
      *
-     * @return \Generator
+     * @return Generator
      */
-    public function load_question_facility_provider(): \Generator {
+    public function load_question_facility_provider(): Generator {
         yield 'Facility case 1' => [
             'Quiz 1 attempts' => [
                 $this->generate_attempt_answers([1, 0, 0, 0]),
             ],
-            'Expected quiz 1 facilities' => ['100.00%', '0.00%', '0.00%', '0.00%'],
+            'Expected quiz 1 facilities' => [1.0, 0.0, 0.0, 0.0],
             'Quiz 2 attempts' => [
                 $this->generate_attempt_answers([1, 0, 0, 0]),
                 $this->generate_attempt_answers([1, 1, 0, 0]),
             ],
-            'Expected quiz 2 facilities' => ['100.00%', '50.00%', '0.00%', '0.00%'],
-            'Expected average facilities' => ['100.00%', '25.00%', '0.00%', '0.00%'],
+            'Expected quiz 2 facilities' => [1.0, 0.5, 0.0, 0.0],
+            'Expected average facilities' => [1.0, 0.25, 0.0, 0.0],
         ];
         yield 'Facility case 2' => [
             'Quiz 1 attempts' => [
@@ -285,15 +292,15 @@ class helper_test extends \advanced_testcase {
                 $this->generate_attempt_answers([1, 1, 0, 0]),
                 $this->generate_attempt_answers([1, 1, 1, 0]),
             ],
-            'Expected quiz 1 facilities' => ['100.00%', '66.67%', '33.33%', '0.00%'],
+            'Expected quiz 1 facilities' => [1.0, 0.6667, 0.3333, 0.0],
             'Quiz 2 attempts' => [
                 $this->generate_attempt_answers([1, 0, 0, 0]),
                 $this->generate_attempt_answers([1, 1, 0, 0]),
                 $this->generate_attempt_answers([1, 1, 1, 0]),
                 $this->generate_attempt_answers([1, 1, 1, 1]),
             ],
-            'Expected quiz 2 facilities' => ['100.00%', '75.00%', '50.00%', '25.00%'],
-            'Expected average facilities' => ['100.00%', '70.83%', '41.67%', '12.50%'],
+            'Expected quiz 2 facilities' => [1.0, 0.75, 0.5, 0.25],
+            'Expected average facilities' => [1.0, 0.7083, 0.4167, 0.1250],
         ];
     }
 
@@ -320,46 +327,50 @@ class helper_test extends \advanced_testcase {
         list($quiz1, $quiz2, $questions) = $this->prepare_and_submit_quizzes($quiz1attempts, $quiz2attempts);
 
         // Quiz 1 facilities.
-        $stats = $this->load_quiz_statistics_for_place(\context_module::instance($quiz1->cmid));
+        $stats = $this->load_quiz_statistics_for_place(context_module::instance($quiz1->cmid));
         $quiz1facility1 = $this->extract_item_value($stats, $questions[1]->id, 'facility');
         $quiz1facility2 = $this->extract_item_value($stats, $questions[2]->id, 'facility');
         $quiz1facility3 = $this->extract_item_value($stats, $questions[3]->id, 'facility');
         $quiz1facility4 = $this->extract_item_value($stats, $questions[4]->id, 'facility');
 
-        $this->assertEquals($expectedquiz1facilities[0], helper::format_percentage($quiz1facility1));
-        $this->assertEquals($expectedquiz1facilities[1], helper::format_percentage($quiz1facility2));
-        $this->assertEquals($expectedquiz1facilities[2], helper::format_percentage($quiz1facility3));
-        $this->assertEquals($expectedquiz1facilities[3], helper::format_percentage($quiz1facility4));
+        $this->assertEqualsWithDelta($expectedquiz1facilities[0], $quiz1facility1, self::DELTA);
+        $this->assertEqualsWithDelta($expectedquiz1facilities[1], $quiz1facility2, self::DELTA);
+        $this->assertEqualsWithDelta($expectedquiz1facilities[2], $quiz1facility3, self::DELTA);
+        $this->assertEqualsWithDelta($expectedquiz1facilities[3], $quiz1facility4, self::DELTA);
 
         // Quiz 2 facilities.
-        $stats = $this->load_quiz_statistics_for_place(\context_module::instance($quiz2->cmid));
+        $stats = $this->load_quiz_statistics_for_place(context_module::instance($quiz2->cmid));
         $quiz2facility1 = $this->extract_item_value($stats, $questions[1]->id, 'facility');
         $quiz2facility2 = $this->extract_item_value($stats, $questions[2]->id, 'facility');
         $quiz2facility3 = $this->extract_item_value($stats, $questions[3]->id, 'facility');
         $quiz2facility4 = $this->extract_item_value($stats, $questions[4]->id, 'facility');
 
-        $this->assertEquals($expectedquiz2facilities[0], helper::format_percentage($quiz2facility1));
-        $this->assertEquals($expectedquiz2facilities[1], helper::format_percentage($quiz2facility2));
-        $this->assertEquals($expectedquiz2facilities[2], helper::format_percentage($quiz2facility3));
-        $this->assertEquals($expectedquiz2facilities[3], helper::format_percentage($quiz2facility4));
+        $this->assertEqualsWithDelta($expectedquiz2facilities[0], $quiz2facility1, self::DELTA);
+        $this->assertEqualsWithDelta($expectedquiz2facilities[1], $quiz2facility2, self::DELTA);
+        $this->assertEqualsWithDelta($expectedquiz2facilities[2], $quiz2facility3, self::DELTA);
+        $this->assertEqualsWithDelta($expectedquiz2facilities[3], $quiz2facility4, self::DELTA);
 
         // Average question facilities.
-        $averagefacility1 = helper::calculate_average_question_facility($questions[1]->id);
-        $averagefacility2 = helper::calculate_average_question_facility($questions[2]->id);
-        $averagefacility3 = helper::calculate_average_question_facility($questions[3]->id);
-        $averagefacility4 = helper::calculate_average_question_facility($questions[4]->id);
+        $stats = statistics_bulk_loader::load_aggregate_statistics(
+            [$questions[1]->id, $questions[2]->id, $questions[3]->id, $questions[4]->id],
+            ['facility']
+        );
 
-        $this->assertEquals($expectedaveragefacilities[0], helper::format_percentage($averagefacility1));
-        $this->assertEquals($expectedaveragefacilities[1], helper::format_percentage($averagefacility2));
-        $this->assertEquals($expectedaveragefacilities[2], helper::format_percentage($averagefacility3));
-        $this->assertEquals($expectedaveragefacilities[3], helper::format_percentage($averagefacility4));
+        $this->assertEqualsWithDelta($expectedaveragefacilities[0],
+            $stats[$questions[1]->id]['facility'], self::DELTA);
+        $this->assertEqualsWithDelta($expectedaveragefacilities[1],
+            $stats[$questions[2]->id]['facility'], self::DELTA);
+        $this->assertEqualsWithDelta($expectedaveragefacilities[2],
+            $stats[$questions[3]->id]['facility'], self::DELTA);
+        $this->assertEqualsWithDelta($expectedaveragefacilities[3],
+            $stats[$questions[4]->id]['facility'], self::DELTA);
     }
 
     /**
      * Data provider for {@see test_load_question_discriminative_efficiency()}.
-     * @return \Generator
+     * @return Generator
      */
-    public function load_question_discriminative_efficiency_provider(): \Generator {
+    public function load_question_discriminative_efficiency_provider(): Generator {
         yield 'Discriminative efficiency' => [
             'Quiz 1 attempts' => [
                 $this->generate_attempt_answers([1, 0, 0, 0]),
@@ -367,15 +378,15 @@ class helper_test extends \advanced_testcase {
                 $this->generate_attempt_answers([1, 0, 1, 0]),
                 $this->generate_attempt_answers([1, 1, 1, 1]),
             ],
-            'Expected quiz 1 discriminative efficiency' => ['N/A', '33.33%', '33.33%', '100.00%'],
+            'Expected quiz 1 discriminative efficiency' => [null, 33.33, 33.33, 100.00],
             'Quiz 2 attempts' => [
                 $this->generate_attempt_answers([1, 1, 1, 1]),
                 $this->generate_attempt_answers([0, 0, 0, 0]),
                 $this->generate_attempt_answers([1, 0, 0, 1]),
                 $this->generate_attempt_answers([0, 1, 1, 0]),
             ],
-            'Expected quiz 2 discriminative efficiency' => ['50.00%', '50.00%', '50.00%', '50.00%'],
-            'Expected average discriminative efficiency' => ['50.00%', '41.67%', '41.67%', '75.00%'],
+            'Expected quiz 2 discriminative efficiency' => [50.00, 50.00, 50.00, 50.00],
+            'Expected average discriminative efficiency' => [50.00, 41.67, 41.67, 75.00],
         ];
     }
 
@@ -402,70 +413,58 @@ class helper_test extends \advanced_testcase {
         list($quiz1, $quiz2, $questions) = $this->prepare_and_submit_quizzes($quiz1attempts, $quiz2attempts);
 
         // Quiz 1 discriminative efficiency.
-        $stats = $this->load_quiz_statistics_for_place(\context_module::instance($quiz1->cmid));
+        $stats = $this->load_quiz_statistics_for_place(context_module::instance($quiz1->cmid));
         $discriminativeefficiency1 = $this->extract_item_value($stats, $questions[1]->id, 'discriminativeefficiency');
         $discriminativeefficiency2 = $this->extract_item_value($stats, $questions[2]->id, 'discriminativeefficiency');
         $discriminativeefficiency3 = $this->extract_item_value($stats, $questions[3]->id, 'discriminativeefficiency');
         $discriminativeefficiency4 = $this->extract_item_value($stats, $questions[4]->id, 'discriminativeefficiency');
 
-        $this->assertEquals($expectedquiz1discriminativeefficiency[0],
-            helper::format_percentage($discriminativeefficiency1, false),
-            "Failure in quiz 1 - question 1 discriminative efficiency");
-        $this->assertEquals($expectedquiz1discriminativeefficiency[1],
-            helper::format_percentage($discriminativeefficiency2, false),
-            "Failure in quiz 1 - question 2 discriminative efficiency");
-        $this->assertEquals($expectedquiz1discriminativeefficiency[2],
-            helper::format_percentage($discriminativeefficiency3, false),
-            "Failure in quiz 1 - question 3 discriminative efficiency");
-        $this->assertEquals($expectedquiz1discriminativeefficiency[3],
-            helper::format_percentage($discriminativeefficiency4, false),
-            "Failure in quiz 1 - question 4 discriminative efficiency");
+        $this->assertEqualsWithDelta($expectedquiz1discriminativeefficiency[0],
+                $discriminativeefficiency1, self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta($expectedquiz1discriminativeefficiency[1],
+                $discriminativeefficiency2, self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta($expectedquiz1discriminativeefficiency[2],
+                $discriminativeefficiency3, self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta($expectedquiz1discriminativeefficiency[3],
+                $discriminativeefficiency4, self::PERCENT_DELTA);
 
         // Quiz 2 discriminative efficiency.
-        $stats = $this->load_quiz_statistics_for_place(\context_module::instance($quiz2->cmid));
+        $stats = $this->load_quiz_statistics_for_place(context_module::instance($quiz2->cmid));
         $discriminativeefficiency1 = $this->extract_item_value($stats, $questions[1]->id, 'discriminativeefficiency');
         $discriminativeefficiency2 = $this->extract_item_value($stats, $questions[2]->id, 'discriminativeefficiency');
         $discriminativeefficiency3 = $this->extract_item_value($stats, $questions[3]->id, 'discriminativeefficiency');
         $discriminativeefficiency4 = $this->extract_item_value($stats, $questions[4]->id, 'discriminativeefficiency');
 
-        $this->assertEquals($expectedquiz2discriminativeefficiency[0],
-            helper::format_percentage($discriminativeefficiency1, false),
-            "Failure in quiz 2 - question 1 discriminative efficiency");
-        $this->assertEquals($expectedquiz2discriminativeefficiency[1],
-            helper::format_percentage($discriminativeefficiency2, false),
-            "Failure in quiz 2 - question 2 discriminative efficiency");
-        $this->assertEquals($expectedquiz2discriminativeefficiency[2],
-            helper::format_percentage($discriminativeefficiency3, false),
-            "Failure in quiz 2 - question 3 discriminative efficiency");
-        $this->assertEquals($expectedquiz2discriminativeefficiency[3],
-            helper::format_percentage($discriminativeefficiency4, false),
-            "Failure in quiz 2 - question 4 discriminative efficiency");
+        $this->assertEqualsWithDelta($expectedquiz2discriminativeefficiency[0],
+                $discriminativeefficiency1, self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta($expectedquiz2discriminativeefficiency[1],
+                $discriminativeefficiency2, self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta($expectedquiz2discriminativeefficiency[2],
+                $discriminativeefficiency3, self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta($expectedquiz2discriminativeefficiency[3],
+                $discriminativeefficiency4, self::PERCENT_DELTA);
 
         // Average question discriminative efficiency.
-        $avgdiscriminativeefficiency1 = helper::calculate_average_question_discriminative_efficiency($questions[1]->id);
-        $avgdiscriminativeefficiency2 = helper::calculate_average_question_discriminative_efficiency($questions[2]->id);
-        $avgdiscriminativeefficiency3 = helper::calculate_average_question_discriminative_efficiency($questions[3]->id);
-        $avgdiscriminativeefficiency4 = helper::calculate_average_question_discriminative_efficiency($questions[4]->id);
+        $stats = statistics_bulk_loader::load_aggregate_statistics(
+            [$questions[1]->id, $questions[2]->id, $questions[3]->id, $questions[4]->id],
+            ['discriminativeefficiency']
+        );
 
-        $this->assertEquals($expectedaveragediscriminativeefficiency[0],
-            helper::format_percentage($avgdiscriminativeefficiency1, false),
-            "Failure in question 1 average discriminative efficiency");
-        $this->assertEquals($expectedaveragediscriminativeefficiency[1],
-            helper::format_percentage($avgdiscriminativeefficiency2, false),
-            "Failure in question 2 average discriminative efficiency");
-        $this->assertEquals($expectedaveragediscriminativeefficiency[2],
-            helper::format_percentage($avgdiscriminativeefficiency3, false),
-            "Failure in question 3 average discriminative efficiency");
-        $this->assertEquals($expectedaveragediscriminativeefficiency[3],
-            helper::format_percentage($avgdiscriminativeefficiency4, false),
-            "Failure in question 4 average discriminative efficiency");
+        $this->assertEqualsWithDelta($expectedaveragediscriminativeefficiency[0],
+            $stats[$questions[1]->id]['discriminativeefficiency'], self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta($expectedaveragediscriminativeefficiency[1],
+            $stats[$questions[2]->id]['discriminativeefficiency'], self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta($expectedaveragediscriminativeefficiency[2],
+            $stats[$questions[3]->id]['discriminativeefficiency'], self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta($expectedaveragediscriminativeefficiency[3],
+            $stats[$questions[4]->id]['discriminativeefficiency'], self::PERCENT_DELTA);
     }
 
     /**
      * Data provider for {@see test_load_question_discrimination_index()}.
-     * @return \Generator
+     * @return Generator
      */
-    public function load_question_discrimination_index_provider(): \Generator {
+    public function load_question_discrimination_index_provider(): Generator {
         yield 'Discrimination Index' => [
             'Quiz 1 attempts' => [
                 $this->generate_attempt_answers([1, 0, 0, 0]),
@@ -473,15 +472,15 @@ class helper_test extends \advanced_testcase {
                 $this->generate_attempt_answers([1, 0, 1, 0]),
                 $this->generate_attempt_answers([1, 1, 1, 1]),
             ],
-            'Expected quiz 1 Discrimination Index' => ['N/A', '30.15%', '30.15%', '81.65%'],
+            'Expected quiz 1 Discrimination Index' => [null, 30.15, 30.15, 81.65],
             'Quiz 2 attempts' => [
                 $this->generate_attempt_answers([1, 1, 1, 1]),
                 $this->generate_attempt_answers([0, 0, 0, 0]),
                 $this->generate_attempt_answers([1, 0, 0, 1]),
                 $this->generate_attempt_answers([0, 1, 1, 0]),
             ],
-            'Expected quiz 2 discrimination Index' => ['44.72%', '44.72%', '44.72%', '44.72%'],
-            'Expected average discrimination Index' => ['44.72%', '37.44%', '37.44%', '63.19%'],
+            'Expected quiz 2 discrimination Index' => [44.72, 44.72, 44.72, 44.72],
+            'Expected average discrimination Index' => [44.72, 37.44, 37.44, 63.19],
         ];
     }
 
@@ -508,62 +507,50 @@ class helper_test extends \advanced_testcase {
         list($quiz1, $quiz2, $questions) = $this->prepare_and_submit_quizzes($quiz1attempts, $quiz2attempts);
 
         // Quiz 1 discrimination index.
-        $stats = $this->load_quiz_statistics_for_place(\context_module::instance($quiz1->cmid));
+        $stats = $this->load_quiz_statistics_for_place(context_module::instance($quiz1->cmid));
         $discriminationindex1 = $this->extract_item_value($stats, $questions[1]->id, 'discriminationindex');
         $discriminationindex2 = $this->extract_item_value($stats, $questions[2]->id, 'discriminationindex');
         $discriminationindex3 = $this->extract_item_value($stats, $questions[3]->id, 'discriminationindex');
         $discriminationindex4 = $this->extract_item_value($stats, $questions[4]->id, 'discriminationindex');
 
-        $this->assertEquals($expectedquiz1discriminationindex[0],
-            helper::format_percentage($discriminationindex1, false),
-            "Failure in quiz 1 - question 1 discrimination index");
-        $this->assertEquals($expectedquiz1discriminationindex[1],
-            helper::format_percentage($discriminationindex2, false),
-            "Failure in quiz 1 - question 2 discrimination index");
-        $this->assertEquals($expectedquiz1discriminationindex[2],
-            helper::format_percentage($discriminationindex3, false),
-            "Failure in quiz 1 - question 3 discrimination index");
-        $this->assertEquals($expectedquiz1discriminationindex[3],
-            helper::format_percentage($discriminationindex4, false),
-            "Failure in quiz 1 - question 4 discrimination index");
+        $this->assertEqualsWithDelta($expectedquiz1discriminationindex[0],
+            $discriminationindex1, self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta($expectedquiz1discriminationindex[1],
+            $discriminationindex2, self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta($expectedquiz1discriminationindex[2],
+            $discriminationindex3, self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta($expectedquiz1discriminationindex[3],
+            $discriminationindex4, self::PERCENT_DELTA);
 
         // Quiz 2 discrimination index.
-        $stats = $this->load_quiz_statistics_for_place(\context_module::instance($quiz2->cmid));
+        $stats = $this->load_quiz_statistics_for_place(context_module::instance($quiz2->cmid));
         $discriminationindex1 = $this->extract_item_value($stats, $questions[1]->id, 'discriminationindex');
         $discriminationindex2 = $this->extract_item_value($stats, $questions[2]->id, 'discriminationindex');
         $discriminationindex3 = $this->extract_item_value($stats, $questions[3]->id, 'discriminationindex');
         $discriminationindex4 = $this->extract_item_value($stats, $questions[4]->id, 'discriminationindex');
 
-        $this->assertEquals($expectedquiz2discriminationindex[0],
-            helper::format_percentage($discriminationindex1, false),
-            "Failure in quiz 2 - question 1 discrimination index");
-        $this->assertEquals($expectedquiz2discriminationindex[1],
-            helper::format_percentage($discriminationindex2, false),
-            "Failure in quiz 2 - question 2 discrimination index");
-        $this->assertEquals($expectedquiz2discriminationindex[2],
-            helper::format_percentage($discriminationindex3, false),
-            "Failure in quiz 2 - question 3 discrimination index");
-        $this->assertEquals($expectedquiz2discriminationindex[3],
-            helper::format_percentage($discriminationindex4, false),
-            "Failure in quiz 2 - question 4 discrimination index");
+        $this->assertEqualsWithDelta($expectedquiz2discriminationindex[0],
+            $discriminationindex1, self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta($expectedquiz2discriminationindex[1],
+            $discriminationindex2, self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta($expectedquiz2discriminationindex[2],
+            $discriminationindex3, self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta($expectedquiz2discriminationindex[3],
+            $discriminationindex4, self::PERCENT_DELTA);
 
         // Average question discrimination index.
-        $avgdiscriminationindex1 = helper::calculate_average_question_discrimination_index($questions[1]->id);
-        $avgdiscriminationindex2 = helper::calculate_average_question_discrimination_index($questions[2]->id);
-        $avgdiscriminationindex3 = helper::calculate_average_question_discrimination_index($questions[3]->id);
-        $avgdiscriminationindex4 = helper::calculate_average_question_discrimination_index($questions[4]->id);
+        $stats = statistics_bulk_loader::load_aggregate_statistics(
+            [$questions[1]->id, $questions[2]->id, $questions[3]->id, $questions[4]->id],
+            ['discriminationindex']
+        );
 
-        $this->assertEquals($expectedaveragediscriminationindex[0],
-            helper::format_percentage($avgdiscriminationindex1, false),
-            "Failure in question 1 average discrimination index");
-        $this->assertEquals($expectedaveragediscriminationindex[1],
-            helper::format_percentage($avgdiscriminationindex2, false),
-            "Failure in question 2 average discrimination index");
-        $this->assertEquals($expectedaveragediscriminationindex[2],
-            helper::format_percentage($avgdiscriminationindex3, false),
-            "Failure in question 3 average discrimination index");
-        $this->assertEquals($expectedaveragediscriminationindex[3],
-            helper::format_percentage($avgdiscriminationindex4, false),
-            "Failure in question 4 average discrimination index");
+        $this->assertEqualsWithDelta($expectedaveragediscriminationindex[0],
+            $stats[$questions[1]->id]['discriminationindex'], self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta($expectedaveragediscriminationindex[1],
+            $stats[$questions[2]->id]['discriminationindex'], self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta($expectedaveragediscriminationindex[2],
+            $stats[$questions[3]->id]['discriminationindex'], self::PERCENT_DELTA);
+        $this->assertEqualsWithDelta($expectedaveragediscriminationindex[3],
+            $stats[$questions[4]->id]['discriminationindex'], self::PERCENT_DELTA);
     }
 }
