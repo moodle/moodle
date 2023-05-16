@@ -45,6 +45,11 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
     /** @var stdClass */
     protected $oldquizlayout;
 
+    /**
+     * @var array Track old question ids that need to be removed at the end of the restore.
+     */
+    protected $oldquestionids = [];
+
     protected function define_structure() {
 
         $paths = [];
@@ -347,8 +352,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             $filtercondition->includingsubcategories = $data->includingsubcategories ?? false;
             $questionsetreference->filtercondition = json_encode($filtercondition);
             $DB->insert_record('question_set_references', $questionsetreference);
-            // Cleanup leftover random qtype data from question table.
-            question_delete_question($question->questionid);
+            $this->oldquestionids[$question->questionid] = 1;
         } else {
             // Reference data.
             $questionreference = new \stdClass();
@@ -607,6 +611,14 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
                     'quizid' => $this->get_new_parentid('quiz'),
                     'firstslot' => 1, 'heading' => '',
                     'shufflequestions' => $this->legacyshufflequestionsoption]);
+        }
+    }
+
+    protected function after_restore() {
+        parent::after_restore();
+        // Delete old random questions that have been converted to set references.
+        foreach (array_keys($this->oldquestionids) as $oldquestionid) {
+            question_delete_question($oldquestionid);
         }
     }
 }
