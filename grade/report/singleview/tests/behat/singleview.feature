@@ -162,9 +162,9 @@ Feature: We can use Single view
     And I open the action menu in "Test assignment four" "table_row"
     And I choose "Show all grades" in the open action menu
     Then I should see "Test assignment four"
-    And I follow "Test assignment three"
+    And I click on "Test assignment three" in the "grade" search widget
     Then I should see "Test assignment three"
-    And I follow "Test assignment four"
+    And I click on "Test assignment four" in the "grade" search widget
     Then I should see "Test assignment four"
 
   Scenario: Activities are clickable only when it has a valid activity page.
