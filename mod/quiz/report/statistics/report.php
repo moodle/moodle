@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_question\statistics\responses\analyser;
 use core_question\statistics\questions\all_calculated_for_qubaid_condition;
 
 require_once($CFG->dirroot . '/mod/quiz/report/default.php');
@@ -420,7 +421,7 @@ class quiz_statistics_report extends quiz_default_report {
             }
         }
 
-        $responesanalyser = new \core_question\statistics\responses\analyser($question, $whichtries);
+        $responesanalyser = new analyser($question, $whichtries);
         $responseanalysis = $responesanalyser->load_cached($qubaids, $whichtries);
 
         $qtable->question_setup($reporturl, $question, $s, $responseanalysis);
@@ -627,11 +628,15 @@ class quiz_statistics_report extends quiz_default_report {
      * @param \core\dml\sql_join $groupstudentsjoins Contains joins, wheres, params for students in this group.
      * @param array  $questions          full question data.
      * @param \core\progress\base|null   $progress
+     * @param bool $calculateifrequired  if true (the default) the stats will be calculated if not already stored.
+     *                                   If false, [null, null] will be returned if the stats are not already available.
      * @return array with 2 elements:    - $quizstats The statistics for overall attempt scores.
      *                                   - $questionstats \core_question\statistics\questions\all_calculated_for_qubaid_condition
+     *                                   Both may be null, if $calculateifrequired is false.
      */
     public function get_all_stats_and_analysis(
-            $quiz, $whichattempts, $whichtries, \core\dml\sql_join $groupstudentsjoins, $questions, $progress = null) {
+            $quiz, $whichattempts, $whichtries, \core\dml\sql_join $groupstudentsjoins,
+            $questions, $progress = null, bool $calculateifrequired = true) {
 
         if ($progress === null) {
             $progress = new \core\progress\none();
@@ -645,6 +650,11 @@ class quiz_statistics_report extends quiz_default_report {
 
         $progress->start_progress('', 3);
         if ($quizcalc->get_last_calculated_time($qubaids) === false) {
+            if (!$calculateifrequired) {
+                $progress->progress(3);
+                $progress->end_progress();
+                return [null, null];
+            }
 
             // Recalculate now.
             $questionstats = $qcalc->calculate($qubaids);
@@ -739,10 +749,8 @@ class quiz_statistics_report extends quiz_default_report {
         foreach ($questions as $question) {
             $progress->increment_progress();
             if (question_bank::get_qtype($question->qtype, false)->can_analyse_responses()  && !isset($done[$question->id])) {
-                $responesstats = new \core_question\statistics\responses\analyser($question, $whichtries);
-                if ($responesstats->get_last_analysed_time($qubaids, $whichtries) === false) {
-                    $responesstats->calculate($qubaids, $whichtries);
-                }
+                $responesstats = new analyser($question, $whichtries);
+                $responesstats->calculate($qubaids, $whichtries);
             }
             $done[$question->id] = 1;
         }
@@ -927,15 +935,21 @@ class quiz_statistics_report extends quiz_default_report {
      * Load question stats for a quiz
      *
      * @param int $quizid question usage
-     * @return all_calculated_for_qubaid_condition question stats
+     * @param bool $calculateifrequired if true (the default) the stats will be calculated if not already stored.
+     *     If false, null will be returned if the stats are not already available.
+     * @return ?all_calculated_for_qubaid_condition question stats
      */
-    public function calculate_questions_stats_for_question_bank(int $quizid): all_calculated_for_qubaid_condition {
+    public function calculate_questions_stats_for_question_bank(
+            int $quizid,
+            bool $calculateifrequired = true
+        ): ?all_calculated_for_qubaid_condition {
         global $DB;
         $quiz = $DB->get_record('quiz', ['id' => $quizid], '*', MUST_EXIST);
         $questions = $this->load_and_initialise_questions_for_calculations($quiz);
 
         [, $questionstats] = $this->get_all_stats_and_analysis($quiz,
-            $quiz->grademethod, question_attempt::ALL_TRIES, new \core\dml\sql_join(), $questions);
+            $quiz->grademethod, question_attempt::ALL_TRIES, new \core\dml\sql_join(),
+            $questions, null, $calculateifrequired);
 
         return $questionstats;
     }

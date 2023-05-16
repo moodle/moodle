@@ -38,7 +38,7 @@ use question_bank;
  */
 class all_calculated_for_qubaid_condition {
 
-    /** @var int Time after which statistics are automatically recomputed. */
+    /** @var int No longer used. Previously, the time after which statistics are automatically recomputed. */
     const TIME_TO_CACHE = 900; // 15 minutes.
 
     /**
@@ -197,9 +197,9 @@ class all_calculated_for_qubaid_condition {
     public function get_cached($qubaids) {
         global $DB;
 
-        $timemodified = time() - self::TIME_TO_CACHE;
-        $questionstatrecs = $DB->get_records_select('question_statistics', 'hashcode = ? AND timemodified > ?',
-                                                    array($qubaids->get_hash_code(), $timemodified));
+        $timemodified = self::get_last_calculated_time($qubaids);
+        $questionstatrecs = $DB->get_records('question_statistics',
+                ['hashcode' => $qubaids->get_hash_code(), 'timemodified' => $timemodified]);
 
         $questionids = array();
         foreach ($questionstatrecs as $fromdb) {
@@ -251,18 +251,26 @@ class all_calculated_for_qubaid_condition {
      */
     public function get_last_calculated_time($qubaids) {
         global $DB;
-
-        $timemodified = time() - self::TIME_TO_CACHE;
-        return $DB->get_field_select('question_statistics', 'timemodified', 'hashcode = ? AND timemodified > ?',
-                                     array($qubaids->get_hash_code(), $timemodified), IGNORE_MULTIPLE);
+        $lastcalculatedtime = $DB->get_field('question_statistics', 'COALESCE(MAX(timemodified), 0)',
+                ['hashcode' => $qubaids->get_hash_code()]);
+        if ($lastcalculatedtime) {
+            return $lastcalculatedtime;
+        } else {
+            return false;
+        }
     }
 
     /**
-     * Save stats to db.
+     * Save stats to db, first cleaning up any old ones.
      *
      * @param \qubaid_condition $qubaids Which question usages are we caching the stats of?
      */
     public function cache($qubaids) {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+        $timemodified = time();
+
         foreach ($this->get_all_slots() as $slot) {
             $this->for_slot($slot)->cache($qubaids);
         }
@@ -270,6 +278,8 @@ class all_calculated_for_qubaid_condition {
         foreach ($this->get_all_subq_ids() as $subqid) {
             $this->for_subq($subqid)->cache($qubaids);
         }
+
+        $transaction->allow_commit();
     }
 
     /**
