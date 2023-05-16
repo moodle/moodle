@@ -73,6 +73,11 @@ class jwks_helper {
         $res = openssl_pkey_get_private($privatekey['key']);
         $details = openssl_pkey_get_details($res);
 
+        // Avoid passing null values to base64_encode.
+        if (!isset($details['rsa']['e']) || !isset($details['rsa']['n'])) {
+            throw new \moodle_exception('Error: essential openssl keys not set');
+        }
+
         $jwk = array();
         $jwk['kty'] = 'RSA';
         $jwk['alg'] = 'RS256';
