@@ -40,11 +40,11 @@ Feature: Automatic deletion of groups and groupings
   @javascript
   Scenario: Delete groups and groupings with and without ID numbers
     Given I set the field "groups" to "Group (without ID) (0)"
-    And I press "Delete selected group"
+    And I press "Delete"
     And I press "Yes"
     Then the "groups" select box should not contain "Group (without ID) (0)"
     And I set the field "groups" to "Group (with ID) (0)"
-    And I press "Delete selected group"
+    And I press "Delete"
     And I press "Yes"
     And the "groups" select box should not contain "Group (with ID) (0)"
     And I select "Groupings" from the "jump" singleselect
@@ -65,9 +65,9 @@ Feature: Automatic deletion of groups and groupings
     And I log in as "teacher1"
     And I am on the "Course 1" "groups" page
     When I set the field "groups" to "Group (with ID) (0)"
-    Then the "Delete selected group" "button" should be disabled
+    Then the "Delete" "button" should be disabled
     And I set the field "groups" to "Group (without ID) (0)"
-    And I press "Delete selected group"
+    And I press "Delete"
     And I press "Yes"
     And I should not see "Group (without ID)"
     And I select "Groupings" from the "jump" singleselect

@@ -789,4 +789,93 @@ class lib_test extends \advanced_testcase {
                 ['prefname' => 'reptile'], 'JOIN {user_preferences} up ON up.userid = u.id');
         $this->assertEquals('snake', reset($result[0]->users)->value);
     }
+
+    /**
+     * Tests set_groups_messaging
+     *
+     * @covers \core_group::set_groups_messaging
+     */
+    public function test_set_groups_messaging() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $course = $dg->create_course();
+
+        // Create some groups in the course.
+        $groupids = [];
+        for ($i = 0; $i < 5; $i++) {
+            $group = new \stdClass();
+            $group->courseid = $course->id;
+            $group->name = 'group-'.$i;
+            $group->enablemessaging = 0;
+            $groupids[] = groups_create_group($group);
+        }
+
+        // They should all initially be disabled.
+        $alldisabledinitially = $this->check_groups_messaging_status_is($groupids, $course->id, false);
+        $this->assertTrue($alldisabledinitially);
+
+        // Enable messaging for all the groups.
+        set_groups_messaging($groupids, true);
+
+        // Check they were all enabled.
+        $allenabled = $this->check_groups_messaging_status_is($groupids, $course->id, true);
+        $this->assertTrue($allenabled);
+
+        // Disable messaging for all the groups.
+        set_groups_messaging($groupids, false);
+
+        // Check they were all disabled.
+        $alldisabled = $this->check_groups_messaging_status_is($groupids, $course->id, false);
+        $this->assertTrue($alldisabled);
+    }
+
+    /**
+     * Tests set group messaging where it doesn't exist
+     *
+     * @covers \core_group::set_groups_messaging
+     */
+    public function test_set_groups_messaging_doesnt_exist() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $groupids = [-1];
+
+        $this->expectException('dml_exception');
+        set_groups_messaging($groupids, false);
+    }
+
+    /**
+     * Checks the given list of groups to verify their messaging settings.
+     *
+     * @param array $groupids array of group ids
+     * @param int $courseid the course the groups are in
+     * @param bool $desired the desired setting value
+     * @return bool true if all groups $enablemessaging setting matches the given $desired value, else false
+     */
+    private function check_groups_messaging_status_is(array $groupids, int $courseid, bool $desired) {
+        $context = \context_course::instance($courseid);
+
+        foreach ($groupids as $groupid) {
+            $conversation = \core_message\api::get_conversation_by_area(
+                'core_group',
+                'groups',
+                $groupid,
+                $context->id
+            );
+
+            // An empty conversation means it has not been enabled yet.
+            if (empty($conversation)) {
+                $conversation = (object) [
+                    'enabled' => 0
+                ];
+            }
+
+            if ($desired !== boolval($conversation->enabled)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
