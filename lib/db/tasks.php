@@ -437,4 +437,24 @@ $tasks = array(
         'dayofweek' => '*',
         'month' => '*'
     ],
+    [
+        'classname' => 'core\task\show_started_courses_task',
+        'blocking' => 0,
+        'minute' => '00',
+        'hour' => '01',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*',
+        'disabled' => true,
+    ],
+    [
+        'classname' => 'core\task\hide_ended_courses_task',
+        'blocking' => 0,
+        'minute' => '00',
+        'hour' => '01',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*',
+        'disabled' => true,
+    ],
 );

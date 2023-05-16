@@ -35,6 +35,12 @@ information provided here is intended especially for developers.
 * Introduce a new public function \core_external\util::generate_token_name()
 * Legacy (and custom) Behat --skip-passed option has been removed completely. Please, use the standard
   --rerun option that provides exactly the same (execution of failed scenarios only).
+* New scheduled tasks show_started_courses_task and hide_ended_courses_task that updates the course visibility when the current
+  day matches course start date/end date. They are disabled by default. Once they are enabled, only courses with start/end dates
+  near the past 24 hours will be checked. The visibility of these courses will only changed when their start/end dates are higher
+  than the current one, to avoid updating the course visibility early.
+* New events course_started and course_ended have been created. For now, they are triggered when courses change automatically their
+  visibility through the new scheduled tasks to hide/show courses based on their start/end dates.
 
 === 4.2 ===
 
