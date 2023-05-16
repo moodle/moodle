@@ -110,7 +110,7 @@ Feature: A teacher can preview questions in the question bank
     And I should see "1" in the "Question version" "select"
     And I should see "2" in the "Question version" "select"
     And I set the field "Question version" to "1"
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
     Then I should see "Version 1"
     And I should not see "Version 2"
     And I should not see "(latest)"
