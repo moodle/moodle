@@ -339,7 +339,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             $questionsetreference->questionscontextid = $question->questioncontextid;
             $filtercondition = new stdClass();
             $filtercondition->questioncategoryid = $question->category;
-            $filtercondition->includingsubcategories = $data->includingsubcategories;
+            $filtercondition->includingsubcategories = $data->includingsubcategories ?? false;
             $questionsetreference->filtercondition = json_encode($filtercondition);
             $DB->insert_record('question_set_references', $questionsetreference);
             // Cleanup leftover random qtype data from question table.
