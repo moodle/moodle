@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="PHP_CodeSniffer" xsi:noNamespaceSchemaLocation="phpcs.xsd">
+    <description>The coding standard for PHP_CodeSniffer itself.</description>
+
+    <exclude-pattern>*/lib/*</exclude-pattern>
+
+    <arg name="basepath" value="."/>
+    <arg name="colors"/>
+    <arg name="parallel" value="75"/>
+    <arg value="np"/>
+
+    <!-- Don't hide tokenizer exceptions -->
+    <rule ref="Internal.Tokenizer.Exception">
+        <type>error</type>
+    </rule>
+    <!-- File comment sniff -->
+    <rule ref="PEAR.Commenting.FileComment"/>
+    <!-- Squiz standard with some exceptions -->
+    <rule ref="Squiz">
+        <exclude name="Squiz.Commenting.FileComment"/>
+        <exclude name="Squiz.Files.FileExtension"/>
+    </rule>
+    <!-- Change min line length -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="120"/>
+            <property name="absoluteLineLimit" value="125"/>
+        </properties>
+    </rule>
+</ruleset>
