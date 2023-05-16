@@ -11,13 +11,12 @@ Feature: We can use the user report
   Scenario: Verify we can view a user grade report with no users enrolled.
     Given I log in as "admin"
     And I am on "Course 1" course homepage
-    And I navigate to "View > User report" in the course gradebook
-    And I click on "All users (0)" in the "user" search widget
+    When I navigate to "View > User report" in the course gradebook
     Then I should see "There are no students enrolled in this course."
 
   Scenario: Teacher sees his last viewed user report when navigating back to the gradebook user report.
     Given the following "users" exist:
-      | username | firstname | lastname | email                |
+      | username | firstname  | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
       | teacher2 | Teacher   | 2        | teacher2@example.com |
       | student1 | Student   | 1        | student1@example.com |
