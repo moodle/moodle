@@ -158,6 +158,16 @@ class grade extends tablelike implements selectable_items, filterable_items {
             return;
         }
 
+        // If we change perpage on pagination we might end up with a page that doesn't exist.
+        if ($this->perpage) {
+            $numpages = intval($this->totalitemcount / $this->perpage) + 1;
+            if ($numpages <= $this->page) {
+                $this->page = 0;
+            }
+        } else {
+            $this->page = 0;
+        }
+
         $params = [
             'id' => $this->itemid,
             'courseid' => $this->courseid

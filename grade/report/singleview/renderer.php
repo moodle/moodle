@@ -152,7 +152,6 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
 
         if ($report->screen->supports_paging()) {
             $navigationdata['perpageselect'] = $report->screen->perpage_select();
-            $navigationdata['pager'] = $report->screen->pager();
         }
 
         if (isset($navigationdata)) {

@@ -36,7 +36,7 @@ $userid   = optional_param('userid', null, PARAM_INT);
 $itemid = optional_param('itemid', null, PARAM_INT);
 $itemtype = optional_param('item', null, PARAM_TEXT);
 $page = optional_param('page', 0, PARAM_INT);
-$perpage = optional_param('perpage', 100, PARAM_INT);
+$perpage = optional_param('perpage', null, PARAM_INT);
 
 $edit = optional_param('edit', -1, PARAM_BOOL); // Sticky editing mode.
 
@@ -203,13 +203,13 @@ if ($data = data_submitted()) {
 // Make sure we have proper final grades.
 grade_regrade_final_grades_if_required($course);
 
-echo $report->output();
 // Save the screen state in a session variable as last viewed state.
 $SESSION->gradereport_singleview["itemtype-{$context->id}"] = $itemtype;
 if ($itemid) {
     $SESSION->gradereport_singleview["{$itemtype}item-{$context->id}"] = $itemid;
 }
 
+$stickyfooter = '';
 if (($itemtype !== 'select') && ($itemtype !== 'grade_select') &&($itemtype !== 'user_select')) {
     $item = (isset($userid)) ? $userid : $itemid;
 
@@ -223,9 +223,21 @@ if (($itemtype !== 'select') && ($itemtype !== 'grade_select') &&($itemtype !== 
 
     $userreportrenderer = $PAGE->get_renderer('gradereport_singleview');
     // Add previous/next user navigation.
-    echo $userreportrenderer->report_navigation($gpr, $courseid, $context, $report, $groupid, $itemtype, $itemid);
+    $footercontent = $userreportrenderer->report_navigation($gpr, $courseid, $context, $report, $groupid, $itemtype, $itemid);
+
+    $buttonhtml = implode(' ', $report->screen->buttons($report->screen->is_readonly()));
+    $footercontent .= $report->screen->bulk_insert() . $buttonhtml;
+
+    $stickyfooter = new core\output\sticky_footer($footercontent);
+    $stickyfooter = $OUTPUT->render($stickyfooter);
+
 }
 
+echo $OUTPUT->render_from_template('gradereport_singleview/report', [
+    'table' => $report->output(),
+    'stickyfooter' => $stickyfooter,
+    'sesskey' => sesskey()
+]);
 $event = \gradereport_singleview\event\grade_report_viewed::create(
     [
         'context' => $context,
