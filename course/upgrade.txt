@@ -1,6 +1,9 @@
 This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
+=== 4.3 ===
+* The `core_course_renderer::course_section_cm_completion` method has been removed, and can no longer be used
+
 === 4.2 ===
 * course/mod.php now accepts parameter beforemod for adding course modules. It contains the course module id
   of an existing course module. The new module is inserted before this module.
