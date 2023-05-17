@@ -79,6 +79,8 @@ class section implements named_templatable, renderable {
     /** @var bool if the section is considered stealth */
     protected $isstealth = false;
 
+    /** @var string control menu class. */
+    protected $controlmenuclass;
 
     /**
      * Constructor.

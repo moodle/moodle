@@ -45,6 +45,12 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  */
 class external_test extends externallib_advanced_testcase {
 
+    /** @var int custom profile field1 ID. */
+    protected $field1;
+
+    /** @var int custom profile field2 ID. */
+    protected $field2;
+
     /**
      * Set up for every test
      */

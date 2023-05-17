@@ -27,6 +27,24 @@ class comment_manager {
     /** @var int The number of comments to display per page */
     private $perpage;
 
+    /** @var stdClass Course data. */
+    protected $course;
+
+    /** @var context|bool To store the context object or false if not found. */
+    protected $context;
+
+    /** @var stdClass Course module. */
+    protected $cm;
+
+    /** @var course_modinfo Module information for course, or null if resetting. */
+    protected $modinfo;
+
+    /** @var string plugin type. */
+    protected $plugintype;
+
+    /** @var string plugin name. */
+    protected $pluginname;
+
     /**
      * Constructs the comment_manage object
      */

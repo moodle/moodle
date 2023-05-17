@@ -53,6 +53,9 @@ class competency extends persistent {
     /** @var competency Object before update. */
     protected $beforeupdate = null;
 
+    /** @var competency|null To store new parent. */
+    protected $newparent;
+
     /**
      * Return the definition of the properties of this model.
      *

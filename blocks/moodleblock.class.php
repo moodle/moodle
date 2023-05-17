@@ -855,9 +855,6 @@ class block_tree extends block_list {
         $this->get_required_javascript();
         $this->get_content();
         $content = $output->tree_block_contents($this->content->items,array('class'=>'block_tree list'));
-        if (isset($this->id) && !is_numeric($this->id)) {
-            $content = $output->box($content, 'block_tree_box', $this->id);
-        }
         return $content;
     }
 }
