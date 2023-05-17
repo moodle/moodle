@@ -129,10 +129,10 @@ Feature: View gradebook when scales are used
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 3" in the "user" search widget
     And the following should exist in the "user-grade" table:
-      | Grade item                   | Grade          | Range | Percentage    | Contribution to course total |
-      | Test assignment one          | C              | F–A   | 50.00 %       | <contrib3>                   |
-      | Sub category (<aggregation>) total<aggregation>. | 3.00           | 1–5   | 50.00 %       | -                            |
-      | Course total<aggregation>.   | <coursetotal3> | 0–100 | <courseperc3> | -                            |
+      | Grade item                          | Grade          | Range | Percentage    | Contribution to course total |
+      | Test assignment one                 | C              | F–A   | 50.00 %       | <contrib3>                   |
+      | Sub category (<aggregation>) total  | 3.00           | 1–5   | 50.00 %       | -                            |
+      | Course total                        | <coursetotal3> | 0–100 | <courseperc3> | -                            |
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                | Max grade |
@@ -144,10 +144,10 @@ Feature: View gradebook when scales are used
     And I follow "Grades" in the user menu
     And I click on "Course 1" "link" in the "region-main" "region"
     And the following should exist in the "user-grade" table:
-      | Grade item                   | Grade          | Range | Percentage    | Contribution to course total |
-      | Test assignment one          | B              | F–A   | 75.00 %       | <contrib2>                   |
-      | Sub category (<aggregation>) total<aggregation>. | 4.00           | 1–5   | 75.00 %       | -                            |
-      | Course total<aggregation>.   | <coursetotal2> | 0–100 | <courseperc2> | -                            |
+      | Grade item                          | Grade          | Range | Percentage    | Contribution to course total |
+      | Test assignment one                 | B              | F–A   | 75.00 %       | <contrib2>                   |
+      | Sub category (<aggregation>) total  | 4.00           | 1–5   | 75.00 %       | -                            |
+      | Course total                        | <coursetotal2> | 0–100 | <courseperc2> | -                            |
 
     Examples:
       | aggregation                         | coursetotal1 | coursetotal2 | coursetotal3 | coursetotal4 | coursetotal5 |overallavg | courseperc2 | courseperc3 | contrib2 | contrib3 |
