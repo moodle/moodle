@@ -96,6 +96,8 @@ $pagetitle = $book->name;
 if ($chapter = $DB->get_record('book_chapters', ['id' => $chapterid, 'bookid' => $book->id])) {
     $pagetitle .= ": {$chapter->title}";
 }
+
+$PAGE->set_other_editing_capability('mod/book:edit');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 $PAGE->add_body_class('limitedwidth');
