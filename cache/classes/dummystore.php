@@ -60,6 +60,12 @@ class cachestore_dummy extends cache_store {
     protected $store = array();
 
     /**
+     * Cache definition
+     * @var cache_definition
+     */
+    protected $definition;
+
+    /**
      * Constructs a dummy store instance.
      * @param string $name
      * @param array $configuration
@@ -119,6 +125,8 @@ class cachestore_dummy extends cache_store {
         } else {
             $this->persist = !$definition->use_static_acceleration();
         }
+
+        $this->definition = $definition;
     }
 
     /**

@@ -168,7 +168,6 @@ foreach ($filterdata->services as $i => $serviceid) {
 $table->define_baseurl($baseurl);
 
 $table->attributes['class'] = 'admintable generaltable';
-$table->data = [];
 $table->out(30, false);
 
 echo $OUTPUT->footer();

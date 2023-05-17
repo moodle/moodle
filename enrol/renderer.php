@@ -351,6 +351,9 @@ class course_enrolment_table extends html_table implements renderable {
             'alternatename', 'username', 'idnumber', 'email', 'phone1', 'phone2',
             'institution', 'department', 'lastaccess', 'lastcourseaccess');
 
+    /** @var bool To store status of Other users page. */
+    public $otherusers;
+
     /**
      * Constructs the table
      *
@@ -643,8 +646,6 @@ class course_enrolment_users_table extends course_enrolment_table {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_enrolment_other_users_table extends course_enrolment_table {
-
-    public $otherusers = true;
 
     /**
      * Constructs the table
