@@ -167,8 +167,9 @@ if (has_capability('moodle/grade:viewall', $context)) {
             }
         }
         $userreportrenderer = $PAGE->get_renderer('gradereport_user');
-        // Add previous/next user navigation.
-        echo $userreportrenderer->user_navigation($gui, $userid, $courseid);
+        // Render the user report (previous/next) navigation in a sticky footer.
+        $stickyfooter = new core\output\sticky_footer($userreportrenderer->user_navigation($gui, $userid, $courseid));
+        echo $OUTPUT->render($stickyfooter);
     }
 } else {
     // Students will see just their own report.
