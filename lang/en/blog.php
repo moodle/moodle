@@ -31,6 +31,7 @@ $string['associatewithmodule'] = 'Blog about {$a->modtype}: {$a->modname}';
 $string['association'] = 'Association';
 $string['associations'] = 'Associations';
 $string['associationunviewable'] = 'This entry cannot be viewed by others until a course is associated with it or the \'Publish to\' field is changed';
+$string['author'] = 'Author';
 $string['autotags'] = 'Add these tags';
 $string['autotags_help'] = 'Enter one or more local tags (separated by commas) that you want to automatically add to each blog entry copied from the external blog into your local blog.';
 $string['backupblogshelp'] = 'If enabled then blogs will be included in SITE automated backups';
