@@ -82,6 +82,8 @@ class role extends base {
      * @return column[]
      */
     protected function get_all_columns(): array {
+        global $DB;
+
         $contextalias = $this->get_table_alias('context');
         $rolealias = $this->get_table_alias('role');
 
@@ -119,6 +121,10 @@ class role extends base {
             ->set_is_sortable(true);
 
         // Description column.
+        $descriptionfieldsql = "{$rolealias}.description";
+        if ($DB->get_dbfamily() === 'oracle') {
+            $descriptionfieldsql = $DB->sql_order_by_text($descriptionfieldsql, 1024);
+        }
         $columns[] = (new column(
             'description',
             new lang_string('description'),
@@ -126,7 +132,8 @@ class role extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_LONGTEXT)
-            ->add_fields("{$rolealias}.description, {$rolealias}.shortname")
+            ->add_field($descriptionfieldsql, 'description')
+            ->add_field("{$rolealias}.shortname")
             ->set_callback(static function($description, stdClass $role): string {
                 if ($description === null) {
                     return '';
