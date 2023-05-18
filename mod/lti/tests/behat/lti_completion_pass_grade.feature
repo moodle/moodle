@@ -1,4 +1,4 @@
-@mod @mod_lti @core_completion @javascript
+@mod @mod_lti @core_completion
 Feature: Pass grade activity completion information in the LTI activity
 
   Background:
@@ -9,8 +9,8 @@ Feature: Pass grade activity completion information in the LTI activity
       | student3 | Vinnie    | Student3 | student3@example.com |
       | teacher1 | Darrell   | Teacher1 | teacher1@example.com |
     And the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1        | 0        |
+      | fullname | shortname | category | enablecompletion | showcompletionconditions |
+      | Course 1 | C1        | 0        | 1                | 1                        |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | student1 | C1     | student        |
@@ -18,22 +18,8 @@ Feature: Pass grade activity completion information in the LTI activity
       | student3 | C1     | student        |
       | teacher1 | C1     | editingteacher |
     And the following "activities" exist:
-      | activity | name          | course | idnumber |
-      | lti      | Music history | C1     | lti1     |
-    And I am on the "Course 1" "course editing" page logged in as teacher1
-    And I expand all fieldsets
-    And I set the following fields to these values:
-      | Enable completion tracking          | Yes |
-      | Show activity completion conditions | Yes |
-    And I press "Save and display"
-    And I am on the "Music history" "lti activity editing" page
-    And I set the following fields to these values:
-      | Completion tracking | Show activity as complete when conditions are met |
-      | Require view        | 1                                                 |
-      | Require grade       | 1                                                 |
-      | gradepass           | 50                                                |
-      | completionpassgrade | 1                                                 |
-    And I press "Save and return to course"
+      | activity | name           | course | gradepass | completion | completionview | completionusegrade | completionpassgrade |
+      | lti      | Music history  | C1     | 50        | 2          | 1              | 1                  | 1                   |
 
   Scenario: View automatic completion items as a teacher
     Given I am on the "Music history" "lti activity" page logged in as teacher1
@@ -41,6 +27,7 @@ Feature: Pass grade activity completion information in the LTI activity
     And "Music history" should have the "Receive a grade" completion condition
     And "Music history" should have the "Receive a passing grade" completion condition
 
+  @javascript
   Scenario: View automatic completion items as a student
     Given I am on the "Music history" "lti activity" page logged in as student1
     And the "View" completion condition of "Music history" is displayed as "done"
