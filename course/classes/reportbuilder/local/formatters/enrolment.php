@@ -37,6 +37,8 @@ class enrolment {
      * @param string|null $value
      * @param stdClass $row
      * @return string
+     *
+     * @deprecated since Moodle 4.3 - please do not use this function any more (to remove in MDL-78118)
      */
     public static function enrolment_name(?string $value, stdClass $row): string {
         global $DB;

@@ -22,11 +22,13 @@ use core_course\reportbuilder\local\entities\course_category;
 use core_course\reportbuilder\local\entities\access;
 use core_course\reportbuilder\local\entities\completion;
 use core_course\reportbuilder\local\entities\enrolment;
+use core_enrol\reportbuilder\local\entities\enrol;
 use core_group\reportbuilder\local\entities\group;
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\course;
 use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\helpers\database;
+use core_role\reportbuilder\local\entities\role;
 
 /**
  * Course participants datasource
@@ -42,9 +44,10 @@ class participants extends datasource {
      */
     protected function initialise(): void {
         $courseentity = new course();
-        $course = $courseentity->get_table_alias('course');
         $this->add_entity($courseentity);
 
+        $context = $courseentity->get_table_alias('context');
+        $course = $courseentity->get_table_alias('course');
         $this->set_main_table('course', $course);
 
         // Exclude site course.
@@ -57,14 +60,19 @@ class participants extends datasource {
         $this->add_entity($coursecatentity
             ->add_join("JOIN {course_categories} {$categories} ON {$categories}.id = {$course}.category"));
 
+        // Join the enrolment method entity.
+        $enrolentity = new enrol();
+        $enrol = $enrolentity->get_table_alias('enrol');
+        $this->add_entity($enrolentity
+            ->add_join("LEFT JOIN {enrol} {$enrol} ON {$enrol}.courseid = {$course}.id"));
+
         // Join the enrolments entity.
-        $enrolmententity = new enrolment();
+        $enrolmententity = (new enrolment())
+            ->set_table_alias('enrol', $enrol);
         $userenrolment = $enrolmententity->get_table_alias('user_enrolments');
-        $enrol = $enrolmententity->get_table_alias('enrol');
-        $enroljoin = "LEFT JOIN {enrol} {$enrol} ON {$enrol}.courseid = {$course}.id";
-        $userenrolmentjoin = " LEFT JOIN {user_enrolments} {$userenrolment} ON {$userenrolment}.enrolid = {$enrol}.id";
-        $enrolmententity->add_joins([$enroljoin, $userenrolmentjoin]);
-        $this->add_entity($enrolmententity);
+        $this->add_entity($enrolmententity
+            ->add_joins($enrolentity->get_joins())
+            ->add_join("LEFT JOIN {user_enrolments} {$userenrolment} ON {$userenrolment}.enrolid = {$enrol}.id"));
 
         // Join user entity.
         $userentity = new user();
@@ -73,9 +81,20 @@ class participants extends datasource {
         $userentity->add_join("LEFT JOIN {user} {$user} ON {$userenrolment}.userid = {$user}.id AND {$user}.deleted = 0");
         $this->add_entity($userentity);
 
+        // Join the role entity.
+        $roleentity = (new role())
+            ->set_table_alias('context', $context);
+        $role = $roleentity->get_table_alias('role');
+        $this->add_entity($roleentity
+            ->add_joins($userentity->get_joins())
+            ->add_join($courseentity->get_context_join())
+            ->add_join("LEFT JOIN {role_assignments} ras ON ras.contextid = {$context}.id AND ras.userid = {$user}.id")
+            ->add_join("LEFT JOIN {role} {$role} ON {$role}.id = ras.roleid")
+        );
+
         // Join group entity.
         $groupentity = (new group())
-            ->set_table_alias('context', $courseentity->get_table_alias('context'));
+            ->set_table_alias('context', $context);
         $groups = $groupentity->get_table_alias('groups');
 
         // Sub-select for all course group members.
@@ -135,7 +154,7 @@ class participants extends datasource {
     public function get_default_columns(): array {
         return [
             'course:coursefullnamewithlink',
-            'enrolment:method',
+            'enrol:name',
             'user:fullnamewithlink',
         ];
     }

@@ -136,7 +136,8 @@ abstract class datasource extends base {
     }
 
     /**
-     * Return all configured report columns
+     * Override parent method, returning only those columns specifically added to the custom report (rather than all that are
+     * available)
      *
      * @return column[]
      */
@@ -157,6 +158,10 @@ abstract class datasource extends base {
 
             // Ensure the column is still present and available.
             if ($instance !== null && $instance->get_is_available()) {
+                if ($instance->get_is_deprecated()) {
+                    debugging("The column '{$instance->get_unique_identifier()}' is deprecated, please do not use it any more." .
+                        " {$instance->get_is_deprecated_message()}", DEBUG_DEVELOPER);
+                }
 
                 // We should clone the report column to ensure if it's added twice to a report, each operates independently.
                 $this->activecolumns['values'][] = clone $instance
@@ -224,7 +229,8 @@ abstract class datasource extends base {
     abstract public function get_default_filters(): array;
 
     /**
-     * Return all configured report filters
+     * Override parent method, returning only those filters specifically added to the custom report (rather than all that are
+     * available)
      *
      * @return filter[]
      */
@@ -245,6 +251,11 @@ abstract class datasource extends base {
 
             // Ensure the filter is still present and available.
             if ($instance !== null && $instance->get_is_available()) {
+                if ($instance->get_is_deprecated()) {
+                    debugging("The filter '{$instance->get_unique_identifier()}' is deprecated, please do not use it any more." .
+                        " {$instance->get_is_deprecated_message()}", DEBUG_DEVELOPER);
+                }
+
                 $this->activefilters['values'][$instance->get_unique_identifier()] =
                     $instance->set_persistent($filter);
             }
@@ -323,7 +334,8 @@ abstract class datasource extends base {
     }
 
     /**
-     * Return all configured report conditions
+     * Override parent method, returning only those conditions specifically added to the custom report (rather than all that are
+     * available)
      *
      * @return filter[]
      */
@@ -344,6 +356,11 @@ abstract class datasource extends base {
 
             // Ensure the condition is still present and available.
             if ($instance !== null && $instance->get_is_available()) {
+                if ($instance->get_is_deprecated()) {
+                    debugging("The condition '{$instance->get_unique_identifier()}' is deprecated, please do not use it any more." .
+                        " {$instance->get_is_deprecated_message()}", DEBUG_DEVELOPER);
+                }
+
                 $this->activeconditions['values'][$instance->get_unique_identifier()] =
                     $instance->set_persistent($condition);
             }

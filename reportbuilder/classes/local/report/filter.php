@@ -57,6 +57,12 @@ final class filter {
     /** @var bool $available */
     protected $available = true;
 
+    /** @var bool $deprecated */
+    protected $deprecated = false;
+
+    /** @var string $deprecatedmessage */
+    protected $deprecatedmessage;
+
     /** @var mixed $options */
     protected $options;
 
@@ -277,6 +283,37 @@ final class filter {
     public function set_is_available(bool $available): self {
         $this->available = $available;
         return $this;
+    }
+
+    /**
+     * Set deprecated state of the filter, in which case it will still be shown when already present in existing reports but
+     * won't be available for selection in the report editor
+     *
+     * @param string $deprecatedmessage
+     * @return self
+     */
+    public function set_is_deprecated(string $deprecatedmessage = ''): self {
+        $this->deprecated = true;
+        $this->deprecatedmessage = $deprecatedmessage;
+        return $this;
+    }
+
+    /**
+     * Return deprecated state of the filter
+     *
+     * @return bool
+     */
+    public function get_is_deprecated(): bool {
+        return $this->deprecated;
+    }
+
+    /**
+     * Return deprecated message of the filter
+     *
+     * @return string
+     */
+    public function get_is_deprecated_message(): string {
+        return $this->deprecatedmessage;
     }
 
     /**
