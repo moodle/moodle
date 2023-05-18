@@ -5,18 +5,7 @@ Feature: Configure tool types
   I need to be able to add, remove and configure tool types
 
   Background:
-    Given the following "users" exist:
-      | username | firstname | lastname | email                |
-      | teacher1 | Terry1    | Teacher1 | teacher1@example.com |
-      | student1 | Sam1      | Student1 | student1@example.com |
-    And the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1 | 0 |
-    And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
-    And I log in as "admin"
+    Given I log in as "admin"
     And I navigate to "Plugins > Activity modules > External tool > Manage tools" in site administration
 
   @javascript
