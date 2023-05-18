@@ -52,8 +52,7 @@ list($options, $unrecognized) = cli_get_params(
         'updatesteps' => false,
         'optimize-runs' => '',
         'add-core-features-to-theme' => false,
-        'axe'      => '',
-        'no-axe'      => false,
+        'axe'         => true,
     ),
     array(
         'h' => 'help',
@@ -187,11 +186,8 @@ if ($options['install']) {
         behat_config_manager::set_behat_run_config_value('behatsiteenabled', 1);
     }
 
-    // Always run Behat with axe tests.
-    if (!$options['no-axe']) {
-        behat_config_manager::set_behat_run_config_value('axe', true);
-    }
-
+    // Configure axe according to option.
+    behat_config_manager::set_behat_run_config_value('axe', $options['axe']);
 
     // Enable test mode.
     $timestart = microtime(true);
