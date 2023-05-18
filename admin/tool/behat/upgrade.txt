@@ -1,6 +1,6 @@
 This files describes API changes in the tool_behat code.
 
-=== 3.11.14 ===
+=== 3.11.15 ===
 * Behat is initialised with Axe accessibility tests enabled by default, if you want to disable them please use the --no-axe option.
 === 3.7 ===
 * Behat will now look for behat step definitions in the current
