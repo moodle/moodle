@@ -394,6 +394,7 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-comment .mform fieldset {
     margin: 0;
+    border-bottom: none;
 }
 
 #page-mod-quiz-comment .que {
