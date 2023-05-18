@@ -200,6 +200,7 @@ function local_qubitssite_parse_url($url){
 }
 
 function local_qubitssite_upsert_cohort($name, $cohortidnumber, $cohortid){
+	global $DB;
     $cohort = new \stdClass();
     $cohort->contextid = \context_system::instance()->id;
     $cohort->name = $name;
