@@ -183,7 +183,7 @@ class registration {
         $siteinfo['activeparticipantnumberaverage'] = average_number_of_participants(true, time() - DAYSECS * 30);
         $siteinfo['modulenumberaverage'] = average_number_of_courses_modules();
         $siteinfo['dbtype'] = $CFG->dbtype;
-        $siteinfo['coursesnodates'] = $DB->count_records_select('course', 'startdate = ? AND enddate = ?', [0, 0]) - 1;
+        $siteinfo['coursesnodates'] = $DB->count_records_select('course', 'enddate = ?', [0]) - 1;
         $siteinfo['sitetheme'] = get_config('core', 'theme');
 
         // Primary auth type.

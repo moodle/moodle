@@ -34,11 +34,20 @@ class registration_test extends \advanced_testcase {
      */
     public function test_get_site_info(): void {
         global $CFG;
+        $this->resetAfterTest();
+
+        // Create some courses with end dates.
+        $generator = $this->getDataGenerator();
+        $generator->create_course(['enddate' => time() + 1000]);
+        $generator->create_course(['enddate' => time() + 1000]);
+
+        $generator->create_course(); // Course with no end date.
 
         $siteinfo = registration::get_site_info();
 
         $this->assertNull($siteinfo['policyagreed']);
         $this->assertEquals($CFG->dbtype, $siteinfo['dbtype']);
         $this->assertEquals('manual', $siteinfo['primaryauthtype']);
+        $this->assertEquals(1, $siteinfo['coursesnodates']);
     }
 }
