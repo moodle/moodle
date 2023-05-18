@@ -389,11 +389,24 @@ class course_edit_form extends moodleform {
 
         // Add communication plugins to the form.
         if (core_communication\api::is_available()) {
+
+            $instanceconfig = core_communication\processor::PROVIDER_NONE;
+            // For new courses.
+            if (empty($course->id)) {
+                $instanceid = 0;
+                if (!empty($courseconfig->coursecommunicationprovider)) {
+                    $instanceconfig = $courseconfig->coursecommunicationprovider;
+                }
+            } else {
+                // For existing courses.
+                $instanceid = $course->id;
+            }
+
             $communication = \core_communication\api::load_by_instance(
                 'core_course',
                 'coursecommunication',
-                empty($course->id) ? 0 : $course->id);
-            $communication->form_definition($mform);
+                $instanceid);
+            $communication->form_definition($mform, $instanceconfig);
             $communication->set_data($course);
         }
 
