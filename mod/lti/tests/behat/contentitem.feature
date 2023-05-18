@@ -88,11 +88,8 @@ Feature: Content-Item support
   @javascript
   Scenario: Editing a manually configured external tool
     Given the following "activities" exist:
-      | activity | course | name                 | typeid | toolurl                                   |
-      | lti      | C1     | Test tool activity 1 | 0      | /mod/lti/tests/fixtures/tool_provider.php |
-    And I am on the "Course 1" course page logged in as teacher1
-    And I turn editing mode on
-    When I open "Test tool activity 1" actions menu
-    And I choose "Edit settings" in the open action menu
+      | activity | course | name      | typeid | toolurl                                   |
+      | lti      | C1     | Test tool | 0      | /mod/lti/tests/fixtures/tool_provider.php |
+    And I am on the "Test tool" "lti activity editing" page logged in as teacher1
     Then the field "Preconfigured tool" matches value "Automatic, based on tool URL"
     And the "Select content" "button" should be disabled
