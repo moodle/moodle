@@ -1,0 +1,10 @@
+{
+    "name": "brandaorodrigo/moodle-format_buttons",
+    "type": "moodle-format",
+    "require": {
+        "composer/installers": "~1.0"
+    },
+    "extra": {
+        "installer-name": "buttons"
+    }
+}

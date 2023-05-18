@@ -1,0 +1,155 @@
+/*
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * format_buttons_renderer
+ *
+ * @package    format_buttons
+ * @author     Rodrigo Brandão <https://www.linkedin.com/in/brandaorodrigo>
+ * @copyright  2020 Rodrigo Brandão <rodrigo.brandao.contato@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+.course-content ul.buttons {
+    margin: 0;
+    list-style: none;
+}
+
+.course-content ul.buttons li.section .content {
+    margin: 0 40px;
+}
+
+.course-content ul.buttons li.section .left,
+.course-content ul.buttons li.section .right {
+    width: 40px;
+    padding: 0 6px;
+}
+
+.course-content ul.buttons li.section .left {
+    padding-top: 22px;
+    text-align: right;
+}
+
+.jsenabled .course-content ul.buttons li.section .left,
+.jsenabled .course-content ul.buttons li.section .right {
+    width: auto;
+}
+
+.course-content ul.buttons li.section .left .section-handle img.icon {
+    padding: 0;
+    vertical-align: baseline;
+}
+
+.course-content ul.buttons li.section .section_action_menu .textmenu,
+.course-content ul.buttons li.section .section_action_menu .menu-action-text {
+    white-space: nowrap;
+}
+
+.course-content ul.buttons li.section.main:not(#section-0) {
+    background: none;
+    list-style: none;
+    display: none;
+    border: 0 !important;
+}
+
+#buttonsectioncontainer {
+    display: none;
+    margin: 20px auto;
+}
+
+#buttonsectioncontainer .buttonsection {
+    background: #dee3e8;
+    color: #7a8188;
+    display: inline-block;
+    text-align: center;
+    width: 48px;
+    line-height: 48px;
+    height: 48px;
+    overflow: hidden;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0;
+    font-weight: 700;
+    margin: 0 5px 10px 5px;
+    vertical-align: top;
+}
+
+#buttonsectioncontainer.circle .buttonsection {
+    border-radius: 100%;
+}
+
+#buttonsectioncontainer .buttonsection:hover {
+    background: #bac1c5;
+    color: #fff;
+}
+
+#buttonsectioncontainer .buttonsection.sectionhidden {
+    width: 53px;
+    height: 53px;
+    line-height: 50px;
+    border: 2px solid;
+    background: none;
+    cursor: default;
+    color: #b7bdc3;
+    border-color: #d3d9df;
+}
+
+#buttonsectioncontainer .divisorsection {
+    display: inline-block;
+    padding: 0;
+    overflow-y: hidden;
+    height: 52px;
+    margin: 0 4px 10px 25px;
+}
+
+#buttonsectioncontainer .divisortext {
+    display: table-cell;
+    vertical-align: middle;
+    padding: 0;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 18px;
+    overflow-y: hidden;
+    height: 52px;
+    text-align: right;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+/* colors */
+#buttonsectioncontainer .buttonsection.current {
+    background: #115898;
+    color: #fff;
+}
+
+#buttonsectioncontainer .buttonsection.sectionvisible {
+    background: #1177d1;
+    color: #fff;
+    border-color: #1177d1;
+}
+
+#buttonsectioncontainer .divisorsection.inlinebuttonsections {
+    display: inline;
+}
+
+#buttonsectioncontainer .divisorsection.inlinebuttonsections::before {
+    content: "\A";
+    white-space: pre;
+}
+
+/* editing */
+.editing .course-content ul.buttons li.section.main:not(#section-0) {
+    display: block;
+    border-bottom: 1px dotted #dee2e6 !important;
+}
