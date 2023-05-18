@@ -50,7 +50,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->render_participants_tertiary_nav($course);
 echo $OUTPUT->heading(get_string('rolerenaming'));
 
-echo $OUTPUT->container(get_string('rolerenaming_help'));
+echo $OUTPUT->paragraph(get_string('rolerenaming_help'));
 
 $customdata = [
     'id' => $course->id,

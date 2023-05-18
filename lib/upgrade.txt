@@ -7,6 +7,7 @@ information provided here is intended especially for developers.
     - admin_setting_requiredpasswordunmask
 * The badges_get_oauth2_service_options() method has been deprecated, because it's not required anymore. It should no longer
   be used.
+* New core_renderer::paragraph method to replace the overused html_writer::tag('p', ...) pattern.
 
 === 4.2 ===
 
