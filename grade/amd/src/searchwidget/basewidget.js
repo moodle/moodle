@@ -77,6 +77,12 @@ export const init = async(
 export const registerListenerEvents = (widgetContentContainer, data, searchFunc, afterSelect = null) => {
     const searchResultsContainer = widgetContentContainer.querySelector(Selectors.regions.searchResults);
     const searchInput = widgetContentContainer.querySelector(Selectors.actions.search);
+
+    if (!searchInput) {
+        // Too late. The widget is already closed and its content is empty.
+        return;
+    }
+
     // We want to focus on the first known user interable element within the dropdown.
     searchInput.focus();
     const clearSearchButton = widgetContentContainer.querySelector(Selectors.actions.clearSearch);
