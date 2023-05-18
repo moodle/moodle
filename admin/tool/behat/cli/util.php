@@ -54,8 +54,7 @@ list($options, $unrecognized) = cli_get_params(
         'torun'       => 0,
         'optimize-runs' => '',
         'add-core-features-to-theme' => false,
-        'axe'      => '',
-        'no-axe'      => false,
+        'axe'         => true,
     ),
     array(
         'h' => 'help',
@@ -318,12 +317,7 @@ function commands_to_execute($options) {
     }
 
     foreach ($extraoptions as $option => $value) {
-        if ($options[$option]) {
-            $extra .= " --$option";
-            if ($value) {
-                $extra .= "=\"$value\"";
-            }
-        }
+        $extra .= behat_get_command_flags($option, $value);
     }
 
     if (empty($options['parallel'])) {
