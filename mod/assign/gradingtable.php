@@ -791,7 +791,7 @@ class assign_grading_table extends table_sql implements renderable {
         $group = false;
         $this->get_group_and_submission($row->id, $group, $submission, -1);
         if ($group) {
-            return $group->name;
+            return format_string($group->name, true, ['context' => $this->assignment->get_context()]);
         } else if ($this->assignment->get_instance()->preventsubmissionnotingroup) {
             $usergroups = $this->assignment->get_all_groups($row->id);
             if (count($usergroups) > 1) {
