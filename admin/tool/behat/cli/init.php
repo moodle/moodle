@@ -49,8 +49,7 @@ list($options, $unrecognized) = cli_get_params(
         'torun'    => 0,
         'optimize-runs' => '',
         'add-core-features-to-theme' => false,
-        'axe'         => '',
-        'no-axe'      => false,
+        'axe'      => null,
         'disable-composer' => false,
         'composer-upgrade' => true,
         'composer-self-update' => true,
@@ -111,11 +110,9 @@ if (!empty($options['help'])) {
     exit(0);
 }
 
-if (!empty($options['axe'])) {
+if ($options['axe']) {
     echo "Axe accessibility tests are enabled by default, to disable them, use the --no-axe option.\n";
-}
-
-if (!empty($options['no-axe'])) {
+} else if ($options['axe'] === false) {
     echo "Axe accessibility tests have been disabled.\n";
 }
 
@@ -127,22 +124,17 @@ if ($options['parallel'] && $options['parallel'] > 1) {
     $utilfile = 'util.php';
     // Sanitize all input options, so they can be passed to util.
     foreach ($options as $option => $value) {
-        if ($value) {
-            $commandoptions .= " --$option=\"$value\"";
-        }
+        $commandoptions .= behat_get_command_flags($option, $value);
     }
 } else {
     // Only sanitize options for single run.
     $cmdoptionsforsinglerun = [
         'add-core-features-to-theme',
         'axe',
-        'no-axe',
     ];
 
     foreach ($cmdoptionsforsinglerun as $option) {
-        if (!empty($options[$option])) {
-            $commandoptions .= " --$option='$options[$option]'";
-        }
+        $commandoptions .= behat_get_command_flags($option, $options[$option]);
     }
 }
 
