@@ -78,16 +78,6 @@ class ADODB_db2 extends ADOConnection {
 	public $nameQuote = '"';
 
 	/*
-	 * Executed after successful connection
-	 */
-	public $connectStmt = '';
-
-	/*
-	 * Holds the current database name
-	 */
-	private $databaseName = '';
-
-	/*
 	 * Holds information about the stored procedure request
 	 * currently being built
 	 */
@@ -307,7 +297,7 @@ class ADODB_db2 extends ADOConnection {
 			}
 			elseif ($argDatabasename)
 			{
-				$this->databaseName = $argDatabasename;
+				$this->database = $argDatabasename;
 				$argDSN .= ';database=' . $argDatabasename;
 				$argDatabasename = '';
 				$useCataloguedConnection = false;
@@ -347,9 +337,9 @@ class ADODB_db2 extends ADOConnection {
 		}
 
 		if ($argDatabasename)
-			$this->databaseName = $argDatabasename;
-		elseif (!$this->databaseName)
-			$this->databaseName = $this->getDatabasenameFromDsn($argDSN);
+			$this->database = $argDatabasename;
+		elseif (!$this->database)
+			$this->database = $this->getDatabasenameFromDsn($argDSN);
 
 
 		$connectionParameters = array('dsn'=>$argDSN,
@@ -1003,7 +993,7 @@ class ADODB_db2 extends ADOConnection {
 	  */
 	public function metaDatabases(){
 
-		$dbName = $this->getMetaCasedValue($this->databaseName);
+		$dbName = $this->getMetaCasedValue($this->database);
 
 		return (array)$dbName;
 
@@ -1580,9 +1570,6 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 	 */
 	function _query(&$sql,$inputarr=false)
 	{
-
-		$this->_error = '';
-
 		$db2Options = array();
 		/*
 		 * Use DB2 Internal case handling for best speed
@@ -1995,11 +1982,11 @@ class ADORecordSet_db2 extends ADORecordSet {
 		$ok = @db2_free_result($this->_queryID);
 		if (!$ok)
 		{
-			$this->_errorMsg  = @db2_stmt_errormsg($this->_queryId);
-			$this->_errorCode = @db2_stmt_error();
+			$this->connection->_errorMsg  = @db2_stmt_errormsg($this->_queryID);
+			$this->connection->_errorCode = @db2_stmt_error();
 
 			if ($this->debug)
-				ADOConnection::outp($this->_errorMsg);
+				ADOConnection::outp($this->connection->_errorMsg);
 			return false;
 		}
 
