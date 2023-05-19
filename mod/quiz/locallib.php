@@ -1457,7 +1457,7 @@ function quiz_send_overdue_message($attemptobj) {
     $a->courseshortname    = format_string($attemptobj->get_course()->shortname);
     // Quiz info.
     $a->quizname           = $quizname;
-    $a->quizurl            = $attemptobj->view_url();
+    $a->quizurl            = $attemptobj->view_url()->out(false);
     $a->quizlink           = '<a href="' . $a->quizurl . '">' . $quizname . '</a>';
     // Attempt info.
     $a->attemptduedate     = userdate($duedate);
