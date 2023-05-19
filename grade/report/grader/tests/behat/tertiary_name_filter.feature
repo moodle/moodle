@@ -149,6 +149,62 @@ Feature: Within the grader report, test that we can open our generic filter drop
       | User Test          |
       | Turtle Manatee     |
 
+  Scenario: A teacher can search and then filter by first or last name
+    Given I set the field "Search users" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
+    And I click on "Filter by name" "combobox"
+    And I select "S" in the "First name" "core_grades > initials bar"
+    When I press "Apply"
+    And the field "Search users" matches value "Student 1"
+    Then the following should exist in the "user-grades" table:
+      | -1-                |
+      | Student 1          |
+    And the following should not exist in the "user-grades" table:
+      | -1-                |
+      | Teacher 1          |
+      | Dummy User         |
+      | User Example       |
+      | User Test          |
+      | Turtle Manatee     |
+    And I click on "First (S)" "combobox"
+    And I select "M" in the "First name" "core_grades > initials bar"
+    And I press "Apply"
+    And the following should not exist in the "user-grades" table:
+      | -1-                |
+      | Teacher 1          |
+      | Student 1          |
+      | Dummy User         |
+      | User Example       |
+      | User Test          |
+      | Turtle Manatee     |
+
+  Scenario: A teacher can search for all users then filter with the initials bar
+    Given I set the field "Search users" to "User"
+    And I click on "View all results (3)" "option_role"
+    And the following should exist in the "user-grades" table:
+      | -1-                |
+      | Dummy User         |
+      | User Example       |
+      | User Test          |
+    And the following should not exist in the "user-grades" table:
+      | -1-                |
+      | Teacher 1          |
+      | Student 1          |
+      | Turtle Manatee     |
+    When I click on "Filter by name" "combobox"
+    And I select "E" in the "Last name" "core_grades > initials bar"
+    And I press "Apply"
+    Then the following should exist in the "user-grades" table:
+      | -1-                |
+      | User Example       |
+    And the following should not exist in the "user-grades" table:
+      | -1-                |
+      | Teacher 1          |
+      | Student 1          |
+      | Dummy User         |
+      | User Test          |
+      | Turtle Manatee     |
+
   # This can be expanded for left/right/home & end keys but will have to be done in conjunction with the non mini render.
   @accessibility
   Scenario: A teacher can set focus and navigate the filter with the keyboard
