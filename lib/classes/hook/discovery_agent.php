@@ -14,28 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+namespace core\hook;
+
 /**
- * Hooks overview page.
+ * This interface describes a component which can discover hooks in its own namespace.
  *
  * @package   core
- * @author    Petr Skoda
- * @copyright 2022 Open LMS
+ * @copyright Andrew Lyons <andrew@nicols.co.uk>
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-require_once(__DIR__ . '/../config.php');
-require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->libdir . '/tablelib.php');
-
-admin_externalpage_setup('hooksoverview');
-require_capability('moodle/site:config', \core\context\system::instance());
-
-$hookmanager = \core\hook\manager::get_instance();
-
-echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('hooksoverview', 'core_admin'));
-
-$table = new \core_admin\table\hook_list_table();
-$table->out();
-
-echo $OUTPUT->footer();
+interface discovery_agent {
+    /**
+     * Discover hooks belonging to the component.
+     *
+     * @return array
+     */
+    public static function discover_hooks(): array;
+}

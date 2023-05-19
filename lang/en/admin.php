@@ -723,10 +723,21 @@ $string['hidefromall'] = 'Hide from all users';
 $string['hidefromnone'] = 'Hide from nobody';
 $string['hidefromstudents'] = 'Hide from students';
 $string['hookcallbacks'] = 'Callbacks';
+$string['hookcallbacks_help'] = 'The list of callbacks which will be called when the hook is dispatched.
+
+The order shown is the order in which callbacks are called.
+
+A callback with a higher priority will be called before one with lower priority.';
+$string['hookcallbacknotcallable'] = 'This callback is not callable. This could be because the class or method does not exist, or because the method is not public.';
+$string['hookconfigoverride'] = 'Overridden';
+$string['hookconfigoverride_help'] = 'The definition of this callback has been overridden in the site configuration file, config.php';
 $string['hookdeprecates'] = 'Deprecated lib.php callbacks';
 $string['hookdescription'] = 'Description';
 $string['hookdescriptionmissing'] = 'Hook does not have a description method';
-$string['hookmissing'] = 'Hook is not available';
+$string['hookclassmissing'] = 'Hook class not found';
+$string['hookclassmissing_desc'] = 'The hook discovery agent has returned a class that does not exist.';
+$string['hookunknown'] = 'Hook not found';
+$string['hookunknown_desc'] = 'The object that this callback listens to is not available. It may have been removed or renamed, or it may not be available in this version of Moodle.';
 $string['hookname'] = 'Hook';
 $string['hooksoverview'] = 'Hooks overview';
 $string['hostname'] = 'Host name';

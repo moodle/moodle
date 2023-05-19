@@ -129,7 +129,7 @@ final class manager implements
     }
 
     /**
-     * Returns list of all callbacks found in deb/hooks.php files.
+     * Returns list of all callbacks found in db/hooks.php files.
      *
      * @return iterable
      */
@@ -412,7 +412,10 @@ final class manager implements
         $candidates = self::discover_known_hooks();
 
         /** @var class-string<deprecated_callback_replacement> $hookclassname */
-        foreach ($candidates as $hookclassname) {
+        foreach (array_keys($candidates) as $hookclassname) {
+            if (!class_exists($hookclassname)) {
+                continue;
+            }
             // It's 2023 and PHP still doesn't provide a simple way to detect if a class implements an interface without
             // that class being instantiated.
             $rc = new \ReflectionClass($hookclassname);
@@ -560,42 +563,22 @@ final class manager implements
      *
      * @return array hook class names
      */
-    public function discover_known_hooks(): array {
-        $hooks = [];
+    public static function discover_known_hooks(): array {
+        $hooks = \core\hooks::discover_hooks();
 
-        // All classes references in callbacks are considered to be known hooks.
-        foreach ($this->allcallbacks as $classname => $definition) {
+        foreach (\core_component::get_component_names() as $component) {
+            $classname = "{$component}\\hooks";
+
             if (!class_exists($classname)) {
                 continue;
             }
-            $hooks[] = $classname;
-        }
 
-        // For classes in hook namespace we have more requirements.
-        $components = ['core'];
-        foreach (\core_component::get_plugin_types() as $plugintype => $plugintypedir) {
-            foreach (\core_component::get_plugin_list($plugintype) as $pluginname => $plugindir) {
-                $components[] = $plugintype . '_' . $pluginname;
+            $rc = new \ReflectionClass($classname);
+            if (!$rc->implementsInterface(\core\hook\hook_discover_agent::class)) {
+                continue;
             }
-        }
-        foreach ($components as $component) {
-            $classnames = array_keys(\core_component::get_component_classes_in_namespace($component, 'hook'));
-            foreach ($classnames as $classname) {
-                if (isset($this->allcallbacks[$classname])) {
-                    continue;
-                }
-                if (!class_exists($classname)) {
-                    continue;
-                }
-                $rc = new \ReflectionClass($classname);
-                if ($rc->isAbstract()) {
-                    continue;
-                }
-                if (!$rc->implementsInterface(\core\hook\described_hook::class)) {
-                    continue;
-                }
-                $hooks[] = $classname;
-            }
+
+            $hooks = array_merge($hooks, $classname::discover_hooks());
         }
 
         return $hooks;
