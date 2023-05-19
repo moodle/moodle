@@ -61,7 +61,7 @@ class tags_test extends core_reportbuilder_testcase {
         $this->assertCount(2, $content);
 
         // Consistent order (course, user), just in case.
-        core_collator::asort_array_of_arrays_by_key($content, 'c3_contextid');
+        core_collator::asort_array_of_arrays_by_key($content, 'c3_ctxid');
         $content = array_values($content);
 
         // Default columns are collection, tag name, tag standard, instance context.
@@ -103,8 +103,10 @@ class tags_test extends core_reportbuilder_testcase {
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:flagged']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:timemodified']);
 
+        // Context.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'context:link']);
+
         // Instance.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'instance:contexturl']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'instance:area']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'instance:component']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'instance:itemtype']);

@@ -200,6 +200,7 @@ class file extends base {
             ->add_fields("{$filesalias}.contextid, " . context_helper::get_preload_record_columns_sql($contextalias))
             // Sorting may not order alphabetically, but will at least group contexts together.
             ->set_is_sortable(true)
+            ->set_is_deprecated('See \'context:name\' for replacement')
             ->add_callback(static function($contextid, stdClass $context): string {
                 if ($contextid === null) {
                     return '';
@@ -221,6 +222,7 @@ class file extends base {
             ->add_fields("{$filesalias}.contextid, " . context_helper::get_preload_record_columns_sql($contextalias))
             // Sorting may not order alphabetically, but will at least group contexts together.
             ->set_is_sortable(true)
+            ->set_is_deprecated('See \'context:link\' for replacement')
             ->add_callback(static function($contextid, stdClass $context): string {
                 if ($contextid === null) {
                     return '';
