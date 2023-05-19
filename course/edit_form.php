@@ -145,14 +145,28 @@ class course_edit_form extends moodleform {
             }
         }
 
+        // Get the task to change automatically the course visibility when the current day matches the course start date.
+        $task = \core\task\manager::get_scheduled_task('\core\task\show_started_courses_task');
+        $startdatestring = 'startdate';
+        if (!empty($task) && !$task->get_disabled()) {
+            // When the task is enabled, display a different help message.
+            $startdatestring = 'startdatewithtaskenabled';
+        }
         $mform->addElement('date_time_selector', 'startdate', get_string('startdate'));
-        $mform->addHelpButton('startdate', 'startdate');
+        $mform->addHelpButton('startdate', $startdatestring);
         $date = (new DateTime())->setTimestamp(usergetmidnight(time()));
         $date->modify('+1 day');
         $mform->setDefault('startdate', $date->getTimestamp());
 
+        // Get the task to change automatically the course visibility when the current day matches the course end date.
+        $task = \core\task\manager::get_scheduled_task('\core\task\hide_ended_courses_task');
+        $enddatestring = 'enddate';
+        if (!empty($task) && !$task->get_disabled()) {
+            // When the task is enabled, display a different help message.
+            $enddatestring = 'enddatewithtaskenabled';
+        }
         $mform->addElement('date_time_selector', 'enddate', get_string('enddate'), array('optional' => true));
-        $mform->addHelpButton('enddate', 'enddate');
+        $mform->addHelpButton('enddate', $enddatestring);
 
         if (!empty($CFG->enablecourserelativedates)) {
             $attributes = [

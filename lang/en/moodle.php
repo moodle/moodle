@@ -789,6 +789,8 @@ $string['enable'] = 'Enable';
 $string['encryptedcode'] = 'Encrypted code';
 $string['enddate'] = 'Course end date';
 $string['enddate_help'] = 'The course end date determines whether a course is listed as past in the course overview. The course end date may also be used by custom reports. Note that users can still enter the course after the end date; in other words the date does not restrict access.';
+$string['enddatewithtaskenabled'] = 'Course end date';
+$string['enddatewithtaskenabled_help'] = 'The date when the course becomes hidden for students and they can no longer access it.';
 $string['english'] = 'English';
 $string['enrolmentmethods'] = 'Enrolment methods';
 $string['entercourse'] = 'Click to enter this course';
@@ -2082,6 +2084,10 @@ $string['standard'] = 'Standard';
 $string['starpending'] = '([*] = course pending approval)';
 $string['startdate'] = 'Course start date';
 $string['startdate_help'] = 'This setting determines the start of the first week for a course in weekly format. It also determines the earliest date that logs of course activities are available for. If the course is reset and the course start date changed, all dates in the course will be moved in relation to the new start date.';
+$string['startdatewithtaskenabled'] = 'Course start date';
+$string['startdatewithtaskenabled_help'] = 'The date when the course becomes visible to students. Before this date, they will not be able to access the course.
+
+This date also determines the start of the first week for a course in weekly format, and is the start date for logs of course activities. if you reset the course and change this date, all dates in the course will be moved in relation to the new start date.';
 $string['startingfrom'] = 'Starting from';
 $string['startsignup'] = 'Create new account';
 $string['state'] = 'State/Province';
