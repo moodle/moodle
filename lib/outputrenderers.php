@@ -1740,7 +1740,6 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment.
      */
     public function block_controls($actions, $blockid = null) {
-        global $CFG;
         if (empty($actions)) {
             return '';
         }
@@ -1748,7 +1747,6 @@ class core_renderer extends renderer_base {
         if ($blockid !== null) {
             $menu->set_owner_selector('#'.$blockid);
         }
-        $menu->set_constraint('.block-region');
         $menu->attributes['class'] .= ' block-control-actions commands';
         return $this->render($menu);
     }

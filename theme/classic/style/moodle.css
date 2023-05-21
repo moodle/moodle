@@ -33771,10 +33771,6 @@ img.userpicture {
     display: none;
   }
 }
-.path-mod-quiz .mod-quiz-edit-content {
-  margin-bottom: 10rem;
-}
-
 #page-mod-quiz-mod #id_reviewoptionshdr .col-md-3,
 #page-mod-quiz-mod #id_reviewoptionshdr .col-md-9 {
   width: auto;
