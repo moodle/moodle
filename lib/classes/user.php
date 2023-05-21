@@ -1226,4 +1226,31 @@ class core_user {
         };
         return null;
     }
+
+
+    /**
+     * Get initials for users
+     *
+     * @param stdClass $user
+     * @return string
+     */
+    public static function get_initials(stdClass $user): string {
+        // Get the available name fields.
+        $namefields = \core_user\fields::get_name_fields();
+        // Build a dummy user to determine the name format.
+        $dummyuser = array_combine($namefields, $namefields);
+        // Determine the name format by using fullname() and passing the dummy user.
+        $nameformat = fullname((object) $dummyuser);
+        // Fetch all the available username fields.
+        $availablefields = order_in_string($namefields, $nameformat);
+        // We only want the first and last name fields.
+        if (!empty($availablefields) && count($availablefields) >= 2) {
+            $availablefields = [reset($availablefields), end($availablefields)];
+        }
+        $initials = '';
+        foreach ($availablefields as $userfieldname) {
+            $initials .= mb_substr($user->$userfieldname, 0, 1);
+        }
+        return $initials;
+    }
 }
