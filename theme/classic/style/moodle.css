@@ -28874,9 +28874,10 @@ span.editinstructions .alert-link {
   font-size: 100%;
 }
 
+/* Variables definition*/
+/* Activity & Block 'add' buttons */
 .activity-add,
 .block-add {
-  border-radius: 0.25rem;
   color: #0f6cbf;
   background-color: #f5f9fc;
   border-color: #3584c9;
@@ -28905,10 +28906,19 @@ span.editinstructions .alert-link {
   text-decoration: underline;
 }
 
+.block-add {
+  border-radius: 0.25rem;
+}
+
+.activity-add {
+  border-radius: 1rem;
+}
+
 .changenumsections {
   border-top: 1px solid #3584c9;
 }
 
+/* Section Expand all/Collapse all */
 .section-collapsemenu .collapseall {
   display: block;
 }
@@ -28922,6 +28932,7 @@ span.editinstructions .alert-link {
   display: block;
 }
 
+/* Course section */
 .course-section {
   list-style: none;
   padding-left: 0;
@@ -28979,6 +28990,7 @@ span.editinstructions .alert-link {
   width: 100%;
 }
 
+/* TODO: These styles won't be needed anymore */
 .description .course-description-item {
   font-size: 0.875em;
   background-color: #f8f9fa;
@@ -29013,20 +29025,21 @@ span.editinstructions .alert-link {
   border-bottom: 0;
 }
 
-.course-content .description-inner ul {
+/* Re-style ordered list in course content */
+.course-content .activity-altcontent ul {
   list-style: disc;
 }
-.course-content .description-inner ul ul {
+.course-content .activity-altcontent ul ul {
   list-style: circle;
 }
-.course-content .description-inner ul ul ul {
+.course-content .activity-altcontent ul ul ul {
   list-style: square;
 }
 
+/* Activity cards */
 .activity-item {
   position: relative;
-  border-radius: 0.25rem;
-  /* Prevent bootstrap strech-link from covering the inplace editable button using z-index. */
+  border-radius: 1rem;
 }
 .activity-item:not(.activityinline) {
   border: 1px solid #dee2e6;
@@ -29043,23 +29056,79 @@ span.editinstructions .alert-link {
 .activity-item.hiddenactivity .badge {
   mix-blend-mode: multiply;
 }
+.activity-item .activity-grid {
+  display: grid;
+  align-items: center;
+  grid-template-columns: min-content 1fr min-content min-content;
+  grid-template-rows: 1fr repeat(5, min-content);
+  grid-template-areas: "icon          name          completion    actions" "icon          visibility    completion    actions" "icon          dates         completion    actions" "altcontent    altcontent    altcontent    altcontent" "afterlink     afterlink     afterlink     afterlink" "availability  availability  availability  availability";
+}
+@media (max-width: 575.98px) {
+  .activity-item .activity-grid {
+    grid-template-columns: min-content 1fr min-content;
+    grid-template-areas: "icon          name          actions" "icon          visibility    actions" "dates         dates         dates" "completion    completion    completion" "altcontent    altcontent    altcontent" "afterlink     afterlink     afterlink" "availability  availability  availability";
+  }
+}
+.activity-item .activity-grid.noname-grid {
+  grid-template-columns: min-content 1fr min-content;
+  grid-template-areas: "visibility    completion    actions" "altcontent    altcontent    altcontent" "afterlink     afterlink     afterlink" "availability  availability  availability";
+}
+@media (max-width: 575.98px) {
+  .activity-item .activity-grid.noname-grid {
+    grid-template-columns: 1fr min-content;
+    grid-template-areas: "visibility    actions" "altcontent    altcontent" "afterlink     afterlink" "completion    completion" "availability  availability";
+  }
+}
+.activity-item .activity-actions {
+  grid-area: actions;
+}
 .activity-item .activity-actions .actions {
   position: relative;
 }
 .activity-item .activity-actions .dropdown-toggle::after {
   display: none;
 }
+.activity-item .activity-icon {
+  grid-area: icon;
+}
+.activity-item .activity-dates {
+  grid-area: dates;
+}
+.activity-item .activity-name-area {
+  grid-area: name;
+}
+.activity-item .activity-name-area .activityname .afterlink {
+  margin-left: 0.5rem;
+}
+.activity-item .activity-name-area .activityname .inplaceeditable .quickeditlink {
+  z-index: 2;
+  margin-left: 0.5rem;
+}
+.activity-item .activity-info {
+  grid-area: completion;
+}
+.activity-item .activity-badges {
+  grid-area: visibility;
+}
+.activity-item .activity-altcontent {
+  grid-area: altcontent;
+}
+.activity-item .activity-availability {
+  grid-area: availability;
+}
+.activity-item .activity-afterlink {
+  grid-area: afterlink;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #dee2e6;
+}
 .activity-item .inplaceeditable {
   display: flex;
   flex: 0 1 auto;
   max-width: 100%;
 }
-.activity-item .activityname .afterlink {
-  margin-left: 0.5rem;
-}
-.activity-item .activityname .inplaceeditable .quickeditlink {
-  z-index: 2;
-  margin-left: 0.5rem;
+.activity-item .no-overflow {
+  width: 100%;
 }
 .activity-item .action-menu-item {
   display: flex;
@@ -29067,9 +29136,6 @@ span.editinstructions .alert-link {
 }
 .activity-item .action-menu-item .filler {
   display: none;
-}
-.activity-item .no-overflow {
-  width: 100%;
 }
 @media (max-width: 767.98px) {
   .activity-item .badge {
@@ -29084,19 +29150,19 @@ span.editinstructions .alert-link {
     align-items: flex-end;
   }
   .activity-item:not(.activityinline) {
-    padding: 1.5rem;
+    padding: 1rem;
   }
   .activity-item .activity-info,
   .activity-item .activity-actions {
     margin-left: auto;
     padding-left: 0.5rem;
-    align-self: start;
     display: flex;
     flex-direction: column;
     justify-content: center;
   }
 }
 
+/* Activity card in editing mode */
 .editing .activity-item {
   cursor: move;
 }
@@ -29140,6 +29206,7 @@ span.editinstructions .alert-link {
   margin-top: 0;
 }
 
+/* Activity divider */
 .activity:focus-within + .activity div.divider button,
 .course-section-header:focus-within + .content .section .activity:first-child div.divider button,
 .content .section .activity:focus-within div.divider button {
@@ -29177,6 +29244,7 @@ span.editinstructions .alert-link {
   visibility: visible;
 }
 
+/* Bulk editing */
 .bulkenabled .bulk-hidden {
   display: none !important;
 }

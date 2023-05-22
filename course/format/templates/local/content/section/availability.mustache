@@ -33,7 +33,7 @@
         "hasavailability": true
     }
 }}
-<div class="section_availability course-description-item">
+<div class="section_availability">
 {{#hasavailability}}
     {{#info}}
         <div class="availabilityinfo {{classes}}">
@@ -41,9 +41,7 @@
             <span class="badge badge-pill badge-warning">{{{text}}}</span>
         {{/isrestricted}}
         {{#isrestricted}}
-            <div class="description-inner">
-                {{#pix}}t/unlock, core{{/pix}} {{{text}}}
-            </div>
+            <div> {{#pix}}t/unlock, core{{/pix}} {{{text}}} </div>
         {{/isrestricted}}
         </div>
     {{/info}}
