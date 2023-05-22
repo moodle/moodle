@@ -7861,15 +7861,35 @@ function get_plugin_list_with_function($plugintype, $function, $file = 'lib.php'
  * @param string $file the name of file within the plugin that defines the
  *      function. Defaults to lib.php.
  * @param bool $include Whether to include the files that contain the functions or not.
+ * @param bool $migratedtohook if true this is a deprecated lib.php callback, if hook callback is present then do nothing
  * @return array with [plugintype][plugin] = functionname
  */
-function get_plugins_with_function($function, $file = 'lib.php', $include = true) {
+function get_plugins_with_function($function, $file = 'lib.php', $include = true, bool $migratedtohook = false) {
     global $CFG;
 
     if (during_initial_install() || isset($CFG->upgraderunning)) {
         // API functions _must not_ be called during an installation or upgrade.
         return [];
     }
+
+    $plugincallback = $function;
+    $filtermigrated = function($plugincallback, $pluginfunctions): array {
+        foreach ($pluginfunctions as $plugintype => $plugins) {
+            foreach ($plugins as $plugin => $unusedfunction) {
+                $component = $plugintype . '_' . $plugin;
+                if (\core\hook\manager::get_instance()->is_deprecated_plugin_callback($plugincallback)) {
+                    if (\core\hook\manager::get_instance()->is_deprecating_hook_present($component, $plugincallback)) {
+                        // Ignore the old callback, it is there only for older Moodle versions.
+                        unset($pluginfunctions[$plugintype][$plugin]);
+                    } else {
+                        debugging("Callback $plugincallback in $component component should be migrated to new hook callback",
+                            DEBUG_DEVELOPER);
+                    }
+                }
+            }
+        }
+        return $pluginfunctions;
+    };
 
     $cache = \cache::make('core', 'plugin_functions');
 
@@ -7925,6 +7945,9 @@ function get_plugins_with_function($function, $file = 'lib.php', $include = true
 
         // If the cache is dirty, we should fall through and let it rebuild.
         if (!$dirty) {
+            if ($migratedtohook && $file === 'lib.php') {
+                $pluginfunctions = $filtermigrated($plugincallback, $pluginfunctions);
+            }
             return $pluginfunctions;
         }
     }
@@ -7970,6 +7993,10 @@ function get_plugins_with_function($function, $file = 'lib.php', $include = true
     }
     if (!empty($CFG->allversionshash)) {
         $cache->set($key, $pluginfunctions);
+    }
+
+    if ($migratedtohook && $file === 'lib.php') {
+        $pluginfunctions = $filtermigrated($plugincallback, $pluginfunctions);
     }
 
     return $pluginfunctions;
@@ -8061,12 +8088,13 @@ function get_list_of_plugins($directory='mod', $exclude='', $basedir='') {
  * @param string $action feature's action
  * @param array $params parameters of callback function, should be an array
  * @param mixed $default default value if callback function hasn't been defined, or if it retursn null.
+ * @param bool $migratedtohook if true this is a deprecated callback, if hook callback is present then do nothing
  * @return mixed
  *
  * @todo Decide about to deprecate and drop plugin_callback() - MDL-30743
  */
-function plugin_callback($type, $name, $feature, $action, $params = null, $default = null) {
-    return component_callback($type . '_' . $name, $feature . '_' . $action, (array) $params, $default);
+function plugin_callback($type, $name, $feature, $action, $params = null, $default = null, bool $migratedtohook = false) {
+    return component_callback($type . '_' . $name, $feature . '_' . $action, (array) $params, $default, $migratedtohook);
 }
 
 /**
@@ -8076,9 +8104,10 @@ function plugin_callback($type, $name, $feature, $action, $params = null, $defau
  * @param string $function the rest of the function name, e.g. 'cron' will end up calling 'mod_quiz_cron'
  * @param array $params parameters of callback function
  * @param mixed $default default value if callback function hasn't been defined, or if it retursn null.
+ * @param bool $migratedtohook if true this is a deprecated callback, if hook callback is present then do nothing
  * @return mixed
  */
-function component_callback($component, $function, array $params = array(), $default = null) {
+function component_callback($component, $function, array $params = array(), $default = null, bool $migratedtohook = false) {
 
     $functionname = component_callback_exists($component, $function);
 
@@ -8093,6 +8122,19 @@ function component_callback($component, $function, array $params = array(), $def
     }
 
     if ($functionname) {
+        if ($migratedtohook) {
+            if (\core\hook\manager::get_instance()->is_deprecated_plugin_callback($function)) {
+                if (\core\hook\manager::get_instance()->is_deprecating_hook_present($component, $function)) {
+                    // Do not call the old lib.php callback,
+                    // it is there for compatibility with older Moodle versions only.
+                    return null;
+                } else {
+                    debugging("Callback $function in $component component should be migrated to new hook callback",
+                        DEBUG_DEVELOPER);
+                }
+            }
+        }
+
         // Function exists, so just return function result.
         $ret = call_user_func_array($functionname, $params);
         if (is_null($ret)) {
