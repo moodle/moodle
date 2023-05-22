@@ -22,7 +22,9 @@ Feature: The Section links block can be configured to display section name in ad
     And I am on "Course 1" course homepage with editing mode on
     And the following config values are set as admin:
       | unaddableblocks | | theme_boost|
-    And I add the "Section links" block
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | section_links | Course       | C1        | course-view-*   | side-pre      |
     And I log out
 
   Scenario: Student can see section name under the Section links block

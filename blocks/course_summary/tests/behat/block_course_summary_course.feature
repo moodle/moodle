@@ -17,10 +17,9 @@ Feature: Course summary block used in a course
       | student1    | C101   | student |
       | teacher1    | C101   | editingteacher |
     And I enable "course_summary" "block" plugin
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Course/site summary" block
-    And I log out
+    And the following "blocks" exist:
+      | blockname      | contextlevel | reference | pagetypepattern | defaultregion |
+      | course_summary | Course       | C101      | course-view-*   | side-pre      |
 
   Scenario: Student can view course summary
     When I log in as "student1"

@@ -17,9 +17,9 @@ Feature: Restore Moodle 2 course backups
       | data     | C3     | data1    | Test database name | Database description | 2       |                       |
       | forum    | C1     | 0001     | Test forum name    |                      | 1       |                       |
       | url      | C1     | url1     | Test URL name      | Test URL description | 3       | http://www.moodle.org |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Activities" block
+    And the following "blocks" exist:
+      | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
+      | activity_modules | Course       | C1        | course-view-*   | side-pre      |
 
   @javascript
   Scenario: Restore a course in another existing course

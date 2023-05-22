@@ -14,11 +14,9 @@ Feature: Enable Block Badges on the frontpage and view awarded badges
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    And I log in as "admin"
-    And I am on site homepage
-    And I turn editing mode on
-    And I add the "Latest badges" block
-    And I log out
+    And the following "blocks" exist:
+      | blockname | contextlevel | reference | pagetypepattern | defaultregion |
+      | badges    | System       | 1         | site-index      | side-pre      |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     # Issue badge 1 of 2
