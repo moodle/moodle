@@ -11,10 +11,12 @@ Feature: Edit activities in main menu block
       | course   | Acceptance test site |
       | name     | My forum name        |
       | idnumber | forum                |
+    And the following "blocks" exist:
+      | blockname      | contextlevel | reference | pagetypepattern | defaultregion |
+      | site_main_menu | System       | 1         | site-index      | side-pre      |
     And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
-    And I add the "Main menu" block
     When I set the field "Edit title" in the "My forum name" "block_site_main_menu > Activity" to "New forum name"
     Then I should not see "My forum name"
     And I should see "New forum name"

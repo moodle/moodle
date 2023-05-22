@@ -26,11 +26,9 @@ Feature: Enable Block blog menu in an activity
       | idnumber                      | 0001                            |
       | section                       | 1                               |
       | assignsubmission_file_enabled | 0                               |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test assignment 1"
-    And I add the "Blog menu" block
-    And I log out
+    And the following "blocks" exist:
+      | blockname | contextlevel    | reference | pagetypepattern | defaultregion |
+      | blog_menu | Activity module | 0001      | mod-assign-view | side-pre      |
 
   Scenario: Students use the blog menu block to post blogs
     Given I log in as "student1"

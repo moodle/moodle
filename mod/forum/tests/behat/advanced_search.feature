@@ -21,9 +21,11 @@ Feature: The forum search allows users to perform advanced searches for forum po
     And the following "tags" exist:
       | name         | isstandard  |
       | SearchedTag  | 1           |
+    And the following "blocks" exist:
+      | blockname  | contextlevel | reference | pagetypepattern | defaultregion |
+      | news_items | Course       | C1        | course-view-*   | side-pre      |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add the "Latest announcements" block
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "id_newsitems" to "1"

@@ -16,9 +16,11 @@ Feature: Enable Block comments on a course page and view comments
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "blocks" exist:
+      | blockname | contextlevel | reference | pagetypepattern | defaultregion |
+      | comments  | Course       | C1        | course-view-*   | side-pre      |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add the "Comments" block
     And I follow "Show comments"
     And I add "I'm a comment from the teacher" comment to comments block
     And I log out
