@@ -33,7 +33,6 @@ Feature: Set availability dates for an assignment
     And the activity date in "Assignment name" should contain "Opens:"
     And the activity date in "Assignment name" should contain "##tomorrow noon##%A, %d %B %Y, %I:%M##"
 
-  @javascript
   Scenario: Student can see the assignment's due date in the course calendar
     Given the following "activity" exists:
       | activity                            | assign                                     |

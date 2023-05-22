@@ -18,10 +18,9 @@ Feature: The Section links block can be configured to display section name in ad
       | student1 | C1     | student        |
     And the following config values are set as admin:
       | showsectionname | 1 | block_section_links |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Section links" block
-    And I log out
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | section_links | Course       | C1        | course-view-*   | side-pre      |
 
   Scenario: Student can see section name under the Section links block
     Given I log in as "student1"

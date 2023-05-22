@@ -26,12 +26,10 @@ Feature: Students can use the recent blog entries block to view recent entries o
       | intro                         | Offline text      |
       | section                       | 1                 |
       | assignsubmission_file_enabled | 0                 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test assignment 1"
-    And I add the "Blog menu" block
-    And I add the "Recent blog entries" block
-    And I log out
+    And the following "blocks" exist:
+      | blockname   | contextlevel    | reference | pagetypepattern | defaultregion |
+      | blog_menu   | Activity module | 0001      | mod-assign-view | side-pre      |
+      | blog_recent | Activity module | 0001      | mod-assign-view | side-pre      |
 
   Scenario: Students use the recent blog entries block to view blogs
     Given I log in as "student1"

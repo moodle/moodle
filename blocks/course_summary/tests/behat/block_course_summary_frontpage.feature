@@ -6,9 +6,11 @@ Feature: Course summary block used on the frontpage
 
   Background:
     Given I log in as "admin"
+    And I enable "course_summary" "block" plugin
+    And the following "blocks" exist:
+      | blockname      | contextlevel | reference | pagetypepattern | defaultregion |
+      | course_summary | System       | 1         | site-index      | side-pre      |
     And I am on site homepage
-    And I turn editing mode on
-    And I add the "Course/site summary" block
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | summary | Proved the summary block works! |

@@ -14,26 +14,21 @@ Feature: Reset all personalised pages to default
       | role                        | user  |
       | moodle/block:edit           | allow |
       | block/myprofile:addinstance | allow |
+    And the following "blocks" exist:
+      | blockname | contextlevel | reference | pagetypepattern | defaultregion |
+      | comments  | User         | student1  | my-index        | side-pre      |
+      | myprofile | User         | student2  | user-profile    | side-pre      |
 
     And I log in as "student1"
-    And I follow "Dashboard" in the user menu
-    And I press "Customise this page"
-    And I add the "Comments" block
-    And I press "Stop customising this page"
     And I should see "Comments"
     And I log out
 
     And I log in as "student2"
     And I follow "Profile" in the user menu
-    And I should not see "Logged in user"
-    And I press "Customise this page"
-    And I add the "Logged in user" block
-    And I press "Stop customising this page"
     And I should see "Logged in user"
     And I log out
 
     And I log in as "student3"
-    And I follow "Dashboard" in the user menu
     And I should not see "Comments"
     And I follow "Profile" in the user menu
     And I should not see "Logged in user"

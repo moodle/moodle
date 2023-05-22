@@ -17,10 +17,9 @@ Feature: Users can view the list of data activities and their formatted descript
       | activity | name            | intro                                                                     | course | idnumber |
       | data     | Test database 1 | This is an intro without an image                                         | C1     | data1    |
       | data     | Test database 2 | This is an intro with an image: <img src="@@PLUGINFILE@@/some_image.jpg"> | C1     | data2    |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Activities" block
-    And I log out
+    And the following "blocks" exist:
+      | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
+      | activity_modules | Course       | C1        | course-view-*   | side-pre      |
 
   Scenario: Teachers can view the list of data activities and their formatted descriptions
     Given I log in as "teacher1"
