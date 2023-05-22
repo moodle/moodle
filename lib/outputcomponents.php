@@ -921,7 +921,10 @@ class single_button implements renderable {
         }
 
         // Form parameters.
-        $actionurl = new moodle_url($this->url, ['sesskey' => sesskey()]);
+        $actionurl = new moodle_url($this->url);
+        if ($this->method === 'post') {
+            $actionurl->param('sesskey', sesskey());
+        }
         $data->params = $actionurl->export_params_for_template();
 
         // Button actions.
@@ -1124,7 +1127,10 @@ class single_select implements renderable, templatable {
         }, array_keys($attributes));
 
         // Form parameters.
-        $actionurl = new moodle_url($this->url, ['sesskey' => sesskey()]);
+        $actionurl = new moodle_url($this->url);
+        if ($this->method === 'post') {
+            $actionurl->param('sesskey', sesskey());
+        }
         $data->params = $actionurl->export_params_for_template();
 
         // Select options.
