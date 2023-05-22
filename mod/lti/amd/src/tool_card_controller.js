@@ -24,10 +24,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
  */
- define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'core/modal_factory',
+ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'core/modal',
         'mod_lti/tool_type', 'mod_lti/events', 'mod_lti/keys',
         'core/str'],
-        function($, ajax, notification, templates, modalFactory, toolType, ltiEvents, KEYS, str) {
+        function($, ajax, notification, templates, Modal, toolType, ltiEvents, KEYS, str) {
 
     var SELECTORS = {
         DELETE_BUTTON: '.delete',
@@ -665,7 +665,7 @@
             'mailto': mailTo
         };
         var footerPromise = templates.render('mod_lti/tool_config_modal_footer', context);
-        modalFactory.create({
+        Modal.create({
           large: true,
           title: element.data('modaltitle'),
           body: bodyPromise,

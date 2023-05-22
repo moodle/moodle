@@ -26,12 +26,12 @@
  * @module report_insights/actions
  */
 
-import {get_strings as getString} from 'core/str';
+import {get_string as getString} from 'core/str';
 import Ajax from 'core/ajax';
 import Notification from 'core/notification';
 import Url from 'core/url';
-import ModalFactory from 'core/modal_factory';
 import ModalEvents from 'core/modal_events';
+import ModalSaveCancel from 'core/modal_save_cancel';
 
 
 /**
@@ -110,8 +110,7 @@ export const initBulk = (rootNode) => {
             nitems: predictionIds.length,
         };
 
-        ModalFactory.create({
-            type: ModalFactory.types.SAVE_CANCEL,
+        ModalSaveCancel.create({
             title: actionVisibleName,
             body: getString('confirmbulkaction', 'report_insights', stringParams),
             buttons: {

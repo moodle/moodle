@@ -118,7 +118,7 @@ function(
                     }
                     return;
                 })
-                .fail(Notification.exception);
+                .catch(Notification.exception);
         }
     };
 
@@ -176,7 +176,7 @@ function(
                     'core_calendar/calendar_day').then(function() {
                     e.preventDefault();
                     return CalendarViewManager.updateUrl(url);
-                }).fail(Notification.exception);
+                }).catch(Notification.exception);
             } else {
                 window.location.assign(Config.wwwroot + '/calendar/view.php' + url);
             }
@@ -190,7 +190,7 @@ function(
                     // We need to get the selector again because the content has changed.
                     return root.find(CalendarSelectors.elements.courseSelector).val(courseId);
                 })
-                .fail(Notification.exception);
+                .catch(Notification.exception);
         });
 
         var eventFormPromise = CalendarCrud.registerEventFormModal(root),
@@ -225,7 +225,7 @@ function(
                             modal.setStartTime(startTime);
                             modal.show();
                             return;
-                        }).fail(Notification.exception);
+                        }).catch(Notification.exception);
                     }
                 }
                 e.preventDefault();

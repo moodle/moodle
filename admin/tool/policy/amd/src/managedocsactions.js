@@ -25,9 +25,9 @@ define([
     'core/log',
     'core/config',
     'core/str',
-    'core/modal_factory',
+    'core/modal_save_cancel',
     'core/modal_events'
-], function($, Log, Config, Str, ModalFactory, ModalEvents) {
+], function($, Log, Config, Str, ModalSaveCancel, ModalEvents) {
 
     "use strict";
 
@@ -106,10 +106,9 @@ define([
 
             promise.then(function(strs) {
                 strings = strs;
-                return ModalFactory.create({
+                return ModalSaveCancel.create({
                     title: strings[0],
                     body: strings[1],
-                    type: ModalFactory.types.SAVE_CANCEL
                 });
 
             }).then(function(modal) {

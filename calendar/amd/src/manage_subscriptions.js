@@ -24,7 +24,7 @@
 
 import * as CalendarSelectors from 'core_calendar/selectors';
 import * as CalendarRepository from 'core_calendar/repository';
-import * as Modal from 'core/modal_factory';
+import ModalSaveCancel from 'core/modal_save_cancel';
 import * as ModalEvents from 'core/modal_events';
 import {exception as displayException, addNotification, fetchNotifications} from 'core/notification';
 import Prefetch from 'core/prefetch';
@@ -70,8 +70,7 @@ const getSubscriptionRow = subscriptionId => {
  */
 const createModal = (element, messageCode) => {
     const subscriptionName = getSubscriptionName(element);
-    return Modal.create({
-        type: Modal.types.SAVE_CANCEL,
+    return ModalSaveCancel.create({
         title: getString('confirmation', 'admin'),
         body: getString(messageCode, 'calendar', subscriptionName),
         buttons: {

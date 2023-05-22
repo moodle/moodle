@@ -23,7 +23,7 @@
  */
 
 import Fragment from 'core/fragment';
-import ModalFactory from 'core/modal_factory';
+import ModalCancel from 'core/modal_cancel';
 import Notification from 'core/notification';
 import * as Str from 'core/str';
 
@@ -44,18 +44,17 @@ const usageEvent = async(questionId, contextId, specificVersion) => {
     };
     if (modal === null) {
         try {
-            modal = await ModalFactory.create({
-                type: ModalFactory.types.CANCEL,
+            modal = await ModalCancel.create({
                 title: Str.get_string('usageheader', 'qbank_usage'),
                 body: Fragment.loadFragment('qbank_usage', 'question_usage', contextId, args),
                 large: true,
+                show: true,
             });
         } catch (e) {
             Notification.exception(e);
             return;
         }
 
-        modal.show();
         modal.getRoot().on('click', 'a[href].page-link', function(e) {
             e.preventDefault();
             let attr = e.target.getAttribute("href");
