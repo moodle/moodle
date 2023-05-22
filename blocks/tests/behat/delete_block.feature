@@ -8,10 +8,11 @@ Feature: Block removal via modal
     Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | search_forums | Course       | C1        | course-view-*   | side-pre      |
     And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
-    And I add the "Search forums" block
-    And "Search forums" "block" should exist
 
   @javascript
   Scenario: Removing a block via modal should remove the block on the page

@@ -16,14 +16,15 @@ Feature: The search forums block allows users to search for forum posts on cours
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | news_items    | Course       | C1        | course-view-*   | side-pre      |
+      | search_forums | Course       | C1        | course-view-*   | side-pre      |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Settings" in current page administration
     And I set the field "id_newsitems" to "1"
     And I press "Save and display"
-    And I turn editing mode on
-    And I add the "Latest announcements" block
-    And I add the "Search forums" block
     And I log out
 
   Scenario: Use the search forum block in a course without any forum posts

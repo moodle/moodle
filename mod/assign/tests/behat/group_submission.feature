@@ -295,11 +295,9 @@ Feature: Group assignment submissions
     And the following "mod_assign > submissions" exist:
       | assign                | user      | onlinetext                          |
       | Test assignment name  | student1  | I'm the student's first submission  |
-
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Activities" block
-    And I log out
+    And the following "blocks" exist:
+      | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
+      | activity_modules | Course       | C1        | course-view-*   | side-pre      |
 
     And I am on the "C1" Course page logged in as student1
     And I click on "Assignments" "link" in the "Activities" "block"

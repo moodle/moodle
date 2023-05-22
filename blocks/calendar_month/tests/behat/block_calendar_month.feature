@@ -52,9 +52,10 @@ Feature: Enable the calendar block in a course and test it's functionality
 
   @javascript
   Scenario: View a user event in the calendar block
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Calendar" block
+    Given the following "blocks" exist:
+      | blockname      | contextlevel | reference | pagetypepattern | defaultregion |
+      | calendar_month | Course       | C1        | course-view-*   | side-pre      |
+    And I log in as "teacher1"
     And I create a calendar event with form data:
       | id_eventtype | User |
       | id_name | User Event |

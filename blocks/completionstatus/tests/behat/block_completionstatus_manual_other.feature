@@ -18,11 +18,13 @@ Feature: Enable Block Completion in a course using manual completion by others
       | teacher1 | C1     | editingteacher |
       | teacher2 | C1     | teacher        |
       | student1 | C1     | student        |
+    And the following "blocks" exist:
+      | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
+      | completionstatus | Course       | C1        | course-view-*   | side-pre      |
 
   Scenario: Add the block to a the course and mark a student complete.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add the "Course completion status" block
     And I navigate to "Course completion" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
@@ -55,7 +57,6 @@ Feature: Enable Block Completion in a course using manual completion by others
   Scenario: Add the block to a the course and require multiple roles to mark a student complete.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add the "Course completion status" block
     And I navigate to "Course completion" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:

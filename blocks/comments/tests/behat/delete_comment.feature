@@ -17,10 +17,9 @@ Feature: Delete comment block messages
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Comments" block
-    And I log out
+    And the following "blocks" exist:
+      | blockname | contextlevel | reference | pagetypepattern | defaultregion |
+      | comments  | Course       | C1        | course-view-*   | side-pre      |
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I add "Comment from student1" comment to comments block

@@ -28,13 +28,15 @@ Feature: Course completion state should match completion criteria
       | assignsubmission_onlinetext_enabled | 1                       |
       | grade[modgrade_type] | Point |
       | grade[modgrade_point] | 100 |
+    And the following "blocks" exist:
+      | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
+      | completionstatus | Course       | C1        | course-view-*   | side-pre      |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I navigate to "Course completion" in current page administration
     And I click on "Condition: Activity completion" "link"
     And I set the field "Assignment - Test assignment name" to "1"
     And I press "Save changes"
-    And I add the "Course completion status" block
     And I am on the "Test assignment name" "assign activity" page
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:

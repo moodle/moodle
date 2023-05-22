@@ -26,10 +26,9 @@ Feature: Users can see the H5P recent activity from the recent activity block
       | course          | C1                                         |
       | name            | Awesome H5P package                        |
       | packagefilepath | h5p/tests/fixtures/multiple-choice-2-6.h5p |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Recent activity" block
-    And I log out
+    And the following "blocks" exist:
+      | blockname       | contextlevel | reference | pagetypepattern | defaultregion |
+      | recent_activity | Course       | C1        | course-view-*   | side-pre      |
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
     # The H5P content needs some time to be displayed (so better to wait for 1 second to avoid random errors).
     And I switch to "h5p-player" class iframe
