@@ -210,21 +210,6 @@ class manager_test extends \advanced_testcase {
     }
 
     /**
-     * Test deprecated callback lookup.
-     * @covers ::is_deprecated_plugin_callback
-     */
-    public function testy_is_deprecated_plugin_callback() {
-        require_once(__DIR__ . '/../fixtures/hook/hook.php');
-
-        $componentfiles = [
-            'test_plugin1' => __DIR__ . '/../fixtures/hook/hooks1_valid.php',
-        ];
-        $testmanager = manager::phpunit_get_instance($componentfiles);
-        $this->assertTrue($testmanager->is_deprecated_plugin_callback('oldcallback'));
-        $this->assertFalse($testmanager->is_deprecated_plugin_callback('legacycallback'));
-    }
-
-    /**
      * Tests callbacks can be overridden via CFG settings.
      * @covers ::load_callbacks
      * @covers ::dispatch
