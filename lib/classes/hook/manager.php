@@ -90,30 +90,6 @@ final class manager implements
     }
 
     /**
-     * Reset all hook caches. This is intended to be called only
-     * from the admin/hooks.php page after callback override is changed.
-     *
-     * @return void
-     * @codeCoverageIgnore
-     */
-    public function reset_caches(): void {
-        if (PHPUNIT_TEST && $this === self::$instance) {
-            debugging('\core\hook\manager::get_instance()->reset_caches() is not supposed to be called in PHPUnit tests',
-                DEBUG_DEVELOPER);
-            return;
-        }
-
-        // WARNING: This will not work when callback overrides are changed
-        // and multiple web nodes with local cache stores are present - in that
-        // case admins must purge all caches when tweaking callback overrides.
-        $cache = \cache::make('core', 'hookcallbacks');
-        $cache->delete('callbacks');
-        $cache->delete('deprecations');
-
-        $this->init_standard_callbacks();
-    }
-
-    /**
      * Returns list of callbacks for given hook name.
      *
      * NOTE: this is the "Listener Provider" described in PSR-14,

@@ -57,24 +57,6 @@ class manager_test extends \advanced_testcase {
     }
 
     /**
-     * Test reset of test instance.
-     *
-     * NOTE: normal hook manger instance cannot be reset in PHPUnit test
-     * because it may be used to control the test environment itself.
-     *
-     * @covers ::reset_caches
-     * @covers ::init_standard_callbacks
-     */
-    public function test_reset_caches() {
-        $testmanager = manager::phpunit_get_instance([]);
-        $this->assertSame([], $testmanager->get_hooks_with_callbacks());
-
-        $testmanager->reset_caches();
-        $manager = manager::get_instance();
-        $this->assertSame($manager->get_hooks_with_callbacks(), $testmanager->get_hooks_with_callbacks());
-    }
-
-    /**
      * Test loading and parsing of callbacks from files.
      *
      * @covers ::get_callbacks_for_hook
