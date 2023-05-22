@@ -17,10 +17,12 @@ Feature: Enable Block Completion in a course using manual self completion
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
     And I enable "selfcompletion" "block" plugin
+    And the following "blocks" exist:
+      | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
+      | completionstatus | Course       | C1        | course-view-*   | side-pre      |
+      | selfcompletion   | Course       | C1        | course-view-*   | side-pre      |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add the "Course completion status" block
-    And I add the "Self completion" block
     And I navigate to "Course completion" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:

@@ -23,6 +23,9 @@ Feature: Allow to mark course as completed without cron for activity completion 
       | name                                | Test assignment name        |
       | idnumber                            | assign1                     |
       | description                         | Test assignment description |
+    And the following "blocks" exist:
+      | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
+      | completionstatus | Course       | CC1       | course-view-*   | side-pre      |
     And I log in as "admin"
     And I am on "Completion course" course homepage
     And I navigate to "Settings" in current page administration
@@ -38,9 +41,6 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I expand all fieldsets
     And I set the field "Assignment - Test assignment name" to "1"
     And I press "Save changes"
-    And I turn editing mode on
-    And I add the "Course completion status" block
-    And I log out
 
   @javascript
   Scenario: Update course completion when student marks activity as complete

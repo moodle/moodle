@@ -17,12 +17,14 @@ Feature: Importing glossary entries
     And the following "activities" exist:
       | activity | course | idnumber  | name        |
       | glossary | C1     | glossary1 | Glossary 1  |
+    And the following "blocks" exist:
+      | blockname       | contextlevel | reference | pagetypepattern | defaultregion |
+      | recent_activity | Course       | C1        | course-view-*   | side-pre      |
+      | tags            | Course       | C1        | course-view-*   | side-pre      |
 
   @javascript @block_recent_activity
   Scenario: Importing glossary entries and checking the Recent activity block
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Recent activity" block
     And I am on the "Glossary 1" "glossary activity" page
     And I press "Import entries"
     And I upload "mod/glossary/tests/fixtures/texfilter_glossary_en.xml" file to "File to import" filemanager
@@ -36,8 +38,6 @@ Feature: Importing glossary entries
   @javascript @block_tags
   Scenario: Importing glossary entries and checking Tags block
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Tags" block
     And I am on the "Glossary 1" "glossary activity" page
     And I press "Import entries"
     And I upload "mod/glossary/tests/fixtures/musicians.xml" file to "File to import" filemanager
