@@ -14,16 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+declare(strict_types=1);
+
+namespace tool_cohortroles;
+
+use core\event\user_deleted;
+
 /**
- * Plugin version info
+ * Plugin event observer callbacks
  *
  * @package    tool_cohortroles
- * @copyright  2015 Damyon Wiese
+ * @copyright  2023 Paul Holden <paulh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class observers {
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2023042401; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2023041800; // Requires this Moodle version.
-$plugin->component = 'tool_cohortroles'; // Full name of the plugin (used for diagnostics).
+    /**
+     * User deleted event, remove cohort role assignments specific to them
+     *
+     * @param user_deleted $event
+     */
+    public static function user_deleted(user_deleted $event): void {
+        $cohortroleassignments = cohort_role_assignment::get_records(['userid' => $event->objectid]);
+        foreach ($cohortroleassignments as $cohortroleassignment) {
+            $cohortroleassignment->delete();
+        }
+    }
+}
