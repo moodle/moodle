@@ -497,7 +497,7 @@ export default class ColumnSearch extends GradebookSearchClass {
     /**
      * If we have any custom user profile fields, grab their system & readable names to add to our string map.
      *
-     * @returns {[string,*][]} An array of associated string arrays ready for our map.
+     * @returns {array<string,*>} An array of associated string arrays ready for our map.
      */
     fetchCustomFieldValues() {
         const customFields = document.querySelectorAll('[data-collapse-name]');
