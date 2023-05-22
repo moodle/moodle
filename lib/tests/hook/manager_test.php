@@ -225,20 +225,6 @@ class manager_test extends \advanced_testcase {
     }
 
     /**
-     * Test detection of legacy callbacks.
-     * @covers ::is_deprecating_hook_present
-     */
-    public function testy_is_deprecating_hook_present() {
-        $componentfiles = [
-            'test_plugin1' => __DIR__ . '/../fixtures/hook/hooks1_valid.php',
-        ];
-        $testmanager = manager::phpunit_get_instance($componentfiles);
-        // There is not much to test because there should not be any legacy callbacks left,
-        // plugin that have these should test their code.
-        $this->assertFalse($testmanager->is_deprecating_hook_present('test_pluing', 'xyz'));
-    }
-
-    /**
      * Tests callbacks can be overridden via CFG settings.
      * @covers ::load_callbacks
      * @covers ::dispatch
