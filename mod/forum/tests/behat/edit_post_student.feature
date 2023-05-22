@@ -41,12 +41,13 @@ Feature: Students can edit or delete their forum posts within a set time limit
 
   @javascript @block_recent_activity
   Scenario: Time limit expires
-    Given I log out
+    Given the following "blocks" exist:
+      | blockname       | contextlevel | reference | pagetypepattern | defaultregion |
+      | recent_activity | Course       | C1        | course-view-*   | side-pre      |
+    And I log out
     And I log in as "admin"
     And the following config values are set as admin:
       | maxeditingtime | 1 |
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Recent activity" block
     And I am on the "Course 1" course page logged in as student1
     And I should see "New forum posts:" in the "Recent activity" "block"
     And I should see "Forum post subject" in the "Recent activity" "block"

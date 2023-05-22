@@ -33,7 +33,6 @@ Feature: Set availability dates for an assignment
     And I should see "This assignment will accept submissions from"
     And I should see "##tomorrow noon##%A, %d %B %Y, %I:%M %p##"
 
-  @javascript
   Scenario: Student can see the assignment's due date in the course calendar
     Given the following "activity" exists:
       | activity                            | assign                                     |

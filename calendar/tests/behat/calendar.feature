@@ -21,6 +21,7 @@ Feature: Perform basic calendar functionality
       | student1 | C1 | student |
       | student3 | C1 | student |
       | teacher1 | C1 | teacher |
+      | admin    | C1 | editingteacher |
     And the following "groups" exist:
       | name | course | idnumber |
       | Group 1 | C1 | G1 |
@@ -28,10 +29,9 @@ Feature: Perform basic calendar functionality
       | user | group |
       | student1 | G1 |
       | teacher1 | G1 |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Calendar" block
-    And I log out
+    And the following "blocks" exist:
+      | blockname         | contextlevel | reference | pagetypepattern | defaultregion |
+      | calendar_month    | Course       | C1        | course-view-*   | side-pre      |
 
   @javascript
   Scenario: Create a site event
@@ -195,7 +195,6 @@ Feature: Perform basic calendar functionality
   Scenario: Admin can only see all courses if calendar_adminseesall setting is enabled.
     Given I log in as "admin"
     And I am on "Course 1" course homepage
-    And I enrol "admin" user as "Teacher"
     And I am viewing site calendar
     And I click on "New event" "button"
     And I set the field "Type of event" to "Course"
