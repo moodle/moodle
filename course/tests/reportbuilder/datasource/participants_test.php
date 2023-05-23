@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_course\reportbuilder\datasource;
 
 use completion_completion;
+use completion_criteria_self;
 use core_collator;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\date;
@@ -33,7 +34,6 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
-require_once("{$CFG->libdir}/gradelib.php");
 
 /**
  * Course participants datasource tests
@@ -46,6 +46,16 @@ require_once("{$CFG->libdir}/gradelib.php");
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class participants_test extends core_reportbuilder_testcase {
+
+    /**
+     * Load required test libraries
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+
+        require_once("{$CFG->libdir}/gradelib.php");
+        require_once("{$CFG->dirroot}/completion/criteria/completion_criteria_self.php");
+    }
 
     /**
      * Test default datasource
@@ -107,8 +117,11 @@ class participants_test extends core_reportbuilder_testcase {
         $group = self::getDataGenerator()->create_group(['courseid' => $course->id]);
         self::getDataGenerator()->create_group_member(['groupid' => $group->id, 'userid' => $user1->id]);
 
-        // Mark course as completed for the user.
-        $ccompletion = new completion_completion(array('course' => $course->id, 'userid' => $user1->id));
+        // Create self completion, mark as complete for the user.
+        $criteriaconfig = (object) ['id' => $course->id, 'criteria_self' => true];
+        (new completion_criteria_self())->update_config($criteriaconfig);
+
+        $ccompletion = new completion_completion(['course' => $course->id, 'userid' => $user1->id]);
         $ccompletion->mark_enrolled($timestart);
         $ccompletion->mark_complete($timecompleted);
 
@@ -146,6 +159,7 @@ class participants_test extends core_reportbuilder_testcase {
 
         $generator->create_column(['reportid' => $report->get('id'),
             'uniqueidentifier' => 'group:name']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'completion:criteria']);
         $generator->create_column(['reportid' => $report->get('id'),
             'uniqueidentifier' => 'completion:completed']);
         $generator->create_column(['reportid' => $report->get('id'),
@@ -197,6 +211,7 @@ class participants_test extends core_reportbuilder_testcase {
             'student', // Role shortname.
             'Students generally have fewer privileges within a course.', // Role description.
             $group->name, // Group name.
+            "All criteria below are required<ul>\n<li>Self completion: Self completion</li>\n</ul>", // Completion criteria.
             'Yes', // Course completed.
             userdate($timelastaccess), // Time last access.
             '100.0%', // Progress percentage.
