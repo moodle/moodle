@@ -286,7 +286,12 @@ final class manager implements
             $cache = \cache::make('core', 'hookcallbacks');
             $callbacks = $cache->get('callbacks');
             $deprecations = $cache->get('deprecations');
-            if (is_array($callbacks) && is_array($deprecations)) {
+            $overrideshash = $cache->get('overrideshash');
+
+            $usecache = is_array($callbacks);
+            $usecache = $usecache && is_array($deprecations);
+            $usecache = $usecache && $this->calculate_overrides_hash() === $overrideshash;
+            if ($usecache) {
                 $this->allcallbacks = $callbacks;
                 $this->alldeprecations = $deprecations;
                 return;
@@ -314,6 +319,7 @@ final class manager implements
         if ($cache) {
             $cache->set('callbacks', $this->allcallbacks);
             $cache->set('deprecations', $this->alldeprecations);
+            $cache->set('overrideshash', $this->calculate_overrides_hash());
         }
     }
 
@@ -391,6 +397,28 @@ final class manager implements
                 }
             }
         }
+    }
+
+    /**
+     * Calculate a hash of the overrides.
+     * This is used to inform if the overrides have changed, which invalidates the cache.
+     *
+     * Overrides are only configured in config.php where there is no other mechanism to invalidate the cache.
+     *
+     * @return null|string
+     */
+    private function calculate_overrides_hash(): ?string {
+        global $CFG;
+
+        if (!property_exists($CFG, 'hooks_callback_overrides')) {
+            return null;
+        }
+
+        if (!is_iterable($CFG->hooks_callback_overrides)) {
+            return null;
+        }
+
+        return sha1(json_encode($CFG->hooks_callback_overrides));
     }
 
     /**
