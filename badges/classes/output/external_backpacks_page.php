@@ -64,8 +64,6 @@ class external_backpacks_page implements \renderable {
     public function export_for_template(\renderer_base $output) {
         global $PAGE;
 
-        $PAGE->requires->js_call_amd('core_badges/backpackactions', 'init');
-
         $rownumber = 0;
         $rowcount = count($this->backpacks);
 
