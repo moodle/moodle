@@ -2008,6 +2008,20 @@ $functions = array(
         'capabilities' => 'moodle/user:manageownfiles',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_user_prepare_private_files_for_edition' => [
+        'classname'     => '\core_user\external\prepare_private_files_for_edition',
+        'description'   => 'Prepares the draft area for user private files.',
+        'type'          => 'write',
+        'capabilities'  => 'moodle/user:manageownfiles',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_user_update_private_files' => [
+        'classname'     => '\core_user\external\update_private_files',
+        'description'   => 'Copy files from a draft area to users private files area.',
+        'type'          => 'write',
+        'capabilities'  => 'moodle/user:manageownfiles',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
 
     // Competencies functions.
     'core_competency_create_competency_framework' => array(
