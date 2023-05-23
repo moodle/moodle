@@ -116,6 +116,17 @@ if ($hassiteconfig) {
     $temp->add($setting);
     $temp->add(new admin_setting_configcheckbox('verifychangedemail', new lang_string('verifychangedemail', 'admin'), new lang_string('configverifychangedemail', 'admin'), 1));
 
+    // ReCaptcha.
+    $temp->add(new admin_setting_configselect('enableloginrecaptcha',
+        new lang_string('auth_loginrecaptcha', 'auth'),
+        new lang_string('auth_loginrecaptcha_desc', 'auth'),
+        0,
+        [
+            new lang_string('no'),
+            new lang_string('yes'),
+        ],
+    ));
+
     $setting = new admin_setting_configtext('recaptchapublickey', new lang_string('recaptchapublickey', 'admin'), new lang_string('configrecaptchapublickey', 'admin'), '', PARAM_NOTAGS);
     $setting->set_force_ltr(true);
     $temp->add($setting);

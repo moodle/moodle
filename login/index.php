@@ -151,7 +151,8 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
     } else {
         if (empty($errormsg)) {
             $logintoken = isset($frm->logintoken) ? $frm->logintoken : '';
-            $user = authenticate_user_login($frm->username, $frm->password, false, $errorcode, $logintoken);
+            $loginrecaptcha = $frm->{'g-recaptcha-response'} ?? false;
+            $user = authenticate_user_login($frm->username, $frm->password, false, $errorcode, $logintoken, $loginrecaptcha);
         }
     }
 
@@ -279,6 +280,8 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
         if (empty($errormsg)) {
             if ($errorcode == AUTH_LOGIN_UNAUTHORISED) {
                 $errormsg = get_string("unauthorisedlogin", "", $frm->username);
+            } else if ($errorcode == AUTH_LOGIN_FAILED_RECAPTCHA) {
+                $errormsg = get_string('missingrecaptchachallengefield');
             } else {
                 $errormsg = get_string("invalidlogin");
                 $errorcode = 3;
