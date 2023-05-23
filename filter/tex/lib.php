@@ -70,7 +70,8 @@ function filter_tex_sanitize_formula($texexp) {
         '\lowercase','\relax','\aftergroup',
         '\afterassignment','\expandafter','\noexpand','\special',
         '\let', '\futurelet','\else','\fi','\chardef','\makeatletter','\afterground',
-        '\noexpand','\line','\mathcode','\item','\section','\mbox','\declarerobustcommand'
+        '\noexpand','\line','\mathcode','\item','\section','\mbox','\declarerobustcommand',
+        '\ExplSyntaxOn',
     ];
 
     $allowlist = ['inputenc'];
