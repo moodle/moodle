@@ -1,5 +1,12 @@
 This files describes API changes in the assign code.
 
+=== 4.3 ===
+* The following deprecated methods have been removed and should not be used any more:
+  - `assign::add_to_log`
+  - `assign::format_grade_for_log`
+  - `assign::format_submission_for_log`
+  - `assign_plugin::format_for_log`
+
 === 4.2 ===
 * The upgradelib.php file has been removed from mod_assign as it was only being used by mod_assignment and mod_assignment has been removed from core.
 

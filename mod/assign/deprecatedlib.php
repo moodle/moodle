@@ -57,3 +57,32 @@ function assign_get_completion_state($course, $cm, $userid, $type) {
         return $type;
     }
 }
+
+/**
+ * @deprecated since Moodle 3.3, when the block_course_overview block was removed.
+ */
+function assign_print_overview() {
+    throw new coding_exception('assign_print_overview() can not be used any more and is obsolete.');
+}
+
+/**
+ * @deprecated since Moodle 3.3, when the block_course_overview block was removed.
+ */
+function assign_get_mysubmission_details_for_print_overview() {
+    throw new coding_exception('assign_get_mysubmission_details_for_print_overview() can not be used any more and is obsolete.');
+}
+
+/**
+ * @deprecated since Moodle 3.3, when the block_course_overview block was removed.
+ */
+function assign_get_grade_details_for_print_overview() {
+    throw new coding_exception('assign_get_grade_details_for_print_overview() can not be used any more and is obsolete.');
+}
+
+/**
+ * @deprecated since Moodle 3.8
+ */
+function assign_scale_used() {
+    throw new coding_exception('assign_scale_used() can not be used anymore. Plugins can implement ' .
+        '<modname>_scale_used_anywhere, all implementations of <modname>_scale_used are now ignored');
+}
