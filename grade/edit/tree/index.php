@@ -284,6 +284,10 @@ if ($moving) {
         new moodle_url('index.php', ['id' => $course->id]), get_string('cancel'), 'get');
 }
 
+$footercontent = $OUTPUT->render_from_template('core_grades/edit_tree_sticky_footer', $tpldata);
+$stickyfooter = new core\output\sticky_footer($footercontent);
+$tpldata->stickyfooter = $OUTPUT->render($stickyfooter);
+
 echo $OUTPUT->render_from_template('core_grades/edit_tree', $tpldata);
 
 echo $OUTPUT->box_end();
