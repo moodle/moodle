@@ -19,6 +19,10 @@ This files describes API changes for code that uses the user API.
   The get_profile_field_list() returns the profile fields
   in a format that can be used for choices in a group select menu.
 
+=== 4.1.4 ===
+* New method `user_update_device_public_key()`` and accompanying external function core_user_external::update_device_public_key to
+  update a user's app generated public key by device uuid and app id.
+
 === 4.1 ===
 
 * Added a new method is_transform_supported() in the profile_field_base class.

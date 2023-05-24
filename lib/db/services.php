@@ -1721,6 +1721,12 @@ $functions = array(
         'type' => 'write',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_user_update_user_device_public_key' => array(
+        'classname' => '\core_user\external\update_user_device_public_key',
+        'description' => 'Store mobile user public key.',
+        'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_user_add_user_private_files' => array(
         'classname' => 'core_user_external',
         'methodname' => 'add_user_private_files',
