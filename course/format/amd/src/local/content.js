@@ -149,6 +149,9 @@ export default class Component extends BaseComponent {
             "scroll",
             this._scrollHandler
         );
+        setTimeout(() => {
+            this._scrollHandler();
+        }, 500);
     }
 
     /**
