@@ -43,6 +43,13 @@ $uninstalllang      = optional_param_array('uninstalllang', array(), PARAM_LANG)
 $confirmtounistall  = optional_param('confirmtouninstall', '', PARAM_SAFEPATH);  // uninstallation confirmation
 $purgecaches        = optional_param('purgecaches', false, PARAM_BOOL);  // explicit caches reset
 
+// Filter the uninstall language list.
+// If the list contains a language which is not installed, it is replaced with an empty string.
+// When we try to uninstall an empty string, we uninstall every language.
+$uninstalllang = array_filter($uninstalllang, function($lang) {
+    return !empty($lang);
+});
+
 if ($purgecaches) {
     require_sesskey();
     get_string_manager()->reset_caches();
