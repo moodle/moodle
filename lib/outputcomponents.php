@@ -5151,7 +5151,8 @@ class progress_bar implements renderable, templatable {
 
         $estimatemsg = '';
         if ($estimate != 0 && is_numeric($estimate)) {
-            $estimatemsg = format_time(round($estimate));
+            // Err on the conservative side and also avoid showing 'now' as the estimate.
+            $estimatemsg = format_time(ceil($estimate));
         }
 
         $this->percent = $percent;
