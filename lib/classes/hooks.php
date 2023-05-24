@@ -17,22 +17,45 @@
 namespace core;
 
 /**
- * Hook discovery agent for core.
+ * Standard hook discovery agent for Moodle which lists
+ * all non-abstract classes in hooks namespace of core and all plugins
+ * unless there is a hook discovery agent in a plugin.
  *
  * @package   core
  * @copyright Andrew Lyons <andrew@nicols.co.uk>
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class hooks implements \core\hook\discovery_agent {
+final class hooks implements \core\hook\discovery_agent {
+    /**
+     * Returns all Moodle hooks in standard hook namespace.
+     *
+     * @return array list of hook classes
+     */
     public static function discover_hooks(): array {
-        // Describe any hard-coded hooks which can't be easily discovered by namespace.
+        // Look for hooks in hook namespace in core and all components.
         $hooks = [];
 
         $hooks = array_merge($hooks, self::discover_hooks_in_namespace('core', 'hook'));
 
+        foreach (\core_component::get_component_names() as $component) {
+            $agent = "$component\\hooks";
+            if (class_exists($agent) && is_subclass_of($agent, hook\discovery_agent::class)) {
+                // Let the plugin supply the list of hooks instead.
+                continue;
+            }
+            $hooks = array_merge($hooks, self::discover_hooks_in_namespace($component, 'hook'));
+        }
+
         return $hooks;
     }
 
+    /**
+     * Look up all non-abstract classes in "$component\$namespace" namespace.
+     *
+     * @param string $component
+     * @param string $namespace
+     * @return array list of hook classes
+     */
     public static function discover_hooks_in_namespace(string $component, string $namespace): array {
         $classes = \core_component::get_component_classes_in_namespace($component, $namespace);
 
@@ -44,8 +67,8 @@ class hooks implements \core\hook\discovery_agent {
                 continue;
             }
 
-            if (is_a($classname, \core\hook\manager::class, true)) {
-                // Skip the manager.
+            if ($classname === \core\hook\manager::class) {
+                // Skip the manager in core.
                 continue;
             }
 
@@ -55,11 +78,9 @@ class hooks implements \core\hook\discovery_agent {
                 'tags' => [],
             ];
 
-            if ($rc->implementsInterface(\core\hook\described_hook::class)) {
+            if (is_subclass_of($classname, \core\hook\described_hook::class)) {
                 $hooks[$classname]['description'] = $classname::get_hook_description();
             }
-
-
         }
 
         return $hooks;

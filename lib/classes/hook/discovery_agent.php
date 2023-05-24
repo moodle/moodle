@@ -17,7 +17,11 @@
 namespace core\hook;
 
 /**
- * This interface describes a component which can discover hooks in its own namespace.
+ * This interface describes a class which can discover all hook
+ * classes of a plugin.
+ *
+ * To add new discovery agent in your plugin you need to add your_plugin\hooks
+ * class that implements this interface.
  *
  * @package   core
  * @copyright Andrew Lyons <andrew@nicols.co.uk>
@@ -25,7 +29,7 @@ namespace core\hook;
  */
 interface discovery_agent {
     /**
-     * Discover hooks belonging to the component.
+     * Returns a list of hooks for component.
      *
      * @return array
      */
