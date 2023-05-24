@@ -1,6 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.2.1 ===
+* Added a new parameter in address_in_subnet to give us the ability to check for 0.0.0.0 or not.
+
 === 4.2 ===
 
 * All context classes were moved to \core\context namespace while keeping full backwards compatibility.
