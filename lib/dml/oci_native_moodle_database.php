@@ -706,48 +706,6 @@ class oci_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Transforms the sql and params in order to emulate the LIMIT clause available in other DBs
-     *
-     * @param string $sql the SQL select query to execute.
-     * @param array $params array of sql parameters
-     * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
-     * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
-     * @return array with the transformed sql and params updated
-     */
-    private function get_limit_sql($sql, array $params = null, $limitfrom=0, $limitnum=0) {
-
-        list($limitfrom, $limitnum) = $this->normalise_limit_from_num($limitfrom, $limitnum);
-        // TODO: Add the /*+ FIRST_ROWS */ hint if there isn't another hint
-
-        if ($limitfrom and $limitnum) {
-            $sql = "SELECT oracle_o.*
-                      FROM (SELECT oracle_i.*, rownum AS oracle_rownum
-                              FROM ($sql) oracle_i
-                             WHERE rownum <= :oracle_num_rows
-                            ) oracle_o
-                     WHERE oracle_rownum > :oracle_skip_rows";
-            $params['oracle_num_rows'] = $limitfrom + $limitnum;
-            $params['oracle_skip_rows'] = $limitfrom;
-
-        } else if ($limitfrom and !$limitnum) {
-            $sql = "SELECT oracle_o.*
-                      FROM (SELECT oracle_i.*, rownum AS oracle_rownum
-                              FROM ($sql) oracle_i
-                            ) oracle_o
-                     WHERE oracle_rownum > :oracle_skip_rows";
-            $params['oracle_skip_rows'] = $limitfrom;
-
-        } else if (!$limitfrom and $limitnum) {
-            $sql = "SELECT *
-                      FROM ($sql)
-                     WHERE rownum <= :oracle_num_rows";
-            $params['oracle_num_rows'] = $limitnum;
-        }
-
-        return array($sql, $params);
-    }
-
-    /**
      * This function will handle all the column values before being inserted/updated to DB for Oracle
      * installations. This is because the "special feature" of Oracle where the empty string is
      * equal to NULL and this presents a problem with all our currently NOT NULL default '' fields.
@@ -1118,9 +1076,16 @@ class oci_native_moodle_database extends moodle_database {
      */
     public function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
 
-        list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
+        list($limitfrom, $limitnum) = $this->normalise_limit_from_num($limitfrom, $limitnum);
 
-        list($rawsql, $params) = $this->get_limit_sql($sql, $params, $limitfrom, $limitnum);
+        if ($limitfrom) {
+            $sql .= " OFFSET $limitfrom ROWS";
+        }
+        if ($limitnum) {
+            $sql .= " FETCH NEXT $limitnum ROWS ONLY";
+        }
+
+        list($rawsql, $params, $type) = $this->fix_sql_params($sql, $params);
 
         list($rawsql, $params) = $this->tweak_param_names($rawsql, $params);
         $this->query_start($rawsql, $params, SQL_QUERY_SELECT);
@@ -1155,9 +1120,16 @@ class oci_native_moodle_database extends moodle_database {
      */
     public function get_records_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
 
-        list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
+        list($limitfrom, $limitnum) = $this->normalise_limit_from_num($limitfrom, $limitnum);
 
-        list($rawsql, $params) = $this->get_limit_sql($sql, $params, $limitfrom, $limitnum);
+        if ($limitfrom) {
+            $sql .= " OFFSET $limitfrom ROWS";
+        }
+        if ($limitnum) {
+            $sql .= " FETCH NEXT $limitnum ROWS ONLY";
+        }
+
+        list($rawsql, $params, $type) = $this->fix_sql_params($sql, $params);
 
         list($rawsql, $params) = $this->tweak_param_names($rawsql, $params);
         $this->query_start($rawsql, $params, SQL_QUERY_SELECT);
