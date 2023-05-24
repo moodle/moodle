@@ -813,4 +813,95 @@ class user_test extends \advanced_testcase {
         $this->assertFalse(\core_user::awaiting_action($admin));
         $this->assertTrue(\core_user::awaiting_action($manager));
     }
+
+    /**
+     * Test for function to get user details.
+     *
+     * @covers \core_user::get_fullname
+     */
+    public function test_display_name() {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user(['firstname' => 'John', 'lastname' => 'Doe']);
+        $context = \context_system::instance();
+
+        // Show real name as the force names config are not set.
+        $this->assertEquals('John Doe', \core_user::get_fullname($user, $context));
+
+        // With override, still show real name.
+        $options = ['override' => true];
+        $this->assertEquals('John Doe', \core_user::get_fullname($user, $context, $options));
+
+        // Set the force names config.
+        set_config('forcefirstname', 'Bruce');
+        set_config('forcelastname', 'Simpson');
+
+        // Show forced names.
+        $this->assertEquals('Bruce Simpson', \core_user::get_fullname($user, $context));
+
+        // With override, show real name.
+        $options = ['override' => true];
+        $this->assertEquals('John Doe', \core_user::get_fullname($user, $context, $options));
+    }
+
+    /**
+     * Test for function to get user details.
+     *
+     * @covers \core_user::get_profile_url
+     */
+    public function test_display_profile_url() {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user(['firstname' => 'John', 'lastname' => 'Doe']);
+
+        // Display profile url at site context.
+        $this->assertEquals("https://www.example.com/moodle/user/profile.php?id={$user->id}",
+            \core_user::get_profile_url($user)->out());
+
+        // Display profile url at course context.
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = \context_course::instance($course->id);
+        $this->assertEquals("https://www.example.com/moodle/user/view.php?id={$user->id}&amp;courseid={$course->id}",
+            \core_user::get_profile_url($user, $coursecontext));
+
+        // Throw error if userid is invalid.
+        unset($user->id);
+        $this->expectException(\coding_exception::class);
+        $this->expectExceptionMessage('User id is required when displaying profile url.');
+        \core_user::get_profile_url($user, $coursecontext);
+    }
+
+    /**
+     * Test for function to get user details.
+     *
+     * @covers \core_user::get_profile_picture
+     */
+    public function test_display_profile_picture() {
+        global $OUTPUT, $CFG;
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user(['firstname' => 'John', 'lastname' => 'Doe']);
+        $user2 = $this->getDataGenerator()->create_user(['picture' => 1]);
+
+        // Display profile picture.
+        $context = \context_system::instance();
+        // No image, show initials.
+        $this->assertStringContainsString("<span class=\"userinitials size-35\">JD</span></a>",
+            $OUTPUT->render(\core_user::get_profile_picture($user1, $context)));
+        // With Image.
+        $expectedimagesrc = $CFG->wwwroot . '/pluginfile.php/' . \context_user::instance($user2->id)->id .
+            '/user/icon/boost/f2?rev=1';
+        $this->assertStringContainsString($expectedimagesrc,
+            $OUTPUT->render(\core_user::get_profile_picture($user2, $context)));
+
+        // Display profile picture with options.
+        $options = ['size' => 50, 'includefullname' => true];
+        $this->assertStringContainsString("<span class=\"userinitials size-50\">JD</span>John Doe</a>",
+            $OUTPUT->render(\core_user::get_profile_picture($user1, $context, $options)));
+
+        // Display profile picture with options, no link.
+        $options = ['link' => false];
+        $this->assertEquals("<span class=\"userinitials size-35\">JD</span>",
+            $OUTPUT->render(\core_user::get_profile_picture($user1, $context, $options)));
+    }
 }

@@ -2,6 +2,11 @@ This files describes API changes for code that uses the user API.
 
 === 4.3 ===
 
+* Added new methods:
+ - `core_user::get_profile_picture` for retrieving user picture.
+ - `core_user::get_profile_url` for retrieving profile url.
+ - `core_user::get_fullname` for retrieving user full name.
+
 * The following previously deprecated methods have been removed and can no longer be used:
   - `profile_display_fields`
   - `profile_edit_category`
