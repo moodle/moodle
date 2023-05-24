@@ -1,6 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.1.4 ===
+* Added a new parameter in address_in_subnet to give us the ability to check for 0.0.0.0 or not.
+
 === 4.1.3 ===
 * Added 'extrainfo' in the DB options config. Its extra information for the DB driver, e.g. SQL Server,
   has additional configuration according to its environment, which the administrator can specify to alter and
