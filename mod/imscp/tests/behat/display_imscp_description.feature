@@ -1,4 +1,4 @@
-@mod @mod_imscp @javascript @_file_upload
+@mod @mod_imscp
 Feature: Display the IMS content package description in the IMSCP and optionally in the course
   In order to display the the IMS content package description description in the course
   As a teacher
