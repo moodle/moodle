@@ -123,7 +123,7 @@ if (!$chapterid) {
     $renderer = $PAGE->get_renderer('mod_book');
     $actionmenu = new \mod_book\output\main_action_menu($cm->id, $chapters, $chapter, $book);
     $renderedmenu = $renderer->render($actionmenu);
-    echo $renderedmenu;
+    echo html_writer::div($renderedmenu, '', ['id' => 'mod_book-chaptersnavigation']);
 
     // The chapter itself.
     $hidden = $chapter->hidden ? ' dimmed_text' : null;
