@@ -71,6 +71,9 @@ information provided here is intended especially for developers.
 * The moodle-core-notification-confirm module, found under the M.core.confirm namespace, has been deprecated.
   Any code using it should be rewritten as an ESM and use the core/notification module instead.
   See MDL-77174 for further information.
+* New behat behat_navigation::i_close_block_drawer_if_open() and behat_navigation::i_keep_block_drawer_closed()
+to ensure in some test that the block drawer is closed. This helps with random failures due to the block drawer
+being forced open in all behat tests.
 
 === 4.2 ===
 

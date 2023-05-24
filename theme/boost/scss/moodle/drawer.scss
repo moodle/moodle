@@ -161,7 +161,7 @@ $right-drawer-width: 320px;
 @mixin drawer() {
     @include transition(left 0.2s ease, right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease);
     background-color: $drawer-bg-color;
-    z-index: $zindex-modal;
+    z-index: $zindex-fixed;
     position: fixed;
     height: 100vh;
     top: 0;
@@ -221,15 +221,15 @@ $right-drawer-width: 320px;
 
 @include media-breakpoint-up(lg) {
     .drawer {
-        z-index: inherit;
-
+        // Make sure that in large screens the drawer goes under the drop down menus.
+        z-index: $zindex-dropdown - 1;
         // Workaround to display the skip link elements from the blocks drawer infront of the navbar.
+        // As the skip link is in a fixed position and z-index for this element is ignored
+        // then it is hidden behind the top navbar.
+        // The workaround is to actually give a z-index to the drawer so it appears in front of the
+        // navbar (https://developer.mozilla.org/en-US/docs/Web/CSS/z-index).
         &#theme_boost-drawers-blocks:focus-within {
-            position: absolute;
-
-            .drawercontent {
-                z-index: auto;
-            }
+            z-index: $zindex-fixed + 1;
         }
 
         &.not-initialized {

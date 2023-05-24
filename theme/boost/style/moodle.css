@@ -29726,7 +29726,7 @@ body.drawer-ease {
 .drawer {
   transition: left 0.2s ease, right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease;
   background-color: #f8f9fa;
-  z-index: 1050;
+  z-index: 1030;
   position: fixed;
   height: 100vh;
   top: 0;
@@ -29776,13 +29776,10 @@ body.drawer-ease {
 
 @media (min-width: 992px) {
   .drawer {
-    z-index: inherit;
+    z-index: 999;
   }
   .drawer#theme_boost-drawers-blocks:focus-within {
-    position: absolute;
-  }
-  .drawer#theme_boost-drawers-blocks:focus-within .drawercontent {
-    z-index: auto;
+    z-index: 1031;
   }
   .drawer.not-initialized {
     display: block;
@@ -29809,7 +29806,7 @@ body.drawer-ease {
     display: block;
     transition: left 0.2s ease, right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease;
     background-color: #f8f9fa;
-    z-index: 1050;
+    z-index: 1030;
     position: fixed;
     height: 100vh;
     top: 0;
@@ -29870,7 +29867,7 @@ body.drawer-ease {
     display: block;
     transition: left 0.2s ease, right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease;
     background-color: #f8f9fa;
-    z-index: 1050;
+    z-index: 1030;
     position: fixed;
     height: 100vh;
     top: 0;

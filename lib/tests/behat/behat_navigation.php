@@ -29,7 +29,6 @@ require_once(__DIR__ . '/../../behat/behat_base.php');
 
 use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ExpectationException as ExpectationException;
-use Behat\Mink\Exception\DriverException as DriverException;
 use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
 /**
@@ -1509,5 +1508,37 @@ class behat_navigation extends behat_base {
                 node: $dropdownnode,
             );
         }
+    }
+
+    /**
+     * Close the block drawer if it is open.
+     *
+     * This is necessary as in Behat the block drawer is open at each page load (disregarding user's settings)
+     * As the block drawer is positioned at the front of some contextual dialogs on the grade report for example.
+     * @Given I close block drawer if open
+     * @return void
+     */
+    public function i_close_block_drawer_if_open() {
+        if ($this->running_javascript()) {
+            $xpath = "//button[contains(@data-action,'closedrawer')][contains(@data-placement,'left')]";
+            $node = $this->getSession()->getPage()->find('xpath', $xpath);
+            if ($node && $node->isVisible()) {
+                $ishidden = $node->getAttribute('aria-hidden-tab-index');
+                if (!$ishidden) {
+                    $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
+                }
+            }
+        }
+    }
+
+    /**
+     * I close the block drawer and keep it closed.
+     *
+     * @Given I keep block drawer closed
+     * @return void
+     */
+    public function i_keep_block_drawer_closed() {
+        set_user_preference('behat_keep_drawer_closed', 1);
+        $this->i_close_block_drawer_if_open();
     }
 }
