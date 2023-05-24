@@ -49,6 +49,12 @@ class loader {
     /** @var string The mimetype to send */
     protected $mimetype = null;
 
+    /** @var string The component to use */
+    protected $component;
+
+    /** @var string The complete path to the candidate file */
+    protected $candidatefile;
+
     /**
      * Initialise the class, parse the request and serve the content.
      */
