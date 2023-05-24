@@ -573,11 +573,16 @@ class mysqli_native_moodle_database extends moodle_database {
             $this->mysqli->options(MYSQLI_OPT_CONNECT_TIMEOUT, $this->dboptions['connecttimeout']);
         }
 
+        $flags = 0;
+        if ($this->dboptions['clientcompress'] ?? false) {
+            $flags |= MYSQLI_CLIENT_COMPRESS;
+        }
+
         $conn = null;
         $dberr = null;
         try {
             // real_connect() is doing things we don't expext.
-            $conn = @$this->mysqli->real_connect($dbhost, $dbuser, $dbpass, $dbname, $dbport, $dbsocket);
+            $conn = @$this->mysqli->real_connect($dbhost, $dbuser, $dbpass, $dbname, $dbport, $dbsocket, $flags);
         } catch (\Exception $e) {
             $dberr = "$e";
         }
