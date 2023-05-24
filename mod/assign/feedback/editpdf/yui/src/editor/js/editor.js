@@ -1614,6 +1614,7 @@ EDITOR.prototype = {
 
         try {
             options = Object.defineProperty({}, "passive", {
+                // eslint-disable-next-line getter-return
                 get: function() {
                     passivesupported = true;
                 }
