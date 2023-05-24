@@ -3861,3 +3861,26 @@ function cron_setup_user($user = null, $course = null, $leavepagealone = false) 
 
     \core\cron::setup_user($user, $course, $leavepagealone);
 }
+
+/**
+ * Get OAuth2 services for the external backpack.
+ *
+ * @return array
+ * @throws coding_exception
+ * @deprecated since 4.3.
+ */
+function badges_get_oauth2_service_options() {
+    debugging(
+        'badges_get_oauth2_service_options() is deprecated. Don\'t use it.',
+        DEBUG_DEVELOPER
+    );
+    global $DB;
+
+    $issuers = core\oauth2\api::get_all_issuers();
+    $options = ['' => 'None'];
+    foreach ($issuers as $issuer) {
+        $options[$issuer->get('id')] = $issuer->get('name');
+    }
+
+    return $options;
+}

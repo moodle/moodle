@@ -129,7 +129,7 @@ if ($backpack) {
             // User input username/email/password on the backpack site
             // After confirm the scopes.
             redirect(new moodle_url('/badges/backpack-connect.php', ['backpackid' => $data->externalbackpackid]));
-        } else if ($data = $form->get_data()) {
+        } else {
             // The form may have been submitted under one of the following circumstances:
             // 1. After clicking 'Connect to backpack'. We'll have $data->email.
             // 2. After clicking 'Resend verification email'. We'll have $data->email.
