@@ -112,6 +112,18 @@ class controller {
     public function uninstall_language($lang) {
         global $CFG;
 
+        $lang = clean_param($lang, PARAM_LANG);
+        if ($lang === '') {
+            // Do not allow uninstallation of invalid languages.
+            // Note: PARAM_LANG returns an empty string for invalid validation.
+            return false;
+        }
+
+        if ($lang === 'en') {
+            // Never allow removal of the default langauge.
+            return false;
+        }
+
         $dest1 = $CFG->dataroot.'/lang/'.$lang;
         $dest2 = $CFG->dirroot.'/lang/'.$lang;
         $rm1 = false;
