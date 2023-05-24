@@ -1,4 +1,4 @@
-@mod @mod_imscp @_file_upload @core_completion @javascript
+@mod @mod_imscp @core_completion
 Feature: View activity completion information in the IMS content package activity
   In order to have visibility of IMS content package completion requirements
   As a student
@@ -21,12 +21,11 @@ Feature: View activity completion information in the IMS content package activit
     Given the following "activities" exist:
       | activity | course | name          | completion | completionview | packagefilepath                             |
       | imscp    | C1     | Music history | 2          | 1              | mod/imscp/tests/pacakges/singescobbasic.zip |
-    # Teacher view.
-    And I am on the "Music history" "imscp activity" page logged in as teacher1
     # Student view.
     When I am on the "Music history" "imscp activity" page logged in as student1
     Then the "View" completion condition of "Music history" is displayed as "done"
 
+  @javascript
   Scenario: Use manual completion
     Given the following "activities" exist:
       | activity | course | name          | completion | packagefilepath                            |
@@ -34,7 +33,6 @@ Feature: View activity completion information in the IMS content package activit
     And I am on the "Music history" "imscp activity" page logged in as teacher1
     # Teacher view.
     And the manual completion button for "Music history" should be disabled
-    And I log out
     # Student view.
     When I am on the "Music history" "imscp activity" page logged in as student1
     Then the manual completion button of "Music history" is displayed as "Mark as done"
