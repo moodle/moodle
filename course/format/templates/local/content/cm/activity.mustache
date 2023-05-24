@@ -69,12 +69,6 @@
                 {{> core_courseformat/local/content/cm/cmname }}
             {{/ core_courseformat/local/content/cm/cmname }}
         {{/cmname}}
-        {{#afterlink}}
-            <div class="afterlink d-flex align-items-center ml-3">
-                {{{afterlink}}}
-            </div>
-        {{/afterlink}}
-
         {{#activityinfo}}
             <div class="activity-info mt-1 mt-md-0">
                 {{$ core_courseformat/local/content/cm/activity_info}}
@@ -125,3 +119,9 @@
         {{/ core_courseformat/local/content/cm/availability }}
     {{/modavailability}}
 </div>
+
+{{#afterlink}}
+    <div class="afterlink d-flex align-items-center mt-3">
+        {{{afterlink}}}
+    </div>
+{{/afterlink}}
