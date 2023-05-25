@@ -526,7 +526,7 @@
 
         tr.heading {
             position: sticky;
-            top: 0;
+            top: $navbar-height;
             z-index: 4;
         }
 

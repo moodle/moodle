@@ -181,9 +181,6 @@
     #page.drawers .main-inner {
         margin-top: 1.5rem;
     }
-    #page.drawers .drawer-right-toggle {
-        margin-right: 0.7rem;
-    }
 }
 
 @include media-breakpoint-up(md) {
@@ -220,7 +217,6 @@
         position: relative;
         overflow-y: visible;
         @include transition(0.2s);
-        height: calc(100vh - #{$navbar-height});
         left: 0;
         right: 0;
         &.show-drawer-left {
@@ -241,7 +237,7 @@
             margin-right: $drawer-right-width;
         }
         &.hasstickyfooter {
-            height: calc(100vh - #{$navbar-height} - #{$stickyfooter-height});
+            margin-bottom: $stickyfooter-height;
         }
     }
 }
