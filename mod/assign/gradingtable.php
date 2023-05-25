@@ -1421,7 +1421,7 @@ class assign_grading_table extends table_sql implements renderable {
 
         $menu = new action_menu();
         $menu->set_owner_selector('.gradingtable-actionmenu');
-        $menu->set_constraint('.gradingtable > .no-overflow');
+        $menu->set_boundary('window');
         $menu->set_menu_trigger(get_string('edit'));
         foreach ($actions as $action) {
             $menu->add($action);
