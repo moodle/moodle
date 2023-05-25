@@ -1,0 +1,41 @@
+@import "./mixins.scss";
+
+.position-inherit {
+  position: inherit !important;
+  overflow: visible !important;
+}
+.flex-column {
+  flex-direction: column !important;
+}
+.bottom-10 {
+  bottom: 10px;
+}
+.bg-login-primary {
+  background-color: #f5f5f5 !important;
+}
+.left-image {
+  background: url([[pix:theme|login-image]]);
+  width: 456px;
+  height: 100vh;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  @include breakpoint(xs) {
+    display: none;
+  }
+  @include breakpoint(sm) {
+    display: none;
+  }
+}
+.h-100vh {
+  height: 100vh !important;
+}
+.login-footer {
+  background: url([[pix:theme|bottom-wave]]) 0 0 no-repeat;
+  background-position: bottom;
+
+  @include breakpoint(xlg) {
+    background-size: contain;
+  }
+}

@@ -1,0 +1,37 @@
+ <div  class="card col-lg-3 max-width max-width-2 flex-grow col-md-6 col-sm-12 p-0 card-width card-border-radius card-box-shadow card-border">
+
+                <div class="card-body bg-wave p-0 card-border-radius card-text-color">
+                    <div class="card-body-overlay card-body-border-radius">
+                        <p class="card-text">{{fullname}}</p>
+                        <div class="row align-items-center">
+                            <div class="card-title card-text-size col-lg-9 col-md-9 col-sm-8 w-auto pr-0">
+							{{coursecategory}}
+                            </div>
+
+                            <div class="col-lg-3 col-md-3 col-sm-4 w-auto my-2">
+                                <div class="row mx-0 justify-content-end">
+                                    <!-- <i class="qicon-tick-mark success-tick"></i> -->
+                                    <div class="white-circle col-9 w-auto">3</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="inner-section card-border-radius">
+                    <div class="d-flex justify-content-between text-grey">
+                        <div class="d-flex align-items-center pb-2">
+                            <span class="qicon-calendar"></span>
+                            <div class="pl-2">Last opened: Jan 13, 2023</div>
+                        </div>
+                        <div>
+                            {{progress}}%
+                        </div>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar success-color" role="progressbar" style="width: {{progress}}%;" aria-valuenow=""
+                            aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+            

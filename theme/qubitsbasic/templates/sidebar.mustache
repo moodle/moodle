@@ -1,0 +1,102 @@
+<div class="sidebar">
+        <div class="logo-details">
+            <img src="{{globals.config.wwwroot}}/theme/qubitsbasic/pix/qubits-full-logo.svg" class="main-logo">
+            <img src="{{globals.config.wwwroot}}/theme/qubitsbasic/pix/qubits-symbol.svg" class="compact-logo">
+
+            <i class="icon fa fa-arrow-left arrow-left"></i>
+
+        </div>
+        <div class="hr-line"></div>
+        <ul class="nav-links">
+            <li class="nav-item">
+                <a href="#" class="nav-hover">
+                    <i class="qicon-my-courses icon"></i>
+                    <span class="link_name">My Courses</span>
+                    <i class="qicon-chevron-down-thin arrow icon"></i>
+                </a>
+                <ul class="sub-menu">
+                    
+                    <li><a href="#">Digi Pro Level 3 Demo</a></li>
+                    <li><a href="#">Digi Pro Level 4 Demo</a></li>
+                    <li><a href="#">Digi Pro Level 5 Demo</a></li>
+                </ul>
+            </li>
+
+            <li class="nav-item">
+
+                <a href="#" class="nav-hover">
+                    <span class="qicon-dashboard icon"></span>
+                    <span class="link_name">Dashboard</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="#">
+                    <span class="qicon-assessment icon"></span>
+                    <span class="link_name">Assestments</span>
+                </a>
+            </li>
+			
+			<li class="nav-item">
+                <a href="{{globals.config.wwwroot}}/sitebuilder/">
+                    <span class="qicon-assessment icon"></span>
+                    <span class="link_name">Site Builder</span>
+                </a>
+            </li>
+
+
+        </ul>
+    </div>
+
+<div class="sidebar-overlay"></div>
+
+{{#js}}
+require(['jquery'], function($){
+    $(window).on("resize", function (e) {
+                checkScreenSize();
+            });
+
+            checkScreenSize();
+
+            function checkScreenSize() {
+                var newWindowWidth = $(window).width();
+                if (newWindowWidth < 578) {
+                    $(".fa-arrow-left").click(function () {
+                        $(".sidebar").hide();
+                        $(".sidebar-overlay").hide();
+                        $(".qicon-menu").show();
+                    });
+                    $(".qicon-menu").click(function () {
+                        $(".sidebar").show().css({ "transition": "all 0.5s ease", "transition-delay": "3s" });
+                        $(".sidebar-overlay").show();
+
+                    });
+                    $(".sidebar-overlay").click(function () {
+                        $(".sidebar").hide().css({ "transition": "all 0.5s ease", "transition-delay": "3s" });;
+                        $(".sidebar-overlay").hide();
+                        $(".qicon-menu").show();
+                    });
+                    $(".arrow").click(function () {
+                        $(".nav-item").toggleClass("showMenu");
+                    });
+                }
+                else {
+                    $(".fa-arrow-left").click(function () {
+                        $(".sidebar").addClass("close-bars");
+                        $(".compact-logo").show();
+                        $(".qicon-menu").show();
+                        $(".pagetitle-left-alignment").addClass("closebar-left-alignment");
+                    });
+                    $(".qicon-menu").click(function () {
+                        $(".sidebar").removeClass("close-bars");
+                        $(".compact-logo").hide();
+                        $(".qicon-menu").hide();
+                        $(".pagetitle-left-alignment").removeClass("closebar-left-alignment");
+                    });
+                    $(".arrow").click(function () {
+                        $(".nav-item").toggleClass("showMenu");
+                    });
+                }
+            }
+});
+{{/js}}

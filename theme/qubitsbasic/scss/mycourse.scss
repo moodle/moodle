@@ -1,0 +1,300 @@
+@font-face {
+  font-family: "qubits";
+  src: url("[[font:theme|qubits.eot]]?yz5onj");
+  src: url("[[font:theme|qubits.eot]]?yz5onj#iefix") format("embedded-opentype"),
+    url("[[font:theme|qubits.ttf]]?yz5onj") format("truetype"),
+    url("[[font:theme|qubits.woff]]?yz5onj") format("woff"),
+    url("[[font:theme|qubits.svg]]?yz5onj#qubits") format("svg");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="qicon-"],
+[class*=" qicon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: "qubits" !important;
+  /* speak: never; */
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.qicon-anouncement:before {
+  content: "\e900";
+}
+.qicon-exercise:before {
+  content: "\e901";
+}
+.qicon-theory:before {
+  content: "\e902";
+}
+.qicon-challenge:before {
+  content: "\e903";
+}
+.qicon-search:before {
+  content: "\e904";
+}
+.qicon-progress:before {
+  content: "\e905";
+}
+.qicon-calendar:before {
+  content: "\e906";
+}
+.qicon-notifications:before {
+  content: "\e907";
+}
+.qicon-dashboard:before {
+  content: "\e908";
+}
+.qicon-assessment:before {
+  content: "\e909";
+}
+.qicon-chevron-down-thin:before {
+  content: "\e90a";
+}
+.qicon-menu:before {
+  content: "\e90b";
+}
+.qicon-my-courses:before {
+  content: "\e90c";
+}
+.qicon-tick-mark:before {
+  content: "\e90d";
+}
+.success-tick {
+  position: absolute;
+  right: 0%;
+  top: -20%;
+  font-size: 25px;
+  z-index: 20;
+  background-color: white;
+  border-radius: 50%;
+  border: 3px solid white;
+  color: #78c466;
+}
+.navbar.fixed-top {
+  height: 88px !important;
+  z-index: 50 !important;
+}
+.pagetitle-left-alignment {
+  margin-left: 280px;
+  padding: 1.6rem 0px;
+  transition: all 0.5s ease;
+}
+.closebar-left-alignment {
+  margin-left: 80px;
+}
+[role="button"]:focus {
+  box-shadow: none !important;
+}
+
+.my-course-section {
+  position: relative;
+  height: 100vh;
+  left: 260px;
+  width: calc(100% - 260px);
+  transition: all 0.5s ease;
+
+  .my-course-content {
+    height: 80px;
+    display: flex;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.09);
+    align-items: center;
+
+    .icon {
+      padding: 12px;
+      cursor: pointer;
+    }
+  }
+  .text {
+    padding-left: 10px;
+  }
+}
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 260px;
+  background: #f7f7f7;
+  z-index: 106;
+  transition: all 0.5s ease;
+
+  .logo-details {
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    i {
+      height: 50px;
+      min-width: 78px;
+      text-align: center;
+      line-height: 50px;
+    }
+    .logo_name {
+      font-size: 22px;
+      color: #fff;
+      font-weight: 600;
+      transition: 0.3s ease;
+      transition-delay: 0.1s;
+    }
+    .main-logo {
+      width: 70%;
+    }
+  }
+  .arrow-left {
+    cursor: pointer;
+    color: #116cbf;
+    font-size: 15px;
+  }
+  .nav-links {
+    height: 100%;
+    padding: 0 0 150px 0;
+    overflow: auto;
+    margin: 0 !important;
+
+    li {
+      position: relative;
+      list-style: none;
+
+      transition: all 0.4s ease;
+
+      &:hover {
+        background: #e2eaf2;
+      }
+
+      a {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: #585858;
+
+        i {
+          &:hover {
+            color: #116cbf;
+          }
+        }
+        .link_name {
+          pointer-events: none;
+        }
+      }
+      .icon {
+        height: 50px;
+        min-width: 78px;
+        text-align: center;
+        line-height: 50px;
+        /* color: #585858; */
+        font-size: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .icon-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .sub-menu {
+        padding: 0px 0px 14px 70px;
+        background: #f7f7f7;
+        display: none;
+
+        a {
+          &:hover {
+            opacity: 1;
+          }
+        }
+
+        .link_name {
+          display: none;
+        }
+      }
+    }
+  }
+  .compact-logo {
+    display: none;
+    width: 100%;
+  }
+}
+
+.sidebar .nav-links li .sub-menu .sidebar.close-bars {
+  width: 78px;
+}
+.sidebar-mobile .close-bar {
+  width: 0;
+}
+.sidebar.close-bars .logo-details .logo_name {
+  transition-delay: 0s;
+  opacity: 0;
+  pointer-events: none;
+}
+.sidebar.close-bars .nav-links li .icon-link {
+  display: block;
+}
+.sidebar.close-bars .nav-links {
+  overflow: visible;
+}
+.sidebar .nav-links::-webkit-scrollbar {
+  display: none;
+}
+.sidebar .nav-links li:hover > a {
+  color: #116cbf;
+}
+
+.sidebar .nav-links li.showMenu i.arrow {
+  transform: rotate(-180deg);
+}
+.sidebar.close-bars .nav-links i.arrow {
+  display: none;
+}
+
+.sidebar .nav-links li.showMenu .sub-menu {
+  display: block;
+  margin: 0 !important;
+}
+
+.sidebar.close-bars .nav-links li .sub-menu {
+  position: absolute;
+  left: 100%;
+  top: -10px;
+  margin-top: 0;
+  padding: 0px;
+  border-radius: 0 6px 6px 0;
+  opacity: 0;
+  display: block;
+  pointer-events: none;
+  transition: 0s;
+}
+.sidebar.close-bars .nav-links li:hover .sub-menu {
+  top: 0;
+  opacity: 1;
+  pointer-events: auto;
+  transition: all 0.4s ease;
+}
+
+.sidebar.close-bars .nav-links li .sub-menu .link_name {
+  font-size: 18px;
+  opacity: 1;
+  display: block;
+}
+.sidebar .nav-links li .sub-menu.blank {
+  opacity: 1;
+  pointer-events: auto;
+  padding: 3px 20px 6px 16px;
+  opacity: 0;
+  pointer-events: none;
+}
+.sidebar .nav-links li:hover .sub-menu.blank {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.sidebar.close-bars ~ .my-course-section {
+  left: 78px;
+  width: calc(100% - 78px);
+}
