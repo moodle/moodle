@@ -35,6 +35,7 @@ information provided here is intended especially for developers.
 * Introduce a new public function \core_external\util::generate_token_name()
 * Legacy (and custom) Behat --skip-passed option has been removed completely. Please, use the standard
   --rerun option that provides exactly the same (execution of failed scenarios only).
+* The action_menu::set_constraint() method is deprecated. Please use action_menu::set_boundary() instead.
 
 === 4.2 ===
 

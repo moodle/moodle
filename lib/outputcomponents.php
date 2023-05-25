@@ -4654,10 +4654,12 @@ class action_menu implements renderable, templatable {
      * This is required whenever the action menu is displayed inside any CSS element with the .no-overflow class
      * (flexible_table and any of it's child classes are a likely candidate).
      *
+     * @deprecated since Moodle 4.3
      * @param string $ancestorselector A snippet of CSS used to identify the ancestor to contrain the dialogue to.
      */
     public function set_constraint($ancestorselector) {
-        $this->attributessecondary['data-constraint'] = $ancestorselector;
+        debugging('The method set_constraint() is deprecated. Please use the set_boundary() method instead.', DEBUG_DEVELOPER);
+        $this->set_boundary('window');
     }
 
     /**
