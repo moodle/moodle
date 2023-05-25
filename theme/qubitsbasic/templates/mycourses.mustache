@@ -373,9 +373,18 @@ require(['theme_boost/loader', 'theme_boost/drawer'], function(Loader, Drawer) {
 
 {{#js}}
 require(['jquery', 'core/config', 'core/templates'], function($, Config, Templates){
+    function hexToRgb(hex) {
+       var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
+    }
+
    let scrolllock = false
    function qubits_load_mycourses(){
-        let mycourseurl = `${Config.wwwroot}/lib/ajax/service.php?sesskey=${Config.sesskey}&info=core_course_get_enrolled_courses_by_timeline_classification`;
+        let mycourseurl = `${Config.wwwroot}/lib/ajax/service.php?sesskey=${Config.sesskey}&info=theme_qubitsbasic_get_enrolled_courses_by_timeline_classification`;
         let offset = $("#mycrsecard").data("offset")
         let limit = $("#mycrsecard").data("limit")
         let complete = $("#mycrsecard").data("complete")
@@ -385,7 +394,7 @@ require(['jquery', 'core/config', 'core/templates'], function($, Config, Templat
         let payload = [
                 {
                     "index": 0,
-                    "methodname": "core_course_get_enrolled_courses_by_timeline_classification",
+                    "methodname": "theme_qubitsbasic_get_enrolled_courses_by_timeline_classification",
                     "args": {
                         "offset": offset,
                         "limit": limit,
@@ -419,6 +428,10 @@ require(['jquery', 'core/config', 'core/templates'], function($, Config, Templat
                     console.log(JSON.stringify(curcourses, null, 4))
                     console.log("****")
                     curcourses.forEach((course) => {
+                        objCoursergb = hexToRgb(course.cardcolour)
+                        course.cardcolourR = objCoursergb.r
+                        course.cardcolourG = objCoursergb.g
+                        course.cardcolourB = objCoursergb.b
                         Templates.render('theme_qubitsbasic/course/coursecard', course).then((coursecardhtml) => {
                             $("#mycrsecard").append(coursecardhtml)
                         });

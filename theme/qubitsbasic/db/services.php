@@ -15,20 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Web service function declarations for the plugintype_pluginname plugin.
  *
  * @package   theme_qubitsbasic
- * @copyright 2023 Qubits Dev Team.
+ * @author    Qubits Dev Team
+ * @copyright 2023 <https://www.yardstickedu.com/>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
-
-$plugin->component = 'theme_qubitsbasic'; // Full name of the plugin (used for diagnostics)
-$plugin->release   = 'v1.0';
-$plugin->version   = 2023052500; // The current module version (Date: YYYYMMDDXX)
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->requires  = 2020061500; // Requires this Moodle version 3.9
-// This theme depends boost theme.
-$plugin->dependencies = [
-    'theme_boost' => 2022112800
+$functions = [
+    'theme_qubitsbasic_get_enrolled_courses_by_timeline_classification' => [
+        'classname' => 'theme_qubitsbasic_external',
+        'methodname' => 'get_enrolled_courses_by_timeline_classification',
+        'classpath' => 'theme/qubitsbasic/externallib.php',
+        'description' => 'List of enrolled courses for the given timeline classification (past, inprogress, or future).',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ]
 ];

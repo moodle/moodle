@@ -2,7 +2,7 @@
   data-url="{{viewurl}}"  role="button">
 
                 <div class="card-body bg-wave p-0 card-border-radius card-text-color">
-                    <div class="card-body-overlay card-body-border-radius">
+                    <div class="card-body-overlay card-body-border-radius" style="--cardbgcolor:rgba({{cardcolourR}},{{cardcolourG}},{{cardcolourB}},0.5)">
                         <p class="card-text">{{fullname}}</p>
                         <div class="row align-items-center">
                             <div class="card-title card-text-size col-lg-9 col-md-9 col-sm-8 w-auto pr-0">
@@ -12,7 +12,7 @@
                             <div class="col-lg-3 col-md-3 col-sm-4 w-auto my-2">
                                 <div class="row mx-0 justify-content-end">
                                     <!-- <i class="qicon-tick-mark success-tick"></i> -->
-                                    <div class="white-circle col-9 w-auto">3</div>
+                                    <div class="white-circle col-9 w-auto">{{level}}</div>
                                 </div>
                             </div>
                         </div>
