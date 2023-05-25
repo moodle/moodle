@@ -438,7 +438,12 @@ require(['jquery', 'core/config', 'core/templates'], function($, Config, Templat
             scrolllock = true
             qubits_load_mycourses()
         }
-    });
+  });
+
+  $(document).on("click", ".card[role=button]", function(){
+     let url = $(this).data("url");
+     $(location).prop('href', url)
+  });
 
 });
 {{/js}}
