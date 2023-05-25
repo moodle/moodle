@@ -40,6 +40,7 @@ require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/questionlib.php');
 
 use mod_quiz\question\bank\qbank_helper;
+use qbank_previewquestion\question_preview_options;
 
 /**
  * @var int We show the countdown timer if there is less than this amount of time left before the
@@ -1477,17 +1478,22 @@ function quiz_question_preview_url($quiz, $question, $variant = null, $restartve
  * @param bool $label if true, show the preview question label after the icon
  * @param int $variant which question variant to preview (optional).
  * @param bool $random if question is random, true.
- * @return the HTML for a preview question icon.
+ * @return string the HTML for a preview question icon.
  */
 function quiz_question_preview_button($quiz, $question, $label = false, $variant = null, $random = null) {
     global $PAGE;
     if (!question_has_capability_on($question, 'use')) {
         return '';
     }
-    $slotinfo = quiz::create($quiz->id)->get_structure()->get_slot_by_number($question->slot);
-    return $PAGE->get_renderer('mod_quiz', 'edit')
-        ->question_preview_icon($quiz, $question, $label, $variant,
-                $slotinfo->requestedversion ?: \qbank_previewquestion\question_preview_options::ALWAYS_LATEST);
+    $structure = quiz::create($quiz->id)->get_structure();
+    if (!empty($question->slot)) {
+        $requestedversion = $structure->get_slot_by_number($question->slot)->requestedversion
+                ?? question_preview_options::ALWAYS_LATEST;
+    } else {
+        $requestedversion = question_preview_options::ALWAYS_LATEST;
+    }
+    return $PAGE->get_renderer('mod_quiz', 'edit')->question_preview_icon(
+            $quiz, $question, $label, $variant, $requestedversion);
 }
 
 /**

@@ -96,6 +96,8 @@ $pagetitle = $book->name;
 if ($chapter = $DB->get_record('book_chapters', ['id' => $chapterid, 'bookid' => $book->id])) {
     $pagetitle .= ": {$chapter->title}";
 }
+
+$PAGE->set_other_editing_capability('mod/book:edit');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 $PAGE->add_body_class('limitedwidth');
@@ -114,9 +116,7 @@ if (!$chapterid) {
     }
     // Add the Book TOC block.
     book_add_fake_block($chapters, $chapter, $book, $cm, $edit);
-    // We need to discover if this is the last chapter to mark activity as completed.
-    $islastchapter = $chapter->pagenum + 1 > count($chapters);
-    book_view($book, $chapter, $islastchapter, $course, $cm, $context);
+    book_view($book, $chapter, \mod_book\helper::is_last_visible_chapter($chapter->id, $chapters), $course, $cm, $context);
 
     echo $OUTPUT->header();
 

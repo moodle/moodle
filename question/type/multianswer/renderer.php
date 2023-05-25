@@ -212,8 +212,9 @@ abstract class qtype_multianswer_subq_renderer_base extends qtype_renderer {
             return '';
         }
 
-        return html_writer::tag('button', $icon, [
-            'type' => 'button',
+        return html_writer::link('#', $icon, [
+            'role' => 'button',
+            'tabindex' => 0,
             'class' => 'btn btn-link p-0',
             'data-toggle' => 'popover',
             'data-container' => 'body',
