@@ -32181,6 +32181,12 @@ body.path-question-type .mform fieldset.hidden {
   position: relative;
 }
 
+[data-filterregion=filter][data-filter-type=category] .form-autocomplete-suggestions li[aria-disabled=true] {
+  font-weight: bold;
+  color: #1d2125;
+  background-color: #fff;
+}
+
 @media (max-width: 767.98px) {
   .que .info {
     float: none;

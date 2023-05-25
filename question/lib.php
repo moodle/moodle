@@ -17,7 +17,7 @@
 /**
  * Question related functions.
  *
- * This file was created just because Fragment API expects callbacks to be defined on lib.php.
+ * This file was created just because Fragment API expects callbacks to be defined on lib.php
  *
  * Please, do not add new functions to this file.
  *
@@ -27,6 +27,8 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/question/editlib.php');
 
 /**
  * Question tags fragment callback.
@@ -98,4 +100,55 @@ function core_question_output_fragment_tags_form($args) {
 
         return $mform->render();
     }
+}
+
+/**
+ * Question data fragment to get the question html via ajax call.
+ *
+ * @param array $args Arguments for rendering the fragment. Expected keys:
+ *  * view - the view class
+ *  * cmid - if in an activity, the course module ID.
+ *  * filterquery - the current filters encoded as a URL parameter.
+ *  * lastchanged - the ID of the last edited question.
+ *  * sortdata - Array of sorted columns.
+ *  * filtercondition - the current filters encoded as an object.
+ *  * extraparams - additional parameters required for a particular view class.
+ *
+ * @return array|string
+ */
+function core_question_output_fragment_question_data(array $args): string {
+    global $PAGE;
+    if (empty($args)) {
+        return '';
+    }
+    [$params, $extraparams] = \core_question\local\bank\filter_condition_manager::extract_parameters_from_fragment_args($args);
+    $thiscontext = \context_course::instance($params['courseid']);
+    $contexts = new \core_question\local\bank\question_edit_contexts($thiscontext);
+    $contexts->require_one_edit_tab_cap($params['tabname']);
+    $course = get_course($params['courseid']);
+
+    $viewclass = empty($args['view']) ? \core_question\local\bank\view::class : clean_param($args['view'], PARAM_NOTAGS);
+    $cmid = clean_param($args['cmid'], PARAM_INT);
+    [, $cm] = empty($cmid) ? [null, null] : get_module_from_cmid($cmid);
+
+    $nodeparent = $PAGE->settingsnav->find('questionbank', \navigation_node::TYPE_CONTAINER);
+    $thispageurl = new \moodle_url($nodeparent->action);
+    if ($cm) {
+        $thispageurl->param('cmid', $cm->id);
+    } else {
+        $thispageurl->param('courseid', $params['courseid']);
+    }
+    if (!empty($args['filterquery'])) {
+        $thispageurl->param('filter', $args['filterquery']);
+    }
+    if (!empty($args['lastchanged'])) {
+        $thispageurl->param('lastchanged', $args['lastchanged']);
+    }
+    if (!empty($params['sortdata'])) {
+        foreach ($params['sortdata'] as $sortname => $sortorder) {
+            $thispageurl->param('sortdata[' . $sortname . ']', $sortorder);
+        }
+    }
+    $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $params, $extraparams);
+    return $questionbank->display_questions_table();
 }

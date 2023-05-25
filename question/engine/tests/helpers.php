@@ -1391,3 +1391,35 @@ class question_test_recordset extends moodle_recordset {
         $this->records = null;
     }
 }
+
+/**
+ * Provide utility function for random question test
+ *
+ * @package   core_question
+ * @author     Nathan Nguyen <nathannguyen@catalyst-au.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class question_filter_test_helper {
+    /**
+     * Create filters base on provided values
+     *
+     * @param array $categoryids question category filter
+     * @param bool $recursive subcategories filter
+     * @param array $qtagids tags filter
+     * @return array
+     */
+    public static function create_filters(array $categoryids, bool $recursive = false, array $qtagids = []): array {
+        $filters = [
+            'category' => [
+                'jointype' => \qbank_managecategories\category_condition::JOINTYPE_DEFAULT,
+                'values' => $categoryids,
+                'filteroptions' => ['includesubcategories' => $recursive],
+            ],
+            'qtagids' => [
+                'jointype' => \qbank_tagquestion\tag_condition::JOINTYPE_DEFAULT,
+                'values' => $qtagids,
+            ],
+        ];
+        return $filters;
+    }
+}

@@ -264,9 +264,9 @@ class custom_view extends \core_question\local\bank\view {
 
         // Build the order by clause.
         $sorts = [];
-        foreach ($this->sort as $sort => $order) {
-            list($colname, $subsort) = $this->parse_subsort($sort);
-            $sorts[] = $this->requiredcolumns[$colname]->sort_expression($order < 0, $subsort);
+        foreach ($this->sort as $sortname => $sortorder) {
+            list($colname, $subsort) = $this->parse_subsort($sortname);
+            $sorts[] = $this->requiredcolumns[$colname]->sort_expression($sortorder == SORT_DESC, $subsort);
         }
 
         // Build the where clause.

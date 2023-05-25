@@ -74,4 +74,41 @@ class question_reference_manager {
              WHERE qv.questionid $qidtest
             ", array_merge($params, $lparams, ['draft' => question_version_status::QUESTION_STATUS_DRAFT]));
     }
+
+    /**
+     * This will transform set reference filter conditions to use the new filter structure.
+     *
+     * Previously filterconditions had questioncategoryid, includesubcategories and tags options.
+     * These have been replaced by the new category and tags filters. This function convers the old
+     * pre-4.3 filter condition structure to the new one.
+     *
+     * @param array $filtercondition Pre-4.3 filter condition.
+     * @return array Post-4.3 filter condition.
+     */
+    public static function convert_legacy_set_reference_filter_condition(array $filtercondition): array {
+        if (!isset($filtercondition['filters'])) {
+            $filtercondition['filters'] = [];
+
+            // Question category filter.
+            if (isset($filtercondition['questioncategoryid'])) {
+                $filtercondition['filters']['category'] = [
+                        'jointype' => \qbank_managecategories\category_condition::JOINTYPE_DEFAULT,
+                        'values' => [$filtercondition['questioncategoryid']],
+                        'includesubcategories' => $filtercondition['includingsubcategories'],
+                ];
+                unset($filtercondition['questioncategoryid']);
+                unset($filtercondition['includingsubcategories']);
+            }
+
+            // Tag filters.
+            if (isset($filtercondition['tags'])) {
+                $filtercondition['filters']['qtagid'] = [
+                    'jointype' => \qbank_tagquestion\tag_condition::JOINTYPE_DEFAULT,
+                    'values' => $filtercondition['tags']
+                ];
+                unset($filtercondition['tags']);
+            }
+        }
+        return $filtercondition;
+    }
 }

@@ -62,9 +62,7 @@ Feature: Use the qbank plugin manager page for deletequestion
       | Tags | foo |
     And I click on "Save changes" "button"
     And I am on the "Test quiz" "mod_quiz > question bank" page
-    And I open the autocomplete suggestions list
-    And I click on "foo" item in the autocomplete list
-    And "foo" "autocomplete_selection" should exist
+    And I apply question bank filter "Tag" with value "foo"
     And I click on "First question" "checkbox"
     And I click on "With selected" "button"
     And I click on question bulk action "deleteselected"

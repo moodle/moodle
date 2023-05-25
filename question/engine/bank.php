@@ -27,6 +27,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_question\local\bank\question_version_status;
 use core_question\output\question_version_info;
 
 defined('MOODLE_INTERNAL') || die();
@@ -547,7 +548,7 @@ class question_finder implements cache_data_source {
         if ($extraconditions) {
             $extraconditions = ' AND (' . $extraconditions . ')';
         }
-        $qcparams['readystatus'] = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+        $qcparams['readystatus'] = question_version_status::QUESTION_STATUS_READY;
         $sql = "SELECT q.id, q.id AS id2
                   FROM {question} q
                   JOIN {question_versions} qv ON qv.questionid = q.id
@@ -572,9 +573,16 @@ class question_finder implements cache_data_source {
      *      the where clause. Must use named parameters.
      * @param array $extraparams any parameters used by $extraconditions.
      * @return array questionid => count of number of previous uses.
+     *
+     * @deprecated since Moodle 4.3
+     * @todo Final deprecation on Moodle 4.7 MDL-78091
      */
     public function get_questions_from_categories_with_usage_counts($categoryids,
             qubaid_condition $qubaids, $extraconditions = '', $extraparams = array()) {
+        debugging(
+            'Function get_questions_from_categories_with_usage_counts() is deprecated, please do not use the function.',
+            DEBUG_DEVELOPER
+        );
         return $this->get_questions_from_categories_and_tags_with_usage_counts(
                 $categoryids, $qubaids, $extraconditions, $extraparams);
     }
@@ -592,14 +600,20 @@ class question_finder implements cache_data_source {
      * @param array $extraparams any parameters used by $extraconditions.
      * @param array $tagids an array of tag ids
      * @return array questionid => count of number of previous uses.
+     * @deprecated since Moodle 4.3
+     * @todo Final deprecation on Moodle 4.7 MDL-78091
      */
     public function get_questions_from_categories_and_tags_with_usage_counts($categoryids,
             qubaid_condition $qubaids, $extraconditions = '', $extraparams = array(), $tagids = array()) {
+        debugging(
+            'Function get_questions_from_categories_and_tags_with_usage_counts() is deprecated, please do not use the function.',
+            DEBUG_DEVELOPER
+        );
         global $DB;
 
         list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc');
 
-        $readystatus = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+        $readystatus = question_version_status::QUESTION_STATUS_READY;
         $select = "q.id, (SELECT COUNT(1)
                             FROM " . $qubaids->from_question_attempts('qa') . "
                            WHERE qa.questionid = q.id AND " . $qubaids->where() . "

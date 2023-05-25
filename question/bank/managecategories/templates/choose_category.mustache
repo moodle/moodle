@@ -15,19 +15,12 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_question/category_condition_advanced
+    @template qbank_managecategories/choose_category
 
     Example context (json):
     {
-        "displaydata": [
-          {
-                "checked": "checked attribute"
-          }
-        ]
     }
 }}
-<div class="category_condition_advanced">
-    <input type="hidden" name="recurse" value="0" id="recurse_off">
-    <input id="recurse_on" class="searchoptions mr-1" type="checkbox" value="1" name="recurse" {{{checked}}}>
-    <label for="recurse_on">{{#str}} includesubcategories, question{{/str}}</label>
-</div>
+<p class="text-center">
+    <strong>{{#str}}selectcategoryabove, question{{/str}}</strong>
+</p>
