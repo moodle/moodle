@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * Unit tests for xAPI delete state webservice.
  *
  * @package    core_xapi
- * @covers     \core_xapi\external\post_state
+ * @covers     \core_xapi\external\delete_state
  * @since      Moodle 4.2
  * @copyright  2023 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -205,7 +205,7 @@ class delete_state_test extends externallib_advanced_testcase {
      * function to check the results.
      *
      * @param string $component component name
-     * @param state $data data to encode and send to post_state
+     * @param state $data data to encode and send to delete_state
      * @param string $expected expected results (if null an exception is expected)
      */
     private function delete_state_data(string $component, state $data, ?string $expected): void {
