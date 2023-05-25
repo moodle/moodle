@@ -633,20 +633,6 @@ function badges_download($userid) {
 }
 
 /**
- * Checks if badges can be pushed to external backpack.
- *
- * @deprecated Since Moodle 3.11.
- * @return string Code of backpack accessibility status.
- */
-function badges_check_backpack_accessibility() {
-    // This method was used for OBv1.0. It can be deprecated because OBv1.0 support will be removed.
-    // When this method will be removed, badges/ajax.php can be removed too (if it keeps containing only a call to it).
-    debugging('badges_check_backpack_accessibility() can not be used any more, it was only used for OBv1.0', DEBUG_DEVELOPER);
-
-    return 'curl-request-timeout';
-}
-
-/**
  * Checks if user has external backpack connected.
  *
  * @param int $userid ID of a user.
@@ -685,30 +671,6 @@ function badges_handle_course_deletion($courseid) {
         $toupdate->status = BADGE_STATUS_ARCHIVED;
         $DB->update_record('badge', $toupdate);
     }
-}
-
-/**
- * Loads JS files required for backpack support.
- *
- * @deprecated Since Moodle 3.11.
- * @return void
- */
-function badges_setup_backpack_js() {
-    // This method was used for OBv1.0. It can be deprecated because OBv1.0 support will be removed.
-    debugging('badges_setup_backpack_js() can not be used any more, it was only used for OBv1.0.', DEBUG_DEVELOPER);
-}
-
-/**
- * No js files are required for backpack support.
- * This only exists to directly support the custom V1 backpack api.
- *
- * @deprecated Since Moodle 3.11.
- * @param boolean $checksite Call check site function.
- * @return void
- */
-function badges_local_backpack_js($checksite = false) {
-    // This method was used for OBv1.0. It can be deprecated because OBv1.0 support will be removed.
-    debugging('badges_local_backpack_js() can not be used any more, it was only used for OBv1.0.', DEBUG_DEVELOPER);
 }
 
 /**

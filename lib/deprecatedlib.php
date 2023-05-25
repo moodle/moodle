@@ -3231,6 +3231,27 @@ function serialise_tool_proxy() {
 }
 
 /**
+ * @deprecated Since Moodle 3.11.
+ */
+function badges_check_backpack_accessibility() {
+    throw new coding_exception('badges_check_backpack_accessibility() can not be used any more, it was only used for OBv1.0');
+}
+
+/**
+ * @deprecated Since Moodle 3.11.
+ */
+function badges_setup_backpack_js() {
+    throw new coding_exception('badges_setup_backpack_js() can not be used any more, it was only used for OBv1.0');
+}
+
+/**
+ * @deprecated Since Moodle 3.11.
+ */
+function badges_local_backpack_js() {
+    throw new coding_exception('badges_local_backpack_js() can not be used any more, it was only used for OBv1.0');
+}
+
+/**
  * Checks if current user is shown any extra fields when listing users.
  *
  * Does not include any custom profile fields.
