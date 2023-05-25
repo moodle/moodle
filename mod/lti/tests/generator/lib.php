@@ -45,6 +45,9 @@ class mod_lti_generator extends testing_module_generator {
 
         if (!isset($record->toolurl)) {
             $record->toolurl = '';
+        } else {
+            $toolurl = new moodle_url($record->toolurl);
+            $record->toolurl = $toolurl->out(false);
         }
         if (!isset($record->resourcekey)) {
             $record->resourcekey = '12345';
