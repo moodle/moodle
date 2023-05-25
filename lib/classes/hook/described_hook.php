@@ -26,7 +26,7 @@ namespace core\hook;
  */
 interface described_hook {
     /**
-     * Mandatory hook purpose description in Markdown format
+     * Hook purpose description in Markdown format
      * used on Hooks overview page.
      *
      * It should include description of callback priority setting

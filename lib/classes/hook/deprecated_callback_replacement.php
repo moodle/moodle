@@ -17,7 +17,7 @@
 namespace core\hook;
 
 /**
- * Interface for hook callbacks that were deprecated by the hook.
+ * Interface for describing of lib.php callbacks that were deprecated by the hook.
  *
  * @package   core
  * @author    Petr Skoda

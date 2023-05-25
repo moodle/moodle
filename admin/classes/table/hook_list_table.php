@@ -92,7 +92,7 @@ class hook_list_table extends flexible_table {
     public function out(): void {
         // All hook consumers referenced from the db/hooks.php files.
         $hookmanager = \core\hook\manager::get_instance();
-        $allhooks = $hookmanager->get_all_callbacks();
+        $allhooks = (array)$hookmanager->get_all_callbacks();
 
         // Add any unused hooks.
         foreach (array_keys($this->emitters) as $classname) {
@@ -101,6 +101,17 @@ class hook_list_table extends flexible_table {
             }
             $allhooks[$classname] = [];
         }
+
+        // Order rows by hook name, putting core first.
+        \core_collator::ksort($allhooks);
+        $corehooks = [];
+        foreach ($allhooks as $classname => $consumers) {
+            if (str_starts_with($classname, 'core\\')) {
+                $corehooks[$classname] = $consumers;
+                unset($allhooks[$classname]);
+            }
+        }
+        $allhooks = array_merge($corehooks, $allhooks);
 
         foreach ($allhooks as $classname => $consumers) {
             $this->add_data_keyed(

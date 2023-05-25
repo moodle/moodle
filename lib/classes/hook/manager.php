@@ -90,36 +90,10 @@ final class manager implements
     }
 
     /**
-     * Reset all hook caches. This is intended to be called only
-     * from the admin/hooks.php page after callback override is changed.
-     *
-     * @return void
-     * @codeCoverageIgnore
-     */
-    public function reset_caches(): void {
-        if (PHPUNIT_TEST && $this === self::$instance) {
-            debugging('\core\hook\manager::get_instance()->reset_caches() is not supposed to be called in PHPUnit tests',
-                DEBUG_DEVELOPER);
-            return;
-        }
-
-        // WARNING: This will not work when callback overrides are changed
-        // and multiple web nodes with local cache stores are present - in that
-        // case admins must purge all caches when tweaking callback overrides.
-        $cache = \cache::make('core', 'hookcallbacks');
-        $cache->delete('callbacks');
-        $cache->delete('deprecations');
-
-        $this->init_standard_callbacks();
-    }
-
-    /**
      * Returns list of callbacks for given hook name.
      *
      * NOTE: this is the "Listener Provider" described in PSR-14,
      * instead of instance parameter it uses real PHP class names.
-     * Moodle hooks should be final and parents of hook class are not
-     * considered when resolving callbacks.
      *
      * @param string $hookclassname PHP class name of hook
      * @return array list of callback definitions
@@ -444,10 +418,7 @@ final class manager implements
             if (!class_exists($hookclassname)) {
                 continue;
             }
-            // It's 2023 and PHP still doesn't provide a simple way to detect if a class implements an interface without
-            // that class being instantiated.
-            $rc = new \ReflectionClass($hookclassname);
-            if (!$rc->implementsInterface(\core\hook\deprecated_callback_replacement::class)) {
+            if (!is_subclass_of($hookclassname, \core\hook\deprecated_callback_replacement::class)) {
                 continue;
             }
             $deprecations = $hookclassname::get_deprecated_plugin_callbacks();
@@ -582,18 +553,19 @@ final class manager implements
     }
 
     /**
-     * Returns list of hooks discovered through standardised Moodle methods.
+     * Returns list of hooks discovered through hook namespaces or discovery agents.
      *
-     * Note that the exact discovery logic may change in the future,
-     * for now this looks for hooks mentioned in callback registrations
-     * and non-abstract classes in \component_name\hook namespaces that
-     * implement described_hook interface.
+     * The hooks overview page includes also all other classes that are
+     * referenced in callback registrations in db/hooks.php files, those
+     * are not included here.
      *
      * @return array hook class names
      */
     public static function discover_known_hooks(): array {
+        // All classes in hook namespace of core and plugins, unless plugin has a discovery agent.
         $hooks = \core\hooks::discover_hooks();
 
+        // Look for hooks classes in all plugins that implement discovery agent interface.
         foreach (\core_component::get_component_names() as $component) {
             $classname = "{$component}\\hooks";
 
@@ -601,8 +573,7 @@ final class manager implements
                 continue;
             }
 
-            $rc = new \ReflectionClass($classname);
-            if (!$rc->implementsInterface(\core\hook\hook_discover_agent::class)) {
+            if (!is_subclass_of($classname, discovery_agent::class)) {
                 continue;
             }
 
