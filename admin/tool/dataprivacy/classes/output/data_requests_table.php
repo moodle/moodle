@@ -285,7 +285,7 @@ class data_requests_table extends table_sql {
         $actionsmenu = new action_menu($actions);
         $actionsmenu->set_menu_trigger(get_string('actions'));
         $actionsmenu->set_owner_selector('request-actions-' . $requestid);
-        $actionsmenu->set_constraint('[data-region=data-requests-table] > .no-overflow');
+        $actionsmenu->set_boundary('window');
 
         return $OUTPUT->render($actionsmenu);
     }
