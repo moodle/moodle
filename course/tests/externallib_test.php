@@ -1126,9 +1126,13 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertEquals($formattedtext, $module['description']);
                 $this->assertEquals($forumcm->instance, $module['instance']);
                 $this->assertEquals(context_module::instance($forumcm->id)->id, $module['contextid']);
-                $this->assertStringContainsString('1 unread post', $module['afterlink']);
                 $this->assertFalse($module['noviewlink']);
                 $this->assertNotEmpty($module['description']);  // Module showdescription is on.
+                // Afterlink for forums has been removed; it has been moved to the new activity badge content.
+                $this->assertEmpty($module['afterlink']);
+                $this->assertEquals('1 unread post', $module['activitybadge']['badgecontent']);
+                $this->assertEquals('badge-dark', $module['activitybadge']['badgestyle']);
+
                 $testexecuted = $testexecuted + 2;
             } else if ($module['id'] == $labelcm->id and $module['modname'] == 'label') {
                 $cm = $modinfo->cms[$labelcm->id];
