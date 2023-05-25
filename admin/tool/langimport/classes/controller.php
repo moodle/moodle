@@ -24,6 +24,8 @@
 
 namespace tool_langimport;
 
+use moodle_url;
+
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/componentlib.class.php');
@@ -57,6 +59,25 @@ class controller {
         $this->installer = new \lang_installer();
 
         $this->availablelangs = $this->installer->get_remote_list_of_languages();
+    }
+
+    /**
+     * Redirect to the specified url, outputting any required messages.
+     *
+     * @param moodle_url $url
+     */
+    public function redirect(moodle_url $url): void {
+        if ($this->info) {
+            $info = implode('<br />', $this->info);
+            \core\notification::success($info);
+        }
+
+        if ($this->errors) {
+            $info = implode('<br />', $this->errors);
+            \core\notification::error($info);
+        }
+
+        redirect($url);
     }
 
     /**
