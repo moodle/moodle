@@ -31,6 +31,7 @@ use core_availability\info_module;
 use core_completion\cm_completion_details;
 use core_course\output\activity_information;
 use core_courseformat\base as course_format;
+use core_courseformat\output\activitybadge;
 use core_courseformat\output\local\courseformat_named_templatable;
 use renderable;
 use renderer_base;
@@ -186,6 +187,12 @@ class cm implements named_templatable, renderable {
         );
         $data->altcontent = (empty($altcontent)) ? false : $altcontent;
         $data->afterlink = $this->mod->afterlink;
+
+        $activitybadgedata = $this->mod->get_activitybadge($output);
+        if (!empty($activitybadgedata)) {
+            $data->activitybadge = $activitybadgedata;
+        }
+
         return !empty($data->altcontent);
     }
 

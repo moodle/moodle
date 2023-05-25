@@ -2,6 +2,17 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 4.3 ===
+* New core_courseformat\output\activitybadge class that can be extended by any module to display content near the activity name.
+The content of the afterlink feature has been moved to the end of the activity card so modules using it should check this new
+feature which might fit better.
+Some considerations about the activitybadge feature:
+  - The badge content is always plain text (no HTML).
+  - The badge style can be set (by default is initialized with badge-none, but it can be set by any module).
+  - An optional URL to redirect the user when the badge is clicked.
+  - An optional ID to add the element in case the module wants to add some JS to the badge events.
+  - Optionally, any other extra HTML attributes to the badge element (for example, data attributes).
+
 === 4.2 ===
 * New core_courseformat\base::get_context() to get the course context directly from the format instance.
 * New core_courseformat\base::delete_module() method. Now format plugins can extend the activity deletion logic
