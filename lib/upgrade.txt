@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.2.2 ===
+* Added new \admin_setting::is_forceable() method to determine whether the setting can be overridden or not. Therefore,
+  whether the settings can be overriden or not will depend on the value of implemented \admin_setting::is_forceable() method,
+  even if we define the settings in config.php.
+
 === 4.2.1 ===
 * Added a new parameter in address_in_subnet to give us the ability to check for 0.0.0.0 or not.
 
