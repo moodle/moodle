@@ -898,6 +898,8 @@ class matrix_communication_test extends \advanced_testcase {
 
         // Room should be in 'pending' state before the task is run and show a notification.
         $communication->show_communication_room_status_notification();
+        $notifications = \core\notification::fetch();
+        $this->assertStringContainsString('Your Matrix room will be ready soon.', $notifications[0]->get_message());
 
         // Run the task.
         $this->runAdhocTasks('\core_communication\task\create_and_configure_room_task');
@@ -911,12 +913,7 @@ class matrix_communication_test extends \advanced_testcase {
 
         // Check the room is now in 'ready' state and show a notification.
         $communication->show_communication_room_status_notification();
-
-        // Get our notifications stack.
-        // There should be one for 'pending' status, and one for 'ready' status.
         $notifications = \core\notification::fetch();
-        $this->assertCount(2, $notifications);
-        $this->assertStringContainsString('Your Matrix room will be ready soon.', $notifications[0]->get_message());
-        $this->assertStringContainsString('Your Matrix room is ready!', $notifications[1]->get_message());
+        $this->assertStringContainsString('Your Matrix room is ready!', $notifications[0]->get_message());
     }
 }
