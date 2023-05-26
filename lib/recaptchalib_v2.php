@@ -182,7 +182,7 @@ function recaptcha_check_response($verifyurl, $privkey, $remoteip, $response) {
             $checkresponse['error'] = '';
         } else {
             $checkresponse['isvalid'] = false;
-            $checkresponse['error'] = $curldata->{error-codes};
+            $checkresponse['error'] = $curldata->{'error-codes'};
         }
     } else {
         $checkresponse['isvalid'] = false;
