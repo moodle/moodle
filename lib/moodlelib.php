@@ -2747,7 +2747,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
 
     // If the user is not even logged in yet then make sure they are.
     if (!isloggedin()) {
-        if ($autologinguest and !empty($CFG->guestloginbutton) and !empty($CFG->autologinguests)) {
+        if ($autologinguest && !empty($CFG->autologinguests)) {
             if (!$guest = get_complete_user_data('id', $CFG->siteguest)) {
                 // Misconfigured site guest, just redirect to login page.
                 redirect(get_login_url());
