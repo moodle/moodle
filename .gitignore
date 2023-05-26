@@ -19,8 +19,6 @@
 # Temporary files including undo
 *~
 #
-/config.php
-/db-config.php
 /lib/editor/tinymce/extra/tools/temp/
 /tags
 /TAGS
