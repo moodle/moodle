@@ -92,7 +92,7 @@ class badge extends moodleform {
         $mform->addElement('text', 'imagecaption', get_string('imagecaption', 'badges'), array('size' => '70'));
         $mform->setType('imagecaption', PARAM_TEXT);
         $mform->addHelpButton('imagecaption', 'imagecaption', 'badges');
-
+        $mform->addElement('tags', 'tags', get_string('tags', 'badges'), ['itemtype' => 'badge', 'component' => 'core_badges']);
 
         if (badges_open_badges_backpack_api() == OPEN_BADGES_V1) {
             $mform->addElement('header', 'issuerdetails', get_string('issuerdetails', 'badges'));
@@ -173,22 +173,23 @@ class badge extends moodleform {
     /**
      * Load in existing data as form defaults
      *
-     * @param stdClass|array $default_values object or array of default values
+     * @param stdClass|array $badge object or array of default values
      */
     public function set_data($badge) {
-        $default_values = array();
+        $defaultvalues = [];
         parent::set_data($badge);
 
         if (!empty($badge->expiredate)) {
-            $default_values['expiry'] = 1;
-            $default_values['expiredate'] = $badge->expiredate;
+            $defaultvalues['expiry'] = 1;
+            $defaultvalues['expiredate'] = $badge->expiredate;
         } else if (!empty($badge->expireperiod)) {
-            $default_values['expiry'] = 2;
-            $default_values['expireperiod'] = $badge->expireperiod;
+            $defaultvalues['expiry'] = 2;
+            $defaultvalues['expireperiod'] = $badge->expireperiod;
         }
-        $default_values['currentimage'] = print_badge_image($badge, $badge->get_context(), 'large');
+        $defaultvalues['tags'] = \core_tag_tag::get_item_tags_array('core_badges', 'badge', $badge->id);
+        $defaultvalues['currentimage'] = print_badge_image($badge, $badge->get_context(), 'large');
 
-        parent::set_data($default_values);
+        parent::set_data($defaultvalues);
     }
 
     /**

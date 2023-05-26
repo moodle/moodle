@@ -302,6 +302,7 @@ class badge {
         $fordb->usermodified = $USER->id;
         $fordb->timecreated = time();
         $fordb->timemodified = time();
+        $tags = $this->get_badge_tags();
         unset($fordb->id);
 
         if ($fordb->notification > 1) {
@@ -313,6 +314,8 @@ class badge {
 
         if ($new = $DB->insert_record('badge', $fordb, true)) {
             $newbadge = new badge($new);
+            // Copy badge tags.
+            \core_tag_tag::set_item_tags('core_badges', 'badge', $newbadge->id, $this->get_context(), $tags);
 
             // Copy badge image.
             $fs = get_file_storage();
@@ -745,6 +748,9 @@ class badge {
         $DB->delete_records_select('badge_related', $relatedsql, $relatedparams);
         $DB->delete_records('badge_alignment', array('badgeid' => $this->id));
 
+        // Delete all tags.
+        \core_tag_tag::remove_all_item_tags('core_badges', 'badge', $this->id);
+
         // Finally, remove badge itself.
         $DB->delete_records('badge', array('id' => $this->id));
 
@@ -975,5 +981,14 @@ class badge {
         }
 
         return $issuer;
+    }
+
+    /**
+     * Get tags of badge.
+     *
+     * @return array Badge tags.
+     */
+    public function get_badge_tags(): array {
+        return array_values(\core_tag_tag::get_item_tags_array('core_badges', 'badge', $this->id));
     }
 }

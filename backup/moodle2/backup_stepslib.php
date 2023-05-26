@@ -939,6 +939,9 @@ class backup_badges_structure_step extends backup_structure_step {
         $manual_award = new backup_nested_element('manual_award', array('id'), array('badgeid',
                 'recipientid', 'issuerid', 'issuerrole', 'datemet'));
 
+        $tags = new backup_nested_element('tags');
+        $tag = new backup_nested_element('tag', ['id'], ['name', 'rawname']);
+
         // Build the tree.
 
         $badges->add_child($badge);
@@ -953,6 +956,8 @@ class backup_badges_structure_step extends backup_structure_step {
         $relatedbadges->add_child($relatedbadge);
         $badge->add_child($manual_awards);
         $manual_awards->add_child($manual_award);
+        $badge->add_child($tags);
+        $tags->add_child($tag);
 
         // Define sources.
 
@@ -979,6 +984,12 @@ class backup_badges_structure_step extends backup_structure_step {
         $parameter->set_source_sql($parametersql, $parameterparams);
 
         $manual_award->set_source_table('badge_manual_award', array('badgeid' => backup::VAR_PARENTID));
+
+        $tag->set_source_sql('SELECT t.id, t.name, t.rawname
+                                FROM {tag} t
+                                JOIN {tag_instance} ti ON ti.tagid = t.id
+                               WHERE ti.itemtype = ?
+                                 AND ti.itemid = ?', [backup_helper::is_sqlparam('badge'), backup::VAR_PARENTID]);
 
         // Define id annotations.
 
