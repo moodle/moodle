@@ -23,5 +23,5 @@
  */
 
 $string['pluginname'] = 'Qubits - Basic';
-$string['loginto'] = 'Sign in to {$a}';
-$string['login'] = 'Login in';
+$string['loginto'] = 'Login in to {$a}';
+$string['login'] = 'Sign in';
