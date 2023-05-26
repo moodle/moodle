@@ -424,14 +424,17 @@ require(['jquery', 'core/config', 'core/templates'], function($, Config, Templat
                     scrolllock = true
                 }else{
                     $("#mycrsecard").data("offset", nextoffset)
-                    console.log("Courses >>>> ")
-                    console.log(JSON.stringify(curcourses, null, 4))
-                    console.log("****")
+                    //console.log("Courses >>>> ")
+                    //console.log(JSON.stringify(curcourses, null, 4))
+                    //console.log("****")
                     curcourses.forEach((course) => {
+                        course.cardcolour = (course.progress == 100) ? "#3e3e3e" : course.cardcolour;
                         objCoursergb = hexToRgb(course.cardcolour)
                         course.cardcolourR = objCoursergb.r
                         course.cardcolourG = objCoursergb.g
                         course.cardcolourB = objCoursergb.b
+                        course.cardcolourA = (course.progress == 100) ? 0.2 : 0.5;
+                        course.iscomplete = (course.progress == 100) ? true : false;
                         Templates.render('theme_qubitsbasic/course/coursecard', course).then((coursecardhtml) => {
                             $("#mycrsecard").append(coursecardhtml)
                         });
@@ -451,11 +454,6 @@ require(['jquery', 'core/config', 'core/templates'], function($, Config, Templat
             scrolllock = true
             qubits_load_mycourses()
         }
-  });
-
-  $(document).on("click", ".card[role=button]", function(){
-     let url = $(this).data("url");
-     $(location).prop('href', url)
   });
 
 });

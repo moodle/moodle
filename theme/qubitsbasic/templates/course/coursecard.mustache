@@ -1,8 +1,8 @@
- <div  class="card col-lg-3 max-width max-width-2 flex-grow col-md-6 col-sm-12 p-0 card-width card-border-radius card-box-shadow card-border" 
-  data-url="{{viewurl}}"  role="button">
+ <div  class="card col-lg-3 max-width max-width-2 flex-grow 
+  col-md-6 col-sm-12 p-0 card-width card-border-radius card-box-shadow card-border {{#iscomplete}}card-text-complete-color{{/iscomplete}}">
 
-                <div class="card-body bg-wave p-0 card-border-radius card-text-color">
-                    <div class="card-body-overlay card-body-border-radius" style="--cardbgcolor:rgba({{cardcolourR}},{{cardcolourG}},{{cardcolourB}},0.5)">
+                <div class="card-body bg-wave p-0 card-border-radius {{^iscomplete}}card-text-color{{/iscomplete}}">
+                    <div class="card-body-overlay card-body-border-radius" style="--cardbgcolor:rgba({{cardcolourR}},{{cardcolourG}},{{cardcolourB}},{{cardcolourA}})">
                         <p class="card-text">{{fullname}}</p>
                         <div class="row align-items-center">
                             <div class="card-title card-text-size col-lg-9 col-md-9 col-sm-8 w-auto pr-0">
@@ -11,7 +11,9 @@
 
                             <div class="col-lg-3 col-md-3 col-sm-4 w-auto my-2">
                                 <div class="row mx-0 justify-content-end">
-                                    <!-- <i class="qicon-tick-mark success-tick"></i> -->
+                                {{#iscomplete}}
+                                    <i class="qicon-tick-mark success-tick"></i>
+                                {{/iscomplete}}
                                     <div class="white-circle col-9 w-auto">{{level}}</div>
                                 </div>
                             </div>
@@ -33,6 +35,7 @@
                         <div class="progress-bar success-color" role="progressbar" style="width: {{progress}}%;" aria-valuenow=""
                             aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
+                    <a href="{{viewurl}}" class="stretched-link"></a>
                 </div>
             </div>
             
