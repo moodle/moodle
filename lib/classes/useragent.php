@@ -252,9 +252,15 @@ class core_useragent {
      *
      * This used to be get_selected_theme_for_device_type.
      * @param null|string $devicetype The device type to find out for. Defaults to the device the user is using,
+     * @deprecated since 4.3.
      * @return bool
      */
     public static function get_device_type_theme($devicetype = null) {
+        debugging(
+            __FUNCTION__ . '() is deprecated.' .
+                'All functions associated with device specific themes are being removed.',
+            DEBUG_DEVELOPER
+        );
         global $CFG;
         if ($devicetype === null) {
             $devicetype = self::get_device_type();
@@ -272,9 +278,15 @@ class core_useragent {
      * Used to be get_device_cfg_var_name.
      *
      * @param null|string $devicetype The device type to find out for. Defaults to the device the user is using,
+     * @deprecated since 4.3.
      * @return string
      */
     public static function get_device_type_cfg_var_name($devicetype = null) {
+        debugging(
+            __FUNCTION__ . '() is deprecated.' .
+                'All functions associated with device specific themes are being removed.',
+            DEBUG_DEVELOPER
+        );
         if ($devicetype == self::DEVICETYPE_DEFAULT || empty($devicetype)) {
             return 'theme';
         }
