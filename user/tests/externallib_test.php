@@ -29,6 +29,7 @@ namespace core_user;
 use core_files_external;
 use core_user_external;
 use externallib_advanced_testcase;
+use external_api;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -1085,7 +1086,8 @@ class externallib_test extends externallib_advanced_testcase {
                 'platform' => 'Android',
                 'version' => '4.2.2',
                 'pushid' => 'apushdkasdfj4835',
-                'uuid' => 'asdnfl348qlksfaasef859'
+                'uuid' => 'asdnfl348qlksfaasef859',
+                'publickey' => null,
                 );
 
         // Call the external function.
@@ -1106,9 +1108,10 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Test update an existing device.
         $device['pushid'] = 'different than before';
+        $device['publickey'] = 'MFsxCzAJBgNVBAYTAkZSMRMwEQYDVQQ';
         $warnings = core_user_external::add_user_device($device['appid'], $device['name'], $device['model'], $device['platform'],
-                                                        $device['version'], $device['pushid'], $device['uuid']);
-        $warnings = \external_api::clean_returnvalue(core_user_external::add_user_device_returns(), $warnings);
+            $device['version'], $device['pushid'], $device['uuid'], $device['publickey']);
+        $warnings = external_api::clean_returnvalue(core_user_external::add_user_device_returns(), $warnings);
 
         $this->assertEquals(1, $DB->count_records('user_devices'));
         $updated = $DB->get_record('user_devices', array('pushid' => $device['pushid']));

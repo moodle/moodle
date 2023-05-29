@@ -3385,6 +3385,7 @@
         <FIELD NAME="version" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="The device version, 6.1.2, 4.2.2 etc.."/>
         <FIELD NAME="pushid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="the device PUSH token/key/identifier/registration id"/>
         <FIELD NAME="uuid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The device vendor UUID"/>
+        <FIELD NAME="publickey" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The app generated public key"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
