@@ -25,6 +25,7 @@ use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\duration;
 use core_reportbuilder\local\filters\select;
+use core_reportbuilder\local\filters\text;
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
 use grade_item;
@@ -295,6 +296,21 @@ class participants_test extends core_reportbuilder_testcase {
                     'enrol:enddate_operator' => date::DATE_EMPTY,
                 ],
                 ['Lionel', 'Kira', 'Luna'],
+            ],
+            [
+                'enrol:customname',
+                [
+                    'enrol:customname_operator' => text::IS_EMPTY,
+                ],
+                ['Luna', 'Kira', 'Lionel'],
+            ],
+            [
+                'enrol:customname',
+                [
+                    'enrol:customname_operator' => text::IS_EQUAL_TO,
+                    'enrol:customname_value' => 'All night long'
+                ],
+                [],
             ],
             [
                 'role:name',
