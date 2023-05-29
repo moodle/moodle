@@ -26,6 +26,7 @@ use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\filters\text;
+use core_reportbuilder\local\helpers\custom_fields;
 use core_reportbuilder\local\helpers\format;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
@@ -66,13 +67,23 @@ class cohort extends base {
      * @return base
      */
     public function initialise(): base {
-        $columns = $this->get_all_columns();
+        $tablealias = $this->get_table_alias('cohort');
+
+        $customfields = (new custom_fields(
+            "{$tablealias}.id",
+            $this->get_entity_name(),
+            'core_cohort',
+            'cohort',
+        ))
+            ->add_joins($this->get_joins());
+
+        $columns = array_merge($this->get_all_columns(), $customfields->get_columns());
         foreach ($columns as $column) {
             $this->add_column($column);
         }
 
         // All the filters defined by the entity can also be used as conditions.
-        $filters = $this->get_all_filters();
+        $filters = array_merge($this->get_all_filters(), $customfields->get_filters());
         foreach ($filters as $filter) {
             $this
                 ->add_filter($filter)
