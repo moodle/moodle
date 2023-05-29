@@ -1408,49 +1408,6 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
     }
 }
 
-/* TODO: These styles won't be needed anymore */
-
-.description .course-description-item {
-    @include font-size($small-font-size);
-
-    background-color: $gray-100;
-    padding-left: map-get($spacers, 3);
-    padding-right: map-get($spacers, 3);
-
-    .description-inner {
-        padding-bottom: map-get($spacers, 2);
-        padding-top: map-get($spacers, 2);
-        border-bottom: $border-width solid $border-color;
-
-        p:last-child {
-            padding-bottom: 0;
-            margin-bottom: 0;
-        }
-    }
-
-    &:first-child {
-        margin-top: map-get($spacers, 3);
-        padding-top: map-get($spacers, 3);
-        border-top-left-radius: $border-radius;
-        border-top-right-radius: $border-radius;
-
-        .description-inner {
-            padding-top: 0;
-        }
-    }
-
-    &:last-child {
-        padding-bottom: map-get($spacers, 3);
-        border-bottom-left-radius: $border-radius;
-        border-bottom-right-radius: $border-radius;
-
-        .description-inner {
-            padding-bottom: 0;
-            border-bottom: 0;
-        }
-    }
-}
-
 /* Re-style ordered list in course content */
 
 .course-content .activity-altcontent {
@@ -1481,7 +1438,6 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
 
     &.hiddenactivity {
         background-color: $gray-100;
-        .description .course-description-item,
         .activityiconcontainer,
         .badge {
             mix-blend-mode: multiply;
@@ -1651,15 +1607,6 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         width: 100%;
     }
 
-    // TODO: Are these styles used?
-    .action-menu-item {
-        display: flex;
-        align-items: center;
-    }
-    .action-menu-item .filler {
-        display: none;
-    }
-
     @include media-breakpoint-up(md) {
         &:not(.activityinline) {
             padding: map-get($spacers, 3);
@@ -1680,7 +1627,6 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
     &.selected {
         @include alert-variant($activity-item-hover, $activity-item-border, $activity-item-color);
 
-        .description .course-description-item,
         .activityiconcontainer,
         .badge {
             mix-blend-mode: multiply;
