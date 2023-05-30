@@ -29040,24 +29040,25 @@ span.editinstructions .alert-link {
 .activity-item .activity-grid {
   display: grid;
   align-items: center;
-  grid-template-columns: min-content 1fr min-content min-content;
+  grid-template-columns: min-content 1fr min-content min-content min-content;
   grid-template-rows: 1fr repeat(5, min-content);
-  grid-template-areas: "icon          name          completion    actions" "icon          visibility    completion    actions" "icon          dates         completion    actions" "altcontent    altcontent    altcontent    altcontent" "afterlink     afterlink     afterlink     afterlink" "availability  availability  availability  availability";
+  grid-template-areas: "icon          name          groupmode      completion    actions" "icon          visibility    groupmode      completion    actions" "icon          dates         groupmode      completion    actions" "altcontent    altcontent    altcontent     altcontent    altcontent" "afterlink     afterlink     afterlink      afterlink     afterlink" "availability  availability  availability   availability  availability";
 }
 @media (max-width: 575.98px) {
   .activity-item .activity-grid {
-    grid-template-columns: min-content 1fr min-content;
-    grid-template-areas: "icon          name          actions" "icon          visibility    actions" "dates         dates         dates" "completion    completion    completion" "altcontent    altcontent    altcontent" "afterlink     afterlink     afterlink" "availability  availability  availability";
+    grid-template-columns: min-content 1fr min-content min-content min-content;
+    grid-template-rows: 1fr repeat(4, min-content);
+    grid-template-areas: "icon          name          actions" "icon          visibility    actions" "dates         dates         dates" "groupmode     groupmode     groupmode" "completion    completion    completion" "altcontent    altcontent    altcontent" "afterlink     afterlink     afterlink" "availability  availability  availability";
   }
 }
 .activity-item .activity-grid.noname-grid {
-  grid-template-columns: min-content 1fr min-content;
-  grid-template-areas: "visibility    completion    actions" "altcontent    altcontent    altcontent" "afterlink     afterlink     afterlink" "availability  availability  availability";
+  grid-template-columns: min-content min-content 1fr min-content;
+  grid-template-areas: "visibility    groupmode        completion    actions" "altcontent    altcontent       altcontent    altcontent" "afterlink     afterlink        afterlink     afterlink" "availability  availability     availability  availability";
 }
 @media (max-width: 575.98px) {
   .activity-item .activity-grid.noname-grid {
     grid-template-columns: 1fr min-content;
-    grid-template-areas: "visibility    actions" "altcontent    altcontent" "afterlink     afterlink" "completion    completion" "availability  availability";
+    grid-template-areas: "visibility    actions" "altcontent    altcontent" "groupmode     groupmode" "afterlink     afterlink" "completion    completion" "availability  availability";
   }
 }
 .activity-item .activity-actions {
@@ -29121,6 +29122,27 @@ span.editinstructions .alert-link {
   }
   .activity-item .activity-info button {
     width: 100%;
+  }
+}
+.activity-item .activity-groupmode-info {
+  grid-area: groupmode;
+  justify-self: end;
+}
+.activity-item .activity-groupmode-info .groupmode-information {
+  height: 31px;
+}
+.activity-item .activity-groupmode-info .groupmode-information .groupmode-icon-info {
+  display: none;
+}
+@media (max-width: 575.98px) {
+  .activity-item .activity-groupmode-info {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #dee2e6;
+  }
+  .activity-item .activity-groupmode-info .groupmode-information .groupmode-icon-info {
+    display: inline;
   }
 }
 .activity-item .activity-badges {

@@ -278,6 +278,7 @@ class core_course_external extends external_api {
                         $module['downloadcontent'] = $cm->downloadcontent;
                         $module['noviewlink'] = plugin_supports('mod', $cm->modname, FEATURE_NO_VIEW_LINK, false);
                         $module['dates'] = $activitydates;
+                        $module['groupmode'] = $cm->groupmode;
 
                         // Check module completion.
                         $completion = $completioninfo->is_enabled($cm);
@@ -488,6 +489,7 @@ class core_course_external extends external_api {
                                         VALUE_DEFAULT,
                                         []
                                     ),
+                                    'groupmode' => new external_value(PARAM_INT, 'Group mode value', VALUE_OPTIONAL),
                                     'contents' => new external_multiple_structure(
                                           new external_single_structure(
                                               array(
