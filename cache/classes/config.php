@@ -66,12 +66,6 @@ class cache_config {
     protected $configdefinitionmappings = array();
 
     /**
-     * The locking mappings that have been configured.
-     * @var array
-     */
-    protected $configlockmappings = [];
-
-    /**
      * An array of configured cache lock instances.
      * @var array
      */
@@ -149,7 +143,6 @@ class cache_config {
         $this->configlocks = array();
         $this->configmodemappings = array();
         $this->configdefinitionmappings = array();
-        $this->configlockmappings = array();
 
         $siteidentifier = 'unknown';
         if (array_key_exists('siteidentifier', $configuration)) {
