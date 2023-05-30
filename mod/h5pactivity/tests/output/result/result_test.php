@@ -78,8 +78,13 @@ class result_test extends \advanced_testcase {
 
         $data = $exportoptions->invoke($resultoutput);
         $useranswersdata = array_map(function($item) {
-            return $item->useranswer;
+            return $item->useranswer ?? null;
         }, $data);
+        $keys = array_map(function($item) {
+            return $item->description . ' - ' . ($item->correctanswer->answer ?? '');
+        }, $data);
+
+        $useranswersdata = array_combine($keys, $useranswersdata);
         $this->assertEquals($expecteduseranswers, $useranswersdata);
     }
 
@@ -103,8 +108,8 @@ class result_test extends \advanced_testcase {
                         . '"https:\\/\\/h5p.org\\/x-api\\/alternatives":[["cat"],["dog"]]},"contextExtensions":{}}',
                 ],
                 'useranswers' => [
-                    (object) ['answer' => 'Cat', 'incorrect' => true],
-                    (object) ['answer' => 'dog', 'correct' => true],
+                    'Gap #1 - cat' => (object) ['answer' => 'Cat', 'incorrect' => true],
+                    'Gap #2 - dog' => (object) ['answer' => 'dog', 'correct' => true],
                 ],
             ],
             'fill-in with case insensitive' => [
@@ -120,8 +125,31 @@ class result_test extends \advanced_testcase {
                         . '"https:\\/\\/h5p.org\\/x-api\\/alternatives":[["cat"],["dog"]]},"contextExtensions":{}}',
                 ],
                 'useranswers' => [
-                    (object) ['answer' => 'Cat', 'correct' => true],
-                    (object) ['answer' => 'dog', 'correct' => true],
+                    'Gap #1 - cat' => (object) ['answer' => 'Cat', 'correct' => true],
+                    'Gap #2 - dog' => (object) ['answer' => 'dog', 'correct' => true],
+                ],
+            ],
+            'drag and drop' => [
+                'result' => [
+                    'interactiontype' => 'matching',
+                    'description' => 'Drag and Drop Test',
+                    'correctpattern' => '["0[.]0[,]0[.]2[,]1[.]1[,]1[.]0"]',
+                    'response' => '0[.]0[,]1[.]1[,]0[.]2[,]0[.]3',
+                    'additionals' => '{"source":[{"id":"0","description":{"en-US":"Answer 1 (DZ1 and DZ2)\n"}},'
+                        . '{"id":"1","description":{"en-US":"Anwser 2 (DZ2)\n"}},'
+                        . '{"id":"2","description":{"en-US":"Anwser 3 (DZ1)\n"}},'
+                        . '{"id":"3","description":{"en-US":"Anwser 4 (neither)\n"}}],'
+                        . '"target":[{"id":"0","description":{"en-US":"Dropzone 1\n"}},'
+                        . '{"id":"1","description":{"en-US":"Dropzone 2\n"}}],'
+                        . '"extensions":{"http:\/\/h5p.org\/x-api\/h5p-local-content-id":41,'
+                        . '"http:\/\/h5p.org\/x-api\/h5p-subContentId":"59590246-f16e-4855-8dd6-c80e892ef96b"},'
+                        . '"contextExtensions":{}}',
+                ],
+                'useranswers' => [
+                    'Answer 1 (DZ1 and DZ2) - Dropzone 1, Dropzone 2' => (object) ['answer' => 'Dropzone 1', 'correct' => true, ],
+                    'Anwser 2 (DZ2) - Dropzone 2' => (object) ['answer' => 'Dropzone 2', 'correct' => true, ],
+                    'Anwser 3 (DZ1) - Dropzone 1' => (object) ['answer' => 'Dropzone 1', 'correct' => true, ],
+                    'Anwser 4 (neither) - ' => (object) ['answer' => 'Dropzone 1', 'incorrect' => true, ]
                 ],
             ],
             'sort the paragraph text' => [
@@ -141,11 +169,11 @@ class result_test extends \advanced_testcase {
                         . '"https:\\/\\/h5p.org\\/x-api\\/duplicates-interchangeable":1},"contextExtensions":{}}',
                 ],
                 'useranswers' => [
-                    (object) ['answer' => 'Correct answer', 'pass' => true, ],
-                    (object) ['answer' => 'Correct answer', 'pass' => true, ],
-                    (object) ['answer' => 'Incorrect answer', 'fail' => true, ],
-                    (object) ['answer' => 'Incorrect answer', 'fail' => true, ],
-                    (object) ['answer' => 'Correct answer', 'pass' => true, ],
+                    '#1 - First I wake up at 7.30 am' => (object) ['answer' => 'Correct answer', 'pass' => true, ],
+                    '#2 - Next I get dressed' => (object) ['answer' => 'Correct answer', 'pass' => true, ],
+                    '#3 - Afterward I have breakfast' => (object) ['answer' => 'Incorrect answer', 'fail' => true, ],
+                    '#4 - I brush my teeth' => (object) ['answer' => 'Incorrect answer', 'fail' => true, ],
+                    '#5 - Finally I go school' => (object) ['answer' => 'Correct answer', 'pass' => true, ],
                 ],
             ],
             'sequencing images' => [
@@ -162,14 +190,14 @@ class result_test extends \advanced_testcase {
                         . '{"http:\/\/h5p.org\/x-api\/h5p-local-content-id":43},"contextExtensions":{}}',
                 ],
                 'useranswers' => [
-                    (object) ['answer' => 'Correct answer', 'pass' => true, ],
-                    (object) ['answer' => 'Correct answer', 'pass' => true, ],
-                    (object) ['answer' => 'Incorrect answer', 'fail' => true, ],
-                    (object) ['answer' => 'Incorrect answer', 'fail' => true, ],
-                    (object) ['answer' => 'Incorrect answer', 'fail' => true, ],
-                    (object) ['answer' => 'Incorrect answer', 'fail' => true, ],
-                    (object) ['answer' => 'Correct answer', 'pass' => true, ],
-                    (object) ['answer' => 'Correct answer', 'pass' => true, ],
+                    '#1 - Mercury' => (object) ['answer' => 'Correct answer', 'pass' => true, ],
+                    '#2 - Mars' => (object) ['answer' => 'Correct answer', 'pass' => true, ],
+                    '#3 - Earth' => (object) ['answer' => 'Incorrect answer', 'fail' => true, ],
+                    '#4 - Venus' => (object) ['answer' => 'Incorrect answer', 'fail' => true, ],
+                    '#5 - Uranus' => (object) ['answer' => 'Incorrect answer', 'fail' => true, ],
+                    '#6 - Neptune' => (object) ['answer' => 'Incorrect answer', 'fail' => true, ],
+                    '#7 - Saturn' => (object) ['answer' => 'Correct answer', 'pass' => true, ],
+                    '#8 - Jupiter' => (object) ['answer' => 'Correct answer', 'pass' => true, ],
                 ],
             ]
         ];
