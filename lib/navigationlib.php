@@ -4627,6 +4627,26 @@ class settings_navigation extends navigation_node {
             $coursenode->force_open();
         }
 
+        // Share course to moodlenet.
+        $usercanshare = utilities::can_user_share($coursecontext, $USER->id, 'course');
+        $issuerid = get_config('moodlenet', 'oauthservice');
+        try {
+            $issuer = \core\oauth2\api::get_issuer($issuerid);
+            $isvalidinstance = utilities::is_valid_instance($issuer);
+            if ($usercanshare && $isvalidinstance) {
+                $this->page->requires->js_call_amd('core/moodlenet/send_resource', 'init');
+                $action = new action_link(new moodle_url(''), '', null, [
+                    'data-action' => 'sendtomoodlenet',
+                    'data-type' => 'course',
+                    'data-sharetype' => 'resource',
+                ]);
+                $coursenode->add(get_string('moodlenet:sharetomoodlenet', 'moodle'),
+                    $action, self::TYPE_SETTING, null, 'exportcoursetomoodlenet')->set_force_into_more_menu(true);
+            }
+        } catch (dml_missing_record_exception $e) {
+            debugging("Invalid MoodleNet OAuth 2 service set in site administration: 'moodlenet | oauthservice'. " .
+                "This must be a valid issuer.");
+        }
 
         if ($adminoptions->update) {
             // Add the course settings link
@@ -4894,7 +4914,7 @@ class settings_navigation extends navigation_node {
             $function($this, $modulenode);
         }
 
-        // Send to MoodleNet.
+        // Send activity to MoodleNet.
         $usercanshare = utilities::can_user_share($this->context->get_course_context(), $USER->id);
         $issuerid = get_config('moodlenet', 'oauthservice');
         try {
