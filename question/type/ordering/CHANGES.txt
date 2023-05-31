@@ -2,6 +2,9 @@
 Change log for qtype_ordering
 ========================================
 
+2023-05-31 (08)
+ -  * Fix Behat failure following button change in Moodle master branch 
+
 2023-04-29 (07)
  -  Co-authored-by: Anupama Sarjoshi <anupama.sarjoshi@open.ac.uk> 
 
