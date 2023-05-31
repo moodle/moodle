@@ -815,6 +815,9 @@ class PEAR_Error
     var $userinfo             = '';
     var $backtrace            = null;
 
+    /** @var mixed error level. */
+    private $callback;
+
     /**
      * PEAR_Error constructor
      *
