@@ -3101,6 +3101,18 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ],
+    'core_moodlenet_get_shared_course_info' => [
+        'classname'   => 'core\external\moodlenet_get_shared_course_info',
+        'description' => 'Get information about an course being shared',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
+    'core_moodlenet_send_course' => [
+        'classname'   => 'core\external\moodlenet_send_course',
+        'description' => 'Send course to MoodleNet',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
 );
 
 $services = array(

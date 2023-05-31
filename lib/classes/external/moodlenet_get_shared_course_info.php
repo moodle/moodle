@@ -26,56 +26,48 @@ use core_external\external_value;
 use core_external\external_warnings;
 
 /**
- * The external API to het the activity information for MoodleNet sharing.
+ * The external API to get MoodleNet information about the course to be shared.
  *
  * @package    core
- * @copyright  2023 Huong Nguyen <huongnv13@gmail.com>
+ * @copyright  2023 Safat Shahin <safat.shahin@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 4.3
  */
-class moodlenet_get_share_info_activity extends external_api {
+class moodlenet_get_shared_course_info extends external_api {
 
     /**
      * Returns description of parameters.
      *
      * @return external_function_parameters
-     * @since Moodle 4.2
      */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
-            'cmid' => new external_value(PARAM_INT, 'The cmid of the activity', VALUE_REQUIRED),
+            'courseid' => new external_value(PARAM_INT, 'The course id', VALUE_REQUIRED),
         ]);
     }
 
     /**
-     * External function to get the activity information.
+     * External function to get the course information.
      *
-     * @param int $cmid The course module id.
+     * @param int $courseid The course id
      * @return array
-     * @since Moodle 4.2
      */
-    public static function execute(int $cmid): array {
+    public static function execute(int $courseid): array {
         global $CFG, $USER;
 
         [
-            'cmid' => $cmid
+            'courseid' => $courseid
         ] = self::validate_parameters(self::execute_parameters(), [
-            'cmid' => $cmid
+            'courseid' => $courseid
         ]);
 
-        // Get course module.
-        $coursemodule = get_coursemodule_from_id(false, $cmid);
-        if (!$coursemodule) {
-            return self::return_errors($cmid, 'errorgettingactivityinformation', get_string('invalidcoursemodule', 'error'));
-        }
-
         // Get course.
-        $course = get_course($coursemodule->course);
+        $course = get_course($courseid);
 
         // Check capability.
         $coursecontext = context_course::instance($course->id);
-        $usercanshare = utilities::can_user_share($coursecontext, $USER->id);
-        if (!$usercanshare) {
-            return self::return_errors($cmid, 'errorpermission',
+        if (!utilities::can_user_share($coursecontext, $USER->id, 'course')) {
+            return self::return_errors($courseid, 'errorpermission',
                 get_string('nopermissions', 'error', get_string('moodlenet:sharetomoodlenet', 'moodle')));
         }
 
@@ -96,8 +88,8 @@ class moodlenet_get_share_info_activity extends external_api {
 
         return [
             'status' => true,
-            'name' => $coursemodule->name,
-            'type' => get_string('modulename', $coursemodule->modname),
+            'name' => $course->fullname,
+            'type' => get_string('course'),
             'server' => $issuer->get_display_name(),
             'supportpageurl' => $supporturl,
             'issuerid' => $issuerid,
@@ -109,12 +101,11 @@ class moodlenet_get_share_info_activity extends external_api {
      * Describes the data returned from the external function.
      *
      * @return external_single_structure
-     * @since Moodle 4.2
      */
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
-            'name' => new external_value(PARAM_TEXT, 'Activity name'),
-            'type' => new external_value(PARAM_TEXT, 'Activity type'),
+            'name' => new external_value(PARAM_TEXT, 'Course short name'),
+            'type' => new external_value(PARAM_TEXT, 'Course type'),
             'server' => new external_value(PARAM_TEXT, 'MoodleNet server'),
             'supportpageurl' => new external_value(PARAM_URL, 'Support page URL'),
             'issuerid' => new external_value(PARAM_INT, 'MoodleNet issuer id'),
