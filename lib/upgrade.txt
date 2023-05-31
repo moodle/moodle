@@ -10,6 +10,7 @@ information provided here is intended especially for developers.
 * Support for the following phpunit coverage info properties, deprecated since 3.11, has been removed:
   - `whitelistfolders`
   - `whitelistfiles`
+* New method moodleform::add_sticky_action_buttons() is created to enable sticky footer for QuickForms.
 
 === 4.2 ===
 
