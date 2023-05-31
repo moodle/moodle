@@ -133,4 +133,46 @@ class utilities_test extends \advanced_testcase {
         assign_capability('moodle/moodlenet:shareactivity', CAP_PROHIBIT, $editingteacherrole->id, $this->coursecontext);
         $this->assertFalse(utilities::can_user_share($this->coursecontext, $teacher2->id));
     }
+
+    /**
+     * Test can_user_share_course_to_moodlenet method.
+     *
+     * @covers ::can_user_share_course_to_moodlenet
+     */
+    public function test_can_user_share_course_to_moodlenet(): void {
+        global $DB;
+
+        // Generate data.
+        $student1 = $this->generator->create_user();
+        $teacher1 = $this->generator->create_user();
+        $teacher2 = $this->generator->create_user();
+        $manager1 = $this->generator->create_user();
+
+        // Enrol users.
+        $this->generator->enrol_user($student1->id, $this->course->id, 'student');
+        $this->generator->enrol_user($teacher1->id, $this->course->id, 'teacher');
+        $this->generator->enrol_user($teacher2->id, $this->course->id, 'editingteacher');
+        $this->generator->enrol_user($manager1->id, $this->course->id, 'manager');
+
+        // Get roles.
+        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher'], 'id', MUST_EXIST);
+        $editingteacherrole = $DB->get_record('role', ['shortname' => 'editingteacher'], 'id', MUST_EXIST);
+
+        // Test with default settings.
+        // Student and Teacher cannot share the course.
+        $this->assertFalse(utilities::can_user_share_course_to_moodlenet($this->coursecontext, $student1->id));
+        $this->assertFalse(utilities::can_user_share_course_to_moodlenet($this->coursecontext, $teacher1->id));
+        // Editing-teacher and Manager can share the course.
+        $this->assertTrue(utilities::can_user_share_course_to_moodlenet($this->coursecontext, $teacher2->id));
+        $this->assertTrue(utilities::can_user_share_course_to_moodlenet($this->coursecontext, $manager1->id));
+
+        // Teacher who has the capabilities can share the course.
+        assign_capability('moodle/moodlenet:sharecourse', CAP_ALLOW, $teacherrole->id, $this->coursecontext);
+        assign_capability('moodle/backup:backupcourse', CAP_ALLOW, $teacherrole->id, $this->coursecontext);
+        $this->assertTrue(utilities::can_user_share_course_to_moodlenet($this->coursecontext, $teacher1->id));
+
+        // Editing-teacher who does not have the capabilities can not share the course.
+        assign_capability('moodle/moodlenet:sharecourse', CAP_PROHIBIT, $editingteacherrole->id, $this->coursecontext);
+        $this->assertFalse(utilities::can_user_share_course_to_moodlenet($this->coursecontext, $teacher2->id));
+    }
 }
