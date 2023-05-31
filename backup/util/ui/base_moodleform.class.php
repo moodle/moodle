@@ -134,7 +134,36 @@ abstract class base_moodleform extends moodleform {
             $buttonarray[] = $this->_form->createElement('submit', 'oneclickbackup', get_string('jumptofinalstep', 'backup'),
                 array('class' => 'oneclickbackup'));
         }
-        $buttonarray[] = $this->_form->createElement('cancel', 'cancel', get_string('cancel'), array('class' => 'confirmcancel'));
+
+        $cancelparams = [
+            'data-modal' => 'confirmation',
+            'data-modal-content-str' => json_encode([
+                'confirmcancelquestion',
+                'backup',
+            ]),
+            'data-modal-yes-button-str' => json_encode([
+                'yes',
+                'moodle',
+            ]),
+        ];
+        if ($this->uistage->get_ui() instanceof import_ui) {
+            $cancelparams['data-modal-title-str'] = json_encode([
+                'confirmcancelimport',
+                'backup',
+            ]);
+        } else if ($this->uistage->get_ui() instanceof restore_ui) {
+            $cancelparams['data-modal-title-str'] = json_encode([
+                'confirmcancelrestore',
+                'backup',
+            ]);
+        } else {
+            $cancelparams['data-modal-title-str'] = json_encode([
+                'confirmcancel',
+                'backup',
+            ]);
+        }
+
+        $buttonarray[] = $this->_form->createElement('cancel', 'cancel', get_string('cancel'), $cancelparams);
         $buttonarray[] = $this->_form->createElement(
             'submit',
             'submitbutton',
@@ -382,24 +411,6 @@ abstract class base_moodleform extends moodleform {
         global $PAGE, $COURSE;
 
         $this->require_definition_after_data();
-
-        $config = new stdClass;
-        if ($this->uistage->get_ui() instanceof import_ui) {
-            $config->title = get_string('confirmcancelimport', 'backup');
-        } else if ($this->uistage->get_ui() instanceof restore_ui) {
-            $config->title = get_string('confirmcancelrestore', 'backup');
-        } else {
-            $config->title = get_string('confirmcancel', 'backup');
-        }
-        $config->question = get_string('confirmcancelquestion', 'backup');
-        $config->yesLabel = $config->title;
-        $config->noLabel = get_string('confirmcancelno', 'backup');
-        $config->closeButtonTitle = get_string('close', 'editor');
-        $PAGE->requires->yui_module(
-            'moodle-backup-confirmcancel',
-            'M.core_backup.confirmcancel.watch_cancel_buttons',
-            array($config)
-        );
 
         // Get list of module types on course.
         $modinfo = get_fast_modinfo($COURSE);
