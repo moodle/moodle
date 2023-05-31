@@ -136,7 +136,7 @@
   .card {
     &:hover {
       color: white;
-      background: var(--cardhoverbgcolor);
+      background-color: var(--cardhoverbgcolor);
       transform: scale(1.05);
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
     }
@@ -184,7 +184,6 @@
     height: 10px !important;
   }
   .card-text-size {
-    font-size: 46px;
     font-weight: 600;
   }
 }
@@ -588,11 +587,19 @@
   .max-width {
     max-width: 90% !important;
   }
+  .pagetitle-left-alignment {
+    margin: 0;
+  }
+  .navbar-nav .popover-region-notifications,
+  .navbar-nav .usermenu {
+    display: none !important;
+  }
   .card-text-size {
     font-size: 27px;
   }
   .my-course-section {
     width: 100%;
+    margin-top: 83px;
     position: initial;
   }
   .sidebar.close-bars ~ .my-course-section {
@@ -692,4 +699,55 @@
 }
 .numbercolor {
   color: black;
+}
+.sidebar .sub-menu {
+  padding-left: 4rem !important;
+}
+
+.navbar.messageicon {
+  .fa-comment-o {
+    display: none !important;
+  }
+  .navbar-nav {
+    align-items: center;
+
+    .popover-region-notifications {
+      border: 1px solid #e6e6e6;
+      border-radius: 50%;
+      height: 50px !important;
+      width: 50px !important;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  .count-container {
+    padding: 4px !important;
+    border-radius: 8px !important;
+    background-color: #ca3120;
+    color: #fff;
+    font-size: 12px !important;
+    line-height: 11px;
+    position: absolute;
+    top: 30px !important;
+    right: -9px !important;
+  }
+}
+.usermenu {
+  .avatar {
+    img {
+      width: 50px !important;
+      height: 50px !important;
+    }
+  }
+}
+.user-profile {
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+  padding: 8px;
+}
+.userpic {
+  width: 78px;
+  text-align: center;
 }

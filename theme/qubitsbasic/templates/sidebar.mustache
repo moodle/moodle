@@ -8,6 +8,31 @@
         </div>
         <div class="hr-line"></div>
         <ul class="nav-links">
+        <li class="nav-item d-block d-sm-none">
+                <a href="javascript:void(0);" class="nav-hover">
+                   <span class="userpic"><img src="{{globals.config.wwwroot}}/theme/qubitsbasic/pix/images/logos/userpic.png" class="user-profile" "></span>
+                    <span class="link_name">User profile</span>
+                    <i class="qicon-chevron-down-thin arrow icon"></i>
+                </a>
+                <ul class="sub-menu">
+                    <li><a href="#">Profile</a></li>
+                    <li><a href="#">Grades<a></li>
+                    <li><a href="#">Calendar<a></li>
+                    <li><a href="#">Private files</a></li>
+                    <li><a href="#">Reports<a></li>
+                    <li><a href="#">Preferences<a></li>
+                    <li><a href="#">Switch role to<a></li>
+                    <li><a href="#">Logout<a></li>
+                </ul>
+            </li>
+             <li class="nav-item d-block d-sm-none">
+
+                <a href="#" class="nav-hover">
+                    <i class="qicon-notifications icon"></i>
+                    <span class="link_name">Notifications</span>
+                </a>
+            </li>
+            <div class="hr-line mb-5 d-block d-sm-none"></div>
             <li class="nav-item">
                 <a href="javascript:void(0);" class="nav-hover">
                     <i class="qicon-my-courses icon"></i>
@@ -79,6 +104,9 @@ require(['jquery'], function($){
                     $(".arrow").click(function () {
                         $(".nav-item").toggleClass("showMenu");
                     });
+                    $(".coursecard").hover(function(){
+                        $(".white-circle").toggleClass("numbercolor");
+                    });
                 }
                 else {
                     $(".fa-arrow-left").click(function () {
@@ -95,6 +123,9 @@ require(['jquery'], function($){
                     });
                     $(".arrow").click(function () {
                         $(".nav-item").toggleClass("showMenu");
+                    });
+                    $(".coursecard").hover(function(){
+                        $(".white-circle").toggleClass("numbercolor");
                     });
                 }
             }

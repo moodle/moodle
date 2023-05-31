@@ -3941,7 +3941,7 @@ class theme_qubitsbasic_external extends external_api {
         if ($customfields = $handler->export_instance_data($course_id)) {
             foreach ($customfields as $data) {
                 $shortname = $data->get_shortname();
-                $value = $data->get_value();
+                $value = $data->get_data_controller()->get_value();
                 $course_customdata[$shortname] = $value;
             }
         }

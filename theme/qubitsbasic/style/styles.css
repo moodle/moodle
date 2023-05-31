@@ -1,4 +1,3 @@
-
 @font-face {
   font-family: "qubits";
   src: url("[[font:theme|qubits.eot]]?yz5onj");
@@ -73,7 +72,7 @@
   right: 0%;
   top: -20%;
   font-size: 25px;
-  z-index: 99;
+  z-index: 20;
   background-color: white;
   border-radius: 50%;
   border: 3px solid white;
@@ -96,9 +95,6 @@
   transition: all 0.5s ease;
 }
 
-
-
-
 .navbar.fixed-top {
   height: 88px !important;
   z-index: 50 !important;
@@ -107,3 +103,47 @@
 /* .test:hover {
     color: red;
   } */
+.navbar.messageicon {
+  .fa-comment-o {
+    display: none !important;
+  }
+  .navbar-nav {
+    align-items: center;
+
+    .popover-region-notifications {
+      border: 1px solid #e6e6e6;
+      border-radius: 50%;
+      height: 50px !important;
+      width: 50px !important;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  .count-container {
+    padding: 4px !important;
+    border-radius: 8px !important;
+    background-color: #ca3120;
+    color: #fff;
+    font-size: 12px !important;
+    line-height: 11px;
+    position: absolute;
+    top: 30px !important;
+    right: -9px !important;
+  }
+}
+.usermenu .avatar img {
+  width: 50px !important;
+  height: 50px !important;
+}
+
+.user-profile {
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+  padding: 8px;
+}
+.userpic {
+  width: 78px;
+  text-align: center;
+}
