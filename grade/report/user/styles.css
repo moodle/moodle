@@ -185,3 +185,7 @@
         display: none;
     }
 }
+
+#fitem_id_submitbutton {
+    padding-right: 2em;
+}
