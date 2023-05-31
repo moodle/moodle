@@ -9,13 +9,15 @@ Feature: Award badges based on user profile field
     Given the following "users" exist:
       | username | firstname | lastname | email           |
       | user1    | First     | User     | first@example.com  |
+    And the following "core_badges > Badge" exists:
+      | name        | Site Badge                   |
+      | status      | 0                            |
+      | description | Site badge description       |
+      | image       | badges/tests/behat/badge.png |
     And I log in as "admin"
-    And I navigate to "Badges > Add a new badge" in site administration
-    And I set the following fields to these values:
-      | Name | Site Badge |
-      | Description | Site badge description |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
+    And I navigate to "Badges > Manage badges" in site administration
+    And I click on "Edit" "link" in the "Site Badge" "table_row"
+    And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Profile completion"
     And I set the field "id_field_picture" to "1"
     And I press "Save"
