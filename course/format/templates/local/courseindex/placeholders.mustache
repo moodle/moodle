@@ -22,7 +22,7 @@
     Example context (json):
     {}
 }}
-<div data-region="loading-placeholder-content" aria-hidden="true" id="{{uniqid}}-course-index-placeholder">
+<div data-region="loading-placeholder-content" aria-hidden="true" id="course-index-placeholder">
     <ul class="media-list">
         <li class="media">
             <div class="media-body col-md-6 p-0 d-flex align-items-center">
@@ -52,6 +52,6 @@
 </div>
 {{#js}}
 require(['core_courseformat/local/courseindex/placeholder'], function(component) {
-    component.init('{{uniqid}}-course-index-placeholder');
+    component.init('course-index-placeholder');
 });
 {{/js}}
