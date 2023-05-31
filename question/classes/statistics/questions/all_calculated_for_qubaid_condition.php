@@ -272,11 +272,11 @@ class all_calculated_for_qubaid_condition {
         $timemodified = time();
 
         foreach ($this->get_all_slots() as $slot) {
-            $this->for_slot($slot)->cache($qubaids);
+            $this->for_slot($slot)->cache($qubaids, $timemodified);
         }
 
         foreach ($this->get_all_subq_ids() as $subqid) {
-            $this->for_subq($subqid)->cache($qubaids);
+            $this->for_subq($subqid)->cache($qubaids, $timemodified);
         }
 
         $transaction->allow_commit();
