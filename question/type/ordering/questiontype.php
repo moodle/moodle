@@ -376,16 +376,7 @@ class qtype_ordering extends question_type {
             }
 
             $subqid = question_utils::to_plain_text($answer->answer, $answer->answerformat);
-
-            // Make sure $subqid is no more than 100 bytes.
-            $maxbytes = 100;
-            if (strlen($subqid) > $maxbytes) {
-                $subqid = substr($subqid, 0, $maxbytes);
-                if (preg_match('/^(.|\n)*/u', '', $subqid, $match)) {
-                    $subqid = $match[0]; // Incomplete UTF-8 chars will be removed.
-                }
-            }
-
+            $subqid = core_text::substr($subqid, 0, 100); // Ensure not more than 100 chars.
             $responseclasses[$subqid] = $classes;
         }
 

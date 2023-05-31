@@ -175,6 +175,15 @@ class questiontype_test extends \advanced_testcase {
         $this->assertEqualsWithDelta($expectedresponseclasses, $possibleresponses, 0.0000005, '');
     }
 
+    public function test_get_possible_responses_very_long() {
+        $questiondata = test_question_maker::get_question_data('ordering');
+        $onehundredchars = str_repeat('1234567890', 9) . '123456789碁';
+        // Set one of the answers to over 100 chars, with a multi-byte UTF-8 character at position 100.
+        $questiondata->options->answers[13]->answer = $onehundredchars . 'and some more';
+        $possibleresponses = $this->qtype->get_possible_responses($questiondata);
+        $this->assertArrayHasKey($onehundredchars, $possibleresponses);
+    }
+
     public function test_get_numberingstyle() {
         $questiondata = test_question_maker::get_question_data('ordering');
         $expected = qtype_ordering_question::NUMBERING_STYLE_DEFAULT;

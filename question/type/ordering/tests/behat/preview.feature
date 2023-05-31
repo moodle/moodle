@@ -26,7 +26,7 @@ Feature: Preview an Ordering question
     When I am on the "ordering-001" "core_question > preview" page logged in as teacher1
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
-    And I press "Start again with these options"
+    And I press "id_saverestart"
     And I drag "Modular" to space "1" in the ordering question
     And I drag "Object" to space "2" in the ordering question
     And I drag "Oriented" to space "3" in the ordering question
@@ -41,7 +41,7 @@ Feature: Preview an Ordering question
     When I am on the "ordering-001" "core_question > preview" page logged in as teacher1
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
-    And I press "Start again with these options"
+    And I press "id_saverestart"
     And I drag "Modular" to space "1" in the ordering question
     And I drag "Oriented" to space "4" in the ordering question
     And I drag "Dynamic" to space "3" in the ordering question
@@ -61,7 +61,7 @@ Feature: Preview an Ordering question
     And I am on the "Renamed ordering-001" "core_question > preview" page
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
-    And I press "Start again with these options"
+    And I press "id_saverestart"
     And I drag "Modular" to space "1" in the ordering question
     And I drag "Oriented" to space "4" in the ordering question
     And I drag "Dynamic" to space "3" in the ordering question
