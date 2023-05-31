@@ -16,7 +16,7 @@
 
 namespace qbank_previewquestion;
 
-use core_question\local\bank\menu_action_column_base;
+use core_question\local\bank\question_action_base;
 
 /**
  * Question bank columns for the preview action icon.
@@ -26,7 +26,7 @@ use core_question\local\bank\menu_action_column_base;
  * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class preview_action_column extends menu_action_column_base {
+class preview_action extends question_action_base {
 
     /**
      * @var string store this lang string for performance.
@@ -36,10 +36,6 @@ class preview_action_column extends menu_action_column_base {
     public function init(): void {
         parent::init();
         $this->strpreview = get_string('preview');
-    }
-
-    public function get_name(): string {
-        return 'previewaction';
     }
 
     protected function get_url_icon_and_label(\stdClass $question): array {

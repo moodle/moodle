@@ -98,11 +98,11 @@ class view {
     protected $requiredcolumns;
 
     /**
-     * @var menu_action_base[] these are all the menu actions that can be displayed in a row's action menu.
+     * @var question_action_base[] these are all the actions that can be displayed in a question's action menu.
      *
      * Array keys are the class name.
      */
-    protected $menuactions;
+    protected $questionactions;
 
     /**
      * @var column_base[] these are the 'columns' that are
@@ -209,7 +209,7 @@ class view {
 
         // Possibly the heading part can be removed.
         $this->init_columns($this->wanted_columns(), $this->heading_column());
-        $this->init_menu_actions();
+        $this->init_question_actions();
         $this->init_sort();
         $this->init_search_conditions();
         $this->init_bulk_actions();
@@ -267,9 +267,9 @@ class view {
      *
      * @return void
      */
-    protected function init_menu_actions(): void {
+    protected function init_question_actions(): void {
         $plugins = \core_component::get_plugin_list_with_class('qbank', 'plugin_feature', 'plugin_feature.php');
-        $this->menuactions = [];
+        $this->questionactions = [];
         foreach ($plugins as $component => $plugin) {
             if (!qbank::is_plugin_enabled($component)) {
                 continue;
@@ -277,7 +277,7 @@ class view {
             $pluginentrypointobject = new $plugin();
             $menuactions = $pluginentrypointobject->get_question_actions($this);
             foreach ($menuactions as $menuaction) {
-                $this->menuactions[$menuaction::class] = $menuaction;
+                $this->questionactions[$menuaction::class] = $menuaction;
             }
         }
     }
@@ -1011,7 +1011,7 @@ class view {
     protected function create_new_question_form($category, $canadd): void {
         if (\core\plugininfo\qbank::is_plugin_enabled('qbank_editquestion')) {
             echo editquestion_helper::create_new_question_button($category->id,
-                    $this->requiredcolumns['edit_action_column']->editquestionurl->params(), $canadd);
+                    $this->questionactions['qbank_editquestion\edit_action']->editquestionurl->params(), $canadd);
         }
     }
 
@@ -1406,9 +1406,9 @@ class view {
     /**
      * Return array of menu actions.
      *
-     * @return menu_action_base[]
+     * @return question_action_base[]
      */
-    public function get_menuactions(): array {
-        return $this->menuactions;
+    public function get_question_actions(): array {
+        return $this->questionactions;
     }
 }

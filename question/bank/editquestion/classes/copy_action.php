@@ -15,70 +15,56 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for question bank edit question column.
+ * Question bank column for the duplicate action icon.
  *
  * @package   qbank_editquestion
- * @copyright 2009 Tim Hunt
+ * @copyright 2013 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace qbank_editquestion;
 
-use core_question\local\bank\menu_action_column_base;
+use core_question\local\bank\question_action_base;
 use moodle_url;
 
 /**
- * Class for question bank edit question column.
+ * Question bank column for the duplicate action icon.
  *
- * @copyright 2009 Tim Hunt
+ * @copyright 2013 The Open University
  * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class edit_action_column extends menu_action_column_base {
+class copy_action extends question_action_base {
 
-    /**
-     * Contains the string.
-     * @var string
-     */
-    protected $stredit;
-
-    /**
-     * Contains the string.
-     * @var string
-     */
-    protected $strview;
+    /** @var string avoids repeated calls to get_string('duplicate'). */
+    protected $strcopy;
 
     /**
      * Contains the url of the edit question page.
      * @var moodle_url|string
      */
-    public $editquestionurl;
+    public $duplicatequestionurl;
 
     public function init(): void {
         parent::init();
-        $this->stredit = get_string('editquestion', 'question');
-        $this->strview = get_string('view');
-        $this->editquestionurl = new \moodle_url('/question/bank/editquestion/question.php',
+        $this->strcopy = get_string('duplicate');
+        $this->duplicatequestionurl = new \moodle_url('/question/bank/editquestion/question.php',
                 array('returnurl' => $this->qbank->returnurl));
         if ($this->qbank->cm !== null) {
-            $this->editquestionurl->param('cmid', $this->qbank->cm->id);
+            $this->duplicatequestionurl->param('cmid', $this->qbank->cm->id);
         } else {
-            $this->editquestionurl->param('courseid', $this->qbank->course->id);
+            $this->duplicatequestionurl->param('courseid', $this->qbank->course->id);
         }
     }
 
-    public function get_name() {
-        return 'editaction';
-    }
-
     /**
-     * Get the URL for editing a question as a link.
+     * Get the URL for duplicating a question as a moodle_url.
      *
      * @param int $questionid the question id.
-     * @return moodle_url the URL, HTML-escaped.
+     * @return \moodle_url the URL.
      */
-    public function edit_question_moodle_url($questionid): moodle_url {
-        return new moodle_url($this->editquestionurl, ['id' => $questionid]);
+    public function duplicate_question_moodle_url($questionid): moodle_url {
+        return new \moodle_url($this->duplicatequestionurl, ['id' => $questionid, 'makecopy' => 1]);
     }
 
     protected function get_url_icon_and_label(\stdClass $question): array {
@@ -89,12 +75,13 @@ class edit_action_column extends menu_action_column_base {
             return [null, null, null];
         }
 
-        if (question_has_capability_on($question, 'edit')) {
-            return [$this->edit_question_moodle_url($question->id), 't/edit', $this->stredit];
-        } else if (question_has_capability_on($question, 'view')) {
-            return [$this->edit_question_moodle_url($question->id), 'i/info', $this->strview];
-        } else {
-            return [null, null, null];
+        // To copy a question, you need permission to add a question in the same
+        // category as the existing question, and ability to access the details of
+        // the question being copied.
+        if (question_has_capability_on($question, 'add') &&
+                (question_has_capability_on($question, 'edit') || question_has_capability_on($question, 'view'))) {
+            return [$this->duplicate_question_moodle_url($question->id), 't/copy', $this->strcopy];
         }
+        return [null, null, null];
     }
 }
