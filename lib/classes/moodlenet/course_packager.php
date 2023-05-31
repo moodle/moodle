@@ -18,46 +18,42 @@ namespace core\moodlenet;
 
 use backup;
 use backup_controller;
-use cm_info;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 
 /**
- * Packager to prepare appropriate backup of an activity to share to MoodleNet.
+ * Packager to prepare appropriate backup of a course to share to MoodleNet.
  *
  * @package   core
- * @copyright 2023 Raquel Ortega <raquel.ortega@moodle.com>
+ * @copyright 2023 Safat Shahin <safat.shahin@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class activity_packager extends resource_packager {
+class course_packager extends resource_packager {
 
     /**
-     * Constructor.
+     * Constructor for course packager.
      *
-     * @param cm_info $cminfo context module information about the resource being packaged.
-     * @param int $userid The ID of the user performing the packaging.
+     * @param stdClass $course The course to package
+     * @param int $userid The ID of the user performing the packaging
      */
     public function __construct(
-        protected cm_info $cminfo,
+        protected stdClass $course,
         protected int $userid,
     ) {
-        // Check backup/restore support.
-        if (!plugin_supports('mod', $cminfo->modname , FEATURE_BACKUP_MOODLE2)) {
-            throw new \coding_exception("Cannot backup module $cminfo->modname. This module doesn't support the backup feature.");
-        }
-
-        parent::__construct($cminfo, $userid);
+        parent::__construct($course, $userid);
 
         $this->controller = new backup_controller(
-            backup::TYPE_1ACTIVITY,
-            $cminfo->id,
+            backup::TYPE_1COURSE,
+            $course->id,
             backup::FORMAT_MOODLE,
             backup::INTERACTIVE_NO,
             backup::MODE_GENERAL,
             $userid
         );
-        $this->resourcefilename = $this->cminfo->modname;
+
+        $this->resourcefilename = $this->course->shortname;
     }
 }

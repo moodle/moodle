@@ -20,7 +20,6 @@ use cm_info;
 use core\event\moodlenet_resource_exported;
 use core\oauth2\client;
 use moodle_exception;
-use stdClass;
 use stored_file;
 
 /**
@@ -30,16 +29,7 @@ use stored_file;
  * @copyright 2023 Michael Hawkins <michaelh@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class activity_sender {
-    /**
-     * @var int Backup share format - the content is being shared as a Moodle backup file.
-     */
-    public const SHARE_FORMAT_BACKUP = 0;
-
-    /**
-     * @var int Maximum upload file size (1.07 GB).
-     */
-    public const MAX_FILESIZE = 1070000000;
+class activity_sender extends resource_sender {
 
     /**
      * @var cm_info The context module info object for the activity being shared.
@@ -47,19 +37,13 @@ class activity_sender {
     protected cm_info $cminfo;
 
     /**
-     * @var stdClass The course where the activity is located.
-     */
-    protected stdClass $course;
-
-    /**
      * Class constructor.
      *
-     * @param int $cmid The course module ID of the activity being shared.
-     * @param int $userid The user ID who is sharing the activity.
-     * @param moodlenet_client $moodlenetclient The moodlenet_client object used to perform the share.
-     * @param client $oauthclient The OAuth 2 client for the MoodleNet instance.
-     * @param int $shareformat The data format to share in. Defaults to a Moodle backup (SHARE_FORMAT_BACKUP).
-     * @throws moodle_exception
+     * @param int $cmid The course module ID of the activity being shared
+     * @param int $userid The user ID who is sharing the activity
+     * @param moodlenet_client $moodlenetclient The moodlenet_client object used to perform the share
+     * @param client $oauthclient The OAuth 2 client for the MoodleNet instance
+     * @param int $shareformat The data format to share in. Defaults to a Moodle backup (SHARE_FORMAT_BACKUP)
      */
     public function __construct(
         int $cmid,
@@ -68,11 +52,21 @@ class activity_sender {
         protected client $oauthclient,
         protected int $shareformat = self::SHARE_FORMAT_BACKUP,
     ) {
+        parent::__construct($cmid, $userid, $moodlenetclient, $oauthclient, $shareformat);
         [$this->course, $this->cminfo] = get_course_and_cm_from_cmid($cmid);
+    }
 
-        if (!in_array($shareformat, $this->get_allowed_share_formats())) {
-            throw new moodle_exception('moodlenet:invalidshareformat');
-        }
+    /**
+     * Share an activity/resource to MoodleNet.
+     *
+     * @return array The HTTP response code from MoodleNet and the MoodleNet draft resource URL (URL empty string on fail).
+     *                Format: ['responsecode' => 201, 'drafturl' => 'https://draft.mnurl/here']
+     * @deprecated since Moodle 4.3
+     * @todo Final deprecation MDL-79086
+     */
+    public function share_activity(): array {
+        debugging('Method share_activity is deprecated, use share_resource instead.', DEBUG_DEVELOPER);
+        return $this->share_resource();
     }
 
     /**
@@ -80,11 +74,8 @@ class activity_sender {
      *
      * @return array The HTTP response code from MoodleNet and the MoodleNet draft resource URL (URL empty string on fail).
      *               Format: ['responsecode' => 201, 'drafturl' => 'https://draft.mnurl/here']
-     * @throws moodle_exception
      */
-    public function share_activity(): array {
-        global $DB;
-
+    public function share_resource(): array {
         $accesstoken = '';
         $resourceurl = '';
         $issuer = $this->oauthclient->get_issuer();
@@ -157,11 +148,10 @@ class activity_sender {
         switch ($this->shareformat) {
             case self::SHARE_FORMAT_BACKUP:
                 // If sharing the activity as a backup, prepare the packaged backup.
-                $packager = new activity_packager($this->cminfo, $this->userid);
-                return $packager->get_package();
+                return (new activity_packager($this->cminfo, $this->userid))->get_package();
             default:
                 throw new \coding_exception("Unknown share format: {$this->shareformat}'");
-        };
+        }
     }
 
     /**
@@ -188,17 +178,6 @@ class activity_sender {
             ],
         ]);
         $event->trigger();
-    }
-
-    /**
-     * Return the list of supported share formats.
-     *
-     * @return array Array of supported share format values.
-     */
-    protected function get_allowed_share_formats(): array {
-        return [
-            self::SHARE_FORMAT_BACKUP,
-        ];
     }
 
     /**
