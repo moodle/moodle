@@ -1,4 +1,4 @@
-@core @core_badges @_file_upload @javascript
+@core @core_badges @javascript
 Feature: Test tertiary navigation as various users
 
   Background:
@@ -15,38 +15,32 @@ Feature: Test tertiary navigation as various users
       | teacher | C1     | editingteacher |
       | student1 | C1     | student        |
       | nonediting | C1     | teacher        |
-    # Create system badge and define a criterion.
-    And I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I navigate to "Badges > Add a new badge" in current page administration
-    And I set the following fields to these values:
-      | Name | Testing course badge |
-      | Version | 1.1 |
-      | Language | Catalan |
-      | Description | Testing course badge description |
-      | Image author | http://author.example.com |
-      | Image caption | Test caption image |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
-    And I set the field "type" to "Manual issue by role"
-    And I expand all fieldsets
-    And I set the field "Teacher" to "1"
-    And I press "Save"
-    And I am on site homepage
-    And I navigate to "Badges > Add a new badge" in site administration
-    And I set the following fields to these values:
-      | Name | Testing site badge |
-      | Version | 1.1 |
-      | Language | Catalan |
-      | Description | Testing site badge description |
-      | Image author | http://author.example.com |
-      | Image caption | Test caption image |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
-    And I set the field "type" to "Manual issue by role"
-    And I expand all fieldsets
-    And I set the field "Teacher" to "1"
-    And I press "Save"
+    # Create a course badge in our test course.
+    And the following "core_badges > Badge" exists:
+      | name           | Testing course badge             |
+      | status         | inactive                         |
+      | type           | 2                                |
+      | course         | C1                               |
+      | version        | 1.1                              |
+      | language       | ca                               |
+      | description    | Testing course badge description |
+      | image          | badges/tests/behat/badge.png     |
+      | imageauthorurl | http://author.example.com        |
+      | imagecaption   | Test caption image               |
+    # Create a site badge.
+    And the following "core_badges > Badge" exists:
+      | name           | Testing site badge               |
+      | status         | inactive                         |
+      | version        | 1.1                              |
+      | language       | ca                               |
+      | description    | Testing site badge description   |
+      | image          | badges/tests/behat/badge.png     |
+      | imageauthorurl | http://author.example.com        |
+      | imagecaption   | Test caption image               |
+    And the following "core_badges > Criterias" exist:
+      | badge                | role           |
+      | Testing course badge | editingteacher |
+      | Testing site badge   | editingteacher |
 
   Scenario Outline: Check navigation as different users in a course context
     Given I log in as "<user>"
