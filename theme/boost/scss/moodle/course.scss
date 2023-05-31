@@ -1349,6 +1349,21 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         align-items: center;
     }
 
+    .summarytext {
+        // Add rounded borders to images.
+        img {
+            @include border-radius($activity-item-border-radius);
+        }
+    }
+
+    // Availability styles for both section and activities.
+    .availabilityinfo {
+        margin-top: map-get($spacers, 2);
+        padding: map-get($spacers, 1) map-get($spacers, 3);
+        background-color: $gray-200;
+        @include border-radius($activity-item-border-radius);
+    }
+
     &.section-summary {
         padding-left: map-get($spacers, 3);
         padding-right: map-get($spacers, 3);
@@ -1525,6 +1540,11 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         .dropdown-toggle::after {
             display: none;
         }
+        // Override '.btn.btn-icon' styles from buttons.scss to make action menu buttons smaller.
+        .action-menu .btn.btn-icon {
+            height: ($icon-width + 15px);
+            width: ($icon-width + 15px);
+        }
     }
 
     .activity-icon {
@@ -1533,6 +1553,14 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
 
     .activity-dates {
         grid-area: dates;
+        @include font-size($small-font-size);
+        color: $gray-700;
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 0.75rem;
+        @include media-breakpoint-down(xs) {
+            margin-top: map-get($spacers, 2);
+        }
     }
 
     .activity-name-area {
@@ -1547,6 +1575,13 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
                 margin-left: 0.5rem;
             }
         }
+        .activitybadge {
+            &.badge-none {
+                font-weight: normal;
+                @include font-size($small-font-size);
+                padding: 0;
+            }
+        }
     }
 
     .activity-info {
@@ -1555,10 +1590,29 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
 
     .activity-badges {
         grid-area: visibility;
+        .badge {
+            font-weight: normal;
+            .icon {
+                font-size: 12px;
+                width: 12px;
+                height: 12px;
+            }
+        }
     }
 
     .activity-altcontent {
         grid-area: altcontent;
+        margin-top: map-get($spacers, 1);
+        &.activity-description {
+            margin-top: map-get($spacers, 2);
+            padding-top: map-get($spacers, 2);
+            border-top: $border-width solid $border-color;
+            @include font-size($small-font-size);
+        }
+        // Add rounded borders to images.
+        img {
+            @include border-radius($activity-item-border-radius);
+        }
     }
 
     .activity-availability {

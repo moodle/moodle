@@ -26057,6 +26057,14 @@ blockquote {
   width: 40px;
   height: 40px;
 }
+.activityiconcontainer.smaller {
+  width: 30px;
+  height: 30px;
+}
+.activityiconcontainer.smaller .activityicon {
+  width: 16px;
+  height: 16px;
+}
 
 .activityiconcontainer.administration {
   background-color: #5d63f6;
@@ -28954,6 +28962,15 @@ span.editinstructions .alert-link {
   display: flex;
   align-items: center;
 }
+.course-section .summarytext img {
+  border-radius: 1rem;
+}
+.course-section .availabilityinfo {
+  margin-top: 0.5rem;
+  padding: 0.25rem 1rem;
+  background-color: #e9ecef;
+  border-radius: 1rem;
+}
 .course-section.section-summary {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -29088,11 +29105,25 @@ span.editinstructions .alert-link {
 .activity-item .activity-actions .dropdown-toggle::after {
   display: none;
 }
+.activity-item .activity-actions .action-menu .btn.btn-icon {
+  height: 31px;
+  width: 31px;
+}
 .activity-item .activity-icon {
   grid-area: icon;
 }
 .activity-item .activity-dates {
   grid-area: dates;
+  font-size: 0.875em;
+  color: #495057;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.75rem;
+}
+@media (max-width: 575.98px) {
+  .activity-item .activity-dates {
+    margin-top: 0.5rem;
+  }
 }
 .activity-item .activity-name-area {
   grid-area: name;
@@ -29104,14 +29135,37 @@ span.editinstructions .alert-link {
   z-index: 2;
   margin-left: 0.5rem;
 }
+.activity-item .activity-name-area .activitybadge.badge-none {
+  font-weight: normal;
+  font-size: 0.875em;
+  padding: 0;
+}
 .activity-item .activity-info {
   grid-area: completion;
 }
 .activity-item .activity-badges {
   grid-area: visibility;
 }
+.activity-item .activity-badges .badge {
+  font-weight: normal;
+}
+.activity-item .activity-badges .badge .icon {
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
+}
 .activity-item .activity-altcontent {
   grid-area: altcontent;
+  margin-top: 0.25rem;
+}
+.activity-item .activity-altcontent.activity-description {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #dee2e6;
+  font-size: 0.875em;
+}
+.activity-item .activity-altcontent img {
+  border-radius: 1rem;
 }
 .activity-item .activity-availability {
   grid-area: availability;

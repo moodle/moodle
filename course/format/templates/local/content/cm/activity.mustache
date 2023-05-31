@@ -87,7 +87,7 @@
     {{! Dates }}
     {{#activityinfo}}
         {{#hasdates}}
-            <div data-region="activity-dates" class="activity-dates mr-2">
+            <div data-region="activity-dates" class="activity-dates mr-sm-2">
                 {{#activitydates}}
                     {{$core_course/activity_date}}
                         {{>core_course/activity_date}}
@@ -105,7 +105,7 @@
     {{! Completion }}
     {{#activityinfo}}
         {{#hascompletion}}
-            <div class="activity-info align-self-start">
+            <div class="activity-info align-self-start mr-sm-2">
                 {{$ core_courseformat/local/content/cm/activity_info}}
                     {{> core_courseformat/local/content/cm/activity_info}}
                 {{/ core_courseformat/local/content/cm/activity_info}}
@@ -124,10 +124,7 @@
 
     {{! Description }}
     {{#altcontent}}
-        <div class="activity-altcontent d-flex text-break
-            {{#hasname}}small{{/hasname}}
-            {{^hasname}}contentwithoutlink{{/hasname}}"
-        >
+        <div class="activity-altcontent d-flex text-break {{#hasname}}activity-description{{/hasname}}">
             {{{altcontent}}}
         </div>
     {{/altcontent}}
