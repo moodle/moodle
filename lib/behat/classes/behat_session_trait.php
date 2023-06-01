@@ -727,23 +727,6 @@ trait behat_session_trait {
     }
 
     /**
-     * Ensures that all the page's editors are loaded.
-     *
-     * @deprecated since Moodle 2.7 MDL-44084 - please do not use this function any more.
-     * @throws ElementNotFoundException
-     * @throws ExpectationException
-     * @return void
-     */
-    protected function ensure_editors_are_loaded() {
-        global $CFG;
-
-        if (empty($CFG->behat_usedeprecated)) {
-            debugging('Function behat_base::ensure_editors_are_loaded() is deprecated. It is no longer required.');
-        }
-        return;
-    }
-
-    /**
      * Checks if the current scenario, or its feature, has a specified tag.
      *
      * @param string $tag Tag to check
