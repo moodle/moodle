@@ -1802,7 +1802,8 @@ class core_user_external extends \core_external\external_api {
                         array(
                             'name' => new external_value(PARAM_RAW, 'The name of the preference'),
                             'value' => new external_value(PARAM_RAW, 'The value of the preference'),
-                            'userid' => new external_value(PARAM_INT, 'Id of the user to set the preference'),
+                            'userid' => new external_value(PARAM_INT,
+                                'Id of the user to set the preference (default to current user)', VALUE_DEFAULT, 0),
                         )
                     )
                 )
@@ -1830,18 +1831,20 @@ class core_user_external extends \core_external\external_api {
 
         $userscache = array();
         foreach ($params['preferences'] as $pref) {
+            $userid = $pref['userid'] ?: $USER->id;
+
             // Check to which user set the preference.
-            if (!empty($userscache[$pref['userid']])) {
-                $user = $userscache[$pref['userid']];
+            if (!empty($userscache[$userid])) {
+                $user = $userscache[$userid];
             } else {
                 try {
-                    $user = core_user::get_user($pref['userid'], '*', MUST_EXIST);
+                    $user = core_user::get_user($userid, '*', MUST_EXIST);
                     core_user::require_active_user($user);
-                    $userscache[$pref['userid']] = $user;
+                    $userscache[$userid] = $user;
                 } catch (Exception $e) {
                     $warnings[] = array(
                         'item' => 'user',
-                        'itemid' => $pref['userid'],
+                        'itemid' => $userid,
                         'warningcode' => 'invaliduser',
                         'message' => $e->getMessage()
                     );

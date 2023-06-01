@@ -6,7 +6,11 @@ This files describes API changes for code that uses the user API.
  - `core_user::get_profile_picture` for retrieving user picture.
  - `core_user::get_profile_url` for retrieving profile url.
  - `core_user::get_fullname` for retrieving user full name.
-
+* The `core_user/repository` Javascript module now exports new methods for manipulating user preferences:
+  - `[get|set]UserPreference`
+  - `[get|set]UserPreferences`
+* The external `core_user_set_user_preferences` method will now default the `userid` property of each preference to
+  that of the current user, if omitted
 * The following previously deprecated methods have been removed and can no longer be used:
   - `profile_display_fields`
   - `profile_edit_category`
