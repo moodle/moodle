@@ -14,52 +14,26 @@ Feature: Display the IMS content package description in the IMSCP and optionally
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "activities" exist:
+      | activity | course | name                     | intro                                | packagefilepath                             |
+      | imscp    | C1     | Test IMS content package | Test IMS content package description | mod/imscp/tests/packages/singelscobasic.zip |
 
-  @javascript @_file_upload
   Scenario: Description is displayed in the IMS content package
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "IMS content package" to section "1"
-    And I set the following fields to these values:
-      | Name | Test IMS content package |
-      | Description | Test IMS content package description |
-    And I upload "mod/imscp/tests/packages/singlescobasic.zip" file to "Package file" filemanager
-    And I click on "Save and display" "button"
-    When I am on the "Test IMS content package" "imscp activity" page
+    When I am on the "Test IMS content package" "imscp activity" page logged in as teacher1
     Then I should see "Test IMS content package description"
 
-  @javascript @_file_upload
   Scenario: Show IMS description in the course homepage
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "IMS content package" to section "1"
-    And I set the following fields to these values:
-      | Name | Test IMS content package |
-      | Description | Test IMS content package description |
-    And I upload "mod/imscp/tests/packages/singlescobasic.zip" file to "Package file" filemanager
-    And I click on "Save and display" "button"
-    When I am on the "Test IMS content package" "imscp activity editing" page
+    When I am on the "Test IMS content package" "imscp activity editing" page logged in as teacher1
     And the following fields match these values:
       | Display description on course page | |
     And I set the following fields to these values:
       | Display description on course page | 1 |
     And I press "Save and return to course"
-    When I am on "Course 1" course homepage
     Then I should see "Test IMS content package description"
 
-  @javascript @_file_upload
   Scenario: Hide IMS description in the course homepage
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "IMS content package" to section "1"
-    And I set the following fields to these values:
-      | Name | Test IMS content package |
-      | Description | Test IMS content package description |
-    And I upload "mod/imscp/tests/packages/singlescobasic.zip" file to "Package file" filemanager
-    And I click on "Save and display" "button"
-    When I am on the "Test IMS content package" "imscp activity editing" page
+    When I am on the "Test IMS content package" "imscp activity editing" page logged in as teacher1
     And the following fields match these values:
       | Display description on course page | |
     And I press "Save and return to course"
-    When I am on "Course 1" course homepage
     Then I should not see "Test IMS content package description"
