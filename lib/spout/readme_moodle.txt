@@ -4,6 +4,13 @@ Description of Spout library import
 * Only include the src/Spout directory.
 * Update lib/thirdpartylibs.xml with the latest version.
 
+2023/05/26
+----------
+MDL-78262 lib_spout: Update box/spout to address PHP 8.1 deprecation
+This change is a direct pull from an upstream fix:
+https://github.com/openspout/openspout/commit/e75f6f73012b81fd5fee6107d0af9e86c458448e
+This addresses the deprecation of str_replace() in PHP 8.1.
+
 2022/11/25
 ----------
 Imported PHP 8.1 patch from OpenSpout/OpenSpout 4.8.1
