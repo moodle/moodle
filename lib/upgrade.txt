@@ -7,6 +7,9 @@ information provided here is intended especially for developers.
     - admin_setting_requiredpasswordunmask
 * The badges_get_oauth2_service_options() method has been deprecated, because it's not required anymore. It should no longer
   be used.
+* Support for the following phpunit coverage info properties, deprecated since 3.11, has been removed:
+  - `whitelistfolders`
+  - `whitelistfiles`
 
 === 4.2 ===
 
