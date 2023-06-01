@@ -179,5 +179,20 @@ function xmldb_quiz_upgrade($oldversion) {
     // Automatically generated Moodle v4.2.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2023042401) {
+
+        // Define field reviewmaxmarks to be added to quiz.
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('reviewmaxmarks', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, '0', 'reviewcorrectness');
+
+        // Conditionally launch add field reviewmaxmarks.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2023042401, 'quiz');
+    }
+
     return true;
 }

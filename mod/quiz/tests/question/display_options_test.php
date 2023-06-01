@@ -37,7 +37,8 @@ class display_options_test extends \basic_testcase {
         $quiz->questiondecimalpoints = -1;
         $quiz->reviewattempt          = 0x11110;
         $quiz->reviewcorrectness      = 0x10000;
-        $quiz->reviewmarks            = 0x01110;
+        $quiz->reviewmaxmarks         = 0x10000; // Max marks is set.
+        $quiz->reviewmarks            = 0x00000; // Marks is not set.
         $quiz->reviewspecificfeedback = 0x10000;
         $quiz->reviewgeneralfeedback  = 0x01000;
         $quiz->reviewrightanswer      = 0x00100;
@@ -56,6 +57,8 @@ class display_options_test extends \basic_testcase {
         $this->assertEquals(2, $options->markdp);
 
         $quiz->questiondecimalpoints = 5;
+        $quiz->reviewmaxmarks         = 0x11000; // Max marks is set.
+        $quiz->reviewmarks            = 0x11000; // Marks is also set.
         $options = display_options::make_from_quiz($quiz,
             display_options::IMMEDIATELY_AFTER);
 
@@ -67,9 +70,12 @@ class display_options_test extends \basic_testcase {
         $this->assertEquals(display_options::HIDDEN, $options->manualcomment);
         $this->assertEquals(5, $options->markdp);
 
+        $quiz->reviewmaxmarks         = 0x00000; // Max marks is NOT set.
+        $quiz->reviewmarks            = 0x00000; // Marks is also NOT set.
         $options = display_options::make_from_quiz($quiz,
             display_options::LATER_WHILE_OPEN);
 
+        $this->assertEquals(display_options::HIDDEN, $options->marks);
         $this->assertEquals(display_options::VISIBLE, $options->rightanswer);
         $this->assertEquals(display_options::HIDDEN, $options->generalfeedback);
 

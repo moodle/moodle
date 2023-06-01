@@ -131,7 +131,7 @@ class mod_quiz_external extends external_api {
                         $quizdetails['hasquestions'] = (int) $quizobj->has_questions();
                         $quizdetails['autosaveperiod'] = get_config('quiz', 'autosaveperiod');
 
-                        $additionalfields = ['attemptonlast', 'reviewattempt', 'reviewcorrectness', 'reviewmarks',
+                        $additionalfields = ['attemptonlast', 'reviewattempt', 'reviewcorrectness', 'reviewmaxmarks', 'reviewmarks',
                                                     'reviewspecificfeedback', 'reviewgeneralfeedback', 'reviewrightanswer',
                                                     'reviewoverallfeedback', 'questionsperpage', 'navmethod',
                                                     'browsersecurity', 'delay1', 'delay2', 'showuserpicture', 'showblocks',
@@ -208,8 +208,9 @@ class mod_quiz_external extends external_api {
                                                                     \mod_quiz\question\display_options class. It is formed by ORing
                                                                     together the constants defined there.', VALUE_OPTIONAL),
                             'reviewcorrectness' => new external_value(PARAM_INT, 'Whether users are allowed to review their quiz
-                                                                        attempts at various times.
-                                                                        A bit field, like reviewattempt.', VALUE_OPTIONAL),
+                                                       attempts at various times.A bit field, like reviewattempt.', VALUE_OPTIONAL),
+                            'reviewmaxmarks' => new external_value(PARAM_INT, 'Whether users are allowed to review their quiz
+                                                  attempts at various times. A bit field, like reviewattempt.', VALUE_OPTIONAL),
                             'reviewmarks' => new external_value(PARAM_INT, 'Whether users are allowed to review their quiz attempts
                                                                 at various times. A bit field, like reviewattempt.',
                                                                 VALUE_OPTIONAL),
