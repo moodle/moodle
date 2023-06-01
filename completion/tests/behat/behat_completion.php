@@ -174,6 +174,17 @@ class behat_completion extends behat_base {
         $conditionslistlabel = get_string('completionrequirements', 'core_course', $activityname);
         $selector = "div[aria-label='$conditionslistlabel']";
 
+        try {
+            // If there is a dropdown, open it.
+            $dropdownnode = $this->find('css', $selector . ' .dropdown-menu');
+            if (!$dropdownnode->hasClass('show')) {
+                $params = [get_string('completionmenuitem', 'completion'), "button", $selector, "css_element"];
+                $this->execute("behat_general::i_click_on_in_the", $params);
+            }
+        } catch (ElementNotFoundException $e) {
+            // If the dropdown does not exist, we are in the activity page, all good.
+        }
+
         $this->execute("behat_general::assert_element_contains_text", [$text, $selector, "css_element"]);
     }
 
@@ -290,7 +301,7 @@ class behat_completion extends behat_base {
      * @param string $activityname The activity name.
      */
     public function the_manual_completion_button_for_activity_should_be_disabled(string $activityname): void {
-        $selector = "div[data-activityname='$activityname'] button";
+        $selector = "div[data-region='activity-information'][data-activityname='$activityname'] button";
 
         $params = [$selector, "css_element"];
         $this->execute("behat_general::the_element_should_be_disabled", $params);
@@ -303,7 +314,7 @@ class behat_completion extends behat_base {
      * @param string $activityname The activity name.
      */
     public function the_manual_completion_button_for_activity_should_not_exist(string $activityname): void {
-        $selector = "div[data-activityname='$activityname'] button";
+        $selector = "div[data-region=activity-information][data-activityname='$activityname'] button";
 
         $params = [$selector, "css_element"];
         $this->execute('behat_general::should_not_exist', $params);
@@ -316,7 +327,7 @@ class behat_completion extends behat_base {
      * @param string $activityname The activity name.
      */
     public function the_manual_completion_button_for_activity_should_exist(string $activityname): void {
-        $selector = "div[data-activityname='$activityname'] button";
+        $selector = "div[data-region=activity-information][data-activityname='$activityname'] button";
 
         $params = [$selector, "css_element"];
         $this->execute('behat_general::should_exist', $params);

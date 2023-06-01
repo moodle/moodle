@@ -29142,6 +29142,22 @@ span.editinstructions .alert-link {
 }
 .activity-item .activity-info {
   grid-area: completion;
+  justify-self: end;
+}
+.activity-item .activity-info button,
+.activity-item .activity-info a[role=button] {
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  font-weight: bold;
+}
+@media (max-width: 575.98px) {
+  .activity-item .activity-info {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  .activity-item .activity-info button {
+    width: 100%;
+  }
 }
 .activity-item .activity-badges {
   grid-area: visibility;
@@ -29191,28 +29207,9 @@ span.editinstructions .alert-link {
 .activity-item .action-menu-item .filler {
   display: none;
 }
-@media (max-width: 767.98px) {
-  .activity-item .badge {
-    white-space: normal;
-    text-align: left;
-  }
-}
 @media (min-width: 768px) {
-  .activity-item .automatic-completion-conditions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-  }
   .activity-item:not(.activityinline) {
     padding: 1rem;
-  }
-  .activity-item .activity-info,
-  .activity-item .activity-actions {
-    margin-left: auto;
-    padding-left: 0.5rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
   }
 }
 

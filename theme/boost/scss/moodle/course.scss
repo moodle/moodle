@@ -1586,6 +1586,21 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
 
     .activity-info {
         grid-area: completion;
+        justify-self: end;
+        // Re-style completion buttons (mark as done & dropdown).
+        button,
+        a[role="button"] {
+            border: $border-width solid $border-color;
+            @include border-radius();
+            font-weight: bold;
+        }
+        @include media-breakpoint-down(xs) {
+            width: 100%;
+            margin-top: map-get($spacers, 2);
+            button {
+                width: 100%;
+            }
+        }
     }
 
     .activity-badges {
@@ -1645,31 +1660,9 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         display: none;
     }
 
-    @include media-breakpoint-down(sm) {
-        .badge {
-            white-space: normal;
-            text-align: left;
-        }
-    }
-
     @include media-breakpoint-up(md) {
-        .automatic-completion-conditions {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-        }
-
         &:not(.activityinline) {
             padding: map-get($spacers, 3);
-        }
-
-        .activity-info,
-        .activity-actions {
-            margin-left: auto;
-            padding-left: map-get($spacers, 2);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
         }
     }
 }
@@ -1699,17 +1692,16 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
     display: none;
 }
 
+// Revisit these styles when MDL-78289 lands. Probably not needed anymore.
 .automatic-completion-conditions .badge {
     font-size: 80%;
     padding: map-get($spacers, 2);
     margin-top: map-get($spacers, 1);
-
     .icon {
         width: 0.7rem;
         height: 0.7rem;
         font-size: 0.7rem;
     }
-
     &:first-child {
         margin-top: 0;
     }
