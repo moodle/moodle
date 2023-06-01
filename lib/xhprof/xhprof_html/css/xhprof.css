@@ -15,7 +15,7 @@
 
 /* Start moodle modification: add basic, smaller, font specs */
 body, p, table, li {
-    font: normal normal normal 13px/1.231 arial, helvetica, clean, sans-serif;
+  font: normal normal normal 13px/1.231 arial, helvetica, clean, sans-serif;
 }
 /* End moodle modification */
 
