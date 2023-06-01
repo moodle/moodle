@@ -3269,17 +3269,17 @@ function repository_delete_selected_files($context, string $component, string $f
  * @param context $context The context where delete is called.
  * @param stored_file $storedfile the file to be logged.
  */
-function create_event_draft_file_deleted(context $context, stored_file $storedfile) :void {
+function create_event_draft_file_deleted(context $context, stored_file $storedfile): void {
     $logevent = \core\event\draft_file_deleted::create([
-            'objectid' => $storedfile->get_id(),
-            'context' => $context,
-            'other' => [
-                    'itemid' => $storedfile->get_itemid(),
-                    'filename' => $storedfile->get_filename(),
-                    'filesize' => $storedfile->get_filesize(),
-                    'filepath' => $storedfile->get_filepath(),
-                    'contenthash' => $storedfile->get_contenthash(),
-            ],
+        'objectid' => $storedfile->get_id(),
+        'context' => $context,
+        'other' => [
+            'itemid' => $storedfile->get_itemid(),
+            'filename' => $storedfile->get_filename(),
+            'filesize' => $storedfile->get_filesize(),
+            'filepath' => $storedfile->get_filepath(),
+            'contenthash' => $storedfile->get_contenthash(),
+        ],
     ]);
     $logevent->trigger();
 }

@@ -48,28 +48,28 @@ class draft_file_deleted_test extends \advanced_testcase {
         $fs = get_file_storage();
 
         $filerecord = [
-                'contextid' => $usercontext->id,
-                'component' => 'core',
-                'filearea' => 'unittest',
-                'itemid' => 0,
-                'filepath' => '/',
-                'filename' => 'test.txt',
-                'source' => 'Copyright stuff',
+            'contextid' => $usercontext->id,
+            'component' => 'core',
+            'filearea' => 'unittest',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => 'test.txt',
+            'source' => 'Copyright stuff',
         ];
         $originalfile = $fs->create_file_from_string($filerecord, 'Test content');
         $nbsp = "\xc2\xa0";
 
         // Event data for logging.
         $eventdata = [
-                'objectid' => $originalfile->get_id(),
-                'context' => $usercontext,
-                'other' => [
-                        'itemid' => $originalfile->get_itemid(),
-                        'filename' => $originalfile->get_filename(),
-                        'filesize' => $originalfile->get_filesize(),
-                        'filepath' => $originalfile->get_filepath(),
-                        'contenthash' => $originalfile->get_contenthash(),
-                ]
+            'objectid' => $originalfile->get_id(),
+            'context' => $usercontext,
+            'other' => [
+                'itemid' => $originalfile->get_itemid(),
+                'filename' => $originalfile->get_filename(),
+                'filesize' => $originalfile->get_filesize(),
+                'filepath' => $originalfile->get_filepath(),
+                'contenthash' => $originalfile->get_contenthash(),
+            ],
         ];
         $event = \core\event\draft_file_deleted::create($eventdata);
         $event->trigger();
@@ -79,7 +79,7 @@ class draft_file_deleted_test extends \advanced_testcase {
         $event = reset($events);
 
         $this->assertEquals($usercontext, $event->get_context());
-        $expected = "The user with id '{$user->id}' has deleted file '/test.txt' from the draft file area with item id 0. ".
+        $expected = "The user with id '{$user->id}' has deleted file '/test.txt' from the draft file area with item id 0. " .
             "Size: 12{$nbsp}bytes. Content hash: {$originalfile->get_contenthash()}.";
         $this->assertSame($expected, $event->get_description());
     }
