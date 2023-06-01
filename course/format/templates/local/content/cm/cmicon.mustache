@@ -25,11 +25,15 @@
         "icon": "../../../pix/help.svg",
         "iconclass": "",
         "purpose": "content",
-        "modname": "resource"
+        "modname": "resource",
+        "pluginname": "File"
     }
 }}
 {{#url}}
-    <a href="{{url}}" class="activity-icon activityiconcontainer smaller {{purpose}} courseicon align-self-start mr-2">
+    <a href="{{url}}"
+        class="activity-icon activityiconcontainer smaller {{purpose}} btn btn-link courseicon align-self-start mr-2"
+        {{#pluginname}}data-toggle="tooltip" title="{{{pluginname}}}" data-placement="top"{{/pluginname}}
+    >
         <img src="{{{icon}}}" class="activityicon {{iconclass}}" alt="{{{modname}}} icon">
     </a>
 {{/url}}
