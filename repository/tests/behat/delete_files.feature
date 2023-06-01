@@ -109,3 +109,23 @@ Feature: Delete files and folders from the file manager
     Then I should not see "Delete me" in the "Private files" "block"
     And I should not see "empty.txt" in the "Private files" "block"
     And I should not see "Delete me too" in the "Private files" "block"
+
+  @javascript
+  Scenario: Verify system logs for deleted draft files
+    Given I log in as "admin"
+    And I follow "Manage private files..."
+    And I upload "lib/tests/fixtures/update_validator/zips/multidir.zip" file to "Files" filemanager
+    And I follow "multidir.zip"
+    And I click on "Unzip" "button"
+    And I click on "Display folder with file details" "link"
+    And I set the field "Select file 'one'" to "1"
+    And I click on "Delete" "link"
+    And I should see "Are you sure you want to delete the selected 1 file(s)?"
+    And I click on "OK" "button" in the "Confirm" "dialogue"
+    And I click on "Save changes" "button"
+    And I am on the "System logs report" page
+    And I click on "Get these logs" "button"
+    And I should see "The user with id '2' has deleted folder '/one/.' from the draft file area with item id" in the "has deleted folder '/one/.'" "table_row"
+    And I should see "Size: 0 bytes. Content hash:" in the "has deleted folder '/one/.'" "table_row"
+    Then I should see "The user with id '2' has deleted file '/one/version.php' from the draft file area with item id" in the "has deleted file '/one/version.php'" "table_row"
+    And I should see "Size: 40 bytes. Content hash:" in the "has deleted file '/one/version.php'" "table_row"
