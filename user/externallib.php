@@ -1214,8 +1214,10 @@ class core_user_external extends external_api {
             $maxbytes = USER_CAN_IGNORE_FILE_SIZE_LIMITS;
             $maxareabytes = FILE_AREA_MAX_BYTES_UNLIMITED;
         } else {
-            // Get current used space for this user.
-            $usedspace = file_get_user_used_space();
+            // Get current used space for this user (private files only).
+            $fileareainfo = file_get_file_area_info($context->id, 'user', 'private');
+            $usedspace = $fileareainfo['filesize_without_references'];
+
             // Get the total size of the new files we want to add to private files.
             $newfilesinfo = file_get_draft_area_info($params['draftid']);
 
