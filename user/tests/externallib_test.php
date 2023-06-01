@@ -1079,7 +1079,8 @@ class externallib_test extends externallib_advanced_testcase {
         core_user_external::add_user_private_files($draftid);
 
         // Force the quota so we are sure it won't be space to add the new file.
-        $CFG->userquota = file_get_user_used_space() + 1;
+        $fileareainfo = file_get_file_area_info($contextid, 'user', 'private');
+        $CFG->userquota = $fileareainfo['filesize_without_references'] + 1;
 
         // Generate a new draftitemid for the same testfile.
         $draftfile = core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath,
