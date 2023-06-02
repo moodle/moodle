@@ -3600,7 +3600,7 @@ class company {
         $departmentid = $topdepartment->id;
 
         // check if there is a different match.
-        if (!empty($this->companyrecord['departmentprofileid'])) {
+        if (!empty($this->companyrecord->departmentprofileid)) {
             // get the profile field;
             if ($field = $DB->get_record('user_info_field', ['id' => $this->companyrecord['departmentprofileid']])) {
                 $fieldname = 'profile_field_' . $field->shortname;

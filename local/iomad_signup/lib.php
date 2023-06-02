@@ -73,6 +73,9 @@ function local_iomad_signup_user_created($user) {
             // Get company.
             $company = new company($domaininfo->companyid);
 
+            // Get the full user information for department matching.
+            profile_load_data($user);
+
             // Do we have a company departmet profile field?
             $autodepartmentid = $company->get_auto_department($user);
 
@@ -90,6 +93,9 @@ function local_iomad_signup_user_created($user) {
             // Do we have a company to assign?
             // Get company.
             $company = new company($CFG->local_iomad_signup_company);
+
+            // Get the full user information for department matching.
+            profile_load_data($user);
 
             // Do we have a company departmet profile field?
             $autodepartmentid = $company->get_auto_department($user);
