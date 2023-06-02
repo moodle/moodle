@@ -1015,7 +1015,7 @@ class iomad {
      *
      * Return array();
      **/
-    public static function get_course_summary_info($departmentid, $courseid=0, $showsuspended) {
+    public static function get_course_summary_info($departmentid, $courseid=0, $showsuspended=1) {
         global $DB;
 
         // Create a temporary table to hold the userids.
@@ -1285,7 +1285,7 @@ class iomad {
      *
      * Return array();
      **/
-    public static function get_user_license_sqlsearch($params, $idlist='', $sort, $dir, $departmentid, $licenses=false) {
+    public static function get_user_license_sqlsearch($params, $idlist='', $sort='lastname', $dir='ASC', $departmentid=null, $licenses=false) {
         global $DB, $CFG;
 
         if (!empty($params['courseid']) && $params['courseid'] == 1) {
