@@ -391,11 +391,17 @@ class potential_company_users_user_selector extends company_user_selector_base {
      * @return array
      */
     public function find_users($search) {
-        global $CFG, $DB;
+        global $CFG, $DB, $USER;
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
         $params['companyidforjoin'] = $this->companyid;
+
+        // Can we see site administrators?
+        $adminsql = "";
+        if (!is_siteadmin($USER)) {
+            $adminsql = " AND u.id NOT IN (" . $CFG->siteadmins . ")";
+        }
 
         $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
@@ -404,6 +410,7 @@ class potential_company_users_user_selector extends company_user_selector_base {
                  LEFT JOIN {user_info_data} ui ON ui.userid = u.id
 
                  WHERE $wherecondition AND u.suspended = 0
+                 $adminsql
                  AND u.id NOT IN (
                    SELECT userid FROM {company_users}
                  )";
