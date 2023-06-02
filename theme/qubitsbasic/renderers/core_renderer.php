@@ -23,6 +23,8 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
+require_once("$CFG->dirroot/theme/qubitsbasic/externallib.php");
+
 class theme_qubitsbasic_core_renderer extends theme_boost\output\core_renderer {
 
     public function brand_color_code()
@@ -34,6 +36,23 @@ class theme_qubitsbasic_core_renderer extends theme_boost\output\core_renderer {
             'secondary_color' => $osettings->color2              
         );
         return $this->render_from_template('theme_qubitsbasic/custom/brandstylecode', $tltmp_txt);
+    }
+
+    public function qubits_left_navigation(){
+        global $CFG;
+        $mycourses = enrol_get_my_courses(array('id', 'cacherev'), 'fullname');
+        $myenrolcourses = array();
+        foreach($mycourses as $mycourse){
+            $myenrolcourses[] = array(
+                "name" => $mycourse->fullname,
+                "id" => $mycourse->id,
+                "url" => $CFG->wwwroot.'/course/view.php?id='.$mycourse->id
+            );
+        }
+        $context = array(
+            "myenrolcourses" => $myenrolcourses
+        );
+        return $this->render_from_template("theme_qubitsbasic/custom/leftnavigation", $context);
     }
     
 }
