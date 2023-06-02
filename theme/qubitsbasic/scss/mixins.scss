@@ -2,7 +2,8 @@
 $screen-xs-min: 320px;
 $screen-sm-min: 544px;
 $screen-md-min: 768px;
-$screen-lg-min: 1024px;
+$screen-lg-min: 992px;
+$screen-lg-max: 1024px;
 $screen-xlg-min: 1700px;
 
 @mixin breakpoint($media) {
@@ -23,7 +24,7 @@ $screen-xlg-min: 1700px;
       @content;
     }
   } @else if $media == xlg {
-    @media only screen and (min-width: $screen-xlg-min) {
+    @media only screen and (min-width: $screen-lg-max) and (max-width: $screen-xlg-min) {
       @content;
     }
   }

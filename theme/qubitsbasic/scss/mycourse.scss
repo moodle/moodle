@@ -3,6 +3,9 @@
   --cardtextcolor: #b36700;
 }
 
+@import "./mixins.scss";
+
+$colorbgcard: blue;
 @font-face {
   font-family: "qubits";
   src: url("[[font:theme|qubits.eot]]?yz5onj");
@@ -17,16 +20,13 @@
 
 [class^="qicon-"],
 [class*=" qicon-"] {
-  /* use !important to prevent issues with browser extensions that change fonts */
   font-family: "qubits" !important;
-  /* speak: never; */
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
   text-transform: none;
   line-height: 1;
 
-  /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -94,6 +94,9 @@
   .text {
     font-size: 20px;
     font-weight: 600;
+  }
+  @include breakpoint(xs) {
+    margin: 0;
   }
 }
 .closebar-left-alignment {
@@ -185,13 +188,52 @@
   }
   .card-text-size {
     font-weight: 600;
+    @include breakpoint(xs) {
+      font-size: 27px;
+    }
+    @include breakpoint(md) {
+      font-size: 30px;
+    }
+    @include breakpoint(lg) {
+      font-size: 36px;
+    }
+  }
+
+  @include breakpoint(xs) {
+    width: 100%;
+    margin-top: 83px;
+    position: initial;
   }
 }
 .qicon-menu {
   display: none;
   cursor: pointer;
 }
-
+.max-width {
+  @include breakpoint(xs) {
+    max-width: 90% !important;
+  }
+  @include breakpoint(md) {
+    max-width: 45% !important;
+  }
+  @include breakpoint(lg) {
+    max-width: 44% !important;
+  }
+  @include breakpoint(xlg) {
+    max-width: 29% !important;
+  }
+}
+.flex-grow {
+  @include breakpoint(md) {
+    flex: 0 0 43% !important;
+  }
+  @include breakpoint(lg) {
+    flex: 0 0 43% !important;
+  }
+  @include breakpoint(xlg) {
+    flex: 0 0 30% !important;
+  }
+}
 .sidebar {
   position: fixed;
   top: 0;
@@ -265,7 +307,7 @@
         min-width: 78px;
         text-align: center;
         line-height: 50px;
-        /* color: #585858; */
+        // / color: #585858; /
         font-size: 20px;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -497,7 +539,7 @@
   min-width: 78px;
   text-align: center;
   line-height: 50px;
-  /* color: #585858; */
+  // / color: #585858; /
   font-size: 20px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -520,7 +562,7 @@
 .sidebar .nav-links li a .link_name {
   font-size: 16px;
   font-weight: 600;
-  /* color: #585858; */
+  // / color: #585858; /
   transition: all 0.4s ease;
 }
 .sidebar.close-bars .nav-links li a .link_name {
@@ -584,24 +626,11 @@
 }
 
 @media screen and (min-width: 250px) and (max-width: 576px) {
-  .max-width {
-    max-width: 90% !important;
-  }
-  .pagetitle-left-alignment {
-    margin: 0;
-  }
   .navbar-nav .popover-region-notifications,
   .navbar-nav .usermenu {
     display: none !important;
   }
-  .card-text-size {
-    font-size: 27px;
-  }
-  .my-course-section {
-    width: 100%;
-    margin-top: 83px;
-    position: initial;
-  }
+
   .sidebar.close-bars ~ .my-course-section {
     width: 100%;
   }
@@ -625,59 +654,12 @@
   }
 }
 
-@media (min-width: 768px) {
-  .max-width {
-    max-width: 45% !important;
-  }
-  .card-text-size {
-    font-size: 30px;
-  }
-  .flex-grow {
-    flex: 0 0 43% !important;
-  }
-}
-
-@media (min-width: 992px) {
-  .max-width {
-    max-width: 44% !important;
-  }
-  .flex-grow {
-    flex: 0 0 43% !important;
-  }
-  .card-text-size {
-    font-size: 36px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .max-width {
-    max-width: 29% !important;
-  }
-  .flex-grow {
-    flex: 0 0 30% !important;
-  }
-}
-
-@media (min-width: 1400px) {
-  .max-width {
-    max-width: 29% !important;
-  }
-}
-@media (min-width: 900px) {
-  .max-width {
-    max-width: 29% !important;
-  }
-}
 @media (max-width: 100px) {
   .sidebar.close-bars .nav-links li .sub-menu {
     display: none;
   }
   .flex-mobile {
     flex-direction: column !important;
-  }
-  .card-text-size {
-    font-size: 28px !important;
-    font-weight: 600;
   }
 }
 @media (max-width: 768px) {
@@ -686,10 +668,6 @@
   }
   .card-width {
     width: 90% !important;
-  }
-
-  .max-width {
-    max-width: 90% !important;
   }
 }
 @media screen and (min-width: 400px) {
@@ -750,4 +728,14 @@
 .userpic {
   width: 78px;
   text-align: center;
+}
+.sample-class {
+  background-color: lighten($colorbgcard, 30);
+  color: darken($colorbgcard, 10);
+  padding: 20px 20px 0 10px;
+
+  &:hover {
+    background-color: darken($colorbgcard, 20);
+    color: white;
+  }
 }

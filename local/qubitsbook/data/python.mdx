@@ -1,0 +1,64 @@
+# Loops in Python
+
+Most of the actions in this world occur repeatedly. For example, if you have to walk one kilometer to reach a mall, you put your left and right foot forward, alternatively, to cover the distance. You repeatedly put each of your feet forward, one by one, a number of times until you reach the mall. Similarly in programming, you need to repeat a set of code multiple times more often than not. Loops help us to reduce this process of repetition.
+
+In Python, the for loop is used to iterate over a sequence such as a list or string and other iterable objects such as a range.
+
+Using a `for` loop, we can iterate over each item in the sequence and execute the same set of commands for each item. This way we can automate and repeat tasks in an efficient manner.
+
+Print the `Hello` statement five times by repeating the statements.
+
+```python
+print("Hello")
+print("Hello")
+print("Hello")
+print("Hello")
+```
+
+Write a program to get the same output using a `for` loop.
+
+```python,editable,python-1
+for i in range(5):
+       print("Hello")
+```
+
+Here `range(5)` returns a list of numbers from 0 to 4, that is, five elements. Therefore it repeats five times. So the `for` loop executes the `print("Hello")` statement five times.
+
+# Prime Number
+
+A natural number greater than 1 that can only be divided by 1 or the number itself is a prime number. Given below is a list of the first few prime numbers, in an increasing order:
+
+2, 3, 5, 7, 11, 13, 17, 19, 23,...
+
+Let’s write a program to check if a number is prime or not.
+
+```python,editable,python-2,input
+num = int(input("Enter a number:"))
+prime = True
+
+if num <= 1:
+   prime=False
+
+for i in range(2,num):
+       if (num % i) == 0:
+           prime = False
+           break
+if prime:
+      print(num,"is a prime number")
+else:
+      print(num,"is not a prime number")
+```
+
+# File I/O
+
+Now let's learn how to read and write to a file
+
+```python,
+def fun():
+    file = open("tes.txt","w")
+    L = ["This is Test File"]
+    file.writelines(L)
+    file = open("tes.txt","r+")
+    return(file.read())
+fun()
+```
