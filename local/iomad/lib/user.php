@@ -568,8 +568,8 @@ class company_user {
         if ( $sendemail ) {
             if ($reset) {
                 // Get the company details.
-                $company = company::get_company_byuserid($user->id);
-                $companyrec = $DB->get_record('company', array('id' => $company->id));
+                $companyrec = company::get_company_byuserid($user->id);
+                $company = new company($companyrec->id);
                 if ($companyrec->managernotify == 0) {
                     $headers = null;
                 } else {
