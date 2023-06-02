@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot.'/mod/lesson/locallib.php');
+
 /**
  * mod_lesson data generator class.
  *
@@ -41,15 +43,41 @@ class mod_lesson_generator extends testing_module_generator {
     protected $pagecount = 0;
 
     /**
+     * @var array list of candidate pages to be created when all answers have been added.
+     */
+    protected $candidatepages = [];
+
+    /**
+     * @var array map of readable jumpto to integer value.
+     */
+    protected $jumptomap = [
+        'This page' => LESSON_THISPAGE,
+        'Next page' => LESSON_NEXTPAGE,
+        'Previous page' => LESSON_PREVIOUSPAGE,
+        'End of lesson' => LESSON_EOL,
+        'Unseen question within a content page' => LESSON_UNSEENBRANCHPAGE,
+        'Random question within a content page' => LESSON_RANDOMPAGE,
+        'Random content page' => LESSON_RANDOMBRANCH,
+    ];
+
+    /**
      * To be called from data reset code only,
      * do not use in tests.
      * @return void
      */
     public function reset() {
         $this->pagecount = 0;
+        $this->candidatepages = [];
         parent::reset();
     }
 
+    /**
+     * Creates a lesson instance for testing purposes.
+     *
+     * @param null|array|stdClass $record data for module being generated.
+     * @param null|array $options general options for course module.
+     * @return stdClass record from module-defined table with additional field cmid (corresponding id in course_modules table)
+     */
     public function create_instance($record = null, array $options = null) {
         global $CFG;
 
@@ -92,9 +120,84 @@ class mod_lesson_generator extends testing_module_generator {
         return parent::create_instance($record, (array)$options);
     }
 
+    /**
+     * Creates a page for testing purposes. The page will be created when answers are added.
+     *
+     * @param null|array|stdClass $record data for page being generated.
+     * @param null|array $options general options.
+     */
+    public function create_page($record = null, array $options = null) {
+        $record = (array) $record;
+
+        // Pages require answers to work. Add it as a candidate page to be created once answers have been added.
+        $record['answer_editor'] = [];
+        $record['response_editor'] = [];
+        $record['jumpto'] = [];
+        $record['score'] = [];
+
+        if (!isset($record['previouspage']) || $record['previouspage'] === '') {
+            // Previous page not set, set it to the last candidate page (if any).
+            $record['previouspage'] = empty($this->candidatepages) ? '0' : end($this->candidatepages)['title'];
+        }
+
+        $this->candidatepages[] = $record;
+    }
+
+    /**
+     * Creates a page and its answers for testing purposes.
+     *
+     * @param array $record data for page being generated.
+     * @return stdClass created page, null if couldn't be created because it has a jump to a page that doesn't exist.
+     * @throws coding_exception
+     */
+    private function perform_create_page(array $record): ?stdClass {
+        global $DB;
+
+        $lesson = $DB->get_record('lesson', ['id' => $record['lessonid']], '*', MUST_EXIST);
+        $cm = get_coursemodule_from_instance('lesson', $lesson->id);
+        $lesson->cmid = $cm->id;
+        $qtype = $record['qtype'];
+
+        unset($record['qtype']);
+        unset($record['lessonid']);
+
+        if (isset($record['content'])) {
+            $record['contents_editor'] = [
+                'text' => $record['content'],
+                'format' => FORMAT_MOODLE,
+                'itemid' => 0,
+            ];
+            unset($record['content']);
+        }
+
+        $record['pageid'] = $this->get_previouspage_id($lesson->id, $record['previouspage']);
+        unset($record['previouspage']);
+
+        try {
+            $record['jumpto'] = $this->convert_page_jumpto($lesson->id, $record['jumpto']);
+        } catch (coding_exception $e) {
+            // This page has a jump to a page that hasn't been created yet.
+            return null;
+        }
+
+        $funcname = $qtype === 'content' ? 'create_content' : "create_question_{$qtype}";
+
+        if (!method_exists($this, $funcname)) {
+            throw new coding_exception('The page '.$record['title']." has an invalid qtype: $qtype");
+        }
+
+        return $this->{$funcname}($lesson, $record);
+    }
+
+    /**
+     * Creates a content page for testing purposes.
+     *
+     * @param stdClass $lesson instance where to create the page.
+     * @param array|stdClass $record data for page being generated.
+     * @return int Page ID.
+     */
     public function create_content($lesson, $record = array()) {
         global $DB, $CFG;
-        require_once($CFG->dirroot.'/mod/lesson/locallib.php');
         $now = time();
         $this->pagecount++;
         $record = (array)$record + array(
@@ -124,7 +227,6 @@ class mod_lesson_generator extends testing_module_generator {
      */
     public function create_question_truefalse($lesson, $record = array()) {
         global $DB, $CFG;
-        require_once($CFG->dirroot.'/mod/lesson/locallib.php');
         $now = time();
         $this->pagecount++;
         $record = (array)$record + array(
@@ -177,7 +279,6 @@ class mod_lesson_generator extends testing_module_generator {
      */
     public function create_question_multichoice($lesson, $record = array()) {
         global $DB, $CFG;
-        require_once($CFG->dirroot.'/mod/lesson/locallib.php');
         $now = time();
         $this->pagecount++;
         $record = (array)$record + array(
@@ -230,7 +331,6 @@ class mod_lesson_generator extends testing_module_generator {
      */
     public function create_question_essay($lesson, $record = array()) {
         global $DB, $CFG;
-        require_once($CFG->dirroot.'/mod/lesson/locallib.php');
         $now = time();
         $this->pagecount++;
         $record = (array)$record + array(
@@ -272,7 +372,6 @@ class mod_lesson_generator extends testing_module_generator {
      */
     public function create_question_matching($lesson, $record = array()) {
         global $DB, $CFG;
-        require_once($CFG->dirroot.'/mod/lesson/locallib.php');
         $now = time();
         $this->pagecount++;
         $record = (array)$record + array(
@@ -351,7 +450,6 @@ class mod_lesson_generator extends testing_module_generator {
      */
     public function create_question_shortanswer($lesson, $record = array()) {
         global $DB, $CFG;
-        require_once($CFG->dirroot.'/mod/lesson/locallib.php');
         $now = time();
         $this->pagecount++;
         $record = (array)$record + array(
@@ -393,7 +491,6 @@ class mod_lesson_generator extends testing_module_generator {
      */
     public function create_question_numeric($lesson, $record = array()) {
         global $DB, $CFG;
-        require_once($CFG->dirroot.'/mod/lesson/locallib.php');
         $now = time();
         $this->pagecount++;
         $record = (array)$record + array(
@@ -431,6 +528,7 @@ class mod_lesson_generator extends testing_module_generator {
      * Create a lesson override (either user or group).
      *
      * @param array $data must specify lessonid, and one of userid or groupid.
+     * @throws coding_exception
      */
     public function create_override(array $data): void {
         global $DB;
@@ -448,5 +546,160 @@ class mod_lesson_generator extends testing_module_generator {
         }
 
         $DB->insert_record('lesson_overrides', (object) $data);
+    }
+
+    /**
+     * Creates an answer in a page for testing purposes.
+     *
+     * @param null|array|stdClass $record data for module being generated.
+     * @param null|array $options general options.
+     * @throws coding_exception
+     */
+    public function create_answer($record = null, array $options = null) {
+        $record = (array) $record;
+
+        $candidatepage = null;
+        $pagetitle = $record['page'];
+        $found = false;
+        foreach ($this->candidatepages as &$candidatepage) {
+            if ($candidatepage['title'] === $pagetitle) {
+                $found = true;
+                break;
+            }
+        }
+
+        if (!$found) {
+            throw new coding_exception("Page '$pagetitle' not found in candidate pages. Please make sure the page exists "
+                . 'and all answers are in the same table.');
+        }
+
+        if (isset($record['answer'])) {
+            $candidatepage['answer_editor'][] = [
+                'text' => $record['answer'],
+                'format' => FORMAT_HTML,
+            ];
+        } else {
+            $candidatepage['answer_editor'][] = null;
+        }
+
+        if (isset($record['response'])) {
+            $candidatepage['response_editor'][] = [
+                'text' => $record['response'],
+                'format' => FORMAT_HTML,
+            ];
+        } else {
+            $candidatepage['response_editor'][] = null;
+        }
+
+        $candidatepage['jumpto'][] = $record['jumpto'] ?? LESSON_THISPAGE;
+        $candidatepage['score'][] = $record['score'] ?? 0;
+    }
+
+    /**
+     * All answers in a table have been generated, create the pages.
+     */
+    public function finish_generate_answer() {
+        $this->create_candidate_pages();
+    }
+
+    /**
+     * Create candidate pages.
+     *
+     * @throws coding_exception
+     */
+    protected function create_candidate_pages(): void {
+        // For performance reasons it would be better to use a topological sort algorithm. But since test cases shouldn't have
+        // a lot of paged and complex jumps it was implemented using a simpler approach.
+        $consecutiveblocked = 0;
+
+        while (count($this->candidatepages) > 0) {
+            $page = array_shift($this->candidatepages);
+            $id = $this->perform_create_page($page);
+
+            if ($id === null) {
+                // Page cannot be created yet because of jumpto. Move it to the end of list.
+                $consecutiveblocked++;
+                $this->candidatepages[] = $page;
+
+                if ($consecutiveblocked === count($this->candidatepages)) {
+                    throw new coding_exception('There is a circular dependency in pages jumps.');
+                }
+            } else {
+                $consecutiveblocked = 0;
+            }
+        }
+    }
+
+    /**
+     * Calculate the previous page id.
+     * If no page title is supplied, use the last page created in the lesson (0 if no pages).
+     * If page title is supplied, search it in DB and the list of candidate pages.
+     *
+     * @param int $lessonid the lesson id.
+     * @param string $pagetitle the page title, for example 'Test page'. '0' if no previous page.
+     * @return int corresponding id. 0 if no previous page.
+     * @throws coding_exception
+     */
+    protected function get_previouspage_id(int $lessonid, string $pagetitle): int {
+        global $DB;
+
+        if (is_numeric($pagetitle) && intval($pagetitle) === 0) {
+            return 0;
+        }
+
+        $pages = $DB->get_records('lesson_pages', ['lessonid' => $lessonid, 'title' => $pagetitle], 'id ASC', 'id, title');
+
+        if (count($pages) > 1) {
+            throw new coding_exception("More than one page with '$pagetitle' found");
+        } else if (!empty($pages)) {
+            return current($pages)->id;
+        }
+
+        // Page doesn't exist, search if it's a candidate page. If it is, use its previous page instead.
+        foreach ($this->candidatepages as $candidatepage) {
+            if ($candidatepage['title'] === $pagetitle) {
+                return $this->get_previouspage_id($lessonid, $candidatepage['previouspage']);
+            }
+        }
+
+        throw new coding_exception("Page '$pagetitle' not found");
+    }
+
+    /**
+     * Convert the jumpto using a string to an integer value.
+     * The jumpto can contain a page name or one of our predefined values.
+     *
+     * @param int $lessonid the lesson id.
+     * @param array|null $jumptolist list of jumpto to treat.
+     * @return array|null list of jumpto already treated.
+     * @throws coding_exception
+     */
+    protected function convert_page_jumpto(int $lessonid, ?array $jumptolist): ?array {
+        global $DB;
+
+        if (empty($jumptolist)) {
+            return $jumptolist;
+        }
+
+        foreach ($jumptolist as $i => $jumpto) {
+            if (empty($jumpto) || is_numeric($jumpto)) {
+                continue;
+            }
+
+            if (isset($this->jumptomap[$jumpto])) {
+                $jumptolist[$i] = $this->jumptomap[$jumpto];
+
+                continue;
+            }
+
+            $page = $DB->get_record('lesson_pages', ['lessonid' => $lessonid, 'title' => $jumpto], 'id');
+            if ($page === false) {
+                throw new coding_exception("Jump '$jumpto' not found in pages.");
+            }
+
+            $jumptolist[$i] = $page->id;
+        }
+
+        return $jumptolist;
     }
 }
