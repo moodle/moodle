@@ -17,23 +17,15 @@
 namespace mod_quiz\question\bank;
 
 /**
- * A column type for the add this question to the quiz action.
+ * A column type for the preview question action.
  *
  * @package    mod_quiz
  * @category   question
- * @copyright  2009 Tim Hunt
- * @author     2021 Safat Shahin <safatshahin@catalyst-au.net>
+ * @copyright  2023 Catalyst IT Europe Ltd.
+ * @author     Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class add_action_column extends \core_question\local\bank\column_base {
-
-    /** @var string caches a lang string used repeatedly. */
-    protected $stradd;
-
-    public function init(): void {
-        parent::init();
-        $this->stradd = get_string('addtoquiz', 'quiz');
-    }
+class preview_action_column extends \core_question\local\bank\column_base {
 
     public function get_extra_classes(): array {
         return ['iconcol'];
@@ -44,20 +36,15 @@ class add_action_column extends \core_question\local\bank\column_base {
     }
 
     public function get_name() {
-        return 'addtoquizaction';
+        return 'previewquestionaction';
     }
 
     protected function display_content($question, $rowclasses) {
-        global $OUTPUT;
+        global $PAGE;
         if (!question_has_capability_on($question, 'use')) {
             return;
         }
-        $link = new \action_link(
-                $this->qbank->add_to_quiz_url($question->id),
-                '',
-                null,
-                ['title' => $this->stradd],
-                new \pix_icon('t/add', $this->stradd));
-        echo $OUTPUT->render($link);
+        $editrenderer = $PAGE->get_renderer('quiz', 'edit');
+        echo $editrenderer->question_preview_icon($this->qbank->get_quiz(), $question);
     }
 }
