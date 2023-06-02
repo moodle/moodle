@@ -25,19 +25,19 @@ Feature: Extra credit contributions are normalised when going out of bounds
     And I set the following fields to these values:
       | Item name | Manual item 1 |
       | Maximum grade | 150 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 2 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 3 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 4 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the field "Show weighting" to "Show"
     And I set the field "Show contribution to course total" to "Show"
@@ -58,11 +58,11 @@ Feature: Extra credit contributions are normalised when going out of bounds
     When I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | <aggregation> |
     And I set the following settings for grade item "Manual item 2" of type "gradeitem" on "setup" page:
-      | Extra credit | 1 |
+      | aggregationcoef | 1 |
     And I set the following settings for grade item "Manual item 3" of type "gradeitem" on "setup" page:
-      | Extra credit | 1 |
+      | aggregationcoef | 1 |
     And I set the following settings for grade item "Manual item 4" of type "gradeitem" on "setup" page:
-      | Extra credit | 1 |
+      | aggregationcoef | 1 |
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
     Then the following should exist in the "user-grade" table:

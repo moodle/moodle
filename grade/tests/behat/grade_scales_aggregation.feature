@@ -93,7 +93,7 @@ Feature: Control the aggregation of the scales
     Then the field "Override weight of Grade me" matches value "100.00"
     And I click on grade item menu "Scale me" of type "gradeitem" on "setup" page
     And I choose "Edit grade item" in the open action menu
-    And I follow "Show more..."
+    And I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     And I should not see "Weight adjusted"
     And I should not see "Weight"
     And the following config values are set as admin:
@@ -106,6 +106,6 @@ Feature: Control the aggregation of the scales
     And the field "Override weight of Scale me" matches value "4.8"
     And I click on grade item menu "Scale me" of type "gradeitem" on "setup" page
     And I choose "Edit grade item" in the open action menu
-    And I follow "Show more..."
+    And I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     And I should see "Weight adjusted"
     And I should see "Weight"

@@ -51,7 +51,7 @@ Feature: Teacher can unhide grades on the edit page allowing students to view th
     And I choose "Edit grade item" in the open action menu
     And the field "Hidden" matches value "1"
     And I set the field "Hidden" to "0"
-    And I press "Save changes"
+    And I click on "Save" "button" in the "Edit grade item" "dialogue"
     And I log out
     And I am on the "Test assignment name" "assign activity" page logged in as student1
     Then I should see "50.00"
@@ -62,7 +62,7 @@ Feature: Teacher can unhide grades on the edit page allowing students to view th
     Given I click on grade item menu "Test assignment name" of type "gradeitem" on "setup" page
     And I choose "Edit grade item" in the open action menu
     And I set the field "Hidden" to "1"
-    And I press "Save changes"
+    And I click on "Save" "button" in the "Edit grade item" "dialogue"
     And I log out
     And I am on the "Test assignment name" "assign activity" page logged in as student1
     And I should not see "50.00"

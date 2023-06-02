@@ -68,7 +68,7 @@ Feature: I can grade a students interaction across a forum
     # The values saved should be reflected here.
     And I click on grade item menu "Test Forum 1 whole forum" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
-    When I expand all fieldsets
+    When I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     Then the field "Maximum grade" matches value "10"
     Then the field "Grade to pass" matches value "4"
     And I should see "Tutor" in the "Parent category" "fieldset"
@@ -121,7 +121,7 @@ Feature: I can grade a students interaction across a forum
     # The values saved should be reflected here.
     And I click on grade item menu "Test Forum 1 rating" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
-    When I expand all fieldsets
+    When I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     Then the field "Maximum grade" matches value "10"
     Then the field "Grade to pass" matches value "4"
     And I should see "Tutor" in the "Parent category" "fieldset"
@@ -149,15 +149,15 @@ Feature: I can grade a students interaction across a forum
     # The values saved should be reflected here.
     And I click on grade item menu "Test Forum 1 rating" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
-    When I expand all fieldsets
+    When I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     Then the field "Maximum grade" matches value "100"
     Then the field "Grade to pass" matches value "40"
     And I should see "Peers" in the "Parent category" "fieldset"
-    And I press "cancel"
+    And I press "Cancel"
 
     And I click on grade item menu "Test Forum 1 whole forum" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
-    When I expand all fieldsets
+    When I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     Then the field "Maximum grade" matches value "10"
     Then the field "Grade to pass" matches value "4"
     And I should see "Tutor" in the "Parent category" "fieldset"

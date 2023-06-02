@@ -32,7 +32,7 @@ Feature: Student and teacher's view of aggregated grade items is consistent when
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | calculated |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I set "=[[a4]]/2" calculation for grade item "calculated" with idnumbers:
       | Sub category 1 | sub1 |
     And I navigate to "Grades > Report settings > Overview report" in site administration

@@ -33,23 +33,23 @@ Feature: Grade item validation
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | MI 1 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
 
   Scenario: Being able to change the grade type, scale and maximum grade for a manual grade item when there are no grades
     Given I click on grade item menu "MI 1" of type "gradeitem" on "setup" page
     And I choose "Edit grade item" in the open action menu
     When I should not see "Some grades have already been awarded, so the grade type"
     Then I set the field "Grade type" to "Scale"
-    And I press "Save changes"
+    And I click on "Save" "button" in the "Edit grade item" "dialogue"
     And I should see "Scale must be selected"
     And I set the field "Scale" to "ABCDEF"
-    And I press "Save changes"
+    And I click on "Save" "button" in the "Edit grade item" "dialogue"
     And I should not see "You cannot change the type, as grades already exist for this item"
     And I click on grade item menu "MI 1" of type "gradeitem" on "setup" page
     And I choose "Edit grade item" in the open action menu
     And I should not see "Some grades have already been awarded, so the grade type"
     And I set the field "Scale" to "Letter scale"
-    And I press "Save changes"
+    And I click on "Save" "button" in the "Edit grade item" "dialogue"
     And I should not see "You cannot change the scale, as grades already exist for this item"
 
   Scenario: Attempting to change a manual item's grade type when grades already exist
@@ -68,7 +68,7 @@ Feature: Grade item validation
     And I choose "Edit grade item" in the open action menu
     And I set the field "Grade type" to "Scale"
     And I set the field "Scale" to "ABCDEF"
-    And I press "Save changes"
+    And I click on "Save" "button" in the "Edit grade item" "dialogue"
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "C" to the user "Student 1" for the grade item "MI 1"

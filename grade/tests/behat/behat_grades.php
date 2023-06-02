@@ -42,6 +42,10 @@ class behat_grades extends behat_base {
                 'grade_actions',
                 ["//td[count(//table[@id='user-grades']//th[contains(., %locator%)]/preceding-sibling::th)]//*[@data-type='grade']"]
             ),
+            new behat_component_named_selector(
+                'gradeitem modal',
+                [".//*[contains(concat(' ', @class, ' '), ' modal ')]"]
+            ),
         ];
     }
 
@@ -56,8 +60,13 @@ class behat_grades extends behat_base {
     public function i_select_in_the($value, $element, $selectortype) {
         // Getting the container where the text should be found.
         $container = $this->get_selected_node($selectortype, $element);
-        $node = $this->find('xpath', './/input[@value="' . $value . '"]', false, $container);
-        $node->click();
+        if ($this->getSession()->getPage()->find('xpath', './/input[@value="' . $value . '"]')) {
+            $node = $this->find('xpath', './/input[@value="' . $value . '"]', false, $container);
+            $node->click();
+        } else {
+            $node = $this->find('xpath', './/button[@data-action="' . strtolower($value) . '"]', false, $container);
+            $node->press();
+        }
     }
 
     /**

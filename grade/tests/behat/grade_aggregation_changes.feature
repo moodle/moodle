@@ -62,46 +62,46 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a2" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "1"
-    And the field "id_aggregationcoef2" matches value "40.0"
+    And the field "Weight" matches value "40.0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a3" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "1"
-    And the field "id_aggregationcoef2" matches value "10.0"
+    And the field "Weight" matches value "10.0"
     And the field "Extra credit" matches value "1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a4" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item b1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item b2" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "1"
-    And the field "id_aggregationcoef2" matches value "40.0"
+    And the field "Weight" matches value "40.0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item b3" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "1"
-    And the field "id_aggregationcoef2" matches value "10.0"
+    And the field "Weight" matches value "10.0"
     And the field "Extra credit" matches value "1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item b4" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
 
   Scenario: Switching a category from Natural aggregation to Mean of grades and back
     Given I click on grade item menu "Course 1" of type "course" on "grader" page
@@ -113,25 +113,25 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     Then I should not see "Weight adjusted"
     And I should not see "Weight"
     And I should not see "Extra credit"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a2" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I should not see "Weight adjusted"
     And I should not see "Weight"
     And I should not see "Extra credit"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a3" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I should not see "Weight adjusted"
     And I should not see "Weight"
     And I should not see "Extra credit"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a4" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I should not see "Weight adjusted"
     And I should not see "Weight"
     And I should not see "Extra credit"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Cat mean" of type "category" on "grader" page
     And I choose "Edit category" in the open action menu
     And I expand all fieldsets
@@ -162,25 +162,25 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I should not see "Weight adjusted"
     And I should not see "Weight"
     And I should not see "Extra credit"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item b1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I should not see "Weight adjusted"
     And I should not see "Weight"
     And I should not see "Extra credit"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item b3" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I should not see "Weight adjusted"
     And I should not see "Weight"
     And I should not see "Extra credit"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item b4" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I should not see "Weight adjusted"
     And I should not see "Weight"
     And I should not see "Extra credit"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     # Switching back.
     And I click on grade item menu "Course 1" of type "course" on "grader" page
     And I choose "Edit category" in the open action menu
@@ -190,22 +190,22 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a2" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a3" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a4" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Cat mean" of type "category" on "grader" page
     And I choose "Edit category" in the open action menu
     And I expand all fieldsets
@@ -232,22 +232,22 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item b2" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item b3" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item b4" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
 
   Scenario: Switching a category from Natural aggregation to Weighted mean of grades and back
     Given I click on grade item menu "Course 1" of type "course" on "grader" page
@@ -259,25 +259,25 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     Then I should not see "Weight adjusted"
     And I should not see "Extra credit"
     And the field "Item weight" matches value "1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a2" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I should not see "Weight adjusted"
     And I should not see "Extra credit"
     And the field "Item weight" matches value "1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a3" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I should not see "Weight adjusted"
     And I should not see "Extra credit"
     And the field "Item weight" matches value "1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a4" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I should not see "Weight adjusted"
     And I should not see "Extra credit"
     And the field "Item weight" matches value "1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Cat mean" of type "category" on "grader" page
     And I choose "Edit category" in the open action menu
     And I expand all fieldsets
@@ -308,25 +308,25 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I should not see "Weight adjusted"
     And I should not see "Extra credit"
     And the field "Item weight" matches value "1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item b2" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I should not see "Weight adjusted"
     And I should not see "Extra credit"
     And the field "Item weight" matches value "1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item b3" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I should not see "Weight adjusted"
     And I should not see "Extra credit"
     And the field "Item weight" matches value "1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item b4" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I should not see "Weight adjusted"
     And I should not see "Extra credit"
     And the field "Item weight" matches value "1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     # Switching back.
     And I click on grade item menu "Course 1" of type "course" on "grader" page
     And I choose "Edit category" in the open action menu
@@ -336,22 +336,22 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a2" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a3" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a4" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Cat mean" of type "category" on "grader" page
     And I choose "Edit category" in the open action menu
     And I expand all fieldsets
@@ -378,22 +378,22 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item b2" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item b3" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item b4" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
 
   Scenario: Switching grade items between categories
     # Move to same aggregation (Natural).
@@ -409,24 +409,24 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I choose "Edit grade item" in the open action menu
     Then the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a2" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "1"
-    And the field "id_aggregationcoef2" matches value "40.0"
+    And the field "Weight" matches value "40.0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a3" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "1"
-    And the field "id_aggregationcoef2" matches value "10.0"
+    And the field "Weight" matches value "10.0"
     And the field "Extra credit" matches value "1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a4" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     # Move to Mean of grades (with extra credit).
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the field "Select Item a1" to "1"
@@ -438,19 +438,19 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I click on grade item menu "Item a1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a2" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a3" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Extra credit" matches value "1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a4" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Extra credit" matches value "1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     # Move to Simple weight mean of grades.
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the field "Select Item a1" to "1"
@@ -462,19 +462,19 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I click on grade item menu "Item a1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a2" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a3" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Extra credit" matches value "1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a4" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Extra credit" matches value "1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     # Move to Weighted mean of grades.
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the field "Select Item a1" to "1"
@@ -487,22 +487,22 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I choose "Edit grade item" in the open action menu
     And the field "Item weight" matches value "1"
     And I set the field "Item weight" to "2"
-    And I press "Save changes"
+    And I click on "Save" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a2" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Item weight" matches value "1"
     And I set the field "Item weight" to "5"
-    And I press "Save changes"
+    And I click on "Save" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a3" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Item weight" matches value "1"
     And I set the field "Item weight" to "8"
-    And I press "Save changes"
+    And I click on "Save" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a4" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Item weight" matches value "1"
     And I set the field "Item weight" to "11"
-    And I press "Save changes"
+    And I click on "Save" "button" in the "Edit grade item" "dialogue"
     # Move to same (Weighted mean of grades).
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the field "Select Item a1" to "1"
@@ -515,19 +515,19 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I click on grade item menu "Item a1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Item weight" matches value "2"
-    And I press "Save changes"
+    And I click on "Save" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a2" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Item weight" matches value "5"
-    And I press "Save changes"
+    And I click on "Save" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a3" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Item weight" matches value "8"
-    And I press "Save changes"
+    And I click on "Save" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a4" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Item weight" matches value "11"
-    And I press "Save changes"
+    And I click on "Save" "button" in the "Edit grade item" "dialogue"
     # Move back to Natural.
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the field "Select Item a1" to "1"
@@ -540,19 +540,19 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a2" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a3" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I click on grade item menu "Item a4" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
