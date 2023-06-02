@@ -2101,10 +2101,17 @@ class grade_structure {
             $url = $gpr->add_url_params($url);
             $title = grade_helper::get_lang_string('itemsedit', 'grades');
         } else if ($element['type'] == 'category') {
-            $url = new moodle_url('/grade/edit/tree/category.php',
-                ['courseid' => $this->courseid, 'id' => $object->id]);
-            $url = $gpr->add_url_params($url);
+            $url = new moodle_url('#');
             $title = grade_helper::get_lang_string('categoryedit', 'grades');
+            return html_writer::link($url, $title, [
+                'class' => 'dropdown-item',
+                'aria-label' => $title,
+                'role' => 'menuitem',
+                'data-gprplugin' => $gpr->plugin,
+                'data-courseid' => $this->courseid,
+                'data-category' => $object->id,
+                'data-trigger' => 'add-category-form'
+            ]);
         }
         return html_writer::link($url, $title,
             ['class' => 'dropdown-item', 'aria-label' => $title, 'role' => 'menuitem']);

@@ -28,7 +28,8 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
     Given I press "Add category"
     And I set the following fields to these values:
       | Category name | Calc cat |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New category" "dialogue"
+    And I wait until the page is ready
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | grade item 1 |
@@ -55,7 +56,8 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
     Given I press "Add category"
     And I set the following fields to these values:
       | Category name | Calc cat |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New category" "dialogue"
+    And I wait until the page is ready
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | grade item 1 |

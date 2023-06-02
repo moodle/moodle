@@ -27,7 +27,8 @@ Feature: Calculated grade items can be used in the gradebook
     Given I press "Add category"
     And I set the following fields to these values:
       | Category name | Calc cat |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New category" "dialogue"
+    And I wait until the page is ready
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | grade item 1 |
@@ -54,7 +55,9 @@ Feature: Calculated grade items can be used in the gradebook
     Given I press "Add category"
     And I set the following fields to these values:
       | Category name | Calc cat |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New category" "dialogue"
+    And I wait until the page is ready
+    And I should not see "Calculated grade" in the "Calc cat" "table_row"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | grade item 1 |
@@ -62,6 +65,7 @@ Feature: Calculated grade items can be used in the gradebook
     And I click on "Save" "button" in the "New grade item" "dialogue"
     And I set "=[[gi1]]/2" calculation for grade category "Calc cat" with idnumbers:
       | grade item 1 | gi1 |
+    And I should see "Calculated grade" in the "Calc cat" "table_row"
     And I set the following settings for grade item "Calc cat" of type "category" on "setup" page:
       | Maximum grade | 50 |
     And I navigate to "View > Grader report" in the course gradebook

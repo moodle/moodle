@@ -31,22 +31,37 @@ import Notification from 'core/notification';
 export const init = () => {
     // Sometimes the trigger does not exist, so lets conditionally add it.
     document.addEventListener('click', event => {
+        const args = {};
+
+        let formClass = null;
+        let title = null;
+        let trigger = null;
         if (event.target.closest('[data-trigger="add-item-form"]')) {
             event.preventDefault();
-            const trigger = event.target.closest('[data-trigger="add-item-form"]');
-            // If we are adding or editing a grade item change the Modal header.
-            const title = trigger.getAttribute('data-itemid') === '-1' ?
+            trigger = event.target.closest('[data-trigger="add-item-form"]');
+            formClass = 'core_grades\\form\\add_item';
+            title = trigger.getAttribute('data-itemid') === '-1' ?
                 getString('newitem', 'core_grades') : getString('itemsedit', 'core_grades');
+            args.itemid = trigger.getAttribute('data-itemid');
+        } else if (event.target.closest('[data-trigger="add-category-form"]')) {
+            event.preventDefault();
+            trigger = event.target.closest('[data-trigger="add-category-form"]');
+            formClass = 'core_grades\\form\\add_category';
+            title = trigger.getAttribute('data-category') === '-1' ?
+                getString('newcategory', 'core_grades') : getString('categoryedit', 'core_grades');
+            args.category = trigger.getAttribute('data-category');
+        }
+
+        if (trigger) {
+            args.courseid = trigger.getAttribute('data-courseid');
+            args.gpr_plugin = trigger.getAttribute('data-gprplugin');
+
             const modalForm = new ModalForm({
                 modalConfig: {
                     title: title,
                 },
-                formClass: 'core_grades\\form\\add_item',
-                args: {
-                    itemid: trigger.getAttribute('data-itemid'),
-                    courseid: trigger.getAttribute('data-courseid'),
-                    gpr_plugin: trigger.getAttribute('data-gprplugin'),
-                },
+                formClass: formClass,
+                args: args,
                 saveButtonText: getString('save', 'core'),
                 returnFocus: trigger,
             });
@@ -58,12 +73,13 @@ export const init = () => {
                 } else {
                     Notification.addNotification({
                         type: 'error',
-                        message:  getString('saving_failed', 'core_grades')
+                        message: getString('saving_failed', 'core_grades')
                     });
                 }
             });
 
             modalForm.show();
         }
+
     });
 };

@@ -81,10 +81,20 @@ class gradebook_setup_action_bar extends action_bar {
         }
 
         // Add a button to the action bar with a link to the 'add category' page.
-        $addcategorylink = new moodle_url('/grade/edit/tree/category.php', ['courseid' => $courseid]);
-        $addcategorybutton = new \single_button($addcategorylink, get_string('addcategory', 'grades'), 'get');
-        $data['addcategorybutton'] = $addcategorybutton->export_for_template($output);
-
+        $addgradecategorybutton = new \single_button(
+            $addgradeitemlink,
+            get_string('addcategory', 'grades'),
+            'get',
+            \single_button::BUTTON_SECONDARY,
+            [
+                'class' => 'btn btn-secondary',
+                'data-courseid' => $courseid,
+                'data-category' => -1,
+                'data-trigger' => 'add-category-form',
+                'data-gprplugin' => 'tree'
+            ]
+        );
+        $data['addcategorybutton'] = $addgradecategorybutton->export_for_template($output);
         return $data;
     }
 }
