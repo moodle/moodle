@@ -44,6 +44,13 @@ if ($hassiteconfig && !empty($USER->id)) {
     );
 
     $settings->add(new admin_setting_configcheckbox(
+        'local_report_completion_overview/showfulldetail',
+        get_string('showfulldetail', 'local_report_completion_overview'),
+        get_string('showfulldetail_help', 'local_report_completion_overview'),
+        true)
+    );
+
+    $settings->add(new admin_setting_configcheckbox(
         'local_report_completion_overview/showexpiryonly',
         get_string('showexpiryonly', 'local_report_completion_overview'),
         get_string('showexpiryonly_help', 'local_report_completion_overview'),

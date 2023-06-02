@@ -337,8 +337,17 @@ $columns = array('fullname',
                  'email');
 
 foreach ($courses as $courseid) {
-    $headers[] = $allcompanycourses[$courseid];
-    $columns[] = "c" . $courseid . "coursename";
+    if (!$download) {
+        $headers[] = $allcompanycourses[$courseid];
+        $columns[] = "c" . $courseid . "coursename";
+    } else {
+        $headers[] = get_string('coursestatus', 'local_report_completion_overview', $allcompanycourses[$courseid]);
+        $columns[] = "c" . $courseid . "coursestatus";
+        $headers[] = get_string('coursecompletion', 'local_report_completion_overview', $allcompanycourses[$courseid]);
+        $columns[] = "c" . $courseid . "coursecompletion";
+        $headers[] = get_string('courseexpiry', 'local_report_completion_overview', $allcompanycourses[$courseid]);
+        $columns[] = "c" . $courseid . "courseexpiry";
+    }
 }
 
 $sqlparams = array('companyid' => $companyid) + $searchinfo->searchparams;
@@ -421,6 +430,10 @@ if (!$download) {
     echo $OUTPUT->download_dataformat_selector(get_string('downloadas', 'table'), $baseurl, 'downloadformat', $downloadparams);
 }
 
+// Are we showing all detail or not?
+$showfulldetails = get_config('local_report_completion_overview', 'showfulldetail');
+
+// Set up the table. 
 $table = new html_table();
 $table->head = $headers;
 foreach ($userlist as $user) {
@@ -480,17 +493,26 @@ foreach ($userlist as $user) {
             $coursesummary['timeexpires'] = date($CFG->iomad_date_format, $usercourse->timeexpires);
         }
         $coursesummary['finalscore'] = $usercourse->finalscore;
-        if (!empty($expirecourses[$usercourse->courseid]) && empty($gradelesscourses[$usercourse->courseid])) {
-            $rowtext = get_string('coursesummary', 'local_report_completion_overview', (object) $coursesummary);
-        } else if (empty($expirecourses[$usercourse->courseid]) && empty($gradelesscourses[$usercourse->courseid])) {
-            $rowtext = get_string('coursesummary_noexpiry', 'local_report_completion_overview', (object) $coursesummary);
-        } else if (!empty($expirecourses[$usercourse->courseid]) && !empty($gradelesscourses[$usercourse->courseid])) {
-            $rowtext = get_string('coursesummary_nograde', 'local_report_completion_overview', (object) $coursesummary);
-        } else if (empty($expirecourses[$usercourse->courseid]) && !empty($gradelesscourses[$usercourse->courseid])) {
-            $rowtext = get_string('coursesummary_nograde_noexpiry', 'local_report_completion_overview', (object) $coursesummary);
+
+        // Make the extra info.
+        if (!$showfulldetails) {
+            $rowtext = get_string('coursesummary_partial', 'local_report_completion_overview', (object) $coursesummary);
+        } else {
+            if (!empty($expirecourses[$usercourse->courseid]) && empty($gradelesscourses[$usercourse->courseid])) {
+                $rowtext = get_string('coursesummary', 'local_report_completion_overview', (object) $coursesummary);
+            } else if (empty($expirecourses[$usercourse->courseid]) && empty($gradelesscourses[$usercourse->courseid])) {
+                $rowtext = get_string('coursesummary_noexpiry', 'local_report_completion_overview', (object) $coursesummary);
+            } else if (!empty($expirecourses[$usercourse->courseid]) && !empty($gradelesscourses[$usercourse->courseid])) {
+                $rowtext = get_string('coursesummary_nograde', 'local_report_completion_overview', (object) $coursesummary);
+            } else if (empty($expirecourses[$usercourse->courseid]) && !empty($gradelesscourses[$usercourse->courseid])) {
+                $rowtext = get_string('coursesummary_nograde_noexpiry', 'local_report_completion_overview', (object) $coursesummary);
+            }
         }
+
+        // Set up the cell classes.
         if (empty($expirecourses[$usercourse->courseid])) {
             $rowclass = "ignored";
+            $statustext = "";
         } else {
             if (empty($usercourse->timeenrolled)) {
                 $rowclass = "notenrolled";
@@ -507,10 +529,13 @@ foreach ($userlist as $user) {
             if (!empty($usercourse->timeenrolled) && !empty($usercourse->timecompleted) && $usercourse->timeexpires < $runtime) {
                 $rowclass = "expired";
             }
+            $statustext = get_string($rowclass, 'local_report_completion_overview');
         }
 
         if ($download) {
-            $row[] = $rowtext;
+            $row[] = $statustext;
+            $row[] = $coursesummary['timecompleted'];
+            $row[] = $coursesummary['timeexpires'];
         } else if (!$showtext) {
             $row[] = "<div class='completion_overview_icon' title='$rowtext'><span class='dot $rowclass'></span></div>";
         } else { 

@@ -22,6 +22,6 @@
  */
 
 $plugin->release  = '4.1.2 (Build: 20230313)'; // Human-friendly version name
-$plugin->version  = 2023050300;
+$plugin->version  = 2023060200;
 $plugin->requires = 2019052000;
 $plugin->component  = 'local_report_completion_overview';
