@@ -539,7 +539,7 @@ foreach ($userlist as $user) {
         } else if (!$showtext) {
             $row[] = "<div class='completion_overview_icon' title='$rowtext'><span class='dot $rowclass'></span></div>";
         } else { 
-            $row[] = nl2br($rowtext);
+            $row[] = "<span class='$rowclass'>" . nl2br($rowtext) . "</span>";
         } 
     }
     $table->data[] = $row;
