@@ -211,7 +211,7 @@ function filter_kaltura_callback($link) {
         'height' => $height,
         'class' => 'kaltura-player-iframe',
         'allowfullscreen' => 'true',
-        'allow' => 'autoplay *; fullscreen *; encrypted-media *; camera *; microphone *;',
+        'allow' => 'autoplay *; fullscreen *; encrypted-media *; camera *; microphone *; display-capture *;',
         'src' => $url->out(false),
         'frameborder' => '0'
     ));
