@@ -287,7 +287,7 @@ echo $output->heading("$usercount ".get_string('users'));
 $alphabet = explode(',', get_string('alphabet', 'block_iomad_company_admin'));
 $strall = get_string('all');
 
-$baseurl = new moodle_url('editusers.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
+$baseurl = new moodle_url('searchusers.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage, 'eventid' => $eventid));
 echo $output->paging_bar($usercount, $page, $perpage, $baseurl);
 
 flush();
