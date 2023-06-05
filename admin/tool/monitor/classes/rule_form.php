@@ -93,7 +93,7 @@ class rule_form extends \moodleform {
         $mform->setType('name', PARAM_TEXT);
 
         // Plugin field.
-        $mform->addElement('select', 'plugin', get_string('areatomonitor', 'tool_monitor'), $pluginlist, [
+        $mform->addElement('selectgroups', 'plugin', get_string('areatomonitor', 'tool_monitor'), $pluginlist, [
             'data-field' => 'component',
         ]);
         $mform->addRule('plugin', get_string('required'), 'required');

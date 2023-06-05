@@ -14,10 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 namespace tool_monitor;
 
+use core_collator;
 use core_component;
+use core_plugin_manager;
 use ReflectionClass;
 
 /**
@@ -97,24 +98,37 @@ class eventlist {
      * Return list of plugins that have events.
      *
      * @param array $eventlist a list of events present in the system {@link eventlist::get_all_eventlist}.
-     *
-     * @return array list of plugins with human readable name.
+     * @return array list of plugins with human readable name, grouped by their type
      */
     public static function get_plugin_list($eventlist = array()) {
+        $pluginmanager = core_plugin_manager::instance();
+
         if (empty($eventlist)) {
             $eventlist = self::get_all_eventlist();
         }
+
         $plugins = array_keys($eventlist);
         $return = array();
         foreach ($plugins as $plugin) {
-            if ($plugin === 'core') {
-                $return[$plugin] = get_string('core', 'tool_monitor');
-            } else if (get_string_manager()->string_exists('pluginname', $plugin)) {
-                $return[$plugin] = get_string('pluginname', $plugin);
+
+            // Core sub-systems are grouped together and are denoted by a distinct lang string.
+            if (strpos($plugin, 'core') === 0) {
+                $plugintype = get_string('core', 'tool_monitor');
+                $pluginname = get_string('coresubsystem', 'tool_monitor', $plugin);
             } else {
-                $return[$plugin] = $plugin;
+                [$type] = core_component::normalize_component($plugin);
+                $plugintype = $pluginmanager->plugintype_name_plural($type);
+                $pluginname = $pluginmanager->plugin_name($plugin);
             }
+
+            $return[$plugintype][$plugin] = $pluginname;
         }
+
+        // Sort returned components according to their type, followed by name.
+        core_collator::ksort($return);
+        array_walk($return, function(array &$componenttype) {
+            core_collator::asort($componenttype);
+        });
 
         return $return;
     }
