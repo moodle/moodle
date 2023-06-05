@@ -10,7 +10,7 @@
     $ltibrowseUrl = new moodle_url('ltibrowse.php', $params);
 ?>
 
-<iframe allow="autoplay *; fullscreen *; encrypted-media *; camera *; microphone *;" id="kafIframe" src="<?php echo $ltibrowseUrl->out(); ?>" width="100%" height="600" style="border: 0;" allowfullscreen>
+<iframe allow="autoplay *; fullscreen *; encrypted-media *; camera *; microphone *; display-capture *;" id="kafIframe" src="<?php echo $ltibrowseUrl->out(); ?>" width="100%" height="600" style="border: 0;" allowfullscreen>
 </iframe>
 <script>
     var buttonJs = window.opener.buttonJs;
