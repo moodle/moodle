@@ -52,7 +52,7 @@ try {
     }
 
     if (!empty($updatedVersion)) {
-        $pluginsRecords = $DB->get_records_select('config_plugins', "plugin in ('local_kaltura', 'local_kalturamediagallery', 'local_mymedia', 'atto_kalturamedia','block_kalturamediagallery','filter_kaltura','tinymce_kalturamedia','mod_kalvidassign','mod_kalvidres') AND name = 'version' AND value = '$kalturaPluginVersion'");
+        $pluginsRecords = $DB->get_records_select('config_plugins', "plugin in ('local_kaltura', 'local_kalturamediagallery', 'local_mymedia', 'atto_kalturamedia','block_kalturamediagallery','filter_kaltura','tinymce_kalturamedia','mod_kalvidassign','mod_kalvidres', 'tiny_kalturamedia') AND name = 'version' AND value = '$kalturaPluginVersion'");
 
         foreach ($pluginsRecords as $record) {
             $record->value = $updatedVersion;
