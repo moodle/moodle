@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OpenSpout\Writer\ODS\Manager;
 
-use OpenSpout\Writer\Common\Entity\Sheet;
 use OpenSpout\Writer\Common\Entity\Workbook;
 use OpenSpout\Writer\Common\Manager\AbstractWorkbookManager;
 use OpenSpout\Writer\Common\Manager\Style\StyleMerger;

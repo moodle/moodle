@@ -210,8 +210,7 @@ final class SheetIterator implements SheetIteratorInterface
         // or if no information about the active sheet was found, it defaults to the first sheet.
         return
             (null === $activeSheetName && 0 === $sheetIndex)
-            || ($activeSheetName === $sheetName)
-        ;
+            || ($activeSheetName === $sheetName);
     }
 
     /**

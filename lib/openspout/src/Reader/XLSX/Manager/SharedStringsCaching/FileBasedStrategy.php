@@ -164,7 +164,7 @@ final class FileBasedStrategy implements CachingStrategyInterface
     {
         $numTempFile = (int) ($sharedStringIndex / $this->maxNumStringsPerTempFile);
 
-        return $this->tempFolder.'/sharedstrings'.$numTempFile;
+        return $this->tempFolder.\DIRECTORY_SEPARATOR.'sharedstrings'.$numTempFile;
     }
 
     /**

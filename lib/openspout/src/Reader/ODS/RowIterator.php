@@ -172,8 +172,7 @@ final class RowIterator implements RowIteratorInterface
 
         return
             !$hasReadAtLeastOneRow
-            || $this->lastRowIndexProcessed === $this->nextRowIndexToBeProcessed - 1
-        ;
+            || $this->lastRowIndexProcessed === $this->nextRowIndexToBeProcessed - 1;
     }
 
     /**
@@ -337,7 +336,6 @@ final class RowIterator implements RowIteratorInterface
     {
         return
             $currentRow->isEmpty()
-            && (null === $lastReadCell || $lastReadCell instanceof Cell\EmptyCell)
-        ;
+            && (null === $lastReadCell || $lastReadCell instanceof Cell\EmptyCell);
     }
 }

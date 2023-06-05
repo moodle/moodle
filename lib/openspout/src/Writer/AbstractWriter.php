@@ -13,6 +13,9 @@ abstract class AbstractWriter implements WriterInterface
     /** @var resource Pointer to the file/stream we will write to */
     protected $filePointer;
 
+    /** @var string document creator */
+    protected string $creator = 'OpenSpout';
+
     /** @var string Content-Type value for the header - to be defined by child class */
     protected static string $headerContentType;
 
@@ -25,9 +28,6 @@ abstract class AbstractWriter implements WriterInterface
     /** @var 0|positive-int */
     private int $writtenRowCount = 0;
 
-    /**
-     * {@inheritdoc}
-     */
     final public function openToFile($outputFilePath): void
     {
         $this->outputFilePath = $outputFilePath;
@@ -53,7 +53,8 @@ abstract class AbstractWriter implements WriterInterface
 
     /**
      * @codeCoverageIgnore
-     * {@inheritdoc}
+     *
+     * @param mixed $outputFileName
      */
     final public function openToBrowser($outputFileName): void
     {
@@ -104,9 +105,6 @@ abstract class AbstractWriter implements WriterInterface
         $this->isWriterOpened = true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     final public function addRow(Row $row): void
     {
         if (!$this->isWriterOpened) {
@@ -117,9 +115,6 @@ abstract class AbstractWriter implements WriterInterface
         ++$this->writtenRowCount;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     final public function addRows(array $rows): void
     {
         foreach ($rows as $row) {
@@ -127,17 +122,16 @@ abstract class AbstractWriter implements WriterInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    final public function setCreator(string $creator): void
+    {
+        $this->creator = $creator;
+    }
+
     final public function getWrittenRowCount(): int
     {
         return $this->writtenRowCount;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     final public function close(): void
     {
         if (!$this->isWriterOpened) {

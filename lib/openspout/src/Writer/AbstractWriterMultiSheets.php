@@ -83,9 +83,6 @@ abstract class AbstractWriterMultiSheets extends AbstractWriter
 
     abstract protected function createWorkbookManager(): WorkbookManagerInterface;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function openWriter(): void
     {
         if (!isset($this->workbookManager)) {
@@ -95,8 +92,6 @@ abstract class AbstractWriterMultiSheets extends AbstractWriter
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws Exception\WriterException
      */
     protected function addRowToWriter(Row $row): void
@@ -105,9 +100,6 @@ abstract class AbstractWriterMultiSheets extends AbstractWriter
         $this->workbookManager->addRowToCurrentWorksheet($row);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function closeWriter(): void
     {
         if (isset($this->workbookManager)) {

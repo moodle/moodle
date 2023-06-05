@@ -183,7 +183,7 @@ final class EncodingHelper
                 $convertedString = false;
             }
         } else {
-            throw new EncodingConversionException("The conversion from {$sourceEncoding} to {$targetEncoding} is not supported. Please install \"iconv\" or \"PHP Intl\".");
+            throw new EncodingConversionException("The conversion from {$sourceEncoding} to {$targetEncoding} is not supported. Please install \"iconv\" or \"mbstring\".");
         }
 
         if (false === $convertedString) {

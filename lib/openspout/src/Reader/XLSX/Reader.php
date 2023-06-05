@@ -8,6 +8,7 @@ use OpenSpout\Common\Exception\IOException;
 use OpenSpout\Common\Helper\Escaper\XLSX;
 use OpenSpout\Reader\AbstractReader;
 use OpenSpout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory;
+use OpenSpout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactoryInterface;
 use OpenSpout\Reader\XLSX\Manager\SharedStringsCaching\MemoryLimit;
 use OpenSpout\Reader\XLSX\Manager\SharedStringsManager;
 use OpenSpout\Reader\XLSX\Manager\SheetManager;
@@ -28,18 +29,16 @@ final class Reader extends AbstractReader
     private SheetIterator $sheetIterator;
 
     private Options $options;
-    private CachingStrategyFactory $cachingStrategyFactory;
+    private CachingStrategyFactoryInterface $cachingStrategyFactory;
 
     public function __construct(
         ?Options $options = null,
-        ?CachingStrategyFactory $cachingStrategyFactory = null
+        ?CachingStrategyFactoryInterface $cachingStrategyFactory = null
     ) {
         $this->options = $options ?? new Options();
 
         if (null === $cachingStrategyFactory) {
             $memoryLimit = \ini_get('memory_limit');
-            \assert(false !== $memoryLimit);
-
             $cachingStrategyFactory = new CachingStrategyFactory(new MemoryLimit($memoryLimit));
         }
         $this->cachingStrategyFactory = $cachingStrategyFactory;

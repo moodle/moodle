@@ -35,7 +35,7 @@ final class Writer extends AbstractWriterMultiSheets
     {
         $workbook = new Workbook();
 
-        $fileSystemHelper = new FileSystemHelper($this->options->getTempFolder(), new ZipHelper());
+        $fileSystemHelper = new FileSystemHelper($this->options->getTempFolder(), new ZipHelper(), $this->creator);
         $fileSystemHelper->createBaseFilesAndFolders();
 
         $styleMerger = new StyleMerger();
