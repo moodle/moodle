@@ -194,7 +194,7 @@ class mod_lesson_generator extends testing_module_generator {
      *
      * @param stdClass $lesson instance where to create the page.
      * @param array|stdClass $record data for page being generated.
-     * @return int Page ID.
+     * @return stdClass page record.
      */
     public function create_content($lesson, $record = array()) {
         global $DB, $CFG;
@@ -223,7 +223,7 @@ class mod_lesson_generator extends testing_module_generator {
      * Create True/false question pages.
      * @param object $lesson
      * @param array $record
-     * @return int
+     * @return stdClass page record.
      */
     public function create_question_truefalse($lesson, $record = array()) {
         global $DB, $CFG;
@@ -275,7 +275,7 @@ class mod_lesson_generator extends testing_module_generator {
      * Create multichoice question pages.
      * @param object $lesson
      * @param array $record
-     * @return int
+     * @return stdClass page record.
      */
     public function create_question_multichoice($lesson, $record = array()) {
         global $DB, $CFG;
@@ -327,7 +327,7 @@ class mod_lesson_generator extends testing_module_generator {
      * Create essay question pages.
      * @param object $lesson
      * @param array $record
-     * @return int
+     * @return stdClass page record.
      */
     public function create_question_essay($lesson, $record = array()) {
         global $DB, $CFG;
@@ -368,7 +368,7 @@ class mod_lesson_generator extends testing_module_generator {
      * Create matching question pages.
      * @param object $lesson
      * @param array $record
-     * @return int
+     * @return stdClass page record.
      */
     public function create_question_matching($lesson, $record = array()) {
         global $DB, $CFG;
@@ -446,7 +446,7 @@ class mod_lesson_generator extends testing_module_generator {
      * Create shortanswer question pages.
      * @param object $lesson
      * @param array $record
-     * @return int
+     * @return stdClass page record.
      */
     public function create_question_shortanswer($lesson, $record = array()) {
         global $DB, $CFG;
@@ -487,7 +487,7 @@ class mod_lesson_generator extends testing_module_generator {
      * Create shortanswer question pages.
      * @param object $lesson
      * @param array $record
-     * @return int
+     * @return stdClass page record.
      */
     public function create_question_numeric($lesson, $record = array()) {
         global $DB, $CFG;
