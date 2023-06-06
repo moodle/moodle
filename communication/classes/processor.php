@@ -409,7 +409,6 @@ class processor {
      * @return string|null
      */
     public function get_provider(): ?string {
-        // var_dump($this->instancedata);die;
         if ((int)$this->instancedata->active === self::PROVIDER_ACTIVE) {
             return $this->instancedata->provider;
         }
@@ -460,6 +459,27 @@ class processor {
     }
 
     /**
+     * Get communication provider for form feature.
+     *
+     * @param string $provider The provider name
+     * @param \MoodleQuickForm $mform The moodle form
+     */
+    public static function set_proider_form_definition(string $provider, \MoodleQuickForm $mform): void {
+        $providerclass = "{$provider}\\communication_feature";
+        $providerclass::set_form_definition($mform);
+    }
+
+    /**
+     * Get communication instance for form feature.
+     *
+     * @return bool
+     */
+    public function get_form_provider(): form_provider {
+        $this->requires_form_features();
+        return $this->provider;
+    }
+
+    /**
      * Get communication instance id.
      *
      * @return bool
@@ -483,6 +503,26 @@ class processor {
         }
 
         return ($this->provider instanceof room_user_provider);
+    }
+
+    /**
+     * Check form feature available.
+     *
+     * @return bool
+     */
+    public function requires_form_features(): void {
+        if (!$this->supports_form_features()) {
+            throw new \coding_exception('Form features are not supported by the provider');
+        }
+    }
+
+    /**
+     * Check support for form feature.
+     *
+     * @return bool
+     */
+    public function supports_form_features(): bool {
+        return ($this->provider instanceof form_provider);
     }
 
     /**

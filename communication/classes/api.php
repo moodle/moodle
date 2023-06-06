@@ -122,6 +122,9 @@ class api {
      * @param \MoodleQuickForm $mform The form element
      */
     public function form_definition(\MoodleQuickForm $mform): void {
+        global $PAGE;
+        $PAGE->requires->js_call_amd('core_communication/providerchooser', 'init');
+
         $mform->addElement('header', 'communication', get_string('communication', 'communication'));
 
         // List the communication providers.
@@ -130,22 +133,47 @@ class api {
             'select',
             'selectedcommunication',
             get_string('seleccommunicationprovider', 'communication'),
-            $communicationproviders);
+            $communicationproviders,
+            ['data-communicationchooser-field' => 'selector'],
+        );
         $mform->addHelpButton('selectedcommunication', 'seleccommunicationprovider', 'communication');
         $mform->setDefault('selectedcommunication', processor::PROVIDER_NONE);
 
-        // Room name for the communication provider.
-        $mform->addElement('text',
-            'communicationroomname',
-            get_string('communicationroomname', 'communication'),
-            'maxlength="100" size="20"');
-        $mform->addHelpButton('communicationroomname', 'communicationroomname', 'communication');
-        $mform->setType('communicationroomname', PARAM_TEXT);
-        $mform->hideIf(
-            'communicationroomname',
-            'selectedcommunication',
-            'eq',
-            processor::PROVIDER_NONE);
+        $mform->registerNoSubmitButton('updatecommunicationprovider');
+        $mform->addElement('submit',
+            'updatecommunicationprovider',
+            'update communication',
+            ['data-communicationchooser-field' => 'updateButton', 'class' => 'd-none',]);
+
+        // Just a placeholder for the communication options.
+        $mform->addElement('hidden', 'addcommunicationoptionshere');
+        $mform->setType('addcommunicationoptionshere', PARAM_BOOL);
+    }
+
+    /**
+     * Set the form definitions for the plugins.
+     *
+     * @param \MoodleQuickForm $mform
+     * @return void
+     */
+    public function form_definition_for_provider(\MoodleQuickForm $mform): void {
+        $provider = $mform->getElementValue('selectedcommunication');
+
+        if ($provider[0] !== processor::PROVIDER_NONE) {
+            // Room name for the communication provider.
+            $mform->insertElementBefore(
+                $mform->createElement(
+                    'text',
+                    'communicationroomname',
+                    get_string('communicationroomname', 'communication'), 'maxlength="100" size="20"'),
+                'addcommunicationoptionshere'
+            );
+            $mform->addHelpButton('communicationroomname', 'communicationroomname', 'communication');
+            $mform->setType('communicationroomname', PARAM_TEXT);
+
+            processor::set_proider_form_definition($provider[0], $mform);
+        }
+
     }
 
     /**
@@ -223,6 +251,8 @@ class api {
         if (!empty($instance->id) && $this->communication) {
             $instance->selectedcommunication = $this->communication->get_provider();
             $instance->communicationroomname = $this->communication->get_room_name();
+
+            $this->communication->get_form_provider()->set_form_data($instance);
         }
     }
 
@@ -244,12 +274,14 @@ class api {
      *
      * @param string $selectedcommunication The selected communication provider
      * @param string $communicationroomname The communication room name
+     * @param \stdClass|null $instance The actual instance object
      * @param string|null $avatarurl The avatar url
      */
     public function create_and_configure_room(
         string $selectedcommunication,
         string $communicationroomname,
         ?string $avatarurl = null,
+        ?\stdClass $instance = null,
     ): void {
 
         if ($selectedcommunication !== processor::PROVIDER_NONE && $selectedcommunication !== '') {
@@ -261,6 +293,11 @@ class api {
                 $this->instancetype,
                 $communicationroomname,
             );
+
+            // Update provider record from form data.
+            if ($instance !== null) {
+                $this->communication->get_form_provider()->save_form_data($instance);
+            }
 
             // Set the avatar.
             if (!empty($avatarurl)) {
@@ -280,12 +317,14 @@ class api {
      *
      * @param string $selectedprovider The selected communication provider
      * @param string $communicationroomname The communication room name
+     * @param \stdClass|null $instance The actual instance object
      * @param string|null $avatarurl The avatar url
      */
     public function update_room(
         string $selectedprovider,
         string $communicationroomname,
         ?string $avatarurl = null,
+        ?\stdClass $instance = null,
     ): void {
 
         // Existing object found, let's update the communication record and associated actions.
@@ -297,6 +336,11 @@ class api {
             // Update communication record.
             $this->communication->update_instance($selectedprovider, $communicationroomname);
 
+            // Update provider record from form data.
+            if ($instance !== null) {
+                $this->communication->get_form_provider()->save_form_data($instance);
+            }
+
             // Update the avatar.
             $imageupdaterequired = $this->set_avatar_from_datauri_or_filepath($avatarurl);
 
@@ -306,9 +350,9 @@ class api {
             }
 
             // Add ad-hoc task to update the provider room if the room name changed.
+            // TODO add efficiency considering dynamic fields.
             if (
-                $previousprovider === $selectedprovider &&
-                ($previousroomname !== $communicationroomname || $imageupdaterequired)
+                $previousprovider === $selectedprovider
             ) {
                 update_room_task::queue(
                     $this->communication,
@@ -323,7 +367,7 @@ class api {
             }
         } else {
             // The instance didn't have any communication record, so create one.
-            $this->create_and_configure_room($selectedprovider, $communicationroomname, $avatarurl);
+            $this->create_and_configure_room($selectedprovider, $communicationroomname, $avatarurl, $instance);
         }
     }
 
