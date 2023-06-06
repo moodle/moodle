@@ -323,7 +323,7 @@ class communication_feature implements
 
     public function get_chat_room_url(): ?string {
         // Check for room record in Moodle and that it exists in Matrix.
-        if (!$this->matrixrooms->room_record_exists()) {
+        if (!$this->matrixrooms->room_record_exists() || !$this->matrixrooms->get_matrix_room_id()) {
             return null;
         }
 
