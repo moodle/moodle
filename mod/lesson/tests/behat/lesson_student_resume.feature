@@ -22,14 +22,14 @@ Feature: In a lesson activity a student should
       | retake      | 1                           |
 
   Scenario: resume a lesson with both content then question pages
-    Given the following "mod_lesson > page" exist:
+    Given the following "mod_lesson > pages" exist:
       | lesson           | qtype     | title                 | content                   |
       | Test lesson name | content   | First page name       | First page contents       |
       | Test lesson name | content   | Second page name      | Second page contents      |
       | Test lesson name | content   | Third page name       | Third page contents       |
       | Test lesson name | truefalse | True/false question 1 | Paper is made from trees. |
       | Test lesson name | truefalse | True/false question 2 | Kermit is a frog          |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page                  | answer        | response | jumpto        | score |
       | First page name       | Next page     |          | Next page     | 0     |
       | Second page name      | Previous page |          | Previous page | 0     |
@@ -82,13 +82,13 @@ Feature: In a lesson activity a student should
     And I should see "Congratulations - end of lesson reached"
 
   Scenario: resume a lesson with only content pages
-    Given the following "mod_lesson > page" exist:
+    Given the following "mod_lesson > pages" exist:
       | lesson           | qtype   | title            | content              |
       | Test lesson name | content | First page name  | First page contents  |
       | Test lesson name | content | Second page name | Second page contents |
       | Test lesson name | content | Third page name  | Third page contents  |
       | Test lesson name | content | Fourth page name | Fourth page contents |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page             | answer        | jumpto        |
       | First page name  | Next page     | Next page     |
       | Second page name | Previous page | Previous page |
@@ -120,7 +120,7 @@ Feature: In a lesson activity a student should
     And I should see "First page contents"
 
   Scenario: resume a lesson with both question then content pages
-    Given the following "mod_lesson > page" exist:
+    Given the following "mod_lesson > pages" exist:
       | lesson           | qtype     | title                 | content                   |
       | Test lesson name | truefalse | True/false question 1 | Cat is an amphibian       |
       | Test lesson name | content   | First page name       | First page contents       |
@@ -129,7 +129,7 @@ Feature: In a lesson activity a student should
       | Test lesson name | truefalse | True/false question 4 | 2+2=4                     |
       | Test lesson name | content   | Second page name      | Second page contents      |
       | Test lesson name | truefalse | True/false question 5 | Kermit is a frog          |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page                  | answer    | response | jumpto    | score |
       | True/false question 1 | False     | Correct  | Next page | 1     |
       | True/false question 1 | True      | Wrong    | This page | 0     |
@@ -192,14 +192,14 @@ Feature: In a lesson activity a student should
     And I should see "Congratulations - end of lesson reached"
 
   Scenario: resume a lesson with only question pages
-    Given the following "mod_lesson > page" exist:
+    Given the following "mod_lesson > pages" exist:
       | lesson           | qtype     | title                 | content                   |
       | Test lesson name | truefalse | True/false question 1 | Cat is an amphibian       |
       | Test lesson name | truefalse | True/false question 2 | Paper is made from trees. |
       | Test lesson name | truefalse | True/false question 3 | 1+1=2                     |
       | Test lesson name | truefalse | True/false question 4 | 2+2=4                     |
       | Test lesson name | truefalse | True/false question 5 | Kermit is a frog          |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page                  | answer    | response | jumpto    | score |
       | True/false question 1 | False     | Correct  | Next page | 1     |
       | True/false question 1 | True      | Wrong    | This page | 0     |

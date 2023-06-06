@@ -22,7 +22,7 @@ Feature: In a lesson activity, I need to edit pages in the lesson taking into ac
     And the following "mod_lesson > page" exist:
       | lesson           | qtype   | title                 | content  |
       | Test lesson name | numeric | Hardest question ever | 1 + 1?   |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page                  | answer  | response         | jumpto        | score |
       | Hardest question ever | 2.87    | Correct answer   | End of lesson | 1     |
       | Hardest question ever | 2.1:2.8 | Incorrect answer | This page     | 0     |

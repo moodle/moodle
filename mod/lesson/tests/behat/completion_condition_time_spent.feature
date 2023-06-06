@@ -23,7 +23,7 @@ Feature: Set time spent as a completion condition for a lesson
       | lesson      | qtype   | title            | content              |
       | Test lesson | content | First page name  | First page contents  |
       | Test lesson | content | Second page name | Second page contents |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page             | answer        | jumpto        |
       | First page name  | Next page     | Next page     |
       | Second page name | Previous page | Previous page |
