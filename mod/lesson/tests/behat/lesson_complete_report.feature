@@ -20,11 +20,11 @@ Feature: Teachers can review student progress on all lessons in a course by view
       | lesson     | Test lesson name | C1     | lesson1     | 1      |
 
   Scenario: View student progress for lesson that was never attempted
-    Given the following "mod_lesson > page" exist:
+    Given the following "mod_lesson > pages" exist:
       | lesson           | qtype     | title                 | content                   |
       | Test lesson name | content   | First page name       | First page contents       |
       | Test lesson name | truefalse | True/false question 1 | Paper is made from trees. |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page                  | answer    | response | jumpto    | score |
       | First page name       | Next page |          | Next page | 0     |
       | True/false question 1 | True      | Correct  | Next page | 1     |
@@ -37,12 +37,12 @@ Feature: Teachers can review student progress on all lessons in a course by view
     Then I should see "No attempts have been made on this lesson"
 
   Scenario: View student progress for an incomplete lesson containing both content and question pages
-    Given the following "mod_lesson > page" exist:
+    Given the following "mod_lesson > pages" exist:
       | lesson           | qtype     | title                 | content                   |
       | Test lesson name | content   | First page name       | First page contents       |
       | Test lesson name | content   | Second page name      | Second page contents      |
       | Test lesson name | truefalse | True/false question 1 | Paper is made from trees. |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page                  | answer    | response | jumpto    | score |
       | First page name       | Next page |          | Next page | 0     |
       | Second page name      | Next page |          | Next page | 0     |
@@ -60,13 +60,13 @@ Feature: Teachers can review student progress on all lessons in a course by view
     And I should see "0" in the ".cell.c2" "css_element"
 
   Scenario: View student progress for a lesson containing both content and question pages
-    Given the following "mod_lesson > page" exist:
+    Given the following "mod_lesson > pages" exist:
       | lesson           | qtype     | title                 | content                   |
       | Test lesson name | content   | First page name       | First page contents       |
       | Test lesson name | content   | Second page name      | Second page contents      |
       | Test lesson name | truefalse | True/false question 1 | Paper is made from trees. |
       | Test lesson name | truefalse | True/false question 2 | The sky is Pink.          |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page                  | answer        | response | jumpto        | score |
       | First page name       | Next page     |          | Next page     | 0     |
       | Second page name      | Previous page |          | Previous page | 0     |
@@ -101,11 +101,11 @@ Feature: Teachers can review student progress on all lessons in a course by view
     And I should see "1" in the ".cell.c3" "css_element"
 
   Scenario: View student attempts in a lesson containing only content pages
-    Given the following "mod_lesson > page" exist:
+    Given the following "mod_lesson > pages" exist:
       | lesson           | qtype     | title            | content              |
       | Test lesson name | content   | First page name  | First page contents  |
       | Test lesson name | content   | Second page name | Second page contents |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page                  | answer        | jumpto        |
       | First page name       | Next page     | Next page     |
       | Second page name      | Previous page | Previous page |

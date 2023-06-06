@@ -27,12 +27,12 @@ Feature: In Dashboard, teacher can see the number of student attempts to lessons
       | idnumber | 0001                    |
       | name     | Test lesson name        |
       | retake   | 1                       |
-    And the following "mod_lesson > page" exist:
+    And the following "mod_lesson > pages" exist:
       | lesson           | qtype     | title                 | content                   |
       | Test lesson name | truefalse | True/false question 1 | Cat is an amphibian       |
       | Test lesson name | truefalse | True/false question 2 | Paper is made from trees. |
       | Test lesson name | truefalse | True/false question 3 | 1+1=2                     |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page                  | answer | response | jumpto        | score |
       | True/false question 1 | False  | Correct  | Next page     | 1     |
       | True/false question 1 | True   | Wrong    | This page     | 0     |

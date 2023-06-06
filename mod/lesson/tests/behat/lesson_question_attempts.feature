@@ -22,7 +22,7 @@ Feature: In a lesson activity, students can not re-attempt a question more than 
       | name                     | Test lesson name        |
       | retake                   | 1                       |
       | minquestions             | 3                       |
-    And the following "mod_lesson > page" exist:
+    And the following "mod_lesson > pages" exist:
       | lesson           | qtype     | title                 | content                   |
       | Test lesson name | content   | First page name       | First page contents       |
       | Test lesson name | truefalse | True/false question 1 | The earth is round.       |
@@ -30,7 +30,7 @@ Feature: In a lesson activity, students can not re-attempt a question more than 
       | Test lesson name | content   | Second page name      | Second page contents      |
       | Test lesson name | truefalse | True/false question 3 | Paper is made from trees. |
       | Test lesson name | content   | Third page name       | Third page contents       |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page                  | answer        | response | jumpto        | score |
       | First page name       | Next page     |          | Next page     | 0     |
       | Second page name      | Previous page |          | Previous page | 0     |

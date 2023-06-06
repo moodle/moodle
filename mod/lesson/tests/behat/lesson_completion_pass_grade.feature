@@ -29,7 +29,7 @@ Feature: Pass grade activity completion in the lesson activity
     And the following "mod_lesson > page" exist:
       | lesson        | qtype   | title              | content        |
       | Music history | numeric | Numerical question | What is 1 + 2? |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page               | answer          | jumpto        | score |
       | Numerical question | 3               | End of lesson | 1     |
       | Numerical question | @#wronganswer#@ | Next page     | 0     |
