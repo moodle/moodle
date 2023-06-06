@@ -58,6 +58,7 @@ class mod_lesson_generator extends testing_module_generator {
         'Unseen question within a content page' => LESSON_UNSEENBRANCHPAGE,
         'Random question within a content page' => LESSON_RANDOMPAGE,
         'Random content page' => LESSON_RANDOMBRANCH,
+        'Unseen question within a cluster' => LESSON_CLUSTERJUMP,
     ];
 
     /**
@@ -180,7 +181,16 @@ class mod_lesson_generator extends testing_module_generator {
             return null;
         }
 
-        $funcname = $qtype === 'content' ? 'create_content' : "create_question_{$qtype}";
+        switch ($qtype) {
+            case 'content':
+            case 'cluster':
+            case 'endofcluster':
+            case 'endofbranch':
+                $funcname = "create_{$qtype}";
+                break;
+            default:
+                $funcname = "create_question_{$qtype}";
+        }
 
         if (!method_exists($this, $funcname)) {
             throw new coding_exception('The page '.$record['title']." has an invalid qtype: $qtype");
@@ -522,6 +532,96 @@ class mod_lesson_generator extends testing_module_generator {
         $context = context_module::instance($lesson->cmid);
         $page = lesson_page::create((object)$record, new lesson($lesson), $context, $CFG->maxbytes);
         return $DB->get_record('lesson_pages', array('id' => $page->id), '*', MUST_EXIST);
+    }
+
+    /**
+     * Creates a cluster page for testing purposes.
+     *
+     * @param stdClass $lesson instance where to create the page.
+     * @param array $record data for page being generated.
+     * @return stdClass page record.
+     */
+    public function create_cluster(stdClass $lesson, array $record = []): stdClass {
+        global $DB, $CFG;
+        $now = time();
+        $this->pagecount++;
+        $record = $record + [
+            'lessonid' => $lesson->id,
+            'title' => 'Cluster '.$this->pagecount,
+            'timecreated' => $now,
+            'qtype' => 30, // LESSON_PAGE_CLUSTER.
+            'pageid' => 0, // By default insert in the beginning.
+        ];
+        if (!isset($record['contents_editor'])) {
+            $record['contents_editor'] = [
+                'text' => 'Cluster '.$this->pagecount,
+                'format' => FORMAT_MOODLE,
+                'itemid' => 0,
+            ];
+        }
+        $context = context_module::instance($lesson->cmid);
+        $page = lesson_page::create((object)$record, new lesson($lesson), $context, $CFG->maxbytes);
+        return $DB->get_record('lesson_pages', ['id' => $page->id], '*', MUST_EXIST);
+    }
+
+    /**
+     * Creates a end of cluster page for testing purposes.
+     *
+     * @param stdClass $lesson instance where to create the page.
+     * @param array $record data for page being generated.
+     * @return stdClass page record.
+     */
+    public function create_endofcluster(stdClass $lesson, array $record = []): stdClass {
+        global $DB, $CFG;
+        $now = time();
+        $this->pagecount++;
+        $record = $record + [
+            'lessonid' => $lesson->id,
+            'title' => 'End of cluster '.$this->pagecount,
+            'timecreated' => $now,
+            'qtype' => 31, // LESSON_PAGE_ENDOFCLUSTER.
+            'pageid' => 0, // By default insert in the beginning.
+        ];
+        if (!isset($record['contents_editor'])) {
+            $record['contents_editor'] = [
+                'text' => 'End of cluster '.$this->pagecount,
+                'format' => FORMAT_MOODLE,
+                'itemid' => 0,
+            ];
+        }
+        $context = context_module::instance($lesson->cmid);
+        $page = lesson_page::create((object)$record, new lesson($lesson), $context, $CFG->maxbytes);
+        return $DB->get_record('lesson_pages', ['id' => $page->id], '*', MUST_EXIST);
+    }
+
+    /**
+     * Creates a end of branch page for testing purposes.
+     *
+     * @param stdClass $lesson instance where to create the page.
+     * @param array $record data for page being generated.
+     * @return stdClass page record.
+     */
+    public function create_endofbranch(stdClass $lesson, array $record = []): stdClass {
+        global $DB, $CFG;
+        $now = time();
+        $this->pagecount++;
+        $record = $record + [
+            'lessonid' => $lesson->id,
+            'title' => 'End of branch '.$this->pagecount,
+            'timecreated' => $now,
+            'qtype' => 21, // LESSON_PAGE_ENDOFBRANCH.
+            'pageid' => 0, // By default insert in the beginning.
+        ];
+        if (!isset($record['contents_editor'])) {
+            $record['contents_editor'] = [
+                'text' => 'End of branch '.$this->pagecount,
+                'format' => FORMAT_MOODLE,
+                'itemid' => 0,
+            ];
+        }
+        $context = context_module::instance($lesson->cmid);
+        $page = lesson_page::create((object)$record, new lesson($lesson), $context, $CFG->maxbytes);
+        return $DB->get_record('lesson_pages', ['id' => $page->id], '*', MUST_EXIST);
     }
 
     /**

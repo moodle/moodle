@@ -216,6 +216,89 @@ class generator_test extends \advanced_testcase {
     }
 
     /**
+     * This tests the generators for cluster, endofcluster and endofbranch pages.
+     *
+     * @covers ::create_cluster
+     * @covers ::create_endofcluster
+     * @covers ::create_endofbranch
+     * @dataProvider create_cluster_pages_provider
+     *
+     * @param string $type Type of page to test: LESSON_PAGE_CLUSTER, LESSON_PAGE_ENDOFCLUSTER or LESSON_PAGE_ENDOFBRANCH.
+     */
+    public function test_create_cluster_pages(string $type): void {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $lesson = $this->getDataGenerator()->create_module('lesson', ['course' => $course]);
+        $lessongenerator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+
+        $page2data = [
+            'title' => 'Custom title',
+            'contents_editor' => [
+                'text' => 'Custom content',
+                'format' => FORMAT_MOODLE,
+                'itemid' => 0,
+            ],
+            'jumpto' => [LESSON_EOL],
+        ];
+
+        switch ($type) {
+            case LESSON_PAGE_CLUSTER:
+                $page1 = $lessongenerator->create_cluster($lesson);
+                $page2 = $lessongenerator->create_cluster($lesson, $page2data);
+                break;
+            case LESSON_PAGE_ENDOFCLUSTER:
+                $page1 = $lessongenerator->create_endofcluster($lesson);
+                $page2 = $lessongenerator->create_endofcluster($lesson, $page2data);
+                break;
+            case LESSON_PAGE_ENDOFBRANCH:
+                $page1 = $lessongenerator->create_endofbranch($lesson);
+                $page2 = $lessongenerator->create_endofbranch($lesson, $page2data);
+                break;
+            default:
+                throw new coding_exception('Cluster page type not valid: ' . $type);
+        }
+
+        $records = $DB->get_records('lesson_pages', ['lessonid' => $lesson->id], 'id');
+        $p1answers = $DB->get_records('lesson_answers', ['lessonid' => $lesson->id, 'pageid' => $page1->id], 'id');
+        $p2answers = $DB->get_records('lesson_answers', ['lessonid' => $lesson->id, 'pageid' => $page2->id], 'id');
+
+        $this->assertCount(2, $records);
+        $this->assertEquals($page1->id, $records[$page1->id]->id);
+        $this->assertEquals($type, $records[$page1->id]->qtype);
+        $this->assertEquals($page2->id, $records[$page2->id]->id);
+        $this->assertEquals($type, $records[$page2->id]->qtype);
+        $this->assertEquals($page2->title, $records[$page2->id]->title);
+        $this->assertEquals($page2data['contents_editor']['text'], $records[$page2->id]->contents);
+        $this->assertCount(1, $p1answers);
+        $this->assertCount(1, $p2answers);
+        $this->assertEquals(LESSON_THISPAGE, array_pop($p1answers)->jumpto);
+        $this->assertEquals(LESSON_EOL, array_pop($p2answers)->jumpto);
+    }
+
+    /**
+     * Data provider for test_create_cluster_pages().
+     *
+     * @return array
+     */
+    public static function create_cluster_pages_provider(): array {
+        // Using the page constants here throws an error: Undefined constant "mod_lesson\LESSON_PAGE_CLUSTER".
+        return [
+            'Cluster' => [
+                'type' => '30',
+            ],
+            'End of cluster' => [
+                'type' => '31',
+            ],
+            'End of branch' => [
+                'type' => '21',
+            ],
+        ];
+    }
+
+    /**
      * Test create some pages and their answers.
      *
      * @covers ::create_page
