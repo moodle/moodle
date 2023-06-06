@@ -28,11 +28,11 @@ Feature: View activity completion in the lesson activity
       | completionendreached       | 1             |
       | completiontimespentenabled | 1             |
       | completiontimespent        | 3             |
-    And the following "mod_lesson > page" exist:
+    And the following "mod_lesson > pages" exist:
       | lesson        | qtype   | title                | content                                |
       | Music history | content | Music history part 1 |                                        |
       | Music history | essay   | Music essay          | Write a really interesting music essay |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page                 | answer                      | jumpto    | score |
       | Music history part 1 | The history of music part 1 | Next page | 0     |
       | Music essay          |                             | Next page | 1     |

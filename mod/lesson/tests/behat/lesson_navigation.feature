@@ -21,12 +21,12 @@ Feature: In a lesson activity, students can navigate through a series of pages i
       | lesson     | Test lesson name | C1     | lesson1     |
 
   Scenario: Student navigation with pages and questions
-    Given the following "mod_lesson > page" exist:
+    Given the following "mod_lesson > pages" exist:
       | lesson           | qtype   | title                 | content              |
       | Test lesson name | content | First page name       | First page contents  |
       | Test lesson name | content | Second page name      | Second page contents |
       | Test lesson name | numeric | Hardest question ever | 1 + 1?               |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page                  | answer        | response         | jumpto           | score |
       | First page name       | Next page     |                  | Next page        | 0     |
       | Second page name      | Previous page |                  | Previous page    | 0     |
@@ -65,7 +65,7 @@ Feature: In a lesson activity, students can navigate through a series of pages i
     Given the following "mod_lesson > page" exist:
       | lesson           | qtype     | title         | content      |
       | Test lesson name | truefalse | Test question | Test content |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page          | answer | jumpto    | score |
       | Test question | right  | Next page | 1     |
       | Test question | wrong  | This page | 0     |
@@ -96,11 +96,11 @@ Feature: In a lesson activity, students can navigate through a series of pages i
     And I should see "Congratulations - end of lesson reached"
 
   Scenario: Student reattempts a question until out of attempts with specific jumps
-    Given the following "mod_lesson > page" exist:
+    Given the following "mod_lesson > pages" exist:
       | lesson           | qtype     | title           | content        |
       | Test lesson name | truefalse | Test question   | Test content 1 |
       | Test lesson name | truefalse | Test question 2 | Test content 2 |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page            | answer | jumpto        | score |
       | Test question   | right  | Next page     | 1     |
       | Test question   | wrong  | This page     | 0     |
@@ -140,7 +140,7 @@ Feature: In a lesson activity, students can navigate through a series of pages i
     Given the following "mod_lesson > page" exist:
       | lesson           | qtype     | title         | content      |
       | Test lesson name | truefalse | Test question | Test content |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page          | answer | jumpto    | score |
       | Test question | right  | Next page | 1     |
       | Test question | wrong  | This page | 0     |

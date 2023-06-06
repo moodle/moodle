@@ -24,7 +24,7 @@ Feature: Practice mode in a lesson activity
     And the following "mod_lesson > page" exist:
       | lesson           | qtype     | title         | content                   |
       | Test lesson name | truefalse | True or False | Paper is made from trees. |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page          | answer | jumpto        | score |
       | True or False | True   | Next page     | 1     |
       | True or False | False  | This page     | 0     |

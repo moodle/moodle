@@ -26,11 +26,11 @@ Feature: An incorrect response to an answer with multiple attempts show appropri
     And I press "Save and display"
 
   Scenario: A student answering incorrectly to a question will see an option to move to the next question if set up.
-    Given the following "mod_lesson > page" exist:
+    Given the following "mod_lesson > pages" exist:
       | lesson           | qtype   | title              | content                 |
       | Test lesson name | numeric | Numerical question | What is 1 + 2?          |
       | Test lesson name | content | Just move on page  | You are here to move on |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page               | answer          | jumpto        | score |
       | Numerical question | 3               | Next page     | 1     |
       | Numerical question | 2               | Next page     | 0     |
@@ -44,11 +44,11 @@ Feature: An incorrect response to an answer with multiple attempts show appropri
     Then I should see "You are here to move on"
 
   Scenario: A student answering incorrectly to a question will only see an option to try again if there is no matching wrong response.
-    Given the following "mod_lesson > page" exist:
+    Given the following "mod_lesson > pages" exist:
       | lesson           | qtype   | title              | content                 |
       | Test lesson name | numeric | Numerical question | What is 1 + 2?          |
       | Test lesson name | content | Just move on page  | You are here to move on |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page               | answer          | jumpto        | score |
       | Numerical question | 3               | Next page     | 1     |
       | Just move on page  | End this lesson | End of lesson | 0     |

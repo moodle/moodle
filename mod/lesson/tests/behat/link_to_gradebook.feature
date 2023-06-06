@@ -19,11 +19,11 @@ Feature: link to gradebook on the end of lesson page
     And the following "activities" exist:
       | activity   | name        | course | idnumber    |
       | lesson     | Test lesson | C1     | lesson1     |
-    And the following "mod_lesson > page" exist:
+    And the following "mod_lesson > pages" exist:
       | lesson      | qtype   | title            | content              |
       | Test lesson | content | First page name  | First page contents  |
       | Test lesson | content | Second page name | Second page contents |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page             | answer        | jumpto        |
       | First page name  | Next page     | Next page     |
       | Second page name | Previous page | Previous page |

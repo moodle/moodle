@@ -19,11 +19,11 @@ Feature: Set end of lesson reached as a completion condition for a lesson
     And the following "activity" exist:
       | activity | name        | course | idnumber | completion | completionview | completionendreached |
       | lesson   | Test lesson | C1     | 0001     | 2          | 0              | 1                    |
-    And the following "mod_lesson > page" exist:
+    And the following "mod_lesson > pages" exist:
       | lesson      | qtype   | title            | content              |
       | Test lesson | content | First page name  | First page contents  |
       | Test lesson | content | Second page name | Second page contents |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page             | answer        | jumpto        |
       | First page name  | Next page     | Next page     |
       | Second page name | Previous page | Previous page |
