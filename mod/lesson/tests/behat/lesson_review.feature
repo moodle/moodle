@@ -19,11 +19,11 @@ Feature: In a lesson activity, students can review the answers they gave to ques
     And the following "activity" exist:
       | activity   | name             | course | idnumber |
       | lesson     | Test lesson name | C1     | lesson1  |
-    And the following "mod_lesson > page" exist:
+    And the following "mod_lesson > pages" exist:
       | lesson           | qtype     | title                 | content                   |
       | Test lesson name | numeric   | Hardest question ever | 1 + 1?                    |
       | Test lesson name | truefalse | Next question         | Paper is made from trees. |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page                  | answer | response         | jumpto    | score |
       | Hardest question ever | 2      | Correct answer   | Next page | 1     |
       | Hardest question ever | 1      | Incorrect answer | This page | 0     |

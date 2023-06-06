@@ -19,10 +19,10 @@ Feature: A teacher can set available from and deadline dates to access a lesson
     And the following "activities" exist:
       | activity   | name        | course | idnumber |
       | lesson     | Test lesson | C1     | lesson1  |
-    And the following "mod_lesson > page" exist:
+    And the following "mod_lesson > pages" exist:
       | lesson      | qtype   | title            | content              |
       | Test lesson | content | First page name  | First page contents  |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page             | answer        | jumpto    |
       | First page name  | Next page     | Next page |
 

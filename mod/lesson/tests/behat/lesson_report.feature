@@ -21,14 +21,14 @@ Feature: In a lesson activity, teachers can review student attempts
       | lesson     | Test lesson name | C1     | lesson1     | 1      |
 
   Scenario: View student attempts in a lesson containing both content and question pages
-    Given the following "mod_lesson > page" exist:
+    Given the following "mod_lesson > pages" exist:
       | lesson           | qtype     | title                 | content                   |
       | Test lesson name | content   | First page name       | First page contents       |
       | Test lesson name | content   | Second page name      | Second page contents      |
       | Test lesson name | content   | Third page name       | Third page contents       |
       | Test lesson name | truefalse | True/false question 1 | Paper is made from trees. |
       | Test lesson name | truefalse | True/false question 2 | Kermit is a frog          |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page                  | answer        | response | jumpto        | score |
       | First page name       | Next page     |          | Next page     | 0     |
       | Second page name      | Previous page |          | Previous page | 0     |
@@ -66,13 +66,13 @@ Feature: In a lesson activity, teachers can review student attempts
     And I should see "Low score"
 
   Scenario: View student attempts in a lesson containing only content pages
-    Given the following "mod_lesson > page" exist:
+    Given the following "mod_lesson > pages" exist:
       | lesson           | qtype     | title            | content              |
       | Test lesson name | content   | First page name  | First page contents  |
       | Test lesson name | content   | Second page name | Second page contents |
       | Test lesson name | content   | Third page name  | Third page contents  |
       | Test lesson name | content   | Fourth page name | Fourth page contents |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page             | answer        | jumpto        |
       | First page name  | Next page     | Next page     |
       | Second page name | Previous page | Previous page |

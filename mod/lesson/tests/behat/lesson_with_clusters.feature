@@ -22,102 +22,39 @@ Feature: In a lesson activity, students can see questions in random order
     And I log in as "teacher1"
 
   Scenario: Lesson with two clusters
-    Given I am on the "Lesson with clusters" "lesson activity" page
-    And I follow "Add a content page"
-    And I set the following fields to these values:
-      | Page title | First page name |
-      | Page contents | First page contents |
-      | id_answer_editor_0 | Next page |
-      | id_jumpto_0 | Next page |
-    And I press "Save page"
-    And I select "Add a content page" from the "qtype" singleselect
-    And I set the following fields to these values:
-      | Page title | Second page name |
-      | Page contents | Second page contents |
-      | id_answer_editor_0 | Previous page |
-      | id_jumpto_0 | Previous page |
-      | id_answer_editor_1 | Next page |
-      | id_jumpto_1 | Next page |
-    And I press "Save page"
-    And I select edit type "Expanded"
-    And I click on "Add a cluster" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][3]" "xpath_element"
-    And I click on "Add a question page here" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][4]" "xpath_element"
-    And I set the field "Select a question type" to "Multichoice"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | question 1 |
-      | Page contents | Question from cluster 1 |
-      | id_answer_editor_0 | Correct answer |
-      | id_response_editor_0 | Good |
-      | id_jumpto_0 | Cluster |
-      | id_score_0 | 1 |
-      | id_answer_editor_1 | Incorrect answer |
-      | id_response_editor_1 | Bad |
-      | id_jumpto_1 | This page |
-      | id_score_1 | 0 |
-    And I press "Save page"
-    And I click on "Add a question page here" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][5]" "xpath_element"
-    And I set the field "Select a question type" to "Multichoice"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | question 2 |
-      | Page contents | Question from cluster 1 |
-      | id_answer_editor_0 | Correct answer |
-      | id_response_editor_0 | Good |
-      | id_jumpto_0 | Cluster |
-      | id_score_0 | 1 |
-      | id_answer_editor_1 | Incorrect answer |
-      | id_response_editor_1 | Bad |
-      | id_jumpto_1 | This page |
-      | id_score_1 | 0 |
-    And I press "Save page"
-    And I click on "Add an end of cluster" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][6]" "xpath_element"
-    And I click on "Add a content page" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][7]" "xpath_element"
-    And I set the following fields to these values:
-      | Page title | Third page name |
-      | Page contents | Content page after cluster 1 |
-      | id_answer_editor_0 | Next page |
-      | id_jumpto_0 | Next page |
-    And I press "Save page"
-    And I click on "Add a cluster" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][8]" "xpath_element"
-    And I click on "Add a question page here" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][9]" "xpath_element"
-    And I set the field "Select a question type" to "Multichoice"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | question 3 |
-      | Page contents | Question from cluster 2 |
-      | id_answer_editor_0 | Correct answer |
-      | id_response_editor_0 | Good |
-      | id_jumpto_0 | Unseen question within a cluster |
-      | id_score_0 | 1 |
-      | id_answer_editor_1 | Incorrect answer |
-      | id_response_editor_1 | Bad |
-      | id_jumpto_1 | This page |
-      | id_score_1 | 0 |
-    And I press "Save page"
-    And I click on "Add a question page here" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][10]" "xpath_element"
-    And I set the field "Select a question type" to "Multichoice"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | question 4 |
-      | Page contents | Question from cluster 2 |
-      | id_answer_editor_0 | Correct answer |
-      | id_response_editor_0 | Good |
-      | id_jumpto_0 | Unseen question within a cluster |
-      | id_score_0 | 1 |
-      | id_answer_editor_1 | Incorrect answer |
-      | id_response_editor_1 | Bad |
-      | id_jumpto_1 | This page |
-      | id_score_1 | 0 |
-    And I press "Save page"
-    And I click on "Add an end of cluster" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][11]" "xpath_element"
-    And I click on "Add a content page" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][12]" "xpath_element"
-    And I set the following fields to these values:
-      | Page title | Fourth page name |
-      | Page contents | Content page after cluster 2 |
-      | id_answer_editor_0 | Next page |
-      | id_jumpto_0 | Next page |
-    And I press "Save page"
+    Given the following "mod_lesson > pages" exist:
+      | lesson               | qtype        | title            | content                      |
+      | Lesson with clusters | content      | First page name  | First page contents          |
+      | Lesson with clusters | content      | Second page name | Second page contents         |
+      | Lesson with clusters | cluster      | Cluster 1        | Cluster 1                    |
+      | Lesson with clusters | multichoice  | Question 1       | Question from cluster 1      |
+      | Lesson with clusters | multichoice  | Question 2       | Question from cluster 1      |
+      | Lesson with clusters | endofcluster | End of cluster 1 | End of cluster 1             |
+      | Lesson with clusters | content      | Third page name  | Content page after cluster 1 |
+      | Lesson with clusters | cluster      | Cluster 2        | Cluster 2                    |
+      | Lesson with clusters | multichoice  | Question 3       | Question from cluster 2      |
+      | Lesson with clusters | multichoice  | Question 4       | Question from cluster 2      |
+      | Lesson with clusters | endofcluster | End of cluster 2 | End of cluster 2             |
+      | Lesson with clusters | content      | Fourth page name | Content page after cluster 2 |
+    And the following "mod_lesson > answers" exist:
+      | page             | answer           | response | jumpto                           | score |
+      | First page name  | Next page        |          | Next page                        | 0     |
+      | Second page name | Previous page    |          | Previous page                    | 0     |
+      | Second page name | Next page        |          | Next page                        | 0     |
+      | Cluster 1        |                  |          | Unseen question within a cluster | 0     |
+      | Question 1       | Correct answer   | Good     | Cluster 1                        | 1     |
+      | Question 1       | Incorrect answer | Bad      | This page                        | 0     |
+      | Question 2       | Correct answer   | Good     | Cluster 1                        | 1     |
+      | Question 2       | Incorrect answer | Bad      | This page                        | 0     |
+      | End of cluster 1 |                  |          | Next page                        | 0     |
+      | Third page name  | Next page        |          | Next page                        | 0     |
+      | Cluster 2        |                  |          | Unseen question within a cluster | 0     |
+      | Question 3       | Correct answer   | Good     | Unseen question within a cluster | 1     |
+      | Question 3       | Incorrect answer | Bad      | This page                        | 0     |
+      | Question 4       | Correct answer   | Good     | Unseen question within a cluster | 1     |
+      | Question 4       | Incorrect answer | Bad      | This page                        | 0     |
+      | End of cluster 2 |                  |          | Next page                        | 0     |
+      | Fourth page name | Next page        |          | Next page                        | 0     |
     When I am on the "Lesson with clusters" "lesson activity" page logged in as student1
     Then I should see "First page contents"
     And I press "Next page"

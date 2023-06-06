@@ -35,7 +35,7 @@ Feature: Lesson group override
     And the following "mod_lesson > page" exist:
       | lesson           | qtype     | title                 | content             |
       | Test lesson name | truefalse | True/false question 1 | Cat is an amphibian |
-    And the following "mod_lesson > answer" exist:
+    And the following "mod_lesson > answers" exist:
       | page                  | answer        | response | jumpto        | score |
       | True/false question 1 | False         | Correct  | Next page     | 1     |
       | True/false question 1 | True          | Wrong    | This page     | 0     |
