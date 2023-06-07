@@ -18,7 +18,7 @@ $CFG->dboptions = array (
   'dbcollation' => "utf8mb4_unicode_ci",
 );
 
-$CFG->wwwroot   = 'http://staging.myqubit.co';
+$CFG->wwwroot   = 'https://staging.myqubit.co';
 $CFG->dataroot  = '/var/www/moodledata';
 $CFG->admin     = 'admin';
 
