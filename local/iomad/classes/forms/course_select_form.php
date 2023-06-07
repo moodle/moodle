@@ -55,7 +55,7 @@ class course_select_form extends moodleform {
             $mform->setType($param, PARAM_CLEAN);
         }
 
-        $courses = $company->get_menu_courses(true, false, false, false, true);
+        $courses = $company->get_menu_courses(true, false, false, false, false);
         $autooptions = array('multiple' => true);
         $sarcharray = array();
         $searcharray[] = $mform->createElement('autocomplete', 'courses', get_string('selectlicensecourse', 'block_iomad_company_admin'), $courses, $autooptions);
