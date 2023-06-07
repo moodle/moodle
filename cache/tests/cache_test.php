@@ -1426,6 +1426,15 @@ class cache_test extends \advanced_testcase {
         $this->assertFalse($cache->set_versioned('v', 1, 'data'));
         $this->assertFalse($cache->delete('test'));
         $this->assertTrue($cache->purge());
+        // Checking a lock should always report that we have one.
+        // Acquiring or releasing a lock should always report success.
+        $this->assertTrue($cache->check_lock_state('test'));
+        $this->assertTrue($cache->acquire_lock('test'));
+        $this->assertTrue($cache->acquire_lock('test'));
+        $this->assertTrue($cache->check_lock_state('test'));
+        $this->assertTrue($cache->release_lock('test'));
+        $this->assertTrue($cache->release_lock('test'));
+        $this->assertTrue($cache->check_lock_state('test'));
 
         // Test a session cache.
         $cache = cache::make_from_params(cache_store::MODE_SESSION, 'phpunit', 'disable');
