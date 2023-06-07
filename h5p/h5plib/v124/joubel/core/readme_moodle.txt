@@ -50,3 +50,9 @@ instance, if a new method is added to h5p-file-storage.interface.php, it should 
     // End of Moodle patch.
 
     var options = {
+
+Notes:
+ * 2023-05-10 To avoid PHP 8.2 deprecations, please apply below patches:
+   - https://github.com/h5p/h5p-php-library/pull/146
+   - https://github.com/h5p/h5p-php-library/pull/148
+   See MDL-78147 for more details.
