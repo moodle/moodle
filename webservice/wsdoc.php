@@ -35,7 +35,6 @@ $tokenid = required_param('id', PARAM_INT);
 $PAGE->set_context($usercontext);
 $PAGE->set_url('/user/wsdoc.php');
 $PAGE->set_title(get_string('wsdocumentation', 'webservice'));
-$PAGE->set_heading(get_string('wsdocumentation', 'webservice'));
 $PAGE->set_pagelayout('standard');
 
 // nav bar
