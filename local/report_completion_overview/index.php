@@ -385,7 +385,8 @@ if (!empty($ilast)) {
     $sqlparams['ilast'] = $ilast . "%";
 }
 $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $ifirstsort $ilastsort ORDER BY $sort $dir";
-$countsql = "SELECT COUNT(u.id) FROM $fromsql WHERE $wheresql";
+$countwheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $ifirstsort $ilastsort";
+$countsql = "SELECT COUNT(u.id) FROM $fromsql WHERE $countwheresql";
 
 // Get the users.
 $userlist = $DB->get_records_sql("SELECT $selectsql FROM $fromsql WHERE $wheresql", $sqlparams, $page, $perpage);
