@@ -10,6 +10,7 @@ information provided here is intended especially for developers.
 * Support for the following phpunit coverage info properties, deprecated since 3.11, has been removed:
   - `whitelistfolders`
   - `whitelistfiles`
+* Added a new parameter in address_in_subnet to give us the ability to check for 0.0.0.0 or not.
 
 === 4.2 ===
 
