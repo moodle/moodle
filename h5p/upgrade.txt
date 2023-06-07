@@ -1,6 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.3 ===
+* The `\core_h5p\file_storage::EDITOR_FILEAREA` constant has been removed, as all editor files are stored in user draft
+
 === 4.0 ===
 * Added new methods to api: get_original_content_from_pluginfile_url and can_edit_content.
 * Added edit.php and editcontent_form class, for modifying H5P content given an H5P identifier (from the h5p table).
