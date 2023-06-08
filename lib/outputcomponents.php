@@ -3498,7 +3498,10 @@ class custom_menu_item implements renderable, templatable {
      */
     public function __construct($text, moodle_url $url = null, $title = null, $sort = null, custom_menu_item $parent = null,
                                 array $attributes = []) {
-        $this->text = $text;
+
+        // Use class setter method for text to ensure it's always a string type.
+        $this->set_text($text);
+
         $this->url = $url;
         $this->title = $title;
         $this->sort = (int)$sort;
@@ -3775,7 +3778,7 @@ class custom_menu extends custom_menu_item {
             $settings = explode('|', $line);
             foreach ($settings as $i => $setting) {
                 $setting = trim($setting);
-                if (!empty($setting)) {
+                if ($setting !== '') {
                     switch ($i) {
                         case 0: // Menu text.
                             $itemtext = ltrim($setting, '-');
