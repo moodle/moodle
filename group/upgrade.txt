@@ -1,6 +1,13 @@
 This files describes API changes in /group/*,
 information provided here is intended especially for developers.
 
+=== 4.2.1 ===
+* The following external methods now return group names correctly formatted:
+  - `core_group_get_groups`
+  - `core_group_get_course_groups`
+  - `core_group_get_course_user_groups`
+  - `core_group_get_activity_allowed_groups`
+
 === 4.2 ===
 * `\core_group\visibility` class added to support new `visibility` field in group records. This holds the visibility constants
   and helper functions for applying visibility restrictions when querying groups or group members in the database.
