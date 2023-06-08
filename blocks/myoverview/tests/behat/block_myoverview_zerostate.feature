@@ -16,7 +16,7 @@ Feature: Zero state on my overview block
   Scenario: Users with no permissions don't see any CTA
     Given I am on the "My courses" page logged in as "user"
     When I should see "You're not enrolled in any course"
-    Then I should see "Once you enrol in a course, it will appear here"
+    Then I should see "Once you're enrolled in a course, it will appear here."
     And I should not see "Create course"
     And I should not see "Request a course"
 
@@ -47,7 +47,7 @@ Feature: Zero state on my overview block
       | shortname        | C1       |
     When I am on the "My courses" page logged in as "manager"
     Then I should see "You're not enrolled in any course"
-    Then I should see "Once you enrol in a course, it will appear here."
+    Then I should see "Once you're enrolled in a course, it will appear here."
     And "Manage courses" "button" should exist
     And "Create course" "button" should exist
     And I click on "Create course" "button"

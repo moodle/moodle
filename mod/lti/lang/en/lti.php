@@ -325,7 +325,7 @@ External tool activities differ from URL resources in a few ways:
 $string['modulename_link'] = 'mod/lti/view';
 $string['modulename_shortcut_link'] = 'mod/lti/view/custom';
 $string['modulenameplural'] = 'External tools';
-$string['modulenamepluralformatted'] = 'LTI Instances';
+$string['modulenamepluralformatted'] = 'External tools';
 $string['name'] = 'Name';
 $string['never'] = 'Never';
 $string['new_window'] = 'New window';
