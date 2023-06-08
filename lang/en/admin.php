@@ -366,7 +366,7 @@ $string['configsectionsecurity'] = 'Security';
 $string['configsectionstats'] = 'Statistics';
 $string['configsectionuser'] = 'User';
 $string['configsecureforms'] = 'Moodle can use an additional level of security when accepting data from web forms. If this is enabled, then the browser\'s HTTP_REFERER variable is checked against the current form address.  In a very few cases this can cause problems if the user is using a firewall (eg Zonealarm) configured to strip HTTP_REFERER from their web traffic.  Symptoms are getting \'stuck\' on a form. If your users are having problems with the login page (for example) you might want to disable this setting, although it might leave your site more open to brute-force password attacks.  If in doubt, leave this set to \'Yes\'.';
-$string['configservicespage'] = 'Enter the URL of a services and support page or leave empty to link to Moodle services on moodle.com.';
+$string['configservicespage'] = 'Enter the URL of a services and support page or leave empty to link to Moodle services on moodle.com. The link is only displayed for site administrators.';
 $string['configsessioncookie'] = 'This setting customises the name of the cookie used for Moodle sessions.  This is optional, and only useful to avoid cookies being confused when there is more than one copy of Moodle running within the same web site.';
 $string['configsessioncookiedomain'] = 'This allows you to change the domain that the Moodle cookies are available from. This is useful for Moodle customisations (e.g. authentication or enrolment plugins) that need to share Moodle session information with a web application on another subdomain. <strong>WARNING: it is strongly recommended to leave this setting at the default (empty) - an incorrect value will prevent all logins to the site.</strong>';
 $string['configsessioncookiepath'] = 'If you need to change where browsers send the Moodle cookies, you can change this setting to specify a subdirectory of your web site.  Otherwise the default \'/\' should be fine.';
@@ -402,7 +402,7 @@ $string['configstripalltitletags'] = 'Uncheck this setting to allow HTML tags in
 $string['configsupportavailability'] = 'Determines who has access to contact site support from the footer.';
 $string['configsupportemail'] = 'If SMTP is configured on this site and a support page is not set, this email address will receive messages submitted through the support form. If sending fails, the email address will be displayed to logged-in users.';
 $string['configsupportname'] = 'The name of the person or other entity providing support via the support form or support page.';
-$string['configsupportpage'] = 'Enter the URL of a support page or leave empty to link to a contact form.';
+$string['configsupportpage'] = 'Enter the URL of a support page or leave empty to link to a contact form. The link is displayed in the site footer.';
 $string['configtempdatafoldercleanup'] = 'Remove temporary data files from the data folder that are older than the selected time.';
 $string['configthemedesignermode'] = 'Normally all theme images and style sheets are cached in browsers and on the server for a very long time, for performance. If you are designing themes or developing code then you probably want to turn this mode on so that you are not served cached versions.  Warning: this will make your site slower for all users!  Alternatively, you can also reset the theme caches manually from the Theme selection page.';
 $string['configthemelist'] = 'Leave this blank to allow any valid theme to be used.  If you want to shorten the theme menu, you can specify a comma-separated list of names here (Don\'t use spaces!).
@@ -638,7 +638,7 @@ $string['environmentrequireversion'] = 'version {$a->needed} is required and you
 $string['environmentsettingok'] = 'recommended setting detected';
 $string['environmentshouldfixsetting'] = 'PHP setting should be changed.';
 $string['environmentxmlerror'] = 'Error reading environment data ({$a->error_code})';
-$string['environmentmariadbwrongdbtype'] = 'Wrong <code>$CFG->dbtype</code>: you need to change it in your <code>config.php</code> file, from \'<code>mysql</code>\' to \'<code>mariadb</code>\'.';
+$string['environmentmariadbwrongdbtype'] = 'Wrong $CFG->dbtype. You need to change it in your config.php file from \'mysqli\' to \'mariadb\'.';
 $string['errordeletingconfig'] = 'An error occurred while deleting the configuration records for plugin \'{$a}\'.';
 $string['errorsetting'] = 'Could not save setting:';
 $string['errorwithsettings'] = 'Some settings were not changed due to an error.';
@@ -774,9 +774,8 @@ $string['ipblocker'] = 'IP blocker';
 $string['ipblockersyntax'] = 'Put every entry on one line. Valid entries are either full IP address (such as <b>192.168.10.1</b>) which matches a single host; or partial address (such as <b>192.168</b>) which matches any address starting with those numbers; or CIDR notation (such as <b>231.54.211.0/20</b>); or a range of IP addresses (such as <b>231.3.56.10-20</b>) where the range applies to the last part of the address. Text domain names (like \'example.com\') are not supported. Blank lines, and text following a "#" character are ignored.';
 $string['iplookup'] = 'IP address lookup';
 $string['iplookupgeoplugin'] = 'The <a href="https://www.geoplugin.com">geoPlugin</a> service is currently being used to look up geographical information. For more accurate results we recommend installing a local copy of the MaxMind GeoLite database.';
-$string['iplookupinfo'] = 'By default Moodle uses the free online NetGeo (The Internet Geographic Database) server to lookup location of IP addresses, unfortunately this database is not maintained anymore and may return <em>wildly incorrect</em> data.
-It is recommended to install local copy of free GeoLite2 City database from MaxMind.<br />
-IP address location is displayed on simple map or using Google Maps. Please note that you need to have a Google account and apply for free Google Maps API key to enable interactive maps.';
+$string['iplookupinfo'] = 'The free online NetGeo server is used to look up IP address locations. The database is not maintained any more though, and may return incorrect data. Installing a local copy of the free GeoLite2 City database from MaxMind is recommended.<br />
+If a Google Maps API V3 key is provided, IP address location is displayed using Google Maps. You need a Google account and to apply for a Google Maps API key. If no Google Maps API V3 key is provided, IP address location is displayed using OpenStreetMap.';
 $string['iplookupmaxmindnote'] = 'This product includes GeoLite2 data created by MaxMind, available from <a href="https://www.maxmind.com">https://www.maxmind.com</a>.';
 $string['iscustomadminwarnings'] = 'It has been detected that your site is using a custom admin directory. This feature is no longer supported and will be removed after Moodle 4.2.';
 $string['ishttpswarning'] = 'It has been detected that your site is not secured using HTTPS. It is strongly recommended to migrate your site to HTTPS for increased security and improved integration with other systems.';
@@ -1181,10 +1180,10 @@ $string['purgethemecache'] = 'Themes';
 $string['referrernone'] = 'Browser default';
 $string['referrerpolicy'] = 'Referrer policy';
 $string['referrerpolicydesc'] = 'Set the referrer policy header to be included with responses from your site.';
-$string['resetindentation_title'] = 'Reset indentation on course page?';
-$string['resetindentation_help'] = 'This will remove any indentation previously set for courses in {$a->format}.';
-$string['resetindentation'] = 'Reset indentation';
-$string['resetindentationsuccess'] = 'Indentation reset';
+$string['resetindentation_title'] = 'Reset indentation sitewide?';
+$string['resetindentation_help'] = 'This will remove any indentation previously set for all courses on the site in {$a->format}.';
+$string['resetindentation'] = 'Reset indentation sitewide';
+$string['resetindentationsuccess'] = 'Indentation reset.';
 $string['restorecourse'] = 'Restore course';
 $string['restorernewroleid'] = 'Restorers\' role in courses';
 $string['restorernewroleid_help'] = 'If the user does not already have the permission to manage the newly restored course, the user is automatically assigned this role and enrolled if necessary. Select "None" if you do not want restorers to be able to manage every restored course.';

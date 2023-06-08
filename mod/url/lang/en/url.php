@@ -26,7 +26,7 @@
 $string['clicktoopen'] = 'Click {$a} link to open resource.';
 $string['configdisplayoptions'] = 'Select all options that should be available, existing settings are not modified. Hold CTRL key to select multiple fields.';
 $string['configframesize'] = 'When a web page or an uploaded file is displayed within a frame, this value is the height (in pixels) of the top frame (which contains the navigation).';
-$string['configrolesinparams'] = 'Enable if you want to include localized role names in list of available parameter variables.';
+$string['configrolesinparams'] = 'Should customised role names (from the course settings) be available as variables for URL parameters?';
 $string['configsecretphrase'] = 'This secret phrase is used to produce encrypted code value that can be sent to some servers as a parameter.  The encrypted code is produced by an md5 value of the current user IP address concatenated with your secret phrase. ie code = md5(IP.secretphrase). Please note that this is not reliable because IP address may change and is often shared by different computers.';
 $string['contentheader'] = 'Content';
 $string['createurl'] = 'Create a URL';
@@ -77,7 +77,7 @@ $string['popupwidthexplain'] = 'Specifies default width of popup windows.';
 $string['printintro'] = 'Display URL description';
 $string['printintroexplain'] = 'Display URL description below content? Some display types may not display description even if enabled.';
 $string['privacy:metadata'] = 'The URL resource plugin does not store any personal data.';
-$string['rolesinparams'] = 'Include role names in parameters';
+$string['rolesinparams'] = 'Role names as URL variables';
 $string['search:activity'] = 'URL';
 $string['serverurl'] = 'Server URL';
 $string['url:addinstance'] = 'Add a new URL resource';
