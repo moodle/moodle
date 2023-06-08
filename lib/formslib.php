@@ -1340,7 +1340,7 @@ abstract class moodleform {
      * @param bool $cancel whether to show cancel button, default true
      * @param string $submitlabel label for submit button, defaults to get_string('savechanges')
      */
-    function add_action_buttons($cancel = true, $submitlabel=null){
+    public function add_action_buttons($cancel = true, $submitlabel = null) {
         if (is_null($submitlabel)){
             $submitlabel = get_string('savechanges');
         }
@@ -1356,6 +1356,21 @@ abstract class moodleform {
             //no group needed
             $mform->addElement('submit', 'submitbutton', $submitlabel);
             $mform->closeHeaderBefore('submitbutton');
+        }
+    }
+
+    /**
+     * Use this method to make a sticky submit/cancel button at the end of your form.
+     *
+     * @param bool $cancel whether to show cancel button, default true
+     * @param string|null $submitlabel label for submit button, defaults to get_string('savechanges')
+     */
+    public function add_sticky_action_buttons(bool $cancel = true, ?string $submitlabel = null): void {
+        $this->add_action_buttons($cancel, $submitlabel);
+        if ($cancel) {
+            $this->_form->set_sticky_footer('buttonar');
+        } else {
+            $this->_form->set_sticky_footer('submitbutton');
         }
     }
 
@@ -1600,6 +1615,12 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     var $_advancedElements = array();
 
     /**
+     * The form element to render in the sticky footer, if any.
+     * @var string|null $_stickyfooterelement
+     */
+    protected $_stickyfooterelement = null;
+
+    /**
      * Array whose keys are element names and values are the desired collapsible state.
      * True for collapsed, False for expanded. If not present, set to default in
      * {@link self::accept()}.
@@ -1735,6 +1756,18 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         } elseif (isset($this->_advancedElements[$elementName])) {
             unset($this->_advancedElements[$elementName]);
         }
+    }
+
+    /**
+     * Use this method to indicate an element to display as a sticky footer.
+     *
+     * Only one page element can be displayed in the sticky footer. To render
+     * more than one element use addGroup to create a named group.
+     *
+     * @param string|null $elementname group or element name (not the element name of something inside a group).
+     */
+    public function set_sticky_footer(?string $elementname): void {
+        $this->_stickyfooterelement = $elementname;
     }
 
     /**
@@ -1992,6 +2025,9 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
 
             // Pass the array to renderer object.
             $renderer->setCollapsibleElements($this->_collapsibleElements);
+        }
+        if (method_exists($renderer, 'set_sticky_footer') && !empty($this->_stickyfooterelement)) {
+            $renderer->set_sticky_footer($this->_stickyfooterelement);
         }
         parent::accept($renderer);
     }
@@ -3051,6 +3087,12 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     var $_advancedElements = array();
 
     /**
+     * The form element to render in the sticky footer, if any.
+     * @var string|null $_stickyfooterelement
+     */
+    protected $_stickyfooterelement = null;
+
+    /**
      * Array whose keys are element names and the the boolean values reflect the current state. If the key exists this is a collapsible element.
      *
      * @var array
@@ -3101,6 +3143,15 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
      */
     function setAdvancedElements($elements){
         $this->_advancedElements = $elements;
+    }
+
+    /**
+     * Set the sticky footer element if any.
+     *
+     * @param string|null $elementname the form element name.
+     */
+    public function set_sticky_footer(?string $elementname): void {
+        $this->_stickyfooterelement = $elementname;
     }
 
     /**
@@ -3203,6 +3254,12 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $html = str_replace('{emptylabel}', $emptylabel, $html);
         }
         $this->_templates[$group->getName()] = $html;
+        // Check if the element should be displayed in the sticky footer.
+        if ($this->_stickyfooterelement == $group->getName()) {
+            $stickyfooter = new core\output\sticky_footer($html);
+            $html = $OUTPUT->render($stickyfooter);
+        }
+
         // Fix for bug in tableless quickforms that didn't allow you to stop a
         // fieldset before a group of elements.
         // if the element name indicates the end of a fieldset, close the fieldset
@@ -3281,6 +3338,12 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $this->_groupElementTemplate = $html;
         } else if (!isset($this->_templates[$element->getName()])) {
             $this->_templates[$element->getName()] = $html;
+        }
+
+        // Check if the element should be displayed in the sticky footer.
+        if ($this->_stickyfooterelement == $element->getName()) {
+            $stickyfooter = new core\output\sticky_footer($html);
+            $html = $OUTPUT->render($stickyfooter);
         }
 
         if (!$fromtemplate) {

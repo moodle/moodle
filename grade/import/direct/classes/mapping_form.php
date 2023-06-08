@@ -112,6 +112,6 @@ class gradeimport_direct_mapping_form extends moodleform {
         $mform->addElement('hidden', 'forceimport', $this->_customdata['forceimport']);
         $mform->setType('forceimport', PARAM_BOOL);
         $mform->setConstant('forceimport', $this->_customdata['forceimport']);
-        $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));
+        $this->add_sticky_action_buttons(false, get_string('uploadgrades', 'grades'));
     }
 }
