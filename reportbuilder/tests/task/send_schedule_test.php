@@ -165,14 +165,37 @@ class send_schedule_test extends advanced_testcase {
             'user:username_value' => 'baconlettucetomato',
         ]);
 
+        $audience = $generator->create_audience(['reportid' => $report->get('id'), 'configdata' => []]);
         $schedule = $generator->create_schedule([
             'reportid' => $report->get('id'),
             'name' => 'My schedule',
+            'audiences' => json_encode([$audience->get_persistent()->get('id')]),
             'reportempty' => schedule::REPORT_EMPTY_DONT_SEND,
         ]);
 
         $this->expectOutputString("Sending schedule: My schedule\n" .
-            "  Empty report, skipping\n");
+            "  Empty report, skipping\n" .
+            "Sending schedule complete\n");
+        $sendschedule = new send_schedule();
+        $sendschedule->set_custom_data(['reportid' => $report->get('id'), 'scheduleid' => $schedule->get('id')]);
+        $sendschedule->execute();
+    }
+
+    /**
+     * Test executing task for a schedule that contains no recipients
+     */
+    public function test_execute_schedule_no_recipients(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
+        $schedule = $generator->create_schedule(['reportid' => $report->get('id'), 'name' => 'My schedule']);
+
+        $this->expectOutputString("Sending schedule: My schedule\n" .
+            "Sending schedule complete\n");
         $sendschedule = new send_schedule();
         $sendschedule->set_custom_data(['reportid' => $report->get('id'), 'scheduleid' => $schedule->get('id')]);
         $sendschedule->execute();
