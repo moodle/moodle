@@ -377,7 +377,7 @@ $string['configstrictformsrequired'] = 'If enabled, users are prevented from ent
 $string['configstripalltitletags'] = 'Uncheck this setting to allow HTML tags in activity and resource names.';
 $string['configsupportemail'] = 'If SMTP is configured on this site and a support page is not set, this email address will receive messages submitted through the support form. If sending fails, the email address will be displayed to logged-in users.';
 $string['configsupportname'] = 'The name of the person or other entity providing support via the support form or support page.';
-$string['configsupportpage'] = 'Enter the URL of a support page or leave empty to link to a contact form.';
+$string['configsupportpage'] = 'Enter the URL of a support page or leave empty to link to a contact form. The link is displayed in the site footer.';
 $string['configtempdatafoldercleanup'] = 'Remove temporary data files from the data folder that are older than the selected time.';
 $string['configthemedesignermode'] = 'Normally all theme images and style sheets are cached in browsers and on the server for a very long time, for performance. If you are designing themes or developing code then you probably want to turn this mode on so that you are not served cached versions.  Warning: this will make your site slower for all users!  Alternatively, you can also reset the theme caches manually from the Theme selection page.';
 $string['configthemelist'] = 'Leave this blank to allow any valid theme to be used.  If you want to shorten the theme menu, you can specify a comma-separated list of names here (Don\'t use spaces!).
@@ -600,7 +600,7 @@ $string['environmentrequireversion'] = 'version {$a->needed} is required and you
 $string['environmentsettingok'] = 'recommended setting detected';
 $string['environmentshouldfixsetting'] = 'PHP setting should be changed.';
 $string['environmentxmlerror'] = 'Error reading environment data ({$a->error_code})';
-$string['environmentmariadbwrongdbtype'] = 'Wrong <code>$CFG->dbtype</code>: you need to change it in your <code>config.php</code> file, from \'<code>mysql</code>\' to \'<code>mariadb</code>\'.';
+$string['environmentmariadbwrongdbtype'] = 'Wrong $CFG->dbtype. You need to change it in your config.php file from \'mysqli\' to \'mariadb\'.';
 $string['errordeletingconfig'] = 'An error occurred while deleting the configuration records for plugin \'{$a}\'.';
 $string['errorsetting'] = 'Could not save setting:';
 $string['errorwithsettings'] = 'Some settings were not changed due to an error.';
@@ -716,9 +716,8 @@ $string['ipblocker'] = 'IP blocker';
 $string['ipblockersyntax'] = 'Put every entry on one line. Valid entries are either full IP address (such as <b>192.168.10.1</b>) which matches a single host; or partial address (such as <b>192.168</b>) which matches any address starting with those numbers; or CIDR notation (such as <b>231.54.211.0/20</b>); or a range of IP addresses (such as <b>231.3.56.10-20</b>) where the range applies to the last part of the address. Text domain names (like \'example.com\') are not supported. Blank lines, and text following a "#" character are ignored.';
 $string['iplookup'] = 'IP address lookup';
 $string['iplookupgeoplugin'] = 'The <a href="https://www.geoplugin.com">geoPlugin</a> service is currently being used to look up geographical information. For more accurate results we recommend installing a local copy of the MaxMind GeoLite database.';
-$string['iplookupinfo'] = 'By default Moodle uses the free online NetGeo (The Internet Geographic Database) server to lookup location of IP addresses, unfortunately this database is not maintained anymore and may return <em>wildly incorrect</em> data.
-It is recommended to install local copy of free GeoLite2 City database from MaxMind.<br />
-IP address location is displayed on simple map or using Google Maps. Please note that you need to have a Google account and apply for free Google Maps API key to enable interactive maps.';
+$string['iplookupinfo'] = 'The free online NetGeo server is used to look up IP address locations. The database is not maintained any more though, and may return incorrect data. Installing a local copy of the free GeoLite2 City database from MaxMind is recommended.<br />
+If a Google Maps API V3 key is provided, IP address location is displayed using Google Maps. You need a Google account and to apply for a Google Maps API key. If no Google Maps API V3 key is provided, IP address location is displayed using OpenStreetMap.';
 $string['iplookupmaxmindnote'] = 'This product includes GeoLite2 data created by MaxMind, available from <a href="https://www.maxmind.com">https://www.maxmind.com</a>.';
 $string['iscustomadminwarnings'] = 'It has been detected that your site is using a custom admin directory. This feature is no longer supported and will be removed after Moodle 4.2.';
 $string['ishttpswarning'] = 'It has been detected that your site is not secured using HTTPS. It is strongly recommended to migrate your site to HTTPS for increased security and improved integration with other systems.';
