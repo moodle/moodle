@@ -31,8 +31,7 @@
  * @return {String} The rewritten destination path.
  */
 const babelRename = function(destPath, srcPath) {
-    const path = require('path');
-    destPath = srcPath.replace(`amd${path.sep}src`, `amd${path.sep}build`);
+    destPath = srcPath.replace(`amd/src`, `amd/build`);
     destPath = destPath.replace(/\.js$/, '.min.js');
     return destPath;
 };
