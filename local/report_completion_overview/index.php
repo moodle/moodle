@@ -528,7 +528,11 @@ foreach ($userlist as $user) {
                 $rowclass = "expiring";
             }
             if (!empty($usercourse->timeenrolled) && !empty($usercourse->timecompleted) && $usercourse->timeexpires < $runtime) {
-                $rowclass = "expired";
+                if (empty($usercourse->timeexpires)) {
+                    $rowclass = "indate";
+                } else {
+                    $rowclass = "expired";
+                } 
             }
             $statustext = get_string($rowclass, 'local_report_completion_overview');
         }
