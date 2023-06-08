@@ -102,7 +102,7 @@ Options:
 Example from Moodle root directory:
 \$ php admin/tool/behat/cli/init.php --parallel=2
 
-More info in http://docs.moodle.org/dev/Acceptance_testing#Running_tests
+More info in https://moodledev.io/general/development/tools/behat/running
 ";
 
 if (!empty($options['help'])) {
