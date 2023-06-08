@@ -1,6 +1,12 @@
 This files describes API changes in core_xapi libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.3 ===
+* The default state store will throw and exception if the activity ID is not
+  a numeric value. This is to avoid problems with the database when using
+  the default state store. If a plugin requires a non numeric activity ID,
+  it must implement its own state store.
+
 === 4.2 ===
 
 * A new state store has been introduced. Now plugins can store state data

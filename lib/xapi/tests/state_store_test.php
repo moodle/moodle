@@ -554,4 +554,61 @@ class state_store_test extends advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test delete with a non numeric activity id.
+     *
+     * The default state store only allows integer itemids.
+     *
+     * @dataProvider invalid_activityid_format_provider
+     * @param string $operation the method to execute
+     * @param bool $usestate if the param is a state or the activity id
+     */
+    public function test_invalid_activityid_format(string $operation, bool $usestate = false): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $state = test_helper::create_state([
+            'activity' => item_activity::create_from_id('notnumeric'),
+        ]);
+        $param = ($usestate) ? $state : 'notnumeric';
+
+        $this->expectException(xapi_exception::class);
+        $store = new state_store('fake_component');
+        $store->$operation($param);
+    }
+
+    /**
+     * Data provider for test_invalid_activityid_format.
+     *
+     * @return array
+     */
+    public function invalid_activityid_format_provider(): array {
+        return [
+            'delete' => [
+                'operation' => 'delete',
+                'usestate' => true,
+            ],
+            'get' => [
+                'operation' => 'get',
+                'usestate' => true,
+            ],
+            'put' => [
+                'operation' => 'put',
+                'usestate' => true,
+            ],
+            'reset' => [
+                'operation' => 'reset',
+                'usestate' => false,
+            ],
+            'wipe' => [
+                'operation' => 'wipe',
+                'usestate' => false,
+            ],
+            'get_state_ids' => [
+                'operation' => 'get_state_ids',
+                'usestate' => false,
+            ],
+        ];
+    }
 }
