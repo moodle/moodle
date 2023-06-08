@@ -119,18 +119,14 @@ class restore_gradebook_structure_step extends restore_structure_step {
             return false;
         }
 
-        // Identify the backup we're dealing with.
-        $backuprelease = $this->get_task()->get_info()->backup_release; // The major version: 2.9, 3.0, 3.10...
-        $backupbuild = 0;
-        preg_match('/(\d{8})/', $this->get_task()->get_info()->moodle_release, $matches);
-        if (!empty($matches[1])) {
-            $backupbuild = (int) $matches[1]; // The date of Moodle build at the time of the backup.
-        }
+        $restoretask = $this->get_task();
 
         // On older versions the freeze value has to be converted.
         // We do this from here as it is happening right before the file is read.
         // This only targets the backup files that can contain the legacy freeze.
-        if ($backupbuild > 20150618 && (version_compare($backuprelease, '3.0', '<') || $backupbuild < 20160527)) {
+        if ($restoretask->backup_version_compare(20150618, '>')
+                && $restoretask->backup_release_compare('3.0', '<')
+                || $restoretask->backup_version_compare(20160527, '<')) {
             $this->rewrite_step_backup_file_for_legacy_freeze($fullpath);
         }
 
@@ -505,24 +501,25 @@ class restore_gradebook_structure_step extends restore_structure_step {
     protected function gradebook_calculation_freeze() {
         global $CFG;
         $gradebookcalculationsfreeze = get_config('core', 'gradebook_calculations_freeze_' . $this->get_courseid());
-        preg_match('/(\d{8})/', $this->get_task()->get_info()->moodle_release, $matches);
-        $backupbuild = (int)$matches[1];
-        $backuprelease = $this->get_task()->get_info()->backup_release; // The major version: 2.9, 3.0, 3.10...
+        $restoretask = $this->get_task();
 
         // Extra credits need adjustments only for backups made between 2.8 release (20141110) and the fix release (20150619).
-        if (!$gradebookcalculationsfreeze && $backupbuild >= 20141110 && $backupbuild < 20150619) {
+        if (!$gradebookcalculationsfreeze && $restoretask->backup_version_compare(20141110, '>=')
+                && $restoretask->backup_version_compare(20150619, '<')) {
             require_once($CFG->libdir . '/db/upgradelib.php');
             upgrade_extra_credit_weightoverride($this->get_courseid());
         }
         // Calculated grade items need recalculating for backups made between 2.8 release (20141110) and the fix release (20150627).
-        if (!$gradebookcalculationsfreeze && $backupbuild >= 20141110 && $backupbuild < 20150627) {
+        if (!$gradebookcalculationsfreeze && $restoretask->backup_version_compare(20141110, '>=')
+                && $restoretask->backup_version_compare(20150627, '<')) {
             require_once($CFG->libdir . '/db/upgradelib.php');
             upgrade_calculated_grade_items($this->get_courseid());
         }
         // Courses from before 3.1 (20160518) may have a letter boundary problem and should be checked for this issue.
         // Backups from before and including 2.9 could have a build number that is greater than 20160518 and should
         // be checked for this problem.
-        if (!$gradebookcalculationsfreeze && ($backupbuild < 20160518 || version_compare($backuprelease, '2.9', '<='))) {
+        if (!$gradebookcalculationsfreeze
+                && ($restoretask->backup_version_compare(20160518, '<') || $restoretask->backup_release_compare('2.9', '<='))) {
             require_once($CFG->libdir . '/db/upgradelib.php');
             upgrade_course_letter_boundary($this->get_courseid());
         }
@@ -4810,13 +4807,8 @@ class restore_create_categories_and_questions extends restore_structure_step {
     protected function define_structure() {
 
         // Check if the backup is a pre 4.0 one.
-        $backuprelease = $this->get_task()->get_info()->backup_release; // The major version: 2.9, 3.0, 3.10...
-        preg_match('/(\d{8})/', $this->get_task()->get_info()->moodle_release, $matches);
-        $backupbuild = (int)$matches[1];
-        $before40 = false;
-        if (version_compare($backuprelease, '4.0', '<') || $backupbuild < 20220202) {
-            $before40 = true;
-        }
+        $restoretask = $this->get_task();
+        $before40 = $restoretask->backup_release_compare('4.0', '<') || $restoretask->backup_version_compare(20220202, '<');
         // Start creating the path, category should be the first one.
         $paths = [];
         $paths [] = new restore_path_element('question_category', '/question_categories/question_category');
@@ -4898,13 +4890,8 @@ class restore_create_categories_and_questions extends restore_structure_step {
 
         // Before 3.5, question categories could be created at top level.
         // From 3.5 onwards, all question categories should be a child of a special category called the "top" category.
-        $backuprelease = $this->get_task()->get_info()->backup_release; // The major version: 2.9, 3.0, 3.10...
-        preg_match('/(\d{8})/', $this->get_task()->get_info()->moodle_release, $matches);
-        $backupbuild = (int)$matches[1];
-        $before35 = false;
-        if (version_compare($backuprelease, '3.5', '<') || $backupbuild < 20180205) {
-            $before35 = true;
-        }
+        $restoretask = $this->get_task();
+        $before35 = $restoretask->backup_release_compare('3.5', '<') || $restoretask->backup_version_compare(20180205, '<');
         if (empty($mapping->info->parent) && $before35) {
             $top = question_get_top_category($data->contextid, true);
             $data->parent = $top->id;
@@ -5052,14 +5039,8 @@ class restore_create_categories_and_questions extends restore_structure_step {
         $oldid = $data->id;
 
         // Check if the backup is a pre 4.0 one.
-        $backuprelease = $this->get_task()->get_info()->backup_release; // The major version: 2.9, 3.0, 3.10...
-        preg_match('/(\d{8})/', $this->get_task()->get_info()->moodle_release, $matches);
-        $backupbuild = (int)$matches[1];
-        $before40 = false;
-        if (version_compare($backuprelease, '4.0', '<') || $backupbuild < 20220202) {
-            $before40 = true;
-        }
-        if ($before40) {
+        $restoretask = $this->get_task();
+        if ($restoretask->backup_release_compare('4.0', '<') || $restoretask->backup_version_compare(20220202, '<')) {
             // Check we have one mapping for this question.
             if (!$questionmapping = $this->get_mapping('question', $oldid)) {
                 return; // No mapping = this question doesn't need to be created/mapped.
@@ -5284,13 +5265,7 @@ class restore_move_module_questions_categories extends restore_execution_step {
     protected function define_execution() {
         global $DB;
 
-        $backuprelease = $this->task->get_info()->backup_release; // The major version: 2.9, 3.0, 3.10...
-        preg_match('/(\d{8})/', $this->task->get_info()->moodle_release, $matches);
-        $backupbuild = (int)$matches[1];
-        $after35 = false;
-        if (version_compare($backuprelease, '3.5', '>=') && $backupbuild > 20180205) {
-            $after35 = true;
-        }
+        $after35 = $this->task->backup_release_compare('3.5', '>=') && $this->task->backup_version_compare(20180205, '>');
 
         $contexts = restore_dbops::restore_get_question_banks($this->get_restoreid(), CONTEXT_MODULE);
         foreach ($contexts as $contextid => $contextlevel) {

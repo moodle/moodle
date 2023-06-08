@@ -381,6 +381,59 @@ class quiz_question_restore_test extends \advanced_testcase {
     }
 
     /**
+     * Test pre 4.0 quiz restore for random question used on multiple quizzes.
+     *
+     * @covers ::process_quiz_question_legacy_instance
+     */
+    public function test_pre_4_quiz_restore_shared_random_question() {
+        global $USER, $DB;
+        $this->resetAfterTest();
+
+        $backupid = 'abc';
+        $backuppath = make_backup_temp_directory($backupid);
+        get_file_packer('application/vnd.moodle.backup')->extract_to_pathname(
+                __DIR__ . "/fixtures/pre-40-shared-random-question.mbz", $backuppath);
+
+        // Do the restore to new course with default settings.
+        $categoryid = $DB->get_field_sql("SELECT MIN(id) FROM {course_categories}");
+        $newcourseid = \restore_dbops::create_new_course('Test fullname', 'Test shortname', $categoryid);
+        $rc = new \restore_controller($backupid, $newcourseid, \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, $USER->id,
+                \backup::TARGET_NEW_COURSE);
+
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Get the information about the resulting course and check that it is set up correctly.
+        // Each quiz should contain an instance of the random question.
+        $modinfo = get_fast_modinfo($newcourseid);
+        $quizzes = $modinfo->get_instances_of('quiz');
+        $this->assertCount(2, $quizzes);
+        foreach ($quizzes as $quiz) {
+            $quizobj = \quiz::create($quiz->instance);
+            $structure = structure::create_for_quiz($quizobj);
+
+            // Are the correct slots returned?
+            $slots = $structure->get_slots();
+            $this->assertCount(1, $slots);
+
+            $quizobj->preload_questions();
+            $quizobj->load_questions();
+            $questions = $quizobj->get_questions();
+            $this->assertCount(1, $questions);
+        }
+
+        // Count the questions for course question bank.
+        // We should have a single question, the random question should have been deleted after the restore.
+        $this->assertEquals(1, $this->question_count(\context_course::instance($newcourseid)->id));
+        $this->assertEquals(1, $this->question_count(\context_course::instance($newcourseid)->id,
+                "AND q.qtype <> 'random'"));
+
+        // Count the questions in quiz qbank.
+        $this->assertEquals(0, $this->question_count($quizobj->get_context()->id));
+    }
+
+    /**
      * Ensure that question slots are correctly backed up and restored with all properties.
      *
      * @covers \backup_quiz_activity_structure_step::define_structure()
