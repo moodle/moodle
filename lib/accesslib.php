@@ -4227,21 +4227,21 @@ function get_user_capability_contexts(string $capability, bool $getcategories, $
         $fieldlist = \core\access\get_user_capability_course_helper::map_fieldnames($categoryfieldsexceptid);
         if ($categoryorderby) {
             $fields = explode(',', $categoryorderby);
-            $orderby = '';
+            $categoryorderby = '';
             foreach ($fields as $field) {
-                if ($orderby) {
-                    $orderby .= ',';
+                if ($categoryorderby) {
+                    $categoryorderby .= ',';
                 }
-                $orderby .= 'c.'.$field;
+                $categoryorderby .= 'c.'.$field;
             }
-            $orderby = 'ORDER BY '.$orderby;
+            $categoryorderby = 'ORDER BY '.$categoryorderby;
         }
         $rs = $DB->get_recordset_sql("
             SELECT c.id $fieldlist
               FROM {course_categories} c
                JOIN {context} x ON c.id = x.instanceid AND x.contextlevel = ?
             $contextlimitsql
-            $orderby", array_merge([CONTEXT_COURSECAT], $contextlimitparams));
+            $categoryorderby", array_merge([CONTEXT_COURSECAT], $contextlimitparams));
         $basedlimit = $limit;
         foreach ($rs as $category) {
             $categories[] = $category;
@@ -4250,6 +4250,7 @@ function get_user_capability_contexts(string $capability, bool $getcategories, $
                 break;
             }
         }
+        $rs->close();
     }
 
     $courses = [];
