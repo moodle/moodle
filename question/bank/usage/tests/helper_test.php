@@ -79,7 +79,12 @@ class helper_test extends \advanced_testcase {
         }
     }
 
-    protected function attempt_quiz() {
+    /**
+     * Record a quiz attempt.
+     *
+     * @return void
+     */
+    protected function attempt_quiz(): void {
         $quizobj = \mod_quiz\quiz_settings::create($this->quiz->id, $this->user->id);
 
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
@@ -121,9 +126,10 @@ class helper_test extends \advanced_testcase {
     /**
      * If a question has been included via a random question attempt, this should be counted as a usage.
      *
+     * @covers ::get_question_entry_usage_count
      * @return void
      */
-    public function test_get_random_question_attempts_usage_count() {
+    public function test_get_random_question_attempts_usage_count(): void {
         $this->setAdminUser();
         $cat = $this->questiongenerator->create_question_category();
         $question = $this->questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
@@ -137,5 +143,111 @@ class helper_test extends \advanced_testcase {
 
         $count = helper::get_question_entry_usage_count($qdef);
         $this->assertEquals(1, $count);
+    }
+
+    /**
+     * When a question referenced directly is edited, the usage count of all versions remains the same.
+     *
+     * When checking usage of separate versions, the new version should show usages but the original version should not.
+     *
+     * @covers ::get_question_entry_usage_count
+     * @return void
+     */
+    public function test_edited_question_usage_counts(): void {
+        foreach ($this->questions as $question) {
+            $qdef = \question_bank::load_question($question->id);
+            $count1 = helper::get_question_entry_usage_count($qdef);
+            // Each question should have 1 usage.
+            $this->assertEquals(1, $count1);
+
+            $newversion = $this->questiongenerator->update_question($question);
+            $newqdef = \question_bank::load_question($newversion->id);
+
+            // Either version should return the same count if not checking a specific version.
+            $count2 = helper::get_question_entry_usage_count($qdef);
+            $this->assertEquals(1, $count2);
+            $count3 = helper::get_question_entry_usage_count($newqdef);
+            $this->assertEquals(1, $count3);
+            // Checking the specific version count should return the counts for each version.
+            // The original version is no longer included in the quiz, so has 0 usages.
+            $count4 = helper::get_question_entry_usage_count($qdef, true);
+            $this->assertEquals(0, $count4);
+            // The new version is now included in the quiz, so has 1 usage.
+            $count5 = helper::get_question_entry_usage_count($newqdef, true);
+            $this->assertEquals(1, $count5);
+        }
+    }
+
+    /**
+     * When a question referenced directly with attempts is edited, the usage count of all versions remains the same.
+     *
+     * When checking usage of separate versions, both versions should show usage.
+     *
+     * @covers ::get_question_entry_usage_count
+     * @return void
+     */
+    public function test_edited_attempted_question_usage_counts(): void {
+        $this->attempt_quiz();
+
+        foreach ($this->questions as $question) {
+            $qdef = \question_bank::load_question($question->id);
+            $count1 = helper::get_question_entry_usage_count($qdef);
+            // Each question should have 1 usage.
+            $this->assertEquals(1, $count1);
+
+            $newversion = $this->questiongenerator->update_question($question);
+            $newqdef = \question_bank::load_question($newversion->id);
+
+            // Either version should return the same count if not checking a specific version.
+            $count2 = helper::get_question_entry_usage_count($qdef);
+            $this->assertEquals(1, $count2);
+            $count3 = helper::get_question_entry_usage_count($newqdef);
+            $this->assertEquals(1, $count3);
+            // Checking the specific version count should return the counts for each version.
+            // The original version is no longer included in the quiz. However, the is still an attempt using this question version,
+            // so it has 1 usage.
+            $count4 = helper::get_question_entry_usage_count($qdef, true);
+            $this->assertEquals(1, $count4);
+            // The new version is now included in the quiz, so has 1 usage.
+            $count5 = helper::get_question_entry_usage_count($newqdef, true);
+            $this->assertEquals(1, $count5);
+        }
+    }
+
+    /**
+     * When a random question with attempts is edited, it should still have the same usage count.
+     *
+     * When checking usage of separate versions, the original version should still show usage but the new version should not.
+     *
+     * @covers ::get_question_entry_usage_count
+     * @return void
+     */
+    public function test_edited_attempted_random_question_usage_count(): void {
+        $this->setAdminUser();
+        $cat = $this->questiongenerator->create_question_category();
+        $question = $this->questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        quiz_add_random_questions($this->quiz, 1, $cat->id, 1, false);
+
+        $this->attempt_quiz();
+
+        $qdef = \question_bank::load_question($question->id);
+        $count1 = helper::get_question_entry_usage_count($qdef);
+        $this->assertEquals(1, $count1);
+
+        $newversion = $this->questiongenerator->update_question($question);
+        $newqdef = \question_bank::load_question($newversion->id);
+
+        // Either version should return the same count if not checking a specific version.
+        $count2 = helper::get_question_entry_usage_count($qdef);
+        $this->assertEquals(1, $count2);
+        $count3 = helper::get_question_entry_usage_count($newqdef);
+        $this->assertEquals(1, $count3);
+        // Checking the specific version count should return the counts for each version.
+        // There is still an attempt of the original version has part of the random question attempt, so it has 1 usage.
+        $count4 = helper::get_question_entry_usage_count($qdef, true);
+        $this->assertEquals(1, $count4);
+        // There is no attempt of the new version, so it has 0 usages.
+        $count5 = helper::get_question_entry_usage_count($newqdef, true);
+        $this->assertEquals(0, $count5);
     }
 }
