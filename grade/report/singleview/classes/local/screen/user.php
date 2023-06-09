@@ -169,18 +169,16 @@ class user extends tablelike implements selectable_items {
         global $OUTPUT;
 
         $grade = $this->fetch_grade_or_default($item, $this->item->id);
-        $lockicon = '';
+        $gradestatus = '';
 
-        $lockeditem = $lockeditemgrade = 0;
-        if (!empty($grade->locked)) {
-            $lockeditem = 1;
-        }
-        if (!empty($grade->grade_item->locked)) {
-            $lockeditemgrade = 1;
-        }
-        // Check both grade and grade item.
-        if ($lockeditem || $lockeditemgrade) {
-             $lockicon = $OUTPUT->pix_icon('t/locked', 'grade is locked', 'moodle', ['class' => 'ml-3']);
+        $context = [
+            'hidden' => $grade->is_hidden(),
+            'locked' => $grade->is_locked(),
+        ];
+
+        if (in_array(true, $context)) {
+            $context['classes'] = 'gradestatus';
+            $gradestatus = $OUTPUT->render_from_template('core_grades/status_icons', $context);
         }
 
         // Create a fake gradetreeitem so we can call get_element_header().
@@ -210,10 +208,10 @@ class user extends tablelike implements selectable_items {
         }
 
         $line = [
-            html_writer::div($itemicon . $itemcontent .  $lockicon, "{$type} d-flex align-items-center"),
+            html_writer::div($itemicon . $itemcontent, "{$type} d-flex align-items-center"),
             $this->get_item_action_menu($item),
             $this->category($item),
-            $formatteddefinition['finalgrade'],
+            $formatteddefinition['finalgrade'] . $gradestatus,
             new range($item),
             $formatteddefinition['feedback'],
             $formatteddefinition['override'],
