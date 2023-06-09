@@ -15,15 +15,16 @@ Feature: Add URL to main menu block
 
   @javascript
   Scenario: Add a URL in menu block and ensure it appears
-    Given I log in as "admin"
-    And I am on site homepage
-    And the following "activity" exists:
+    Given the following "activity" exists:
       | activity    | url                   |
       | course      | Acceptance test site  |
       | name        | reference link        |
       | intro       | mooooooooodle         |
       | externalurl | http://www.moodle.com |
       | section     | 0                     |
+    And I log in as "admin"
+    And I am on site homepage
+    And I turn editing mode on
     When I am on the "reference link" "url activity editing" page
     And I expand all fieldsets
     And I set the following fields to these values:

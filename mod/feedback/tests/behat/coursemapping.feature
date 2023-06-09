@@ -34,7 +34,6 @@ Feature: Mapping courses in a feedback
       | activity   | name             | course               | idnumber  | anonymous | publish_stats | section |
       | feedback   | Course feedback  | Acceptance test site | feedback0 | 1         | 1             | 1       |
       | feedback   | Another feedback | C1                   | feedback1 | 1         | 1             | 0       |
-    And I enable "feedback" "block" plugin
     And the following "blocks" exist:
       | blockname | contextlevel | reference | pagetypepattern | defaultregion |
       | feedback  | Course       | C1        | course-view-*   | side-pre      |

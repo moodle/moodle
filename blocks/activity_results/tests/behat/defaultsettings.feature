@@ -21,8 +21,6 @@ Feature: The activity results block can have administrator set defaults
       | course                        | C1              |
       | idnumber                      | 0001            |
       | name                          | Test assignment |
-      | intro                         | Offline text    |
-      | section                       | 1               |
       | assignsubmission_file_enabled | 0               |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on

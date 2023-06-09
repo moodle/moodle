@@ -23,8 +23,7 @@ Feature: The Section links block can be configured to display section name in ad
       | section_links | Course       | C1        | course-view-*   | side-pre      |
 
   Scenario: Student can see section name under the Section links block
-    Given I log in as "student1"
-    When I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     Then I should see "7: Topic 7" in the "Section links" "block"
     And I follow "7: Topic 7"
     And I should see "First assignment"

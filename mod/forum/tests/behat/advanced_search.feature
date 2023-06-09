@@ -24,9 +24,7 @@ Feature: The forum search allows users to perform advanced searches for forum po
     And the following "blocks" exist:
       | blockname  | contextlevel | reference | pagetypepattern | defaultregion |
       | news_items | Course       | C1        | course-view-*   | side-pre      |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Course 1" "course editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the field "id_newsitems" to "1"
     And I press "Save and display"
@@ -37,7 +35,6 @@ Feature: The forum search allows users to perform advanced searches for forum po
     And I add a new topic to "Announcements" forum with:
       | Subject | Your subjective|
       | Message | Your long message |
-    And I log out
 
   Scenario: Perform an advanced search using any term
     Given I am on the "Announcements" "forum activity" page logged in as student1
