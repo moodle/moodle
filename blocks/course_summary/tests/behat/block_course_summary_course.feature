@@ -22,15 +22,13 @@ Feature: Course summary block used in a course
       | course_summary | Course       | C101      | course-view-*   | side-pre      |
 
   Scenario: Student can view course summary
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     Then "Course summary" "block" should exist
     And I should see "Course summary" in the "Course summary" "block"
     And I should see "Proved the course summary block works!" in the "Course summary" "block"
 
   Scenario: Teacher can not see edit icon when edit mode is off
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as teacher1
     Then I should see "Proved the course summary block works!" in the "Course summary" "block"
     And I should see "Course summary" in the "Course summary" "block"
     And "Edit" "link" should not exist in the "Course summary" "block"

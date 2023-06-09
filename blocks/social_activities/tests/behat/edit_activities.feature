@@ -76,8 +76,7 @@ Feature: Edit activities in social activities block
     And "My forum name" activity in social activities block should be available but hidden from course page
     And I log out
     # Student will not see the module on the course page but can access it from other reports and blocks:
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I should not see "My forum name" in the "Social activities" "block"
+    When I am on the "Course 1" course page logged in as student1
+    Then I should not see "My forum name" in the "Social activities" "block"
     And I click on "My forum name" "link" in the "Recent activity" "block"
     And I should see "My forum name" in the ".breadcrumb" "css_element"
