@@ -151,7 +151,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
      */
     public function init($selfitemisempty = false) {
 
-        $this->items = $this->load_users();
+        $this->items = get_gradable_users($this->courseid, $this->groupid);
         $this->totalitemcount = count($this->items);
 
         if ($selfitemisempty) {
