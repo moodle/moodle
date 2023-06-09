@@ -95,8 +95,6 @@ Feature: Users can see the relevant recent forum posts from the recent activity 
     And I am on "Course 1" course homepage
     And I should see "The egg vs the chicken" in the "Recent activity" "block"
     And I should see "Student 1's answer" in the "Recent activity" "block"
-    And I log out
-    And I log in as "admin"
     And the following config values are set as admin:
       | maxeditingtime | 1 |
     When I am on the "Course 1" course page logged in as student2

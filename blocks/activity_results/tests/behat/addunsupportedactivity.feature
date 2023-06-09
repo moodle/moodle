@@ -32,8 +32,7 @@ Feature: The activity results block doesn't display student scores for unsupport
       | id_config_gradeformat | Percentages |
       | id_config_nameformat | Display full names |
     And I press "Save changes"
-    When I follow "Test assignment"
-    And I navigate to "Edit settings" in current page administration
+    When I am on the "Test assignment" "assign activity editing" page
     And I set the following fields to these values:
       | id_grade_modgrade_type | None |
     And I press "Save and return to course"

@@ -20,25 +20,19 @@ Feature: The search forums block allows users to search for forum posts on cours
       | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
       | news_items    | Course       | C1        | course-view-*   | side-pre      |
       | search_forums | Course       | C1        | course-view-*   | side-pre      |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Course 1" "course editing" page logged in as teacher1
     And I set the field "id_newsitems" to "1"
     And I press "Save and display"
-    And I log out
 
   Scenario: Use the search forum block in a course without any forum posts
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as student1
     When I set the following fields to these values:
       | searchform_search | Moodle |
     And I press "Go"
     Then I should see "No posts"
 
   Scenario: Use the search forum block in a course with a hidden forum and search for posts
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I add a new topic to "Announcements" forum with:
+    Given I add a new topic to "Announcements" forum with:
       | Subject | My subject |
       | Message | My message |
     And I am on "Course 1" course homepage with editing mode on
@@ -47,9 +41,7 @@ Feature: The search forums block allows users to search for forum posts on cours
     And I expand all fieldsets
     And I set the field "id_visible" to "0"
     And I press "Save and return to course"
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     And "Search forums" "block" should exist
     And I set the following fields to these values:
       | searchform_search | message |
@@ -57,14 +49,10 @@ Feature: The search forums block allows users to search for forum posts on cours
     Then I should see "No posts"
 
   Scenario: Use the search forum block in a course and search for posts
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I add a new topic to "Announcements" forum with:
+    Given I add a new topic to "Announcements" forum with:
       | Subject | My subject |
       | Message | My message |
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     And "Search forums" "block" should exist
     And I set the following fields to these values:
       | searchform_search | message |

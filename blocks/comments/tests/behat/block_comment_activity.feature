@@ -22,14 +22,9 @@ Feature: Enable Block comments on an activity page and view comments
     And the following "blocks" exist:
       | blockname | contextlevel    | reference | pagetypepattern | defaultregion |
       | comments  | Activity module | page1     | mod-page-*      | side-pre      |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test page name"
+    And I am on the "Test page name" "page activity" page logged in as teacher1
     And I follow "Show comments"
     And I add "I'm a comment from the teacher" comment to comments block
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test page name"
+    When I am on the "Test page name" "page activity" page logged in as student1
     And I follow "Show comments"
     Then I should see "I'm a comment from the teacher"

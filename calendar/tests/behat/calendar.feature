@@ -41,8 +41,7 @@ Feature: Perform basic calendar functionality
       | Event title | Really awesome event! |
       | Description | Come join this awesome event, sucka! |
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     And I follow "This month"
     And I should see "Really awesome event!"
     And I log out
@@ -59,8 +58,7 @@ Feature: Perform basic calendar functionality
       | Event title | Really awesome event! |
       | Description | Come join this awesome event, sucka! |
     And I log out
-    And I log in as "student1"
-    When I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     And I follow "This month"
     And I click on "Really awesome event!" "link"
     And "Course 1" "link" should exist in the "Really awesome event!" "dialogue"
@@ -72,16 +70,14 @@ Feature: Perform basic calendar functionality
 
   @javascript
   Scenario: Create a group event
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as teacher1
     And I create a calendar event with form data:
       | Type of event | group |
       | Group         | Group 1 |
       | Event title | Really awesome event! |
       | Description | Come join this awesome event |
     And I log out
-    And I log in as "student1"
-    When I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     And I follow "This month"
     Then I follow "Really awesome event!"
 
@@ -93,8 +89,7 @@ Feature: Perform basic calendar functionality
       | Event title | Really awesome event! |
       | Description | Come join this awesome event, sucka! |
     And I log out
-    And I log in as "student1"
-    When I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     And I follow "This month"
     Then I should not see "Really awesome event!"
 
@@ -166,8 +161,7 @@ Feature: Perform basic calendar functionality
 
   @javascript
   Scenario: Attempt to create event without fill required fields should display validation errors
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as teacher1
     And I follow "This month"
     And I click on "New event" "button"
     When I click on "Save" "button"
@@ -193,8 +187,7 @@ Feature: Perform basic calendar functionality
 
   @javascript
   Scenario: Admin can only see all courses if calendar_adminseesall setting is enabled.
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as admin
     And I am viewing site calendar
     And I click on "New event" "button"
     And I set the field "Type of event" to "Course"
