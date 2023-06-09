@@ -73,9 +73,7 @@ Feature: Enable the calendar block in a course and test it's functionality
       | user     | group   |
       | student1 | G1 |
       | student2 | G2 |
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Settings" in current page administration
+    When I am on the "Course 1" "course editing" page logged in as teacher1
     And I set the following fields to these values:
       | id_groupmode | Separate groups |
       | id_groupmodeforce | Yes |
@@ -88,12 +86,8 @@ Feature: Enable the calendar block in a course and test it's functionality
       | Type of event | group       |
       | Group         | Group 1     |
       | Event title   | Group Event |
-    And I log out
-    Then I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student1
     And I hover over today in the mini-calendar block
-    And I should see "Group Event"
-    And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
+    Then I should see "Group Event"
+    And I am on the "Course 1" course page logged in as student2
     And I should not see "Group Event"

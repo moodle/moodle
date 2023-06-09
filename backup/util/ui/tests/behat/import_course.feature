@@ -20,9 +20,9 @@ Feature: Import course's contents into another course
   Scenario: Import course's contents to another course
     Given I log in as "teacher1"
     And the following "activities" exist:
-      | activity | name               | intro                        | course | idnumber   | section |
-      | data     | Test database name | Test database description    | C1     | database1  | 2       |
-      | forum    | Test forum name    | Test forum name description  | C1     | forum1     | 1       |
+      | activity | name               | course | idnumber   |
+      | data     | Test database name | C1     | database1  |
+      | forum    | Test forum name    | C1     | forum1     |
     And the following "blocks" exist:
       | blockname   | contextlevel | reference | pagetypepattern | defaultregion |
       | comments    | Course       | C1        | course-view-*   | side-pre      |

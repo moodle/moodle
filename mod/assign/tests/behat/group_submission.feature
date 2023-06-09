@@ -291,24 +291,18 @@ Feature: Group assignment submissions
       | preventsubmissionnotingroup          | 0                            |
       | submissiondrafts                     | 0                            |
       | teamsubmission                       | 1                            |
-
     And the following "mod_assign > submissions" exist:
       | assign                | user      | onlinetext                          |
       | Test assignment name  | student1  | I'm the student's first submission  |
     And the following "blocks" exist:
       | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
       | activity_modules | Course       | C1        | course-view-*   | side-pre      |
-
     And I am on the "C1" Course page logged in as student1
     And I click on "Assignments" "link" in the "Activities" "block"
     And I should see "Submitted for grading"
-    And I log out
-
     And I am on the "C1" Course page logged in as student2
     And I click on "Assignments" "link" in the "Activities" "block"
     And I should see "Submitted for grading"
-    And I log out
-
     And I am on the "Test assignment name" Activity page logged in as teacher1
     When I follow "View all submissions"
     Then "Student 1" row "Status" column of "generaltable" table should contain "Submitted for grading"
