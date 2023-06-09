@@ -23,21 +23,16 @@ Feature: Enable Block Completion in a course using manual completion by others
       | completionstatus | Course       | C1        | course-view-*   | side-pre      |
 
   Scenario: Add the block to a the course and mark a student complete.
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
+    Given I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Course completion" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
       | Teacher | 1 |
     And I press "Save changes"
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     And I should see "Status: Not yet started" in the "Course completion status" "block"
     And I should see "No" in the "Teacher" "table_row"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Reports" in current page administration
     And I click on "Course completion" "link" in the "region-main" "region"
     And I follow "Click to mark user complete"
@@ -46,17 +41,14 @@ Feature: Enable Block Completion in a course using manual completion by others
     And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"
     And I am on site homepage
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student1
     Then I should see "Status: Complete" in the "Course completion status" "block"
     And I should see "Yes" in the "Teacher" "table_row"
     And I follow "More details"
     And I should see "Yes" in the "Marked complete by Teacher" "table_row"
 
   Scenario: Add the block to a the course and require multiple roles to mark a student complete.
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
+    Given I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Course completion" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
@@ -64,30 +56,22 @@ Feature: Enable Block Completion in a course using manual completion by others
       | Non-editing teacher | 1 |
       | id_role_aggregation | ALL selected roles to mark when the condition is met |
     And I press "Save changes"
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     And I should see "Status: Not yet started" in the "Course completion status" "block"
     And I should see "No" in the "Teacher" "table_row"
     And I should see "No" in the "Non-editing teacher" "table_row"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Reports" in current page administration
     And I click on "Course completion" "link" in the "region-main" "region"
     And I follow "Click to mark user complete"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student1
     And I should see "Status: In progress" in the "Course completion status" "block"
     And I should see "Yes" in the "Teacher" "table_row"
     And I should see "No" in the "Non-editing teacher" "table_row"
     And I follow "More details"
     And I should see "Yes" in the "Marked complete by Teacher" "table_row"
     And I should see "No" in the "Marked complete by Non-editing teacher" "table_row"
-    And I log out
-    And I log in as "teacher2"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as teacher2
     And I navigate to "Reports" in current page administration
     And I click on "Course completion" "link" in the "region-main" "region"
     And I follow "Click to mark user complete"
@@ -96,9 +80,7 @@ Feature: Enable Block Completion in a course using manual completion by others
     And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"
     And I am on site homepage
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student1
     Then I should see "Status: Complete" in the "Course completion status" "block"
     And I should see "Yes" in the "Teacher" "table_row"
     And I should see "Yes" in the "Non-editing teacher" "table_row"

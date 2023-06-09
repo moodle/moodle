@@ -19,8 +19,7 @@ Feature: Add a comment to the comments block
     And the following "blocks" exist:
       | blockname | contextlevel | reference | pagetypepattern | defaultregion |
       | comments  | Course       | C1        | course-view-*   | side-pre      |
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student1
 
   @javascript
   Scenario: Add a comment with Javascript enabled
