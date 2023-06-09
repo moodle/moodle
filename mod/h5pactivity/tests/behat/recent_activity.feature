@@ -36,7 +36,6 @@ Feature: Users can see the H5P recent activity from the recent activity block
     And I click on "Wrong one" "text" in the ".h5p-question-content" "css_element"
     And I click on "Check" "button" in the ".h5p-question-buttons" "css_element"
     And I switch to the main frame
-    And I log out
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student2
     # The H5P content needs some time to be displayed (so better to wait for 1 second to avoid random errors).
     And I switch to "h5p-player" class iframe
@@ -44,7 +43,6 @@ Feature: Users can see the H5P recent activity from the recent activity block
     And I click on "Correct one" "text" in the ".h5p-question-content" "css_element"
     And I click on "Check" "button" in the ".h5p-question-buttons" "css_element"
     And I switch to the main frame
-    And I log out
 
   Scenario: Student see only his own activity
     Given I am on the "Course 1" course page logged in as student1

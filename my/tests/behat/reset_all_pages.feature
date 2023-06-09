@@ -46,13 +46,11 @@ Feature: Reset all personalised pages to default
     And I log out
 
     And I log in as "student1"
-    And I follow "Dashboard"
     And I should not see "Latest announcements"
     And I should see "Timeline"
     And I log out
 
     And I log in as "student3"
-    And I follow "Dashboard"
     And I should not see "Latest announcements"
     And I should see "Timeline"
     And I log out
@@ -64,21 +62,18 @@ Feature: Reset all personalised pages to default
     And I log out
 
     And I log in as "student1"
-    And I follow "Dashboard"
     Then I should see "Latest announcements"
     And I should not see "Comments"
     And I should not see "Timeline"
     And I log out
 
     And I log in as "student3"
-    And I follow "Dashboard"
     And I should see "Latest announcements"
     And I should not see "Timeline"
     And I log out
 
     # Check that this did not affect the customised profiles.
-    And I log in as "student2"
-    And I follow "Profile" in the user menu
+    And I am on the "student2" "user > profile" page logged in as student2
     And I should see "Logged in user"
     And I should not see "Latest announcements"
 
@@ -89,13 +84,11 @@ Feature: Reset all personalised pages to default
     And I add the "Latest announcements" block
     And I log out
 
-    And I log in as "student2"
-    And I follow "Profile" in the user menu
+    And I am on the "student2" "user > profile" page logged in as student2
     And I should not see "Latest announcements"
     And I log out
 
-    And I log in as "student3"
-    And I follow "Profile" in the user menu
+    And I am on the "student3" "user > profile" page logged in as student3
     And I should not see "Latest announcements"
     And I log out
 
@@ -105,19 +98,16 @@ Feature: Reset all personalised pages to default
     And I should see "All profile pages have been reset to default."
     And I log out
 
-    And I log in as "student2"
-    And I follow "Profile" in the user menu
+    And I am on the "student2" "user > profile" page logged in as student2
     Then I should see "Latest announcements"
     And I should not see "Logged in user"
     And I log out
 
-    And I log in as "student3"
-    And I follow "Profile" in the user menu
+    And I am on the "student3" "user > profile" page logged in as student3
     And I should see "Latest announcements"
     And I log out
 
     # Check that this did not affect the customised dashboards.
     And I log in as "student1"
-    And I follow "Dashboard"
     And I should see "Comments"
     And I should not see "Latest announcements"
