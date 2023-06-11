@@ -5157,6 +5157,94 @@ EOD;
         }
         return $addblockbutton;
     }
+
+    /**
+     * Prepares an element for streaming output
+     *
+     * This must be used with NO_OUTPUT_BUFFERING set to true. After using this method
+     * any subsequent prints or echos to STDOUT result in the outputted content magically
+     * being appended inside that element rather than where the current html would be
+     * normally. This enables pages which take some time to render incremental content to
+     * first output a fully formed html page, including the footer, and to then stream
+     * into an element such as the main content div. This fixes a class of page layout
+     * bugs and reduces layout shift issues and was inspired by Facebook BigPipe.
+     *
+     * Some use cases such as a simple page which loads content via ajax could be swapped
+     * to this method wich saves another http request and its network latency resulting
+     * in both lower server load and better front end performance.
+     *
+     * You should consider giving the element you stream into a minimum height to further
+     * reduce layout shift as the content initally streams into the element.
+     *
+     * You can safely finish the output without closing the streamed element. You can also
+     * call this method again to swap the target of the streaming to a new element as
+     * often as you want.
+
+     * https://www.youtube.com/watch?v=LLRig4s1_yA&t=1022s
+     * Watch this video segment to explain how and why this 'One Weird Trick' works.
+     *
+     * @param string $selector where new content should be appended
+     * @param string $element which contains the streamed content
+     */
+    public function select_element_for_append(string $selector = '#region-main [role=main]', string $element = 'div') {
+
+        static $currentselector = '';
+        static $currentelement = '';
+
+        if (!CLI_SCRIPT && !NO_OUTPUT_BUFFERING) {
+            throw new coding_exception('select_element_for_append used in a non-CLI script without setting NO_OUTPUT_BUFFERING.',
+                DEBUG_DEVELOPER);
+        }
+
+        // We are already streaming into this element so don't change anything.
+        if ($currentselector === $selector && $currentelement === $element) {
+            return;
+        }
+
+        $html = '';
+
+        // We have a streaming element so close it before starting a new one.
+        if ($currentselector !== '') {
+            $html .= html_writer::end_tag($currentelement);
+        }
+
+        $currentselector = $selector;
+        $currentelement = $element;
+
+        // Create an unclosed element for the streamed content to append into.
+        $id = uniqid();
+        $html .= html_writer::start_tag($element, ['id' => $id]);
+        $html .= html_writer::tag('script', "document.querySelector('$selector').append(document.getElementById('$id'))");
+        return $html;
+    }
+
+    /**
+     * A companion method to select_element_for_append
+     *
+     * This must be used with NO_OUTPUT_BUFFERING set to true.
+     *
+     * This is similar but instead of appending into the element it replaces
+     * the content in the element. Depending on the 3rd argument it can replace
+     * the innerHTML or the outerHTML which can be useful to completely remove
+     * the element if needed.
+     *
+     * @param string $selector where new content should be replaced
+     * @param string $html A chunk of well formed html
+     * @param bool $outer Wether it replaces the innerHTML or the outerHTML
+     */
+    public function select_element_for_replace(string $selector, string $html, bool $outer = false) {
+
+        if (!CLI_SCRIPT && !NO_OUTPUT_BUFFERING) {
+            throw new coding_exception('select_element_for_replace used in a non-CLI script without setting NO_OUTPUT_BUFFERING.',
+                DEBUG_DEVELOPER);
+        }
+
+        // Escape html for use inside a javascript string.
+        $html = addslashes_js($html);
+        $property = $outer ? 'outerHTML' : 'innerHTML';
+        $output = html_writer::tag('script', "document.querySelector('$selector').$property = '$html';");
+        return $output;
+    }
 }
 
 /**
