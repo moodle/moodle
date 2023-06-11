@@ -83,13 +83,16 @@ require_sesskey();
 
 \core\session\manager::write_close();
 
+// Prepare for streamed output.
+echo $OUTPUT->footer();
+echo $OUTPUT->select_element_for_append();
+
 // Prepare to handle output via mtrace.
-echo html_writer::start_tag('pre');
+echo html_writer::start_tag('pre', ['style' => 'color: #fff; background: #333; padding: 1em; min-height: 24lh']);
 $CFG->mtrace_wrapper = 'tool_task_mtrace_wrapper';
 
 // Run the specified task (this will output an error if it doesn't exist).
 \core\task\manager::run_from_cli($task);
-
 echo html_writer::end_tag('pre');
 
 $output = $PAGE->get_renderer('tool_task');
@@ -100,4 +103,3 @@ echo $OUTPUT->single_button(new moodle_url('/admin/tool/task/schedule_task.php',
         get_string('runagain', 'tool_task'));
 echo $output->link_back(get_class($task));
 
-echo $OUTPUT->footer();
