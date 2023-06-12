@@ -20,18 +20,17 @@ use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_single_structure;
 use core_external\external_multiple_structure;
-use core_external\external_value;
 use moodle_exception;
 
 /**
- * External function for retrieving search results.
+ * External function for retrieving top search results.
  *
  * @package    core_search
- * @copyright  2023 David Monllao & Juan Leyva <juan@moodle.com>
+ * @copyright  2023 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 4.3
  */
-class get_results extends external_api {
+class get_top_results extends external_api {
 
     /**
      * Webservice parameters.
@@ -39,56 +38,31 @@ class get_results extends external_api {
      * @return external_function_parameters
      */
     public static function execute_parameters(): external_function_parameters {
+
+        $baseparameters = get_results::execute_parameters();
+
         return new external_function_parameters(
             [
-                'query' => new external_value(PARAM_NOTAGS, 'the search query'),
-                'filters' => new external_single_structure(
-                    [
-                        'title' => new external_value(PARAM_NOTAGS, 'result title', VALUE_OPTIONAL),
-                        'areaids' => new external_multiple_structure(
-                            new external_value(PARAM_ALPHANUMEXT, 'areaid'), 'restrict results to these areas', VALUE_DEFAULT, []
-                        ),
-                        'courseids' => new external_multiple_structure(
-                            new external_value(PARAM_INT, 'courseid'), 'restrict results to these courses', VALUE_DEFAULT, []
-                        ),
-                        'contextids' => new external_multiple_structure(
-                            new external_value(PARAM_INT, 'contextid'), 'restrict results to these contexts', VALUE_DEFAULT, []
-                        ),
-                        'cat' => new external_value(PARAM_NOTAGS, 'category to filter areas', VALUE_DEFAULT, ''),
-                        'userids' => new external_multiple_structure(
-                            new external_value(PARAM_INT, 'userid'), 'restrict results to these users', VALUE_DEFAULT, []
-                        ),
-                        'groupids' => new external_multiple_structure(
-                            new external_value(PARAM_INT, 'groupid'), 'restrict results to these groups', VALUE_DEFAULT, []
-                        ),
-                        'mycoursesonly' => new external_value(PARAM_BOOL, 'only results from my courses', VALUE_DEFAULT, false),
-                        'order' => new external_value(PARAM_ALPHA, 'how to order', VALUE_DEFAULT, ''),
-                        'timestart' => new external_value(PARAM_INT, 'docs modified after this date', VALUE_DEFAULT, 0),
-                        'timeend' => new external_value(PARAM_INT, 'docs modified before this date', VALUE_DEFAULT, 0)
-                    ], 'filters to apply', VALUE_DEFAULT, []
-                ),
-                'page' => new external_value(PARAM_INT, 'results page number starting from 0, defaults to the first page',
-                    VALUE_DEFAULT, 0)
+                'query' => $baseparameters->keys['query'],
+                'filters' => $baseparameters->keys['filters'],
             ]
         );
     }
 
     /**
-     * Gets global search results based on the provided query and filters.
+     * Gets top search results based on the provided query and filters.
      *
      * @param string $query the search query
      * @param array $filters filters to apply
-     * @param int $page results page
      * @return array search results
      */
-    public static function execute(string $query, array $filters = [], int $page = 0): array {
+    public static function execute(string $query, array $filters = []): array {
         global $PAGE;
 
         $params = self::validate_parameters(self::execute_parameters(),
             [
                 'query' => $query,
                 'filters' => $filters,
-                'page' => $page,
             ]
         );
 
@@ -123,17 +97,16 @@ class get_results extends external_api {
             $data->cat = $cat->get_name();
         }
 
-        $docs = $search->paged_search($data, $page);
+        $docs = $search->search_top($data);
 
         $return = [
-            'totalcount' => $docs->totalcount,
             'warnings' => [],
             'results' => []
         ];
 
         // Convert results to simple data structures.
         if ($docs) {
-            foreach ($docs->results as $doc) {
+            foreach ($docs as $doc) {
                 $return['results'][] = $doc->export_doc($PAGE->get_renderer('core'));
             }
         }
@@ -146,9 +119,9 @@ class get_results extends external_api {
      * @return external_single_structure
      */
     public static function execute_returns(): external_single_structure {
+
         return new external_single_structure(
             [
-                'totalcount' => new external_value(PARAM_INT, 'Total number of results'),
                 'results' => new external_multiple_structure(
                     \core_search\external\document_exporter::get_read_structure()
                 ),
