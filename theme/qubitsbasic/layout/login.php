@@ -28,7 +28,7 @@ $bodyattributes = $OUTPUT->body_attributes();
 // Theme - login page background carousel.
 // $templatecontext += theme_klass_login_bgcarousel();
 
-$logourl = new moodle_url("/theme/qubitsbasic/pix/images/logos/loginimage.png");
+$logourl = new moodle_url("/theme/qubitsbasic/pix/qubits-full-logo.svg");
 
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),

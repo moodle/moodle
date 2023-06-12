@@ -1,27 +1,25 @@
- <div  class="card col-lg-3 max-width max-width-2 flex-grow 
-  col-md-6 col-sm-12 p-0 card-width card-border-radius card-box-shadow card-border {{#iscomplete}}card-text-complete-color{{/iscomplete}}">
+<div id="mycoursecard-{{id}}" class="card coursecard col-lg-3 max-width max-width-2 flex-grow col-md-6 col-sm-12 p-0 card-width card-border-radius card-box-shadow card-border">
 
-                <div class="card-body bg-wave p-0 card-border-radius {{^iscomplete}}card-text-color{{/iscomplete}}">
-                    <div class="card-body-overlay card-body-border-radius" style="--cardbgcolor:rgba({{cardcolourR}},{{cardcolourG}},{{cardcolourB}},{{cardcolourA}})">
+                <div class="card-body bg-wave p-0 card-border-radius card-text-color">
+                    <div class="{{#iscomplete}}complete-card-overlay {{/iscomplete}}{{^iscomplete}}card-body-overlay {{/iscomplete}} card-body-border-radius" style="--cardbgcolor:rgb(255, 185, 0, 0.5);">
                         <p class="card-text">{{fullname}}</p>
                         <div class="row align-items-center">
-                            <div class="card-title card-text-size col-lg-9 col-md-9 col-sm-8 w-auto pr-0">
-							{{coursecategory}}
+                            <div class="card-title card-text-size col-lg-9 col-md-9 col-sm-8 w-auto pr-0">{{coursecategory}}
                             </div>
 
                             <div class="col-lg-3 col-md-3 col-sm-4 w-auto my-2">
                                 <div class="row mx-0 justify-content-end">
-                                {{#iscomplete}}
-                                    <i class="qicon-tick-mark success-tick"></i>
-                                {{/iscomplete}}
-                                    <div class="white-circle col-9 w-auto">{{level}}</div>
+                                    {{#iscomplete}}
+									<i class="qicon-tick-mark success-tick"></i> 
+									{{/iscomplete}}
+                                    <div class="white-circle {{#iscomplete}}complete-text-color{{/iscomplete}} col-9 w-auto">3</div>
                                 </div>
                             </div>
                         </div>
-
+                <a href="{{viewurl}}" class="stretched-link"></a>
                     </div>
                 </div>
-                <div class="inner-section card-border-radius">
+                <div class="inner-section" style="border-radius:0px 0px 8px 8px">
                     <div class="d-flex justify-content-between text-grey">
                         <div class="d-flex align-items-center pb-2">
                             <span class="qicon-calendar"></span>
@@ -35,7 +33,5 @@
                         <div class="progress-bar success-color" role="progressbar" style="width: {{progress}}%;" aria-valuenow=""
                             aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    <a href="{{viewurl}}" class="stretched-link"></a>
                 </div>
             </div>
-            

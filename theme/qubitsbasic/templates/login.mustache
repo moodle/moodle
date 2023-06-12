@@ -66,24 +66,15 @@
         <div id="page" class="container-fluid mt-0">
             <div id="page-content" class="row">
                 <div id="region-main-box" class="col-12 p-0">
-               
-                  
-                       
-                        
-                    
-                    <section id="region-main" class="col-12 h-100 p-0 bg-login-primary" aria-label="{{#str}}content{{/str}}">
-                    <div class="left-image col-lg-3 col-md-3 float-left p-0">
-                    
-                    </div>
-                    <div class="login-wrapper flex-column h-100vh login-footer p-0 col-md-9 col-sm-12">
-                        <div class="login-container w-100 rounded-0 shadow-none bg-transparent">
-                        <img src={{{qubits_logo}}} alt="qubits logo"/>
-                        {{{ output.main_content }}}
+                    <section id="region-main" class="col-12 page-height p-0 bg-login-primary" aria-label="{{#str}}content{{/str}}">
+                        <div class="login-leftbanner col-lg-3 col-md-3 float-left p-0"></div>
+                        <div class="login-wrapper flex-column page-height login-footer p-0 col-md-9 col-sm-12">
+                            <div class="login-container w-100 rounded-0 shadow-none bg-transparent">
+                                <img src={{{qubits_logo}}} alt="qubits logo"/>
+                                {{{ output.main_content }}}
+                            </div>
+                        <div class="position-absolute footer-copyright-text">Copyright Qubits 2023</div>
                         </div>
-                        <div class="position-absolute bottom-10">Copyright Qubits 2023</div>
-                    </div>
-                    
-                    
                     </section>
                 </div>
             </div>

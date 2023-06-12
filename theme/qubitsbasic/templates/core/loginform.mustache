@@ -97,11 +97,11 @@
 <div class="loginform">
     {{#logourl}}
         <div id="loginlogo" class="login-logo">
-            <img id="logoimage" src="{{logourl}}" class="img-fluid" alt="{{sitename}}"/>
+            <!-- <img id="logoimage" src="{{logourl}}" class="img-fluid" alt="{{sitename}}"/> -->
             <h1 class="login-heading sr-only">{{#str}} loginto, theme_qubitsbasic, {{sitename}} {{/str}}</h1>
         </div>
     {{/logourl}}
-    {{^logourl}}
+      {{^logourl}}
         
         <h1 class="login-heading mb-4">{{#str}} loginto, theme_qubitsbasic, {{sitename}} {{/str}}</h1>
     {{/logourl}}
@@ -117,14 +117,14 @@
     {{#cansignup}}
         <a href="{{signupurl}}" class="sr-only">{{#str}} tocreatenewaccount {{/str}}</a>
     {{/cansignup}}
-    <form class="login-form" action="{{loginurl}}" method="post" id="login">
+    <form class="login-form" action="{{loginurl}}" method="post" id="login" aria-label="login form">
         <input type="hidden" name="logintoken" value="{{logintoken}}">
         <div class="login-form-username form-group">
             <label for="username" class="sr-only position-inherit overflow-visible">
                 {{^canloginbyemail}}
                     {{#str}} username {{/str}}
                 {{/canloginbyemail}}
-                {{#canloginbyemail}}
+                {{#canloginbyemail}}6
                     {{#str}} usernameemail {{/str}}
                 {{/canloginbyemail}}
             </label>
@@ -136,7 +136,7 @@
                 !}}autocomplete="username">
         </div>
         <div class="login-form-password form-group">
-            <label for="password" class="sr-only position-inherit">{{#str}} password {{/str}}</label>
+            <label for="password" class="sr-only position-inherit overflow-visible">{{#str}} password {{/str}}</label>
             <input type="password" name="password" id="password" value="" {{!
                 !}}class="form-control form-control-lg w-100" {{!
                 !}} {{!

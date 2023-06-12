@@ -1,19 +1,22 @@
 @import "./mixins.scss";
+$bg-primary: #f5f5f5;
 
 .position-inherit {
   position: inherit !important;
+}
+.overflow-visible {
   overflow: visible !important;
 }
 .flex-column {
   flex-direction: column !important;
 }
-.bottom-10 {
+.footer-copyright-text {
   bottom: 10px;
 }
 .bg-login-primary {
-  background-color: #f5f5f5 !important;
+  background-color: $bg-primary !important;
 }
-.left-image {
+.login-leftbanner {
   background: url([[pix:theme|login-image]]);
   width: 456px;
   height: 100vh;
@@ -28,7 +31,7 @@
     display: none;
   }
 }
-.h-100vh {
+.page-height {
   height: 100vh !important;
 }
 .login-footer {
