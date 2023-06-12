@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['contenthash'] = 'Content hash';
 $string['eventfileaddedtodraftarea'] = 'File added to draft area';
 $string['eventfiledeletedfromdraftarea'] = 'File deleted from draft area';
 $string['privacy:metadata:file_conversions'] = 'A record of the file conversions performed by a user.';
