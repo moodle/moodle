@@ -61,7 +61,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('resource/showsize',
         get_string('showsize', 'resource'), get_string('showsize_desc', 'resource'), 0));
     $settings->add(new admin_setting_configcheckbox('resource/showtype',
-        get_string('showtype', 'resource'), get_string('showtype_desc', 'resource'), 0));
+        get_string('showtype', 'resource'), get_string('showtype_desc', 'resource'), 1));
     $settings->add(new admin_setting_configcheckbox('resource/showdate',
         get_string('showdate', 'resource'), get_string('showdate_desc', 'resource'), 0));
     $settings->add(new admin_setting_configtext('resource/popupwidth',
