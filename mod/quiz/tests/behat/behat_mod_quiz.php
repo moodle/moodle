@@ -31,6 +31,7 @@ require_once(__DIR__ . '/../../../../question/tests/behat/behat_question_base.ph
 use Behat\Gherkin\Node\TableNode as TableNode;
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException;
+use Behat\Mink\Exception\DriverException as DriverException;
 use mod_quiz\quiz_attempt;
 use mod_quiz\quiz_settings;
 
