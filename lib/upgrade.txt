@@ -12,6 +12,9 @@ information provided here is intended especially for developers.
   - `whitelistfiles`
 * Added a new parameter in address_in_subnet to give us the ability to check for 0.0.0.0 or not.
 * New method moodleform::add_sticky_action_buttons() is created to enable sticky footer for QuickForms.
+* Added new \admin_setting::is_forceable() method to determine whether the setting can be overridden or not. Therefore,
+  whether the settings can be overriden or not will depend on the value of implemented \admin_setting::is_forceable() method,
+  even if we define the settings in config.php.
 
 === 4.2 ===
 
