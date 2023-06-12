@@ -108,11 +108,7 @@ class availability extends section_avalability {
         }
 
         $info = [];
-        $formattedinfo = \core_availability\info::format_info(
-            $this->mod->availableinfo,
-            $this->mod->get_course()
-        );
-        $info[] = $this->availability_info($formattedinfo, 'isrestricted');
+        $info[] = $this->get_availability_data($output, $this->mod->availableinfo, 'isrestricted');
         return $info;
     }
 
@@ -151,11 +147,7 @@ class availability extends section_avalability {
         if (!$mod->visible) {
             $hidinfoclass .= ' hide';
         }
-        $formattedinfo = info::format_info(
-            $fullinfo,
-            $mod->get_course()
-        );
-        $info[] = $this->availability_info($formattedinfo, $hidinfoclass);
+        $info[] = $this->get_availability_data($output, $fullinfo, $hidinfoclass);
 
         return $info;
     }
