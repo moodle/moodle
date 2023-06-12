@@ -68,7 +68,7 @@ function local_mymedia_extend_navigation($navigation) {
 
     // top navigation
     $menuHeaderStr = get_string('nav_mymedia', 'local_mymedia');
-    if (strpos($CFG->custommenuitems,$menuHeaderStr) !== false) {
+    if (strpos($CFG->custommenuitems, $menuHeaderStr) !== false) {
         //My Media is already part of the config, no need to add it again.
         return;
     }
