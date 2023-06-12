@@ -53,6 +53,7 @@ function local_mymedia_extend_navigation($navigation) {
         return;
     }
 
+    // side navigation
     if (get_config('local_mymedia', 'link_location') == LOCAL_KALTURAMYMEDIA_LINK_LOCATION_SIDE_NAVIGATION_MENU) {
         $nodehome = $navigation->get('home');
         if (empty($nodehome)){
@@ -65,7 +66,13 @@ function local_mymedia_extend_navigation($navigation) {
         return;
     }
 
+    // top navigation
     $menuHeaderStr = get_string('nav_mymedia', 'local_mymedia');
+    if (strpos($CFG->custommenuitems, $menuHeaderStr) !== false) {
+        //My Media is already part of the config, no need to add it again.
+        return;
+    }
+
     $myMediaStr = "\n$menuHeaderStr|/local/mymedia/mymedia.php";
     $CFG->custommenuitems .= $myMediaStr;
 }

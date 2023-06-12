@@ -41,7 +41,6 @@ $header = format_string($course->fullname) . ": " . get_string('heading_mediagal
 
 $PAGE->set_url('/local/kalturamediagallery/index.php', array('courseid' => $courseid));
 $PAGE->set_pagetype('kalturamediagallery-index');
-$PAGE->set_pagelayout('standard');
 $PAGE->set_title($header);
 $PAGE->set_heading($header);
 

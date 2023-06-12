@@ -37,7 +37,6 @@ $header =  fullname($USER) . ": " . get_string('heading_mymedia', 'local_mymedia
 
 $PAGE->set_url('/local/mymedia/mymedia.php');
 $PAGE->set_pagetype('mymedia-index');
-$PAGE->set_pagelayout('standard');
 $PAGE->set_title($header);
 $PAGE->set_heading($header);
 
