@@ -103,6 +103,17 @@ class enrol_guest_plugin extends enrol_plugin {
             if ($USER->enrol_guest_passwords[$instance->id] === $instance->password) {
                 $allow = true;
             }
+        } else if (WS_SERVER) { // Mobile app mostly.
+            $storedpass = get_user_preferences('enrol_guest_ws_password_'. $instance->id);
+            // We check first if there is a supplied password.
+            if (!is_null($storedpass)) {
+                $allow = $storedpass === $instance->password;
+
+                if (!$allow) {
+                    // Reset, probably the course password was changed.
+                    unset_user_preference('enrol_guest_ws_password_' . $instance->id);
+                }
+            }
         }
 
         if ($allow) {
