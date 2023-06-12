@@ -187,6 +187,35 @@ Feature: Course index depending on role
     And I should see "Activity sample 3" in the "courseindex-content" "region"
 
   @javascript
+  Scenario: Course index toggling all sections
+    When I am on the "Course 1" course page logged in as teacher1
+    # Sections should be opened by default.
+    Then I should see "Topic 1" in the "courseindex-content" "region"
+    And I should see "Activity sample 1" in the "courseindex-content" "region"
+    And I should see "Topic 2" in the "courseindex-content" "region"
+    And I should see "Activity sample 2" in the "courseindex-content" "region"
+    And I should see "Topic 3" in the "courseindex-content" "region"
+    And I should see "Activity sample 3" in the "courseindex-content" "region"
+    # Collapse all sections
+    And I click on "Course index options" "button" in the "#courseindexdrawercontrols" "css_element"
+    And I click on "Collapse all" "link" in the "#courseindexdrawercontrols" "css_element"
+    And I should see "Topic 1" in the "courseindex-content" "region"
+    And I should not see "Activity sample 1" in the "courseindex-content" "region"
+    And I should see "Topic 2" in the "courseindex-content" "region"
+    And I should not see "Activity sample 2" in the "courseindex-content" "region"
+    And I should see "Topic 3" in the "courseindex-content" "region"
+    And I should not see "Activity sample 3" in the "courseindex-content" "region"
+    # Expand all sections
+    And I click on "Course index options" "button" in the "#courseindexdrawercontrols" "css_element"
+    And I click on "Expand all" "link" in the "#courseindexdrawercontrols" "css_element"
+    And I should see "Topic 1" in the "courseindex-content" "region"
+    And I should see "Activity sample 1" in the "courseindex-content" "region"
+    And I should see "Topic 2" in the "courseindex-content" "region"
+    And I should see "Activity sample 2" in the "courseindex-content" "region"
+    And I should see "Topic 3" in the "courseindex-content" "region"
+    And I should see "Activity sample 3" in the "courseindex-content" "region"
+
+  @javascript
   Scenario: Course index section preferences
     When I am on the "C1" "Course" page logged in as "teacher1"
     Then I should see "Topic 1" in the "courseindex-content" "region"

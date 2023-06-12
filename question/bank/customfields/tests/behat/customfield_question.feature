@@ -42,7 +42,7 @@ Feature: A teacher can edit question with custom fields
   Scenario: Edit a previously created question and see the custom field in the overview table and in the question preview.
     When I choose "Edit question" action for "First question" in the question bank
     And I should see "Category for test"
-    And I click on "Expand all" "link"
+    And I click on "Expand all" "link" in the "region-main" "region"
     And I should see "Field 1"
     And I set the following fields to these values:
       | Field 1 | custom field text |

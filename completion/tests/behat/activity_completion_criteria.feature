@@ -30,7 +30,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I set the field "Enable completion tracking" to "Yes"
     And I click on "Save and display" "button"
     And I am on the "Test assignment name" "assign activity editing" page
-    And I follow "Expand all"
+    And I click on "Expand all" "link" in the "region-main" "region"
     And I set the field "Completion tracking" to "Show activity as complete when conditions are met"
     And I set the field "completionusegrade" to "1"
     And I press "Save and return to course"
@@ -42,7 +42,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
   @javascript
   Scenario: Update course completion when student marks activity as complete
     Given I am on the "Test assignment name" "assign activity editing" page logged in as teacher1
-    And I follow "Expand all"
+    And I click on "Expand all" "link" in the "region-main" "region"
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
     And I press "Save and return to course"
     When I am on the "Completion course" course page logged in as student1
@@ -72,7 +72,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
       | name                                | Test assignment name2       |
       | idnumber                            | assign2                     |
     And I am on the "Test assignment name2" "assign activity editing" page logged in as admin
-    And I follow "Expand all"
+    And I click on "Expand all" "link" in the "region-main" "region"
     And I set the field "Completion tracking" to "Show activity as complete when conditions are met"
     And I set the field "completionusegrade" to "1"
     And I press "Save and return to course"
