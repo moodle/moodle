@@ -3,8 +3,8 @@ name: Push-to-EC2
 # Trigger deployment only on push to master branch
 on:
   pull_request:
-    branches:
-      - develop
+    types:
+      - closed
 
 jobs:
   deploy:
@@ -22,3 +22,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.HOST_DNS }}
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
+
+      - name: Print message
+        if: github.event.pull_request.merged == true
+        run: echo "Pull request merged! PR Name: ${{ github.event.pull_request.title }}"
