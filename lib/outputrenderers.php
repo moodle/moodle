@@ -3264,6 +3264,22 @@ EOD;
     }
 
     /**
+     * Outputs a paragraph.
+     *
+     * @param string $contents The contents of the paragraph
+     * @param string|null $classes A space-separated list of CSS classes
+     * @param string|null $id An optional ID
+     * @return string the HTML to output.
+     */
+    public function paragraph(string $contents, ?string $classes = null, ?string $id = null): string {
+        return html_writer::tag(
+            'p',
+            $contents,
+            ['id' => $id, 'class' => renderer_base::prepare_classes($classes)]
+        );
+    }
+
+    /**
      * Outputs a container.
      *
      * @param string $contents The contents of the box

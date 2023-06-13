@@ -476,6 +476,17 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
         if (!$url) {
             $instancesnode->trim_if_empty();
         }
+
+        if (has_capability('moodle/course:renameroles', $coursecontext)) {
+            $url = new moodle_url('/enrol/renameroles.php', array('id' => $course->id));
+            $instancesnode->add(
+                get_string('rolerenaming'),
+                $url,
+                navigation_node::TYPE_SETTING,
+                null,
+                'renameroles'
+            );
+        }
     }
 
     // Manage groups in this course or even frontpage
@@ -484,7 +495,10 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
         $usersnode->add(get_string('groups'), $url, navigation_node::TYPE_SETTING, null, 'groups', new pix_icon('i/group', ''));
     }
 
-     if (has_any_capability(array( 'moodle/role:assign', 'moodle/role:safeoverride','moodle/role:override', 'moodle/role:review'), $coursecontext)) {
+    if (has_any_capability(
+        [ 'moodle/role:assign', 'moodle/role:safeoverride', 'moodle/role:override', 'moodle/role:review'],
+        $coursecontext
+    )) {
         // Override roles
         if (has_capability('moodle/role:review', $coursecontext)) {
             $url = new moodle_url('/admin/roles/permissions.php', array('contextid'=>$coursecontext->id));
@@ -505,7 +519,7 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
             $url = new moodle_url('/admin/roles/check.php', array('contextid'=>$coursecontext->id));
             $permissionsnode->add(get_string('checkpermissions', 'role'), $url, navigation_node::TYPE_SETTING, null, 'permissions', new pix_icon('i/checkpermissions', ''));
         }
-     }
+    }
 
      // Deal somehow with users that are not enrolled but still got a role somehow
     if ($course->id != SITEID) {

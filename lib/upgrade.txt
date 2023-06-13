@@ -15,6 +15,7 @@ information provided here is intended especially for developers.
 * Added new \admin_setting::is_forceable() method to determine whether the setting can be overridden or not. Therefore,
   whether the settings can be overriden or not will depend on the value of implemented \admin_setting::is_forceable() method,
   even if we define the settings in config.php.
+* New core_renderer::paragraph method to replace the overused html_writer::tag('p', ...) pattern.
 
 === 4.2 ===
 

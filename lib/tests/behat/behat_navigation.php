@@ -882,6 +882,13 @@ class behat_navigation extends behat_base {
                         $identifier . '" does not exist');
                 }
                 return new moodle_url('/enrol/otherusers.php', ['id' => $courseid]);
+            case 'renameroles':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
+                            $identifier . '" does not exist');
+                }
+                return new moodle_url('/enrol/renameroles.php', ['id' => $courseid]);
         }
 
         $parts = explode(' ', $type);
