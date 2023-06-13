@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="126px" height="86px" viewBox="0 0 126 86" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Group</title>
+    <defs>
+        <path d="M25.9191131,17.647897 L61.5688726,34.9149913 C62.6474234,35.4373915 63.9033771,35.4486866 64.9911489,34.9457687 L102.876634,17.4298823 C104.881832,16.5028036 107.258912,17.3767922 108.185991,19.3819905 C108.889673,20.9040003 108.569367,22.7033602 107.383685,23.8890421 L66.1676965,65.1050308 C64.6055994,66.6671279 62.0729394,66.6671279 60.5108423,65.1050308 L21.2820391,24.0097553 C19.7566822,22.4117623 19.8155654,19.879787 21.4135583,18.3544301 C22.620908,17.20196 24.4169456,16.9203165 25.9191131,17.647897 Z" id="path-1"></path>
+        <filter x="-20.4%" y="-32.5%" width="140.7%" height="173.2%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="11" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="2" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.288388979 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Python-" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard" transform="translate(-94.000000, -449.000000)">
+            <g id="Group" transform="translate(94.000000, 449.000000)">
+                <g id="chapter-tick">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                    <path stroke="#FCC924" stroke-width="11" d="M100.568525,12.4376248 C102.949698,11.3367189 105.551676,11.3051966 107.833587,12.1441941 C110.115498,12.9831916 112.077342,14.6927089 113.178248,17.0738819 C114.013871,18.8812685 114.241501,20.8533318 113.908225,22.7255477 C113.57495,24.5977636 112.68077,26.3701322 111.272772,27.7781294 L70.0567838,68.994118 C68.2017934,70.8491084 65.7705314,71.7766036 63.3392694,71.7766036 C60.8842298,71.7766036 58.4291903,70.8308781 56.5674959,68.9394269 L17.3035836,27.8073719 C15.4922223,25.9097553 14.6215035,23.4575866 14.6780292,21.0269818 C14.7345549,18.5963769 15.7183251,16.1873359 17.6159417,14.3759746 C19.0496694,13.0074164 20.8329306,12.1559114 22.7037159,11.8625465 C24.5745012,11.5691815 26.5328105,11.8339566 28.3166344,12.6979584 L63.3274483,29.6555771 Z" fill="#FCCA1E" fill-rule="evenodd"></path>
+                </g>
+                <rect id="Rectangle" x="0" y="0" width="126" height="86"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

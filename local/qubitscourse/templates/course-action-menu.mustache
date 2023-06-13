@@ -1,0 +1,61 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_qubitscourse/course-action-menu
+
+    This template renders action menu for each course.
+
+    Example context (json):
+    {
+        "isfavourite": true
+    }
+}}
+<div class="ml-auto dropdown">
+    <button class="btn btn-link btn-icon icon-size-3 coursemenubtn"
+        type="button"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false">
+        <i class="icon fa fa-ellipsis-v fa-fw m-0" title="{{#str}} aria:qubitscourseactions, local_qubitscourse {{/str}}" aria-hidden="true"></i>
+        <span class="sr-only">{{#str}} aria:qubitscourseactions, local_qubitscourse {{/str}}</span>
+    </button>
+    <div class="dropdown-menu dropdown-menu-right">
+        <a class="dropdown-item qbitsenrlusr" href="javascript:;"
+            data-action="enrol-users"
+            data-course-id="{{id}}"
+            data-context-id="{{contextid}}"
+            data-site-id="{{siteid}}"
+            >
+            {{#str}} enrolusers, local_qubitscourse {{/str}}
+            <div class="sr-only">
+                {{#str}} aria:enrolusers, local_qubitscourse {{/str}}
+            </div>
+        </a>
+        <a class="dropdown-item" href="#"
+            data-action="view-enrolled-users"
+            data-course-id="{{id}}"
+            data-context-id="{{contextid}}"
+            data-site-id="{{siteid}}"
+            >
+            {{#str}} viewenrolledusers, local_qubitscourse {{/str}}
+            <div class="sr-only">
+                {{#str}} aria:viewenrolledusers, local_qubitscourse {{/str}}
+            </div>
+        </a>
+        
+    </div>
+</div>

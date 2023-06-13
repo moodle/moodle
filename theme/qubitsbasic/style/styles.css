@@ -1,0 +1,188 @@
+@import url("https://fonts.googleapis.com/css2?family=Acme&display=swap");
+@font-face {
+  font-family: "qubits";
+  src: url("[[font:theme|qubits.eot]]?yz5onj");
+  src: url("[[font:theme|qubits.eot]]?yz5onj#iefix") format("embedded-opentype"),
+    url("[[font:theme|qubits.ttf]]?yz5onj") format("truetype"),
+    url("[[font:theme|qubits.woff]]?yz5onj") format("woff"),
+    url("[[font:theme|qubits.svg]]?yz5onj#qubits") format("svg");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="qicon-"],
+[class*=" qicon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: "qubits" !important;
+  /* speak: never; */
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.qicon-anouncement:before {
+  content: "\e900";
+}
+.qicon-exercise:before {
+  content: "\e901";
+}
+.qicon-theory:before {
+  content: "\e902";
+}
+.qicon-challenge:before {
+  content: "\e903";
+}
+.qicon-search:before {
+  content: "\e904";
+}
+.qicon-progress:before {
+  content: "\e905";
+}
+.qicon-calendar:before {
+  content: "\e906";
+}
+.qicon-notifications:before {
+  content: "\e907";
+}
+.qicon-dashboard:before {
+  content: "\e908";
+}
+.qicon-assessment:before {
+  content: "\e909";
+}
+.qicon-chevron-down-thin:before {
+  content: "\e90a";
+}
+.qicon-menu:before {
+  content: "\e90b";
+}
+.qicon-my-courses:before {
+  content: "\e90c";
+}
+.qicon-tick-mark:before {
+  content: "\e90d";
+}
+.success-tick {
+  position: absolute;
+  right: 0%;
+  top: -20%;
+  font-size: 25px;
+  z-index: 20;
+  background-color: white;
+  border-radius: 50%;
+  border: 3px solid white;
+  color: #78c466;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Arial";
+}
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 260px;
+  background: #f7f7f7;
+  z-index: 106;
+  transition: all 0.5s ease;
+}
+
+.navbar.fixed-top {
+  height: 88px !important;
+  z-index: 50 !important;
+}
+
+/* .test:hover {
+    color: red;
+  } */
+.navbar.messageicon {
+  .fa-comment-o {
+    display: none !important;
+  }
+  .navbar-nav {
+    align-items: center;
+
+    .popover-region-notifications {
+      border: 1px solid #e6e6e6;
+      border-radius: 50%;
+      height: 50px !important;
+      width: 50px !important;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  .count-container {
+    padding: 4px !important;
+    border-radius: 8px !important;
+    background-color: #ca3120;
+    color: #fff;
+    font-size: 12px !important;
+    line-height: 11px;
+    position: absolute;
+    top: 30px !important;
+    right: -9px !important;
+  }
+}
+.usermenu .avatar img {
+  width: 50px !important;
+  height: 50px !important;
+}
+
+.user-profile {
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+  padding: 8px;
+}
+.userpic {
+  width: 78px;
+  text-align: center;
+}
+
+.main-inner {
+  position: relative;
+  height: 100vh;
+  left: 140px;
+  width: calc(100% - 260px) !important;
+  transition: all 0.5s ease;
+}
+.secondary-navigation .navigation .nav-tabs .nav-link {
+  color: #585858;
+  font-size: 16px !important;
+}
+
+@media screen and (min-width: 768px) {
+  body.limitedwidth #page.drawers .main-inner,
+  .header-maxwidth,
+  .secondary-navigation .navigation .nav-tabs {
+    max-width: 100% !important;
+  }
+}
+@media screen and (min-width: 768px) {
+  #page.drawers.show-drawer-left {
+    margin-left: 0 !important;
+  }
+}
+
+@media screen and (min-width: 360px) and (max-width: 768px) {
+  .main-inner {
+    left: 0px;
+    width: 100% !important;
+  }
+}
+.leftnav {
+  left: 0 !important;
+}
+.drawer-left {
+  display: none !important;
+}
