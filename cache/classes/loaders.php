@@ -457,7 +457,7 @@ class cache implements cache_loader {
             }
         } else {
             // If there's no result, obviously it doesn't meet the required version.
-            if (!$result) {
+            if ($result === false) {
                 return false;
             }
             if (!($result instanceof \core_cache\version_wrapper)) {
@@ -490,7 +490,7 @@ class cache implements cache_loader {
 
         if ($usesstaticacceleration) {
             $result = $this->static_acceleration_get($key);
-            if ($result && self::check_version($result, $requiredversion)) {
+            if ($result !== false && self::check_version($result, $requiredversion)) {
                 if ($requiredversion === self::VERSION_NONE) {
                     return $result;
                 } else {
@@ -505,7 +505,7 @@ class cache implements cache_loader {
 
         // 3. Get it from the store. Obviously wasn't in the static acceleration array.
         $result = $this->store->get($parsedkey);
-        if ($result) {
+        if ($result !== false) {
             // Check the result has at least the required version.
             try {
                 $validversion = self::check_version($result, $requiredversion);
