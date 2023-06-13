@@ -1064,6 +1064,9 @@ abstract class moodleform_mod extends moodleform {
 
         $mform->addElement('hidden', 'beforemod', 0);
         $mform->setType('beforemod', PARAM_INT);
+
+        $mform->addElement('hidden', 'showonly', '');
+        $mform->setType('showonly', PARAM_ALPHANUMEXT);
     }
 
     public function standard_grading_coursemodule_elements() {

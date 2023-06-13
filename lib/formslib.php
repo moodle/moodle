@@ -486,6 +486,24 @@ abstract class moodleform {
     }
 
     /**
+     * Use this method to indicate that the fieldsets should be shown as expanded
+     * and all other fieldsets should be hidden.
+     * The method is applicable to header elements only.
+     *
+     * @param array $shownonly array of header element names
+     * @return void
+     */
+    public function filter_shown_headers(array $shownonly): void {
+        $toshow = [];
+        foreach ($shownonly as $show) {
+            if ($this->_form->elementExists($show) && $this->_form->getElementType($show) == 'header') {
+                $toshow[] = $show;
+            }
+        }
+        $this->_form->filter_shown_headers($toshow);
+    }
+
+    /**
      * Check that form was submitted. Does not check validity of submitted data.
      *
      * @return bool true if form properly submitted
@@ -1636,6 +1654,14 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      */
     var $_disableShortforms = false;
 
+    /**
+     * Array whose keys are the only elements to be shown.
+     * Rest of the elements that are not in this array will be hidden.
+     *
+     * @var array
+     */
+    protected $_shownonlyelements = [];
+
     /** @var bool whether to automatically initialise the form change detector this form. */
     protected $_use_form_change_checker = true;
 
@@ -1831,6 +1857,45 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     }
 
     /**
+     * Use this method to indicate that the fieldsets should be shown and expanded
+     * and all other fieldsets should be hidden.
+     * The method is applicable to header elements only.
+     *
+     * @param array $shownonly array of header element names
+     * @return void
+     */
+    public function filter_shown_headers(array $shownonly): void {
+        $this->_shownonlyelements = [];
+        if (empty($shownonly)) {
+            return;
+        }
+        foreach ($shownonly as $headername) {
+            $element = $this->getElement($headername);
+            if ($element->getType() == 'header') {
+                $this->_shownonlyelements[] = $headername;
+                $this->setExpanded($headername);
+            }
+        }
+    }
+
+    /**
+     * Use this method to check if the fieldsets could be shown.
+     * The method is applicable to header elements only.
+     *
+     * @param string $headername header element name to check in the shown only elements array.
+     * @return void
+     */
+    public function is_shown(string $headername): bool {
+        if (empty($headername)) {
+            return true;
+        }
+        if (empty($this->_shownonlyelements)) {
+            return true;
+        }
+        return in_array($headername, $this->_shownonlyelements);
+    }
+
+    /**
      * Use this method to add show more/less status element required for passing
      * over the advanced elements visibility status on the form submission.
      *
@@ -2012,15 +2077,22 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                 }
 
                 if ($element->getType() == 'header') {
+                    if (!$this->is_shown($headername)) {
+                        $this->setExpanded($headername, false);
+                        continue;
+                    }
                     if ($headercounter === 1 && !isset($this->_collapsibleElements[$headername])) {
                         // By default the first section is always expanded, except if a state has already been set.
                         $this->setExpanded($headername, true);
-                    } else if (($headercounter === 2 && $headerscount === 2) && !isset($this->_collapsibleElements[$headername])) {
+                    } else if (
+                        ($headercounter === 2 && $headerscount === 2)
+                        && !isset($this->_collapsibleElements[$headername])
+                    ) {
                         // The second section is always expanded if the form only contains 2 sections),
                         // except if a state has already been set.
                         $this->setExpanded($headername, true);
                     }
-                } else if ($anyrequiredorerror) {
+                } else if ($anyrequiredorerror && (empty($headername) || $this->is_shown($headername))) {
                     // If any error or required field are present within the header, we need to expand it.
                     $this->setExpanded($headername, true, true);
                 } else if (!isset($this->_collapsibleElements[$headername])) {
@@ -2032,10 +2104,36 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             // Pass the array to renderer object.
             $renderer->setCollapsibleElements($this->_collapsibleElements);
         }
+
+        $this->accept_set_nonvisible_elements($renderer);
+
         if (method_exists($renderer, 'set_sticky_footer') && !empty($this->_stickyfooterelement)) {
             $renderer->set_sticky_footer($this->_stickyfooterelement);
         }
         parent::accept($renderer);
+    }
+
+    /**
+     * Checking non-visible elements to set when accepting a renderer.
+     * @param HTML_QuickForm_Renderer $renderer
+     */
+    private function accept_set_nonvisible_elements($renderer) {
+        if (!method_exists($renderer, 'set_nonvisible_elements') || $this->_disableShortforms) {
+            return;
+        }
+        $nonvisibles = [];
+        foreach (array_keys($this->_elements) as $index) {
+            $element =& $this->_elements[$index];
+            if ($element->getType() != 'header') {
+                continue;
+            }
+            $headername = $element->getName();
+            if (!$this->is_shown($headername)) {
+                $nonvisibles[] = $headername;
+            }
+        }
+        // Pass the array to renderer object.
+        $renderer->set_nonvisible_elements($nonvisibles);
     }
 
     /**
@@ -3117,6 +3215,14 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     protected $_advancedHTML;
 
     /**
+     * Array whose keys are element names should be hidden.
+     * If the key exists this is an invisible element.
+     *
+     * @var array
+     */
+    protected $_nonvisibleelements = [];
+
+    /**
      * Constructor
      */
     public function __construct() {
@@ -3173,6 +3279,15 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
      */
     function setCollapsibleElements($elements) {
         $this->_collapsibleElements = $elements;
+    }
+
+    /**
+     * Setting non visible elements
+     *
+     * @param array $elements
+     */
+    public function set_nonvisible_elements($elements) {
+        $this->_nonvisibleelements = $elements;
     }
 
     /**
@@ -3435,6 +3550,11 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             if ($this->_collapsibleElements[$header->getName()]) {
                 $fieldsetclasses[] = 'collapsed';
             }
+        }
+
+        // Hide fieldsets not included in the shown only elements.
+        if (in_array($header->getName(), $this->_nonvisibleelements)) {
+            $fieldsetclasses[] = 'd-none';
         }
 
         if (isset($this->_advancedElements[$name])){

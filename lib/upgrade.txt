@@ -42,6 +42,7 @@ information provided here is intended especially for developers.
 * New events course_started and course_ended have been created. For now, they are triggered when courses change automatically their
   visibility through the new scheduled tasks to hide/show courses based on their start/end dates.
 * The action_menu::set_constraint() method is deprecated. Please use action_menu::set_boundary() instead.
+* New method moodleform::filter_shown_headers() is created to show some expanded headers only and hide the rest.
 
 === 4.2 ===
 
