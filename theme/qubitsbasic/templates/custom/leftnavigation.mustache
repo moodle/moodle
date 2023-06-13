@@ -19,18 +19,18 @@
             </li>
              <li class="nav-item d-block d-sm-none">
 
-                <a href="#" class="nav-hover">
+                <a href="{{globals.config.wwwroot}}/message/output/popup/notifications.php" class="nav-hover">
                     <i class="qicon-notifications icon"></i>
                     <span class="link_name">Notifications</span>
                 </a>
             </li>
             <div class="hr-line mb-5 d-block d-sm-none"></div>
             <li class="nav-item">
-                <a href="javascript:void(0);" class="nav-hover">
+                <div class="nav-hover">
                     <i class="qicon-my-courses icon"></i>
-                    <span class="link_name">My Courses</span>
+                    <a href="{{globals.config.wwwroot}}/my/courses.php" class="link_name">My Courses</a>
                     <i class="qicon-chevron-down-thin arrow icon"></i>
-                </a>
+                </div>
                 <ul class="sub-menu">
                     {{#myenrolcourses}}
                     <li><a href="{{{url}}}">{{ name }}</a></li>
@@ -40,7 +40,7 @@
 
             <li class="nav-item">
 
-                <a href="#" class="nav-hover">
+                <a href="{{globals.config.wwwroot}}/" class="nav-hover">
                     <span class="qicon-dashboard icon"></span>
                     <span class="link_name">Dashboard</span>
                 </a>

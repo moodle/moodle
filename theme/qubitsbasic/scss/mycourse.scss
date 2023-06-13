@@ -1,7 +1,6 @@
 @import "./preset/default.scss";
 @import "./mixins.scss";
 
-
 @font-face {
   font-family: "qubits";
   src: url("[[font:theme|qubits.eot]]?yz5onj");
@@ -343,12 +342,14 @@
           }
         }
         .link_name {
-          pointer-events: none;
           font-size: 16px;
           font-weight: 600;
           white-space: nowrap;
           // / color: #585858; /
           transition: all 0.4s ease;
+        }
+        &:hover {
+          color: var(--hovertextcolor);
         }
       }
       .icon {
@@ -405,6 +406,33 @@
     background-color: #dedede;
     width: 100%;
     height: 1px;
+  }
+}
+.nav-hover {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--basetextcolor2);
+
+  i {
+    &:hover {
+      color: var(--hovertextcolor);
+    }
+  }
+  .link_name {
+    font-size: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+    // / color: #585858; /
+    transition: all 0.4s ease;
+    &:hover {
+      background: #e2eaf2;
+      color: var(--hovertextcolor);
+    }
+  }
+  &:hover {
+    background: #e2eaf2;
+    color: var(--hovertextcolor);
   }
 }
 .navbar.messageicon {
@@ -480,6 +508,11 @@
     li {
       .icon-link {
         display: block;
+      }
+      .nav-hover {
+        a.link_name {
+          opacity: 0;
+        }
       }
       a {
         .link_name {
