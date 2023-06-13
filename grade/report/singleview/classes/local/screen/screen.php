@@ -405,28 +405,15 @@ abstract class screen {
 
     /**
      * Load a valid list of users for this gradebook as the screen "items".
-     * @return array $users A list of enroled users.
+     *
+     * @deprecated since Moodle 4.3
+     * @return array A list of enroled users.
      */
     protected function load_users(): array {
-        global $CFG;
+        debugging('The function ' . __FUNCTION__ . '() is deprecated. Please use get_gradable_users() instead.',
+            DEBUG_DEVELOPER);
 
-        // Create a graded_users_iterator because it will properly check the groups etc.
-        $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
-        $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
-        $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $this->context);
-
-        require_once($CFG->dirroot.'/grade/lib.php');
-        $gui = new \graded_users_iterator($this->course, null, $this->groupid);
-        $gui->require_active_enrolment($showonlyactiveenrol);
-        $gui->init();
-
-        // Flatten the users.
-        $users = [];
-        while ($user = $gui->next_user()) {
-            $users[$user->user->id] = $user->user;
-        }
-        $gui->close();
-        return $users;
+        return get_gradable_users($this->courseid, $this->groupid);
     }
 
     /**
