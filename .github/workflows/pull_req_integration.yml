@@ -23,6 +23,7 @@ jobs:
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
 
-      - name: Print message
+      - name: PR Status
         if: github.event.pull_request.merged == true
-        run: echo "Pull request merged! PR Name: ${{ github.event.pull_request.title }}"
+        run: |
+          echo "Pull request merged! PR Name: ${{ github.event.pull_request.title }}"
