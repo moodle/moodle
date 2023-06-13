@@ -1,5 +1,9 @@
 This files describes API changes in /cache/stores/* - cache store plugins.
 Information provided here is intended especially for developers.
+
+=== 4.2.2 ===
+* A new cache_helper::result_found() helper has been added to assist with cache value validation
+
 === 4.2 ===
 * The memcached cachestore has been removed.
 * The mongodb cachestore has been removed.
