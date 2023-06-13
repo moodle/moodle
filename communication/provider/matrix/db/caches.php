@@ -14,27 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace communication_matrix\privacy;
-
-use core_privacy\local\metadata\null_provider;
-
 /**
- * Privacy Subsystem for communication_matrix implementing null_provider.
+ * Cache definition for the Matrix Communication plugin.
  *
  * @package    communication_matrix
- * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
+ * @category   cache
+ * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @codeCoverageIgnore
  */
-class provider implements null_provider {
 
-    /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
-     *
-     * @return  string
-     */
-    public static function get_reason(): string {
-        return 'privacy:metadata';
-    }
-}
+defined('MOODLE_INTERNAL') || die();
+
+$definitions = [
+    // Used to store processed lang files.
+    // The keys used are the revision, lang and component of the string file.
+    // The static acceleration size has been based upon student access of the site.
+    'serverversions' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 1,
+        'canuselocalstore' => true,
+        // Cache for one day.
+        'ttl' => 60 * 60 * 24,
+    ],
+];

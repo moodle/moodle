@@ -16,6 +16,8 @@
 
 namespace communication_matrix;
 
+use stdClass;
+
 /**
  * Class matrix_rooms to manage the updates to the room information in db.
  *
@@ -25,80 +27,101 @@ namespace communication_matrix;
  */
 class matrix_rooms {
 
-    /**
-     * @var \stdClass|null $matrixroomrecord The matrix room record from db
-     */
-    private ?\stdClass $matrixroomrecord = null;
+    /** @var \stdClass|null $record The matrix room record from db */
 
+    /**
+     * Load the matrix room record for the supplied processor.
+     * @param int $processorid
+     * @return null|self
+     */
+    public static function load_by_processor_id(
+        int $processorid,
+    ): ?self {
+        global $DB;
+
+        $record = $DB->get_record('matrix_rooms', ['commid' => $processorid]);
+
+        if (!$record) {
+            return null;
+        }
+        return new self($record);
+    }
 
     /**
      * Matrix rooms constructor to load the matrix room information from matrix_rooms table.
      *
-     * @param int $commid The id of the communication record
+     * @param stdClass $record
      */
-    public function __construct(int $commid) {
-        $this->load_matrix_room_data($commid);
-    }
-
-    /**
-     * Get the matrix room data from database. Either get the data object or return false if no data found.
-     *
-     * @param int $commid The id of the communication record
-     */
-    public function load_matrix_room_data(int $commid): void {
-        global $DB;
-        if ($record = $DB->get_record('matrix_rooms', ['commid' => $commid])) {
-            $this->matrixroomrecord = $record;
-        }
+    private function __construct(
+        private stdClass $record,
+    ) {
     }
 
     /**
      * Create matrix room data.
      *
-     * @param int $commid The id of the communication record
+     * @param int $processorid The id of the communication record
+     * @param string|null $topic The topic of the room for matrix
      * @param string|null $roomid The id of the room from matrix
-     * @param string|null $roomtopic The topic of the room for matrix
+     * @return self
      */
-    public function create_matrix_room_record(
-        int $commid,
-        ?string $roomid,
-        ?string $roomtopic
-    ): void {
+    public static function create_room_record(
+        int $processorid,
+        ?string $topic,
+        ?string $roomid = null,
+    ): self {
         global $DB;
-        $roomrecord = new \stdClass();
-        $roomrecord->commid = $commid;
-        $roomrecord->roomid = $roomid;
-        $roomrecord->topic = $roomtopic;
+
+        $roomrecord = (object) [
+            'commid' => $processorid,
+            'roomid' => $roomid,
+            'topic' => $topic,
+        ];
         $roomrecord->id = $DB->insert_record('matrix_rooms', $roomrecord);
-        $this->matrixroomrecord = $roomrecord;
+
+        return self::load_by_processor_id($processorid);
     }
 
     /**
      * Update matrix room data.
      *
      * @param string|null $roomid The id of the room from matrix
-     * @param string|null $roomtopic The topic of the room for matrix
+     * @param string|null $topic The topic of the room for matrix
      */
-    public function update_matrix_room_record(?string $roomid, ?string $roomtopic): void {
+    public function update_room_record(
+        ?string $roomid = null,
+        ?string $topic = null,
+    ): void {
         global $DB;
-        if ($this->room_record_exists()) {
-            $this->matrixroomrecord->roomid = $roomid;
-            $this->matrixroomrecord->topic = $roomtopic;
-            $DB->update_record('matrix_rooms', $this->matrixroomrecord);
+
+        if ($roomid !== null) {
+            $this->record->roomid = $roomid;
         }
+
+        if ($topic !== null) {
+            $this->record->topic = $topic;
+        }
+
+        $DB->update_record('matrix_rooms', $this->record);
     }
 
     /**
      * Delete matrix room data.
-     *
-     * @return bool
      */
-    public function delete_matrix_room_record(): bool {
+    public function delete_room_record(): void {
         global $DB;
-        if ($this->room_record_exists()) {
-            return $DB->delete_records('matrix_rooms', ['commid' => $this->matrixroomrecord->commid]);
-        }
-        return false;
+        $DB->delete_records('matrix_rooms', ['commid' => $this->record->commid]);
+
+        unset($this->record);
+    }
+
+    /**
+     * Get the processor id.
+     *
+     * @return int
+     */
+    public function get_processor_id(): int {
+        return $this->record->commid;
     }
 
     /**
@@ -106,11 +129,8 @@ class matrix_rooms {
      *
      * @return string|null
      */
-    public function get_matrix_room_id(): ?string {
-        if ($this->room_record_exists()) {
-            return $this->matrixroomrecord->roomid;
-        }
-        return null;
+    public function get_room_id(): ?string {
+        return $this->record->roomid;
     }
 
     /**
@@ -118,19 +138,7 @@ class matrix_rooms {
      *
      * @return string|null
      */
-    public function get_matrix_room_topic(): ?string {
-        if ($this->room_record_exists()) {
-            return $this->matrixroomrecord->topic;
-        }
-        return null;
-    }
-
-    /**
-     * Check if room record exist for matrix.
-     *
-     * @return bool
-     */
-    public function room_record_exists(): bool {
-        return (bool) $this->matrixroomrecord;
+    public function get_topic(): ?string {
+        return $this->record->topic;
     }
 }

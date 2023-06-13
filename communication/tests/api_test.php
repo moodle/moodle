@@ -27,7 +27,7 @@ require_once(__DIR__ . '/communication_test_helper_trait.php');
  * @category   test
  * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_communication\api
+ * @covers     \core_communication\api
  */
 class api_test extends \advanced_testcase {
 
@@ -41,8 +41,6 @@ class api_test extends \advanced_testcase {
 
     /**
      * Test the communication plugin list for the form element returns the correct number of plugins.
-     *
-     * @covers ::get_communication_plugin_list_for_form
      */
     public function test_get_communication_plugin_list_for_form(): void {
         $communicationplugins = \core_communication\api::get_communication_plugin_list_for_form();
@@ -54,8 +52,6 @@ class api_test extends \advanced_testcase {
 
     /**
      * Test set data to the instance.
-     *
-     * @covers ::set_data
      */
     public function test_set_data(): void {
         $course = $this->get_course();
@@ -80,8 +76,6 @@ class api_test extends \advanced_testcase {
 
     /**
      * Test get_current_communication_provider method.
-     *
-     * @covers ::get_provider
      */
     public function test_get_provider(): void {
         $course = $this->get_course();
@@ -96,30 +90,7 @@ class api_test extends \advanced_testcase {
     }
 
     /**
-     * Test get_avatar_filerecord method.
-     *
-     * @covers ::get_avatar_filerecord
-     */
-    public function test_get_avatar_filerecord(): void {
-        $course = $this->get_course();
-
-        $communication = \core_communication\api::load_by_instance(
-            'core_course',
-            'coursecommunication',
-            $course->id
-        );
-        $filerecord = $communication->get_avatar_filerecord('avatar.svg');
-
-        $this->assertEquals('avatar.svg', $filerecord->filename);
-        $this->assertEquals('core_communication', $filerecord->component);
-        $this->assertEquals('avatar', $filerecord->filearea);
-    }
-
-    /**
      * Test set_avatar method.
-     *
-     * @covers ::set_avatar
-     * @covers ::get_avatar_filerecord
      */
     public function test_set_avatar(): void {
         global $CFG;
@@ -135,26 +106,31 @@ class api_test extends \advanced_testcase {
             'moodle_logo.jpg',
         );
 
+        // Create the room, settingthe avatar.
         $communication = \core_communication\api::load_by_instance(
             'core_course',
             'coursecommunication',
-            $course->id
+            $course->id,
         );
+
         $communication->create_and_configure_room($selectedcommunication, $communicationroomname, $avatar);
 
+        // Reload the communication processor.
         $communicationprocessor = processor::load_by_instance(
             'core_course',
             'coursecommunication',
-            $course->id
+            $course->id,
         );
 
-        $this->assertNotNull($communicationprocessor->get_avatar());
+        // Compare result.
+        $this->assertEquals(
+            $avatar->get_contenthash(),
+            $communicationprocessor->get_avatar()->get_contenthash(),
+        );
     }
 
     /**
      * Test the create_and_configure_room method to add/create tasks.
-     *
-     * @covers ::create_and_configure_room
      */
     public function test_create_and_configure_room(): void {
         // Get the course by disabling communication so that we can create it manually calling the api.
@@ -191,8 +167,6 @@ class api_test extends \advanced_testcase {
 
     /**
      * Test the create_and_configure_room method to add/create tasks when no communication provider selected.
-     *
-     * @covers ::create_and_configure_room
      */
     public function test_create_and_configure_room_without_communication_provider_selected(): void {
         // Get the course by disabling communication so that we can create it manually calling the api.
@@ -214,8 +188,6 @@ class api_test extends \advanced_testcase {
 
     /**
      * Test update operation.
-     *
-     * @covers ::update_room
      */
     public function test_update_room(): void {
         $course = $this->get_course();
@@ -231,14 +203,6 @@ class api_test extends \advanced_testcase {
         );
         $communication->update_room($selectedcommunication, $communicationroomname);
 
-        // Test the tasks added.
-        $adhoctask = \core\task\manager::get_adhoc_tasks('\\core_communication\\task\\update_room_task');
-        // Should be 2 as one for create, another for update.
-        $this->assertCount(1, $adhoctask);
-
-        $adhoctask = reset($adhoctask);
-        $this->assertInstanceOf('\\core_communication\\task\\update_room_task', $adhoctask);
-
         // Test the communication record exists.
         $communicationprocessor = processor::load_by_instance(
             'core_course',
@@ -252,8 +216,6 @@ class api_test extends \advanced_testcase {
 
     /**
      * Test delete operation.
-     *
-     * @covers ::delete_room
      */
     public function test_delete_room(): void {
         $course = $this->get_course();
@@ -290,9 +252,6 @@ class api_test extends \advanced_testcase {
 
     /**
      * Test the update_room_membership for adding adn removing members.
-     *
-     * @covers ::add_members_to_room
-     * @covers ::remove_members_from_room
      */
     public function test_update_room_membership(): void {
         $course = $this->get_course();
@@ -320,8 +279,6 @@ class api_test extends \advanced_testcase {
 
     /**
      * Test the enabled communication plugin list and default.
-     *
-     * @covers ::get_enabled_providers_and_default
      */
     public function test_get_enabled_providers_and_default(): void {
         list($communicationproviders, $defaulprovider) = \core_communication\api::get_enabled_providers_and_default();

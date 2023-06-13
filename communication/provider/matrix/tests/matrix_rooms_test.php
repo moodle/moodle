@@ -16,14 +16,6 @@
 
 namespace communication_matrix;
 
-use core_communication\processor;
-use core_communication\communication_test_helper_trait;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/matrix_test_helper_trait.php');
-require_once(__DIR__ . '/../../../tests/communication_test_helper_trait.php');
-
 /**
  * Class matrix_rooms_test to test the matrix room data in db.
  *
@@ -35,149 +27,106 @@ require_once(__DIR__ . '/../../../tests/communication_test_helper_trait.php');
  */
 class matrix_rooms_test extends \advanced_testcase {
 
-    use matrix_test_helper_trait;
-    use communication_test_helper_trait;
+    /**
+     * Test for load_by_processor_id with no record.
+     *
+     * @covers ::load_by_processor_id
+     */
+    public function test_load_by_processor_id_none(): void {
+        $this->assertNull(matrix_rooms::load_by_processor_id(999999999));
+    }
 
-    public function setUp(): void {
-        parent::setUp();
+    /**
+     * Test for load_by_processor_id with valid records.
+     *
+     * @covers ::create_room_record
+     * @covers ::__construct
+     * @covers ::load_by_processor_id
+     * @covers ::get_processor_id
+     * @covers ::get_room_id
+     * @covers ::get_topic
+     */
+    public function test_create_room_record(): void {
         $this->resetAfterTest();
-        $this->setup_communication_configs();
+
+        $room = matrix_rooms::create_room_record(
+            processorid: 12345,
+            topic: 'The topic of this room is thusly',
+        );
+
+        $this->assertInstanceOf(matrix_rooms::class, $room);
+        $this->assertEquals(12345, $room->get_processor_id());
+        $this->assertEquals('The topic of this room is thusly', $room->get_topic());
+        $this->assertNull($room->get_room_id());
+
+        $room = matrix_rooms::create_room_record(
+            processorid: 54321,
+            topic: 'The topic of this room is thusly',
+            roomid: 'This is a roomid',
+        );
+
+        $this->assertInstanceOf(matrix_rooms::class, $room);
+        $this->assertEquals(54321, $room->get_processor_id());
+        $this->assertEquals('The topic of this room is thusly', $room->get_topic());
+        $this->assertEquals('This is a roomid', $room->get_room_id());
+
+        $reloadedroom = matrix_rooms::load_by_processor_id(54321);
+        $this->assertEquals(54321, $reloadedroom->get_processor_id());
+        $this->assertEquals('The topic of this room is thusly', $reloadedroom->get_topic());
+        $this->assertEquals('This is a roomid', $reloadedroom->get_room_id());
+
     }
 
     /**
-     * Test the matrix room creation in database.
+     * Test for update_room_record.
      *
-     * @covers ::create_matrix_room_record
+     * @covers ::update_room_record
      */
-    public function test_create_matrix_room_record(): void {
-        global $DB;
-        $course = $this->get_course();
+    public function test_update_room_record(): void {
+        $this->resetAfterTest();
 
-        $sampleroomid = 'samplematrixroomid';
-        $sampleroomtopic = 'samplematrixroomtopic';
-
-        // Communication internal api call.
-        $communicationprocessor = processor::load_by_instance(
-            'core_course',
-            'coursecommunication',
-            $course->id
+        $room = matrix_rooms::create_room_record(
+            processorid: 12345,
+            topic: 'The topic of this room is that',
         );
 
-        // Call matrix room object to create the matrix data.
-        $matrixroom = new \communication_matrix\matrix_rooms($communicationprocessor->get_id());
-        $matrixroom->update_matrix_room_record(
-            $sampleroomid,
-            $sampleroomtopic
+        // Add a roomid.
+        $room->update_room_record(
+            roomid: 'This is a roomid',
         );
 
-        // Test the object.
-        $this->assertEquals($matrixroom->get_matrix_room_id(), $sampleroomid);
+        $this->assertEquals('This is a roomid', $room->get_room_id());
+        $this->assertEquals('The topic of this room is that', $room->get_topic());
+        $this->assertEquals(12345, $room->get_processor_id());
 
-        // Get the record from db.
-        $matrixrecord = $DB->get_record('matrix_rooms',
-            ['commid' => $communicationprocessor->get_id()]);
+        // Alter the roomid and topic.
+        $room->update_room_record(
+            roomid: 'updatedRoomId',
+            topic: 'updatedTopic is here',
+        );
 
-        // Check the record against sample data.
-        $this->assertNotEmpty($matrixrecord);
-        $this->assertEquals($sampleroomid, $matrixrecord->roomid);
-        $this->assertEquals($communicationprocessor->get_id(), $matrixrecord->commid);
+        $this->assertEquals('updatedRoomId', $room->get_room_id());
+        $this->assertEquals('updatedTopic is here', $room->get_topic());
+        $this->assertEquals(12345, $room->get_processor_id());
     }
 
     /**
-     * Test matrix room record updates.
+     * Tests for delete_room_record.
      *
-     * @covers ::update_matrix_room_record
+     * @covers ::delete_room_record
      */
-    public function test_update_matrix_room_record(): void {
+    public function test_delete_room_record(): void {
         global $DB;
-        $course = $this->get_course();
 
-        $sampleroomid = 'samplematrixroomid';
-        $sampleroomtopic = 'samplematrixroomtopic';
+        $this->resetAfterTest();
 
-        // Communication internal api call.
-        $communicationprocessor = processor::load_by_instance(
-            'core_course',
-            'coursecommunication',
-            $course->id
+        $room = matrix_rooms::create_room_record(
+            processorid: 12345,
+            topic: 'The topic of this room is that',
         );
+        $this->assertCount(1, $DB->get_records('matrix_rooms'));
 
-        // Call matrix room object to create the matrix data.
-        $matrixroom = new \communication_matrix\matrix_rooms($communicationprocessor->get_id());
-        $matrixroom->update_matrix_room_record(
-            $sampleroomid,
-            $sampleroomtopic
-        );
-
-        // Get the record from db.
-        $matrixrecord = $DB->get_record('matrix_rooms',
-            ['commid' => $communicationprocessor->get_id()]);
-
-        // Check the record against sample data.
-        $this->assertNotEmpty($matrixrecord);
-
-        $sampleroomidupdated = 'samplematrixroomidupdated';
-
-        $matrixroom->update_matrix_room_record(
-            $sampleroomidupdated,
-            $sampleroomtopic
-        );
-
-        // Test the object.
-        $this->assertEquals($matrixroom->get_matrix_room_id(), $sampleroomidupdated);
-
-        // Get the record from db.
-        $matrixrecord = $DB->get_record('matrix_rooms',
-            ['commid' => $communicationprocessor->get_id()]);
-
-        // Check the record against sample data.
-        $this->assertNotEmpty($matrixrecord);
-        $this->assertEquals($sampleroomidupdated, $matrixrecord->roomid);
-        $this->assertEquals($communicationprocessor->get_id(), $matrixrecord->commid);
-    }
-
-    /**
-     * Test matrix room deletion.
-     *
-     * @covers ::delete_matrix_room_record
-     * @covers ::get_matrix_room_id
-     */
-    public function test_delete_matrix_room_record(): void {
-        global $DB;
-        $course = $this->get_course();
-
-        $sampleroomid = 'samplematrixroomid';
-        $sampleroomtopic = 'samplematrixroomtopic';
-
-        // Communication internal api call.
-        $communicationprocessor = processor::load_by_instance(
-            'core_course',
-            'coursecommunication',
-            $course->id
-        );
-
-        // Call matrix room object to create the matrix data.
-        $matrixroom = new \communication_matrix\matrix_rooms($communicationprocessor->get_id());
-        $matrixroom->update_matrix_room_record(
-            $sampleroomid,
-            $sampleroomtopic
-        );
-
-        // Get the record from db.
-        $matrixrecord = $DB->get_record('matrix_rooms',
-            ['commid' => $communicationprocessor->get_id()]);
-
-        // Check the record against sample data.
-        $this->assertNotEmpty($matrixrecord);
-
-        // Now delete the record.
-        $matrixroom->delete_matrix_room_record();
-
-        // Get the record from db.
-        $matrixrecord = $DB->get_record('matrix_rooms',
-            ['commid' => $communicationprocessor->get_id()]);
-
-        // Check the record against sample data.
-        $this->assertEmpty($matrixrecord);
+        $room->delete_room_record();
+        $this->assertCount(0, $DB->get_records('matrix_rooms'));
     }
 }

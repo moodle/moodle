@@ -2345,13 +2345,19 @@ function create_course($data, $editoroptions = NULL) {
             // Prepare the communication api data.
             $courseimage = course_get_courseimage($course);
             $communicationroomname = !empty($data->communicationroomname) ? $data->communicationroomname : $data->fullname;
+
             // Communication api call.
             $communication = \core_communication\api::load_by_instance(
                 'core_course',
                 'coursecommunication',
-                $course->id
+                $course->id,
             );
-            $communication->create_and_configure_room($provider, $communicationroomname, $courseimage, $data);
+            $communication->create_and_configure_room(
+                $provider,
+                $communicationroomname,
+                $courseimage ?: null,
+                $data,
+            );
         }
     }
 

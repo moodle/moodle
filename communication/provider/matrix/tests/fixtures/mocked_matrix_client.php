@@ -14,27 +14,39 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace communication_matrix\privacy;
+namespace communication_matrix\tests\fixtures;
 
-use core_privacy\local\metadata\null_provider;
+use core\http_client;
 
 /**
- * Privacy Subsystem for communication_matrix implementing null_provider.
+ * Tests for the api_base class.
  *
  * @package    communication_matrix
- * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
+ * @category   test
+ * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @codeCoverageIgnore
  */
-class provider implements null_provider {
+class mocked_matrix_client extends \communication_matrix\matrix_client {
+    /**
+     * Public variant of the constructor.
+     */
+    public function __construct() {
+        parent::__construct(...func_get_args());
+    }
 
     /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
-     *
-     * @return  string
+     * Reset the test client.
      */
-    public static function get_reason(): string {
-        return 'privacy:metadata';
+    public static function reset_client(): void {
+        self::$client = null;
+    }
+
+    /**
+     * Set the http_client to the client specified.
+     *
+     * @param http_client $client
+     */
+    public static function set_client(http_client $client): void {
+        self::$client = $client;
     }
 }

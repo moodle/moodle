@@ -35,7 +35,6 @@ class matrix_user_manager_test extends \advanced_testcase {
     public function test_get_matrixid_from_moodle_without_field(): void {
         $user = get_admin();
 
-        // And confirm that they're fetched back.
         $this->assertNull(matrix_user_manager::get_matrixid_from_moodle($user->id));
     }
 
