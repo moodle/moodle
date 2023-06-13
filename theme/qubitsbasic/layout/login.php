@@ -35,8 +35,7 @@ $templatecontext = [
     'output' => $OUTPUT,
     'bodyattributes' => $bodyattributes,
     'pagetypelogin' => true,
-    'loginimage' => $logourl,
-    'qubits_logo'=> $OUTPUT->image_url('qubits-logo', 'theme')
+    'loginimage' => $logourl
 ];
 
 

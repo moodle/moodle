@@ -71,7 +71,8 @@
   position: absolute;
   right: 0%;
   top: -20%;
-  font-size: 25px;
+
+  font-size: $fontsize25;
   z-index: 20;
   background-color: var(--white);
   border-radius: 50%;
@@ -87,7 +88,7 @@
   padding: 1.6rem 0px;
   transition: all 0.5s ease;
   .text {
-    font-size: 20px;
+    font-size: $fontsize20;
     font-weight: 600;
   }
   @include breakpoint(xs) {
@@ -119,7 +120,7 @@
       cursor: pointer;
     }
     .text {
-      font-size: 20px;
+      font-size: $fontsize20;
       font-weight: 600;
       color: var(--basetextcolor);
     }
@@ -149,7 +150,7 @@
       .text-grey {
         color: #333333 !important;
         opacity: 0.5;
-        font-size: 12px;
+        font-size: $fontsize12;
       }
     }
   }
@@ -191,7 +192,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 30px;
+    font-size: $fontsize30;
     font-weight: 600;
     font-family: "Acme", sans-serif;
   }
@@ -203,6 +204,12 @@
   .card-width {
     width: 33%;
     margin: 20px;
+    @include breakpoint(xs) {
+      width: 90% !important;
+    }
+    @include breakpoint(sm) {
+      width: 90% !important;
+    }
   }
   .success-color {
     background-color: #78c466 !important;
@@ -211,20 +218,20 @@
     height: 4px !important;
   }
   .card-text {
-    font-size: 20px;
+    font-size: $fontsize20;
   }
   .card-text-size {
     @include breakpoint(xs) {
-      font-size: 27px;
+      font-size: $fontsize27;
     }
     @include breakpoint(md) {
-      font-size: 30px;
+      font-size: $fontsize30;
     }
     @include breakpoint(lg) {
-      font-size: 46px;
+      font-size: $fontsize46;
     }
     @include breakpoint(xlg) {
-      font-size: 46px;
+      font-size: $fontsize46;
     }
   }
 
@@ -285,7 +292,7 @@
       line-height: 50px;
     }
     .logo_name {
-      font-size: 22px;
+      font-size: $fontsize22;
       color: #fff;
       font-weight: 600;
       transition: 0.3s ease;
@@ -302,7 +309,7 @@
   .arrow-left {
     cursor: pointer;
     color: var(--hovertextcolor);
-    font-size: 15px;
+    font-size: $fontsize15;
   }
   .nav-links {
     height: 100%;
@@ -325,7 +332,7 @@
       .sub-menu {
         padding-left: 4rem;
         a {
-          font-size: 15px;
+          font-size: $fontsize15;
           padding: 15px 10px;
           transition: all 0.3s ease;
         }
@@ -342,7 +349,8 @@
           }
         }
         .link_name {
-          font-size: 16px;
+          pointer-events: none;
+          font-size: $fontsize16;
           font-weight: 600;
           white-space: nowrap;
           // / color: #585858; /
@@ -358,7 +366,7 @@
         text-align: center;
         line-height: 50px;
         // / color: #585858; /
-        font-size: 20px;
+        font-size: $fontsize20;
         cursor: pointer;
         transition: all 0.3s ease;
       }
@@ -423,7 +431,6 @@
     font-size: 16px;
     font-weight: 600;
     white-space: nowrap;
-    // / color: #585858; /
     transition: all 0.4s ease;
     &:hover {
       background: #e2eaf2;
@@ -457,7 +464,7 @@
     border-radius: 8px !important;
     background-color: #ca3120;
     color: #fff;
-    font-size: 12px !important;
+    font-size: $fontsize12 !important;
     line-height: 11px;
     position: absolute;
     top: 30px !important;
@@ -534,9 +541,22 @@
         transition: 0s;
 
         .link_name {
-          font-size: 18px;
+          font-size: $fontsize18;
           opacity: 1;
           display: block;
+        }
+      }
+      &:hover {
+        .sub-menu {
+          top: 0;
+          opacity: 1;
+          pointer-events: auto;
+          transition: all 0.4s ease;
+          padding-left: 0rem;
+        }
+        .sub-menu.blank {
+          top: 50%;
+          transform: translateY(-50%);
         }
       }
     }
@@ -559,8 +579,6 @@
   }
 }
 
-//CSS need to change
-
 .sidebar .nav-links li .sub-menu .sidebar.close-bars {
   width: 78px;
 }
@@ -569,9 +587,6 @@
 }
 .sidebar .nav-links::-webkit-scrollbar {
   display: none;
-}
-.sidebar .nav-links li:hover > a {
-  color: var(--hovertextcolor);
 }
 
 .sidebar {
@@ -586,14 +601,6 @@
       }
     }
   }
-}
-
-.sidebar.close-bars .nav-links li:hover .sub-menu {
-  top: 0;
-  opacity: 1;
-  pointer-events: auto;
-  transition: all 0.4s ease;
-  padding-left: 0rem;
 }
 
 .sidebar.close-bars ~ .my-course-section {
@@ -617,87 +624,67 @@
   display: none;
 }
 
-.sidebar .nav-links li:hover > a {
-  color: var(--hovertextcolor);
-}
-
-.sidebar .nav-links li.showMenu .sub-menu {
-  display: block;
-}
-
-.sidebar .nav-links li .sub-menu a:hover {
-  opacity: 1;
-}
-
-.sidebar.close-bars .nav-links li:hover .sub-menu {
-  top: 0;
-  opacity: 1;
-  pointer-events: auto;
-  transition: all 0.4s ease;
-}
-
-.sidebar .nav-links li:hover .sub-menu.blank {
-  top: 50%;
-  transform: translateY(-50%);
-}
+// .sidebar .nav-links li:hover .sub-menu.blank {
+//   top: 50%;
+//   transform: translateY(-50%);
+// }
 .main-inner {
+  position: relative;
+  height: 100vh;
+  left: 140px;
+  width: calc(100% - 260px) !important;
+  transition: all 0.5s ease;
+
   .drawer-right-toggle {
     display: none !important;
   }
+
+  @include breakpoint(xs) {
+    left: 0px;
+    width: 100% !important;
+  }
+  @include breakpoint(sm) {
+    left: 0px;
+    width: 100% !important;
+  }
 }
 
-@media screen and (min-width: 250px) and (max-width: 576px) {
-  .navbar-nav .popover-region-notifications,
-  .navbar-nav .usermenu {
+.navbar.messageicon {
+  .fa-comment-o {
     display: none !important;
   }
+  .navbar-nav {
+    align-items: center;
 
-  .sidebar.close-bars ~ .my-course-section {
-    width: 100%;
+    .popover-region-notifications {
+      border: 1px solid #e6e6e6;
+      border-radius: 50%;
+      height: 50px !important;
+      width: 50px !important;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
-  .sidebar-mobile {
-    display: block;
-    z-index: 200;
-  }
-  .sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    opacity: 0.5;
-    background: rgba(0, 0, 0, 0.87);
-    z-index: 103;
-    transition: all 0.3s cubic-bezier(0.55, 0, 0.1, 1);
-    -ms-transform: translateZ(0);
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-  }
-}
-
-@media (max-width: 100px) {
-  .sidebar.close-bars .nav-links li .sub-menu {
-    display: none;
-  }
-  .flex-mobile {
-    flex-direction: column !important;
+  .count-container {
+    padding: 4px !important;
+    border-radius: 8px !important;
+    background-color: #ca3120;
+    color: #fff;
+    font-size: 12px !important;
+    line-height: 11px;
+    position: absolute;
+    top: 30px !important;
+    right: -9px !important;
   }
 }
-@media (max-width: 768px) {
-  .flex-mobile {
-    flex-direction: column !important;
+.usermenu {
+  .avatar {
+    img {
+      width: 50px !important;
+      height: 50px !important;
+    }
   }
-  .card-width {
-    width: 90% !important;
-  }
-}
-@media screen and (min-width: 400px) {
-  .sidebar-icon-only .compact-logo {
-    display: inline-block;
-  }
-}
-.numbercolor {
-  color: darken($colorbgcard, 45);
 }
 
 .aabtn.focus,
@@ -742,6 +729,9 @@ button.close:focus,
 .complete-text-color {
   color: #4d4d4d;
 }
+.numbercolor {
+  color: darken($colorbgcard, 45);
+}
 .navbar.messageicon {
   .fa-comment-o {
     display: none !important;
@@ -764,58 +754,11 @@ button.close:focus,
     border-radius: 8px !important;
     background-color: #ca3120;
     color: #fff;
-    font-size: 12px !important;
+    font-size: $fontsize12 !important;
     line-height: 11px;
     position: absolute;
     top: 30px !important;
     right: -9px !important;
-  }
-}
-.usermenu .avatar img {
-  width: 50px !important;
-  height: 50px !important;
-}
-
-.user-profile {
-  border-radius: 50%;
-  height: 50px;
-  width: 50px;
-  padding: 8px;
-}
-.userpic {
-  width: 78px;
-  text-align: center;
-}
-
-.main-inner {
-  position: relative;
-  height: 100vh;
-  left: 140px;
-  width: calc(100% - 260px) !important;
-  transition: all 0.5s ease;
-}
-.secondary-navigation .navigation .nav-tabs .nav-link {
-  color: #585858;
-  font-size: 16px !important;
-}
-
-@media screen and (min-width: 768px) {
-  body.limitedwidth #page.drawers .main-inner,
-  .header-maxwidth,
-  .secondary-navigation .navigation .nav-tabs {
-    max-width: 100% !important;
-  }
-}
-@media screen and (min-width: 768px) {
-  #page.drawers.show-drawer-left {
-    margin-left: 0 !important;
-  }
-}
-
-@media screen and (min-width: 360px) and (max-width: 768px) {
-  .main-inner {
-    left: 0px;
-    width: 100% !important;
   }
 }
 .leftnav {
@@ -823,4 +766,103 @@ button.close:focus,
 }
 .drawer-left {
   display: none !important;
+}
+
+.secondary-navigation .navigation .nav-tabs .nav-link {
+  color: #585858;
+  font-size: $fontsize16 !important;
+}
+#page.drawers.show-drawer-left {
+  @include breakpoint(md) {
+    margin-left: 0 !important;
+  }
+  @include breakpoint(lg) {
+    margin-left: 0 !important;
+  }
+  @include breakpoint(xlg) {
+    margin-left: 0 !important;
+  }
+}
+.sidebar-overlay {
+  @include breakpoint(sm) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.5;
+    background: rgba(0, 0, 0, 0.87);
+    z-index: 103;
+    transition: all 0.3s cubic-bezier(0.55, 0, 0.1, 1);
+    -ms-transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  @include breakpoint(xs) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.5;
+    background: rgba(0, 0, 0, 0.87);
+    z-index: 103;
+    transition: all 0.3s cubic-bezier(0.55, 0, 0.1, 1);
+    -ms-transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
+//Css need to change
+.flex-mobile {
+  @include breakpoint(sm) {
+    flex-direction: column !important;
+  }
+  @include breakpoint(xs) {
+    flex-direction: column !important;
+  }
+}
+@media screen and (min-width: 768px) {
+  body.limitedwidth #page.drawers .main-inner,
+  .header-maxwidth,
+  .secondary-navigation .navigation .nav-tabs {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 100px) {
+  .sidebar.close-bars .nav-links li .sub-menu {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 400px) {
+  .sidebar-icon-only .compact-logo {
+    display: inline-block;
+  }
+}
+@media screen and (min-width: 250px) and (max-width: 576px) {
+  .navbar-nav .popover-region-notifications,
+  .navbar-nav .usermenu {
+    display: none !important;
+  }
+
+  .sidebar.close-bars ~ .my-course-section {
+    width: 100%;
+  }
+
+  // .sidebar-overlay {
+  //   position: fixed;
+  //   top: 0;
+  //   left: 0;
+  //   right: 0;
+  //   bottom: 0;
+  //   opacity: 0.5;
+  //   background: rgba(0, 0, 0, 0.87);
+  //   z-index: 103;
+  //   transition: all 0.3s cubic-bezier(0.55, 0, 0.1, 1);
+  //   -ms-transform: translateZ(0);
+  //   -webkit-transform: translateZ(0);
+  //   transform: translateZ(0);
+  // }
 }
