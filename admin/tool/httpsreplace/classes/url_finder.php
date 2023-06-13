@@ -148,7 +148,7 @@ class url_finder {
         }
 
         $urls = array();
-
+        sort($tables); // Make it easier to see progress because they are ordered.
         $numberoftables = count($tables);
         $tablenumber = 0;
         foreach ($tables as $table) {
