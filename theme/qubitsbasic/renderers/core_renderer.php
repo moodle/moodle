@@ -39,7 +39,7 @@ class theme_qubitsbasic_core_renderer extends theme_boost\output\core_renderer {
     }
 
     public function qubits_left_navigation(){
-        global $CFG;
+        global $CFG, $PAGE;
         $mycourses = enrol_get_my_courses(array('id', 'cacherev'), 'fullname');
         $myenrolcourses = array();
         foreach($mycourses as $mycourse){
@@ -49,8 +49,12 @@ class theme_qubitsbasic_core_renderer extends theme_boost\output\core_renderer {
                 "url" => $CFG->wwwroot.'/course/view.php?id='.$mycourse->id
             );
         }
+        $primary = new core\navigation\output\primary($PAGE);
+        $renderer = $PAGE->get_renderer('core');
+        $primarymenu = $primary->export_for_template($renderer);
         $context = array(
-            "myenrolcourses" => $myenrolcourses
+            "myenrolcourses" => $myenrolcourses,
+            'usermenu' => $primarymenu['user']
         );
         return $this->render_from_template("theme_qubitsbasic/custom/leftnavigation", $context);
     }

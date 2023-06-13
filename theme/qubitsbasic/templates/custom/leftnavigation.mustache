@@ -1,21 +1,9 @@
 <div class="hr-line"></div>
         <ul class="nav-links">
         <li class="nav-item d-block d-sm-none">
-                <a href="javascript:void(0);" class="nav-hover">
-                   <span class="userpic"><img src="{{globals.config.wwwroot}}/theme/qubitsbasic/pix/images/logos/userpic.png" class="user-profile" "></span>
-                    <span class="link_name">User profile</span>
-                    <i class="qicon-chevron-down-thin arrow icon"></i>
-                </a>
-                <ul class="sub-menu">
-                    <li><a href="#">Profile</a></li>
-                    <li><a href="#">Grades</a></li>
-                    <li><a href="#">Calendar</a></li>
-                    <li><a href="#">Private files</a></li>
-                    <li><a href="#">Reports</a></li>
-                    <li><a href="#">Preferences</a></li>
-                    <li><a href="#">Switch role to</a></li>
-                    <li><a href="#">Logout</a></li>
-                </ul>
+                {{#usermenu}}
+                    {{> core/user_menu }}
+                {{/usermenu}}
             </li>
              <li class="nav-item d-block d-sm-none">
 
