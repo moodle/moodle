@@ -1,0 +1,429 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_boost/drawers
+
+    Boost drawer template.
+
+    Context variables required for this template:
+    * sitename - The name of the site
+    * output - The core renderer for the page
+    * bodyattributes - attributes for the body tag as a string of html attributes
+    * sidepreblocks - HTML for the blocks
+    * hasblocks - true if there are blocks on this page
+    * courseindexopen - true if the nav drawer should be open on page load
+    * regionmainsettingsmenu - HTML for the region main settings menu
+    * hasregionmainsettingsmenu - There is a region main settings menu on this page.
+
+    Example context (json):
+    {
+        "sitename": "Moodle",
+        "output": {
+            "doctype": "<!DOCTYPE html>",
+            "page_title": "Test page",
+            "favicon": "favicon.ico",
+            "main_content": "<h1>Headings make html validators happier</h1>"
+         },
+        "bodyattributes":"",
+        "sidepreblocks": "<h2>Blocks html goes here</h2>",
+        "hasblocks":true,
+        "courseindexopen": true,
+        "navdraweropen": false,
+        "blockdraweropen": true,
+        "regionmainsettingsmenu": "",
+        "hasregionmainsettingsmenu": false,
+        "addblockbutton": ""
+    }
+}}
+
+{{> theme_boost/head }}
+
+<body {{{ bodyattributes }}}>
+
+{{> core/local/toast/wrapper}}
+<div id="page-wrapper" class="d-print-block">
+
+    {{{ output.standard_top_of_body_html }}}
+    {{> theme_qubitsbasic/sidebar }}
+    {{> theme_qubitsbasic/navbar }}
+    <section class="my-course-section" style="top:81px;">
+        <div class="row m-0 flex-mobile" id="mycrsecard" data-offset="0" data-limit="6" data-complete="no">
+        
+          
+            
+           <div class="card coursecard col-lg-3 max-width max-width-2 flex-grow col-md-6 col-sm-12 p-0 card-width card-border-radius card-box-shadow card-border">
+
+                <div class="card-body bg-wave p-0 card-border-radius card-text-color">
+                    <div class="complete-card-overlay card-body-border-radius">
+                        <p class="card-text">Computing Systems and Softwares</p>
+                        <div class="row align-items-center">
+                            <div class="card-title card-text-size col-lg-9 col-md-9 col-sm-8 w-auto pr-0">DigiChamps
+                            </div>
+
+                            <div class="col-lg-3 col-md-3 col-sm-4 w-auto my-2">
+                                <div class="row mx-0 justify-content-end">
+                                    <i class="qicon-tick-mark success-tick"></i>
+                                    <div class="white-circle complete-text-color col-9 w-auto">3</div>
+                                </div>
+                            </div>
+                        </div>
+                <a href="https://www.google.com/" class="stretched-link"></a>
+                    </div>
+                </div>
+                <div class="inner-section" style="border-radius:0px 0px 8px 8px">
+                    <div class="d-flex justify-content-between text-grey">
+                        <div class="d-flex align-items-center pb-2">
+                            <span class="qicon-calendar"></span>
+                            <div class="pl-2">Last opened: Jan 13, 2023</div>
+                        </div>
+                        <div>
+                            100%
+                        </div>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar success-color" role="progressbar" style="width: 100%;" aria-valuenow=""
+                            aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card coursecard col-lg-3 max-width max-width-2 flex-grow col-md-6 col-sm-12 p-0 card-width card-border-radius card-box-shadow card-border">
+
+                <div class="card-body bg-wave p-0 card-border-radius card-text-color">
+                    <div class="card-body-overlay card-body-border-radius" style="--cardbgcolor:rgb(255, 185, 0, 0.5);">
+                        <p class="card-text">Computing Systems and Softwares</p>
+                        <div class="row align-items-center">
+                            <div class="card-title card-text-size col-lg-9 col-md-9 col-sm-8 w-auto pr-0">DigiChamps
+                            </div>
+
+                            <div class="col-lg-3 col-md-3 col-sm-4 w-auto my-2">
+                                <div class="row mx-0 justify-content-end">
+                                    <!-- <i class="qicon-tick-mark success-tick"></i> -->
+                                    <div class="white-circle col-9 w-auto">3</div>
+                                </div>
+                            </div>
+                        </div>
+                <a href="https://www.google.com/" class="stretched-link"></a>
+                    </div>
+                </div>
+                <div class="inner-section" style="border-radius:0px 0px 8px 8px">
+                    <div class="d-flex justify-content-between text-grey">
+                        <div class="d-flex align-items-center pb-2">
+                            <span class="qicon-calendar"></span>
+                            <div class="pl-2">Last opened: Jan 13, 2023</div>
+                        </div>
+                        <div>
+                            56%
+                        </div>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar success-color" role="progressbar" style="width: 25%;" aria-valuenow=""
+                            aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div
+                class="card coursecard col-lg-3 max-width max-width-2 flex-grow col-md-6 col-sm-12 p-0 card-width card-border-radius card-box-shadow card-border">
+
+                <div class="card-body bg-wave p-0 card-border-radius card-text-color">
+                    <div class="card-body-overlay card-body-border-radius" style="--cardbgcolor:rgb(255, 185, 0, 0.5);">
+                        <p class="card-text">Computing Systems and Softwares</p>
+                        <div class="row align-items-center">
+                            <div class="card-title card-text-size col-lg-9 col-md-9 col-sm-8 w-auto pr-0">DigiChamps
+                            </div>
+
+                            <div class="col-lg-3 col-md-3 col-sm-4 w-auto my-2">
+                                <div class="row mx-0 justify-content-end">
+                                    <!-- <i class="qicon-tick-mark success-tick"></i> -->
+                                    <div class="white-circle col-9 w-auto">3</div>
+                                </div>
+                            </div>
+                        </div>
+                <a href="https://www.google.com/" class="stretched-link"></a>
+                    </div>
+                </div>
+                <div class="inner-section" style="border-radius:0px 0px 8px 8px">
+                    <div class="d-flex justify-content-between text-grey">
+                        <div class="d-flex align-items-center pb-2">
+                            <span class="qicon-calendar"></span>
+                            <div class="pl-2">Last opened: Jan 13, 2023</div>
+                        </div>
+                        <div>
+                            56%
+                        </div>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar success-color" role="progressbar" style="width: 25%;" aria-valuenow=""
+                            aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+             <div
+                class="card coursecard col-lg-3 max-width max-width-2 flex-grow col-md-6 col-sm-12 p-0 card-width card-border-radius card-box-shadow card-border">
+
+                <div class="card-body bg-wave p-0 card-border-radius card-text-color">
+                    <div class="card-body-overlay card-body-border-radius" style="--cardbgcolor:rgb(255, 185, 0, 0.5);">
+                        <p class="card-text">Computing Systems and Softwares</p>
+                        <div class="row align-items-center">
+                            <div class="card-title card-text-size col-lg-9 col-md-9 col-sm-8 w-auto pr-0">DigiChamps
+                            </div>
+
+                            <div class="col-lg-3 col-md-3 col-sm-4 w-auto my-2">
+                                <div class="row mx-0 justify-content-end">
+                                    <!-- <i class="qicon-tick-mark success-tick"></i> -->
+                                    <div class="white-circle col-9 w-auto">3</div>
+                                </div>
+                            </div>
+                        </div>
+                <a href="https://www.google.com/" class="stretched-link"></a>
+                    </div>
+                </div>
+                <div class="inner-section" style="border-radius:0px 0px 8px 8px">
+                    <div class="d-flex justify-content-between text-grey">
+                        <div class="d-flex align-items-center pb-2">
+                            <span class="qicon-calendar"></span>
+                            <div class="pl-2">Last opened: Jan 13, 2023</div>
+                        </div>
+                        <div>
+                            56%
+                        </div>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar success-color" role="progressbar" style="width: 25%;" aria-valuenow=""
+                            aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    
+    {{#courseindex}}
+        {{< theme_boost/drawer }}
+            {{$id}}theme_boost-drawers-courseindex{{/id}}
+            {{$drawerclasses}}drawer drawer-left {{#courseindexopen}}show{{/courseindexopen}}{{/drawerclasses}}
+            {{$drawercontent}}
+                {{{courseindex}}}
+            {{/drawercontent}}
+            {{$drawerpreferencename}}drawer-open-index{{/drawerpreferencename}}
+            {{$drawerstate}}show-drawer-left{{/drawerstate}}
+            {{$tooltipplacement}}right{{/tooltipplacement}}
+            {{$closebuttontext}}{{#str}}closecourseindex, core{{/str}}{{/closebuttontext}}
+        {{/ theme_boost/drawer}}
+    {{/courseindex}}
+    {{#hasblocks}}
+        {{< theme_boost/drawer }}
+            {{$id}}theme_boost-drawers-blocks{{/id}}
+            {{$drawerclasses}}drawer drawer-right{{#blockdraweropen}} show{{/blockdraweropen}}{{/drawerclasses}}
+            {{$drawercontent}}
+                <section class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
+                    {{{ addblockbutton }}}
+                    {{{ sidepreblocks }}}
+                </section>
+            {{/drawercontent}}
+            {{$drawerpreferencename}}drawer-open-block{{/drawerpreferencename}}
+            {{$forceopen}}{{#forceblockdraweropen}}1{{/forceblockdraweropen}}{{/forceopen}}
+            {{$drawerstate}}show-drawer-right{{/drawerstate}}
+            {{$tooltipplacement}}left{{/tooltipplacement}}
+            {{$drawercloseonresize}}1{{/drawercloseonresize}}
+            {{$closebuttontext}}{{#str}}closeblockdrawer, core{{/str}}{{/closebuttontext}}
+        {{/ theme_boost/drawer}}
+    {{/hasblocks}}
+    
+    <div id="page" data-region="mainpage" data-usertour="scroller" class="drawers {{#courseindexopen}}show-drawer-left{{/courseindexopen}} {{#blockdraweropen}}show-drawer-right{{/blockdraweropen}} drag-container d-none">
+        <div id="topofscroll" class="main-inner">
+            <div class="drawer-toggles d-flex">
+                {{#courseindex}}
+                    <div class="drawer-toggler drawer-left-toggle open-nav d-print-none">
+                        <button
+                            class="btn icon-no-margin"
+                            data-toggler="drawers"
+                            data-action="toggle"
+                            data-target="theme_boost-drawers-courseindex"
+                            data-toggle="tooltip"
+                            data-placement="right"
+                            title="{{#str}}opendrawerindex, core{{/str}}"
+                        >
+                            <span class="sr-only">{{#str}}opendrawerindex, core{{/str}}</span>
+                            {{#pix}} t/index_drawer, moodle {{/pix}}
+                        </button>
+                    </div>
+                {{/courseindex}}
+                {{#hasblocks}}
+                    <div class="drawer-toggler drawer-right-toggle ml-auto d-print-none">
+                        <button
+                            class="btn icon-no-margin"
+                            data-toggler="drawers"
+                            data-action="toggle"
+                            data-target="theme_boost-drawers-blocks"
+                            data-toggle="tooltip"
+                            data-placement="right"
+                            title="{{#str}}opendrawerblocks, core{{/str}}"
+                        >
+                            <span class="sr-only">{{#str}}opendrawerblocks, core{{/str}}</span>
+                            <span class="dir-rtl-hide">{{#pix}}t/blocks_drawer, core{{/pix}}</span>
+                            <span class="dir-ltr-hide">{{#pix}}t/blocks_drawer_rtl, core{{/pix}}</span>
+                        </button>
+                    </div>
+                {{/hasblocks}}
+            </div>
+            {{{ output.full_header }}}
+            {{#secondarymoremenu}}
+                <div class="secondary-navigation d-print-none">
+                    {{> core/moremenu}}
+                </div>
+            {{/secondarymoremenu}}
+            <div id="page-content" class="pb-3 d-print-block">
+                <div id="region-main-box">
+                    {{#hasregionmainsettingsmenu}}
+                    <div id="region-main-settings-menu" class="d-print-none">
+                        <div> {{{ regionmainsettingsmenu }}} </div>
+                    </div>
+                    {{/hasregionmainsettingsmenu}}
+                    <section id="region-main" aria-label="{{#str}}content{{/str}}">
+
+                        {{#hasregionmainsettingsmenu}}
+                            <div class="region_main_settings_menu_proxy"></div>
+                        {{/hasregionmainsettingsmenu}}
+                        {{{ output.course_content_header }}}
+                        {{#headercontent}}
+                            {{> core/activity_header }}
+                        {{/headercontent}}
+                        {{#overflow}}
+                            <div class="container-fluid tertiary-navigation">
+                                <div class="navitem">
+                                    {{> core/url_select}}
+                                </div>
+                            </div>
+                        {{/overflow}}
+                        {{{ output.main_content }}}
+                        {{{ output.activity_navigation }}}
+                        {{{ output.course_content_footer }}}
+
+                    </section>
+                </div>
+            </div>
+        </div>
+        
+        {{> theme_boost/footer }}
+    </div>
+    
+
+
+    {{{ output.standard_after_main_region_html }}}
+</div>
+
+</body>
+</html>
+{{#js}}
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader', 'theme_boost/drawer'], function(Loader, Drawer) {
+    Drawer.init();
+    M.util.js_complete('theme_boost/loader');
+});
+{{/js}}
+
+{{#js}}
+require(['jquery', 'core/config', 'core/templates'], function($, Config, Templates){
+    function hexToRgb(hex) {
+       var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
+    }
+
+   let scrolllock = false
+   function qubits_load_mycourses(){
+        let mycourseurl = `${Config.wwwroot}/lib/ajax/service.php?sesskey=${Config.sesskey}&info=theme_qubitsbasic_get_enrolled_courses_by_timeline_classification`;
+        let offset = $("#mycrsecard").data("offset")
+        let limit = $("#mycrsecard").data("limit")
+        let complete = $("#mycrsecard").data("complete")
+        if(complete == "yes"){
+            return null;
+        }
+        let payload = [
+                {
+                    "index": 0,
+                    "methodname": "theme_qubitsbasic_get_enrolled_courses_by_timeline_classification",
+                    "args": {
+                        "offset": offset,
+                        "limit": limit,
+                        "classification": "all",
+                        "sort": "fullname",
+                        "customfieldname": "level",
+                        "customfieldvalue": ""
+                    }
+                }
+            ];
+        $.ajax({
+            url : mycourseurl,
+            type : "POST",
+            data : JSON.stringify(payload),
+            contentType : "application/json"
+        }).done(function(resp){
+            let curresp = resp[0]
+            if(curresp.error){
+                console.log("Error Occurred")
+            }else{
+                let curdata = curresp.data
+                let curcourses = curdata?.courses
+                let nextoffset = curdata?.nextoffset
+                let curoffset = $("#mycrsecard").data("offset")
+                if(nextoffset==curoffset){
+                    $("#mycrsecard").data("complete", "yes")
+                    scrolllock = true
+                }else{
+                    $("#mycrsecard").data("offset", nextoffset)
+                    //console.log("Courses >>>> ")
+                    //console.log(JSON.stringify(curcourses, null, 4))
+                    //console.log("****")
+                    curcourses.forEach((course) => {
+					    course.level = (course.level) ? course.level : "1"
+						course.cardcolour = (course.cardcolour) ? course.cardcolour : "#FFB900"
+                        course.cardcolour = (course.progress == 100) ? "#3e3e3e" : course.cardcolour;
+                        objCoursergb = hexToRgb(course.cardcolour)
+                        course.cardcolourR = objCoursergb.r
+                        course.cardcolourG = objCoursergb.g
+                        course.cardcolourB = objCoursergb.b
+                        course.cardcolourA = (course.progress == 100) ? 0.2 : 0.5;
+                        course.iscomplete = (course.progress == 100) ? true : false;
+                        Templates.render('theme_qubitsbasic/course/coursecard', course).then((coursecardhtml) => {
+                            $("#mycrsecard").append(coursecardhtml)
+                        });
+                    });
+                    setTimeout(() => {
+                        scrolllock = false
+                    }, 1000);
+                }
+            }  
+        });
+   }
+   scrolllock = true
+   qubits_load_mycourses()
+
+   $( window ).on( "scroll", function() {
+        if(scrolllock===false){
+            scrolllock = true
+            qubits_load_mycourses()
+        }
+  });
+
+});
+{{/js}}

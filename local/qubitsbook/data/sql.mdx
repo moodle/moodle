@@ -1,0 +1,64 @@
+# SQL Basics
+
+### Create the table
+
+To create a table in SQL, you can use the following syntax:
+
+> CREATE TABLE table_name (
+> column_name1 data_type constraint,
+> column_name2 data_type constraint,
+> ...
+> );
+
+For example, to create a table called "students" with columns for "id", "name", and "age", you would use the following SQL statement:
+
+```sql,editable,sql-1
+CREATE TABLE students (id INT PRIMARY KEY, name VARCHAR(255) NOT NULL, age INT);
+```
+
+### Insert data
+
+To insert data into the table, you can use the following syntax:
+
+> INSERT INTO table_name (column1, column2, ...)
+> VALUES (value1, value2, ...);
+
+For example, to insert a student with an id of 1, a name of "John Smith", and an age of 20 into the "students" table, you would use the following SQL statement:
+
+```sql,editable,sql-2
+INSERT INTO students (id, name, age) VALUES (1, 'John Smith', 12);
+INSERT INTO students (id, name, age) VALUES (2, 'Fahed Khan', 13);
+INSERT INTO students (id, name, age) VALUES (3, 'Maryiam Sulfi', 13);
+INSERT INTO students (id, name, age) VALUES (4, 'De Paul Mathew', 12);
+```
+
+### Select and display the data
+
+To display the data in the table, you can use the SELECT statement.
+
+> SELECT \* FROM table_name;
+
+For example, to display all the data in the "students" table, you would use the following SQL statement:
+
+```sql,editable,sql-3
+SELECT * FROM students;
+```
+
+### Filter Data
+
+To select a specific student with a specific ID from a table in SQL, you can use the following syntax:
+
+> SELECT \* FROM table_name WHERE column_name = value;
+
+For example, to select the student with an ID of 1 from the "students" table, you would use the following SQL statement:
+
+```sql,editable,sql-4
+SELECT * FROM students WHERE id = 1;
+```
+
+### Use a pre-defined table to load data from.. The table will be served from the webserver...
+
+```sql
+--DATA:users
+select * from users;
+```

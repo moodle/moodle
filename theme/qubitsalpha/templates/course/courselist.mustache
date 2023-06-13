@@ -1,0 +1,144 @@
+<div data-region="filter" class="d-flex align-items-center my-2" aria-label="Tenant Site - Courses Overview">
+        <div class="row no-gutters">
+            <div class="d-none">
+                <input type="hidden" name="sortcolumn" value="{{sortcolumn}}" />
+                <input type="hidden" name="sortdir" value="{{sortdir}}" />
+                <input type="hidden" name="siteid" value="{{siteid}}" />
+            </div>
+            <div class="dropdown mb-1 mr-1">
+                <button id="groupingdropdown1" type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="">
+                     <span id="spngddwn1" data-active-item-text>
+                      Sort By
+                     </span>
+                </button>
+                <ul class="dropdown-menu" role="menu" data-show-active-item data-skip-active-class="true" data-active-item-text aria-labelledby="groupingdropdown1">
+                   <li>
+                       <a class="dropdown-item" href="javascript:;" >
+                            Any
+                        </a>
+                    </li>
+                   <li>
+                        <a class="dropdown-item" href="javascript:;" >
+                            Course Full Name
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="dropdown-item" href="javascript:;" >
+                            Course Short Name
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="dropdown mb-1 mr-1">
+                <button id="groupingdropdown2" type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="">
+                     <span data-active-item-text id="spngddwn2">
+                      Sort Dir
+                     </span>
+                </button>
+                <ul class="dropdown-menu" role="menu" data-show-active-item data-skip-active-class="true" data-active-item-text aria-labelledby="groupingdropdown2">
+                   
+                   <li>
+                        <a class="dropdown-item" href="javascript:;" >
+                            ASC
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="dropdown-item" href="javascript:;" >
+                            DESC
+                        </a>
+                    </li>
+                </ul>
+            </div>
+             <div class="mb-1 mr-5 flex-grow-1">
+             &nbsp;
+             </div>
+             <div class="mb-1 mr-1 flex-grow-1">
+                <div class="form-inline simplesearchform">
+                    <div class="input-group searchbar w-200" role="search">
+                        <label for="searchinput">
+                            <span class="sr-only">Search courses</span>
+                        </label>
+                        <input type="text" role="searchbox" data-region="input" data-action="search" id="searchinput" class="form-control withclear rounded" placeholder="Search" name="search" value="{{search}}" autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                      <button class="btn btn-primary ml-1" id="btnsearchgo">Go</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+
+<div class="row no-gutters">&nbsp;</div>
+
+<div data-region="filter" class="d-flex align-items-center my-2" aria-label="Tenant Site - Courses Overview">
+<div class="card-deck dashboard-card-deck " data-region="card-deck" role="list">
+{{#tenantcourses}}
+<div class="card dashboard-card" role="listitem" data-region="course-content" data-course-id="{{id}}">
+<a href="{{viewlink}}" tabindex="-1">
+    <div class="card-img dashboard-card-img" style="background-image: url({{courseimage}});">
+        <span class="sr-only">Course image</span>
+    </div>
+</a>
+    <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-3">
+            <div class="d-flex align-items-start">
+            <a href="{{viewlink}}">{{fullname}}</a>
+            </div>
+    </div>
+</div>
+{{/tenantcourses}}
+</div>
+</div>
+
+{{{pagebar}}}
+
+{{#js}}
+require(['jquery'], function($) {
+   let columnjson = {
+       "any" : "Any",
+       "coursefullname" : "Course Full Name",
+       "courseshortname" : "Course Short Name"
+   }
+   let scolumn = $("input[name=sortcolumn]").val();
+   $("#spngddwn1").text(columnjson[scolumn]);
+   let sdir = $("input[name=sortdir]").val();
+   if(sdir){
+       sdirtxt = (sdir=="desc") ? "DESC" : "ASC";
+       $("#spngddwn2").text(sdirtxt);
+   }
+
+    function prepare_redir_url(){
+        let scolumn = $("input[name=sortcolumn]").val();
+        let sdir = $("input[name=sortdir]").val();
+        let stxt = $.trim($("#searchinput").val());
+        let siteid = $.trim($("input[name=siteid]").val());
+        let sparams = {
+            "sortcolumn" : scolumn,
+            "sortdir" : sdir,
+            "search" : stxt,
+            "siteid" : siteid
+        };
+        let paramstr = $.param(sparams);
+        let rdirurl = M.cfg.wwwroot + "/course/index.php?" + paramstr;
+        return rdirurl;
+    }
+
+   $("#btnsearchgo").click(function(){
+       let rdirurl = prepare_redir_url();
+       $(location).attr("href", rdirurl);
+   });
+   $("#spngddwn1").bind("DOMSubtreeModified", function() {
+        let dpdwn1 = $.trim($(this).text()).toLowerCase().replace(/\s/g, '');
+        $("input[name=sortcolumn]").val(dpdwn1);
+        let rdirurl = prepare_redir_url();
+        $(location).attr("href", rdirurl);
+   });
+   $("#spngddwn2").bind("DOMSubtreeModified", function() {
+        let dpdwn2 = $.trim($(this).text()).toLowerCase().replace(/\s/g, '');
+        $("input[name=sortdir]").val(dpdwn2);
+        let rdirurl = prepare_redir_url();
+        $(location).attr("href", rdirurl);
+   });
+});
+{{/js}}

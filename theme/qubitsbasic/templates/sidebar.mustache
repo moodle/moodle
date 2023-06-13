@@ -1,0 +1,77 @@
+<div class="sidebar">
+        <div class="logo-details">
+            <img src="{{globals.config.wwwroot}}/theme/qubitsbasic/pix/qubits-full-logo.svg" class="main-logo">
+            <img src="{{globals.config.wwwroot}}/theme/qubitsbasic/pix/qubits-symbol.svg" class="compact-logo">
+
+            <i class="icon fa fa-arrow-left arrow-left"></i>
+
+        </div>
+        {{{ output.qubits_left_navigation }}}
+</div>
+
+<div class="sidebar-overlay"></div>
+
+{{#js}}
+require(['jquery'], function($){
+
+    $(document).on("mouseenter", ".coursecard", function(){
+        $(this).find(".white-circle").addClass("numbercolor");
+    }).on("mouseleave", ".coursecard", function(){
+        $(this).find(".white-circle").removeClass("numbercolor");
+    });
+
+    $(window).on("resize", function (e) {
+                checkScreenSize();
+            });
+
+            checkScreenSize();
+
+            function checkScreenSize() {
+                var newWindowWidth = $(window).width();
+                if (newWindowWidth < 578) {
+                    $(".fa-arrow-left").click(function () {
+                        $(".sidebar").hide();
+                        $(".sidebar-overlay").hide();
+                        $(".qicon-menu").show();
+                    });
+                    $(".qicon-menu").click(function () {
+                        $(".sidebar").show().css({ "transition": "all 0.5s ease", "transition-delay": "3s" });
+                        $(".sidebar-overlay").show();
+
+                    });
+                    $(".sidebar-overlay").click(function () {
+                        $(".sidebar").hide().css({ "transition": "all 0.5s ease", "transition-delay": "3s" });;
+                        $(".sidebar-overlay").hide();
+                        $(".qicon-menu").show();
+                    });
+                    $(".arrow").click(function () {
+                        $(".nav-item").toggleClass("showMenu");
+                    });
+                    
+                    $(".nav-item").hover(function(){
+                        $(".white-circle").toggleClass("numbercolor");
+                    });
+                }
+                else {
+                    $(".fa-arrow-left").click(function () {
+                        $(".sidebar").addClass("close-bars");
+                        $(".compact-logo").show();
+                        $(".qicon-menu").show();
+                        $(".pagetitle-left-alignment").addClass("closebar-left-alignment");
+                        $(".main-inner").addClass("leftnav");
+                    });
+                    $(".qicon-menu").click(function () {
+                        $(".sidebar").removeClass("close-bars");
+                        $(".compact-logo").hide();
+                        $(".qicon-menu").hide();
+                        $(".pagetitle-left-alignment").removeClass("closebar-left-alignment");
+                         $(".main-inner").removeClass("leftnav");
+                    });
+                    $(".arrow").click(function () {
+                        $(".nav-item").toggleClass("showMenu");
+                    });
+                    
+                }
+            }
+});
+{{/js}}

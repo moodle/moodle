@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/qubitssite/db" VERSION="20230322" COMMENT="XMLDB file for Moodle local/qubitssite"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_qubits_sites" COMMENT="Qubits Sites">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="200" NOTNULL="true" SEQUENCE="false" COMMENT="Name for identification"/>
+        <FIELD NAME="hostname" TYPE="char" LENGTH="300" NOTNULL="false" SEQUENCE="false" COMMENT="Http Host Name with out http or https. It is used for checking purpose"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Site status maintain in this block"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time of the site created."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The last time this site updated."/>
+        <FIELD NAME="color1" TYPE="char" LENGTH="12" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="color2" TYPE="char" LENGTH="12" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="color3" TYPE="char" LENGTH="12" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="logo1" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Logo1"/>
+        <FIELD NAME="logo2" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Logo2"/>
+        <FIELD NAME="cohortid" TYPE="char" LENGTH="200" NOTNULL="false" SEQUENCE="false" COMMENT="CohortID"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

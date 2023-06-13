@@ -1,0 +1,88 @@
+@font-face {
+    font-family: "DMSans Regular";
+    src: url("fonts/DMSans-Regular.ttf");
+}
+
+h1,
+h3 {
+    font-family: 'DMSans Regular', sans-serif !important;
+}
+
+html,
+body {
+    padding: 0;
+    margin: 0;
+}
+
+.row {
+    margin: 0;
+}
+
+.sticky-top {
+    top: -1px !important;
+}
+
+:root {
+    --color_accent: #FCFCFA;
+}
+
+
+/************************************
+ HEADER SECTION CSS STARTS
+*************************************/
+
+.topnavbar.navbar {
+    height: 68px!important;
+    max-height: 68px!important;
+    padding-right: 30px;
+    padding-left: 28.25px;
+}
+
+.topnavbar.navbar .navbar-brand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 155px;
+    height: 68px;
+    padding: 0;
+    margin-right: 0;
+    background-color: transparent;
+}
+
+.logo {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.page_error_msg .col-md-12 .alert {
+    padding: 20px!important;
+    margin-top: 20px;
+    border-radius: 0;
+}
+
+.page_error_msg .col-md-12 h1 {
+    font-family: "DMSans Regular", sans-serif!important;
+    font-size: 30px;
+    line-height: 30px;
+    font-weight: 300;
+}
+
+.page_error_msg .col-md-12 h3 {
+    font-size: 25px;
+    font-weight: 300;
+}
+
+.footer.aftersignin {
+    background: var(--color_accent)!important;
+    padding: 5px 10px!important;
+    margin-top: 40px;
+    display: inline-block;
+    width: 100%;
+}
+
+.footer.aftersignin p {
+    font-family: "DMSans Regular", sans-serif!important;
+    font-size: 14px;
+    color: #666;
+    line-height: 24px;
+}

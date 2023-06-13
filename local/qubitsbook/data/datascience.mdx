@@ -1,0 +1,95 @@
+# Introduction to Pandas
+
+Pandas is a python library used for working with large data sets. It has all the relevant tools for cleaning, exploring and manipulating data. It is an integral part of data science.
+
+Lets explore a data set using pandas. The first step is to load the data from a csv file into a pandas data frame. Pandas allows us to see a summary of the loaded data using the `head` function.
+
+```python,editable,data-science-1
+from pyodide.http import pyfetch
+import pandas as pd
+
+async def  fun():
+    download_url = "./data.csv"
+    response = await pyfetch(download_url)
+    response = await response.string()
+    with open("data.csv", "w") as f_w:
+        f_w.write(response)
+    nba = pd.read_csv("data.csv")
+    return(nba.head())
+fun()
+```
+
+# Visualizing data using matplotlib
+
+Simple Bar Graph using matplotlib.
+
+```python,editable,data-science-2
+import matplotlib.pyplot as plt
+import js
+
+x = [1, 2, 3, 4, 5]
+y = [5, 7, 3, 9, 2]
+
+fig, ax = plt.subplots()
+plt.bar(x, y)
+plt.xlabel('X-axis')
+plt.ylabel('Y-axis')
+plt.title('Bar Graph')
+
+def create_root_element2(self):
+    return js.document.getElementById('playground-9')
+fig.canvas.create_root_element = create_root_element2.__get__(
+create_root_element2, fig.canvas.__class__)
+
+fig.canvas.show()
+```
+
+<div id="playground-9"></div>
+
+Simple Line Graph using matplotlib.
+
+```python,editable,data-science-3
+import matplotlib.pyplot as plt
+from js import document
+
+x = [1, 2, 3, 4, 5]
+y = [5, 7, 3, 9, 2]
+
+fig, ax = plt.subplots()
+plt.plot(x, y)
+plt.xlabel('X-axis')
+plt.ylabel('Y-axis')
+plt.title('Line Graph')
+
+def create_root_element2(self):
+    return document.getElementById('playground-10')
+fig.canvas.create_root_element = create_root_element2.__get__(
+create_root_element2, fig.canvas.__class__)
+
+fig.canvas.show()
+```
+
+<div id="playground-10"></div>
+
+Simple Pie Chart using matplotlib
+
+```python,editable,data-science-4
+import matplotlib.pyplot as plt
+from js import document
+
+labels = ['A', 'B', 'C', 'D']
+values = [20, 30, 40, 10]
+
+fig, ax = plt.subplots()
+plt.pie(values, labels=labels, autopct='%1.1f%%')
+plt.title('Pie Chart')
+
+def create_root_element2(self):
+    return document.getElementById('playground-11')
+fig.canvas.create_root_element = create_root_element2.__get__(
+create_root_element2, fig.canvas.__class__)
+
+fig.canvas.show()
+```
+
+<div id="playground-11"></div>
