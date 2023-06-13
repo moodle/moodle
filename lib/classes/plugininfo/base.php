@@ -613,7 +613,7 @@ abstract class base {
     public function get_dir() {
         global $CFG;
 
-        if (!isset($pluginfo->rootdir)) {
+        if (!isset($this->rootdir)) {
             return '';
         }
 
