@@ -100,8 +100,9 @@ $string['backpackbadgessummary'] = 'You have {$a->totalbadges} badge(s) displaye
 $string['backpackbadgessettings'] = 'Change backpack settings';
 $string['backpackcannotsendverification'] = 'Cannot send verification email';
 $string['backpackconnected'] = 'Backpack is connected';
-$string['backpackconnection'] = 'Backpack connection';
-$string['backpackconnection_help'] = 'Connecting to a backpack enables you to share your badges from this site, and display public badge collections from your backpack on your profile page on this site.';
+$string['backpackconnection'] = 'Connect to a backpack';
+$string['backpackconnection_help'] = 'Store and share your badges from this site and display public badges from other websites on your user profile.';
+$string['backpackconnection_connected'] = 'Your backpack';
 $string['backpackconnectioncancelattempt'] = 'Connect using a different email address';
 $string['backpackconnectionconnect'] = 'Connect to backpack';
 $string['backpackconnectionresendemail'] = 'Resend verification email';
@@ -109,25 +110,28 @@ $string['backpackconnectionunexpectedresult'] = 'There was a problem connecting 
 $string['backpackconnectionunexpectedmessage'] = 'The backpack returned the error: "{$a}".';
 $string['backpackdetails'] = 'Backpack settings';
 $string['backpackdisconnected'] = 'Backpack is disconnected';
-$string['backpackemail'] = 'Email address';
 $string['backpackemail_required'] = 'Email address can\'t be blank';
-$string['backpackemail_help'] = 'The email address associated with your backpack. While you are connected, any badges earned on this site will be associated with this email address.';
 $string['backpackemailverificationpending'] = 'Verification pending';
-$string['backpackemailverifyemailbody'] = 'Hi,
+$string['backpackemailverifyemailbody'] = 'Hi {$a->userfirstname},
 
-A new connection to your badges backpack has been requested from \'{$a->sitename}\' using your email address.
+You\'re almost done connecting to your badges backpack on \'{$a->sitename}\'.
 
-To confirm and activate the connection to your backpack, please go to
+To finish connecting to your backpack, verify your email address through the following button:
 
+{$a->buttonlink}
+
+If the button doesn\'t work, you can copy and paste the following URL into your browser:
 {$a->link}
 
-In most mail programs, this should appear as a blue link which you can just click on. If that doesn\'t work, then cut and paste the address into the address line at the top of your web browser.
 
-If you need help, please contact the site administrator,
+If you didn\'t try to connect to your badges backpack, you can safely ignore this email.
+
+For any extra help, please contact your site support,
+
 {$a->admin}';
 $string['backpackemailverifyemailsubject'] = '{$a}: Badges backpack email verification';
-$string['backpackemailverifypending'] = 'A verification email has been sent to <strong>{$a}</strong>. Click on the verification link in the email to activate your Backpack connection.';
-$string['backpackemailverifysuccess'] = 'Thanks for verifying your email address. You are now connected to your backpack.';
+$string['backpackemailverifypending'] = 'We have sent an email to <strong>{$a}</strong>. Click on the verification link in the email to activate your backpack connection.';
+$string['backpackemailverifysuccess'] = 'You\'re now connected to your backpack.';
 $string['backpackemailverifytokenmismatch'] = 'The token in the link you clicked does not match the stored token. Make sure you clicked the link in most recent email you received.';
 $string['backpackexporterror'] = 'Can\'t export the badge to backpack';
 $string['backpackexporterrorwithinfo'] = 'Can\'t export the badge "{$a->badgename}" to backpack. Error: {$a->error}';
@@ -354,6 +358,7 @@ $string['expirydate'] = 'Expiry date';
 $string['expirydate_help'] = 'Optionally, badges can expire on a specific date, or the date can be calculated based on the date when the badge was issued to a user. ';
 $string['existsinbackpack'] = 'Badge already exists in backpack';
 $string['externalconnectto'] = 'To display external badges you need to <a href="{$a}">connect to a backpack</a>.';
+$string['externalbackpack_required'] = 'Backpack provider can\'t be blank';
 $string['externalbadges'] = 'My badges from other web sites';
 $string['externalbadgesp'] = 'Badges from other web sites:';
 $string['externalbadges_help'] = 'This area displays badges from your external backpack.';
@@ -394,6 +399,7 @@ You can manage your badges here by making them public or private for your profil
 
 You can download all of your badges or each badge separately and save them on your computer. Downloaded badges can be added to your external backpack service.';
 $string['localbadgesp'] = 'Badges from {$a}:';
+$string['loginbackpacktitle'] = '<strong>Log in to your backpack</strong>';
 $string['makeprivate'] = 'Make private';
 $string['makepublic'] = 'Make public';
 $string['managebadges'] = 'Manage badges';
@@ -574,6 +580,7 @@ $string['variablesubstitution_help'] = 'In a badge message, certain variables ca
 
 %badgelink%
 : This will be replaced by the public URL with information about the issued badge.';
+$string['verifyemail'] = 'Verify email';
 $string['viewbadge'] = 'View issued badge';
 $string['visible'] = 'Visible';
 $string['version'] = 'Version';
@@ -586,3 +593,7 @@ $string['includeauthdetails'] = "Include authentication details with the backpac
 $string['evidence'] = 'Evidence';
 $string['recipientdetails'] = 'Recipient details';
 $string['recipientidentificationproblem'] = 'Cannot find a recipient of this badge among the existing users.';
+
+// Deprecated since Moodle 4.3.
+$string['backpackemail'] = 'Email address';
+$string['backpackemail_help'] = 'The email address associated with your backpack. While you are connected, any badges earned on this site will be associated with this email address.';

@@ -80,3 +80,5 @@ selecttheme,core_admin
 themenoselected,core_admin
 unsettheme,core_admin
 showmore,core_availability
+backpackemail,core_badges
+backpackemail_help,core_badges

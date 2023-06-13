@@ -1264,10 +1264,35 @@ function badges_send_verification_email($email, $backpackid, $backpackpassword) 
     $verificationpath = $verificationurl->out(false);
 
     $site = get_site();
-    $args = new stdClass();
-    $args->link = $verificationpath . '?data='. $secret;
-    $args->sitename = $site->fullname;
-    $args->admin = generate_email_signoff();
+    $link = $verificationpath . '?data='. $secret;
+    // Hard-coded button styles, because CSS can't be used in emails.
+    $buttonstyles = [
+        'background-color: #0f6cbf',
+        'border: none',
+        'color: white',
+        'padding: 12px',
+        'text-align: center',
+        'text-decoration: none',
+        'display: inline-block',
+        'font-size: 20px',
+        'font-weight: 800',
+        'margin: 4px 2px',
+        'cursor: pointer',
+        'border-radius: 8px',
+    ];
+    $button = html_writer::start_tag('center') .
+        html_writer::tag(
+            'button',
+            get_string('verifyemail', 'badges'),
+            ['style' => implode(';', $buttonstyles)]) .
+        html_writer::end_tag('center');
+    $args = [
+        'link' => html_writer::link($link, $link),
+        'buttonlink' => html_writer::link($link, $button),
+        'sitename' => $site->fullname,
+        'admin' => generate_email_signoff(),
+        'userfirstname' => $USER->firstname,
+    ];
 
     $messagesubject = get_string('backpackemailverifyemailsubject', 'badges', $site->fullname);
     $messagetext = get_string('backpackemailverifyemailbody', 'badges', $args);
