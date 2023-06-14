@@ -949,14 +949,6 @@ $functions = array(
         'ajax' => true,
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
-    'core_grades_create_gradecategory' => array (
-        'classname' => 'core_grades_external',
-        'methodname' => 'create_gradecategory',
-        'description' => '** DEPRECATED ** Please do not call this function any more. Use core_grades_create_gradecategories.
-                                     Create a grade category inside a course gradebook.',
-        'type' => 'write',
-        'capabilities' => 'moodle/grade:manage',
-    ),
     'core_grades_create_gradecategories' => array (
         'classname' => 'core_grades\external\create_gradecategories',
         'description' => 'Create grade categories inside a course gradebook.',
