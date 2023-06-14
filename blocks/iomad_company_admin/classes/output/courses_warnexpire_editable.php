@@ -135,11 +135,6 @@ class courses_warnexpire_editable extends \core\output\inplace_editable {
             throw new coding_exception('Course is not under IOMAD control');
         }
 
-        // Do some sanity checking.
-        if (empty($warnexpire) || $warnexpire < 0) {
-            $warnexpire = $courserec->warnexpire;
-        }
-
         // Process changes.
         $DB->set_field('iomad_courses', 'warnexpire', $warnexpire, ['courseid' => $courseid]);
 

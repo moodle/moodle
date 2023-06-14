@@ -135,11 +135,6 @@ class courses_warncompletion_editable extends \core\output\inplace_editable {
             throw new coding_exception('Course is not under IOMAD control');
         }
 
-        // Do some sanity checking.
-        if (empty($warncompletion) || $warncompletion < 0) {
-            $warncompletion = $courserec->warncompletion;
-        }
-
         // Process changes.
         $DB->set_field('iomad_courses', 'warncompletion', $warncompletion, ['courseid' => $courseid]);
 

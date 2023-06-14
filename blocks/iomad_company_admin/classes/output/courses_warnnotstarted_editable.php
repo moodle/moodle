@@ -135,11 +135,6 @@ class courses_warnnotstarted_editable extends \core\output\inplace_editable {
             throw new coding_exception('Course is not under IOMAD control');
         }
 
-        // Do some sanity checking.
-        if (empty($warnnotstarted) || $warnnotstarted < 0) {
-            $warnnotstarted = $courserec->warnnotstarted;
-        }
-
         // Process changes.
         $DB->set_field('iomad_courses', 'warnnotstarted', $warnnotstarted, ['courseid' => $courseid]);
 

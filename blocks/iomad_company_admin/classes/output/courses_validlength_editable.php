@@ -120,6 +120,7 @@ class courses_validlength_editable extends \core\output\inplace_editable {
         $courseid = clean_param($courseid, PARAM_INT);
         $validlength = json_decode($newvalue);
         $validlength = clean_param($validlength, PARAM_INT);
+
         if ($validlength < 0) {
             $validlength = 0;
         }
@@ -133,11 +134,6 @@ class courses_validlength_editable extends \core\output\inplace_editable {
 
         if (!$courserec = $DB->get_record('iomad_courses', ['courseid' => $courseid])) {
             throw new coding_exception('Course is not under IOMAD control');
-        }
-
-        // Do some sanity checking.
-        if (empty($validlength) || $validlength < 0) {
-            $validlength = $courserec->validlength;
         }
 
         // Process changes.
