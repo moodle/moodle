@@ -304,21 +304,26 @@ class communication_feature implements
      * Update the room avatar when an instance image is added or updated.
      */
     public function update_room_avatar(): void {
-        $instanceimage = $this->communication->get_avatar();
-        $contenturi = null;
 
-        // If avatar is set for the instance, update in matrix.
-        if (!empty($instanceimage)) {
-            // First upload the content.
-            $contenturi = $this->eventmanager->upload_matrix_content($instanceimage->get_content());
+        // Check if we have an avatar that needs to be synced.
+        if (!$this->communication->is_avatar_synced()) {
+
+            $instanceimage = $this->communication->get_avatar();
+            $contenturi = null;
+
+            // If avatar is set for the instance, upload to Matrix. Otherwise, leave null for unsetting.
+            if (!empty($instanceimage)) {
+                $contenturi = $this->eventmanager->upload_matrix_content($instanceimage->get_content());
+            }
+
+            $response = $this->eventmanager->request(['url' => $contenturi], [], false)->put(
+                $this->eventmanager->get_update_avatar_endpoint());
+
+            // Indicate the avatar has been synced if it was successfully set with Matrix.
+            if ($response->getReasonPhrase() === 'OK') {
+                $this->communication->set_avatar_synced_flag(true);
+            }
         }
-
-        // Now update the room avatar.
-        $json = [
-            'url' => $contenturi,
-        ];
-
-        $this->eventmanager->request($json, [], false)->put($this->eventmanager->get_update_avatar_endpoint());
     }
 
     public function get_chat_room_url(): ?string {
