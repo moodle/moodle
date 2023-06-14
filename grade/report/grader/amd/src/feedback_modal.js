@@ -48,7 +48,8 @@ const getModal = async(courseid, userid, itemid) => {
 
     return ModalFactory.create({
         removeOnClose: true,
-        large: true
+        large: true,
+        verticallyCentered: true,
     })
     .then(modal => {
         const body = Templates.render('core_grades/feedback_modal', {
