@@ -363,7 +363,7 @@ class core_string_manager_standard implements core_string_manager {
 
         if ($a !== null) {
             // Process array's and objects (except lang_strings).
-            if (is_array($a) or (is_object($a) && !($a instanceof lang_string))) {
+            if (is_array($a) or (is_object($a) && !($a instanceof Stringable))) {
                 $a = (array)$a;
                 $search = array();
                 $replace = array();
@@ -372,7 +372,7 @@ class core_string_manager_standard implements core_string_manager {
                         // We do not support numeric keys - sorry!
                         continue;
                     }
-                    if (is_array($value) or (is_object($value) && !($value instanceof lang_string))) {
+                    if (is_array($value) or (is_object($value) && !($value instanceof Stringable))) {
                         // We support just string or lang_string as value.
                         continue;
                     }
