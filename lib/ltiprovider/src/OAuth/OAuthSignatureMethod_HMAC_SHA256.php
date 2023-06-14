@@ -17,6 +17,7 @@ namespace IMSGlobal\LTI\OAuth;
  * encoded per Parameter Encoding) of the Consumer Secret and Token Secret, separated by an '&'
  * character (ASCII code 38) even if empty.
  */
+#[\AllowDynamicProperties]
 class OAuthSignatureMethod_HMAC_SHA256 extends OAuthSignatureMethod {
 
     function get_name() {
