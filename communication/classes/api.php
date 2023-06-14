@@ -226,9 +226,8 @@ class api {
      * @return bool
      */
     public function set_avatar_from_datauri_or_filepath(?string $datauri): bool {
-        global $DB;
 
-        $currentfilename = $DB->get_field('communication', 'avatarfilename', ['id' => $this->communication->get_id()]);
+        $currentfilename = $this->communication->get_avatar_filename();
         if (empty($datauri) && empty($currentfilename)) {
             return false;
         }
@@ -260,7 +259,11 @@ class api {
             $fs->create_file_from_string($this->get_avatar_filerecord($filename), file_get_contents($datauri));
         }
 
-        $DB->set_field('communication', 'avatarfilename', $filename, ['id' => $this->communication->get_id()]);
+        $this->communication->set_avatar_filename($filename);
+
+        // Indicate that we need to sync the avatar when the update task is run.
+        $this->communication->set_avatar_synced_flag(false);
+
         return true;
     }
 
