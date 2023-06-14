@@ -26,15 +26,15 @@ import CustomEvents from 'core/custom_interaction_events';
 import Modal from 'core/modal';
 import ModalEvents from 'core/modal_events';
 import PaymentEvents from 'core_payment/events';
-import ModalRegistry from 'core/modal_registry';
 
-let registered = false;
 const SELECTORS = {
     PROCEED_BUTTON: '[data-action="proceed"]',
     CANCEL_BUTTON: '[data-action="cancel"]',
 };
 
 export default class ModalGateways extends Modal {
+    static TYPE = 'core_payment-modal_gateways';
+    static TEMPLATE = 'core_payment/modal_gateways';
 
     /**
      * Constructor for the Modal.
@@ -76,11 +76,4 @@ export default class ModalGateways extends Modal {
     }
 }
 
-ModalGateways.TYPE = 'core_payment-modal_gateways';
-
-// Automatically register with the modal registry the first time this module is imported so that you can create modals
-// of this type using the modal factory.
-if (!registered) {
-    ModalRegistry.register(ModalGateways.TYPE, ModalGateways, 'core_payment/modal_gateways');
-    registered = true;
-}
+ModalGateways.registerModalType();
