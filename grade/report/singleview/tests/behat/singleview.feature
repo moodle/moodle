@@ -256,6 +256,7 @@ Feature: We can use Single view
     And I navigate to course participants
     And I click on "Unenrol" "icon" in the "Gronya,Beecham" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
+    And I am on "Course 1" course homepage
     When I navigate to "View > Single view" in the course gradebook
     Then I should see "Select a user above to view all their grades" in the "region-main" "region"
     And I should not see "Gronya,Beecham" in the "region-main" "region"
