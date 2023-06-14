@@ -3091,6 +3091,9 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @return bool
      */
     public function can_request_course() {
+        global $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
+
         return course_request::can_request($this->get_context());
     }
 
