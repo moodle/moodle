@@ -255,7 +255,7 @@ if (!empty($data)) {
                 local_iomad_track_delete_entry($rowid, true);
                 echo html_writer::tag('p', get_string('deletedtrackentry', 'block_iomad_company_admin', $rowid));
             }
-            echo $OUTPUT->single_button(new moodle_url('/local/report_completion/index.php.php',
+            echo $OUTPUT->single_button(new moodle_url('/local/report_completion/index.php',
                                      array('userid' => $userid)), get_string('continue'));
             echo $OUTPUT->footer();
             die;
@@ -428,7 +428,7 @@ if (!empty($action)) {
             }
             die;
         } else {
-            $confirmurl = new moodle_url('/local/report_completion/index.php.php',
+            $confirmurl = new moodle_url('/local/report_completion/index.php',
                                          array('userid' => $userid,
                                          'rowid' => $rowid,
                                          'confirm' => $redocertificate,
