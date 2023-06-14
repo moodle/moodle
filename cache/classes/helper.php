@@ -858,4 +858,16 @@ class cache_helper {
         }
         return $warnings;
     }
+
+    /**
+     * A helper to determine whether a result was found.
+     *
+     * This has been deemed required after people have been confused by the fact that [] == false.
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    public static function result_found($value): bool {
+        return $value !== false;
+    }
 }

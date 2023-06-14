@@ -1,6 +1,9 @@
 This files describes API changes in /cache/stores/* - cache store plugins.
 Information provided here is intended especially for developers.
 
+=== 4.0.10 ===
+* A new cache_helper::result_found() helper has been added to assist with cache value validation
+
 === 4.0 ===
 * Cache stores may implement new optional function cache_store::get_last_io_bytes() to provide
   information about the size of data transferred (shown in footer if performance info enabled).
