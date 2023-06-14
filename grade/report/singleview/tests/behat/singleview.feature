@@ -225,7 +225,7 @@ Feature: We can use Single view
     And I navigate to "View > Single view" in the course gradebook
     And I click on "Nee,Chumlee" in the "user" search widget
     And I navigate to "View > Grader report" in the course gradebook
-    And I click on "Group 1" in the "group" search widget
+    And I select "Group 1" from the "group" singleselect
     When I navigate to "View > Single view" in the course gradebook
     Then I should see "Nee,Chumlee" in the "region-main" "region"
     And I should not see "Select a user above to view all their grades" in the "region-main" "region"
@@ -245,7 +245,7 @@ Feature: We can use Single view
     And I navigate to "View > Single view" in the course gradebook
     And I click on "Gronya,Beecham" in the "user" search widget
     And I navigate to "View > Grader report" in the course gradebook
-    And I click on "Group 1" in the "group" search widget
+    And I select "Group 1" from the "group" singleselect
     When I navigate to "View > Single view" in the course gradebook
     Then I should see "Select a user above to view all their grades" in the "region-main" "region"
     And I should not see "Gronya,Beecham" in the "region-main" "region"
