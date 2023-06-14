@@ -87,6 +87,7 @@ class lib_test extends \advanced_testcase {
         $externaltoken->contextid = 1;
         $externaltoken->creatorid = $USER->id;
         $externaltoken->timecreated = time();
+        $externaltoken->name = \core_external\util::generate_token_name();
         $DB->insert_record('external_tokens', $externaltoken);
 
         // Add a function to the service.

@@ -30,6 +30,9 @@ information provided here is intended especially for developers.
   - core_useragent::get_device_type_cfg_var_name()
   - theme_is_device_locked()
   - theme_get_locked_theme_for_device()
+* Addition of new 'name' field in the external_tokens table.
+* \core_external\util::generate_token() has a new optional argument "name" used as a token name.
+* Introduce a new public function \core_external\util::generate_token_name()
 
 === 4.2 ===
 

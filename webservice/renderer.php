@@ -290,7 +290,7 @@ class core_webservice_renderer extends plugin_renderer_base {
 
         // display strings
         $stroperation = get_string('operation', 'webservice');
-        $strtoken = get_string('key', 'webservice');
+        $strtoken = get_string('tokenname', 'webservice');
         $strservice = get_string('service', 'webservice');
         $strcreator = get_string('tokencreator', 'webservice');
         $strcontext = get_string('context', 'webservice');
@@ -338,11 +338,11 @@ class core_webservice_renderer extends plugin_renderer_base {
                     $validuntil = userdate($token->validuntil, get_string('strftimedatetime', 'langconfig'));
                 }
 
-                $tokenname = $token->name;
-                if (!$token->enabled) { //that is the (1 token-1ws) related ws is not enabled.
-                    $tokenname = '<span class="dimmed_text">'.$token->name.'</span>';
+                $servicename = $token->servicename;
+                if (!$token->enabled) { // That is the (1 token-1ws) related ws is not enabled.
+                    $servicename = '<span class="dimmed_text">'.$token->servicename.'</span>';
                 }
-                $row = array($token->token, $tokenname, $validuntil, $creatoratag, $reset);
+                $row = array($token->tokenname, $servicename, $validuntil, $creatoratag, $reset);
 
                 if ($documentation) {
                     $doclink = new moodle_url('/webservice/wsdoc.php',
