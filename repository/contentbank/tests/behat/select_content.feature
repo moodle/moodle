@@ -30,7 +30,7 @@ Feature: Select content bank files using the content bank files repository
       | System       |           | contenttype_h5p | admin | filltheblanks.h5p       | /h5p/tests/fixtures/filltheblanks.h5p       |
     And the following "activities" exist:
       | activity | name       | intro      | introformat | course | idnumber |
-      | forum    | Forum      | ForumDesc  | 1           | mscC1  | forum1   |
+      | forum    | Forum      |            | 1           | mscC1  | forum1   |
       | folder   | Folder     | FolderDesc | 1           | mscC1  | folder1  |
     And the following "course enrolments" exist:
       | user     | course | role           |
