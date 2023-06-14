@@ -26,6 +26,10 @@ Feature: Course activity controls works as expected
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "activities" exist:
+      | activity | course | section | name              |
+      | forum    | C1     | 1       | Test forum name 1 |
+      | forum    | C1     | 1       | Test forum name 2 |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     When I click on <targetpage> "link" in the "region-main" "region"
@@ -34,12 +38,6 @@ Feature: Course activity controls works as expected
     And I click on "Delete Recent activity block" "link"
     And I click on "Delete" "button" in the "Delete block?" "dialogue"
     And <belowpage> "section" <should_see_other_sections> exist
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name 1 |
-      | Description | Test forum description 1 |
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name 2 |
-      | Description | Test forum description 2 |
     And <belowpage> "section" <should_see_other_sections> exist
     And I open "Test forum name 1" actions menu
     And I click on "Edit settings" "link" in the "Test forum name 1" activity
@@ -96,9 +94,9 @@ Feature: Course activity controls works as expected
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And the following "activities" exist:
-      | activity  | name                   | intro                         | course | idnumber     | section |
-      | forum     | Test forum name 1      | Test forum description 1      | C1     | 0001         | 1       |
-      | forum     | Test forum name 2      | Test forum description 2      | C1     | 0002         | 1       |
+      | activity  | name                   | course | idnumber     | section |
+      | forum     | Test forum name 1      | C1     | 0001         | 1       |
+      | forum     | Test forum name 2      | C1     | 0002         | 1       |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     When I click on <targetpage> "link" in the "region-main" "region"

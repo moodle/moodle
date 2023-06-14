@@ -18,7 +18,6 @@ Feature: Edit activity name in-place
       | course      | C1                     |
       | activity    | forum                  |
       | name        | Test forum name        |
-      | description | Test forum description |
       | idnumber    | forum1                 |
 
   @javascript
