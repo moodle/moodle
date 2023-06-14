@@ -41,7 +41,7 @@
         <location>amd/src/local/ogv/ogv.js</location>
         <name>ogv.js</name>
         <description>Javascript media decoder and player for Ogg Vorbis/Opus/Theora and WebM VP8/VP9/AV1 video.</description>
-        <version>1.8.4</version>
+        <version>1.8.9</version>
         <license>MIT</license>
         <repository>https://github.com/brion/ogv.js/</repository>
         <copyrights>
@@ -53,7 +53,7 @@
         <name>ogv.js support files</name>
         <description>JavaScript media decoder and player for Ogg Vorbis/Opus/Theora and WebM VP8/VP9/AV1 video.</description>
         <license>MIT</license>
-        <version>1.8.4</version>
+        <version>1.8.9</version>
         <repository>https://github.com/brion/ogv.js/</repository>
         <copyrights>
             <copyright>Brion Vibber</copyright>
