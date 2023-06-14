@@ -27,10 +27,10 @@ Feature: Groups report filter is not available if no groups exist
       | user     | group |
       | teacher1 | G1    |
     And the following "activities" exist:
-      | activity | name   | description     | course | idnumber | groupmode |
-      | forum    | forum1 | C1 first forum  | C1     | forum1   | 0         |
-      | forum    | forum2 | C1 second forum | C1     | forum2   | 0         |
-      | forum    | forum1 | C2 first forum  | C2     | forum1   | 2         |
+      | activity | name   | course | idnumber | groupmode |
+      | forum    | forum1 | C1     | forum1   | 0         |
+      | forum    | forum2 | C1     | forum2   | 0         |
+      | forum    | forum1 | C2     | forum1   | 2         |
     And the following forum discussions exist in course "Course 1":
       | user     | forum  | name        | message    | created           |
       | teacher1 | forum1 | discussion1 | D1 message | ## 1 month ago ## |
@@ -49,8 +49,7 @@ Feature: Groups report filter is not available if no groups exist
       | user     | forum  | name        | message         | created          |
       | teacher1 | forum1 | discussion1 | D1 other course | ## 1 week ago ## |
       | teacher1 | forum1 | discussion2 | D2 other course | ## 4 days ago ## |
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as teacher1
     And I follow "forum1"
     And I navigate to "Forum summary report" in current page administration
     Then "Groups" "button" should not exist

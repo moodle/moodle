@@ -18,8 +18,8 @@ Feature: Sections can be moved
 
   Scenario: Move up and down a section with Javascript disabled in a single page course
     Given the following "activities" exist:
-      | activity | name            | intro                        | course | idnumber | section |
-      | forum    | Test forum name | Test forum name description  | C1     | forum1   | 1       |
+      | activity | name            | course | idnumber | section |
+      | forum    | Test forum name | C1     | forum1   | 1       |
     And I am on "Course 1" course homepage with editing mode on
     When I move down section "1"
     Then I should see "Test forum name" in the "Topic 2" "section"
@@ -28,8 +28,8 @@ Feature: Sections can be moved
 
   Scenario: Move up and down a section with Javascript disabled in the course home of a course using paged mode
     Given the following "activities" exist:
-      | activity | name            | intro                        | course | idnumber | section |
-      | forum    | Test forum name | Test forum name description  | C1     | forum1   | 1       |
+      | activity | name            | course | idnumber | section |
+      | forum    | Test forum name | C1     | forum1   | 1       |
     And I am on "Course 1" course homepage with editing mode on
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
@@ -42,8 +42,8 @@ Feature: Sections can be moved
 
   Scenario: Sections can not be moved with Javascript disabled in a section page of a course using paged mode
     Given the following "activities" exist:
-      | activity | name            | intro                        | course | idnumber | section |
-      | forum    | Test forum name | Test forum name description  | C1     | forum1   | 2       |
+      | activity | name            | course | idnumber | section |
+      | forum    | Test forum name | C1     | forum1   | 2       |
     And I am on "Course 1" course homepage with editing mode on
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
