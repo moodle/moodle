@@ -64,7 +64,7 @@ Feature: We can use the user report
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 2" in the "user" search widget
     And I navigate to "View > Grader report" in the course gradebook
-    And I click on "Group 1" in the "group" search widget
+    And I select "Group 1" from the "group" singleselect
     When I navigate to "View > User report" in the course gradebook
     Then I should see "Student 2" in the "region-main" "region"
     And I should not see "Select a user above to view their report" in the "region-main" "region"
@@ -91,7 +91,7 @@ Feature: We can use the user report
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
     And I navigate to "View > Grader report" in the course gradebook
-    And I click on "Group 1" in the "group" search widget
+    And I select "Group 1" from the "group" singleselect
     When I navigate to "View > User report" in the course gradebook
     Then I should see "Select a user above to view their report" in the "region-main" "region"
     And I should not see "Student 1" in the "region-main" "region"
