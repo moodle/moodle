@@ -13,6 +13,7 @@ use IMSGlobal\LTI\Profile\ResourceHandler as ProfileResourceHandler;
  * @version  3.0.0
  * @license  GNU Lesser General Public License, version 3 (<http://www.gnu.org/licenses/lgpl.html>)
  */
+#[\AllowDynamicProperties]
 class ResourceHandler
 {
 
