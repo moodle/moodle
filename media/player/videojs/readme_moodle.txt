@@ -27,7 +27,7 @@ Instructions to import YouTube Playback Technology into Moodle:
    with
      define(['media_videojs/video-lazy']
 
-Ogv.js Playback Technology for VideoJS 0.2.1
+Ogv.js Playback Technology for VideoJS 1.0.0
 ---------------------------------------------
 https://github.com/HuongNV13/videojs-ogvjs
 
@@ -35,24 +35,10 @@ Instructions to import Ogv.js Playback Technology into Moodle:
 1. Download the latest release from https://github.com/HuongNV13/videojs-ogvjs/releases
    (do not choose "Source code")
 
-2. Copy videojs-ogvjs.js into 'amd/src/videojs-ogvjs-lazy.js'
+2. Copy Videojs-Ogvjs.amd.js into 'amd/src/videojs-ogvjs-lazy.js'
    In the beginning of the js file:
 
    Replace
-     define(['video.js', 'OGVCompat', 'OGVLoader', 'OGVPlayer']
+     define(['video.js', 'ogv']
    with
      define(['media_videojs/video-lazy', './local/ogv/ogv']
-
-   Replace
-     function (videojs, OGVCompat, OGVLoader, OGVPlayer)
-   with
-     function (videojs, ogvBase)
-
-   Replace
-     var OGVCompat__default = /*#__PURE__*/_interopDefaultLegacy(OGVCompat);
-     var OGVLoader__default = /*#__PURE__*/_interopDefaultLegacy(OGVLoader);
-     var OGVPlayer__default = /*#__PURE__*/_interopDefaultLegacy(OGVPlayer);
-   with
-     var OGVCompat__default = /*#__PURE__*/_interopDefaultLegacy(ogvBase.OGVCompat);
-     var OGVLoader__default = /*#__PURE__*/_interopDefaultLegacy(ogvBase.OGVLoader);
-     var OGVPlayer__default = /*#__PURE__*/_interopDefaultLegacy(ogvBase.OGVPlayer);
