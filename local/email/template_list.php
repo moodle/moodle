@@ -109,7 +109,11 @@ if (empty($templatesetid)) {
         }
     } else {
         if ($templatesetinfo = $DB->get_record('email_templateset', array('id' => $templatesetid))) {
-            $linktext = get_string('deletetemplateset', 'local_email'). " " . $templatesetinfo->templatesetname;
+            if ($action == 'edit') {
+                $linktext = format_string(get_string('edittemplateset', 'local_email'). " " . $templatesetinfo->templatesetname);
+            } else {
+                $linktext = format_string(get_string('deletetemplateset', 'local_email'). " " . $templatesetinfo->templatesetname);
+            }
         }
     }
 }
