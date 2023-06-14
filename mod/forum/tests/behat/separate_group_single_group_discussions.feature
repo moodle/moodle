@@ -39,21 +39,18 @@ Feature: Posting to groups in a separate group discussion when restricted to gro
       | G1       | G1G2    |
       | G2       | G2G1    |
     And the following "activities" exist:
-      | activity | course | idnumber | name                  | intro                      | type    | section | groupmode | grouping |
-      | forum    | C1     | 00001    | Multiple groups forum | Standard forum description | general | 1       | 1         | G1       |
-      | forum    | C1     | 00001    | Single groups forum   | Standard forum description | general | 1       | 1         | G2       |
+      | activity | course | idnumber | name                  | type    | groupmode | grouping |
+      | forum    | C1     | 00001    | Multiple groups forum | general | 1         | G1       |
+      | forum    | C1     | 00001    | Single groups forum   | general | 1         | G2       |
 
   Scenario: Teacher with accessallgroups can post in all groups
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Multiple groups forum"
+    Given I am on the "Multiple groups forum" "forum activity" page logged in as teacher1
     When I click on "Add discussion topic" "link"
     And I click on "Advanced" "button"
     Then the "Group" select box should contain "All participants"
     And the "Group" select box should contain "G1G1"
     And the "Group" select box should contain "G1G2"
-    And I am on "Course 1" course homepage
-    And I follow "Single groups forum"
+    And I am on the "Single groups forum" "forum activity" page
     And I click on "Add discussion topic" "link"
     And I click on "Advanced" "button"
     And the "Group" select box should contain "All participants"
@@ -61,16 +58,13 @@ Feature: Posting to groups in a separate group discussion when restricted to gro
     And I should not see "Post a copy to all groups"
 
   Scenario: Teacher in all groups but without accessallgroups can post in either group but not to All Participants
-    Given I log in as "teacher2"
-    And I am on "Course 1" course homepage
-    And I follow "Multiple groups forum"
+    Given I am on the "Multiple groups forum" "forum activity" page logged in as teacher2
     When I click on "Add discussion topic" "link"
     And I click on "Advanced" "button"
     Then the "Group" select box should not contain "All participants"
     And the "Group" select box should contain "G1G1"
     And the "Group" select box should contain "G1G2"
-    And I am on "Course 1" course homepage
-    And I follow "Single groups forum"
+    And I am on the "Single groups forum" "forum activity" page
     And I click on "Add discussion topic" "link"
     And I click on "Advanced" "button"
     And I should see "G2G1"
