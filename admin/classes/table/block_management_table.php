@@ -35,28 +35,29 @@ class block_management_table extends \core_admin\table\plugin_management_table {
     /** @var stdClass[] A list of basic block data */
     protected array $blockdata;
 
+    /** @var array<string,int> A list of course counts */
+    protected array $courseblocks;
+
     public function __construct() {
         global $DB;
         parent::__construct();
         $this->undeletableblocktypes = \block_manager::get_undeletable_block_types();
 
-        $sql = <<<EOF
-            SELECT
-                b.name,
-                b.id,
-                b.name,
-                COUNT(DISTINCT binst.id) as totalcount,
-                COUNT(DISTINCT bcinst.id) as courseviewcount
-            FROM {block} b
-            LEFT JOIN {block_instances} binst ON binst.blockname = b.name
-            LEFT JOIN {block_instances} bcinst ON
-                bcinst.blockname = b.name AND
-                bcinst.pagetypepattern = 'course-view-*'
-            GROUP BY b.id, b.name, b.visible, binst.blockname, bcinst.blockname
-            ORDER BY b.name ASC
-        EOF;
-
+        $sql = 'SELECT b.name,
+                       b.id,
+                       COUNT(DISTINCT binst.id) as totalcount
+                  FROM {block} b
+             LEFT JOIN {block_instances} binst ON binst.blockname = b.name
+              GROUP BY b.id,
+                       b.name
+              ORDER BY b.name ASC';
         $this->blockdata = $DB->get_records_sql($sql);
+
+        $sql = "SELECT blockname
+                  FROM {block_instances}
+                 WHERE pagetypepattern = 'course-view-*'
+              GROUP BY blockname";
+        $this->courseblocks = $DB->get_records_sql($sql);
     }
 
     protected function get_plugintype(): string {
@@ -102,11 +103,10 @@ class block_management_table extends \core_admin\table\plugin_management_table {
      */
     protected function col_instances(stdClass $row): string {
         $blockdata = $this->blockdata[$row->plugininfo->name];
-        if ($blockdata->courseviewcount > 0) {
+        if (array_key_exists($blockdata->name, $this->courseblocks)) {
             return html_writer::link(
                 new moodle_url('/course/search.php', [
-                    'blocklist' => $row->plugininfo->name,
-                    'sesskey' => sesskey(),
+                    'blocklist' => $blockdata->id,
                 ]),
                 $blockdata->totalcount,
             );
