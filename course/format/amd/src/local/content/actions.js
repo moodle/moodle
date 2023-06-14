@@ -53,6 +53,9 @@ const directMutations = {
     cmStealth: 'cmStealth',
     cmMoveRight: 'cmMoveRight',
     cmMoveLeft: 'cmMoveLeft',
+    cmNoGroups: 'cmNoGroups',
+    cmSeparateGroups: 'cmSeparateGroups',
+    cmVisibleGroups: 'cmVisibleGroups',
 };
 
 export default class extends BaseComponent {
