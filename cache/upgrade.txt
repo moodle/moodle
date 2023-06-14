@@ -1,6 +1,9 @@
 This files describes API changes in /cache/stores/* - cache store plugins.
 Information provided here is intended especially for developers.
 
+=== 4.1.5 ===
+* A new cache_helper::result_found() helper has been added to assist with cache value validation
+
 === 4.1 ===
 * Added new `requirelockingbeforewrite` option for cache definitions. This will check that a lock for a given cache key already
   exists before it will perform a `set()` on that key. A `coding_exception` is thrown if the lock has not been acquired.

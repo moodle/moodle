@@ -50,6 +50,7 @@ use cacheable_object_array;
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \cache
+ * @covers \cache
  */
 class cache_test extends \advanced_testcase {
 
@@ -2826,6 +2827,162 @@ class cache_test extends \advanced_testcase {
         $this->assertEquals(4, $endstats[$requestid]['stores']['default_request']['sets'] -
             $startstats[$requestid]['stores']['default_request']['sets']);
     }
+
+    /**
+     * Data provider for static acceleration performance tests.
+     *
+     * @return array
+     */
+    public function static_acceleration_performance_provider(): array {
+        // Note: These are the delta values, not the absolute values.
+        // Also note that the set will actually store the valuein the static cache immediately.
+        $validfirst = [
+            'default_application' => [
+                'hits' => 1,
+                'misses' => 0,
+            ],
+            cache_store::STATIC_ACCEL => [
+                'hits' => 0,
+                'misses' => 1,
+            ],
+        ];
+
+        $validsecond = [
+            'default_application' => [
+                'hits' => 0,
+                'misses' => 0,
+            ],
+            cache_store::STATIC_ACCEL => [
+                'hits' => 1,
+                'misses' => 0,
+            ],
+        ];
+
+        $invalidfirst = [
+            'default_application' => [
+                'hits' => 0,
+                'misses' => 1,
+            ],
+            cache_store::STATIC_ACCEL => [
+                'hits' => 0,
+                'misses' => 1,
+            ],
+        ];
+        $invalidsecond = [
+            'default_application' => [
+                'hits' => 0,
+                'misses' => 1,
+            ],
+            cache_store::STATIC_ACCEL => [
+                'hits' => 0,
+                'misses' => 1,
+            ],
+        ];;
+
+        return [
+            'Truthy' => [
+                true,
+                $validfirst,
+                $validsecond,
+            ],
+            'Null' => [
+                null,
+                $validfirst,
+                $validsecond,
+            ],
+            'Empty Array' => [
+                [],
+                $validfirst,
+                $validsecond,
+            ],
+            'Empty String' => [
+                '',
+                $validfirst,
+                $validsecond,
+            ],
+            'False' => [
+                false,
+                $invalidfirst,
+                $invalidsecond,
+            ],
+        ];
+    }
+
+    /**
+     * Test performance of static acceleration caches with values which are frequently confused with missing values.
+     *
+     * @dataProvider static_acceleration_performance_provider
+     * @param mixed $value The value to test
+     * @param array $firstfetchstats The expected stats on the first fetch
+     * @param array $secondfetchstats The expected stats on the subsequent fetch
+     */
+    public function test_static_acceleration_values_performance(
+        $value,
+        array $firstfetchstats,
+        array $secondfetchstats
+    ): void {
+        // Note: We need to modify perfdebug to test this.
+        global $CFG;
+        $this->resetAfterTest(true);
+        $CFG->perfdebug = 15;
+
+        $instance = cache_config_testing::instance();
+        $instance->phpunit_add_definition('phpunit/accelerated', [
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'accelerated',
+            'staticacceleration' => true,
+            'staticaccelerationsize' => 1,
+        ]);
+
+        $cache = cache::make('phpunit', 'accelerated');
+        $this->assertInstanceOf(cache_phpunit_application::class, $cache);
+
+        $this->assertTrue($cache->set('value', $value));
+
+        $checkstats = function(
+            array $start,
+            array $expectedstats
+        ): array {
+            $applicationid = 'phpunit/accelerated';
+            $endstats = cache_helper::get_stats();
+
+            $start = $start[$applicationid]['stores'];
+            $end = $endstats[$applicationid]['stores'];
+
+            foreach ($expectedstats as $cachename => $expected) {
+                foreach ($expected as $type => $value) {
+                    $startvalue = array_key_exists($cachename, $start) ? $start[$cachename][$type] : 0;
+                    $endvalue = array_key_exists($cachename, $end) ? $end[$cachename][$type] : 0;
+                    $diff = $endvalue - $startvalue;
+                    $this->assertEquals(
+                        $value,
+                        $diff,
+                        "Expected $cachename $type to be $value, got $diff"
+                    );
+                }
+            }
+
+            return $endstats;
+        };
+
+        // Reset the cache factory so that we can get the stats from a fresh instance.
+        $factory = cache_factory::instance();
+        $factory->reset_cache_instances();
+        $cache = cache::make('phpunit', 'accelerated');
+
+        // Get the initial stats.
+        $startstats = cache_helper::get_stats();
+
+        // Fetching the value the first time should seed the static cache from the application cache.
+        $this->assertEquals($value, $cache->get('value'));
+        $startstats = $checkstats($startstats, $firstfetchstats);
+
+        // Fetching the value should only hit the static cache.
+        $this->assertEquals($value, $cache->get('value'));
+        $checkstats($startstats, $secondfetchstats);
+    }
+
 
     public function test_static_cache() {
         global $CFG;
