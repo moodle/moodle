@@ -26,6 +26,13 @@ This files describes API changes for code that uses the question API.
 5) The "Start again with these options" text is changed "Save preview options and start again". If you use this text in behat test, please use the new text
    or use the id of the button id_saverestart instead.
 
+6) The question bank tertiary navigation is now built using the `plugin_feature::get_navigation_node()` functions from qbank plugins.
+   This allows plugins to extend the navigation with their own links.
+
+7) The tertiary navigation now allows pages to add their own action button next to the navigation menu by calling
+   `set_action_button()` on the `qbank_action_menu` object. This means plugin pages can include their own button like the
+   category management page has "Add category".
+
 === 4.2 ===
 
 1) The question/qengine.js has been deprecated. We create core_question/question_engine
