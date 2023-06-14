@@ -3,6 +3,10 @@ Information provided here is intended especially for developers.
 
 === 4.3 ===
 * A new cache_helper::result_found() helper has been added to assist with cache value validation
+* Implementations of the following methods, deprecated since 3.10, have been removed and can no longer be used:
+  - `\core\lock\lock::extend`
+  - `\core\lock\lock_factory::extend_lock`
+  - `\core\lock\lock_factory::supports_recursion`
 
 === 4.2 ===
 * The memcached cachestore has been removed.

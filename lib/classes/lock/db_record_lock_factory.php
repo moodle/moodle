@@ -14,18 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This is a db record locking factory.
- *
- * @package    core
- * @category   lock
- * @copyright  Damyon Wiese 2013
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\lock;
 
-defined('MOODLE_INTERNAL') || die();
+use coding_exception;
 
 /**
  * This is a db record locking factory.
@@ -90,15 +81,10 @@ class db_record_lock_factory implements lock_factory {
     }
 
     /**
-     * Multiple locks for the same resource can be held by a single process.
-     *
      * @deprecated since Moodle 3.10.
-     * @return boolean - False - not process specific.
      */
     public function supports_recursion() {
-        debugging('The function supports_recursion() is deprecated, please do not use it anymore.',
-            DEBUG_DEVELOPER);
-        return false;
+        throw new coding_exception('The function supports_recursion() has been removed, please do not use it anymore.');
     }
 
     /**
@@ -190,33 +176,10 @@ class db_record_lock_factory implements lock_factory {
     }
 
     /**
-     * Extend a lock that was previously obtained with @lock.
-     *
      * @deprecated since Moodle 3.10.
-     * @param lock $lock - a lock obtained from this factory.
-     * @param int $maxlifetime - the new lifetime for the lock (in seconds).
-     * @return boolean - true if the lock was extended.
      */
-    public function extend_lock(lock $lock, $maxlifetime = 86400) {
-        debugging('The function extend_lock() is deprecated, please do not use it anymore.',
-            DEBUG_DEVELOPER);
-
-        $now = time();
-        $expires = $now + $maxlifetime;
-        $params = array('expires' => $expires,
-                        'token' => $lock->get_key());
-
-        $sql = 'UPDATE {lock_db}
-                    SET
-                        expires = :expires,
-                    WHERE
-                        owner = :token';
-
-        $this->db->execute($sql, $params);
-        $countparams = array('owner' => $lock->get_key());
-        $result = $this->count_records('lock_db', $countparams);
-
-        return $result === 0;
+    public function extend_lock() {
+        throw new coding_exception('The function extend_lock() has been removed, please do not use it anymore.');
     }
 
     /**
