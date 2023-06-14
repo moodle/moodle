@@ -38,26 +38,13 @@ Feature: Posting to groups in a separate group discussion when restricted to gro
       | G1       | G1G1    |
       | G1       | G1G2    |
       | G2       | G2G1    |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name  | Multiple groups forum             |
-      | Forum type  | Standard forum for general use    |
-      | Description | Standard forum description        |
-      | Group mode  | Separate groups                   |
-      | Grouping    | G1                                |
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name  | Single groups forum               |
-      | Forum type  | Standard forum for general use    |
-      | Description | Standard forum description        |
-      | Group mode  | Separate groups                   |
-      | Grouping    | G2                                |
-    And I log out
+    And the following "activities" exist:
+      | activity | course | idnumber | name                  | type    | groupmode | grouping |
+      | forum    | C1     | 00001    | Multiple groups forum | general | 1         | G1       |
+      | forum    | C1     | 00001    | Single groups forum   | general | 1         | G2       |
 
   Scenario: Teacher with accessallgroups can post in all groups
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Multiple groups forum"
+    Given I am on the "Multiple groups forum" "forum activity" page logged in as teacher1
     When I click on "Add a new discussion topic" "link"
     And I click on "Advanced" "button"
     Then the "Group" select box should contain "All participants"
@@ -72,9 +59,7 @@ Feature: Posting to groups in a separate group discussion when restricted to gro
     And I should not see "Post a copy to all groups"
 
   Scenario: Teacher in all groups but without accessallgroups can post in either group but not to All Participants
-    Given I log in as "teacher2"
-    And I am on "Course 1" course homepage
-    And I follow "Multiple groups forum"
+    Given I am on the "Multiple groups forum" "forum activity" page logged in as teacher2
     When I click on "Add a new discussion topic" "link"
     And I click on "Advanced" "button"
     Then the "Group" select box should not contain "All participants"

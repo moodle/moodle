@@ -15,22 +15,17 @@ Feature: As a teacher, you can manually lock individual discussions when viewing
       | course   | C1              |
       | activity | forum           |
       | name     | Test forum name |
-    And I am on the "Course 1" course page logged in as admin
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion 1 |
-      | Message | Discussion contents 1, first message |
-    And I reply "Discussion 1" post from "Test forum name" forum with:
-      | Subject | Reply 1 to discussion 1 |
-      | Message | Discussion contents 1, second message |
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion 2 |
-      | Message | Discussion contents 2, first message |
-    And I reply "Discussion 2" post from "Test forum name" forum with:
-      | Subject | Reply 1 to discussion 2 |
-      | Message | Discussion contents 2, second message |
+    And the following forum discussions exist in course "Course 1":
+      | user  | forum           | name         | message                              |
+      | admin | Test forum name | Discussion 1 | Discussion contents 1, first message |
+      | admin | Test forum name | Discussion 2 | Discussion contents 2, first message |
+    And the following forum replies exist in course "Course 1":
+      | user  | forum           | discussion   | subject                 | message                               |
+      | admin | Test forum name | Discussion 1 | Reply 1 to discussion 1 | Discussion contents 1, second message |
+      | admin | Test forum name | Discussion 2 | Reply 1 to discussion 2 | Discussion contents 2, second message |
 
   Scenario: Lock a discussion and view
-    Given I am on the "Course 1" course page
+    Given I am on the "Course 1" course page logged in as admin
     And I navigate to post "Discussion 1" in "Test forum name" forum
     And I press "Settings"
     Then "Lock this discussion" "link" should be visible
@@ -42,9 +37,7 @@ Feature: As a teacher, you can manually lock individual discussions when viewing
     And I press "Settings"
     And I follow "Discussion 2"
     Then I should not see "This discussion has been locked so you can no longer reply to it."
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student1
     And I navigate to post "Discussion 1" in "Test forum name" forum
     Then I should see "This discussion has been locked so you can no longer reply to it."
     And "Reply" "link" should not be visible
