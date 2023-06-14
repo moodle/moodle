@@ -17,7 +17,7 @@
         <location>amd/src/Youtube-lazy.js</location>
         <name>videojs-youtube</name>
         <description>YouTube Playback Technology for Video.js.</description>
-        <version>2.6.1</version>
+        <version>3.0.0</version>
         <license>MIT</license>
         <repository>https://github.com/videojs/videojs-youtube</repository>
         <copyrights>

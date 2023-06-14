@@ -16,17 +16,26 @@ Instructions to import VideoJS player into Moodle:
 6. copy 'lang/' into 'videojs/' subfolder (so the result will be media/player/videojs/videojs/lang).
 
 Import plugins:
+YouTube Playback Technology for VideoJS 3.0.0
+---------------------------------------------
+https://github.com/videojs/videojs-youtube
 
+Instructions to import YouTube Playback Technology into Moodle:
 1. Copy https://github.com/videojs/videojs-youtube/blob/master/dist/Youtube.js into 'amd/src/Youtube-lazy.js'
    In the beginning of the js file replace
      define(['videojs']
    with
      define(['media_videojs/video-lazy']
 
-2. Download the latest release from https://github.com/HuongNV13/videojs-ogvjs/releases
+Ogv.js Playback Technology for VideoJS 0.2.1
+---------------------------------------------
+https://github.com/HuongNV13/videojs-ogvjs
+
+Instructions to import Ogv.js Playback Technology into Moodle:
+1. Download the latest release from https://github.com/HuongNV13/videojs-ogvjs/releases
    (do not choose "Source code")
 
-3. Copy videojs-ogvjs.js into 'amd/src/videojs-ogvjs-lazy.js'
+2. Copy videojs-ogvjs.js into 'amd/src/videojs-ogvjs-lazy.js'
    In the beginning of the js file:
 
    Replace
