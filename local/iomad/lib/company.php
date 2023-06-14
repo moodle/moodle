@@ -3602,8 +3602,9 @@ class company {
         // check if there is a different match.
         if (!empty($this->companyrecord->departmentprofileid)) {
             // get the profile field;
-            if ($field = $DB->get_record('user_info_field', ['id' => $this->companyrecord['departmentprofileid']])) {
+            if ($field = $DB->get_record('user_info_field', ['id' => $this->companyrecord->departmentprofileid])) {
                 $fieldname = 'profile_field_' . $field->shortname;
+                profile_load_data($user);
                 if (!empty($user->$fieldname)) {
                     if ($department = $DB->get_record('department', ['name' => $user->$fieldname, 'company' => $this->id])) {
                         $departmentid = $department->id;
