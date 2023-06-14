@@ -20,6 +20,10 @@ require(['jquery'], function($){
         $(this).find(".white-circle").removeClass("numbercolor");
     });
 
+    $(document).on("click", ".arrow", function(){
+        $(this).parents(".nav-item").toggleClass("showMenu");
+    });
+
     $(window).on("resize", function (e) {
                 checkScreenSize();
             });
@@ -44,9 +48,6 @@ require(['jquery'], function($){
                         $(".sidebar-overlay").hide();
                         $(".qicon-menu").show();
                     });
-                    $(".arrow").click(function () {
-                        $(".nav-item").toggleClass("showMenu");
-                    });
                     
                     $(".nav-item").hover(function(){
                         $(".white-circle").toggleClass("numbercolor");
@@ -66,9 +67,6 @@ require(['jquery'], function($){
                         $(".qicon-menu").hide();
                         $(".pagetitle-left-alignment").removeClass("closebar-left-alignment");
                          $(".main-inner").removeClass("leftnav");
-                    });
-                    $(".arrow").click(function () {
-                        $(".nav-item").toggleClass("showMenu");
                     });
                     
                 }
