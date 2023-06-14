@@ -391,7 +391,7 @@ if (!empty($action)) {
             }
         } else if ($action != 'trackonly') {
             company_user::delete_user_course($userid, $courseid, $action);
-            redirect(new moodle_url('/local/report_completion/index.php', array('userid' => $userid)),
+            redirect(new moodle_url('/local/report_completion/index.php', $params),
                      get_string($action . "_successful", 'local_report_users'),
                      null,
                      \core\output\notification::NOTIFY_SUCCESS);
@@ -429,6 +429,7 @@ if (!empty($action)) {
             die;
         } else {
             $confirmurl = new moodle_url('/local/report_completion/index.php',
+                                         $params +
                                          array('userid' => $userid,
                                          'rowid' => $rowid,
                                          'confirm' => $redocertificate,
@@ -437,8 +438,7 @@ if (!empty($action)) {
                                          'action' => $action,
                                          'sesskey' => sesskey()
                                          ));
-            $cancel = new moodle_url('/local/report_completion/index.php',
-                                     $params);
+            $cancel = new moodle_url('/local/report_completion/index.php', $params);
             echo $OUTPUT->confirm(get_string('redocertificateconfirm', 'local_report_users'), $confirmurl, $cancel);
         }
     }
