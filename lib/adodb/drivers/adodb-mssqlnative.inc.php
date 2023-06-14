@@ -440,7 +440,6 @@ class ADODB_mssqlnative extends ADOConnection {
 	function SelectDB($dbName)
 	{
 		$this->database = $dbName;
-		$this->databaseName = $dbName; # obsolete, retained for compat with older adodb versions
 		if ($this->_connectionID) {
 			$rs = $this->Execute('USE '.$dbName);
 			if($rs) {
