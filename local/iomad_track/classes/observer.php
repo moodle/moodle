@@ -25,9 +25,6 @@ namespace local_iomad_track;
 
 defined('MOODLE_INTERNAL') || die();
 
-// In case we ever want to switch back to ordinary certificates
-define('CERTIFICATE', 'iomadcertificate');
-
 require_once($CFG->dirroot . '/mod/' . CERTIFICATE . '/lib.php');
 require_once($CFG->dirroot . '/mod/' . CERTIFICATE . '/locallib.php');
 
