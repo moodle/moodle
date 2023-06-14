@@ -1599,7 +1599,10 @@ class theme_config {
             }
             $candidates[] = $parent_config->extrascsscallback;
         }
-        $candidates[] = $this->extrascsscallback;
+
+        if (isset($this->extrascsscallback)) {
+            $candidates[] = $this->extrascsscallback;
+        }
 
         // Calling the functions.
         foreach ($candidates as $function) {
@@ -1629,7 +1632,10 @@ class theme_config {
             }
             $candidates[] = $parent_config->prescsscallback;
         }
-        $candidates[] = $this->prescsscallback;
+
+        if (isset($this->prescsscallback)) {
+            $candidates[] = $this->prescsscallback;
+        }
 
         // Calling the functions.
         foreach ($candidates as $function) {
