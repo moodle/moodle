@@ -207,7 +207,6 @@ class message_output_airnotifier extends message_output {
         unset($payload->usertoid);
         unset($payload->replyto);
         unset($payload->replytoname);
-        unset($payload->name);
         unset($payload->siteshortname);
         unset($payload->customdata);
         unset($payload->contexturlname);
