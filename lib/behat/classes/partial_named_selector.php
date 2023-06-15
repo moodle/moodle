@@ -153,7 +153,7 @@ XPATH
 ]
 XPATH
         , 'badge' => <<<XPATH
-.//span[(contains(@class, 'badge')) and text()[contains(., %locator%)]]
+.//*[self::span or self::button][(contains(@class, 'badge')) and text()[contains(., %locator%)]]
 XPATH
         , 'block' => <<<XPATH
 .//*[@data-block][contains(concat(' ', normalize-space(@class), ' '), concat(' ', %locator%, ' ')) or

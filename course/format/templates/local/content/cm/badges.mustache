@@ -17,23 +17,19 @@
 {{!
     @template core_courseformat/local/content/cm/badges
 
-    Convenience mustache to displays if an activity is in hidden or stealth mode.
-
-    Format plugins are free to implement an alternative inplace editable for activities.
+    Formats can override this template to display extra badges.
 
     Example context (json):
     {
-        "modhiddenfromstudents" : "1",
-        "modstealth" : "1"
+        "visibility": {
+            "isInteractive": false,
+            "modhiddenfromstudents" : "1",
+            "modstealth" : "1"
+        }
     }
 }}
-{{#modhiddenfromstudents}}
-    <div class="activity-badges my-1 d-flex align-self-start align-items-center">
-        <span class="badge badge-pill badge-secondary">{{#pix}}i/show, core{{/pix}}{{#str}}hiddenfromstudents{{/str}}</span>
-    </div>
-{{/modhiddenfromstudents}}
-{{#modstealth}}
-    <div class="activity-badges my-1 d-flex align-self-start align-items-center">
-        <span class="badge badge-pill badge-secondary">{{#pix}}t/stealth, core{{/pix}}{{#str}}hiddenoncoursepage{{/str}}</span>
-    </div>
-{{/modstealth}}
+{{#visibility}}
+    {{$ core_courseformat/local/content/cm/visibility }}
+        {{> core_courseformat/local/content/cm/visibility }}
+    {{/ core_courseformat/local/content/cm/visibility }}
+{{/visibility}}

@@ -952,7 +952,7 @@ class behat_course extends behat_base {
      * @param string $menuitem
      */
     public function actions_menu_should_have_item($activityname, $menuitem) {
-        $activitynode = $this->get_activity_node($activityname);
+        $activitynode = $this->get_activity_action_menu_node($activityname);
 
         $notfoundexception = new ExpectationException('"' . $activityname . '" doesn\'t have a "' .
             $menuitem . '" item', $this->getSession());
@@ -968,7 +968,7 @@ class behat_course extends behat_base {
      * @param string $menuitem
      */
     public function actions_menu_should_not_have_item($activityname, $menuitem) {
-        $activitynode = $this->get_activity_node($activityname);
+        $activitynode = $this->get_activity_action_menu_node($activityname);
 
         try {
             $this->find('named_partial', array('link', $menuitem), false, $activitynode);
@@ -977,6 +977,20 @@ class behat_course extends behat_base {
         } catch (ElementNotFoundException $e) {
             // This is good, the menu item should not be there.
         }
+    }
+
+    /**
+     * Returns the DOM node of the activity action menu.
+     *
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $activityname The activity name
+     * @return \Behat\Mink\Element\NodeElement
+     */
+    protected function get_activity_action_menu_node($activityname) {
+        $activityname = behat_context_helper::escape($activityname);
+        $xpath = "//li[contains(concat(' ', normalize-space(@class), ' '), ' activity ')][contains(., $activityname)]" .
+            "//div[contains(@class, 'action-menu')]";
+        return $this->find('xpath', $xpath);
     }
 
     /**

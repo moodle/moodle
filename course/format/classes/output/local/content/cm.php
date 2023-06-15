@@ -67,6 +67,8 @@ class cm implements named_templatable, renderable {
 
     /** @var string the activity completion class name */
     protected $completionclass;
+    /** @var string the activity visibility class name */
+    protected $visibilityclass;
 
     /**
      * Constructor.
@@ -90,6 +92,7 @@ class cm implements named_templatable, renderable {
         $this->controlmenuclass = $format->get_output_classname('content\\cm\\controlmenu');
         $this->availabilityclass = $format->get_output_classname('content\\cm\\availability');
         $this->completionclass = $format->get_output_classname('content\\cm\\completion');
+        $this->visibilityclass = $format->get_output_classname('content\\cm\\visibility');
     }
 
     /**
@@ -120,13 +123,13 @@ class cm implements named_templatable, renderable {
         $haspartials['completion'] = $this->add_completion_data($data, $output);
         $haspartials['editor'] = $this->add_editor_data($data, $output);
         $haspartials['groupmode'] = $this->add_groupmode_data($data, $output);
+        $haspartials['visibility'] = $this->add_visibility_data($data, $output);
         $this->add_format_data($data, $haspartials, $output);
 
         // Calculated fields.
         if (!empty($data->url)) {
             $data->hasurl = true;
         }
-
         return $data;
     }
 
@@ -320,6 +323,23 @@ class cm implements named_templatable, renderable {
             'groupalt' => $groupalt,
         ];
         return true;
+    }
+
+    /**
+     * Add visibility information to the data structure.
+     *
+     * @param stdClass $data the current cm data reference
+     * @param renderer_base $output typically, the renderer that's calling this function
+     * @return bool if the cm has visibility data
+     */
+    protected function add_visibility_data(stdClass &$data, renderer_base $output): bool {
+        $visibility = new $this->visibilityclass($this->format, $this->section, $this->mod);
+        $templatedata = $visibility->export_for_template($output);
+        if ($templatedata) {
+            $data->visibility = $templatedata;
+            return true;
+        }
+        return false;
     }
 
     /**
