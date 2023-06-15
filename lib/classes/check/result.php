@@ -92,9 +92,9 @@ class result implements \renderable {
     const CRITICAL = 'critical';
 
     /**
-     * @var string $state - state
+     * @var string $status - status
      */
-    protected $state = self::UNKNOWN;
+    protected $status = self::UNKNOWN;
 
     /**
      * @var string summary - should be roughly 1 line of plain text and may change depending on the state.
@@ -126,7 +126,7 @@ class result implements \renderable {
     /**
      * Constructor
      *
-     * @param int $status code
+     * @param string $status code
      * @param string $summary a 1 liner summary
      * @param string $details as a html chunk
      */
