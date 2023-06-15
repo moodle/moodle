@@ -457,6 +457,8 @@ $string['rightanswer'] = 'Right answer';
 $string['rightanswer_help'] = 'An automatically generated summary of the correct response. This can be limited, so you may wish to consider explaining the correct solution in the general feedback for the question, and turning this option off.';
 $string['saved'] = 'Saved: {$a}';
 $string['settingsformultipletries'] = 'Multiple tries';
+$string['shortversioninfo'] = 'v{$a->version} (of {$a->latestversion})';
+$string['shortversioninfolatest'] = 'v{$a->version} (latest)';
 $string['showhidden'] = 'Also show old questions';
 $string['showmarkandmax'] = 'Show mark and max';
 $string['showmaxmarkonly'] = 'Show max mark only';
@@ -505,6 +507,8 @@ $string['qbanknotfound'] = 'The \'{$a}\' question bank plugin doesn\'t exist or 
 $string['noquestionbanks'] = 'No question bank plugin found.';
 $string['questionloaderror'] = 'Could not load the question options.';
 $string['version_selection'] = 'Version {$a->version}';
+$string['versioninfo'] = 'Version {$a->version} (of {$a->latestversion})';
+$string['versioninfolatest'] = 'Version {$a->version} (latest)';
 $string['question_version'] = 'Question version';
 
 // Deprecated since Moodle 4.0.

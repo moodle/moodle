@@ -83,6 +83,7 @@ $maxvariant = min($question->get_num_variants(), QUESTION_PREVIEW_MAX_VARIANTS);
 $options = new question_preview_options($question);
 $options->load_user_defaults();
 $options->set_from_request();
+$options->versioninfo = false;
 $PAGE->set_url(helper::question_preview_url($id, $options->behaviour, $options->maxmark,
         $options, $options->variant, $context, null, $restartversion));
 
@@ -264,11 +265,9 @@ $previewdata = [];
 $previewdata['questionicon'] = print_question_icon($question);
 $previewdata['questionidumber'] = $question->idnumber;
 $previewdata['questiontitle'] = $question->name;
-$islatestversion = is_latest($question->version, $question->questionbankentryid);
-if ($islatestversion) {
-    $previewdata['versiontitle'] = get_string('versiontitlelatest', 'qbank_previewquestion', $question->version);
-} else {
-    $previewdata['versiontitle'] = get_string('versiontitle', 'qbank_previewquestion', $question->version);
+$versioninfo = new \core_question\output\question_version_info($question);
+$previewdata['versiontitle'] = $versioninfo->export_for_template($OUTPUT);
+if ($versioninfo->version !== $versioninfo->latestversion) {
     if ($restartversion == question_preview_options::ALWAYS_LATEST) {
         $newerversionparams = (object) [
             'currentversion' => $question->version,

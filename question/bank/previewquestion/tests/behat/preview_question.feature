@@ -149,18 +149,18 @@ Feature: A teacher can preview questions in the question bank
       | Test questions   | Test question to be previewed | Question version 2 |
     And I choose "History" action for "Test question to be previewed" in the question bank
     And I choose "Preview" action for "Test question to be previewed" in the question bank
-    And I should see "Version 1"
+    And I should see "Version 1 (of 2)"
     And I expand all fieldsets
     And the field "Question version" matches value "1"
     And I set the field "Answer:" to "3.14"
     And I press "Submit and finish"
-    And I should see "Version 1"
+    And I should see "Version 1 (of 2)"
     And I should not see "The latest version is 2."
     And the following "core_question > updated questions" exist:
       | questioncategory | question                      | questiontext       |
       | Test questions   | Test question to be previewed | Question version 3 |
     When I press "Start again"
-    Then I should see "Version 1"
+    Then I should see "Version 1 (of 3)"
     And I should not see "Version 3 (latest)"
 
   Scenario: Question preview can be closed

@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_question\local\bank\question_edit_contexts;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -902,6 +903,9 @@ class question_attempt {
         if (is_null($page)) {
             global $PAGE;
             $page = $PAGE;
+        }
+        if (is_null($options->versioninfo)) {
+            $options->versioninfo = (new question_edit_contexts($page->context))->have_one_edit_tab_cap('questions');
         }
         $qoutput = $page->get_renderer('core', 'question');
         $qtoutput = $this->question->get_renderer($page);

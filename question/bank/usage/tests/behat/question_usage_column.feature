@@ -36,5 +36,6 @@ Feature: Use the qbank plugin manager page for question usage
     And I should see "0" on the usage column
     When I click "0" on the usage column
     Then I should see "Version 1"
+    And I should see "v1 (latest)" in the "Question 1" "question"
     And I click on "Close" "button" in the ".modal-dialog" "css_element"
     And I should see "0" on the usage column
