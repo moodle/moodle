@@ -81,7 +81,9 @@ class ADODB_odbc extends ADOConnection {
 		if ($this->curmode === false) $this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword);
 		else $this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword,$this->curmode);
 		$this->_errorMsg = $this->getChangedErrorMsg($last_php_error);
-		if (isset($this->connectStmt)) $this->Execute($this->connectStmt);
+		if ($this->connectStmt) {
+			$this->Execute($this->connectStmt);
+		}
 
 		return $this->_connectionID != false;
 	}
@@ -102,7 +104,9 @@ class ADODB_odbc extends ADOConnection {
 
 		$this->_errorMsg = $this->getChangedErrorMsg($last_php_error);
 		if ($this->_connectionID && $this->autoRollback) @odbc_rollback($this->_connectionID);
-		if (isset($this->connectStmt)) $this->Execute($this->connectStmt);
+		if ($this->connectStmt) {
+			$this->Execute($this->connectStmt);
+		}
 
 		return $this->_connectionID != false;
 	}

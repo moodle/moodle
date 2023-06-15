@@ -160,7 +160,8 @@ class ADODB2_postgres extends ADODB_DataDict
 		$sql = array();
 		$not_null = false;
 		list($lines,$pkey) = $this->_genFields($flds);
-		$alter = 'ALTER TABLE ' . $tabname . $this->addCol . ' ';
+		$alter = 'ALTER TABLE ' . $tabname . $this->addCol;
+		$alter .= (float)@$this->serverInfo['version'] < 9.6 ? ' ' : ' IF NOT EXISTS ';
 		foreach($lines as $v) {
 			if (($not_null = preg_match('/NOT NULL/i',$v))) {
 				$v = preg_replace('/NOT NULL/i','',$v);
