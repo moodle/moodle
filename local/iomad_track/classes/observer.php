@@ -24,6 +24,9 @@
 namespace local_iomad_track;
 
 defined('MOODLE_INTERNAL') || die();
+if (!defined('CERTIFICATE')) {
+    define('CERTIFICATE', 'iomadcertificate');
+}
 
 require_once($CFG->dirroot . '/mod/' . CERTIFICATE . '/lib.php');
 require_once($CFG->dirroot . '/mod/' . CERTIFICATE . '/locallib.php');
