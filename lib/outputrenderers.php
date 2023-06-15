@@ -4291,7 +4291,7 @@ EOD;
      * @return bool
      */
     public function has_communication_links(): bool {
-        if (!core_communication\api::is_available()) {
+        if (during_initial_install() || !core_communication\api::is_available()) {
             return false;
         }
         return !empty($this->communication_link());
@@ -4303,11 +4303,6 @@ EOD;
      * @return string
      */
     public function communication_link(): string {
-
-        if (during_initial_install()) {
-            return '';
-        }
-
         $link = $this->communication_url() ?? '';
         $commicon = $this->pix_icon('t/messages-o', '', 'moodle', ['class' => 'fa fa-comments']);
         $newwindowicon = $this->pix_icon('i/externallink', get_string('opensinnewwindow'), 'moodle', ['class' => 'ml-1']);
