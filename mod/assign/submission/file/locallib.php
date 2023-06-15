@@ -510,19 +510,6 @@ class assign_submission_file extends assign_submission_plugin {
     }
 
     /**
-     * Formatting for log info
-     *
-     * @param stdClass $submission The submission
-     * @return string
-     */
-    public function format_for_log(stdClass $submission) {
-        // Format the info for each submission plugin (will be added to log).
-        $filecount = $this->count_files($submission->id, ASSIGNSUBMISSION_FILE_FILEAREA);
-
-        return get_string('numfilesforlog', 'assignsubmission_file', $filecount);
-    }
-
-    /**
      * Return true if there are no submission files
      * @param stdClass $submission
      */
