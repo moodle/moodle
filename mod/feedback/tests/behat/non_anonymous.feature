@@ -62,14 +62,10 @@ Feature: Non anonymous feedback
 
   @javascript
   Scenario: Complete non anonymous feedback and view analysis on the front page as an authenticated user
-    And I log in as "admin"
-    And I set the following system permissions of "Authenticated user on frontpage" role:
-      | capability                   | permission |
-      | mod/feedback:viewanalysepage | Allow      |
-    And I log out
-    And I log in as "user1"
-    And I am on site homepage
-    When I follow "Site feedback"
+    Given the following "role capability" exists:
+      | role                         | frontpage |
+      | mod/feedback:viewanalysepage | allow     |
+    When I am on the "Site feedback" "feedback activity" page logged in as user1
     And I follow "Answer the questions"
     And I should see "Do you like our site?"
     And I set the following fields to these values:

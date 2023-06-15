@@ -101,10 +101,9 @@ Feature: Organize students into groups
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    And I log in as "admin"
-    And I set the following system permissions of "Teacher" role:
-      | moodle/course:changeidnumber | Prevent |
-    And I log out
+    And the following "role capability" exists:
+      | role                         | editingteacher |
+      | moodle/course:changeidnumber | prevent        |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Users > Groups" in current page administration

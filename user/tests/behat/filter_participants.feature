@@ -743,9 +743,10 @@ Feature: Course participants can be filtered
 
   @javascript @skip_chrome_zerosize
   Scenario: Filter by user identity fields when cannot see the field data
-    Given I log in as "admin"
-    And I set the following system permissions of "Teacher" role:
-      | moodle/site:viewuseridentity | Prevent |
+    Given the following "role capability" exists:
+      | role                         | editingteacher |
+      | moodle/site:viewuseridentity | prevent        |
+    And I log in as "admin"
     And the following config values are set as admin:
       | showuseridentity | idnumber,email,city,country |
     And I log out

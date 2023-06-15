@@ -65,11 +65,9 @@ Feature: Automatic updating of groups and groupings
 
   @javascript @skip_chrome_zerosize
   Scenario: Update groups and groupings with ID numbers without the 'moodle/course:changeidnumber' capability
-    Given I log out
-    And I log in as "admin"
-    And I set the following system permissions of "Teacher" role:
-      | moodle/course:changeidnumber | Prevent |
-    And I log out
+    Given the following "role capability" exists:
+      | role                         | editingteacher |
+      | moodle/course:changeidnumber | prevent        |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Users > Groups" in current page administration

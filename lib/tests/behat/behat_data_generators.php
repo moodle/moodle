@@ -93,7 +93,35 @@ class behat_data_generators extends behat_base {
     }
 
     /**
-     * Creates the specified element.
+     * Create multiple entities of one entity type.
+     *
+     * @Given :count :entitytype exist with the following data:
+     *
+     * @param   string $entitytype The name of the type entity to add
+     * @param   int $count
+     * @param   TableNode $data
+     */
+    public function the_following_repeated_entities_exist(string $entitytype, int $count, TableNode $data): void {
+        $rows = $data->getRowsHash();
+
+        $tabledata = [array_keys($rows)];
+        for ($current = 1; $current < $count + 1; $current++) {
+            $rowdata = [];
+            foreach ($rows as $fieldname => $fieldtemplate) {
+                $rowdata[$fieldname] = str_replace('[count]', $current, $fieldtemplate);
+            }
+            $tabledata[] = $rowdata;
+        }
+
+        if (isset($this->movedentitytypes[$entitytype])) {
+            $entitytype = $this->movedentitytypes[$entitytype];
+        }
+        list($component, $entity) = $this->parse_entity_type($entitytype);
+        $this->get_instance_for_component($component)->generate_items($entity, new TableNode($tabledata), false);
+    }
+
+    /**
+     * Creates the specified (singular) element.
      *
      * See the class comment for an overview.
      *
