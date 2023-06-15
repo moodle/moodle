@@ -192,6 +192,8 @@ class core_badges_renderer extends plugin_renderer_base {
         $dl[get_string('imageauthorurl', 'badges')] =
             html_writer::link($badge->imageauthorurl, $badge->imageauthorurl, array('target' => '_blank'));
         $dl[get_string('imagecaption', 'badges')] = $badge->imagecaption;
+        $tags = \core_tag_tag::get_item_tags('core_badges', 'badge', $badge->id);
+        $dl[get_string('tags', 'badges')] = $this->output->tag_list($tags, '');
         $display .= $this->definition_list($dl);
 
         // Issuer details.

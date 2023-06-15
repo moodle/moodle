@@ -2621,6 +2621,7 @@ class restore_badges_structure_step extends restore_structure_step {
         $paths[] = new restore_path_element('alignment', '/badges/badge/alignments/alignment');
         $paths[] = new restore_path_element('relatedbadge', '/badges/badge/relatedbadges/relatedbadge');
         $paths[] = new restore_path_element('manual_award', '/badges/badge/manual_awards/manual_award');
+        $paths[] = new restore_path_element('tag', '/badges/badge/tags/tag');
 
         return $paths;
     }
@@ -2827,6 +2828,22 @@ class restore_badges_structure_step extends restore_structure_step {
             }
 
             $DB->insert_record('badge_manual_award', $award);
+        }
+    }
+
+    /**
+     * Process tag.
+     *
+     * @param array $data The data.
+     * @throws base_step_exception
+     */
+    public function process_tag(array $data): void {
+        $data = (object)$data;
+        $badgeid = $this->get_new_parentid('badge');
+
+        if (!empty($data->rawname)) {
+            core_tag_tag::add_item_tag('core_badges', 'badge', $badgeid,
+                context_course::instance($this->get_courseid()), $data->rawname);
         }
     }
 
