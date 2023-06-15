@@ -51,11 +51,9 @@ Feature: Displaying the link to the Participants page
     Then I should not see "Participants" in the "Navigation" "block"
     And I am on the "Test forum name" "forum activity" page
     And I should not see "Participants" in the "Navigation" "block"
-    And I log out
-    And I log in as "admin"
-    And I set the following system permissions of "Guest" role:
-      | capability                     | permission |
-      | moodle/course:viewparticipants | Allow      |
+    And the following "role capability" exists:
+      | role                           | guest |
+      | moodle/course:viewparticipants | allow |
     And I am on the "Course1" course page logged in as guest
     And I should see "Participants" in the "Navigation" "block"
     And I am on the "Test forum name" "forum activity" page
