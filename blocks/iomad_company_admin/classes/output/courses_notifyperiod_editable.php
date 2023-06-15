@@ -135,11 +135,6 @@ class courses_notifyperiod_editable extends \core\output\inplace_editable {
             throw new coding_exception('Course is not under IOMAD control');
         }
 
-        // Do some sanity checking.
-        if (empty($notifyperiod) || $notifyperiod < 0) {
-            $notifyperiod = $courserec->notifyperiod;
-        }
-
         // Process changes.
         $DB->set_field('iomad_courses', 'notifyperiod', $notifyperiod, ['courseid' => $courseid]);
 

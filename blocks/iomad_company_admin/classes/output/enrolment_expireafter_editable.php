@@ -131,11 +131,6 @@ class enrolment_expireafter_editable extends \core\output\inplace_editable {
             throw new coding_exception('Course is not under IOMAD control');
         }
 
-        // Do some sanity checking.
-        if (empty($expireafter) || $expireafter < 0) {
-            $expireafter = $courserec->expireafter;
-        }
-
         // Process changes.
         $DB->set_field('iomad_courses', 'expireafter', $expireafter, ['courseid' => $courseid]);
 
