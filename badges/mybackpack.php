@@ -129,7 +129,7 @@ if ($backpack) {
             // User input username/email/password on the backpack site
             // After confirm the scopes.
             redirect(new moodle_url('/badges/backpack-connect.php', ['backpackid' => $data->externalbackpackid]));
-        } else {
+        } else if ($data = $form->get_data()) {
             // The form may have been submitted under one of the following circumstances:
             // 1. After clicking 'Connect to backpack'. We'll have $data->email.
             // 2. After clicking 'Resend verification email'. We'll have $data->email.
@@ -139,6 +139,7 @@ if ($backpack) {
                 badges_disconnect_user_backpack($USER->id);
                 redirect(new moodle_url('/badges/mybackpack.php'));
             } else if (isset($data->backpackemail)) {
+                // There are no errors, so the verification email can be sent.
                 if (badges_send_verification_email($data->backpackemail, $data->externalbackpackid, $data->password)) {
                     $a = get_user_preferences('badges_email_verify_backpackid');
                     redirect(new moodle_url('/badges/mybackpack.php'),
