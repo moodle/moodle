@@ -139,6 +139,7 @@ if ($backpack) {
                 badges_disconnect_user_backpack($USER->id);
                 redirect(new moodle_url('/badges/mybackpack.php'));
             } else if (isset($data->backpackemail)) {
+                // There are no errors, so the verification email can be sent.
                 if (badges_send_verification_email($data->backpackemail, $data->externalbackpackid, $data->password)) {
                     $a = get_user_preferences('badges_email_verify_backpackid');
                     redirect(new moodle_url('/badges/mybackpack.php'),
