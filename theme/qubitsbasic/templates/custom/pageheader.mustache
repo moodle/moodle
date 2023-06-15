@@ -4,12 +4,16 @@
             <li class="breadcrumb-item active" aria-current="page">{{#str}} mycourses, theme_qubitsbasic {{/str}}</li>
         {{/ismycoursepage}}
         {{#iscourseviewpage}}
-            <li class="breadcrumb-item"><a href="#" class="bc-items">{{#str}} mycourses, theme_qubitsbasic {{/str}}</a></li>
+            <li class="breadcrumb-item"><a href="{{globals.config.wwwroot}}/my/courses.php" class="bc-items">{{#str}} mycourses, theme_qubitsbasic {{/str}}</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{heading}}</li>
         {{/iscourseviewpage}}
         {{#ismodulepage}}
-            <li class="breadcrumb-item"><a href="#" class="bc-items">{{#str}} mycourses, theme_qubitsbasic {{/str}}</a></li>
-            <li class="breadcrumb-item bc-items" aria-current="page">{{coursefullname}}</li>
+            <li class="breadcrumb-item"><a href="{{globals.config.wwwroot}}/my/courses.php" class="bc-items">{{#str}} mycourses, theme_qubitsbasic {{/str}}</a></li>
+            <li class="breadcrumb-item bc-items" aria-current="page">
+            <a href="{{globals.config.wwwroot}}/course/view.php?id={{courseid}}" class="bc-items">
+            {{coursefullname}}
+            </a>
+            </li>
             <li class="breadcrumb-item active" aria-current="page">{{heading}}</li>
         {{/ismodulepage}}
         {{#otherpage}}
