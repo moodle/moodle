@@ -362,7 +362,7 @@
       }
       .icon {
         height: 50px;
-        min-width: 78px;
+        min-width: 70px;
         text-align: center;
         line-height: 50px;
         // / color: #585858; /
@@ -402,7 +402,7 @@
       }
 
       &:hover {
-        background: #e2eaf2;
+        background: #e2eaf2 !important;
       }
     }
   }
@@ -772,6 +772,13 @@ button.close:focus,
   color: #585858;
   font-size: $fontsize16 !important;
 }
+.dropdown-item.active,
+.dropdown-item:active,
+.dropdown-item:hover,
+.dropdown-item:focus,
+.dropdown-item:focus-within {
+  background-color: #e2eaf2 !important;
+}
 #page.drawers.show-drawer-left {
   @include breakpoint(md) {
     margin-left: 0 !important;
@@ -850,19 +857,4 @@ button.close:focus,
   .sidebar.close-bars ~ .my-course-section {
     width: 100%;
   }
-
-  // .sidebar-overlay {
-  //   position: fixed;
-  //   top: 0;
-  //   left: 0;
-  //   right: 0;
-  //   bottom: 0;
-  //   opacity: 0.5;
-  //   background: rgba(0, 0, 0, 0.87);
-  //   z-index: 103;
-  //   transition: all 0.3s cubic-bezier(0.55, 0, 0.1, 1);
-  //   -ms-transform: translateZ(0);
-  //   -webkit-transform: translateZ(0);
-  //   transform: translateZ(0);
-  // }
 }
