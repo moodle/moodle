@@ -248,10 +248,7 @@ Feature: Posting to all groups in a separate group discussion is restricted to u
     And I should not see "Student -> A"
 
   Scenario: Teacher in all groups but without accessallgroups can only post in their groups
-    Given I log in as "admin"
-    And I set the following system permissions of "Non-editing teacher" role:
-      | moodle/site:accessallgroups | Prohibit |
-    And I am on the "Standard forum name" "forum activity" page logged in as noneditor1
+    Given I am on the "Standard forum name" "forum activity" page logged in as noneditor1
     When I click on "Add discussion topic" "link"
     And I click on "Advanced" "button"
     Then the "Group" select box should not contain "All participants"
@@ -260,10 +257,7 @@ Feature: Posting to all groups in a separate group discussion is restricted to u
     And I should see "Post a copy to all groups"
 
   Scenario: Teacher in some groups and without accessallgroups can only post in their groups
-    Given I log in as "admin"
-    And I set the following system permissions of "Non-editing teacher" role:
-      | moodle/site:accessallgroups | Prohibit |
-    And I am on the "Standard forum name" "forum activity" page logged in as noneditor1
+    Given I am on the "Standard forum name" "forum activity" page logged in as noneditor1
     When I click on "Add discussion topic" "link"
     And I click on "Advanced" "button"
     Then the "Group" select box should not contain "All participants"

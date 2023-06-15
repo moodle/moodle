@@ -57,10 +57,9 @@ Feature: Access to full profiles of users
     Then I should see "First access to site"
 
   Scenario: Viewing full profiles with global permission
-    Given I log in as "admin"
-    And I set the following system permissions of "Authenticated user" role:
-      | moodle/user:viewdetails | Allow |
-    And I log out
+    Given the following "role capability" exists:
+      | role                    | user  |
+      | moodle/user:viewdetails | allow |
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I navigate to course participants

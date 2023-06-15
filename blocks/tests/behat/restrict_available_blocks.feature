@@ -24,9 +24,10 @@ Feature: Allowed blocks controls
     And I should see "Course completion status" in the "Course completion status" "block"
 
   Scenario: Blocks can not be added when the admin restricts the permissions
-    Given I log in as "admin"
-    And I set the following system permissions of "Teacher" role:
-      | block/activity_modules:addinstance | Prohibit |
+    Given the following "role capability" exists:
+      | role                               | editingteacher  |
+      | block/activity_modules:addinstance | prohibit        |
+    And I log in as "admin"
     And I am on the "Course 1" "permissions" page
     And I override the system permissions of "Teacher" role with:
       | block/completionstatus:addinstance | Prohibit |
