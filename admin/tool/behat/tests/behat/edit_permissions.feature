@@ -21,12 +21,15 @@ Feature: Edit capabilities
 
   Scenario: Default system capabilities modification
     Given I log in as "admin"
-    And I set the following system permissions of "Teacher" role:
+    And I navigate to "Users > Permissions > Define roles" in site administration
+    And I click on "Edit Teacher role" "link"
+    And I fill the capabilities form with the following permissions:
       | capability | permission |
       | block/mnet_hosts:myaddinstance | Allow |
       | moodle/site:messageanyuser | Inherit |
       | moodle/grade:managesharedforms | Prevent |
       | moodle/course:request | Prohibit |
+    And I press "Save changes"
     When I follow "Edit Teacher role"
     Then "block/mnet_hosts:myaddinstance" capability has "Allow" permission
     And "moodle/site:messageanyuser" capability has "Not set" permission

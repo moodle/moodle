@@ -168,10 +168,9 @@ Feature: tool_monitor_subscriptions
     And I should not see "You can manage rules the from the Event monitoring rules page."
 
   Scenario: No manage rules link when user does not have permission
-    Given I log in as "admin"
-    And I set the following system permissions of "Non-editing teacher" role:
-      | tool/monitor:managerules | Prohibit |
-    And I log out
+    Given the following "role capability" exists:
+      | role                     | teacher  |
+      | tool/monitor:managerules | prohibit |
     And I log in as "teacher1"
     And I follow "Preferences" in the user menu
     And I follow "Event monitoring"
