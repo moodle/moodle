@@ -25,15 +25,9 @@ Feature: Forum discussions can be split
       | forum   | course | user     | name                      | message                                                                  |
       | forump1 | C1     | teacher1 | Photosynthesis discussion | Lets discuss our learning about Photosynthesis this week in this thread. |
     And the following "mod_forum > posts" exist:
-      | user     | parentsubject             | message                                                                   |
-      | student1 | Photosynthesis discussion | Can anyone tell me which number is the mass number in the periodic table? |
-    And I am on the "Study discussions" "forum activity" page logged in as student2
-    And I follow "Photosynthesis discussion"
-    And I click on "Reply" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' forumpost ')][contains(., 'Can anyone tell me which number is the mass number in the periodic table?')]" "xpath_element"
-    And I wait to be redirected
-    And I set the following fields to these values:
-      | Message | I would also like to know this |
-    And I press "Post to forum"
+      | user     | parentsubject             | subject     | message                                                                   |
+      | student1 | Photosynthesis discussion | Mass number | Can anyone tell me which number is the mass number in the periodic table? |
+      | student2 | Mass number               |             | I would also like to know this                                            |
 
   Scenario: Split a forum discussion
     Given I am on the "Study discussions" "forum activity" page logged in as teacher1
