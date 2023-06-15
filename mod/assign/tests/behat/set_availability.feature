@@ -184,30 +184,29 @@ Feature: Set availability dates for an assignment
     And I should see "No submission" in the "Student 1" "table_row"
     And I should see "Assignment is overdue by: 2 days 5 hours" in the "Student 1" "table_row"
 
-  @javascript @_file_upload
-  Scenario: Late submission will be calculated only when the student starts the assignm
+  Scenario: Late submission will be calculated only when the student starts the assignments
+    # Note: This test has the potential to randomly fail on slower machines.
+    # The timelimit needs to be sufficient to allow the page to load and be interacted with completely.
     Given the following config values are set as admin:
       | config          | value | plugin |
       | enabletimelimit | 1     | assign |
     And the following "activity" exists:
-      | activity                           | assign          |
-      | course                             | C1              |
-      | name                               | Assignment name |
-      | assignsubmission_file_enabled      | 1               |
-      | assignsubmission_file_maxfiles     | 1               |
-      | assignsubmission_file_maxsizebytes | 0               |
-      | submissiondrafts                   | 0               |
-      | timelimit                          | 2               |
-      | allowsubmissionsfromdate_enabled   | 0               |
-      | duedate_enabled                    | 0               |
-      | cutoffdate_enabled                 | 0               |
-      | gradingduedate_enabled             | 0               |
+      | activity                            | assign          |
+      | course                              | C1              |
+      | name                                | Assignment name |
+      | assignsubmission_onlinetext_enabled | 1               |
+      | assignsubmission_file_enabled       | 0               |
+      | submissiondrafts                    | 0               |
+      | timelimit                           | 2               |
+      | allowsubmissionsfromdate_enabled    | 0               |
+      | duedate_enabled                     | 0               |
+      | cutoffdate_enabled                  | 0               |
+      | gradingduedate_enabled              | 0               |
 
     When I am on the "Assignment name" Activity page logged in as student1
     And I wait "3" seconds
     And I click on "Begin assignment" "link"
-    And I click on "Begin assignment" "button"
-    And I upload "lib/tests/fixtures/empty.txt" file to "File submissions" filemanager
+    And I set the field "Online text" to "This is my submission"
     And I press "Save changes"
     Then I should see "Submitted for grading" in the "Submission status" "table_row"
     And I should see "under the time limit" in the "Time remaining" "table_row"
