@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,14 +14,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Language strings
+ * Qubits Theme Main
  *
- * @package   theme_qubitsbasic
- * @copyright 2023 Qubits Dev Team.
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qubitsmain
+ * @copyright  2023 Qubits Dev Team - https://www.yardstickedu.com/
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+define(['jquery', 'core/str'], function($, Str) {
 
-$string['pluginname'] = 'Qubits - Basic';
-$string['loginto'] = 'Sign in to {$a}';
-$string['login'] = 'Sign in';
-$string['mycourses'] = 'My Courses';
+    var QubitsMain = function(){
+        console.log("TODO: we have to move all common internal scripts into this file")
+        // TODO: we have to move all common internal scripts into this file
+    }
+
+    return {
+        'init': function() {
+            return new QubitsMain();
+        }
+    };
+
+});
