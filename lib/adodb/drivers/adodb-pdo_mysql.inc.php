@@ -266,7 +266,6 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 	function SelectDB($dbName)
 	{
 		$this->database = $dbName;
-		$this->databaseName = $dbName; # obsolete, retained for compat with older adodb versions
 		$try = $this->Execute('use ' . $dbName);
 		return ($try !== false);
 	}
