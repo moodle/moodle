@@ -181,3 +181,18 @@ Feature: Backpack badges
     And I set the field "externalbackpackid" to "https://test.com/"
     And I should see "Email address"
     And I should see "Password"
+
+  @javascript
+  Scenario: Check backpack form validation as a student
+    Given I log in as "student1"
+    And I follow "Preferences" in the user menu
+    And I follow "Backpack settings"
+    And I set the field "externalbackpackid" to "https://test.com/"
+    And I set the field "password" to ""
+    When I click on "Connect to backpack" "button"
+    Then I should see "Password can't be blank"
+    And I should not see "Email address can't be blank"
+    And I set the field "backpackemail" to ""
+    And I click on "Connect to backpack" "button"
+    And I should see "Email address can't be blank"
+    And I should see "Password can't be blank"
