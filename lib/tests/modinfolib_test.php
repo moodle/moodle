@@ -584,6 +584,39 @@ class modinfolib_test extends advanced_testcase {
     }
 
     /**
+     * Tests for function cm_info::get_activitybadge().
+     *
+     * @covers \cm_info::get_activitybadge
+     */
+    public function test_cm_info_get_activitybadge(): void {
+        global $PAGE;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+        $resource = $this->getDataGenerator()->create_module('resource', ['course' => $course->id]);
+        $assign = $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
+        $label = $this->getDataGenerator()->create_module('label', ['course' => $course->id]);
+
+        $renderer = $PAGE->get_renderer('core');
+        $modinfo = get_fast_modinfo($course->id);
+
+        // Forum and resource implements the activitybadge feature.
+        $cminfo = $modinfo->get_cm($forum->cmid);
+        $this->assertNotNull($cminfo->get_activitybadge($renderer));
+        $cminfo = $modinfo->get_cm($resource->cmid);
+        $this->assertNotNull($cminfo->get_activitybadge($renderer));
+
+        // Assign and label don't implement the activitybadge feature (at least for now).
+        $cminfo = $modinfo->get_cm($assign->cmid);
+        $this->assertNull($cminfo->get_activitybadge($renderer));
+        $cminfo = $modinfo->get_cm($label->cmid);
+        $this->assertNull($cminfo->get_activitybadge($renderer));
+    }
+
+    /**
      * Tests the availability property that has been added to course modules
      * and sections (just to see that it is correctly saved and accessed).
      */

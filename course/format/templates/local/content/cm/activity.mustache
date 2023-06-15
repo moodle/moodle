@@ -25,7 +25,23 @@
             "displayvalue" : "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Activity example</span></a>"
         },
         "hasname": "true",
-        "afterlink": "<span class=\"badge badge-primary\">30 unread messages</span>",
+        "afterlink": "<span class=\"resourcelinkdetails\">24.7&nbsp;KB · Uploaded 26/05/23, 16:29</span>",
+        "activitybadge": {
+            "badgecontent": "PDF",
+            "badgestyle": "badge-none",
+            "badgeurl": "http://example.org/help",
+            "badgeelementid": "myelementid",
+            "badgeextraattributes": [
+                {
+                    "name": "data-el1name",
+                    "value": "el1value"
+                },
+                {
+                    "name": "data-el2name",
+                    "value": "el2value"
+                }
+            ]
+        },
         "hasextras": true,
         "extras": ["<span class=\"badge badge-secondary\">[extras]</span>"],
         "activityinfo": {
@@ -69,11 +85,12 @@
                 {{> core_courseformat/local/content/cm/cmname }}
             {{/ core_courseformat/local/content/cm/cmname }}
         {{/cmname}}
-        {{#afterlink}}
-            <div class="afterlink d-flex align-items-center ml-3">
-                {{{afterlink}}}
-            </div>
-        {{/afterlink}}
+
+        {{#activitybadge}}
+            {{$ core_courseformat/local/content/cm/activitybadge }}
+                {{> core_courseformat/local/content/cm/activitybadge }}
+            {{/ core_courseformat/local/content/cm/activitybadge }}
+        {{/activitybadge}}
 
         {{#activityinfo}}
             <div class="activity-info mt-1 mt-md-0">
@@ -125,3 +142,9 @@
         {{/ core_courseformat/local/content/cm/availability }}
     {{/modavailability}}
 </div>
+
+{{#afterlink}}
+    <div class="afterlink d-flex align-items-center mt-3">
+        {{{afterlink}}}
+    </div>
+{{/afterlink}}

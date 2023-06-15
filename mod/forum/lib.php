@@ -5488,28 +5488,6 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
 }
 
 /**
- * Adds information about unread messages, that is only required for the course view page (and
- * similar), to the course-module object.
- * @param cm_info $cm Course-module object
- */
-function forum_cm_info_view(cm_info $cm) {
-    global $CFG;
-
-    if (forum_tp_can_track_forums()) {
-        if ($unread = forum_tp_count_forum_unread_posts($cm, $cm->get_course())) {
-            $out = '<span class="badge badge-secondary">';
-            if ($unread == 1) {
-                $out .= get_string('unreadpostsone', 'forum');
-            } else {
-                $out .= get_string('unreadpostsnumber', 'forum', $unread);
-            }
-            $out .= '</span>';
-            $cm->set_after_link($out);
-        }
-    }
-}
-
-/**
  * Return a list of page types
  * @param string $pagetype current page type
  * @param stdClass $parentcontext Block's parent context
