@@ -389,7 +389,7 @@ $countwheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $depar
 $countsql = "SELECT COUNT(u.id) FROM $fromsql WHERE $countwheresql";
 
 // Get the users.
-$userlist = $DB->get_records_sql("SELECT $selectsql FROM $fromsql WHERE $wheresql", $sqlparams, $page, $perpage);
+$userlist = $DB->get_records_sql("SELECT $selectsql FROM $fromsql WHERE $wheresql", $sqlparams, $page*$perpage, $perpage);
 $usercount = $DB->count_records_sql($countsql, $sqlparams);
 
 // Populate all of the course data
