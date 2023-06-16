@@ -33667,6 +33667,10 @@ div#dock {
   width: 35px;
   height: 35px;
 }
+.userinitials.size-50 {
+  width: 50px;
+  height: 50px;
+}
 .userinitials.size-64 {
   width: 64px;
   height: 64px;

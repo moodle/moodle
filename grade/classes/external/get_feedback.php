@@ -92,7 +92,7 @@ class get_feedback extends external_api {
             'feedbacktext' => $grade->feedback,
             'title' => $gradeitem->get_name(true),
             'fullname' => fullname($user),
-            'picture' => $OUTPUT->user_picture($user, ['size' => 35, 'link' => false]),
+            'picture' => $OUTPUT->user_picture($user, ['size' => 50, 'link' => false]),
             'additionalfield' => empty($extrafields) ? '' : $user->{$extrafields[0]},
         ];
     }
