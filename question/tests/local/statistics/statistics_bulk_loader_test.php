@@ -553,4 +553,31 @@ class statistics_bulk_loader_test extends advanced_testcase {
         $this->assertEqualsWithDelta($expectedaveragediscriminationindex[3],
             $stats[$questions[4]->id]['discriminationindex'], self::PERCENT_DELTA);
     }
+
+    /**
+     * Test with question statistics disabled
+     */
+    public function test_statistics_disabled(): void {
+        $this->resetAfterTest();
+
+        // Prepare some quizzes and attempts. Exactly what is not important to this test.
+        $quiz1attempts = [$this->generate_attempt_answers([1, 0, 0, 0])];
+        $quiz2attempts = [$this->generate_attempt_answers([1, 1, 1, 1])];
+        [, , $questions] = $this->prepare_and_submit_quizzes($quiz1attempts, $quiz2attempts);
+
+        // Prepare some useful arrays.
+        $expectedstats = [
+            $questions[1]->id => [],
+            $questions[2]->id => [],
+            $questions[3]->id => [],
+            $questions[4]->id => [],
+        ];
+        $questionids = array_keys($expectedstats);
+
+        // Ask to load no statistics at all.
+        $stats = statistics_bulk_loader::load_aggregate_statistics($questionids, []);
+
+        // Verify we got the right thing.
+        $this->assertEquals($expectedstats, $stats);
+    }
 }
