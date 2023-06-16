@@ -4477,7 +4477,6 @@ function lti_load_cartridge($url, $map, $propertiesmap = array()) {
 
     // TODO MDL-46023 Replace this code with a call to the new library.
     $origerrors = libxml_use_internal_errors(true);
-    $origentity = lti_libxml_disable_entity_loader(true);
     libxml_clear_errors();
 
     $document = new DOMDocument();
@@ -4489,7 +4488,6 @@ function lti_load_cartridge($url, $map, $propertiesmap = array()) {
 
     libxml_clear_errors();
     libxml_use_internal_errors($origerrors);
-    lti_libxml_disable_entity_loader($origentity);
 
     if (count($errors) > 0) {
         $message = 'Failed to load cartridge.';
@@ -4584,10 +4582,10 @@ function lti_new_access_token($typeid, $scopes) {
  *
  * @param bool $value
  * @return bool
+ *
+ * @deprecated since Moodle 4.3
  */
 function lti_libxml_disable_entity_loader(bool $value): bool {
-    if (PHP_VERSION_ID < 80000) {
-        return (bool)libxml_disable_entity_loader($value);
-    }
+    debugging(__FUNCTION__ . '() is deprecated, please do not use it any more', DEBUG_DEVELOPER);
     return true;
 }
