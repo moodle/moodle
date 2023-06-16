@@ -316,6 +316,9 @@
     padding: 0 0 150px 0;
     overflow: auto;
     margin: 0 !important;
+    .nav-item .arrow{
+      font-size: 13px !important;
+    }
 
     li {
       position: relative;
@@ -598,6 +601,7 @@
       }
       i.arrow {
         transform: rotate(-180deg);
+        
       }
     }
   }
@@ -857,4 +861,31 @@ button.close:focus,
   .sidebar.close-bars ~ .my-course-section {
     width: 100%;
   }
+}
+
+.bc-items {
+  color: #116cbf !important;
+  font-size: 14px !important;
+  text-decoration: underline !important;
+}
+.bg-none {
+  background-color: transparent !important;
+}
+.breadcrumb{
+	align-items: center;
+}
+.breadcrumb-item.active {
+  color: #333333 !important;
+  font-size: 20px !important;
+  font-weight: 600 !important;
+}
+.breadcrumb-item+.breadcrumb-item::before{
+	fomt-size:14px !important;
+}
+
+.breadcrumb-item.active {
+	width: 100%;
+}
+.breadcrumb-item+.breadcrumb-item.active::before {
+	display: none
 }
