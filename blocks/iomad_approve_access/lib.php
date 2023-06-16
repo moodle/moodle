@@ -42,6 +42,7 @@ class iomad_approve_access {
         }
 
         // If I'm a site admin I can approve any type.
+        $approvaltype = '';
         if (is_siteadmin($USER->id)) {
             $approvaltype = 'both';
         } else {
