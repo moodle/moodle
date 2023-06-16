@@ -309,11 +309,11 @@ if (!$companyselect->onecompany) {
     $select->set_data(array('company' => $selectedcompany, 'showsuspendedcompanies' => $showsuspendedcompanies));
     $companyselect->selectform = $select->render();
     if (!$showsuspendedcompanies) {
-        $companyselect->suspended = $OUTPUT->single_button(new moodle_url('/my/index.php',
+        $companyselect->suspended = $OUTPUT->single_button(new moodle_url('/blocks/iomad_company_admin/index.php',
                                            array('showsuspendedcompanies' => true)),
                                            get_string("show_suspended_companies", 'block_iomad_company_admin'));
     } else {
-        $companyselect->suspended = $OUTPUT->single_button(new moodle_url('/my/index.php',
+        $companyselect->suspended = $OUTPUT->single_button(new moodle_url('/blocks/iomad_company_admin/index.php',
                                            array('showsuspendedcompanies' => false)),
                                            get_string("hide_suspended_companies", 'block_iomad_company_admin'));
     }
