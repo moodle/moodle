@@ -141,10 +141,6 @@ class block_settings extends block_base {
             } else {
                 $this->content->footer = '';
             }
-
-            if (!empty($this->config->enabledock) && $this->config->enabledock == 'yes') {
-                user_preference_allow_ajax_update('nav_in_tab_panel_settingsnav'.block_settings::$navcount, PARAM_INT);
-            }
         }
 
         $this->contentgenerated = true;

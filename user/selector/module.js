@@ -368,7 +368,9 @@ M.core_user.init_user_selector_options_tracker = function(Y) {
          * @param {string} name The name of the preference to set
          */
         set_user_preference : function(e, name) {
-            M.util.set_user_preference(name, Y.one('#' + name + 'id').get('checked'));
+            require(['core_user/repository'], function(UserRepository) {
+                UserRepository.setUserPreference(name, Y.one('#' + name + 'id').get('checked'));
+            });
         }
     };
     // Initialise the options tracker

@@ -679,7 +679,6 @@ abstract class user_selector_base {
                             '" value="1"' . $checked . ' /> ' . $label .
                     "</label>
                    </div>\n";
-        user_preference_allow_ajax_update($name, PARAM_BOOL);
         return $output;
     }
 

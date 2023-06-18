@@ -2560,7 +2560,6 @@ function print_collapsible_region_start($classes, $id, $caption, $userpref = '',
 
     // Work out the initial state.
     if (!empty($userpref) and is_string($userpref)) {
-        user_preference_allow_ajax_update($userpref, PARAM_BOOL);
         $collapsed = get_user_preferences($userpref, $default);
     } else {
         $collapsed = $default;
