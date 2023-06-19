@@ -120,8 +120,7 @@ Feature: The forum search allows users to perform advanced searches for forum po
   @javascript
   Scenario: Perform an advanced search on starred discussions without text
     Given I am on the "Announcements" "forum activity" page logged in as student1
-    And I click on "Your subjective" action menu
-    And I follow "Star this discussion"
+    And I click on "Star this discussion" "link" in the "Your subjective" "table_row"
     And I press "Search forums"
     And I should see "Advanced search"
     And I set the field "starredonly" to "1"
@@ -132,8 +131,7 @@ Feature: The forum search allows users to perform advanced searches for forum po
   @javascript
   Scenario: Perform an advanced search on starred discussions with text
     Given I am on the "Announcements" "forum activity" page logged in as student1
-    And I click on "Your subjective" action menu
-    And I follow "Star this discussion"
+    And I click on "Star this discussion" "link" in the "Your subjective" "table_row"
     And I press "Search forums"
     And I should see "Advanced search"
     And I set the field "words" to "message"
