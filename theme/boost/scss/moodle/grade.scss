@@ -498,10 +498,17 @@
  */
 .path-grade-report-grader {
     .gradeparent {
-        z-index: 5;
         tr .cell,
         .floater .cell {
             background-color: $pagination-bg;
+
+            &.gradecell {
+                .dropdown-menu {
+                    &.show {
+                        z-index: 1;
+                    }
+                }
+            }
         }
 
         table,
@@ -522,12 +529,27 @@
         tr.heading {
             position: sticky;
             top: 0;
-            z-index: 1;
+            z-index: 4;
+        }
+
+        tr.userrow {
+            th {
+                z-index: 2;
+
+                &.actions-menu-active {
+                    z-index: 3;
+                }
+            }
         }
 
         tr.lastrow {
             position: sticky;
-            bottom: 0;
+            // Hack used by the observer to help detecting when the sticky 'Overall average' row is pinned. */
+            bottom: -1px;
+
+            &.pinned {
+                z-index: 4;
+            }
 
             td,
             th {
@@ -543,7 +565,10 @@
                 left: -3rem;
             }
             position: sticky;
-            z-index: 1;
+
+            &#studentheader {
+                z-index: 1;
+            }
         }
 
         td.noborder {
