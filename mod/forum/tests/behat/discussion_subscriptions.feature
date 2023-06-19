@@ -24,10 +24,10 @@ Feature: A user can control their own subscription preferences for a discussion
       | name           | Test forum name        |
       | type           | general                |
       | forcesubscribe | 0                      |
-    And the following forum discussions exist in course "Course 1":
-      | user  | forum           | name                  | message               |
-      | admin | Test forum name | Test post subject one | Test post message one |
-      | admin | Test forum name | Test post subject two | Test post message two |
+    And the following "mod_forum > discussions" exist:
+      | user  | forum  | name                  | message               |
+      | admin | forum1 | Test post subject one | Test post message one |
+      | admin | forum1 | Test post subject two | Test post message two |
     When I am on the "Test forum name" "forum activity" page logged in as student1
     Then I can subscribe to this forum
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
@@ -64,10 +64,10 @@ Feature: A user can control their own subscription preferences for a discussion
       | name           | Test forum name        |
       | type           | general                |
       | forcesubscribe | 2                      |
-    And the following forum discussions exist in course "Course 1":
-      | user  | forum           | name                  | message               |
-      | admin | Test forum name | Test post subject one | Test post message one |
-      | admin | Test forum name | Test post subject two | Test post message two |
+    And the following "mod_forum > discussions" exist:
+      | user  | forum  | name                  | message               |
+      | admin | forum1 | Test post subject one | Test post message one |
+      | admin | forum1 | Test post subject two | Test post message two |
     When I am on the "Test forum name" "forum activity" page logged in as student1
     Then I can unsubscribe from this forum
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
@@ -104,10 +104,10 @@ Feature: A user can control their own subscription preferences for a discussion
       | name           | Test forum name        |
       | type           | general                |
       | forcesubscribe | 0                      |
-    And the following forum discussions exist in course "Course 1":
-      | user  | forum           | name                  | message               |
-      | admin | Test forum name | Test post subject one | Test post message one |
-      | admin | Test forum name | Test post subject two | Test post message two |
+    And the following "mod_forum > discussions" exist:
+      | user  | forum  | name                  | message               |
+      | admin | forum1 | Test post subject one | Test post message one |
+      | admin | forum1 | Test post subject two | Test post message two |
     And I am on the "Test forum name" "forum activity" page logged in as student1
     And I can subscribe to this forum
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
@@ -138,10 +138,10 @@ Feature: A user can control their own subscription preferences for a discussion
       | name           | Test forum name        |
       | type           | general                |
       | forcesubscribe | 0                      |
-    And the following forum discussions exist in course "Course 1":
-      | user  | forum           | name                  | message               |
-      | admin | Test forum name | Test post subject one | Test post message one |
-      | admin | Test forum name | Test post subject two | Test post message two |
+    And the following "mod_forum > discussions" exist:
+      | user  | forum  | name                  | message               |
+      | admin | forum1 | Test post subject one | Test post message one |
+      | admin | forum1 | Test post subject two | Test post message two |
     When I am on the "Test forum name" "forum activity" page logged in as student1
     And I should see "Subscribe to forum"
     And I reply "Test post subject one" post from "Test forum name" forum with:
@@ -171,10 +171,10 @@ Feature: A user can control their own subscription preferences for a discussion
       | name           | Test forum name        |
       | type           | general                |
       | forcesubscribe | 2                      |
-    And the following forum discussions exist in course "Course 1":
-      | user  | forum           | name                  | message               |
-      | admin | Test forum name | Test post subject one | Test post message one |
-      | admin | Test forum name | Test post subject two | Test post message two |
+    And the following "mod_forum > discussions" exist:
+      | user  | forum  | name                  | message               |
+      | admin | forum1 | Test post subject one | Test post message one |
+      | admin | forum1 | Test post subject two | Test post message two |
     # added for this scenario
     And the following "users" exist:
       | username | firstname | lastname | email                   |
@@ -207,9 +207,9 @@ Feature: A user can control their own subscription preferences for a discussion
     Given the following "activities" exist:
       | activity    | name            | course               | section | idnumber  | type    |
       | forum       | Test forum name | Acceptance test site | 1       | forum1    | general |
-    And the following forum discussions exist in course "Acceptance test site":
-      | user  | forum           | name                  | message               |
-      | admin | Test forum name | Test post subject one | Test post message one |
+    And the following "mod_forum > discussions" exist:
+      | user  | forum  | name                  | message               |
+      | admin | forum1 | Test post subject one | Test post message one |
     When I am on the "Test forum name" "forum activity" page logged in as guest
     Then "Subscribe to this discussion" "checkbox" should not exist in the "Test post subject one" "table_row"
     And "Unsubscribe from this discussion" "checkbox" should not exist in the "Test post subject one" "table_row"
@@ -221,9 +221,9 @@ Feature: A user can control their own subscription preferences for a discussion
     Given the following "activities" exist:
       | activity    | name            | course               | section | idnumber  | type    |
       | forum       | Test forum name | Acceptance test site | 1       | forum1    | general |
-    And the following forum discussions exist in course "Acceptance test site":
-      | user  | forum           | name                  | message               |
-      | admin | Test forum name | Test post subject one | Test post message one |
+    And the following "mod_forum > discussions" exist:
+      | user  | forum  | name                  | message               |
+      | admin | forum1 | Test post subject one | Test post message one |
     When I am on site homepage
     And I follow "Test forum name"
     Then "Subscribe to this discussion" "checkbox" should not exist in the "Test post subject one" "table_row"
@@ -240,9 +240,9 @@ Feature: A user can control their own subscription preferences for a discussion
       | name           | Test forum name        |
       | type           | general                |
       | forcesubscribe | 0                      |
-    And the following forum discussions exist in course "Course 1":
-      | user  | forum           | name                  | message               |
-      | admin | Test forum name | Test post subject one | Test post message one |
+    And the following "mod_forum > discussions" exist:
+      | user  | forum  | name                  | message               |
+      | admin | forum1 | Test post subject one | Test post message one |
     When I am on the "Test forum name" "forum activity" page logged in as student1
     Then "Subscribe to forum" "link" should exist
     And I follow "Test post subject one"
