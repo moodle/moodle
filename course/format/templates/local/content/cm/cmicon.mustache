@@ -15,17 +15,25 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_courseformat/local/content/section/summary
+    @template core_courseformat/local/content/cm/cmicon
 
-    Displays the course section summary.
+    Displays a course module icon.
 
     Example context (json):
     {
-        "summarytext": "Summary text!"
+        "url": "#",
+        "icon": "../../../pix/help.svg",
+        "iconclass": "",
+        "purpose": "content",
+        "modname": "resource",
+        "pluginname": "File"
     }
 }}
-{{#summarytext}}
-    <div class="summarytext">
-        {{{summarytext}}}
-    </div>
-{{/summarytext}}
+{{#url}}
+    <a href="{{url}}"
+        class="activity-icon activityiconcontainer smaller {{purpose}} btn btn-link courseicon align-self-start mr-2"
+        {{#pluginname}}data-toggle="tooltip" title="{{{pluginname}}}" data-placement="top"{{/pluginname}}
+    >
+        <img src="{{{icon}}}" class="activityicon {{iconclass}}" alt="{{{modname}}} icon">
+    </a>
+{{/url}}

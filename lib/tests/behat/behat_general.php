@@ -372,7 +372,7 @@ class behat_general extends behat_base {
     /**
      * Generic mouse over action. Mouse over a element of the specified type.
      *
-     * @When /^I hover over the "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*) in the "(?P<container_element_string>(?:[^"]|\\")*)" "(?P<container_selector_string>[^"]*)"$/
+     * @When I hover over the :element :selectortype in the :containerelement :containerselectortype
      * @param string $element Element we look for
      * @param string $selectortype The type of what we look for
      * @param string $containerelement Element we look for
@@ -380,7 +380,7 @@ class behat_general extends behat_base {
      */
     public function i_hover_in_the(string $element, $selectortype, string $containerelement, $containerselectortype): void {
         // Gets the node based on the requested selector type and locator.
-        $node = $this->get_node_in_container($selectortype, $element, $containerselectortype, $containerselectortype);
+        $node = $this->get_node_in_container($selectortype, $element, $containerselectortype, $containerelement);
         $this->execute_js_on_node($node, '{{ELEMENT}}.scrollIntoView();');
         $node->mouseOver();
     }

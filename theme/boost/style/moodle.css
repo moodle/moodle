@@ -26057,6 +26057,14 @@ blockquote {
   width: 40px;
   height: 40px;
 }
+.activityiconcontainer.smaller {
+  width: 30px;
+  height: 30px;
+}
+.activityiconcontainer.smaller .activityicon {
+  width: 16px;
+  height: 16px;
+}
 
 .activityiconcontainer.administration {
   background-color: #5d63f6;
@@ -28874,9 +28882,10 @@ span.editinstructions .alert-link {
   font-size: 100%;
 }
 
+/* Variables definition*/
+/* Activity & Block 'add' buttons */
 .activity-add,
 .block-add {
-  border-radius: 0.5rem;
   color: #0f6cbf;
   background-color: #f5f9fc;
   border-color: #3584c9;
@@ -28905,10 +28914,19 @@ span.editinstructions .alert-link {
   text-decoration: underline;
 }
 
+.block-add {
+  border-radius: 0.5rem;
+}
+
+.activity-add {
+  border-radius: 1rem;
+}
+
 .changenumsections {
   border-top: 1px solid #3584c9;
 }
 
+/* Section Expand all/Collapse all */
 .section-collapsemenu .collapseall {
   display: block;
 }
@@ -28922,6 +28940,7 @@ span.editinstructions .alert-link {
   display: block;
 }
 
+/* Course section */
 .course-section {
   list-style: none;
   padding-left: 0;
@@ -28942,6 +28961,15 @@ span.editinstructions .alert-link {
 .course-section .inplaceeditable {
   display: flex;
   align-items: center;
+}
+.course-section .summarytext img {
+  border-radius: 1rem;
+}
+.course-section .availabilityinfo {
+  margin-top: 0.5rem;
+  padding: 0.25rem 1rem;
+  background-color: #e9ecef;
+  border-radius: 1rem;
 }
 .course-section.section-summary {
   padding-left: 1rem;
@@ -28979,54 +29007,21 @@ span.editinstructions .alert-link {
   width: 100%;
 }
 
-.description .course-description-item {
-  font-size: 0.875em;
-  background-color: #f8f9fa;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-.description .course-description-item .description-inner {
-  padding-bottom: 0.5rem;
-  padding-top: 0.5rem;
-  border-bottom: 1px solid #dee2e6;
-}
-.description .course-description-item .description-inner p:last-child {
-  padding-bottom: 0;
-  margin-bottom: 0;
-}
-.description .course-description-item:first-child {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top-left-radius: 0.5rem;
-  border-top-right-radius: 0.5rem;
-}
-.description .course-description-item:first-child .description-inner {
-  padding-top: 0;
-}
-.description .course-description-item:last-child {
-  padding-bottom: 1rem;
-  border-bottom-left-radius: 0.5rem;
-  border-bottom-right-radius: 0.5rem;
-}
-.description .course-description-item:last-child .description-inner {
-  padding-bottom: 0;
-  border-bottom: 0;
-}
-
-.course-content .description-inner ul {
+/* Re-style ordered list in course content */
+.course-content .activity-altcontent ul {
   list-style: disc;
 }
-.course-content .description-inner ul ul {
+.course-content .activity-altcontent ul ul {
   list-style: circle;
 }
-.course-content .description-inner ul ul ul {
+.course-content .activity-altcontent ul ul ul {
   list-style: square;
 }
 
+/* Activity cards */
 .activity-item {
   position: relative;
-  border-radius: 0.5rem;
-  /* Prevent bootstrap strech-link from covering the inplace editable button using z-index. */
+  border-radius: 1rem;
 }
 .activity-item:not(.activityinline) {
   border: 1px solid #dee2e6;
@@ -29038,10 +29033,35 @@ span.editinstructions .alert-link {
 .activity-item.hiddenactivity {
   background-color: #f8f9fa;
 }
-.activity-item.hiddenactivity .description .course-description-item,
 .activity-item.hiddenactivity .activityiconcontainer,
 .activity-item.hiddenactivity .badge {
   mix-blend-mode: multiply;
+}
+.activity-item .activity-grid {
+  display: grid;
+  align-items: center;
+  grid-template-columns: min-content 1fr min-content min-content;
+  grid-template-rows: 1fr repeat(5, min-content);
+  grid-template-areas: "icon          name          completion    actions" "icon          visibility    completion    actions" "icon          dates         completion    actions" "altcontent    altcontent    altcontent    altcontent" "afterlink     afterlink     afterlink     afterlink" "availability  availability  availability  availability";
+}
+@media (max-width: 575.98px) {
+  .activity-item .activity-grid {
+    grid-template-columns: min-content 1fr min-content;
+    grid-template-areas: "icon          name          actions" "icon          visibility    actions" "dates         dates         dates" "completion    completion    completion" "altcontent    altcontent    altcontent" "afterlink     afterlink     afterlink" "availability  availability  availability";
+  }
+}
+.activity-item .activity-grid.noname-grid {
+  grid-template-columns: min-content 1fr min-content;
+  grid-template-areas: "visibility    completion    actions" "altcontent    altcontent    altcontent" "afterlink     afterlink     afterlink" "availability  availability  availability";
+}
+@media (max-width: 575.98px) {
+  .activity-item .activity-grid.noname-grid {
+    grid-template-columns: 1fr min-content;
+    grid-template-areas: "visibility    actions" "altcontent    altcontent" "afterlink     afterlink" "completion    completion" "availability  availability";
+  }
+}
+.activity-item .activity-actions {
+  grid-area: actions;
 }
 .activity-item .activity-actions .actions {
   position: relative;
@@ -29049,54 +29069,108 @@ span.editinstructions .alert-link {
 .activity-item .activity-actions .dropdown-toggle::after {
   display: none;
 }
+.activity-item .activity-actions .action-menu .btn.btn-icon {
+  height: 31px;
+  width: 31px;
+}
+.activity-item .activity-icon {
+  grid-area: icon;
+}
+.activity-item .activity-dates {
+  grid-area: dates;
+  font-size: 0.875em;
+  color: #495057;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.75rem;
+}
+@media (max-width: 575.98px) {
+  .activity-item .activity-dates {
+    margin-top: 0.5rem;
+  }
+}
+.activity-item .activity-name-area {
+  grid-area: name;
+}
+.activity-item .activity-name-area .activityname .afterlink {
+  margin-left: 0.5rem;
+}
+.activity-item .activity-name-area .activityname .inplaceeditable .quickeditlink {
+  z-index: 2;
+  margin-left: 0.5rem;
+}
+.activity-item .activity-name-area .activitybadge.badge-none {
+  font-weight: normal;
+  font-size: 0.875em;
+  padding: 0;
+}
+.activity-item .activity-info {
+  grid-area: completion;
+  justify-self: end;
+}
+.activity-item .activity-info button,
+.activity-item .activity-info a[role=button] {
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  font-weight: bold;
+}
+@media (max-width: 575.98px) {
+  .activity-item .activity-info {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  .activity-item .activity-info button {
+    width: 100%;
+  }
+}
+.activity-item .activity-badges {
+  grid-area: visibility;
+}
+.activity-item .activity-badges .badge {
+  font-weight: normal;
+}
+.activity-item .activity-badges .badge .icon {
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
+}
+.activity-item .activity-altcontent {
+  grid-area: altcontent;
+  margin-top: 0.25rem;
+}
+.activity-item .activity-altcontent.activity-description {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #dee2e6;
+  font-size: 0.875em;
+}
+.activity-item .activity-altcontent img {
+  border-radius: 1rem;
+}
+.activity-item .activity-availability {
+  grid-area: availability;
+}
+.activity-item .activity-afterlink {
+  grid-area: afterlink;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #dee2e6;
+}
 .activity-item .inplaceeditable {
   display: flex;
   flex: 0 1 auto;
   max-width: 100%;
 }
-.activity-item .activityname .afterlink {
-  margin-left: 0.5rem;
-}
-.activity-item .activityname .inplaceeditable .quickeditlink {
-  z-index: 2;
-  margin-left: 0.5rem;
-}
-.activity-item .action-menu-item {
-  display: flex;
-  align-items: center;
-}
-.activity-item .action-menu-item .filler {
-  display: none;
-}
 .activity-item .no-overflow {
   width: 100%;
 }
-@media (max-width: 767.98px) {
-  .activity-item .badge {
-    white-space: normal;
-    text-align: left;
-  }
-}
 @media (min-width: 768px) {
-  .activity-item .automatic-completion-conditions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-  }
   .activity-item:not(.activityinline) {
-    padding: 1.5rem;
-  }
-  .activity-item .activity-info,
-  .activity-item .activity-actions {
-    margin-left: auto;
-    padding-left: 0.5rem;
-    align-self: start;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    padding: 1rem;
   }
 }
 
+/* Activity card in editing mode */
 .editing .activity-item {
   cursor: move;
 }
@@ -29114,10 +29188,8 @@ span.editinstructions .alert-link {
 .editing .activity-item:hover .alert-link, .editing .activity-item.selected .alert-link {
   color: #070808;
 }
-.editing .activity-item:hover .description .course-description-item,
 .editing .activity-item:hover .activityiconcontainer,
-.editing .activity-item:hover .badge, .editing .activity-item.selected .description .course-description-item,
-.editing .activity-item.selected .activityiconcontainer,
+.editing .activity-item:hover .badge, .editing .activity-item.selected .activityiconcontainer,
 .editing .activity-item.selected .badge {
   mix-blend-mode: multiply;
 }
@@ -29140,6 +29212,7 @@ span.editinstructions .alert-link {
   margin-top: 0;
 }
 
+/* Activity divider */
 .activity:focus-within + .activity div.divider button,
 .course-section-header:focus-within + .content .section .activity:first-child div.divider button,
 .content .section .activity:focus-within div.divider button {
@@ -29177,6 +29250,7 @@ span.editinstructions .alert-link {
   visibility: visible;
 }
 
+/* Bulk editing */
 .bulkenabled .bulk-hidden {
   display: none !important;
 }
