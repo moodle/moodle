@@ -15,14 +15,15 @@ Feature: As a teacher, you can manually lock individual discussions when viewing
       | course   | C1              |
       | activity | forum           |
       | name     | Test forum name |
-    And the following forum discussions exist in course "Course 1":
-      | user  | forum           | name         | message                              |
-      | admin | Test forum name | Discussion 1 | Discussion contents 1, first message |
-      | admin | Test forum name | Discussion 2 | Discussion contents 2, first message |
-    And the following forum replies exist in course "Course 1":
-      | user  | forum           | discussion   | subject                 | message                               |
-      | admin | Test forum name | Discussion 1 | Reply 1 to discussion 1 | Discussion contents 1, second message |
-      | admin | Test forum name | Discussion 2 | Reply 1 to discussion 2 | Discussion contents 2, second message |
+      | idnumber | forum1          |
+    And the following "mod_forum > discussions" exist:
+      | user  | forum  | name         | message                              |
+      | admin | forum1 | Discussion 1 | Discussion contents 1, first message |
+      | admin | forum1 | Discussion 2 | Discussion contents 2, first message |
+    And the following "mod_forum > posts" exist:
+      | user  | parentsubject | subject                 | message                               |
+      | admin | Discussion 1  | Reply 1 to discussion 1 | Discussion contents 1, second message |
+      | admin | Discussion 2  | Reply 1 to discussion 2 | Discussion contents 2, second message |
 
   Scenario: Lock a discussion and view
     Given I am on the "Course 1" course page logged in as admin
