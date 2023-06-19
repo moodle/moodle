@@ -34386,6 +34386,13 @@ img.userpicture {
 .generaltable tbody tr:nth-of-type(odd) {
   background-color: rgba(0, 0, 0, 0.03);
 }
+.generaltable thead .sticky-column,
+.generaltable tbody tr:nth-of-type(even) {
+  background-color: #fff;
+}
+.generaltable tbody tr:nth-of-type(odd) .sticky-column {
+  background-color: #f7f7f7;
+}
 .generaltable.table-sm th,
 .generaltable.table-sm td {
   padding: 0.3rem;
@@ -34397,6 +34404,9 @@ img.userpicture {
 .generaltable tbody tr:hover.dimmed_text a:not(.menu-action) {
   color: #1d2125;
 }
+.generaltable tbody tr:hover td.sticky-column {
+  background-color: #ececec;
+}
 
 table caption {
   font-size: 24px;
@@ -34404,6 +34414,11 @@ table caption {
   line-height: 42px;
   text-align: left;
   caption-side: top;
+}
+table .sticky-column {
+  position: sticky;
+  left: 0;
+  background-color: inherit;
 }
 
 .table-dynamic .loading-icon {
