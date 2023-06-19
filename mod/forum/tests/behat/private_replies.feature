@@ -23,9 +23,9 @@ Feature: Forum posts can be replied to in private
       | teacher2 | C1 | editingteacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
-    And the following forum discussions exist in course "Science 101":
-      | user     | forum             | name                    | message                                        |
-      | student1 | Study discussions | Answers to the homework | Here are the answers to last night's homework. |
+    And the following "mod_forum > discussions" exist:
+      | user     | forum  | name                    | message                                        |
+      | student1 | forum  | Answers to the homework | Here are the answers to last night's homework. |
     And I am on the "Science 101" course page logged in as teacher1
     And I reply "Answers to the homework" post from "Study discussions" forum with:
       | Message         | How about you and I have a meeting after class about plagiarism? |
