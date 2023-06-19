@@ -1,5 +1,9 @@
-This files describes API changes in /completion/* - completion,
+This file describes API changes in /completion/* - completion,
 information provided here is intended especially for developers.
+
+=== 4.3 ===
+* A trait class, core_completion/form/form_trait has been added to reuse code for adding and validation completion settings to any
+  form.
 
 === 4.0 ===
 * New method mark_course_completions_activity_criteria() has been added to mark course completions instantly. It is
