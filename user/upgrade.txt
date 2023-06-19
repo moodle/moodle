@@ -15,6 +15,9 @@ This files describes API changes for code that uses the user API.
   - `profile_display_fields`
   - `profile_edit_category`
   - `profile_edit_field`
+  - `user_get_participants`
+  - `user_get_participants_sql`
+  - `user_get_total_participants`
 
 === 4.2 ===
 
