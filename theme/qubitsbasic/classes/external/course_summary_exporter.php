@@ -148,6 +148,10 @@ class course_summary_exporter extends \core\external\exporter {
                 'type' => PARAM_TEXT,
                 'optional' => true
             ),
+            'cardstyle' => array(
+                'type' => PARAM_RAW,
+                'optional' => true
+            ),
             'courseimage' => array(
                 'type' => PARAM_RAW,
             ),
