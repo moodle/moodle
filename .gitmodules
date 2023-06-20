@@ -1,0 +1,3 @@
+[submodule "lib/editor/tiny/plugins/iorad"]
+	path = lib/editor/tiny/plugins/iorad
+	url = /home/pujangga/projects/iorad/iorad-tiny-editor/
