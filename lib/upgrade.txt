@@ -16,6 +16,11 @@ information provided here is intended especially for developers.
   example, of `\moodle_url` instances)
 * The badges_get_oauth2_service_options() method has been deprecated, because it's not required anymore. It should no longer
   be used.
+* The following class constants are deprecated, as Sodium is now required and we no longer support the OpenSSL fallback except
+  when decrypting existing content for backwards compatibility:
+  - `\core\encryption::METHOD_OPENSSL`
+  - `\core\encryption::OPENSSL_CIPHER`
+* The `\core\encryption::is_sodium_installed` method is deprecated, as Sodium is now a requirement
 * Support for the following phpunit coverage info properties, deprecated since 3.11, has been removed:
   - `whitelistfolders`
   - `whitelistfiles`

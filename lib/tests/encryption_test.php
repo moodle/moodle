@@ -14,24 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Test encryption.
- *
- * @package core
- * @copyright 2020 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core;
 
+use advanced_testcase;
+
 /**
  * Test encryption.
  *
  * @package core
  * @copyright 2020 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers  \core\encryption
  */
-class encryption_test extends \basic_testcase {
+class encryption_test extends advanced_testcase {
 
     /**
      * Clear junk created by tests.
@@ -57,25 +52,14 @@ class encryption_test extends \basic_testcase {
     }
 
     /**
-     * Tests using Sodium need to check the extension is available.
-     *
-     * @param string $method Encryption method
-     */
-    protected function require_sodium(string $method) {
-        if ($method == encryption::METHOD_SODIUM) {
-            if (!encryption::is_sodium_installed()) {
-                $this->markTestSkipped('Sodium not installed');
-            }
-        }
-    }
-
-    /**
      * Many of the tests work with both encryption methods.
      *
      * @return array[] Array of method options for test
      */
     public function encryption_method_provider(): array {
-        return ['Sodium' => [encryption::METHOD_SODIUM], 'OpenSSL' => [encryption::METHOD_OPENSSL]];
+        return [
+            'Sodium' => [encryption::METHOD_SODIUM],
+        ];
     }
 
     /**
@@ -85,11 +69,8 @@ class encryption_test extends \basic_testcase {
      * @dataProvider encryption_method_provider
      */
     public function test_create_key(string $method): void {
-        $this->require_sodium($method);
         encryption::create_key($method);
         $key = testable_encryption::get_key($method);
-
-        // Conveniently, both encryption methods have the same key length.
         $this->assertEquals(32, strlen($key));
 
         $this->expectExceptionMessage('Key already exists');
@@ -97,9 +78,19 @@ class encryption_test extends \basic_testcase {
     }
 
     /**
+     * Test that we can create keys for legacy {@see encryption::METHOD_OPENSSL} content
+     */
+    public function test_create_key_openssl(): void {
+        encryption::create_key(encryption::METHOD_OPENSSL);
+        $key = testable_encryption::get_key(encryption::METHOD_OPENSSL);
+        $this->assertEquals(32, strlen($key));
+
+        $this->expectExceptionMessage('Key already exists');
+        encryption::create_key(encryption::METHOD_OPENSSL);
+    }
+
+    /**
      * Tests encryption and decryption with empty strings.
-     *
-     * @throws \moodle_exception
      */
     public function test_encrypt_and_decrypt_empty(): void {
         $this->assertEquals('', encryption::encrypt(''));
@@ -114,12 +105,20 @@ class encryption_test extends \basic_testcase {
      */
     public function test_encrypt_nokeys(string $method): void {
         global $CFG;
-        $this->require_sodium($method);
 
         // Prevent automatic generation of keys.
         $CFG->nokeygeneration = true;
         $this->expectExceptionMessage('Key not found');
         encryption::encrypt('frogs', $method);
+    }
+
+    /**
+     * Test that attempting to encrypt with legacy {@see encryption::METHOD_OPENSSL} method falls back to Sodium
+     */
+    public function test_encrypt_openssl(): void {
+        $encrypted = encryption::encrypt('Frogs', encryption::METHOD_OPENSSL);
+        $this->assertStringStartsWith(encryption::METHOD_SODIUM . ':', $encrypted);
+        $this->assertDebuggingCalledCount(1, ['Encryption using legacy OpenSSL is deprecated, reverting to Sodium']);
     }
 
     /**
@@ -137,7 +136,6 @@ class encryption_test extends \basic_testcase {
      * @param string $method Encryption method
      */
     public function test_decrypt_tooshort(string $method): void {
-        $this->require_sodium($method);
 
         $this->expectExceptionMessage('Insufficient data');
         switch ($method) {
@@ -162,8 +160,6 @@ class encryption_test extends \basic_testcase {
      * @param string $method Encryption method
      */
     public function test_decrypt_notbase64(string $method): void {
-        $this->require_sodium($method);
-
         $this->expectExceptionMessage('Invalid base64 data');
         encryption::decrypt($method . ':' . chr(160));
     }
@@ -176,7 +172,6 @@ class encryption_test extends \basic_testcase {
      */
     public function test_decrypt_nokeys(string $method): void {
         global $CFG;
-        $this->require_sodium($method);
 
         // Prevent automatic generation of keys.
         $CFG->nokeygeneration = true;
@@ -186,13 +181,28 @@ class encryption_test extends \basic_testcase {
     }
 
     /**
+     * Test that we can decrypt legacy {@see encryption::METHOD_OPENSSL} content
+     */
+    public function test_decrypt_openssl(): void {
+        $key = testable_encryption::get_key(encryption::METHOD_OPENSSL);
+
+        // Construct encrypted string using openssl method/cipher.
+        $iv = random_bytes(openssl_cipher_iv_length(encryption::OPENSSL_CIPHER));
+        $encrypted = @openssl_encrypt('Frogs', encryption::OPENSSL_CIPHER, $key, OPENSSL_RAW_DATA, $iv);
+        $hmac = hash_hmac('sha256', $iv . $encrypted, $key, true);
+
+        $decrypted = encryption::decrypt(encryption::METHOD_OPENSSL . ':' . base64_encode($iv . $encrypted . $hmac));
+        $this->assertEquals('Frogs', $decrypted);
+        $this->assertDebuggingCalledCount(1, ['Decryption using legacy OpenSSL is deprecated, please upgrade to Sodium']);
+    }
+
+    /**
      * Test automatic generation of keys when needed.
      *
      * @dataProvider encryption_method_provider
      * @param string $method Encryption method
      */
     public function test_auto_key_generation(string $method): void {
-        $this->require_sodium($method);
 
         // Allow automatic generation (default).
         $encrypted = encryption::encrypt('frogs', $method);
@@ -207,7 +217,6 @@ class encryption_test extends \basic_testcase {
      */
     public function test_invalid_key(string $method): void {
         global $CFG;
-        $this->require_sodium($method);
 
         // Set the key to something bogus.
         $folder = $CFG->dataroot . '/secret/key';
@@ -233,7 +242,6 @@ class encryption_test extends \basic_testcase {
      * @param string $method Encryption method
      */
     public function test_modified_data(string $method): void {
-        $this->require_sodium($method);
 
         $encrypted = encryption::encrypt('frogs', $method);
         $mainbit = base64_decode(substr($encrypted, strlen($method) + 1));
@@ -248,10 +256,8 @@ class encryption_test extends \basic_testcase {
      *
      * @dataProvider encryption_method_provider
      * @param string $method Encryption method
-     * @throws \moodle_exception
      */
     public function test_encrypt_and_decrypt_realdata(string $method): void {
-        $this->require_sodium($method);
 
         // Encrypt short string.
         $encrypted = encryption::encrypt('frogs', $method);
