@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 
 use theme_qubitsbasic\external\course_summary_exporter;
 use core_availability\info;
+use core_scss;
 
 
 require_once("$CFG->libdir/externallib.php");
@@ -3918,7 +3919,26 @@ class theme_qubitsbasic_external extends external_api {
             $course_customdata = self::get_custom_fields_data_by_cid($course->id);
             if(!empty($course_customdata)){
                 $course->level = isset($course_customdata["level"]) ? $course_customdata["level"] : "1";
-                $course->cardcolour = isset($course_customdata["cardcolour"]) ? $course_customdata["cardcolour"] : "#FFB900";
+                $cardcolour = isset($course_customdata["cardcolour"]) ? $course_customdata["cardcolour"] : "#FFB900";
+                if (preg_match('/^#?([[:xdigit:]]{3}){1,2}$/', $cardcolour)){
+                    $course->cardcolour = $cardcolour;
+                }else{
+                    $course->cardcolour = "#FFB900";
+                }
+                
+                $crgba = "{$course->cardcolour}80";
+                $coursescss = '$colorbgcard: '.$crgba.'; ';
+                $coursescss .= '#mycoursecard-'.$course->id.' .card-body-overlay{';
+                $coursescss .= 'background: linear-gradient(lighten($colorbgcard, 15), darken($colorbgcard, 10));';
+                $coursescss .= 'color: darken($colorbgcard, 45); } ';
+                $coursescss .= '#mycoursecard-'.$course->id.' .card-body-overlay:hover {';
+                $coursescss .= 'background: linear-gradient(darken($colorbgcard, 15),darken($colorbgcard, 10));';
+                $coursescss .= 'color: #ffffff; } ';
+                $coursescss .= '#mycoursecard-'.$course->id.' .numbercolor {';
+                $coursescss .= 'color: darken($colorbgcard, 45); } ';
+                $compiler = new core_scss();
+                $cardstyle = $compiler->compile($coursescss);
+                $course->cardstyle = $cardstyle;
             }
             return $course;
         }, $formattedcourses);

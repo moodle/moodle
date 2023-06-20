@@ -1,7 +1,7 @@
-<div id="mycoursecard-{{id}}" class="card coursecard col-lg-3 max-width max-width-2 flex-grow col-md-6 col-sm-12 p-0 card-width card-border-radius card-box-shadow card-border">
+<div id="mycoursecard-{{id}}" class="card coursecard col-lg-3 max-width max-width-2 flex-grow col-md-6 col-sm-12 p-0 card-width card-border-radius card-box-shadow card-border" data-color="{{cardcolour}}">
 
                 <div class="card-body bg-wave p-0 card-border-radius card-text-color">
-                    <div class="{{#iscomplete}}complete-card-overlay {{/iscomplete}}{{^iscomplete}}card-body-overlay {{/iscomplete}} card-body-border-radius" style="--cardbgcolor:rgb(255, 185, 0, 0.5);">
+                    <div class="{{#iscomplete}}complete-card-overlay {{/iscomplete}}{{^iscomplete}}card-body-overlay {{/iscomplete}} card-body-border-radius" >
                         <p class="card-text">{{fullname}}</p>
                         <div class="row align-items-center">
                             <div class="card-title card-text-size col-lg-9 col-md-9 col-sm-8 w-auto pr-0">{{coursecategory}}
@@ -35,3 +35,7 @@
                     </div>
                 </div>
             </div>
+
+<style>
+{{{cardstyle}}}
+</style>
