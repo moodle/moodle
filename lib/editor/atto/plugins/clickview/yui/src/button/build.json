@@ -1,0 +1,10 @@
+{
+  "name": "moodle-atto_clickview-button",
+  "builds": {
+    "moodle-atto_clickview-button": {
+      "jsfiles": [
+        "button.js"
+      ]
+    }
+  }
+}
