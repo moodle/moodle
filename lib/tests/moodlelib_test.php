@@ -3958,9 +3958,11 @@ EOF;
      * @dataProvider count_words_testcases
      * @param int $expectedcount number of words in $string.
      * @param string $string the test string to count the words of.
+     * @param int|null $format
      */
-    public function test_count_words(int $expectedcount, string $string): void {
-        $this->assertEquals($expectedcount, count_words($string));
+    public function test_count_words(int $expectedcount, string $string, $format = null): void {
+        $this->assertEquals($expectedcount, count_words($string, $format),
+            "'$string' with format '$format' does not match count $expectedcount");
     }
 
     /**
@@ -3969,6 +3971,13 @@ EOF;
      * @return array of test cases.
      */
     public function count_words_testcases(): array {
+        // Copy-pasting example from MDL-64240.
+        $copypasted = <<<EOT
+<p onclick="alert('boop');">Snoot is booped</p>
+ <script>alert('Boop the snoot');</script>
+ <img alt="Boop the Snoot." src="https://proxy.duckduckgo.com/iu/?u=http%3A%2F%2Fwww.geekfill.com%2Fwp-content%2Fuploads%2F2015%2F08%2FBoop-the-Snoot.jpg&f=1">
+EOT;
+
         // The counts here should match MS Word and Libre Office.
         return [
             [0, ''],
@@ -4005,6 +4014,16 @@ EOF;
             [1, "SO<sub>4</sub><sup>2-</sup>"],
             [6, '4+4=8 i.e. O(1) a,b,c,d I’m black&blue_really'],
             [1, '<span>a</span><span>b</span>'],
+            [1, '<span>a</span><span>b</span>', FORMAT_PLAIN],
+            [1, '<span>a</span><span>b</span>', FORMAT_HTML],
+            [1, '<span>a</span><span>b</span>', FORMAT_MOODLE],
+            [1, '<span>a</span><span>b</span>', FORMAT_MARKDOWN],
+            [1, 'aa <argh <bleh>pokus</bleh>'],
+            [2, 'aa <argh <bleh>pokus</bleh>', FORMAT_HTML],
+            [6, $copypasted],
+            [6, $copypasted, FORMAT_PLAIN],
+            [3, $copypasted, FORMAT_HTML],
+            [3, $copypasted, FORMAT_MOODLE],
         ];
     }
 
@@ -4014,9 +4033,11 @@ EOF;
      * @dataProvider count_letters_testcases
      * @param int $expectedcount number of characters in $string.
      * @param string $string the test string to count the letters of.
+     * @param int|null $format
      */
-    public function test_count_letters(int $expectedcount, string $string): void {
-        $this->assertEquals($expectedcount, count_letters($string));
+    public function test_count_letters(int $expectedcount, string $string, $format = null): void {
+        $this->assertEquals($expectedcount, count_letters($string, $format),
+            "'$string' with format '$format' does not match count $expectedcount");
     }
 
     /**
@@ -4030,6 +4051,12 @@ EOF;
             [1, 'x'],
             [1, '&amp;'],
             [4, '<p>frog</p>'],
+            [4, '<p>frog</p>', FORMAT_PLAIN],
+            [4, '<p>frog</p>', FORMAT_MOODLE],
+            [4, '<p>frog</p>', FORMAT_HTML],
+            [4, '<p>frog</p>', FORMAT_MARKDOWN],
+            [2, 'aa <argh <bleh>pokus</bleh>'],
+            [7, 'aa <argh <bleh>pokus</bleh>', FORMAT_HTML],
         ];
     }
 
