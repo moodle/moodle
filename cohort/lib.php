@@ -384,13 +384,13 @@ function cohort_get_cohort($cohortorid, $currentcontext, $withcustomfields = fal
 
     if ($cohort && in_array($cohort->contextid, $currentcontext->get_parent_context_ids())) {
         if (!$cohort->visible) {
-            $cohort = false;
-        } else {
             $cohortcontext = context::instance_by_id($cohort->contextid);
             if (!has_capability('moodle/cohort:view', $cohortcontext)) {
-                $cohort = false;
+                return false;
             }
         }
+    } else {
+        return false;
     }
 
     if ($cohort && $withcustomfields) {
