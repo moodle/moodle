@@ -8399,9 +8399,10 @@ function moodle_setlocale($locale='') {
  *
  * @category string
  * @param string $string The text to be searched for words. May be HTML.
+ * @param int|null $format
  * @return int The count of words in the specified string
  */
-function count_words($string) {
+function count_words($string, $format = null) {
     // Before stripping tags, add a space after the close tag of anything that is not obviously inline.
     // Also, br is a special case because it definitely delimits a word, but has no close tag.
     $string = preg_replace('~
@@ -8418,6 +8419,11 @@ function count_words($string) {
                 <br> | <br\s*/>                 # Special cases that are not close tags.
             )
             ~x', '$1 ', $string); // Add a space after the close tag.
+    if ($format !== null && $format != FORMAT_PLAIN) {
+        // Match the usual text cleaning before display.
+        // Ideally we should apply multilang filter only here, other filters might add extra text.
+        $string = format_text($string, $format, ['filter' => false, 'noclean' => false, 'para' => false]);
+    }
     // Now remove HTML tags.
     $string = strip_tags($string);
     // Decode HTML entities.
@@ -8439,9 +8445,15 @@ function count_words($string) {
  *
  * @category string
  * @param string $string The text to be searched for letters. May be HTML.
+ * @param int|null $format
  * @return int The count of letters in the specified text.
  */
-function count_letters($string) {
+function count_letters($string, $format = null) {
+    if ($format !== null && $format != FORMAT_PLAIN) {
+        // Match the usual text cleaning before display.
+        // Ideally we should apply multilang filter only here, other filters might add extra text.
+        $string = format_text($string, $format, ['filter' => false, 'noclean' => false, 'para' => false]);
+    }
     $string = strip_tags($string); // Tags are out now.
     $string = html_entity_decode($string, ENT_COMPAT);
     $string = preg_replace('/[[:space:]]*/', '', $string); // Whitespace are out now.
