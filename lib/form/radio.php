@@ -43,6 +43,9 @@ class MoodleQuickForm_radio extends HTML_QuickForm_radio implements templatable 
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
 
+    /** @var bool if true label will be hidden. */
+    protected $_hiddenLabel = false;
+
     /**
      * constructor
      *
@@ -114,5 +117,14 @@ class MoodleQuickForm_radio extends HTML_QuickForm_radio implements templatable 
     function toHtml()
     {
         return '<span>' . parent::toHtml() . '</span>';
+    }
+
+    /**
+     * Sets label to be hidden
+     *
+     * @param bool $hiddenLabel sets if label should be hidden
+     */
+    public function setHiddenLabel($hiddenLabel) {
+        $this->_hiddenLabel = $hiddenLabel;
     }
 }
