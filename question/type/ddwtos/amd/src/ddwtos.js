@@ -363,6 +363,12 @@ define([
      * @param {jQuery} drop the place to put it.
      */
     DragDropToTextQuestion.prototype.sendDragToDrop = function(drag, drop) {
+        // Send drag home if there is no place in drop.
+        if (this.getPlace(drop) === null) {
+            this.sendDragHome(drag);
+            return;
+        }
+
         // Is there already a drag in this drop? if so, evict it.
         var oldDrag = this.getCurrentDragInPlace(this.getPlace(drop));
         if (oldDrag.length !== 0) {
@@ -663,7 +669,7 @@ define([
      */
     DragDropToTextQuestion.prototype.getClassnameNumericSuffix = function(node, prefix) {
         var classes = node.attr('class');
-        if (classes !== '') {
+        if (classes !== undefined && classes !== '') {
             var classesArr = classes.split(' ');
             for (var index = 0; index < classesArr.length; index++) {
                 var patt1 = new RegExp('^' + prefix + '([0-9])+$');
