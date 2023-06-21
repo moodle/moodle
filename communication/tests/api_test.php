@@ -312,4 +312,18 @@ class api_test extends \advanced_testcase {
         $adhoctask = \core\task\manager::get_adhoc_tasks('\\core_communication\\task\\remove_members_from_room');
         $this->assertCount(1, $adhoctask);
     }
+
+    /**
+     * Test the enabled communication plugin list and default.
+     *
+     * @covers ::get_enabled_providers_and_default
+     */
+    public function test_get_enabled_providers_and_default(): void {
+        list($communicationproviders, $defaulprovider) = \core_communication\api::get_enabled_providers_and_default();
+        // Get the communication plugins.
+        $plugins = \core_component::get_plugin_list('communication');
+        // Check the number of plugins matches plus 1 as we have none in the selection.
+        $this->assertCount(count($plugins) + 1, $communicationproviders);
+        $this->assertEquals(processor::PROVIDER_NONE, $defaulprovider);
+    }
 }

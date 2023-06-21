@@ -116,19 +116,41 @@ class api {
     }
 
     /**
+     * Get the enabled communication providers and default provider according to the selected provider.
+     *
+     * @param string|null $selecteddefaulprovider
+     * @return array
+     */
+    public static function get_enabled_providers_and_default(string $selecteddefaulprovider = null): array {
+        $communicationproviders = self::get_communication_plugin_list_for_form();
+        $defaulprovider = processor::PROVIDER_NONE;
+        if (!empty($selecteddefaulprovider) && array_key_exists($selecteddefaulprovider, $communicationproviders)) {
+            $defaulprovider = $selecteddefaulprovider;
+        }
+        return [$communicationproviders, $defaulprovider];
+    }
+
+    /**
      * Define the form elements for the communication api.
      * This method will be called from the form definition method of the instance.
      *
      * @param \MoodleQuickForm $mform The form element
+     * @param string $selectdefaultcommunication The default selected communication provider in the form field
      */
-    public function form_definition(\MoodleQuickForm $mform): void {
+    public function form_definition(
+        \MoodleQuickForm $mform,
+        string $selectdefaultcommunication = processor::PROVIDER_NONE
+    ): void {
         global $PAGE;
+
+        list($communicationproviders, $defaulprovider) = self::
+            get_enabled_providers_and_default($selectdefaultcommunication);
+
         $PAGE->requires->js_call_amd('core_communication/providerchooser', 'init');
 
         $mform->addElement('header', 'communication', get_string('communication', 'communication'));
 
         // List the communication providers.
-        $communicationproviders = self::get_communication_plugin_list_for_form();
         $mform->addElement(
             'select',
             'selectedcommunication',
@@ -137,7 +159,7 @@ class api {
             ['data-communicationchooser-field' => 'selector'],
         );
         $mform->addHelpButton('selectedcommunication', 'seleccommunicationprovider', 'communication');
-        $mform->setDefault('selectedcommunication', processor::PROVIDER_NONE);
+        $mform->setDefault('selectedcommunication', $defaulprovider);
 
         $mform->registerNoSubmitButton('updatecommunicationprovider');
         $mform->addElement('submit',
