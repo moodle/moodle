@@ -1,15 +1,17 @@
-@mod @mod_workshop @javascript @_file_upload
+@mod @mod_workshop @javascript
 Feature: Teachers can embed images into instructions and conclusion fields
   In order to display images as a part of instructions or conclusions in the workshop
   As a teacher
   I need to be able to embed images into the fields and they should display correctly
 
-  # This scenario has Atto-specific steps. See MDL-75913 for further details.
-  @editor_atto
+  @editor_tiny
   Scenario: Embedding the image into the instructions and conclusions fields
     Given the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | One      | teacher1@example.com |
+    And the following "user private files" exist:
+      | user     | filepath                                   | filename       |
+      | teacher1 | mod/workshop/tests/fixtures/moodlelogo.png | moodlelogo.png |
     And the following "courses" exist:
       | fullname | shortname |
       | Course 1 | C1        |
@@ -29,17 +31,11 @@ Feature: Teachers can embed images into instructions and conclusion fields
       | Conclusion format                   | 1 |
     And I press "Save and display"
     And I log out
-    And I log in as "teacher1"
-    # Upload an image into the private files.
-    And I follow "Manage private files"
-    And I upload "mod/workshop/tests/fixtures/moodlelogo.png" file to "Files" filemanager
-    And I click on "Save changes" "button"
+    When I log in as "teacher1"
     # Edit the workshop.
-    When I am on the "Workshop with embedded images" "workshop activity editing" page
+    And I am on the "Workshop with embedded images" "workshop activity editing" page
     And I expand all fieldsets
-    And I set the field "Instructions for submission" to "<p>Image test</p>"
-    And I select the text in the "Instructions for submission" Atto editor
-    And I click on "Insert or edit image" "button" in the "//*[@data-fieldtype='editor']/*[descendant::*[@id='id_instructauthorseditor']]" "xpath_element"
+    And I click on "Image" "button" in the "Instructions for submission" "form_row"
     And I click on "Browse repositories..." "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodlelogo.png" "link"
@@ -50,9 +46,7 @@ Feature: Teachers can embed images into instructions and conclusion fields
     # Embed the image into Instructions for assessment.
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    And I set the field "Instructions for assessment" to "<p>Image test</p>"
-    And I select the text in the "Instructions for assessment" Atto editor
-    And I click on "Insert or edit image" "button" in the "//*[@data-fieldtype='editor']/*[descendant::*[@id='id_instructreviewerseditor']]" "xpath_element"
+    And I click on "Image" "button" in the "Instructions for assessment" "form_row"
     And I click on "Browse repositories..." "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodlelogo.png" "link"
@@ -63,9 +57,7 @@ Feature: Teachers can embed images into instructions and conclusion fields
     # Embed the image into Conclusion.
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    And I set the field "Conclusion" to "<p>Image test</p>"
-    And I select the text in the "Conclusion" Atto editor
-    And I click on "Insert or edit image" "button" in the "//*[@data-fieldtype='editor']/*[descendant::*[@id='id_conclusioneditor']]" "xpath_element"
+    And I click on "Image" "button" in the "Conclusion" "form_row"
     And I click on "Browse repositories..." "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodlelogo.png" "link"
@@ -77,6 +69,6 @@ Feature: Teachers can embed images into instructions and conclusion fields
     And I change phase in workshop "Workshop with embedded images" to "Submission phase"
     Then "//*[contains(@class, 'instructions')]//img[contains(@src, 'pluginfile.php') and contains(@src, '/mod_workshop/instructauthors/moodlelogo.png') and @alt='How to submit']" "xpath_element" should exist
     And I change phase in workshop "Workshop with embedded images" to "Assessment phase"
-    And "//*[contains(@class, 'instructions')]//img[contains(@src, 'pluginfile.php') and contains(@src, '/mod_workshop/instructreviewers/moodlelogo.png') and @alt='How to assess']" "xpath_element" should exist
+    Then "//*[contains(@class, 'instructions')]//img[contains(@src, 'pluginfile.php') and contains(@src, '/mod_workshop/instructreviewers/moodlelogo.png') and @alt='How to assess']" "xpath_element" should exist
     And I change phase in workshop "Workshop with embedded images" to "Closed"
-    And "//*[contains(@class, 'conclusion')]//img[contains(@src, 'pluginfile.php') and contains(@src, '/mod_workshop/conclusion/moodlelogo.png') and @alt='Well done']" "xpath_element" should exist
+    Then "//*[contains(@class, 'conclusion')]//img[contains(@src, 'pluginfile.php') and contains(@src, '/mod_workshop/conclusion/moodlelogo.png') and @alt='Well done']" "xpath_element" should exist
