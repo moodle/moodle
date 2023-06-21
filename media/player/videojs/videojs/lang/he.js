@@ -14,7 +14,7 @@ videojs.addLanguage('he', {
   "Progress Bar": "סרגל התקדמות",
   "progress bar timing: currentTime={1} duration={2}": "{1} מתוך {2}",
   "Fullscreen": "מסך מלא",
-  "Non-Fullscreen": "מסך לא מלא",
+  "Exit Fullscreen": "מסך לא מלא",
   "Mute": "השתק",
   "Unmute": "בטל השתקה",
   "Playback Rate": "קצב ניגון",

@@ -16,7 +16,7 @@ videojs.addLanguage('et', {
   "Progress Bar": "Edenemisriba ",
   "progress bar timing: currentTime={1} duration={2}": "{1} / {2}",
   "Fullscreen": "Täisekraan",
-  "Non-Fullscreen": "Välju täisekraanist",
+  "Exit Fullscreen": "Välju täisekraanist",
   "Mute": "Vaigista",
   "Unmute": "Lõpeta vaigistus",
   "Playback Rate": "Taasesituse kiirus",
