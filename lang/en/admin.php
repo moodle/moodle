@@ -1265,9 +1265,7 @@ $string['searchupdateindex'] = 'Update indexed contents';
 $string['sectionerror'] = 'Section error!';
 $string['secureforms'] = 'Use additional form security';
 $string['security'] = 'Security';
-$string['selectdevice'] = 'Select device';
 $string['selectsearchengine'] = 'Select search engine';
-$string['selecttheme'] = 'Select theme for {$a} device';
 $string['server'] = 'Server';
 $string['serverchecks'] = 'Server checks';
 $string['serverlimit'] = 'Server limit';
@@ -1459,7 +1457,6 @@ $string['testoutgoingmailconf_toemail'] = 'To email address';
 $string['themedesignermode'] = 'Theme designer mode';
 $string['themedesignermodewarning'] = 'Theme designer mode is enabled. This should not be enabled on production sites as it can significantly reduce performance.';
 $string['themelist'] = 'Theme list';
-$string['themenoselected'] = 'No theme selected';
 $string['themeresetcaches'] = 'Clear theme caches';
 $string['themeselect'] = 'Change theme';
 $string['themeselector'] = 'Theme selector';
@@ -1487,7 +1484,6 @@ $string['unicoderequired'] = 'It is required that you store all your data in Uni
 $string['uninstallplugin'] = 'Uninstall';
 $string['unlockaccount'] = 'Unlock account';
 $string['unoconvwarning'] = 'The version of unoconv you have installed is not supported.';
-$string['unsettheme'] = 'Unset theme';
 $string['unsupported'] = 'Unsupported';
 $string['unsupporteddbfileformat'] = 'Your database uses Antelope as the file format. Full UTF-8 support in MySQL and MariaDB requires the Barracuda file format. Please switch to the Barracuda file format. See the documentation <a href="https://docs.moodle.org/en/admin/environment/custom check/mysql full unicode support">MySQL full unicode support</a> for details.';
 $string['unsupporteddbfilepertable'] = 'For full support of UTF-8 both MySQL and MariaDB require you to change your MySQL setting \'innodb_file_per_table\' to \'ON\'. See the documentation for further details.';
@@ -1627,3 +1623,9 @@ $string['multilangforceold'] = 'Force old multilang syntax: &lt;span&gt; without
 
 // Deprecated since Moodle 4.2.
 $string['blockunprotect'] = 'Unprotect';
+
+// Deprecated since Moodle 4.3.
+$string['selectdevice'] = 'Select device';
+$string['selecttheme'] = 'Select theme for {$a} device';
+$string['themenoselected'] = 'No theme selected';
+$string['unsettheme'] = 'Unset theme';

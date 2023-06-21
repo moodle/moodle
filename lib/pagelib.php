@@ -1896,22 +1896,17 @@ class moodle_page {
             }
         }
 
-        $devicetheme = core_useragent::get_device_type_theme($this->devicetypeinuse);
-
-        // The user is using another device than default, and we have a theme for that, we should use it.
-        $hascustomdevicetheme = core_useragent::DEVICETYPE_DEFAULT != $this->devicetypeinuse && !empty($devicetheme);
-
         foreach ($themeorder as $themetype) {
 
             switch ($themetype) {
                 case 'course':
-                    if (!empty($CFG->allowcoursethemes) && !empty($this->_course->theme) && !$hascustomdevicetheme) {
+                    if (!empty($CFG->allowcoursethemes) && !empty($this->_course->theme)) {
                         return $this->_course->theme;
                     }
                 break;
 
                 case 'category':
-                    if (!empty($CFG->allowcategorythemes) && !empty($this->_course) && !$hascustomdevicetheme) {
+                    if (!empty($CFG->allowcategorythemes) && !empty($this->_course)) {
                         $categories = $this->categories;
                         foreach ($categories as $category) {
                             if (!empty($category->theme)) {
@@ -1928,7 +1923,7 @@ class moodle_page {
                 break;
 
                 case 'user':
-                    if (!empty($CFG->allowuserthemes) && !empty($USER->theme) && !$hascustomdevicetheme) {
+                    if (!empty($CFG->allowuserthemes) && !empty($USER->theme)) {
                         if ($mnetpeertheme) {
                             return $mnetpeertheme;
                         } else {
@@ -1938,7 +1933,7 @@ class moodle_page {
                 break;
 
                 case 'cohort':
-                    if (!empty($CFG->allowcohortthemes) && !empty($USER->cohorttheme) && !$hascustomdevicetheme) {
+                    if (!empty($CFG->allowcohortthemes) && !empty($USER->cohorttheme)) {
                         return $USER->cohorttheme;
                     }
                 break;
@@ -1947,16 +1942,12 @@ class moodle_page {
                     if ($mnetpeertheme) {
                         return $mnetpeertheme;
                     }
-                    // First try for the device the user is using.
-                    if (!empty($devicetheme)) {
-                        return $devicetheme;
+
+                    // Use theme if it is set in config.
+                    if (!empty($CFG->theme)) {
+                        return $CFG->theme;
                     }
-                    // Next try for the default device (as a fallback).
-                    $devicetheme = core_useragent::get_device_type_theme(core_useragent::DEVICETYPE_DEFAULT);
-                    if (!empty($devicetheme)) {
-                        return $devicetheme;
-                    }
-                    // The default device theme isn't set up - use the overall default theme.
+                    // Use the overall default theme.
                     return theme_config::DEFAULT_THEME;
             }
         }

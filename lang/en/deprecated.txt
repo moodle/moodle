@@ -75,3 +75,7 @@ type_contentbank,core_plugin
 type_contentbank_plural,core_plugin
 missingversionfile,core_webservice
 cannotgetcoursecontents,core_webservice
+selectdevice,core_admin
+selecttheme,core_admin
+themenoselected,core_admin
+unsettheme,core_admin

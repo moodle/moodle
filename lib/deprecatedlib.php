@@ -3442,3 +3442,44 @@ function badges_get_oauth2_service_options() {
 
     return $options;
 }
+
+/**
+ * Checks if the given device has a theme defined in config.php.
+ *
+ * @param string $device The device
+ * @deprecated since 4.3.
+ * @return bool
+ */
+function theme_is_device_locked($device) {
+    debugging(
+        __FUNCTION__ . '() is deprecated.' .
+            'All functions associated with device specific themes are being removed.',
+        DEBUG_DEVELOPER
+    );
+    global $CFG;
+    $themeconfigname = core_useragent::get_device_type_cfg_var_name($device);
+    return isset($CFG->config_php_settings[$themeconfigname]);
+}
+
+/**
+ * Returns the theme named defined in config.php for the given device.
+ *
+ * @param string $device The device
+ * @deprecated since 4.3.
+ * @return string or null
+ */
+function theme_get_locked_theme_for_device($device) {
+    debugging(
+        __FUNCTION__ . '() is deprecated.' .
+            'All functions associated with device specific themes are being removed.',
+        DEBUG_DEVELOPER
+    );
+    global $CFG;
+
+    if (!theme_is_device_locked($device)) {
+        return null;
+    }
+
+    $themeconfigname = core_useragent::get_device_type_cfg_var_name($device);
+    return $CFG->config_php_settings[$themeconfigname];
+}

@@ -25,6 +25,11 @@ information provided here is intended especially for developers.
   whether the settings can be overriden or not will depend on the value of implemented \admin_setting::is_forceable() method,
   even if we define the settings in config.php.
 * New core_renderer::paragraph method to replace the overused html_writer::tag('p', ...) pattern.
+* All functions associated with device specific themes have been deprecated.
+  - core_useragent::get_device_type_theme()
+  - core_useragent::get_device_type_cfg_var_name()
+  - theme_is_device_locked()
+  - theme_get_locked_theme_for_device()
 
 === 4.2 ===
 
