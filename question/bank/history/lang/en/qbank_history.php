@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['allquestionversionsdeleted'] = 'All versions of this question have been deleted.';
 $string['close_history'] = 'Close';
 $string['history_action'] = 'History';
 $string['history_header'] = 'Question history';
