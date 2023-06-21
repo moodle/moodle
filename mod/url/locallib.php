@@ -277,7 +277,7 @@ function url_print_workaround($url, $cm, $course) {
     }
 
     echo '<div class="urlworkaround">';
-    print_string('clicktoopen', 'url', "<a href=\"$fullurl\" $extra>$fullurl</a>");
+    print_string('clicktoopen', 'url', html_writer::link($fullurl, format_string($cm->name)));
     echo '</div>';
 
     echo $OUTPUT->footer();
@@ -289,7 +289,6 @@ function url_print_workaround($url, $cm, $course) {
  * @param object $url
  * @param object $cm
  * @param object $course
- * @return does not return
  */
 function url_display_embed($url, $cm, $course) {
     global $PAGE, $OUTPUT;
@@ -298,7 +297,7 @@ function url_display_embed($url, $cm, $course) {
     $fullurl  = url_get_full_url($url, $cm, $course);
     $title    = $url->name;
 
-    $link = html_writer::tag('a', $fullurl, array('href'=>str_replace('&amp;', '&', $fullurl)));
+    $link = html_writer::link($fullurl, format_string($cm->name));
     $clicktoopen = get_string('clicktoopen', 'url', $link);
     $moodleurl = new moodle_url($fullurl);
 
