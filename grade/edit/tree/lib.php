@@ -105,10 +105,10 @@ class grade_edit_tree {
 
         $object = $element['object'];
         $eid    = $element['eid'];
-        $object->name = $this->gtree->get_element_header($element, true, false, true, false, true);
-        $object->icon = $this->gtree->get_element_icon($element);
-        $object->type = $this->gtree->get_element_type_string($element);
-        $object->stripped_name = $this->gtree->get_element_header($element, false, false, false);
+        $name = $this->gtree->get_element_header($element, true, false, true, false, true);
+        $icon = $this->gtree->get_element_icon($element);
+        $type = $this->gtree->get_element_type_string($element);
+        $strippedname = $this->gtree->get_element_header($element, false, false, false);
         $is_category_item = false;
         if ($element['type'] == 'categoryitem' || $element['type'] == 'courseitem') {
             $is_category_item = true;
@@ -142,7 +142,7 @@ class grade_edit_tree {
             $cell->colspan = 12;
             $cell->attributes['class'] = $element['type'] . ' moving column-name level' .
                 ($level + 1) . ' level' . ($level % 2 ? 'even' : 'odd');
-            $cell->text = $object->name.' ('.get_string('move').')';
+                $cell->text = $name.' ('.get_string('move').')';
 
             // Create a row that represents the available area to move a grade item or a category into.
             $movingarea = new html_table_row();
@@ -160,7 +160,7 @@ class grade_edit_tree {
 
         if ($element['type'] == 'category') {
             $level++;
-            $this->categories[$object->id] = $object->stripped_name;
+            $this->categories[$object->id] = $strippedname;
             $category = grade_category::fetch(array('id' => $object->id));
             $item = $category->get_grade_item();
 
@@ -285,7 +285,7 @@ class grade_edit_tree {
                 if (!($this->moving && $column->hide_when_moving)) {
                     $categoryrow->cells[] = $column->get_category_cell($category, $levelclass, [
                         'id' => $id,
-                        'name' => $object->name,
+                        'name' => $name,
                         'level' => $level,
                         'actions' => $actions,
                         'moveaction' => $moveaction,
@@ -353,15 +353,15 @@ class grade_edit_tree {
                         $item,
                         [
                             'id' => $id,
-                            'name' => $object->name,
+                            'name' => $name,
                             'level' => $level,
                             'actions' => $actions,
                             'element' => $element,
                             'eid' => $eid,
                             'moveaction' => $moveaction,
                             'itemtype' => $object->itemtype,
-                            'icon' => $object->icon,
-                            'type' => $object->type
+                            'icon' => $icon,
+                            'type' => $type
                         ]
                     );
                 }

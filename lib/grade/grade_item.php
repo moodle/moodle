@@ -263,6 +263,22 @@ class grade_item extends grade_object {
     public $markasoverriddenwhengraded = true;
 
     /**
+     * @var int course module ID
+     */
+    public $cmid;
+
+    /**
+     * @var string average information.
+     */
+    public $avg;
+
+    /**
+     * Category name.
+     * @var string
+     */
+    public $category;
+
+    /**
      * Constructor. Optionally (and by default) attempts to fetch corresponding row from the database
      *
      * @param array $params An array with required parameters for this grade object.
