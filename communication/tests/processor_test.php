@@ -395,4 +395,19 @@ class processor_test extends \advanced_testcase {
         $this->assertEquals($avatar->get_filepath(), '/');
         $this->assertEquals($avatar->get_filearea(), 'avatar');
     }
+
+    /**
+     * Test if the provider is enabled or disabled.
+     *
+     * @covers ::is_provider_enabled
+     */
+    public function test_is_provider_enabled(): void {
+        $this->resetAfterTest();
+        $communicationprovider = 'communication_matrix';
+        $this->assertTrue(processor::is_provider_enabled($communicationprovider));
+
+        // Now test is disabling the plugin returns false.
+        set_config('disabled', 1, $communicationprovider);
+        $this->assertFalse(processor::is_provider_enabled($communicationprovider));
+    }
 }
