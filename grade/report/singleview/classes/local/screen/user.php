@@ -121,6 +121,16 @@ class user extends tablelike implements selectable_items {
             }
         }
 
+        // If we change perpage on pagination we might end up with a page that doesn't exist.
+        if ($this->perpage) {
+            $numpages = intval(count($this->items) / $this->perpage) + 1;
+            if ($numpages <= $this->page) {
+                $this->page = 0;
+            }
+        } else {
+            $this->page = 0;
+        }
+
         $this->requirespaging = count($this->items) > $this->perpage;
 
         $this->setup_structure();

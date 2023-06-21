@@ -1,0 +1,58 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template gradereport_grader/perpage
+
+    The students per page dropdown element.
+
+    Context variables required for this template:
+    * baseurl - The base URL for the perpage action.
+    * options - Choices
+
+    Example context (json):
+    {
+        "baseurl": "http://example.com/grade/report/grader/index.php?id=2&report=grader",
+        "options": [
+            {"name": "20", "value": "20"},
+            {"name": "100", "value": "100", "selected": true},
+            {"name": "All", "value": "0"}
+        ]
+    }
+}}
+<div class="col-auto">
+    <label>
+        {{#str}}show{{/str}}
+        <select name="perpage" class="mt-1 custom-select ignoredirty" id="{{uniqid}}">
+            {{#options}}
+                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+            {{/options}}
+        </select>
+    </label>
+</div>
+{{#pagingbar}}
+    <div class="col">
+        {{{pagingbar}}}
+    </div>
+{{/pagingbar}}
+{{#js}}
+    document.getElementById('{{uniqid}}').addEventListener('change', function(e) {
+    var url = new URL('{{{baseurl}}}');
+    url.searchParams.set('perpage', e.target.value);
+
+    window.location.href = url;
+    });
+{{/js}}
