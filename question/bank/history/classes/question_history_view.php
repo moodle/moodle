@@ -175,7 +175,7 @@ class question_history_view extends view {
      * Display the header for the question bank in the history page to include question name and type.
      */
     public function display_question_bank_header(): void {
-        global $PAGE, $DB;
+        global $PAGE, $DB, $OUTPUT;
         $sql = 'SELECT q.*
                  FROM {question} q
                  JOIN {question_versions} qv ON qv.questionid = q.id
@@ -187,13 +187,19 @@ class question_history_view extends view {
                                       WHERE be.id = qbe.id)
                   AND qbe.id = ?';
         $latestquestiondata = $DB->get_record_sql($sql, [$this->entryid]);
-        $historydata = [
-            'questionname' => $latestquestiondata->name,
-            'returnurl' => $this->basereturnurl,
-            'questionicon' => print_question_icon($latestquestiondata)
-        ];
-        // Header for the page before the actual form from the api.
-        echo $PAGE->get_renderer('qbank_history')->render_history_header($historydata);
+        if ($latestquestiondata) {
+            $historydata = [
+                'questionname' => $latestquestiondata->name,
+                'returnurl' => $this->basereturnurl,
+                'questionicon' => print_question_icon($latestquestiondata)
+            ];
+            // Header for the page before the actual form from the api.
+            echo $PAGE->get_renderer('qbank_history')->render_history_header($historydata);
+        } else {
+            // Continue when all the question versions are deleted.
+            echo $OUTPUT->notification(get_string('allquestionversionsdeleted', 'qbank_history'), 'notifysuccess');
+            echo $OUTPUT->continue_button($this->basereturnurl);
+        }
     }
 
     public function is_listing_specific_versions(): bool {
