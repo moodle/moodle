@@ -1738,6 +1738,8 @@ abstract class admin_setting {
     private $dependenton = [];
     /** @var bool Whether this setting uses a custom form control */
     protected $customcontrol = false;
+    /** @var mixed int means PARAM_XXX type, string is a allowed format in regex */
+    public $paramtype;
 
     /**
      * Constructor
@@ -2442,8 +2444,6 @@ class admin_setting_description extends admin_setting {
  */
 class admin_setting_configtext extends admin_setting {
 
-    /** @var mixed int means PARAM_XXX type, string is a allowed format in regex */
-    public $paramtype;
     /** @var int default field size */
     public $size;
 
@@ -3126,10 +3126,11 @@ class admin_setting_configcheckbox extends admin_setting {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class admin_setting_configmulticheckbox extends admin_setting {
-    /** @var array Array of choices value=>label */
-    public $choices;
     /** @var callable|null Loader function for choices */
     protected $choiceloader = null;
+
+    /** @var array Array of choices value=>label. */
+    public $choices;
 
     /**
      * Constructor: uses parent::__construct
@@ -4664,7 +4665,8 @@ class admin_setting_bloglevel extends admin_setting_configselect {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class admin_setting_courselist_frontpage extends admin_setting {
-    /** @var array Array of choices value=>label */
+
+    /** @var array Array of choices value=>label. */
     public $choices;
 
     /**
@@ -6237,7 +6239,8 @@ class admin_setting_special_gradepointmax extends admin_setting_configtext {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class admin_setting_gradecat_combo extends admin_setting {
-    /** @var array Array of choices */
+
+    /** @var array Array of choices value=>label. */
     public $choices;
 
     /**
