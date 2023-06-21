@@ -1,5 +1,9 @@
 This files describes API changes in the lti code.
 
+=== 4.3 ===
+
+* The `lti_libxml_disable_entity_loader` method is deprecated, as it is no longer required from PHP 8.0
+
 === 4.2 ===
 
 * get_jwt_claim_mappings() function has been added to service_base class. It allows a service subplugin to be
