@@ -82,7 +82,7 @@ M.core_comment = {
                         action: 'add',
                         scope: scope,
                         params: params,
-                        callback: function(id, obj, args) {
+                        callback: async function(id, obj, args) {
                             var scope = args.scope;
                             var cid = scope.client_id;
                             var ta = Y.one('#dlg-content-'+cid);
@@ -91,7 +91,7 @@ M.core_comment = {
                             ta.setStyle('backgroundImage', 'none');
                             scope.toggle_textarea(false);
                             var container = Y.one('#comment-list-'+cid);
-                            var result = scope.render([obj], true);
+                            var result = await scope.render([obj], true);
                             var newcomment = Y.Node.create(result.html);
                             container.appendChild(newcomment);
                             var ids = result.ids;
@@ -178,7 +178,7 @@ M.core_comment = {
                     this.wait();
                 }
             },
-            render: function(list, newcmt) {
+            render: async function(list, newcmt) {
                 var ret = {};
                 ret.ids = [];
                 var template = Y.one('#cmt-tmpl');
@@ -191,18 +191,9 @@ M.core_comment = {
                     } else {
                         val = val.replace('___name___', list[i].fullname);
                     }
-                    if (list[i]['delete']||newcmt) {
-                        var tokens = {
-                            user: list[i].fullname,
-                            time: list[i].time
-                        };
-                        var deleteStr = Y.Escape.html(M.util.get_string('deletecommentbyon', 'moodle', tokens));
-                        list[i].content = '<div class="comment-delete">' +
-                            '<a href="#" role="button" id ="comment-delete-' + this.client_id + '-' + list[i].id + '"' +
-                            '   title="' + deleteStr + '">' +
-                            '<span></span>' +
-                            '</a>' +
-                            '</div>' + list[i].content;
+                    if (list[i].delete || newcmt) {
+                        list[i].clientid = this.client_id;
+                        list[i].content += await this.renderDeleteIcon(list[i]);
                     }
                     val = val.replace('___time___', list[i].time);
                     val = val.replace('___picture___', list[i].avatar);
@@ -214,6 +205,34 @@ M.core_comment = {
                 ret.html = html;
                 return ret;
             },
+            renderDeleteIcon: async function(list) {
+                return new Promise(function(resolve) {
+                    require(['core/templates', 'core/str'], (Templates, Str) => {
+                        return Str.get_string('deletecommentbyon', 'moodle', {
+                            user: list.fullname,
+                            time: list.time
+                        }).then(function(deleteStr) {
+                            return Templates.renderPix('t/delete', 'core', deleteStr).then(function(deleteIcon) {
+                                var deleteDiv = document.createElement('div');
+                                deleteDiv.className = 'comment-delete';
+
+                                var deleteLink = document.createElement('a');
+                                deleteLink.href = '#';
+                                deleteLink.role = 'button';
+                                deleteLink.title = deleteStr;
+                                deleteLink.id = `comment-delete-${list.clientid}-${list.id}`;
+                                deleteLink.innerHTML = deleteIcon;
+
+                                deleteDiv.appendChild(deleteLink);
+
+                                resolve(deleteDiv.outerHTML);
+
+                                return true;
+                            });
+                        });
+                    });
+                });
+            },
             load: function(page) {
                 var scope = this;
                 var container = Y.one('#comment-ctrl-'+this.client_id);
@@ -224,7 +243,7 @@ M.core_comment = {
                 this.request({
                     scope: scope,
                     params: params,
-                    callback: function(id, ret, args) {
+                    callback: async function(id, ret, args) {
                         var linkText = Y.one('#comment-link-text-' + scope.client_id);
                         if (ret.count && linkText) {
                             linkText.set('innerHTML', M.util.get_string('commentscount', 'moodle', ret.count));
@@ -241,7 +260,7 @@ M.core_comment = {
                             var result = {};
                             result.html = M.util.get_string('commentsrequirelogin', 'moodle');
                         } else {
-                            var result = scope.render(ret.list);
+                            var result = await scope.render(ret.list);
                         }
                         container.set('innerHTML', result.html);
                         var img = Y.one('#comment-img-'+scope.client_id);
@@ -332,13 +351,6 @@ M.core_comment = {
                             }
                         }, '13,32');
                         // 13 and 32 are the keycodes for space and enter.
-
-                        require(['core/templates', 'core/notification'], function(Templates, Notification) {
-                            var title = node.getAttribute('title');
-                            Templates.renderPix('t/delete', 'core', title).then(function(html) {
-                                node.set('innerHTML', html);
-                            }).catch(Notification.exception);
-                        });
                     }
                 );
             },
