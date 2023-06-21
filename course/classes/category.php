@@ -3189,20 +3189,58 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      */
     public static function get_nearest_editable_subcategory(core_course_category $parentcat,
         array $permissionstocheck): ?core_course_category {
+        global $USER, $DB;
+
         // First, check the parent category.
         if ($parentcat->has_capabilities($permissionstocheck)) {
             return $parentcat;
         }
 
-        // Check the child categories.
-        $subcategoryids = $parentcat->get_all_children_ids();
-        foreach ($subcategoryids as $subcategoryid) {
-            $subcategory = static::get($subcategoryid, MUST_EXIST, true);
+        // Get all course category contexts that are children of the parent category's context where
+        // a) there is a role assignment for the current user or
+        // b) there are role capability overrides for a role that the user has in this context.
+        // We never need to return the system context because it cannot be a child of another context.
+        $fields = array_keys(array_filter(self::$coursecatfields));
+        $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
+        $rs = $DB->get_recordset_sql("
+            SELECT cc.". join(',cc.', $fields). ", $ctxselect
+            FROM {course_categories} cc
+            JOIN {context} ctx ON cc.id = ctx.instanceid AND ctx.contextlevel = :contextcoursecat
+            LEFT JOIN {role_assignments} ra ON ra.contextid = ctx.id
+            LEFT JOIN {role_capabilities} rc ON rc.contextid = ctx.id
+            LEFT JOIN {role_assignments} rc_ra ON rc_ra.roleid = rc.roleid
+            LEFT JOIN {context} rc_ra_ctx ON rc_ra_ctx.id = rc_ra.contextid
+            WHERE ctx.path LIKE :parentpath
+            AND (
+                ra.userid = :userid1
+                OR (
+                    rc_ra.userid = :userid2
+                    AND (ctx.path = rc_ra_ctx.path OR ctx.path LIKE " . $DB->sql_concat("rc_ra_ctx.path", "'/%'") . ")
+                )
+            )
+        ", [
+            'contextcoursecat' => CONTEXT_COURSECAT,
+            'parentpath' => $parentcat->get_context()->path . '/%',
+            'userid1' => $USER->id,
+            'userid2' => $USER->id
+        ]);
+
+        // Check if user has required capabilities in any of the contexts.
+        $tocache = [];
+        $result = null;
+        foreach ($rs as $record) {
+            $subcategory = new self($record);
+            $tocache[$subcategory->id] = $subcategory;
             if ($subcategory->has_capabilities($permissionstocheck)) {
-                return $subcategory;
+                $result = $subcategory;
+                break;
             }
         }
+        $rs->close();
 
-        return null;
+        $coursecatrecordcache = cache::make('core', 'coursecatrecords');
+        $coursecatrecordcache->set_many($tocache);
+
+        return $result;
     }
 }
