@@ -2105,8 +2105,8 @@ class grade_structure {
             $title = grade_helper::get_lang_string('editgrade', 'grades');
         } else if (($element['type'] == 'item') || ($element['type'] == 'categoryitem') ||
             ($element['type'] == 'courseitem')) {
+            $url = new moodle_url('#');
             if (empty($object->outcomeid) || empty($CFG->enableoutcomes)) {
-                $url = new moodle_url('#');
                 return html_writer::link($url, get_string('itemsedit', 'grades'), [
                     'class' => 'dropdown-item',
                     'aria-label' => get_string('itemsedit', 'grades'),
@@ -2115,12 +2115,16 @@ class grade_structure {
                     'data-courseid' => $this->courseid,
                     'data-itemid' => $object->id, 'data-trigger' => 'add-item-form'
                 ]);
-            } else {
-                $url = new moodle_url('/grade/edit/tree/outcomeitem.php',
-                    ['courseid' => $this->courseid, 'id' => $object->id]);
+            } else if (count(grade_outcome::fetch_all_available($this->courseid)) > 0) {
+                return html_writer::link($url, get_string('itemsedit', 'grades'), [
+                    'class' => 'dropdown-item',
+                    get_string('itemsedit', 'grades'),
+                    'role' => 'menuitem',
+                    'data-gprplugin' => $gpr->plugin,
+                    'data-courseid' => $this->courseid,
+                    'data-itemid' => $object->id, 'data-trigger' => 'add-outcome-form'
+                ]);
             }
-            $url = $gpr->add_url_params($url);
-            $title = grade_helper::get_lang_string('itemsedit', 'grades');
         } else if ($element['type'] == 'category') {
             $url = new moodle_url('#');
             $title = grade_helper::get_lang_string('categoryedit', 'grades');

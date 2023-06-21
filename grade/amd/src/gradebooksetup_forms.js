@@ -50,6 +50,13 @@ export const init = () => {
             title = trigger.getAttribute('data-category') === '-1' ?
                 getString('newcategory', 'core_grades') : getString('categoryedit', 'core_grades');
             args.category = trigger.getAttribute('data-category');
+        } else if (event.target.closest('[data-trigger="add-outcome-form"]')) {
+            event.preventDefault();
+            trigger = event.target.closest('[data-trigger="add-outcome-form"]');
+            formClass = 'core_grades\\form\\add_outcome';
+            title = trigger.getAttribute('data-itemid') === '-1' ?
+                getString('newoutcomeitem', 'core_grades') : getString('outcomeitemsedit', 'core_grades');
+            args.itemid = trigger.getAttribute('data-itemid');
         }
 
         if (trigger) {
