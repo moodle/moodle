@@ -26,6 +26,9 @@ namespace core_adminpresets\local\setting;
  */
 class adminpresets_admin_setting_configmultiselect extends adminpresets_setting {
 
+    /** @var \admin_setting_configmultiselect $settingdata */
+    protected $settingdata;
+
     /**
      * Ensure that the $value values are setting choices.
      *
