@@ -91,6 +91,10 @@ $CFG->dboptions = array(
                                 // set to zero if you are using pg_bouncer in
                                 // 'transaction' mode (it is fine in 'session'
                                 // mode).
+    // 'clientcompress' => true // Use compression protocol to communicate with the database server.
+                                // Decreases traffic from the database server.
+                                // Not needed if the databse is on the same host.
+                                // Currently supported only with mysqli driver.
     /*
     'connecttimeout' => null, // Set connect timeout in seconds. Not all drivers support it.
     'readonly' => [          // Set to read-only slave details, to get safe reads
