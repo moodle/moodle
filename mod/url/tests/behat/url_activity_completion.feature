@@ -31,7 +31,9 @@ Feature: View activity completion information in the URL resource
       | completionview | 1                   |
       | display        | 0                   |
     When I am on the "Music history" "url activity" page logged in as teacher1
-    Then "Music history" should have the "View" completion condition
+    Then "Music history" "link" should exist
+    And I should see "Click on Music history to open the resource."
+    And "Music history" should have the "View" completion condition
 
   Scenario: View automatic completion items in automatic display mode as student
     Given the following "activity" exists:
