@@ -138,7 +138,6 @@ input[type="file"],
 input[type="image"],
 .sr-only-focusable,
 a.dropdown-toggle,
-.modal-dialog[tabindex="0"],
 .moodle-dialogue-base .closebutton,
 button.close,
 .form-autocomplete-selection,
@@ -157,7 +156,14 @@ button.close,
 .modal-dialog[tabindex="0"] {
     &.focus,
     &:focus {
-        @include border-radius($modal-content-border-radius);
+        outline: 0;
+        .modal-content {
+            outline: 0;
+            box-shadow: $input-btn-focus-box-shadow;
+
+            // Modal dialogs border should be rounded too.
+            @include border-radius($modal-content-border-radius);
+        }
     }
 }
 
