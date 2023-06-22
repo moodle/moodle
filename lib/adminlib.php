@@ -8801,6 +8801,10 @@ function admin_apply_default_settings($node=null, $unconditional=true, $admindef
 
     } else if ($node instanceof admin_settingpage) {
         foreach ($node->settings as $setting) {
+            if ($setting->nosave) {
+                // Not a real setting, must be a heading or description.
+                continue;
+            }
             if (!$unconditional && !is_null($setting->get_setting())) {
                 // Do not override existing defaults.
                 continue;
