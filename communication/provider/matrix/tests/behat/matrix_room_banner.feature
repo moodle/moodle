@@ -34,3 +34,19 @@ Feature: Display communication room status banner
     # Not for students to see.
     When I am on the "Test course" "Course" page logged in as "student1"
     Then I should not see "Your Matrix room is ready!" in the "page-content" "region"
+
+  Scenario: Enabling or disabling the matrix plugin hides the banner accordingly
+    Given I am on the "Test course" "Course" page logged in as "teacher1"
+    Then I should see "Your Matrix room will be ready soon." in the "page-content" "region"
+    When I log in as "admin"
+    And I navigate to "Plugins > Communication > Manage communication providers" in site administration
+    And I should see "Matrix"
+    And I click on "Disable" "link" in the "Matrix" "table_row"
+    And I am on the "Test course" "Course" page logged in as "teacher1"
+    And I should not see "Your Matrix room will be ready soon." in the "page-content" "region"
+    And I log in as "admin"
+    And I navigate to "Plugins > Communication > Manage communication providers" in site administration
+    And I should see "Matrix"
+    And I click on "Enable" "link" in the "Matrix" "table_row"
+    And I am on the "Test course" "Course" page logged in as "teacher1"
+    Then I should see "Your Matrix room will be ready soon." in the "page-content" "region"
