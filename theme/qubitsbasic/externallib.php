@@ -3940,6 +3940,7 @@ class theme_qubitsbasic_external extends external_api {
                 $cardstyle = $compiler->compile($coursescss);
                 $course->cardstyle = $cardstyle;
             }
+            $course->courselastopened = self::get_course_last_open($course->id);
             return $course;
         }, $formattedcourses);
 
@@ -3966,6 +3967,18 @@ class theme_qubitsbasic_external extends external_api {
             }
         }
         return $course_customdata;
+    }
+
+    public static function get_course_last_open($course_id){
+        global $USER, $DB;
+        $string = get_string('lastcourseaccess');
+        if ($lastaccess = $DB->get_record('user_lastaccess', array('userid' => $USER->id, 'courseid' => $course_id))) {
+            $monthstring = substr(userdate($lastaccess->timeaccess, '%B'),0,3);
+            $datestring = $monthstring.' '.userdate($lastaccess->timeaccess, '%d, %Y');
+        } else {
+            $datestring = get_string("never");
+        }
+        return $datestring;
     }
 
     /**

@@ -12,7 +12,7 @@
                                     {{#iscomplete}}
 									<i class="qicon-tick-mark success-tick"></i> 
 									{{/iscomplete}}
-                                    <div class="white-circle {{#iscomplete}}complete-text-color{{/iscomplete}} col-9 w-auto">3</div>
+                                    <div class="white-circle {{#iscomplete}}complete-text-color{{/iscomplete}} col-9 w-auto">{{level}}</div>
                                 </div>
                             </div>
                         </div>
@@ -23,7 +23,7 @@
                     <div class="d-flex justify-content-between text-grey">
                         <div class="d-flex align-items-center pb-2">
                             <span class="qicon-calendar"></span>
-                            <div class="pl-2">Last opened: Jan 13, 2023</div>
+                            <div class="pl-2">Last opened: {{courselastopened}}</div>
                         </div>
                         <div>
                             {{progress}}%
