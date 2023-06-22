@@ -209,7 +209,7 @@ function ldap_connect_moodle($host_url, $ldap_version, $user_type, $bind_dn, $bi
         }
 
         if ($start_tls && (!ldap_start_tls($connresult))) {
-            $debuginfo .= "Server: '$server', Connection: '$connresult', STARTTLS failed.\n";
+            $debuginfo .= "Server: '$server', STARTTLS failed.\n";
             continue;
         }
 
@@ -224,7 +224,7 @@ function ldap_connect_moodle($host_url, $ldap_version, $user_type, $bind_dn, $bi
             return $connresult;
         }
 
-        $debuginfo .= "Server: '$server', Connection: '$connresult', Bind result: '$bindresult'\n";
+        $debuginfo .= "Server: '$server', Bind result: '$bindresult'\n";
     }
 
     // If any of servers were alive we have already returned connection.
