@@ -740,13 +740,11 @@ abstract class grade_edit_tree_column {
     public function get_category_cell($category, $levelclass, $params) {
         $cell = clone($this->categorycell);
         $cell->attributes['class'] .= ' ' . $levelclass;
-        $cell->attributes['text'] = '';
         return $cell;
     }
 
     public function get_item_cell($item, $params) {
         $cell = clone($this->itemcell);
-        $cell->attributes['text'] = '';
         if (isset($params['level'])) {
             $level = $params['level'] + (($item->itemtype == 'category' || $item->itemtype == 'course') ? 0 : 1);
             $cell->attributes['class'] .= ' level' . $level;
@@ -827,7 +825,7 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
             $masterlabel = $params['level'] === 1 ? get_string('all') : $params['name'];
             // Build the master checkbox.
             $mastercheckbox = new \core\output\checkbox_toggleall($togglegroup, true, [
-                'id' => $togglegroup,
+                'id' => 'select_category_' . $category->id,
                 'name' => $togglegroup,
                 'value' => 1,
                 'classes' => 'itemselect ignoredirty mr-2',
@@ -1203,7 +1201,7 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
         }
         // Build the master checkbox.
         $mastercheckbox = new \core\output\checkbox_toggleall($togglegroup, true, [
-            'id' => $togglegroup,
+            'id' => 'select_category_' . $category->id,
             'name' => $togglegroup,
             'value' => 1,
             'classes' => 'itemselect ignoredirty',
