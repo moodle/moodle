@@ -131,6 +131,11 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
         }
 
         $this->_elements = array();
+        // If optional we add a checkbox which the user can use to turn if on.
+        if ($this->_options['optional']) {
+            $this->_elements[] = $this->createFormElement('checkbox', 'enabled', null,
+                get_string('enable'), $this->getAttributes(), true);
+        }
         $dateformat = $calendartype->get_date_order($this->_options['startyear'], $this->_options['stopyear']);
         if (right_to_left()) {   // Display time to the right of date, in RTL mode.
             $this->_elements[] = $this->createFormElement('select', 'minute', get_string('minute', 'form'),
@@ -155,10 +160,6 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
             $image = $OUTPUT->pix_icon('i/calendar', get_string('calendar', 'calendar'), 'moodle');
             $this->_elements[] = $this->createFormElement('link', 'calendar',
                     null, '#', $image);
-        }
-        // If optional we add a checkbox which the user can use to turn if on
-        if ($this->_options['optional']) {
-            $this->_elements[] = $this->createFormElement('checkbox', 'enabled', null, get_string('enable'), $this->getAttributes(), true);
         }
         foreach ($this->_elements as $element){
             if (method_exists($element, 'setHiddenLabel')){
