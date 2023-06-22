@@ -94,7 +94,7 @@ $CFG->dboptions = array(
     // 'clientcompress' => true // Use compression protocol to communicate with the database server.
                                 // Decreases traffic from the database server.
                                 // Not needed if the databse is on the same host.
-                                // Currently supported only with mysqli driver.
+                                // Currently supported only with mysqli, mariadb, and aurora drivers.
     /*
     'connecttimeout' => null, // Set connect timeout in seconds. Not all drivers support it.
     'readonly' => [          // Set to read-only slave details, to get safe reads
