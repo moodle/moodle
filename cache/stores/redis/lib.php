@@ -211,12 +211,16 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
      */
     protected function new_redis($server, $prefix = '', $password = '') {
         $redis = new Redis();
-        // Check if it isn't a Unix socket to set default port.
-        $port = ($server[0] === '/') ? null : 6379;
-        if (strpos($server, ':')) {
-            $serverconf = explode(':', $server);
-            $server = $serverconf[0];
-            $port = $serverconf[1];
+        // Check for Unix socket.
+        if ($server[0] === '/') {
+            $port = 0;
+        } else {
+            $port = 6379; // No Unix socket so set default port.
+            if (strpos($server, ':')) { // Check for custom port.
+                $serverconf = explode(':', $server);
+                $server = $serverconf[0];
+                $port = $serverconf[1];
+            }
         }
 
         try {
