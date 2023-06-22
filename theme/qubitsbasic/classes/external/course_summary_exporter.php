@@ -155,6 +155,10 @@ class course_summary_exporter extends \core\external\exporter {
             'courseimage' => array(
                 'type' => PARAM_RAW,
             ),
+            'courselastopened' => array(
+                'type' => PARAM_TEXT,
+                'optional' => true
+            ),
             'progress' => array(
                 'type' => PARAM_INT,
                 'optional' => true
