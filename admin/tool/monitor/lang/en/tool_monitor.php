@@ -32,6 +32,7 @@ $string['areatomonitor'] = 'Area to monitor';
 $string['cachedef_eventsubscriptions'] = 'This stores the list of event subscriptions for individual courses';
 $string['contactadmin'] = 'Contact your administrator to enable it.';
 $string['core'] = 'Core';
+$string['coresubsystem'] = 'Subsystem ({$a})';
 $string['currentsubscriptions'] = 'Your current subscriptions';
 $string['defaultmessagetemplate'] = 'Rule name: {rulename}<br />Description: {description}<br />Event name: {eventname}';
 $string['deleterule'] = 'Delete rule';
