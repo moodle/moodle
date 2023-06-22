@@ -3305,14 +3305,13 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023051500.00);
     }
 
-    if ($oldversion < 2023052500.00) {
-
+    if ($oldversion < 2023062200.00) {
         // Remove device specific fields for themes from config table.
         unset_config('thememobile');
         unset_config('themelegacy');
         unset_config('themetablet');
 
-        upgrade_main_savepoint(true, 2023052500.00);
+        upgrade_main_savepoint(true, 2023062200.00);
     }
 
     return true;
