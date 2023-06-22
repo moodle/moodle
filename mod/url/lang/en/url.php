@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['clicktoopen'] = 'Click {$a} link to open resource.';
+$string['clicktoopen'] = 'Click on {$a} to open the resource.';
 $string['configdisplayoptions'] = 'Select all options that should be available, existing settings are not modified. Hold CTRL key to select multiple fields.';
 $string['configframesize'] = 'When a web page or an uploaded file is displayed within a frame, this value is the height (in pixels) of the top frame (which contains the navigation).';
 $string['configrolesinparams'] = 'Should customised role names (from the course settings) be available as variables for URL parameters?';
