@@ -82,13 +82,13 @@ class group_form extends moodleform {
         $mform->addHelpButton('participation', 'participation', 'group');
         $mform->setType('participation', PARAM_BOOL);
         $mform->setDefault('participation', 1);
-        $mform->disabledIf('participation', 'visibility', 'in', [GROUPS_VISIBILITY_OWN, GROUPS_VISIBILITY_NONE]);
+        $mform->hideIf('participation', 'visibility', 'in', [GROUPS_VISIBILITY_OWN, GROUPS_VISIBILITY_NONE]);
 
         // Group conversation messaging.
         if (\core_message\api::can_create_group_conversation($USER->id, $coursecontext)) {
             $mform->addElement('selectyesno', 'enablemessaging', get_string('enablemessaging', 'group'));
             $mform->addHelpButton('enablemessaging', 'enablemessaging', 'group');
-            $mform->disabledIf('enablemessaging', 'visibility', 'in', [GROUPS_VISIBILITY_OWN, GROUPS_VISIBILITY_NONE]);
+            $mform->hideIf('enablemessaging', 'visibility', 'in', [GROUPS_VISIBILITY_OWN, GROUPS_VISIBILITY_NONE]);
         }
 
         $mform->addElement('static', 'currentpicture', get_string('currentpicture'));
