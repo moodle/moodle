@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_data\local;
+namespace mod_data\local\exporter;
 
 use file_serving_exception;
 use moodle_exception;
@@ -28,7 +28,7 @@ use zip_archive;
  * @author     Philipp Memmel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class exporter {
+abstract class entries_exporter {
 
     /** @var int Tracks the currently edited row of the export data file. */
     private int $currentrow;
@@ -46,7 +46,7 @@ abstract class exporter {
     private zip_archive $ziparchive;
 
     /** @var bool Tracks the state if the zip archive already has been closed. */
-    private bool $ziparchiveclosed;
+    private bool $isziparchiveclosed;
 
     /** @var string full path of the zip archive. */
     private string $zipfilepath;
@@ -55,7 +55,7 @@ abstract class exporter {
     private array $filenamesinzip;
 
     /**
-     * Creates an exporter object.
+     * Creates an entries_exporter object.
      *
      * This object can be used to export data to different formats including files. If files are added,
      * everything will be bundled up in a zip archive.
@@ -65,7 +65,7 @@ abstract class exporter {
         $this->exportdata = [];
         $this->exportfilename = 'Exportfile';
         $this->filenamesinzip = [];
-        $this->ziparchiveclosed = true;
+        $this->isziparchiveclosed = true;
     }
 
     /**
@@ -90,7 +90,7 @@ abstract class exporter {
     }
 
     /**
-     * Signal the exporter to finish the current row and jump to the next row.
+     * Signal the entries_exporter to finish the current row and jump to the next row.
      *
      * @return void
      */
@@ -111,7 +111,7 @@ abstract class exporter {
     }
 
     /**
-     * The exporter will prepare a data file from the rows and columns being added.
+     * The entries_exporter will prepare a data file from the rows and columns being added.
      * Overwrite this method to generate the data file as string.
      *
      * @return string the data file as a string
@@ -120,9 +120,9 @@ abstract class exporter {
 
     /**
      * Overwrite the method to return the file extension your data file will have, for example
-     * <code>return 'csv';</code> for a csv file exporter.
+     * <code>return 'csv';</code> for a csv file entries_exporter.
      *
-     * @return string the file extension of the data file your exporter is using
+     * @return string the file extension of the data file your entries_exporter is using
      */
     abstract protected function get_export_data_file_extension(): string;
 
@@ -141,7 +141,7 @@ abstract class exporter {
     }
 
     /**
-     * Use this method to add a file which should be exported to the exporter.
+     * Use this method to add a file which should be exported to the entries_exporter.
      *
      * @param string $filename the name of the file which should be added
      * @param string $filecontent the content of the file as a string
@@ -188,7 +188,7 @@ abstract class exporter {
             $this->get_data_file_content(), '/');
         $this->finish_zip_archive();
 
-        if ($this->ziparchiveclosed) {
+        if ($this->isziparchiveclosed) {
             if ($sendtouser) {
                 send_file($this->zipfilepath, $this->exportfilename . '.zip', null, 0, false, true);
                 return null;
@@ -215,6 +215,9 @@ abstract class exporter {
         if (!str_ends_with($zipsubdir, '/')) {
             $zipsubdir .= '/';
         }
+        if (empty($filename)) {
+            return false;
+        }
         return in_array($zipsubdir . $filename, $this->filenamesinzip, true);
     }
 
@@ -231,13 +234,19 @@ abstract class exporter {
         if (!$this->file_exists($filename)) {
             return $filename;
         }
-        $i = 1;
 
+        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+        $filenamewithoutextension = empty($extension)
+            ? $filename
+            : substr($filename, 0,strlen($filename) - strlen($extension) - 1);
+        $filenamewithoutextension = $filenamewithoutextension . '_1';
+        $i = 1;
+        $filename = empty($extension) ? $filenamewithoutextension : $filenamewithoutextension . '.' . $extension;
         while ($this->file_exists($filename)) {
-            $extension = pathinfo($filename, PATHINFO_EXTENSION);
-            $filenamewithoutextension = substr($filename, 0,
-                strlen($filename) - strlen($extension) - 1);
-            $filename = $filenamewithoutextension . '_' . $i . '.' . $extension;
+            // In case we have already a file ending with '_XX' where XX is an ascending number, we have to
+            // remove '_XX' first before adding '_YY' again where YY is the successor of XX.
+            $filenamewithoutextension = preg_replace('/_' . $i . '$/', '_' . ($i + 1), $filenamewithoutextension);
+            $filename = empty($extension) ? $filenamewithoutextension : $filenamewithoutextension . '.' . $extension;
             $i++;
         }
         return $filename;
@@ -252,7 +261,7 @@ abstract class exporter {
         $tmpdir = make_request_directory();
         $this->zipfilepath = $tmpdir . '/' . $this->exportfilename . '.zip';
         $this->ziparchive = new zip_archive();
-        $this->ziparchiveclosed = !$this->ziparchive->open($this->zipfilepath);
+        $this->isziparchiveclosed = !$this->ziparchive->open($this->zipfilepath);
     }
 
     /**
@@ -261,8 +270,8 @@ abstract class exporter {
      * @return void
      */
     private function finish_zip_archive(): void {
-        if (!$this->ziparchiveclosed) {
-            $this->ziparchiveclosed = $this->ziparchive->close();
+        if (!$this->isziparchiveclosed) {
+            $this->isziparchiveclosed = $this->ziparchive->close();
         }
     }
 }

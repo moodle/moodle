@@ -83,7 +83,7 @@ $string['createfields'] = 'Create fields to collect different types of data.';
 $string['createtemplates'] = 'Templates define the interface of your activity. Once you create fields, templates will be created automatically. Alternatively, you can use a preset, which includes fields and templates.';
 $string['csstemplate'] = 'Custom CSS';
 $string['csvfailed'] = 'Unable to read the raw data from the CSV file';
-$string['csvorzipfile'] = 'CSV or ZIP containing a CSV file';
+$string['csvfile'] = 'CSV or ZIP containing a CSV file';
 $string['csvimport'] = 'CSV file import';
 $string['csvimport_help'] = 'Entries may be imported via a plain text file with a list of field names as the first line, then the data, with one record per line.';
 $string['csvwithselecteddelimiter'] = '<abbr title="Comma Separated Values">CSV</abbr>';

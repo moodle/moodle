@@ -14,13 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_data\local;
+namespace mod_data\local\exporter;
 
-use coding_exception;
 use context;
 use context_system;
-use dml_exception;
-use moodle_exception;
 
 /**
  * Utility class for exporting data from a mod_data instance.
@@ -30,15 +27,15 @@ use moodle_exception;
  * @author     Philipp Memmel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class exporter_utils {
+class utils {
 
     /**
-     * Exports the data of the mod_data instance to an exporter object which then can export it to a file format.
+     * Exports the data of the mod_data instance to an entries_exporter object which then can export it to a file format.
      *
      * @param int $dataid
      * @param array $fields
      * @param array $selectedfields
-     * @param exporter $exporter the exporter object used
+     * @param entries_exporter $exporter the entries_exporter object used
      * @param int $currentgroup group ID of the current group. This is used for
      *  exporting data while maintaining group divisions.
      * @param context|null $context the context in which the operation is performed (for capability checks)
@@ -48,11 +45,8 @@ class exporter_utils {
      * @param bool $tags whether to include tags
      * @param bool $includefiles whether files should be exported as well
      * @return void
-     * @throws coding_exception
-     * @throws dml_exception
-     * @throws moodle_exception
      */
-    public static function data_exportdata(int $dataid, array $fields, array $selectedfields, exporter $exporter,
+    public static function data_exportdata(int $dataid, array $fields, array $selectedfields, entries_exporter $exporter,
         int $currentgroup = 0, context $context = null, bool $userdetails = false, bool $time = false, bool $approval = false,
         bool $tags = false, bool $includefiles = true): void {
         global $DB;

@@ -14,12 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_data\local;
+namespace mod_data\local\importer;
 
 use coding_exception;
 use core_php_time_limit;
 use file_packer;
-use moodle_exception;
 
 /**
  * Importer class for importing data and - if needed - files as well from a zip archive.
@@ -29,7 +28,7 @@ use moodle_exception;
  * @author     Philipp Memmel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class importer {
+abstract class entries_importer {
 
     /** @var string The import file path of the file which data should be imported from. */
     protected string $importfilepath;
@@ -50,14 +49,14 @@ abstract class importer {
     private string $extracteddir;
 
     /**
-     * Creates an importer object.
+     * Creates an entries_importer object.
      *
      * This object can be used to import data from data files (like csv) and zip archives both including a data file and files to be
      * stored in the course module context.
      *
      * @param string $importfilepath the complete path of the import file including filename
      * @param string $importfilename the import file name as uploaded by the user
-     * @throws coding_exception
+     * @throws coding_exception if a wrong file type is being used
      */
     public function __construct(string $importfilepath, string $importfilename) {
         $this->importfilepath = $importfilepath;
@@ -71,7 +70,7 @@ abstract class importer {
     }
 
     /**
-     * Return the file extension of the import data file which is being used, for example 'csv' for a csv importer.
+     * Return the file extension of the import data file which is being used, for example 'csv' for a csv entries_importer.
      *
      * @return string the file extension of the export data file
      */
@@ -80,11 +79,11 @@ abstract class importer {
     /**
      * Returns the file content of the data file.
      *
-     * Returns the content of the file directly if the importer's file is a data file itself. If the importer's file is a zip
-     *  archive, the content of the first found data file in the zip archive's root will be returned.
+     * Returns the content of the file directly if the entries_importer's file is a data file itself.
+     *  If the entries_importer's file is a zip archive, the content of the first found data file in the
+     *  zip archive's root will be returned.
      *
      * @return false|string the data file content as string; false, if file cannot be found/read
-     * @throws moodle_exception
      */
     public function get_data_file_content(): false|string {
         if ($this->importfiletype !== 'zip') {
@@ -109,7 +108,6 @@ abstract class importer {
      * @param string $filename
      * @param string $zipsubdir
      * @return false|string the file content as string, false if the file could not be found/read
-     * @throws moodle_exception
      */
     public function get_file_content_from_zip(string $filename, string $zipsubdir = 'files/'): false|string {
         if (empty($filename)) {
@@ -129,7 +127,6 @@ abstract class importer {
      * Extracts (if not already done and if we have a zip file to deal with) the zip file to a temporary directory.
      *
      * @return void
-     * @throws moodle_exception
      */
     private function extract_zip(): void {
         if ($this->zipfileextracted || $this->importfiletype !== 'zip') {

@@ -102,7 +102,7 @@ function data_export_xls($export, $dataname, $count) {
 }
 
 /**
- * @deprecated since Moodle 4.3, exporting is now being done by \mod_data\local\csv_exporter
+ * @deprecated since Moodle 4.3, exporting is now being done by \mod_data\local\exporter\csv_entries_exporter
  * @global object
  * @param array $export
  * @param string $delimiter_name
@@ -130,7 +130,7 @@ function data_export_csv($export, $delimiter_name, $database, $count, $return=fa
 }
 
 /**
- * @deprecated since Moodle 4.3, exporting is now being done by \mod_data\local\ods_exporter
+ * @deprecated since Moodle 4.3, exporting is now being done by \mod_data\local\exporter\ods_entries_exporter
  * @global object
  * @param array $export
  * @param string $dataname
@@ -168,7 +168,7 @@ function data_export_ods($export, $dataname, $count) {
 }
 
 /**
- * @deprecated since Moodle 4.3, use \mod_data\local\exporter_utils::data_exportdata with a \mod_data\local\exporter object
+ * @deprecated since Moodle 4.3, use \mod_data\local\exporter\utils::data_exportdata with a \mod_data\local\exporter\entries_exporter object
  * @global object
  * @param int $dataid
  * @param array $fields
@@ -269,7 +269,7 @@ function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0,
 }
 
 /**
- * @deprecated since Moodle 4.3, importing is now being done by \mod_data\local\mod_data_csv_importer::import_csv
+ * @deprecated since Moodle 4.3, importing is now being done by \mod_data\local\importer\csv_importer::import_csv
  * Import records for a data instance from csv data.
  *
  * @param object $cm Course module of the data instance.
@@ -280,129 +280,17 @@ function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0,
  * @return int Number of records added.
  */
 function data_import_csv($cm, $data, &$csvdata, $encoding, $fielddelimiter) {
-    global $CFG, $DB;
-
     debugging('Function data_import_csv has been deprecated. '
-        . 'Importing is now being done by \mod_data\local\mod_data_csv_importer::import_csv.',
+        . 'Importing is now being done by \mod_data\local\csv_importer::import_csv.',
         DEBUG_DEVELOPER);
 
-    // Large files are likely to take their time and memory. Let PHP know
-    // that we'll take longer, and that the process should be recycled soon
-    // to free up memory.
-    core_php_time_limit::raise();
-    raise_memory_limit(MEMORY_EXTRA);
+    // New function needs a file, not the file content, so we have to temporarily put the content into a file.
+    $tmpdir = make_request_directory();
+    $tmpfilename = 'tmpfile.csv';
+    $tmpfilepath = $tmpdir . '/tmpfile.csv';
+    file_put_contents($tmpfilepath, $csvdata);
 
-    $iid = csv_import_reader::get_new_iid('moddata');
-    $cir = new csv_import_reader($iid, 'moddata');
-
-    $context = context_module::instance($cm->id);
-
-    $readcount = $cir->load_csv_content($csvdata, $encoding, $fielddelimiter);
-    $csvdata = null; // Free memory.
-    if (empty($readcount)) {
-        throw new \moodle_exception('csvfailed', 'data', "{$CFG->wwwroot}/mod/data/edit.php?d={$data->id}");
-    } else {
-        if (!$fieldnames = $cir->get_columns()) {
-            throw new \moodle_exception('cannotreadtmpfile', 'error');
-        }
-
-        // Check the fieldnames are valid.
-        $rawfields = $DB->get_records('data_fields', array('dataid' => $data->id), '', 'name, id, type');
-        $fields = array();
-        $errorfield = '';
-        $usernamestring = get_string('username');
-        $safetoskipfields = array(get_string('user'), get_string('email'),
-            get_string('timeadded', 'data'), get_string('timemodified', 'data'),
-            get_string('approved', 'data'), get_string('tags', 'data'));
-        $userfieldid = null;
-        foreach ($fieldnames as $id => $name) {
-            if (!isset($rawfields[$name])) {
-                if ($name == $usernamestring) {
-                    $userfieldid = $id;
-                } else if (!in_array($name, $safetoskipfields)) {
-                    $errorfield .= "'$name' ";
-                }
-            } else {
-                // If this is the second time, a field with this name comes up, it must be a field not provided by the user...
-                // like the username.
-                if (isset($fields[$name])) {
-                    if ($name == $usernamestring) {
-                        $userfieldid = $id;
-                    }
-                    unset($fieldnames[$id]); // To ensure the user provided content fields remain in the array once flipped.
-                } else {
-                    $field = $rawfields[$name];
-                    $filepath = "$CFG->dirroot/mod/data/field/$field->type/field.class.php";
-                    if (!file_exists($filepath)) {
-                        $errorfield .= "'$name' ";
-                        continue;
-                    }
-                    require_once($filepath);
-                    $classname = 'data_field_' . $field->type;
-                    $fields[$name] = new $classname($field, $data, $cm);
-                }
-            }
-        }
-
-        if (!empty($errorfield)) {
-            throw new \moodle_exception('fieldnotmatched', 'data',
-                "{$CFG->wwwroot}/mod/data/edit.php?d={$data->id}", $errorfield);
-        }
-
-        $fieldnames = array_flip($fieldnames);
-
-        $cir->init();
-        $recordsadded = 0;
-        while ($record = $cir->next()) {
-            $authorid = null;
-            if ($userfieldid) {
-                if (!($author = core_user::get_user_by_username($record[$userfieldid], 'id'))) {
-                    $authorid = null;
-                } else {
-                    $authorid = $author->id;
-                }
-            }
-            if ($recordid = data_add_record($data, 0, $authorid)) {  // Add instance to data_record.
-                foreach ($fields as $field) {
-                    $fieldid = $fieldnames[$field->field->name];
-                    if (isset($record[$fieldid])) {
-                        $value = $record[$fieldid];
-                    } else {
-                        $value = '';
-                    }
-
-                    if (method_exists($field, 'update_content_import')) {
-                        $field->update_content_import($recordid, $value, 'field_' . $field->field->id);
-                    } else {
-                        $content = new stdClass();
-                        $content->fieldid = $field->field->id;
-                        $content->content = $value;
-                        $content->recordid = $recordid;
-                        $DB->insert_record('data_content', $content);
-                    }
-                }
-
-                if (core_tag_tag::is_enabled('mod_data', 'data_records') &&
-                    isset($fieldnames[get_string('tags', 'data')])) {
-                    $columnindex = $fieldnames[get_string('tags', 'data')];
-                    $rawtags = $record[$columnindex];
-                    $tags = explode(',', $rawtags);
-                    foreach ($tags as $tag) {
-                        $tag = trim($tag);
-                        if (empty($tag)) {
-                            continue;
-                        }
-                        core_tag_tag::add_item_tag('mod_data', 'data_records', $recordid, $context, $tag);
-                    }
-                }
-
-                $recordsadded++;
-                print get_string('added', 'moodle', $recordsadded) . ". " . get_string('entry', 'data') . " (ID $recordid)<br />\n";
-            }
-        }
-        $cir->close();
-        $cir->cleanup(true);
-        return $recordsadded;
-    }
+    $importer = new \mod_data\local\importer\csv_entries_importer($tmpfilepath, $tmpfilename);
+    $importer->import_csv($cm, $data, $encoding, $fielddelimiter);
     return 0;
 }

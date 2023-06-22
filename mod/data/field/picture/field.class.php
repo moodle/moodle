@@ -353,15 +353,6 @@ class data_field_picture extends data_field_base {
     }
 
     /**
-     * Picture field supports export of text. The text being exported is the filename of the stored picture.
-     *
-     * @return bool true
-     */
-    public function text_export_supported() {
-        return true;
-    }
-
-    /**
      * Here we export the text value of a picture field which is the filename of the exported picture.
      *
      * @param stdClass $record the record which is being exported
@@ -407,8 +398,6 @@ class data_field_picture extends data_field_base {
      * @param string $filecontent the content of the file to import as string
      * @param string $filename the filename the imported file should get
      * @return void
-     * @throws file_exception
-     * @throws stored_file_creation_exception
      */
     public function import_file_value(int $contentid, string $filecontent, string $filename): void {
         $filerecord = [

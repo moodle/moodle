@@ -14,25 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_data\local;
+namespace mod_data\local\exporter;
 
 use MoodleODSWorkbook;
 use MoodleODSWriter;
 
 /**
- * ODS exporter for mod_data.
+ * ODS entries exporter for mod_data.
  *
  * @package    mod_data
  * @copyright  2023 ISB Bayern
  * @author     Philipp Memmel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ods_exporter extends exporter {
+class ods_entries_exporter extends entries_exporter {
 
     /**
-     * Returns the file extension of this exporter.
+     * Returns the file extension of this entries exporter.
      *
-     * @see \mod_data\local\exporter::get_export_data_file_extension()
+     * @see \mod_data\local\exporter\entries_exporter::get_export_data_file_extension()
      */
     public function get_export_data_file_extension(): string {
         return 'ods';
@@ -41,7 +41,7 @@ class ods_exporter extends exporter {
     /**
      * Returns the ods data exported by the ODS library for further handling.
      *
-     * @see \mod_data\local\exporter::get_data_file_content()
+     * @see \mod_data\local\exporter\entries_exporter::get_data_file_content()
      */
     public function get_data_file_content(): string {
         global $CFG;

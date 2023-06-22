@@ -14,30 +14,37 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_data\local;
+namespace mod_data\local\importer;
 
-use coding_exception;
 use context_module;
 use core_php_time_limit;
 use core_tag_tag;
 use core_user;
 use csv_import_reader;
-use dml_exception;
 use moodle_exception;
 use stdClass;
 
 /**
- * CSV importer class for importing data and - if needed - files as well from a zip archive.
+ * CSV entries_importer class for importing data and - if needed - files as well from a zip archive.
  *
  * @package    mod_data
  * @copyright  2023 ISB Bayern
  * @author     Philipp Memmel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_data_csv_importer extends csv_importer {
+class csv_entries_importer extends entries_importer {
 
     /** @var array Log entries for successfully added records. */
     private array $addedrecordsmessages = [];
+
+    /**
+     * Declares the entries_importer to use a csv file as data file.
+     *
+     * @see entries_importer::get_import_data_file_extension()
+     */
+    public function get_import_data_file_extension(): string {
+        return 'csv';
+    }
 
     /**
      * Import records for a data instance from csv data.
@@ -47,8 +54,6 @@ class mod_data_csv_importer extends csv_importer {
      * @param string $encoding The encoding of csv data.
      * @param string $fielddelimiter The delimiter of the csv data.
      *
-     * @throws coding_exception
-     * @throws dml_exception
      * @throws moodle_exception
      */
     public function import_csv(stdClass $cm, stdClass $data, string $encoding, string $fielddelimiter): void {

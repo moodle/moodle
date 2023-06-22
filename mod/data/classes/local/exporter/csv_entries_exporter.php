@@ -14,20 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_data\local;
+namespace mod_data\local\exporter;
 
 use coding_exception;
 use csv_export_writer;
 
 /**
- * CSV exporter for mod_data.
+ * CSV entries exporter for mod_data.
  *
  * @package    mod_data
  * @copyright  2023 ISB Bayern
  * @author     Philipp Memmel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class csv_exporter extends exporter {
+class csv_entries_exporter extends entries_exporter {
 
     /** @var string[] Possible delimiter names. Only used internally to check if a valid delimiter name
      *   has been specified.
@@ -43,23 +43,26 @@ class csv_exporter extends exporter {
     /**
      * Returns the csv data exported by the csv_export_writer for further handling.
      *
-     * @see \mod_data\local\exporter::get_data_file_content()
+     * @see \mod_data\local\exporter\entries_exporter::get_data_file_content()
      */
     public function get_data_file_content(): string {
+        global $CFG;
+        require_once($CFG->libdir . '/csvlib.class.php');
+
         return csv_export_writer::print_array($this->exportdata, $this->delimitername, '"', true);
     }
 
     /**
-     * Returns the file extension of this exporter.
+     * Returns the file extension of this entries exporter.
      *
-     * @see \mod_data\local\exporter::get_export_data_file_extension()
+     * @see \mod_data\local\exporter\entries_exporter::get_export_data_file_extension()
      */
     public function get_export_data_file_extension(): string {
         return 'csv';
     }
 
     /**
-     * Setter for the delimiter name which should be used in this csv_exporter object.
+     * Setter for the delimiter name which should be used in this csv_entries_exporter object.
      *
      * Calling this setter is optional, the delimiter name defaults to 'comma'.
      *

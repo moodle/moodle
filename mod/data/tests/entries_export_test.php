@@ -16,22 +16,20 @@
 
 namespace mod_data;
 
-use coding_exception;
 use context_module;
-use dml_exception;
-use mod_data\local\csv_exporter;
-use mod_data\local\exporter_utils;
-use mod_data\local\mod_data_csv_importer;
+use mod_data\local\exporter\csv_entries_exporter;
+use mod_data\local\exporter\ods_entries_exporter;
+use mod_data\local\exporter\utils;
 
 /**
- * Unit tests for import.php.
+ * Unit tests for exporting entries.
  *
  * @package    mod_data
- * @category   test
- * @copyright  2019 Tobias Reischmann
+ * @copyright  2023 ISB Bayern
+ * @author     Philipp Memmel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class export_test extends \advanced_testcase {
+class entries_export_test extends \advanced_testcase {
 
     /**
      * Get the test data.
@@ -39,11 +37,11 @@ class export_test extends \advanced_testcase {
      * In this instance we are setting up database records to be used in the unit tests.
      *
      * @return array of test instances
-     * @throws coding_exception
      */
     protected function get_test_data(): array {
         $this->resetAfterTest(true);
 
+        /** @var \mod_data_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
@@ -91,19 +89,25 @@ class export_test extends \advanced_testcase {
     }
 
     /**
-     * Tests the exporting of the content of a mod_data instance.
+     * Tests the exporting of the content of a mod_data instance by using the csv_entries_exporter.
      *
-     * @covers \mod_data\local\exporter
-     * @covers \mod_data\local\exporter_utils::data_exportdata
+     * It also includes more general testing of the functionality of the entries_exporter the csv_entries_exporter
+     * is inheriting from.
+     *
+     * @covers \mod_data\local\exporter\entries_exporter
+     * @covers \mod_data\local\exporter\entries_exporter::get_records_count()
+     * @covers \mod_data\local\exporter\entries_exporter::send_file()
+     * @covers \mod_data\local\exporter\csv_entries_exporter
+     * @covers \mod_data\local\exporter\utils::data_exportdata
      */
-    public function test_export(): void {
+    public function test_export_csv(): void {
         global $DB;
         [
             'data' => $data,
             'cm' => $cm,
         ] = $this->get_test_data();
 
-        $exporter = new csv_exporter();
+        $exporter = new csv_entries_exporter();
         $exporter->set_export_file_name('testexportfile');
         $fieldrecords = $DB->get_records('data_fields', ['dataid' => $data->id], 'id');
 
@@ -124,16 +128,18 @@ class export_test extends \advanced_testcase {
         // This means file and picture fields will be exported, but only as text (which is the filename),
         // so we will receive a csv export file.
         $includefiles = false;
-        exporter_utils::data_exportdata($data->id, $fields, $selectedfields, $exporter, $currentgroup, $context,
+        utils::data_exportdata($data->id, $fields, $selectedfields, $exporter, $currentgroup, $context,
             $exportuser, $exporttime, $exportapproval, $tags, $includefiles);
         $this->assertEquals(file_get_contents(__DIR__ . '/fixtures/test_data_export_without_files.csv'),
             $exporter->send_file(false));
 
+        $this->assertEquals(1, $exporter->get_records_count());
+
         // We now test the export including files. This will generate a zip archive.
         $includefiles = true;
-        $exporter = new csv_exporter();
+        $exporter = new csv_entries_exporter();
         $exporter->set_export_file_name('testexportfile');
-        exporter_utils::data_exportdata($data->id, $fields, $selectedfields, $exporter, $currentgroup, $context,
+        utils::data_exportdata($data->id, $fields, $selectedfields, $exporter, $currentgroup, $context,
             $exportuser, $exporttime, $exportapproval, $tags, $includefiles);
         // We now write the zip archive temporary to disc to be able to parse it and assert it has the correct structure.
         $tmpdir = make_request_directory();
@@ -164,5 +170,91 @@ class export_test extends \advanced_testcase {
             fclose($filestream);
         }
         $ziparchive->close();
+        unlink($tmpdir . '/testexportarchive.zip');
+    }
+
+    /**
+     * Tests specific ODS exporting functionality.
+     *
+     * @covers \mod_data\local\exporter\ods_entries_exporter
+     * @covers \mod_data\local\exporter\utils::data_exportdata
+     */
+    public function test_export_ods(): void {
+        global $DB;
+        [
+            'data' => $data,
+            'cm' => $cm,
+        ] = $this->get_test_data();
+
+        $exporter = new ods_entries_exporter();
+        $exporter->set_export_file_name('testexportfile');
+        $fieldrecords = $DB->get_records('data_fields', ['dataid' => $data->id], 'id');
+
+        $fields = [];
+        foreach ($fieldrecords as $fieldrecord) {
+            $fields[] = data_get_field($fieldrecord, $data);
+        }
+
+        // We select all fields.
+        $selectedfields = array_map(fn($field) => $field->field->id, $fields);
+        $currentgroup = groups_get_activity_group($cm);
+        $context = context_module::instance($cm->id);
+        $exportuser = false;
+        $exporttime = false;
+        $exportapproval = false;
+        $tags = false;
+        // We first test the export without exporting files.
+        // This means file and picture fields will be exported, but only as text (which is the filename),
+        // so we will receive an ods export file.
+        $includefiles = false;
+        utils::data_exportdata($data->id, $fields, $selectedfields, $exporter, $currentgroup, $context,
+            $exportuser, $exporttime, $exportapproval, $tags, $includefiles);
+        $odsrows = $this->get_ods_rows_content($exporter->send_file(false));
+
+        // Check, if the headings match with the first row of the ods file.
+        $i = 0;
+        foreach ($fields as $field) {
+            $this->assertEquals($field->field->name, $odsrows[0][$i]);
+            $i++;
+        }
+
+        // Check, if the values match with the field values.
+        $this->assertEquals('3', $odsrows[1][0]);
+        $this->assertEquals('a simple text', $odsrows[1][1]);
+        $this->assertEquals('samplefile.png', $odsrows[1][2]);
+        $this->assertEquals('samplefile.png', $odsrows[1][3]);
+        $this->assertEquals('picturefile.png', $odsrows[1][4]);
+
+        // As the logic of renaming the files and building a zip archive is implemented in entries_exporter class, we do
+        // not need to test this for the ods_entries_exporter, because entries_export_test::test_export_csv already does this.
+    }
+
+    /**
+     * Helper function to extract the text data as row arrays from an ODS document.
+     *
+     * @param string $content the file content
+     * @return array two-dimensional row/column array with the text content of the first spreadsheet
+     */
+    private function get_ods_rows_content(string $content): array {
+        $file = tempnam(make_request_directory(), 'ods_');
+        $filestream = fopen($file, "w");
+        fwrite($filestream, $content);
+        $reader = new \OpenSpout\Reader\ODS\Reader();
+        $reader->open($file);
+        /** @var \OpenSpout\Reader\ODS\Sheet[] $sheets */
+        $sheets = $reader->getSheetIterator();
+        $rowscellsvalues = [];
+        foreach ($sheets as $sheet) {
+            /** @var \OpenSpout\Common\Entity\Row[] $rows */
+            $rows = $sheet->getRowIterator();
+            foreach ($rows as $row) {
+                $cellvalues = [];
+                foreach ($row->getCells() as $cell) {
+                    $cellvalues[] = $cell->getValue();
+                }
+                $rowscellsvalues[] = $cellvalues;
+            }
+        }
+        return $rowscellsvalues;
     }
 }

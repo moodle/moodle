@@ -93,7 +93,7 @@ if ($formdata = $form->get_data()) {
         throw new coding_exception('No file uploaded.');
     }
 
-    $importer = new \mod_data\local\mod_data_csv_importer($uploadedfilepath, $form->get_new_filename('recordsfile'));
+    $importer = new \mod_data\local\importer\csv_entries_importer($uploadedfilepath, $form->get_new_filename('recordsfile'));
 
     if (!$importer->get_data_file_content()) {
         echo $OUTPUT->notification(get_string('errordatafilenotfound', 'data'),
