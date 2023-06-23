@@ -5,6 +5,8 @@ information provided here is intended especially for developers.
 * Added new \admin_setting::is_forceable() method to determine whether the setting can be overridden or not. Therefore,
   whether the settings can be overriden or not will depend on the value of implemented \admin_setting::is_forceable() method,
   even if we define the settings in config.php.
+* New \core\output\activity_header::get_heading_level() method to get the heading level for a given heading level depending whether
+  the page displays a heading for the activity (usually a h2 heading containing the activity name).
 
 === 4.1.4 ===
 * Added a new parameter in address_in_subnet to give us the ability to check for 0.0.0.0 or not.
