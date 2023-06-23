@@ -220,6 +220,7 @@ if ($user->description && !isset($hiddenfields['description'])) {
     echo '</div>';
 }
 
+echo $OUTPUT->heading(get_string('userprofile', 'core_user'), 2, 'sr-only');
 echo $OUTPUT->custom_block_region('content');
 
 // Render custom blocks.
