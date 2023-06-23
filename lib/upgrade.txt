@@ -35,6 +35,8 @@ information provided here is intended especially for developers.
 * Introduce a new public function \core_external\util::generate_token_name()
 * Legacy (and custom) Behat --skip-passed option has been removed completely. Please, use the standard
   --rerun option that provides exactly the same (execution of failed scenarios only).
+* New \core\output\activity_header::get_heading_level() method to get the heading level for a given heading level depending whether
+  the page displays a heading for the activity (usually a h2 heading containing the activity name).
 
 === 4.2 ===
 
