@@ -418,9 +418,11 @@ function badges_get_badge_by_hash(string $hash): object|bool {
  */
 function badges_prepare_badge_for_external(stdClass $badge, stdClass $user): object {
     global $PAGE, $USER;
-    $context = ($badge->type == BADGE_TYPE_SITE) ?
-                        context_system::instance() :
-                        context_course::instance($badge->courseid);
+    if ($badge->type == BADGE_TYPE_SITE) {
+        $context = context_system::instance();
+    } else {
+        $context = context_course::instance($badge->courseid);
+    }
     $canconfiguredetails = has_capability('moodle/badges:configuredetails', $context);
     // If the user is viewing another user's badge and doesn't have the right capability return only part of the data.
     if ($USER->id != $user->id && !$canconfiguredetails) {
