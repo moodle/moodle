@@ -90,7 +90,7 @@ class grade_import_form extends moodleform {
             $mform->disabledIf('key', 'url', 'eq', '');
         }
 
-        $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));
+        $this->add_sticky_action_buttons(false, get_string('uploadgrades', 'grades'));
     }
 
     function validation($data, $files) {

@@ -18,8 +18,8 @@
 require_once('../../../config.php');
 require_once($CFG->libdir . '/gradelib.php');
 require_once($CFG->dirroot . '/grade/lib.php');
-require_once($CFG->dirroot . '/grade/import/grade_import_form.php');
-require_once($CFG->dirroot . '/grade/import/lib.php');
+require_once($CFG->dirroot . '/grade/import/xml/lib.php');
+require_once($CFG->dirroot . '/grade/import/xml/grade_import_form.php');
 
 $id = required_param('id', PARAM_INT); // course id
 
