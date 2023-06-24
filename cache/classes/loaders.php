@@ -1703,7 +1703,7 @@ class cache_application extends cache implements cache_loader_with_locking {
         $after = microtime(true);
         if ($lock) {
             $this->locks[$key] = $lock;
-            if ((defined('MDL_PERF') && MDL_PERF) || $this->perfdebug) {
+            if (MDL_PERF || $this->perfdebug) {
                 \core\lock\timing_wrapper_lock_factory::record_lock_data($after, $before,
                         $this->get_definition()->get_id(), $key, $lock, $this->get_identifier() . $key);
             }
@@ -1748,7 +1748,7 @@ class cache_application extends cache implements cache_loader_with_locking {
         }
         if ($released && array_key_exists($key, $this->locks)) {
             unset($this->locks[$key]);
-            if ((defined('MDL_PERF') && MDL_PERF) || $this->perfdebug) {
+            if (MDL_PERF || $this->perfdebug) {
                 \core\lock\timing_wrapper_lock_factory::record_lock_released_data($this->get_identifier() . $key);
             }
         }

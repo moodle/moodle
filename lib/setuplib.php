@@ -1195,7 +1195,6 @@ function init_performance_info() {
     global $PERF, $CFG, $USER;
 
     $PERF = new stdClass();
-    $PERF->logwrites = 0;
     if (function_exists('microtime')) {
         $PERF->starttime = microtime();
     }

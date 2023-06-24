@@ -422,9 +422,6 @@ $CFG->admin = 'admin';
 //   Capture performance profiling data
 //   define('MDL_PERF'  , true);
 //
-//   Capture additional data from DB
-//   define('MDL_PERFDB'  , true);
-//
 //   Print to log (for passive profiling of production servers)
 //   define('MDL_PERFTOLOG'  , true);
 //

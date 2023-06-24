@@ -9642,13 +9642,7 @@ function get_performance_info() {
         }
     }
 
-    if (!empty($PERF->logwrites)) {
-        $info['logwrites'] = $PERF->logwrites;
-        $info['html'] .= '<li class="logwrites col-sm-4">Log DB writes '.$info['logwrites'].'</li> ';
-        $info['txt'] .= 'logwrites: '.$info['logwrites'].' ';
-    }
-
-    $info['dbqueries'] = $DB->perf_get_reads().'/'.($DB->perf_get_writes() - $PERF->logwrites);
+    $info['dbqueries'] = $DB->perf_get_reads().'/'.$DB->perf_get_writes();
     $info['html'] .= '<li class="dbqueries col-sm-4">DB reads/writes: '.$info['dbqueries'].'</li> ';
     $info['txt'] .= 'db reads/writes: '.$info['dbqueries'].' ';
 
