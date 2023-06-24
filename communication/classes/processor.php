@@ -51,9 +51,6 @@ class processor {
         private stdClass $instancedata,
     ) {
         $providercomponent = $this->instancedata->provider;
-        if (!\core\plugininfo\communication::is_plugin_enabled($providercomponent)) {
-            throw new \moodle_exception('communicationproviderdisabled', 'core_communication', '', $providercomponent);
-        }
         $providerclass = $this->get_classname_for_provider($providercomponent);
         if (!class_exists($providerclass)) {
             throw new \moodle_exception('communicationproviderclassnotfound', 'core_communication', '', $providerclass);
@@ -329,8 +326,8 @@ class processor {
      */
     public static function load_by_id(int $id): ?self {
         global $DB;
-
-        if ($record = $DB->get_record('communication', ['id' => $id])) {
+        $record = $DB->get_record('communication', ['id' => $id]);
+        if ($record && self::is_provider_enabled($record->provider)) {
             return new self($record);
         }
 
@@ -359,7 +356,7 @@ class processor {
             'instancetype' => $instancetype,
         ]);
 
-        if ($record) {
+        if ($record && self::is_provider_enabled($record->provider)) {
             return new self($record);
         }
 
@@ -599,5 +596,15 @@ class processor {
             return $this->get_room_provider()->get_chat_room_url();
         }
         return null;
+    }
+
+    /**
+     * Is communication provider enabled/disabled.
+     *
+     * @param string $provider provider component name
+     * @return bool
+     */
+    public static function is_provider_enabled(string $provider): bool {
+        return \core\plugininfo\communication::is_plugin_enabled($provider);
     }
 }
