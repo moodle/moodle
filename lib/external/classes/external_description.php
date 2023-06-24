@@ -44,7 +44,7 @@ abstract class external_description {
      * @param mixed $default The default value
      * @param bool $allownull Allow null value
      */
-    public function __construct($desc, $required, $default, $allownull = NULL_NOTALLOWED) {
+    public function __construct($desc, $required, $default, $allownull = NULL_NOT_ALLOWED) {
         if (!in_array($required, [VALUE_DEFAULT, VALUE_REQUIRED, VALUE_OPTIONAL], true)) {
             $requiredstr = $required;
             if (is_array($required)) {
