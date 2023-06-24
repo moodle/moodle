@@ -15,19 +15,19 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template media/embed
+    @template media_youtube/embed
 
     This template will render the YouTube embeded player.
 
     Variables required for this template:
-    * info: The title of the video.
+    * title: The title of the video.
     * width: The width of the video.
     * height: The height of the video.
     * embedurl: The URL to the video.
 
     Example context (json):
     {
-        "info": "YouTube video",
+        "title": "YouTube video",
         "width": 640,
         "height": 360,
         "embedurl": "https://www.youtube.com/embed/9bZkp7q19f0?rel=0&amp;wmode=transparent"
@@ -36,6 +36,6 @@
 }}
 
 <span class="mediaplugin mediaplugin_youtube">
-<iframe title="{{info}}" width="{{width}}" height="{{height}}" style="border:0;"
-        src="{{{embedurl}}}" allow="fullscreen"></iframe>
+<iframe title="{{title}}" width="{{width}}" height="{{height}}" style="border:0;"
+        src="{{{embedurl}}}" allow="fullscreen" loading="lazy"></iframe>
 </span>

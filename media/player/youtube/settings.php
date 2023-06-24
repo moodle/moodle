@@ -15,15 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Settings file for plugin 'media_youtube'
  *
  * @package   media_youtube
- * @copyright 2016 Marina Glancy
+ * @copyright 2023 Matt Porritt <matt.porritt@moodle.com
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2023062400;      // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2023041800;      // Requires this Moodle version.
-$plugin->component = 'media_youtube'; // Full name of the plugin (used for diagnostics).
+if ($ADMIN->fulltree) {
+    // Add the settings page.
+    $settings->add(new admin_setting_heading('media_youtube_settings',
+                    get_string('pluginname', 'media_youtube'),
+                    get_string('pluginname_help', 'media_youtube')));
+    // Add a settings checkbox to enable or disable no cookie YouTube links.
+    $settings->add(new admin_setting_configcheckbox('media_youtube/nocookie',
+        new lang_string('nocookie', 'media_youtube'),
+        new lang_string('nocookie_desc', 'media_youtube'), 0));
+}

@@ -184,4 +184,27 @@ class player_test extends \advanced_testcase {
         $this->assertMatchesRegularExpression('~</iframe>~', $content);
         $this->assertMatchesRegularExpression('~width="123" height="35"~', $content);
     }
+
+    /**
+     * Test that YouTube media plugin renders embed code correctly
+     * when the "nocookie" config options is set to true.
+     *
+     * @covers \media_youtube_plugin::embed_external
+     */
+    public function test_youtube_nocookie() {
+        // Turn on the no cookie option.
+        set_config('nocookie', true, 'media_youtube');
+
+        // Test that the embed code contains the no cookie domain.
+        $url = new \moodle_url('http://www.youtube.com/v/vyrwMmsufJc');
+        $text = \html_writer::link($url, 'Watch this one');
+        $content = format_text($text, FORMAT_HTML);
+        $this->assertMatchesRegularExpression('~youtube-nocookie~', $content);
+
+        // Next test for a playlist.
+        $url = new \moodle_url('https://www.youtube.com/playlist?list=PL59FEE129ADFF2B12');
+        $text = \html_writer::link($url, 'Great Playlist');
+        $content = format_text($text, FORMAT_HTML);
+        $this->assertMatchesRegularExpression('~youtube-nocookie~', $content);
+    }
 }
