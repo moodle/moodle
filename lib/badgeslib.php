@@ -29,6 +29,9 @@ defined('MOODLE_INTERNAL') || die();
 /* Include required award criteria library. */
 require_once($CFG->dirroot . '/badges/criteria/award_criteria.php');
 
+/* Include required user badge exporter */
+use core_badges\external\user_badge_exporter;
+
 /*
  * Number of records per page.
 */
@@ -376,6 +379,105 @@ function badges_get_user_badges($userid, $courseid = 0, $page = 0, $perpage = 0,
     $badges = $DB->get_records_sql($sql, $params, $page * $perpage, $perpage);
 
     return $badges;
+}
+
+/**
+ * Get badge by hash.
+ *
+ * @param string $hash
+ * @return object|bool
+ */
+function badges_get_badge_by_hash(string $hash): object|bool {
+    global $DB;
+    $sql = 'SELECT
+                bi.uniquehash,
+                bi.dateissued,
+                bi.userid,
+                bi.dateexpire,
+                bi.id as issuedid,
+                bi.visible,
+                u.email,
+                b.*
+            FROM
+                {badge} b,
+                {badge_issued} bi,
+                {user} u
+            WHERE b.id = bi.badgeid
+                AND u.id = bi.userid
+                AND bi.uniquehash = :uniquehash';
+    $badge = $DB->get_record_sql($sql, ['uniquehash' => $hash]);
+    return $badge;
+}
+
+/**
+ * Update badge instance to external functions.
+ *
+ * @param stdClass $badge
+ * @param stdClass $user
+ * @return object
+ */
+function badges_prepare_badge_for_external(stdClass $badge, stdClass $user): object {
+    global $PAGE, $USER;
+    $context = ($badge->type == BADGE_TYPE_SITE) ?
+                        context_system::instance() :
+                        context_course::instance($badge->courseid);
+    $canconfiguredetails = has_capability('moodle/badges:configuredetails', $context);
+    // If the user is viewing another user's badge and doesn't have the right capability return only part of the data.
+    if ($USER->id != $user->id && !$canconfiguredetails) {
+        $badge = (object) [
+            'id'            => $badge->id,
+            'name'          => $badge->name,
+            'type'          => $badge->type,
+            'description'   => $badge->description,
+            'issuername'    => $badge->issuername,
+            'issuerurl'     => $badge->issuerurl,
+            'issuercontact' => $badge->issuercontact,
+            'uniquehash'    => $badge->uniquehash,
+            'dateissued'    => $badge->dateissued,
+            'dateexpire'    => $badge->dateexpire,
+            'version'       => $badge->version,
+            'language'      => $badge->language,
+            'imageauthorname'  => $badge->imageauthorname,
+            'imageauthoremail' => $badge->imageauthoremail,
+            'imageauthorurl'   => $badge->imageauthorurl,
+            'imagecaption'     => $badge->imagecaption,
+        ];
+    }
+
+    // Create a badge instance to be able to get the endorsement and other info.
+    $badgeinstance = new badge($badge->id);
+    $endorsement   = $badgeinstance->get_endorsement();
+    $alignments    = $badgeinstance->get_alignments();
+    $relatedbadges = $badgeinstance->get_related_badges();
+
+    if (!$canconfiguredetails) {
+        // Return only the properties visible by the user.
+        if (!empty($alignments)) {
+            foreach ($alignments as $alignment) {
+                unset($alignment->targetdescription);
+                unset($alignment->targetframework);
+                unset($alignment->targetcode);
+            }
+        }
+
+        if (!empty($relatedbadges)) {
+            foreach ($relatedbadges as $relatedbadge) {
+                unset($relatedbadge->version);
+                unset($relatedbadge->language);
+                unset($relatedbadge->type);
+            }
+        }
+    }
+
+    $related = [
+        'context'       => $context,
+        'endorsement'   => $endorsement ? $endorsement : null,
+        'alignment'     => $alignments,
+        'relatedbadges' => $relatedbadges,
+    ];
+
+    $exporter = new user_badge_exporter($badge, $related);
+    return $exporter->export($PAGE->get_renderer('core'));
 }
 
 /**
