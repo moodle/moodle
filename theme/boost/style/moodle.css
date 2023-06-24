@@ -36869,6 +36869,10 @@ div.editor_atto_toolbar button .icon {
   margin-top: 0;
 }
 
+:root {
+  --navbar-height: 60px;
+}
+
 /**
 * Reportbuilder.
 */
