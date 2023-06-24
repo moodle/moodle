@@ -34,6 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class media_vimeo_plugin extends core_media_player_external {
     protected function embed_external(moodle_url $url, $name, $width, $height, $options) {
+        global $OUTPUT;
         $videoid = $this->get_video_id();
         $info = s($name);
 
@@ -42,15 +43,17 @@ class media_vimeo_plugin extends core_media_player_external {
         // option that seems to work on most devices.
         self::pick_video_size($width, $height);
 
-        $output = <<<OET
-<span class="mediaplugin mediaplugin_vimeo">
-<iframe title="$info" src="https://player.vimeo.com/video/$videoid"
-  width="$width" height="$height" frameborder="0"
-  webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-</span>
-OET;
+        $embedurl = new moodle_url("https://player.vimeo.com/video/$videoid");
+        // Template context.
+        $context = [
+                'width' => $width,
+                'height' => $height,
+                'title' => $info,
+                'embedurl' => $embedurl->out(false),
+        ];
 
-        return $output;
+        // Return the rendered template.
+        return $OUTPUT->render_from_template('media_vimeo/embed', $context);
     }
 
     /**
