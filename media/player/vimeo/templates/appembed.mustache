@@ -21,6 +21,7 @@
     in a special format for the Moodle mobile app.
 
     Variables required for this template:
+    * lang: The language of the user.
     * width: The width of the video.
     * height: The height of the video.
     * style: The style info for iframe.
@@ -28,6 +29,7 @@
 
     Example context (json):
     {
+        "lang": "en",
         "width": 640,
         "height": 360,
         "style": "position:absolute; top:0; left:0; width:100%; height:100%;",
@@ -35,10 +37,11 @@
     }
 
 }}
-
-<html>
+<!DOCTYPE html>
+<html lang="{{lang}}">
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>{{#str}} pluginname, media_vimeo {{/str}}</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
 </head>
 <body style="margin:0; padding:0">
 <iframe {{#style}}style="{{style}}" {{/style}}

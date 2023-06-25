@@ -48,9 +48,14 @@ $h = optional_param('h', '', PARAM_ALPHANUM); // Security hash for restricted vi
 $webservicelib = new webservice();
 $webservicelib->authenticate_user($token);
 
-$params = [];
+$params = ['lang' => current_language()];
 if (!empty($h)) {
     $params['h'] = $h;
+}
+
+// Add do not track parameter.
+if (get_config('media_vimeo', 'donottrack')) {
+    $params['dnt'] = 1;
 }
 
 $embedurl = new moodle_url("https://player.vimeo.com/video/$video", $params);
@@ -65,4 +70,4 @@ if (empty($width) && empty($height)) {
 }
 
 // Output the rendered template.
-echo $OUTPUT->render_from_template('media_youtube/appembed', $context);
+echo $OUTPUT->render_from_template('media_vimeo/appembed', $context);

@@ -35,21 +35,29 @@ defined('MOODLE_INTERNAL') || die();
 class media_vimeo_plugin extends core_media_player_external {
     protected function embed_external(moodle_url $url, $name, $width, $height, $options) {
         global $OUTPUT;
+
+        $donottrack = get_config('media_vimeo', 'donottrack');
         $videoid = $this->get_video_id();
         $info = s($name);
+        $params = [];
 
         // Note: resizing via url is not supported, user can click the fullscreen
         // button instead. iframe embedding is not xhtml strict but it is the only
         // option that seems to work on most devices.
         self::pick_video_size($width, $height);
 
-        $embedurl = new moodle_url("https://player.vimeo.com/video/$videoid");
+        // Add do not track parameter.
+        if ($donottrack) {
+            $params['dnt'] = 1;
+        }
+
+        $embedurl = new moodle_url("https://player.vimeo.com/video/$videoid", $params);
         // Template context.
         $context = [
-                'width' => $width,
-                'height' => $height,
-                'title' => $info,
-                'embedurl' => $embedurl->out(false),
+            'width' => $width,
+            'height' => $height,
+            'title' => $info,
+            'embedurl' => $embedurl->out(false),
         ];
 
         // Return the rendered template.

@@ -20,14 +20,14 @@
     This template will render the Vimeo embeded player.
 
     Variables required for this template:
-    * info: The title of the video.
+    * title: The title of the video.
     * width: The width of the video.
     * height: The height of the video.
     * embedurl: The URL to the video.
 
     Example context (json):
     {
-        "info": "YouTube video",
+        "title": "Vimeo video",
         "width": 640,
         "height": 360,
         "embedurl": "https://player.vimeo.com/video/226053498"
@@ -36,6 +36,6 @@
 }}
 
 <span class="mediaplugin mediaplugin_vimeo">
-<iframe title="{{info}}" width="{{width}}" height="{{height}}" style="border:0;"
+<iframe title="{{title}}" width="{{width}}" height="{{height}}" style="border:0;"
         src="{{{embedurl}}}" allow="fullscreen" loading="lazy"></iframe>
 </span>
