@@ -2665,35 +2665,48 @@ EOF;
     }
 
     /**
-     * Test function password_is_legacy_hash().
+     * Test function password_is_legacy_hash.
+     * @covers ::password_is_legacy_hash
      */
     public function test_password_is_legacy_hash() {
-        // Well formed md5s should be matched.
-        foreach (array('some', 'strings', 'to_check!') as $string) {
-            $md5 = md5($string);
-            $this->assertTrue(password_is_legacy_hash($md5));
+        // Well formed bcrypt hashes should be matched.
+        foreach (array('some', 'strings', 'to_check!') as $password) {
+            $bcrypt = password_hash($password, '2y');
+            $this->assertTrue(password_is_legacy_hash($bcrypt));
         }
-        // Strings that are not md5s should not be matched.
-        foreach (array('', AUTH_PASSWORD_NOT_CACHED, 'IPW8WTcsWNgAWcUS1FBVHegzJnw5M2jOmYkmfc8z.xdBOyC4Caeum') as $notmd5) {
-            $this->assertFalse(password_is_legacy_hash($notmd5));
+        // Strings that are not bcrypt should not be matched.
+        $sha512 = '$6$rounds=5000$somesalt$9nEA35u5h4oDrUdcVFUwXDSwIBiZtuKDHiaI/kxnBSslH4wVXeAhVsDn1UFxBxrnRJva/8dZ8IouaijJdd4cF';
+        foreach (array('', AUTH_PASSWORD_NOT_CACHED, $sha512) as $notbcrypt) {
+            $this->assertFalse(password_is_legacy_hash($notbcrypt));
         }
     }
 
     /**
-     * Test function validate_internal_user_password().
+     * Test function validate_internal_user_password.
+     * @covers ::validate_internal_user_password
      */
     public function test_validate_internal_user_password() {
-        // Test bcrypt hashes.
-        $validhashes = array(
+        $this->resetAfterTest(true);
+        // Test bcrypt hashes (these will be updated but will still count as valid).
+        $bcrypthashes = [
             'pw' => '$2y$10$LOSDi5eaQJhutSRun.OVJ.ZSxQZabCMay7TO1KmzMkDMPvU40zGXK',
             'abc' => '$2y$10$VWTOhVdsBbWwtdWNDRHSpewjd3aXBQlBQf5rBY/hVhw8hciarFhXa',
             'C0mP1eX_&}<?@*&%` |\"' => '$2y$10$3PJf.q.9ywNJlsInPbqc8.IFeSsvXrGvQLKRFBIhVu1h1I3vpIry6',
-            'ĩńťėŕňăţĩōŋāĹ' => '$2y$10$3A2Y8WpfRAnP3czJiSv6N.6Xp0T8hW3QZz2hUCYhzyWr1kGP1yUve'
-        );
+            'ĩńťėŕňăţĩōŋāĹ' => '$2y$10$3A2Y8WpfRAnP3czJiSv6N.6Xp0T8hW3QZz2hUCYhzyWr1kGP1yUve',
+        ];
+
+        // Test sha512 hashes.
+        $sha512hashes = [
+            'pw2' => '$6$rounds=10000$0rDIzh/4.MMf9Dm8$Zrj6Ulc1JFj0RFXwMJFsngRSNGlqkPlV1wwRVv7wBLrMeQeMZrwsBO62zy63D//6R5sNGVYQwPB0K8jPCScxB/',
+            'abc2' => '$6$rounds=10000$t0L6PklgpijV4tMB$1vpCRKCImsVqTPMiZTi6zLGbs.hpAU8I2BhD/IFliBnHJkFZCWEBfTCq6pEzo0Q8nXsryrgeZ.qngcW.eifuW.',
+            'C0mP1eX_&}<?@*&%` |\"2' => '$6$rounds=10000$3TAyVAXN0zmFZ4il$KF8YzduX6Gu0C2xHsY83zoqQ/rLVsb9mLe417wDObo9tO00qeUC68/y2tMq4FL2ixnMPH3OMwzGYo8VJrm8Eq1',
+            'ĩńťėŕňăţĩōŋāĹ2' => '$6$rounds=10000$SHR/6ctTkfXOy5NP$YPv42hjDjohVWD3B0boyEYTnLcBXBKO933ijHmkPXNL7BpqAcbYMLfTl9rjsPmCt.1GZvEJZ8ikkCPYBC5Sdp.',
+        ];
+
+        $validhashes = array_merge($bcrypthashes, $sha512hashes);
 
         foreach ($validhashes as $password => $hash) {
-            $user = new \stdClass();
-            $user->auth = 'manual';
+            $user = $this->getDataGenerator()->create_user(array('auth' => 'manual', 'password' => $password));
             $user->password = $hash;
             // The correct password should be validated.
             $this->assertTrue(validate_internal_user_password($user, $password));
@@ -2703,7 +2716,8 @@ EOF;
     }
 
     /**
-     * Test function hash_internal_user_password().
+     * Test function hash_internal_user_password.
+     * @covers ::hash_internal_user_password
      */
     public function test_hash_internal_user_password() {
         $passwords = array('pw', 'abc123', 'C0mP1eX_&}<?@*&%` |\"', 'ĩńťėŕňăţĩōŋāĹ');
@@ -2718,17 +2732,18 @@ EOF;
             $user->password = $hash;
             $this->assertTrue(validate_internal_user_password($user, $password));
 
-            // They should not be in md5 format.
+            // They should not be in bycrypt format.
             $this->assertFalse(password_is_legacy_hash($hash));
 
             // Check that cost factor in hash is correctly set.
-            $this->assertMatchesRegularExpression('/\$10\$/', $hash);
-            $this->assertMatchesRegularExpression('/\$04\$/', $fasthash);
+            $this->assertMatchesRegularExpression('/\$6\$rounds=10000\$.{103}/', $hash);
+            $this->assertMatchesRegularExpression('/\$6\$rounds=5000\$.{103}/', $fasthash);
         }
     }
 
     /**
-     * Test function update_internal_user_password().
+     * Test function update_internal_user_password.
+     * @covers ::update_internal_user_password
      */
     public function test_update_internal_user_password() {
         global $DB;
@@ -2745,8 +2760,8 @@ EOF;
         }
 
         $user = $this->getDataGenerator()->create_user(array('auth'=>'manual'));
-        // Manually set the user's password to the md5 of the string 'password'.
-        $DB->set_field('user', 'password', '5f4dcc3b5aa765d61d8327deb882cf99', array('id' => $user->id));
+        // Manually set the user's password to the bcrypt of the string 'password'.
+        $DB->set_field('user', 'password', '$2y$10$HhNAYmQcU1GqU/psOmZjfOWlhPEcxx9aEgSJqBfEtYVyq1jPKqMAi', ['id' => $user->id]);
 
         $sink = $this->redirectEvents();
         // Update the password.
@@ -2755,7 +2770,7 @@ EOF;
         $sink->close();
         $event = array_pop($events);
 
-        // Password should have been updated to a bcrypt hash.
+        // Password should have been updated to a SHA512 hash.
         $this->assertFalse(password_is_legacy_hash($user->password));
 
         // Verify event information.

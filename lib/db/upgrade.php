@@ -3383,5 +3383,39 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023081800.01);
     }
 
+    if ($oldversion < 2023082200.01) {
+
+        // Get all the ids of users who still have md5 hashed passwords.
+        if ($DB->sql_regex_supported()) {
+            // If the database supports regex, we can add an exact check for md5.
+            $condition = 'password ' . $DB->sql_regex() . ' :pattern';
+            $params = ['pattern'  => "^[a-fA-F0-9]{32}$"];
+        } else {
+            // Otherwise, we need to use a NOT LIKE condition and rule out bcrypt.
+            $condition = $DB->sql_like('password', ':pattern', true, false, true);
+            $params = ['pattern'  => '$2y$%'];
+        }
+
+        // Regardless of database regex support we check the hash length which should be enough.
+        // But extra regex or like matching makes sure.
+        $sql = "SELECT id FROM {user} WHERE LENGTH(password) = 32 AND $condition";
+        $userids = $DB->get_fieldset_sql($sql, $params);
+
+        // Update the password for each user with a new SHA-512 hash.
+        // Users won't know this password, but they can reset it. This is a security measure,
+        // in case the database is compromised or the hash has been leaked elsewhere.
+        foreach ($userids as $userid) {
+            $password = base64_encode(random_bytes(24)); // Generate a new password for the user.
+
+            $user = new \stdClass();
+            $user->id = $userid;
+            $user->password = hash_internal_user_password($password);
+            $DB->update_record('user', $user, true);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023082200.01);
+    }
+
     return true;
 }
