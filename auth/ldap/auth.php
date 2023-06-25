@@ -1796,7 +1796,7 @@ class auth_plugin_ldap extends auth_plugin_base {
     function sync_roles($user) {
         global $DB;
 
-        $roles = get_ldap_assignable_role_names(2); // Admin user.
+        $roles = get_ldap_assignable_role_names(get_admin()->id); // Admin user.
 
         foreach ($roles as $role) {
             $isrole = $this->is_role($user->username, $role);
