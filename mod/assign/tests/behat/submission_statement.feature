@@ -39,6 +39,19 @@ Feature: In an assignment, teacher can require submission statements
     And I press "Continue"
     And I should see "Submitted for grading" in the "Submission status" "table_row"
 
+  Scenario: Student is not required to accept assignment submission statement when non exists
+    Given the following config values are set as admin:
+      | config               | value | plugin |
+      | submissionstatement  |       | assign |
+    And I am on the "Test assign" "assign activity" page logged in as student1
+    When I press "Add submission"
+    And I set the field "Online text" to "My submission text."
+    And I press "Save changes"
+    And I should see "Draft (not submitted)" in the "Submission status" "table_row"
+    And I press "Submit assignment"
+    And I press "Continue"
+    Then I should see "Submitted for grading" in the "Submission status" "table_row"
+
   Scenario: Student is not required to accept assignment submission statement
     Given I am on the "Test assign" "assign activity editing" page logged in as teacher1
     And I set the following fields to these values:
