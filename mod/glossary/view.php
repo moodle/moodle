@@ -295,7 +295,6 @@ if (!empty($CFG->enablerssfeeds) && !empty($CFG->glossary_enablerssfeeds)
 }
 if ($tab == GLOSSARY_APPROVAL_VIEW) {
     require_capability('mod/glossary:approve', $context);
-    $PAGE->navbar->add($strwaitingapproval);
 }
 
 $hassecondary = $PAGE->has_secondary_navigation();

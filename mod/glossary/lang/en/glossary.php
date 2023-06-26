@@ -280,6 +280,7 @@ $string['page-mod-glossary-x'] = 'Any glossary module page';
 $string['page-mod-glossary-edit'] = 'Glossary add/edit entry page';
 $string['page-mod-glossary-view'] = 'View glossary edit page';
 $string['pendingapproval'] = 'Pending approval';
+$string['pendingapprovalcount'] = 'Pending approval ({$a})';
 $string['pluginadministration'] = 'Glossary administration';
 $string['pluginname'] = 'Glossary';
 $string['popupformat'] = 'Popup format';
