@@ -2830,7 +2830,7 @@ class core_message_external extends external_api {
         return new external_function_parameters(
             array(
                 'userid' => new external_value(PARAM_INT, 'id of the user, 0 for current user', VALUE_REQUIRED),
-                'name' => new external_value(PARAM_TEXT, 'The name of the message processor'),
+                'name' => new external_value(PARAM_SAFEDIR, 'The name of the message processor'),
                 'formvalues' => new external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -2906,7 +2906,7 @@ class core_message_external extends external_api {
         return new external_function_parameters(
             array(
                 'userid' => new external_value(PARAM_INT, 'id of the user, 0 for current user'),
-                'name' => new external_value(PARAM_TEXT, 'The name of the message processor', VALUE_REQUIRED),
+                'name' => new external_value(PARAM_SAFEDIR, 'The name of the message processor', VALUE_REQUIRED),
             )
         );
     }
