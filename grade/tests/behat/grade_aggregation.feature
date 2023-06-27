@@ -266,7 +266,7 @@ Feature: We can use calculated grade totals
     And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the following settings for grade item "Test outcome item one" of type "gradeitem" on "setup" page:
-      | Extra credit     | 1   |
+      | aggregationcoef     | 1   |
     And I log out
     And I log in as "student1"
     And I follow "Grades" in the user menu
@@ -280,6 +280,7 @@ Feature: We can use calculated grade totals
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation                     | Natural |
       | Include outcomes in aggregation | 0       |
+    And I press "Save"
     And I log out
     And I log in as "student1"
     And I follow "Grades" in the user menu
@@ -402,17 +403,17 @@ Feature: We can use calculated grade totals
     And I set the following fields to these values:
       | Item name | Manual item 1 |
       | Grade category | Sub category 3 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 2 |
       | Grade category | Sub category 3 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 3 |
       | Grade category | Sub category 3 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I navigate to "View > Grader report" in the course gradebook
     And I give the grade "60.00" to the user "Student 1" for the grade item "Manual item 1"
     And I give the grade "20.00" to the user "Student 1" for the grade item "Manual item 2"

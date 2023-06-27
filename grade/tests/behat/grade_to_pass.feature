@@ -64,6 +64,7 @@ Feature: We can set the grade to pass value
     And I navigate to "View > Grader report" in the course gradebook
     And I click on grade item menu "Test Assignment 1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
+    And I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     Then the field "Grade to pass" matches value "25"
     And I am on "Course 1" course homepage
     And I am on the "Test Assignment 1" "assign activity" page
@@ -74,6 +75,7 @@ Feature: We can set the grade to pass value
     And I navigate to "View > Grader report" in the course gradebook
     And I click on grade item menu "Test Assignment 1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
+    And I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     And the field "Grade to pass" matches value "30"
 
   Scenario: Set a valid grade to pass for an assignment activity using scales
@@ -88,7 +90,7 @@ Feature: We can set the grade to pass value
     And I navigate to "View > Grader report" in the course gradebook
     And I click on grade item menu "Test Assignment 1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
-    And I expand all fieldsets
+    And I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     Then the field "Grade to pass" matches value "3"
     And I set the field "Grade to pass" to "4"
     And I press "Save changes"
@@ -123,13 +125,13 @@ Feature: We can set the grade to pass value
     And I navigate to "View > Grader report" in the course gradebook
     And I click on grade item menu "Test Workshop 1 (submission)" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
-    And I expand all fieldsets
+    And I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     Then the field "Grade to pass" matches value "40"
     And I set the field "Grade to pass" to "45"
     And I press "Save changes"
     And I click on grade item menu "Test Workshop 1 (assessment)" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
-    And I expand all fieldsets
+    And I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     And the field "Grade to pass" matches value "10"
     And I set the field "Grade to pass" to "15"
     And I press "Save changes"
@@ -165,7 +167,7 @@ Feature: We can set the grade to pass value
     And I navigate to "View > Grader report" in the course gradebook
     And I click on grade item menu "Test Quiz 1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
-    And I expand all fieldsets
+    And I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     Then the field "Grade to pass" matches value "9.5"
     And I set the field "Grade to pass" to "8"
     And I press "Save changes"
@@ -186,7 +188,7 @@ Feature: We can set the grade to pass value
     And I navigate to "View > Grader report" in the course gradebook
     And I click on grade item menu "Test Lesson 1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
-    And I expand all fieldsets
+    And I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     Then the field "Grade to pass" matches value "90"
     And I set the field "Grade to pass" to "80"
     And I press "Save changes"
@@ -208,7 +210,7 @@ Feature: We can set the grade to pass value
     And I navigate to "View > Grader report" in the course gradebook
     And I click on grade item menu "Test Lesson 1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
-    And I expand all fieldsets
+    And I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     Then the field "Grade to pass" matches value "90#50"
     And I set the field "Grade to pass" to "80"
     And I press "Save changes"
@@ -231,7 +233,7 @@ Feature: We can set the grade to pass value
     And I navigate to "View > Grader report" in the course gradebook
     And I click on grade item menu "Test Database 1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
-    And I expand all fieldsets
+    And I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     Then the field "Grade to pass" matches value "90"
     And I set the field "Grade to pass" to "80"
     And I press "Save changes"
@@ -269,7 +271,7 @@ Feature: We can set the grade to pass value
     And I navigate to "View > Grader report" in the course gradebook
     And I click on grade item menu "Test Forum 1 rating" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
-    And I expand all fieldsets
+    And I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     Then the field "Grade to pass" matches value "90"
     And I set the field "Grade to pass" to "80"
     And I press "Save changes"
@@ -291,7 +293,7 @@ Feature: We can set the grade to pass value
     And I navigate to "View > Grader report" in the course gradebook
     And I click on grade item menu "Test Glossary 1" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
-    And I expand all fieldsets
+    And I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     Then the field "Grade to pass" matches value "90"
     And I set the field "Grade to pass" to "80"
     And I press "Save changes"

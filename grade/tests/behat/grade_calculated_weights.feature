@@ -207,12 +207,13 @@ Feature: We can understand the gradebook user report
 
   @javascript @skip_chrome_zerosize
   Scenario: View user report with mixed aggregation methods
+    And I change window size to "large"
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Natural |
     And I set the following settings for grade item "Sub category" of type "category" on "setup" page:
       | Aggregation | Weighted mean of grades |
     And I set the following settings for grade item "Test assignment three" of type "gradeitem" on "setup" page:
-      | Extra credit | 1 |
+      | aggregationcoef | 1 |
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
 

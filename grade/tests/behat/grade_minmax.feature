@@ -30,27 +30,27 @@ Feature: We can choose what min or max grade to use when aggregating grades.
     And I set the following fields to these values:
       | Item name | MI 1 |
       | Grade category | C1 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | MI 2 |
       | Grade category | C1 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | MI 3 |
       | Grade category | CAT1 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | MI 4 |
       | Grade category | CAT1 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | MI 5 |
       | Grade category | C1 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I set "=[[mi1]]+[[mi2]]+[[mi3]]" calculation for grade item "MI 5" with idnumbers:
       | MI 1 | mi1 |
       | MI 2 | mi2 |

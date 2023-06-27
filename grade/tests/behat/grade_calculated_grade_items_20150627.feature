@@ -33,7 +33,7 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
     And I set the following fields to these values:
       | Item name | grade item 1 |
       | Grade category | Calc cat |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I set "=[[gi1]]/2" calculation for grade category "Calc cat" with idnumbers:
       | grade item 1 | gi1 |
     And I set the following settings for grade item "Calc cat" of type "category" on "setup" page:
@@ -60,7 +60,7 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
     And I set the following fields to these values:
       | Item name | grade item 1 |
       | Grade category | Calc cat |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I set "=[[gi1]]/2" calculation for grade category "Calc cat" with idnumbers:
       | grade item 1 | gi1 |
     And I set the following settings for grade item "Calc cat" of type "category" on "setup" page:
@@ -118,11 +118,11 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
     Given I press "Add grade item"
     And I set the following fields to these values:
       | Item name | grade item 1 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | calc item |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I set "=[[gi1]]/2" calculation for grade item "calc item" with idnumbers:
       | grade item 1 | gi1 |
     And I set the following settings for grade item "calc item" of type "gradeitem" on "setup" page:

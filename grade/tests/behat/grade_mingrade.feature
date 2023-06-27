@@ -32,38 +32,38 @@ Feature: We can use a minimum grade different than zero
       | Item name | Manual item 1 |
       | Minimum grade | -100 |
       | Grade category | Course 1 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 2 |
       | Minimum grade | 50 |
       | Grade category | Course 1 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 3 |
       | Maximum grade | 50 |
       | Minimum grade | -100 |
       | Grade category | Sub category 1 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 4 |
       | Minimum grade | -100 |
       | Grade category | Sub category 1 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 5 |
       | Minimum grade | 50 |
       | Grade category | Sub category 2 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 6 |
       | Minimum grade | 50 |
       | Grade category | Sub category 2 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the field "Show weightings" to "Show"
     And I set the field "Show contribution to course total" to "Show"

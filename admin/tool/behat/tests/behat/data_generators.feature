@@ -334,21 +334,21 @@ Feature: Set up contextual data for tests
     And I choose "Edit grade item" in the open action menu
     And I expand all fieldsets
     And I should see "Course 1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I should see "Grade category 1"
     And I should see "Test Grade Item 2"
     And I click on grade item menu "Test Grade Item 2" of type "gradeitem" on "setup" page
     And I choose "Edit grade item" in the open action menu
     And I expand all fieldsets
     And I should see "Grade category 1"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     And I should see "Grade sub category 2"
     And I should see "Test Grade Item 3"
     And I click on grade item menu "Test Grade Item 3" of type "gradeitem" on "setup" page
     And I choose "Edit grade item" in the open action menu
     And I expand all fieldsets
     And I should see "Grade sub category 2"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
 
   Scenario: Add a bunch of scales
     Given the following "courses" exist:

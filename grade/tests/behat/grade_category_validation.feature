@@ -43,12 +43,12 @@ Feature: Editing a grade item
     And I set the following fields to these values:
       | Item name      | Item 1 |
       | Grade category | Cat 1  |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name      | Item 2 |
       | Grade category |  Cat 1 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
 
   Scenario: Being able to change the grade type, scale and maximum grade for a grade category when there are no overridden grades
     Given I click on grade item menu "Cat 1" of type "category" on "setup" page

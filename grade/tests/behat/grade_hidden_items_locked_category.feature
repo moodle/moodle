@@ -29,7 +29,7 @@ Feature: Hidden grade items should be hidden when grade category is locked, but 
       | Item name | Hidden item |
       | Hidden | 1 |
       | Grade category | Test locked category |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -75,7 +75,7 @@ Feature: Hidden grade items should be hidden when grade category is locked, but 
     And I set the following fields to these values:
       | Item name | Cat b item |
       | Grade category | Test overridden category B |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     When I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "50.00" to the user "Student 1" for the grade item "Test overridden category B total"
