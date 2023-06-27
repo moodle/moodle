@@ -183,7 +183,6 @@ $PAGE->set_pagelayout('standard');
 echo $OUTPUT->header();
 
 echo $OUTPUT->render_participants_tertiary_nav($course);
-echo $OUTPUT->heading(format_string($course->shortname, true, array('context' => $context)) .' '.$strgroups, 3);
 
 $groups = groups_get_all_groups($courseid);
 $selectedname = null;

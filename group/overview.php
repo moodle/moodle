@@ -273,11 +273,9 @@ $PAGE->navbar->add(get_string('overview', 'group'));
 $PAGE->set_title($strgroups);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('standard');
-echo $OUTPUT->header();
 
+echo $OUTPUT->header();
 echo $OUTPUT->render_participants_tertiary_nav($course);
-/// Print overview
-echo $OUTPUT->heading(format_string($course->shortname, true, array('context' => $context)) .' '.$stroverview, 3);
 
 echo $strfiltergroups;
 

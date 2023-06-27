@@ -110,7 +110,7 @@ Feature: Organize students into groups
       | Group name | The greatest group that never existed |
     And I press "Save changes"
     And I should see "The greatest group that never existed"
-    And I select "Groupings" from the "jump" singleselect
+    And I am on the "Course 1" "groupings" page
     And I press "Create grouping"
     And the "idnumber" "field" should be readonly
     And I set the following fields to these values:

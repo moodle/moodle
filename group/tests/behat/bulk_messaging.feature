@@ -14,19 +14,11 @@ Feature: Bulk update group messaging status
     And the following "course enrolments" exist:
         | user     | course | role           |
         | teacher1 | C1     | editingteacher |
-    And I log in as "teacher1"
-    And I am on the "Course 1" "groups" page
-    And I press "Create group"
-    And I set the following fields to these values:
-        | Group name      | Group-A-Test |
-        | Group ID number | Group-A-Test |
-    And I press "Save changes"
-    And I press "Create group"
-    And I set the following fields to these values:
-        | Group name      | Group-B-Test |
-        | Group ID number | Group-B-Test |
-    And I press "Save changes"
-    And I select "Groups" from the "jump" singleselect
+    And the following "groups" exist:
+        | course | name         | idnumber |
+        | C1     | Group-A-Test | GA       |
+        | C1     | Group-B-Test | GB       |
+    And I am on the "Course 1" "groups" page logged in as "teacher1"
 
   @javascript
   Scenario: Bulk enable messaging in groups
